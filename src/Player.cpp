@@ -1559,6 +1559,23 @@ void Player::ApplyWaitingTransforms()
 	m_pPlayerState->m_ModsToApply.clear();
 }
 
+// update_displayed_time is outside of DrawPrimitives because ScreenGameplay
+// calls Player::Draw multiple times to put the notefield board underneath
+// other things while having the notes above those things.
+// This way, update_displayed_time only occurs once, instead of twice per
+// frame.
+// update_displayed_time must be called by the thing that contains the Player
+// before drawing it to update the field.
+// -Kyz
+void Player::update_displayed_time()
+{
+	if(m_new_field != nullptr)
+	{
+		SongPosition const& disp_pos= m_pPlayerState->GetDisplayedPosition();
+		m_new_field->update_displayed_time(disp_pos.m_fSongBeatVisible, disp_pos.m_fMusicSecondsVisible);
+	}
+}
+
 void Player::DrawPrimitives()
 {
 	// TODO: Remove use of PlayerNumber.
@@ -1568,12 +1585,6 @@ void Player::DrawPrimitives()
 	if( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StyleType == StyleType_OnePlayerTwoSides  &&
 		pn != GAMESTATE->GetMasterPlayerNumber() )
 		return;
-
-	if(m_new_field != nullptr)
-	{
-		SongPosition const& disp_pos= m_pPlayerState->GetDisplayedPosition();
-		m_new_field->update_displayed_time(disp_pos.m_fSongBeatVisible, disp_pos.m_fMusicSecondsVisible);
-	}
 
 	bool draw_notefield= m_new_field && !IsOniDead();
 

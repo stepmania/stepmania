@@ -53,6 +53,7 @@ public:
 	// rewritten. -Kyz
 	void SetSpeedFromPlayerOptions();
 	void SetNoteFieldToEditMode();
+	void update_displayed_time();
 
 	struct TrackRowTapNote
 	{

@@ -2052,6 +2052,7 @@ void ScreenGameplay::DrawPrimitives()
 	}
 	FOREACH_EnabledPlayerNumberInfo(m_vPlayerInfo, pi)
 	{
+		pi->m_pPlayer->update_displayed_time();
 		pi->m_pPlayer->DrawNoteFieldBoard();
 	}
 	ScreenWithMenuElements::DrawPrimitives();

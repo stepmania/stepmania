@@ -2533,6 +2533,10 @@ void NewField::update_displayed_time(double beat, double second)
 	m_curr_beat= beat;
 	m_curr_second= second;
 	m_mod_manager.update(beat, second);
+	if(m_in_defective_mode)
+	{
+		m_defective_mods.update(m_curr_beat, m_curr_second);
+	}
 	for(auto&& col : m_columns)
 	{
 		col.update_displayed_time(beat, second);
@@ -2569,7 +2573,6 @@ void NewField::update_displayed_time(double beat, double second)
 	}
 	else
 	{
-		m_defective_mods.update(m_curr_beat, m_curr_second);
 		SetFOV(45.0);
 		double vanish_x= Rage::scale(m_defective_mods.get_skew(), 0.1f, 1.0f, GetParent()->GetX(), SCREEN_CENTER_X);
 		double vanish_y= SCREEN_CENTER_Y;

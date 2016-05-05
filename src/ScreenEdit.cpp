@@ -2025,6 +2025,7 @@ void ScreenEdit::DrawPrimitives()
 
 	if( m_pSoundMusic->IsPlaying() )
 	{
+		m_Player->update_displayed_time();
 		m_Player->SetBeingDrawnByProxy();
 		ScreenWithMenuElements::DrawPrimitives();
 		return;
