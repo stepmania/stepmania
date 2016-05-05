@@ -304,7 +304,9 @@ public:
 	Preference<bool>	m_bThreadedInput;
 	Preference<bool>	m_bThreadedMovieDecode;
 	Preference<std::string>	m_sTestInitialScreen;
-	Preference<bool>	m_bDebugLights;
+	// m_bDebugLights is not a preference because people hit it by accident and
+	// have no clue how to turn it off -Kyz
+	bool m_bDebugLights;
 	Preference<std::string>	m_sMachineName;
 	Preference<std::string>	m_sCoursesToShowRanking;
 	Preference<bool> m_MuteActions;
