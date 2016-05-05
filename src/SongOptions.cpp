@@ -153,14 +153,13 @@ void SongOptions::FromString( const std::string &sMultipleMods )
 {
 	std::string sTemp = sMultipleMods;
 	auto vs = Rage::split(sTemp, ",", Rage::EmptyEntries::skip);
-	std::string sThrowAway;
 	for (auto &s: vs)
 	{
-		FromOneModString( s, sThrowAway );
+		FromOneModString(s);
 	}
 }
 
-bool SongOptions::FromOneModString( const std::string &sOneMod, std::string &sErrorOut )
+bool SongOptions::FromOneModString(const std::string &sOneMod)
 {
 	std::string sBit = Rage::trim(Rage::make_lower(sOneMod));
 

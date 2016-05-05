@@ -23,7 +23,7 @@ void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 	vPlayerInfoOut[other].Load( other, MultiPlayer_Invalid, false, Difficulty_Invalid );
 }
 
-PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput( const InputEventPlus& iep )
+PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput(const InputEventPlus&)
 {
 	return m_vPlayerInfo[GAMESTATE->GetMasterPlayerNumber()];
 }

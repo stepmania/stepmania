@@ -1327,7 +1327,7 @@ std::string ThemeManager::GetBlankGraphicPath()
 class LunaThemeManager: public Luna<ThemeManager>
 {
 public:
-	static int ReloadMetrics( T* p, lua_State *L )		{ p->ReloadMetrics(); return 0; }
+	static int ReloadMetrics(T* p, lua_State*)		{ p->ReloadMetrics(); return 0; }
 
 	static int HasMetric( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMetric(SArg(1),SArg(2))); return 1; }
 	static int GetMetric( T* p, lua_State *L )
@@ -1431,13 +1431,13 @@ public:
 		}
 	}
 
-	static int GetMetricNamesInGroup(T* p, lua_State* L)
+	static int GetMetricNamesInGroup(T*, lua_State* L)
 	{
 		PushMetricNamesInGroup(g_pLoadedThemeData->iniMetrics, L);
 		return 1;
 	}
 
-	static int GetStringNamesInGroup(T* p, lua_State* L)
+	static int GetStringNamesInGroup(T*, lua_State* L)
 	{
 		PushMetricNamesInGroup(g_pLoadedThemeData->iniStrings, L);
 		return 1;

@@ -930,9 +930,9 @@ public:
 	static int course( T* p, lua_State *L ) { GetArgs( p, L ); p->m_Type = UnlockRewardType_Course; return 0; }
 	static int mod( T* p, lua_State *L )	{ GetArgs( p, L ); p->m_Type = UnlockRewardType_Modifier; return 0; }
 	static int code( T* p, lua_State *L )	{ p->m_sEntryID = SArg(1); return 0; }
-	static int roulette( T* p, lua_State *L ) { p->m_bRoulette = true; return 0; }
-	static int requirepasshardsteps( T* p, lua_State *L ) { p->m_bRequirePassHardSteps = true; return 0; }
-	static int requirepasschallengesteps( T* p, lua_State *L ) { p->m_bRequirePassChallengeSteps = true; return 0; }
+	static int roulette(T* p, lua_State*) { p->m_bRoulette = true; return 0; }
+	static int requirepasshardsteps(T* p, lua_State*) { p->m_bRequirePassHardSteps = true; return 0; }
+	static int requirepasschallengesteps(T* p, lua_State*) { p->m_bRequirePassChallengeSteps = true; return 0; }
 	static int require( T* p, lua_State *L )
 	{
 		const UnlockRequirement ut = Enum::Check<UnlockRequirement>( L, 1 );
@@ -1016,7 +1016,7 @@ public:
 	static int GetSongsUnlockedByEntryID( T* p, lua_State *L )
 	{
 		vector<Song *> apSongs;
-		UNLOCKMAN->GetSongsUnlockedByEntryID( apSongs, SArg(1) );
+		p->GetSongsUnlockedByEntryID( apSongs, SArg(1) );
 		LuaHelpers::CreateTableFromArray( apSongs, L );
 		return 1;
 	}
@@ -1026,7 +1026,7 @@ public:
 		// Return the Song each Steps are associated with, too.
 		vector<Song *> apSongs;
 		vector<Difficulty> apDifficulty;
-		UNLOCKMAN->GetStepsUnlockedByEntryID( apSongs, apDifficulty, SArg(1) );
+		p->GetStepsUnlockedByEntryID( apSongs, apDifficulty, SArg(1) );
 		LuaHelpers::CreateTableFromArray( apSongs, L );
 		LuaHelpers::CreateTableFromArray( apDifficulty, L );
 		return 2;
@@ -1034,14 +1034,14 @@ public:
 
 	static int GetPoints( T* p, lua_State *L ) {
 		float fScores[NUM_UnlockRequirement];
-		UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
+		p->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 		lua_pushnumber( L, fScores[Enum::Check<UnlockRequirement>(L, 1)] );
 		return 1;
 	}
 
 	static int GetPointsForProfile( T* p, lua_State *L ) {
 		float fScores[NUM_UnlockRequirement];
-		UNLOCKMAN->GetPoints( Luna<Profile>::check(L,1), fScores );
+		p->GetPoints( Luna<Profile>::check(L,1), fScores );
 		lua_pushnumber( L, fScores[Enum::Check<UnlockRequirement>(L, 2)] );
 		return 1;
 	}
@@ -1049,7 +1049,7 @@ public:
 	static int IsSongLocked( T* p, lua_State *L )
 	{
 		Song *pSong = Luna<Song>::check(L,1);
-		lua_pushnumber( L, UNLOCKMAN->SongIsLocked(pSong));
+		lua_pushnumber( L, p->SongIsLocked(pSong));
 		return 1;
 	}
 

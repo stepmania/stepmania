@@ -100,12 +100,12 @@ ScreenOptionsCourseOverview::~ScreenOptionsCourseOverview()
 
 }
 
-void ScreenOptionsCourseOverview::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsCourseOverview::ImportOptions(int, const vector<PlayerNumber>&)
 {
 	//OptionRow &row = *m_pRows[iRow];
 }
 
-void ScreenOptionsCourseOverview::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsCourseOverview::ExportOptions(int iRow, const vector<PlayerNumber>&)
 {
 	OptionRow &row = *m_pRows[iRow];
 	int iIndex = row.GetOneSharedSelection( true );

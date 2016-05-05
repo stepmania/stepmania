@@ -555,7 +555,7 @@ std::string PrefsManager::GetPreferencesSection() const
 class LunaPrefsManager: public Luna<PrefsManager>
 {
 public:
-	static int GetPreference( T* p, lua_State *L )
+	static int GetPreference(T*, lua_State *L)
 	{
 		std::string sName = SArg(1);
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
@@ -569,7 +569,7 @@ public:
 		pPref->PushValue( L );
 		return 1;
 	}
-	static int SetPreference( T* p, lua_State *L )
+	static int SetPreference(T* p, lua_State *L)
 	{
 		std::string sName = SArg(1);
 
@@ -584,7 +584,7 @@ public:
 		pPref->SetFromStack( L );
 		COMMON_RETURN_SELF;
 	}
-	static int SetPreferenceToDefault( T* p, lua_State *L )
+	static int SetPreferenceToDefault(T* p, lua_State *L)
 	{
 		std::string sName = SArg(1);
 
@@ -599,7 +599,7 @@ public:
 		LOG->Trace( "Restored preference \"%s\" to default \"%s\"", sName.c_str(), pPref->ToString().c_str() );
 		COMMON_RETURN_SELF;
 	}
-	static int PreferenceExists( T* p, lua_State *L )
+	static int PreferenceExists(T*, lua_State *L)
 	{
 		std::string sName = SArg(1);
 

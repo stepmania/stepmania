@@ -65,7 +65,7 @@ public:
 
 		return RELOAD_CHANGED_ALL;
 	}
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption(OptionRow *pRow, const vector<PlayerNumber>&, vector<bool>[NUM_PLAYERS]) const
 	{
 		Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
 		Steps *pSteps;
@@ -87,7 +87,7 @@ public:
 		}
 
 	}
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption(const vector<PlayerNumber>&, const vector<bool>[NUM_PLAYERS]) const
 	{
 		return 0;
 	}
@@ -256,7 +256,7 @@ ScreenOptionsEditCourse::~ScreenOptionsEditCourse()
 
 }
 
-void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsEditCourse::ImportOptions(int iRow, const vector<PlayerNumber>&)
 {
 	OptionRow &row = *m_pRows[iRow];
 	if( row.GetRowType() == OptionRow::RowType_Exit )
@@ -298,7 +298,7 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 	}
 }
 
-void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsEditCourse::ExportOptions(int, const vector<PlayerNumber>&)
 {
 	FOREACH_ENUM( EditCourseRow, i )
 	{

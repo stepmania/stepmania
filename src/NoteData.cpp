@@ -1268,7 +1268,7 @@ XNode* NoteData::CreateNode() const
 	return p;
 }
 
-void NoteData::LoadFromNode( const XNode* pNode )
+void NoteData::LoadFromNode(const XNode*)
 {
 	FAIL_M("NoteData::LoadFromNode() not implemented");
 }

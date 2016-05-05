@@ -354,7 +354,7 @@ public:
 		p->m_vPlayedStageStats[iIndex].PushSelf(L);
 		return 1;
 	}
-	static int Reset( T* p, lua_State *L )			{ p->Reset(); return 0; }
+	static int Reset(T* p, lua_State*)			{ p->Reset(); return 0; }
 	static int GetAccumPlayedStageStats( T* p, lua_State *L )	{ p->GetAccumPlayedStageStats().PushSelf(L); return 1; }
 	static int GetFinalEvalStageStats( T* p, lua_State *L )
 	{
@@ -383,7 +383,9 @@ public:
 	{
 		Grade g = NUM_Grade;
 		FOREACH_EnabledPlayer( pn )
-			g = std::min( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+		{
+			g = std::min(g, p->m_CurStageStats.m_player[pn].GetGrade());
+		}
 		lua_pushnumber( L, g );
 		return 1;
 	}
@@ -393,24 +395,24 @@ public:
 		Grade g = Grade_Tier01;
 		FOREACH_EnabledPlayer( pn )
 		{
-			g = std::max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+			g = std::max( g, p->m_CurStageStats.m_player[pn].GetGrade() );
 		}
 		lua_pushnumber( L, g );
 		return 1;
 	}
 
-	static int GetBestFinalGrade( T* t, lua_State *L )
+	static int GetBestFinalGrade( T* p, lua_State *L )
 	{
 		Grade top_grade = Grade_Failed;
 		StageStats stats;
-		t->GetFinalEvalStageStats( stats );
-		FOREACH_HumanPlayer( p )
+		p->GetFinalEvalStageStats( stats );
+		FOREACH_HumanPlayer(pn)
 		{
 			// If this player failed any stage, then their final grade is an F.
 			bool bPlayerFailedOneStage = false;
-			for (auto &ss: STATSMAN->m_vPlayedStageStats)
+			for(auto &ss: p->m_vPlayedStageStats)
 			{
-				if( ss.m_player[p].m_bFailed )
+				if( ss.m_player[pn].m_bFailed )
 				{
 					bPlayerFailedOneStage = true;
 					break;
@@ -420,7 +422,7 @@ public:
 			if( bPlayerFailedOneStage )
 				continue;
 
-			top_grade = std::min( top_grade, stats.m_player[p].GetGrade() );
+			top_grade = std::min( top_grade, stats.m_player[pn].GetGrade() );
 		}
 
 		Enum::Push( L, top_grade );

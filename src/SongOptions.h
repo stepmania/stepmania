@@ -64,7 +64,7 @@ public:
 	std::string GetString() const;
 	std::string GetLocalizedString() const;
 	void FromString( const std::string &sOptions );
-	bool FromOneModString( const std::string &sOneMod, std::string &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
+	bool FromOneModString(const std::string &sOneMod);	// On error, return false
 
 	bool operator==( const SongOptions &other ) const;
 	bool operator!=( const SongOptions &other ) const { return !operator==(other); }

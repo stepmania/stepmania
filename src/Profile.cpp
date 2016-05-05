@@ -2395,7 +2395,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 	}
 }
 
-void Profile::SaveStatsWebPageToDir( std::string sDir ) const
+void Profile::SaveStatsWebPageToDir(std::string) const
 {
 	ASSERT( PROFILEMAN != nullptr );
 }

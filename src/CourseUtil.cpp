@@ -342,7 +342,7 @@ void CourseUtil::WarnOnInvalidMods( std::string sMods )
 		bool bValid = false;
 		std::string sErrorDetail;
 		bValid |= po.FromOneModString( s, sErrorDetail );
-		bValid |= so.FromOneModString( s, sErrorDetail );
+		bValid |= so.FromOneModString(s);
 		/* ==Invalid options that used to be valid==
 		 * all noteskins (solo, note, foon, &c.)
 		 * protiming (done in Lua now)

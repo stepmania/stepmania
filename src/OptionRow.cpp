@@ -906,6 +906,8 @@ void OptionRow::Reload()
 			PositionUnderlines( pn );
 		}
 		break;
+		default:
+			break;
 	}
 
 	// TODO: Nothing uses this yet and it causes skips when changing options.

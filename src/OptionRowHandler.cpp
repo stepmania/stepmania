@@ -87,7 +87,7 @@ std::string OptionRowHandler::GetThemedItemText( int iChoice ) const
 	return s;
 }
 
-void OptionRowHandler::GetIconTextAndGameCommand( int iFirstSelection, std::string &sIconTextOut, GameCommand &gcOut ) const
+void OptionRowHandler::GetIconTextAndGameCommand(int, std::string &sIconTextOut, GameCommand &gcOut) const
 {
 	sIconTextOut = "";
 	gcOut.Init();
@@ -251,7 +251,7 @@ public:
 		}
 		return true;
 	}
-	void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	void ImportOption(OptionRow*, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS]) const
 	{
 		for (auto const &p: vpns)
 		{
@@ -630,7 +630,7 @@ public:
 		m_ppStepsToFill->Set( m_vSteps[0] );
 		return true;
 	}
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption(OptionRow*, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS]) const
 	{
 		for (auto const &p: vpns)
 		{
@@ -1170,7 +1170,7 @@ public:
 		return effect;
 	}
 
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption(OptionRow*, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		if(!m_TableIsSane)
 		{
@@ -1465,7 +1465,7 @@ public:
 		return true;
 	}
 
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption(OptionRow*, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		for (auto const &p: vpns)
 		{
@@ -1527,21 +1527,21 @@ public:
 		m_Def.m_vsChoices.push_back( "" );
 		return true;
 	}
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption(OptionRow*, const vector<PlayerNumber>&, vector<bool>[NUM_PLAYERS]) const
 	{
 	}
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption(const vector<PlayerNumber>&, const vector<bool> vbSelected[NUM_PLAYERS]) const
 	{
 		if( vbSelected[PLAYER_1][0] || vbSelected[PLAYER_2][0] )
 			m_gc.ApplyToAllPlayers();
 		return 0;
 	}
-	virtual void GetIconTextAndGameCommand( int iFirstSelection, std::string &sIconTextOut, GameCommand &gcOut ) const
+	virtual void GetIconTextAndGameCommand(int, std::string &sIconTextOut, GameCommand &gcOut) const
 	{
 		sIconTextOut = "";
 		gcOut = m_gc;
 	}
-	virtual std::string GetScreen( int iChoice ) const
+	virtual std::string GetScreen(int) const
 	{
 		return m_gc.m_sScreen;
 	}

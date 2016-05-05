@@ -148,7 +148,7 @@ public:
 	DEFINE_METHOD( GetStyleType,		m_StyleType )
 	DEFINE_METHOD( GetStepsType,		m_StepsType )
 	DEFINE_METHOD( ColumnsPerPlayer,	m_iColsPerPlayer )
-	static int NeedsZoomOutWith2Players(T* p, lua_State *L)
+	static int NeedsZoomOutWith2Players(T*, lua_State *L)
 	{
 		// m_bNeedsZoomOutWith2Players was removed in favor of having
 		// ScreenGameplay use the style's width and margin values to calculate

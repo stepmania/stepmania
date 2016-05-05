@@ -227,7 +227,7 @@ static int GetScore(int p, int Z, int64_t S, int n)
 
 }
 
-void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
+void ScoreKeeperNormal::AddTapScore(TapNoteScore)
 {
 }
 

@@ -128,7 +128,7 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 	ScreenGameplay::HandleScreenMessage( SM );
 }
 
-bool ScreenGameplayLesson::MenuStart( const InputEventPlus &input )
+bool ScreenGameplayLesson::MenuStart(const InputEventPlus&)
 {
 	// XXX: Allow repeats?
 	if( m_iCurrentPageIndex == -1 )
@@ -137,7 +137,7 @@ bool ScreenGameplayLesson::MenuStart( const InputEventPlus &input )
 	return true;
 }
 
-bool ScreenGameplayLesson::MenuBack( const InputEventPlus &input )
+bool ScreenGameplayLesson::MenuBack(const InputEventPlus&)
 {
 	// XXX: Allow repeats?
 	if( m_iCurrentPageIndex == 0 )

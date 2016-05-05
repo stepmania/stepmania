@@ -183,7 +183,7 @@ static void GetTimingTags( vector<std::string> &lines, const TimingData &timing,
 	w.Finish();
 }
 
-static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong = false )
+static void WriteTimingTags(RageFile &f, const TimingData &timing)
 {
 	f.PutLine(fmt::sprintf("#BPMS:%s;",
 						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_BPM, 3)).c_str()));
@@ -284,7 +284,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			break;
 	}
 
-	WriteTimingTags( f, out.m_SongTiming, true );
+	WriteTimingTags(f, out.m_SongTiming);
 
 	if( out.GetSpecifiedLastSecond() > 0 )
 	{

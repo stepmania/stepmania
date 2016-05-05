@@ -236,7 +236,7 @@ struct garv_state
 	{}
 };
 
-static void DoRowEndRadarActualCalc(garv_state& state, RadarValues& out)
+static void DoRowEndRadarActualCalc(garv_state& state)
 {
 	if(state.judgable && state.last_tns_on_row != TapNoteScore_Invalid)
 	{
@@ -303,7 +303,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	{
 		if(curr_note.Row() != state.curr_row)
 		{
-			DoRowEndRadarActualCalc(state, out);
+			DoRowEndRadarActualCalc(state);
 			state.curr_row= curr_note.Row();
 			state.num_notes_on_curr_row= 0;
 			state.num_holds_on_curr_row= 0;
@@ -384,7 +384,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 		}
 		++curr_note;
 	}
-	DoRowEndRadarActualCalc(state, out);
+	DoRowEndRadarActualCalc(state);
 
 	// ScreenGameplay passes in the RadarValues that were calculated by
 	// NoteDataUtil::CalculateRadarValues, so those are reused here. -Kyz
