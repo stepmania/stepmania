@@ -60,7 +60,9 @@ static DeviceButton GetRandomKeyboardKey()
 
 void InputHandler_MonkeyKeyboard::Update()
 {
-	if( !PREFSMAN->m_bMonkeyInput )
+	// Monkey input shouuld only ever be used by devs.
+	// If you actually need it, recompile with it on or something. -Kyz
+	if(true)
 	{
 		if( m_dbLast != DeviceButton_Invalid )
 		{

@@ -193,8 +193,9 @@ void InputHandler::Create( const std::string &drivers_, vector<InputHandler *> &
 		Add.push_back( ret );
 	}
 
-	// Always add
-	Add.push_back( new InputHandler_MonkeyKeyboard );
+	// Monkey input shouuld only ever be used by devs.
+	// If you actually need it, recompile with it on or something. -Kyz
+	// Add.push_back( new InputHandler_MonkeyKeyboard );
 }
 
 

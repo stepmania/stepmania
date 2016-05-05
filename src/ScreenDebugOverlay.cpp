@@ -759,17 +759,6 @@ class DebugLineLightsDebug : public IDebugLine
 	}
 };
 
-class DebugLineMonkeyInput : public IDebugLine
-{
-	virtual std::string GetDisplayTitle() { return MONKEY_INPUT.GetValue(); }
-	virtual bool IsEnabled() { return PREFSMAN->m_bMonkeyInput.Get(); }
-	virtual void DoAndLog( std::string &sMessageOut )
-	{
-		PREFSMAN->m_bMonkeyInput.Set( !PREFSMAN->m_bMonkeyInput );
-		IDebugLine::DoAndLog( sMessageOut );
-	}
-};
-
 class DebugLineStats : public IDebugLine
 {
 	virtual std::string GetDisplayTitle() { return RENDERING_STATS.GetValue(); }
@@ -1332,7 +1321,6 @@ DECLARE_ONE( DebugLineCoinMode );
 DECLARE_ONE( DebugLineSlow );
 DECLARE_ONE( DebugLineHalt );
 DECLARE_ONE( DebugLineLightsDebug );
-DECLARE_ONE( DebugLineMonkeyInput );
 DECLARE_ONE( DebugLineStats );
 DECLARE_ONE( DebugLineVsync );
 DECLARE_ONE( DebugLineAllowMultitexture );

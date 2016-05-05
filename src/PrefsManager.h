@@ -305,7 +305,6 @@ public:
 	Preference<bool>	m_bThreadedMovieDecode;
 	Preference<std::string>	m_sTestInitialScreen;
 	Preference<bool>	m_bDebugLights;
-	Preference<bool>	m_bMonkeyInput;
 	Preference<std::string>	m_sMachineName;
 	Preference<std::string>	m_sCoursesToShowRanking;
 	Preference<bool> m_MuteActions;

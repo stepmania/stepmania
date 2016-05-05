@@ -291,7 +291,6 @@ PrefsManager::PrefsManager() :
 	m_bThreadedMovieDecode		( "ThreadedMovieDecode",		true ),
 	m_sTestInitialScreen		( "TestInitialScreen",			"" ),
 	m_bDebugLights			( "DebugLights",			false ),
-	m_bMonkeyInput			( "MonkeyInput",			false ),
 	m_sMachineName			( "MachineName",			"" ),
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
 	m_MuteActions			( "MuteActions",			false ),

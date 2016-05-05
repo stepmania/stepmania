@@ -31,6 +31,10 @@ ________________________________________________________________________________
 * [NewSkin] Added shown_noteskins config and menu for hiding noteskins. [kyzentun]
 * [ScreenNestyPlayerOptions] Added life and background options. [kyzentun]
 
+================================================================================
+StepMania 5.1.-2 | 20160401
+--------------------------------------------------------------------------------
+
 2016/03/14
 ----------
 * [NewSkin] Added quantum_time field to column info so that quantizations can
