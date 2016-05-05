@@ -632,15 +632,16 @@ nesty_option_menus.menu= {
 		interpret_start= function(self)
 			local data= self.shown_data[self.cursor_pos]
 			if self.special_handler then
-				local handler_ret= self.special_handler(self, data)
-				if handler_ret.recall_init then
-					self:recall_init()
-					return true
-				elseif handler_ret.ret_data then
-					return unpack(handler_ret.ret_data)
-				else
-					return true
+				local handler_ret= {self.special_handler(self, data)}
+				if handler_ret[1] then
+					if handler_ret[1] == "recall_init" then
+						self:recall_init()
+						return true
+					else
+						return unpack(handler_ret)
+					end
 				end
+				return true
 			else
 				if data then
 					if self.up_text and data.text == self.up_text then
@@ -1108,7 +1109,7 @@ nesty_menu_stack_mt= {
 					elseif action_data.menu then
 						local nargs= action_data.args
 						if action_data.exec_args and type(nargs) == "function" then
-							nargs= nargs(self.pn)
+							nargs= nargs(self.pn, action_data.exec_args)
 						end
 						self:push_menu_stack(action_data.menu, nargs)
 						if type(action_data.on_open) == "function" then
