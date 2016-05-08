@@ -1576,16 +1576,18 @@ void Player::update_displayed_time()
 	}
 }
 
-void Player::DrawPrimitives()
+bool Player::EarlyAbortDraw() const
 {
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 	// May have both players in doubles (for battle play); only draw primary player.
-	if( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StyleType == StyleType_OnePlayerTwoSides  &&
-		pn != GAMESTATE->GetMasterPlayerNumber() )
-		return;
+	return (GAMESTATE->GetCurrentStyle(pn)->m_StyleType == StyleType_OnePlayerTwoSides  &&
+		pn != GAMESTATE->GetMasterPlayerNumber()) ||
+		!HasVisibleParts() || ActorFrame::EarlyAbortDraw();
+}
 
+void Player::DrawPrimitives()
+{
 	bool draw_notefield= m_new_field && !IsOniDead();
 
 	if(m_drawing_notefield_board || m_being_drawn_by_proxy)
