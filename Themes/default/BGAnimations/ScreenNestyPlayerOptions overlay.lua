@@ -206,7 +206,7 @@ local base_options= {
 	nesty_options.bool_song_mod_val("StaticBackground"),
 	nesty_options.bool_song_mod_val("RandomBGOnly"),
 	nesty_options.float_config_val(player_config, "ScreenFilter", -2, -1, 0),
-	{name= "reload_newskins", translatable= true,
+	{name= "reload_newskins", translatable= true, type= "action",
 	 execute= function() NEWSKIN:reload_skins() end},
 }
 
@@ -241,15 +241,17 @@ local function input(event)
 	if not pn then return end
 	if not menus[pn] then return end
 	if menu_stack_generic_input(menus, event) then
-		player_ready[pn]= true
-		ready_indicators[pn]:playcommand("show_ready")
-		exit_if_both_ready()
+		if event.GameButton == "Back" then
+			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
+		else
+			player_ready[pn]= true
+			ready_indicators[pn]:playcommand("show_ready")
+			exit_if_both_ready()
+		end
 	else
 		if player_ready[pn] and not menus[pn]:can_exit_screen() then
 			player_ready[pn]= false
 			ready_indicators[pn]:playcommand("hide_ready")
-		elseif event.GameButton == "Back" and GAMESTATE:IsHumanPlayer(pn) then
-			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
 		end
 	end
 	update_explanation(pn)
@@ -270,7 +272,28 @@ local item_params= {
 		Font= "Common Normal", InitCommand= function(self)
 			self:shadowlength(1)
 		end,
-		SetCommand= nesty_option_item_default_set_command,
+		SetCommand= function(self, params)
+			if params.type == "menu" then
+				self:rotationz(30)
+			elseif params.type == "number" then
+				self:rotationz(60)
+			elseif params.type == "choice" then
+				self:rotationz(90)
+			elseif params.type == "action" then
+				self:rotationz(120)
+			elseif params.type == "bool" then
+				self:rotationz(150)
+			elseif params.type == "enum" then
+				self:rotationz(180)
+			elseif params.type == "back" then
+				self:rotationz(210)
+			else
+				self:rotationz(0)
+			end
+			self:settext(params.text)
+			width_limit_text(self, params.width, params.zoom)
+			params.ret_width= self:GetZoomedWidth()
+		end,
 	}
 }
 for pn, menu in pairs(menus) do

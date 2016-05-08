@@ -250,7 +250,8 @@ nesty_option_item_mt= {
 		set_text= function(self, t)
 			local text_params= {text= get_string_if_translatable(
 				self.info.translatable, self.translation_section, t),
-				width= self.width, zoom= self.zoom}
+				width= self.width, zoom= self.zoom, type= self.info.type,
+				value= self.info.value}
 			self.text:playcommand("Set", text_params)
 			self.text_width= text_params.ret_width or 0
 			self.underline:refit(nil, nil, self.text_width, nil)
@@ -391,7 +392,7 @@ nesty_option_display_mt= {
 		end,
 }}
 
-nesty_menu_up_element= {text= "&leftarrow;"}
+nesty_menu_up_element= {text= "&leftarrow;", type= "back"}
 
 local general_menu_mt= {
 	__index= {
@@ -512,6 +513,7 @@ nesty_option_menus= {}
 --     menu= {} -- metatable for the submenu
 --     args= {} -- extra args for the initialize function of the metatable
 nesty_option_menus.menu= {
+	type= "menu",
 	__index= {
 		initialize= function(self, pn, initializer_args, no_up, up_text)
 			self.init_args= initializer_args
@@ -526,7 +528,7 @@ nesty_option_menus.menu= {
 					for i= 1, #menu_data do
 						if menu_data[i].text == self.up_text then return end
 					end
-					table.insert(menu_data, 1, {text= self.up_text, translatable= true})
+					table.insert(menu_data, 1, {text= self.up_text, translatable= true, type= "back"})
 				else
 					for i= 1, #menu_data do
 						if menu_data[i].text == nesty_menu_up_element.text then return end
@@ -591,9 +593,18 @@ nesty_option_menus.menu= {
 					if not self.info_set[disp_slot] then
 						self.info_set[disp_slot]= {}
 					end
+					if data.menu then
+						self.info_set[disp_slot].type= data.type or data.menu.type
+					else
+						self.info_set[disp_slot].type= data.type
+					end
 					self.info_set[disp_slot].text= disp_text
 					self.info_set[disp_slot].underline= underline
-					self.info_set[disp_slot].value= data.value
+					if type(data.value) == "function" then
+						self.info_set[disp_slot].value= data.value(pn)
+					else
+						self.info_set[disp_slot].value= data.value
+					end
 					self.info_set[disp_slot].translatable= data.translatable
 					self.info_set[disp_slot].translatable_value= data.translatable_value
 					if data.args and type(data.args) == "table" then
@@ -685,6 +696,7 @@ local function find_scale_for_number(num, min_scale)
 end
 
 nesty_option_menus.adjustable_float= {
+	type= "number",
 	__index= {
 		initialize= function(self, pn, extra)
 			local function check_member(member_name)
@@ -726,12 +738,12 @@ nesty_option_menus.adjustable_float= {
 			self.pi_text= "pi"
 			self.info_set= {
 				nesty_menu_up_element,
-				{text= "+"..self.scale_to_text(self.pn, 10^self.scale),sound= "inc"},
-				{text= "-"..self.scale_to_text(self.pn, 10^self.scale),sound= "dec"},
-				{text= scale_text.."*10",sound= "inc"},
-				{text= scale_text.."/10",sound= "dec"},
-				{text= "Round", translatable= true},
-				{text= "Reset", translatable= true}}
+				{text= "+"..self.scale_to_text(self.pn, 10^self.scale),sound= "inc", type= "action"},
+				{text= "-"..self.scale_to_text(self.pn, 10^self.scale),sound= "dec", type= "action"},
+				{text= scale_text.."*10",sound= "inc", type= "action"},
+				{text= scale_text.."/10",sound= "dec", type= "action"},
+				{text= "Round", translatable= true, type= "action"},
+				{text= "Reset", translatable= true, type= "action"}}
 			self.menu_functions= {
 				function() return false end, -- up element
 				function() -- increment
@@ -826,6 +838,7 @@ nesty_option_menus.adjustable_float= {
 }}
 
 nesty_option_menus.enum_option= {
+	type= "enum",
 	__index= {
 		initialize= function(self, pn, extra)
 			self.name= extra.name
@@ -841,7 +854,7 @@ nesty_option_menus.enum_option= {
 			for i, v in ipairs(extra.enum) do
 				self.enum_vals[#self.enum_vals+1]= v
 				self.info_set[#self.info_set+1]= {
-					text= self:short_string(v), translatable= true, underline= v == cv}
+					text= self:short_string(v), translatable= true, underline= v == cv, type= "choice"}
 			end
 		end,
 		short_string= function(self, val)
@@ -1250,6 +1263,7 @@ nesty_options= {
 	end,
 	float_song_mod_toggle_val= function(valname, on_val, off_val)
 		local ret= {
+			type= "bool",
 			name= valname, translatable= true, execute= function()
 				local song_ops= GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
 				local old_val= song_ops[valname](song_ops)
@@ -1272,6 +1286,7 @@ nesty_options= {
 	end,
 	bool_song_mod_val= function(valname)
 		local ret= {
+			type= "bool",
 			name= valname, translatable= true, execute= function(pn)
 				local song_ops= GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
 				local old_val= song_ops[valname](song_ops)
@@ -1352,6 +1367,7 @@ nesty_options= {
 	end,
 	bool_player_mod_val= function(valname)
 		local ret= {
+			type= "bool",
 			name= valname, translatable= true, execute= function(pn)
 				local plops= GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred")
 				local new_val= not plops[valname](plops)
@@ -1385,6 +1401,7 @@ nesty_options= {
 	end,
 	bool_profile_val= function(valname)
 		local ret= {
+			type= "bool",
 			name= valname, translatable= true, execute= function(pn)
 				local profile= PROFILEMAN:GetProfile(pn)
 				profile["Set"..valname](profile, not profile["Get"..valname](profile))
@@ -1425,6 +1442,7 @@ nesty_options= {
 	end,
 	float_config_toggle_val= function(conf, field_name, on_val, off_val)
 		local ret= {
+			type= "bool",
 			name= field_name, translatable= true, execute= function(pn)
 				local old_val= get_element_by_path(conf:get_data(pn), field_name)
 				local new_val= float_toggle_val_toggle_logic(old_val, on_val, off_val)
@@ -1441,6 +1459,7 @@ nesty_options= {
 	end,
 	bool_config_val= function(conf, field_name)
 		local ret= {
+			type= "bool",
 			name= field_name, translatable= true, execute= function(pn)
 				local old_val= get_element_by_path(conf:get_data(pn), field_name)
 				conf:set_dirty(pn)

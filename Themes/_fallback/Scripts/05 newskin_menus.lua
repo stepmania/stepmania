@@ -43,6 +43,7 @@ function find_current_stepstype(pn)
 end
 
 nesty_option_menus.shown_noteskins= {
+	type= "menu",
 	__index= {
 		initialize= function(self, pn, extra)
 			self.pn= pn
@@ -52,7 +53,7 @@ nesty_option_menus.shown_noteskins= {
 			self.info_set= {nesty_menu_up_element}
 			for i, skin_name in ipairs(self.all_noteskin_names) do
 				local show= not self.shown_config[skin_name]
-				self.info_set[#self.info_set+1]= {text= skin_name, underline= show}
+				self.info_set[#self.info_set+1]= {text= skin_name, type= "choice", underline= show}
 			end
 			self.cursor_pos= 1
 		end,
@@ -75,6 +76,7 @@ nesty_option_menus.shown_noteskins= {
 }}
 
 nesty_option_menus.newskins= {
+	type= "menu",
 	__index= {
 		scroll_to_move_on_start= true,
 		initialize= function(self, pn)
@@ -97,7 +99,7 @@ nesty_option_menus.newskins= {
 			self.info_set= {nesty_menu_up_element}
 			for ni, nv in ipairs(self.ops) do
 				self.info_set[#self.info_set+1]= {
-					text= nv, underline= ni == self.selected_skin}
+					text= nv, underline= ni == self.selected_skin, type= "choice"}
 			end
 		end,
 		interpret_start= function(self)
@@ -187,6 +189,7 @@ local function noteskin_param_choice_val(param_name, param_section, type_info)
 	local translation= get_noteskin_param_translation(param_name, type_info)
 	for i, choice in ipairs(type_info.choices) do
 		eles[#eles+1]= {
+			type= "bool",
 			name= translation.choices[i], explanation= translation.explanation,
 			execute= function(pn)
 				param_section[param_name]= choice
@@ -202,6 +205,7 @@ end
 local function noteskin_param_bool_val(param_name, param_section, type_info)
 	local translation= get_noteskin_param_translation(param_name, type_info)
 	return {
+		type= "bool",
 		name= translation.title, explanation= translation.explanation,
 		translatable= false, execute= function(pn)
 			param_section[param_name]= not param_section[param_name]
