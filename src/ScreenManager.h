@@ -74,6 +74,12 @@ public:
 
 	void	PlaySharedBackgroundOffCommand();
 	void    ZeroNextUpdate();
+
+	// ScreenMapControllers needs some way to disable special actions like
+	// taking a screenshot or opening the operator menu to allow remapping the
+	// keys mapped to those actions.  If m_disable_special_keys is true, those
+	// actions are ignored. -Kyz
+	bool m_disable_special_keys;
 private:
 	// Screen loads, removals, and concurrent prepares are delayed until the next update.
 	std::string		m_sDelayedScreen;

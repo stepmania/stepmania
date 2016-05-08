@@ -1376,14 +1376,15 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			/* Global operator key, to get quick access to the options menu. Don't
 			 * do this if we're on a "system menu", which includes the editor
 			 * (to prevent quitting without storing changes). */
-			if( SCREENMAN->AllowOperatorMenuButton() )
+			if( SCREENMAN->AllowOperatorMenuButton() && !SCREENMAN->m_disable_special_keys)
 			{
 				SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED.GetValue() );
 				SCREENMAN->PopAllScreens();
 				GAMESTATE->Reset();
 				SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN.GetValue() );
 			}
-			return true;
+			// Return false if special keys are disabled, to allow remapping. -Kyz
+			return !SCREENMAN->m_disable_special_keys;
 
 		case GAME_BUTTON_COIN:
 			// Handle a coin insertion.
@@ -1471,11 +1472,9 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	}
 #endif
 
-	bool bDoScreenshot =
 #if defined(MACOSX)
+	bool do_screenshot = input.MenuI == GAME_BUTTON_SCREENSHOT ||
 	// Notebooks don't have F13. Use cmd-F12 as well.
-		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_PRTSC ) ||
-		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_F13 ) ||
 		( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) &&
 		  (INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList) ||
 		   INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList)) );
@@ -1485,11 +1484,11 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	 * Alt+PrntScrn. Windows will do this whether or not we save a screenshot
 	 * ourself by dumping the frame buffer. */
 	// "if pressing PrintScreen and not pressing Alt"
-		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PRTSC) &&
+	bool do_screenshot = input.MenuI == GAME_BUTTON_SCREENSHOT &&
 		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList) &&
 		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList);
 #endif
-	if( bDoScreenshot )
+	if(do_screenshot && !SCREENMAN->m_disable_special_keys)
 	{
 		// If holding Shift save uncompressed, else save compressed
 		bool bHoldingShift = ( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) )

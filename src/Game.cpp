@@ -16,7 +16,7 @@ TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 	}
 }
 
-static std::array<Game::PerButtonInfo, 11> const g_CommonButtonInfo =
+static std::array<Game::PerButtonInfo, 12> const g_CommonButtonInfo =
 {
 	{
 		Game::PerButtonInfo{ GameButtonType_Menu }, // GAME_BUTTON_MENULEFT
@@ -28,6 +28,7 @@ static std::array<Game::PerButtonInfo, 11> const g_CommonButtonInfo =
 		Game::PerButtonInfo{ GameButtonType_Menu }, // GAME_BUTTON_BACK
 		Game::PerButtonInfo{ GameButtonType_Menu }, // GAME_BUTTON_COIN
 		Game::PerButtonInfo{ GameButtonType_Menu }, // GAME_BUTTON_OPERATOR
+		Game::PerButtonInfo{ GameButtonType_Menu }, // GAME_BUTTON_SCREENSHOT
 		Game::PerButtonInfo{ GameButtonType_Menu }, // GAME_BUTTON_EFFECT_UP
 		Game::PerButtonInfo{ GameButtonType_Menu }  // GAME_BUTTON_EFFECT_DOWN
 	}
@@ -36,7 +37,7 @@ static std::array<Game::PerButtonInfo, 11> const g_CommonButtonInfo =
 const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const
 {
 	// TODO: Replace the need for this compile assert.
-	COMPILE_ASSERT( GAME_BUTTON_NEXT == 11 );
+	COMPILE_ASSERT( GAME_BUTTON_NEXT == 12 );
 	if( gb < GAME_BUTTON_NEXT )
 		return &g_CommonButtonInfo[gb];
 	else

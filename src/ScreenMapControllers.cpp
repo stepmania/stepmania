@@ -316,6 +316,7 @@ void ScreenMapControllers::Update( float fDeltaTime )
 		}
 		Refresh();
 		SCREENMAN->PlayStartSound();
+		SCREENMAN->m_disable_special_keys= false;
 	}
 }
 
@@ -690,6 +691,7 @@ void ScreenMapControllers::SetCursorFromSetListCurrent()
 
 void ScreenMapControllers::StartWaitingForPress()
 {
+	SCREENMAN->m_disable_special_keys= true;
 	const KeyToMap *pKey = &m_KeysToMap[CurKeyIndex()];
 	BitmapText *pText = pKey->m_textMappedTo[m_CurController][m_CurSlot];
 	pText->PlayCommand( "Waiting" );
