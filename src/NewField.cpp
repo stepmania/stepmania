@@ -872,6 +872,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	hold_texture_handler tex_handler(note_size, head_y_offset, tail_y_offset, tex_top, tex_bottom, data);
 	double const body_start_render_y= apply_reverse_shift(tex_handler.body_start_y);
 	double const body_end_render_y= apply_reverse_shift(tex_handler.body_end_y);
+	float const color_scale= Rage::scale(note.note_iter->second.HoldResult.fLife, 0.f, 1.f, m_newskin->get_hold_gray_percent(), 1.f);
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetZTestMode(ZTEST_WRITE_ON_PASS);
 	DISPLAY->SetZWrite(true);
@@ -978,7 +979,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		const Rage::Vector3 right_vert(
 			-render_left.x + curr_step.trans.pos.x, render_y -render_left.y,
 			-render_left.z + curr_step.trans.pos.z);
-		const Rage::Color color(1.0, 1.0, 1.0, curr_step.trans.alpha);
+		const Rage::Color color(color_scale, color_scale, color_scale, curr_step.trans.alpha);
 		const Rage::Color glow_color(1.0, 1.0, 1.0, curr_step.trans.glow);
 #define add_vert_strip_args verts_to_draw, left_vert, right_vert, color, glow_color, tex_left, tex_right
 		for(size_t i= 0; i < curr_step.tex_coords.size(); ++i)

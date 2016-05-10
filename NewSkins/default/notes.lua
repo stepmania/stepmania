@@ -188,6 +188,9 @@ return function(button_list, stepstype)
 			-- column.  A padding value of 2 means 1 pixel on each side.
 			-- The default is 0.
 			padding= 0,
+			-- hold_gray_percent controls how far towards black a released hold
+			-- turns.  0 means the hold turns completely black.
+			hold_gray_percent= .25,
 			-- anim_time is used to specify how long the animation of the taps
 			-- lasts.  anim_time is optional, if it isn't set, the engine will set
 			-- it to 1.

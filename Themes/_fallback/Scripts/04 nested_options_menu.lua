@@ -1359,7 +1359,7 @@ nesty_options= {
 				set= function(pn, value)
 					local pstate= GAMESTATE:GetPlayerState(pn)
 					local plops= pstate:get_player_options_no_defect("ModsLevel_Preferred")
-					plops[plops](plops, value)
+					plops[valname](plops, value)
 					pstate:ApplyPreferredOptionsToOtherLevels()
 				end,
 		}}
