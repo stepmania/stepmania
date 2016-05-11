@@ -726,69 +726,94 @@ nesty_option_menus.adjustable_float= {
 			self.min_scale_used= math.min(self.scale, self.min_scale_used or 0)
 			self.max_scale= extra.max_scale
 			check_member("max_scale")
+			if self.min_scale > self.max_scale then
+				self.min_scale, self.max_scale= self.max_scale, self.min_scale
+			end
 			self.set= extra.set
 			check_member("set")
 			self.val_min= extra.val_min
 			self.val_max= extra.val_max
 			self.val_to_text= extra.val_to_text or to_text_default
 			self.scale_to_text= extra.scale_to_text or to_text_default
+			self.info_set= {nesty_menu_up_element}
+			self.menu_functions= {function() return "pop" end}
 			--local scale_text= THEME:GetString("OptionNames", "scale")
-			--self.pi_text= THEME:GetString("OptionNames", "pi")
 			local scale_text= "scale"
-			self.pi_text= "pi"
-			self.info_set= {
-				nesty_menu_up_element,
-				{text= "+"..self.scale_to_text(self.pn, 10^self.scale),sound= "inc", type= "action"},
-				{text= "-"..self.scale_to_text(self.pn, 10^self.scale),sound= "dec", type= "action"},
-				{text= scale_text.."*10",sound= "inc", type= "action"},
-				{text= scale_text.."/10",sound= "dec", type= "action"},
-				{text= "Round", translatable= true, type= "action"},
-				{text= "Reset", translatable= true, type= "action"}}
-			self.menu_functions= {
-				function() return false end, -- up element
-				function() -- increment
+			local scale_range= self.max_scale - self.min_scale
+			if scale_range < 4 then
+				-- {+100, +10, +1, -1, -10, -100, Round, Reset}
+				self.mode= "small"
+				for s= self.max_scale, self.min_scale, -1 do
+					self.info_set[#self.info_set+1]= {
+						text= "+"..self.scale_to_text(self.pn, 10^s), sound= "inc",
+						type= "action"}
+					self.menu_functions[#self.menu_functions+1]= function()
+						self:set_new_val(self.current_value + 10^s)
+						return true
+					end
+				end
+				for s= self.min_scale, self.max_scale do
+					self.info_set[#self.info_set+1]= {
+						text= "-"..self.scale_to_text(self.pn, 10^s), sound= "dec",
+						type= "action"}
+					self.menu_functions[#self.menu_functions+1]= function()
+						self:set_new_val(self.current_value - 10^s)
+						return true
+					end
+				end
+			else
+				-- {+scale, -scale, ...}
+				self.info_set[#self.info_set+1]= {text= "+"..self.scale_to_text(self.pn, 10^self.scale),sound= "inc", type= "action"}
+				self.info_set[#self.info_set+1]= {text= "-"..self.scale_to_text(self.pn, 10^self.scale),sound= "dec", type= "action"}
+				self.menu_functions[#self.menu_functions+1]= function() -- increment
 					self:set_new_val(self.current_value + 10^self.scale)
 					return true
-				end,
-				function() -- decrement
+				end
+				self.menu_functions[#self.menu_functions+1]= function() -- decrement
 					self:set_new_val(self.current_value - 10^self.scale)
 					return true
-				end,
-				function() -- scale up
-					self:set_new_scale(self.scale + 1)
-					return true
-				end,
-				function() -- scale down
-					self:set_new_scale(self.scale - 1)
-					return true
-				end,
-				function() -- round
+				end
+				if scale_range < 7 then
+					-- {..., scale=1, scale=2, ..., Round, Reset}
+					self.mode= "medium"
+					for s= self.min_scale, self.max_scale do
+						self.info_set[#self.info_set+1]= {
+							text= scale_text.."="..(10^s), sound= "inc", typej= "action"}
+						self.menu_functions[#self.menu_functions+1]= function()
+							self:set_new_scale(s)
+						end
+					end
+				else
+					-- {..., scale*10, scale/10, Round, Reset}
+					self.mode= "bignum"
+					self.info_set[#self.info_set+1]= {text= scale_text.."*10",sound= "inc", type= "action"}
+					self.info_set[#self.info_set+1]= {text= scale_text.."/10",sound= "dec", type= "action"}
+					self.menu_functions[#self.menu_functions+1]= function() -- scale up
+						self:set_new_scale(self.scale + 1)
+						return true
+					end
+					self.menu_functions[#self.menu_functions+1]= function() -- scale down
+						self:set_new_scale(self.scale - 1)
+						return true
+					end
+				end
+			end
+			if self.min_scale < 0 then
+				self.info_set[#self.info_set+1]= {
+					text= "Round", translatable= true, type= "action"}
+				self.menu_functions[#self.menu_functions+1]= function()
 					self:set_new_val(math.round(self.current_value))
 					return true
-				end,
-				function() -- reset
-					local new_scale, new_value=
-						find_scale_for_number(self.reset_value, self.min_scale)
-					self:set_new_scale(new_scale)
-					self:set_new_val(new_value)
-					return true
-				end,
-			}
-			if extra.is_angle then
-				-- insert the pi option before the Round option.
-				local pi_pos= #self.info_set-1
-				local function pi_function()
-					self.pi_exp= not self.pi_exp
-					if self.pi_exp then
-						self:update_el_text(6, "/"..self.pi_text)
-					else
-						self:update_el_text(6, "*"..self.pi_text)
-					end
-					self:set_new_val(self.current_value)
-					return true
 				end
-				table.insert(self.info_set, pi_pos, {text= "*"..self.pi_text})
-				table.insert(self.menu_functions, pi_pos, pi_function)
+			end
+			self.info_set[#self.info_set+1]= {
+				text= "Reset", translatable= true, type= "action"}
+			self.menu_functions[#self.menu_functions+1]= function()
+				local new_scale, new_value=
+					find_scale_for_number(self.reset_value, self.min_scale)
+				self:set_new_scale(new_scale)
+				self:set_new_val(new_value)
+				return true
 			end
 		end,
 		interpret_start= function(self)
@@ -802,14 +827,10 @@ nesty_option_menus.adjustable_float= {
 				self.display:set_heading(self.name)
 				local val_text=
 					self.val_to_text(self.pn, self.current_value)
-				if self.pi_exp then
-					val_text= val_text .. "*" .. self.pi_text
-				end
 				self.display:set_status(val_text)
 			end
 		end,
 		cooked_val= function(self, nval)
-			if self.pi_exp then return nval * math.pi end
 			return nval
 		end,
 		set_new_val= function(self, nval)

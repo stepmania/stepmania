@@ -37,7 +37,7 @@ local function gen_speed_menu(pn)
 	if prefs.speed_type == "multiple" then
 		return nesty_options.float_config_val_args(newfield_prefs_config, "speed_mod", -2, -1, 1)
 	else
-		return nesty_options.float_config_val_args(newfield_prefs_config, "speed_mod", -2, 1, 3)
+		return nesty_options.float_config_val_args(newfield_prefs_config, "speed_mod", 0, 1, 3)
 	end
 end
 
