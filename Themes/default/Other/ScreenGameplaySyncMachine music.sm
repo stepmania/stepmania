@@ -11,19 +11,19 @@
 #LYRICSPATH:;
 #CDTITLE:;
 #MUSIC:_gameplay sync music.ogg;
-#OFFSET:-0.025;
+#OFFSET:-0.019;
 #SAMPLESTART:0.000;
 #SAMPLELENGTH:12.000;
 #SELECTABLE:YES;
-#BPMS:0.000=132.027;
+#BPMS:0.000=132.000;
 #STOPS:;
 #BGCHANGES:;
 #KEYSOUNDS:;
 
-//---------------dance-single - blank----------------
+//---------------dance-single - ----------------
 #NOTES:
      dance-single:
-     blank:
+     :
      Beginner:
      1:
      0.302,0.205,0.000,0.000,0.000:
