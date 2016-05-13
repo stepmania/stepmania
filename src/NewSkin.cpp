@@ -832,6 +832,7 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	}
 	m_quantum_mult= 1.0 / m_quantum_mult;
 	m_anim_uses_beats= get_optional_bool(L, index, "anim_uses_beats");
+	m_use_hold_heads_for_taps_on_row= get_optional_bool(L, index, "use_hold_heads_for_taps_on_row");
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
 	m_taps.swap(temp_taps);

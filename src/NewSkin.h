@@ -394,6 +394,7 @@ struct NewSkinColumn
 	double get_anim_mult() { return m_anim_mult; }
 	double get_quantum_mult() { return m_quantum_mult; }
 	float get_hold_gray_percent() { return m_hold_gray_percent; }
+	bool get_use_hold_head() { return m_use_hold_heads_for_taps_on_row; }
 	bool get_anim_uses_beats() { return m_anim_uses_beats; }
 	bool supports_masking()
 	{
@@ -488,6 +489,7 @@ private:
 	double m_anim_mult;
 	double m_quantum_mult;
 	bool m_anim_uses_beats;
+	bool m_use_hold_heads_for_taps_on_row;
 };
 
 struct NewSkinLayer

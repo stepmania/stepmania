@@ -145,6 +145,10 @@ struct TapNote
 	// during rendering. -Kyz
 	float occurs_at_second;
 	float end_second; // occurs_at_second plus duration.
+	// highest_subtype_on_row on row is for rendering a tap as a hold head if
+	// there is a hold head on the same row.  It needs to be a TapNoteSubType
+	// instead of a bool to handle rolls. -Kyz
+	TapNoteSubType highest_subtype_on_row;
 
 	// used only if Type == attack:
 	std::string		sAttackModifiers;

@@ -1594,6 +1594,22 @@ void NewFieldColumn::draw_taps_internal()
 				break;
 			default:
 				part= NSTP_Tap;
+				if(m_newskin->get_use_hold_head())
+				{
+					switch(tn.highest_subtype_on_row)
+					{
+						case TapNoteSubType_Hold:
+							part= NewSkinTapPart_Invalid;
+							head_part= NSTOP_HoldHead;
+							break;
+						case TapNoteSubType_Roll:
+							part= NewSkinTapPart_Invalid;
+							head_part= NSTOP_RollHead;
+							break;
+						default:
+							break;
+					}
+				}
 				head_beat= tap_beat;
 				break;
 		}
@@ -1607,17 +1623,29 @@ void NewFieldColumn::draw_taps_internal()
 		}
 		else
 		{
-			// Put tails on the list first because they need to be under the heads.
-			set_tap_actor_info(acts[0], *this, m_newskin,
-				&NewSkinColumn::get_optional_actor,
-				&NewSkinColumn::get_player_optional_tap, tail_part, tn.pn, tail_beat,
-				tn.end_second, tapit.tail_y_offset, tap_beat, tap_second,
-				m_status.anim_percent, active, m_status.in_reverse);
-			set_tap_actor_info(acts[1], *this, m_newskin,
-				&NewSkinColumn::get_optional_actor,
-				&NewSkinColumn::get_player_optional_tap, head_part, tn.pn, head_beat,
-				head_second, tapit.y_offset, tap_beat, tap_second,
-				m_status.anim_percent, active, m_status.in_reverse);
+			// Handle the case where it's an obscenity instead of an actual hold.
+			if(tail_part == NewSkinTapOptionalPart_Invalid)
+			{
+				set_tap_actor_info(acts[0], *this, m_newskin,
+					&NewSkinColumn::get_optional_actor,
+					&NewSkinColumn::get_player_optional_tap, head_part, tn.pn, head_beat,
+					head_second, tapit.y_offset, tap_beat, tap_second,
+					m_status.anim_percent, active, m_status.in_reverse);
+			}
+			else
+			{
+				// Put tails on the list first because they need to be under the heads.
+				set_tap_actor_info(acts[0], *this, m_newskin,
+					&NewSkinColumn::get_optional_actor,
+					&NewSkinColumn::get_player_optional_tap, tail_part, tn.pn, tail_beat,
+					tn.end_second, tapit.tail_y_offset, tap_beat, tap_second,
+					m_status.anim_percent, active, m_status.in_reverse);
+				set_tap_actor_info(acts[1], *this, m_newskin,
+					&NewSkinColumn::get_optional_actor,
+					&NewSkinColumn::get_player_optional_tap, head_part, tn.pn, head_beat,
+					head_second, tapit.y_offset, tap_beat, tap_second,
+					m_status.anim_percent, active, m_status.in_reverse);
+			}
 		}
 		for(auto&& act : acts)
 		{

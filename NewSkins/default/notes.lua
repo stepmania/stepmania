@@ -191,6 +191,9 @@ return function(button_list, stepstype)
 			-- hold_gray_percent controls how far towards black a released hold
 			-- turns.  0 means the hold turns completely black.
 			hold_gray_percent= .25,
+			-- If a roll and a hold start on the same row as a tap, and
+			-- use_hold_heads_for_taps_on_row is true, the tap will be a roll head.
+			use_hold_heads_for_taps_on_row= false,
 			-- anim_time is used to specify how long the animation of the taps
 			-- lasts.  anim_time is optional, if it isn't set, the engine will set
 			-- it to 1.

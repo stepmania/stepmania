@@ -32,23 +32,43 @@ void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
 	int curr_row= -1;
 	NoteData::all_tracks_iterator curr_note=
 		GetTapNoteRangeAllTracks(0, MAX_NOTE_ROW);
+	vector<TapNote*> notes_on_curr_row;
+	TapNoteSubType highest_subtype_on_row= TapNoteSubType_Invalid;
 	double curr_row_second= -1.0;
 	while(!curr_note.IsAtEnd())
 	{
 		if(curr_note.Row() != curr_row)
 		{
+			for(auto&& note : notes_on_curr_row)
+			{
+				note->highest_subtype_on_row= highest_subtype_on_row;
+			}
+			notes_on_curr_row.clear();
+			highest_subtype_on_row= TapNoteSubType_Invalid;
 			curr_row= curr_note.Row();
 			curr_row_second= timing_data->GetElapsedTimeFromBeat(NoteRowToBeat(curr_row));
 		}
 		if(curr_note->type != TapNoteType_Empty)
 		{
 			curr_note->occurs_at_second= curr_row_second;
+			notes_on_curr_row.push_back(&(*curr_note));
+			if(curr_note->subType != TapNoteSubType_Invalid)
+			{
+				if(curr_note->subType > highest_subtype_on_row || highest_subtype_on_row == TapNoteSubType_Invalid)
+				{
+					highest_subtype_on_row= curr_note->subType;
+				}
+			}
 			if(curr_note->type == TapNoteType_HoldHead)
 			{
 				curr_note->end_second= timing_data->GetElapsedTimeFromBeat(NoteRowToBeat(curr_row + curr_note->iDuration));
 			}
 		}
 		++curr_note;
+	}
+	for(auto&& note : notes_on_curr_row)
+	{
+		note->highest_subtype_on_row= highest_subtype_on_row;
 	}
 	timing_data->ReleaseLookup();
 }
