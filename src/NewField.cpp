@@ -1554,7 +1554,7 @@ void NewFieldColumn::draw_taps_internal()
 		double head_beat;
 		double tail_beat;
 		double head_second;
-		bool active= true;
+		bool active= false;
 		switch(tn.type)
 		{
 			case TapNoteType_Mine:
