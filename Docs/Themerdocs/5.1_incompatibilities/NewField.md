@@ -88,7 +88,7 @@ newfield prefs.
 
 #### Gameplay
 Add an actor to a layer on ScreenGameplay like this:
-```
+```lua
 t[#t+1]= use_newfield_actor()
 ```
 This will create an actor that will apply the newfield preferences for both
@@ -210,14 +210,14 @@ is also the best place to call it.
 
 #### Example WidthSetCommand
 For a column layer:
-```
+```lua
 WidthSetCommand= function(self, param)
   param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
     :set_layer_transform_type(self, "FieldLayerTransformType_HeadPosOnly")
 end
 ```
 For a field layer:
-```
+```lua
 WidthSetCommand= function(self, param)
   param.field:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
 end
@@ -227,7 +227,7 @@ end
 #### Draw Order Variable List
 
 02 NewField.lua defines these variables to make life convenient for themers.
-```
+```lua
 newfield_draw_order= {
 	layer_spacing= 100,
 	mid_layer_spacing= 50,
@@ -262,26 +262,28 @@ The param table has three entries:
 * width:  The width in pixels from the left edge of the leftmost column to
 the right edge of the rightmost column.
 * columns:  A set of tables, one for each column, from left to right.  Each
-table contains the width and padding of a column.
+table contains the width, padding, and x position of a column.
 * field:  The NewField the board is attached to.  If you need it for some
 reason, this is how to get it.
 
 #### Example
 Imagine that the engine does this to create the param for WidthSetCommand:
-```
+```lua
 local width_info= {
   field= self,
   width= 256,
 	columns= {
-	  {width= 64, padding= 0},
-	  {width= 64, padding= 0},
-	  {width= 64, padding= 0},
-	  {width= 64, padding= 0},
+	  {width= 64, padding= 0, x= -96},
+	  {width= 64, padding= 0, x= -32},
+	  {width= 64, padding= 0, x= 32},
+	  {width= 64, padding= 0, x= 96},
 	},
 }
 ```
 So to size a quad to go behind the notefield, you just use param.width as the
-width of the quad, and pick a height.  
+width of the quad, and pick a height.  Note that if the noteskin sets custom
+positions for the columns and doesn't center them, a centered quad won't be
+behind the columns.  Complain to the noteskin author.  
 To size a set of quads, each one in a different column, walk through the
 columns table.
 

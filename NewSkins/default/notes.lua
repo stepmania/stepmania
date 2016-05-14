@@ -188,6 +188,9 @@ return function(button_list, stepstype)
 			-- column.  A padding value of 2 means 1 pixel on each side.
 			-- The default is 0.
 			padding= 0,
+			-- If custom_x is set to a number, this column will be placed at that
+			-- position instead of automatically positioned by the field.
+			-- custom_x= 0,
 			-- hold_gray_percent controls how far towards black a released hold
 			-- turns.  0 means the hold turns completely black.
 			hold_gray_percent= .25,

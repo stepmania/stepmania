@@ -818,6 +818,14 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	}
 	m_width= get_optional_double(L, index, "width", default_column_width);
 	m_padding= get_optional_double(L, index, "padding", default_column_padding);
+	m_use_custom_x= false;
+	lua_getfield(L, index, "custom_x");
+	if(lua_isnumber(L, -1))
+	{
+		m_use_custom_x= true;
+		m_custom_x= lua_tonumber(L, -1);
+	}
+	lua_pop(L, 1);
 	m_hold_gray_percent= get_optional_double(L, index, "hold_gray_percent", default_hold_gray_percent);
 	m_anim_mult= get_optional_double(L, index, "anim_time", default_anim_time);
 	if(m_anim_mult <= min_anim_time)
