@@ -1352,7 +1352,7 @@ void NewFieldColumn::build_render_lists()
 		{
 			if(first_non_visible_time > 0.0)
 			{
-				if(tn.occurs_at_second - first_non_visible_time > time_to_end_visible_notes)
+				if(tn.occurs_at_second > m_curr_second && tn.occurs_at_second - first_non_visible_time > time_to_end_visible_notes)
 				{
 					found_end_of_visible_notes= true;
 				}
