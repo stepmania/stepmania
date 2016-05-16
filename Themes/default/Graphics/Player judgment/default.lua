@@ -52,8 +52,15 @@ local TNSFrames = {
 	TapNoteScore_W5 = 4;
 	TapNoteScore_Miss = 5;
 };
-local t = Def.ActorFrame {};
-t[#t+1] = Def.ActorFrame {
+local frame = Def.ActorFrame {
+	InitCommand = function(self)
+		if player_config:get_data(player).JudgmentUnderField then
+			self:draworder(newfield_draw_order.under_field)
+		else
+			self:draworder(newfield_draw_order.over_field)
+		end
+		c = self:GetChildren();
+	end,
 	LoadActor(THEME:GetPathG("Judgment","Normal")) .. {
 		Name="Judgment";
 		InitCommand=cmd(pause;visible,false);
@@ -129,15 +136,6 @@ t[#t+1] = Def.ActorFrame {
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
 		OnCommand=cmd(diffuse,Color("White");diffusealpha,1);
 	};
-	InitCommand = function(self)
-		if player_config:get_data(player).JudgmentUnderField then
-			self:draworder(newfield_draw_order.under_field)
-		else
-			self:draworder(newfield_draw_order.over_field)
-		end
-		c = self:GetChildren();
-	end;
-
 	JudgmentMessageCommand=function(self, param)
         -- Fix Player Combo animating when player successfully avoids a mine.
         local msgParam = param;
@@ -232,7 +230,6 @@ t[#t+1] = Def.ActorFrame {
 		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphCenter);
 	end;
 
-};
+}
 
-
-return t;
+return frame
