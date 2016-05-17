@@ -12,6 +12,41 @@ REGISTER_LIGHTS_DRIVER_CLASS( Win32Minimaid );
 
 HINSTANCE hMMMAGICDLL = nullptr;
 
+int minimaid_filter(unsigned int, struct _EXCEPTION_POINTERS *)
+{
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+void setup_driver()
+{
+	__try
+	{
+
+		// Get the function pointers
+		mm_connect_minimaid = (MM_CONNECT_MINIMAID)GetProcAddress(hMMMAGICDLL, "mm_connect_minimaid");
+		mm_setKB = (MM_SETKB)GetProcAddress(hMMMAGICDLL, "mm_setKB");
+		mm_setDDRPad1Light = (MM_SETDDRPAD1LIGHT)GetProcAddress(hMMMAGICDLL, "mm_setDDRPad1Light");
+		mm_setDDRPad2Light = (MM_SETDDRPAD2LIGHT)GetProcAddress(hMMMAGICDLL, "mm_setDDRPad2Light");
+		mm_setDDRCabinetLight = (MM_SETCABINETLIGHT)GetProcAddress(hMMMAGICDLL, "mm_setDDRCabinetLight");
+		mm_setDDRBassLight = (MM_SETDDRBASSLIGHT)GetProcAddress(hMMMAGICDLL, "mm_setDDRBassLight");
+		mm_setDDRAllOn = (MM_SETDDRALLON)GetProcAddress(hMMMAGICDLL, "mm_setDDRAllOn");
+		mm_setDDRAllOff = (MM_SETDDRALLOFF)GetProcAddress(hMMMAGICDLL, "mm_setDDRAllOff");
+		mm_setBlueLED = (MM_SETBLUELED)GetProcAddress(hMMMAGICDLL, "mm_setBlueLED");
+		mm_setMMOutputReports = (MM_SETMMOUTPUTREPORTS)GetProcAddress(hMMMAGICDLL, "mm_setMMOutputReports");
+		mm_sendDDRMiniMaidUpdate = (MM_SENDDDRMINIMAIDUPDATE)GetProcAddress(hMMMAGICDLL, "mm_sendDDRMiniMaidUpdate");
+		mm_connect_minimaid();
+		mm_setKB(true);
+
+		_mmmagic_loaded = true;
+	}
+	__except (minimaid_filter(GetExceptionCode(), GetExceptionInformation()))
+	{
+		MessageBox(NULL, "Could not connect to the Mimimaid device. Freeing the library now.", "ERROR", MB_OK);
+		FreeLibrary(hMMMAGICDLL);
+	}
+
+}
+
 LightsDriver_Win32Minimaid::LightsDriver_Win32Minimaid()
 {
 	_mmmagic_loaded=false;
@@ -21,28 +56,15 @@ LightsDriver_Win32Minimaid::LightsDriver_Win32Minimaid()
 		MessageBox(nullptr, "Could not LoadLibrary( mmmagic.dll ).", "ERROR", MB_OK );
 		return;
 	}
-	_mmmagic_loaded=true;
-
-	// Get the function pointers
-	mm_connect_minimaid		= (MM_CONNECT_MINIMAID) GetProcAddress(hMMMAGICDLL, "mm_connect_minimaid");
-	mm_setKB				= (MM_SETKB) GetProcAddress(hMMMAGICDLL, "mm_setKB");
-	mm_setDDRPad1Light		= (MM_SETDDRPAD1LIGHT) GetProcAddress(hMMMAGICDLL, "mm_setDDRPad1Light");
-	mm_setDDRPad2Light		= (MM_SETDDRPAD2LIGHT) GetProcAddress(hMMMAGICDLL, "mm_setDDRPad2Light");
-	mm_setDDRCabinetLight	= (MM_SETCABINETLIGHT) GetProcAddress(hMMMAGICDLL, "mm_setDDRCabinetLight");
-	mm_setDDRBassLight		= (MM_SETDDRBASSLIGHT) GetProcAddress(hMMMAGICDLL, "mm_setDDRBassLight");
-	mm_setDDRAllOn			= (MM_SETDDRALLON) GetProcAddress(hMMMAGICDLL, "mm_setDDRAllOn");
-	mm_setDDRAllOff			= (MM_SETDDRALLOFF) GetProcAddress(hMMMAGICDLL, "mm_setDDRAllOff");
-	mm_setBlueLED			= (MM_SETBLUELED) GetProcAddress(hMMMAGICDLL, "mm_setBlueLED");
-	mm_setMMOutputReports	= (MM_SETMMOUTPUTREPORTS) GetProcAddress(hMMMAGICDLL, "mm_setMMOutputReports");
-	mm_sendDDRMiniMaidUpdate= (MM_SENDDDRMINIMAIDUPDATE) GetProcAddress(hMMMAGICDLL, "mm_sendDDRMiniMaidUpdate");
-	mm_connect_minimaid();
-	mm_setKB(true);
+	setup_driver();
 }
 
 LightsDriver_Win32Minimaid::~LightsDriver_Win32Minimaid()
 {
-	if(_mmmagic_loaded)
-		FreeLibrary( hMMMAGICDLL );
+	if (_mmmagic_loaded)
+	{
+		FreeLibrary(hMMMAGICDLL);
+	}
 }
 
 void LightsDriver_Win32Minimaid::Set( const LightsState *ls )
