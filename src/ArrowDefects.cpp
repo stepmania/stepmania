@@ -223,6 +223,7 @@ void ArrowDefects::update(float music_beat, float music_second)
 		float const accel_time= .2f;
 		float const total_time= .5f;
 		float beat= m_music_beat + accel_time;
+		bool const even_beat= (int(beat) % 2) != 0;
 		m_beat_factor= 0;
 		if(beat >= 0.f)
 		{
@@ -241,7 +242,7 @@ void ArrowDefects::update(float music_beat, float music_second)
 					m_beat_factor= Rage::scale(beat, accel_time, total_time, 1.f, 0.f);
 					m_beat_factor= 1 - ((1-m_beat_factor) * (1-m_beat_factor));
 				}
-				if((int(beat) % 2) != 0)
+				if(even_beat)
 				{
 					m_beat_factor*= -1;
 				}
