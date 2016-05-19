@@ -277,6 +277,7 @@ public:
 		vector<std::string> s;
 		p->m_PlayerOptions.Get(m).GetMods(s);
 		LuaHelpers::CreateTableFromArray<std::string>( s, L );
+		p->set_defective_mode(true);
 		return 1;
 	}
 	static int GetPlayerOptionsString( T* p, lua_State *L )
@@ -284,6 +285,7 @@ public:
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
 		std::string s = p->m_PlayerOptions.Get(m).GetString();
 		LuaHelpers::Push( L, s );
+		p->set_defective_mode(true);
 		return 1;
 	}
 	static int GetCurrentPlayerOptions( T* p, lua_State *L )
