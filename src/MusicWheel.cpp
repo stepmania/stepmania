@@ -183,29 +183,6 @@ void MusicWheel::BeginScreen()
 	if( GAMESTATE->m_PreferredSortOrder == SortOrder_Invalid )
 		GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 
-	/* Invalidate current Song if it can't be played
-	 * because there are not enough stages remaining. */
-	if( GAMESTATE->m_pCurSong != NULL && 
-		GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong ) > GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() )
-	{
-		GAMESTATE->m_pCurSong.Set( NULL );
-	}
-
-	/* Invalidate current Steps if it can't be played
-	 * because there are not enough stages remaining. */
-	FOREACH_ENUM( PlayerNumber, p )
-	{
-		if( GAMESTATE->m_pCurSteps[p] != NULL )
-		{
-			vector<Steps*> vpPossibleSteps;
-			if( GAMESTATE->m_pCurSong != NULL )
-				SongUtil::GetPlayableSteps( GAMESTATE->m_pCurSong, vpPossibleSteps );
-			bool bStepsIsPossible = find( vpPossibleSteps.begin(), vpPossibleSteps.end(), GAMESTATE->m_pCurSteps[p] ) == vpPossibleSteps.end();
-			if( !bStepsIsPossible )
-				GAMESTATE->m_pCurSteps[p].Set( NULL );
-		}
-	}
-
 	if(GAMESTATE->m_sPreferredSongGroup != GROUP_ALL)
 	{
 		// If a preferred song group is set, open the group and select the
@@ -241,6 +218,34 @@ void MusicWheel::BeginScreen()
 
 	// rebuild the WheelItems that appear on screen
 	RebuildWheelItems();
+
+	/* Invalidate current Song if it can't be played
+	 * because there are not enough stages remaining. */
+	if(GAMESTATE->m_pCurSong != NULL &&
+		GameState::GetNumStagesMultiplierForSong(GAMESTATE->m_pCurSong) >
+		GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer())
+	{
+		GAMESTATE->m_pCurSong.Set(NULL);
+	}
+
+	/* Invalidate current Steps if it can't be played
+	 * because there are not enough stages remaining. */
+	FOREACH_ENUM(PlayerNumber, p)
+	{
+		if(GAMESTATE->m_pCurSteps[p] != NULL)
+		{
+			vector<Steps*> vpPossibleSteps;
+			if(GAMESTATE->m_pCurSong != NULL)
+			{
+				SongUtil::GetPlayableSteps(GAMESTATE->m_pCurSong, vpPossibleSteps);
+			}
+			bool bStepsIsPossible = find(vpPossibleSteps.begin(), vpPossibleSteps.end(), GAMESTATE->m_pCurSteps[p]) == vpPossibleSteps.end();
+			if(!bStepsIsPossible)
+			{
+				GAMESTATE->m_pCurSteps[p].Set(NULL);
+			}
+		}
+	}
 }
 
 MusicWheel::~MusicWheel()
