@@ -146,7 +146,10 @@ local lua_config_mt= {
 		end,
 		get_data= function(self, slot)
 			slot= sanitize_profile_slot(slot)
-			return self.data_set[slot] or self.default
+			if not self.data_set[slot] then
+				self.data_set[slot]= DeepCopy(self:get_default(slot))
+			end
+			return self.data_set[slot]
 		end,
 		set_data= function(self, slot, data)
 			slot= sanitize_profile_slot(slot)
@@ -164,6 +167,17 @@ local lua_config_mt= {
 			slot= sanitize_profile_slot(slot)
 			self.dirty_table[slot]= nil
 			self.data_set[slot]= nil
+		end,
+		clear_all_slots= function(self)
+			local slots_to_clear= {}
+			for slot, data in pairs(self.data_set) do
+				if slot ~= "ProfileSlot_Invalid" then
+					slots_to_clear[#slots_to_clear+1]= slot
+				end
+			end
+			for i, slot in ipairs(slots_to_clear) do
+				self:clear_slot(slot)
+			end
 		end,
 		get_filename= function(self, slot)
 			slot= sanitize_profile_slot(slot)
@@ -246,3 +260,10 @@ function add_standard_lua_config_save_load_hooks(config)
 	add_profile_load_callback(standard_lua_config_profile_load(config))
 	add_profile_save_callback(standard_lua_config_profile_save(config))
 end
+
+function clear_all_lua_config_slots()
+	for name, config in pairs(lua_config_registry) do
+		config:clear_all_slots()
+	end
+end
+add_gamestate_reset_callback(clear_all_lua_config_slots)

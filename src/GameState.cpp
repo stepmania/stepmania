@@ -285,6 +285,15 @@ void GameState::ResetPlayerOptions( PlayerNumber pn )
 
 void GameState::Reset()
 {
+	LuaReference custom_reset_func= THEME->GetMetricR("GameState", "CustomResetFunction");
+	if(custom_reset_func.GetLuaType() == LUA_TFUNCTION)
+	{
+		Lua* L= LUA->Get();
+		custom_reset_func.PushSelf(L);
+		std::string err= "Error running CustomResetFunction: ";
+		LuaHelpers::RunScriptOnStack(L, err, 0, 0, true);
+		LUA->Release(L);
+	}
 	this->SetMasterPlayerNumber(PLAYER_INVALID); // must initialize for UnjoinPlayer
 
 	FOREACH_PlayerNumber( pn )

@@ -25,3 +25,15 @@ function SaveProfileCustom(profile, dir)
 		callback(profile, dir)
 	end
 end
+
+-- It's kinda like loading and saving profiles....
+local gamestate_reset_callbacks= {}
+function add_gamestate_reset_callback(func)
+	table.insert(gamestate_reset_callbacks, func)
+end
+
+function GameStateResetCustom()
+	for i, callback in ipairs(gamestate_reset_callbacks) do
+		callback()
+	end
+end
