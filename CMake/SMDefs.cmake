@@ -1,7 +1,7 @@
 # Set up version numbers according to the new scheme.
 set(SM_VERSION_MAJOR 5)
 set(SM_VERSION_MINOR 0)
-set(SM_VERSION_PATCH 8)
+set(SM_VERSION_PATCH 11)
 set(SM_VERSION_TRADITIONAL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
 
 execute_process(COMMAND git rev-parse --short HEAD
@@ -12,10 +12,18 @@ execute_process(COMMAND git rev-parse --short HEAD
 )
 
 if(NOT (ret STREQUAL "0"))
+  message(WARNING "git was not found on your path. If you collect bug reports, please add git to your path and rerun cmake.")
   set(SM_VERSION_GIT_HASH "UNKNOWN")
   set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
+  set(SM_VERSION_GIT "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
 else()
-  set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")
+  if (WITH_FULL_RELEASE)
+    set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
+    set(SM_VERSION_GIT "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
+  else()
+    set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")
+    set(SM_VERSION_GIT "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")
+  endif()
 endif()
 
 if (CMAKE_MAJOR_VERSION STREQUAL "3")

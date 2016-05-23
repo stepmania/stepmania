@@ -59,19 +59,21 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 
 	switch( out.m_DisplayBPMType )
 	{
-	case DISPLAY_BPM_ACTUAL:
-		// write nothing
-		break;
-	case DISPLAY_BPM_SPECIFIED:
-		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
-		else
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", 
-					    out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
-		break;
-	case DISPLAY_BPM_RANDOM:
-		f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
-		break;
+		case DISPLAY_BPM_ACTUAL:
+			// write nothing
+			break;
+		case DISPLAY_BPM_SPECIFIED:
+			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
+				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
+			else
+				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", 
+							out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
+			break;
+		case DISPLAY_BPM_RANDOM:
+			f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
+			break;
+		default:
+			break;
 	}
 
 

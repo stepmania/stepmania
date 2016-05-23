@@ -185,7 +185,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// least played
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
-				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.

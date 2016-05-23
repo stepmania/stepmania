@@ -3,10 +3,6 @@
 -- If you include this file in your theme, you will not benefit from any improvements in error reporting.
 -- If you want to adjust how long errors stay on screen for, call the "SetErrorMessageTime" function. (see usage notes in comments above that function)
 
-if PREFSMAN:GetPreference("IgnoredDialogs") ~= "" then
-	return Def.Actor{}
-end
-
 local line_height= 12 -- A good line height for Common Normal at .5 zoom.
 
 local min_message_time= {show= 1, hide= .03125}

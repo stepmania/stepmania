@@ -369,6 +369,7 @@ void LightsManager::Update( float fDeltaTime )
 						m_LightsState.m_bGameButtonLights[gc][gb] = m_fSecsLeftInGameButtonBlink[gc][gb] > 0 ;
 					}
 				}
+				break;
 			}
 
 			// fall through to blink on button presses

@@ -230,8 +230,12 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		}
 	}
 
-	// Save recent scores
+	// Not sure what the Save/Upload folder was originally for, but the files
+	// in it just accumulate uselessly, wasting several seconds when finishing
+	// a song.  So this pref disables it. -Kyz
+	if(!PREFSMAN->m_DisableUploadDir)
 	{
+		// Save recent scores
 		auto_ptr<XNode> xml( new XNode("Stats") );
 		xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 

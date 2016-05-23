@@ -176,6 +176,7 @@ public:
 
 	void FailFadeRemovePlayer(PlayerInfo* pi);
 	void FailFadeRemovePlayer(PlayerNumber pn);
+	void BeginBackingOutFromGameplay();
 
 	vector<float> m_HasteTurningPoints; // Values at which the meaning of GAMESTATE->m_fHasteRate changes.
 	vector<float> m_HasteAddAmounts; // Amounts that are added to speed depending on what turning point has been passed.
@@ -225,7 +226,6 @@ protected:
 	void PlayAnnouncer( const RString &type, float fSeconds ) { PlayAnnouncer(type, fSeconds, &m_fTimeSinceLastDancingComment); }
 	void UpdateLights();
 	void SendCrossedMessages();
-	void BeginBackingOutFromGameplay();
 
 	void PlayTicks();
 	void UpdateSongPosition( float fDeltaTime );
@@ -249,9 +249,14 @@ protected:
 		STATE_DANCING,	 /**< The main state where notes have to be pressed. */
 		STATE_OUTRO,	 /**< The ending state, pressing Back isn't allowed here. */
 		NUM_DANCING_STATES
-	} 
+	}
 	/** @brief The specific point within ScreenGameplay. */ m_DancingState;
+	private:
 	bool			m_bPaused;
+	// set_paused_internal exists because GameState's pause variable needs to
+	// be kept in sync with ScreenGameplay's.
+	void set_paused_internal(bool p);
+	protected:
 
 	GameController		m_PauseController;
 	/**

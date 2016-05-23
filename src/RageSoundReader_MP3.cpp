@@ -9,14 +9,7 @@
 #include <cerrno>
 #include <map>
 
-#if defined(_WINDOWS) || defined(MACOSX)
-#include "../extern/mad-0.15.1b/mad.h"
-#ifdef _MSC_VER
-#pragma comment(lib, "libmad.lib")
-#endif //_MSC_VER
-#else
-#include <mad.h>
-#endif // _WINDOWS
+#include "mad.h"
 
 // ID3 code from libid3:
 enum tagtype {
@@ -396,7 +389,7 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 {
 	int bytes_read = 0;
 
-	while(1)
+	for(;;)
 	{
 		int ret;
 
@@ -868,7 +861,7 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 	}
 
 	/* Decode frames until the current frame contains the desired offset. */
-	while(1)
+	for(;;)
 	{
 		/* If desired < next_frame_timer, this frame contains the position.  Since we've
 		 * already decoded the frame, synth it, too. */
@@ -1042,13 +1035,17 @@ int RageSoundReader_MP3::GetLengthInternal( bool fast )
 	}
 
 	MADLIB_rewind();
-	while(1)
+	for(;;)
 	{
 		int ret = do_mad_frame_decode( true );
 		if( ret == -1 )
+		{
 			return -1; /* it set the error */
+		}
 		if( ret == 0 ) /* EOF */
+		{
 			break;
+		}
 	}
 
 	/* mad->Timer is the timestamp of the current frame; find the timestamp of

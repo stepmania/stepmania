@@ -50,6 +50,8 @@ public:
 	void OpenOptionsList( PlayerNumber pn );
 	void OnConfirmSongDeletion();
 
+	bool can_open_options_list(PlayerNumber pn);
+
 	// Lua
 	virtual void PushSelf( lua_State *L );
 

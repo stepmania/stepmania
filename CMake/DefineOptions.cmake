@@ -1,4 +1,6 @@
 # Prep options that are needed for each platform.
+
+# This option allows for networking support with StepMania.
 option(WITH_NETWORKING "Build with networking support." ON)
 
 # This option quiets warnings that are a part of external projects.
@@ -17,7 +19,7 @@ option(WITH_JPEG "Build with JPEG Image Support." ON)
 option(WITH_FULL_RELEASE "Build as a proper, full release." OFF)
 
 # Turn this on to compile tomcrypt with no assembly data. This is a portable mode.
-option(WITH_PORTABLE_TOMCRYPT "Build with assembly/free tomcrypt, making it portable." OFF)
+option(WITH_PORTABLE_TOMCRYPT "Build with assembly/free tomcrypt, making it portable." ON)
 
 # Turn this on to not use the ROLC assembly featurs of tomcrypt.
 # If WITH_PORTABLE_TOMCRYPT is ON, this will automatically have no effect.
@@ -26,19 +28,44 @@ option(WITH_NO_ROLC_TOMCRYPT "Build without the ROLC assembly instructions for t
 # Turn this option off to not use the GPL exclusive components.
 option(WITH_GPL_LIBS "Build with GPL libraries." ON)
 
+# Turn this option off to disable using WAV files with the game.
+# Note that it is recommended to keep this on.
+option(WITH_WAV "Build with WAV Support." ON)
+
+# Turn this option off to disable using MP3 files with the game.
+option(WITH_MP3 "Build with MP3 Support." ON)
+
+# Turn this option off to disable using OGG files with the game.
+option(WITH_OGG "Build with OGG/Vorbis Support." ON)
+
+# Turn this option on to log every segment added or removed.
+option(WITH_LOGGING_TIMING_DATA "Build with logging all Add and Erase Segment calls." OFF)
+
+if(NOT MSVC)
+  # Turn this option off to disable using FFMEPG.
+  option(WITH_FFMPEG "Build with FFMPEG." ON)
+  # Change this number to utilize a different number of jobs for building FFMPEG.
+  option(WITH_FFMPEG_JOBS "Build FFMPEG with this many jobs." 2)
+else()
+  # Turn this option on to enable using the Texture Font Generator.
+  option(WITH_TEXTURE_GENERATOR "Build with the Texture Font Generator. Ensure the MFC library is installed." OFF)
+  # Turn this option off to use dynamic linking instead of static linking.
+  option(WITH_STATIC_LINKING "Build StepMania with static linking." ON)
+endif()
+
 if(WIN32)
-  option(WITH_MINIMAID "Build with Mimimaid Lights Support." OFF)
+  option(WITH_MINIMAID "Build with Minimaid Lights Support." ON)
+  # Developer only option: connect to IRC to report the result. Only use with build servers.
+  option(WITH_IRC_POST_HOOK "Report via IRC of the success afterwards." OFF)
 elseif(LINUX)
-    option(WITH_FFMPEG "Build with FFMPEG." ON)
     # Builder beware: later versions of ffmpeg may break!
-    option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG." OFF)
+    option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG, disabled build with bundled's FFMPEG" OFF)
     option(WITH_CRYSTALHD_DISABLED "Build FFMPEG without Crystal HD support." OFF)
+    option(WITH_MINIMAID "Build with Minimaid Lights Support." ON)
     option(WITH_TTY "Build with Linux TTY Input Support." OFF)
     option(WITH_PROFILING "Build with Profiling Support." OFF)
     option(WITH_GLES2 "Build with OpenGL ES 2.0 Support." ON)
     option(WITH_GTK2 "Build with GTK2 Support." ON)
-    option(WITH_OGG "Build with OGG/Vorbis Support." ON)
-    option(WITH_MP3 "Build with MP3 Support." ON)
     option(WITH_PARALLEL_PORT "Build with Parallel Lights I/O Support." OFF)
     option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
 endif()

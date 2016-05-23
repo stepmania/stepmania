@@ -126,6 +126,9 @@ save yourself some time, copy this for undocumented things:
 		converts them to equivalent lua files.  See Docs/Themerdocs/XmlToLua.txt
 		for details.
 	</Function>
+	<Function name='create_bezier' return='RageBezier2D' arguments=''>
+		Creates a RageBezier2D for you to use.  Make sure you destroy the RageBezier2D when you're done with it, or you will have a memory leak.
+	</Function>
 	<Function name='create_spline' return='CubicSplineN' arguments=''>
 		Creates a CubicSplineN for you to use.  Make sure you destroy the CubicSplineN when you're done with it, or you will have a memory leak.
 	</Function>
@@ -211,6 +214,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='get_music_file_length' return='float' arguments='string path'>
 		Returns the length of the music file found at path.<br />
 		If you are loading the sound into an ActorSound, ActorSound:get to get its RageSound then use RageSound's get_length function instead to avoid loading the file twice.
+	</Function>
+	<Function name='get_sound_driver_list' return='table' arguments=''>
+		Returns a table of the names of the sound drivers available.  If the SoundDriver preference is set to something that is not in this list, StepMania WILL NOT START UP.  Changes to the SoundDriver preference do not take effect until the next time StepMania starts up.
 	</Function>
 	<Function name='GetOSName' return='string' arguments=''>
 		Returns a string representing the name of the operating system being used. (e.g. "Windows", "Linux", "Mac, "Unknown")
@@ -469,8 +475,8 @@ save yourself some time, copy this for undocumented things:
 		"Sets the real value of <code>t[index]</code> to <code>value</code>, without invoking any metamethod."
 		The modified <code>t</code> is then returned.
 	</Function>
-	<Function name='ResolveRelativePath' theme='_fallback' return='string' arguments='string path, int level'>
-		[02 ActorDef.lua]
+	<Function name='ResolveRelativePath' theme='_fallback' return='string' arguments='string path, int level, bool optional'>
+		[02 ActorDef.lua] Used internally by LoadActor to resolve a path.  If <code>optional</code> is true, then a nil path is returned instead of emitting an error if no file is found.
 	</Function>
 	<Function name='ReadFile' theme='_fallback' return='string' arguments='string path'>
 		[04 FileUtils.lua] Reads the file at <code>path</code> and returns its contents.
@@ -697,7 +703,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='LoadAllCommandsAndSetXY' return='void' arguments='Actor a'>
 		Loads all commands and sets X and Y for the specified Actor.
 	</Function>
-	<Function name='ResolvePath' return='string' arguments='string sPath, int iLevel' />
+	<Function name='ResolvePath' return='string' arguments='string sPath, int iLevel, bool optional'>
+		Used internally by LoadActor to resolve a path.  If <code>optional</code> is true, then a nil path is returned instead of emitting an error if no file is found.
+	</Function>
 </Namespace>
 <Namespace name='ArrowEffects'>
 	<Function name='Update' return='void' arguments=''>
@@ -1217,6 +1225,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetZoomedWidth' return='float' arguments=''>
 		Returns the zoomed width of an Actor.
 	</Function>
+	<Function name='get_tween_uses_effect_delta' return='bool' arguments=''>
+		Returns true if this actor is currently set to use the effect delta for tweening.
+	</Function>
 	<Function name='glow' return='void' arguments='color c'>
 		Sets the Actor's glow color.
 	</Function>
@@ -1326,6 +1337,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetWidth' return='void' arguments='float width'>
 		Sets the width of the Actor.
 	</Function>
+	<Function name='set_tween_uses_effect_delta' return='' arguments='bool'>
+		Use this to make the actor use the effect clock to tween instead of using the global frame delta.
+	</Function>
 	<Function name='shadowcolor' return='void' arguments='color c'>
 		Sets the shadow's color to <code>c</code>.
 	</Function>
@@ -1369,7 +1383,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='texturewrapping' return='void' arguments='bool bWrap'>
 		Determines if the Actor should use texture wrapping or not.
 	</Function>
-	<!-- tween -->
+	<Function name='tween' return= '' arguments='float time, TweenType type, table params'>
+		Uses type to determine the tween to use.  The type must be one of the TweenType enum values.  If the type is note TweenType_Bezier, the params table is ignored.  If the type is TweenType_Bezier, then the params table must have 4 or 8 numbers.  4 numbers in the params creates a 1 dimensional bezier curve, 8 numbers creates a 2 dimensional bezier curve.<br />
+		It's usually more convenient to use Actor:linear, Actor:accelerate, and so on, rather than using Actor:tween directly.
+	</Function>
 	<Function name='valign' return='void' arguments='float fAlign'>
 		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign" /> for the common case.
 	</Function>
@@ -1431,8 +1448,8 @@ save yourself some time, copy this for undocumented things:
 		Sets z writing to <code>true</code> or <code>false</code> based on <code>bWrite</code>.
 	</Function>
 	<!-- addons from scripts that come with sm-ssc (non-compat) -->
-	<Function name='bezier' theme='_fallback' return='void' arguments=''>
-		[02 Actor.lua]
+	<Function name='bezier' theme='_fallback' return='' arguments='float time, table curve'>
+		[02 Actor.lua] Plays the commands that follow using a bezier curve to determine the rate.  The curve must have 4 or 8 elements.  This is a convenience wrapper around calling Actor:tween with TweenType_Bezier.
 	</Function>
 	<Function name='FullScreen' theme='_fallback' return='void' arguments=''>
 		[02 Actor.lua] Stretches an Actor to cover the screen. (equivalent to <code>stretchto,0,0,SCREEN_WIDTH,SCREEN_HEIGHT</code>)
@@ -1961,6 +1978,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='undistort' return='void' arguments=''>
 		Turns off distortion.
+	</Function>
+	<Function name='get_mult_attrs_with_diffuse' return='bool' arguments=''>
+		Returns whether the diffuse colors in the attributes are multiplied by the general diffuse colors of the BitmapText.
+	</Function>
+	<Function name='set_mult_attrs_with_diffuse' return='' arguments='bool mult'>
+		If mult_attrs_with_diffuse is set to true, then the diffuse colors in the attributes are multiplied by the general diffuse colors of the BitmapText.
 	</Function>
 	<Function name='jitter' return='void' arguments='bool bJitter'>
 		If <code>bJitter</code> is <code>true</code>, move each character of the string around by a small random amount.
@@ -2849,7 +2872,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.
 	</Function>
-	<Function name='SaveProfiles' return='void' arguments='bool LoadEdits'>
+	<Function name='SaveProfiles' return='void' arguments=''>
 		Save profiles.
 	</Function>
 	<Function name='SetCharacter' return='void' arguments='PlayerNumber pn, string sCharID'>
@@ -3352,6 +3375,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='Player'>
+	<Function name='ChangeLife' return='' arguments='float delta'>
+		Changes the life value by delta.  This will broadcast a LifeChangedMessageCommand, to allow custom life bars to update to the new value.  Do not call ChangeLife from within LifeChangedMessageCommand.
+	</Function>
+	<Function name='SetLife' return='' arguments='float value'>
+		Sets the life to value.  This will broadcast a LifeChangedMessageCommand, to allow custom life bars to update to the new value.  Do not call SetLife from within LifeChangedMessageCommand.
+	</Function>
 	<Function name='GetPlayerTimingData' return='TimingData' arguments=''>
 		Returns the current TimingData for this player.
 	</Function>
@@ -3991,6 +4020,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s, ProfileSlot ps'>
 		Returns the number of times Song s has been played with the specified ProfileSlot.
 	</Function>
+	<Function name='GetStatsPrefix' return='string' arguments=''>
+		Returns the current stats prefix.
+	</Function>
 	<Function name='IsPersistentProfile' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code>'s profile is persistent.
 	</Function>
@@ -4021,10 +4053,39 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SaveProfile' return='bool' arguments='PlayerNumber pn'>
 		Saves the profile for player <code>pn</code>.
 	</Function>
+	<Function name='SetStatsPrefix' return='' arguments='string'>
+		Sets the current stats prefix.  The stats prefix is prepended to the Stats.xml file when loading or saving a profile.  SetStatsPrefix will reload all profiles from the Stats.xml that has the given prefix.  In general, score entries are the only thing not preserved when changing the stats prefix.  Profile::HandleStatsPrefixChange in Profile.cpp lists the fields that are preserved.
+	</Function>
 </Class>
 <Class name='RadarValues'>
 	<Function name='GetValue' return='int' arguments='RadarCategory rc'>
 		Returns the value of <code>rc</code> from <Link class='Steps' function='GetRadarValues' />.
+	</Function>
+</Class>
+<Class name='RageBezier2D'>
+	<Description>
+		You must call create_bezier to create a RageBezier2D to use any of these functions.  When you are done with the object, destroy it with its destroy function to avoid a memory leak.<br />
+		A RageBezier2D is two RageQuadratics, one for the x coordinate and one for the y.<br />
+		This class is provided as a tool for designers working with bezier tweens who need a tool that displays the tween curve visually.<br />
+		If you use Actor:tween(time, "TweenType_Bezier", {xa, ya, xb, yb, xc, yc, xd, yd}) to tween an actor, the actor creates a RageBezier2D internally and calls evaluate_y_from_x each frame to set where it is in the tween.
+	</Description>
+	<Function name='destroy' return='' arguments=''>
+		Destroys the RageBezier2D.  Do not attempt to use it after it has been destroyed.
+	</Function>
+	<Function name='evaluate' return='float,float' arguments='float t'>
+		Evaluates the bezier curve at the given t and returns the x and y values.  This is equivalent to using get_x and get_y to fetch the quadratic parts and calling evaluate on them directly.
+	</Function>
+	<Function name='evaluate_y_from_x' return='float' arguments='float x'>
+		Takes the x given and converts it to a t value, then evaluates the y quadratic with the t value and returns the result.
+	</Function>
+	<Function name='get_x' return='RageQuadratic' arguments=''>
+		Returns the RageQuadratic used for the x component.
+	</Function>
+	<Function name='get_y' return='RageQuadratic' arguments=''>
+		Returns the RageQuadratic used for the y component.
+	</Function>
+	<Function name='set_from_bezier' return='' arguments='float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd'>
+		Sets the values used by the two quadratics.  This is equivalent to using get_x and get_y to get the quadratics and setting them directly.  Note that the components for the x quadratic and the y quadratic are interleaved.
 	</Function>
 </Class>
 <Class name='RageDisplay'>
@@ -4111,6 +4172,33 @@ save yourself some time, copy this for undocumented things:
 <Class name='RageInput'>
 	<Function name='GetDescriptions' return='{string}' arguments=''>
 		Return an array of connected input device descriptions.
+	</Function>
+</Class>
+<Class name='RageQuadratic'>
+	<Description>
+		If you use Actor:tween(time, "TweenType_Bezier", {a, b, c, d}) to tween an actor, the actor creates a RageQuadratic internally and calls evaluate each frame to set where it is in the tween.
+	</Description>
+	<Function name='evaluate' return='float' arguments='float t'>
+		Evaluates the quadratic at the given t value and returns the result.
+	</Function>
+	<Function name='get_bezier' return='float,float,float,float' arguments=''>
+		Returns the four values that form the quadratic equation.  This function returns multiple values, so you must do something like this to get them:<br />
+		a, b, c, d= quadratic:get_bezier()
+	</Function>
+	<Function name='get_bezier_end' return='float' arguments=''>
+		Equivalent to evaluate(1), but faster.
+	</Function>
+	<Function name='get_bezier_start' return='float' arguments=''>
+		Equivalent to evaluate(0), but faster.
+	</Function>
+	<Function name='get_slope' return='float' arguments='float t'>
+		Returns the slope of the curve at the given t value.
+	</Function>
+	<Function name='set_from_bezier' return='' arguments='float a, float b, float c, float d'>
+		Sets the four values that form the quadratic equation.
+	</Function>
+	<Function name='set_from_cubic' return='' arguments='float a, float b, float c, float d'>
+		Sets the four values that form the quadratic equation, treating the arguments as from a cubic equation instead of as from a bezier curve.
 	</Function>
 </Class>
 <Class name='RageSound'>
@@ -4234,6 +4322,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetNextScreenName' return='void' arguments='string name'>
 		Sets the NextScreen value to name.
 	</Function>
+	<Function name='SetPrevScreenName' return='void' arguments='string name'>
+		Sets the PrevScreen value to name.
+	</Function>
 	<Function name='String' theme='_fallback' return='string' arguments='string sName'>
 		[02 Other.lua] Gets a string from the current Screen in the current language.
 	</Function>
@@ -4249,6 +4340,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ScreenGameplay'>
+	<Function name='begin_backing_out' return='' arguments=''>
+		This should behave identically to the normal back button behavior.  This function is for the pause menu to use when the player forfeits or restarts, so that a score isn't saved.
+	</Function>
 	<Function name='Center1Player' return='bool' arguments=''>
 		Returns <code>true</code> if a single <Link class='Player' /> has its NoteField centered.
 	</Function>
@@ -4310,6 +4404,24 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetTopScreen' return='Screen' arguments=''>
 		Gets the screen at the top of the screen stack.
 	</Function>
+	<Function name='get_input_redirected' return='bool' arguments='PlayerNumber pn'>
+		Returns whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.
+	</Function>
+	<Function name='PlayInvalidSound' return='' arguments=''>
+		Plays the invalid sound.
+	</Function>
+	<Function name='PlayStartSound' return='' arguments=''>
+		Plays the start sound.
+	</Function>
+	<Function name='PlayCoinSound' return='' arguments=''>
+		Plays the coin sound.
+	</Function>
+	<Function name='PlayCancelSound' return='' arguments=''>
+		Plays the cancel sound.
+	</Function>
+	<Function name='PlayScreenshotSound' return='' arguments=''>
+		Plays the screenshot sound.
+	</Function>
 	<Function name='ReloadOverlayScreens' return='void' arguments=''>
 		Reloads any loaded overlay screens.
 	</Function>
@@ -4321,6 +4433,10 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SetNewScreen' return='void' arguments='string s'>
 		Sets the next screen to <code>s</code>.
+	</Function>
+	<Function name='set_input_redirected' return='bool' arguments='PlayerNumber pn, bool redir'>
+		Sets whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.<br />
+		This can be useful when putting a custom menu on a screen, and you want to disable the built in actors while the menu is open.  Then you handle input through an input callback until the player closes the menu.
 	</Function>
 	<Function name='SystemMessage' return='void' arguments='string s'>
 		Broadcasts a system message.
@@ -4403,6 +4519,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ScreenSelectMusic'>
+	<Function name='CanOpenOptionsList' return='bool' arguments=''>
+		Returns false if the options list is already open or the UseOptionsList metric is false.
+	</Function>
 	<Function name='GetGoToOptions' return='bool' arguments=''>
 		Returns <code>true</code> if the player is going to the options screen.
 	</Function>
@@ -4518,6 +4637,10 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetLyricsPath' return='string' arguments=''>
 		Gets the path to the lyrics.
+	</Function>
+	<Function name='GetMainTitle' return='string' arguments=''>
+		GetDisplayMainTitle checks the ShowNativeLanguage pref and returns the transliterated title is that pref is false.<br />
+		GetMainTitle (this function) does not check that pref.  Instead, it directly returns the title, exactly as it is in the #TITLE field in the simfile.
 	</Function>
 	<Function name='GetMusicPath' return='string' arguments=''>
 		Gets the path to the music file.
@@ -4908,6 +5031,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='customtexturerect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		Allows the themer to set a custom texture rectangle that effects the way the texture is drawn.
 	</Function>
+	<Function name='get_use_effect_clock_for_texcoords' return='bool' arguments=''>
+		Returns true if the sprite is using the effect clock for texcoordvelocity.
+	</Function>
 	<Function name='loop' theme='_fallback' return='void' arguments='bool bLoop'>
 		[02 Sprite.lua] Call <Link class='RageTexture' function='loop'><code>RageTexture:loop</code></Link><code>( bLoop )</code> on the texture.
 	</Function>
@@ -4923,11 +5049,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='setstate' return='void' arguments='int iNewState'>
 		Set the Sprite's state to <code>iNewState</code>.
 	</Function>
+	<Function name='set_use_effect_clock_for_texcoords' return='' arguments='bool use'>
+		If <code>use</code> is true, then the sprite will use the effect clock for texcoordvelocity.
+	</Function>
 	<Function name='stretchtexcoords' return='void' arguments='float fX, float fY'>
 		<!-- XXX: What does this do? -->
 	</Function>
 	<Function name='texcoordvelocity' return='void' arguments='float fVelX, float fVelY'>
-		Set the texture coordinate velocity which controls how the Sprite changes as it animates. <!-- XXX: Can we be more specific? -->
+		Set the texture coordinate velocity which controls how the Sprite changes as it animates.  A velocity of 1 makes the texture scroll all the way once per second.
 	</Function>
 	<!-- sm-ssc addons -->
 	<Function name='CropTo' return='void' arguments='float fWidth, float fHeight'>

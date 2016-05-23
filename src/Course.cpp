@@ -445,179 +445,186 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	// Set to true if CourseDifficulty is able to change something.
 	bool bCourseDifficultyIsSignificant = (cd == Difficulty_Medium);
 
-	vector<Song*> vpAllPossibleSongs;
-	vector<SongAndSteps> vSongAndSteps;
+	
 
 	// Resolve each entry to a Song and Steps.
-	FOREACH_CONST( CourseEntry, entries, e )
+	if( trail.m_CourseType == COURSE_TYPE_ENDLESS )
 	{
-		SongAndSteps resolved;	// fill this in
-		SongCriteria soc = e->songCriteria;
-
-		Song *pSong = e->songID.ToSong();
-		if( pSong )
+		GetTrailUnsortedEndless(entries, trail, st, cd, rnd, bCourseDifficultyIsSignificant);
+	}
+	else
+	{
+		vector<SongAndSteps> vSongAndSteps;
+		FOREACH_CONST( CourseEntry, entries, e )
 		{
-			soc.m_bUseSongAllowedList = true;
-			soc.m_vpSongAllowedList.push_back( pSong );
-		}
-		soc.m_Tutorial = SongCriteria::Tutorial_No;
-		soc.m_Locked = SongCriteria::Locked_Unlocked;
-		if( !soc.m_bUseSongAllowedList )
-			soc.m_iMaxStagesForSong = 1;
+			SongAndSteps resolved;	// fill this in
+			SongCriteria soc = e->songCriteria;
 
-		StepsCriteria stc = e->stepsCriteria;
-		stc.m_st = st;
-		stc.m_Locked = StepsCriteria::Locked_Unlocked;
-
-		const bool bSameSongCriteria  = e != entries.begin() && (e-1)->songCriteria == soc;
-		const bool bSameStepsCriteria = e != entries.begin() && (e-1)->stepsCriteria == stc;
-
-		if( pSong )
-		{
-			StepsUtil::GetAllMatching( pSong, stc, vSongAndSteps );
-		}
-		else if( vSongAndSteps.empty() || !(bSameSongCriteria && bSameStepsCriteria) )
-		{
-			vSongAndSteps.clear();
-			StepsUtil::GetAllMatching( soc, stc, vSongAndSteps );
-		}
-
-		// It looks bad to have the same song 2x in a row in a randomly generated course.
-		// Don't allow the same song to be played 2x in a row, unless there's only
-		// one song in vpPossibleSongs.
-		if( trail.m_vEntries.size() > 0  &&  vSongAndSteps.size() > 1 )
-		{
-			const TrailEntry &teLast = trail.m_vEntries.back();
-			RemoveIf( vSongAndSteps, SongIsEqual(teLast.pSong) );
-		}
-
-		// if there are no songs to choose from, abort this CourseEntry
-		if( vSongAndSteps.empty() )
-			continue;
-
-		vector<Song*> vpSongs;
-		typedef vector<Steps*> StepsVector;
-		map<Song*,StepsVector> mapSongToSteps;
-		FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
-		{
-			StepsVector &v = mapSongToSteps[sas->pSong];
-
-			v.push_back( sas->pSteps );
-			if( v.size() == 1 )
-				vpSongs.push_back( sas->pSong );
-		}
-
-		CourseSortSongs( e->songSort, vpSongs, rnd );
-
-		ASSERT( e->iChooseIndex >= 0 );
-		if( e->iChooseIndex < int(vSongAndSteps.size()) )
-		{
-			resolved.pSong = vpSongs[e->iChooseIndex];
-			const vector<Steps*> &mappedSongs = mapSongToSteps[resolved.pSong];
-			resolved.pSteps = mappedSongs[ RandomInt(mappedSongs.size()) ];
-		}
-		else
-		{
-			continue;
-		}
-
-		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are 
-		 * either easier or harder than the base difficulty.  If no such steps exist, then 
-		 * just use the one we already have. */
-		Difficulty dc = resolved.pSteps->GetDifficulty();
-		int iLowMeter = e->stepsCriteria.m_iLowMeter;
-		int iHighMeter = e->stepsCriteria.m_iHighMeter;
-		if( cd != Difficulty_Medium  &&  !e->bNoDifficult )
-		{
-			Difficulty new_dc = (Difficulty)(dc + cd - Difficulty_Medium);
-			new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
-			/*
-			// re-edit this code to work using the metric.
-			Difficulty new_dc;
-			if( INCLUDE_BEGINNER_STEPS )
+			Song *pSong = e->songID.ToSong();
+			if( pSong )
 			{
-				// don't factor in the course difficulty if we're including
-				// beginner steps -aj
-				new_dc = clamp( dc, Difficulty_Beginner, (Difficulty)(Difficulty_Edit-1) );
+				soc.m_bUseSongAllowedList = true;
+				soc.m_vpSongAllowedList.push_back( pSong );
+			}
+			soc.m_Tutorial = SongCriteria::Tutorial_No;
+			soc.m_Locked = SongCriteria::Locked_Unlocked;
+			if( !soc.m_bUseSongAllowedList )
+				soc.m_iMaxStagesForSong = 1;
+
+			StepsCriteria stc = e->stepsCriteria;
+			stc.m_st = st;
+			stc.m_Locked = StepsCriteria::Locked_Unlocked;
+
+			const bool bSameSongCriteria = e != entries.begin() && ( e - 1 )->songCriteria == soc;
+			const bool bSameStepsCriteria = e != entries.begin() && ( e - 1 )->stepsCriteria == stc;
+
+			if( pSong )
+			{
+				StepsUtil::GetAllMatching( pSong, stc, vSongAndSteps );
+			}
+			else if( vSongAndSteps.empty() || !( bSameSongCriteria && bSameStepsCriteria ) )
+			{
+				vSongAndSteps.clear();
+				StepsUtil::GetAllMatching( soc, stc, vSongAndSteps );
+			}
+
+			// It looks bad to have the same song 2x in a row in a randomly generated course.
+			// Don't allow the same song to be played 2x in a row, unless there's only
+			// one song in vpPossibleSongs.
+			if( trail.m_vEntries.size() > 0 && vSongAndSteps.size() > 1 )
+			{
+				const TrailEntry &teLast = trail.m_vEntries.back();
+				RemoveIf( vSongAndSteps, SongIsEqual( teLast.pSong ) );
+			}
+
+			// if there are no songs to choose from, abort this CourseEntry
+			if( vSongAndSteps.empty() )
+				continue;
+
+			vector<Song*> vpSongs;
+			typedef vector<Steps*> StepsVector;
+			map<Song*, StepsVector> mapSongToSteps;
+			FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
+			{
+				StepsVector &v = mapSongToSteps[ sas->pSong ];
+
+				v.push_back( sas->pSteps );
+				if( v.size() == 1 )
+					vpSongs.push_back( sas->pSong );
+			}
+
+			CourseSortSongs( e->songSort, vpSongs, rnd );
+
+			ASSERT( e->iChooseIndex >= 0 );
+			if( e->iChooseIndex < int( vSongAndSteps.size() ) )
+			{
+				resolved.pSong = vpSongs[ e->iChooseIndex ];
+				const vector<Steps*> &mappedSongs = mapSongToSteps[ resolved.pSong ];
+				resolved.pSteps = mappedSongs[ RandomInt( mappedSongs.size() ) ];
 			}
 			else
 			{
+				continue;
+			}
+
+			/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are
+			* either easier or harder than the base difficulty.  If no such steps exist, then
+			* just use the one we already have. */
+			Difficulty dc = resolved.pSteps->GetDifficulty();
+			int iLowMeter = e->stepsCriteria.m_iLowMeter;
+			int iHighMeter = e->stepsCriteria.m_iHighMeter;
+			if( cd != Difficulty_Medium  &&  !e->bNoDifficult )
+			{
+				Difficulty new_dc = ( Difficulty )( dc + cd - Difficulty_Medium );
+				new_dc = clamp( new_dc, ( Difficulty )0, ( Difficulty )( Difficulty_Edit - 1 ) );
+				/*
+				// re-edit this code to work using the metric.
+				Difficulty new_dc;
+				if( INCLUDE_BEGINNER_STEPS )
+				{
+				// don't factor in the course difficulty if we're including
+				// beginner steps -aj
+				new_dc = clamp( dc, Difficulty_Beginner, (Difficulty)(Difficulty_Edit-1) );
+				}
+				else
+				{
 				new_dc = (Difficulty)(dc + cd - Difficulty_Medium);
 				new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
-			}
-			*/
+				}
+				*/
 
-			bool bChangedDifficulty = false;
-			if( new_dc != dc )
-			{
-				Steps* pNewSteps = SongUtil::GetStepsByDifficulty( resolved.pSong, st, new_dc );
-				if( pNewSteps )
+				bool bChangedDifficulty = false;
+				if( new_dc != dc )
 				{
-					dc = new_dc;
-					resolved.pSteps = pNewSteps;
-					bChangedDifficulty = true;
-					bCourseDifficultyIsSignificant = true;
+					Steps* pNewSteps = SongUtil::GetStepsByDifficulty( resolved.pSong, st, new_dc );
+					if( pNewSteps )
+					{
+						dc = new_dc;
+						resolved.pSteps = pNewSteps;
+						bChangedDifficulty = true;
+						bCourseDifficultyIsSignificant = true;
+					}
+				}
+
+				/* Hack: We used to adjust low_meter/high_meter above while searching for
+				* songs.  However, that results in a different song being chosen for
+				* difficult courses, which is bad when LockCourseDifficulties is disabled;
+				* each player can end up with a different song.  Instead, choose based
+				* on the original range, bump the steps based on course difficulty, and
+				* then retroactively tweak the low_meter/high_meter so course displays
+				* line up. */
+				if( e->stepsCriteria.m_difficulty == Difficulty_Invalid && bChangedDifficulty )
+				{
+					/* Minimum and maximum to add to make the meter range contain the actual
+					* meter: */
+					int iMinDist = resolved.pSteps->GetMeter() - iHighMeter;
+					int iMaxDist = resolved.pSteps->GetMeter() - iLowMeter;
+
+					/* Clamp the possible adjustments to try to avoid going under 1 or over
+					* MAX_BOTTOM_RANGE. */
+					iMinDist = min( max( iMinDist, -iLowMeter + 1 ), iMaxDist );
+					iMaxDist = max( min( iMaxDist, MAX_BOTTOM_RANGE - iHighMeter ), iMinDist );
+
+					int iAdd;
+					if( iMaxDist == iMinDist )
+						iAdd = iMaxDist;
+					else
+						iAdd = rnd( iMaxDist - iMinDist ) + iMinDist;
+					iLowMeter += iAdd;
+					iHighMeter += iAdd;
 				}
 			}
 
-			/* Hack: We used to adjust low_meter/high_meter above while searching for
-			 * songs.  However, that results in a different song being chosen for
-			 * difficult courses, which is bad when LockCourseDifficulties is disabled;
-			 * each player can end up with a different song.  Instead, choose based
-			 * on the original range, bump the steps based on course difficulty, and
-			 * then retroactively tweak the low_meter/high_meter so course displays
-			 * line up. */
-			if( e->stepsCriteria.m_difficulty == Difficulty_Invalid && bChangedDifficulty )
+			TrailEntry te;
+			te.pSong = resolved.pSong;
+			te.pSteps = resolved.pSteps;
+			te.Modifiers = e->sModifiers;
+			te.Attacks = e->attacks;
+			te.bSecret = e->bSecret;
+			te.iLowMeter = iLowMeter;
+			te.iHighMeter = iHighMeter;
+
+			/* If we chose based on meter (not difficulty), then store Difficulty_Invalid, so
+			* other classes can tell that we used meter. */
+			if( e->stepsCriteria.m_difficulty == Difficulty_Invalid )
 			{
-				/* Minimum and maximum to add to make the meter range contain the actual
-				 * meter: */
-				int iMinDist = resolved.pSteps->GetMeter() - iHighMeter;
-				int iMaxDist = resolved.pSteps->GetMeter() - iLowMeter;
-
-				/* Clamp the possible adjustments to try to avoid going under 1 or over
-				 * MAX_BOTTOM_RANGE. */
-				iMinDist = min( max( iMinDist, -iLowMeter+1 ), iMaxDist );
-				iMaxDist = max( min( iMaxDist, MAX_BOTTOM_RANGE-iHighMeter ), iMinDist );
-
-				int iAdd;
-				if( iMaxDist == iMinDist )
-					iAdd = iMaxDist;
-				else
-					iAdd = rnd(iMaxDist-iMinDist) + iMinDist;
-				iLowMeter += iAdd;
-				iHighMeter += iAdd;
+				te.dc = Difficulty_Invalid;
 			}
-		}
+			else
+			{
+				/* Otherwise, store the actual difficulty we got (post-course-difficulty).
+				* This may or may not be the same as e.difficulty. */
+				te.dc = dc;
+			}
+			trail.m_vEntries.push_back( te );
 
-		TrailEntry te;
-		te.pSong = resolved.pSong;
-		te.pSteps = resolved.pSteps;
-		te.Modifiers = e->sModifiers;
-		te.Attacks = e->attacks;
-		te.bSecret = e->bSecret;
-		te.iLowMeter = iLowMeter;
-		te.iHighMeter = iHighMeter;
+			// LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
 
-		/* If we chose based on meter (not difficulty), then store Difficulty_Invalid, so
-		 * other classes can tell that we used meter. */
-		if( e->stepsCriteria.m_difficulty == Difficulty_Invalid )
-		{
-			te.dc = Difficulty_Invalid;
-		}
-		else
-		{
-			/* Otherwise, store the actual difficulty we got (post-course-difficulty).
-			 * This may or may not be the same as e.difficulty. */
-			te.dc = dc;
-		}
-		trail.m_vEntries.push_back( te );
-
-		// LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
-
-		if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&
-			int(trail.m_vEntries.size()) >= MAX_SONGS_IN_EDIT_COURSE )
-		{
-			break;
+			if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&
+				int( trail.m_vEntries.size() ) >= MAX_SONGS_IN_EDIT_COURSE )
+			{
+				break;
+			}
 		}
 	}
 
@@ -639,6 +646,194 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	/* If the course difficulty never actually changed anything, then this difficulty
 	 * is equivalent to Difficulty_Medium; it doesn't exist. */
 	return bCourseDifficultyIsSignificant && trail.m_vEntries.size() > 0;
+}
+
+void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail &trail, StepsType &st, 
+	CourseDifficulty &cd, RandomGen &rnd, bool &bCourseDifficultyIsSignificant ) const
+{
+	vector<Song*> vpAllPossibleSongs;
+	vector<SongAndSteps> vSongAndSteps;
+	vector<Song*> vpSongs;
+	typedef vector<Steps*> StepsVector;
+	map<Song*, StepsVector> mapSongToSteps;
+	int songIndex = 0;
+	bool vpSongsSorted = false;
+	FOREACH_CONST( CourseEntry, entries, e )
+	{
+
+		SongAndSteps resolved;	// fill this in
+		SongCriteria soc = e->songCriteria;
+
+
+		Song *pSong = e->songID.ToSong();
+		if( pSong )
+		{
+			soc.m_bUseSongAllowedList = true;
+			soc.m_vpSongAllowedList.push_back( pSong );
+		}
+		soc.m_Tutorial = SongCriteria::Tutorial_No;
+		soc.m_Locked = SongCriteria::Locked_Unlocked;
+		if( !soc.m_bUseSongAllowedList )
+			soc.m_iMaxStagesForSong = 1;
+
+		StepsCriteria stc = e->stepsCriteria;
+		stc.m_st = st;
+		stc.m_Locked = StepsCriteria::Locked_Unlocked;
+
+		const bool bSameSongCriteria = e != entries.begin() && ( e - 1 )->songCriteria == soc;
+		const bool bSameStepsCriteria = e != entries.begin() && ( e - 1 )->stepsCriteria == stc;
+
+		if( pSong )
+		{
+			StepsUtil::GetAllMatchingEndless( pSong, stc, vSongAndSteps );
+		}
+		else if( vSongAndSteps.empty() || !( bSameSongCriteria && bSameStepsCriteria ) )
+		{
+			vSongAndSteps.clear();
+			StepsUtil::GetAllMatching( soc, stc, vSongAndSteps );
+		}
+
+		// if there are no songs to choose from, abort this CourseEntry
+		if( vSongAndSteps.empty() )
+			continue;
+
+		if( !vpSongsSorted && !vSongAndSteps.empty() ) {
+			FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
+			{
+				StepsVector &v = mapSongToSteps[ sas->pSong ];
+				v.push_back( sas->pSteps );
+				if( v.size() == 1 )
+					vpSongs.push_back( sas->pSong );
+			}
+			vpSongsSorted = true;
+			CourseSortSongs( e->songSort, vpSongs, rnd );
+			songIndex = 0;
+		}
+
+		ASSERT( e->iChooseIndex >= 0 );
+		if( e->iChooseIndex < int( vSongAndSteps.size() ) )
+		{
+			if( songIndex >= vpSongs.size() ) {
+				songIndex = 0;
+			}
+			resolved.pSong = vpSongs[ songIndex ];
+			const vector<Steps*> &mappedSongs = mapSongToSteps[ resolved.pSong ];
+			songIndex++;
+			resolved.pSteps = mappedSongs[ RandomInt( mappedSongs.size() ) ];
+		}
+		else
+		{
+			continue;
+		}
+
+		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are
+		* either easier or harder than the base difficulty.  If no such steps exist, then
+		* just use the one we already have. */
+		Difficulty dc = resolved.pSteps->GetDifficulty();
+		int iLowMeter = e->stepsCriteria.m_iLowMeter;
+		int iHighMeter = e->stepsCriteria.m_iHighMeter;
+		if( cd != Difficulty_Medium  &&  !e->bNoDifficult )
+		{
+			Difficulty new_dc = ( Difficulty )( dc + cd - Difficulty_Medium );
+			if( dc != Difficulty_Medium )
+			{
+				new_dc = cd;
+			}
+			new_dc = clamp( new_dc, ( Difficulty )0, ( Difficulty )( Difficulty_Edit - 1 ) );
+			/*
+			// re-edit this code to work using the metric.
+			Difficulty new_dc;
+			if( INCLUDE_BEGINNER_STEPS )
+			{
+			// don't factor in the course difficulty if we're including
+			// beginner steps -aj
+			new_dc = clamp( dc, Difficulty_Beginner, (Difficulty)(Difficulty_Edit-1) );
+			}
+			else
+			{
+			new_dc = (Difficulty)(dc + cd - Difficulty_Medium);
+			new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
+			}
+			*/
+
+			bool bChangedDifficulty = false;
+			if( new_dc != dc )
+			{
+				Steps* pNewSteps = SongUtil::GetStepsByDifficulty( resolved.pSong, st, new_dc );
+				if( pNewSteps )
+				{
+					dc = new_dc;
+					resolved.pSteps = pNewSteps;
+					bChangedDifficulty = true;
+					bCourseDifficultyIsSignificant = true;
+				}
+			}
+
+			/* Hack: We used to adjust low_meter/high_meter above while searching for
+			* songs.  However, that results in a different song being chosen for
+			* difficult courses, which is bad when LockCourseDifficulties is disabled;
+			* each player can end up with a different song.  Instead, choose based
+			* on the original range, bump the steps based on course difficulty, and
+			* then retroactively tweak the low_meter/high_meter so course displays
+			* line up. */
+			if( e->stepsCriteria.m_difficulty == Difficulty_Invalid && bChangedDifficulty )
+			{
+				/* Minimum and maximum to add to make the meter range contain the actual
+				* meter: */
+				int iMinDist = resolved.pSteps->GetMeter() - iHighMeter;
+				int iMaxDist = resolved.pSteps->GetMeter() - iLowMeter;
+
+				/* Clamp the possible adjustments to try to avoid going under 1 or over
+				* MAX_BOTTOM_RANGE. */
+				iMinDist = min( max( iMinDist, -iLowMeter + 1 ), iMaxDist );
+				iMaxDist = max( min( iMaxDist, MAX_BOTTOM_RANGE - iHighMeter ), iMinDist );
+
+				int iAdd;
+				if( iMaxDist == iMinDist )
+					iAdd = iMaxDist;
+				else
+					iAdd = rnd( iMaxDist - iMinDist ) + iMinDist;
+				iLowMeter += iAdd;
+				iHighMeter += iAdd;
+			}
+		}
+
+		TrailEntry te;
+		te.pSong = resolved.pSong;
+		te.pSteps = resolved.pSteps;
+		te.Modifiers = e->sModifiers;
+		te.Attacks = e->attacks;
+		te.bSecret = e->bSecret;
+		te.iLowMeter = iLowMeter;
+		te.iHighMeter = iHighMeter;
+
+		/* If we chose based on meter (not difficulty), then store Difficulty_Invalid, so
+		* other classes can tell that we used meter. */
+		if( e->stepsCriteria.m_difficulty == Difficulty_Invalid )
+		{
+			te.dc = Difficulty_Invalid;
+		}
+		else
+		{
+			/* Otherwise, store the actual difficulty we got (post-course-difficulty).
+			* This may or may not be the same as e.difficulty. */
+			te.dc = dc;
+		}
+
+		trail.m_vEntries.push_back( te );
+		if( trail.m_vEntries.size() > 0 && te.dc != cd )
+		{
+			trail.m_vEntries.reserve( trail.m_vEntries.size() - 1 );
+			trail.m_vEntries.resize( trail.m_vEntries.size() - 1 );
+		}
+		// LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
+
+		if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&
+			int( trail.m_vEntries.size() ) >= MAX_SONGS_IN_EDIT_COURSE )
+		{
+			break;
+		}
+	}
 }
 
 void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
@@ -926,7 +1121,7 @@ bool Course::IsRanking() const
 	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
 
 	for(unsigned i=0; i < rankingsongs.size(); i++)
-		if (rankingsongs[i].CompareNoCase(m_sPath))
+		if (rankingsongs[i].EqualsNoCase(m_sPath))
 			return true;
 
 	return false;

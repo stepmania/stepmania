@@ -169,13 +169,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 			bSubtract = true;
 		}
 	}
-
-	Message msg( "LifeChanged" );
-	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
-	msg.SetParam( "LivesLeft", GetLivesLeft() );
-	msg.SetParam( "LostLife", bSubtract );
-	MESSAGEMAN->Broadcast( msg );
+	BroadcastLifeChanged(bSubtract);
 }
 
 void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
@@ -191,13 +185,25 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		SubtractLives(LET_GO_SUBTRACT_LIVES);
 		bSubtract = true;
 	}
+	BroadcastLifeChanged(bSubtract);
+}
 
-	Message msg( "LifeChanged" );
-	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
-	msg.SetParam( "LivesLeft", GetLivesLeft() );
-	msg.SetParam( "LostLife", bSubtract );
-	MESSAGEMAN->Broadcast( msg );
+void LifeMeterBattery::SetLife(float value)
+{
+	int new_lives= static_cast<int>(value);
+	bool lost= (new_lives < m_iLivesLeft);
+	m_iLivesLeft= new_lives;
+	BroadcastLifeChanged(lost);
+}
+
+void LifeMeterBattery::BroadcastLifeChanged(bool lost_life)
+{
+	Message msg("LifeChanged");
+	msg.SetParam("Player", m_pPlayerState->m_PlayerNumber);
+	msg.SetParam("LifeMeter", LuaReference::CreateFromPush(*this));
+	msg.SetParam("LivesLeft", GetLivesLeft());
+	msg.SetParam("LostLife", lost_life);
+	MESSAGEMAN->Broadcast(msg);
 }
 
 void LifeMeterBattery::HandleTapScoreNone()

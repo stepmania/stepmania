@@ -295,7 +295,7 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 	m_sCurLanguage = sLanguage;
 
 	bool bLoadedBase = false;
-	while(1)
+	for(;;)
 	{
 		ASSERT_M( g_vThemes.size() < 20, "Circular theme fallback references detected." );
 
@@ -315,13 +315,15 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		}
 		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
 		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
+		{
 			iniStrings.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
-
+		}
 		bool bIsBaseTheme = !sThemeName.CompareNoCase(SpecialFiles::BASE_THEME_NAME);
 		iniMetrics.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
 		if( bIsBaseTheme )
+		{
 			bLoadedBase = true;
-
+		}
 		/* Read the fallback theme. If no fallback theme is specified, and we haven't
 		 * already loaded it, fall back on SpecialFiles::BASE_THEME_NAME.
 		 * That way, default theme fallbacks can be disabled with
@@ -330,9 +332,10 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		if( !iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
 		{
 			if( sThemeName.CompareNoCase( SpecialFiles::BASE_THEME_NAME ) && !bLoadedBase )
+			{
 				sFallback = SpecialFiles::BASE_THEME_NAME;
+			}
 		}
-
 		/* We actually want to load themes bottom-to-top, loading fallback themes
 		 * first, so derived themes overwrite metrics in fallback themes. But, we
 		 * need to load the derived theme first, to find out the name of the fallback
@@ -342,7 +345,9 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		XmlFileUtil::MergeIniUnder( &iniStrings, &g_pLoadedThemeData->iniStrings );
 
 		if( sFallback.empty() )
+		{
 			break;
+		}
 		sThemeName = sFallback;
 	}
 
@@ -688,14 +693,15 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 		switch( LuaHelpers::ReportScriptError(message, "", true) )
 		{
-		case Dialog::abort:
-			RageException::Throw( "%s", message.c_str() ); 
-			break;
-		case Dialog::retry:
-			ReloadMetrics();
-			return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
-		case Dialog::ignore:
-			break;
+			case Dialog::abort:
+				RageException::Throw( "%s", message.c_str() ); 
+				break;
+			case Dialog::retry:
+				ReloadMetrics();
+				return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
+			case Dialog::ignore:
+			default:
+				break;
 		}
 	}
 
@@ -733,15 +739,15 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 	switch(LuaHelpers::ReportScriptError(sMessage, "", true))
 	{
-	case Dialog::retry:
-		ReloadMetrics();
-		return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
-	case Dialog::ignore:
-		GetPathInfo( out, category, "", "_missing" );
-		return true;
+		case Dialog::retry:
+			ReloadMetrics();
+			return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
+		case Dialog::ignore:
+			GetPathInfo( out, category, "", "_missing" );
+			return true;
+		default:
+			RageException::Throw( "%s", sMessage.c_str() );
 	}
-
-	RageException::Throw( "%s", sMessage.c_str() ); 
 }
 
 bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement ) 
@@ -959,12 +965,13 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sMetricsG
 	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sValueName = sValueName_;
 
-	while( true )
+	for(;;)
 	{
 		RString ret;
 		if( ThemeManager::GetMetricRawRecursive(ini, sMetricsGroup, sValueName, ret) )
+		{
 			return ret;
-		
+		}
 		RString sCurMetricPath = GetMetricsIniPath( m_sCurThemeName );
 		RString sDefaultMetricPath = GetMetricsIniPath( SpecialFiles::BASE_THEME_NAME );
 		
@@ -1181,20 +1188,20 @@ void ThemeManager::GetOptionNames( vector<RString>& AddTo )
 
 static RString PseudoLocalize( RString s )
 {
-	s.Replace( "a", "àá" );
-	s.Replace( "A", "ÀÀ" );
-	s.Replace( "e", "éé" );
-	s.Replace( "E", "ÉÉ" );
-	s.Replace( "i", "íí" );
-	s.Replace( "I", "ÍÍ" );
-	s.Replace( "o", "óó" );
-	s.Replace( "O", "ÓÓ" );
-	s.Replace( "u", "üü" );
-	s.Replace( "U", "ÜÜ" );
-	s.Replace( "n", "ñ" );
-	s.Replace( "N", "Ñ" );
-	s.Replace( "c", "ç" );
-	s.Replace( "C", "Ç" );
+	s.Replace( "a", "\xc3\xa0\xc3\xa1" ); // àá
+	s.Replace( "A", "\xc3\x80\xc3\x80" ); // ÀÀ
+	s.Replace( "e", "\xc3\xa9\xc3\xa9" ); // éé
+	s.Replace( "E", "\xc3\x89\xc3\x89" ); // ÉÉ
+	s.Replace( "i", "\xc3\xad\xc3\xad" ); // íí
+	s.Replace( "I", "\xc3\x8d\xc3\x8d" ); // ÍÍ
+	s.Replace( "o", "\xc3\xb3\xc3\xb3" ); // óó
+	s.Replace( "O", "\xc3\x93\xc3\x93" ); // ÓÓ
+	s.Replace( "u", "\xc3\xbc\xc3\xbc" ); // üü
+	s.Replace( "U", "\xc3\x9c\xc3\x9c" ); // ÜÜ
+	s.Replace( "n", "\xc3\xb1" ); // ñ
+	s.Replace( "N", "\xc3\x91" ); // Ñ
+	s.Replace( "c", "\xc3\xa7" ); // ç
+	s.Replace( "C", "\xc3\x87" ); // Ç
 	// transformations that help expose punctuation assumptions
 	//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
 	s.Replace( "?", " ?" );

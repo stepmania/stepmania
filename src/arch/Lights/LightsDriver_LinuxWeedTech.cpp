@@ -1,15 +1,21 @@
 #include "global.h"
 #include <stdio.h>
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
+
 #include <termios.h>
 #include <errno.h>
 #include "LightsDriver_LinuxWeedTech.h"
 #include "RageLog.h"
 
-REGISTER_SOUND_DRIVER_CLASS(LinuxWeedTech);
+REGISTER_LIGHTS_DRIVER_CLASS(LinuxWeedTech);
 
 // Begin serial driver
 static int fd = -1;

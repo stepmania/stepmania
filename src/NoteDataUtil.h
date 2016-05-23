@@ -74,25 +74,25 @@ namespace NoteDataUtil
 	 * @param tn the TapNote Type to remove.
 	 * @param iStartIndex the starting point for transforming.
 	 * @param iEndIndex the ending point for transforming. */
-	void RemoveSpecificTapNotes( NoteData &inout, TapNoteType tn, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveSpecificTapNotes(NoteData &inout, TapNoteType tn, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW);
 	/**
 	 * @brief Remove all of the mines from the chart.
 	 * @param inout the Notedata to be transformed.
 	 * @param iStartIndex the starting point for transforming.
 	 * @param iEndIndex the ending point for transforming. */
-	void RemoveMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveMines(NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW);
 	/**
 	 * @brief Remove all of the lifts from the chart.
 	 * @param inout the Notedata to be transformed.
 	 * @param iStartIndex the starting point for transforming.
 	 * @param iEndIndex the ending point for transforming. */
-	void RemoveLifts( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveLifts(NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW);
 	/**
 	 * @brief Remove all of the fakes from the chart.
 	 * @param inout the Notedata to be transformed.
 	 * @param iStartIndex the starting point for transforming.
 	 * @param iEndIndex the ending point for transforming. */
-	void RemoveFakes( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveFakes(NoteData &inout, TimingData const& timing_data, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW);
 	void RemoveStretch( NoteData &inout, StepsType st, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveAllButOneTap( NoteData &inout, int row );
 	void RemoveAllButPlayer( NoteData &inout, PlayerNumber pn );
@@ -163,8 +163,10 @@ namespace NoteDataUtil
 	// True if no notes in row that aren't true in the mask
 	bool RowPassesValidMask( NoteData &inout, int row, const bool bValidMask[] );
 
-	void TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong );
-	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, 
+	void TransformNoteData(NoteData &nd, TimingData const& timing_data,
+		const AttackArray &aa, StepsType st, Song* pSong);
+	void TransformNoteData(NoteData &nd, TimingData const& timing_data,
+		const PlayerOptions &po, StepsType st,
 			       int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void AddTapAttacks( NoteData &nd, Song* pSong );
 
@@ -182,8 +184,6 @@ namespace NoteDataUtil
 
 	bool GetNextEditorPosition( const NoteData& in, int &rowInOut );
 	bool GetPrevEditorPosition( const NoteData& in, int &rowInOut );
-
-	void SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut );
 	
 	/** @brief Count the number of hold ticks that will fire, assuming that tickholds are on.
 	  * @param td The TimingData from the relevant Steps. */

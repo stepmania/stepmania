@@ -331,6 +331,7 @@ void GameState::Reset()
 
 	m_SongOptions.Init();
 
+	m_paused= false;
 	ResetMusicStatistics();
 	ResetStageStatistics();
 	AdjustSync::ResetOriginalSyncData();
@@ -1187,7 +1188,6 @@ void GameState::ResetMusicStatistics()
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_pPlayerState[p]->ClearHopoState();
 		m_pPlayerState[p]->m_Position.Reset();
 	}
 }
@@ -1251,7 +1251,7 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	 * driver, like so: 13.120953,13.130975,13.130975,13.130975,13.140998,...
 	 * This causes visual stuttering of the arrows. To compensate, keep a
 	 * RageTimer since the last change. */
-	if (fPositionSeconds == m_LastPositionSeconds)
+	if(fPositionSeconds == m_LastPositionSeconds && !m_paused)
 		fPositionSeconds += m_LastPositionTimer.Ago();
 	else
 	{
@@ -2369,15 +2369,18 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 	const vector<Difficulty> &v = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
 
 	Difficulty d = GetClosestShownDifficulty(pn);
-	while( 1 )
+	for(;;)
 	{
 		d = enum_add2( d, dir );
 		if( d < 0 || d >= NUM_Difficulty )
+		{
 			return false;
+		}
 		if( find(v.begin(), v.end(), d) != v.end() )
+		{
 			break; // found
+		}
 	}
-
 	m_PreferredDifficulty[pn].Set( d );
 	return true;
 }
@@ -2424,17 +2427,22 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 	const vector<CourseDifficulty> &v = CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue();
 
 	CourseDifficulty cd = m_PreferredCourseDifficulty[pn];
-	while( 1 )
+	for(;;)
 	{
 		cd = enum_add2( cd, dir );
 		if( cd < 0 || cd >= NUM_Difficulty )
+		{
 			return false;
+		}
 		if( find(v.begin(),v.end(),cd) == v.end() )
+		{
 			continue; /* not available */
+		}
 		if( !pCourse || pCourse->GetTrail( GetCurrentStyle(pn)->m_StepsType, cd ) )
+		{
 			break;
+		}
 	}
-
 	return ChangePreferredCourseDifficulty( pn, cd );
 }
 

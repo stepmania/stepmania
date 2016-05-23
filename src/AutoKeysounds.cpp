@@ -52,7 +52,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 	for( int t = 0; t < iNumTracks; t++ )
 	{
 		int iRow = -1;
-		while(1)
+		for(;;)
 		{
 			/* Find the next row that either player has a note on. */
 			int iNextRow = INT_MAX;

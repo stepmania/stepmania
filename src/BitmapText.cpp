@@ -49,6 +49,7 @@ BitmapText::BitmapText()
 	m_bJitter = false;
 	m_fDistortion= 0.0f;
 	m_bUsingDistortion= false;
+	m_mult_attrs_with_diffuse= false;
 
 	m_iWrapWidthPixels = -1;
 	m_fMaxWidth = 0;
@@ -86,6 +87,7 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 	CPY( m_bJitter );
 	CPY( m_fDistortion );
 	CPY( m_bUsingDistortion );
+	CPY( m_mult_attrs_with_diffuse );
 	CPY( m_iVertSpacing );
 	CPY( m_MaxDimensionUsesZoom );
 	CPY( m_aVertices );
@@ -573,6 +575,17 @@ void BitmapText::UnSetDistortion()
 	BuildChars();
 }
 
+void BitmapText::set_mult_attrs_with_diffuse(bool m)
+{
+	m_mult_attrs_with_diffuse= m;
+	BuildChars();
+}
+
+bool BitmapText::get_mult_attrs_with_diffuse()
+{
+	return m_mult_attrs_with_diffuse;
+}
+
 void BitmapText::UpdateBaseZoom()
 {
 	// don't divide by 0
@@ -724,22 +737,21 @@ void BitmapText::DrawPrimitives()
 				else
 					iEnd = i + attr.length*4;
 				iEnd = min( iEnd, m_aVertices.size() );
+				vector<RageColor> temp_attr_diffuse(NUM_DIFFUSE_COLORS, m_internalDiffuse);
+				for(size_t c= 0; c < NUM_DIFFUSE_COLORS; ++c)
+				{
+					temp_attr_diffuse[c]*= attr.diffuse[c];
+					if(m_mult_attrs_with_diffuse)
+					{
+						temp_attr_diffuse[c]*= m_pTempState->diffuse[c];
+					}
+				}
 				for( ; i < iEnd; i += 4 )
 				{
-					if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
-					{
-						m_aVertices[i+0].c = attr.diffuse[0] * m_internalDiffuse;
-						m_aVertices[i+1].c = attr.diffuse[2] * m_internalDiffuse;
-						m_aVertices[i+2].c = attr.diffuse[3] * m_internalDiffuse;
-						m_aVertices[i+3].c = attr.diffuse[1] * m_internalDiffuse;
-					}
-					else
-					{
-						m_aVertices[i+0].c = attr.diffuse[0];	// top left
-						m_aVertices[i+1].c = attr.diffuse[2];	// bottom left
-						m_aVertices[i+2].c = attr.diffuse[3];	// bottom right
-						m_aVertices[i+3].c = attr.diffuse[1];	// top right
-					}
+					m_aVertices[i+0].c = temp_attr_diffuse[0];	// top left
+					m_aVertices[i+1].c = temp_attr_diffuse[2];	// bottom left
+					m_aVertices[i+2].c = temp_attr_diffuse[3];	// bottom right
+					m_aVertices[i+3].c = temp_attr_diffuse[1];	// top right
 				}
 			}
 		}
@@ -965,6 +977,7 @@ public:
 	static int jitter( T* p, lua_State *L )			{ p->SetJitter( BArg(1) ); COMMON_RETURN_SELF; }
 	static int distort( T* p, lua_State *L) { p->SetDistortion( FArg(1) ); COMMON_RETURN_SELF; }
 	static int undistort( T* p, lua_State *L) { p->UnSetDistortion(); COMMON_RETURN_SELF; }
+	GETTER_SETTER_BOOL_METHOD(mult_attrs_with_diffuse);
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 	static int AddAttribute( T* p, lua_State *L )
 	{
@@ -993,6 +1006,7 @@ public:
 		ADD_METHOD( jitter );
 		ADD_METHOD( distort );
 		ADD_METHOD( undistort );
+		ADD_GET_SET_METHODS(mult_attrs_with_diffuse);
 		ADD_METHOD( GetText );
 		ADD_METHOD( AddAttribute );
 		ADD_METHOD( ClearAttributes );

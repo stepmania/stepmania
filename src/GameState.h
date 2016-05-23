@@ -269,6 +269,8 @@ public:
 	static const float MUSIC_SECONDS_INVALID;
 
 	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.
+	void SetPaused(bool p) { m_paused= p; }
+	bool GetPaused() { return m_paused; }
 	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 	float GetSongPercent( float beat ) const;
 
@@ -426,6 +428,7 @@ private:
 	// Timing position corrections
 	RageTimer m_LastPositionTimer;
 	float m_LastPositionSeconds;
+	bool m_paused;
 
 	GameState(const GameState& rhs);
 	GameState& operator=(const GameState& rhs);

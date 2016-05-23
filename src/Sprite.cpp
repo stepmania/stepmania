@@ -36,6 +36,7 @@ Sprite::Sprite()
 
 	m_fTexCoordVelocityX = 0;
 	m_fTexCoordVelocityY = 0;
+	m_use_effect_clock_for_texcoords= false;
 }
 
 // NoteSkinManager needs a sprite with a texture set to return in cases where
@@ -74,6 +75,7 @@ Sprite::Sprite( const Sprite &cpy ):
 	CPY( m_fRememberedClipHeight );
 	CPY( m_fTexCoordVelocityX );
 	CPY( m_fTexCoordVelocityY );
+	CPY(m_use_effect_clock_for_texcoords);
 #undef CPY
 
 	if( cpy.m_pTexture != NULL )
@@ -375,6 +377,10 @@ void Sprite::UpdateAnimationState()
 			// increment frame and reset the counter
 			m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
 			m_iCurState = (m_iCurState+1) % m_States.size();
+			if(m_iCurState == 0)
+			{
+				PlayCommand("AnimationFinished");
+			}
 		}
 	}
 }
@@ -422,18 +428,23 @@ void Sprite::Update( float fDelta )
 	// update scrolling
 	if( m_fTexCoordVelocityX != 0 || m_fTexCoordVelocityY != 0 )
 	{
+		float coord_delta= fDelta;
+		if(m_use_effect_clock_for_texcoords)
+		{
+			coord_delta= fTimePassed;
+		}
 		float fTexCoords[8];
 		Sprite::GetActiveTextureCoords( fTexCoords );
  
 		// top left, bottom left, bottom right, top right
-		fTexCoords[0] += fDelta*m_fTexCoordVelocityX;
-		fTexCoords[1] += fDelta*m_fTexCoordVelocityY; 
-		fTexCoords[2] += fDelta*m_fTexCoordVelocityX;
-		fTexCoords[3] += fDelta*m_fTexCoordVelocityY;
-		fTexCoords[4] += fDelta*m_fTexCoordVelocityX;
-		fTexCoords[5] += fDelta*m_fTexCoordVelocityY;
-		fTexCoords[6] += fDelta*m_fTexCoordVelocityX;
-		fTexCoords[7] += fDelta*m_fTexCoordVelocityY;
+		fTexCoords[0] += coord_delta * m_fTexCoordVelocityX;
+		fTexCoords[1] += coord_delta * m_fTexCoordVelocityY;
+		fTexCoords[2] += coord_delta * m_fTexCoordVelocityX;
+		fTexCoords[3] += coord_delta * m_fTexCoordVelocityY;
+		fTexCoords[4] += coord_delta * m_fTexCoordVelocityX;
+		fTexCoords[5] += coord_delta * m_fTexCoordVelocityY;
+		fTexCoords[6] += coord_delta * m_fTexCoordVelocityX;
+		fTexCoords[7] += coord_delta * m_fTexCoordVelocityY;
 
 		/* When wrapping, avoid gradual loss of precision and sending
 		 * unreasonably large texture coordinates to the renderer by pushing
@@ -1106,6 +1117,16 @@ public:
 	}
 	static int StopUsingCustomPosCoords( T* p, lua_State *L ) { p->StopUsingCustomPosCoords(); COMMON_RETURN_SELF; }
 	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); COMMON_RETURN_SELF; }
+	static int get_use_effect_clock_for_texcoords(T* p, lua_State* L)
+	{
+		lua_pushboolean(L, p->m_use_effect_clock_for_texcoords);
+		return 1;
+	}
+	static int set_use_effect_clock_for_texcoords(T* p, lua_State* L)
+	{
+		p->m_use_effect_clock_for_texcoords= BArg(1);
+		COMMON_RETURN_SELF;
+	}
 	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); COMMON_RETURN_SELF; }
 	static int CropTo( T* p, lua_State *L )		{ p->CropTo( FArg(1),FArg(2) ); COMMON_RETURN_SELF; }
 	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); COMMON_RETURN_SELF; }
@@ -1236,6 +1257,8 @@ public:
 		ADD_METHOD( SetCustomPosCoords );
 		ADD_METHOD( StopUsingCustomPosCoords );
 		ADD_METHOD( texcoordvelocity );
+		ADD_METHOD(get_use_effect_clock_for_texcoords);
+		ADD_METHOD(set_use_effect_clock_for_texcoords);
 		ADD_METHOD( scaletoclipped );
 		ADD_METHOD( CropTo );
 		ADD_METHOD( stretchtexcoords );

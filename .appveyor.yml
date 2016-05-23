@@ -1,0 +1,65 @@
+version: 5.0.10.{build}.{branch}
+environment:
+  access_token:
+    secure: vsDaeFdGCIGlIxWSEdsDomYtr5mKS5IPGHc4NwuDZ5D6mCna0STrDvMZ6IP6mOBK
+pull_requests:
+  do_not_increment_build_number: true
+skip_tags: true
+os: Visual Studio 2015
+configuration: Release
+shallow_clone: false
+clone_depth: 1
+clone_folder: C:\Repos\wolfmania
+init:
+- cmd: >-
+    git config --global credential.helper store
+
+    set GITHUB_API_URL=https://api.github.com/repos/%APPVEYOR_REPO_NAME%/statuses/%APPVEYOR_REPO_COMMIT%
+
+    set GITHUB_API_PENDING="{"""state""": """pending""", """target_url""": """https://ci.appveyor.com/project/%APPVEYOR_REPO_NAME%/build/%APPVEYOR_BUILD_VERSION%""", """description""": """Starting the appveyor build.""", """context""": """continuous-integration/appveyor"""}"
+
+    set APPVEYOR_BUILD_URL=https://ci.appveyor.com/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
+
+    set SM_COMMIT_SHORT=%APPVEYOR_REPO_COMMIT:~0,7%
+
+    set SM_SETUP_EXE_NAME=StepMania-5.0-git-%SM_COMMIT_SHORT%-win32.exe
+
+    curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_PENDING% %GITHUB_API_URL%
+
+install:
+- cmd: >-
+    choco install cmake
+
+    choco install nsis -version 2.46.0.20150406
+before_build:
+- cmd: >-
+    cd Build
+
+    cmake -G "Visual Studio 14 2015" -T "v140_xp" -DWITH_IRC_POST_HOOK=ON ..
+build:
+  project: C:\Repos\wolfmania\Build\StepMania.sln
+  verbosity: normal
+after_build:
+- cmd: >-
+    msbuild "C:\Repos\wolfmania\Build\PACKAGE.vcxproj" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+artifacts:
+  - path: Build/*.exe
+    type: exe
+on_success:
+- cmd: >-
+    set GITHUB_API_SUCCESS="{"""state""": """success""", """target_url""": """%APPVEYOR_BUILD_URL%""", """description""": """Successfully compiled in appveyor.""", """context""": """continuous-integration/appveyor"""}"
+
+    curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_SUCCESS% %GITHUB_API_URL%
+
+    echo "Posting to IRC now..."
+
+    C:\Repos\wolfmania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%"  "%SM_COMMIT_SHORT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "%APPVEYOR_BUILD_URL%" "success"
+on_failure:
+- cmd: >-
+    set GITHUB_API_FAILURE="{"""state""": """failure""", """target_url""": """%APPVEYOR_BUILD_URL%""", """description""": """Build failure on appveyor.""", """context""": """continuous-integration/appveyor"""}"
+
+    curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_FAILURE%  %GITHUB_API_URL%
+
+    echo "Posting to IRC now..."
+
+    C:\Repos\wolfmania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%" "%SM_COMMIT_SHORT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "%APPVEYOR_BUILD_URL%" "failure"

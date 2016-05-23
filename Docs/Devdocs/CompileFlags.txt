@@ -7,10 +7,6 @@ stepmania:
 WITHOUT_NETWORKING
 Disables all networking stuff (e.g. StepMania Online).
 --------------------------------------------------------------------------------
-HAVE_VERSION_INFO
-If this isn't defined, passing in --version will only show the name of the
-current StepMania version, no build number or date.
-Please define HAVE_VERSION_INFO if you can when building StepMania.
 
 ================================================================================
 sm-ssc:

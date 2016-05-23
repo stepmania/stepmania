@@ -106,7 +106,9 @@ local log_display_mt= {
 			self.line_width= params.LineWidth or SCREEN_WIDTH
 			self.text_zoom= params.TextZoom or .5
 			self.text_color= params.TextColor or color("#93a1a1")
-			self.max_lines= params.MaxLines or SCREEN_HEIGHT / self.line_height
+			local lines_on_screen= params.MaxLines or SCREEN_HEIGHT / self.line_height
+			self.max_lines= math.floor(lines_on_screen)
+			self.add_to_height= (lines_on_screen - self.max_lines) * self.line_height
 			self.max_log= params.MaxLogLen or self.max_lines
 			self.indent= params.Indent or 8
 			self.times= params.Times
@@ -120,7 +122,7 @@ local log_display_mt= {
 					subself:visible(true)
 					subself:linear(params.Times.hide)
 					local cover= math.min(self.line_height * (lines+.5), SCREEN_HEIGHT)
-					subself:y(-SCREEN_HEIGHT + cover)
+					subself:y(-SCREEN_HEIGHT + cover + self.add_to_height)
 				end
 
 			self.text_actors= {}
@@ -144,8 +146,9 @@ local log_display_mt= {
 					end
 				end,
 				[name_mess]= function(subself, mess)
-					if PREFSMAN:GetPreference("IgnoredDialogs") ~= "" then
-						self:visible(false)
+					if not PREFSMAN:GetPreference("ShowThemeErrors")
+					and self.name == "ScriptError" then
+						subself:visible(false)
 						return
 					end
 					if not mess.message then return end

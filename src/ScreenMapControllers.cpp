@@ -227,7 +227,21 @@ void ScreenMapControllers::BeginScreen()
 	m_AutoDismissWarningSecs= THEME->GetMetricF(m_sName, "AutoDismissWarningSecs");
 	m_AutoDismissNoSetListPromptSecs= 0.0f;
 	m_AutoDismissSanitySecs= 0.0f;
-	m_Warning->PlayCommand("TweenOn");
+	if(m_AutoDismissWarningSecs > 0.25)
+	{
+		m_Warning->PlayCommand("TweenOn");
+	}
+	else
+	{
+		if(m_Warning->HasCommand("NeverShow"))
+		{
+			m_Warning->PlayCommand("NeverShow");
+		}
+		else
+		{
+			m_Warning->SetHibernate(16777216.0f);
+		}
+	}
 }
 
 

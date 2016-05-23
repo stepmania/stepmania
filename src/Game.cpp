@@ -17,17 +17,17 @@ TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 
 static const Game::PerButtonInfo g_CommonButtonInfo[] =
 {
-	{ GameButtonType_INVALID }, // GAME_BUTTON_MENULEFT
-	{ GameButtonType_INVALID }, // GAME_BUTTON_MENURIGHT
-	{ GameButtonType_INVALID }, // GAME_BUTTON_MENUUP
-	{ GameButtonType_INVALID }, // GAME_BUTTON_MENUDOWN
-	{ GameButtonType_INVALID }, // GAME_BUTTON_START
-	{ GameButtonType_INVALID }, // GAME_BUTTON_SELECT
-	{ GameButtonType_INVALID }, // GAME_BUTTON_BACK
-	{ GameButtonType_INVALID }, // GAME_BUTTON_COIN
-	{ GameButtonType_INVALID }, // GAME_BUTTON_OPERATOR
-	{ GameButtonType_INVALID }, // GAME_BUTTON_EFFECT_UP
-	{ GameButtonType_INVALID }, // GAME_BUTTON_EFFECT_DOWN
+	{ GameButtonType_Menu }, // GAME_BUTTON_MENULEFT
+	{ GameButtonType_Menu }, // GAME_BUTTON_MENURIGHT
+	{ GameButtonType_Menu }, // GAME_BUTTON_MENUUP
+	{ GameButtonType_Menu }, // GAME_BUTTON_MENUDOWN
+	{ GameButtonType_Menu }, // GAME_BUTTON_START
+	{ GameButtonType_Menu }, // GAME_BUTTON_SELECT
+	{ GameButtonType_Menu }, // GAME_BUTTON_BACK
+	{ GameButtonType_Menu }, // GAME_BUTTON_COIN
+	{ GameButtonType_Menu }, // GAME_BUTTON_OPERATOR
+	{ GameButtonType_Menu }, // GAME_BUTTON_EFFECT_UP
+	{ GameButtonType_Menu }, // GAME_BUTTON_EFFECT_DOWN
 };
 
 const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const

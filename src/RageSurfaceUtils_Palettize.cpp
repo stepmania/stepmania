@@ -120,22 +120,27 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 		 * [GRR POSSIBLE BUG: what about 32^4 ?] */
 		acolorhist_item *achv;
 		int colors;
-		while(1)
+		for(;;)
 		{
 			achv = pam_computeacolorhist( pImg, MAXCOLORS, &colors );
 			if( achv != NULL )
+			{
 				break;
+			}
 			pixval newmaxval = maxval / 2;
 
 			int table[256];
 			for( int c = 0; c <= maxval; ++c )
+			{
 				table[c] = ( (uint8_t) c * newmaxval + maxval/2 ) / maxval;
-
+			}
 			for( int row = 0; row < pImg->h; ++row )
 			{
 				apixel *pP = (apixel *) (pImg->pixels+row*pImg->pitch);
 				for( int col = 0; col < pImg->w; ++col, ++pP )
+				{
 					PAM_DEPTH( *pP );
+				}
 			}
 			maxval = newmaxval;
 		}

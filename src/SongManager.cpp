@@ -61,6 +61,8 @@ static Preference<bool> g_bHideIncompleteCourses( "HideIncompleteCourses", false
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor%i", (int) i+1 ); }
 
+static const float next_loading_window_update= 0.02f;
+
 SongManager::SongManager()
 {
 	// Register with Lua.
@@ -263,6 +265,12 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 static LocalizedString LOADING_SONGS ( "SongManager", "Loading songs..." );
 void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 {
+	// Compositors and other stuff can impose some overhead on updating the
+	// loading window, which slows down startup time for some people.
+	// loading_window_last_update_time provides a timer so the loading window
+	// isn't updated after every song and course. -Kyz
+	RageTimer loading_window_last_update_time;
+	loading_window_last_update_time.Touch();
 	// Make sure sDir has a trailing slash.
 	if( sDir.Right(1) != "/" )
 		sDir += "/";
@@ -288,8 +296,9 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
 		RString sGroupDirName = *s;
-		if(ld)
+		if(ld && loading_window_last_update_time.Ago() > next_loading_window_update)
 		{
+			loading_window_last_update_time.Touch();
 			ld->SetProgress(sanity_index);
 			ld->SetText(SANITY_CHECKING_GROUPS.GetValue() + ssprintf("\n%s",
 					Basename(sGroupDirName).c_str()));
@@ -328,18 +337,19 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		int loaded = 0;
 
 		SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupDirName];
-
+		RString group_base_name= Basename(sGroupDirName);
 		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
 		{
 			RString sSongDirName = arraySongDirs[j];
 
 			// this is a song directory. Load a new song.
-			if( ld )
+			if(ld && loading_window_last_update_time.Ago() > next_loading_window_update)
 			{
+				loading_window_last_update_time.Touch();
 				ld->SetProgress(songIndex);
 				ld->SetText( LOADING_SONGS.GetValue() +
 					ssprintf("\n%s\n%s",
-						Basename(sGroupDirName).c_str(),
+						group_base_name.c_str(),
 						Basename(sSongDirName).c_str()
 					)
 				);
@@ -842,6 +852,8 @@ static LocalizedString LOADING_COURSES ( "SongManager", "Loading courses..." );
 void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
 	LOG->Trace( "Loading courses." );
+	RageTimer loading_window_last_update_time;
+	loading_window_last_update_time.Touch();
 
 	vector<RString> vsCourseDirs;
 	vsCourseDirs.push_back( SpecialFiles::COURSES_DIR );
@@ -874,13 +886,15 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 			ld->SetTotalWork( vsCoursePaths.size() );
 		}
 
+		RString base_course_group= Basename(*sCourseGroup);
 		FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
 		{
-			if( ld )
+			if(ld && loading_window_last_update_time.Ago() > next_loading_window_update)
 			{
+				loading_window_last_update_time.Touch();
 				ld->SetProgress(courseIndex);
 				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
-					Basename(*sCourseGroup).c_str(),
+					base_course_group.c_str(),
 					Basename(*sCoursePath).c_str()));
 			}
 

@@ -268,7 +268,13 @@ protected:
 	/** @brief Display the TimingData menu for editing song and step timing. */
 	void DisplayTimingMenu();
 
-	bool m_timing_is_being_copied; // Instead of being shifted.
+	enum TimingChangeMenuPurpose
+	{
+		menu_is_for_copying,
+		menu_is_for_shifting,
+		menu_is_for_clearing
+	};
+	TimingChangeMenuPurpose m_timing_change_menu_purpose;
 	int m_timing_rows_being_shitted; // How far the timing is being shitted.
 	void DisplayTimingChangeMenu();
 
@@ -610,6 +616,7 @@ public:
 		shift_timing_in_region_down,
 		shift_timing_in_region_up,
 		copy_timing_in_region,
+		clear_timing_in_region,
 		paste_timing_from_clip,
 		copy_full_timing,
 		paste_full_timing,

@@ -473,7 +473,7 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 	}
 	FOREACH(PlayerNumber, vpns, pn)
 	{
-		if(on_unplayable[*pn])
+		if(on_unplayable[*pn] && first_playable != -1)
 		{
 			ChangeSelection(*pn, first_playable < m_iChoice[*pn] ? MenuDir_Left :
 				MenuDir_Right, first_playable);

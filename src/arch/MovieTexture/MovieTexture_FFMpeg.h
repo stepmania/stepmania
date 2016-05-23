@@ -63,7 +63,7 @@ private:
 	int DecodePacket( float fTargetTime );
 
 	avcodec::AVStream *m_pStream;
-	avcodec::AVFrame m_Frame;
+	avcodec::AVFrame *m_Frame;
 	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
 	avcodec::SwsContext *m_swsctx;
 

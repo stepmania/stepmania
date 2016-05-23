@@ -281,10 +281,13 @@ public:
 	virtual void Update( float fDeltaTime );		// this can short circuit UpdateInternal
 	virtual void UpdateInternal( float fDeltaTime );	// override this
 	void UpdateTweening( float fDeltaTime );
+	void CalcPercentThroughTween();
 	// These next functions should all be overridden by a derived class that has its own tweening states to handle.
 	virtual void SetCurrentTweenStart() {}
 	virtual void EraseHeadTween() {}
 	virtual void UpdatePercentThroughTween( float PercentThroughTween ) {}
+	bool get_tween_uses_effect_delta() { return m_tween_uses_effect_delta; }
+	void set_tween_uses_effect_delta(bool t) { m_tween_uses_effect_delta= t; }
 
 	/**
 	 * @brief Retrieve the Actor's name.
@@ -700,6 +703,7 @@ protected:
 	// -Kyz
 	float m_effect_period;
 	EffectClock m_EffectClock;
+	bool m_tween_uses_effect_delta;
 
 	/* This can be used in lieu of the fDeltaTime parameter to Update() to
 	 * follow the effect clock.  Actor::Update must be called first. */

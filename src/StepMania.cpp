@@ -69,10 +69,7 @@
 #include "SpecialFiles.h"
 #include "Profile.h"
 #include "ActorUtil.h"
-
-#ifdef HAVE_VERSION_INFO
 #include "ver.h"
-#endif
 
 #if defined(WIN32)
 #include <windows.h>
@@ -176,7 +173,7 @@ bool StepMania::GetHighResolutionTextures()
 	case HighResolutionTextures_Auto:
 		{
 			int height = PREFSMAN->m_iDisplayHeight;
-			return height > 480;
+			return height > THEME->GetMetricI("Common", "ScreenHeight");
 		}
 	case HighResolutionTextures_ForceOn:
 		return true;
@@ -919,14 +916,11 @@ static void MountTreeOfZips( const RString &dir )
 	}
 }
 
-
 static void WriteLogHeader()
 {
 	LOG->Info("%s%s", PRODUCT_FAMILY, product_version);
 
-#if defined(HAVE_VERSION_INFO)
-	LOG->Info( "Compiled %s @ %s (build %lu)", version_date, version_time, version_num );
-#endif
+	LOG->Info( "Compiled %s @ %s (build %s)", version_date, version_time, ::sm_version_git_hash);
 
 	time_t cur_time;
 	time(&cur_time);
@@ -977,6 +971,7 @@ int sm_main(int argc, char* argv[])
 	HOOKS->Init();
 
 	LUA		= new LuaManager;
+	HOOKS->RegisterWithLua();
 
 	// Initialize the file extension type lists so everything can ask ActorUtil
 	// what the type of a file is.
@@ -1080,6 +1075,7 @@ int sm_main(int argc, char* argv[])
 	CommandLineActions::Handle(pLoadingWindow);
 
 	// Aldo: Check for updates here!
+#if 0
 	if( /* PREFSMAN->m_bUpdateCheckEnable (do this later) */ 0 )
 	{
 		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
@@ -1115,7 +1111,7 @@ int sm_main(int argc, char* argv[])
 			LOG->Info( "Unable to check for updates. The server might be offline." );
 		}
 	}
-
+#endif
 	if( GetCommandlineArgument("dopefish") )
 		GAMESTATE->m_bDopefish = true;
 

@@ -211,7 +211,13 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 		fDeltaLife *= 1 + (float)m_iProgressiveLifebar/8 * m_iMissCombo;
 		// do this after; only successive W5/miss will increase the amount of life lost.
 		m_iMissCombo++;
-		m_iComboToRegainLife = PREFSMAN->m_iRegenComboAfterMiss;
+		/* Increase by m_iRegenComboAfterMiss; never push it beyond m_iMaxRegenComboAfterMiss
+		 * but don't reduce it if it's already past. */
+		const int NewComboToRegainLife = min(
+			 (int)PREFSMAN->m_iMaxRegenComboAfterMiss,
+			 m_iComboToRegainLife + PREFSMAN->m_iRegenComboAfterMiss );
+
+		m_iComboToRegainLife = max( m_iComboToRegainLife, NewComboToRegainLife );
 	}
 
 	// If we've already failed, there's no point in letting them fill up the bar again.
@@ -239,6 +245,13 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	}
 
 	m_fLifePercentage += fDeltaLife;
+	CLAMP( m_fLifePercentage, 0, LIFE_MULTIPLIER );
+	AfterLifeChanged();
+}
+
+void LifeMeterBar::SetLife(float value)
+{
+	m_fLifePercentage= value;
 	CLAMP( m_fLifePercentage, 0, LIFE_MULTIPLIER );
 	AfterLifeChanged();
 }

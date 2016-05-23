@@ -912,6 +912,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 						out.SetSMNoteData(matcher);
 						out.TidyUpData();
 						return true;
+					default:
 						break;
 				}
 			}
@@ -927,6 +928,8 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 					case LNDID_notedata:
 						tryingSteps = true;
 						break;
+					default:
+						break;
 				}
 			}
 		}
@@ -940,7 +943,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 
 bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
-	LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
+	//LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
 
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, true ) )

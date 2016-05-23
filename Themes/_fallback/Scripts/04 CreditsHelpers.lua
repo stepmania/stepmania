@@ -49,6 +49,7 @@ local stepmania_credits= {
 	},
 	{
 		name= "Translators",
+		{type= "subsection", name= "Pre-5.0.5"},
 		"John Reactor (Polish)",
 		"DHalens (Spanish)",
 		"@Niler_jp (Japanese)",
@@ -58,6 +59,11 @@ local stepmania_credits= {
 		"Grégory Doche (French)",
 		"Jarosław Pietras (Polish)",
 		"Alejandro G. de la Muñoza (Spanish)",
+		"Raymund Zacharias (German)",
+		{type= "subsection", name= "5.0.10 update"},
+		"Milène Gauthier-Sabourin (Arvaneth) (French)",
+		{type= "subsection", name= "5.0.11 update"},
+		"Joel Robert Justiawan (JOELwindows7) (Indonesian)",
 	},
 	{
 		name= "Other Contributors",
@@ -84,6 +90,7 @@ local stepmania_credits= {
 		"NitroX72", -- pump/frame noteskin
 		"nixtrix", -- various BMS features and other fixes
 		"Petriform", -- default theme music
+		"Prcuvu", -- various VS2015 related fixes
 		"psmay", -- SextetStream driver and related things
 		"桜為小鳩/Sakurana-Kobato (@sakuraponila)", -- custom scoring fixes
 		"Samuel Kim (1a2a3a2a1a)", -- various beat mode fixes
@@ -114,6 +121,7 @@ local stepmania_credits= {
 		"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits -shakesoda
 		"#KBO",
 		"Celestia Radio", -- LOVE AND TOLERANCE
+		"Perkedel Corporation", -- Joel's company.
 		"You showed us... your ultimate dance",
 	},
 }

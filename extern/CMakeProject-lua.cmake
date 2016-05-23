@@ -25,7 +25,6 @@ set(LUA_SRC
   "lua-5.1/src/ltable.c"
   "lua-5.1/src/ltablib.c"
   "lua-5.1/src/ltm.c"
-  "lua-5.1/src/lua.c"
   "lua-5.1/src/lundump.c"
   "lua-5.1/src/lvm.c"
   "lua-5.1/src/lzio.c"
@@ -59,7 +58,7 @@ set(LUA_HPP
 source_group("" FILES ${LUA_SRC})
 source_group("" FILES ${LUA_HPP})
 
-add_library("lua-5.1" ${LUA_SRC} ${LUA_HPP})
+add_library("lua-5.1" STATIC ${LUA_SRC} ${LUA_HPP})
 
 set_property(TARGET "lua-5.1" PROPERTY FOLDER "External Libraries")
 

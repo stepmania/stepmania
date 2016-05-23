@@ -564,6 +564,7 @@ static LocalizedString SCREEN_ON		( "ScreenDebugOverlay", "Send On To Screen" );
 static LocalizedString SCREEN_OFF		( "ScreenDebugOverlay", "Send Off To Screen" );
 static LocalizedString RELOAD_OVERLAY_SCREENS( "ScreenDebugOverlay", "Reload Overlay Screens" );
 static LocalizedString TOGGLE_ERRORS( "ScreenDebugOverlay", "Toggle Errors" );
+static LocalizedString SHOW_RECENT_ERRORS("ScreenDebugOverlay", "Show Recent Errors");
 static LocalizedString CLEAR_ERRORS( "ScreenDebugOverlay", "Clear Errors" );
 static LocalizedString CONVERT_XML( "ScreenDebugOverlay", "Convert XML" );
 static LocalizedString RELOAD_THEME_AND_TEXTURES( "ScreenDebugOverlay", "Reload Theme and Textures" );
@@ -1093,6 +1094,19 @@ class DebugLineToggleErrors : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return TOGGLE_ERRORS.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
+	virtual bool IsEnabled() { return PREFSMAN->m_show_theme_errors; }
+	virtual RString GetPageName() const { return "Theme"; }
+	virtual void DoAndLog( RString &sMessageOut )
+	{
+		PREFSMAN->m_show_theme_errors.Set(!PREFSMAN->m_show_theme_errors);
+		IDebugLine::DoAndLog(sMessageOut);
+	}
+};
+
+class DebugLineShowRecentErrors : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return SHOW_RECENT_ERRORS.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
@@ -1318,6 +1332,7 @@ DECLARE_ONE( DebugLineCurrentScreenOff );
 DECLARE_ONE( DebugLineReloadTheme );
 DECLARE_ONE( DebugLineReloadOverlayScreens );
 DECLARE_ONE( DebugLineToggleErrors );
+DECLARE_ONE( DebugLineShowRecentErrors );
 DECLARE_ONE( DebugLineClearErrors );
 DECLARE_ONE( DebugLineConvertXML );
 DECLARE_ONE( DebugLineWriteProfiles );

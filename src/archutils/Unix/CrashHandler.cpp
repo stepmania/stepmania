@@ -3,10 +3,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstdarg>
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 #include <cerrno>
 #include <limits.h>
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
 #include <csignal>
 
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc, only */
@@ -27,17 +31,21 @@ static void safe_print( int fd, ... )
 	va_list ap;
 	va_start( ap, fd );
 
-	while( true )
+	for(;;)
 	{
 		const char *p = va_arg( ap, const char * );
 		if( p == NULL )
+		{
 			break;
+		}
 		size_t len = strlen( p );
 		while( len )
 		{
 			ssize_t result = write( fd, p, strlen(p) );
 			if( result == -1 )
+			{
 				_exit( 1 );
+			}
 			len -= result;
 			p += result;
 		}

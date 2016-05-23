@@ -183,7 +183,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
-			if( !stricmp(choices[i], sCurGameName) )
+			if( !strcasecmp(choices[i], sCurGameName) )
 				sel = i;
 	} else {
 		vector<const Game*> aGames;
@@ -218,12 +218,12 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = -1;
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !stricmp(vs[i], THEME->GetCurLanguage()) )
+			if( !strcasecmp(vs[i], THEME->GetCurLanguage()) )
 				sel = i;
 
 		// If the current language doesn't exist, we'll show BASE_LANGUAGE, so select that.
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !stricmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
+			if( !strcasecmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
 				sel = i;
 
 		if( sel == -1 )
@@ -248,12 +248,19 @@ static void ThemeChoices( vector<RString> &out )
 		*s = THEME->GetThemeDisplayName( *s );
 }
 
+static DisplayResolutions display_resolution_list;
+static void cache_display_resolution_list()
+{
+	if(display_resolution_list.empty())
+	{
+		DISPLAY->GetDisplayResolutions(display_resolution_list);
+	}
+}
+
 static void DisplayResolutionChoices( vector<RString> &out )
 {
-	DisplayResolutions d;
-	DISPLAY->GetDisplayResolutions( d );
-
-	FOREACHS_CONST( DisplayResolution, d, iter )
+	cache_display_resolution_list();
+	FOREACHS_CONST( DisplayResolution, display_resolution_list, iter )
 	{
 		RString s = ssprintf("%dx%d", iter->iWidth, iter->iHeight);
 		out.push_back( s );
@@ -272,7 +279,7 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 	{
 		sel = 0;
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
-			if( !stricmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
+			if( !strcasecmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
 				sel = i;
 	}
 	else
@@ -298,7 +305,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = 0;
 		for( unsigned i=1; i<choices.size(); i++ )
-			if( !stricmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
+			if( !strcasecmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
 				sel = i;
 	}
 	else
@@ -325,7 +332,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 		po.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = 0;
 		for( unsigned i=0; i < choices.size(); i++ )
-			if( !stricmp(choices[i], po.m_sNoteSkin) )
+			if( !strcasecmp(choices[i], po.m_sNoteSkin) )
 				sel = i;
 	}
 	else
@@ -394,7 +401,7 @@ static void BGBrightnessOrStatic( int &sel, bool ToSel, const ConfOption *pConfO
 
 static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 5,10,15,20 };
+	const int mapping[] = { 1,5,10,15,20 };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -574,18 +581,19 @@ inline res_t operator-(res_t lhs, res_t const &rhs)
 
 static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<res_t> v;
+	static vector<res_t> res_choices;
 
-	DisplayResolutions d;
-	DISPLAY->GetDisplayResolutions( d );
-
-	FOREACHS_CONST( DisplayResolution, d, iter )
+	if(res_choices.empty())
 	{
-		v.push_back( res_t(iter->iWidth, iter->iHeight) );
+		cache_display_resolution_list();
+		FOREACHS_CONST(DisplayResolution, display_resolution_list, iter)
+		{
+			res_choices.push_back(res_t(iter->iWidth, iter->iHeight));
+		}
 	}
 
 	res_t sel_res( PREFSMAN->m_iDisplayWidth, PREFSMAN->m_iDisplayHeight );
-	MoveMap( sel, sel_res, ToSel, &v[0], v.size() );
+	MoveMap( sel, sel_res, ToSel, &res_choices[0], res_choices.size());
 	if( !ToSel )
 	{
 		PREFSMAN->m_iDisplayWidth.Set( sel_res.w );
@@ -702,6 +710,11 @@ static void InitializeConfOptions()
 	if( !g_ConfOptions.empty() )
 		return;
 
+	// Clear the display_resolution_list so that we don't get problems from
+	// caching it.  If the DisplayResolution option row is on the screen, it'll
+	// recache the list. -Kyz
+	display_resolution_list.clear();
+
 	// There are a couple ways of getting the current preference column or turning
 	// a new choice in the interface into a new preference. The easiest is when
 	// the interface choices are an exact mapping to the values the preference
@@ -726,7 +739,6 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowInstructions",		MovePref<bool>,		"Skip","Show") );
 	ADD( ConfOption( "ShowCaution",			MovePref<bool>,		"Skip","Show") );
 	ADD( ConfOption( "DancePointsForOni",		MovePref<bool>,		"Percent","Dance Points") );
-	ADD( ConfOption( "ShowSelectGroup",		MovePref<bool>,		"All Music","Choose") );
 	ADD( ConfOption( "MusicWheelUsesSections",	MovePref<MusicWheelUsesSections>, "Never","Always","Title Only") );
 	ADD( ConfOption( "CourseSortOrder",		MovePref<CourseSortOrders>, "Num Songs","Average Feet","Total Feet","Ranking") );
 	ADD( ConfOption( "MoveRandomToEnd",		MovePref<bool>,		"No","Yes") );
@@ -764,7 +776,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowDanger",			MovePref<bool>,		"Hide","Show" ) );
 	ADD( ConfOption( "ShowDancingCharacters",	MovePref<ShowDancingCharacters>, "Default to Off","Default to Random","Select" ) );
 	ADD( ConfOption( "ShowBeginnerHelper",		MovePref<bool>,		"Off","On" ) );
-	ADD( ConfOption( "NumBackgrounds",		NumBackgrounds,		"|5","|10","|15","|20" ) );
+	ADD( ConfOption( "NumBackgrounds",		NumBackgrounds,		"|1","|5","|10","|15","|20" ) );
 
 	// Input options
 	ADD( ConfOption( "AutoMapOnJoyChange",		MovePref<bool>,		"Off","On (recommended)" ) );

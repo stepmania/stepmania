@@ -98,20 +98,9 @@ void WheelBase::BeginScreen()
 	m_WheelState = STATE_SELECTING;
 }
 
-void WheelBase::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
+void WheelBase::SetItemPosition(Actor &item, int item_index, float offset_from_middle)
 {
-	/* Don't supply and item index or num items. The number of items can be so
-	 * large that transforms that depend on such large numbers are likely to break. */
-	int iItemIndex = 0; // dummy
-	int iNumItems = 1; // dummy
-
-	Actor::TweenState ts = m_exprItemTransformFunction.GetTransformCached( fPosOffsetsFromMiddle, iItemIndex, iNumItems );
-
-	// Round to achieve pixel alignment. Any benefit to moving this to Lua? -Chris
-	ts.pos.x = roundf( ts.pos.x );
-	ts.pos.y = roundf( ts.pos.y );
-	ts.pos.z = roundf( ts.pos.z );
-
+	Actor::TweenState ts = m_exprItemTransformFunction.GetTransformCached(offset_from_middle, item_index, NUM_WHEEL_ITEMS);
 	item.DestTweenState() = ts;
 }
 
@@ -152,7 +141,7 @@ void WheelBase::SetPositions()
 		else
 			pDisplay->SetVisible( true );
 
-		SetItemPosition( *pDisplay, fOffsetFromSelection );
+		SetItemPosition(*pDisplay, i, fOffsetFromSelection);
 	}
 }
 

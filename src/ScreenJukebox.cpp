@@ -173,6 +173,8 @@ ScreenJukebox::ScreenJukebox()
 static LocalizedString NO_MATCHING_STEPS("ScreenJukebox", "NoMatchingSteps");
 void ScreenJukebox::Init()
 {
+	// The server crashes if syncing is attempted while connected to SMO. -Kyz
+	NSMAN->CloseConnection();
 	// ScreenJukeboxMenu must set this
 	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != NULL );
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );

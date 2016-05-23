@@ -1,3 +1,10 @@
+# Borrowed from http://stackoverflow.com/a/3323227/445373
+function(sm_list_replace container index newvalue)
+  list(INSERT ${container} ${index} ${newvalue})
+  math(EXPR __INDEX "${index} + 1")
+  list(REMOVE_AT ${container} ${__INDEX})
+endfunction()
+
 function(sm_append_simple_target_property target property str)
   get_target_property(current_property ${target} ${property})
   if (current_property)
@@ -48,3 +55,58 @@ function(disable_project_warnings projectName)
     endif()
   endif()
 endfunction()
+
+macro(check_compile_features BIN_DIR SOURCE_FILE GREETER GREET_SUCCESS GREET_FAILURE TARGET_VAR ON_SUCCESS)
+  if(NOT DEFINED "${TARGET_VAR}")
+    message(STATUS "${GREETER}")
+    try_compile(${TARGET_VAR} "${BIN_DIR}"
+      SOURCES "${SOURCE_FILE}"
+    )
+    if(${TARGET_VAR})
+      if (${ON_SUCCESS})
+        message(STATUS "${GREETER} - ${GREET_SUCCESS}")
+        set(${TARGET_VAR} 1 CACHE INTERNAL "${GREETER}")
+      else()
+        message(STATUS "${GREETER} - ${GREET_FAILURE}")
+        set(${TARGET_VAR} "" CACHE INTERNAL "${GREETER}")
+      endif()
+    else()
+      if(${ON_SUCCESS})
+        message(STATUS "${GREETER} - ${GREET_FAILURE}")
+        set(${TARGET_VAR} 1 CACHE INTERNAL "${GREETER}")
+      else()
+        message(STATUS "${GREETER} - ${GREET_SUCCESS}")
+        set(${TARGET_VAR} "" CACHE INTERNAL "${GREETER}")
+      endif()
+    endif()
+  endif()
+endmacro()
+
+# Borrowed from http://stackoverflow.com/q/10113017
+macro(configure_msvc_runtime)
+  if(MSVC)
+    # Get the compiler options generally used.
+    list(APPEND COMPILER_VARIABLES
+      CMAKE_C_FLAGS_DEBUG
+      CMAKE_C_FLAGS_MINSIZEREL
+      CMAKE_C_FLAGS_RELEASE
+      CMAKE_C_FLAGS_RELWITHDEBINFO
+      CMAKE_CXX_FLAGS_DEBUG
+      CMAKE_CXX_FLAGS_MINSIZEREL
+      CMAKE_CXX_FLAGS_RELEASE
+      CMAKE_CXX_FLAGS_RELWITHDEBINFO
+    )
+    if (WITH_STATIC_LINKING)
+      set(TO_REPLACE "/MD")
+      set(REPLACE_WITH "/MT")
+    else()
+      set(TO_REPLACE "/MT")
+      set(REPLACE_WITH "/MD")
+    endif()
+    foreach(COMPILER_VARIABLE ${COMPILER_VARIABLES})
+      if (${COMPILER_VARIABLE} MATCHES "${TO_REPLACE}")
+        string(REGEX REPLACE "${TO_REPLACE}" "${REPLACE_WITH}" ${COMPILER_VARIABLE} "${${COMPILER_VARIABLE}}")
+      endif()
+    endforeach()
+  endif()
+endmacro()

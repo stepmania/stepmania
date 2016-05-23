@@ -86,7 +86,10 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 	m_bPlaying = false;
 	m_bDeleteWhenFinished = false;
 
-	delete m_pSource;
+	if(m_pSource != NULL)
+	{
+		delete m_pSource;
+	}
 	if( cpy.m_pSource )
 		m_pSource = cpy.m_pSource->Copy();
 	else
@@ -104,7 +107,10 @@ void RageSound::Unload()
 
 	LockMut(m_Mutex);
 
-	delete m_pSource;
+	if(m_pSource != NULL)
+	{
+		delete m_pSource;
+	}
 	m_pSource = NULL;
 	
 	m_sFilePath = "";

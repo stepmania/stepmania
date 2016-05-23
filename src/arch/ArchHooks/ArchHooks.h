@@ -123,6 +123,7 @@ public:
 	
 	// Lua
 	void PushSelf( lua_State *L );
+	void RegisterWithLua();
 
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer

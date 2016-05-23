@@ -3,7 +3,9 @@
 
 #if defined(CPU_X86)
 
+#if defined(HAVE_STDINT_H)
 #include <stdint.h>
+#endif
 
 inline uint32_t ArchSwap32( uint32_t n )
 {

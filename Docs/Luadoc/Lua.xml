@@ -191,7 +191,6 @@
 		<Function name='Trace'/>
 		<Function name='TrailToCustomDifficulty'/>
 		<Function name='URLEncode'/>
-		<Function name='UndocumentedFeature'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
 		<Function name='update_centering'/>
 		<Function name='Var'/>
@@ -222,6 +221,7 @@
 		<Function name='getfenv'/>
 		<Function name='getmetatable'/>
 		<Function name='get_music_file_length'/>
+		<Function name='get_sound_driver_list'/>
 		<Function name='ipairs'/>
 		<Function name='ivalues'/>
 		<Function name='join'/>
@@ -385,6 +385,7 @@
 			<Function name='getaux'/>
 			<Function name='geteffectmagnitude'/>
 			<Function name='getrotation'/>
+			<Function name='get_tween_uses_effect_delta'/>
 			<Function name='glow'/>
 			<Function name='glowblink'/>
 			<Function name='glowramp'/>
@@ -417,6 +418,7 @@
 			<Function name='scaletofit'/>
 			<Function name='setsize'/>
 			<Function name='setstate'/>
+			<Function name='set_tween_uses_effect_delta'/>
 			<Function name='shadowcolor'/>
 			<Function name='shadowlength'/>
 			<Function name='shadowlengthx'/>
@@ -628,11 +630,13 @@
 			<Function name='PixelFont'/>
 			<Function name='Stroke'/>
 			<Function name='distort'/>
+			<Function name='get_mult_attrs_with_diffuse'/>
 			<Function name='jitter'/>
 			<Function name='max_dimension_use_zoom'/>
 			<Function name='maxheight'/>
 			<Function name='maxwidth'/>
 			<Function name='rainbowscroll'/>
+			<Function name='set_mult_attrs_with_diffuse'/>
 			<Function name='settext'/>
 			<Function name='settextf'/>
 			<Function name='strokecolor'/>
@@ -1094,6 +1098,8 @@
 			<Function name='LoadFromStats'/>
 		</Class>
 		<Class base='ActorFrame' name='Player'>
+			<Function name='ChangeLife'/>
+			<Function name='SetLife'/>
 			<Function name='GetPlayerTimingData'/>
 			<Function name='SetActorWithComboPosition'/>
 			<Function name='SetActorWithJudgmentPosition'/>
@@ -1348,6 +1354,7 @@
 			<Function name='GetProfile'/>
 			<Function name='GetProfileDir'/>
 			<Function name='GetSongNumTimesPlayed'/>
+			<Function name='GetStatsPrefix'/>
 			<Function name='IsPersistentProfile'/>
 			<Function name='IsSongNew'/>
 			<Function name='LastLoadWasTamperedOrCorrupt'/>
@@ -1357,9 +1364,18 @@
 			<Function name='SaveLocalProfile'/>
 			<Function name='SaveMachineProfile'/>
 			<Function name='SaveProfile'/>
+			<Function name='SetStatsPrefix'/>
 		</Class>
 		<Class name='RadarValues'>
 			<Function name='GetValue'/>
+		</Class>
+		<Class name='RageBezier2D'>
+			<Function name='destroy'/>
+			<Function name='evaluate'/>
+			<Function name='evaluate_y_from_x'/>
+			<Function name='get_x'/>
+			<Function name='get_y'/>
+			<Function name='set_from_bezier'/>
 		</Class>
 		<Class name='RageDisplay'>
 			<Function name='GetCumFPS'/>
@@ -1392,6 +1408,15 @@
 		</Class>
 		<Class name='RageInput'>
 			<Function name='GetDescriptions'/>
+		</Class>
+		<Class name='RageQuadratic'>
+			<Function name='evaluate'/>
+			<Function name='get_bezier'/>
+			<Function name='get_bezier_end'/>
+			<Function name='get_bezier_start'/>
+			<Function name='get_slope'/>
+			<Function name='set_from_bezier'/>
+			<Function name='set_from_cubic'/>
 		</Class>
 		<Class name='RageSound'>
 			<Function name='get_length'/>
@@ -1434,6 +1459,7 @@
 			<Function name='PostScreenMessage'/>
 			<Function name='RemoveInputCallback'/>
 			<Function name='SetNextScreenName'/>
+			<Function name='SetPrevScreenName'/>
 			<Function name='String'/>
 			<Function name='lockinput'/>
 		</Class>
@@ -1445,6 +1471,7 @@
 			<Function name='GetStageStats'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenGameplay'>
+			<Function name='begin_backing_out'/>
 			<Function name='Center1Player'/>
 			<Function name='GetDummyPlayerInfo'/>
 			<Function name='GetHasteRate'/>
@@ -1465,10 +1492,17 @@
 		<Class name='ScreenManager'>
 			<Function name='AddNewScreenToTop'/>
 			<Function name='GetTopScreen'/>
+			<Function name='get_input_redirected'/>
+			<Function name='PlayInvalidSound'/>
+			<Function name='PlayStartSound'/>
+			<Function name='PlayCoinSound'/>
+			<Function name='PlayCancelSound'/>
+			<Function name='PlayScreenshotSound'/>
 			<Function name='ReloadOverlayScreens'/>
 			<Function name='ScreenClassExists'/>
 			<Function name='ScreenIsPrepped'/>
 			<Function name='SetNewScreen'/>
+			<Function name='set_input_redirected'/>
 			<Function name='SystemMessage'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenNameEntryTraditional'>
@@ -1506,6 +1540,7 @@
 			<Function name='GetSelectionIndex'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenSelectMusic'>
+			<Function name='CanOpenOptionsList'/>
 			<Function name='GetGoToOptions'/>
 			<Function name='GetMusicWheel'/>
 			<Function name='OpenOptionsList'/>
@@ -1549,6 +1584,7 @@
 			<Function name='GetLastBeat'/>
 			<Function name='GetLastSecond'/>
 			<Function name='GetLyricsPath'/>
+			<Function name='GetMainTitle'/>
 			<Function name='GetMusicPath'/>
 			<Function name='GetOneSteps'/>
 			<Function name='GetOrigin'/>
@@ -1682,10 +1718,12 @@
 			<Function name='addimagecoords'/>
 			<Function name='cropto'/>
 			<Function name='customtexturerect'/>
+			<Function name='get_use_effect_clock_for_texcoords'/>
 			<Function name='loop'/>
 			<Function name='position'/>
 			<Function name='rate'/>
 			<Function name='scaletoclipped'/>
+			<Function name='set_use_effect_clock_for_texcoords'/>
 			<Function name='setstate'/>
 			<Function name='stretchtexcoords'/>
 			<Function name='texcoordvelocity'/>

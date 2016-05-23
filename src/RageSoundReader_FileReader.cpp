@@ -1,19 +1,20 @@
 #include "global.h"
 #include "RageSoundReader_FileReader.h"
-#include "RageUtil.h"
+#include "RageFile.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 #include "ActorUtil.h"
 
 #include <set>
-#ifndef NO_WAV_SUPPORT
+#if defined(HAS_WAV)
 #include "RageSoundReader_WAV.h"
 #endif
 
-#ifndef NO_MP3_SUPPORT
+#if defined(HAS_MP3)
 #include "RageSoundReader_MP3.h"
 #endif
 
-#ifndef NO_VORBIS_SUPPORT
+#if defined(HAS_OGG)
 #include "RageSoundReader_Vorbisfile.h"
 #endif
 
@@ -21,16 +22,17 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 {
 	RageSoundReader_FileReader *Sample = NULL;
 
-#ifndef NO_WAV_SUPPORT
+#if defined(HAS_WAV)
 	if( !format.CompareNoCase("wav") )
 		Sample = new RageSoundReader_WAV;
 #endif
-#ifndef NO_MP3_SUPPORT
+
+#if defined(HAS_MP3)
 	if( !format.CompareNoCase("mp3") )
 		Sample = new RageSoundReader_MP3;
 #endif
 
-#ifndef NO_VORBIS_SUPPORT
+#if defined(HAS_OGG)
 	if( !format.CompareNoCase("oga") || !format.CompareNoCase("ogg") )
 		Sample = new RageSoundReader_Vorbisfile;
 #endif
@@ -57,7 +59,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 	 * wrong file format.  The error message always looks like "unknown file format" or
 	 * "Not Vorbis data"; ignore it so we always give a consistent error message, and
 	 * continue trying other file formats.
-	 * 
+	 *
 	 * OPEN_FATAL_ERROR: Either the file was opened successfully and appears to be the
 	 * correct format, but a fatal format-specific error was encountered that will probably
 	 * not be fixed by using a different reader (for example, an Ogg file that doesn't

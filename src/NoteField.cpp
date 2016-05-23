@@ -375,9 +375,16 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 	}
 	else
 	{
-		float fScrollSpeed = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
-		if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing > 0 )
+		PlayerOptions const& curr_ops= m_pPlayerState->m_PlayerOptions.GetCurrent();
+		float fScrollSpeed = curr_ops.m_fScrollSpeed;
+		if(curr_ops.m_fTimeSpacing > 0)
+		{
 			fScrollSpeed = 4;
+		}
+		else if(curr_ops.m_fMaxScrollBPM != 0)
+		{
+			fScrollSpeed= curr_ops.m_fMaxScrollBPM / m_pPlayerState->m_fReadBPM;
+		}
 		switch( type )
 		{
 			DEFAULT_FAIL( type );
@@ -917,7 +924,7 @@ void NoteField::DrawPrimitives()
 						FOREACH_BackgroundLayer( j )
 							iter[j] = GAMESTATE->m_pCurSong->GetBackgroundChanges(j).begin();
 
-						while( 1 )
+						for(;;)
 						{
 							float fLowestBeat = FLT_MAX;
 							vector<BackgroundLayer> viLowestIndex;
@@ -925,8 +932,9 @@ void NoteField::DrawPrimitives()
 							FOREACH_BackgroundLayer( j )
 							{
 								if( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() )
+								{
 									continue;
-
+								}
 								float fBeat = iter[j]->m_fStartBeat;
 								if( fBeat < fLowestBeat )
 								{
@@ -943,7 +951,9 @@ void NoteField::DrawPrimitives()
 							if( viLowestIndex.empty() )
 							{
 								FOREACH_BackgroundLayer( j )
+								{
 									ASSERT( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() );
+								}
 								break;
 							}
 	
@@ -956,13 +966,17 @@ void NoteField::DrawPrimitives()
 									const BackgroundChange& change = *iter[*bl];
 									RString s = change.GetTextDescription();
 									if( *bl!=0 )
+									{
 										s = ssprintf("%d: ",*bl) + s;
+									}
 									vsBGChanges.push_back( s );
 								}
 								DrawBGChangeText(fLowestBeat, join("\n",vsBGChanges), text_glow);
 							}
 							FOREACH_CONST( BackgroundLayer, viLowestIndex, bl )
+							{
 								iter[*bl]++;
+							}
 						}
 					}
 					break;

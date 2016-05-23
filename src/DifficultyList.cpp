@@ -166,7 +166,7 @@ void StepsDisplayList::UpdatePositions()
 
 	/* If less than total (and Rows.size()) are displayed, fill in the empty
 	 * space intelligently. */
-	while(1)
+	for(;;)
 	{
 		const int sum = (first_end - first_start) + (second_end - second_start);
 		if( sum >= (int) Rows.size() || sum >= total)

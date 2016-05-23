@@ -390,7 +390,9 @@ public:
 	void swap(Profile& other);
 
 	// Loading and saving
+	void HandleStatsPrefixChange(RString dir, bool require_signature);
 	ProfileLoadResult LoadAllFromDir( RString sDir, bool bRequireSignature );
+	ProfileLoadResult LoadStatsFromDir(RString dir, bool require_signature);
 	void LoadTypeFromDir(RString dir);
 	void LoadCustomFunction( RString sDir );
 	bool SaveAllToDir( RString sDir, bool bSignData ) const;

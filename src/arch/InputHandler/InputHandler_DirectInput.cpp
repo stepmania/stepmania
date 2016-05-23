@@ -16,7 +16,6 @@
 #include "InputHandler_DirectInputHelper.h"
 
 REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
-static Preference<bool> g_bAxisFix( "AxisFix", false );
 
 static vector<DIDevice> Devices;
 
@@ -540,7 +539,14 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								{
 									DeviceInput diUp = DeviceInput(dev, up, 1.0f, tm);
 									DeviceInput diDown = DeviceInput(dev, down, 0.0f, tm);
-									while( fWheelDelta >= WHEEL_DELTA )
+									// This if statement used to be a while loop.  But Kevin
+									// reported that scrolling the mouse wheel locked up input.
+									// I assume that fWheelDelta was some absurdly large value,
+									// causing an infinite loop.  Changing the while loop to an
+									// if fixed the input lockup.  Anything that wants to
+									// imitate multiple presses when the wheel is scrolled will
+									// have to do it manually. -Kyz
+									if( fWheelDelta >= WHEEL_DELTA )
 									{
 										ButtonPressed( diUp );
 										ButtonPressed( diDown );
@@ -552,7 +558,8 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								{
 									DeviceInput diDown = DeviceInput(dev, down, 1.0f, tm);
 									DeviceInput diUp = DeviceInput(dev, up, 0.0f, tm);
-									while( fWheelDelta <= -WHEEL_DELTA )
+									// See comment for the l > 0 case. -Kyz
+									if( fWheelDelta <= -WHEEL_DELTA )
 									{
 										ButtonPressed( diDown );
 										ButtonPressed( diUp );
@@ -589,7 +596,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 										 device.m_sName.c_str(), in.ofs );
 						
 						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
-						if(g_bAxisFix)
+						if(GamePreferences::m_AxisFix)
 						{
 						  ButtonPressed( DeviceInput(dev, up, (l == 0) || (l == -1), tm) );
 						  ButtonPressed( DeviceInput(dev, down,(l == 0) || (l == 1), tm) );

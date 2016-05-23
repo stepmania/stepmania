@@ -193,9 +193,10 @@ public:
 	Preference<float>	m_fLifeDifficultyScale;
 
 	// Whoever added these: Please add a comment saying what they do. -Chris
-	Preference<int>	m_iRegenComboAfterMiss;
+	Preference<int>		m_iRegenComboAfterMiss; // combo that must be met after a Miss to regen life
+	Preference<int>		m_iMaxRegenComboAfterMiss; // caps RegenComboAfterMiss if multiple Misses occur in rapid succession
 	Preference<bool>	m_bMercifulDrain; // negative life deltas are scaled by the players life percentage
-	Preference<bool> m_HarshHotLifePenalty; // See LifeMeterBar.cpp -Kyz
+	Preference<bool>	m_HarshHotLifePenalty; // See LifeMeterBar.cpp -Kyz
 	Preference<bool>	m_bMinimum1FullSongInCourses; // FEoS for 1st song, FailImmediate thereafter
 	Preference<bool>	m_bFailOffInBeginner;
 	Preference<bool>	m_bFailOffForFirstStageEasy;
@@ -248,6 +249,7 @@ public:
 	Preference<int>	m_iMaxHighScoresPerListForMachine;
 	Preference<int>	m_iMaxHighScoresPerListForPlayer;
 	Preference<bool>	m_bAllowMultipleHighScoreWithSameName;
+	Preference<bool> m_DisableUploadDir;
 	Preference<bool>	m_bCelShadeModels;
 	Preference<bool>	m_bPreferredSortUsesGroups;
 	Preference<float>	m_fDebounceCoinInputTime; // allow users to apply a distinct debounce to coin input
@@ -314,20 +316,20 @@ public:
 	Preference<bool>	m_bLogCheckpoints;
 	Preference<bool>	m_bShowLoadingWindow;
 	Preference<bool>	m_bPseudoLocalize;
+	Preference<bool>	m_show_theme_errors;
 
 #if !defined(WITHOUT_NETWORKING)
 	Preference<bool>	m_bEnableScoreboard;  //Alows disabling of scoreboard in network play
 
-	#if defined(HAVE_VERSION_INFO)
-		// Check for Updates code
-		Preference<bool>			m_bUpdateCheckEnable;
-		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
-		//Preference<int>				m_iUpdateCheckIntervalSeconds;
-		//Preference<int>				m_iUpdateCheckLastCheckedSecond;
+	// Check for Updates code
+	Preference<bool>	m_bUpdateCheckEnable;
+	// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
+	//Preference<int>				m_iUpdateCheckIntervalSeconds;
+	//Preference<int>				m_iUpdateCheckLastCheckedSecond;
 
-		// TODO - Aldo_MX: Write helpers in LuaManager.cpp to treat unsigned int/long like LUA Numbers
-		//Preference<unsigned long>	m_uUpdateCheckLastCheckedBuild;
-	#endif
+	// TODO - Aldo_MX: Write helpers in LuaManager.cpp to treat unsigned int/long like LUA Numbers
+	//Preference<unsigned long>	m_uUpdateCheckLastCheckedBuild;
+
 #endif
 
 	void ReadPrefsFromIni( const IniFile &ini, const RString &sSection, bool bIsStatic );

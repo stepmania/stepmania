@@ -595,60 +595,47 @@ void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn )
 			pOut->m[j][i] = pIn->m[i][j];
 }
 
-float RageFastSin( float x )
+static const unsigned int sine_table_size= 1024;
+static const unsigned int sine_index_mod= sine_table_size * 2;
+static const double sine_table_index_mult= static_cast<double>(sine_index_mod) / (PI*2);
+static float sine_table[sine_table_size];
+struct sine_initter
 {
-	// from 0 to PI
-	// sizeof(table) == 4096 == one page of memory in Windows
-	static float table[1024];
-
-	static bool bInited = false;
-	if( !bInited )
+	sine_initter()
 	{
-		bInited = true;
-		for( unsigned i=0; i<ARRAYLEN(table); i++ )
+		for(unsigned int i= 0; i < sine_table_size; ++i)
 		{
-			float z = SCALE(i,0,ARRAYLEN(table),0.0f,PI);
-			table[i] = sinf(z);
+			float angle= SCALE(i, 0, sine_table_size, 0.0f, PI);
+			sine_table[i]= sinf(angle);
 		}
 	}
+};
+static sine_initter sinner;
 
-	// optimization
-	if( x == 0 )
-		return 0;
-
-	float fIndex = SCALE( x, 0.0f, PI*2, 0, ARRAYLEN(table)*2 );
-
-	// lerp using samples from the table
-	int iSampleIndex[2];
-	iSampleIndex[0] = (int)floorf(fIndex);
-	iSampleIndex[1] = iSampleIndex[0]+1;
-
-	float fRemainder = fIndex - iSampleIndex[0];
-	for( unsigned i=0; i<ARRAYLEN(iSampleIndex); i++ )
-		iSampleIndex[i] %= ARRAYLEN(table) * 2;
-
-	DEBUG_ASSERT( fRemainder>=0 && fRemainder<=1 );
-
-	float fValue[ARRAYLEN(iSampleIndex)];
-	for( unsigned i=0; i<ARRAYLEN(iSampleIndex); i++ )
-	{
-		int &iSample = iSampleIndex[i];
-		float &fVal = fValue[i];
-
-		if( iSample >= int(ARRAYLEN(table)) )	// PI <= iSample < 2*PI
-		{
-			// sin(x) == -sin(PI+x)
-			iSample -= ARRAYLEN(table);
-			DEBUG_ASSERT( iSample>=0 && iSample<int(ARRAYLEN(table)) );
-			fVal = -table[iSample];
-		}
-		else
-		{
-			fVal = table[iSample];
-		}
+float RageFastSin(float angle)
+{
+	if(angle == 0) { return 0; }
+	float index= angle * sine_table_index_mult;
+	int first_index= static_cast<int>(index);
+	int second_index= (first_index + 1) % sine_index_mod;
+	float remainder= index - first_index;
+	first_index%= sine_index_mod;
+	float first= 0.0f;
+	float second= 0.0f;
+#define SET_SAMPLE(sample) \
+	if(sample##_index >= sine_table_size) \
+	{ \
+		sample= -sine_table[sample##_index - sine_table_size]; \
+	} \
+	else \
+	{ \
+		sample= sine_table[sample##_index]; \
 	}
-
-	return SCALE( fRemainder, 0.0f, 1.0f, fValue[0], fValue[1] );
+	SET_SAMPLE(first);
+	SET_SAMPLE(second);
+#undef SET_SAMPLE
+	float result= lerp(remainder, first, second);
+	return result;
 }
 
 float RageFastCos( float x )
@@ -728,6 +715,119 @@ void RageBezier2D::SetFromBezier(
 	m_X.SetFromBezier( fC1X, fC2X, fC3X, fC4X );
 	m_Y.SetFromBezier( fC1Y, fC2Y, fC3Y, fC4Y );
 }
+
+#include "LuaBinding.h"
+
+struct LunaRageQuadratic : Luna<RageQuadratic>
+{
+	static int evaluate(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->Evaluate(FArg(1)));
+		return 1;
+	}
+	static int get_bezier(T* p, lua_State* L)
+	{
+		float a, b, c, d;
+		p->GetBezier(a, b, c, d);
+		lua_pushnumber(L, a);
+		lua_pushnumber(L, b);
+		lua_pushnumber(L, c);
+		lua_pushnumber(L, d);
+		return 4;
+	}
+	static int get_bezier_end(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->GetBezierEnd());
+		return 1;
+	}
+	static int get_bezier_start(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->GetBezierStart());
+		return 1;
+	}
+	static int get_slope(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->GetSlope(FArg(1)));
+		return 1;
+	}
+	static int set_from_bezier(T* p, lua_State* L)
+	{
+		p->SetFromBezier(FArg(1), FArg(2), FArg(3), FArg(4));
+		COMMON_RETURN_SELF;
+	}
+	static int set_from_cubic(T* p, lua_State* L)
+	{
+		p->SetFromCubic(FArg(1), FArg(2), FArg(3), FArg(4));
+		COMMON_RETURN_SELF;
+	}
+	LunaRageQuadratic()
+	{
+		ADD_METHOD(evaluate);
+		ADD_METHOD(get_bezier);
+		ADD_METHOD(get_bezier_end);
+		ADD_METHOD(get_bezier_start);
+		ADD_METHOD(get_slope);
+		ADD_METHOD(set_from_bezier);
+		ADD_METHOD(set_from_cubic);
+	}
+};
+LUA_REGISTER_CLASS(RageQuadratic);
+
+struct LunaRageBezier2D : Luna<RageBezier2D>
+{
+	static int evaluate(T* p, lua_State* L)
+	{
+		float x, y;
+		p->Evaluate(FArg(1), &x, &y);
+		lua_pushnumber(L, x);
+		lua_pushnumber(L, y);
+		return 2;
+	}
+	static int evaluate_y_from_x(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->EvaluateYFromX(FArg(1)));
+		return 1;
+	}
+	static int get_x(T* p, lua_State* L)
+	{
+		p->get_x().PushSelf(L);
+		return 1;
+	}
+	static int get_y(T* p, lua_State* L)
+	{
+		p->get_y().PushSelf(L);
+		return 1;
+	}
+	static int set_from_bezier(T* p, lua_State* L)
+	{
+		p->SetFromBezier(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5), FArg(6), FArg(7), FArg(8));
+		COMMON_RETURN_SELF;
+	}
+	static int destroy(T* p, lua_State* L)
+	{
+		SAFE_DELETE(p);
+		return 0;
+	}
+	LunaRageBezier2D()
+	{
+		ADD_METHOD(destroy);
+		ADD_METHOD(evaluate);
+		ADD_METHOD(evaluate_y_from_x);
+		ADD_METHOD(get_x);
+		ADD_METHOD(get_y);
+		ADD_METHOD(set_from_bezier);
+	}
+};
+LUA_REGISTER_CLASS(RageBezier2D);
+
+int LuaFunc_create_bezier(lua_State* L);
+int LuaFunc_create_bezier(lua_State* L)
+{
+	RageBezier2D* bezier= new RageBezier2D;
+	bezier->PushSelf(L);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(create_bezier);
 
 /*
  * Copyright (c) 2001-2006 Chris Danford, Glenn Maynard

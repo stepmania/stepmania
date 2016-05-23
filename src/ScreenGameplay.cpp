@@ -398,7 +398,7 @@ void ScreenGameplay::Init()
 		MEMCARDMAN->PauseMountingThread();
 
 	m_pSoundMusic = NULL;
-	m_bPaused = false;
+	set_paused_internal(false);
 
 	m_pCombinedLifeMeter = NULL;
 
@@ -1499,6 +1499,11 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 	}
 }
 
+void ScreenGameplay::set_paused_internal(bool p)
+{
+	m_bPaused= p;
+	GAMESTATE->SetPaused(p);
+}
 
 void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 {
@@ -1514,7 +1519,7 @@ void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 
 	ResetGiveUpTimers(false);
 
-	m_bPaused = bPause;
+	set_paused_internal(bPause);
 	m_PauseController = gc;
 
 	m_pSoundMusic->Pause( bPause );
@@ -1954,9 +1959,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 					pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveBigMissCombo;
 					pi->GetPlayerStageStats()->m_bDisqualified |= bGiveUpTimerFired;    // Don't disqualify if failing for miss combo.  The player should still be eligable for a high score on courses.
 				}
-
 				ResetGiveUpTimers(false);
-
 				if(GIVING_UP_GOES_TO_PREV_SCREEN && !m_skipped_song)
 				{
 					BeginBackingOutFromGameplay();
@@ -2563,18 +2566,11 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 				GameButtonType gbt = GAMESTATE->m_pCurGame->GetPerButtonInfo(input.GameI.button)->m_gbt;
 				switch( gbt )
 				{
-				case GameButtonType_INVALID:
+				case GameButtonType_Menu:
 					return false;
 				case GameButtonType_Step:
 					if( iCol != -1 )
 						pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
-					return true;
-				case GameButtonType_Fret:
-					if( iCol != -1 )
-						pi.m_pPlayer->Fret( iCol, -1, input.DeviceI.ts, false, bRelease );
-					return true;
-				case GameButtonType_Strum:
-					pi.m_pPlayer->Strum( iCol, -1, input.DeviceI.ts, false, bRelease );
 					return true;
 				}
 			}
@@ -3269,6 +3265,11 @@ public:
 	FLOAT_TABLE_INTERFACE(HasteAddAmounts, HasteAddAmounts, AddAmountsValid);
 	FLOAT_NO_SPEED_INTERFACE(HasteTimeBetweenUpdates, HasteTimeBetweenUpdates, (v > 0));
 	FLOAT_NO_SPEED_INTERFACE(HasteLifeSwitchPoint, HasteLifeSwitchPoint, (v >= 0 && v <= 1));
+	static int begin_backing_out(T* p, lua_State* L)
+	{
+		p->BeginBackingOutFromGameplay();
+		COMMON_RETURN_SELF;
+	}
 	static int GetTrueBPS(T* p, lua_State* L)
 	{
 		PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1);
@@ -3295,6 +3296,7 @@ public:
 		ADD_METHOD( HasteAddAmounts );
 		ADD_METHOD( HasteTimeBetweenUpdates );
 		ADD_METHOD( HasteLifeSwitchPoint );
+		ADD_METHOD(begin_backing_out);
 		ADD_METHOD( GetTrueBPS );
 	}
 };

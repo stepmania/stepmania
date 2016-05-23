@@ -94,28 +94,6 @@ public:
 	/** @brief The Player's HealthState in general terms. */
 	HealthState		m_HealthState;
 
-	/**
-	 * @brief Set to the MusicSeconds of when the a strum button was pressed. 
-	 *
-	 * If -1, the strum window has passed. */
-	float		m_fLastStrumMusicSeconds;
-	/**
-	 * @brief Set to the MusicSeconds of the last note successfully strummed or hammered in a hopochain.
-	 *
-	 * If -1, then there is no current hopo chain. */
-	float		m_fLastHopoNoteMusicSeconds;
-	/**
-	 * @brief Set to the column in the current hopo chain.
-	 *
-	 * If -1, then there is no current hopo chain. */
-	int			m_iLastHopoNoteCol;
-
-	/** @brief Reset the hopo state to its default. */
-	void ClearHopoState()
-	{
-		m_fLastHopoNoteMusicSeconds = -1;
-		m_iLastHopoNoteCol = -1;
-	}
 	/** @brief The type of person/machine controlling the Player. */
 	PlayerController	m_PlayerController;
 

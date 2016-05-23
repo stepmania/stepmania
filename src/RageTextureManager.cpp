@@ -233,7 +233,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 void RageTextureManager::DeleteTexture( RageTexture *t )
 {
 	ASSERT( t->m_iRefCount == 0 );
-	LOG->Trace( "RageTextureManager: deleting '%s'.", t->GetID().filename.c_str() );
+	//LOG->Trace( "RageTextureManager: deleting '%s'.", t->GetID().filename.c_str() );
 
 	map<RageTexture*, RageTextureID>::iterator id_entry=
 		m_texture_ids_by_pointer.find(t);

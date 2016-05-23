@@ -26,6 +26,8 @@ public:
 	 * @param hns the hold note score recently received.
 	 * @param tns the score from the initial TapNote. */
 	virtual void ChangeLife( PlayerNumber pn, HoldNoteScore hns, TapNoteScore tns ) = 0;
+	virtual void ChangeLife(PlayerNumber pn, float delta) = 0;
+	virtual void SetLife(PlayerNumber pn, float value) = 0;
 	virtual void HandleTapScoreNone( PlayerNumber pn ) = 0;
 };
 

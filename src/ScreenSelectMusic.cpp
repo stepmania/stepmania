@@ -379,7 +379,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 		g_bSampleMusicWaiting = false;
 
 		GameSoundManager::PlayMusicParams PlayParams;
-		PlayParams.sFile = m_sSampleMusicToPlay;
+		PlayParams.sFile = HandleLuaMusicFile(m_sSampleMusicToPlay);
 		PlayParams.pTiming = m_pSampleMusicTimingData;
 		PlayParams.bForceLoop = SAMPLE_MUSIC_LOOPS;
 		PlayParams.fStartSecond = m_fSampleStartSeconds;
@@ -1859,6 +1859,11 @@ void ScreenSelectMusic::AfterMusicChange()
 			case SampleMusicPreviewMode_LastSong: // fall through
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetPreviewMusicPath();
+				if(!m_sSampleMusicToPlay.empty() && ActorUtil::GetFileType(m_sSampleMusicToPlay) != FT_Sound)
+				{
+					LuaHelpers::ReportScriptErrorFmt("Music file %s for song is not a sound file, ignoring.", m_sSampleMusicToPlay.c_str());
+					m_sSampleMusicToPlay= "";
+				}
 				m_pSampleMusicTimingData = &pSong->m_SongTiming;
 				m_fSampleStartSeconds = pSong->GetPreviewStartSeconds();
 				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
@@ -1995,6 +2000,23 @@ void ScreenSelectMusic::OnConfirmSongDeletion()
 	m_pSongAwaitingDeletionConfirmation = NULL;
 }
 
+bool ScreenSelectMusic::can_open_options_list(PlayerNumber pn)
+{
+	if(!USE_OPTIONS_LIST)
+	{
+		return false;
+	}
+	if(pn >= NUM_PLAYERS)
+	{
+		return false;
+	}
+	if(m_OptionsList[pn].IsOpened())
+	{
+		return false;
+	}
+	return true;
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -2008,13 +2030,28 @@ public:
 		p->GetMusicWheel()->PushSelf(L);
 		return 1;
 	}
-	static int OpenOptionsList( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);  p->OpenOptionsList(pn); COMMON_RETURN_SELF; }
+	static int OpenOptionsList( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		if(p->can_open_options_list(pn))
+		{
+			p->OpenOptionsList(pn);
+		}
+		COMMON_RETURN_SELF;
+	}
+	static int CanOpenOptionsList( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		lua_pushboolean(L, p->can_open_options_list(pn));
+		return 1;
+	}
 
 	LunaScreenSelectMusic()
 	{
   		ADD_METHOD( GetGoToOptions );
 		ADD_METHOD( GetMusicWheel );
 		ADD_METHOD( OpenOptionsList );
+		ADD_METHOD( CanOpenOptionsList );
 	}
 };
 

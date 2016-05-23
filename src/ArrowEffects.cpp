@@ -396,7 +396,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		// TODO: Don't index by PlayerNumber.
 		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
 	
-		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY), 
+		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY),
 						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
 						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 
@@ -495,7 +495,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		float fRads = acosf( fPositionBetween );
 		fRads += fYOffset * TORNADO_OFFSET_FREQUENCY / SCREEN_HEIGHT;
 
-		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH, 
+		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH,
 							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
 
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];

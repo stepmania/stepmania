@@ -2,13 +2,17 @@
 #include "Backtrace.h"
 #include "RageUtil.h"
 
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 #include <cstdlib>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <cerrno>
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
 
 #if defined(BACKTRACE_METHOD_X86_LINUX)
 #include "archutils/Common/PthreadHelpers.h"
@@ -36,17 +40,25 @@ static const char *itoa(unsigned n)
 static intptr_t xtoi( const char *hex )
 {
 	intptr_t ret = 0;
-	while( 1 )
+	for(;;)
 	{
 		int val = -1;
 		if( *hex >= '0' && *hex <= '9' )
+		{
 			val = *hex - '0';
+		}
 		else if( *hex >= 'A' && *hex <= 'F' )
+		{
 			val = *hex - 'A' + 10;
+		}
 		else if( *hex >= 'a' && *hex <= 'f' )
+		{
 			val = *hex - 'a' + 10;
+		}
 		else
+		{
 			break;
+		}
 		hex++;
 
 		ret *= 16;

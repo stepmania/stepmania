@@ -11,7 +11,7 @@
 #include "RageLog.h"
 #include "SpecialFiles.h"
 
-#if !defined(WITHOUT_NETWORKING) && defined(HAVE_VERSION_INFO)
+#if !defined(WITHOUT_NETWORKING)
 #include "ver.h"
 #endif
 
@@ -159,51 +159,52 @@ void ValidateSongsPerPlay( int &val )
 }
 
 PrefsManager::PrefsManager() :
-	m_sCurrentGame		( "CurrentGame",		"" ),
+	m_sCurrentGame			( "CurrentGame",		"" ),
 
-	m_sAnnouncer		( "Announcer",			"" ),
-	m_sTheme		( "Theme",			SpecialFiles::BASE_THEME_NAME ),
-	m_sDefaultModifiers	( "DefaultModifiers",		"" ), 
+	m_sAnnouncer			( "Announcer",			"" ),
+	m_sTheme			( "Theme",			SpecialFiles::BASE_THEME_NAME ),
+	m_sDefaultModifiers		( "DefaultModifiers",		"" ),
 
-	m_bWindowed		( "Windowed",			true ),
-	m_iDisplayWidth		( "DisplayWidth",		854 ),
-	m_iDisplayHeight	( "DisplayHeight",		480 ),
-	m_fDisplayAspectRatio	( "DisplayAspectRatio",		16/9.f, ValidateDisplayAspectRatio ),
-	m_iDisplayColorDepth	( "DisplayColorDepth",		32 ),
-	m_iTextureColorDepth	( "TextureColorDepth",		32 ),
-	m_iMovieColorDepth	( "MovieColorDepth",		32 ),
-	m_bStretchBackgrounds	( "StretchBackgrounds",		false ),
-	m_BGFitMode("BackgroundFitMode", BFM_CoverPreserve),
+	m_bWindowed			( "Windowed",			true ),
+	m_iDisplayWidth			( "DisplayWidth",		854 ),
+	m_iDisplayHeight		( "DisplayHeight",		480 ),
+	m_fDisplayAspectRatio		( "DisplayAspectRatio",		16/9.f, ValidateDisplayAspectRatio ),
+	m_iDisplayColorDepth		( "DisplayColorDepth",		32 ),
+	m_iTextureColorDepth		( "TextureColorDepth",		32 ),
+	m_iMovieColorDepth		( "MovieColorDepth",		32 ),
+	m_bStretchBackgrounds		( "StretchBackgrounds",		false ),
+	m_BGFitMode			( "BackgroundFitMode",		BFM_CoverPreserve),
 	m_HighResolutionTextures	( "HighResolutionTextures",	HighResolutionTextures_Auto ),
-	m_iMaxTextureResolution	( "MaxTextureResolution",	2048 ),
-	m_iRefreshRate		( "RefreshRate",		REFRESH_DEFAULT ),
-	m_bAllowMultitexture	( "AllowMultitexture",		true ),
-	m_bShowStats		( "ShowStats",			TRUE_IF_DEBUG),
-	m_bShowBanners		( "ShowBanners",		true ),
-	m_bShowMouseCursor	( "ShowMouseCursor",		true ),
+	m_iMaxTextureResolution		( "MaxTextureResolution",	2048 ),
+	m_iRefreshRate			( "RefreshRate",		REFRESH_DEFAULT ),
+	m_bAllowMultitexture		( "AllowMultitexture",		true ),
+	m_bShowStats			( "ShowStats",			TRUE_IF_DEBUG),
+	m_bShowBanners			( "ShowBanners",		true ),
+	m_bShowMouseCursor		( "ShowMouseCursor",		true ),
 
-	m_bHiddenSongs		( "HiddenSongs",		false ),
-	m_bVsync		( "Vsync",			true ),
-	m_FastNoteRendering("FastNoteRendering", false),
-	m_bInterlaced		( "Interlaced",			false ),
-	m_bPAL			( "PAL",			false ),
-	m_bDelayedTextureDelete	( "DelayedTextureDelete",	false ),
-	m_bDelayedModelDelete	( "DelayedModelDelete",		false ),
-	m_BannerCache		( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
+	m_bHiddenSongs			( "HiddenSongs",		false ),
+	m_bVsync			( "Vsync",			true ),
+	m_FastNoteRendering		( "FastNoteRendering",		false),
+	m_bInterlaced			( "Interlaced",			false ),
+	m_bPAL				( "PAL",			false ),
+	m_bDelayedTextureDelete		( "DelayedTextureDelete",	false ),
+	m_bDelayedModelDelete		( "DelayedModelDelete",		false ),
+	m_BannerCache			( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
 	//m_BackgroundCache		( "BackgroundCache",		BGCACHE_LOW_RES_PRELOAD ),
-	m_bFastLoad		( "FastLoad",			true ),
+	m_bFastLoad			( "FastLoad",			true ),
 	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    true ),
-	m_NeverCacheList("NeverCacheList", ""),
+	m_NeverCacheList		( "NeverCacheList", ""),
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
-	m_bMenuTimer		( "MenuTimer",			false ),
+	m_bMenuTimer			( "MenuTimer",			false ),
 
-	m_fLifeDifficultyScale	( "LifeDifficultyScale",	1.0f ),
+	m_fLifeDifficultyScale		( "LifeDifficultyScale",	1.0f ),
 
 
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
+	m_iMaxRegenComboAfterMiss	( "MaxRegenComboAfterMiss",	5 ), // this was 10 by default in SM3.95 -dguzek
 	m_bMercifulDrain		( "MercifulDrain",		false ),	// negative life deltas are scaled by the players life percentage
-	m_HarshHotLifePenalty("HarshHotLifePenalty", true),
+	m_HarshHotLifePenalty		( "HarshHotLifePenalty",	true ),
 	m_bMinimum1FullSongInCourses	( "Minimum1FullSongInCourses",	false ),	// FEoS for 1st song, FailImmediate thereafter
 	m_bFailOffInBeginner		( "FailOffInBeginner",		false ),
 	m_bFailOffForFirstStageEasy	( "FailOffForFirstStageEasy",	false ),
@@ -214,7 +215,7 @@ PrefsManager::PrefsManager() :
 	m_bShowCaution			( "ShowCaution",		true ),
 	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),
 	m_iArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	0 ),
-	m_ThreeKeyNavigation("ThreeKeyNavigation", false),
+	m_ThreeKeyNavigation		( "ThreeKeyNavigation",		false ),
 	m_MusicWheelUsesSections	( "MusicWheelUsesSections",	MusicWheelUsesSections_ALWAYS ),
 	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",	15 ),
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
@@ -223,17 +224,18 @@ PrefsManager::PrefsManager() :
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
 	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
 	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
-	m_AllowMultipleToasties("AllowMultipleToasties", true),
-	m_MinTNSToHideNotes("MinTNSToHideNotes", TNS_W3),
+	m_AllowMultipleToasties		("AllowMultipleToasties",	true ),
+	m_MinTNSToHideNotes		("MinTNSToHideNotes",		TNS_W3 ),
 	m_ShowSongOptions		( "ShowSongOptions",		Maybe_NO ),
 	m_bDancePointsForOni		( "DancePointsForOni",		true ),
 	m_bPercentageScoring		( "PercentageScoring",		false ),
+	// Wow, these preference names are *seriously* long -Colby
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.0001f ), // This is for home, who cares how bad you do?
-	m_fMinPercentageForMachineCourseHighScore	( "MinPercentageForMachineCourseHighScore",	0.0001f ),	// don't save course scores with 0 percentage
+	m_fMinPercentageForMachineCourseHighScore	( "MinPercentageForMachineCourseHighScore",	0.0001f ), // don't save course scores with 0 percentage
 	m_bDisqualification		( "Disqualification",			false ),
 	m_bAutogenSteps			( "AutogenSteps",			false ),
 	m_bAutogenGroupCourses		( "AutogenGroupCourses",		true ),
-	m_bOnlyPreferredDifficulties ( "OnlyPreferredDifficulties", false ),
+	m_bOnlyPreferredDifficulties	( "OnlyPreferredDifficulties",		false ),
 	m_bBreakComboToGetItem		( "BreakComboToGetItem",		false ),
 	m_bLockCourseDifficulties	( "LockCourseDifficulties",		true ),
 	m_ShowDancingCharacters		( "ShowDancingCharacters",		SDC_Random ),
@@ -256,13 +258,14 @@ PrefsManager::PrefsManager() :
 	m_iMaxHighScoresPerListForMachine	( "MaxHighScoresPerListForMachine",	10 ),
 	m_iMaxHighScoresPerListForPlayer	( "MaxHighScoresPerListForPlayer",	3 ),
 	m_bAllowMultipleHighScoreWithSameName	( "AllowMultipleHighScoreWithSameName",	true ),
+	m_DisableUploadDir("DisableUploadDir", false),
 	m_bCelShadeModels		( "CelShadeModels",			false ),	// Work-In-Progress.. disable by default.
 	m_bPreferredSortUsesGroups	( "PreferredSortUsesGroups",		true ),
 	m_fDebounceCoinInputTime	( "DebounceCoinInputTime",		0 ),
 
 	m_fPadStickSeconds		( "PadStickSeconds",			0 ),
-	m_EditRecordModeLeadIn("EditRecordModeLeadIn", 1.0f),
-	m_EditClearPromptThreshold("EditClearPromptThreshold", 50),
+	m_EditRecordModeLeadIn		("EditRecordModeLeadIn",		1.0f ),
+	m_EditClearPromptThreshold	("EditClearPromptThreshold",		50),
 	m_bForceMipMaps			( "ForceMipMaps",			false ),
 	m_bTrilinearFiltering		( "TrilinearFiltering",			false ),
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),
@@ -290,10 +293,10 @@ PrefsManager::PrefsManager() :
 	m_bMonkeyInput			( "MonkeyInput",			false ),
 	m_sMachineName			( "MachineName",			"" ),
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
-	m_MuteActions("MuteActions", false),
-	m_bAllowSongDeletion("AllowSongDeletion", false),
+	m_MuteActions			( "MuteActions",			false ),
+	m_bAllowSongDeletion		( "AllowSongDeletion",			false ),
 
-	m_bQuirksMode		( "QuirksMode",		false ),
+	m_bQuirksMode			( "QuirksMode",		false ),
 
 	/* Debug: */
 	m_bLogToDisk			( "LogToDisk",		true ),
@@ -307,24 +310,21 @@ PrefsManager::PrefsManager() :
 	m_bLogSkips			( "LogSkips",		false ),
 	m_bLogCheckpoints		( "LogCheckpoints",	false ),
 	m_bShowLoadingWindow		( "ShowLoadingWindow",	true ),
-	m_bPseudoLocalize		( "PseudoLocalize",	false )
+	m_bPseudoLocalize		( "PseudoLocalize",	false ),
+	m_show_theme_errors("ShowThemeErrors", false)
 
 #if !defined(WITHOUT_NETWORKING)
 	,
 	m_bEnableScoreboard		( "EnableScoreboard",	true )
-
-	#if defined(HAVE_VERSION_INFO)
-		,
-		m_bUpdateCheckEnable			( "UpdateCheckEnable",				true )
-		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
-		//,
-		//m_iUpdateCheckIntervalSeconds	( "UpdateCheckIntervalSeconds",		86400 ),	// 24 hours
-		//m_iUpdateCheckLastCheckedSecond	( "UpdateCheckLastCheckSecond",		0 )
-
-		// TODO - Aldo_MX: Write helpers in LuaManager.cpp to treat unsigned int/long like LUA Numbers
-		//,
-		//m_uUpdateCheckLastCheckedBuild	( "UpdateCheckLastCheckedBuild",	version_num )
-	#endif
+	,
+	m_bUpdateCheckEnable			( "UpdateCheckEnable",				true )
+	// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
+	//,
+	//m_iUpdateCheckIntervalSeconds	( "UpdateCheckIntervalSeconds",		86400 ),	// 24 hours
+	//m_iUpdateCheckLastCheckedSecond	( "UpdateCheckLastCheckSecond",		0 )
+	// TODO - Aldo_MX: Write helpers in LuaManager.cpp to treat unsigned int/long like LUA Numbers
+	//,
+	//m_uUpdateCheckLastCheckedBuild	( "UpdateCheckLastCheckedBuild",	version_num )
 #endif
 
 {
