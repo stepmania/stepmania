@@ -354,6 +354,12 @@ local value_item_mt= {
 				else
 					self.value_image:setstate(0)
 				end
+			elseif self.info.type == "choice" then
+				if self.info.value then
+					self.value_image:setstate(1):hibernate(0)
+				else
+					self.value_image:hibernate(math.huge)
+				end
 			else
 				self.value_image:setstate(0)
 			end
@@ -939,7 +945,9 @@ nesty_option_menus.adjustable_float= {
 			self.menu_functions[#self.menu_functions+1]= function()
 				local new_scale, new_value=
 					find_scale_for_number(self.reset_value, self.min_scale)
-				self:set_new_scale(new_scale)
+				if self.mode ~= "small" then
+					self:set_new_scale(new_scale)
+				end
 				self:set_new_val(new_value)
 				return true
 			end
@@ -1003,7 +1011,7 @@ nesty_option_menus.enum_option= {
 			for i, v in ipairs(extra.enum) do
 				self.enum_vals[#self.enum_vals+1]= v
 				self.info_set[#self.info_set+1]= {
-					text= self:short_string(v), translatable= true, value= (v == cv), type= "bool"}
+					text= self:short_string(v), translatable= true, value= (v == cv), type= "choice"}
 			end
 		end,
 		short_string= function(self, val)
@@ -1367,6 +1375,16 @@ local function pops_get(pn)
 		"ModsLevel_Preferred")
 end
 
+local function float_val_func(min_scale, get)
+	if min_scale < 0 then
+		return function(pn)
+			return ("%."..(-min_scale).."f"):format(get(pn))
+		end
+	else
+		return get
+	end
+end
+
 nesty_options= {
 	float_pref_val= function(valname, min_scale, scale, max_scale, val_min, val_max, val_reset)
 		local ret= {
@@ -1383,7 +1401,7 @@ nesty_options= {
 					PREFSMAN:SetPreference(valname, value)
 				end,
 		}}
-		ret.value= ret.args.initial_value
+		ret.value= float_val_func(min_scale, ret.args.initial_value)
 		return setmetatable(ret, mergable_table_mt)
 	end,
 	float_song_mod_val= function(valname, min_scale, scale, max_scale, val_min, val_max, val_reset)
@@ -1409,7 +1427,7 @@ nesty_options= {
 					GAMESTATE:ApplyPreferredSongOptionsToOtherLevels()
 				end,
 		}}
-		ret.value= ret.args.initial_value
+		ret.value= float_val_func(min_scale, ret.args.initial_value)
 		return setmetatable(ret, mergable_table_mt)
 	end,
 	float_song_mod_toggle_val= function(valname, on_val, off_val)
@@ -1479,7 +1497,7 @@ nesty_options= {
 	end,
 	enum_player_mod_single_val= function(valname, value, func_name)
 		local ret= {
-			type= "bool",
+			type= "choice",
 			name= valname, translatable= true, execute= function(pn)
 				local pops= pops_get(pn)
 				pops[func_name](pops, value)
@@ -1515,7 +1533,7 @@ nesty_options= {
 					pstate:ApplyPreferredOptionsToOtherLevels()
 				end,
 		}}
-		ret.value= ret.args.initial_value
+		ret.value= float_val_func(min_scale, ret.args.initial_value)
 		return setmetatable(ret, mergable_table_mt)
 	end,
 	bool_player_mod_val= function(valname)
@@ -1550,7 +1568,7 @@ nesty_options= {
 					profile["Set"..valname](profile, value)
 				end,
 		}}
-		ret.value= ret.args.initial_value
+		ret.value= float_val_func(mins, ret.args.initial_value)
 		return setmetatable(ret, mergable_table_mt)
 	end,
 	bool_profile_val= function(valname)
@@ -1592,7 +1610,7 @@ nesty_options= {
 			menu= nesty_option_menus.adjustable_float,
 			args= nesty_options.float_config_val_args(conf, field_name, mins, scale, maxs, val_min, val_max),
 		}
-		ret.value= ret.args.initial_value
+		ret.value= float_val_func(mins, ret.args.initial_value)
 		return setmetatable(ret, mergable_table_mt)
 	end,
 	float_config_toggle_val= function(conf, field_name, on_val, off_val)
@@ -1630,7 +1648,8 @@ nesty_options= {
 	end,
 	choices_config_val= function(conf, field_name, choices)
 		local ret= {
-			name= field_name, menu= nesty_option_menus.enum_option, args= {
+			name= field_name, translatable= true, menu=
+				nesty_option_menus.enum_option, args= {
 				name= field_name, enum= choices, fake_enum= true,
 				obj_get= function(pn) return conf:get_data(pn) end,
 				get= function(pn, obj) return get_element_by_path(obj, field_name) end,

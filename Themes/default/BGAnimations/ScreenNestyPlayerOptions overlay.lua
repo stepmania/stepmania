@@ -52,7 +52,7 @@ local pn_skew_mult= {[PLAYER_1]= 1, [PLAYER_2]= -1}
 
 local function perspective_entry(name, skew_mult, rot_mult)
 	return {
-		name= name, translatable= true, type= "bool", execute= function(pn)
+		name= name, translatable= true, type= "choice", execute= function(pn)
 			local conf_data= newfield_prefs_config:get_data(pn)
 			local old_rot= get_element_by_path(conf_data, "rotation_x")
 			local old_skew= get_element_by_path(conf_data, "vanish_x")
@@ -289,6 +289,7 @@ local item_params= {
 	value_width= .25,
 	type_images= {
 		bool= THEME:GetPathG("", "menu_icons/bool"),
+		choice= THEME:GetPathG("", "menu_icons/bool"),
 		menu= THEME:GetPathG("", "menu_icons/menu"),
 	},
 }
