@@ -252,6 +252,7 @@ ScreenManager::ScreenManager()
 
 	g_pSharedBGA = new Actor;
 
+	m_disable_special_keys= false;
 	m_bReloadOverlayScreensAfterInput= false;
 	m_bZeroNextUpdate = false;
 	m_PopTopScreen = SM_Invalid;
