@@ -52,7 +52,7 @@ local pn_skew_mult= {[PLAYER_1]= 1, [PLAYER_2]= -1}
 
 local function perspective_entry(name, skew_mult, rot_mult)
 	return {
-		name= name, translatable= true, execute= function(pn)
+		name= name, translatable= true, type= "bool", execute= function(pn)
 			local conf_data= newfield_prefs_config:get_data(pn)
 			local old_rot= get_element_by_path(conf_data, "rotation_x")
 			local old_skew= get_element_by_path(conf_data, "vanish_x")
@@ -72,7 +72,7 @@ local function perspective_entry(name, skew_mult, rot_mult)
 			MESSAGEMAN:Broadcast("ConfigValueChanged", {
 				config_name= newfield_prefs_config.name, field_name= "rotation_x", value= new_rot, pn= pn})
 		end,
-		underline= function(pn)
+		value= function(pn)
 			local conf_data= newfield_prefs_config:get_data(pn)
 			local old_rot= get_element_by_path(conf_data, "rotation_x")
 			local old_skew= get_element_by_path(conf_data, "vanish_x")
@@ -166,9 +166,14 @@ local life_options= {
 
 local base_options= {
 	{name= "speed_mod", menu= nesty_option_menus.adjustable_float,
-	 translatable= true, args= gen_speed_menu, exec_args= true},
+	 translatable= true, args= gen_speed_menu, exec_args= true,
+	 value= function(pn)
+		 return newfield_prefs_config:get_data(pn).speed_mod
+	 end},
 	{name= "speed_type", menu= nesty_option_menus.enum_option,
-	 translatable= true,
+	 translatable= true, value= function(pn)
+		 return newfield_prefs_config:get_data(pn).speed_type
+	 end,
 	 args= {
 		 name= "speed_type", enum= newfield_speed_types, fake_enum= true,
 		 obj_get= function(pn) return newfield_prefs_config:get_data(pn) end,
@@ -189,7 +194,7 @@ local base_options= {
 	nesty_options.float_song_mod_toggle_val("Haste", 1, 0),
 	{name= "perspective", translatable= true, menu= nesty_option_menus.menu, args= perspective_mods},
 	nesty_options.float_config_toggle_val(newfield_prefs_config, "reverse", -1, 1),
-	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 1),
+	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 0),
 	{name= "chart_mods", translatable= true, menu= nesty_option_menus.menu, args= chart_mods},
 	{name= "newskin", translatable= true, menu= nesty_option_menus.newskins},
 	{name= "newskin_params", translatable= true, menu= nesty_option_menus.menu,
@@ -240,7 +245,8 @@ local function input(event)
 	local pn= event.PlayerNumber
 	if not pn then return end
 	if not menus[pn] then return end
-	if menu_stack_generic_input(menus, event) then
+	if menu_stack_generic_input(menus, event)
+	and event.type == "InputEventType_FirstPress" then
 		if event.GameButton == "Back" then
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
 		else
@@ -268,33 +274,23 @@ local frame= Def.ActorFrame{
 	end,
 }
 local item_params= {
-	text_actor= Def.BitmapText{
-		Font= "Common Normal", InitCommand= function(self)
-			self:shadowlength(1)
-		end,
-		SetCommand= function(self, params)
-			if params.type == "menu" then
-				self:rotationz(30)
-			elseif params.type == "number" then
-				self:rotationz(60)
-			elseif params.type == "choice" then
-				self:rotationz(90)
-			elseif params.type == "action" then
-				self:rotationz(120)
-			elseif params.type == "bool" then
-				self:rotationz(150)
-			elseif params.type == "enum" then
-				self:rotationz(180)
-			elseif params.type == "back" then
-				self:rotationz(210)
-			else
-				self:rotationz(0)
-			end
-			self:settext(params.text)
-			width_limit_text(self, params.width, params.zoom)
-			params.ret_width= self:GetZoomedWidth()
-		end,
-	}
+	text_font= "Common Normal",
+	text_on= function(self)
+		self:rotationz(720):linear(1):rotationz(0)
+	end,
+	text_width= .7,
+	value_font= "Common Normal",
+	value_text_on= function(self)
+		self:rotationz(-720):linear(1):rotationz(0)
+	end,
+	value_image_on= function(self)
+		self:rotationz(-720):linear(1):rotationz(0)
+	end,
+	value_width= .25,
+	type_images= {
+		bool= THEME:GetPathG("", "menu_icons/bool"),
+		menu= THEME:GetPathG("", "menu_icons/menu"),
+	},
 }
 for pn, menu in pairs(menus) do
 	frame[#frame+1]= LoadActor(
@@ -317,7 +313,11 @@ for pn, menu in pairs(menus) do
 			inc= THEME:GetPathS("_switch", "up"),
 			dec= THEME:GetPathS("_switch", "down"),
 		},
-		display_params= {el_zoom= .55, item_params= item_params},
+		display_params= {
+			el_zoom= .55, item_params= item_params, item_mt= nesty_items.value,
+			on= function(self)
+				self:rotationx(720):linear(1):rotationx(0)
+			end},
 	}
 	frame[#frame+1]= Def.BitmapText{
 		Font= "Common Normal", InitCommand= function(self)

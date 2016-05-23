@@ -53,7 +53,7 @@ nesty_option_menus.shown_noteskins= {
 			self.info_set= {nesty_menu_up_element}
 			for i, skin_name in ipairs(self.all_noteskin_names) do
 				local show= not self.shown_config[skin_name]
-				self.info_set[#self.info_set+1]= {text= skin_name, type= "choice", underline= show}
+				self.info_set[#self.info_set+1]= {text= skin_name, type= "bool", value= show}
 			end
 			self.cursor_pos= 1
 		end,
@@ -69,8 +69,8 @@ nesty_option_menus.shown_noteskins= {
 			shown_noteskins:set_dirty(self.pn)
 			local skin_name= info.text
 			self.shown_config[skin_name]= not self.shown_config[skin_name]
-			info.underline= not self.shown_config[skin_name]
-			self:update_el_underline(self.cursor_pos, info.underline)
+			info.value= not self.shown_config[skin_name]
+			self:update_el_value(self.cursor_pos, info.value)
 			return true
 		end,
 }}
@@ -99,7 +99,7 @@ nesty_option_menus.newskins= {
 			self.info_set= {nesty_menu_up_element}
 			for ni, nv in ipairs(self.ops) do
 				self.info_set[#self.info_set+1]= {
-					text= nv, underline= ni == self.selected_skin, type= "choice"}
+					text= nv, value= ni == self.selected_skin, type= "bool"}
 			end
 		end,
 		interpret_start= function(self)
@@ -107,13 +107,13 @@ nesty_option_menus.newskins= {
 			local info= self.info_set[self.cursor_pos]
 			if self.ops[ops_pos] then
 				for i, tinfo in ipairs(self.info_set) do
-					if i ~= self.cursor_pos and tinfo.underline then
-						self:update_el_underline(i, false)
+					if i ~= self.cursor_pos and tinfo.value then
+						self:update_el_value(i, false)
 					end
 				end
 				self.player_skin= self.ops[ops_pos]
 				PROFILEMAN:GetProfile(self.pn):set_preferred_noteskin(self.stepstype, self.player_skin)
-				self:update_el_underline(self.cursor_pos, true)
+				self:update_el_value(self.cursor_pos, true)
 				self:set_status()
 				MESSAGEMAN:Broadcast("NewskinChanged", {pn= self.pn})
 				return true
@@ -174,6 +174,7 @@ local function noteskin_param_float_val(param_name, param_section, type_info, de
 	return {
 		name= translation.title, menu= nesty_option_menus.adjustable_float,
 		explanation= translation.explanation,
+		value= function() return param_section[param_name] end,
 		args= {
 			name= translation.title, min_scale= min_scale, scale= 0,
 			max_scale= max_scale, reset_value= default_val,
@@ -194,12 +195,13 @@ local function noteskin_param_choice_val(param_name, param_section, type_info)
 			execute= function(pn)
 				param_section[param_name]= choice
 			end,
-			underline= function(pn)
+			value= function(pn)
 				return param_section[param_name] == choice
 			end,
 		}
 	end
 	return {name= translation.title, explanation= translation.explanation,
+					value= param_section[param_name],
 					args= eles, menu= nesty_option_menus.menu}
 end
 local function noteskin_param_bool_val(param_name, param_section, type_info)
@@ -210,7 +212,7 @@ local function noteskin_param_bool_val(param_name, param_section, type_info)
 		translatable= false, execute= function(pn)
 			param_section[param_name]= not param_section[param_name]
 		end,
-		underline= function(pn)
+		value= function(pn)
 			return param_section[param_name]
 		end,
 	}

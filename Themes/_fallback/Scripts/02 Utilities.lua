@@ -420,6 +420,14 @@ function rec_print_table(t, indent, depth_remaining)
 	Trace(indent .. "end")
 end
 
+-- Because somebody decided stepmania's scaletofit should change the position
+-- of the actor. -kyz
+function scale_to_fit(actor, width, height)
+	local xscale= width / actor:GetWidth()
+	local yscale= height / actor:GetHeight()
+	actor:zoom(math.min(xscale, yscale))
+end
+
 -- Minor text formatting functions from Kyzentun.
 -- TODO:  Figure out why BitmapText:maxwidth doesn't do what I want.
 -- Intentionally undocumented because they should be moved to BitmapText ASAP
