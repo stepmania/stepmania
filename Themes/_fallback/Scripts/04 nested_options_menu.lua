@@ -891,6 +891,7 @@ nesty_option_menus.adjustable_float= {
 						text= "+"..self.scale_to_text(self.pn, 10^s), sound= "inc",
 						type= "action"}
 					self.menu_functions[#self.menu_functions+1]= function()
+						self.min_scale_used= math.min(s, self.min_scale_used)
 						self:set_new_val(self.current_value + 10^s)
 						return true
 					end
@@ -898,6 +899,7 @@ nesty_option_menus.adjustable_float= {
 						text= "-"..self.scale_to_text(self.pn, 10^s), sound= "dec",
 						type= "action"}
 					self.menu_functions[#self.menu_functions+1]= function()
+						self.min_scale_used= math.min(s, self.min_scale_used)
 						self:set_new_val(self.current_value - 10^s)
 						return true
 					end
@@ -1309,12 +1311,12 @@ nesty_menu_stack_mt= {
 			local item= tos:get_cursor_element()
 			if item then
 				item:gain_focus()
-				local xmn, xmx, ymn, ymx= rec_calc_actor_extent(item.container)
+				local fit= item:get_cursor_fit()
 				local xp, yp= rec_calc_actor_pos(item.container)
 				local xs, ys= rec_calc_actor_pos(self.container)
 				xp= xp - xs
 				yp= yp - ys
-				self.cursor:refit(xp, yp, xmx - xmn + 4, ymx - ymn + 4)
+				self.cursor:refit(xp, yp, fit[3], fit[4])
 			end
 		end,
 		refit_cursor= function(self, fit)
