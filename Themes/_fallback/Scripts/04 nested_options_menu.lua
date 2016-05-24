@@ -287,29 +287,33 @@ local value_item_mt= {
 			self.text_width= params.text_width
 			self.value_width= params.value_width
 			self.type_images= params.type_images or {}
-			return Def.ActorFrame{
+			local frame= Def.ActorFrame{
 				InitCommand= function(subself)
 					self.container= subself
+					self.text= subself:GetChild("text"):horizalign(left)
+					self.value_text= subself:GetChild("vtext"):horizalign(right)
+					self.value_image= subself:GetChild("vimage"):horizalign(right):animate(false)
 				end,
-				Def.BitmapText{
-					Font= params.text_font, InitCommand= function(subself)
-						self.text= subself:horizalign(left)
-					end,
-					OnCommand= params.text_on,
-				},
-				Def.BitmapText{
-					Font= params.value_font, InitCommand= function(subself)
-						self.value_text= subself:horizalign(right)
-					end,
-					OnCommand= params.value_text_on,
-				},
-				Def.Sprite{
-					InitCommand= function(subself)
-						self.value_image= subself:animate(false):horizalign(right)
-					end,
-					OnCommand= params.value_image_on,
-				},
 			}
+			local parts= {{
+					thing= Def.BitmapText{Name= "text"},
+					commands= params.text_commands or {}
+										},{
+					thing= Def.BitmapText{Name= "vtext"},
+					commands= params.value_text_commands or {}
+											},{
+					thing= Def.Sprite{Name= "vimage"},
+					commands= params.value_image_commands or {}
+			}}
+			for i, part in ipairs(parts) do
+				for name, func in pairs(part.commands) do
+					if name ~= "Name" then
+						part.thing[name]= func
+					end
+				end
+				frame[#frame+1]= part.thing
+			end
+			return frame
 		end,
 		set_geo= function(self, width, height, zoom)
 			self.width= width

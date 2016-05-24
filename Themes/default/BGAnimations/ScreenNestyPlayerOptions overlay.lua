@@ -274,18 +274,22 @@ local frame= Def.ActorFrame{
 	end,
 }
 local item_params= {
-	text_font= "Common Normal",
-	text_on= function(self)
-		self:rotationz(720):linear(1):rotationz(0)
-	end,
+	text_commands= {
+		Font= "Common Normal", OnCommand= function(self)
+			self:rotationz(720):linear(1):rotationz(0)
+		end,
+	},
 	text_width= .7,
-	value_font= "Common Normal",
-	value_text_on= function(self)
-		self:rotationz(-720):linear(1):rotationz(0)
-	end,
-	value_image_on= function(self)
-		self:rotationz(-720):linear(1):rotationz(0)
-	end,
+	value_text_commands= {
+		Font= "Common Normal", OnCommand= function(self)
+			self:rotationz(-720):linear(1):rotationz(0)
+		end,
+	},
+	value_image_commands= {
+		OnCommand= function(self)
+			self:rotationz(-720):linear(1):rotationz(0)
+		end,
+	},
 	value_width= .25,
 	type_images= {
 		bool= THEME:GetPathG("", "menu_icons/bool"),
