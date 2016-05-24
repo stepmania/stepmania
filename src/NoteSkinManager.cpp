@@ -487,6 +487,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 
 	if( !PushActorTemplate(L, sButton, sElement, bSpriteOnly) )
 	{
+		LUA->Release( L );
 		// ActorUtil will warn about the error
 		return Sprite::NewBlankSprite();
 	}
@@ -494,6 +495,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	auto_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
 	if( pNode.get() == NULL )
 	{
+		LUA->Release( L );
 		// XNode will warn about the error
 		return Sprite::NewBlankSprite();
 	}
