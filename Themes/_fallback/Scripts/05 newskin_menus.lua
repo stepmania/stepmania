@@ -190,7 +190,7 @@ local function noteskin_param_choice_val(param_name, param_section, type_info)
 	local translation= get_noteskin_param_translation(param_name, type_info)
 	for i, choice in ipairs(type_info.choices) do
 		eles[#eles+1]= {
-			type= "bool",
+			type= "choice",
 			name= translation.choices[i], explanation= translation.explanation,
 			execute= function(pn)
 				param_section[param_name]= choice

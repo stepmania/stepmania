@@ -160,11 +160,11 @@ nesty_cursor_mt= {
 		end,
 		hide= function(self)
 			self.hidden= true
-			self.container:hibernate(math.huge)
+			self.container:visible(false)
 		end,
 		unhide= function(self)
 			self.hidden= false
-			self.container:hibernate(0)
+			self.container:visible(true)
 		end,
 }}
 
@@ -345,8 +345,8 @@ local value_item_mt= {
 			self.prev_index= item_index
 		end,
 		set_value_image= function(self, path)
-			self.value_image:hibernate(0):Load(path)
-			self.value_text:hibernate(math.huge):settext("")
+			self.value_image:visible(true):Load(path)
+			self.value_text:visible(false):settext("")
 			self.using_image= true
 			if self.info.type == "bool" then
 				if self.info.value then
@@ -356,17 +356,17 @@ local value_item_mt= {
 				end
 			elseif self.info.type == "choice" then
 				if self.info.value then
-					self.value_image:setstate(1):hibernate(0)
+					self.value_image:setstate(1):visible(true)
 				else
-					self.value_image:hibernate(math.huge)
+					self.value_image:visible(false)
 				end
 			else
 				self.value_image:setstate(0)
 			end
 		end,
 		set_value_text= function(self, text)
-			self.value_image:hibernate(math.huge)
-			self.value_text:hibernate(0):settext(text)
+			self.value_image:visible(false)
+			self.value_text:visible(true):settext(text)
 			self.using_image= false
 		end,
 		set= function(self, info)
@@ -375,7 +375,14 @@ local value_item_mt= {
 				local text= get_string_if_translatable(
 					info.translatable, self.translation_section, info.text)
 				self.text:settext(text)
+				local use_value_image= false
 				if self.type_images[info.type] then
+					use_value_image= true
+				end
+				if info.type == "menu" and info.value ~= nil then
+					use_value_image= false
+				end
+				if use_value_image then
 					self:set_value_image(self.type_images[info.type])
 				else
 					if info.value ~= nil then
@@ -1364,9 +1371,9 @@ end
 local function float_toggle_val_bool_logic(old_val, on_val, off_val)
 	local mid_val= (on_val + off_val) * .5
 	if on_val > off_val then
-		return old_val < mid_val
-	else
 		return old_val > mid_val
+	else
+		return old_val < mid_val
 	end
 end
 
@@ -1492,7 +1499,8 @@ nesty_options= {
 		end
 		local ret= {
 			name= valname, menu= nesty_option_menus.enum_option, translatable= true,
-			args= {obj_get= pops_get, get= get, set= set, enum= enum}}
+			args= {obj_get= pops_get, get= get, set= set, enum= enum},
+			value= function(pn) return get(pn, pops_get(pn)) end}
 		return setmetatable(ret, mergable_table_mt)
 	end,
 	enum_player_mod_single_val= function(valname, value, func_name)
