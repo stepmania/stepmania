@@ -3142,6 +3142,7 @@ void Player::SetHoldJudgment( TapNote &tn, int iTrack )
 		Lua* L = LUA->Get();
 		tn.PushSelf(L);
 		msg.SetParamFromStack( L, "TapNote" );
+		LUA->Release( L );
 
 		MESSAGEMAN->Broadcast( msg );
 	}
