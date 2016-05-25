@@ -1206,7 +1206,7 @@ static MenuDef g_BackgroundChange(
 	MenuRowDef(ScreenEdit::layer,
 		"Layer",
 		false,
-		EditMode_Full, true, false, 0, "" ),
+		EditMode_Full, true, false, 0, "without this choice string the game will crash" ),
 	MenuRowDef(ScreenEdit::rate,
 		"Rate",
 		true,
@@ -2735,7 +2735,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 				MenuDef &menu = g_BackgroundChange;
 
-				menu.rows[layer].choices[0] = fmt::sprintf("%d",g_CurrentBGChangeLayer);
+				menu.rows[layer].choices[0] = fmt::sprintf("%d",int(g_CurrentBGChangeLayer));
 				BackgroundUtil::GetBackgroundTransitions(	"", vThrowAway, menu.rows[transition].choices );
 				g_BackgroundChange.rows[transition].choices.insert( g_BackgroundChange.rows[transition].choices.begin(), "None" );	// add "no transition"
 				BackgroundUtil::GetBackgroundEffects(		"", vThrowAway, menu.rows[effect].choices );

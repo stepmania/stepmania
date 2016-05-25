@@ -97,6 +97,10 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		}
 	}
 	f.PutLine( ";" );
+	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
+	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
+
+	std::map<float, float> allPauses;
 
 	const vector<TimingSegment *> &warps = timing.GetTimingSegments(SEGMENT_WARP);
 	unsigned wSize = warps.size();
@@ -108,25 +112,24 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			int iRow = ws->GetRow();
 			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
 			float fSkip = fBPS * ws->GetLength();
-			out.m_SongTiming.AddSegment( StopSegment(iRow, -fSkip) );
+			allPauses.insert(std::pair<float, float>(ws->GetBeat(), -fSkip));
 		}
 	}
 
-	// TODO: make Delays into Stops that start one row before.
-	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
-	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
-
-	std::map<float, float> allPauses;
 	for (auto *item: stops)
 	{
 		const StopSegment *fs = ToStop( item );
 
-		allPauses.insert(std::pair<float, float>(fs->GetBeat(), fs->GetPause()));
-
-		// erase stops with negative length
-		if( fs->GetPause() < 0 )
+		// Handle warps on the same row by summing the values.  Not sure this
+		// plays out the same. -Kyz
+		auto already_exists= allPauses.find(fs->GetBeat());
+		if(already_exists != allPauses.end())
 		{
-			timing.AddSegment( StopSegment(fs->GetRow(), 0) );
+			already_exists->second+= fs->GetPause();
+		}
+		else
+		{
+			allPauses.insert(std::pair<float, float>(fs->GetBeat(), fs->GetPause()));
 		}
 	}
 	// Delays can't be negative: thus, no effect.
@@ -134,7 +137,15 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	{
 		float fBeat = NoteRowToBeat( ss->GetRow()-1 );
 		float fPause = ToDelay(ss)->GetPause();
-		allPauses.insert( std::pair<float,float>(fBeat, fPause) );
+		auto already_exists= allPauses.find(fBeat);
+		if(already_exists != allPauses.end())
+		{
+			already_exists->second+= fPause;
+		}
+		else
+		{
+			allPauses.insert( std::pair<float,float>(fBeat, fPause));
+		}
 	}
 
 	f.Write( "#STOPS:" );
