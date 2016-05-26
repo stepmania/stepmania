@@ -1153,7 +1153,7 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 	if( X==nullptr ) LOG->Warn("Failed to read section " #X); \
 	else Load##X##FromNode(X); }
 
-void Profile::LoadCustomFunction( std::string sDir )
+void Profile::LoadCustomFunction(std::string dir, PlayerNumber pn)
 {
 	/* Get the theme's custom load function:
 	 *   [Profile]
@@ -1166,11 +1166,19 @@ void Profile::LoadCustomFunction( std::string sDir )
 
 	// Pass profile and profile directory as arguments
 	this->PushSelf(L);
-	LuaHelpers::Push(L, sDir);
+	LuaHelpers::Push(L, dir);
+	if(pn == PlayerNumber_Invalid)
+	{
+		lua_pushnil(L);
+	}
+	else
+	{
+		Enum::Push(L, pn);
+	}
 
 	// Run it
 	std::string Error= "Error running CustomLoadFunction: ";
-	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
+	LuaHelpers::RunScriptOnStack(L, Error, 3, 0, true);
 
 	LUA->Release(L);
 }
@@ -1258,7 +1266,7 @@ ProfileLoadResult Profile::LoadAllFromDir( std::string sDir, bool bRequireSignat
 	if (ret != ProfileLoadResult_Success)
 		return ret;
 
-	LoadCustomFunction( sDir );
+	LoadCustomFunction(sDir, PlayerNumber_Invalid);
 
 	return ProfileLoadResult_Success;
 }

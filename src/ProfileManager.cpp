@@ -248,7 +248,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 		return false;
 	}
 
-	GetProfile(pn)->LoadCustomFunction(m_sProfileDir[pn]);
+	GetProfile(pn)->LoadCustomFunction(m_sProfileDir[pn], pn);
 
 	return true;
 }

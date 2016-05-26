@@ -232,26 +232,16 @@ function create_lua_config(params)
 end
 
 function standard_lua_config_profile_load(config)
-	return function(profile, dir)
-		local this_guid= profile:GetGUID()
-		for i, pn in ipairs(PlayerNumber) do
-			local matching_profile= PROFILEMAN:GetProfile(pn)
-			if matching_profile and matching_profile:GetGUID() == this_guid then
-				config:load(pn)
-				return
-			end
+	return function(profile, dir, pn)
+		if pn then
+			config:load(pn)
 		end
 	end
 end
 function standard_lua_config_profile_save(config)
-	return function(profile, dir)
-		local this_guid= profile:GetGUID()
-		for i, pn in ipairs(PlayerNumber) do
-			local matching_profile= PROFILEMAN:GetProfile(pn)
-			if matching_profile and matching_profile:GetGUID() == this_guid then
-				config:save(pn)
-				return
-			end
+	return function(profile, dir, pn)
+		if pn then
+			config:save(pn)
 		end
 	end
 end

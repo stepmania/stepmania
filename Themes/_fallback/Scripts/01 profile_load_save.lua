@@ -15,14 +15,14 @@ function add_profile_save_callback(func)
 	table.insert(profile_save_callbacks, func)
 end
 
-function LoadProfileCustom(profile, dir)
+function LoadProfileCustom(profile, dir, pn)
 	for i, callback in ipairs(profile_load_callbacks) do
-		callback(profile, dir)
+		callback(profile, dir, pn)
 	end
 end
-function SaveProfileCustom(profile, dir)
+function SaveProfileCustom(profile, dir, pn)
 	for i, callback in ipairs(profile_save_callbacks) do
-		callback(profile, dir)
+		callback(profile, dir, pn)
 	end
 end
 

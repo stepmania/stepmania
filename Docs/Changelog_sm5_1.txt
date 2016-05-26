@@ -7,6 +7,57 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/05/26
+----------
+* [Profile] LoadProfileCustom function is now passed the player number the
+  profile is being loaded for.  The player number is nil when local profiles
+  are being loaded during stepmania startup because they aren't actually
+  being loaded for a player. [kyzentun]
+
+2016/05/24
+----------
+* [NotesWriterSM] Fixed bug that deleted stops that were on the same row as
+  a warp when saving in edit mode.  The SM format does not support warps, so
+  warps are converted to negative stops.  There can only be one stop per row,
+  so creating the negative stop for the warp deleted the existing positive
+  stop.  The new SM writing logic does not modify the original timing data,
+  and sums the values if a stop and a warp occur on the same row.
+  Ex: 135 bpm, 225ms stop and 1 beat warp on the same row.  The warp becomes
+  a -444ms stop.  -444ms + 225ms is -219ms, so the result is a -219ms stop on
+  that row.
+  [kyzentun]
+* [NestyMenus] Various improvements that I really should document. [kyzentun]
+
+2016/05/17
+----------
+* [ArrowDefects] Fixed beat mod bug that only beat right. [kyzentun]
+  GetPlayerOptionsArray and GetPlayerOptionsString added to the list of lua
+  functions that activate defective mode.
+
+2016/05/14
+----------
+* [Newskin] Added custom_x column field to allow overlapping positions. [kyzentun]
+
+2016/05/13
+----------
+* [Newskin] Added use_hold_heads_for_taps_on_row flag. [kyzentun]
+
+2016/05/10
+----------
+* [Newskin] Added hold_gray_percent for darkening dropped holds. [kyzentun]
+
+2016/05/08
+----------
+* [Key mapping] Screenshot key can now be remapped. [kyzentun]
+
+2016/05/04
+----------
+* [Debug Menu] Disabled Monkey Input because it is a hazard.  Everybody now
+  has to relearn the keys on the debug menu because Rendering Stats is now 5
+  instead of 6. [kyzentun]
+* [Preferences] Removed Debug Lights preference so it does not persist after
+  the game is restarted. [kyzentun]
+
 2016/04/23
 ----------
 * [item_scroller] Added item_params arg to item_scroller:create_actors, which

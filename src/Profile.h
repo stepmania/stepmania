@@ -12,6 +12,7 @@
 #include "StyleUtil.h"	// for StyleID
 #include "IDUtil.h" // For hash specializations.
 #include "LuaReference.h"
+#include "PlayerNumber.h"
 
 #include <unordered_map>
 #include <map>
@@ -418,7 +419,7 @@ public:
 	ProfileLoadResult LoadAllFromDir( std::string sDir, bool bRequireSignature );
 	ProfileLoadResult LoadStatsFromDir( std::string dir, bool require_signature );
 	void LoadTypeFromDir(std::string dir);
-	void LoadCustomFunction( std::string sDir );
+	void LoadCustomFunction(std::string dir, PlayerNumber pn);
 	bool SaveAllToDir( std::string sDir, bool bSignData ) const;
 
 	ProfileLoadResult LoadEditableDataFromDir( std::string sDir );

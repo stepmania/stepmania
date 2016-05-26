@@ -449,7 +449,7 @@ void ThemeManager::SwitchThemeAndLanguage( const std::string &sThemeName_, const
 		if( PROFILEMAN != nullptr )
 		{
 			Profile* pProfile = PROFILEMAN->GetMachineProfile();
-			pProfile->LoadCustomFunction( "/Save/MachineProfile/" );
+			pProfile->LoadCustomFunction("/Save/MachineProfile/", PlayerNumber_Invalid);
 		}
 	}
 
