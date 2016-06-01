@@ -6,8 +6,8 @@ ________________________________________________________________________________
 
 2016/05/25
 ----------
-* [MemoryCards] Fixed bug that occasionally disabled loading profiles from
-  usb drives. [djpohly]
+* [MemoryCards] Fixed bug that caused loading profiles from usb drives to
+  crash. [djpohly]
 
 2016/05/20
 ----------
