@@ -32,8 +32,6 @@ using namespace X11Helper;
 const std::string ID_XSCREEN = "XSCREEN_RANDR";
 
 static GLXContext g_pContext = nullptr;
-static GLXContext g_pBackgroundContext = nullptr;
-static Window g_AltWindow = None;
 static bool g_bChangedScreenSize = false;
 static SizeID g_iOldSize = None;
 static Rotation g_OldRotation = RR_Rotate_0;
@@ -100,15 +98,8 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		glXDestroyContext( Dpy, g_pContext );
 		g_pContext = nullptr;
 	}
-	if( g_pBackgroundContext )
-	{
-		glXDestroyContext( Dpy, g_pBackgroundContext );
-		g_pBackgroundContext = nullptr;
-	}
 	XDestroyWindow( Dpy, Win );
 	Win = None;
-	XDestroyWindow( Dpy, g_AltWindow );
-	g_AltWindow = None;
 	CloseXConnection();
 }
 
@@ -194,19 +185,13 @@ std::string LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bN
 		if( !MakeWindow(Win, xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
 			return "Failed to create the window.";
 
-		if( !MakeWindow(g_AltWindow, xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
-			FAIL_M( "Failed to create the alt window." ); // Should this be fatal?
-
 		char *szWindowTitle = const_cast<char *>( p.sWindowTitle.c_str() );
 		XChangeProperty( Dpy, Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
 				reinterpret_cast<unsigned char*>(szWindowTitle), strlen(szWindowTitle) );
 
 		if( g_pContext )
 			glXDestroyContext( Dpy, g_pContext );
-		if( g_pBackgroundContext )
-			glXDestroyContext( Dpy, g_pBackgroundContext );
 		g_pContext = glXCreateContext( Dpy, xvi, nullptr, True );
-		g_pBackgroundContext = glXCreateContext( Dpy, xvi, g_pContext, True );
 
 		glXMakeCurrent( Dpy, Win, g_pContext );
 
@@ -746,173 +731,6 @@ void LowLevelWindow_X11::GetDisplaySpecs(DisplaySpecs &out) const {
 	}
 }
 
-bool LowLevelWindow_X11::SupportsThreadedRendering()
-{
-	return g_pBackgroundContext != nullptr;
-}
-
-class RenderTarget_X11: public RenderTarget
-{
-public:
-	RenderTarget_X11( LowLevelWindow_X11 *pWind );
-	~RenderTarget_X11();
-
-	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	unsigned GetTexture() const { return m_iTexHandle; }
-	void StartRenderingTo();
-	void FinishRenderingTo();
-
-	// Copying from the Pbuffer to the texture flips Y.
-	virtual bool InvertY() const { return true; }
-
-private:
-	int m_iWidth, m_iHeight;
-	LowLevelWindow_X11 *m_pWind;
-	GLXPbuffer m_iPbuffer;
-	GLXContext m_pPbufferContext;
-	unsigned int m_iTexHandle;
-
-	GLXContext m_pOldContext;
-	GLXDrawable m_pOldDrawable;
-};
-
-RenderTarget_X11::RenderTarget_X11( LowLevelWindow_X11 *pWind )
-{
-	m_pWind = pWind;
-	m_iPbuffer = 0;
-	m_pPbufferContext = nullptr;
-	m_iTexHandle = 0;
-	m_pOldContext = nullptr;
-	m_pOldDrawable = 0;
-}
-
-RenderTarget_X11::~RenderTarget_X11()
-{
-	if( m_pPbufferContext )
-		glXDestroyContext( Dpy, m_pPbufferContext );
-	if( m_iPbuffer )
-		glXDestroyPbuffer( Dpy, m_iPbuffer );
-	if( m_iTexHandle )
-		glDeleteTextures( 1, reinterpret_cast<GLuint*>(&m_iTexHandle) );
-}
-
-/* Note that although the texture size may need to be a power of 2,
- * the Pbuffer does not. */
-void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
-{
-	//ASSERT( param.iWidth == power_of_two(param.iWidth) && param.iHeight == power_of_two(param.iHeight) );
-
-	m_iWidth = param.iWidth;
-	m_iHeight = param.iHeight;
-
-	/* NOTE: int casts on GLX_DONT_CARE are for -Werror=narrowing */
-	int pConfigAttribs[] =
-	{
-		GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
-		GLX_RENDER_TYPE, GLX_RGBA_BIT,
-
-		GLX_RED_SIZE, 8,
-		GLX_GREEN_SIZE, 8,
-		GLX_BLUE_SIZE, 8,
-		GLX_ALPHA_SIZE, param.bWithAlpha? 8: (int) GLX_DONT_CARE,
-
-		GLX_DOUBLEBUFFER, False,
-		GLX_DEPTH_SIZE, param.bWithDepthBuffer? 16: (int) GLX_DONT_CARE,
-		None
-	};
-	int iConfigs;
-	GLXFBConfig *pConfigs = glXChooseFBConfig( Dpy, DefaultScreen(Dpy), pConfigAttribs, &iConfigs );
-	ASSERT( pConfigs );
-
-	const int pPbufferAttribs[] =
-	{
-		GLX_PBUFFER_WIDTH, param.iWidth,
-		GLX_PBUFFER_HEIGHT, param.iHeight,
-		None
-	};
-
-	for( int i = 0; i < iConfigs; ++i )
-	{
-		m_iPbuffer = glXCreatePbuffer( Dpy, pConfigs[i], pPbufferAttribs );
-		if( m_iPbuffer == 0 )
-			continue;
-
-		XVisualInfo *pVisual = glXGetVisualFromFBConfig( Dpy, pConfigs[i] );
-		m_pPbufferContext = glXCreateContext( Dpy, pVisual, g_pContext, True );
-		ASSERT( m_pPbufferContext );
-		XFree( pVisual );
-		break;
-	}
-
-	ASSERT( m_iPbuffer );
-
-	// allocate OpenGL texture resource
-	glGenTextures( 1, reinterpret_cast<GLuint*>(&m_iTexHandle) );
-	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
-
-	LOG->Trace( "n %i, %ix%i", m_iTexHandle, param.iWidth, param.iHeight );
-		while( glGetError() != GL_NO_ERROR )
-		;
-
-	int iTextureWidth = power_of_two( param.iWidth );
-	int iTextureHeight = power_of_two( param.iHeight );
-	iTextureWidthOut = iTextureWidth;
-	iTextureHeightOut = iTextureHeight;
-
-	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
-			iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB, GL_UNSIGNED_BYTE, nullptr );
-	GLenum error = glGetError();
-	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
-
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-}
-
-void RenderTarget_X11::StartRenderingTo()
-{
-	m_pOldContext = glXGetCurrentContext();
-	m_pOldDrawable = glXGetCurrentDrawable();
-	glXMakeCurrent( Dpy, m_iPbuffer, m_pPbufferContext );
-
-	glViewport( 0, 0, m_iWidth, m_iHeight );
-}
-
-void RenderTarget_X11::FinishRenderingTo()
-{
-	glFlush();
-
-	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
-
-		while( glGetError() != GL_NO_ERROR )
-		;
-
-	glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_iWidth, m_iHeight );
-
-	GLenum error = glGetError();
-	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
-
-	glBindTexture( GL_TEXTURE_2D, 0 );
-
-	glXMakeCurrent( Dpy, m_pOldDrawable, m_pOldContext );
-	m_pOldContext = nullptr;
-	m_pOldDrawable = 0;
-
-}
-
-bool LowLevelWindow_X11::SupportsRenderToTexture() const
-{
-	// Server must support pbuffers:
-	const int iScreen = DefaultScreen( Dpy );
-	float fVersion = strtof( glXQueryServerString(Dpy, iScreen, GLX_VERSION), nullptr );
-	if( fVersion < 1.3f )
-		return false;
-
-	return true;
-}
-
 bool NetWMSupported(Display *Dpy, Atom feature)
 {
 	Atom net_supported = XInternAtom( Dpy, "_NET_SUPPORTED", False );
@@ -939,38 +757,6 @@ bool LowLevelWindow_X11::SupportsFullscreenBorderlessWindow() const
 {
 	Atom fullscreen = XInternAtom( Dpy, "_NET_WM_STATE_FULLSCREEN", False );
 	return NetWMSupported( Dpy, fullscreen );
-}
-
-RenderTarget *LowLevelWindow_X11::CreateRenderTarget()
-{
-	return new RenderTarget_X11( this );
-}
-
-void LowLevelWindow_X11::BeginConcurrentRenderingMainThread()
-{
-	/* Move the main thread, which is going to be loading textures, etc.
-	 * but not rendering, to an undisplayed window. This results in
-	 * smoother rendering. */
-	bool b = glXMakeCurrent( Dpy, g_AltWindow, g_pContext );
-	ASSERT(b);
-}
-
-void LowLevelWindow_X11::EndConcurrentRenderingMainThread()
-{
-	bool b = glXMakeCurrent( Dpy, Win, g_pContext );
-	ASSERT(b);
-}
-
-void LowLevelWindow_X11::BeginConcurrentRendering()
-{
-	bool b = glXMakeCurrent( Dpy, Win, g_pBackgroundContext );
-	ASSERT(b);
-}
-
-void LowLevelWindow_X11::EndConcurrentRendering()
-{
-	bool b = glXMakeCurrent( Dpy, None, nullptr );
-	ASSERT(b);
 }
 
 /*

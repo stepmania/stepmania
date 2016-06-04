@@ -851,9 +851,13 @@ void RageDisplay_Legacy::EndFrame()
 		fullscreenSprite.SetHorizAlign(align_left);
 		fullscreenSprite.SetVertAlign(align_top);
 		CameraPushMatrix();
-		LoadMenuPerspective( 0, GetActualVideoModeParams().width, GetActualVideoModeParams().height,
-							 static_cast<float> (GetActualVideoModeParams().width) / 2.f,
-							 static_cast<float> (GetActualVideoModeParams().height) / 2.f );
+		LoadMenuPerspective(
+			0,
+			float(GetActualVideoModeParams().width),
+			float(GetActualVideoModeParams().height),
+			float(GetActualVideoModeParams().width) / 2.f,
+			float(GetActualVideoModeParams().height) / 2.f
+		);
 		fullscreenSprite.Draw();
 		CameraPopMatrix();
 	}
@@ -2087,32 +2091,6 @@ const RageDisplay::RagePixelFormatDesc *RageDisplay_Legacy::GetPixelFormatDesc(R
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
-bool RageDisplay_Legacy::SupportsThreadedRendering()
-{
-	return g_pWind->SupportsThreadedRendering();
-}
-
-void RageDisplay_Legacy::BeginConcurrentRenderingMainThread()
-{
-	g_pWind->BeginConcurrentRenderingMainThread();
-}
-
-void RageDisplay_Legacy::EndConcurrentRenderingMainThread()
-{
-	g_pWind->EndConcurrentRenderingMainThread();
-}
-
-void RageDisplay_Legacy::BeginConcurrentRendering()
-{
-	g_pWind->BeginConcurrentRendering();
-	RageDisplay::BeginConcurrentRendering();
-}
-
-void RageDisplay_Legacy::EndConcurrentRendering()
-{
-	g_pWind->EndConcurrentRendering();
-}
-
 void RageDisplay_Legacy::DeleteTexture( unsigned iTexture )
 {
 	if (iTexture == 0)
@@ -2577,7 +2555,7 @@ void RenderTarget_FramebufferObject::FinishRenderingTo()
 
 bool RageDisplay_Legacy::SupportsRenderToTexture() const
 {
-	return GLEW_EXT_framebuffer_object || g_pWind->SupportsRenderToTexture();
+	return GLEW_EXT_framebuffer_object ? true : false;
 }
 
 bool RageDisplay_Legacy::SupportsFullscreenBorderlessWindow() const
@@ -2597,10 +2575,8 @@ bool RageDisplay_Legacy::SupportsFullscreenBorderlessWindow() const
 unsigned RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
 	RenderTarget *pTarget;
-	if (GLEW_EXT_framebuffer_object)
+	if (this->SupportsRenderToTexture())
 		pTarget = new RenderTarget_FramebufferObject;
-	else
-		pTarget = g_pWind->CreateRenderTarget();
 
 	pTarget->Create( param, iTextureWidthOut, iTextureHeightOut );
 

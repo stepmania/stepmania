@@ -181,119 +181,7 @@ static NSOpenGLContext *CreateOGLContext( GLContextType type, int iColorSize, in
 	return context;
 }		
 
-
-class RenderTarget_MacOSX : public RenderTarget
-{
-public:
-	RenderTarget_MacOSX( id shareContext );
-	~RenderTarget_MacOSX();
-	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	unsigned GetTexture() const { return m_iTexHandle; }
-	void StartRenderingTo();
-	void FinishRenderingTo();
-	
-private:
-	NSOpenGLContext *m_ShareContext, *m_OldContext, *m_PBufferContext;
-	GLuint m_iTexHandle;
-	int m_iWidth, m_iHeight;
-};
-
-RenderTarget_MacOSX::RenderTarget_MacOSX( id shareContext )
-{
-	m_ShareContext = shareContext;
-	m_OldContext = nil;
-	m_PBufferContext = nil;
-	m_iTexHandle = 0;
-	m_iWidth = 0;
-	m_iHeight = 0;
-}
-
-RenderTarget_MacOSX::~RenderTarget_MacOSX()
-{
-	POOL;
-	[m_PBufferContext release];
-	if( m_iTexHandle )
-		glDeleteTextures( 1, &m_iTexHandle );
-}
-
-void RenderTarget_MacOSX::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
-{
-	POOL;
-	m_iWidth = param.iWidth;
-	m_iHeight = param.iHeight;
-	
-	// PBuffer needs to be a power of 2.
-	int iTextureWidth = power_of_two( param.iWidth );
-	int iTextureHeight = power_of_two( param.iHeight );
-
-	// Create the PBuffer.
-	unsigned long format = param.bWithAlpha? GL_RGBA:GL_RGB;
-	NSOpenGLPixelBuffer *PBuffer = [[NSOpenGLPixelBuffer alloc] initWithTextureTarget:GL_TEXTURE_2D
-								    textureInternalFormat:format
-								    textureMaxMipMapLevel:0 // No idea.
-									       pixelsWide:iTextureWidth
-									       pixelsHigh:iTextureHeight];
-	DEBUG_ASSERT( PBuffer );
-	
-	// Create an OGL context.
-	bool bShared = false;
-	m_PBufferContext = CreateOGLContext( PIXEL_BUFFER, 24, param.bWithAlpha? 8:0, param.bWithDepthBuffer? 16:0, m_ShareContext, bShared );
-	DEBUG_ASSERT( m_PBufferContext );
-	DEBUG_ASSERT( bShared );
-	[m_PBufferContext setPixelBuffer:PBuffer cubeMapFace:0 mipMapLevel:0
-		    currentVirtualScreen:[m_ShareContext currentVirtualScreen]];
-	[PBuffer release]; // XXX: Hopefully this is retained by the PBufferContext.
-	
-	glGenTextures( 1, &m_iTexHandle );
-	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
-	
-	while( glGetError() != GL_NO_ERROR )
-		;
-	
-	iTextureWidthOut = iTextureWidth;
-	iTextureHeightOut = iTextureHeight;
-	
-	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
-		      iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB,
-		      GL_UNSIGNED_BYTE, nullptr );
-	GLenum error = glGetError();
-	ASSERT_M(error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error));
-	
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-}
-
-void RenderTarget_MacOSX::StartRenderingTo()
-{
-	DEBUG_ASSERT( !m_OldContext );
-	m_OldContext = [NSOpenGLContext currentContext];
-	[m_PBufferContext makeCurrentContext];
-	glViewport( 0, 0, m_iWidth, m_iHeight );
-}
-
-void RenderTarget_MacOSX::FinishRenderingTo()
-{
-	DEBUG_ASSERT( m_OldContext );
-	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
-	
-	while( glGetError() != GL_NO_ERROR )
-		;
-	
-	glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_iWidth, m_iHeight );
-	
-	GLenum error = glGetError();
-	ASSERT_M( error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error) );
-	
-	glBindTexture( GL_TEXTURE_2D, 0 );
-	
-	[m_OldContext makeCurrentContext];
-	m_OldContext = nil;
-}
-
-
-LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(nullptr), m_DisplayID(0)
+LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_CurrentDisplayMode(nullptr), m_DisplayID(0)
 {
 	POOL;
 	m_WindowDelegate = [[SMWindowDelegate alloc] init];
@@ -311,8 +199,6 @@ LowLevelWindow_MacOSX::~LowLevelWindow_MacOSX()
 		
 	[m_Context clearDrawable];
 	[m_Context release];
-	[m_BGContext clearDrawable];
-	[m_BGContext release];
 	[m_WindowDelegate performSelectorOnMainThread:@selector(closeWindow) withObject:nil waitUntilDone:YES];
 	[m_WindowDelegate release];
 }
@@ -372,15 +258,6 @@ std::string LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool&
 			m_Context = newContext;
 			newDeviceOut = !bShared;
 			m_CurrentParams.bpp = p.bpp;
-			[m_BGContext release];
-			m_BGContext = nil;
-			m_BGContext = CreateOGLContext( WINDOWED, p.bpp == 16? 16:24, p.bpp == 16? 1:8, 16, m_Context, bShared );
-			
-			if( m_BGContext && !bShared )
-			{
-				[m_BGContext release];
-				m_BGContext = nil;
-			}
 		}
 		
 		[m_WindowDelegate performSelectorOnMainThread:@selector(setParams:) withObject:[NSValue valueWithPointer:&p] waitUntilDone:YES];
@@ -414,14 +291,6 @@ std::string LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool&
 		m_Context = newContext;
 		newDeviceOut = !bShared;
 		m_CurrentParams.bpp = p.bpp;
-		[m_BGContext release];
-		m_BGContext = CreateOGLContext( FULL_SCREEN, p.bpp == 16? 16:24, p.bpp == 16? 1:8, 16, m_Context, bShared );
-		
-		if( m_BGContext && !bShared )
-		{
-			[m_BGContext release];
-			m_BGContext = nil;
-		}
 	}
 	
 	[m_Context setFullScreen];
@@ -454,7 +323,6 @@ void LowLevelWindow_MacOSX::ShutDownFullScreen()
 	
 	[NSOpenGLContext clearCurrentContext];
 	[m_Context clearDrawable];
-	[m_BGContext clearDrawable];
 	
 	CGDisplayErr err = CGDisplaySwitchToMode( kCGDirectMainDisplay, m_CurrentDisplayMode );
 	
@@ -633,20 +501,6 @@ void LowLevelWindow_MacOSX::Update()
 	lock.Unlock(); // Unlock before calling ResolutionChanged().
 	[m_Context update];
 	DISPLAY->ResolutionChanged();
-}
-
-RenderTarget *LowLevelWindow_MacOSX::CreateRenderTarget()
-{
-	return new RenderTarget_MacOSX( m_Context );
-}
-
-void LowLevelWindow_MacOSX::BeginConcurrentRendering()
-{
-	if( m_CurrentParams.windowed )
-		[m_BGContext setView:[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView]];
-	else
-		[m_BGContext setFullScreen];
-	[m_BGContext makeCurrentContext];
 }
 
 /*

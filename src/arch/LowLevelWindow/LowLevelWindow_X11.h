@@ -22,16 +22,7 @@ public:
 
 	void GetDisplaySpecs(DisplaySpecs &out) const;
 
-	bool SupportsRenderToTexture() const;
-	RenderTarget *CreateRenderTarget();
-
 	bool SupportsFullscreenBorderlessWindow() const;
-
-	bool SupportsThreadedRendering();
-	void BeginConcurrentRenderingMainThread();
-	void EndConcurrentRenderingMainThread();
-	void BeginConcurrentRendering();
-	void EndConcurrentRendering();
 
 private:
 	void RestoreOutputConfig();

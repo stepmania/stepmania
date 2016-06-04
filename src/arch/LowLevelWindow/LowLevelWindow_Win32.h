@@ -14,11 +14,6 @@ public:
 	bool IsSoftwareRenderer( std::string &sError );
 	void SwapBuffers();
 	void Update();
-	bool SupportsThreadedRendering();
-	void BeginConcurrentRendering();
-	void EndConcurrentRendering();
-	virtual bool SupportsRenderToTexture() const { return true; }
-	virtual RenderTarget *CreateRenderTarget();
 
 	const ActualVideoModeParams GetActualVideoModeParams() const;
 };
