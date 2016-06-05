@@ -762,6 +762,9 @@ void InputHandler_DInput::InputThreadMain()
 			// Update buffered devices.
 			PollAndAcquireDevices( true );
 
+			/* NB: This sleep is interruptable - so it *doesn't* increase your latency
+			 * in the slightest. Unsure of this, I set it to 500ms and played a song.
+			 * Judging by the AAA I got, gameplay was unaffected. -Colby */
 			int ret = WaitForSingleObjectEx( Handle, 50, true );
 			if( ret == -1 )
 			{
@@ -774,6 +777,8 @@ void InputHandler_DInput::InputThreadMain()
 			RageTimer now;
 			for( unsigned i = 0; i < BufferedDevices.size(); ++i )
 				UpdateBuffered( *BufferedDevices[i], now );
+
+			InputHandler::UpdateCounter();
 		}
 		CHECKPOINT;
 

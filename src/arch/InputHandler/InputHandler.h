@@ -44,6 +44,8 @@ public:
 	 * Override this if you need to do that. */
 	virtual void WindowReset() { }
 
+	std::string m_sName;
+
 protected:
 	/* Convenience function: Call this to queue a received event.
 	 * This may be called in a thread.
@@ -63,9 +65,15 @@ protected:
 	/* Call this at the end of polling input. */
 	void UpdateTimer();
 
+	/* Call this during threaded polls */
+	void UpdateCounter();
+
 private:
 	RageTimer m_LastUpdate;
+	// Time since we last reset the update counter.
+	RageTimer m_LastReset;
 	int m_iInputsSinceUpdate;
+	int m_iUpdatesPerSecond;
 };
 
 #define REGISTER_INPUT_HANDLER_CLASS2( name, x ) \

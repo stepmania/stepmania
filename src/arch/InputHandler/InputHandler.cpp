@@ -1,5 +1,6 @@
 #include "global.h"
 #include "InputFilter.h"
+#include "InputQueue.h"
 #include "RageUtil.h"
 #include "InputHandler.h"
 #include "RageLog.h"
@@ -10,6 +11,17 @@
 
 using std::vector;
 using std::wstring;
+
+void InputHandler::UpdateCounter()
+{
+	m_iUpdatesPerSecond++;
+
+	if (m_LastReset.Ago() > 1.0f) {
+		m_LastReset.Touch();
+		INPUTQUEUE->SetPPS(m_sName, m_iUpdatesPerSecond);
+		m_iUpdatesPerSecond = 0;
+	}
+}
 
 void InputHandler::UpdateTimer()
 {
@@ -190,6 +202,8 @@ void InputHandler::Create( const std::string &drivers_, vector<InputHandler *> &
 
 		InputHandler *ret = dynamic_cast<InputHandler *>( pDriver );
 		DEBUG_ASSERT( ret );
+		ret->m_sName = s;
+
 		Add.push_back( ret );
 	}
 

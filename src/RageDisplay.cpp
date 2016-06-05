@@ -16,12 +16,18 @@
 #include "DisplaySpec.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
+// Needed for stats (GetPPS)
+#include "InputQueue.h"
+
+// This is disabled by default, as the stat is misleading to users.
+Preference<bool>  show_pps("ShowPPS", false);
+
 using std::vector;
 
 // Statistics stuff
 RageTimer	g_LastCheckTimer;
-int		g_iNumVerts;
-int		g_iFPS, g_iVPF, g_iCFPS;
+int         g_iNumVerts;
+int         g_iFPS, g_iVPF, g_iCFPS;
 
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
@@ -173,12 +179,20 @@ std::string RageDisplay::GetStats() const
 	// If FPS == 0, we don't have stats yet.
 	if( !GetFPS() )
 		s = "-- FPS\n-- av FPS\n-- VPF";
+	else
+		s = fmt::sprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
 
-	s = fmt::sprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
+	s += "\n" + this->GetApiDescription();
 
-//	#if defined(_WINDOWS)
-	s += "\n"+this->GetApiDescription();
-//	#endif
+	if (show_pps)
+	{
+		s += "\n";
+		auto pps = INPUTQUEUE->GetPPS();
+		for (auto &device : pps)
+		{
+			s += fmt::sprintf("%s: %d\n", device.first, device.second);
+		}
+	}
 
 	return s;
 }

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "InputQueue.h"
+#include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "InputEventPlus.h"
@@ -10,6 +11,21 @@ using std::vector;
 InputQueue*	INPUTQUEUE = nullptr;	// global and accessible from anywhere in our program
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 32;
+
+std::map<std::string, int> g_PPS;
+RageMutex g_ppsMut("PPSCounter");
+
+// Used by the InputHandlers.
+void InputQueue::SetPPS(std::string driver, int pps)
+{
+	LockMut(g_ppsMut);
+	g_PPS[driver] = pps;
+}
+
+std::map<std::string, int> InputQueue::GetPPS() const
+{
+	return g_PPS;
+}
 
 InputQueue::InputQueue()
 {
