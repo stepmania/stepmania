@@ -2574,10 +2574,11 @@ bool RageDisplay_Legacy::SupportsFullscreenBorderlessWindow() const
 
 unsigned RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
-	RenderTarget *pTarget;
-	if (this->SupportsRenderToTexture())
-		pTarget = new RenderTarget_FramebufferObject;
+	if (!this->SupportsRenderToTexture()) {
+		return 0;
+	}
 
+	RenderTarget *pTarget = new RenderTarget_FramebufferObject;
 	pTarget->Create( param, iTextureWidthOut, iTextureHeightOut );
 
 	unsigned iTexture = pTarget->GetTexture();
@@ -2601,7 +2602,7 @@ unsigned RageDisplay_Legacy::GetRenderTarget( )
 
 void RageDisplay_Legacy::SetRenderTarget( unsigned iTexture, bool bPreserveTexture )
 {
-	if (iTexture == 0)
+	if (iTexture == 0 && g_pCurrentRenderTarget)
 	{
 		g_bInvertY = false;
 		glFrontFace( GL_CCW );
