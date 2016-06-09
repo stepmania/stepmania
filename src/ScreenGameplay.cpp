@@ -325,6 +325,7 @@ ScreenGameplay::ScreenGameplay()
 	m_pSongBackground = NULL;
 	m_pSongForeground = NULL;
 	m_bForceNoNetwork = false;
+	m_delaying_ready_announce= false;
 	GAMESTATE->m_AdjustTokensBySongCostForFinalStageCheck= false;
 }
 
@@ -2685,21 +2686,58 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	CHECKPOINT_M( ssprintf("HandleScreenMessage(%s)", ScreenMessageHelpers::ScreenMessageToString(SM).c_str()) );
 	if( SM == SM_DoneFadingIn )
 	{
-		SOUND->PlayOnceFromAnnouncer( "gameplay ready" );
+		// If the ready animation is zero length, then playing the sound will
+		// make it overlap with the go sound.
+		// If the Ready animation is zero length, and the Go animation is not,
+		// only play the Go sound.
+		// If they're both zero length, only play the Ready sound.
+		// Otherwise, play both sounds.
+		// -Kyz
 		m_Ready.StartTransitioning( SM_PlayGo );
+		if(m_Ready.GetTweenTimeLeft() <= .0f)
+		{
+			m_delaying_ready_announce= true;
+		}
+		else
+		{
+			m_delaying_ready_announce= false;
+			SOUND->PlayOnceFromAnnouncer("gameplay ready");
+		}
 	}
 	else if( SM == SM_PlayGo )
 	{
-		if( GAMESTATE->IsAnExtraStage() )
-			SOUND->PlayOnceFromAnnouncer( "gameplay here we go extra" );
-		else if( GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 )
-			SOUND->PlayOnceFromAnnouncer( "gameplay here we go final" );
-		else
-			SOUND->PlayOnceFromAnnouncer( "gameplay here we go normal" );
+		m_Go.StartTransitioning( SM_None );
+		bool should_play_go= true;
+		if(m_delaying_ready_announce)
+		{
+			if(m_Go.GetTweenTimeLeft() <= .0f)
+			{
+				SOUND->PlayOnceFromAnnouncer("gameplay ready");
+				should_play_go= false;
+			}
+			else
+			{
+				should_play_go= true;
+			}
+		}
+		if(should_play_go)
+		{
+			if( GAMESTATE->IsAnExtraStage() )
+			{
+				SOUND->PlayOnceFromAnnouncer( "gameplay here we go extra" );
+			}
+			else if( GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 )
+			{
+				SOUND->PlayOnceFromAnnouncer( "gameplay here we go final" );
+			}
+			else
+			{
+				SOUND->PlayOnceFromAnnouncer( "gameplay here we go normal" );
+			}
+		}
 
 		GAMESTATE->m_DanceStartTime.Touch();
 
-		m_Go.StartTransitioning( SM_None );
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
 		m_DancingState = STATE_DANCING; // STATE CHANGE!  Now the user is allowed to press Back
 	}
