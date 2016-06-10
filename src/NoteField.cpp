@@ -975,7 +975,7 @@ IsOnScreen(fBeat, 0, static_cast<int>(m_FieldRenderArgs.draw_pixels_after_target
 									std::string s = change.GetTextDescription();
 									if( *bl!=0 )
 									{
-										s = fmt::sprintf("%d: ",*bl) + s;
+										s = fmt::sprintf("%d: ",int(*bl)) + s;
 									}
 									vsBGChanges.push_back( s );
 								}

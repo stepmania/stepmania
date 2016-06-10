@@ -27,7 +27,7 @@ the way turning off FastNoteRendering did in the old NoteField.
 
 ## Under the Hood
 Compatibility is provided through a complete rewrite of ArrowEffects, called
-ArrowDefedcts.  When something touches the PlayerOptions structure for a
+ArrowDefects.  When something touches the PlayerOptions structure for a
 player, the field for that player is put into "defective mode".  When the
 field is in that mode, it ignores all the new modifier fields and instead
 only uses the stuff in PlayerOptions.  This should make old mods behave the

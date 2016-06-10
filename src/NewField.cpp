@@ -1314,7 +1314,7 @@ void NewFieldColumn::build_render_lists()
 					if((!tn.result.bHidden || !m_use_game_music_beat) &&
 						(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
 					{
-						render_taps.push_back(renderable);
+						render_taps.push_front(renderable);
 						imitate_did_note(tn);
 						update_upcoming(tap_beat, tn.occurs_at_second);
 						update_active_hold(tn);
@@ -1326,8 +1326,8 @@ void NewFieldColumn::build_render_lists()
 					{
 						// Hold heads are added to the tap list to take care of rendering
 						// heads and tails in the same phase as taps.
-						render_taps.push_back(renderable);
-						render_holds.push_back(renderable);
+						render_taps.push_front(renderable);
+						render_holds.push_front(renderable);
 						imitate_did_note(tn);
 						update_upcoming(tap_beat, tn.occurs_at_second);
 						update_active_hold(tn);
@@ -1337,8 +1337,8 @@ void NewFieldColumn::build_render_lists()
 					if((!tn.result.bHidden || !m_use_game_music_beat) &&
 						(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
 					{
-						render_taps.push_back(renderable);
-						render_lifts.push_back(renderable);
+						render_taps.push_front(renderable);
+						render_lifts.push_front(renderable);
 						imitate_did_note(tn);
 						update_upcoming(tap_beat, tn.occurs_at_second);
 						update_active_hold(tn);

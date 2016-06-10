@@ -264,9 +264,9 @@ private:
 	void draw_lifts_internal();
 	void draw_taps_internal();
 	NoteData::TrackMap::const_iterator first_note_visible_prev_frame;
-	std::vector<render_note> render_holds;
-	std::vector<render_note> render_lifts;
-	std::vector<render_note> render_taps;
+	std::list<render_note> render_holds;
+	std::list<render_note> render_lifts;
+	std::list<render_note> render_taps;
 	int curr_render_child;
 	// Calculating the effects of reverse and center for every note is costly.
 	// Only do it once per frame and store the result.

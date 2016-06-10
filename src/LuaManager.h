@@ -306,6 +306,18 @@ inline double get_optional_double(lua_State* L, int index, char const* field, do
 	return ret;
 }
 
+inline int get_optional_int(lua_State* L, int index, char const* field, int def)
+{
+	int ret= def;
+	lua_getfield(L, index, field);
+	if(lua_isnumber(L, -1))
+	{
+		ret= lua_tonumber(L, -1);
+	}
+	lua_pop(L, 1);
+	return ret;
+}
+
 inline bool get_optional_bool(lua_State* L, int index, char const* field)
 {
 	lua_getfield(L, index, field);
