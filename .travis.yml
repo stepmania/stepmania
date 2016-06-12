@@ -8,35 +8,35 @@ notifications:
 
 matrix:
     include:
-        -
-            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
-            compiler: clang
-            addons: &clang36
-                apt:
-                    sources:
-                        - ubuntu-toolchain-r-test
-                        - llvm-toolchain-precise-3.6
-                    packages:
-                        - nasm
-                        - libudev-dev
-                        - clang-3.6
-                        - libmad0-dev
-                        - libgtk2.0-dev
-                        - binutils-dev
-                        - libasound-dev
-                        - libpulse-dev
-                        - libjack-dev
-                        - libc6-dev
-                        - libogg-dev
-                        - libvorbis-dev
-                        - libxtst-dev
-                        - libxrandr-dev
-                        - libglew-dev
+        #-
+        #    env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
+        #    compiler: clang
+        #    addons: &clang36
+        #        apt:
+        #            sources:
+        #                - ubuntu-toolchain-r-test
+        #                - llvm-toolchain-precise-3.6
+        #            packages:
+        #                - nasm
+        #                - libudev-dev
+        #                - clang-3.6
+        #                - libmad0-dev
+        #                - libgtk2.0-dev
+        #                - binutils-dev
+        #                - libasound-dev
+        #                - libpulse-dev
+        #                - libjack-dev
+        #                - libc6-dev
+        #                - libogg-dev
+        #                - libvorbis-dev
+        #                - libxtst-dev
+        #                - libxrandr-dev
+        #                - libglew-dev
 
-        -
-            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=ON WITH_FFMPEG_JOBS=1
-            compiler: clang
-            addons: *clang36
+        #-
+        #    env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=ON WITH_FFMPEG_JOBS=1
+        #    compiler: clang
+        #    addons: *clang36
 
         -
             env: CXX_COMPILER=g++-5 CC_COMPILER=gcc-5 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
