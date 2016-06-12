@@ -5,10 +5,10 @@ return function(button_list, stepstype, skin_parameters)
 		Down      = 0,
 		Up        = 180,
 		Right     = 270,
-		UpLeft    = 90,
-		UpRight   = 45, 
-		DownLeft  = 225,
-		DownRight = 135
+		UpLeft    = 135,
+		UpRight   = 225, 
+		DownLeft  = 45,
+		DownRight = 315
 	}
 	local texture = "Receptor 4x1.png"
 	for i, button in ipairs(button_list) do
