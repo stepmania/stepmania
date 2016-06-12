@@ -5,10 +5,10 @@ return function(button_list, stepstype, skin_params)
 		Down      = 0,
 		Up        = 180,
 		Right     = 270,
-		UpLeft    = 90,
-		UpRight   = 45, 
-		DownLeft  = 225,
-		DownRight = 135
+		UpLeft    = 135,
+		UpRight   = 225, 
+		DownLeft  = 45,
+		DownRight = 315
 	}
 	local tap_redir= {}
 	for i, button in ipairs(button_list) do
