@@ -19,22 +19,22 @@ return function(button_list, stepstype, skin_parameters)
 			WidthSetCommand= function(self, param)
 				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Receptor")
 			end,
-			ColumnJudgmentCommand= function(self)
-				self.none = false
+			ColumnJudgmentCommand= function(self, param)
+				self.tap_note_score = param.tap_note_score
 			end,
 			BeatUpdateCommand= function(self, param)
 				if param.pressed then
-					if self.none == true then
-						if self.onepress == true then
+					if self.tap_note_score == nil or string.find(self.tap_note_score, "miss") or string.find(self.tap_note_score, "W4") then
+						if self.onepress then
 							self:stoptweening():zoom(.75):linear(.11):zoom(1)
 							self.onepress = false
 						end
 					end
-				else
+				elseif param.lifted then
 					self:zoom(1)
 					self.onepress = true
-					self.none = true
-				end
+					self.tap_note_score = nil
+				end      
 			end,
 		}
 	end
