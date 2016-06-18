@@ -530,6 +530,11 @@ else() # Unix / Linux
   if(X11_FOUND)
     list(APPEND SMDATA_LINK_LIB ${X11_LIBRARIES})
   endif()
+  
+  if(SDL2_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${SDL2_LIBRARY})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_SDL)
+  endif()
 
   if(PCRE_FOUND)
     list(APPEND SMDATA_LINK_LIB ${PCRE_LIBRARY})

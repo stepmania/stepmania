@@ -206,9 +206,16 @@ elseif(APPLE)
     "arch/LowLevelWindow/LowLevelWindow_MacOSX.h"
   )
 else(UNIX)
-  if (X11_FOUND)
+  if (SDL2_FOUND)
     list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
-      "arch/LowLevelWindow/LowLevelWindow_X11.cpp"
+      "arch/LowLevelWindow/LowLevelWindow_SDL.cpp"      
+    )
+    list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
+      "arch/LowLevelWindow/LowLevelWindow_SDL.h"
+    )
+  elseif (X11_FOUND)
+      list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
+      "arch/LowLevelWindow/LowLevelWindow_X11.cpp"   
     )
     list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
       "arch/LowLevelWindow/LowLevelWindow_X11.h"

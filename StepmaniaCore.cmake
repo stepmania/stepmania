@@ -221,6 +221,18 @@ if(WITH_OGG)
   endif()
 endif()
 
+if(WITH_SDL)
+
+    find_package(SDL2)
+    
+    if(NOT SDL2_FOUND)
+        message(FATAL_ERROR "SDL2 Library was not found. If you wish to compile without SDL2, set WITH_SDL to OFF when configuring.")
+    else()
+        set(HAS_SDL TRUE)
+    endif()
+
+endif()
+
 find_package(nasm)
 find_package(yasm)
 
