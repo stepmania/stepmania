@@ -195,7 +195,8 @@ void LowLevelWindow_SDL::GetDisplaySpecs( DisplaySpecs &out ) const
                 return;
             }
             LOG->Info(" Mode %d: %dx%d %dbpp %dHz", j, mode.w, mode.h, SDL_BITSPERPIXEL(mode.format), mode.refresh_rate);
-            DisplayMode res = { mode.w, mode.h, mode.refresh_rate };
+            DisplayMode res = {static_cast<unsigned int> (mode.w), static_cast<unsigned int> (mode.h),
+                               static_cast<double> (mode.refresh_rate)};
             outputSupported.insert( res );
         }
         const std::string outId(std::to_string(i));
