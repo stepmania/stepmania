@@ -199,12 +199,21 @@ if(WIN32)
     "arch/LowLevelWindow/LowLevelWindow_Win32.h"
   )
 elseif(APPLE)
-  list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
-    "arch/LowLevelWindow/LowLevelWindow_MacOSX.mm"
-  )
-  list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
-    "arch/LowLevelWindow/LowLevelWindow_MacOSX.h"
-  )
+  if (SDL2_FOUND)
+    list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
+      "arch/LowLevelWindow/LowLevelWindow_SDL.cpp"
+    )
+    list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
+      "arch/LowLevelWindow/LowLevelWindow_SDL.h"
+    )
+  else()
+    list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
+      "arch/LowLevelWindow/LowLevelWindow_MacOSX.mm"
+    )
+    list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
+      "arch/LowLevelWindow/LowLevelWindow_MacOSX.h"
+    )
+  endif()
 else(UNIX)
   if (SDL2_FOUND)
     list(APPEND SMDATA_ARCH_LOWLEVEL_SRC

@@ -6,6 +6,9 @@ option(WITH_NETWORKING "Build with networking support." ON)
 # This option quiets warnings that are a part of external projects.
 option(WITH_EXTERNAL_WARNINGS "Build with warnings for all components, not just StepMania." OFF)
 
+# This option enables using SDL for windows. This will eventually always be ON.
+option(WITH_SDL "Build with SDL windows." OFF)
+
 # This option is not yet working, but will likely default to ON in the future.
 option(WITH_LTO "Build with Link Time Optimization (LTO)/Whole Program Optimization." OFF)
 

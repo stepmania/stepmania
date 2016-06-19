@@ -452,6 +452,11 @@ elseif(APPLE)
       "${SM_FFMPEG_ROOT}/libavutil/libavutil.a"
     )
   endif()
+
+  if(SDL2_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${SDL2_LIBRARY})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_SDL)
+  endif()
 else() # Unix / Linux
   # TODO: Remember to find and locate the zip archive files.
   list(FIND SMDATA_LINK_LIB "jpeg" JPEG_INDEX)
@@ -629,6 +634,12 @@ else()
       "${SM_FFMPEG_ROOT}"
     )
   endif()
+endif()
+
+if (WITH_SDL)
+  list(APPEND SM_INCLUDE_DIRS
+    ${SDL2_INCLUDE_DIR}
+  )
 endif()
 
 if(WIN32)

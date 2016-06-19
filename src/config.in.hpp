@@ -54,6 +54,9 @@
 /* Defined to 1 if the underlying system provides the strtof function. */
 #cmakedefine HAVE_STRTOF 1
 
+/* Defined to 1 if the underlying system is using X11. */
+#cmakedefine X11_FOUND 1
+
 /* Defined to 1 if the underlying system provides the posix_fadvise function. */
 #cmakedefine HAVE_POSIX_FADVISE 1
 
