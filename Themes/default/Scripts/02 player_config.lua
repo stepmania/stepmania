@@ -4,6 +4,7 @@ local player_config_default= {
 	GameplayShowStepsDisplay= true,
 	GameplayShowScore= true,
 	JudgmentUnderField= true,
+	Protiming= false,
 	ScreenFilter= 0,
 }
 

@@ -361,6 +361,37 @@ function IsUsingWideScreen()
 	end
 end
 
+function PrintTable( tbl )
+	Trace( "Printing table" )
+	for k,v in pairs(tbl) do
+		Trace( ("[%s] -> %s"):format(tostring(k),tostring(v)) )
+	end
+end
+
+-- TODO: move this into a more general section
+-- func takes a key and a value
+function foreach_by_sorted_keys(tbl, keys, func)
+	table.sort(keys)
+	for _, key in ipairs(keys) do func(key, tbl[key]) end
+end
+
+function foreach_ordered( tbl, func )
+	local string_keys= {}
+	local number_keys= {}
+	-- First person to to use this on a table that uses something else as keys
+	-- gets to extend this function to cover more types.  And a beating. -Kyz
+	for k,_ in pairs(tbl) do
+		if type(k) == "string" then
+			table.insert(string_keys, k)
+		elseif type(k) == "number" then
+			table.insert(number_keys, k)
+		end
+	end
+	-- iterate in sorted order
+	foreach_by_sorted_keys(tbl, number_keys, func)
+	foreach_by_sorted_keys(tbl, string_keys, func)
+end
+
 -- Usage:  Pass in an ActorFrame and a string to put in front of every line.
 -- indent will be appended to at each level of the recursion, to indent each
 -- generation further.

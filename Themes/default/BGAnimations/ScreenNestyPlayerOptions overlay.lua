@@ -146,6 +146,7 @@ local gameplay_options= {
 	nesty_options.bool_config_val(player_config, "GameplayShowStepsDisplay"),
 	nesty_options.bool_config_val(player_config, "GameplayShowScore"),
 	nesty_options.bool_config_val(player_config, "JudgmentUnderField"),
+	nesty_options.bool_config_val(player_config, "Protiming"),
 }
 
 -- The time life bar doesn't work sensibly outside the survival courses, so
@@ -276,18 +277,18 @@ local frame= Def.ActorFrame{
 local item_params= {
 	text_commands= {
 		Font= "Common Normal", OnCommand= function(self)
-			self:rotationz(720):linear(1):rotationz(0)
+			self:diffusealpha(0):linear(1):diffusealpha(1)
 		end,
 	},
 	text_width= .7,
 	value_text_commands= {
 		Font= "Common Normal", OnCommand= function(self)
-			self:rotationz(-720):linear(1):rotationz(0)
+			self:diffusealpha(0):linear(1):diffusealpha(1)
 		end,
 	},
 	value_image_commands= {
 		OnCommand= function(self)
-			self:rotationz(-720):linear(1):rotationz(0)
+			self:diffusealpha(0):linear(1):diffusealpha(1)
 		end,
 	},
 	value_width= .25,
@@ -321,7 +322,7 @@ for pn, menu in pairs(menus) do
 		display_params= {
 			el_zoom= .55, item_params= item_params, item_mt= nesty_items.value,
 			on= function(self)
-				self:rotationx(720):linear(1):rotationx(0)
+				self:zoomy(0):linear(1):zoomy(1)
 			end},
 	}
 	frame[#frame+1]= Def.BitmapText{

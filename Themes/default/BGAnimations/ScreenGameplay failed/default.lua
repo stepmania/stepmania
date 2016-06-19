@@ -1,4 +1,4 @@
-local longFail = ThemePrefs.Get("LongFail");
+local longFail = theme_config:get_data().LongFail
 
 local t = Def.ActorFrame{};
 

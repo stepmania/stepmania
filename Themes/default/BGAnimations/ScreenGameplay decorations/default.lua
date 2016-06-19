@@ -206,7 +206,7 @@ for pn in ivalues(PlayerNumber) do
 			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(pn) ) ) .. { InitCommand=cmd(visible,false); };
 		};
 	};
-	if ThemePrefs.Get("TimingDisplay") == true then
+	if theme_config:get_data().TimingDisplay then
 		songMeterDisplay[#songMeterDisplay+1] = CreateSegments(pn);
 	end
 	t[#t+1] = songMeterDisplay

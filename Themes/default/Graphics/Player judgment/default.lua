@@ -4,7 +4,7 @@ local function ShowProtiming()
   if GAMESTATE:IsDemonstration() then
     return false
   else
-    return GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player));
+    return player_config:get_data(player).Protiming
   end
 end;
 local bShowProtiming = ShowProtiming();
