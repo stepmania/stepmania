@@ -278,7 +278,6 @@ elseif(MACOSX)
   set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
   # When SDL2 is introduced, this may change.
-  set(CMAKE_OSX_ARCHITECTURES "i386")
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
   set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.7.0")
 
