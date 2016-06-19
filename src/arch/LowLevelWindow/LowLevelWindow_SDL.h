@@ -24,7 +24,7 @@ public:
     bool SupportsFullscreenBorderlessWindow() const;
 
 private:
-
+	int GetSDLDisplayNum( const std::string displayID ) const;
     ActualVideoModeParams CurrentParams;
 };
 
