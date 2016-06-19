@@ -37,6 +37,26 @@ LowLevelWindow_SDL::~LowLevelWindow_SDL()
     SDL_Quit(); // Shutting down SDL properly (will restore resolution automatically
 }
 
+int LowLevelWindow_SDL::GetSDLDisplayNum( const std::string displayId ) const
+{
+    auto target = 0; // Default to using SDL display 0
+    try
+    {
+        int requested = std::stoi( displayId );
+        int maxvalid = SDL_GetNumVideoDisplays();
+        if (requested > maxvalid)
+        {
+            throw std::invalid_argument( "Display index out of range" );
+        }
+        target = requested;
+    } catch (...)
+    {
+        LOG->Warn( "Unrecognized Display ID %s", displayId );
+    }
+    return target;
+}
+
+
 std::string LowLevelWindow_SDL::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
     LOG->Trace("%s called", __FUNCTION__);
@@ -81,18 +101,46 @@ std::string LowLevelWindow_SDL::TryVideoMode( const VideoModeParams &p, bool &bN
 
     }
 
-
-    if (p.windowed)
+    if (p.windowed && !p.bWindowIsFullscreenBorderless)
     {
         SDL_SetWindowFullscreen(g_DisplayWindow, 0);
         SDL_SetWindowSize(g_DisplayWindow, g_DisplayMode.w, g_DisplayMode.h);
     }
-    else {
-        SDL_SetWindowFullscreen(g_DisplayWindow, SDL_WINDOW_FULLSCREEN);
-        if (SDL_SetWindowDisplayMode(g_DisplayWindow,&g_DisplayMode) != 0)
-            LOG->Warn( "Error setting DisplayMode %s", SDL_GetError());
+    else
+    {
+        auto target = GetSDLDisplayNum( p.sDisplayId );
+        SDL_DisplayMode cur_mode;
+        SDL_Rect cur_bounds;
+        // Reset fullscreen, move window onto desired monitor, then set fullscreen mode accordingly
+        SDL_SetWindowFullscreen( g_DisplayWindow, 0 );
+        SDL_GetCurrentDisplayMode( target, &cur_mode );
+        SDL_GetDisplayBounds( target, &cur_bounds );
+        SDL_SetWindowPosition( g_DisplayWindow, cur_bounds.x, cur_bounds.y );
+
+        if (p.bWindowIsFullscreenBorderless)
+        {
+            SDL_SetWindowSize( g_DisplayWindow, cur_mode.w, cur_mode.h );
+            g_DisplayMode.w = cur_mode.w;
+            g_DisplayMode.h = cur_mode.h;
+            if (SDL_SetWindowFullscreen( g_DisplayWindow, SDL_WINDOW_FULLSCREEN_DESKTOP ) != 0)
+                return fmt::sprintf( "Failed to set borderless fullscreen mode: %s", SDL_GetError());
+        }
+        else // Fullscreen exclusive
+        {
+            // Display mode takes effect at next transition to fullscreen
+            if (SDL_SetWindowDisplayMode( g_DisplayWindow, &g_DisplayMode ) != 0)
+                LOG->Warn( "Error setting DisplayMode %s", SDL_GetError());
+            if (SDL_SetWindowFullscreen( g_DisplayWindow, SDL_WINDOW_FULLSCREEN ) != 0)
+                return fmt::sprintf( "Failed to set display mode: %s", SDL_GetError() );
+        }
     }
     CurrentParams = p;
+    CurrentParams.windowWidth = g_DisplayMode.w;
+    CurrentParams.windowHeight = g_DisplayMode.h;
+    if (CurrentParams.windowHeight != CurrentParams.height || CurrentParams.windowWidth != CurrentParams.width)
+    {
+        CurrentParams.renderOffscreen = true;
+    }
 
     if (g_DisplayMode.refresh_rate != 0) // If SDL does not specify a refresh rate assume 60
         CurrentParams.rate = g_DisplayMode.refresh_rate;
@@ -141,18 +189,20 @@ void LowLevelWindow_SDL::GetDisplaySpecs( DisplaySpecs &out ) const
     {
         LOG->Trace("Checking modes for display %i", i);
         auto nummodes = SDL_GetNumDisplayModes(i);
-        for (int j = 1; j < nummodes; j++){
+        for (int j = 0; j < nummodes; j++){
             if (SDL_GetDisplayMode(i,j, &mode) != 0) {
                 LOG->Warn("SDL_GetDisplayMode failed: %s", SDL_GetError());
                 return;
             }
             LOG->Info(" Mode %d: %dx%d %dbpp %dHz", j, mode.w, mode.h, SDL_BITSPERPIXEL(mode.format), mode.refresh_rate);
-            DisplayMode res = { mode.w, mode.h, mode.refresh_rate };
+            DisplayMode res = {static_cast<unsigned int> (mode.w), static_cast<unsigned int> (mode.h),
+                               static_cast<double> (mode.refresh_rate)};
             outputSupported.insert( res );
         }
         const std::string outId(std::to_string(i));
         const std::string outName(SDL_GetDisplayName(i));
         out.insert( DisplaySpec( outId, outName, outputSupported ));
+        outputSupported.clear();
     }
 
 }
