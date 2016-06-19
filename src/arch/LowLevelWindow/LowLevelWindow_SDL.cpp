@@ -141,7 +141,7 @@ void LowLevelWindow_SDL::GetDisplaySpecs( DisplaySpecs &out ) const
     {
         LOG->Trace("Checking modes for display %i", i);
         auto nummodes = SDL_GetNumDisplayModes(i);
-        for (int j = 1; j < nummodes; j++){
+        for (int j = 0; j < nummodes; j++){
             if (SDL_GetDisplayMode(i,j, &mode) != 0) {
                 LOG->Warn("SDL_GetDisplayMode failed: %s", SDL_GetError());
                 return;
@@ -153,6 +153,7 @@ void LowLevelWindow_SDL::GetDisplaySpecs( DisplaySpecs &out ) const
         const std::string outId(std::to_string(i));
         const std::string outName(SDL_GetDisplayName(i));
         out.insert( DisplaySpec( outId, outName, outputSupported ));
+        outputSupported.clear();
     }
 
 }
