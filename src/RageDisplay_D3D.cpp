@@ -541,7 +541,7 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 std::string RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
 {
 	VideoModeParams p = _p;
-	LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
+	LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", int(p.windowed), p.width, p.height, p.bpp, p.rate, p.vsync );
 
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
 		return fmt::sprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode

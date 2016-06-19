@@ -206,7 +206,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	// apply new attack
 	pPlayerStateToAttack->LaunchAttack( a );
 
-//	SCREENMAN->SystemMessage( fmt::sprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
+//	SCREENMAN->SystemMessage( fmt::sprintf( "attacking %d with %s", pnToAttack+1, sAttackToGive.c_str() ) );
 }
 
 /*
