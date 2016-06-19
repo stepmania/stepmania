@@ -6,13 +6,13 @@
 #
 # This module responds to the the flag:
 # SDL2_BUILDING_LIBRARY
-# If this is defined, then no SDL2_main will be linked in because
+# If this is defined, then no SDL2main will be linked in because
 # only applications need main().
 # Otherwise, it is assumed you are building an application and this
 # module will attempt to locate and set the the proper link flags
 # as part of the returned SDL2_LIBRARY variable.
 #
-# Don't forget to include SDL2main.h and SDL2main.m your project for the
+# Don't forget to include SDLmain.h and SDLmain.m your project for the
 # OS X framework based version. (Other versions link to -lSDL2main which
 # this module will try to find on your behalf.) Also for OS X, this
 # module will automatically add the -framework Cocoa on your behalf.
@@ -37,7 +37,7 @@
 # and providing a more controlled/consistent search behavior.
 # Added new modifications to recognize OS X frameworks and
 # additional Unix paths (FreeBSD, etc).
-# Also corrected the header search path to follow "proper" SDL2 guidelines.
+# Also corrected the header search path to follow "proper" SDL guidelines.
 # Added a search for SDL2main which is needed by some platforms.
 # Added a search for threads which is needed by some platforms.
 # Added needed compile switches for MinGW.
@@ -48,14 +48,9 @@
 # CMAKE_INCLUDE_PATH to modify the search paths.
 #
 # Note that the header path has changed from SDL2/SDL.h to just SDL.h
-# This needed to change because "proper" SDL2 convention
+# This needed to change because "proper" SDL convention
 # is #include "SDL.h", not <SDL2/SDL.h>. This is done for portability
 # reasons because not all systems place things in SDL2/ (see FreeBSD).
-#
-# Ported by Johnny Patterson. This is a literal port for SDL2 of the FindSDL.cmake
-# module with the minor edit of changing "SDL" to "SDL2" where necessary. This
-# was not created for redistribution, and exists temporarily pending official
-# SDL2 CMake modules.
 
 #=============================================================================
 # Copyright 2003-2009 Kitware, Inc.
@@ -70,35 +65,31 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-FIND_PATH(SDL2_INCLUDE_DIR SDL.h
-  HINTS
-  $ENV{SDL2DIR}
-  PATH_SUFFIXES include/SDL2 include
-  PATHS
+SET(SDL2_SEARCH_PATHS
   ~/Library/Frameworks
   /Library/Frameworks
-  /usr/local/include/SDL2
-  /usr/include/SDL2
+  /usr/local
+  /usr
   /sw # Fink
   /opt/local # DarwinPorts
   /opt/csw # Blastwave
   /opt
 )
-#MESSAGE("SDL2_INCLUDE_DIR is ${SDL2_INCLUDE_DIR}")
+
+FIND_PATH(SDL2_INCLUDE_DIR SDL.h
+  HINTS
+  $ENV{SDL2DIR}
+  PATH_SUFFIXES include/SDL2 include
+  PATHS ${SDL2_SEARCH_PATHS}
+)
 
 FIND_LIBRARY(SDL2_LIBRARY_TEMP
   NAMES SDL2
   HINTS
   $ENV{SDL2DIR}
   PATH_SUFFIXES lib64 lib
-  PATHS
-  /sw
-  /opt/local
-  /opt/csw
-  /opt
+  PATHS ${SDL2_SEARCH_PATHS}
 )
-
-#MESSAGE("SDL2_LIBRARY_TEMP is ${SDL2_LIBRARY_TEMP}")
 
 IF(NOT SDL2_BUILDING_LIBRARY)
   IF(NOT ${SDL2_INCLUDE_DIR} MATCHES ".framework")
@@ -111,11 +102,7 @@ IF(NOT SDL2_BUILDING_LIBRARY)
       HINTS
       $ENV{SDL2DIR}
       PATH_SUFFIXES lib64 lib
-      PATHS
-      /sw
-      /opt/local
-      /opt/csw
-      /opt
+      PATHS ${SDL2_SEARCH_PATHS}
     )
   ENDIF(NOT ${SDL2_INCLUDE_DIR} MATCHES ".framework")
 ENDIF(NOT SDL2_BUILDING_LIBRARY)
@@ -135,7 +122,6 @@ IF(MINGW)
   SET(MINGW32_LIBRARY mingw32 CACHE STRING "mwindows for MinGW")
 ENDIF(MINGW)
 
-SET(SDL2_FOUND "NO")
 IF(SDL2_LIBRARY_TEMP)
   # For SDL2main
   IF(NOT SDL2_BUILDING_LIBRARY)
@@ -170,24 +156,8 @@ IF(SDL2_LIBRARY_TEMP)
   SET(SDL2_LIBRARY ${SDL2_LIBRARY_TEMP} CACHE STRING "Where the SDL2 Library can be found")
   # Set the temp variable to INTERNAL so it is not seen in the CMake GUI
   SET(SDL2_LIBRARY_TEMP "${SDL2_LIBRARY_TEMP}" CACHE INTERNAL "")
-
-  SET(SDL2_FOUND "YES")
-
-  # extract the major and minor version numbers from SDL2/SDL_version.h
-  # we have to handle framework a little bit differently :
-  if("${SDL2_INCLUDE_DIR}" MATCHES ".framework")
-    set(SDL2_VERSION_H_INPUT "${SDL2_INCLUDE_DIR}/Headers/SDL_version.h")
-  else()
-    set(SDL2_VERSION_H_INPUT "${SDL2_INCLUDE_DIR}/SDL_version.h")
-  endif()
-  FILE(READ "${SDL2_VERSION_H_INPUT}" SDL2_VERSION_H_CONTENTS)
-  STRING(REGEX REPLACE ".*#define[ \t]+SDL_MAJOR_VERSION[ \t]+([0-9]+).*#define[ \t]+SDL_MINOR_VERSION[ \t]+([0-9]+).*#define[ \t]+SDL_PATCHLEVEL[ \t]+([0-9]+).*"
-                       "\\1.\\2.\\3" SDL2_VERSION "${SDL2_VERSION_H_CONTENTS}")
-#MESSAGE("SDL2 Version is ${SDL2_VERSION}")
-
 ENDIF(SDL2_LIBRARY_TEMP)
 
 INCLUDE(FindPackageHandleStandardArgs)
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2
-                                  REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR VERSION_VAR SDL2_VERSION)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2 REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR)

@@ -5,7 +5,11 @@
 #if defined(WINDOWS)
 #include "ArchHooks/ArchHooks_Win32.h"
 #include "LoadingWindow/LoadingWindow_Win32.h"
+#if defined(HAVE_SDL)
+#include "LowLevelWindow/LowLevelWindow_SDL.h"
+#else
 #include "LowLevelWindow/LowLevelWindow_Win32.h"
+#endif
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
 #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
@@ -14,8 +18,12 @@
 
 #elif defined(MACOSX)
 #include "ArchHooks/ArchHooks_MacOSX.h"
-#include "LoadingWindow/LoadingWindow_MacOSX.h"
+#if defined(HAVE_SDL)
+#include "LowLevelWindow/LowLevelWindow_SDL.h"
+#else
 #include "LowLevelWindow/LowLevelWindow_MacOSX.h"
+#endif
+#include "LoadingWindow/LoadingWindow_MacOSX.h"
 #include "MemoryCard/MemoryCardDriverThreaded_MacOSX.h"
 #define DEFAULT_INPUT_DRIVER_LIST "HID"
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"

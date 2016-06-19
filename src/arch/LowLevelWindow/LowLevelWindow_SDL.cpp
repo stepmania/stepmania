@@ -2,8 +2,11 @@
 #include "LowLevelWindow_SDL.h"
 #include "RageLog.h"
 #include "RageException.h"
+#if defined(X11_FOUND)
 #include "archutils/Unix/X11Helper.h"
+#endif
 #include "PrefsManager.h" // XXX
+#include "DisplaySpec.h"
 #include "RageDisplay.h" // VideoModeParams
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
@@ -13,9 +16,9 @@ using namespace RageDisplay_Legacy_Helpers;
 
 #include <stack>
 #include <math.h>	// ceil()
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <SDL2/SDL_syswm.h>
+#include <SDL.h>
+#include <SDL_opengl.h>
+#include <SDL_syswm.h>
 
 
 static SDL_Window* g_DisplayWindow;
@@ -91,8 +94,10 @@ std::string LowLevelWindow_SDL::TryVideoMode( const VideoModeParams &p, bool &bN
         SDL_VERSION(&info.version);
 
         if(SDL_GetWindowWMInfo(g_DisplayWindow,&info)) { // Retrieve the Window ID so that the X11 InputHandler can use this
+#if defined(X11_FOUND)
             X11Helper::Win = info.info.x11.window;
             X11Helper::Dpy = info.info.x11.display;
+#endif
         }
         else
         {
