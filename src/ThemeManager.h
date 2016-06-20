@@ -36,7 +36,8 @@ public:
 	void GetSelectableThemeNames( vector<RString>& AddTo );
 	int GetNumSelectableThemes();
 	bool DoesThemeExist( const RString &sThemeName );
-	bool IsThemeSelectable( const RString &sThemeName );
+	bool IsThemeSelectable(RString const& name);
+	bool IsThemeNameValid(RString const& name);
 	RString GetThemeDisplayName( const RString &sThemeName );
 	RString GetThemeAuthor( const RString &sThemeName );
 	void GetLanguages( vector<RString>& AddTo );
