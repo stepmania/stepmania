@@ -13,3 +13,9 @@
 [submodule "extern/tommath"]
 	path = extern/tommath
 	url = https://github.com/stepmania/libtommath.git
+[submodule "extern/libogg-git"]
+	path = extern/libogg-git
+	url = https://github.com/stepmania/ogg.git
+[submodule "extern/libvorbis-git"]
+	path = extern/libvorbis-git
+	url = https://github.com/stepmania/vorbis.git

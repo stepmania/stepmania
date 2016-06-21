@@ -268,6 +268,11 @@ if(WIN32)
     get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
   endif()
 elseif(MACOSX)
+  # TODO: Better way of determining if OGG is required.
+  # Also: Keep WITH_OGG checks together.
+  if (WITH_OGG)
+    include("${SM_CMAKE_DIR}/SetupOggVorbis.cmake") 
+  endif()
 
   if (WITH_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
