@@ -60,8 +60,14 @@ static const char *NoteTypeNames[] = {
 	"32nd",
 	"48th",
 	"64th",
-	"96th",	
+	"96th",
+	"128th",
 	"192nd",
+	"256th",
+	"384th",
+	"512th",
+	"768th",
+	"1536th",
 };
 XToString( NoteType );
 LuaXType( NoteType );
@@ -85,8 +91,14 @@ float NoteTypeToBeat( NoteType nt )
 	case NOTE_TYPE_48TH:	return 1.0f/12; // sixteenth note triplets
 	case NOTE_TYPE_64TH:	return 1.0f/16; // sixty-fourth notes
 	case NOTE_TYPE_96TH:	return 1.0f/24; // thirty-second note triplets
+	case NOTE_TYPE_128TH:	return 1.0f/32; // one hundred twenty-eighth notes
 	case NOTE_TYPE_192ND:	return 1.0f/48; // sixty-fourth note triplets
-	case NoteType_Invalid:	return 1.0f/48;
+	case NOTE_TYPE_256TH:	return 1.0f/64; // two hundred fifty-sixth notes
+	case NOTE_TYPE_384TH:	return 1.0f/96; // one hundred twenty-eighth note triplets
+	case NOTE_TYPE_512TH:	return 1.0f/128; // five hundred twelfth notes
+	case NOTE_TYPE_768TH:	return 1.0f/192; // two hundred fifty-sixth note triplets
+	case NOTE_TYPE_1536TH:	return 1.0f/384; // five hundred twelfth note triplets
+	case NoteType_Invalid:	return 1.0f/384;
 	default:
 		FAIL_M(fmt::sprintf("Unrecognized note type: %i", nt));
 	}
@@ -96,16 +108,22 @@ int NoteTypeToRow( NoteType nt )
 {
 	switch( nt )
 	{
-		case NOTE_TYPE_4TH: return 48;
-		case NOTE_TYPE_8TH: return 24;
-		case NOTE_TYPE_12TH: return 16;
-		case NOTE_TYPE_16TH: return 12;
-		case NOTE_TYPE_24TH: return 8;
-		case NOTE_TYPE_32ND: return 6;
-		case NOTE_TYPE_48TH: return 4;
-		case NOTE_TYPE_64TH: return 3;
-		case NOTE_TYPE_96TH: return 2;	
-		case NOTE_TYPE_192ND:
+		case NOTE_TYPE_4TH: return 384;
+		case NOTE_TYPE_8TH: return 192;
+		case NOTE_TYPE_12TH: return 128;
+		case NOTE_TYPE_16TH: return 96;
+		case NOTE_TYPE_24TH: return 64;
+		case NOTE_TYPE_32ND: return 48;
+		case NOTE_TYPE_48TH: return 32;
+		case NOTE_TYPE_64TH: return 24;
+		case NOTE_TYPE_96TH: return 16;
+		case NOTE_TYPE_128TH: return 12;
+		case NOTE_TYPE_192ND: return 8;
+		case NOTE_TYPE_256TH: return 6;
+		case NOTE_TYPE_384TH: return 4;
+		case NOTE_TYPE_512TH: return 3;
+		case NOTE_TYPE_768TH: return 2;
+		case NOTE_TYPE_1536TH:
 		case NoteType_Invalid:
 			return 1;
 		default:
@@ -138,8 +156,14 @@ NoteType GetNoteType( int row )
 	else if( row % (ROWS_PER_MEASURE/32) == 0)	return NOTE_TYPE_32ND;
 	else if( row % (ROWS_PER_MEASURE/48) == 0)	return NOTE_TYPE_48TH;
 	else if( row % (ROWS_PER_MEASURE/64) == 0)	return NOTE_TYPE_64TH;
-	else if( row % (ROWS_PER_MEASURE/96) == 0)	return NOTE_TYPE_96TH;	
-	else						return NOTE_TYPE_192ND;
+	else if( row % (ROWS_PER_MEASURE/96) == 0)	return NOTE_TYPE_96TH;
+	else if( row % (ROWS_PER_MEASURE/128) == 0)	return NOTE_TYPE_128TH;
+	else if( row % (ROWS_PER_MEASURE/192) == 0)	return NOTE_TYPE_192TH;
+	else if( row % (ROWS_PER_MEASURE/256) == 0)	return NOTE_TYPE_256TH;
+	else if( row % (ROWS_PER_MEASURE/384) == 0)	return NOTE_TYPE_384TH;
+	else if( row % (ROWS_PER_MEASURE/512) == 0)	return NOTE_TYPE_512TH;
+	else if( row % (ROWS_PER_MEASURE/768) == 0)	return NOTE_TYPE_768TH;
+	else						return NOTE_TYPE_1536TH;
 };
 
 NoteType BeatToNoteType( float fBeat )
