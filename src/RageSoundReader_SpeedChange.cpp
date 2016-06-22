@@ -89,7 +89,7 @@ int RageSoundReader_SpeedChange::FillData( int iMaxFrames )
 		if( iBytesToRead <= 0 )
 			return m_iDataBufferAvailFrames;
 
-		float *pTempBuffer = (float *) alloca( iBytesToRead );
+		float pTempBuffer[iBytesToRead/sizeof(float)];
 		int iGotFrames = m_pSource->Read( pTempBuffer, iFramesToRead );
 		if( iGotFrames < 0 )
 		{

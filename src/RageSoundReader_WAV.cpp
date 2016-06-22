@@ -288,8 +288,8 @@ public:
 		/* We've read the block header; read the rest.  Don't read past the end of the data chunk. */
 		int iMaxSize = min( (int) m_WavData.m_iBlockAlign - 7 * m_WavData.m_iChannels, (m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos) - m_File.Tell() );
 
-		char *pBuf = (char *) alloca( iMaxSize );
-		ASSERT( pBuf != NULL );
+		char cBuf[iMaxSize];
+		char* pBuf= cBuf;
 
 		int iBlockSize = m_File.Read( pBuf, iMaxSize );
 		if( iBlockSize == 0 )
