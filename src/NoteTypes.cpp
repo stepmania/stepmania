@@ -158,7 +158,7 @@ NoteType GetNoteType( int row )
 	else if( row % (ROWS_PER_MEASURE/64) == 0)	return NOTE_TYPE_64TH;
 	else if( row % (ROWS_PER_MEASURE/96) == 0)	return NOTE_TYPE_96TH;
 	else if( row % (ROWS_PER_MEASURE/128) == 0)	return NOTE_TYPE_128TH;
-	else if( row % (ROWS_PER_MEASURE/192) == 0)	return NOTE_TYPE_192TH;
+	else if( row % (ROWS_PER_MEASURE/192) == 0)	return NOTE_TYPE_192ND;
 	else if( row % (ROWS_PER_MEASURE/256) == 0)	return NOTE_TYPE_256TH;
 	else if( row % (ROWS_PER_MEASURE/384) == 0)	return NOTE_TYPE_384TH;
 	else if( row % (ROWS_PER_MEASURE/512) == 0)	return NOTE_TYPE_512TH;
