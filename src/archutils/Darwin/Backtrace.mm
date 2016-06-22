@@ -23,14 +23,14 @@ struct Frame
 #define PROT_EXE (VM_PROT_READ|VM_PROT_EXECUTE)
 
 /* Returns the starting address and the protection. Pass in mach_task_self() and the starting address. */
-static bool GetRegionInfo( mach_port_t self, const void *address, vm_address_t &startOut, vm_prot_t &protectionOut )
+static bool GetRegionInfo( mach_port_t machPort, const void *address, vm_address_t &startOut, vm_prot_t &protectionOut )
 {
   struct vm_region_basic_info_64 info;
   mach_msg_type_number_t infoCnt = VM_REGION_BASIC_INFO_COUNT_64;
   mach_port_t unused;
   vm_size_t size = 0;
   vm_address_t start = vm_address_t( address );
-  kern_return_t ret = vm_region( self, &start, &size, VM_REGION_BASIC_INFO_64,
+  kern_return_t ret = vm_region_64 (machPort, &start, &size, VM_REGION_BASIC_INFO_64,
                                 (vm_region_info_t)&info, &infoCnt, &unused );
   
   if( ret != KERN_SUCCESS ||

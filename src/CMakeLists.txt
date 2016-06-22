@@ -424,22 +424,26 @@ elseif(APPLE)
     ${MAC_FRAME_CARBON}
     ${MAC_FRAME_COCOA}
     ${MAC_FRAME_IOKIT}
-    ${MAC_FRAME_QUICKTIME}
     ${MAC_FRAME_OPENGL}
     ${MAC_FRAME_COREFOUNDATION}
     ${MAC_FRAME_AUDIOTOOLBOX}
     ${MAC_FRAME_AUDIOUNIT}
     ${MAC_FRAME_COREAUDIO}
     ${MAC_FRAME_CORESERVICES}
-    "ogg"
-    "theora"
-    "vorbis"
   )
   list(APPEND SMDATA_LINK_LIB
     "${BZIP2_LIBRARY_RELEASE}"
     "${ICONV_LIBRARIES}"
     "pcre"
   )
+
+  if (HAS_OGG)
+    list(APPEND SMDATA_LINK_LIB
+      "${SM_OGG_ROOT}/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libogg.a"
+      "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbis.a"
+      "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbisfile.a"
+    )
+  endif()
 
   if(HAS_FFMPEG)
     list(APPEND SMDATA_LINK_LIB
@@ -605,9 +609,10 @@ if(NOT APPLE)
   endif()
 else()
   if(WITH_OGG)
+    add_dependencies("${SM_EXE_NAME}" "vorbis")
     list(APPEND SM_INCLUDE_DIRS
-      "${SM_EXTERN_DIR}/newogg/include"
-      "${SM_EXTERN_DIR}/newvorbis/include"
+      "${SM_OGG_INCLUDE_DIR}"
+      "${SM_VORBIS_INCLUDE_DIR}"
     )
   endif()
   list(APPEND SM_INCLUDE_DIRS

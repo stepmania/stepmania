@@ -268,6 +268,11 @@ if(WIN32)
     get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
   endif()
 elseif(MACOSX)
+  # TODO: Better way of determining if OGG is required.
+  # Also: Keep WITH_OGG checks together.
+  if (WITH_OGG)
+    include("${SM_CMAKE_DIR}/SetupOggVorbis.cmake") 
+  endif()
 
   if (WITH_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
@@ -278,7 +283,6 @@ elseif(MACOSX)
   set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
   # When SDL2 is introduced, this may change.
-  set(CMAKE_OSX_ARCHITECTURES "i386")
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
   set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.7.0")
 
