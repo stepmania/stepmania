@@ -1701,7 +1701,7 @@ static const Style g_Style_Beat_Double5 =
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 0, 1, 2, 3, 4, Style::NO_MAPPING, Style::NO_MAPPING, 5, 5, Style::END_MAPPING },
-		{ 5, 6, 7, 8, 9, Style::NO_MAPPING, Style::NO_MAPPING, 10, 10, Style::END_MAPPING }
+		{ 6, 7, 8, 9, 10, Style::NO_MAPPING, Style::NO_MAPPING, 11, 11, Style::END_MAPPING }
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4,5,6,7,8,9,10,11
