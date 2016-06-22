@@ -31,6 +31,7 @@ public:
 		int iDrawDistanceBeforeTargetsPixels );
 	virtual void Unload();
 
+	void ensure_note_displays_have_skin();
 	void InitColumnRenderers();
 
 	virtual void HandleMessage( const Message &msg );

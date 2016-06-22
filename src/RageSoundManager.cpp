@@ -57,6 +57,11 @@ RageSoundManager::~RageSoundManager()
 	m_mapPreloadedSounds.clear();
 }
 
+void RageSoundManager::fix_bogus_sound_driver_pref(const std::string& valid_setting)
+{
+	g_sSoundDrivers.Set(valid_setting);
+}
+
 /*
  * Previously, we went to some lengths to shut down sounds before exiting threads.
  * The only other thread that actually starts sounds is SOUND.  Doing this was ugly;

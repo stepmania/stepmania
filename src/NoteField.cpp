@@ -228,6 +228,18 @@ void NoteField::Load(
 		 fmt::sprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(),
 			  GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
 
+	// If we're in routine mode, the noteskin is forcibly set to the routine
+	// noteskin metrics (which is bad in its own way).  The noteskin set in the
+	// options is ignored and probably already set anyway. -Kyz
+	if(GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_StyleType != StyleType_TwoPlayersSharedSides)
+	{
+		ensure_note_displays_have_skin();
+	}
+	InitColumnRenderers();
+}
+
+void NoteField::ensure_note_displays_have_skin()
+{
 	// The NoteSkin may have changed at the beginning of a new course song.
 	std::string sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 
@@ -271,7 +283,6 @@ void NoteField::Load(
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 		m_pDisplays[pn] = it->second;
 	}
-	InitColumnRenderers();
 }
 
 void NoteField::InitColumnRenderers()
@@ -755,6 +766,10 @@ void NoteField::DrawPrimitives()
 			static_cast<int>(m_FieldRenderArgs.draw_pixels_before_targets));
 		return;
 	}
+
+	// Clear the z buffer so 3D notes aren't hidden by anything in the underlay using masking. -Kyz
+	DISPLAY->ClearZBuffer();
+
 	// Some might prefer an else block, instead of returning from the if, but I
 	// don't want to bump the indent on the entire remaining section. -Kyz
 	ArrowEffects::SetCurrentOptions(&m_pPlayerState->m_PlayerOptions.GetCurrent());

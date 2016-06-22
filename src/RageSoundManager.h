@@ -44,6 +44,8 @@ public:
 
 	RageSoundReader *GetLoadedSound( const std::string &sPath );
 	void AddLoadedSound( const std::string &sPath, RageSoundReader_Preload *pSound );
+	
+	void fix_bogus_sound_driver_pref( const std::string &valid_setting);
 
 private:
 	std::unordered_map<std::string, RageSoundReader_Preload *> m_mapPreloadedSounds;

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSoundDriver.h"
+#include "RageSoundManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageUtil.hpp"
@@ -9,11 +10,43 @@ using std::vector;
 
 DriverList RageSoundDriver::m_pDriverList;
 
-RageSoundDriver *RageSoundDriver::Create( const std::string& sDrivers )
+RageSoundDriver *RageSoundDriver::Create( const std::string& drivers )
 {
-	auto DriversToTry = Rage::split(sDrivers.empty() ? DEFAULT_SOUND_DRIVER_LIST : sDrivers, ",", Rage::EmptyEntries::skip);
+	vector<std::string> drivers_to_try;
+	if(drivers.empty())
+	{
+		drivers_to_try = Rage::split(DEFAULT_SOUND_DRIVER_LIST, ",", Rage::EmptyEntries::skip);
+	}
+	else
+	{
+		drivers_to_try = Rage::split(drivers, ",", Rage::EmptyEntries::skip);
+		auto default_drivers = Rage::split(DEFAULT_SOUND_DRIVER_LIST, ",", Rage::EmptyEntries::skip);
+		size_t to_try= 0;
+		bool had_to_erase= false;
+		while(to_try < drivers_to_try.size())
+		{
+			if(std::find(default_drivers.begin(), default_drivers.end(), drivers_to_try[to_try]) == default_drivers.end())
+			{
+				LOG->Warn("Removed unusable sound driver %s", drivers_to_try[to_try].c_str());
+				drivers_to_try.erase(drivers_to_try.begin() + to_try);
+				had_to_erase= true;
+			}
+			else
+			{
+				++to_try;
+			}
+		}
+		if(had_to_erase)
+		{
+			SOUNDMAN->fix_bogus_sound_driver_pref(Rage::join(",", drivers_to_try));
+		}
+		if(drivers_to_try.empty())
+		{
+			drivers_to_try = Rage::split(DEFAULT_SOUND_DRIVER_LIST, ",", Rage::EmptyEntries::skip);
+		}
+	}
 
-	for (auto const &Driver: DriversToTry)
+	for (auto const &Driver: drivers_to_try)
 	{
 		RageDriver *pDriver = m_pDriverList.Create( Driver );
 		if( pDriver == nullptr )

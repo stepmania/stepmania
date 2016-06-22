@@ -439,7 +439,7 @@ static void BGBrightnessOrStatic( int &sel, bool ToSel, const ConfOption *pConfO
 
 static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 5,10,15,20 };
+	const int mapping[] = { 1,5,10,15,20 };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -819,7 +819,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowDanger",			MovePref<bool>,		"Hide","Show" ) );
 	ADD( ConfOption( "ShowDancingCharacters",	MovePref<ShowDancingCharacters>, "Default to Off","Default to Random","Select" ) );
 	ADD( ConfOption( "ShowBeginnerHelper",		MovePref<bool>,		"Off","On" ) );
-	ADD( ConfOption( "NumBackgrounds",		NumBackgrounds,		"|5","|10","|15","|20" ) );
+	ADD( ConfOption( "NumBackgrounds",		NumBackgrounds,		"|1","|5","|10","|15","|20" ) );
 
 	// Input options
 	ADD( ConfOption( "AutoMapOnJoyChange",		MovePref<bool>,		"Off","On (recommended)" ) );

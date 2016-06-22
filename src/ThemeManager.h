@@ -37,6 +37,7 @@ public:
 	int GetNumSelectableThemes();
 	bool DoesThemeExist( const std::string &sThemeName );
 	bool IsThemeSelectable( const std::string &sThemeName );
+	bool IsThemeNameValid( const std::string &sThemeName );
 	std::string GetThemeDisplayName( const std::string &sThemeName );
 	std::string GetThemeAuthor( const std::string &sThemeName );
 	void GetLanguages( std::vector<std::string>& AddTo );

@@ -4,6 +4,21 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/05/25
+----------
+* [MemoryCards] Fixed bug that caused loading profiles from usb drives to
+  crash. [djpohly]
+
+2016/05/20
+----------
+* [Global] Removed UndocumentedFeature lua function because it was just a way
+  to crash with a message. [kyzentun]
+
+
+2016/05/11
+----------
+* [Minimaid] Fixed crash that occurred when the minimaid lights driver was
+  selected, but no minimaid device was connected. [wolfman2000]
 
 ================================================================================
 StepMania 5.0.11 | 20160401
