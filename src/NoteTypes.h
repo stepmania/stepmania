@@ -272,7 +272,7 @@ enum NoteType
 	NOTE_TYPE_96TH,	/**< thirty-second note triplet */
 	NOTE_TYPE_128TH,/**< one hundred twenty-eighth note */
 	NOTE_TYPE_192ND,/**< sixty-fourth note triplet */
-	NOTE_TYPE_256TH,/**< two hundred fifty-sixth note */
+	NOTE_TYPE_256TH,/**< two hundred fifty-sixth note */ // Higher quants added just to test out and experiment with the new noteskin system
 	NOTE_TYPE_384TH,/**< one hundred twenty-eighth note triplet */
 	NOTE_TYPE_512TH,/**< five hundred twelfth note */
 	NOTE_TYPE_768TH,/**< two hundred fifty-sixth note triplet */
