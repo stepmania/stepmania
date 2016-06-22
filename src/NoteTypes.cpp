@@ -60,6 +60,7 @@ static const char *NoteTypeNames[] = {
 	"32nd",
 	"48th",
 	"64th",
+	"96th",	
 	"192nd",
 };
 XToString( NoteType );
@@ -83,6 +84,7 @@ float NoteTypeToBeat( NoteType nt )
 	case NOTE_TYPE_32ND:	return 1.0f/8;	// thirty-second notes
 	case NOTE_TYPE_48TH:	return 1.0f/12; // sixteenth note triplets
 	case NOTE_TYPE_64TH:	return 1.0f/16; // sixty-fourth notes
+	case NOTE_TYPE_96TH:	return 1.0f/24; // thirty-second note triplets
 	case NOTE_TYPE_192ND:	return 1.0f/48; // sixty-fourth note triplets
 	case NoteType_Invalid:	return 1.0f/48;
 	default:
@@ -102,6 +104,7 @@ int NoteTypeToRow( NoteType nt )
 		case NOTE_TYPE_32ND: return 6;
 		case NOTE_TYPE_48TH: return 4;
 		case NOTE_TYPE_64TH: return 3;
+		case NOTE_TYPE_96TH: return 2;
 		case NOTE_TYPE_192ND:
 		case NoteType_Invalid:
 			return 1;
@@ -135,6 +138,7 @@ NoteType GetNoteType( int row )
 	else if( row % (ROWS_PER_MEASURE/32) == 0)	return NOTE_TYPE_32ND;
 	else if( row % (ROWS_PER_MEASURE/48) == 0)	return NOTE_TYPE_48TH;
 	else if( row % (ROWS_PER_MEASURE/64) == 0)	return NOTE_TYPE_64TH;
+	else if( row % (ROWS_PER_MEASURE/96) == 0)	return NOTE_TYPE_96TH;	
 	else						return NOTE_TYPE_192ND;
 };
 
