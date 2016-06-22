@@ -222,14 +222,14 @@ bool ThemeManager::DoesThemeExist( const std::string &sThemeName )
 	return false;
 }
 
-bool ThemeManager::IsThemeSelectable( const std::string &sThemeName )
+bool ThemeManager::IsThemeSelectable( const std::string &name )
 {
-	return IsThemeNameValid(sThemeName) && DoesThemeExist(sThemeName);
+	return IsThemeNameValid(name) && DoesThemeExist(name);
 }
 
-bool ThemeManager::IsThemeNameValid( const std::string &sThemeName )
+bool ThemeManager::IsThemeNameValid( const std::string &name )
 {
-	return !Rage::starts_with(sThemeName, "_");
+	return !Rage::starts_with(name, "_");
 }
 
 std::string ThemeManager::GetThemeDisplayName( const std::string &sThemeName )
