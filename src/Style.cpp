@@ -79,7 +79,7 @@ void Style::StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>&
 	}
 	if(unlikely(ret.empty()))
 	{
-		FAIL_M( fmt::sprintf("Invalid column number %i for player %i in the style %s", iCol, pn, m_szName) );
+		FAIL_M( fmt::sprintf("Invalid column number %i for player %i in the style %s", iCol, int(pn), m_szName) );
 	}
 };
 
