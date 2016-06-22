@@ -60,7 +60,7 @@ static const char *NoteTypeNames[] = {
 	"32nd",
 	"48th",
 	"64th",
-	"96th",	
+	"96th",
 	"192nd",
 };
 XToString( NoteType );
@@ -138,7 +138,7 @@ NoteType GetNoteType( int row )
 	else if( row % (ROWS_PER_MEASURE/32) == 0)	return NOTE_TYPE_32ND;
 	else if( row % (ROWS_PER_MEASURE/48) == 0)	return NOTE_TYPE_48TH;
 	else if( row % (ROWS_PER_MEASURE/64) == 0)	return NOTE_TYPE_64TH;
-	else if( row % (ROWS_PER_MEASURE/96) == 0)	return NOTE_TYPE_96TH;	
+	else if( row % (ROWS_PER_MEASURE/96) == 0)	return NOTE_TYPE_96TH;
 	else						return NOTE_TYPE_192ND;
 };
 
