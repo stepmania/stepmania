@@ -482,9 +482,10 @@ struct bmsCommandTree
 		else if (name == "#random")
 		{
 			while (randomStack.size() < currentNode->branchHeight + 1) // if we're on branch level N we need N+1 values.
+			{
 				randomStack.push_back(0);
-
-			randomStack[currentNode->branchHeight] = rand() % StringToInt(value) + 1;
+			}
+			randomStack[currentNode->branchHeight] = rand() % std::stoi(value) + 1;
 		}
 		else
 		{
@@ -555,7 +556,7 @@ bool BMSChart::Load( const std::string &chartPath )
 		if (channel == 2)
 		{
 			// special channel: time signature
-			BMSMeasure m = { StringToFloat(data) };
+			BMSMeasure m = { std::stof(data) };
 			this->measures[measure] = m;
 		}
 		else
@@ -874,7 +875,7 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if( it.first == "#bpm" )
 		{
-			initialBPM = StringToFloat(it.second);
+			initialBPM = std::stof(it.second);
 		}
 		else if( it.first == "#lntype" )
 		{
@@ -891,12 +892,12 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if( it.first == "#playlevel" )
 		{
-			out->SetMeter( StringToInt(it.second) );
+			out->SetMeter( std::stoi(it.second) );
 		}
 		else if( it.first == "#difficulty")
 		{
 			// only set the difficulty if the #difficulty tag is between 1 and 6 (beginner~edit)
-			int diff = StringToInt(it.second)-1; // BMS uses 1 to 6, SM uses 0 to 5
+			int diff = std::stoi(it.second)-1; // BMS uses 1 to 6, SM uses 0 to 5
 			if(diff>=0 && diff<NUM_Difficulty)
 			{
 				out->SetDifficulty( (Difficulty)diff );
@@ -914,7 +915,7 @@ void BMSChartReader::ReadHeaders()
 		else if (it.first == "#offset")
 		{
 			// This gets copied into the real timing data later.
-			out->m_Timing.m_fBeat0OffsetInSeconds = -StringToFloat(it.second);
+			out->m_Timing.m_fBeat0OffsetInSeconds = -std::stof(it.second);
 		}
 		else if (it.first == "#maker")
 		{
@@ -922,7 +923,7 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if (it.first == "#previewpoint")
 		{
-			info.previewStart = StringToFloat(it.second);
+			info.previewStart = std::stof(it.second);
 		}
 	}
 }
@@ -1384,7 +1385,7 @@ bool BMSChartReader::ReadNoteData()
 			BMSHeaders::iterator it = in->headers.find( search );
 			if( it != in->headers.end() )
 			{
-				td.SetBPMAtRow( row, measureAdjust * (currentBPM = StringToFloat(it->second)) );
+				td.SetBPMAtRow( row, measureAdjust * (currentBPM = std::stof(it->second)) );
 			}
 			else
 			{
@@ -1397,7 +1398,7 @@ bool BMSChartReader::ReadNoteData()
 			BMSHeaders::iterator it = in->headers.find( search );
 			if( it != in->headers.end() )
 			{
-				td.SetStopAtRow( row, (StringToFloat(it->second) / 48.0f) * (60.0f / currentBPM) );
+				td.SetStopAtRow( row, (std::stof(it->second) / 48.0f) * (60.0f / currentBPM) );
 			}
 			else
 			{

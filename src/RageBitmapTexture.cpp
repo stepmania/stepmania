@@ -29,15 +29,29 @@ static void GetResolutionFromFileName( std::string sPath, int &iWidth, int &iHei
 	if( !re.Compare(sPath, asMatches) )
 		return;
 
-	// Check for nonsense values.  Some people might not intend the hint. -Kyz
-	int maybe_width= StringToInt(asMatches[0]);
-	int maybe_height= StringToInt(asMatches[1]);
-	if(maybe_width <= 0 || maybe_height <= 0)
+	if (asMatches.size() < 2)
 	{
+		// Sanity check. Shouldn't be needed, but better safe than sorry.
 		return;
 	}
-	iWidth = maybe_width;
-	iHeight = maybe_height;
+	
+	// Check for nonsense values.  Some people might not intend the hint. -Kyz
+	try
+	{
+		int maybe_width= std::stoi(asMatches[0]);
+		int maybe_height= std::stoi(asMatches[1]);
+		if(maybe_width <= 0 || maybe_height <= 0)
+		{
+			return;
+		}
+		iWidth = maybe_width;
+		iHeight = maybe_height;
+	}
+	catch (...)
+	{
+		// Nonsense values did come in. Skip them.
+		LOG->Warn("Invalid resolution values came through. Please validate %s and %s.", asMatches[0], asMatches[1]);
+	}
 }
 
 RageBitmapTexture::RageBitmapTexture( RageTextureID name ) :

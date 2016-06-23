@@ -426,12 +426,12 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris
-				sErrorOut = fmt::sprintf("Invalid player options \"%s\"; did you mean '*%d'?", s.c_str(), StringToInt(s) );
+				sErrorOut = fmt::sprintf("Invalid player options \"%s\"; did you mean '*%d'?", s.c_str(), std::stoi(s) );
 				return false;
 			}
 			else
 			{
-				level = StringToFloat( s ) / 100.0f;
+				level = std::stof( s ) / 100.0f;
 			}
 		}
 		else if( s[0]=='*' )

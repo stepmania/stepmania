@@ -104,21 +104,31 @@ void ScreenTextEntry::TextEntry(
 static LocalizedString INVALID_FLOAT( "ScreenTextEntry", "\"%s\" is an invalid floating point value." );
 bool ScreenTextEntry::FloatValidate( const std::string &sAnswer, std::string &sErrorOut )
 {
-	float f;
-	if( StringToFloat(sAnswer, f) )
+	try
+	{
+		std::stof(sAnswer);
 		return true;
-	sErrorOut = fmt::sprintf( INVALID_FLOAT.GetValue().c_str(), sAnswer.c_str() );
-	return false;
+	}
+	catch (...)
+	{
+		sErrorOut = fmt::sprintf( INVALID_FLOAT.GetValue().c_str(), sAnswer.c_str() );
+		return false;
+	}
 }
 
 static LocalizedString INVALID_INT( "ScreenTextEntry", "\"%s\" is an invalid integer value." );
 bool ScreenTextEntry::IntValidate( const std::string &sAnswer, std::string &sErrorOut )
 {
-	int f;
-	if(sAnswer >> f)
+	try
+	{
+		std::stoi(sAnswer);
 		return true;
-	sErrorOut = fmt::sprintf( INVALID_INT.GetValue(), sAnswer.c_str() );
-	return false;
+	}
+	catch (...)
+	{
+		sErrorOut = fmt::sprintf( INVALID_INT.GetValue(), sAnswer.c_str() );
+		return false;
+	}
 }
 
 bool ScreenTextEntry::s_bCancelledLast = false;

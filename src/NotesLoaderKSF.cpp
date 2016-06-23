@@ -63,14 +63,14 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 		}
 		else if( sValueName=="BPM" )
 		{
-			BPM1 = StringToFloat(sParams[1]);
+			BPM1 = std::stof(sParams[1]);
 			stepsTiming.AddSegment( BPMSegment(0, BPM1) );
 		}
 		else if( sValueName=="BPM2" )
 		{
 			if (bKIUCompliant)
 			{
-				BPM2 = StringToFloat( sParams[1] );
+				BPM2 = std::stof( sParams[1] );
 			}
 			else
 			{
@@ -81,7 +81,7 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 		{
 			if (bKIUCompliant)
 			{
-				BPM3 = StringToFloat( sParams[1] );
+				BPM3 = std::stof( sParams[1] );
 			}
 			else
 			{
@@ -92,7 +92,7 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 		{
 			if (bKIUCompliant)
 			{
-				BPMPos2 = StringToFloat( sParams[1] ) / 100.0f;
+				BPMPos2 = std::stof( sParams[1] ) / 100.0f;
 			}
 			else
 			{
@@ -103,7 +103,7 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 		{
 			if (bKIUCompliant)
 			{
-				BPMPos3 = StringToFloat( sParams[1] ) / 100.0f;
+				BPMPos3 = std::stof( sParams[1] ) / 100.0f;
 			}
 			else
 			{
@@ -112,7 +112,7 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 		}
 		else if( sValueName=="STARTTIME" )
 		{
-			SMGap1 = -StringToFloat( sParams[1] )/100;
+			SMGap1 = -std::stof( sParams[1] )/100;
 			stepsTiming.m_fBeat0OffsetInSeconds = SMGap1;
 		}
 		// This is currently required for more accurate KIU BPM changes.
@@ -120,7 +120,7 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 		{
 			if (bKIUCompliant)
 			{
-				SMGap2 = -StringToFloat( sParams[1] )/100;
+				SMGap2 = -std::stof( sParams[1] )/100;
 			}
 			else
 			{
@@ -135,7 +135,7 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 
 		else if( sValueName=="TICKCOUNT" )
 		{
-			iTickCount = StringToInt( sParams[1] );
+			iTickCount = std::stoi( sParams[1] );
 			if( iTickCount <= 0 )
 			{
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
@@ -146,7 +146,7 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 
 		else if( sValueName=="DIFFICULTY" )
 		{
-			out.SetMeter( max(StringToInt(sParams[1]), 1) );
+			out.SetMeter( max(std::stoi(sParams[1]), 1) );
 		}
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
@@ -350,7 +350,7 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 			//continue;
 
 			std::string temp = sRowString.substr(2,sRowString.size()-3);
-			float numTemp = StringToFloat(temp);
+			float numTemp = std::stof(temp);
 			if (Rage::starts_with(sRowString, "|T"))
 			{
 				// duh
@@ -522,12 +522,13 @@ static void ProcessTickcounts( const std::string & value, int & ticks, TimingDat
 	/* TICKCOUNT will be used below if there are DM compliant BPM changes
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */
-	ticks = StringToInt( value );
+	ticks = std::stoi( value );
 	ticks = Rage::clamp( ticks, 0, ROWS_PER_BEAT );
 
 	if( ticks == 0 )
+	{
 		ticks = TickcountSegment::DEFAULT_TICK_COUNT;
-
+	}
 	timing.AddSegment( TickcountSegment(0, ticks) );
 }
 
@@ -569,39 +570,39 @@ static bool LoadGlobalData( const std::string &sPath, Song &out, bool &bKIUCompl
 			LoadTags(sParams[1], out);
 		else if( sValueName=="BPM" )
 		{
-			BPM1 = StringToFloat(sParams[1]);
+			BPM1 = std::stof(sParams[1]);
 			out.m_SongTiming.AddSegment( BPMSegment(0, BPM1) );
 		}
 		else if( sValueName=="BPM2" )
 		{
 			bKIUCompliant = true;
-			BPM2 = StringToFloat( sParams[1] );
+			BPM2 = std::stof( sParams[1] );
 		}
 		else if( sValueName=="BPM3" )
 		{
 			bKIUCompliant = true;
-			BPM3 = StringToFloat( sParams[1] );
+			BPM3 = std::stof( sParams[1] );
 		}
 		else if( sValueName=="BUNKI" )
 		{
 			bKIUCompliant = true;
-			BPMPos2 = StringToFloat( sParams[1] ) / 100.0f;
+			BPMPos2 = std::stof( sParams[1] ) / 100.0f;
 		}
 		else if( sValueName=="BUNKI2" )
 		{
 			bKIUCompliant = true;
-			BPMPos3 = StringToFloat( sParams[1] ) / 100.0f;
+			BPMPos3 = std::stof( sParams[1] ) / 100.0f;
 		}
 		else if( sValueName=="STARTTIME" )
 		{
-			SMGap1 = -StringToFloat( sParams[1] )/100;
+			SMGap1 = -std::stof( sParams[1] )/100;
 			out.m_SongTiming.m_fBeat0OffsetInSeconds = SMGap1;
 		}
 		// This is currently required for more accurate KIU BPM changes.
 		else if( sValueName=="STARTTIME2" )
 		{
 			bKIUCompliant = true;
-			SMGap2 = -StringToFloat( sParams[1] )/100;
+			SMGap2 = -std::stof( sParams[1] )/100;
 		}
 		else if ( sValueName=="STARTTIME3" )
 		{

@@ -1,6 +1,7 @@
 #include "global.h"
 
 #include "RageTexture.h"
+#include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTextureManager.h"
 #include <cstring>
@@ -58,11 +59,22 @@ void RageTexture::GetFrameDimensionsFromFileName( std::string sPath, int* piFram
 		return;
 	}
 	// Check for nonsense values.  Some people might not intend the hint. -Kyz
-	int maybe_width= StringToInt(asMatch[0]);
-	int maybe_height= StringToInt(asMatch[1]);
-	if(maybe_width <= 0 || maybe_height <= 0)
+	int maybe_width;
+	int maybe_height;
+	try
 	{
-		*piFramesWide = *piFramesHigh = 1;
+		maybe_width= std::stoi(asMatch[0]);
+		maybe_height= std::stoi(asMatch[1]);
+		if(maybe_width <= 0 || maybe_height <= 0)
+		{
+			*piFramesWide = *piFramesHigh = 1;
+			return;
+		}
+	}
+	catch (...)
+	{
+		// Nonsense values did come in. Skip them.
+		LOG->Warn("Invalid resolution values came through. Please validate %s and %s.", asMatch[0], asMatch[1]);
 		return;
 	}
 	// Font.cpp uses this function, but can't pass in a texture size.  Other

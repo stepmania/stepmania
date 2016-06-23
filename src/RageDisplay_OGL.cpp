@@ -684,10 +684,10 @@ static void CheckReversePackedPixels()
 
 void SetupExtensions()
 {
-	const float fGLVersion = StringToFloat( (const char *) glGetString(GL_VERSION) );
+	const float fGLVersion = std::stof( (const char *) glGetString(GL_VERSION) );
 	g_glVersion = std::lrint( fGLVersion * 10 );
 
-	const float fGLUVersion = StringToFloat( (const char *) gluGetString(GLU_VERSION) );
+	const float fGLUVersion = std::stof( (const char *) gluGetString(GLU_VERSION) );
 	g_gluVersion = std::lrint( fGLUVersion * 10 );
 
 #ifndef HAVE_X11 // LLW_X11 needs to init GLEW early for GLX exts

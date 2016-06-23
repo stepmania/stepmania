@@ -355,20 +355,7 @@ bool FindFirstFilenameContaining(
 	std::vector<std::string> const & starts_with,
 	std::vector<std::string> const & contains, std::vector<std::string> const & ends_with);
 
-/**
- * @brief Have a standard way of converting Strings to integers.
- * @param sString the string to convert.
- * @return the integer we are after. */
-int StringToInt( const std::string &sString );
-/**
- * @brief Have a standard way of converting integers to Strings.
- * @param iNum the integer to convert.
- * @return the string we are after. */
-std::string IntToString( const int &iNum );
-float StringToFloat( const std::string &sString );
-std::string FloatToString( const float &num );
-bool StringToFloat( const std::string &sString, float &fOut );
-// Better than IntToString because you can check for success.
+// Potentially better than std::to_string because you can check for success.
 template<class T>
 inline bool operator>>(const std::string& lhs, T& rhs)
 {

@@ -872,11 +872,11 @@ IsOnScreen(fBeat, 0, static_cast<int>(m_FieldRenderArgs.draw_pixels_after_target
 			} \
 		}
 
-		draw_all_segments(FloatToString(seg->GetRatio()), Scroll, SCROLL);
-		draw_all_segments(FloatToString(seg->GetBPM()), BPM, BPM);
-		draw_all_segments(FloatToString(seg->GetPause()), Stop, STOP);
-		draw_all_segments(FloatToString(seg->GetPause()), Delay, DELAY);
-		draw_all_segments(FloatToString(seg->GetLength()), Warp, WARP);
+		draw_all_segments(std::to_string(seg->GetRatio()), Scroll, SCROLL);
+		draw_all_segments(std::to_string(seg->GetBPM()), BPM, BPM);
+		draw_all_segments(std::to_string(seg->GetPause()), Stop, STOP);
+		draw_all_segments(std::to_string(seg->GetPause()), Delay, DELAY);
+		draw_all_segments(std::to_string(seg->GetLength()), Warp, WARP);
 		draw_all_segments(fmt::sprintf("%d\n--\n%d", seg->GetNum(), seg->GetDen()),
 			TimeSignature, TIME_SIG);
 		draw_all_segments(fmt::sprintf("%d", seg->GetTicks()), Tickcount, TICKCOUNT);
@@ -884,10 +884,10 @@ IsOnScreen(fBeat, 0, static_cast<int>(m_FieldRenderArgs.draw_pixels_after_target
 			fmt::sprintf("%d/%d", seg->GetCombo(), seg->GetMissCombo()), Combo, COMBO);
 		draw_all_segments(seg->GetLabel(), Label, LABEL);
 		draw_all_segments(fmt::sprintf("%s\n%s\n%s",
-				FloatToString(seg->GetRatio()).c_str(),
+				std::to_string(seg->GetRatio()).c_str(),
 				(seg->GetUnit() == 1 ? "S" : "B"),
-				FloatToString(seg->GetDelay()).c_str()), Speed, SPEED);
-		draw_all_segments(FloatToString(seg->GetLength()), Fake, FAKE);
+				std::to_string(seg->GetDelay()).c_str()), Speed, SPEED);
+		draw_all_segments(std::to_string(seg->GetLength()), Fake, FAKE);
 #undef draw_all_segments
 
 		// Course mods text

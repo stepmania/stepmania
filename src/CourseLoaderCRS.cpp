@@ -95,17 +95,17 @@ bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd,
 		}
 		else if(tagName == "LIVES" )
 		{
-			out.m_iLives = max( StringToInt(sParams[1]), 0 );
+			out.m_iLives = max( std::stoi(sParams[1]), 0 );
 		}
 		else if(tagName == "GAINSECONDS" )
 		{
-			fGainSeconds = StringToFloat( sParams[1] );
+			fGainSeconds = std::stof( sParams[1] );
 		}
 		else if(tagName == "METER" )
 		{
 			if( sParams.params.size() == 2 )
 			{
-				out.m_iCustomMeter[Difficulty_Medium] = max( StringToInt(sParams[1]), 0 ); /* compat */
+				out.m_iCustomMeter[Difficulty_Medium] = max( std::stoi(sParams[1]), 0 ); /* compat */
 			}
 			else if( sParams.params.size() == 3 )
 			{
@@ -115,7 +115,7 @@ bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd,
 					LOG->UserLog( "Course file", sPath, "contains an invalid #METER string: \"%s\"", sParams[1].c_str() );
 					continue;
 				}
-				out.m_iCustomMeter[cd] = max( StringToInt(sParams[2]), 0 );
+				out.m_iCustomMeter[cd] = max( std::stoi(sParams[2]), 0 );
 			}
 		}
 
@@ -134,15 +134,15 @@ bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd,
 				Rage::ci_ascii_string tagName{ Rage::trim(sBits[0]).c_str() };
 				if( tagName == "TIME" )
 				{
-					attack.fStartSecond = max( StringToFloat(sBits[1]), 0.0f );
+					attack.fStartSecond = max( std::stof(sBits[1]), 0.0f );
 				}
 				else if( tagName == "LEN" )
 				{
-					attack.fSecsRemaining = StringToFloat( sBits[1] );
+					attack.fSecsRemaining = std::stof( sBits[1] );
 				}
 				else if( tagName == "END" )
 				{
-					end = StringToFloat( sBits[1] );
+					end = std::stof( sBits[1] );
 				}
 				else if( tagName == "MODS" )
 				{
@@ -183,7 +183,7 @@ bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd,
 			// most played
 			if (Rage::starts_with(sParams[1], "BEST"))
 			{
-				int iChooseIndex = StringToInt( Rage::tail( sParams[1], -4 ) ) - 1;
+				int iChooseIndex = std::stoi( Rage::tail( sParams[1], -4 ) ) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -200,7 +200,7 @@ bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd,
 			// least played
 			else if (Rage::starts_with(sParams[1], "WORST"))
 			{
-				int iChooseIndex = StringToInt(Rage::tail(sParams[1], -5)) - 1;
+				int iChooseIndex = std::stoi(Rage::tail(sParams[1], -5)) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -217,14 +217,14 @@ bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd,
 			// best grades
 			else if (Rage::starts_with(sParams[1], "GRADEBEST"))
 			{
-				new_entry.iChooseIndex = StringToInt(Rage::tail(sParams[1], -9)) - 1;
+				new_entry.iChooseIndex = std::stoi(Rage::tail(sParams[1], -9)) - 1;
 				new_entry.iChooseIndex = Rage::clamp( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_TopGrades;
 			}
 			// worst grades
 			else if (Rage::starts_with(sParams[1], "GRADEWORST"))
 			{
-				new_entry.iChooseIndex = StringToInt(Rage::tail(sParams[1], -10)) - 1;
+				new_entry.iChooseIndex = std::stoi(Rage::tail(sParams[1], -10)) - 1;
 				new_entry.iChooseIndex = Rage::clamp( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_LowestGrades;
 			}
@@ -326,7 +326,7 @@ bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd,
 					}
 					else if (sMod.length() > 5 && Rage::ci_ascii_string{ "award" } == Rage::head(sMod, 5))
 					{
-						new_entry.iGainLives = StringToInt(sMod.substr(5));
+						new_entry.iGainLives = std::stoi(sMod.substr(5));
 					}
 					else
 					{
@@ -349,8 +349,8 @@ bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd,
 		}
 		else if( bFromCache && tagName == "RADAR" )
 		{
-			StepsType st = (StepsType) StringToInt(sParams[1]);
-			CourseDifficulty cd = (CourseDifficulty) StringToInt( sParams[2] );
+			StepsType st = (StepsType) std::stoi(sParams[1]);
+			CourseDifficulty cd = (CourseDifficulty) std::stoi( sParams[2] );
 
 			RadarValues rv;
 			rv.FromString( sParams[3] );

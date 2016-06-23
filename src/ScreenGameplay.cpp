@@ -3254,7 +3254,7 @@ void ScreenGameplay::SaveReplay()
 					continue;
 
 				ASSERT( matches.size() == 1 );
-				iIndex = StringToInt( matches[0] )+1;
+				iIndex = std::stoi( matches[0] )+1;
 				break;
 			}
 

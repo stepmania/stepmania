@@ -312,18 +312,18 @@ std::string NoteSkinManager::GetMetric( const std::string &sButtonName, const st
 
 int NoteSkinManager::GetMetricI( const std::string &sButtonName, const std::string &sValueName )
 {
-	return StringToInt( GetMetric(sButtonName,sValueName) );
+	return std::stoi( GetMetric(sButtonName,sValueName) );
 }
 
 float NoteSkinManager::GetMetricF( const std::string &sButtonName, const std::string &sValueName )
 {
-	return StringToFloat( GetMetric(sButtonName,sValueName) );
+	return std::stof( GetMetric(sButtonName,sValueName) );
 }
 
 bool NoteSkinManager::GetMetricB( const std::string &sButtonName, const std::string &sValueName )
 {
 	// Could also call GetMetricI here...hmm.
-	return StringToInt( GetMetric(sButtonName,sValueName) ) != 0;
+	return std::stoi( GetMetric(sButtonName,sValueName) ) != 0;
 }
 
 apActorCommands NoteSkinManager::GetMetricA( const std::string &sButtonName, const std::string &sValueName )

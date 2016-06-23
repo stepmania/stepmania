@@ -288,9 +288,9 @@ float HHMMSSToSeconds( const std::string &sHHMMSS )
 		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
 	}
 	float fSeconds = 0;
-	fSeconds += StringToInt( arrayBits[0] ) * 60 * 60;
-	fSeconds += StringToInt( arrayBits[1] ) * 60;
-	fSeconds += StringToFloat( arrayBits[2] );
+	fSeconds += std::stoi( arrayBits[0] ) * 60 * 60;
+	fSeconds += std::stoi( arrayBits[1] ) * 60;
+	fSeconds += std::stoi( arrayBits[2] );
 
 	return fSeconds;
 }
@@ -1294,46 +1294,6 @@ static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[25
 	return iStart;
 }
 
-int StringToInt( const std::string &sString )
-{
-	int ret;
-	istringstream ( sString ) >> ret;
-	return ret;
-}
-
-std::string IntToString( const int &iNum )
-{
-	stringstream ss;
-	ss << iNum;
-	return ss.str();
-}
-
-float StringToFloat( const std::string &sString )
-{
-	float ret = strtof( sString.c_str(), nullptr );
-
-	if( !isfinite(ret) )
-	{
-		ret = 0.0f;
-	}
-	return ret;
-}
-
-bool StringToFloat( const std::string &sString, float &fOut )
-{
-	char *endPtr;
-
-	fOut = strtof( sString.c_str(), &endPtr );
-	return sString.size() && *endPtr == '\0' && isfinite( fOut );
-}
-
-std::string FloatToString( const float &num )
-{
-	stringstream ss;
-	ss << num;
-	return ss.str();
-}
-
 wstring StringToWstring( const std::string &s )
 {
 	wstring ret;
@@ -1720,7 +1680,7 @@ namespace StringConversion
 		if( sValue.size() == 0 )
 			return false;
 
-		out = (StringToInt(sValue) != 0);
+		out = (std::stoi(sValue) != 0);
 		return true;
 	}
 
