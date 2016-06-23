@@ -1294,40 +1294,50 @@ static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[25
 	return iStart;
 }
 
-int StringToInt( const std::string &sString )
+int StringToInt(const std::string &str)
 {
-	int ret;
-	istringstream ( sString ) >> ret;
-	return ret;
-}
-
-std::string IntToString( const int &iNum )
-{
-	stringstream ss;
-	ss << iNum;
-	return ss.str();
-}
-
-float StringToFloat( const std::string &sString )
-{
-	float ret = strtof( sString.c_str(), nullptr );
-
-	if( !isfinite(ret) )
+	try
 	{
-		ret = 0.0f;
+		return std::stoi(str);
 	}
-	return ret;
+	catch(...)
+	{
+		return 0;
+	}
 }
 
-bool StringToFloat( const std::string &sString, float &fOut )
+float StringToFloat(const std::string &str)
 {
-	char *endPtr;
-
-	fOut = strtof( sString.c_str(), &endPtr );
-	return sString.size() && *endPtr == '\0' && isfinite( fOut );
+	try
+	{
+		float ret= std::stof(str);
+		if(!isfinite(ret))
+		{
+			ret = 0.0f;
+		}
+		return ret;
+	}
+	catch(...)
+	{
+		return 0.0f;
+	}
 }
 
-std::string FloatToString( const float &num )
+bool StringToFloat(const std::string &str, float &ret)
+{
+	try
+	{
+		ret= std::stof(str);
+		return isfinite(ret);
+	}
+	catch(...)
+	{
+		ret= 0.0f;
+		return false;
+	}
+}
+
+std::string FloatToString(const float &num)
 {
 	stringstream ss;
 	ss << num;

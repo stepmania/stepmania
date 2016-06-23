@@ -93,7 +93,7 @@ choices(), bThemeTitle(bTT), bThemeItems(bTI)
 {
 	for ( int i = low; i <= high; ++i )
 	{
-		choices.push_back(IntToString(i).c_str());
+		choices.push_back(std::to_string(i).c_str());
 	}
 }
 

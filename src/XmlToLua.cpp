@@ -668,7 +668,7 @@ void actor_template_t::output_to_file(RageFile* file, std::string const& indent)
 		for(vector<frame_t>::iterator frame= frames.begin();
 			frame != frames.end(); ++frame)
 		{
-			file->Write(frameindent + "{Frame= " + IntToString(frame->frame) +
+			file->Write(frameindent + "{Frame= " + std::to_string(frame->frame) +
 				", Delay= " + FloatToString(frame->delay) + "},\n");
 		}
 		file->Write(indent + "},\n");
