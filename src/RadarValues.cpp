@@ -101,7 +101,7 @@ void RadarValues::FromString( std::string sRadarValues )
 
 	FOREACH_ENUM( RadarCategory, rc )
 	{
-		(*this)[rc] = StringToFloat(saValues[rc]);
+		(*this)[rc] = std::stof(saValues[rc]);
 	}
 
 }

@@ -95,7 +95,7 @@ void SMSetMusic(SMSongTagInfo& info)
 }
 void SMSetOffset(SMSongTagInfo& info)
 {
-	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
+	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = std::stof((*info.params)[1]);
 }
 void SMSetBPMs(SMSongTagInfo& info)
 {
@@ -139,11 +139,11 @@ void SMSetDisplayBPM(SMSongTagInfo& info)
 	else
 	{
 		info.song->m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
-		info.song->m_fSpecifiedBPMMin = StringToFloat((*info.params)[1]);
+		info.song->m_fSpecifiedBPMMin = std::stof((*info.params)[1]);
 		if((*info.params)[2].empty())
 		{ info.song->m_fSpecifiedBPMMax = info.song->m_fSpecifiedBPMMin; }
 		else
-		{ info.song->m_fSpecifiedBPMMax = StringToFloat((*info.params)[2]); }
+		{ info.song->m_fSpecifiedBPMMax = std::stof((*info.params)[2]); }
 	}
 }
 void SMSetSelectable(SMSongTagInfo& info)
@@ -170,7 +170,7 @@ void SMSetSelectable(SMSongTagInfo& info)
 	{ 
 		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; 
 	}
-	else if(StringToInt((*info.params)[1]) > 0)
+	else if(std::stoi((*info.params)[1]) > 0)
 	{
 		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
 	}
@@ -293,12 +293,9 @@ float SMLoader::RowToBeat( std::string line, const int rowsPerBeat )
 	backup = Rage::trim(backup, "R");
 	if( backup != line )
 	{
-		return StringToFloat( line ) / rowsPerBeat;
+		return std::stof( line ) / rowsPerBeat;
 	}
-	else
-	{
-		return StringToFloat( line );
-	}
+	return std::stof( line );
 }
 
 void SMLoader::LoadFromTokens(
@@ -355,7 +352,7 @@ void SMLoader::LoadFromTokens(
 		// have a meter on certain steps. Make the meter 1 in these instances.
 		sMeter = "1";
 	}
-	out.SetMeter( StringToInt(sMeter) );
+	out.SetMeter( std::stoi(sMeter) );
 
 	out.SetSMNoteData( sNoteData );
 
@@ -479,7 +476,7 @@ void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const std::str
 		}
 
 		const float fBeat = RowToBeat( arrayBPMChangeValues[0], rowsPerBeat );
-		const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
+		const float fNewBPM = std::stof( arrayBPMChangeValues[1] );
 		if( fNewBPM == 0 ) {
 			LOG->UserLog("Song file", this->GetSongTitle(),
 				     "has a zero BPM; ignored.");
@@ -507,7 +504,7 @@ void SMLoader::ParseStops( vector< std::pair<float, float> > &out, const std::st
 		}
 
 		const float fFreezeBeat = RowToBeat( arrayFreezeValues[0], rowsPerBeat );
-		const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
+		const float fFreezeSeconds = std::stof( arrayFreezeValues[1] );
 		if( fFreezeSeconds == 0 ) {
 			LOG->UserLog("Song file", this->GetSongTitle(),
 				     "has a zero-length stop; ignored.");
@@ -770,7 +767,7 @@ void SMLoader::ProcessDelays( TimingData &out, const std::string line, const int
 			continue;
 		}
 		const float fFreezeBeat = RowToBeat( arrayDelayValues[0], rowsPerBeat );
-		const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
+		const float fFreezeSeconds = std::stof( arrayDelayValues[1] );
 		// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
 		if(fFreezeSeconds > 0.0f)
@@ -802,8 +799,8 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const std::string line, c
 		}
 
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
-		const int iNumerator = StringToInt( vs2[1] );
-		const int iDenominator = StringToInt( vs2[2] );
+		const int iNumerator = std::stoi( vs2[1] );
+		const int iDenominator = std::stoi( vs2[2] );
 
 		if( fBeat < 0 )
 		{
@@ -870,7 +867,7 @@ void SMLoader::ProcessSpeeds( TimingData &out, const std::string line, const int
 		if (vs2.size() == 2)
 		{
 			// Make sure we don't cast all the dang time. Also, first one almost always has 2.
-			if (StringToFloat(vs2[0]) == 0.f)
+			if (std::stof(vs2[0]) == 0.f)
 			{
 				vs2.push_back("0");
 			}
@@ -891,11 +888,11 @@ void SMLoader::ProcessSpeeds( TimingData &out, const std::string line, const int
 		}
 
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
-		const float fRatio = StringToFloat( vs2[1] );
-		const float fDelay = StringToFloat( vs2[2] );
+		const float fRatio = std::stof( vs2[1] );
+		const float fDelay = std::stof( vs2[2] );
 
 		// XXX: ugly...
-		int iUnit = StringToInt(vs2[3]);
+		int iUnit = std::stoi(vs2[3]);
 		SpeedSegment::BaseUnit unit = (iUnit == 0) ?
 			SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
 
@@ -938,7 +935,7 @@ void SMLoader::ProcessFakes( TimingData &out, const std::string line, const int 
 		}
 
 		const float fBeat = RowToBeat( arrayFakeValues[0], rowsPerBeat );
-		const float fSkippedBeats = StringToFloat( arrayFakeValues[1] );
+		const float fSkippedBeats = std::stof( arrayFakeValues[1] );
 
 		if(fSkippedBeats > 0)
 		{
@@ -995,9 +992,19 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const std::str
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bLoop = StringToInt( aBGChangeValues[5] ) != 0;
+			bool bLoop;
+			try
+			{
+				bLoop = std::stoi( aBGChangeValues[5] ) != 0;
+			}
+			catch (...)
+			{
+				bLoop = false;
+			}
 			if( !bLoop )
+			{
 				change.m_def.m_sEffect = SBE_StretchNoLoop;
+			}
 		}
 		// fall through
 	case 5:
@@ -1005,19 +1012,29 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const std::str
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bRewindMovie = StringToInt( aBGChangeValues[4] ) != 0;
+			bool bRewindMovie;
+			try
+			{
+				bRewindMovie = std::stoi( aBGChangeValues[4] ) != 0;
+			}
+			catch (...)
+			{
+				bRewindMovie = false;
+			}
 			if( bRewindMovie )
+			{
 				change.m_def.m_sEffect = SBE_StretchRewind;
+			}
 		}
 		// fall through
 	case 4:
 		// param 9 overrides this.
 		// Backward compatibility:
 		if( change.m_sTransition.empty() )
-			change.m_sTransition = (StringToInt( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
+			change.m_sTransition = (std::stoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
 		// fall through
 	case 3:
-		change.m_fRate = StringToFloat( aBGChangeValues[2] );
+		change.m_fRate = std::stof( aBGChangeValues[2] );
 		// fall through
 	case 2:
 	{
@@ -1031,7 +1048,14 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const std::str
 		// fall through
 	}
 	case 1:
-		change.m_fStartBeat = StringToFloat( aBGChangeValues[0] );
+		try
+		{
+			change.m_fStartBeat = std::stof( aBGChangeValues[0] );
+		}
+		catch (...)
+		{
+			change.m_fStartBeat = 0.f;
+		}
 		// fall through
 	}
 

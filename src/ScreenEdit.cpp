@@ -2872,7 +2872,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			if( iAttack >= 0 )
 			{
-				const std::string sDuration = FloatToString(ce.attacks[iAttack].fSecsRemaining );
+				const std::string sDuration = std::to_string(ce.attacks[iAttack].fSecsRemaining );
 
 				g_InsertCourseAttack.rows[remove].bEnabled = true;
 				if( g_InsertCourseAttack.rows[duration].choices.size() == 9 )
@@ -3700,13 +3700,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromDifficultyMeterChange )
 	{
-		int i = StringToInt( ScreenTextEntry::s_sLastAnswer );
+		int i = std::stoi( ScreenTextEntry::s_sLastAnswer );
 		GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(i);
 		SetDirty( true );
 	}
 	else if( SM == SM_BackFromBeat0Change && !ScreenTextEntry::s_bCancelledLast )
 	{
-		float fBeat0 = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		float fBeat0 = std::stof( ScreenTextEntry::s_sLastAnswer );
 
 		TimingData &timing = GetAppropriateTimingForUpdate();
 		float old = timing.m_fBeat0OffsetInSeconds;
@@ -3727,7 +3727,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromBPMChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		float fBPM = std::stof( ScreenTextEntry::s_sLastAnswer );
 
 		if( fBPM > 0 )
 			GetAppropriateTimingForUpdate().AddSegment( BPMSegment(GetRow(), fBPM) );
@@ -3736,7 +3736,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromStopChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		float fStop = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		float fStop = std::stof( ScreenTextEntry::s_sLastAnswer );
 
 		if( fStop >= 0 )
 			GetAppropriateTimingForUpdate().AddSegment( StopSegment(GetRow(), fStop) );
@@ -3745,7 +3745,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromDelayChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		float fDelay = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		float fDelay = std::stof( ScreenTextEntry::s_sLastAnswer );
 
 		if( fDelay >= 0 )
 			GetAppropriateTimingForUpdate().AddSegment( DelaySegment(GetRow(), fDelay) );
@@ -3754,11 +3754,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromTickcountChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		int iTick = StringToInt( ScreenTextEntry::s_sLastAnswer );
+		int iTick = std::stoi( ScreenTextEntry::s_sLastAnswer );
 
 		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
+		{
 			GetAppropriateTimingForUpdate().AddSegment( TickcountSegment( GetRow(), iTick) );
-
+		}
 		SetDirty( true );
 	}
 	else if ( SM == SM_BackFromComboChange && !ScreenTextEntry::s_bCancelledLast )
@@ -3785,7 +3786,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromWarpChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		float fWarp = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		float fWarp = std::stof( ScreenTextEntry::s_sLastAnswer );
 		if( fWarp >= 0 ) // allow 0 to kill a warp.
 		{
 			GetAppropriateTimingForUpdate().SetWarpAtBeat( GetBeat(), fWarp );
@@ -3794,13 +3795,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromSpeedPercentChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		float fNum = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		float fNum = std::stof( ScreenTextEntry::s_sLastAnswer );
 		GetAppropriateTimingForUpdate().SetSpeedPercentAtBeat( GetBeat(), fNum );
 		SetDirty( true );
 	}
 	else if ( SM == SM_BackFromSpeedWaitChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		float fDen = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		float fDen = std::stof( ScreenTextEntry::s_sLastAnswer );
 		if( fDen >= 0)
 		{
 			GetAppropriateTimingForUpdate().SetSpeedWaitAtBeat( GetBeat(), fDen );
@@ -3819,7 +3820,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			int tmp = StringToInt(ScreenTextEntry::s_sLastAnswer );
+			int tmp = std::stoi(ScreenTextEntry::s_sLastAnswer );
 
 			SpeedSegment::BaseUnit unit = (tmp == 0 ) ?
 			  SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
@@ -3830,13 +3831,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromScrollChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		float fNum = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		float fNum = std::stof( ScreenTextEntry::s_sLastAnswer );
 		GetAppropriateTimingForUpdate().SetScrollAtBeat( GetBeat(), fNum );
 		SetDirty( true );
 	}
 	else if ( SM == SM_BackFromFakeChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		float fFake = StringToFloat( ScreenTextEntry::s_sLastAnswer );
+		float fFake = std::stof( ScreenTextEntry::s_sLastAnswer );
 		if( fFake >= 0 ) // allow 0 to kill a fake.
 		{
 			GetAppropriateTimingForUpdate().AddSegment( FakeSegment(GetRow(), fFake) );
@@ -3976,7 +3977,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromInsertTapAttack )
 	{
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
-		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertTapAttack.rows[0].choices[iDurationChoice] );
+		g_fLastInsertAttackDurationSeconds = std::stof( g_InsertTapAttack.rows[0].choices[iDurationChoice] );
 
 		SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertTapAttackPlayerOptions );
 	}
@@ -4001,7 +4002,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_BackFromEditingAttackStart && !ScreenTextEntry::s_bCancelledLast)
 	{
-		float time = StringToFloat(ScreenTextEntry::s_sLastAnswer);
+		float time = std::stof(ScreenTextEntry::s_sLastAnswer);
 		AttackArray &attacks =
 		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
 		Attack &attack = attacks[attackInProcess];
@@ -4010,7 +4011,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_BackFromEditingAttackLength && !ScreenTextEntry::s_bCancelledLast)
 	{
-		float time = StringToFloat(ScreenTextEntry::s_sLastAnswer);
+		float time = std::stof(ScreenTextEntry::s_sLastAnswer);
 		AttackArray &attacks =
 		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
 		Attack &attack = attacks[attackInProcess];
@@ -4067,14 +4068,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromEditingAttackStart,
 									   EDIT_ATTACK_START.GetValue(),
-									   FloatToString(attack.fStartSecond),
+									   std::to_string(attack.fStartSecond),
 									   10);
 		}
 		else if (option == 1) // adjusting the length of the attack
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromEditingAttackLength,
 									   EDIT_ATTACK_LENGTH.GetValue(),
-									   FloatToString(attack.fSecsRemaining),
+									   std::to_string(attack.fSecsRemaining),
 									   10);
 		}
 		else if (option >= 2 + mods.size()) // adding a new mod
@@ -4145,7 +4146,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 															 true,
 															 0,
 															 nullptr));
-				g_IndividualAttack.rows[0].SetOneUnthemedChoice(FloatToString(attack.fStartSecond));
+				g_IndividualAttack.rows[0].SetOneUnthemedChoice(std::to_string(attack.fStartSecond));
 				g_IndividualAttack.rows.push_back(MenuRowDef(1,
 															 "Secs Remaining",
 															 true,
@@ -4154,7 +4155,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 															 true,
 															 0,
 															 nullptr));
-				g_IndividualAttack.rows[1].SetOneUnthemedChoice(FloatToString(attack.fSecsRemaining));
+				g_IndividualAttack.rows[1].SetOneUnthemedChoice(std::to_string(attack.fSecsRemaining));
 				auto mods = Rage::split(attack.sModifiers, ",");
 				for (unsigned i = 0; i < mods.size(); ++i)
 				{
@@ -4188,7 +4189,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
 		const TimingData &timing = GetAppropriateTiming();
 		g_fLastInsertAttackPositionSeconds = timing.GetElapsedTimeFromBeat( GetBeat() );
-		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertStepAttack.rows[0].choices[iDurationChoice] );
+		g_fLastInsertAttackDurationSeconds = std::stof( g_InsertStepAttack.rows[0].choices[iDurationChoice] );
 		AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks;
 		int iAttack = FindAttackAtTime(attacks, g_fLastInsertAttackPositionSeconds);
 
@@ -4220,7 +4221,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		// TODO: Handle Song/Step Timing functions/switches here?
 
 		g_fLastInsertAttackPositionSeconds = m_pSteps->GetTimingData()->GetElapsedTimeFromBeat( GAMESTATE->m_Position.m_fSongBeat );
-		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertCourseAttack.rows[0].choices[iDurationChoice] );
+		g_fLastInsertAttackDurationSeconds = std::stof( g_InsertCourseAttack.rows[0].choices[iDurationChoice] );
 		iAttack = FindAttackAtTime( ce.attacks, g_fLastInsertAttackPositionSeconds );
 
 		if( ScreenMiniMenu::s_iLastRowCode == ScreenEdit::remove )
@@ -4581,7 +4582,7 @@ static void ChangeStepCredit( const std::string &sNew )
 static void ChangeStepMeter( const std::string &sNew )
 {
 	using std::max;
-	int diff = StringToInt(sNew);
+	int diff = std::stoi(sNew);
 	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(max(diff, 1));
 }
 
@@ -4666,39 +4667,39 @@ static void ChangeArtistTranslit( const std::string &sNew )
 static void ChangeLastSecondHint( const std::string &sNew )
 {
 	Song &s = *GAMESTATE->m_pCurSong;
-	s.SetSpecifiedLastSecond(StringToFloat(sNew));
+	s.SetSpecifiedLastSecond(std::stof(sNew));
 }
 
 static void ChangePreviewStart( const std::string &sNew )
 {
-	GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds = StringToFloat( sNew );
+	GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds = std::stof( sNew );
 }
 
 static void ChangePreviewLength( const std::string &sNew )
 {
-	GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds = StringToFloat( sNew );
+	GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds = std::stof( sNew );
 }
 
 static void ChangeMinBPM( const std::string &sNew )
 {
-	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMin = StringToFloat( sNew );
+	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMin = std::stof( sNew );
 }
 
 static void ChangeStepsMinBPM(const std::string &sNew)
 {
 	Steps *step = GAMESTATE->m_pCurSteps[PLAYER_1];
-	step->SetMinBPM(StringToFloat(sNew));
+	step->SetMinBPM(std::stof(sNew));
 }
 
 static void ChangeMaxBPM( const std::string &sNew )
 {
-	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMax = StringToFloat( sNew );
+	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMax = std::stof( sNew );
 }
 
 static void ChangeStepsMaxBPM(const std::string &sNew)
 {
 	Steps *step = GAMESTATE->m_pCurSteps[PLAYER_1];
-	step->SetMaxBPM(StringToFloat(sNew));
+	step->SetMaxBPM(std::stof(sNew));
 }
 
 const TimingData & ScreenEdit::GetAppropriateTiming() const
@@ -4767,25 +4768,25 @@ void ScreenEdit::DisplayTimingMenu()
 	// bool bIsSelecting = ( (m_NoteFieldEdit.m_iEndMarker != -1) && (m_NoteFieldEdit.m_iBeginMarker != -1) );
 
 
-	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( FloatToString(pTime.m_fBeat0OffsetInSeconds) );
-	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( FloatToString(pTime.GetBPMAtRow( row ) ) );
-	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( FloatToString(pTime.GetStopAtRow( row ) ) ) ;
-	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( FloatToString(pTime.GetDelayAtRow( row ) ) );
+	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( std::to_string(pTime.m_fBeat0OffsetInSeconds) );
+	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( std::to_string(pTime.GetBPMAtRow( row ) ) );
+	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( std::to_string(pTime.GetStopAtRow( row ) ) ) ;
+	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( std::to_string(pTime.GetDelayAtRow( row ) ) );
 
 	g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtRow( row ).c_str() );
 	g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( fmt::sprintf("%d", pTime.GetTickcountAtRow( row ) ) );
 	g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( fmt::sprintf("%d / %d",
 																	   pTime.GetComboAtRow( row ),
 																	   pTime.GetMissComboAtRow( row ) ) );
-	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( FloatToString(pTime.GetWarpAtRow( row ) ) );
-	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( bHasSpeedOnThisRow ? FloatToString(pTime.GetSpeedPercentAtRow( row ) ) : "---" );
-	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( bHasSpeedOnThisRow ? FloatToString(pTime.GetSpeedWaitAtRow( row ) ) : "---" );
+	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( std::to_string(pTime.GetWarpAtRow( row ) ) );
+	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( bHasSpeedOnThisRow ? std::to_string(pTime.GetSpeedPercentAtRow( row ) ) : "---" );
+	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( bHasSpeedOnThisRow ? std::to_string(pTime.GetSpeedWaitAtRow( row ) ) : "---" );
 
 	std::string starting = ( pTime.GetSpeedModeAtRow( row ) == 1 ? "Seconds" : "Beats" );
 	g_TimingDataInformation.rows[speed_mode].SetOneUnthemedChoice( starting.c_str() );
 
-	g_TimingDataInformation.rows[scroll].SetOneUnthemedChoice( FloatToString(pTime.GetScrollAtRow( row ) ) );
-	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( FloatToString(pTime.GetFakeAtRow( row ) ) );
+	g_TimingDataInformation.rows[scroll].SetOneUnthemedChoice( std::to_string(pTime.GetScrollAtRow( row ) ) );
+	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( std::to_string(pTime.GetFakeAtRow( row ) ) );
 
 	// g_TimingDataInformation.rows[speed_percent].bEnabled = !bIsSelecting;
 	g_TimingDataInformation.rows[speed_wait].bEnabled = bHasSpeedOnThisRow;
@@ -4903,8 +4904,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[step_credit].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
 				g_StepsInformation.rows[step_credit].SetOneUnthemedChoice( pSteps->GetCredit() );
 				g_StepsInformation.rows[step_display_bpm].iDefaultChoice = pSteps->GetDisplayBPM();
-				g_StepsInformation.rows[step_min_bpm].SetOneUnthemedChoice( FloatToString(pSteps->GetMinBPM()));
-				g_StepsInformation.rows[step_max_bpm].SetOneUnthemedChoice( FloatToString(pSteps->GetMaxBPM()));
+				g_StepsInformation.rows[step_min_bpm].SetOneUnthemedChoice( std::to_string(pSteps->GetMinBPM()));
+				g_StepsInformation.rows[step_max_bpm].SetOneUnthemedChoice( std::to_string(pSteps->GetMaxBPM()));
 				g_StepsInformation.rows[step_music].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
 				g_StepsInformation.rows[step_music].SetOneUnthemedChoice( pSteps->GetMusicFile() );
 				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation, SM_None );
@@ -4985,12 +4986,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[main_title_transliteration].SetOneUnthemedChoice( pSong->m_sMainTitleTranslit );
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
-				g_SongInformation.rows[last_second_hint].SetOneUnthemedChoice( FloatToString(pSong->GetSpecifiedLastSecond()) );
-				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( FloatToString(pSong->m_fMusicSampleStartSeconds) );
-				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( FloatToString(pSong->m_fMusicSampleLengthSeconds) );
+				g_SongInformation.rows[last_second_hint].SetOneUnthemedChoice( std::to_string(pSong->GetSpecifiedLastSecond()) );
+				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( std::to_string(pSong->m_fMusicSampleStartSeconds) );
+				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( std::to_string(pSong->m_fMusicSampleLengthSeconds) );
 				g_SongInformation.rows[display_bpm].iDefaultChoice = pSong->m_DisplayBPMType;
-				g_SongInformation.rows[min_bpm].SetOneUnthemedChoice( FloatToString(pSong->m_fSpecifiedBPMMin) );
-				g_SongInformation.rows[max_bpm].SetOneUnthemedChoice( FloatToString(pSong->m_fSpecifiedBPMMax) );
+				g_SongInformation.rows[min_bpm].SetOneUnthemedChoice( std::to_string(pSong->m_fSpecifiedBPMMin) );
+				g_SongInformation.rows[max_bpm].SetOneUnthemedChoice( std::to_string(pSong->m_fSpecifiedBPMMax) );
 
 				EditMiniMenu( &g_SongInformation, SM_BackFromSongInformation );
 			}
@@ -5677,7 +5678,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		case step_min_bpm:
 		{
 			ScreenTextEntry::TextEntry(SM_None, ENTER_MIN_BPM.GetValue(),
-									   FloatToString(pSteps->GetMinBPM()), 20,
+									   std::to_string(pSteps->GetMinBPM()), 20,
 									   ScreenTextEntry::FloatValidate,
 									   ChangeStepsMinBPM, nullptr);
 			break;
@@ -5685,7 +5686,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		case step_max_bpm:
 		{
 			ScreenTextEntry::TextEntry(SM_None, ENTER_MAX_BPM.GetValue(),
-									   FloatToString(pSteps->GetMaxBPM()), 20,
+									   std::to_string(pSteps->GetMaxBPM()), 20,
 									   ScreenTextEntry::FloatValidate,
 									   ChangeStepsMaxBPM, nullptr);
 			break;
@@ -5755,27 +5756,27 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 		break;
 	case last_second_hint:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_SECOND_HINT.GetValue(),
-					   FloatToString(pSong->GetSpecifiedLastSecond()), 20,
+					   std::to_string(pSong->GetSpecifiedLastSecond()), 20,
 					   ScreenTextEntry::FloatValidate, ChangeLastSecondHint, nullptr );
 		break;
 	case preview_start:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_START.GetValue(),
-					   FloatToString(pSong->m_fMusicSampleStartSeconds), 20,
+					   std::to_string(pSong->m_fMusicSampleStartSeconds), 20,
 					   ScreenTextEntry::FloatValidate, ChangePreviewStart, nullptr );
 		break;
 	case preview_length:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_LENGTH.GetValue(),
-					   FloatToString(pSong->m_fMusicSampleLengthSeconds), 20,
+					   std::to_string(pSong->m_fMusicSampleLengthSeconds), 20,
 					   ScreenTextEntry::FloatValidate, ChangePreviewLength, nullptr );
 		break;
 	case min_bpm:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MIN_BPM.GetValue(),
-					   FloatToString(pSong->m_fSpecifiedBPMMin), 20,
+					   std::to_string(pSong->m_fSpecifiedBPMMin), 20,
 					   ScreenTextEntry::FloatValidate, ChangeMinBPM, nullptr );
 		break;
 	case max_bpm:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MAX_BPM.GetValue(),
-					   FloatToString(pSong->m_fSpecifiedBPMMax), 20,
+					   std::to_string(pSong->m_fSpecifiedBPMMax), 20,
 					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, nullptr );
 		break;
 	default: break;
@@ -5807,7 +5808,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 			SM_BackFromBeat0Change,
 			ENTER_BEAT_0_OFFSET.GetValue(),
-			FloatToString(GetAppropriateTiming().m_fBeat0OffsetInSeconds),
+			std::to_string(GetAppropriateTiming().m_fBeat0OffsetInSeconds),
 			20
 			);
 		break;
@@ -5815,7 +5816,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 			SM_BackFromBPMChange,
 			ENTER_BPM_VALUE.GetValue(),
-			FloatToString( GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) ),
+			std::to_string( GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) ),
 			10
 			);
 		break;
@@ -5823,7 +5824,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 			SM_BackFromStopChange,
 			ENTER_STOP_VALUE.GetValue(),
-			FloatToString( GetAppropriateTiming().GetStopAtBeat( GetBeat() ) ),
+			std::to_string( GetAppropriateTiming().GetStopAtBeat( GetBeat() ) ),
 			10
 			);
 		break;
@@ -5831,7 +5832,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 			SM_BackFromDelayChange,
 			ENTER_DELAY_VALUE.GetValue(),
-			FloatToString( GetAppropriateTiming().GetDelayAtBeat( GetBeat() ) ),
+			std::to_string( GetAppropriateTiming().GetDelayAtBeat( GetBeat() ) ),
 			10
 		);
 		break;
@@ -5866,7 +5867,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromWarpChange,
 		   ENTER_WARP_VALUE.GetValue(),
-		   FloatToString( GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
+		   std::to_string( GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
 		   10
 		   );
 		break;
@@ -5874,7 +5875,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedPercentChange,
 		   ENTER_SPEED_PERCENT_VALUE.GetValue(),
-		   FloatToString( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetRatio() ),
+		   std::to_string( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
 		break;
@@ -5882,7 +5883,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromScrollChange,
 		   ENTER_SCROLL_VALUE.GetValue(),
-		   FloatToString( GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() )->GetRatio() ),
+		   std::to_string( GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
 		break;
@@ -5890,7 +5891,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedWaitChange,
 		   ENTER_SPEED_WAIT_VALUE.GetValue(),
-		   FloatToString( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetDelay() ),
+		   std::to_string( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetDelay() ),
 		   10
 		   );
 		break;
@@ -5910,7 +5911,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			ScreenTextEntry::TextEntry(
 				SM_BackFromFakeChange,
 				ENTER_FAKE_VALUE.GetValue(),
-			        FloatToString(GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
+			        std::to_string(GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
 				10
 			);
 			break;
@@ -6048,7 +6049,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	}
 
 	newChange.m_fStartBeat    = GAMESTATE->m_Position.m_fSongBeat;
-	newChange.m_fRate         = StringToFloat( g_BackgroundChange.rows[rate].choices[iAnswers[rate]] )/100.f;
+	newChange.m_fRate         = std::stof( g_BackgroundChange.rows[rate].choices[iAnswers[rate]] )/100.f;
 	newChange.m_sTransition   = iAnswers[transition] ? g_BackgroundChange.rows[transition].choices[iAnswers[transition]] : std::string();
 	newChange.m_def.m_sEffect = iAnswers[effect]     ? g_BackgroundChange.rows[effect].choices[iAnswers[effect]]         : std::string();
 	newChange.m_def.m_sColor1 = iAnswers[color1]     ? g_BackgroundChange.rows[color1].choices[iAnswers[color1]]         : std::string();

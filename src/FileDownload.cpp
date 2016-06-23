@@ -271,17 +271,20 @@ void FileTransfer::HTTPUpdate()
 			m_sResponseName = "Malformed response.";
 			return;
 		}
-		m_iResponseCode = StringToInt(m_sBUFFER.substr(i+1,j-i));
+		m_iResponseCode = std::stoi(m_sBUFFER.substr(i+1,j-i));
 		m_sResponseName = m_sBUFFER.substr( j+1, k-j );
 
 		i = m_sBUFFER.find("Content-Length:");
 		j = m_sBUFFER.find("\n", i+1 );
 
 		if( i != string::npos )
-			m_iTotalBytes = StringToInt(m_sBUFFER.substr(i+16,j-i));
+		{
+			m_iTotalBytes = std::stoi(m_sBUFFER.substr(i+16,j-i));
+		}
 		else
+		{
 			m_iTotalBytes = -1;	// We don't know, so go until disconnect
-
+		}
 		m_bGotHeader = true;
 		m_sBUFFER.erase( 0, iHeaderEnd );
 	}
@@ -349,13 +352,16 @@ bool FileTransfer::ParseHTTPAddress( const std::string &URL, std::string &sProto
 	sServer = asMatches[1];
 	if( asMatches[3] != "" )
 	{
-		iPort = StringToInt(asMatches[3]);
+		iPort = std::stoi(asMatches[3]);
 		if( iPort == 0 )
+		{
 			return false;
+		}
 	}
 	else
+	{
 		iPort = 80;
-
+	}
 	sAddress = asMatches[5];
 
 	return true;

@@ -33,11 +33,11 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 			continue;
 		}
 		const float fComboBeat = RowToBeat( arrayMultiplierValues[0], iRowsPerBeat );
-		const int iCombos = StringToInt( arrayMultiplierValues[1] ); // always true.
+		const int iCombos = std::stoi( arrayMultiplierValues[1] ); // always true.
 		// hoping I'm right here: SMA files can use 6 values after the row/beat.
 		const int iMisses = (size == 2 || size == 4 ?
 							 iCombos :
-							 StringToInt(arrayMultiplierValues[2]));
+							 std::stoi(arrayMultiplierValues[2]));
 		out.AddSegment( ComboSegment(BeatToNoteRow(fComboBeat), iCombos, iMisses) );
 	}
 }
@@ -58,8 +58,8 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const std::string sPara
 				     static_cast<int>(vs2.size()) );
 			continue;
 		}
-		const float fBeat = StringToFloat( vs2[0] );
-		const int iNumerator = StringToInt( vs2[1] );
+		const float fBeat = std::stof( vs2[0] );
+		const int iNumerator = std::stoi( vs2[1] );
 
 		if( fBeat < 0 )
 		{
@@ -112,8 +112,8 @@ void SMALoader::ProcessSpeeds( TimingData &out, const std::string line, const in
 		vs2[2] = Rage::trim(vs2[2], "s");
 		vs2[2] = Rage::trim(vs2[2], "S");
 
-		const float fRatio = StringToFloat( vs2[1] );
-		const float fDelay = StringToFloat( vs2[2] );
+		const float fRatio = std::stof( vs2[1] );
+		const float fDelay = std::stof( vs2[2] );
 
 		SpeedSegment::BaseUnit unit = ((backup != vs2[2]) ?
 			SpeedSegment::UNIT_SECONDS : SpeedSegment::UNIT_BEATS);
@@ -262,11 +262,11 @@ bool SMALoader::LoadFromSimfile( const std::string &sPath, Song &out, bool )
 			else
 			{
 				out.m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
-				out.m_fSpecifiedBPMMin = StringToFloat( sParams[1] );
+				out.m_fSpecifiedBPMMin = std::stof( sParams[1] );
 				if( sParams[2].empty() )
 					out.m_fSpecifiedBPMMax = out.m_fSpecifiedBPMMin;
 				else
-					out.m_fSpecifiedBPMMax = StringToFloat( sParams[2] );
+					out.m_fSpecifiedBPMMax = std::stof( sParams[2] );
 			}
 		}
 
@@ -287,7 +287,7 @@ bool SMALoader::LoadFromSimfile( const std::string &sPath, Song &out, bool )
 				auto arrayBeatChangeExpressions = Rage::split(sParams[1], ",");
 
 				auto arrayBeatChangeValues = Rage::split(arrayBeatChangeExpressions[0], "=");
-				iRowsPerBeat = StringToInt(arrayBeatChangeValues[1]);
+				iRowsPerBeat = std::stoi(arrayBeatChangeValues[1]);
 			}
 			else
 			{
@@ -328,7 +328,7 @@ bool SMALoader::LoadFromSimfile( const std::string &sPath, Song &out, bool )
 			{
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			}
-			else if (StringToInt(sParams[1]) > 0)
+			else if (std::stoi(sParams[1]) > 0)
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else
 				LOG->UserLog("Song file",
@@ -359,7 +359,7 @@ bool SMALoader::LoadFromSimfile( const std::string &sPath, Song &out, bool )
 		else if( sValueName=="OFFSET" )
 		{
 			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
-			timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+			timing.m_fBeat0OffsetInSeconds = std::stof( sParams[1] );
 		}
 
 		else if( sValueName=="BPMS" )

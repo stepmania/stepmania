@@ -431,7 +431,7 @@ static bool LoadFromDWITokens(
 	if( sNumFeet.empty() )
 		sNumFeet = "1";
 
-	out.SetMeter(StringToInt(sNumFeet));
+	out.SetMeter(std::stoi(sNumFeet));
 
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDescription) );
 
@@ -463,9 +463,10 @@ static float ParseBrokenDWITimestamp( const std::string &arg1, const std::string
 	{
 		/* If the value contains a period, treat it as seconds; otherwise ms. */
 		if( arg1.find_first_of(".") != arg1.npos )
-			return StringToFloat( arg1 );
-		else
-			return StringToFloat( arg1 ) / 1000.f;
+		{
+			return std::stof( arg1 );
+		}
+		return std::stof( arg1 ) / 1000.f;
 	}
 
 	/* 2+ args */
@@ -504,11 +505,16 @@ bool DWILoader::LoadNoteDataFromSimfile( const std::string &path, Steps &out )
 		if(tagName == "SINGLE" || tagName == "DOUBLE" || tagName == "COUPLE" || tagName == "SOLO")
 		{
 			if (out.m_StepsType != GetTypeFromMode(valueName))
+			{
 				continue;
+			}
 			if (out.GetDifficulty() != DwiCompatibleStringToDifficulty(params[1]))
+			{	continue;
+			}
+			if (out.GetMeter() != std::stoi(params[2]))
+			{
 				continue;
-			if (out.GetMeter() != StringToInt(params[2]))
-				continue;
+			}
 			std::string step1 = params[3];
 			std::string step2 = (iNumParams==5) ? params[4] : std::string("");
 			out.SetNoteData(ParseNoteData(step1, step2, out, path));
@@ -588,7 +594,7 @@ bool DWILoader::LoadFromDir( const std::string &sPath_, Song &out, std::set<std:
 
 		else if(tagName == "BPM" )
 		{
-			const float fBPM = StringToFloat( sParams[1] );
+			const float fBPM = std::stof( sParams[1] );
 
 			if( unlikely(fBPM <= 0.0f && !PREFSMAN->m_bQuirksMode) )
 			{
@@ -625,12 +631,14 @@ bool DWILoader::LoadFromDir( const std::string &sPath_, Song &out, std::set<std:
 		}
 
 		else if(tagName == "GAP" )
+		{
 			// the units of GAP is 1/1000 second
-			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt(sParams[1]) / 1000.0f;
-
+			out.m_SongTiming.m_fBeat0OffsetInSeconds = -std::stoi(sParams[1]) / 1000.0f;
+		}
 		else if(tagName == "SAMPLESTART" )
+		{
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
-
+		}
 		else if(tagName == "SAMPLELENGTH" )
 		{
 			float sampleLength = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
@@ -653,8 +661,8 @@ bool DWILoader::LoadFromDir( const std::string &sPath_, Song &out, std::set<std:
 					LOG->UserLog( "Song file", sPath, "has an invalid FREEZE: '%s'.", freeze.c_str() );
 					continue;
 				}
-				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
-				float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] ) / 1000.0f;
+				int iFreezeRow = BeatToNoteRow( std::stof(arrayFreezeValues[0]) / 4.0f );
+				float fFreezeSeconds = std::stof( arrayFreezeValues[1] ) / 1000.0f;
 
 				out.m_SongTiming.AddSegment( StopSegment(iFreezeRow, fFreezeSeconds) );
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
@@ -674,13 +682,17 @@ bool DWILoader::LoadFromDir( const std::string &sPath_, Song &out, std::set<std:
 					continue;
 				}
 
-				int iStartIndex = BeatToNoteRow( StringToFloat(arrayBPMChangeValues[0]) / 4.0f );
-				float fBPM = StringToFloat( arrayBPMChangeValues[1] );
+				int iStartIndex = BeatToNoteRow( std::stof(arrayBPMChangeValues[0]) / 4.0f );
+				float fBPM = std::stof( arrayBPMChangeValues[1] );
 				if( fBPM > 0.0f )
+				{
 					out.m_SongTiming.AddSegment( BPMSegment(iStartIndex, fBPM) );
+				}
 				else
+				{
 					LOG->UserLog( "Song file", sPath, "has an invalid BPM change at beat %f, BPM %f.",
 						      NoteRowToBeat(iStartIndex), fBPM );
+				}
 			}
 		}
 

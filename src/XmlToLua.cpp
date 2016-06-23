@@ -47,12 +47,12 @@ void convert_xmls_in_dir(std::string const& dirname)
 
 std::string convert_xpos(float x)
 {
-	return "SCREEN_CENTER_X + " + FloatToString(x - 320.0f);
+	return "SCREEN_CENTER_X + " + std::to_string(x - 320.0f);
 }
 
 std::string convert_ypos(float y)
 {
-	return "SCREEN_CENTER_Y + " + FloatToString(y - 240.0f);
+	return "SCREEN_CENTER_Y + " + std::to_string(y - 240.0f);
 }
 
 std::string maybe_conv_pos(std::string pos, std::string (*conv_func)(float p))
@@ -433,13 +433,13 @@ void actor_template_t::load_frames_from_file(std::string const& fname, std::stri
 			std::string field_type{ Rage::head(attr.first, 5) };
 			if(field_type == "Frame")
 			{
-				int id= StringToInt( Rage::tail(attr.first, -5) );
+				int id= std::stoi( Rage::tail(attr.first, -5) );
 				make_space_for_frame(id);
 				attr.second->GetValue(frames[id].frame);
 			}
 			else if(field_type == "Delay")
 			{
-				int id= StringToInt( Rage::tail(attr.first, -5) );
+				int id= std::stoi( Rage::tail(attr.first, -5) );
 				make_space_for_frame(id);
 				attr.second->GetValue(frames[id].delay);
 			}
@@ -668,8 +668,8 @@ void actor_template_t::output_to_file(RageFile* file, std::string const& indent)
 		for(vector<frame_t>::iterator frame= frames.begin();
 			frame != frames.end(); ++frame)
 		{
-			file->Write(frameindent + "{Frame= " + IntToString(frame->frame) +
-				", Delay= " + FloatToString(frame->delay) + "},\n");
+			file->Write(frameindent + "{Frame= " + std::to_string(frame->frame) +
+				", Delay= " + std::to_string(frame->delay) + "},\n");
 		}
 		file->Write(indent + "},\n");
 	}

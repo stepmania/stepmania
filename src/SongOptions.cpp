@@ -167,7 +167,7 @@ bool SongOptions::FromOneModString(const std::string &sOneMod)
 	vector<std::string> matches;
 	if( mult.Compare(sBit, matches) )
 	{
-		m_fMusicRate = StringToFloat( matches[0] );
+		m_fMusicRate = std::stof( matches[0] );
 		return true;
 	}
 

@@ -80,7 +80,7 @@ struct TimingSegment
 
 	virtual std::string ToString(int /* dec */) const
 	{
-		return FloatToString(GetBeat());
+		return std::to_string(GetBeat());
 	}
 
 	virtual std::vector<float> GetValues() const

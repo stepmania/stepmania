@@ -75,7 +75,7 @@ typedef void (*song_tag_func_t)(SongTagInfo& info);
 /****************************************************************/
 void SetVersion(SongTagInfo& info)
 {
-	info.song->m_fVersion = StringToFloat((*info.params)[1]);
+	info.song->m_fVersion = std::stof((*info.params)[1]);
 }
 void SetTitle(SongTagInfo& info)
 {
@@ -161,11 +161,11 @@ void SetInstrumentTrack(SongTagInfo& info)
 void SetMusicLength(SongTagInfo& info)
 {
 	if(info.from_cache)
-	info.song->m_fMusicLengthSeconds = StringToFloat((*info.params)[1]);
+	info.song->m_fMusicLengthSeconds = std::stof((*info.params)[1]);
 }
 void SetLastSecondHint(SongTagInfo& info)
 {
-	info.song->SetSpecifiedLastSecond(StringToFloat((*info.params)[1]));
+	info.song->SetSpecifiedLastSecond(std::stof((*info.params)[1]));
 }
 void SetSampleStart(SongTagInfo& info)
 {
@@ -183,11 +183,11 @@ void SetDisplayBPM(SongTagInfo& info)
 	else
 	{
 		info.song->m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
-		info.song->m_fSpecifiedBPMMin = StringToFloat((*info.params)[1]);
+		info.song->m_fSpecifiedBPMMin = std::stof((*info.params)[1]);
 		if((*info.params)[2].empty())
 		{ info.song->m_fSpecifiedBPMMax = info.song->m_fSpecifiedBPMMin; }
 		else
-		{ info.song->m_fSpecifiedBPMMax = StringToFloat((*info.params)[2]); }
+		{ info.song->m_fSpecifiedBPMMax = std::stof((*info.params)[2]); }
 	}
 }
 void SetSelectable(SongTagInfo& info)
@@ -212,7 +212,7 @@ void SetSelectable(SongTagInfo& info)
 	{ 
 		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; 
 	}
-	else if(StringToInt((*info.params)[1]) > 0)
+	else if(std::stoi((*info.params)[1]) > 0)
 	{ 
 		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; 
 	}
@@ -254,7 +254,7 @@ void SetAttacks(SongTagInfo& info)
 }
 void SetOffset(SongTagInfo& info)
 {
-	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
+	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = std::stof((*info.params)[1]);
 }
 void SetSongStops(SongTagInfo& info)
 {
@@ -303,12 +303,12 @@ void SetSongFakes(SongTagInfo& info)
 void SetFirstSecond(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->SetFirstSecond(StringToFloat((*info.params)[1])); }
+	{ info.song->SetFirstSecond(std::stof((*info.params)[1])); }
 }
 void SetLastSecond(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->SetLastSecond(StringToFloat((*info.params)[1])); }
+	{ info.song->SetLastSecond(std::stof((*info.params)[1])); }
 }
 void SetSongFilename(SongTagInfo& info)
 {
@@ -318,19 +318,19 @@ void SetSongFilename(SongTagInfo& info)
 void SetHasMusic(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->m_bHasMusic = StringToInt((*info.params)[1]) != 0; }
+	{ info.song->m_bHasMusic = std::stoi((*info.params)[1]) != 0; }
 }
 void SetHasBanner(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->m_bHasBanner = StringToInt((*info.params)[1]) != 0; }
+	{ info.song->m_bHasBanner = std::stoi((*info.params)[1]) != 0; }
 }
 
 // Functions for steps tags go below this line. -Kyz
 /****************************************************************/
 void SetStepsVersion(StepsTagInfo& info)
 {
-	info.song->m_fVersion = StringToFloat((*info.params)[1]);
+	info.song->m_fVersion = std::stof((*info.params)[1]);
 }
 void SetChartName(StepsTagInfo& info)
 {
@@ -366,7 +366,7 @@ void SetDifficulty(StepsTagInfo& info)
 }
 void SetMeter(StepsTagInfo& info)
 {
-	info.steps->SetMeter(StringToInt((*info.params)[1]));
+	info.steps->SetMeter(std::stoi((*info.params)[1]));
 	info.ssc_format= true;
 }
 void SetRadarValues(StepsTagInfo& info)
@@ -383,7 +383,7 @@ void SetRadarValues(StepsTagInfo& info)
 		{
 			for(size_t i= 0; i < cats_per_player; ++i)
 			{
-				v[pn][i]= StringToFloat(values[pn * cats_per_player + i]);
+				v[pn][i]= std::stof(values[pn * cats_per_player + i]);
 			}
 		}
 		info.steps->SetCachedRadarValues(v);
@@ -514,7 +514,7 @@ void SetStepsOffset(StepsTagInfo& info)
 {
 	if(info.song->m_fVersion >= VERSION_SPLIT_TIMING || info.for_load_edit)
 	{
-		info.timing->m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
+		info.timing->m_fBeat0OffsetInSeconds = std::stof((*info.params)[1]);
 		info.has_own_timing = true;
 	}
 }
@@ -526,12 +526,12 @@ void SetStepsDisplayBPM(StepsTagInfo& info)
 	else
 	{
 		info.steps->SetDisplayBPM(DISPLAY_BPM_SPECIFIED);
-		float min = StringToFloat((*info.params)[1]);
+		float min = std::stof((*info.params)[1]);
 		info.steps->SetMinBPM(min);
 		if((*info.params)[2].empty())
 		{ info.steps->SetMaxBPM(min); }
 		else
-		{ info.steps->SetMaxBPM(StringToFloat((*info.params)[2])); }
+		{ info.steps->SetMaxBPM(std::stof((*info.params)[2])); }
 	}
 }
 
@@ -672,8 +672,8 @@ void SSCLoader::ProcessBPMs( TimingData &out, const std::string sParam )
 			continue;
 		}
 
-		const float fBeat = StringToFloat( arrayBPMValues[0] );
-		const float fNewBPM = StringToFloat( arrayBPMValues[1] );
+		const float fBeat = std::stof( arrayBPMValues[0] );
+		const float fNewBPM = std::stof( arrayBPMValues[1] );
 		if( fBeat >= 0 && fNewBPM > 0 )
 		{
 			out.AddSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
@@ -704,8 +704,8 @@ void SSCLoader::ProcessStops( TimingData &out, const std::string sParam )
 			continue;
 		}
 
-		const float fBeat = StringToFloat( arrayStopValues[0] );
-		const float fNewStop = StringToFloat( arrayStopValues[1] );
+		const float fBeat = std::stof( arrayStopValues[0] );
+		const float fNewStop = std::stof( arrayStopValues[1] );
 		if( fBeat >= 0 && fNewStop > 0 )
 			out.AddSegment( StopSegment(BeatToNoteRow(fBeat), fNewStop) );
 		else
@@ -734,8 +734,8 @@ void SSCLoader::ProcessWarps( TimingData &out, const std::string sParam, const f
 			continue;
 		}
 
-		const float fBeat = StringToFloat( arrayWarpValues[0] );
-		const float fNewBeat = StringToFloat( arrayWarpValues[1] );
+		const float fBeat = std::stof( arrayWarpValues[0] );
+		const float fNewBeat = std::stof( arrayWarpValues[1] );
 		// Early versions were absolute in beats. They should be relative.
 		if( ( fVersion < VERSION_SPLIT_TIMING && fNewBeat > fBeat ) )
 		{
@@ -769,7 +769,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const std::string sParam )
 			continue;
 		}
 
-		const float fBeat = StringToFloat( arrayLabelValues[0] );
+		const float fBeat = std::stof( arrayLabelValues[0] );
 		std::string sLabel = Rage::trim_right(arrayLabelValues[1]);
 		if( fBeat >= 0.0f )
 		{
@@ -802,9 +802,9 @@ void SSCLoader::ProcessCombos( TimingData &out, const std::string line, const in
 				     expression.c_str() );
 			continue;
 		}
-		const float fComboBeat = StringToFloat( arrayComboValues[0] );
-		const int iCombos = StringToInt( arrayComboValues[1] );
-		const int iMisses = (size == 2 ? iCombos : StringToInt(arrayComboValues[2]));
+		const float fComboBeat = std::stof( arrayComboValues[0] );
+		const int iCombos = std::stoi( arrayComboValues[1] );
+		const int iMisses = (size == 2 ? iCombos : std::stoi(arrayComboValues[2]));
 		out.AddSegment( ComboSegment( BeatToNoteRow(fComboBeat), iCombos, iMisses ) );
 	}
 }
@@ -826,8 +826,8 @@ void SSCLoader::ProcessScrolls( TimingData &out, const std::string sParam )
 			continue;
 		}
 
-		const float fBeat = StringToFloat( vs2[0] );
-		const float fRatio = StringToFloat( vs2[1] );
+		const float fBeat = std::stof( vs2[0] );
+		const float fRatio = std::stof( vs2[1] );
 
 		if( fBeat < 0 )
 		{
@@ -877,7 +877,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const std::string & cachePath, Steps &o
 					case LNDID_version:
 						// Note that version is in both switches.  Formerly, it was
 						// checked before the tryingSteps condition. -Kyz
-						storedVersion = StringToFloat(matcher);
+						storedVersion = std::stof(matcher);
 						break;
 					case LNDID_stepstype:
 						if(out.m_StepsType != GAMEMAN->StringToStepsType(matcher))
@@ -909,7 +909,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const std::string & cachePath, Steps &o
 						}
 						break;
 					case LNDID_meter:
-						if(out.GetMeter() != StringToInt(matcher))
+						if(out.GetMeter() != std::stoi(matcher))
 						{ tryingSteps = false; }
 						break;
 					case LNDID_credit:
@@ -932,7 +932,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const std::string & cachePath, Steps &o
 					case LNDID_version:
 						// Note that version is in both switches.  Formerly, it was
 						// checked before the tryingSteps condition. -Kyz
-						storedVersion = StringToFloat(matcher);
+						storedVersion = std::stof(matcher);
 						break;
 					case LNDID_notedata:
 						tryingSteps = true;
