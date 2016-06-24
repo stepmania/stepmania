@@ -18,53 +18,12 @@ static bool IsGameplay()
 
 REGISTER_SCREEN_CLASS( ScreenSyncOverlay );
 
-static LocalizedString REVERT_SYNC_CHANGES	( "ScreenSyncOverlay", "Revert sync changes" );
-static LocalizedString CURRENT_BPM		( "ScreenSyncOverlay", "Current BPM - smaller/larger" );
-static LocalizedString SONG_OFFSET		( "ScreenSyncOverlay", "Song offset - notes earlier/later" );
-static LocalizedString MACHINE_OFFSET		( "ScreenSyncOverlay", "Machine offset - notes earlier/later" );
-static LocalizedString HOLD_ALT			( "ScreenSyncOverlay", "(hold Alt for smaller increment)" );
-
 void ScreenSyncOverlay::Init()
 {
 	Screen::Init();
-	
-	m_quad.SetDiffuse( RageColor(0,0,0,0) );
-	m_quad.SetHorizAlign(align_right);
-	m_quad.SetVertAlign(align_top);
-	m_quad.SetXY(SCREEN_WIDTH, SCREEN_TOP);
-	this->AddChild( &m_quad );
 
-	m_textHelp.LoadFromFont( THEME->GetPathF("Common", "normal") );
-	m_textHelp.SetHorizAlign( align_left );
-	m_textHelp.SetVertAlign(align_top);
-	m_textHelp.SetDiffuseAlpha( 0 );
-	m_textHelp.SetShadowLength( 2 );
-	m_textHelp.SetText( 
-		REVERT_SYNC_CHANGES.GetValue()+":\n"
-		"    F4\n" +
-		CURRENT_BPM.GetValue()+":\n"
-		"    F9/F10\n" +
-		CURRENT_BPM.GetValue()+":\n"
-		"    F11/F12\n" +
-		MACHINE_OFFSET.GetValue()+":\n"
-		"    Shift + F11/F12\n" +
-		HOLD_ALT.GetValue() );
-	m_textHelp.SetXY(SCREEN_WIDTH - m_textHelp.GetZoomedWidth() - 10,
-		SCREEN_TOP + 10);
-	this->AddChild( &m_textHelp );
-	
-	m_quad.ZoomToWidth( m_textHelp.GetZoomedWidth()+20 ); 
-	m_quad.ZoomToHeight( m_textHelp.GetZoomedHeight()+20 ); 
-
-	m_textStatus.SetName( "Status" );
-	m_textStatus.LoadFromFont( THEME->GetPathF(m_sName, "status") );
-	ActorUtil::LoadAllCommandsAndOnCommand( m_textStatus, m_sName );
-	this->AddChild( &m_textStatus );
-
-	m_textAdjustments.SetName( "Adjustments" );
-	m_textAdjustments.LoadFromFont( THEME->GetPathF(m_sName,"Adjustments") );
-	ActorUtil::LoadAllCommandsAndOnCommand( m_textAdjustments, m_sName );
-	this->AddChild( &m_textAdjustments );
+	m_overlay.Load(THEME->GetPathB(m_sName, "overlay"));
+	AddChild(m_overlay);
 	
 	Update( 0 );
 }
@@ -133,13 +92,16 @@ void ScreenSyncOverlay::UpdateText()
 		AdjustSync::GetSyncChangeTextSong( vs );
 	}
 
-	m_textStatus.SetText( join("\n",vs) );
+	Message set_status("SetStatus");
+	set_status.SetParam("text", join("\n",vs));
+	m_overlay->HandleMessage(set_status);
 
 
 	// Update SyncInfo
-	bool bVisible = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType != AutosyncType_Off;
-	m_textAdjustments.SetVisible( bVisible );
-	if( bVisible )
+	bool visible= GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType != AutosyncType_Off;
+	Message set_adjustments("SetAdjustments");
+	set_adjustments.SetParam("visible", visible);
+	if(visible)
 	{
 		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
 		float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
@@ -149,8 +111,13 @@ void ScreenSyncOverlay::UpdateText()
 		s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
 		s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
 		s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, AdjustSync::OFFSET_SAMPLE_COUNT );
-		m_textAdjustments.SetText( s );
+		set_adjustments.SetParam("text", s);
 	}
+	else
+	{
+		set_adjustments.SetParam("text", RString(""));
+	}
+	m_overlay->HandleMessage(set_adjustments);
 }
 
 static LocalizedString CANT_SYNC_WHILE_PLAYING_A_COURSE	("ScreenSyncOverlay","Can't sync while playing a course.");
@@ -322,27 +289,12 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 
 void ScreenSyncOverlay::ShowHelp()
 {
-	m_quad.StopTweening();
-	m_quad.BeginTweening( 0.3f, TWEEN_LINEAR );
-	m_quad.SetDiffuseAlpha( 0.5f );
-
-	m_textHelp.StopTweening();
-	m_textHelp.BeginTweening( 0.3f, TWEEN_LINEAR );
-	m_textHelp.SetDiffuseAlpha( 1 );
-
-	m_quad.Sleep( 4 );
-	m_quad.BeginTweening( 0.3f, TWEEN_LINEAR );
-	m_quad.SetDiffuseAlpha( 0 );
-
-	m_textHelp.Sleep( 4 );
-	m_textHelp.BeginTweening( 0.3f, TWEEN_LINEAR );
-	m_textHelp.SetDiffuseAlpha( 0 );
+	m_overlay->PlayCommand("Show");
 }
 
 void ScreenSyncOverlay::HideHelp()
 {
-	m_quad.FinishTweening();
-	m_textHelp.FinishTweening();
+	m_overlay->PlayCommand("Hide");
 }
 
 
