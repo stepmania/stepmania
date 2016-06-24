@@ -668,7 +668,6 @@ int RageSoundReader_Resample_Good::Read( float *pBuf, int iFrames )
 	{
 		int iFramesNeeded = m_apResamplers[0]->NumInputsForOutputSamples(iFrames);
 		float *pTmpBuf = (float *) alloca( iFramesNeeded * sizeof(float) * iChannels );
-		ASSERT( pTmpBuf != NULL );
 		int iFramesIn = m_pSource->Read( pTmpBuf, iFramesNeeded );
 		if( iFramesIn < 0 )
 			return iFramesIn;
