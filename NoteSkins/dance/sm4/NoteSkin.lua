@@ -60,6 +60,7 @@ ret.PartsToRotate =
 	["Ready Receptor"] = true,
 	["Tap Explosion Bright"] = true,
 	["Tap Explosion Dim"] = true,
+	["Tap Fake"] = true,
 	["Tap Note"] = true,
 	["Hold Head Active"] = true,
 	["Hold Head Inactive"] = true,
