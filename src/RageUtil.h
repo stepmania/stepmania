@@ -355,19 +355,21 @@ bool FindFirstFilenameContaining(
 	std::vector<std::string> const & starts_with,
 	std::vector<std::string> const & contains, std::vector<std::string> const & ends_with);
 
-/**
- * @brief Have a standard way of converting Strings to integers.
- * @param sString the string to convert.
- * @return the integer we are after. */
-int StringToInt( const std::string &sString );
-/**
- * @brief Have a standard way of converting integers to Strings.
- * @param iNum the integer to convert.
- * @return the string we are after. */
-std::string IntToString( const int &iNum );
-float StringToFloat( const std::string &sString );
-std::string FloatToString( const float &num );
-bool StringToFloat( const std::string &sString, float &fOut );
+// StringToInt and StringToFloat are wrappers around std::stoi and std::stof
+// which handle the exception by returning 0.  Reporting the exception would
+// be cumbersome, and there are probably a million things that rely on an
+// "invalid" string being silently converted to 0.  This includes cases where
+// someone uses an empty string and expects it to come out 0, probably
+// frequently used in metrics. -Kyz
+int StringToInt(const std::string &str);
+float StringToFloat(const std::string &str);
+// The variant of StringToFloat that returns a bool returns true if the float
+// was valid. -Kyz
+bool StringToFloat(const std::string &str, float &ret);
+// We can't use std::to_string to replaced FloatToString because
+// std::to_string has no way to control the precision.  If we used it, we
+// would have to add extra code to trim off trailing zeroes. -Kyz
+std::string FloatToString(const float &num);
 // Better than IntToString because you can check for success.
 template<class T>
 inline bool operator>>(const std::string& lhs, T& rhs)

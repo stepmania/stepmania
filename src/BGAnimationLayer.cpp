@@ -417,22 +417,25 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		{
 			m_Type = TYPE_TILES;
 		}
-		else if( StringToInt(type) == 1 )
-		{
-			m_Type = TYPE_SPRITE;
-			bStretch = true;
-		}
-		else if( StringToInt(type) == 2 )
-		{
-			m_Type = TYPE_PARTICLES;
-		}
-		else if( StringToInt(type) == 3 )
-		{
-			m_Type = TYPE_TILES;
-		}
 		else
 		{
-			m_Type = TYPE_SPRITE;
+			int typo= StringToInt(type);
+			switch(typo)
+			{
+				case 1:
+					m_Type = TYPE_SPRITE;
+					bStretch = true;
+					break;
+				case 2:
+					m_Type = TYPE_PARTICLES;
+					break;
+				case 3:
+					m_Type = TYPE_TILES;
+					break;
+				default:
+					m_Type = TYPE_SPRITE;
+					break;
+			}
 		}
 	}
 
