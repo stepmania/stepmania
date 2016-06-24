@@ -7,6 +7,25 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/06/19
+----------
+* [OSX] Moved to 64-bit executables. [wolfman2000]
+
+2016/06/18
+----------
+* [ThemePrefs] Removed ThemePrefs, GamePrefs, UserPrefs, and CustomSpeedMods
+  systems because they are obsolete and deprecated.
+  See Themerdocs/5.1_incompatibilities/ThemePrefs_removed.md. [kyzentun]
+
+2016/06/10
+----------
+* [NewField] Changed note render order to render notes closer to the
+  receptors last. [kyzentun]
+
+2016/06/04
+----------
+* [NewSkin] Added delta. [shakesoda]
+
 2016/05/26
 ----------
 * [Profile] LoadProfileCustom function is now passed the player number the
