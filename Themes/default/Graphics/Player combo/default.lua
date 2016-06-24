@@ -29,7 +29,7 @@ local t = Def.ActorFrame {
 		cf.MissLabel:visible(false)
 	end,
 	-- flashy combo elements:
- 	LoadActor(THEME:GetPathG("Combo","100Milestone")) .. {
+	LoadActor(THEME:GetPathG("Combo","100Milestone"), player) .. {
 		Name="OneHundredMilestone";
 		InitCommand=cmd(visible,ShowFlashyCombo);
 		FiftyMilestoneCommand=cmd(playcommand,"Milestone");

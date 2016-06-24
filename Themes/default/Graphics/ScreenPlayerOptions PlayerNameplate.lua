@@ -50,8 +50,6 @@ local t = Def.ActorFrame {
 		InitCommand= function(self)
 			self:x(68):maxwidth(88/bpm_text_zoom):shadowlength(1):zoom(bpm_text_zoom)
 			self:playcommand("ConfigValueChanged", {pn= PlayerNumber, field_name= "speed_mod"})
-			--local speed, mode= GetSpeedModeAndValueFromPoptions(PlayerNumber)
-			--self:playcommand("SpeedChoiceChanged", {pn= PlayerNumber, mode= mode, speed= speed})
 		end,
 		BPMWillNotChangeCommand=cmd(stopeffect),
 		BPMWillChangeCommand=cmd(diffuseshift;effectcolor1,Color.White;effectcolor2,Color.Orange),
