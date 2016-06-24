@@ -1517,7 +1517,10 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			 * hit accidentally.  Accept an initial START right away, though,
 			 * so we don't ignore deliberate fast presses (which would be
 			 * annoying). */
-			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
+			if(PREFSMAN->m_AllowHoldForOptions.Get())
+			{
+				this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
+			}
 
 			StartTransitioningScreen( SM_None );
 			float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );

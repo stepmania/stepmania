@@ -1,6 +1,13 @@
 gameplay_pause_count= 0
 course_stopped_by_pause_menu= false
 
+local prompt_text= {
+	Start= THEME:GetString("ScreenGameplay", "GiveUpStartText"),
+	Select= THEME:GetString("ScreenGameplay", "GiveUpSelectText"),
+	Back= THEME:GetString("ScreenGameplay", "GiveUpBackText"),
+}
+local prompt_actor= false
+
 local pause_buttons= {Start= false, Select= true, Back= true}
 local pause_double_tap_time= 1
 local tap_debounce_time= .1
@@ -178,11 +185,16 @@ local function pause_and_show(pn)
 		old_fg_visible= fg:GetVisible()
 		fg:visible(false)
 	end
-	local prompt_text= screen_gameplay:GetChild("Debug")
-	if prompt_text then
-		prompt_text:playcommand("TweenOff")
-	end
+	prompt_actor:playcommand("Hide")
 	show_menu(pn)
+end
+
+local function show_prompt(button)
+	prompt_actor:playcommand("Show", {text= prompt_text[button]})
+end
+
+local function hide_prompt()
+	prompt_actor:playcommand("Hide")
 end
 
 local function input(event)
@@ -222,13 +234,16 @@ local function input(event)
 					if time_since_press <= pause_double_tap_time then
 						pause_and_show(pn)
 					else
+						show_prompt(button)
 						pause_press_times[pn]= GetTimeSinceStart()
 					end
 				end
 			else
+				show_prompt(button)
 				pause_press_times[pn]= GetTimeSinceStart()
 			end
 		else
+			hide_prompt()
 			pause_press_times[pn]= nil
 		end
 	end
@@ -239,6 +254,18 @@ local frame= Def.ActorFrame{
 		screen_gameplay= SCREENMAN:GetTopScreen()
 		screen_gameplay:AddInputCallback(input)
 	end,
+	Def.BitmapText{
+		Font= "Common Normal", InitCommand= function(self)
+			prompt_actor= self
+			self:xy(_screen.cx, _screen.h*.75):zoom(.75):diffusealpha(0)
+		end,
+		ShowCommand= function(self, param)
+			self:stoptweening():settext(param.text):accelerate(.25):diffusealpha(1)
+		end,
+		HideCommand= function(self)
+			self:stoptweening():decelerate(.25):diffusealpha(0)
+		end,
+	},
 }
 
 for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
