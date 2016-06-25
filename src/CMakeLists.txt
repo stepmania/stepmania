@@ -183,12 +183,25 @@ if(WIN32)
   )
 
   if(MSVC)
-    # Allow for getting a virtualdub stack trace.
-    add_custom_command(TARGET "${SM_EXE_NAME}"
-      POST_BUILD
-      COMMAND "mapconv" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.map" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.vdi"
-      COMMENT "Generating file to allow for easier stack traces."
+    # TODO: Look into a better way for custom commands to reduce duplication.
+    if (SDL2_FOUND)
+      get_filename_component(SDL2_DLL_DIR ${SDL2_LIBRARY} DIRECTORY)
+      add_custom_command(TARGET "${SM_EXE_NAME}"
+        POST_BUILD
+        # Attempt to allow generating a stack trace.
+        COMMAND "mapconv" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.map" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.vdi"
+        # Copy the SDL2.dll
+        COMMAND ${CMAKE_COMMAND} -E copy "${SDL2_DLL_DIR}/SDL2.dll" "${SM_PROGRAM_DIR}/SDL2.dll"
+        COMMENT "Post-build stuff for Windows."
     )
+    else()
+      # Allow for getting a virtualdub stack trace.
+      add_custom_command(TARGET "${SM_EXE_NAME}"
+        POST_BUILD
+        COMMAND "mapconv" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.map" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.vdi"
+        COMMENT "Generating file to allow for easier stack traces."
+      )
+    endif()
   endif()
 elseif(APPLE)
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
@@ -389,6 +402,11 @@ if (WIN32)
     )
   endif()
 
+  if(SDL2_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${SDL2_LIBRARY})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_SDL)
+  endif()
+
   list(APPEND SMDATA_LINK_LIB
     "dbghelp.lib"
     "setupapi.lib"
@@ -397,6 +415,9 @@ if (WIN32)
 
   get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
 
+  if (SDL2_FOUND)
+    sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SDL2_LIBRARY}\"")
+  endif()
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
