@@ -5,6 +5,12 @@
 #if defined(X11_FOUND)
 #include "archutils/Unix/X11Helper.h"
 #endif
+
+#if defined (WINDOWS)
+#include "archutils/Win32/GraphicsWindow.h"
+#include "archutils/Win32/Crash.h"
+#endif
+
 #include "PrefsManager.h" // XXX
 #include "DisplaySpec.h"
 #include "RageDisplay.h" // VideoModeParams
@@ -21,14 +27,19 @@ using namespace RageDisplay_Legacy_Helpers;
 #include <SDL_syswm.h>
 
 
+
+#include "arch/ArchHooks/ArchHooks.h"
+
+
 static SDL_Window* g_DisplayWindow;
 static SDL_DisplayMode g_DisplayMode;
 static SDL_GLContext g_Context;
+static SDL_Event g_Event;
 
 static LocalizedString FAILED_WINDOW_SDL( "LowLevelWindow_SDL", "Failed to create an SDL window" );
 LowLevelWindow_SDL::LowLevelWindow_SDL()
 {
-    if ( SDL_Init(SDL_INIT_VIDEO) != 0)
+    if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS ) != 0)
          RageException::Throw( "SDL Error in %s: %s",__FUNCTION__, SDL_GetError());
 
     //SDL_GetDesktopDisplayMode(1, &g_DisplayMode);
@@ -76,7 +87,7 @@ std::string LowLevelWindow_SDL::TryVideoMode( const VideoModeParams &p, bool &bN
     {
 
         //Create window
-        g_DisplayWindow = SDL_CreateWindow( p.sWindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, g_DisplayMode.w, g_DisplayMode.h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
+        g_DisplayWindow = SDL_CreateWindow( p.sWindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, g_DisplayMode.w, g_DisplayMode.h, SDL_WINDOW_OPENGL );
         if( g_DisplayWindow == NULL )
         {
             LOG->Warn( "%s SDL Error: %s\n",FAILED_WINDOW_SDL.GetValue().c_str(), SDL_GetError() );
@@ -97,6 +108,10 @@ std::string LowLevelWindow_SDL::TryVideoMode( const VideoModeParams &p, bool &bN
 #if defined(X11_FOUND)
             X11Helper::Win = info.info.x11.window;
             X11Helper::Dpy = info.info.x11.display;
+#endif
+#if defined(WINDOWS)
+			GraphicsWindow::SetHwnd(info.info.win.window); // So that DInput knows about our SDL created window
+			//CrashHandler::SetForegroundWindow(info.info.win.window);
 #endif
         }
         else
@@ -172,6 +187,14 @@ bool LowLevelWindow_SDL::IsSoftwareRenderer( std::string &sError )
 void LowLevelWindow_SDL::SwapBuffers()
 {
     SDL_GL_SwapWindow(g_DisplayWindow);
+	while (SDL_PollEvent(&g_Event) != 0)
+	{
+		if (g_Event.type == SDL_QUIT)
+		{
+			LOG->Trace("SDL_QUIT: shutting down");
+			ArchHooks::SetUserQuit();
+		}
+	}
 }
 
 void LowLevelWindow_SDL::GetDisplaySpecs( DisplaySpecs &out ) const
