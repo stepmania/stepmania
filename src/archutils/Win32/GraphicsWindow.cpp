@@ -512,6 +512,11 @@ HWND GraphicsWindow::GetHwnd()
 	return g_hWndMain;
 }
 
+void GraphicsWindow::SetHwnd(HWND a_Handle)
+{
+	g_hWndMain = a_Handle;
+}
+
 void GraphicsWindow::GetDisplaySpecs( DisplaySpecs &out )
 {
 	const size_t DM_DRIVER_EXTRA_BYTES = 4096;
