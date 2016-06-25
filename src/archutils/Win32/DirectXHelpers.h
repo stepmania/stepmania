@@ -10,7 +10,7 @@ std::string hr_final(std::string const &msg, int hr);
 template<typename... Args>
 std::string hr_format(int hr, std::string const &msg, Args const & ...args)
 {
-	std::string item = fmt::format(msg, args...);
+	std::string item = fmt::sprintf(msg, args...);
 	return hr_final(item, hr);
 }
 
