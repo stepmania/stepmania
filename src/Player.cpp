@@ -2652,12 +2652,19 @@ void Player::FlashGhostRow( int iRow )
 	{
 		const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
 
-		if( tn.type == TapNoteType_Empty || tn.type == TapNoteType_Mine || tn.type == TapNoteType_Fake )
+		if(tn.type == TapNoteType_Empty || tn.type == TapNoteType_Mine ||
+			tn.type == TapNoteType_Fake || tn.result.bHidden)
+		{
 			continue;
+		}
 		if( m_pNoteField )
+		{
 			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
+		}
 		if( lastTNS >= m_pPlayerState->m_PlayerOptions.GetCurrent().m_MinTNSToHideNotes || bBlind )
+		{
 			HideNote( iTrack, iRow );
+		}
 	}
 }
 
