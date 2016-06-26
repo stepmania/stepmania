@@ -13,6 +13,8 @@ local function GetDisplaySpecs()
 						return self[i]
 					end
 				end
+				-- default to returning first DisplaySpec
+				return self[1]
 			end,
 			-- hold on to a reference to the userdata, so it isn't GC'd prematurely
 			c_specs= specs
@@ -130,7 +132,7 @@ local function GetDisplayAspectRatios(specs)
 				-- same (e.g. 1366x768 is typically considered 16:9)
 				for knownRatio, fraction in pairs(recognized) do
 					if math.abs(trueRatio - (fraction.n/fraction.d)) < RATIO_EPSILON then
-						r = knownRatio
+						truncRatio = knownRatio
 						f = fraction
 						break
 					end
@@ -142,9 +144,9 @@ local function GetDisplayAspectRatios(specs)
 					local w = mode:GetWidth()
 					local h = mode:GetHeight()
 					local gcd = math.gcd(w, h)
-					dRatios[r] = {n=w/gcd, d=h/gcd}
+					dRatios[trueRatio] = {n=w/gcd, d=h/gcd}
 				else
-					dRatios[r] = f
+					dRatios[truncRatio] = f
 				end
 			end
 		end
@@ -235,8 +237,8 @@ function ConfAspectRatio()
 		GenChoices= function(self)
 			-- Determine the available aspect ratios for the current display mode
 			local isWindowed = PREFSMAN:GetPreference("Windowed")
-			local curDisplayId = PREFSMAN:GetPreference("DisplayId") or ""
-			local ratios = isWindowed and wRatios or dRatios[curDisplayId]
+			local curDisplayId = PREFSMAN:GetPreference("DisplayId")
+			local ratios = isWindowed and wRatios or (dRatios[curDisplayId] or dRatios[specs[1]:GetId()])
 			local choices = {}
 			local vals = {}
 			foreach_ordered(ratios, function(v, f)
