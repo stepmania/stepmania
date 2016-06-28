@@ -1,42 +1,31 @@
-#ifndef LightsDriver_SextetStream_H
-#define LightsDriver_SextetStream_H
 
-/*
- * `LightsDriver_SextetStream` (abstract): Streams the light data (in
- * ASCII-safe sextets) to some output stream.
- *
- * *   `LightsDriver_SextetStreamToFile`: Streams the light data to an
- *     output file.
- *     *   The specified file may be a named pipe (Windows)/named fifo
- *         (Linux, others). This makes it possible to implement an
- *         out-of-process light controller without touching the StepMania
- *         source and without using C++. See the included notes for
- *         details.
- */
+#include "Sextets/IO/NoopPacketWriter.h"
+#include "RageLog.h"
 
-#include "LightsDriver.h"
-#include "RageFile.h"
-
-class LightsDriver_SextetStream : public LightsDriver
+namespace Sextets
 {
-public:
-	LightsDriver_SextetStream();
-	virtual ~LightsDriver_SextetStream();
-	virtual void Set(const LightsState *ls);
-
-public:
-	class Impl;
-protected:
-	Impl * _impl;
-};
-
-class LightsDriver_SextetStreamToFile : public LightsDriver_SextetStream
-{
-public:
-	LightsDriver_SextetStreamToFile();
-};
-
-#endif // H
+	namespace IO
+	{
+		NoopPacketWriter::NoopPacketWriter()
+		{
+			LOG->Info("NoopPacketWriter ctor");
+			LOG->Flush();
+		}
+		NoopPacketWriter::~NoopPacketWriter()
+		{
+			LOG->Info("NoopPacketWriter dtor");
+			LOG->Flush();
+		}
+		bool NoopPacketWriter::IsReady()
+		{
+			return false;
+		}
+		bool NoopPacketWriter::WritePacket(const Packet& packet)
+		{
+			return false;
+		}
+	}
+}
 
 /*
  * Copyright © 2014-2016 Peter S. May
