@@ -273,9 +273,8 @@ local simple_item_mt= {
 }}
 
 local value_item_default_params= {
-	name= "", text_font= "Common Normal", text_on= noop_nil, text_width= .70,
-	value_font= "Common Normal", value_text_on= noop_nil,
-	value_image_on= noop_nil, value_width= .25,
+	name= "", text_font= "Common Normal", text_width= .70,
+	value_font= "Common Normal", value_width= .25,
 }
 local value_item_mt= {
 	__index= {
@@ -1129,7 +1128,7 @@ nesty_menu_stack_mt= {
 				el_width= disp_el_width_limit, el_height= self.el_height,
 				el_zoom= self.zoom, height= params.height, no_heading= false,
 				no_display= false, el_height= params.el_height,
-				item_mt= option_item_underlinable_mt})
+				item_mt= nesty_items.value})
 			for i, disp in ipairs(self.displays) do
 				local sub_params= DeepCopy(params.display_params)
 				sub_params.name= "disp" .. i
@@ -1399,6 +1398,12 @@ local function float_val_func(min_scale, get)
 end
 
 nesty_options= {
+	submenu= function(name, items)
+		local ret= {
+			name= name, translatable= true, menu= nesty_option_menus.menu, args= items,
+		}
+		return setmetatable(ret, mergable_table_mt)
+	end,
 	float_pref_val= function(valname, min_scale, scale, max_scale, val_min, val_max, val_reset)
 		local ret= {
 			name= valname, translatable= true,

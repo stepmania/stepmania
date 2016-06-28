@@ -132,12 +132,9 @@ local insertion_chart_mods= {
 }
 
 local chart_mods= {
-	{name= "turn_chart_mods", menu= nesty_option_menus.menu,
-	 translatable= true, args= turn_chart_mods},
-	{name= "removal_chart_mods", menu= nesty_option_menus.menu,
-	 translatable= true, args= removal_chart_mods},
-	{name= "insertion_chart_mods", menu= nesty_option_menus.menu,
-	 translatable= true, args= insertion_chart_mods},
+	nesty_options.submenu("turn_chart_mods", turn_chart_mods),
+	nesty_options.submenu("removal_chart_mods", removal_chart_mods),
+	nesty_options.submenu("insertion_chart_mods", insertion_chart_mods),
 }
 
 local gameplay_options= {
@@ -193,20 +190,19 @@ local base_options= {
 	}},
 	nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2, 1),
 	nesty_options.float_song_mod_toggle_val("Haste", 1, 0),
-	{name= "perspective", translatable= true, menu= nesty_option_menus.menu, args= perspective_mods},
+	nesty_options.submenu("perspective", perspective_mods),
 	nesty_options.float_config_toggle_val(newfield_prefs_config, "reverse", -1, 1),
 	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 0),
-	{name= "chart_mods", translatable= true, menu= nesty_option_menus.menu, args= chart_mods},
+	nesty_options.submenu("chart_mods", chart_mods),
 	{name= "newskin", translatable= true, menu= nesty_option_menus.newskins},
 	{name= "newskin_params", translatable= true, menu= nesty_option_menus.menu,
 	 args= gen_noteskin_param_menu, req_func= show_noteskin_param_menu},
 	{name= "shown_noteskins", translatable= true, menu= nesty_option_menus.shown_noteskins, args= {}},
 	nesty_options.bool_config_val(newfield_prefs_config, "hidden"),
 	nesty_options.bool_config_val(newfield_prefs_config, "sudden"),
-	{name= "advanced_notefield_config", translatable= true, menu= nesty_option_menus.menu, args= notefield_config},
-	{name= "gameplay_options", translatable= true, menu= nesty_option_menus.menu, args= gameplay_options},
-	{name= "life_options", translatable= true, menu= nesty_option_menus.menu,
-	 args= life_options},
+	nesty_options.submenu("advanced_notefield_config", notefield_config),
+	nesty_options.submenu("gameplay_options", gameplay_options),
+	nesty_options.submenu("life_options", life_options),
 	nesty_options.bool_song_mod_val("AssistClap"),
 	nesty_options.bool_song_mod_val("AssistMetronome"),
 	nesty_options.bool_song_mod_val("StaticBackground"),
