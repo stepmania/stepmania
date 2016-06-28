@@ -484,7 +484,7 @@ namespace Sextets
 
 		bool Equals(const Packet& b) const
 		{
-			VectorsEqual(sextets, b._impl->sextets);
+			return VectorsEqual(sextets, b._impl->sextets);
 		}
 
 		void GetUntrimmedLine(RString& line)

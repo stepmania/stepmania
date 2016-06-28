@@ -39,7 +39,10 @@ namespace
 				RString line = packet.GetLine();
 				out->PutLine(line);
 				out->Flush();
+
+				return true;
 			}
+			return false;
 		}
 	};
 }
