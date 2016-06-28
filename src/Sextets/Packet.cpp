@@ -440,7 +440,7 @@ namespace Sextets
 			}
 
 			RString bs;
-			for(size_t bi; bi < bits.size(); ++bi) {
+			for(size_t bi = 0; bi < bits.size(); ++bi) {
 				bs += (bits[bi] ? "1" : "0");
 			}
 
