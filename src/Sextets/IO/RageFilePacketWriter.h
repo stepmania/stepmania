@@ -1,42 +1,35 @@
-#ifndef LightsDriver_SextetStream_H
-#define LightsDriver_SextetStream_H
+#ifndef Sextets_IO_RageFilePacketWriter_h
+#define Sextets_IO_RageFilePacketWriter_h
 
-/*
- * `LightsDriver_SextetStream` (abstract): Streams the light data (in
- * ASCII-safe sextets) to some output stream.
- *
- * *   `LightsDriver_SextetStreamToFile`: Streams the light data to an
- *     output file.
- *     *   The specified file may be a named pipe (Windows)/named fifo
- *         (Linux, others). This makes it possible to implement an
- *         out-of-process light controller without touching the StepMania
- *         source and without using C++. See the included notes for
- *         details.
- */
-
-#include "LightsDriver.h"
+#include "Sextets/IO/PacketWriter.h"
 #include "RageFile.h"
 
-class LightsDriver_SextetStream : public LightsDriver
+namespace Sextets
 {
-public:
-	LightsDriver_SextetStream();
-	virtual ~LightsDriver_SextetStream();
-	virtual void Set(const LightsState *ls);
+	namespace IO
+	{
+		class RageFilePacketWriter : public PacketWriter
+		{
+		public:
+			virtual ~RageFilePacketWriter();
 
-public:
-	class Impl;
-protected:
-	Impl * _impl;
-};
+			// Note: If there is a problem opening the file, returns
+			// NULL.
+			static RageFilePacketWriter * Create(const RString& filename);
 
-class LightsDriver_SextetStreamToFile : public LightsDriver_SextetStream
-{
-public:
-	LightsDriver_SextetStreamToFile();
-};
+			// Note: If `stream` is `NULL`, returns `NULL`.
+			// When using this method, the RageFile should have been
+			// opened with the modes
+			// `RageFile::WRITE|RageFile::STREAMED` set. (This is not
+			// checked.) Additionally, the provided RageFile will be
+			// properly closed, flushed, and deleted when this packet
+			// writer is deleted.
+			static RageFilePacketWriter * Create(RageFile * stream);
+		};
+	}
+}
 
-#endif // H
+#endif
 
 /*
  * Copyright © 2014-2016 Peter S. May

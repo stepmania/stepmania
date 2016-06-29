@@ -1,45 +1,28 @@
-#ifndef LightsDriver_SextetStream_H
-#define LightsDriver_SextetStream_H
+#ifndef Sextets_IO_StdCFilePacketReader_h
+#define Sextets_IO_StdCFilePacketReader_h
+
+#include "Sextets/IO/PacketReader.h"
+#include <cstdio>
+
+namespace Sextets
+{
+	namespace IO
+	{
+		// PacketReader implementation using std::FILE from <cstdio>
+		class StdCFilePacketReader : public PacketReader
+		{
+			public:
+				virtual ~StdCFilePacketReader();
+				static StdCFilePacketReader* Create(std::FILE * file);
+				static StdCFilePacketReader* Create(const RString& filename);
+		};
+	}
+}
+
+#endif
 
 /*
- * `LightsDriver_SextetStream` (abstract): Streams the light data (in
- * ASCII-safe sextets) to some output stream.
- *
- * *   `LightsDriver_SextetStreamToFile`: Streams the light data to an
- *     output file.
- *     *   The specified file may be a named pipe (Windows)/named fifo
- *         (Linux, others). This makes it possible to implement an
- *         out-of-process light controller without touching the StepMania
- *         source and without using C++. See the included notes for
- *         details.
- */
-
-#include "LightsDriver.h"
-#include "RageFile.h"
-
-class LightsDriver_SextetStream : public LightsDriver
-{
-public:
-	LightsDriver_SextetStream();
-	virtual ~LightsDriver_SextetStream();
-	virtual void Set(const LightsState *ls);
-
-public:
-	class Impl;
-protected:
-	Impl * _impl;
-};
-
-class LightsDriver_SextetStreamToFile : public LightsDriver_SextetStream
-{
-public:
-	LightsDriver_SextetStreamToFile();
-};
-
-#endif // H
-
-/*
- * Copyright © 2014-2016 Peter S. May
+ * Copyright © 2016 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

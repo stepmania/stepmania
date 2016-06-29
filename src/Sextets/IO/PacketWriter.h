@@ -1,42 +1,35 @@
-#ifndef LightsDriver_SextetStream_H
-#define LightsDriver_SextetStream_H
+#ifndef Sextets_IO_PacketWriter_h
+#define Sextets_IO_PacketWriter_h
 
-/*
- * `LightsDriver_SextetStream` (abstract): Streams the light data (in
- * ASCII-safe sextets) to some output stream.
- *
- * *   `LightsDriver_SextetStreamToFile`: Streams the light data to an
- *     output file.
- *     *   The specified file may be a named pipe (Windows)/named fifo
- *         (Linux, others). This makes it possible to implement an
- *         out-of-process light controller without touching the StepMania
- *         source and without using C++. See the included notes for
- *         details.
- */
+#include "global.h"
+#include "Sextets/Packet.h"
 
-#include "LightsDriver.h"
-#include "RageFile.h"
-
-class LightsDriver_SextetStream : public LightsDriver
+// Sextets/IO/PacketWriter.h
+namespace Sextets
 {
-public:
-	LightsDriver_SextetStream();
-	virtual ~LightsDriver_SextetStream();
-	virtual void Set(const LightsState *ls);
+	namespace IO
+	{
+		class PacketWriter
+		{
+		public:
+			PacketWriter()
+			{
+			}
+			virtual ~PacketWriter()
+			{
+			}
 
-public:
-	class Impl;
-protected:
-	Impl * _impl;
-};
+			// Returns whether this stream can currently write.
+			virtual bool IsReady() = 0;
 
-class LightsDriver_SextetStreamToFile : public LightsDriver_SextetStream
-{
-public:
-	LightsDriver_SextetStreamToFile();
-};
+			// Writes the provided packet (and generally also an LF or CRLF,
+			// depending on the intended receiver) to this packet writer.
+			virtual bool WritePacket(const Packet& packet) = 0;
+		};
+	}
+}
 
-#endif // H
+#endif
 
 /*
  * Copyright © 2014-2016 Peter S. May

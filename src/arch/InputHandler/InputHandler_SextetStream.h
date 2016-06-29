@@ -4,19 +4,23 @@
 #include "InputHandler.h"
 #include <cstdio>
 
+#include "Sextets/IO/PacketReaderEventGenerator.h"
+
 class InputHandler_SextetStream: public InputHandler
 {
 public:
 	InputHandler_SextetStream();
 	virtual ~InputHandler_SextetStream();
-	//virtual void Update();
+	virtual void Update();
 	virtual void GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut);
 
 public:
 	class Impl;
+	friend class Impl;
 protected:
 	Impl * _impl;
 };
+
 
 // Note: InputHandler_SextetStreamFromFile uses blocking I/O. For the
 // handler thread to close in a timely fashion, the producer of data for the
@@ -29,25 +33,47 @@ protected:
 class InputHandler_SextetStreamFromFile: public InputHandler_SextetStream
 {
 public:
+	virtual ~InputHandler_SextetStreamFromFile();
+
 	// Note: In the current implementation, the filename (either the
 	// `filename` parameter or the `SextetStreamInputFilename` setting) is
 	// passed to fopen(), not a RageFile ctor, so specify the file to be
 	// opened on the actual filesystem instead of the mapped filesystem. (I
 	// couldn't get RageFile to work here, possibly because I haven't
-	// determined how to disable buffering on an input file.) 
+	// determined how to disable buffering on an input file.)
 	InputHandler_SextetStreamFromFile();
-	InputHandler_SextetStreamFromFile(const RString& filename);
-
-	// The file object passed here must already be open and buffering should
-	// be disabled. The file object will be closed in the destructor.
-	InputHandler_SextetStreamFromFile(std::FILE * file);
 
 };
+
+#if !defined(WITHOUT_NETWORKING)
+class InputHandler_SextetStreamFromSocket: public InputHandler_SextetStream
+{
+public:
+	virtual ~InputHandler_SextetStreamFromSocket();
+	InputHandler_SextetStreamFromSocket();
+};
+#endif // !defined(WITHOUT_NETWORKING)
+
+
+#if !defined(WIN32)
+// Only for systems that support select() on ordinary files
+class InputHandler_SextetStreamFromSelectFile: public InputHandler_SextetStream
+{
+public:
+	virtual ~InputHandler_SextetStreamFromSelectFile();
+
+	// Note: The configured filename (the `SextetStreamInputFilename`
+	// setting) is passed to open(), not a RageFile ctor, so specify the
+	// file to be opened on the actual filesystem instead of the mapped
+	// filesystem.
+	InputHandler_SextetStreamFromSelectFile();
+};
+#endif // !defined(WIN32)
 
 #endif
 
 /*
- * Copyright © 2014 Peter S. May
+ * Copyright © 2014-2016 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
