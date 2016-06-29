@@ -4,6 +4,11 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/06/28
+----------
+* [Gameplay] Moved pause menu logic to a script in _fallback.  Added
+  documentation to help other themes implement a pause menu.
+
 2016/06/24
 ----------
 * [Gameplay] Added UsePauseMenuInsteadOfGiveUp theme metric.  If this metric
