@@ -212,6 +212,7 @@ PrefsManager::PrefsManager() :
 	m_bMercifulBeginner		( "MercifulBeginner",		false ),
 	m_bMercifulSuperMeter		( "MercifulSuperMeter",		true ),
 	m_bDelayedBack			( "DelayedBack",		true ),
+	m_AllowHoldForOptions("AllowHoldForOptions", true),
 	m_bShowInstructions		( "ShowInstructions",		true ),
 	m_bShowCaution			( "ShowCaution",		true ),
 	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),

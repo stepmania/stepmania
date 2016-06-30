@@ -113,6 +113,7 @@ void SetOrigin(SongTagInfo& info)
 void SetCredit(SongTagInfo& info)
 {
 	info.song->m_sCredit = (*info.params)[1];
+	Trim(info.song->m_sCredit);
 }
 void SetBanner(SongTagInfo& info)
 {
@@ -334,7 +335,9 @@ void SetStepsVersion(StepsTagInfo& info)
 }
 void SetChartName(StepsTagInfo& info)
 {
-	info.steps->SetChartName((*info.params)[1]);
+	RString name= (*info.params)[1];
+	Trim(name);
+	info.steps->SetChartName(name);
 }
 void SetStepsType(StepsTagInfo& info)
 {
@@ -349,13 +352,15 @@ void SetChartStyle(StepsTagInfo& info)
 }
 void SetDescription(StepsTagInfo& info)
 {
+	RString name= (*info.params)[1];
+	Trim(name);
 	if(info.song->m_fVersion < VERSION_CHART_NAME_TAG && !info.for_load_edit)
 	{
-		info.steps->SetChartName((*info.params)[1]);
+		info.steps->SetChartName(name);
 	}
 	else
 	{
-		info.steps->SetDescription((*info.params)[1]);
+		info.steps->SetDescription(name);
 	}
 	info.ssc_format= true;
 }

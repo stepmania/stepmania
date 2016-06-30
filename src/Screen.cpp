@@ -216,8 +216,10 @@ bool Screen::Input( const InputEventPlus &input )
 		case GAME_BUTTON_MENULEFT:  return this->MenuLeft ( input );
 		case GAME_BUTTON_MENURIGHT: return this->MenuRight( input );
 		case GAME_BUTTON_BACK:
-			// Don't make the user hold the back button if they're pressing escape and escape is the back button.
-			if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
+			// Only go back on first press.  If somebody is backing out of the
+			// options screen, they might still be holding it when select music
+			// appears, and accidentally back out of that too. -Kyz
+			if(input.type == IET_FIRST_PRESS)
 			{
 				if( HANDLE_BACK_BUTTON )
 					return this->MenuBack( input );

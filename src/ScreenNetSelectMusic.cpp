@@ -345,10 +345,23 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	/* Why?  Nothing else allows that. (-who?) */
 	// I agree, that's a stupid idea -aj
 
+	// Funny story:  If the arrow keys are mapped to Player 2, but the person
+	// is playing as Player 1, then hitting down to change the difficulty will
+	// crash in UpdateDifficulties.  So pretend the input came from the player
+	// that is enabled. -Kyz
+
 	PlayerNumber pn = input.pn;
-	if( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) &&
-		!GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
-		pn = PLAYER_2;
+	if(!GAMESTATE->IsPlayerEnabled(pn))
+	{
+		if(pn == PLAYER_1)
+		{
+			pn= PLAYER_2;
+		}
+		else
+		{
+			pn= PLAYER_1;
+		}
+	}
 
 	if( GAMESTATE->m_pCurSong == nullptr )
 		return false;

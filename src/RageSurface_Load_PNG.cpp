@@ -50,7 +50,10 @@ void PNG_Error( png_struct *png, const char *error )
 	strncpy( info->err, error, 1024 );
 	info->err[1023] = 0;
 	LOG->Trace( "loading \"%s\": err: %s", info->fn, info->err );
-	longjmp( png_jmpbuf(png), 1 );
+	// This exception is just thrown to go to the catch block for cleanup.  The
+	// message has already been printed, so the exception value can be ignored.
+	// -Kyz
+	throw int(1);
 }
 
 void PNG_Warning( png_struct *png, const char *warning )
@@ -87,12 +90,10 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	RageSurface *volatile img = nullptr;
 	CHECKPOINT_M("Potential issue with png jump about to be analyzed.");
-	if( setjmp(png_jmpbuf(png) ))
+
+	png_byte** row_pointers= nullptr;
+	try
 	{
-		png_destroy_read_struct( &png, &info_ptr, nullptr );
-		delete img;
-		return nullptr;
-	}
 
 	png_set_read_fn( png, f, RageFile_png_read );
 
@@ -227,8 +228,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	}
 	ASSERT( img != nullptr );
 
-	/* alloca to prevent memleaks if libpng longjmps us */
-	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
+	row_pointers = new png_byte*[height];
 	CHECKPOINT_M( fmt::sprintf("%p", static_cast<void *>(row_pointers) ) );
 
 	for( unsigned y = 0; y < height; ++y )
@@ -241,6 +241,17 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, nullptr );
+	}
+	catch(int e)
+	{
+		png_destroy_read_struct(&png, &info_ptr, nullptr);
+		delete img;
+		if(row_pointers != nullptr)
+		{
+			delete[] row_pointers;
+		}
+		return nullptr;
+	}
 
 	return img;
 }

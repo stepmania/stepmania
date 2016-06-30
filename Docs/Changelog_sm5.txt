@@ -4,6 +4,43 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/06/28
+----------
+* [Gameplay] Moved pause menu logic to a script in _fallback.  Added
+  documentation to help other themes implement a pause menu.
+
+2016/06/24
+----------
+* [Gameplay] Added UsePauseMenuInsteadOfGiveUp theme metric.  If this metric
+  is true, Select, Back, and Start cannot be held to exit a song.  This is
+	for themes that provide a pause menu for these choices. [kyzentun]
+* [SelectMusic] Added AllowHoldForOptions preference to disable holding start
+  to go to the player options screen. [kyzentun]
+* [General] Back button will only back out of the screen on a press, not when
+  it is still being held from the previous screen. [kyzentun]
+
+2016/06/12
+----------
+* [ScreenSyncOverlay] Moved actors to lua to make them themable. [kyzentun]
+
+2016/06/09
+----------
+* [Gameplay] Ready and Go announcer sounds no longer play simultaneously.  If
+  the Ready animation doesn't exist and the Go animation exists, only the
+  Go announcer sound is played.  If neither animation exists, only the Ready
+  announcer sound is played. [kyzentun]
+
+2016/06/07
+----------
+* [NotesWriterSM] Stops, delays, and warps that occur on the same row are now
+  summed correctly.  Fixes bug that deleted warps that were on the same row
+  as a stop. [kyzentun]
+* [Sound] Ignore invalid SoundDriver preference. [kyzentun]
+
+2016/06/06
+----------
+* [Language] Traditional Chinese translation added. [ddrtime]
+
 2016/05/25
 ----------
 * [MemoryCards] Fixed bug that caused loading profiles from usb drives to
