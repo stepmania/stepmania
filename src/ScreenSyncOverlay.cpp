@@ -117,7 +117,7 @@ void ScreenSyncOverlay::UpdateText()
 	}
 	else
 	{
-		set_adjustments.SetParam("text", "");
+		set_adjustments.SetParam("text", std::string(""));
 	}
 	m_overlay->HandleMessage(set_adjustments);
 }

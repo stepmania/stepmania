@@ -2691,6 +2691,7 @@ void Player::FlashGhostRow( int iRow )
 			tn.type == TapNoteType_Fake || tn.result.bHidden)
 		{
 			continue;
+		}
 		if(m_new_field != nullptr)
 		{
 			m_new_field->did_tap_note(iTrack, lastTNS, bBright);

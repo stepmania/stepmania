@@ -1,7 +1,25 @@
-local config_data= {
-	pause_buttons= {Start= false, Select= true, Back= true},
-	pause_tap_time= 1, pause_debounce_time= .1,
+local button_config= create_lua_config{
+	name= "pause_config", file= "pause_config.lua",
+	default= {
+		pause_buttons= {Start= true, Select= true, Back= true},
+		pause_tap_time= 1, pause_debounce_time= .1,
+	},
+	use_alternate_config_prefix= "", no_per_player= true,
 }
+button_config:load()
+
+function get_pause_config_menu()
+	return nesty_options.submenu(
+		"pause_config", {
+			nesty_options.bool_config_val(button_config, "pause_buttons.Start"),
+			nesty_options.bool_config_val(button_config, "pause_buttons.Select"),
+			nesty_options.bool_config_val(button_config, "pause_buttons.Back"),
+			nesty_options.float_config_val(button_config, "pause_tap_time", -3, -1, 0, .25, 2, 1),
+			nesty_options.float_config_val(button_config, "pause_debounce_time", -3, -1, 0, 0, .5, .1),
+	})..{on_close= function() button_config:save() end}
+end
+
+local config_data= {}
 local pause_press_times= {}
 local last_press_buttons= {}
 local down_status= {}
@@ -77,6 +95,7 @@ function pause_controller_actor()
 	gameplay_pause_count= 0
 	return Def.Actor{
 		OnCommand= function(self)
+			config_data= button_config:get_data()
 			screen_gameplay= SCREENMAN:GetTopScreen()
 			if screen_gameplay:GetName() == "ScreenGameplaySyncMachine" then
 				return

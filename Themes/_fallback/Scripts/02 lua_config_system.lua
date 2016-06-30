@@ -71,27 +71,6 @@ for i, pn in ipairs(PlayerNumber) do
 		pn_slot_conversions[pn]= ProfileSlot[i]
 	end
 end
-local function sanitize_profile_slot(slot)
-	if pn_slot_conversions[slot] then return pn_slot_conversions[slot] end
-	if not slot then return "ProfileSlot_Invalid" end
-	return slot
-end
-
-local function slot_to_prof_dir(slot, reason)
-	local prof_dir= "Save"
-	slot= sanitize_profile_slot(slot)
-	if slot == "ProfileSlot_Invalid" then return prof_dir end
-	if slot:match("ProfileSlot") then
-		prof_dir= PROFILEMAN:GetProfileDir(slot)
-	else
-		prof_dir= PROFILEMAN:LocalProfileIDToDir(slot)
-	end
-	if not prof_dir or prof_dir == "" then
-		--lua.ReportScriptError("Could not fetch profile dir to " .. reason .. " for " .. tostring(slot))
-		return
-	end
-	return prof_dir
-end
 
 local lua_config_mt= {
 	__index= {
@@ -105,7 +84,29 @@ local lua_config_mt= {
 			self.exceptions= params.exceptions
 			self.use_global_as_default= params.use_global_as_default
 			self.use_alternate_config_prefix= params.use_alternate_config_prefix
+			self.no_per_player= params.no_per_player
 			return self
+		end,
+		sanitize_profile_slot= function(self, slot)
+			if self.no_per_player then return "ProfileSlot_Invalid" end
+			if pn_slot_conversions[slot] then return pn_slot_conversions[slot] end
+			if not slot then return "ProfileSlot_Invalid" end
+			return slot
+		end,
+		slot_to_prof_dir= function(self, slot, reason)
+			local prof_dir= "Save"
+			slot= self:sanitize_profile_slot(slot)
+			if slot == "ProfileSlot_Invalid" then return prof_dir end
+			if slot:match("ProfileSlot") then
+				prof_dir= PROFILEMAN:GetProfileDir(slot)
+			else
+				prof_dir= PROFILEMAN:LocalProfileIDToDir(slot)
+			end
+			if not prof_dir or prof_dir == "" then
+				--lua.ReportScriptError("Could not fetch profile dir to " .. reason .. " for " .. tostring(slot))
+				return
+			end
+			return prof_dir
 		end,
 		apply_force= function(self, cand, slot)
 			if self.match_depth and self.match_depth ~= 0 then
@@ -114,7 +115,7 @@ local lua_config_mt= {
 			end
 		end,
 		get_default= function(self, slot)
-			slot= sanitize_profile_slot(slot)
+			slot= self:sanitize_profile_slot(slot)
 			if not self.use_global_as_default or slot == "ProfileSlot_Invalid" then
 				return self.default
 			end
@@ -124,8 +125,8 @@ local lua_config_mt= {
 			return self.data_set["ProfileSlot_Invalid"]
 		end,
 		load= function(self, slot)
-			slot= sanitize_profile_slot(slot)
-			local prof_dir= slot_to_prof_dir(slot, "read " .. self.name)
+			slot= self:sanitize_profile_slot(slot)
+			local prof_dir= self:slot_to_prof_dir(slot, "read " .. self.name)
 			if not prof_dir then
 				self.data_set[slot]= DeepCopy(self:get_default(slot))
 			else
@@ -145,26 +146,26 @@ local lua_config_mt= {
 			return self.data_set[slot]
 		end,
 		get_data= function(self, slot)
-			slot= sanitize_profile_slot(slot)
+			slot= self:sanitize_profile_slot(slot)
 			if not self.data_set[slot] then
 				self.data_set[slot]= DeepCopy(self:get_default(slot))
 			end
 			return self.data_set[slot]
 		end,
 		set_data= function(self, slot, data)
-			slot= sanitize_profile_slot(slot)
+			slot= self:sanitize_profile_slot(slot)
 			self.data_set[slot]= data
 		end,
 		set_dirty= function(self, slot)
-			slot= sanitize_profile_slot(slot)
+			slot= self:sanitize_profile_slot(slot)
 			self.dirty_table[slot]= true
 		end,
 		check_dirty= function(self, slot)
-			slot= sanitize_profile_slot(slot)
+			slot= self:sanitize_profile_slot(slot)
 			return self.dirty_table[slot]
 		end,
 		clear_slot= function(self, slot)
-			slot= sanitize_profile_slot(slot)
+			slot= self:sanitize_profile_slot(slot)
 			self.dirty_table[slot]= nil
 			self.data_set[slot]= nil
 		end,
@@ -180,8 +181,8 @@ local lua_config_mt= {
 			end
 		end,
 		get_filename= function(self, slot)
-			slot= sanitize_profile_slot(slot)
-			local prof_dir= slot_to_prof_dir(slot, "write " .. self.name)
+			slot= self:sanitize_profile_slot(slot)
+			local prof_dir= self:slot_to_prof_dir(slot, "write " .. self.name)
 			if not prof_dir then return end
 			if self.use_alternate_config_prefix then
 				return prof_dir .. self.use_alternate_config_prefix .. self.file
@@ -190,7 +191,7 @@ local lua_config_mt= {
 			return prof_dir .. config_prefix .. self.file
 		end,
 		save= function(self, slot)
-			slot= sanitize_profile_slot(slot)
+			slot= self:sanitize_profile_slot(slot)
 			if not self:check_dirty(slot) then return end
 			local fname= self:get_filename(slot)
 			lua.save_lua_table(fname, self.data_set[slot])
