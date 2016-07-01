@@ -7,6 +7,19 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/06/30
+----------
+* [Gameplay] Added configuration for setting pause behavior. [kyzentun]
+
+2016/06/27
+----------
+* [NestyMenus] Added nesty_options.submenu function. [kyzentun]
+  Added unhelpful Docs/Themerdocs/nesty_menus.md. [kyzentun]
+
+2016/06/21
+----------
+* [Deps] Moved ogg and vorbis to submodules. [wolfman2000]
+
 2016/06/19
 ----------
 * [OSX] Moved to 64-bit executables. [wolfman2000]

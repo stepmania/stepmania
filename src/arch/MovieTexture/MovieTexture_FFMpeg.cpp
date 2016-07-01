@@ -452,8 +452,15 @@ std::string MovieDecoder_FFMpeg::Open( std::string sFile )
 		return fmt::sprintf( "AVCodec (%s): %s", sFile.c_str(), sError.c_str() );
 
 	LOG->Trace( "Bitrate: %i", m_pStream->codec->bit_rate );
-	LOG->Trace( "Codec pixel format: %s", avcodec::av_get_pix_fmt_name(m_pStream->codec->pix_fmt) );
-
+	char const* fmt_name= avcodec::av_get_pix_fmt_name(m_pStream->codec->pix_fmt);
+	if(fmt_name == nullptr)
+	{
+		LOG->Trace("Codec pixel format: Unknown");
+	}
+	else
+	{
+		LOG->Trace("Codec pixel format: %s", fmt_name);
+	}
 	return std::string();
 }
 
