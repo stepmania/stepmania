@@ -108,6 +108,12 @@ for their Dist inputs.
   The distance in beats from the end time of the ```ModFunction```.
 * EndDistSecond  
   The distance in seconds from the end time of the ```ModFunction```.
+* NoteTimeRandom  
+  A random value that is different for every note. (0-1 range)
+* MusicTimeRandom  
+  A random value that is different every frame. (0-1 range)
+* StageRandom  
+  A random value that is different every stage. (0-1 range)
 
 #### Why are there both Beat and Second inputs?
 Because C mods exist.  And for other things that find it more convenient to
@@ -319,6 +325,14 @@ EndDistSecond inputs.  For unmanaged mods, those inputs will always be zero.
   make the spline do the wrong thing.  (on creation, the points are organized
   into different lists for scalar, per-frame, and per-note.  These lists are
   never updated)
+
+### Column field
+The random input choices are different for each column.  The column can be
+set for a ModFunction to make the random results the same as for the other
+column.
+```lua
+{"ModFunctionType_Constant", column= 0, {"ModInputType_NoteTimeRandom", 64}}
+```
 
 ### Functions
 * get_inputs()  

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "CubicSpline.h"
 #include "EnumHelper.h"
+#include "GameState.h"
 #include "ModValue.h"
 #include "RageLog.h"
 #include "RageMath.h"
@@ -34,6 +35,9 @@ static const char* ModInputTypeNames[] = {
 	"StartDistSecond",
 	"EndDistBeat",
 	"EndDistSecond",
+	"NoteTimeRandom",
+	"MusicTimeRandom",
+	"StageRandom",
 };
 XToString(ModInputType);
 LuaXType(ModInputType);
@@ -420,9 +424,10 @@ void ModInput::load_spline(lua_State* L, int index)
 	}
 }
 
-void ModInput::load_from_lua(lua_State* L, int index, ModFunction* parent)
+void ModInput::load_from_lua(lua_State* L, int index, ModFunction* parent, uint32_t col)
 {
 	m_parent= parent;
+	m_column= col;
 	if(lua_isnumber(L, index))
 	{
 		set_type(MIT_Scalar);
@@ -458,47 +463,6 @@ void ModInput::set_type(ModInputType t)
 {
 	ModInputMetaType old_meta_type= get_meta_type();
 	m_type= t;
-	switch(m_type)
-	{
-		case MIT_Scalar:
-			choice= &mod_val_inputs::scalar;
-			break;
-		case MIT_EvalBeat:
-			choice= &mod_val_inputs::eval_beat;
-			break;
-		case MIT_EvalSecond:
-			choice= &mod_val_inputs::eval_second;
-			break;
-		case MIT_MusicBeat:
-			choice= &mod_val_inputs::music_beat;
-			break;
-		case MIT_MusicSecond:
-			choice= &mod_val_inputs::music_second;
-			break;
-		case MIT_DistBeat:
-			choice= &mod_val_inputs::dist_beat;
-			break;
-		case MIT_DistSecond:
-			choice= &mod_val_inputs::dist_second;
-			break;
-		case MIT_YOffset:
-			choice= &mod_val_inputs::y_offset;
-			break;
-		case MIT_StartDistBeat:
-			choice= &mod_val_inputs::start_dist_beat;
-			break;
-		case MIT_StartDistSecond:
-			choice= &mod_val_inputs::start_dist_second;
-			break;
-		case MIT_EndDistBeat:
-			choice= &mod_val_inputs::end_dist_beat;
-			break;
-		case MIT_EndDistSecond:
-			choice= &mod_val_inputs::end_dist_second;
-			break;
-		default:
-			break;
-	}
 	ModInputMetaType new_meta_type= get_meta_type();
 	if(m_parent != nullptr && old_meta_type != new_meta_type)
 	{
@@ -570,6 +534,77 @@ double ModInput::apply_rep(double input)
 		return mod_res + dist + m_rep_begin;
 	}
 	return mod_res + m_rep_begin;
+}
+
+double ModInput::pick(mod_val_inputs const& input)
+{
+	double ret= 0.0;
+	switch(m_type)
+	{
+		case MIT_Scalar:
+			ret= input.scalar;
+			break;
+		case MIT_EvalBeat:
+			ret= input.eval_beat;
+			break;
+		case MIT_EvalSecond:
+			ret= input.eval_second;
+			break;
+		case MIT_MusicBeat:
+			ret= input.music_beat;
+			break;
+		case MIT_MusicSecond:
+			ret= input.music_second;
+			break;
+		case MIT_DistBeat:
+			ret= input.dist_beat;
+			break;
+		case MIT_DistSecond:
+			ret= input.dist_second;
+			break;
+		case MIT_YOffset:
+			ret= input.y_offset;
+			break;
+		case MIT_StartDistBeat:
+			ret= input.start_dist_beat;
+			break;
+		case MIT_StartDistSecond:
+			ret= input.start_dist_second;
+			break;
+		case MIT_EndDistBeat:
+			ret= input.end_dist_beat;
+			break;
+		case MIT_EndDistSecond:
+			ret= input.end_dist_second;
+			break;
+		case MIT_NoteTimeRandom:
+			ret= GAMESTATE->simple_stage_frandom(
+				(BeatToNoteRow(input.eval_beat)) + (m_column << 24));
+			break;
+		case MIT_MusicTimeRandom:
+			ret= GAMESTATE->simple_stage_frandom(
+				(BeatToNoteRow(input.music_beat)) + (m_column << 24));
+			break;
+		case MIT_StageRandom:
+			ret= GAMESTATE->simple_stage_frandom((m_column << 24));
+			break;
+		default:
+			break;
+	}
+	if(rep_apple != nullptr)
+	{
+		ret= (this->*rep_apple)(ret);
+	}
+	if(phase_apple != nullptr)
+	{
+		ret= (this->*phase_apple)(ret);
+	}
+	ret*= m_scalar;
+	if(spline_apple != nullptr)
+	{
+		ret= (this->*spline_apple)(ret);
+	}
+	return ret + m_offset;
 }
 
 void ModInput::send_repick()
@@ -1013,7 +1048,7 @@ void ModFunction::init_picked_inputs()
 	}
 }
 
-bool ModFunction::load_from_lua(lua_State* L, int index)
+bool ModFunction::load_from_lua(lua_State* L, int index, uint32_t col)
 {
 	m_being_loaded= true;
 	lua_rawgeti(L, index, 1);
@@ -1052,6 +1087,23 @@ bool ModFunction::load_from_lua(lua_State* L, int index)
 	m_start_second= get_optional_double(L, index, "start_second", invalid_modfunction_time);
 	m_end_beat= get_optional_double(L, index, "end_beat", invalid_modfunction_time);
 	m_end_second= get_optional_double(L, index, "end_second", invalid_modfunction_time);
+	lua_getfield(L, index, "column");
+	if(lua_isnumber(L, -1))
+	{
+		int col_from_lua= lua_tonumber(L, -1);
+		if(col_from_lua < 0)
+		{
+			m_column= col;
+		}
+		else
+		{
+			m_column= static_cast<uint32_t>(col_from_lua);
+		}
+	}
+	else
+	{
+		m_column= col;
+	}
 	lua_getfield(L, index, "sum_type");
 	if(lua_isstring(L, -1))
 	{
@@ -1069,7 +1121,7 @@ bool ModFunction::load_from_lua(lua_State* L, int index)
 		for(size_t el= 2; el <= limit; ++el)
 		{
 			lua_rawgeti(L, index, el);
-			m_inputs[el-2].load_from_lua(L, lua_gettop(L), this);
+			m_inputs[el-2].load_from_lua(L, lua_gettop(L), this, m_column);
 			lua_pop(L, 1);
 		}
 	}
@@ -1083,14 +1135,14 @@ bool ModFunction::load_from_lua(lua_State* L, int index)
 		m_inputs.resize(num_points+1);
 		m_spline.resize(num_points);
 		lua_getfield(L, index, "t");
-		m_inputs[0].load_from_lua(L, lua_gettop(L), this);
+		m_inputs[0].load_from_lua(L, lua_gettop(L), this, m_column);
 		lua_pop(L, 1);
 		m_loop_spline= get_optional_bool(L, index, "loop");
 		m_polygonal_spline= get_optional_bool(L, index, "polygonal");
 		for(size_t el= 2; el <= num_points+1; ++el)
 		{
 			lua_rawgeti(L, index, el);
-			m_inputs[el-1].load_from_lua(L, lua_gettop(L), this);
+			m_inputs[el-1].load_from_lua(L, lua_gettop(L), this, m_column);
 			lua_pop(L, 1);
 		}
 	}
@@ -1197,10 +1249,10 @@ MF_NEEDS_THING(second);
 MF_NEEDS_THING(y_offset);
 #undef MF_NEEDS_THING
 
-static ModFunction* create_field_mod(ModifiableValue* parent, lua_State* L, int index)
+static ModFunction* create_field_mod(ModifiableValue* parent, lua_State* L, int index, uint32_t col)
 {
-	ModFunction* ret= new ModFunction(parent);
-	if(!ret->load_from_lua(L, index))
+	ModFunction* ret= new ModFunction(parent, col);
+	if(!ret->load_from_lua(L, index, col))
 	{
 		delete ret;
 		return nullptr;
@@ -1270,7 +1322,7 @@ double ModifiableValue::evaluate(mod_val_inputs const& input)
 
 ModFunction* ModifiableValue::add_mod_internal(lua_State* L, int index)
 {
-	ModFunction* new_mod= create_field_mod(this, L, index);
+	ModFunction* new_mod= create_field_mod(this, L, index, m_column);
 	if(new_mod == nullptr)
 	{
 		LuaHelpers::ReportScriptError("Problem creating modifier: unknown type.");
@@ -1423,7 +1475,7 @@ void ModifiableValue::remove_mod_from_active_list(ModFunction* mod)
 void ModifiableValue::add_simple_mod(std::string const& name,
 	ModInputType input_type, double input_scalar)
 {
-	ModFunction* new_mod= new ModFunction(this);
+	ModFunction* new_mod= new ModFunction(this, m_column);
 	new_mod->init_single_input(name, input_type, input_scalar);
 	insert_mod_internal(new_mod);
 }

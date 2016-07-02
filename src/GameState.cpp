@@ -2531,6 +2531,18 @@ void GameState::SetNewStageSeed()
 	m_iStageSeed= rand();
 }
 
+uint32_t GameState::simple_stage_random(uint32_t seed_add)
+{
+	uint64_t random = 0xE4AA2261 * (m_iStageSeed + seed_add * 0x17427C37);
+	return ((random & 65535) ^ (random >> 16));
+}
+
+float GameState::simple_stage_frandom(uint32_t seed_add)
+{
+	return simple_stage_random(seed_add) / 65536.f;
+}
+
+
 bool GameState::IsEventMode() const
 {
 	return m_bTemporaryEventMode || PREFSMAN->m_bEventMode;

@@ -77,6 +77,7 @@ struct NewFieldColumn : ActorFrame
 	bool get_defective_mode();
 	void set_speed_old_way(float time_spacing, float max_scroll_bpm,
 		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
+	size_t get_mod_col() { return m_column+1; }
 
 	Rage::Color get_player_color(size_t pn);
 	void get_hold_draw_time(TapNote const& tap, double const hold_beat,

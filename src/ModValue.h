@@ -85,11 +85,13 @@ struct mod_val_inputs
 		:scalar(1.0), eval_beat(mb), eval_second(ms), music_beat(mb),
 		music_second(ms), dist_beat(0.0), dist_second(0.0), y_offset(0.0)
 	{}
-	mod_val_inputs(double const eb, double const es, double const mb, double const ms)
+	mod_val_inputs(double const eb, double const es, double const mb,
+		double const ms)
 		:scalar(1.0), eval_beat(eb), eval_second(es), music_beat(mb),
 		music_second(ms), dist_beat(eb-mb), dist_second(es-ms), y_offset(0.0)
 	{}
-	mod_val_inputs(double const eb, double const es, double const mb, double const ms, double const yoff)
+	mod_val_inputs(double const eb, double const es, double const mb,
+		double const ms, double const yoff)
 		:scalar(1.0), eval_beat(eb), eval_second(es), music_beat(mb),
 		music_second(ms), dist_beat(eb-mb), dist_second(es-ms), y_offset(yoff)
 	{}
@@ -121,6 +123,9 @@ enum ModInputType
 	MIT_StartDistSecond,
 	MIT_EndDistBeat,
 	MIT_EndDistSecond,
+	MIT_NoteTimeRandom,
+	MIT_MusicTimeRandom,
+	MIT_StageRandom,
 	NUM_ModInputType,
 	ModInputType_Invalid
 };
@@ -151,14 +156,14 @@ struct ModInput
 		:m_parent(nullptr), m_type(ModInputType_Invalid), m_scalar(0.0),
 		m_offset(0.0), m_rep_begin(0.0), m_rep_end(0.0),
 		m_loop_spline(false), m_polygonal_spline(false),
-		rep_apple(nullptr), phase_apple(nullptr), spline_apple(nullptr),
-		choice(&mod_val_inputs::scalar)
+		rep_apple(nullptr), phase_apple(nullptr), spline_apple(nullptr)
 	{}
 	ModInputMetaType get_meta_type()
 	{
 		switch(m_type)
 		{
 			case MIT_Scalar:
+			case MIT_StageRandom:
 				return MIMT_Scalar;
 			case MIT_MusicBeat:
 			case MIT_MusicSecond:
@@ -166,12 +171,14 @@ struct ModInput
 			case MIT_StartDistSecond:
 			case MIT_EndDistBeat:
 			case MIT_EndDistSecond:
+			case MIT_MusicTimeRandom:
 				return MIMT_PerFrame;
 			case MIT_EvalBeat:
 			case MIT_EvalSecond:
 			case MIT_DistBeat:
 			case MIT_DistSecond:
 			case MIT_YOffset:
+			case MIT_NoteTimeRandom:
 				return MIMT_PerNote;
 			default:
 				return MIMT_Invalid;
@@ -227,7 +234,7 @@ struct ModInput
 	void load_phases(lua_State* L, int index);
 	void sort_phases();
 	void load_spline(lua_State* L, int index);
-	void load_from_lua(lua_State* L, int index, ModFunction* parent);
+	void load_from_lua(lua_State* L, int index, ModFunction* parent, uint32_t col);
 	phase const* find_phase(double input);
 	double apply_rep(double input);
 	double apply_phase(double input)
@@ -247,24 +254,7 @@ struct ModInput
 	{
 		return input;
 	}
-	double pick(mod_val_inputs const& input)
-	{
-		double ret= input.*choice;
-		if(rep_apple != nullptr)
-		{
-			ret= (this->*rep_apple)(ret);
-		}
-		if(phase_apple != nullptr)
-		{
-			ret= (this->*phase_apple)(ret);
-		}
-		ret*= m_scalar;
-		if(spline_apple != nullptr)
-		{
-			ret= (this->*spline_apple)(ret);
-		}
-		return ret + m_offset;
-	}
+	double pick(mod_val_inputs const& input);
 	virtual void PushSelf(lua_State* L);
 
 	void send_repick();
@@ -350,10 +340,11 @@ private:
 	bool m_loop_spline;
 	bool m_polygonal_spline;
 
+	uint32_t m_column;
+
 	double (ModInput::* rep_apple)(double);
 	double (ModInput::* phase_apple)(double);
 	double (ModInput::* spline_apple)(double);
-	double mod_val_inputs::* choice;
 };
 
 enum ModFunctionType
@@ -387,7 +378,7 @@ LuaDeclareType(ModSumType);
 
 struct ModFunction
 {
-	ModFunction(ModifiableValue* parent)
+	ModFunction(ModifiableValue* parent, uint32_t col)
 		:m_start_beat(invalid_modfunction_time),
 		m_start_second(invalid_modfunction_time),
 		m_end_beat(invalid_modfunction_time),
@@ -396,7 +387,7 @@ struct ModFunction
 		m_sub_eval(&ModFunction::noop_eval),
 		m_pfu(&ModFunction::per_frame_update_normal),
 		m_pnu(&ModFunction::per_note_update_normal),
-		m_parent(parent)
+		m_parent(parent), m_column(col)
 	{}
 	~ModFunction() {}
 	void change_parent(ModifiableValue* new_parent)
@@ -459,7 +450,7 @@ struct ModFunction
 	double spline_eval();
 	void set_type(ModFunctionType type);
 	ModFunctionType get_type() { return m_type; }
-	bool load_from_lua(lua_State* L, int index);
+	bool load_from_lua(lua_State* L, int index, uint32_t col);
 	void push_inputs(lua_State* L, int table_index);
 	size_t num_inputs() { return m_inputs.size(); }
 	void PushSelf(lua_State* L);
@@ -498,6 +489,8 @@ private:
 
 	std::string m_name;
 	ModifiableValue* m_parent;
+
+	uint32_t m_column;
 };
 
 struct ModifiableValue
@@ -509,6 +502,10 @@ struct ModifiableValue
 	void set_timing(TimingData const* timing)
 	{
 		m_timing= timing;
+	}
+	void set_column(uint32_t col)
+	{
+		m_column= col;
 	}
 	double evaluate(mod_val_inputs const& input);
 	std::list<ModFunction*>::iterator find_mod(std::string const& name);
@@ -541,6 +538,7 @@ private:
 
 	ModManager* m_manager;
 	TimingData const* m_timing;
+	uint32_t m_column;
 	std::list<ModFunction*> m_mods;
 	std::unordered_map<std::string, ModFunction*> m_managed_mods;
 	std::unordered_set<ModFunction*> m_active_managed_mods;
@@ -562,6 +560,12 @@ struct ModifiableVector3
 		x_mod.set_timing(timing);
 		y_mod.set_timing(timing);
 		z_mod.set_timing(timing);
+	}
+	void set_column(uint32_t col)
+	{
+		x_mod.set_column(col);
+		y_mod.set_column(col);
+		z_mod.set_column(col);
 	}
 	void take_over_mods(ModifiableVector3& other)
 	{
@@ -588,6 +592,12 @@ struct ModifiableTransform
 		pos_mod.set_timing(timing);
 		rot_mod.set_timing(timing);
 		zoom_mod.set_timing(timing);
+	}
+	void set_column(uint32_t col)
+	{
+		pos_mod.set_column(col);
+		rot_mod.set_column(col);
+		zoom_mod.set_column(col);
 	}
 	void evaluate(mod_val_inputs const& input, Rage::transform& out)
 	{

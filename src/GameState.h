@@ -127,6 +127,8 @@ public:
 	std::string		m_sStageGUID;
 
 	void SetNewStageSeed();
+	uint32_t simple_stage_random(uint32_t seed_add);
+	float simple_stage_frandom(uint32_t seed_add);
 
 	/**
 	 * @brief Determine if a second player can join in at this time.

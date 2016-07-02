@@ -162,7 +162,7 @@ void NewFieldColumn::AddChild(Actor* act)
 		PushSelf(L);
 		width_msg.SetParamFromStack(L, "column");
 		LUA->Release(L);
-		width_msg.SetParam("column_id", m_column+1);
+		width_msg.SetParam("column_id", get_mod_col());
 		width_msg.SetParam("width", m_newskin->get_width());
 		width_msg.SetParam("padding", m_newskin->get_padding());
 		act->HandleMessage(width_msg);
@@ -213,14 +213,17 @@ void NewFieldColumn::set_note_data(size_t column, const NoteData* note_data,
 				&m_receptor_glow, &m_explosion_alpha, &m_explosion_glow})
 	{
 		moddable->set_timing(timing_data);
+		moddable->set_column(column);
 	}
 	for(auto&& moddable : {&m_note_mod, &m_column_mod})
 	{
 		moddable->set_timing(timing_data);
+		moddable->set_column(column);
 	}
 	for(auto&& moddable : {&m_hold_normal_mod})
 	{
 		moddable->set_timing(timing_data);
+		moddable->set_column(column);
 	}
 }
 
@@ -2099,11 +2102,13 @@ void NewField::set_note_data(NoteData* note_data, TimingData* timing, StepsType 
 	m_defective_mods.set_timing(m_timing_data);
 	m_defective_mods.set_num_pads(GAMEMAN->get_num_pads_for_stepstype(stype));
 	m_trans_mod.set_timing(m_timing_data);
+	m_trans_mod.set_column(0);
 	for(auto&& moddable : {&m_receptor_alpha, &m_receptor_glow,
 				&m_explosion_alpha, &m_explosion_glow,
 				&m_fov_mod, &m_vanish_x_mod, &m_vanish_y_mod})
 	{
 		moddable->set_timing(m_timing_data);
+		moddable->set_column(0);
 	}
 	if(stype != m_steps_type)
 	{

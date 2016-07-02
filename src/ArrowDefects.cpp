@@ -57,8 +57,8 @@ float const fade_dist_y= 40.f;
 ArrowDefects::ArrowDefects()
 	:m_options(nullptr)
 {
-	m_receptor_pos_normal= THEME->GetMetricF("Player", "ReceptorArrowsYStandard");
-	m_receptor_pos_reverse= THEME->GetMetricF("Player", "ReceptorArrowsYReverse");
+	m_receptor_pos_normal= -125.f;
+	m_receptor_pos_reverse= 145.f;
 	m_reverse_offset= (m_receptor_pos_reverse - m_receptor_pos_normal) * .5f;
 }
 
