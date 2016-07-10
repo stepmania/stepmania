@@ -9,6 +9,8 @@
 class Steps;
 class Style;
 struct lua_State;
+static ThemeMetric<TapNoteScore>		g_MinScoreToMaintainCombo("Gameplay", "MinScoreToMaintainCombo");
+
 /** @brief Contains statistics for one stage of play - either one song, or a whole course. */
 class PlayerStageStats
 {
@@ -143,7 +145,7 @@ public:
 
 	int	GetComboAtStartOfStage() const;
 	bool	FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
-	bool	FullCombo() const { return FullComboOfScore(TNS_W3); }
+	bool	FullCombo() const { return FullComboOfScore(g_MinScoreToMaintainCombo); }
 	TapNoteScore GetBestFullComboTapNoteScore() const;
 	bool	SingleDigitsOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	bool	OneOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
