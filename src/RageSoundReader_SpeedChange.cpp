@@ -89,11 +89,10 @@ int RageSoundReader_SpeedChange::FillData( int iMaxFrames )
 		if( iBytesToRead <= 0 )
 			return m_iDataBufferAvailFrames;
 
-		float* pTempBuffer= new float[iBytesToRead/sizeof(float)];
+		float *pTempBuffer = (float *) alloca( iBytesToRead );
 		int iGotFrames = m_pSource->Read( pTempBuffer, iFramesToRead );
 		if( iGotFrames < 0 )
 		{
-			delete[] pTempBuffer;
 			if( iGotFrames == END_OF_FILE && m_iDataBufferAvailFrames )
 				return m_iDataBufferAvailFrames;
 			return iGotFrames;
@@ -115,7 +114,6 @@ int RageSoundReader_SpeedChange::FillData( int iMaxFrames )
 				++pOut;
 			}
 		}
-		delete[] pTempBuffer;
 
 		m_iDataBufferAvailFrames += iGotFrames;
 	}

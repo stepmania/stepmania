@@ -289,6 +289,7 @@ public:
 		int iMaxSize = min( (int) m_WavData.m_iBlockAlign - 7 * m_WavData.m_iChannels, (m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos) - m_File.Tell() );
 
 		char *pBuf = (char *) alloca( iMaxSize );
+		ASSERT( pBuf != NULL );
 
 		int iBlockSize = m_File.Read( pBuf, iMaxSize );
 		if( iBlockSize == 0 )
