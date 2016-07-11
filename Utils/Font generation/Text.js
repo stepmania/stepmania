@@ -30,15 +30,15 @@ var OutputDir = "c:/temp/stepmania/utils/Font generation/Output/";
  * store prototypes for each font page.  These should just be PSD files that contain
  * a single text layer with the characters we want.  The orientation, font, etc.
  * don't matter; they'll be overridden. */
-var JAFontPages = Array("main", "kanji 1", "kanji 2","kanji 3","kanji 4");
-var KRFontPages = Array("jamo 1", "jamo 2", "jamo 3", "jamo 4");
+//var JAFontPages = Array("main", "kanji 1", "kanji 2","kanji 3","kanji 4");
+var KRFontPages = Array("jamo 1", "jamo 2", "jamo 3", "jamo 4", "jamo 5", "jamo 6", "jamo 7", "jamo 8", "jamo 9", "jamo 10", "jamo 11");
 
 var Fonts = new Array(
 	/* name                       font         pages        frame sz  font sz  AA                border   bold */
-	new FontDef("_japanese 16px", "MS-Gothic", JAFontPages, 32,       20,      AntiAlias.STRONG, 2,       true),
-	new FontDef("_japanese 24px", "MS-Gothic", JAFontPages, 32,       26,      AntiAlias.SMOOTH, 2,       true)
-	//new FontDef("_korean 16px",   "ArialUnicodeMS", KRFontPages, 32,       20,      AntiAlias.SMOOTH, 2,       true),
-	//new FontDef("_korean 24px",   "ArialUnicodeMS", KRFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
+	//new FontDef("_japanese 16px", "MS-Gothic", JAFontPages, 32,       20,      AntiAlias.STRONG, 2,       true),
+	//new FontDef("_japanese 24px", "MS-Gothic", JAFontPages, 32,       26,      AntiAlias.SMOOTH, 2,       true)
+	new FontDef("_korean 16px",   "NanumGothic", KRFontPages, 32,       20,      AntiAlias.SMOOTH, 2,       true),
+	new FontDef("_korean 24px",   "NanumGothic", KRFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
 		);
 	
 
