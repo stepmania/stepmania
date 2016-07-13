@@ -420,7 +420,7 @@ public:
 	ProfileLoadResult LoadStatsFromDir( std::string dir, bool require_signature );
 	void LoadTypeFromDir(std::string dir);
 	void LoadCustomFunction(std::string dir, PlayerNumber pn);
-	bool SaveAllToDir( std::string sDir, bool bSignData ) const;
+	bool SaveAllToDir(std::string sDir, bool bSignData, PlayerNumber pn) const;
 
 	ProfileLoadResult LoadEditableDataFromDir( std::string sDir );
 	void load_noteskin_params_from_dir(std::string const& dir);

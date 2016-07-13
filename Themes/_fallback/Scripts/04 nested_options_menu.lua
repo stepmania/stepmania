@@ -1422,6 +1422,18 @@ nesty_options= {
 		ret.value= float_val_func(min_scale, ret.args.initial_value)
 		return setmetatable(ret, mergable_table_mt)
 	end,
+	bool_pref_val= function(valname)
+		local ret= {
+			type= "bool", name= valname, translatable= true, execute= function()
+				local old_val= PREFSMAN:GetPreference(valname)
+				PREFSMAN:SetPreference(valname, not old_val)
+			end,
+			value= function()
+				return PREFSMAN:GetPreference(valname)
+			end,
+		}
+		return setmetatable(ret, mergable_table_mt)
+	end,
 	float_song_mod_val= function(valname, min_scale, scale, max_scale, val_min, val_max, val_reset)
 		local ret= {
 			name= valname, translatable= true,

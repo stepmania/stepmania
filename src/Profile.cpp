@@ -1245,7 +1245,7 @@ void Profile::HandleStatsPrefixChange(std::string dir, bool require_signature)
 	m_UserTable= user_table;
 	if(need_to_create_file)
 	{
-		SaveAllToDir(dir, require_signature);
+		SaveAllToDir(dir, require_signature, PlayerNumber_Invalid);
 	}
 }
 	
@@ -1427,7 +1427,7 @@ ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreE
 	return ProfileLoadResult_Success;
 }
 
-bool Profile::SaveAllToDir( std::string sDir, bool bSignData ) const
+bool Profile::SaveAllToDir(std::string sDir, bool bSignData, PlayerNumber pn) const
 {
 	m_sLastPlayedMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 	m_LastPlayedDate = DateTime::GetNowDate();
@@ -1461,10 +1461,18 @@ bool Profile::SaveAllToDir( std::string sDir, bool bSignData ) const
 	// Pass profile and profile directory as arguments
 	const_cast<Profile *>(this)->PushSelf(L);
 	LuaHelpers::Push(L, sDir);
+	if(pn == PlayerNumber_Invalid)
+	{
+		lua_pushnil(L);
+	}
+	else
+	{
+		Enum::Push(L, pn);
+	}
 
 	// Run it
 	std::string Error= "Error running CustomSaveFunction: ";
-	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
+	LuaHelpers::RunScriptOnStack(L, Error, 3, 0, true);
 
 	LUA->Release(L);
 

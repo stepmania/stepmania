@@ -381,7 +381,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 		Profile::MoveBackupToDir( m_sProfileDir[pn], sBackupDir );
 	}
 
-	bool b = GetProfile(pn)->SaveAllToDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+	bool b = GetProfile(pn)->SaveAllToDir(m_sProfileDir[pn], PREFSMAN->m_bSignProfileData, pn);
 
 	return b;
 }
@@ -391,7 +391,7 @@ bool ProfileManager::SaveLocalProfile( std::string sProfileID )
 	const Profile *pProfile = GetLocalProfile( sProfileID );
 	ASSERT( pProfile != nullptr );
 	std::string sDir = LocalProfileIDToDir( sProfileID );
-	bool b = pProfile->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
+	bool b = pProfile->SaveAllToDir(sDir, PREFSMAN->m_bSignProfileData, PlayerNumber_Invalid);
 	return b;
 }
 
@@ -573,7 +573,7 @@ bool ProfileManager::CreateLocalProfile( std::string sName, std::string &sProfil
 
 	// Save it to disk.
 	std::string sProfileDir = LocalProfileIDToDir(profile_id);
-	if( !pProfile->SaveAllToDir(sProfileDir, PREFSMAN->m_bSignProfileData) )
+	if(!pProfile->SaveAllToDir(sProfileDir, PREFSMAN->m_bSignProfileData, PlayerNumber_Invalid))
 	{
 		delete pProfile;
 		sProfileIDOut = "";
@@ -633,7 +633,7 @@ bool ProfileManager::RenameLocalProfile( std::string sProfileID, std::string sNe
 	pProfile->m_sDisplayName = sNewName;
 
 	std::string sProfileDir = LocalProfileIDToDir( sProfileID );
-	return pProfile->SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
+	return pProfile->SaveAllToDir(sProfileDir, PREFSMAN->m_bSignProfileData, PlayerNumber_Invalid);
 }
 
 bool ProfileManager::DeleteLocalProfile( std::string sProfileID )
@@ -683,7 +683,7 @@ void ProfileManager::SaveMachineProfile() const
 	// are saved, so that the Player's profiles show the right machine name.
 	const_cast<ProfileManager *> (this)->m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName.Get();
 
-	m_pMachineProfile->SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
+	m_pMachineProfile->SaveAllToDir(MACHINE_PROFILE_DIR, false, PlayerNumber_Invalid); /* don't sign machine profiles */
 }
 
 void ProfileManager::LoadMachineProfile()
@@ -692,7 +692,7 @@ void ProfileManager::LoadMachineProfile()
 	if( lr == ProfileLoadResult_FailedNoProfile )
 	{
 		m_pMachineProfile->InitAll();
-		m_pMachineProfile->SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
+		m_pMachineProfile->SaveAllToDir(MACHINE_PROFILE_DIR, false, PlayerNumber_Invalid); /* don't sign machine profiles */
 	}
 
 	// If the machine name has changed, make sure we use the new name
