@@ -67,7 +67,6 @@
 #define SHOW_SCORE_IN_RAVE			THEME->GetMetricB(m_sName,"ShowScoreInRave")
 #define SONG_POSITION_METER_WIDTH		THEME->GetMetricF(m_sName,"SongPositionMeterWidth")
 #define STOP_COURSE_EARLY			THEME->GetMetricB(m_sName,"StopCourseEarly")	// evaluate this every time it's used
-#define USE_PAUSE_MENU_INSTEAD_OF_GIVE_UP THEME->GetMetricB(m_sName, "UsePauseMenuInsteadOfGiveUp")
 
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
@@ -1937,12 +1936,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 			// update give up
 			bool bGiveUpTimerFired = false;
-			if(!USE_PAUSE_MENU_INSTEAD_OF_GIVE_UP)
-			{
-				bGiveUpTimerFired= !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > GIVE_UP_SECONDS;
-				m_gave_up= bGiveUpTimerFired;
-				m_skipped_song= !m_SkipSongTimer.IsZero() && m_SkipSongTimer.Ago() > GIVE_UP_SECONDS;
-			}
+			bGiveUpTimerFired= !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > GIVE_UP_SECONDS;
+			m_gave_up= bGiveUpTimerFired;
+			m_skipped_song= !m_SkipSongTimer.IsZero() && m_SkipSongTimer.Ago() > GIVE_UP_SECONDS;
 
 
 			bool bAllHumanHaveBigMissCombo = true;
@@ -2451,7 +2447,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 		return false;
 	}
 
-	if(!USE_PAUSE_MENU_INSTEAD_OF_GIVE_UP && m_DancingState != STATE_OUTRO  &&
+	if(m_DancingState != STATE_OUTRO  &&
 		GAMESTATE->IsHumanPlayer(input.pn)  &&
 		!m_Cancel.IsTransitioning() )
 	{

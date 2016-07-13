@@ -50,10 +50,7 @@ void PNG_Error( png_struct *png, const char *error )
 	strncpy( info->err, error, 1024 );
 	info->err[1023] = 0;
 	LOG->Trace( "loading \"%s\": err: %s", info->fn, info->err );
-	// This exception is just thrown to go to the catch block for cleanup.  The
-	// message has already been printed, so the exception value can be ignored.
-	// -Kyz
-	throw int(1);
+	longjmp( png_jmpbuf(png), 1 );
 }
 
 void PNG_Warning( png_struct *png, const char *warning )
@@ -92,8 +89,20 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	CHECKPOINT_M("Potential issue with png jump about to be analyzed.");
 
 	png_byte** row_pointers= NULL;
-	try
+
+	// Throwing an exception in the error callback would make the exception
+	// pass through C code, which is undefined behavior.  Works fine on Linux,
+	// and on OS X with C++11, but does not work on OS X without C++11. -Kyz
+	if(setjmp(png_jmpbuf(png)))
 	{
+		png_destroy_read_struct(&png, &info_ptr, NULL);
+		delete img;
+		if(row_pointers != NULL)
+		{
+			delete[] row_pointers;
+		}
+		return NULL;
+	}
 
 	png_set_read_fn( png, f, RageFile_png_read );
 
@@ -241,17 +250,6 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, NULL );
-	}
-	catch(int e)
-	{
-		png_destroy_read_struct(&png, &info_ptr, NULL);
-		delete img;
-		if(row_pointers != NULL)
-		{
-			delete[] row_pointers;
-		}
-		return NULL;
-	}
 
 	return img;
 }

@@ -11,9 +11,6 @@ ________________________________________________________________________________
 
 2016/06/24
 ----------
-* [Gameplay] Added UsePauseMenuInsteadOfGiveUp theme metric.  If this metric
-  is true, Select, Back, and Start cannot be held to exit a song.  This is
-	for themes that provide a pause menu for these choices. [kyzentun]
 * [SelectMusic] Added AllowHoldForOptions preference to disable holding start
   to go to the player options screen. [kyzentun]
 * [General] Back button will only back out of the screen on a press, not when

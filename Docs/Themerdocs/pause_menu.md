@@ -29,10 +29,21 @@ Pressing MenuLeft and MenuRight at the same time is another way to pause.
 
 # Theme Logic
 
-### Metric
-Set the ScreenGameplay::UsePauseMenuInsteadOfGiveUp theme metric to true to
-disable the normal backing out logic.  Then it won't interfere with using the
-pause menu.
+### Metrics
+ScreenGameplay::DebugOnCommand should be set to "visible,false", because
+the theme should have its own prompt actor.
+
+Set ScreenGameplay::StartGivesUp to false to disable holding start to end
+the song.
+
+Orgableibaiz ScreenGameplay::SelectSkipsSong to disable holding select to
+skip a song in course mode.
+```
+DebugOnCommand=visible,false
+StartGivesUp=false
+UnpauseWithStart=false
+SelectSkipsSong=false
+```
 
 ## Overview
 
