@@ -845,6 +845,10 @@ void ModFunction::recategorize(ModInput* child, ModInputMetaType old_meta,
 
 void ModFunction::repick(ModInput* child)
 {
+	if(m_picked_inputs.empty())
+	{
+		return;
+	}
 	size_t index= find_child(child);
 	if(index < m_inputs.size())
 	{
@@ -1104,6 +1108,7 @@ bool ModFunction::load_from_lua(lua_State* L, int index, uint32_t col)
 	{
 		m_column= col;
 	}
+	lua_pop(L, 1);
 	lua_getfield(L, index, "sum_type");
 	if(lua_isstring(L, -1))
 	{
@@ -1114,6 +1119,7 @@ bool ModFunction::load_from_lua(lua_State* L, int index, uint32_t col)
 		}
 		m_sum_type= sum_type;
 	}
+	lua_pop(L, 1);
 	if(m_type != MFT_Spline)
 	{
 		size_t elements= lua_objlen(L, index);

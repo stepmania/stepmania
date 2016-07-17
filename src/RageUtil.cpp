@@ -428,16 +428,21 @@ std::string FormatNumberAndSuffix( int i )
 
 std::string unique_name(std::string const& type)
 {
-	static char const* name_chars= "abcdefghijklmnopqrstuvwxyz";
+	// The returned name is not universally unique, it's only unique to a run
+	// of the program.
+	// Use only letters that can be the first character of an identifier,
+	// for simplicity.  Exactly 32 letters so that each 5 bits of the counter
+	// encodes one letter.
+	static char const* name_chars= "abcdefghijklmnopqrstuvwxyzABCDEF";
 	static int name_count= 0;
 	int curr_name= name_count;
 	std::string ret= type + "_"; // Minimize the chance of a name collision.
-	ret= ret + name_chars[curr_name%26];
-	while(curr_name / 26 > 0)
+	do
 	{
-		curr_name= curr_name / 26;
-		ret= ret + name_chars[curr_name%26];
-	}
+		int letter= curr_name & 31;
+		ret= ret + name_chars[letter];
+		curr_name= curr_name >> 5;
+	} while(curr_name > 0);
 	++name_count;
 	return ret;
 }
