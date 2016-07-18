@@ -7,6 +7,22 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/07/18
+----------
+* [Player] Removed HoldJudgment class.  Hold judgments should be displayed by
+  an actor in Graphics/NoteColumn layers.lua in the theme.  This allows using
+  something besides a 1x2 sprite for the hold judgment.
+  Removed metrics:
+  HoldJudgmentYStandard/Reverse: Use ReverseChangedCommand in the actor.
+  HoldJudgmentsUnderField: Set the draw order of the actor.
+  TapJudgmentsUnderField: Set the draw order of the judgment actor.
+  ComboUnderField: Set the draw order of the combo actor.
+  [kyzentun]
+
+2016/07/02
+----------
+* [NewField] Added random input choices to modifier system. [kyzentun]
+
 2016/06/30
 ----------
 * [Gameplay] Added configuration for setting pause behavior. [kyzentun]

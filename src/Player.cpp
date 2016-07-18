@@ -285,10 +285,6 @@ Player::~Player()
 {
 	Rage::safe_delete( m_pAttackDisplay );
 	Rage::safe_delete( m_new_field );
-	for (auto &hold: m_vpHoldJudgment)
-	{
-		Rage::safe_delete(hold);
-	}
 	Rage::safe_delete( m_pJudgedRows );
 	Rage::safe_delete( m_pIterNeedsTapJudging );
 	Rage::safe_delete( m_pIterNeedsHoldJudging );
@@ -316,12 +312,7 @@ void Player::Init(
 	ATTACK_DISPLAY_X.Load(				sType, ATTACK_DISPLAY_X_NAME, NUM_PLAYERS, 2 );
 	ATTACK_DISPLAY_Y.Load(				sType, "AttackDisplayY" );
 	ATTACK_DISPLAY_Y_REVERSE.Load(			sType, "AttackDisplayYReverse" );
-	HOLD_JUDGMENT_Y_STANDARD.Load(			sType, "HoldJudgmentYStandard" );
-	HOLD_JUDGMENT_Y_REVERSE.Load(			sType, "HoldJudgmentYReverse" );
 	BRIGHT_GHOST_COMBO_THRESHOLD.Load(		sType, "BrightGhostComboThreshold" );
-	TAP_JUDGMENTS_UNDER_FIELD.Load(			sType, "TapJudgmentsUnderField" );
-	HOLD_JUDGMENTS_UNDER_FIELD.Load(		sType, "HoldJudgmentsUnderField" );
-	COMBO_UNDER_FIELD.Load(		sType, "ComboUnderField" );
 	DRAW_DISTANCE_AFTER_TARGET_PIXELS.Load(		sType, "DrawDistanceAfterTargetsPixels" );
 	DRAW_DISTANCE_BEFORE_TARGET_PIXELS.Load(	sType, "DrawDistanceBeforeTargetsPixels" );
 
@@ -455,6 +446,8 @@ void Player::Init(
 		// todo: allow for judgments to be loaded per-column a la pop'n?
 		// see how HoldJudgments are handled below for an example, though
 		// it would need more work. -aj
+		// Judgments can be shown per-column in NoteColumn layers in the theme.
+		// -Kyz
 		m_sprJudgment.Load( THEME->GetPathG(sType,"judgment") );
 		m_sprJudgment->SetName( "Judgment" );
 		m_pActorWithJudgmentPosition = &*m_sprJudgment;
@@ -464,24 +457,6 @@ void Player::Init(
 	{
 		m_pActorWithComboPosition = nullptr;
 		m_pActorWithJudgmentPosition = nullptr;
-	}
-
-	// Load HoldJudgments
-	m_vpHoldJudgment.resize( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer );
-	for( int i = 0; i < GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; ++i )
-	{
-		m_vpHoldJudgment[i] = nullptr;
-	}
-	if( HasVisibleParts() )
-	{
-		for( int i = 0; i < GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; ++i )
-		{
-			HoldJudgment *pJudgment = new HoldJudgment;
-			// xxx: assumes sprite; todo: don't force 1x2 -aj
-			pJudgment->Load( THEME->GetPathG("HoldJudgment","label 1x2") );
-			m_vpHoldJudgment[i] = pJudgment;
-			this->AddChild( m_vpHoldJudgment[i] );
-		}
 	}
 
 	if(m_new_field)
@@ -933,17 +908,6 @@ void Player::Update( float fDeltaTime )
 		float fMiniPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
 		float fTinyPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
 		float fJudgmentZoom = min( std::pow(0.5f, fMiniPercent+fTinyPercent), 1.0f );
-
-		// Update Y positions
-		if(m_new_field != nullptr)
-		{
-			FieldLayerRenderInfo render_info= {FLFT_Explosion, FLTT_PosOnly};
-			for(size_t c= 0; c < m_new_field->get_num_columns(); c++)
-			{
-				m_new_field->position_actor_at_column_head(m_vpHoldJudgment[c],
-					render_info, c);
-			}
-		}
 
 		const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0) == 1;
 		float fPercentCentered = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
@@ -1638,16 +1602,6 @@ void Player::DrawTapJudgments()
 
 	if( m_sprJudgment )
 		m_sprJudgment->Draw();
-}
-
-void Player::DrawHoldJudgments()
-{
-	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind > 0 )
-		return;
-
-	for( int c=0; c<m_NoteData.GetNumTracks(); c++ )
-		if( m_vpHoldJudgment[c] )
-			m_vpHoldJudgment[c]->Draw();
 }
 
 void Player::SetSpeedFromPlayerOptions()
@@ -3168,14 +3122,16 @@ void Player::SetJudgment( int iRow, int iTrack, const TapNote &tn, TapNoteScore 
 
 void Player::SetHoldJudgment( TapNote &tn, int iTrack )
 {
-	ASSERT( iTrack < (int)m_vpHoldJudgment.size() );
-	if( m_vpHoldJudgment[iTrack] )
-		m_vpHoldJudgment[iTrack]->SetHoldJudgment( tn.HoldResult.hns );
+	if(m_new_field)
+	{
+		bool bright= m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
+		m_new_field->did_hold_note(iTrack, tn.HoldResult.hns, bright);
+	}
 
 	if( m_bSendJudgmentAndComboMessages )
 	{
 		Message msg(create_judge_message(m_pPlayerState->m_PlayerNumber, tn.result.tns, iTrack));
-		msg.SetParam( "NumTracks", (int)m_vpHoldJudgment.size() );
+		msg.SetParam( "NumTracks", (int)m_NoteData.GetNumTracks() );
 		msg.SetParam( "HoldNoteScore", tn.HoldResult.hns );
 
 		Lua* L = LUA->Get();

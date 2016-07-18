@@ -2,7 +2,7 @@
 #define PLAYER_H
 
 #include "ActorFrame.h"
-#include "HoldJudgment.h"
+#include "AutoActor.h"
 #include "NoteDataWithScoring.h"
 #include "RageSound.h"
 #include "AttackDisplay.h"
@@ -126,7 +126,6 @@ protected:
 	void HandleHoldScore( const TapNote &tn );
 	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const std::vector<int> &viColsWithHold );
 	void DrawTapJudgments();
-	void DrawHoldJudgments();
 	void SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo );
 	void PlayKeysound( const TapNote &tn, TapNoteScore score );
 
@@ -171,8 +170,6 @@ protected:
 
 	NoteData		&m_NoteData;
 	NewField		*m_new_field;
-
-	std::vector<HoldJudgment*>	m_vpHoldJudgment;
 
 	AutoActor		m_sprJudgment;
 	AutoActor		m_sprCombo;

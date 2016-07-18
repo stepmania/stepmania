@@ -177,6 +177,11 @@ above the notes while the other has their judgment under the notes.
 The draw order of the judgment and combo actors is checked every frame, so if
 it changes during gameplay, the change takes effect immediately.
 
+### Hold Judgments
+
+Displaying hold judgments such as "OK" or "NG" should be handled by an actor
+in Graphics/NoteColumn layers.lua.
+
 
 ### Alpha/glow and transform mods
 
