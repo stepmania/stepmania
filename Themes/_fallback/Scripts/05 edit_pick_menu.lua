@@ -358,9 +358,7 @@ local function menu_input(event)
 	if not button or button == "" then return end
 	local menu_action= song_menu_stack:interpret_code(button)
 	if menu_action == "close" then
-		lua.ReportScriptError("lol no")
-	else
-		
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
 	end
 end
 
