@@ -70,8 +70,8 @@ static MenuDef g_TempMenu(
 	"ScreenMiniMenuContext"
 );
 
-static LocalizedString PROFILE_NAME_BLANK	( "ScreenEditMenu", "Profile name cannot be blank." );
-static LocalizedString PROFILE_NAME_CONFLICTS	( "ScreenEditMenu", "The name you chose conflicts with another profile. Please use a different name." );
+static LocalizedString PROFILE_NAME_BLANK	( "ScreenOptionsManageProfiles", "profile_name_blank" );
+static LocalizedString PROFILE_NAME_CONFLICTS	( "ScreenOptionsManageProfiles", "profile_name_conflicts" );
 static bool ValidateLocalProfileName( const std::string &sAnswer, std::string &sErrorOut )
 {
 	if( sAnswer == "" )
