@@ -361,7 +361,14 @@ void SetDescription(StepsTagInfo& info)
 }
 void SetDifficulty(StepsTagInfo& info)
 {
-	info.steps->SetDifficulty(StringToDifficulty((*info.params)[1]));
+	if((*info.params)[1].empty())
+	{
+		info.steps->SetDifficulty(Difficulty_Edit);
+	}
+	else
+	{
+		info.steps->SetDifficulty(StringToDifficulty((*info.params)[1]));
+	}
 	info.ssc_format= true;
 }
 void SetMeter(StepsTagInfo& info)
@@ -901,11 +908,20 @@ bool SSCLoader::LoadNoteDataFromSimfile( const std::string & cachePath, Steps &o
 						// Accept any difficulty if it's an edit because LoadEditFromMsd
 						// forces edits onto Edit difficulty even if they have a difficulty
 						// tag. -Kyz
-						if(out.GetDifficulty() != StringToDifficulty(matcher) &&
-							!(out.GetDifficulty() == Difficulty_Edit &&
-								Rage::make_lower(GetExtension(cachePath)) == "edit"))
 						{
-							tryingSteps = false;
+							// If the simfile has a blank difficulty string, load it as an
+							// edit. -Kyz
+							Difficulty match_diff= StringToDifficulty(matcher);
+							if(matcher.empty())
+							{
+								match_diff == Difficulty_Edit;
+							}
+							if(out.GetDifficulty() != match_diff &&
+								!(out.GetDifficulty() == Difficulty_Edit &&
+									Rage::make_lower(GetExtension(cachePath)) == "edit"))
+							{
+								tryingSteps = false;
+							}
 						}
 						break;
 					case LNDID_meter:

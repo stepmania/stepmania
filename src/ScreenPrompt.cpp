@@ -28,6 +28,7 @@ namespace
 	void(*g_pOnYes)(void*);
 	void(*g_pOnNo)(void*);
 	void *g_pCallbackData;
+	LuaReference g_lua_callback;
 };
 
 void ScreenPrompt::SetPromptSettings( const std::string &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
@@ -38,6 +39,7 @@ void ScreenPrompt::SetPromptSettings( const std::string &sText, PromptType type,
 	g_pOnYes = OnYes;
 	g_pOnNo = OnNo;
 	g_pCallbackData = pCallbackData;
+	g_lua_callback.SetFromNil();
 }
 
 void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const std::string &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
@@ -246,6 +248,27 @@ void ScreenPrompt::End( bool bCancelled )
 			break;
 		default: break;
 	}
+	if(!g_lua_callback.IsNil())
+	{
+		Lua* L= LUA->Get();
+		g_lua_callback.PushSelf(L);
+		switch(m_Answer)
+		{
+			case ANSWER_YES:
+				lua_pushstring(L, "yes");
+				break;
+			case ANSWER_NO:
+				lua_pushstring(L, "no");
+				break;
+			default:
+				lua_pushstring(L, "cancel");
+				break;
+		}
+		std::string err= "Error running ScreenPrompt callback:  ";
+		LuaHelpers::RunScriptOnStack(L, err, 1, 0, true);
+		lua_settop(L, 0);
+		LUA->Release(L);
+	}
 
 	s_LastAnswer = bCancelled ? ANSWER_CANCEL : m_Answer;
 	s_bCancelledLast = bCancelled;
@@ -267,6 +290,27 @@ void ScreenPrompt::TweenOffScreen()
 	}
 	ScreenWithMenuElements::TweenOffScreen();
 }
+
+int LuaFunc_prompt_screen(lua_State* L);
+int LuaFunc_prompt_screen(lua_State* L)
+{
+	std::string prompt= SArg(1);
+	int type= IArg(2);
+	if(lua_type(L, 3) != LUA_TFUNCTION)
+	{
+		luaL_error(L, "Third arg to prompt_screen must be a function.");
+	}
+	PromptType pro_type= PROMPT_OK;
+	if(type >= 0 && type <= PROMPT_YES_NO_CANCEL)
+	{
+		pro_type= static_cast<PromptType>(type);
+	}
+	ScreenPrompt::Prompt(SM_Invalid, prompt, pro_type);
+	lua_pushvalue(L, 3);
+	g_lua_callback.SetFromStack(L);
+	return 0;
+}
+LUAFUNC_REGISTER_COMMON(prompt_screen);
 
 // lua start
 /*

@@ -131,7 +131,7 @@ nesty_cursor_mt= {
 				LoadActor(THEME:GetPathG(params.parts_name, "Right")) ..
 				{InitCommand= function(subself) self.right= subself end},
 			}
-			return frame;
+			return frame
 		end,
 		refit= function(self, nx, ny, nw, nh)
 			nx= nx or self.container:GetX()
@@ -408,8 +408,18 @@ local value_item_mt= {
 		get_cursor_fit= function(self)
 			return {0, 0, self.width + 4, self.height + 4}
 		end,
-		gain_focus= play_gain_focus,
-		lose_focus= play_lose_focus,
+		gain_focus= function(self)
+			play_gain_focus(self)
+			if self.info and type(self.info.on_focus) == "function" then
+				self.info.on_focus()
+			end
+		end,
+		lose_focus= function(self)
+			play_lose_focus(self)
+			if self.info and type(self.info.on_unfocus) == "function" then
+				self.info.on_unfocus()
+			end
+		end,
 }}
 
 nesty_items= {
@@ -615,6 +625,30 @@ local general_menu_mt= {
 					self:get_cursor_element():gain_focus()
 					return true, false, "move_down"
 				end,
+				page_down= function(self)
+					if self.cursor_pos < #self.info_set then
+						unfocus_cursor(self)
+						self.cursor_pos= self.cursor_pos + self.display.scroller.num_items
+						if self.cursor_pos > #self.info_set then
+							self.cursor_pos= #self.info_set
+						end
+						self.display:scroll(self.cursor_pos)
+						self:get_cursor_element():gain_focus()
+					end
+					return true, false, "move_down"
+				end,
+				page_up= function(self)
+					if self.cursor_pos > 1 then
+						unfocus_cursor(self)
+						self.cursor_pos= self.cursor_pos - self.display.scroller.num_items
+						if self.cursor_pos < 1 then
+							self.cursor_pos= 1
+						end
+						self.display:scroll(self.cursor_pos)
+						self:get_cursor_element():gain_focus()
+					end
+					return true, false, "move_up"
+				end,
 				Start= function(self)
 					if self.info_set[self.cursor_pos].text == nesty_menu_up_element.text then
 						-- This position is the "up" element that moves the
@@ -694,6 +728,7 @@ nesty_option_menus.menu= {
 			else
 				self.menu_data= self.init_args
 			end
+			self.up_text= self.menu_data.up_text or self.up_text
 			self:insert_up(self.menu_data)
 			self.name= self.menu_data.name or ""
 			self.recall_init_on_pop= self.menu_data.recall_init_on_pop
@@ -753,6 +788,8 @@ nesty_option_menus.menu= {
 					end
 					self.info_set[disp_slot].translatable= data.translatable
 					self.info_set[disp_slot].translatable_value= data.translatable_value
+					self.info_set[disp_slot].on_focus= data.on_focus
+					self.info_set[disp_slot].on_unfocus= data.on_unfocus
 					if data.args and type(data.args) == "table" then
 						data.args.name= data.name
 					end

@@ -348,6 +348,10 @@ void SMLoader::LoadFromTokens(
 			out.SetDifficulty(Difficulty_Challenge);
 		}
 	}
+	if(out.GetDifficulty() == Difficulty_Invalid)
+	{
+		out.SetDifficulty(Difficulty_Edit);
+	}
 
 	if( sMeter.empty() )
 	{

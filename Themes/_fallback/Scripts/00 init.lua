@@ -54,6 +54,28 @@ function join(delimiter, list)
 	return table.concat(list, delimiter)
 end
 
+function foreach_by_sorted_keys(tbl, keys, func)
+	table.sort(keys)
+	for _, key in ipairs(keys) do func(key, tbl[key]) end
+end
+
+function foreach_ordered( tbl, func )
+	local string_keys= {}
+	local number_keys= {}
+	-- First person to to use this on a table that uses something else as keys
+	-- gets to extend this function to cover more types.  And a beating. -Kyz
+	for k,_ in pairs(tbl) do
+		if type(k) == "string" then
+			table.insert(string_keys, k)
+		elseif type(k) == "number" then
+			table.insert(number_keys, k)
+		end
+	end
+	-- iterate in sorted order
+	foreach_by_sorted_keys(tbl, number_keys, func)
+	foreach_by_sorted_keys(tbl, string_keys, func)
+end
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --

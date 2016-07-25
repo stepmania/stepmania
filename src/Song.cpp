@@ -9,6 +9,8 @@
 #include "SongCacheIndex.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
+#include "Screen.h"
+#include "ScreenManager.h"
 #include "Style.h"
 #include "FontCharAliases.h"
 #include "TitleSubstitution.h"
@@ -2337,6 +2339,28 @@ public:
 		p->ReloadFromSongDir();
 		COMMON_RETURN_SELF;
 	}
+	static int delete_steps(T* p, lua_State* L)
+	{
+		Screen* sub_top_screen= SCREENMAN->GetSubTopScreen();
+		if(sub_top_screen == nullptr || sub_top_screen->GetName() != "ScreenEditMenu")
+		{
+			LuaHelpers::ReportScriptError("Song:delete_steps:  no, not on this screen, go away.");
+			COMMON_RETURN_SELF;
+		}
+		Steps* del_steps= Luna<Steps>::check(L, 1);
+		if(del_steps != nullptr)
+		{
+			bool save_song= !del_steps->WasLoadedFromProfile();
+			p->DeleteSteps(del_steps);
+			SONGMAN->Invalidate(p);
+			if(save_song)
+			{
+				p->Save();
+				SCREENMAN->ZeroNextUpdate();
+			}
+		}
+		COMMON_RETURN_SELF;
+	}
 
 	LunaSong()
 	{
@@ -2405,6 +2429,7 @@ public:
 		ADD_METHOD( GetPreviewVidPath );
 		ADD_METHOD(GetPreviewMusicPath);
 		ADD_METHOD(ReloadFromSongDir);
+		ADD_METHOD(delete_steps);
 	}
 };
 

@@ -7,6 +7,13 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/07/25
+----------
+* [ScreenEditMenu] Complete rewrite removes the old ScreenEditMenu and
+  EditMenu classes with their metrics and language strings.  See
+  Docs/Themerdocs/5.1_incompatibilities/ScreenEditMenu_rewrite.md for details.
+  [kyzentun]
+
 2016/07/18
 ----------
 * [Player] Removed HoldJudgment class.  Hold judgments should be displayed by

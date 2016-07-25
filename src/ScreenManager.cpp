@@ -346,6 +346,15 @@ Screen *ScreenManager::GetTopScreen()
 	return g_ScreenStack[g_ScreenStack.size()-1].m_pScreen;
 }
 
+Screen* ScreenManager::GetSubTopScreen()
+{
+	if(g_ScreenStack.size() < 2)
+	{
+		return nullptr;
+	}
+	return g_ScreenStack[g_ScreenStack.size()-2].m_pScreen;
+}
+
 Screen *ScreenManager::GetScreen( int iPosition )
 {
 	if( iPosition >= (int) g_ScreenStack.size() )

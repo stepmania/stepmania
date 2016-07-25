@@ -121,10 +121,21 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	pShared = nullptr;
 
 	vector<std::string> vsMusicFile;
-	const std::string sMusicPath = GAMESTATE->m_pCurSteps[GAMESTATE->GetMasterPlayerNumber()]->GetMusicPath();
+	Steps* master_steps= GAMESTATE->m_pCurSteps[GAMESTATE->GetMasterPlayerNumber()];
+	std::string music_path;
+	if(master_steps == nullptr)
+	{
+		LuaHelpers::ReportScriptError("Cannot load music for song because there is no master player!");
+	}
+	else
+	{
+		music_path= master_steps->GetMusicPath();
+	}
 
-	if( !sMusicPath.empty() )
-		vsMusicFile.push_back( sMusicPath );
+	if(!music_path.empty())
+	{
+		vsMusicFile.push_back(music_path);
+	}
 
 	FOREACH_ENUM( InstrumentTrack, it )
 	{

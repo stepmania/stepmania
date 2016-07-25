@@ -122,7 +122,12 @@ struct LunaRollingNumbers : Luna<RollingNumbers>
 	}
 	static int target_number(T* p, lua_State *L)
 	{
-		p->SetTargetNumber(FArg(1));
+		float target= FArg(1);
+		if(!std::isfinite(target))
+		{
+			luaL_error(L, "RollingNumbers: Invalid non-finite target number.");
+		}
+		p->SetTargetNumber(target);
 		COMMON_RETURN_SELF;
 	}
 

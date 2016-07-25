@@ -3212,9 +3212,10 @@ public:
 		// 1.  Edit existing steps:
 		//    song, steps
 		// 2.  Create new steps to edit:
-		//    song, nil, stepstype, difficulty
+		//    song, nil, stepstype, difficulty, description
 		// 3.  Copy steps to new difficulty to edit:
-		//    song, steps, stepstype, difficulty
+		//    song, steps, stepstype, difficulty, description
+		// Description field is optional.
 		Song* song= Luna<Song>::check(L, 1);
 		Steps* steps= nullptr;
 		if(!lua_isnil(L, 2))
@@ -3232,7 +3233,7 @@ public:
 			return 0;
 		}
 		StepsType stype= Enum::Check<StepsType>(L, 3);
-		Enum::Check<Difficulty>(L, 4);
+		Difficulty diff= Enum::Check<Difficulty>(L, 4);
 		Steps* new_steps= song->CreateSteps();
 		std::string edit_name;
 		// Form 2.
@@ -3248,13 +3249,18 @@ public:
 			new_steps->CopyFrom(steps, stype, song->m_fMusicLengthSeconds);
 			edit_name= steps->GetDescription();
 		}
+		if(lua_isstring(L, 5))
+		{
+			edit_name= SArg(5);
+		}
 		SongUtil::MakeUniqueEditDescription(song, stype, edit_name);
-		steps->SetDescription(edit_name);
+		new_steps->SetDifficulty(diff);
+		new_steps->SetDescription(edit_name);
 		song->AddSteps(new_steps);
 		p->m_pCurSong.Set(song);
-		p->m_pCurSteps[PLAYER_1].Set(steps);
+		p->m_pCurSteps[PLAYER_1].Set(new_steps);
 		p->SetCurrentStyle(GAMEMAN->GetEditorStyleForStepsType(
-				steps->m_StepsType), PLAYER_INVALID);
+				new_steps->m_StepsType), PLAYER_INVALID);
 		p->m_pCurCourse.Set(nullptr);
 		return 0;
 	}
