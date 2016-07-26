@@ -7,6 +7,25 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/07/26
+----------
+* [Colors] Find the PlayerColors and PlayerDarkColors tables in your theme.
+  Put square brackets around PLAYER_1 and PLAYER_2.  Add a color named "both"
+  to each table.  The "both" color is for things that are for both players,
+  or neither player, like the cursor in the new edit menu.
+  Long explanation:
+  The PlayerColors and PlayerDarkColors tables in 02 Colors.lua used
+  player numbers wrong.  Instead of allowing a player number to be used as
+  an index into the table like this,
+  "local thing_color= GameColor.PlayerColors[PLAYER_1]"
+  the elements in the tables were named "PLAYER_1" and "PLAYER_2".
+  Code using player colors had to do this,
+  "local thing_color= GameColor.PlayerColors.PLAYER_1".
+  A function written to work for any player couldn't just use the player
+  number it was passed to index into the table.  It had to convert the player
+  number to the special names used by the color table.  Awkward.
+  [kyzentun]
+
 2016/07/25
 ----------
 * [ScreenEditMenu] Complete rewrite removes the old ScreenEditMenu and

@@ -96,7 +96,7 @@ Branch = {
 		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
 			return "ScreenHowToInstallSongs"
 		end
-		return "ScreenOptionsEdit"
+		return "ScreenEditMenu"
 	end,
 	AfterSelectStyle = function()
 		if IsNetConnected() then

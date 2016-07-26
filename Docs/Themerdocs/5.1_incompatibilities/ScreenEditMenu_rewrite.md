@@ -1,7 +1,25 @@
-## Removed metrics:
-Everything in the ScreenEditMenu section.
+Practice mode and Edit Course mode are temporarilty removed.  They didn't work right anyway.
 
-Everything in the EditMenu section.
+## Removed screens
+* ScreenOptionsEdit
+* ScreenPracticeMenu
+* ScreenPractice
+* ScreenEditCourseModsMenu
+* ScreenEditCourseMods
+
+## Removed metrics sections
+* EditMenu
+* ScreenOptionsEdit
+* ScreenPracticeMenu
+* PracticeMenu
+* ScreenPractice
+* ScreenEditCourseModsMenu
+* CourseModsMenu
+* ScreenEditCourseMods
+
+## Changed metrics sections
+* ScreenEditMenu
+
 
 ## Removed language entries:
 Everything in the EditMenuAction section.
@@ -26,3 +44,4 @@ No, seriously, the name of the translation string should not be the string that 
 Handle read-only song directory error.
 Handle trying to delete steps produced by autogen.
 Handle steps made by autogen in general.
+

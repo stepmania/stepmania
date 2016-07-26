@@ -120,9 +120,7 @@ nesty_cursor_mt= {
 					self.container= subself
 					self.left:horizalign(right)
 					self.right:horizalign(left)
-					if self.pn then
-						self:diffuse(PlayerColor(self.pn))
-					end
+					self:diffuse(PlayerColor(self.pn))
 				end,
 				LoadActor(THEME:GetPathG(params.parts_name, "Middle")) ..
 				{InitCommand= function(subself) self.middle= subself end},
