@@ -18,13 +18,12 @@ RageSoundDriver *RageSoundDriver::Create( const RString& drivers )
 	else
 	{
 		split(drivers, ",", drivers_to_try);
-		vector<RString> default_drivers;
-		split(DEFAULT_SOUND_DRIVER_LIST, ",", default_drivers);
 		size_t to_try= 0;
 		bool had_to_erase= false;
 		while(to_try < drivers_to_try.size())
 		{
-			if(std::find(default_drivers.begin(), default_drivers.end(), drivers_to_try[to_try]) == default_drivers.end())
+			if(m_pDriverList.m_pRegistrees->find(istring(drivers_to_try[to_try]))
+				== m_pDriverList.m_pRegistrees->end())
 			{
 				LOG->Warn("Removed unusable sound driver %s", drivers_to_try[to_try].c_str());
 				drivers_to_try.erase(drivers_to_try.begin() + to_try);
