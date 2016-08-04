@@ -149,6 +149,11 @@ struct TapNote
 	// there is a hold head on the same row.  It needs to be a TapNoteSubType
 	// instead of a bool to handle rolls. -Kyz
 	TapNoteSubType highest_subtype_on_row;
+	// id_in_chart, id_in_column, and row_id are for passing to mods.  The mod
+	// system uses floating point for everything, so they're floats. -Kyz
+	float id_in_chart;
+	float id_in_column;
+	float row_id;
 
 	// used only if Type == attack:
 	std::string		sAttackModifiers;

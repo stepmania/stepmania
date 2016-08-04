@@ -35,6 +35,9 @@ void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
 	vector<TapNote*> notes_on_curr_row;
 	TapNoteSubType highest_subtype_on_row= TapNoteSubType_Invalid;
 	double curr_row_second= -1.0;
+	vector<int> column_ids(GetNumTracks(), 0);
+	int curr_note_id= 0;
+	int curr_row_id= -1; // Start at -1 so that the first row update sets to 0.
 	while(!curr_note.IsAtEnd())
 	{
 		if(curr_note.Row() != curr_row)
@@ -47,10 +50,16 @@ void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
 			highest_subtype_on_row= TapNoteSubType_Invalid;
 			curr_row= curr_note.Row();
 			curr_row_second= timing_data->GetElapsedTimeFromBeat(NoteRowToBeat(curr_row));
+			++curr_row_id;
 		}
 		if(curr_note->type != TapNoteType_Empty)
 		{
 			curr_note->occurs_at_second= curr_row_second;
+			curr_note->id_in_chart= static_cast<float>(curr_note_id);
+			curr_note->id_in_column= static_cast<float>(column_ids[curr_note.Track()]);
+			curr_note->row_id= static_cast<float>(curr_row_id);
+			++curr_note_id;
+			++column_ids[curr_note.Track()];
 			notes_on_curr_row.push_back(&(*curr_note));
 			if(curr_note->subType != TapNoteSubType_Invalid)
 			{

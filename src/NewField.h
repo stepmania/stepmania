@@ -119,10 +119,10 @@ struct NewFieldColumn : ActorFrame
 		if(off > last_y_offset_visible) { return 1; }
 		return 0;
 	}
-	double calc_y_offset(double beat, double second);
+	double calc_y_offset(double beat, double second, TapNote const* note);
 	double head_y_offset()
 	{
-		return calc_y_offset(m_curr_beat, m_curr_second);
+		return calc_y_offset(m_curr_beat, m_curr_second, nullptr);
 	}
 	double calc_lift_pretrail(double beat, double second, double yoffset);
 	double get_reverse_shift()

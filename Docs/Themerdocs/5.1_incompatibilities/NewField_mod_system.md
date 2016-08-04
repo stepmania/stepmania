@@ -3,14 +3,11 @@ the notefield.  Things that change how notes appear are also known as
 modifiers.
 
 ## Overview
-The mod system is a set of building blocks, each layer built on top of the
-previous.  This guide will go from the bottom layer to the top.  
 Mods are heavily based on abstraction, so prepare yourself.
 
-Mods are designed to be "fire and forget".  You create a ```ModFunction``` by
-calling ```ModifiableValue:add_mod()``` or a similar function, and then never
-change it.  Functions for accessing and modifying ```ModFunction```s after
-creation are provided, but should not be necessary.
+Mods are designed to be "fire and forget".  A mod cannot be changed after it
+is added to the system, it can only be removed or replaced by one with the
+same name.
 
 There is a mod management system for handling mods that need to start or end
 at a particular time.
@@ -19,7 +16,7 @@ at a particular time.
 #### Complexity
 If some aspect is too complex or strange to understand, you can safely ignore
 it and just use the parts you understand.  For example, if you have trouble
-understanding the phases input shifter, you can ignore it and just make mods
+understanding the phase operator, you can ignore it and just make mods
 that don't use it.
 
 
@@ -57,371 +54,160 @@ and shaped by mods.  A hold is roughly equivalent to having a tap every 4
 pixels along its length.
 
 
-# Classes
-* ModInput
-* ModFunction
-* ModifiableValue
-* ModifiableVector3
-* ModifiableTransform
-* NewFieldColumn
-* NewField
+# Mod structure
+```
+column:get_speed_mod():add_mod{name= "speed", {"*", "dist_beat", 5}}
+```
+### Operand
+An operand can be either an operator, or an input.  It's an abstract term
+that means either an operator or an input can be used where it is.
 
+### Input
+An input is some value from the note being modified.  Or a raw number.
 
-## ModInput
-
-### Explanation
-```ModInput``` is a piece of input for a ```ModFunction```.  It is a type,
-a scalar, an offset, and two ```input limiters```.  The type sets which
-value from a note is used.  When a ModInput is evaluated, the value from the
-note is put through the input limiters, then multiplied by the scalar, then
-the offset is added.
-
-### Input types
 To render a note, the notefield takes a few basic properties from the note
-and gives them to the modifiers as input.  Things that are not notes have the
-current music beat and second for their EvalBeat and EvalSecond inputs, and 0
-for their Dist inputs.  
-* Scalar  
-  The scalar value will be used, and not multiplied with a value from the
-  note.
-* EvalBeat  
-  EvalBeat is the beat of the music that the note occurs on.
-* EvalSecond  
-  EvalSecond is the second of the music that the note occurs on.
-* MusicBeat  
-  MusicBeat is the current beat of the music.
-* MusicSecond  
-  MusicSecond is the current second of the music.
-* DistBeat  
-  DistBeat is EvalBeat - MusicBeat.
-* DistSecond  
-  DistSecond is EvalSecond - MusicSecond.
-* YOffset  
-  YOffset is the value calculated by the speed mod, before reverse effects
-  are applied.  YOffset is zero for the speed mod, reverse mods, and receptor
-  and explosion mods.
-* StartDistBeat  
-  The distance in beats from the start time of the ```ModFunction```.
-* StartDistSecond  
-  The distance in seconds from the start time of the ```ModFunction```.
-* EndDistBeat  
-  The distance in beats from the end time of the ```ModFunction```.
-* EndDistSecond  
-  The distance in seconds from the end time of the ```ModFunction```.
-* NoteTimeRandom  
-  A random value that is different for every note. (0-1 range)
-* MusicTimeRandom  
-  A random value that is different every frame. (0-1 range)
-* StageRandom  
-  A random value that is different every stage. (0-1 range)
+and gives them to the modifiers as input.  Things that are not notes use the
+current music time as the eval time.
+* "column"  
+  The column the note is in.
+* "y_offset"  
+  y_offset is the value calculated by the speed mod, before reverse effects
+  are applied.  y_offset is zero for the speed mod, reverse mods, and
+	receptor and explosion mods.
+* "note_id_in_chart"
+* "note_id_in_column"
+* "row_id"  
+	See image: http://i.imgur.com/U2UcGtM.png
+* "eval_beat"
+* "eval_second"  
+	The time the note occurs at.
+* "music_beat"
+* "music_second"
+	The current music time.
+* "dist_beat"
+* "dist_second"
+	Eval time minus music time.
+* "start_beat"
+* "start_second"  
+	Start time set in the mod function.
+* "end_beat"
+* "end_second"  
+	End time set in the mod function.
 
 #### Why are there both Beat and Second inputs?
 Because C mods exist.  And for other things that find it more convenient to
 work with seconds instead of beats.
 
-### Input shifters
-To enable mods that need to shift the input around in special ways before
-using it, input shifters are provided inside ModInput.  
-To use an input shifter in a ModInput, put it inside the table when creating
-the ModInput.
+### Operator
+An operator is a lua table where the first element is the name of the
+operator and the other elements are its operands.
 
-##### Input shifter order
-To use input shifters, it helps to understand the steps they are applied in.
-Each step has a piece of pseudocode to illustrate how the value changes in each step.
-* 1. Initial input value is picked.  (Ex: ```y_offset= 5```)
-* 2. Input value goes through rep input shifter.  (Ex: ```y_offset= rep(y_offset)```)
-* 3. Input value goes through phase input shifter.  (Ex: ```y_offset= phase(y_offset)```)
-* 4. Input value is multiplied by the scalar member of the ModInput.  (Ex: ```y_offset= y_offset * 1```)
-* 5. Input value goes through the spline input shifter.  (Ex: ```y_offset= spline(y_offset)```)
-* 6. The offset member of the ModInput is added in.  (Ex. ```y_offset= y_offset + 0```)
-* 7. The final result is passed to the parent ModFunction.  (Ex: ```return y_offset```)
+The sum of the numbers one through five:
+```{"+", 1, 2, 3, 4, 5}```
 
-#### rep input shifter
-The rep input shifter causes a specific sub-range of the input to repeat
-instead of using the full range of the input.  It has only ```rep_begin```
-and ```rep_end```.  The result of the rep input limiter will never equal ```rep_end```.
-##### Example
-```rep= {1, 2}```
-rep_begin is 1.
-rep_end is 2.
-* input is 2, result is 1.
-* input is .2, result is 1.2.
-* input is -.2, result is 1.8.
+Six times that sum:
+```{"*", 6, {"+", 1, 2, 3, 4, 5}}```
 
-#### phase input shifter
-The phase input shifter applies a multiplier and an offset if the input is in
-its range.  ```
-Equation: ```result= ((input - phase_start) * multiplier) + offset```
-The range includes the beginning, but not the end.  If the input is not in
-the range of a phase, the default phase is used.  The default phase has a
-start of 0, finish 0, mult 1, and offset 0 (so the input is unchanged).  
-A ModInput can have multiple phases to simplify creating mods that need
-multiple phases. (say, when beat ramps up the amplitude on a sine wave, then
-ramps it down.  Between beats is one phase, ramp up is another, and ramp down
-is a third.)  
-The system relies on phases not overlapping and being sorted.  If the list of
-phases is not sorted, or two phases overlap, the result is undefined.  
-##### Example
-```phases= {{0, 1, 2, -1}}```
-phase_start is 0.  
-phase_finish is 1.  
-phase_mult is 2.  
-phase_offset is -1.  
-* input is -1, result is -1 (outside the phase).
-* input is 0, result is -1 (0 - 0 is 0, 0 * 2 is 0, 0 + -1 is -1).
-* input is .5, result is 0 (.5 - 0 is .5, .5 * 2 is 1, 1 + -1 is 0).
-* input is 1, result is 1 (outside the phase).
-```phases= {{0, 1, 2, -1}, {1, 2, 1, 0}}```
-Two phases are in this example.  
-* input is -1, result is -1 (outside any phase).
-* input is 0, result is -1 (in phase one).
-* input is .5, result is 0 (in phase one).
-* input is 1, result is 0 (in phase 2).
-* input is 1.5, result is .5 (in phase 2).
-* input is 2, result is 2 (outside any phase).
-
-#### Spline input shifter
-If the input needs to follow a complex curve, a spline can be used.  
-The optional fields ```loop``` and ```polygonal``` can be set to make the
-spline looped or polygonal.  Each point on the spline must be a number.
-##### Example
-```{"ModInputType_MusicBeat", 1/4, spline= {loop= true, 0, 1.5, 2, 1.5}}```
-This creates a looped spline with points at 0, 1.5, 2, and 1.5.  When the
-```ModInput``` is evaluated, the music beat will be multiplied by 1/4, the
-spline will evaluated at that point, and the result returned.  
-So at music beat 0, the spline is evaluated at t= 0.  At music beat 4, the
-spline is evaluated at t= 1.  Since the spline is looped, at music beat 16,
-the spline is evaluated at t= 0, because t= 4 is equivalent to t=0 on a
-looped spline.
-```{"ModInputType_MusicBeat", 1/4, spline= {loop= true, polygonal= true, 0, 1.5, 2, 1.5}}```
-This time the spline is polygonal instead of being curved.
-
-### Functions
-Function descriptions are omitted in cases where they would just restate what
-the function name says.  
-In the args for these functions ```phase``` means a table of four numbers:
-```{start, finish, mult, offset}```.  
-In general, the get and set functions for a thing return it exactly as it
-appears when constructing a ModInput.  So if you create a ModInput with
-```phases= {{0, 1, 2, -1}, {1, 2, 1, 0}, default= {-5, 5, -1, 1}}``` then
-```get_all_phases()``` will return
-```{{0, 1, 2, -1}, {1, 2, 1, 0}, default= {-5, 5, -1, 1}}``` and
-```get_phase(1)``` will return ```{0, 1, 2, -1}```.
-* get_type()
-* set_type(ModInputType)
-* get_scalar()
-* set_scalar(float)
-* get_offset()
-* set_offset(float)
-* get_rep()
-  Returns ```{rep_begin, rep_end}```.
-* set_rep({float, float})
-  Pass nil to disable the rep input shifter.
-* get_all_phases()
-* set_all_phases(table)
-* get_phase(int)
-* set_phase(int, table)
-* get_default_phase()
-* set_default_phase(table)
-* get_num_phases()
-* remove_phase(int)
-* clear_phases()
-  Removes all phases and disables phase input shifter.
-* get_enable_phases()
-  Returns true if the phase input shifter is enabled.
-* set_enable_phases(bool)
-  Can be used to disable or enable the phase input shifter without changing
-  any phases.
-* get_spline_size()
-* get_spline_point(int)
-* set_spline_point(int, float)
-* add_spline_point(float)
-  Similar to set_spline_point, but adds to the end instead of setting a point
-  that already exists.
-* remove_spline_point(int)
-* get_spline()
-* set_spline(table)
-
-### Construction Examples
-These examples are meant as elements in a table of ```ModInput```s that are
-being passed when creating a ```ModFunction```.  The first two examples are
-equivalent, the bare number form is provided for convenience.  The first
-element of the table must be the type, the second is the scalar, the third is
-the offset.  If the scalar or offset is not provided, 0 will be used.  
-The input limiters are optional and are set from named elements of the table.
-``` 5 ```  
-```{"ModInputType_Scalar", 5}```  
-The second example is identical to the first, the simple number form is for
-convenience.  
-```{"ModInputType_EvalBeat", 1}```  
-```{"ModInputType_EvalSecond", 2, 3}```
-```{"ModInputType_DistBeat", 1, rep= {1, 2}}```
-```{"ModInputType_DistBeat", 1, phases= {{0, 1, 2, 0}}}```
-```{"ModInputType_DistBeat", 1, 2, rep= {1, 2}, phases= {{0, 1, 2, 0}, {1, 2, 4, 0}}}```
+#### Operator names:
+The basic operators each have two names, one for the word written out, and a
+single character name for conciseness.
+* "+"
+* "add"  
+	The addition operator.  Returns the sum of its operands.
+* "-"
+* "subtract"  
+	The subtraction operator.  Returns "a - b - c - ...".
+* "*"
+* "divide"  
+	The division operator.  Returns "a / b / c / ...".
+* "/"
+* "multiply"  
+	The multiplication operator.  Returns "a * b * c * ...".
+* "^"
+* "exp"  
+	Exponentiationalificationizate.  Returns "a^b^c^...".
+* "v"
+* "log"  
+	Log!  Log!  Log!  Better than bad, it's log!  Rolls down stairs!
+* "sine"  
+	Only takes one operand.
+* "tan"  
+	Only takes one operand.
+* "square"  
+	Only takes one operand.  Square wave version of sine.
+* "triangle"  
+	Only takes one operand.  Triangle wave version of sine.
+* "flat"
+	Only takes one operand.  Flat wave version of sine.
+* "random"  
+	Only takes one operand.  Returns a random number generated from its
+	operand.  ```{"random", "music_beat"}``` means a different random number
+	every frame.  ```{"random", "note_id"}``` means a different random number
+	for every note, but the same number every frame.  
+	The stage seed is added to the operand, so it will be different every time
+	the song is played.
+* "repeat"  
+	```{"repeat", "music_beat", 0, 2}```
+	Changes it's operand to repeat the given range.  The range elements must
+	be numbers.
+* "phase"  
+	```{"phase", "music_beat", {default= {0, 0, 1, 0}, {0, 4, -1, 0}, {4, 8, 2, -4}}}```
+	The phase operator changes its operand based on the phase of the moon.  
+	The third element of the operator table must be the table of phases.  
+	Each phase has a start value, end value, multiplier, and offset.  
+	When the moon is between the start value and the end value, it is in that
+	phase.  If it's not in any phase, the default phase is used.  
+	The start value of the phase is subtracted from the cow, then the result is
+	multiplied by the multiplier, and the offset is added.  It's like this:
+	```result= ((operand - phase.start) * phase.markiplier) + phase.offset```
+* "spline"  
+	```{"spline", loop= true, polygonal= false, operand, operand, operand, ...}```
+	Inspires a headache in all who contemplate it.  
+	The first operand is the t value to evaluate the spline with.  The other
+	operands are the points.  If loop is true, the spline is a looping spline.
+	If polygonal is true, the spline will not be curved.
 
 
-## ModFunction
 
-### Explanation
-A ```ModFunction``` takes some ```ModInput```s and returns a result.  The
-number of ```ModInput```s and how they are used varies for each type of ```ModFunction```.  
-A ```ModFunction``` can optionally have a name.  If a name is not provided,
-one will be generated.  The name can be used to find the ```ModFunction```
-in the ```ModifiableValue``` after creation.  
+### Mod Function
+A mod function is a lua table with various fields and an operand.  All fields
+are optional, with default values.
 
-#### Managed Mods
-If a ```ModFunction``` is added with ```add_managed_mod```, it should have a
-start time and an end time.  The managing system will be discussed more in
-the section for ```ModifiableValue```.  
-The field for setting the start beat is ```start_beat``` and start second is
-```start_second```.  End beat is ```end_beat``` and end second is ```end_second```.  
-All the time fields are optional, but one for start and one for end should be
-set.  If ```start_beat``` is not provided, it will be calculated from
-```start_second```, and vice versa.  The same is true for the end time.
+```{name= "foo", operand}```
 
-##### Start/End Dist Inputs
-Managed mods can use the StartDistBeat, StartDistSecond, EndDistBeat, and
-EndDistSecond inputs.  For unmanaged mods, those inputs will always be zero.
-
-### Function types
-* Constant  
-  This takes a single input and returns it when evaluated.
-* Product  
-  This takes two inputs and multiplies them together.
-* Power  
-  This takes two inputs and returns ```base^exponent```.
-* Log  
-  This takes two inputs and returns ```log(value) / log(base)```, which is
-  the log of ```value``` in base ```base```.
-* Sine  
-  This is a sine wave.  A sine wave has four inputs:  angle, phase,
-  amplitude, and offset.  The equation looks like this:  
-  ```return (sin(angle + phase) * amplitude) + offset```
-* Tan  
-  This is a tan wave.  You need a fresh tan before hitting the club.
-* Square  
-  This is a square wave.  The inputs are identical to a sine wave.
-  For any angle and phase where ```sin(angle + phase)``` would be over zero,
-  a square wave is 1.  Any angle and phase where ```sin(angle + phase)```
-  would be under zero, a square wave is -1.  The amplitude and offset are
-  applied in the same way as for a sine wave.
-* Triangle  
-  A triangle wave is like a sine wave, but with straight lines instead of
-  curves.  The peaks and troughs of the triangle wave are exactly where they
-  would be for a sine wave with the same inputs.
-* Spline  
-  ```ModFunctionSpline``` is the most complex.  It allows you to define a
-  spline, then uses a ```ModInput``` to calculate a t value, the spline is
-  evaluated at the t value, and the result is returned.  The spline is a one
-  dimensional cubic spline.  Each point on the spline is a ```ModInput```.
-  Using a input type that changes every frame like ```MusicSecond``` is
-  practically free.  Using an input that is different for every note like
-  ```EvalSecond``` is expensive, because the spline has to be solved again
-  for every note that is rendered in the column.  Using per-note input for
-  the t value is expected and incurs no performance penalty.  
-  There are flags for creating the spline as a loop or polygonal. Lua.xml
-  explains what makes a looped or polygonal spline special.  
-  Changing the type of an input after creating the spline is guaranteed to
-  make the spline do the wrong thing.  (on creation, the points are organized
-  into different lists for scalar, per-frame, and per-note.  These lists are
-  never updated)
-
-### Column field
-The random input choices are different for each column.  The column can be
-set for a ModFunction to make the random results the same as for the other
-column.
-```lua
-{"ModFunctionType_Constant", column= 0, {"ModInputType_NoteTimeRandom", 64}}
-```
-
-### Functions
-* get_inputs()  
-  This returns the ```ModInputs``` in a table.  Because the different types
-  have different inputs, here is a list of the table for each type.  The same
-  input order is used when constructing a ```ModFunction``` for ```ModifiableValue:add_mod```.  
-  * Constant: {value}
-  * Product: {value, multiplier}
-  * Power: {value, exponent}
-  * Log: {value, base}
-  * Sine: {angle, phase, amplitude, offset}
-  * Square: Same as Sine.
-  * Triangle: Same as Sine.
-  * Spline: {t_value, point_1, point_2, ...}
-
-### Construction Examples
-These examples are meant as the argument to ```Modifiablevalue:add_mod```.  
-A ```ModFunction``` can be given an optional name that can be used to fetch
-it from the ```Modifiablevalue``` later.  If it is not given a name on
-creation, a unique name will be generated.
-```{"ModFunctionType_Constant", 2}```  
-```{name= "fred", "ModFunctionType_Constant", 2}```  
-```{"ModFunctionType_Constant", {"ModInputType_Scalar", 2}}```  
-```{"ModFunctionType_Power", {"ModInputType_DistBeat", 1}, 2}```  
-```{"ModFunctionType_Sine", {"ModInputType_DistBeat", 1}, 0, 2, 0}```  
-```{"ModFunctionType_Constant", {"ModInputType_DistBeat", 2, rep= {0, .1}}}```  
-```{"ModFunctionType_Constant", {"ModInputType_DistBeat", 2, phases= {default= {0, 0, 0, 1}, {.1, .9, 10, 0}}}}```
-The most extreme example: https://youtu.be/b1jcIgLFlws
-```
-{name= "kloozorg", "ModFunctionType_Sine",
-  {"ModInputType_EvalBeat", 1, .5, rep= {.2, .4}, phases= {
-  {.2, .25, 0, 0}, {.25, .35, 4, 0}, {.35, .4, 0, 1}}},
-  {"ModInputType_EvalSecond", 1, -.5, rep= {.4, .6}, phases= {
-  {.4, .45, 0, 0}, {.45, .55, 4, 0}, {.55, .6, 0, 1}}},
-  {"ModInputType_DistBeat", 1, .5, rep= {.2, .4}, phases= {
-  {.2, .25, 0, 0}, {.25, .35, 4, 0}, {.35, .4, 0, 1}}},
-  {"ModInputType_DistSecond", 1, -.5, rep= {.4, .6}, phases= {
-  {.4, .45, 0, 0}, {.45, .55, 4, 0}, {.55, .6, 0, 1}}}
-}
-```
-### Spline Construction Examples
-This constructs a simple spline with 6 points, all of them scalars.  The
-t value uses the y offset of the note as input, and multiplies it by 1/16,
-so the note takes 96 pixels to traverse the whole spline.  If this were on
-the x position of a note, it would be positioned normally at y offset 0, 4
-pixels to the right at y offset 16, 16 pixels right at y offset 32, 64 pixels
-right at y offset 48, 16 pixels right at y offset 64, 4 pixels right at y
-offset 80, and back to 0 pixels right at y offset 96.
-```
-{"ModFunctionType_Spline", t= {"ModInputType_YOffset", 1/16}, loop= true,
-  0, 4, 16, 64, 16, 4}
-```
-The second example is the same as the first, but it uses the current second
-of the music as the input for the point in the middle of the spline.  This
-makes that point move as the song progresses.
-```
-{"ModFunctionType_Spline", t= {"ModInputType_YOffset", 1/16}, loop= true,
-0, 4, 16, {"ModInputType_MusicSecond", 2}, 16, 4}
-```
-The third example uses the beat the note is on as input for a point.  The
-spline must be solved every time a note is rendered, which is expensive.
-```
-{"ModFunctionType_Spline", t= {"ModInputType_DistSecond", 1/16}, loop= true,
-0, 16, {"ModInputType_YOffset", 1/16}, 16}
-```
-This example makes the spline polygonal just to demonstrate how to set that
-flag.  A polygonal spline has straight lines instead of curved lines.
-```
-{"ModFunctionType_Spline", t= {"ModInputType_DistSecond", 1/16}, loop= true,
-polygonal= true, 0, 16, {"ModInputType_YOffset", 1/16}, 16}
-```
-
-### Example
-This example assumes that a ```ModFunction``` has been fetched from a
-```ModifiableValue``` and stored in the variable ```mod```.
-```
-local inputs= mod:get_inputs()
-for i, input in ipairs(inputs) do
-  -- Call some ModInput function here.
-  input:set_scalar(5)
-end
-```
+* name  
+	The name can be any string.  If the ModifiableValue already has a
+	Mod Function with the same name, this new one will replace that one.
+	If no name is set, a unique name will be generated.  
+	It is better not to set a name for managed mods, unless you want to invent
+	lots of unique meaningful names.
+* sum_type  
+	sum_type controls how the result of the Mod Function is combined with the
+	result from preceding Mod Functions in the ModifiableValue.  Valid values
+	are "+", "add", "-", "subtract", "*", "multiply", "/", "divide".  Default
+	is "+".  See note on evaluation in ModifiableValue section.
+* priority  
+	Managed mods are evaluated in order by priority, from lowest to highest.
+	Default is 0.  Priority is ignored for unmanaged mods.
+* column  
+	If the column field is set, then using the "column" input will use this
+	number instead of the actual column number.
+* start_beat
+* start_second
+* end_beat
+* end_second  
+	start_beat and start_second set when a managed mod begins.  If start_beat
+	is not set, it is calculated from start_second.  start_beat and
+	start_second are ignored by unmanaged mods.  end_beat and end_second work
+	similarly to the start values.
 
 
 ## ModifiableValue
 
 ### Explanation
-A ModifiableValue is a base value, and a list of ```ModFunction``` mods.
-When evaluated, the base value and the mods are all summed together.
+A ModifiableValue is anything that can be changed with modifiers.
+It contains unmanaged and managed mods which are evaluated to set a number.
+One example is the note alpha.
 
 #### Managed Mods
 When a mod is added with ```add_managed_mod```, it is managed.  This means
@@ -435,12 +221,6 @@ functions is used to create and access them.
   This adds a ```ModFunction``` to the list of mods.  See the Construction
   Examples section in ```ModFunction``` for an explanation of the arg.  
   ```add_mod``` returns the ```ModifiableValue``` it was called on.  
-* add_get_mod(ModFunction)  
-  This takes the same arg as ```add_mod``` and it returns the newly created
-  ```ModFunction```.  ```add_get_mod``` is equivalent to using ```add_mod```
-  and chaining it with ```get_mod```.
-* get_mod(name)  
-  This returns the ```ModFunction``` with the given name in the list.
 * remove_mod(name)  
   Removes the ```ModFunction``` with the given name in the list.
 * clear_mods()  
@@ -449,48 +229,42 @@ functions is used to create and access them.
   Identical to add_mod, but for managed mods.
 * add_managed_mod_set({ModFunction, ...})  
   Takes a table of ```ModFunction```s to add.
-* add_get_managed_mod(ModFunction)  
-  Identical to add_get_mod, but for managed mods.
-* get_managed_mod(name)  
-  Identical to get_mod, but for managed mods.
 * remove_managed_mod(name)  
   Identical to remove_mod, but for managed mods.
 * clear_managed_mods()  
   Identical to clear_mods, but for managed mods.
 * get_value()  
   Returns the base value of the ```ModifiableValue```.
-* set_value(float)  
-  Sets the base value of the ```ModifiableValue```.
+* set_value(value)  
+  Convenience wrapper around ```add_mod{name= "base_value", value}```.
 
 ### Examples
-This assumes that a ```ModifiableValue``` has been fetched from something and
-stored in the variable ```mod_val```.
 ```
--- First mod:  1
--- Second mod:  The distance from the note to the receptor, in seconds.
--- Third mod:  The input angle for the wave is the beat * pi, and the
---   amplitude grows from 0 at the beginning to 1 two minutes in.  After 4
---   minutes, the amplitude would be 2.
--- Fourth mod:  Same as the third, but only uses the part of the sine wave
---   that is between pi*.25 and pi*.75.
-mod_val:add_mod{"ModFunctionType_Constant", 1}
-  :add_mod{"ModFunctionType_Constant", {"ModInputType_DistSecond", 1}}
-  :add_mod{"ModFunctionType_Sine", {"ModInputType_DistBeat", pi}, 0,
-    {"ModInputType_MusicSecond", 1/120}, 0}
-
-local mod= mod_val:get_mod(3)
--- Imagine the example for ModFunction here.
-
-mod_val:remove_mod(3)
-Trace("There are " .. mod_val:num_mods() .. " mods in the list.")
-
-mod_val:clear_mods()
-
-mod_val:add_managed_mod_set{
-  {start_beat= 18, end_beat= 34, "ModFunctionType_Constant", {"ModInputType_StartDistBeat", pi/2}},
- {start_beat= 38, end_beat= 54, "ModFunctionType_Constant", {"ModInputType_StartDistBeat", -pi/2}},
+column:get_note_pos_y():add_mod{name= "tipsy", {
+  "*", 64, .4, {"cos",
+    {"+", {"*", "music_second", 1.2}, {"*", "column", 1.8}}
+	}
 }
 ```
+This add a mod that makes the notes drift up and down.  As a normal equation
+it would look like this: ```64 * .4 * cos((music_second * 1.2) + (column * 1.8))```
+The music second and column are added together to make the columns out of
+phase with each other.
+
+
+```
+column:get_note_pos_x():add_managed_mod_set{
+  {start_beat= 0, end_beat= 16, {"*", 4, {"-", "eval_beat", "start_beat"}}},
+	{start_beat= 16, end_beat= 32, {"*", 4, {"-", "end_beat", "eval_beat"}}},
+}
+```
+The first mod in the managed set moves the notes right 4 pixels per beat
+until it ends at beat 16.  For example, when the eval beat is 10: 10 minus 4
+is 6, 6 times 4 is 24, so the note is 24 pixels right of its normal position.
+
+The second mod does the reverse.  For example, when the eval beat is 20:
+32 minus 20 is 12, 12 * 4 is 48, so the note is 48 pixels right of its normal
+position.
 
 
 ## ModifiableVector3
@@ -517,9 +291,8 @@ result is the position, rotation, and zoom of the note inside the column.
 ### Tweening
 Attempting to use the normal Actor functions for setting the position,
 rotation, or zoom of a ```NewFieldColumn``` will have no effect.  There is a
-```ModifiableTransform``` for that.  If this is a serious problem, look up
-the Actor function ```add_wrapper_state```, which puts an ActorFrame around
-an actor that already exists.
+```ModifiableTransform``` for using the modifier system to move the column
+around.
 
 ### Modifiers
 Modifiers are fetched from a column with their ```get_*``` functions.
@@ -558,14 +331,14 @@ The type of a modifier is in parens after the name.
   the screen.  
   A value of 128 puts the receptor 128 pixels above the center.  
   ```reverse_offset_pixels``` is evaluated once per frame, with only the
-  current time of the column.  The ```Eval*``` inputs for it are identical to
-  the ```Music*``` inputs, and the ```Dist*``` inputs are 0.
+  current time of the column.  The eval inputs for it are identical to
+  the music inputs, and the dist inputs are 0.
 * reverse_scale (ModifiableValue)  
   ```reverse_scale``` controls whether notes scroll up or down.  At 1, notes
 	scroll up.  At -1, notes scroll down.
   ```reverse_scale``` is evaluated once per frame, with only the
-  current time of the column.  The ```Eval*``` inputs for it are identical to
-  the ```Music*``` inputs, and the ```Dist*``` inputs are 0.
+  current time of the column.  The eval inputs for it are identical to
+  the music inputs, and the dist inputs are 0.
 * center_percent (ModifiableValue)  
   ```center_percent``` acts as an additional shift factor on the y offset
   that moves it towards the center of the column.  ```center_percent``` of 0
@@ -573,8 +346,8 @@ The type of a modifier is in parens after the name.
   ```reverse_offset_pixels``` entirely, putting the receptor in the center of
   the column.  
   ```center_percent``` is evaluated once per frame, with only the
-  current time of the column.  The ```Eval*``` inputs for it are identical to
-  the ```Music*``` inputs, and the ```Dist*``` inputs are 0.
+  current time of the column.  The eval inputs for it are identical to
+  the music inputs, and the dist inputs are 0.
 * note (ModifiableTransform)  
   The ```note``` transform is evaluated for a note to calculate its position,
   rotation, and scale.  The y offset resulting from the speed mod and the
@@ -597,6 +370,43 @@ The type of a modifier is in parens after the name.
 * explosion_glow (ModifiableValue)  
   Notes, receptors, and explosions all have separate alpha and glow values.
   Alpha defaults to 1, glow defaults to 0.
+
+### Get ModifiableValue functions
+* get_time_offset()
+* get_quantization_multiplier()
+* get_quantization_offset()
+* get_speed_mod()
+* get_reverse_offset_pixels()
+* get_reverse_scale()
+* get_center_percent()
+* get_rekt()
+* get_note_pos_x()
+* get_note_pos_y()
+* get_note_pos_z()
+* get_note_rot_x()
+* get_note_rot_y()
+* get_note_rot_z()
+* get_note_zoom_x()
+* get_note_zoom_y()
+* get_note_zoom_z()
+* get_column_pos_x()
+* get_column_pos_y()
+* get_column_pos_z()
+* get_column_rot_x()
+* get_column_rot_y()
+* get_column_rot_z()
+* get_column_zoom_x()
+* get_column_zoom_y()
+* get_column_zoom_z()
+* get_hold_normal_x()
+* get_hold_normal_y()
+* get_hold_normal_z()
+* get_note_alpha()
+* get_note_glow()
+* get_receptor_alpha()
+* get_receptor_glow()
+* get_explosion_alpha()
+* get_explosion_glow()
 
 For convenience, the ```ModifiableTransform```s and the
 ```ModifiableVector3```s inside them are not directly accessed.  Instead, a
@@ -669,8 +479,14 @@ needs the flags to tell it to turn off those things.
   Returns the reverse scale that is applied to y offsets before rendering.
 * apply_column_mods_to_actor(actor)
   Sets the transform of the actor as if it were affected by the column mods.
-* apply_note_mods_to_actor(actor)
+* apply_note_mods_to_actor(actor, time_is_offset, beat, second, y_offset, use_alpha, use_glow)
   Sets the transform of the actor as if it were affected by the note mods.
+	If time_is_offset is true, the time given is treated as an offset from the
+	current time.
+	beat and second are optional.  If neither is given, the current time is
+	used.  If only beat is set, the second is calculated.  If second is set,
+	the beat is calculated (overriding the beat value that was passed in).
+	use_alpha and use_glow can be true to apply the alpha and glow mods.
 
 ### Examples
 These examples assume that a column has been fetched from a field and stored
@@ -692,17 +508,14 @@ local play_x= 2
 
 -- Set a speed mod that is equivalent to C300.  The distance is in seconds,
 --   and the 300 in C300 is in minutes, so play_bpm is divided by 60.
-column:get_speed_mod():add_mod{"ModFunctionType_Constant",
-  {"ModInputType_DistSecond", play_bpm / 60}}
+column:get_speed_mod():add_mod{{"*", "dist_second", play_bpm / 60}}
 
 -- Set a speed mod that is equivalent to 2x.
-column:get_speed_mod():add_mod{"ModFunctionType_Constant",
-  {"ModInputType_DistBeat", play_x}}
+column:get_speed_mod():add_mod{{"*", "dist_beat", play_x}}
 
 -- Set a speed mod that is equivalent to m300.  Fetching the display bpm is
 --   outside the scope of this document.
-column:get_speed_mod():add_mod{"ModFunctionType_Constant",
-  {"ModInputType_DistBeat", play_bpm / display_bpm}}
+column:get_speed_mod():add_mod{{"*", "dist_beat", play_bpm / display_bpm}}
 
 -- Note that if you actually do all three of these on a column, the speed mod
 --   will be the sum of all three.  So for a chart with a display bpm of 150,
@@ -719,8 +532,7 @@ column:get_speed_mod():add_mod{"ModFunctionType_Constant",
 column:get_reverse_scale():set_value(-1)
 
 -- Make the notes follow a sine wave left and right as they go up.
-column:get_note_pos_x():add_mod{"ModFunctionType_Sine",
-  {"ModInputType_DistBeat", pi}, 0, 128, 0}
+column:get_note_pos_x():add_mod{{"*", 128, {"sine", {"*", "dist_beat", pi}}}}
 
 -- Make the column change size with the music, and have the size grow as the
 --   song continues.  Calibrated to reach max amplitude at the end of the
@@ -729,9 +541,9 @@ column:get_note_pos_x():add_mod{"ModFunctionType_Sine",
 --   1/130 is used so the x zoom doesn't quite hit zero at the end of the
 --   song.
 local seconds_factor= 120 / song_length
-column:get_column_zoom_x():add_mod{"ModFunctionType_Triangle",
-  {"ModInputType_MusicBeat", pi/2}, 0,
-  {"ModInputType_MusicSecond", 1/130 * seconds_factor}, 0}
+column:get_column_zoom_x():add_mod{
+  {"*", "music_second", 1/130 * seconds_factor,
+  {"triangle", {"*", "music_beat", pi/2}}}}
 ```
 
 
@@ -740,9 +552,7 @@ column:get_column_zoom_x():add_mod{"ModFunctionType_Triangle",
 ### Tweening
 Attempting to use the normal Actor functions for setting the position,
 rotation, or zoom of a ```NewField``` will have no effect.  There is a
-```ModifiableTransform``` for that.  If this is a serious problem, look up
-the Actor function ```add_wrapper_state```, which puts an ActorFrame around
-an actor that already exists.
+```ModifiableTransform``` for movind the NewField with the modifier system.
 
 ### Explanation
 The ```NewField``` is a collection of ```NewFieldColumn```s.  Not much more too it,
@@ -764,8 +574,27 @@ it.
 * receptor_glow (ModifiableValue)  
 * explosion_alpha (ModifiableValue)  
 * explosion_glow (ModifiableValue)  
-  receptor_alpha and receptor_glow affect layers with even draw order.
-  explosion_alpha and explosion_glow affect layers with odd draw order.
+  receptor_alpha and receptor_glow affect layers with receptor fade type.
+  explosion_alpha and explosion_glow affect layers with explosion fade type.
+
+### Get ModifiableValue functions
+* get_fov_mod()
+* get_trans_pos_x()
+* get_trans_pos_y()
+* get_trans_pos_z()
+* get_trans_rot_x()
+* get_trans_rot_y()
+* get_trans_rot_z()
+* get_trans_zoom_x()
+* get_trans_zoom_y()
+* get_trans_zoom_z()
+* get_vanish_x_mod()
+* get_vanish_y_mod()
+* get_receptor_alpha()
+* get_receptor_glow()
+* get_explosion_alpha()
+* get_explosion_glow()
+
 
 ### Functions
 * get_columns()  
@@ -800,10 +629,11 @@ for column in ivalues(field:get_columns()) do
   -- Imagine the example for NewFieldColumn here.
 end
 
--- Tilt the field, similar to what distant does, but do it on a SawTriangle
---   wave, so it starts with no tilt, gradually tilts, then snaps back.
-field:get_trans_rot_x():add_mod{"ModFunctionType_SawTriangle",
-  {"ModInputType_MusicBeat", pi/16}, 0, -pi/4, 0, 0, pi/2}
+-- Tilt the field, similar to what distant does, but do it on a modified
+--   triangle wave, so it starts with no tilt, gradually tilts, then snaps
+--   back.
+field:get_trans_rot_x():add_mod{
+{"*", -pi/4, {"triangle", {"repeat", {"*", "music_beat", pi/16}, 0, pi/2}}}}
 
 -- Invert the field over the y axis.
 field:get_trans_zoom_y():set_value(-1)
@@ -824,7 +654,7 @@ Scroll Segments are more complex: They change the beat value that is passed
 to the speed mod.  If you are doing something special with the input to the
 speed mod, avoid using scroll segments to keep your code simple.  
 If you set the speed mod to something simple like
-```{"ModFunctionType_Constant", {"ModInputType_DistBeat", 2}}```
+```{"*", "dist_beat", 2}```
 (a 2x speed mod), you don't need to worry about the effect that scroll
 segments have on the speed mod.  
 A speed segment starts at a beat and all beats after it are multiplied in
@@ -851,10 +681,6 @@ default phase is used for the rest.
 
 
 ## TODO
-Remove the long prefixes from the strings used for types.  This is a problem
-with Stepmania's string enum system in general, it requires the name of the
-enum as a prefix on the strings passed in from Lua.
-
 Add a convenience wrapper for changing all elements of zoom in the same way.
 
 Add a convenience wrapper in NewField for doing the same thing to all columns.
@@ -904,3 +730,35 @@ reproduced, but a spline can be calculated that is very similar to using the
 old equation.  This will not give the same result when boost and brake are
 both used, or behave differently when the player uses a C-mod instead of an
 X-mod.
+
+
+
+# Why
+
+## Why make an entirely new system?
+
+The old mod system has a variety of musical sync problems.  Various mods
+aren't synced to the music, and tweening mods is not synced.
+
+It can't be extended by themers and gimmick artists.  Anything not hardcoded
+in the system is impossible.  Want the beat modifier, but running at 1/8
+speed?  Requires writing it in C++, and so forth.
+
+Gimmick artists need a system that can efficiently handle thousands of mods
+that start and end at specific times.  Walking through a table of 500+ mods
+every frame to find one to activate is a disgrace.  The mod manager in the
+new mod system uses data structures and techniques that are not possible in
+lua to minimize the work needed to update which mods are active.
+
+
+## Why use these weird table structures instead of calling a lua function?
+
+Calling a lua function would be unusably slow.
+
+As a simple example, the system looks for things that only need to be
+calculated once per frame, and those things are only done once per frame.
+
+If you have ```{"sine", "music_beat"}``` somewhere in a mod, the system sees
+that the music beat only changes once per frame, so it only does that sine
+once per frame.  It doesn't have to do it for every note or every vert in a
+hold.

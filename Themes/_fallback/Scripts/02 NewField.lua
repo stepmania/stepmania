@@ -50,6 +50,11 @@ newfield_draw_order= {
 	over_field= 450,
 }
 
+function ModifiableValue:set_value(value)
+	if not self then return end
+	self:add_mod{name= "base_value", value}
+end
+
 -- The read_bpm arg to set_speed_mod is optional.  If it is exists,
 -- the speed is treated as an m-mod.  The read bpm for a chart can be fetched
 -- with PlayerState:get_read_bpm() or calculated by the theme.
@@ -65,14 +70,16 @@ function NewField:set_speed_mod(constant, speed, read_bpm)
 	-- divided by the music rate, then a player that reads C600 normally would
 	-- have to pick C300 when using x2 music rate.
 	local music_rate= GAMESTATE:GetSongOptionsObject("ModsLevel_Current"):MusicRate()
-	local mod_input= {}
+	local mod_input= "dist_beat"
+	local mod_mult= 1
 	local show_unjudgable= true
 	local speed_segments_enabled= true
 	local scroll_segments_enabled= true
 	if constant then
 		-- Constant speed mods use the distance in seconds to calculate the arrow
 		-- position.
-		mod_input= {"ModInputType_DistSecond", (speed / 60) / music_rate}
+		mod_input= "dist_second"
+		mod_mult= (speed / 60) / music_rate
 		-- Hide unjudgable notes so that mines inside of warps are not rendered
 		-- on top of the arrows the warp skips to.
 		show_unjudgable= false
@@ -83,14 +90,15 @@ function NewField:set_speed_mod(constant, speed, read_bpm)
 		read_bpm= read_bpm or 1
 		-- Non-constant speed mods use the distance in beats to calculate the
 		-- arrow position.
-		mod_input= {"ModInputType_DistBeat", (speed / read_bpm) / music_rate}
+		mod_input= "dist_beat"
+		mod_mult= (speed / read_bpm) / music_rate
 	end
 	-- Each column has independent modifier state, so the speed mod needs to be
 	-- set in each column.
 	for col in ivalues(self:get_columns()) do
 		-- The speed modifier is named so that repeated calls to
 		-- set_speed_mod do not add stacking speed mods.
-		col:get_speed_mod():add_mod{name= "speed", "ModFunctionType_Constant", mod_input}
+		col:get_speed_mod():add_mod{name= "speed", {"*", mod_input, mod_mult}}
 		col:set_show_unjudgable_notes(show_unjudgable)
 		col:set_speed_segments_enabled(speed_segments_enabled)
 		col:set_scroll_segments_enabled(scroll_segments_enabled)
@@ -133,6 +141,18 @@ function NewField:set_hidden_mod(line, dist, add_glow)
 	local glow_mod
 	if add_glow then
 		alpha_mod= {
+			name= "hidden", {"phase", "y_offset", {
+				default= {0, 0, 0, 0},
+				{-32, line, 0, -1},
+		}}}
+		glow_mod= {
+			name= "hidden", {"phase", "y_offset", {
+				default= {0, 0, 0, 0},
+				 {line - half_dist, line, 1/half_dist, 0},
+				 {line, line + half_dist, -1/half_dist, 1},
+		}}}
+		--[[
+		alpha_mod= {
 			name= "hidden", "ModFunctionType_Constant",
 			{"ModInputType_YOffset", 1, 0, phases= {
 				 default= {0, 0, 0, 0},
@@ -147,7 +167,16 @@ function NewField:set_hidden_mod(line, dist, add_glow)
 				 {line, line + half_dist, -1/half_dist, 1},
 			}}
 		}
+		]]
 	else
+		alpha_mod= {
+			name= "hidden", {"phase", "y_offset", {
+				default= {0, 0, 0, 0},
+				 {-32, 0, 0, -1},
+				 {0, line - half_dist, 0, -1},
+				 {line - half_dist, line + half_dist, 1/dist, -1},
+		}}}
+		--[[
 		alpha_mod= {
 			name= "hidden", "ModFunctionType_Constant",
 			{"ModInputType_YOffset", 1, 0, phases= {
@@ -157,6 +186,7 @@ function NewField:set_hidden_mod(line, dist, add_glow)
 				 {line - half_dist, line + half_dist, 1/dist, -1},
 			}}
 		}
+		]]
 	end
 	set_alpha_glow_mods(self, alpha_mod, glow_mod)
 end
@@ -166,6 +196,18 @@ function NewField:set_sudden_mod(line, dist, add_glow)
 	local alpha_mod
 	local glow_mod
 	if add_glow then
+		alpha_mod= {
+			name= "sudden", {"phase", "y_offset", {
+				 default= {0, 0, 0, 0},
+				 {line, math.huge, 0, -1},
+		}}}
+		glow_mod= {
+			name= "sudden", {"phase", "y_offset", {
+				 default= {0, 0, 0, 0},
+				 {line - half_dist, line, 1/half_dist, 0},
+				 {line, line + half_dist, -1/half_dist, 1},
+		}}}
+		--[[
 		alpha_mod= {
 			name= "sudden", "ModFunctionType_Constant",
 			{"ModInputType_YOffset", 1, 0, phases= {
@@ -181,7 +223,15 @@ function NewField:set_sudden_mod(line, dist, add_glow)
 				 {line, line + half_dist, -1/half_dist, 1},
 			}}
 		}
+		]]
 	else
+		alpha_mod= {
+			name= "sudden", {"phase", "y_offset", {
+				 default= {0, 0, 0, 0},
+				 {line - half_dist, line + half_dist, -1/dist, 0},
+				 {line + half_dist, math.huge, 0, -1},
+		}}}
+		--[[
 		alpha_mod= {
 			name= "sudden", "ModFunctionType_Constant",
 			{"ModInputType_YOffset", 1, 0, phases= {
@@ -190,6 +240,7 @@ function NewField:set_sudden_mod(line, dist, add_glow)
 				 {line + half_dist, math.huge, 0, -1},
 			}}
 		}
+		]]
 	end
 	set_alpha_glow_mods(self, alpha_mod, glow_mod)
 end
