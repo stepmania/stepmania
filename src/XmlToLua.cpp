@@ -151,11 +151,11 @@ void hidden_conv(vector<RString>& args)
 	args[0]= "visible";
 	if(args[1] == "1")
 	{
-		args[1]= "true";
+		args[1]= "false";
 	}
 	else
 	{
-		args[1]= "false";
+		args[1]= "true";
 	}
 }
 void diffuse_conv(vector<RString>& args)
