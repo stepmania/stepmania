@@ -914,7 +914,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const std::string & cachePath, Steps &o
 							Difficulty match_diff= StringToDifficulty(matcher);
 							if(matcher.empty())
 							{
-								match_diff == Difficulty_Edit;
+								match_diff= Difficulty_Edit;
 							}
 							if(out.GetDifficulty() != match_diff &&
 								!(out.GetDifficulty() == Difficulty_Edit &&

@@ -116,7 +116,7 @@ NewFieldColumn::NewFieldColumn()
 	 m_quantization_offset(&m_mod_manager, 0.0),
 	 m_speed_mod(&m_mod_manager, 0.0),
 	 m_lift_pretrail_length(&m_mod_manager, 0.25),
-	 m_reverse_offset_pixels(&m_mod_manager, 0.0),
+	 m_reverse_offset_pixels(&m_mod_manager, 240.0 - note_size),
 	 m_reverse_scale(&m_mod_manager, 1.0),
 	 m_center_percent(&m_mod_manager, 0.0),
 	 m_note_mod(&m_mod_manager), m_column_mod(&m_mod_manager),
@@ -136,9 +136,6 @@ NewFieldColumn::NewFieldColumn()
 	 reverse_scale_sign(1.0),
 	 pressed(false)
 {
-	m_quantization_multiplier.m_value= 1.0;
-	double default_offset= 240 - note_size;
-	m_reverse_offset_pixels.m_value= default_offset;
 	DeleteChildrenWhenDone(true);
 }
 
@@ -238,7 +235,7 @@ void NewFieldColumn::set_column_info(NewField* field, size_t column,
 	m_defective_mods= defects;
 	m_newskin->set_timing_source(&m_timing_source);
 	set_note_data(column, note_data, timing_data);
-	m_column_mod.pos_mod.x_mod.m_value= x;
+	m_column_mod.pos_mod.x_mod.add_simple_mod("base_value", "number", x);
 	m_use_game_music_beat= true;
 	m_player_colors= player_colors;
 
@@ -318,18 +315,18 @@ void NewFieldColumn::set_speed_old_way(float time_spacing,
 	{
 		if(max_scroll_bpm != 0.f)
 		{
-			m_speed_mod.add_simple_mod("speed", MIT_DistBeat,
+			m_speed_mod.add_simple_mod("speed", "dist_beat",
 				max_scroll_bpm / read_bpm / music_rate);
 		}
 		else
 		{
-			m_speed_mod.add_simple_mod("speed", MIT_DistBeat,
+			m_speed_mod.add_simple_mod("speed", "dist_beat",
 				scroll_speed);
 		}
 	}
 	else
 	{
-		m_speed_mod.add_simple_mod("speed", MIT_DistSecond,
+		m_speed_mod.add_simple_mod("speed", "dist_second",
 			scroll_bpm / 60.f / music_rate);
 	}
 }
@@ -381,7 +378,7 @@ void NewFieldColumn::set_displayed_second(double second)
 	set_displayed_time(m_timing_data->GetBeatFromElapsedTime(static_cast<float>(second)), second);
 }
 
-double NewFieldColumn::calc_y_offset(double beat, double second)
+double NewFieldColumn::calc_y_offset(double beat, double second, TapNote const* note)
 {
 	if(!m_in_defective_mode)
 	{
@@ -398,7 +395,7 @@ double NewFieldColumn::calc_y_offset(double beat, double second)
 				note_beat= m_timing_data->GetDisplayedBeat(static_cast<float>(note_beat));
 			}
 		}
-		mod_val_inputs input(note_beat, second, curr_beat, m_curr_second);
+		mod_val_inputs input(note_beat, second, curr_beat, m_curr_second, note);
 		double ret= note_size * m_speed_mod.evaluate(input);
 		if(m_speed_segments_enabled)
 		{
@@ -415,7 +412,7 @@ double NewFieldColumn::calc_y_offset(double beat, double second)
 
 double NewFieldColumn::calc_lift_pretrail(double beat, double second, double yoffset)
 {
-	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, yoffset);
+	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, yoffset, nullptr);
 	return m_lift_pretrail_length.evaluate(input);
 }
 
@@ -530,7 +527,7 @@ void NewFieldColumn::apply_column_mods_to_actor(Actor* act)
 void NewFieldColumn::apply_note_mods_to_actor(Actor* act, double beat,
 	double second, double y_offset, bool use_alpha, bool use_glow)
 {
-	mod_val_inputs mod_input(beat, second, m_curr_beat, m_curr_beat, y_offset);
+	mod_val_inputs mod_input(beat, second, m_curr_beat, m_curr_beat, y_offset, nullptr);
 	if(use_alpha)
 	{
 		act->SetDiffuseAlpha(static_cast<float>(m_note_alpha.evaluate(mod_input)));
@@ -796,7 +793,7 @@ struct hold_vert_step_state
 	bool calc(NewFieldColumn& col, double curr_y, double end_y,
 		hold_time_lerper& beat_lerp, hold_time_lerper& second_lerp,
 		double curr_beat, double curr_second, hold_texture_handler& tex_handler,
-		int& phase, bool is_lift)
+		int& phase, bool is_lift, TapNote const* note)
 	{
 		tex_coords.clear();
 		bool last_vert_set= false;
@@ -818,7 +815,7 @@ struct hold_vert_step_state
 		}
 		beat= beat_lerp.lerp(y);
 		second= second_lerp.lerp(y);
-		mod_val_inputs mod_input(beat, second, curr_beat, curr_second, y);
+		mod_val_inputs mod_input(beat, second, curr_beat, curr_second, y, note);
 		col.hold_render_transform(mod_input, trans, col.m_twirl_holds);
 		if(is_lift)
 		{
@@ -899,7 +896,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	int phase= HTP_Top;
 	int next_phase= HTP_Top;
 	hold_vert_step_state next_step; // The OS of the future.
-	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, next_phase, is_lift);
+	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, next_phase, is_lift, &(note.note_iter->second));
 	bool need_glow_pass= true;
 	for(double curr_y= start_y; !last_vert_set; curr_y+= y_step)
 	{
@@ -910,7 +907,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		}
 		phase= next_phase;
 		last_vert_set= next_last_vert_set;
-		next_last_vert_set= next_step.calc(*this, curr_y + y_step, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase, is_lift);
+		next_last_vert_set= next_step.calc(*this, curr_y + y_step, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase, is_lift, &(note.note_iter->second));
 		Rage::Vector3 render_forward(0.0, 1.0, 0.0);
 		if(!m_holds_skewed_by_mods)
 		{
@@ -931,7 +928,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		if(m_use_moddable_hold_normal)
 		{
 			Rage::Vector3 normal;
-			mod_val_inputs mod_input(curr_step.beat, curr_step.second, m_curr_beat, m_curr_second, curr_step.y);
+			mod_val_inputs mod_input(curr_step.beat, curr_step.second, m_curr_beat, m_curr_second, curr_step.y, &(note.note_iter->second));
 			m_hold_normal_mod.evaluate(mod_input, normal);
 			render_left= Rage::CrossProduct(normal, render_forward);
 		}
@@ -1104,8 +1101,8 @@ void init_render_note_for_lift_at_further_time(NewFieldColumn::render_note& that
 {
 	double beat_from_second= column->get_beat_from_second(pretrail_second);
 	double second_from_beat= column->get_second_from_beat(pretrail_beat);
-	double second_y_offset= column->calc_y_offset(beat_from_second, pretrail_second);
-	double beat_y_offset= column->calc_y_offset(pretrail_beat, second_from_beat);
+	double second_y_offset= column->calc_y_offset(beat_from_second, pretrail_second, &(that.note_iter->second));
+	double beat_y_offset= column->calc_y_offset(pretrail_beat, second_from_beat, &(that.note_iter->second));
 	if(second_y_offset < beat_y_offset)
 	{
 		that.tail_y_offset= second_y_offset;
@@ -1132,8 +1129,8 @@ NewFieldColumn::render_note::render_note(NewFieldColumn* column,
 		double hold_draw_beat;
 		double hold_draw_second;
 		column->get_hold_draw_time(iter->second, beat, hold_draw_beat, hold_draw_second);
-		y_offset= column->calc_y_offset(hold_draw_beat, hold_draw_second);
-		tail_y_offset= column->calc_y_offset(beat + NoteRowToBeat(iter->second.iDuration), iter->second.end_second);
+		y_offset= column->calc_y_offset(hold_draw_beat, hold_draw_second, &(iter->second));
+		tail_y_offset= column->calc_y_offset(beat + NoteRowToBeat(iter->second.iDuration), iter->second.end_second, &(iter->second));
 		int head_visible= column->y_offset_visible(y_offset);
 		int tail_visible= column->y_offset_visible(tail_y_offset);
 		// y_offset_visible returns 3 possible things:
@@ -1154,7 +1151,7 @@ NewFieldColumn::render_note::render_note(NewFieldColumn* column,
 	}
 	else if(iter->second.type == TapNoteType_Lift)
 	{
-		y_offset= column->calc_y_offset(beat, iter->second.occurs_at_second);
+		y_offset= column->calc_y_offset(beat, iter->second.occurs_at_second, &(iter->second));
 		double pretrail_len= column->calc_lift_pretrail(
 			beat, iter->second.occurs_at_second, y_offset);
 		// To deal with the case where a lift is right after a stop, calculate
@@ -1185,7 +1182,7 @@ NewFieldColumn::render_note::render_note(NewFieldColumn* column,
 			}
 			if(prev_beat > pretrail_beat || prev_second > pretrail_second)
 			{
-				tail_y_offset= column->calc_y_offset(pretrail_beat, pretrail_second);
+				tail_y_offset= column->calc_y_offset(pretrail_beat, pretrail_second, &(iter->second));
 				tail_beat= pretrail_beat;
 				tail_second= pretrail_second;
 			}
@@ -1204,7 +1201,7 @@ NewFieldColumn::render_note::render_note(NewFieldColumn* column,
 	}
 	else
 	{
-		y_offset= column->calc_y_offset(beat, iter->second.occurs_at_second);
+		y_offset= column->calc_y_offset(beat, iter->second.occurs_at_second, &(iter->second));
 		if(column->y_offset_visible(y_offset) == 0)
 		{
 			note_iter= iter;
@@ -1460,7 +1457,7 @@ void NewFieldColumn::draw_holds_internal()
 		TapNote const& tn= holdit.note_iter->second;
 		double const hold_beat= NoteRowToBeat(holdit.note_iter->first);
 		double const hold_second= tn.occurs_at_second;
-		mod_val_inputs input(hold_beat, hold_second, m_curr_beat, m_curr_second, calc_y_offset(hold_beat, hold_second));
+		mod_val_inputs input(hold_beat, hold_second, m_curr_beat, m_curr_second, holdit.y_offset, &tn);
 		double const quantization= quantization_for_time(input);
 		bool active= HOLD_COUNTS_AS_ACTIVE(tn);
 		QuantizedHoldRenderData data;
@@ -1488,7 +1485,7 @@ void NewFieldColumn::draw_lifts_internal()
 		TapNote const& tn= liftit.note_iter->second;
 		double const lift_beat= NoteRowToBeat(liftit.note_iter->first);
 		double const lift_second= tn.occurs_at_second;
-		mod_val_inputs input(lift_beat, lift_second, m_curr_beat, m_curr_second, calc_y_offset(lift_beat, lift_second));
+		mod_val_inputs input(lift_beat, lift_second, m_curr_beat, m_curr_second, liftit.y_offset, &tn);
 		double const quantization= quantization_for_time(input);
 		QuantizedHoldRenderData data;
 		m_newskin->get_hold_render_data(TapNoteSubType_Hold, m_playerize_mode,
@@ -1522,7 +1519,7 @@ void set_tap_actor_info(tap_draw_info& draw_info, NewFieldColumn& col,
 	get_play_actor_fun get_playerized, size_t part,
 	size_t pn, double draw_beat, double draw_second, double yoff,
 	double tap_beat, double tap_second, double anim_percent, bool active,
-	bool reverse)
+	bool reverse, TapNote const* note)
 {
 	draw_info.draw_beat= draw_beat;
 	draw_info.y_offset= yoff;
@@ -1530,7 +1527,7 @@ void set_tap_actor_info(tap_draw_info& draw_info, NewFieldColumn& col,
 	{
 		if(col.get_playerize_mode() != NPM_Quanta)
 		{
-			mod_val_inputs mod_input(tap_beat, tap_second, col.get_curr_beat(), col.get_curr_second(), yoff);
+			mod_val_inputs mod_input(tap_beat, tap_second, col.get_curr_beat(), col.get_curr_second(), yoff, note);
 			double const quantization= col.quantization_for_time(mod_input);
 			draw_info.act= (newskin->*get_normal)(part, quantization, anim_percent,
 				active, reverse);
@@ -1622,7 +1619,7 @@ void NewFieldColumn::draw_taps_internal()
 			set_tap_actor_info(acts[0], *this, m_newskin,
 				&NewSkinColumn::get_tap_actor, &NewSkinColumn::get_player_tap, part,
 				tn.pn, head_beat, tn.occurs_at_second, tapit.y_offset, tap_beat,
-				tap_second, m_status.anim_percent, active, m_status.in_reverse);
+				tap_second, m_status.anim_percent, active, m_status.in_reverse, &tn);
 		}
 		else
 		{
@@ -1633,7 +1630,7 @@ void NewFieldColumn::draw_taps_internal()
 					&NewSkinColumn::get_optional_actor,
 					&NewSkinColumn::get_player_optional_tap, head_part, tn.pn, head_beat,
 					head_second, tapit.y_offset, tap_beat, tap_second,
-					m_status.anim_percent, active, m_status.in_reverse);
+					m_status.anim_percent, active, m_status.in_reverse, &tn);
 			}
 			else
 			{
@@ -1642,12 +1639,12 @@ void NewFieldColumn::draw_taps_internal()
 					&NewSkinColumn::get_optional_actor,
 					&NewSkinColumn::get_player_optional_tap, tail_part, tn.pn, tail_beat,
 					tn.end_second, tapit.tail_y_offset, tap_beat, tap_second,
-					m_status.anim_percent, active, m_status.in_reverse);
+					m_status.anim_percent, active, m_status.in_reverse, &tn);
 				set_tap_actor_info(acts[1], *this, m_newskin,
 					&NewSkinColumn::get_optional_actor,
 					&NewSkinColumn::get_player_optional_tap, head_part, tn.pn, head_beat,
 					head_second, tapit.y_offset, tap_beat, tap_second,
-					m_status.anim_percent, active, m_status.in_reverse);
+					m_status.anim_percent, active, m_status.in_reverse, &tn);
 			}
 		}
 		for(auto&& act : acts)
@@ -1657,7 +1654,7 @@ void NewFieldColumn::draw_taps_internal()
 			if(act.act != nullptr)
 			{
 				Rage::transform trans;
-				mod_val_inputs input(act.draw_beat, act.draw_second, m_curr_beat, m_curr_second, act.y_offset);
+				mod_val_inputs input(act.draw_beat, act.draw_second, m_curr_beat, m_curr_second, act.y_offset, &tn);
 				calc_transform_with_glow_alpha(input, trans);
 				if(!m_in_defective_mode)
 				{
@@ -2250,7 +2247,7 @@ void NewField::draw_field_text(double beat, double second, double y_offset,
 	Rage::Color const& color, Rage::Color const& glow)
 {
 	Rage::transform trans;
-	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, y_offset);
+	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, y_offset, nullptr);
 	m_columns[0].calc_transform(input, trans);
 	if(!m_in_defective_mode)
 	{
@@ -2280,7 +2277,7 @@ void NewField::draw_beat_bar(double beat, double second, double y_offset,
 	}
 	float const bar_width= m_beat_bars.GetUnzoomedWidth();
 	Rage::transform trans;
-	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, y_offset);
+	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, y_offset, nullptr);
 	m_columns[0].calc_transform(input, trans);
 	if(!m_in_defective_mode)
 	{
@@ -2326,7 +2323,7 @@ void NewField::draw_beat_bars_internal()
 		double const beat= start_beat + (step * beat_step_size);
 		double const second= needs_second ?
 			m_timing_data->GetElapsedTimeFromBeat(beat) : 0.;
-		double const main_y_offset= m_columns[0].calc_y_offset(beat, second);
+		double const main_y_offset= m_columns[0].calc_y_offset(beat, second, nullptr);
 		if(beat > max_beat)
 		{
 			found_end= true;
@@ -2362,7 +2359,7 @@ void NewField::draw_beat_bars_internal()
 			double sub_beat= beat + sub_beats[sub];
 			double sub_second= needs_second ?
 				m_timing_data->GetElapsedTimeFromBeat(sub_beat) : 0.;
-			double sub_y_offset= m_columns[0].calc_y_offset(sub_beat, sub_second);
+			double sub_y_offset= m_columns[0].calc_y_offset(sub_beat, sub_second, nullptr);
 			double offset_diff= fabs(sub_y_offset - main_y_offset);
 			float alpha= ((offset_diff / note_size) - .5) * 2.;
 			switch(sub)
@@ -2444,6 +2441,8 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 	pn_msg.SetParam("PlayerNumber", m_pn);
 	Lua* L= LUA->Get();
 	lua_createtable(L, m_newskin.num_columns(), 0);
+	vector<float> column_x;
+	column_x.reserve(m_columns.size());
 	for(size_t i= 0; i < m_columns.size(); ++i)
 	{
 		NewSkinColumn* col= m_newskin.get_column(i);
@@ -2474,6 +2473,7 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 
 		m_columns[i].set_column_info(this, i, col, &m_defective_mods, m_newskin,
 			&m_player_colors, m_note_data, m_timing_data, col_x);
+		column_x.push_back(col_x);
 		if(i < old_columns.size())
 		{
 			m_columns[i].take_over_mods(old_columns[i]);
@@ -2497,12 +2497,6 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 	PushSelf(L);
 	width_msg.SetParamFromStack(L, "field");
 	LUA->Release(L);
-	vector<float> column_x;
-	column_x.reserve(m_columns.size());
-	for(auto&& col : m_columns)
-	{
-		column_x.push_back(col.m_column_mod.pos_mod.x_mod.m_value);
-	}
 	m_defective_mods.set_column_pos(column_x);
 	// Handle the width message after the columns have been created so that the
 	// board can fetch the columns.
@@ -2864,7 +2858,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 		}
 		else
 		{
-			y_offset= p->calc_y_offset(beat, second);
+			y_offset= p->calc_y_offset(beat, second, nullptr);
 		}
 		bool use_alpha= lua_toboolean(L, 6) != 0;
 		bool use_glow= lua_toboolean(L, 7) != 0;
