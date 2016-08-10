@@ -87,10 +87,20 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	RageSurface *volatile img = NULL;
 	CHECKPOINT_M("Potential issue with png jump about to be analyzed.");
-	if( setjmp(png_jmpbuf(png) ))
+
+	png_byte** row_pointers= NULL;
+
+	// Throwing an exception in the error callback would make the exception
+	// pass through C code, which is undefined behavior.  Works fine on Linux,
+	// and on OS X with C++11, but does not work on OS X without C++11. -Kyz
+	if(setjmp(png_jmpbuf(png)))
 	{
-		png_destroy_read_struct( &png, &info_ptr, NULL );
+		png_destroy_read_struct(&png, &info_ptr, NULL);
 		delete img;
+		if(row_pointers != NULL)
+		{
+			delete[] row_pointers;
+		}
 		return NULL;
 	}
 
@@ -227,8 +237,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	}
 	ASSERT( img != NULL );
 
-	/* alloca to prevent memleaks if libpng longjmps us */
-	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
+	row_pointers = new png_byte*[height];
 	CHECKPOINT_M( ssprintf("%p",row_pointers) );
 
 	for( unsigned y = 0; y < height; ++y )

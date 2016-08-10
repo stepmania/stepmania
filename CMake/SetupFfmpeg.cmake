@@ -51,9 +51,9 @@ if (NOT WITH_EXTERNAL_WARNINGS)
 endif()
 
 list(APPEND SM_FFMPEG_MAKE
-  "make"
+  $(MAKE)
 )
-if (WITH_FFMPEG_JOBS GREATER 1)
+if (WITH_FFMPEG_JOBS GREATER 0)
   list(APPEND SM_FFMPEG_MAKE "-j${WITH_FFMPEG_JOBS}")
 endif()
 
@@ -69,7 +69,7 @@ if (IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
 else()
   # --shlibdir=$our_installdir/stepmania-$VERSION
   externalproject_add("ffmpeg"
-    DOWNLOAD_COMMAND git clone "--branch" "n${SM_FFMPEG_VERSION}" "--depth" "1" "git://source.ffmpeg.org/ffmpeg.git" "${SM_FFMPEG_SRC_DIR}"
+    DOWNLOAD_COMMAND git clone "--branch" "n${SM_FFMPEG_VERSION}" "--depth" "1" "git://github.com/stepmania/ffmpeg.git" "${SM_FFMPEG_SRC_DIR}"
     CONFIGURE_COMMAND "${FFMPEG_CONFIGURE}"
     BUILD_COMMAND "${SM_FFMPEG_MAKE}"
     UPDATE_COMMAND ""

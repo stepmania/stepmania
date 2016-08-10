@@ -191,7 +191,6 @@
 		<Function name='Trace'/>
 		<Function name='TrailToCustomDifficulty'/>
 		<Function name='URLEncode'/>
-		<Function name='UndocumentedFeature'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
 		<Function name='update_centering'/>
 		<Function name='Var'/>

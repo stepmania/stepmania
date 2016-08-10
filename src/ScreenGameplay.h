@@ -328,6 +328,11 @@ protected:
 	virtual PlayerInfo &GetPlayerInfoForInput( const InputEventPlus& iep )  { return m_vPlayerInfo[iep.pn]; }
 
 	RageTimer		m_timerGameplaySeconds;
+
+	// m_delaying_ready_announce is for handling a case where the ready
+	// announcer sound needs to be delayed.  See HandleScreenMessage for more.
+	// -Kyz
+	bool m_delaying_ready_announce;
 	
 	// HACK: We have no idea whether we're actually using SMOnline or not.
 	// No, seriously, NOWHERE is it stored what room we're in or whether we're in a room at all.

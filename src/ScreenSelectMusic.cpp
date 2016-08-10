@@ -1517,7 +1517,10 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			 * hit accidentally.  Accept an initial START right away, though,
 			 * so we don't ignore deliberate fast presses (which would be
 			 * annoying). */
-			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
+			if(PREFSMAN->m_AllowHoldForOptions.Get())
+			{
+				this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
+			}
 
 			StartTransitioningScreen( SM_None );
 			float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );
@@ -1891,11 +1894,23 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 		const Course *lCourse = m_MusicWheel.GetSelectedCourse();
 		const Style *pStyle = NULL;
-		if( CommonMetrics::AUTO_SET_STYLE )
-			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
-		if( pStyle == NULL )
+		if(CommonMetrics::AUTO_SET_STYLE)
+		{
+			pStyle = pCourse->GetCourseStyle(GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled());
+			if(pStyle == NULL)
+			{
+				lCourse->GetAllTrails(m_vpTrails);
+			}
+			else
+			{
+				lCourse->GetTrails(m_vpTrails, pStyle->m_StepsType);
+			}
+		}
+		else
+		{
 			pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
-		lCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
+			lCourse->GetTrails(m_vpTrails, pStyle->m_StepsType);
+		}
 
 		m_sSampleMusicToPlay = m_sCourseMusicPath;
 		m_fSampleStartSeconds = 0;

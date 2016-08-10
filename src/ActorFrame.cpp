@@ -238,6 +238,7 @@ void ActorFrame::DrawPrimitives()
 		m_DrawFunction.PushSelf( L );
 		if( lua_isnil(L, -1) )
 		{
+			LUA->Release(L);
 			LuaHelpers::ReportScriptErrorFmt( "Error compiling DrawFunction" );
 			return;
 		}
@@ -487,6 +488,7 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		m_UpdateFunction.PushSelf( L );
 		if( lua_isnil(L, -1) )
 		{
+			LUA->Release(L);
 			LuaHelpers::ReportScriptErrorFmt( "Error compiling UpdateFunction" );
 			return;
 		}

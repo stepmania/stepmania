@@ -2436,8 +2436,6 @@ LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
 LuaFunction( URLEncode, URLEncode( SArg(1) ) );
 LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );
 //LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
-static bool UndocumentedFeature( RString s ){ sm_crash(s); return true; }
-LuaFunction( UndocumentedFeature, UndocumentedFeature(SArg(1)) );
 LuaFunction( lerp, lerp(FArg(1), FArg(2), FArg(3)) );
 
 int LuaFunc_commify(lua_State* L);

@@ -192,8 +192,10 @@ void ThemeManager::GetSelectableThemeNames( vector<RString>& AddTo )
 	GetThemeNames( AddTo );
 	for( int i=AddTo.size()-1; i>=0; i-- )
 	{
-		if( !IsThemeSelectable(AddTo[i]) )
+		if(!IsThemeNameValid(AddTo[i]))
+		{
 			AddTo.erase( AddTo.begin()+i );
+		}
 	}
 }
 
@@ -216,12 +218,14 @@ bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 	return false;
 }
 
-bool ThemeManager::IsThemeSelectable( const RString &sThemeName )
+bool ThemeManager::IsThemeSelectable(RString const& name)
 {
-	if( !DoesThemeExist(sThemeName) )
-		return false;
+	return IsThemeNameValid(name) && DoesThemeExist(name);
+}
 
-	return sThemeName.Left(1) != "_";
+bool ThemeManager::IsThemeNameValid(RString const& name)
+{
+	return name.Left(1) != "_";
 }
 
 RString ThemeManager::GetThemeDisplayName( const RString &sThemeName )
@@ -383,18 +387,38 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	// todo: if the theme isn't selectable, find the next theme that is,
 	// and change to that instead of asserting/crashing since
 	// SpecialFiles::BASE_THEME_NAME is _fallback now. -aj
-#if !defined(SMPACKAGE)
-	if( !IsThemeSelectable(sThemeName) )
-		sThemeName = PREFSMAN->m_sTheme.GetDefault();
-
-	// sm-ssc's SpecialFiles::BASE_THEME_NAME is _fallback, which you can't
-	// select. This requires a preference, which allows it to be adapted for
-	// other purposes (e.g. PARASTAR).
-	if( !IsThemeSelectable(sThemeName) )
-		sThemeName = PREFSMAN->m_sDefaultTheme;
-#endif
-
-	ASSERT( IsThemeSelectable(sThemeName) );
+	if(!IsThemeSelectable(sThemeName))
+	{
+		RString to_try= PREFSMAN->m_sTheme.GetDefault();
+		LOG->Warn("Selected theme '%s' not found.  "
+			"Trying Theme preference default value '%s'.",
+			sThemeName.c_str(), to_try.c_str());
+		sThemeName = to_try;
+		// sm-ssc's SpecialFiles::BASE_THEME_NAME is _fallback, which you can't
+		// select. This requires a preference, which allows it to be adapted for
+		// other purposes (e.g. PARASTAR).
+		if(!IsThemeSelectable(sThemeName))
+		{
+			to_try= PREFSMAN->m_sDefaultTheme;
+			LOG->Warn("Theme preference defaults to '%s', which cannot be used."
+				"  Trying DefaultTheme preference '%s'.",
+				sThemeName.c_str(), to_try.c_str());
+			sThemeName = to_try;
+			if(!IsThemeSelectable(sThemeName))
+			{
+				vector<RString> theme_names;
+				GetSelectableThemeNames(theme_names);
+				ASSERT_M(!theme_names.empty(), "No themes found, unable to start stepmania.");
+				to_try= theme_names[0];
+				LOG->Warn("DefaultTheme preference is '%s', which cannot be found."
+					"  Using '%s'.",
+					sThemeName.c_str(), to_try.c_str());
+				sThemeName= to_try;
+				PREFSMAN->m_sDefaultTheme.Set(to_try);
+			}
+		}
+		PREFSMAN->m_sTheme.Set(sThemeName);
+	}
 
 	/* We haven't actually loaded the theme yet, so we can't check whether
 	 * sLanguage exists. Just check for empty. */

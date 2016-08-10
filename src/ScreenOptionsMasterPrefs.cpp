@@ -401,7 +401,7 @@ static void BGBrightnessOrStatic( int &sel, bool ToSel, const ConfOption *pConfO
 
 static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 5,10,15,20 };
+	const int mapping[] = { 1,5,10,15,20 };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -776,13 +776,14 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowDanger",			MovePref<bool>,		"Hide","Show" ) );
 	ADD( ConfOption( "ShowDancingCharacters",	MovePref<ShowDancingCharacters>, "Default to Off","Default to Random","Select" ) );
 	ADD( ConfOption( "ShowBeginnerHelper",		MovePref<bool>,		"Off","On" ) );
-	ADD( ConfOption( "NumBackgrounds",		NumBackgrounds,		"|5","|10","|15","|20" ) );
+	ADD( ConfOption( "NumBackgrounds",		NumBackgrounds,		"|1","|5","|10","|15","|20" ) );
 
 	// Input options
 	ADD( ConfOption( "AutoMapOnJoyChange",		MovePref<bool>,		"Off","On (recommended)" ) );
 	ADD( ConfOption( "OnlyDedicatedMenuButtons",	MovePref<bool>,		"Use Gameplay Buttons","Only Dedicated Buttons" ) );
 	ADD( ConfOption( "AutoPlay",			MovePref<PlayerController>, "Off","On","CPU-Controlled" ) );
 	ADD( ConfOption( "DelayedBack",			MovePref<bool>,		"Instant","Hold" ) );
+	ADD( ConfOption( "AllowHoldForOptions", MovePref<bool>, "Double Tap", "Hold"));
 	ADD( ConfOption( "ArcadeOptionsNavigation",	MovePref<bool>,		"StepMania Style","Arcade Style" ) );
 	ADD( ConfOption( "ThreeKeyNavigation", MovePref<bool>, "Five Key Menu", "Three Key Menu" ) );
 	ADD( ConfOption( "MusicWheelSwitchSpeed",	MusicWheelSwitchSpeed,	"Slow","Normal","Fast","Really Fast" ) );
