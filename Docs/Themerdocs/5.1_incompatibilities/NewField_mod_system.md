@@ -77,7 +77,7 @@ current music time as the eval time.
 * "note_id_in_chart"
 * "note_id_in_column"
 * "row_id"  
-	See image: http://i.imgur.com/U2UcGtM.png
+	See image: http://i.imgur.com/x0RqDbZ.png
 * "eval_beat"
 * "eval_second"  
 	The time the note occurs at.
@@ -762,3 +762,144 @@ If you have ```{"sine", "music_beat"}``` somewhere in a mod, the system sees
 that the music beat only changes once per frame, so it only does that sine
 once per frame.  It doesn't have to do it for every note or every vert in a
 hold.
+
+
+## Why isn't there a way to find the speed mod the player is using?
+
+I haven't figured out a simple way to do it.
+
+The speed mod is a ModifiableValue, with all the attendent flexibility.
+In theory, a themer could write some weird logarithmic function and allow
+players to pick it as a speed mod.  Then there's the per-column wrinkle:
+every mod that doesn't need to affect the notefield as whole can be set
+different in every column.  How would you even handle it when the player has
+set a different speed for each column?
+
+You can check what their newfield prefs are set to.
+```
+local speed_mod= newfield_prefs_config:get_data(pn).speed_mod
+local speed_type= newfield_prefs_config:get_data(pn).speed_type
+```
+If the theme being used doesn't use those prefs, or applies them in a
+non-standard way, checking will mislead you.
+
+
+## Why not use tween states?
+
+The tween system would need to be extended and transmogrified in a variety of
+ways.  The result would be complex and unsightly.
+
+### Conjoined values
+
+In an actor tween state, all aspects (x, y, z, ...) are joined into one state
+and they all change together in lockstep.  If x and y need to change at
+different rates or x needs to keep changing after y finishes, you have to
+either wrap the actor in another frame, or make the tween for the y animation
+do part of the x animation, then put the rest of the x animation in the next
+tween.
+
+Thus, the parts would have to be separated.  x, y, z and everything else each
+with their own tween stack.
+
+### Musical sync
+
+Standard actor tweens are not synced to the music.  If a simfile with
+animations is played at a non-standard music rate, the animations all occur
+at the wrong time.  The Creator (God Himself) can add special code to detect
+the music rate and adjust animation times to compensate.  This workaround
+requires careful handling of every animation, making it difficult to do 100%
+right.  In a better system, such a workaround shouldn't be necessary.
+
+Result: Tweens need a way to be tied to musical time.  Sometimes you want an
+animation to pause during a stop.  Some animations you want to continue
+during stops.  Syncing to the current music second isn't enough, there needs
+to be a choice between seconds and beats (because the current beat does not
+change during a stop).
+
+### Tween types
+
+Tween types that currently exist:  linear, accelerate, decelerate, spring,
+bezier.  (sleep is actually two linear tweens, the second takes 0 time)
+
+You can't do a sine wave with this (drunk, tipsy, ...).  The system would
+have to be extended support sine waves for anyone that wants something as
+simple as moving the receptors in a circle.
+
+### Note motion
+
+Consider a note moving.  It starts at the bottom of the screen, moves to the
+receptor.  If it is missed, it goes past the receptors before disappearing.
+What tells it the starting and ending positions?  What positions does it pass
+through in between?  The system needs a list of tween states for the note to
+progress through as it moves to the receptor.  Actually, a list of lists of
+tween states, because they need to change over time.
+
+Sometimes you want a simple animation that only needs two tween states.
+Sometimes you want something complex that requires a dozen.  The system can't
+just have a fixed list, it needs a way to change the list, either by
+inserting and removing states, or replacing its contents entirely.
+
+Imagine a system where you make a set of tween states for describing the
+motion of a note.  The note starts at the first tween state, then moves to
+each in turn, using various tween types.
+
+You want to change the path at some time, which means a whole new list of
+tween states.  Something controls how the list transitions from the old
+states to the new ones.  What would that even be?
+
+### Combining mods
+
+Dizzy makes the notes spin.  Confusion makes the notes and the receptors
+spin.  When they're combined, the notes spin with the sum of the results.
+To allow things other than standard addition, any modifier needs to specify
+how it combines with the mods that are already applied.
+
+The theme needs to be able to set modifiers for whatever custom stuff themers
+invent.  Simfiles need to be able to replace or add to the tween states set
+by the theme as needed.
+
+### Editing
+
+When editing, it would be useful to be able to stop at any time, and make the
+animation stop.  Watch a section at a slower speed to make sure it looks
+right.  Or skip to a different time.
+
+With tween states set by calling a lua function when one tween ends, these
+are impractical, because the system can't predict what the lua will do.
+
+To skip forward, every tween play out in a fake environment, to trick it into
+going forward to the next animation.  If some aspect of the fake environment
+isn't right, the lua does the wrong thing and the animation comes out wrong
+after skipping during editing.
+
+Skipping backwards is even worse.  Tweens only have one direction, forward.
+Either the system has to fake skipping backwards by starting at the beginning
+and moving forward, or the creator must be forced to set preceding states at
+every step.  Or the system could track every tween state on a list and
+elimininate running lua after every tween.
+
+### Repeating animations
+
+A repeating animation requires making one tween state for the beginning, and
+one for the end.  When the actor reaches the end state, a command in it
+resets it to the beginning.  Eventually something kicks it out of the loop to
+do another animation.
+
+Consider an animation that moves the field 256 pixels right and back 30 times
+per second, for a flickering double field effect.  If it lasts for 4 seconds,
+that's 240 tween states (move right, move back (2) * 30 * 4).  You would
+naturally write a function to generate all these states and add them to the
+list.
+
+In the system that uses equations instead of tween states, this animation can
+be done with a simple square wave.
+```{"+", 128, {"*", 128, {"square", {"*", "music_second", 60 * pi}}}}```
+
+### Summary
+
+The end result is a system that bears little resemblance to the current actor
+tweening system.  Adjustments made to separate values, sync tweens to music,
+and allow describing motion have distorted it substantially.  New tween types
+each and a persistent stack of states added to prop up shortcomings.  It's
+not simple, it's not straightforward, and it requires continuous work for
+edge cases.
