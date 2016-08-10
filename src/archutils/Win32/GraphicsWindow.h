@@ -35,6 +35,7 @@ namespace GraphicsWindow
 	void Update();
 
 	HWND GetHwnd();
+	void SetHwnd(HWND a_Handle);
 };
 
 #endif

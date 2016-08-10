@@ -58,7 +58,7 @@ bool DIDevice::Open()
 	hr = Device->SetCooperativeLevel( GraphicsWindow::GetHwnd(), coop );
 	if ( hr != DI_OK )
 	{
-		LOG->Info( hr_format(hr, "OpenDevice(%s): IDirectInputDevice2::SetCooperativeLevel", m_sName.c_str()) );
+		LOG->Info( hr_format(hr, "OpenDevice(%s): IDirectInputDevice2::SetCooperativeLevel", m_sName.c_str()) ); // TODO: Why could this crash when invalid handler?
 		return false;
 	}
 
