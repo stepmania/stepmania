@@ -114,34 +114,6 @@ private:
 	 * @param tn the note in question. Required for routine mode.
 	 * @return true if it's for player 1, false for player 2. */
 	bool IsPlayer1(const int track, const TapNote &tn) const;
-	
-	/**
-	 * @brief Determine if the note in question should be counted as a tap.
-	 * @param tn the note in question.
-	 * @param row the row it lives in.
-	 * @return true if it's a tap, false otherwise. */
-	bool IsTap(const TapNote &tn, const int row) const;
-	
-	/**
-	 * @brief Determine if the note in question should be counted as a mine.
-	 * @param tn the note in question.
-	 * @param row the row it lives in.
-	 * @return true if it's a mine, false otherwise. */
-	bool IsMine(const TapNote &tn, const int row) const;
-	
-	/**
-	 * @brief Determine if the note in question should be counted as a lift.
-	 * @param tn the note in question.
-	 * @param row the row it lives in.
-	 * @return true if it's a lift, false otherwise. */
-	bool IsLift(const TapNote &tn, const int row) const;
-	
-	/**
-	 * @brief Determine if the note in question should be counted as a fake.
-	 * @param tn the note in question.
-	 * @param row the row it lives in.
-	 * @return true if it's a fake, false otherwise. */
-	bool IsFake(const TapNote &tn, const int row) const;
 
 	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
 														   int startRow = 0,
@@ -313,8 +285,29 @@ public:
 		return GetNumRowsWithSimultaneousTaps( 2, iStartIndex, iEndIndex );
 	}
 	
-	
+	/**
+	 * @brief Get the number of judgable notes on a row.
+	 * @param row The row that contains the notes.
+	 * @return The number of judgable notes.
+	 */
+	int GetNumAllTapsOnRow(int const row) const;
 
+	/**
+	 * @brief Get the number of holds that are the same type on a row.
+	 * @param row The row that contains the notes.
+	 * @param holdType The specific type of hold to watch for.
+	 * @return The number of holds of the same type within the row.
+	 */
+	int GetNumHoldsOnRowOfType(int const row, TapNoteSubType const holdType) const;
+
+	/**
+	 * @brief Get the number of holds that are the same type.
+	 * @param row The row that contains the notes.
+	 * @param holdType The specific type of hold to watch for.
+	 * @return The number of holds of the same type.
+	 */
+	int GetNumHoldsOfType(TapNoteSubType const holdType, int startIndex, int finishIndex) const;
+	
 	// This row needs at least iMinSimultaneousPresses either tapped or held.
 	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;
 	bool RowNeedsHands( int row ) const { return RowNeedsAtLeastSimultaneousPresses(3,row); }
@@ -334,33 +327,33 @@ public:
 	int GetNumLifts( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 
-	// the couple/routine style variants of the above.
-	pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0,
-										   int endRow = MAX_NOTE_ROW) const;
+	/**
+	 * @brief Determine if the note in question should be counted as a tap.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a tap, false otherwise. */
+	bool IsTap(const TapNote &tn, const int row) const;
 	
-	pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumHandsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0,
-											int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumMinesTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumRollsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-	
-	pair<int, int> GetNumFakesTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
+	/**
+	 * @brief Determine if the note in question should be counted as a mine.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a mine, false otherwise. */
+	bool IsMine(const TapNote &tn, const int row) const;
+
+	/**
+	 * @brief Determine if the note in question should be counted as a lift.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a lift, false otherwise. */
+	bool IsLift(const TapNote &tn, const int row) const;
+
+	/**
+	 * @brief Determine if the note in question should be counted as a fake.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a fake, false otherwise. */
+	bool IsFake(const TapNote &tn, const int row) const;
 	
 	// Transformations
 	void LoadTransformed(const NoteData& original,

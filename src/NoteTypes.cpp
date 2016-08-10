@@ -110,6 +110,15 @@ int NoteTypeToRow( NoteType nt )
 	}
 }
 
+PlayerNumber TapNote::GetEffectivePlayer() const
+{
+	if ( this->pn == PLAYER_INVALID)
+	{
+		return PLAYER_1;
+	}
+	return this->pn;
+}
+
 /**
  * @brief The number of beats per measure.
  *
