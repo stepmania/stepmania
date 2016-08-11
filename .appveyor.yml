@@ -33,9 +33,9 @@ install:
 
     git submodule update extern/googletest
 
-    choco install cmake
+    choco install cmake -y
 
-    choco install nsis -version 2.46.0.20150406
+    choco install nsis -y -version 2.46.0.20150406
 build_script:
 - cmd: >-
     echo Running cmake now...
