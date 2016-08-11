@@ -11,7 +11,7 @@ class RageFileBasic
 public:
 	virtual ~RageFileBasic() { }
 
-	virtual RString GetError() const = 0;
+	virtual std::string GetError() const = 0;
 	virtual void ClearError() = 0;
 	virtual bool AtEOF() const = 0;
 
@@ -27,12 +27,12 @@ public:
 	 * does not necessarily mean that the end of the stream has been reached;
 	 * keep reading until 0 is returned. */
 	virtual int Read( void *pBuffer, size_t iBytes ) = 0;
-	virtual int Read( RString &buffer, int bytes = -1 ) = 0;
+	virtual int Read( std::string &buffer, int bytes = -1 ) = 0;
 	virtual int Read( void *buffer, size_t bytes, int nmemb ) = 0;
 
 	/* Write iSize bytes of data from pBuf.  Return 0 on success, -1 on error. */
 	virtual int Write( const void *pBuffer, size_t iBytes ) = 0;
-	virtual int Write( const RString &sString ) = 0;
+	virtual int Write( const std::string &sString ) = 0;
 	virtual int Write( const void *buffer, size_t bytes, int nmemb ) = 0;
 
 	/* Due to buffering, writing may not happen by the end of a Write() call, so not
@@ -42,12 +42,12 @@ public:
 	virtual int Flush() = 0;
 
 	/* This returns a descriptive path for the file, or "". */
-	virtual RString GetDisplayPath() const { return RString(); }
+	virtual std::string GetDisplayPath() const { return std::string(); }
 
 	virtual RageFileBasic *Copy() const = 0;
 
-	virtual int GetLine( RString &out ) = 0;
-	virtual int PutLine( const RString &str ) = 0;
+	virtual int GetLine( std::string &out ) = 0;
+	virtual int PutLine( const std::string &str ) = 0;
 
 	virtual void EnableCRC32( bool on=true ) = 0;
 	virtual bool GetCRC32( uint32_t *iRet ) = 0;
@@ -67,7 +67,7 @@ public:
 	RageFileObj( const RageFileObj &cpy );
 	virtual ~RageFileObj();
 
-	virtual RString GetError() const { return m_sError; }
+	virtual std::string GetError() const { return m_sError; }
 	virtual void ClearError() { SetError(""); }
 	
 	bool AtEOF() const { return m_bEOF; }
@@ -77,24 +77,24 @@ public:
 	int Tell() const { return m_iFilePos; }
 
 	int Read( void *pBuffer, size_t iBytes );
-	int Read( RString &buffer, int bytes = -1 );
+	int Read( std::string &buffer, int bytes = -1 );
 	int Read( void *buffer, size_t bytes, int nmemb );
 
 	int Write( const void *pBuffer, size_t iBytes );
-	int Write( const RString &sString ) { return Write( sString.data(), sString.size() ); }
+	int Write( const std::string &sString ) { return Write( sString.data(), sString.size() ); }
 	int Write( const void *buffer, size_t bytes, int nmemb );
 
 	int Flush();
 
-	int GetLine( RString &out );
-	int PutLine( const RString &str );
+	int GetLine( std::string &out );
+	int PutLine( const std::string &str );
 
 	void EnableCRC32( bool on=true );
 	bool GetCRC32( uint32_t *iRet );
 
 	virtual int GetFileSize() const = 0;
 	virtual int GetFD() { return -1; }
-	virtual RString GetDisplayPath() const { return RString(); }
+	virtual std::string GetDisplayPath() const { return std::string(); }
 	virtual RageFileBasic *Copy() const { FAIL_M( "Copying unimplemented" ); }
 
 protected:
@@ -106,8 +106,8 @@ protected:
 	void EnableReadBuffering();
 	void EnableWriteBuffering( int iBytes=1024*64 );
 
-	void SetError( const RString &sError ) { m_sError = sError; }
-	RString m_sError;
+	void SetError( const std::string &sError ) { m_sError = sError; }
+	std::string m_sError;
 
 private:
 	int FillReadBuf();

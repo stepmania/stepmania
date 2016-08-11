@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenOptionsMasterPrefs.h"
+#include "RageMath.hpp"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
@@ -12,24 +13,24 @@
 #include "GameState.h"
 #include "StepMania.h"
 #include "Game.h"
-#include "Foreach.h"
 #include "GameConstantsAndTypes.h"
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 #include "LocalizedString.h"
 #include "SpecialFiles.h"
 #include "RageLog.h"
 
+using std::vector;
 using namespace StringConversion;
 
 static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
-	po.FromString( PREFSMAN->m_sDefaultModifiers );
-	so.FromString( PREFSMAN->m_sDefaultModifiers );
+	po.FromString( PREFSMAN->m_sDefaultModifiers.Get() );
+	so.FromString( PREFSMAN->m_sDefaultModifiers.Get() );
 }
 
 static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
 {
-	vector<RString> as;
+	vector<std::string> as;
 #define remove_empty_back() if(as.back() == "") { as.pop_back(); }
 	as.push_back(po.GetString());
 	remove_empty_back();
@@ -37,7 +38,7 @@ static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions
 	remove_empty_back();
 #undef remove_empty_back
 
-	PREFSMAN->m_sDefaultModifiers.Set( join(", ",as) );
+	PREFSMAN->m_sDefaultModifiers.Set( Rage::join(", ",as) );
 }
 
 
@@ -88,14 +89,14 @@ static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, u
 {
 	if( ToSel )
 	{
-		RString sOpt = opt.ToString();
+		std::string sOpt = opt.ToString();
 		// This should really be T, but we can't FromString an enum.
 		float val;
 		FromString( sOpt, val );
 		sel = FindClosestEntry( val, mapping, cnt );
 	} else {
 		// sel -> opt
-		RString sOpt = ToString( mapping[sel] );
+		std::string sOpt = ToString( mapping[sel] );
 		opt.FromString( sOpt );
 	}
 }
@@ -103,9 +104,9 @@ static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, u
 template <class T>
 static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const T *mapping, unsigned cnt )
 {
-	ASSERT( pConfOption != NULL );
+	ASSERT( pConfOption != nullptr );
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
-	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+	ASSERT_M( pPref != nullptr, pConfOption->m_sPrefName );
 
 	MoveMap( sel, *pPref, ToSel, mapping, cnt );
 }
@@ -114,7 +115,7 @@ template <class T>
 static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
-	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+	ASSERT_M( pPref != nullptr, pConfOption->m_sPrefName );
 
 	if( bToSel )
 	{
@@ -134,7 +135,7 @@ template <>
 void MovePref<bool>( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
-	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+	ASSERT_M( pPref != nullptr, pConfOption->m_sPrefName );
 
 	if( bToSel )
 	{
@@ -161,71 +162,88 @@ static void MoveNop( int &iSel, bool bToSel, const ConfOption *pConfOption )
 
 // TODO: Write GenerateValueList() function that can use ints and floats. -aj
 
-static void GameChoices( vector<RString> &out )
+static void GameChoices( vector<std::string> &out )
 {
 	vector<const Game*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	FOREACH( const Game*, aGames, g )
+	for (auto const *g: aGames)
 	{
-		RString sGameName = (*g)->m_szName;
+		std::string sGameName = g->gameName;
 		out.push_back( sGameName );
 	}
 }
 
 static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	vector<std::string> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
 	{
-		const RString sCurGameName = PREFSMAN->GetCurrentGame();
+		Rage::ci_ascii_string const currGame {PREFSMAN->GetCurrentGame().c_str()};
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
-			if( !strcasecmp(choices[i], sCurGameName) )
+		{
+			if (currGame == choices[i])
+			{
 				sel = i;
-	} else {
+			}
+		}
+	}
+	else {
 		vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
-		PREFSMAN->SetCurrentGame(aGames[sel]->m_szName);
+		PREFSMAN->SetCurrentGame(aGames[sel]->gameName);
 	}
 }
 
-static void LanguageChoices( vector<RString> &out )
+static void LanguageChoices( vector<std::string> &out )
 {
-	vector<RString> vs;
+	vector<std::string> vs;
 	THEME->GetLanguages( vs );
-	SortRStringArray( vs, true );
+	SortStringArray( vs, true );
 
-	FOREACH_CONST( RString, vs, s )
+	for (auto const &s: vs)
 	{
-		const LanguageInfo *pLI = GetLanguageInfo( *s );
+		const LanguageInfo *pLI = GetLanguageInfo( s );
 		if( pLI )
-			out.push_back( THEME->GetString("NativeLanguageNames", pLI->szEnglishName) );
+		{
+			out.push_back( THEME->GetString("NativeLanguageNames", pLI->englishName) );
+		}
 		else
-			out.push_back( *s );
+		{
+			out.push_back( s );
+		}
 	}
 }
 
 static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> vs;
+	vector<std::string> vs;
 	THEME->GetLanguages( vs );
-	SortRStringArray( vs, true );
+	SortStringArray( vs, true );
 
 	if( ToSel )
 	{
+		Rage::ci_ascii_string const currLang {THEME->GetCurLanguage().c_str()};
+		Rage::ci_ascii_string const baseLang {SpecialFiles::BASE_LANGUAGE.c_str()};
 		sel = -1;
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !strcasecmp(vs[i], THEME->GetCurLanguage()) )
+		{
+			if (currLang == vs[i])
+			{
 				sel = i;
-
+			}
+		}
 		// If the current language doesn't exist, we'll show BASE_LANGUAGE, so select that.
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !strcasecmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
+		{
+			if (baseLang == vs[i])
+			{
 				sel = i;
-
+			}
+		}
 		if( sel == -1 )
 		{
 			LOG->Warn( "Couldn't find language \"%s\" or fallback \"%s\"; using \"%s\"",
@@ -233,107 +251,127 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 			sel = 0;
 		}
 	} else {
-		const RString &sNewLanguage = vs[sel];
+		const std::string &sNewLanguage = vs[sel];
 
 		PREFSMAN->m_sLanguage.Set( sNewLanguage );
 		if( THEME->GetCurLanguage() != sNewLanguage )
-			THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
+			THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage.Get(), PREFSMAN->m_bPseudoLocalize );
 	}
 }
 
-static void ThemeChoices( vector<RString> &out )
+static void ThemeChoices( vector<std::string> &out )
 {
 	THEME->GetSelectableThemeNames( out );
-	FOREACH( RString, out, s )
-		*s = THEME->GetThemeDisplayName( *s );
-}
-
-static DisplayResolutions display_resolution_list;
-static void cache_display_resolution_list()
-{
-	if(display_resolution_list.empty())
+	for (auto &s: out)
 	{
-		DISPLAY->GetDisplayResolutions(display_resolution_list);
+		s = THEME->GetThemeDisplayName( s );
 	}
 }
 
-static void DisplayResolutionChoices( vector<RString> &out )
+static DisplaySpecs display_specs;
+static void cache_display_specs()
 {
-	cache_display_resolution_list();
-	FOREACHS_CONST( DisplayResolution, display_resolution_list, iter )
+	if(display_specs.empty())
 	{
-		RString s = ssprintf("%dx%d", iter->iWidth, iter->iHeight);
-		out.push_back( s );
+		DISPLAY->GetDisplaySpecs(display_specs);
+	}
+}
+
+static void DisplayResolutionChoices( vector<std::string> &out )
+{
+	cache_display_specs();
+	for (auto const &iter: display_specs)
+	{
+		if (iter.currentMode() != NULL)
+		{
+			std::string s = fmt::sprintf( "%dx%d", iter.currentMode()->width, iter.currentMode()->height );
+			out.push_back( s );
+		}
 	}
 }
 
 static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	vector<std::string> choices;
 	pConfOption->MakeOptionsList( choices );
 
-	vector<RString> vsThemeNames;
+	vector<std::string> vsThemeNames;
 	THEME->GetSelectableThemeNames( vsThemeNames );
 
 	if( ToSel )
 	{
 		sel = 0;
+		Rage::ci_ascii_string themeName{PREFSMAN->m_sTheme.Get().c_str()};
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
-			if( !strcasecmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
+		{
+			if (themeName == vsThemeNames[i])
+			{
 				sel = i;
+			}
+		}
 	}
 	else
 	{
-		const RString sNewTheme = vsThemeNames[sel];
+		const std::string sNewTheme = vsThemeNames[sel];
 		PREFSMAN->m_sTheme.Set( sNewTheme ); // OPT_APPLY_THEME will load the theme
 	}
 }
 
 static LocalizedString OFF ("ScreenOptionsMasterPrefs","Off");
-static void AnnouncerChoices( vector<RString> &out )
+static void AnnouncerChoices( vector<std::string> &out )
 {
 	ANNOUNCER->GetAnnouncerNames( out );
-	out.insert( out.begin(), OFF );
+	out.insert( out.begin(), OFF.GetValue() );
 }
 
 static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	vector<std::string> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
 	{
 		sel = 0;
+		Rage::ci_ascii_string announcerName{ANNOUNCER->GetCurAnnouncerName().c_str()};
 		for( unsigned i=1; i<choices.size(); i++ )
-			if( !strcasecmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
+		{
+			if (announcerName == choices[i])
+			{
 				sel = i;
+			}
+		}
 	}
 	else
 	{
-		const RString sNewAnnouncer = sel? choices[sel]:RString("");
+		const std::string sNewAnnouncer = sel? choices[sel]:std::string("");
 		ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
 		PREFSMAN->m_sAnnouncer.Set( sNewAnnouncer );
 	}
 }
 
-static void DefaultNoteSkinChoices( vector<RString> &out )
+static void DefaultNoteSkinChoices( vector<std::string> &out )
 {
 	NOTESKIN->GetNoteSkinNames( out );
 }
 
 static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	vector<std::string> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
 	{
 		PlayerOptions po;
-		po.FromString( PREFSMAN->m_sDefaultModifiers );
+		po.FromString( PREFSMAN->m_sDefaultModifiers.Get() );
 		sel = 0;
+		Rage::ci_ascii_string playerNoteSkin{ po.m_sNoteSkin.c_str()};
 		for( unsigned i=0; i < choices.size(); i++ )
-			if( !strcasecmp(choices[i], po.m_sNoteSkin) )
+		{
+			if (playerNoteSkin == choices[i])
+			{
 				sel = i;
+			}
+		}
 	}
 	else
 	{
@@ -345,7 +383,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	}
 }
 
-static void DefaultFailChoices(vector<RString>& out)
+static void DefaultFailChoices(vector<std::string>& out)
 {
 	out.push_back("Immediate");
 	out.push_back("ImmediateContinue");
@@ -358,7 +396,7 @@ static void DefaultFailType(int& sel, bool to_sel, const ConfOption* conf_option
 	if(to_sel)
 	{
 		PlayerOptions po;
-		po.FromString(PREFSMAN->m_sDefaultModifiers);
+		po.FromString(PREFSMAN->m_sDefaultModifiers.Get());
 		sel= po.m_FailType;
 	}
 	else
@@ -433,7 +471,7 @@ static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption 
 		else
 			sel = 1;
 	}
-	else 
+	else
 	{
 		int tmp = sel + 1;
 		MovePref<CoinMode>( tmp, ToSel, pConfOption );
@@ -516,10 +554,12 @@ static void MaxHighScoresPerListForPlayer(int& sel, bool to_sel, ConfOption cons
 
 
 #include "LuaManager.h"
+#include "LuaBinding.h"
+
 static int GetTimingDifficulty()
 {
 	int iTimingDifficulty = 0;
-	TimingWindowScale( iTimingDifficulty, true, ConfOption::Find("TimingWindowScale") );	
+	TimingWindowScale( iTimingDifficulty, true, ConfOption::Find("TimingWindowScale") );
 	iTimingDifficulty++; // TimingDifficulty returns an index
 	return iTimingDifficulty;
 }
@@ -527,7 +567,7 @@ LuaFunction( GetTimingDifficulty, GetTimingDifficulty() );
 static int GetLifeDifficulty()
 {
 	int iLifeDifficulty = 0;
-	LifeDifficulty( iLifeDifficulty, true, ConfOption::Find("LifeDifficulty") );	
+	LifeDifficulty( iLifeDifficulty, true, ConfOption::Find("LifeDifficulty") );
 	iLifeDifficulty++; // LifeDifficulty returns an index
 	return iLifeDifficulty;
 }
@@ -540,7 +580,7 @@ struct res_t
 	int w, h;
 	res_t(): w(0), h(0) { }
 	res_t( int w_, int h_ ): w(w_), h(h_) { }
-	
+
 	res_t& operator-=( res_t const &rhs) {
 		w -= rhs.w;
 		h -= rhs.h;
@@ -556,7 +596,7 @@ inline bool operator<(res_t const &lhs, res_t const &rhs)
 	if( lhs.w != rhs.w )
 	{
 		return lhs.w < rhs.w;
-	
+
 	}
 	return lhs.h < rhs.h;
 }
@@ -585,10 +625,13 @@ static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOpt
 
 	if(res_choices.empty())
 	{
-		cache_display_resolution_list();
-		FOREACHS_CONST(DisplayResolution, display_resolution_list, iter)
+		cache_display_specs();
+		for (auto const &iter: display_specs)
 		{
-			res_choices.push_back(res_t(iter->iWidth, iter->iHeight));
+			if (iter.currentMode() != NULL)
+			{
+				res_choices.push_back( res_t( iter.currentMode()->width, iter.currentMode()->height ));
+			}
 		}
 	}
 
@@ -683,7 +726,7 @@ static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOp
 {
 	float mapping[41];
 	for( int i = 0; i < 41; ++i )
-		mapping[i] = SCALE( i, 0.0f, 40.0f, -0.1f, +0.1f );
+		mapping[i] = Rage::scale( i + 0.f, 0.0f, 40.0f, -0.1f, +0.1f );
 
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
@@ -710,10 +753,10 @@ static void InitializeConfOptions()
 	if( !g_ConfOptions.empty() )
 		return;
 
-	// Clear the display_resolution_list so that we don't get problems from
+	// Clear the display_specs so that we don't get problems from
 	// caching it.  If the DisplayResolution option row is on the screen, it'll
 	// recache the list. -Kyz
-	display_resolution_list.clear();
+	display_specs.clear();
 
 	// There are a couple ways of getting the current preference column or turning
 	// a new choice in the interface into a new preference. The easiest is when
@@ -757,7 +800,7 @@ static void InitializeConfOptions()
 		ConfOption c("EditRecordModeLeadIn", EditRecordModeLeadIn);
 		for(int i= 0; i < 32; ++i)
 		{
-			c.AddOption(ssprintf("%+i s", i));
+			c.AddOption(fmt::sprintf("%+i s", i));
 		}
 		ADD(c);
 	}
@@ -884,7 +927,7 @@ static void InitializeConfOptions()
 	{
 		ConfOption c( "GlobalOffsetSeconds",		GlobalOffsetSeconds );
 		for( int i = -100; i <= +100; i += 5 )
-			c.AddOption( ssprintf("%+i ms", i) );
+			c.AddOption( fmt::sprintf("%+i ms", i) );
 		ADD( c );
 	}
 	ADD( ConfOption( "EnableAttackSounds",		MovePref<bool>,		"No","Yes" ) );
@@ -902,41 +945,55 @@ int ConfOption::GetEffects() const
 	return m_iEffects | OPT_SAVE_PREFERENCES;
 }
 
-ConfOption *ConfOption::Find( RString name )
+ConfOption *ConfOption::Find( std::string name )
 {
 	InitializeConfOptions();
-	for( unsigned i = 0; i < g_ConfOptions.size(); ++i )
+	Rage::ci_ascii_string ciName{ name.c_str() };
+	for (auto &opt: g_ConfOptions)
 	{
-		ConfOption *opt = &g_ConfOptions[i];
-		RString match(opt->name);
-		if( match.CompareNoCase(name) )
-			continue;
-		return opt;
+		std::string match(opt.name);
+		if (ciName == match)
+		{
+			return &opt;
+		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ConfOption::UpdateAvailableOptions()
 {
-	if( MakeOptionsListCB != NULL )
+	if( MakeOptionsListCB != nullptr )
 	{
 		names.clear();
 		MakeOptionsListCB( names );
 	}
 }
 
-void ConfOption::MakeOptionsList( vector<RString> &out ) const
+void ConfOption::MakeOptionsList( vector<std::string> &out ) const
 {
 	out = names;
 }
+
+static const char *OptEffectNames[] = {
+	"SavePreferences",
+	"ApplyGraphics",
+	"ApplyTheme",
+	"ChangeGame",
+	"ApplySound",
+	"ApplySong",
+	"ApplyAspectRatio"
+};
+XToString( OptEffect );
+StringToX( OptEffect );
+LuaXType( OptEffect );
 
 /**
  * @file
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -946,7 +1003,7 @@ void ConfOption::MakeOptionsList( vector<RString> &out ) const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

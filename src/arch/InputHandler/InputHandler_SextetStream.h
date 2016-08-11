@@ -10,7 +10,7 @@ public:
 	InputHandler_SextetStream();
 	virtual ~InputHandler_SextetStream();
 	//virtual void Update();
-	virtual void GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut);
+	virtual void GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut);
 
 public:
 	class Impl;
@@ -34,9 +34,9 @@ public:
 	// passed to fopen(), not a RageFile ctor, so specify the file to be
 	// opened on the actual filesystem instead of the mapped filesystem. (I
 	// couldn't get RageFile to work here, possibly because I haven't
-	// determined how to disable buffering on an input file.) 
+	// determined how to disable buffering on an input file.)
 	InputHandler_SextetStreamFromFile();
-	InputHandler_SextetStreamFromFile(const RString& filename);
+	InputHandler_SextetStreamFromFile(const std::string& filename);
 
 	// The file object passed here must already be open and buffering should
 	// be disabled. The file object will be closed in the destructor.

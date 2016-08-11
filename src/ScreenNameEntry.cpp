@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenNameEntry.h"
+#include "RageMath.hpp"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
@@ -39,18 +40,18 @@
 #define NUM_CHARS_TO_DRAW_TOTAL		THEME->GetMetricI(m_sName,"NumCharsToDrawTotal")
 #define FAKE_BEATS_PER_SEC		THEME->GetMetricF(m_sName,"FakeBeatsPerSec")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
-#define PLAYER_X( p, styleType )	THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
+#define PLAYER_X( p, styleType )	THEME->GetMetricF(m_sName,fmt::sprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
 
 // cache for frequently used metrics
 static float	g_fCharsZoomSmall;
-static float	g_fCharsZoomLarge; 
+static float	g_fCharsZoomLarge;
 static float	g_fCharsSpacingY;
 static float	g_fReceptorArrowsY;
 static int	g_iNumCharsToDrawBehind;
 static int	g_iNumCharsToDrawTotal;
 static float	g_fFakeBeatsPerSec;
 
-void ScreenNameEntry::ScrollingText::Init( const RString &sName, const vector<float> &xs )
+void ScreenNameEntry::ScrollingText::Init( const std::string &sName, const vector<float> &xs )
 {
 	SetName( sName );
 	m_Xs = xs;
@@ -62,7 +63,7 @@ void ScreenNameEntry::ScrollingText::Init( const RString &sName, const vector<fl
 void ScreenNameEntry::ScrollingText::DrawPrimitives()
 {
 	const float fFakeBeat = GAMESTATE->m_Position.m_fSongBeat;
-	const size_t iClosestIndex = lrintf( fFakeBeat ) % CHARS_CHOICES.size();
+	const size_t iClosestIndex = std::lrint( fFakeBeat ) % CHARS_CHOICES.size();
 	const float fClosestYOffset = GetClosestCharYOffset( fFakeBeat );
 
 	size_t iCharIndex = ( iClosestIndex - NUM_CHARS_TO_DRAW_BEHIND + CHARS_CHOICES.size() ) % CHARS_CHOICES.size();
@@ -70,24 +71,24 @@ void ScreenNameEntry::ScrollingText::DrawPrimitives()
 
 	for( int i = 0; i < NUM_CHARS_TO_DRAW_TOTAL; ++i )
 	{
-		const RString c = CHARS_CHOICES.substr( iCharIndex, 1 );
+		const std::string c = CHARS_CHOICES.substr( iCharIndex, 1 );
 		float fZoom = g_fCharsZoomSmall;
 		float fAlpha = 1.f;
 
 		if( iCharIndex == iClosestIndex )
-			fZoom = SCALE( fabs(fClosestYOffset), 0, 0.5f, g_fCharsZoomLarge, g_fCharsZoomSmall );
+			fZoom = Rage::scale( static_cast<float>(fabs(fClosestYOffset)), 0.f, 0.5f, g_fCharsZoomLarge, g_fCharsZoomSmall );
 		if( i == 0 )
-			fAlpha *= SCALE( fClosestYOffset, -0.5f, 0.f, 0.f, 1.f );
+			fAlpha *= Rage::scale( fClosestYOffset, -0.5f, 0.f, 0.f, 1.f );
 		if( i == g_iNumCharsToDrawTotal-1 )
-			fAlpha *= SCALE( fClosestYOffset, 0.f, 0.5f, 1.f, 0.f );
+			fAlpha *= Rage::scale( fClosestYOffset, 0.f, 0.5f, 1.f, 0.f );
 
 		m_Stamp.SetZoom( fZoom );
 		m_Stamp.SetDiffuseAlpha( fAlpha );
 		m_Stamp.SetText( c );
 		m_Stamp.SetY( fY );
-		FOREACH_CONST( float, m_Xs, x )
+		for (auto &x: m_Xs)
 		{
-			m_Stamp.SetX( *x );
+			m_Stamp.SetX( x );
 			m_Stamp.Draw();
 		}
 		fY += g_fCharsSpacingY;
@@ -98,7 +99,7 @@ void ScreenNameEntry::ScrollingText::DrawPrimitives()
 char ScreenNameEntry::ScrollingText::GetClosestChar( float fFakeBeat ) const
 {
 	ASSERT( fFakeBeat >= 0.f );
-	return CHARS_CHOICES[lrintf(fFakeBeat) % CHARS_CHOICES.size()];
+	return CHARS_CHOICES[std::lrint(fFakeBeat) % CHARS_CHOICES.size()];
 }
 
 // return value is relative to gray arrows
@@ -108,7 +109,7 @@ float ScreenNameEntry::ScrollingText::GetClosestCharYOffset( float fFakeBeat ) c
 	if( f > 0.5f )
 		f -= 1;
 	ASSERT( f>-0.5f && f<=0.5f );
-	return -f;	
+	return -f;
 }
 
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
@@ -188,7 +189,9 @@ void ScreenNameEntry::Init()
 	// reset Player and Song Options
 	{
 		FOREACH_PlayerNumber( p )
+		{
 			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
+		}
 		SO_GROUP_CALL( GAMESTATE->m_SongOptions, ModsLevel_Stage, Init );
 	}
 
@@ -215,7 +218,7 @@ void ScreenNameEntry::Init()
 	bool IsOnRanking = ( (GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP || GAMESTATE->m_PlayMode == PLAY_MODE_ONI)
 		&& !(GAMESTATE->m_pCurCourse->IsRanking()) );
 
-	if( PREFSMAN->m_GetRankingName == RANKING_OFF || 
+	if( PREFSMAN->m_GetRankingName == RANKING_OFF ||
 		(PREFSMAN->m_GetRankingName == RANKING_LIST && !IsOnRanking) )
 	{
 		// don't collect score due to ranking setting
@@ -233,7 +236,7 @@ void ScreenNameEntry::Init()
 			 m_sSelectedName[p] = pProfile->m_sLastUsedHighScoreName;
 
 		// resize string to MAX_RANKING_NAME_LENGTH
-		m_sSelectedName[p] = ssprintf( "%*.*s", MAX_RANKING_NAME_LENGTH, MAX_RANKING_NAME_LENGTH, m_sSelectedName[p].c_str() );
+		m_sSelectedName[p] = fmt::sprintf( "%*.*s", MAX_RANKING_NAME_LENGTH, MAX_RANKING_NAME_LENGTH, m_sSelectedName[p].c_str() );
 		ASSERT( (int) m_sSelectedName[p].length() == MAX_RANKING_NAME_LENGTH );
 
 		// don't load player if they aren't going to enter their name
@@ -259,7 +262,7 @@ void ScreenNameEntry::Init()
 		}
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(p);
-		const int iMaxCols = min( int(ABS_MAX_RANKING_NAME_LENGTH), pStyle->m_iColsPerPlayer );
+		const int iMaxCols = std::min( int(ABS_MAX_RANKING_NAME_LENGTH), pStyle->m_iColsPerPlayer );
 		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyle->m_iColsPerPlayer, -1);
 		int CurrentStringIndex = 0;
 		vector<float> xs;
@@ -273,9 +276,9 @@ void ScreenNameEntry::Init()
 			vector<GameInput> gi;
 			GAMESTATE->GetCurrentStyle(p)->StyleInputToGameInput( iCol, p, gi );
 			bool gi_is_start= false;
-			for(size_t i= 0; i < gi.size(); ++i)
+			for (auto &input: gi)
 			{
-				gi_is_start|= (INPUTMAPPER->GameButtonToMenuButton(gi[i].button)
+				gi_is_start|= (INPUTMAPPER->GameButtonToMenuButton(input.button)
 					== GAME_BUTTON_START);
 			}
 			if(gi_is_start)
@@ -301,7 +304,7 @@ void ScreenNameEntry::Init()
 		m_textCategory[p].SetX( fPlayerX );
 		m_textCategory[p].SetY( CATEGORY_Y );
 		m_textCategory[p].SetZoom( CATEGORY_ZOOM );
-		RString joined;
+		std::string joined;
 		for( unsigned j = 0; j < aFeats[p].size(); ++j )
 		{
 			if( j )
@@ -320,8 +323,12 @@ void ScreenNameEntry::Init()
 bool ScreenNameEntry::AnyStillEntering() const
 {
 	FOREACH_PlayerNumber( p )
+	{
 		if( m_bStillEnteringName[p] )
+		{
 			return true;
+		}
+	}
 	return false;
 }
 
@@ -354,7 +361,7 @@ bool ScreenNameEntry::Input( const InputEventPlus &input )
 			m_ReceptorArrowRow[input.pn].Step( iCol, TNS_W1 );
 			m_soundStep.Play(true);
 			char c = m_Text[input.pn].GetClosestChar( m_fFakeBeat );
-			m_textSelectedChars[input.pn][iCol].SetText( RString(1, c) );
+			m_textSelectedChars[input.pn][iCol].SetText( std::string(1, c) );
 			m_sSelectedName[input.pn][iStringIndex] = c;
 		}
 		bHandled = true;
@@ -397,7 +404,7 @@ bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 	pProfile->m_sLastUsedHighScoreName = m_sSelectedName[pn];
 
-	Trim( m_sSelectedName[pn], " " );
+	m_sSelectedName[pn] = Rage::trim( m_sSelectedName[pn], " " );
 
 	GAMESTATE->StoreRankingName( pn, m_sSelectedName[pn] );
 
@@ -409,7 +416,7 @@ bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
 /*
  * (c) 2001-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -419,7 +426,7 @@ bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,5 +1,8 @@
 #include "global.h"
 #include "InputHandler_Linux_Event.h"
+#include "RageMath.hpp"
+#include <array>
+
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "LinuxInputManager.h"
@@ -18,9 +21,11 @@
 #include <sys/stat.h>
 #include <linux/input.h>
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( LinuxEvent, Linux_Event );
 
-static RString BustypeToString( int iBus )
+static std::string BustypeToString( int iBus )
 {
 	switch( iBus )
 	{
@@ -39,7 +44,7 @@ static RString BustypeToString( int iBus )
 	case BUS_RS232: return "serial port";
 	case BUS_USB: return "USB";
 	case BUS_XTKBD: return "XT keyboard";
-	default: return ssprintf("unknown bus %x", iBus);
+	default: return fmt::sprintf("unknown bus %x", iBus);
 	}
 }
 
@@ -47,7 +52,7 @@ struct EventDevice
 {
 	EventDevice();
 	~EventDevice();
-	bool Open( RString sFile, InputDevice dev );
+	bool Open( std::string sFile, InputDevice dev );
 	bool IsOpen() const { return m_iFD != -1; }
 	void Close()
 	{
@@ -57,8 +62,8 @@ struct EventDevice
 	}
 
 	int m_iFD;
-	RString m_sPath;
-	RString m_sName;
+	std::string m_sPath;
+	std::string m_sName;
 	InputDevice m_Dev;
 
 	int aiAbsMin[ABS_MAX];
@@ -73,13 +78,13 @@ static vector<EventDevice *> g_apEventDevices;
  * there; return false if we don't know. */
 static bool EventDeviceExists( int iNum )
 {
-	RString sDir = ssprintf( "/sys/class" );
+	auto sDir = fmt::sprintf( "/sys/class" );
 	struct stat st;
-	if( stat(sDir, &st) == -1 )
+	if( stat(sDir.c_str(), &st) == -1 )
 		return true;
 
-	RString sFile = ssprintf( "/sys/class/input/event%i", iNum );
-	return stat(sFile, &st) == 0;
+	auto sFile = fmt::sprintf( "/sys/class/input/event%i", iNum );
+	return stat(sFile.c_str(), &st) == 0;
 }
 
 static bool BitIsSet( const uint8_t *pArray, uint32_t iBit )
@@ -92,11 +97,11 @@ EventDevice::EventDevice()
 	m_iFD = -1;
 }
 
-bool EventDevice::Open( RString sFile, InputDevice dev )
+bool EventDevice::Open( std::string sFile, InputDevice dev )
 {
 	m_sPath = sFile;
 	m_Dev = dev;
-	m_iFD = open( sFile, O_RDWR );
+	m_iFD = open( sFile.c_str(), O_RDWR );
 	if( m_iFD == -1 )
 	{
 		// HACK: Let the caller handle errno.
@@ -111,14 +116,14 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		if( ioctl(m_iFD, EVIOCGVERSION, &iVersion) == -1 )
 			LOG->Warn( "ioctl(EVIOCGVERSION): %s", strerror(errno) );
 		else
-			LOG->Info( "Event driver: v%i.%i.%i", (iVersion >> 16) & 0xFF, (iVersion >> 8) & 0xFF, iVersion & 0xFF ); 
+			LOG->Info( "Event driver: v%i.%i.%i", (iVersion >> 16) & 0xFF, (iVersion >> 8) & 0xFF, iVersion & 0xFF );
 	}
 
 	char szName[1024];
 	if( ioctl(m_iFD, EVIOCGNAME(sizeof(szName)), szName) == -1 )
 	{
 		LOG->Warn( "ioctl(EVIOCGNAME): %s", strerror(errno) );
-		
+
 		m_sName = "(unknown)";
 	}
 	else
@@ -161,7 +166,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		LOG->Warn( "ioctl(EV_MAX): %s", strerror(errno) );
 
 	{
-		vector<RString> setEventTypes;
+		vector<std::string> setEventTypes;
 
 		if( BitIsSet(iEventTypes, EV_SYN) )		setEventTypes.push_back( "syn" );
 		if( BitIsSet(iEventTypes, EV_KEY) )		setEventTypes.push_back( "key" );
@@ -176,9 +181,9 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		if( BitIsSet(iEventTypes, EV_PWR) )		setEventTypes.push_back( "pwr" );
 		if( BitIsSet(iEventTypes, EV_FF_STATUS) )	setEventTypes.push_back( "ff_status" );
 
-		LOG->Info( "    Event types: %s", join(", ", setEventTypes).c_str() );
+		LOG->Info( "    Event types: %s", Rage::join(", ", setEventTypes).c_str() );
 	}
-	
+
 	int iTotalKeys = 0;
 	for( int i = 0; i < KEY_MAX; ++i )
 	{
@@ -188,7 +193,12 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 	}
 
 	int iTotalAxes = 0;
-	const DeviceButton iExtraAxes[] = { JOY_LEFT_2, JOY_UP_2, JOY_AUX_1, JOY_AUX_3 };
+	std::array<DeviceButton, 4> const iExtraAxes = {
+		JOY_LEFT_2,
+		JOY_UP_2,
+		JOY_AUX_1,
+		JOY_AUX_3
+	};
 	int iNextExtraAxis = 0;
 	for( int i = 0; i < ABS_MAX; ++i )
 	{
@@ -250,7 +260,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		}
 		else
 		{
-			if( iNextExtraAxis < (int) ARRAYLEN(iExtraAxes) )
+			if( iNextExtraAxis < iExtraAxes.size() )
 			{
 				aiAbsMappingLow[i] = iExtraAxes[iNextExtraAxis];
 				aiAbsMappingHigh[i] = enum_add2( aiAbsMappingLow[i], 1 );
@@ -275,13 +285,13 @@ InputHandler_Linux_Event::InputHandler_Linux_Event()
 	m_NextDevice = DEVICE_JOY10;
 	m_bDevicesChanged = false;
 
-	if(LINUXINPUT == NULL) LINUXINPUT = new LinuxInputManager;
+	if(LINUXINPUT == nullptr) LINUXINPUT = new LinuxInputManager;
 	LINUXINPUT->InitDriver(this);
 
 	if( ! g_apEventDevices.empty() ) // LinuxInputManager found at least one valid device for us
 		StartThread();
 }
-	
+
 InputHandler_Linux_Event::~InputHandler_Linux_Event()
 {
 	if( m_InputThread.IsCreated() ) StopThread();
@@ -306,7 +316,7 @@ void InputHandler_Linux_Event::StopThread()
 	LOG->Trace( "Joystick thread shut down." );
 }
 
-bool InputHandler_Linux_Event::TryDevice(RString devfile)
+bool InputHandler_Linux_Event::TryDevice(std::string devfile)
 {
 	EventDevice* pDev = new EventDevice;
 	if( pDev->Open(devfile, m_NextDevice) )
@@ -318,7 +328,7 @@ bool InputHandler_Linux_Event::TryDevice(RString devfile)
 			g_apEventDevices.push_back( pDev );
 		}
 		if( hotplug ) StartThread();
-		
+
 		m_NextDevice = enum_add2(m_NextDevice, 1);
 		m_bDevicesChanged = true;
 		return true;
@@ -342,12 +352,13 @@ int InputHandler_Linux_Event::InputThread_Start( void *p )
 
 void InputHandler_Linux_Event::InputThread()
 {
+	using std::max;
 	while( !m_bShutdown )
 	{
 		fd_set fdset;
 		FD_ZERO( &fdset );
 		int iMaxFD = -1;
-		
+
 		for( int i = 0; i < (int) g_apEventDevices.size(); ++i )
 		{
 			int iFD = g_apEventDevices[i]->m_iFD;
@@ -362,7 +373,7 @@ void InputHandler_Linux_Event::InputThread()
 			break;
 
 		struct timeval zero = {0,100000};
-		if( select(iMaxFD+1, &fdset, NULL, NULL, &zero) <= 0 )
+		if( select(iMaxFD+1, &fdset, nullptr, nullptr, &zero) <= 0 )
 			continue;
 		RageTimer now;
 
@@ -408,13 +419,13 @@ void InputHandler_Linux_Event::InputThread()
 				ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, enum_add2(JOY_BUTTON_1, iNum), event.value != 0, now) );
 				break;
 			}
-				
+
 			case EV_ABS: {
-				ASSERT_M( event.code < ABS_MAX, ssprintf("%i", event.code) );
+				ASSERT_M( event.code < ABS_MAX, fmt::sprintf("%i", event.code) );
 				DeviceButton neg = g_apEventDevices[i]->aiAbsMappingLow[event.code];
 				DeviceButton pos = g_apEventDevices[i]->aiAbsMappingHigh[event.code];
 
-				float l = SCALE( int(event.value), (float) g_apEventDevices[i]->aiAbsMin[event.code], (float) g_apEventDevices[i]->aiAbsMax[event.code], -1.0f, 1.0f );
+				float l = Rage::scale( static_cast<float>(event.value), static_cast<float>(g_apEventDevices[i]->aiAbsMin[event.code]), static_cast<float>(g_apEventDevices[i]->aiAbsMax[event.code]), -1.0f, 1.0f );
 				if (GamePreferences::m_AxisFix)
 				{
 				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, (l < -0.5)||((l > 0.0001)&&(l < 0.5)), now) ); //Up if between 0.0001 and 0.5 or if less than -0.5
@@ -422,8 +433,8 @@ void InputHandler_Linux_Event::InputThread()
 				}
 				else
 				{
-				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, max(-l,0), now) );
-				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, pos, max(+l,0), now) );
+				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, max(-l,0.f), now) );
+				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, pos, max(+l,0.f), now) );
 				}
 				break;
 			}
@@ -443,7 +454,7 @@ void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo
 		EventDevice *pDev = g_apEventDevices[i];
                 vDevicesOut.push_back( InputDeviceInfo(pDev->m_Dev, pDev->m_sName) );
 	}
-	
+
 	m_bDevicesChanged = false;
 }
 
@@ -451,7 +462,7 @@ void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo
  * (c) 2003-2008 Glenn Maynard
  * (c) 2013 Ben "root" Anderson
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -461,7 +472,7 @@ void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

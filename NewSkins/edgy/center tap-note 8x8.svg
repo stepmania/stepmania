@@ -1,0 +1,1377 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="512"
+   id="svg3770"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="center tap-note 8x8.svg"
+   inkscape:export-filename="/home/parallels/center tap-note 8x8.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs3772">
+    <g
+       id="colorGray">
+      <path
+         d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
+         inkscape:connector-curvature="0"
+         style="fill:#808080;stroke:#000000;stroke-width:2"
+         id="path2988" />
+    </g>
+    <g
+       id="colorBlue">
+      <path
+         style="fill:#6666ff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
+         id="path3855" />
+    </g>
+    <g
+       id="colorRed">
+      <path
+         id="path3859"
+         d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ff3333;stroke:#000000;stroke-width:2" />
+    </g>
+    <g
+       id="colorPurple">
+      <path
+         style="fill:#b300b3;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
+         id="path3863" />
+    </g>
+    <g
+       id="colorYellow">
+      <path
+         id="path3867"
+         d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffff33;stroke:#000000;stroke-width:2" />
+    </g>
+    <g
+       id="colorPink">
+      <path
+         style="fill:#ffc0cb;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
+         id="path3871" />
+    </g>
+    <g
+       id="colorOrange">
+      <path
+         id="path3875"
+         d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffb733;stroke:#000000;stroke-width:2" />
+    </g>
+    <g
+       id="colorCyan">
+      <path
+         style="fill:#33ffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
+         id="path3879" />
+    </g>
+    <g
+       id="colorGreen">
+      <path
+         id="path3883"
+         d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
+         inkscape:connector-curvature="0"
+         style="fill:#00e600;stroke:#000000;stroke-width:2" />
+    </g>
+    <g
+       id="arrow1">
+      <path
+         d="M 21,17 H 43 V 2 H 21 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3007" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z"
+         id="path3009" />
+      <path
+         d="M 2,21 V 43 H 17 V 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3011" />
+      <path
+         d="m 2,43 v 11 l 8,8 H 21 V 47 l -4,-4 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3013" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,62 H 43 V 47 H 21 z"
+         id="path3015" />
+      <path
+         d="m 43,62 h 11 l 8,-8 V 43 H 47 l -4,4 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3017" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 62,21 H 47 v 22 h 15 z"
+         id="path3019" />
+      <path
+         d="M 62,10 V 21 H 47 L 43,17 V 2 h 11 l 8,8 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3021" />
+    </g>
+    <g
+       id="arrow2">
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,17 H 43 V 2 H 21 z"
+         id="path3887" />
+      <path
+         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3889" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 2,21 V 43 H 17 V 21 z"
+         id="path3891" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 2,43 v 11 l 8,8 H 21 V 47 l -4,-4 z"
+         id="path3893" />
+      <path
+         d="M 21,62 H 43 V 47 H 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3895" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 43,62 h 11 l 8,-8 V 43 H 47 l -4,4 z"
+         id="path3897" />
+      <path
+         d="M 62,21 H 47 v 22 h 15 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3899" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 62,10 V 21 H 47 L 43,17 V 2 h 11 l 8,8 z"
+         id="path3901" />
+    </g>
+    <g
+       id="arrow3">
+      <path
+         id="path3905"
+         d="M 21,17 H 43 V 2 H 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3907"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z" />
+      <path
+         id="path3909"
+         d="M 2,21 V 43 H 17 V 21 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3911"
+         d="m 2,43 v 11 l 8,8 H 21 V 47 l -4,-4 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3913"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,62 H 43 V 47 H 21 z" />
+      <path
+         id="path3915"
+         d="m 43,62 h 11 l 8,-8 V 43 H 47 l -4,4 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3917"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 62,21 H 47 v 22 h 15 z" />
+      <path
+         id="path3919"
+         d="M 62,10 V 21 H 47 L 43,17 V 2 h 11 l 8,8 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+    </g>
+    <g
+       id="arrow4">
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,17 H 43 V 2 H 21 z"
+         id="path3923" />
+      <path
+         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3925" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 2,21 V 43 H 17 V 21 z"
+         id="path3927" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 2,43 v 11 l 8,8 H 21 V 47 l -4,-4 z"
+         id="path3929" />
+      <path
+         d="M 21,62 H 43 V 47 H 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3931" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 43,62 h 11 l 8,-8 V 43 H 47 l -4,4 z"
+         id="path3933" />
+      <path
+         d="M 62,21 H 47 v 22 h 15 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3935" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 62,10 V 21 H 47 L 43,17 V 2 h 11 l 8,8 z"
+         id="path3937" />
+    </g>
+    <g
+       id="arrow5">
+      <path
+         id="path3941"
+         d="M 21,17 H 43 V 2 H 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3943"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z" />
+      <path
+         id="path3945"
+         d="M 2,21 V 43 H 17 V 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3947"
+         d="m 2,43 v 11 l 8,8 H 21 V 47 l -4,-4 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3949"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,62 H 43 V 47 H 21 z" />
+      <path
+         id="path3951"
+         d="m 43,62 h 11 l 8,-8 V 43 H 47 l -4,4 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3953"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 62,21 H 47 v 22 h 15 z" />
+      <path
+         id="path3955"
+         d="M 62,10 V 21 H 47 L 43,17 V 2 h 11 l 8,8 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+    </g>
+    <g
+       id="arrow6">
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,17 H 43 V 2 H 21 z"
+         id="path3959" />
+      <path
+         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3961" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 2,21 V 43 H 17 V 21 z"
+         id="path3963" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 2,43 v 11 l 8,8 H 21 V 47 l -4,-4 z"
+         id="path3965" />
+      <path
+         d="M 21,62 H 43 V 47 H 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3967" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 43,62 h 11 l 8,-8 V 43 H 47 l -4,4 z"
+         id="path3969" />
+      <path
+         d="M 62,21 H 47 v 22 h 15 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3971" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 62,10 V 21 H 47 L 43,17 V 2 h 11 l 8,8 z"
+         id="path3973" />
+    </g>
+    <g
+       id="arrow7">
+      <path
+         id="path3977"
+         d="M 21,17 H 43 V 2 H 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3979"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z" />
+      <path
+         id="path3981"
+         d="M 2,21 V 43 H 17 V 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3983"
+         d="m 2,43 v 11 l 8,8 H 21 V 47 l -4,-4 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3985"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,62 H 43 V 47 H 21 z" />
+      <path
+         id="path3987"
+         d="m 43,62 h 11 l 8,-8 V 43 H 47 l -4,4 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         id="path3989"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 62,21 H 47 v 22 h 15 z" />
+      <path
+         id="path3991"
+         d="M 62,10 V 21 H 47 L 43,17 V 2 h 11 l 8,8 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+    </g>
+    <g
+       id="arrow8">
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 21,17 H 43 V 2 H 21 z"
+         id="path3995" />
+      <path
+         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3997" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 2,21 V 43 H 17 V 21 z"
+         id="path3999" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 2,43 v 11 l 8,8 H 21 V 47 l -4,-4 z"
+         id="path4001" />
+      <path
+         d="M 21,62 H 43 V 47 H 21 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path4003" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 43,62 h 11 l 8,-8 V 43 H 47 l -4,4 z"
+         id="path4005" />
+      <path
+         d="M 62,21 H 47 v 22 h 15 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path4007" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 62,10 V 21 H 47 L 43,17 V 2 h 11 l 8,8 z"
+         id="path4009" />
+    </g>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.90028971"
+     inkscape:cx="304.4909"
+     inkscape:cy="253.06674"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:window-width="1224"
+     inkscape:window-height="782"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3792" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3775">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <use
+       x="0"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#colorBlue"
+       id="use3090" />
+    <use
+       xlink:href="#colorBlue"
+       height="64"
+       width="64"
+       y="0"
+       x="64"
+       id="use4011" />
+    <use
+       id="use4013"
+       x="128"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#colorBlue" />
+    <use
+       xlink:href="#colorBlue"
+       height="64"
+       width="64"
+       y="0"
+       x="192"
+       id="use4015" />
+    <use
+       id="use4017"
+       x="256"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#colorBlue" />
+    <use
+       xlink:href="#colorBlue"
+       height="64"
+       width="64"
+       y="0"
+       x="320"
+       id="use4019" />
+    <use
+       id="use4021"
+       x="384"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#colorBlue" />
+    <use
+       xlink:href="#colorBlue"
+       height="64"
+       width="64"
+       y="0"
+       x="448"
+       id="use4023" />
+    <use
+       id="use4025"
+       x="0"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#colorRed" />
+    <use
+       xlink:href="#colorRed"
+       height="64"
+       width="64"
+       y="64"
+       x="64"
+       id="use4027" />
+    <use
+       id="use4029"
+       x="128"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#colorRed" />
+    <use
+       xlink:href="#colorRed"
+       height="64"
+       width="64"
+       y="64"
+       x="192"
+       id="use4031" />
+    <use
+       id="use4033"
+       x="256"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#colorRed" />
+    <use
+       xlink:href="#colorRed"
+       height="64"
+       width="64"
+       y="64"
+       x="320"
+       id="use4035" />
+    <use
+       id="use4037"
+       x="384"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#colorRed" />
+    <use
+       xlink:href="#colorRed"
+       height="64"
+       width="64"
+       y="64"
+       x="448"
+       id="use4039" />
+    <use
+       id="use4041"
+       x="0"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#colorPurple" />
+    <use
+       xlink:href="#colorPurple"
+       height="64"
+       width="64"
+       y="128"
+       x="64"
+       id="use4043" />
+    <use
+       id="use4045"
+       x="128"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#colorPurple" />
+    <use
+       xlink:href="#colorPurple"
+       height="64"
+       width="64"
+       y="128"
+       x="192"
+       id="use4047" />
+    <use
+       id="use4049"
+       x="256"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#colorPurple" />
+    <use
+       xlink:href="#colorPurple"
+       height="64"
+       width="64"
+       y="128"
+       x="320"
+       id="use4051" />
+    <use
+       id="use4053"
+       x="384"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#colorPurple" />
+    <use
+       xlink:href="#colorPurple"
+       height="64"
+       width="64"
+       y="128"
+       x="448"
+       id="use4055" />
+    <use
+       id="use4057"
+       x="0"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#colorYellow" />
+    <use
+       xlink:href="#colorYellow"
+       height="64"
+       width="64"
+       y="192"
+       x="64"
+       id="use4059" />
+    <use
+       id="use4061"
+       x="128"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#colorYellow" />
+    <use
+       xlink:href="#colorYellow"
+       height="64"
+       width="64"
+       y="192"
+       x="192"
+       id="use4063" />
+    <use
+       id="use4065"
+       x="256"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#colorYellow" />
+    <use
+       xlink:href="#colorYellow"
+       height="64"
+       width="64"
+       y="192"
+       x="320"
+       id="use4067" />
+    <use
+       id="use4069"
+       x="384"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#colorYellow" />
+    <use
+       xlink:href="#colorYellow"
+       height="64"
+       width="64"
+       y="192"
+       x="448"
+       id="use4071" />
+    <use
+       id="use4073"
+       x="0"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#colorPink" />
+    <use
+       xlink:href="#colorPink"
+       height="64"
+       width="64"
+       y="256"
+       x="64"
+       id="use4075" />
+    <use
+       id="use4077"
+       x="128"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#colorPink" />
+    <use
+       xlink:href="#colorPink"
+       height="64"
+       width="64"
+       y="256"
+       x="192"
+       id="use4079" />
+    <use
+       id="use4081"
+       x="256"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#colorPink" />
+    <use
+       xlink:href="#colorPink"
+       height="64"
+       width="64"
+       y="256"
+       x="320"
+       id="use4083" />
+    <use
+       id="use4085"
+       x="384"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#colorPink" />
+    <use
+       xlink:href="#colorPink"
+       height="64"
+       width="64"
+       y="256"
+       x="448"
+       id="use4087" />
+    <use
+       id="use4089"
+       x="0"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#colorOrange" />
+    <use
+       xlink:href="#colorOrange"
+       height="64"
+       width="64"
+       y="320"
+       x="64"
+       id="use4091" />
+    <use
+       id="use4093"
+       x="128"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#colorOrange" />
+    <use
+       xlink:href="#colorOrange"
+       height="64"
+       width="64"
+       y="320"
+       x="192"
+       id="use4095" />
+    <use
+       id="use4097"
+       x="256"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#colorOrange" />
+    <use
+       xlink:href="#colorOrange"
+       height="64"
+       width="64"
+       y="320"
+       x="320"
+       id="use4099" />
+    <use
+       id="use4101"
+       x="384"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#colorOrange" />
+    <use
+       xlink:href="#colorOrange"
+       height="64"
+       width="64"
+       y="320"
+       x="448"
+       id="use4103" />
+    <use
+       id="use4105"
+       x="0"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#colorCyan" />
+    <use
+       xlink:href="#colorCyan"
+       height="64"
+       width="64"
+       y="384"
+       x="64"
+       id="use4107" />
+    <use
+       id="use4109"
+       x="128"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#colorCyan" />
+    <use
+       xlink:href="#colorCyan"
+       height="64"
+       width="64"
+       y="384"
+       x="192"
+       id="use4111" />
+    <use
+       id="use4113"
+       x="256"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#colorCyan" />
+    <use
+       xlink:href="#colorCyan"
+       height="64"
+       width="64"
+       y="384"
+       x="320"
+       id="use4115" />
+    <use
+       id="use4117"
+       x="384"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#colorCyan" />
+    <use
+       xlink:href="#colorCyan"
+       height="64"
+       width="64"
+       y="384"
+       x="448"
+       id="use4119" />
+    <use
+       id="use4121"
+       x="0"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#colorGreen" />
+    <use
+       xlink:href="#colorGreen"
+       height="64"
+       width="64"
+       y="448"
+       x="64"
+       id="use4123" />
+    <use
+       id="use4125"
+       x="128"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#colorGreen" />
+    <use
+       xlink:href="#colorGreen"
+       height="64"
+       width="64"
+       y="448"
+       x="192"
+       id="use4127" />
+    <use
+       id="use4129"
+       x="256"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#colorGreen" />
+    <use
+       xlink:href="#colorGreen"
+       height="64"
+       width="64"
+       y="448"
+       x="320"
+       id="use4131" />
+    <use
+       id="use4133"
+       x="384"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#colorGreen" />
+    <use
+       xlink:href="#colorGreen"
+       height="64"
+       width="64"
+       y="448"
+       x="448"
+       id="use4135" />
+    <use
+       xlink:href="#arrow1"
+       height="64"
+       width="64"
+       y="0"
+       x="0"
+       id="use3155" />
+    <use
+       x="0"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#arrow1"
+       id="use4137" />
+    <use
+       id="use4139"
+       xlink:href="#arrow1"
+       height="64"
+       width="64"
+       y="128"
+       x="0" />
+    <use
+       x="0"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#arrow1"
+       id="use4141" />
+    <use
+       id="use4143"
+       xlink:href="#arrow1"
+       height="64"
+       width="64"
+       y="256"
+       x="0" />
+    <use
+       x="0"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#arrow1"
+       id="use4145" />
+    <use
+       id="use4147"
+       xlink:href="#arrow1"
+       height="64"
+       width="64"
+       y="384"
+       x="0" />
+    <use
+       x="0"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#arrow1"
+       id="use4149" />
+    <use
+       id="use4151"
+       xlink:href="#arrow2"
+       height="64"
+       width="64"
+       y="0"
+       x="64" />
+    <use
+       x="64"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#arrow2"
+       id="use4153" />
+    <use
+       id="use4155"
+       xlink:href="#arrow2"
+       height="64"
+       width="64"
+       y="128"
+       x="64" />
+    <use
+       x="64"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#arrow2"
+       id="use4157" />
+    <use
+       id="use4159"
+       xlink:href="#arrow2"
+       height="64"
+       width="64"
+       y="256"
+       x="64" />
+    <use
+       x="64"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#arrow2"
+       id="use4161" />
+    <use
+       id="use4163"
+       xlink:href="#arrow2"
+       height="64"
+       width="64"
+       y="384"
+       x="64" />
+    <use
+       x="64"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#arrow2"
+       id="use4165" />
+    <use
+       id="use4167"
+       xlink:href="#arrow3"
+       height="64"
+       width="64"
+       y="0"
+       x="128" />
+    <use
+       x="128"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#arrow3"
+       id="use4169" />
+    <use
+       id="use4171"
+       xlink:href="#arrow3"
+       height="64"
+       width="64"
+       y="128"
+       x="128" />
+    <use
+       x="128"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#arrow3"
+       id="use4173" />
+    <use
+       id="use4175"
+       xlink:href="#arrow3"
+       height="64"
+       width="64"
+       y="256"
+       x="128" />
+    <use
+       x="128"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#arrow3"
+       id="use4177" />
+    <use
+       id="use4179"
+       xlink:href="#arrow3"
+       height="64"
+       width="64"
+       y="384"
+       x="128" />
+    <use
+       x="128"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#arrow3"
+       id="use4181" />
+    <use
+       id="use4183"
+       xlink:href="#arrow4"
+       height="64"
+       width="64"
+       y="0"
+       x="192" />
+    <use
+       x="192"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#arrow4"
+       id="use4185" />
+    <use
+       id="use4187"
+       xlink:href="#arrow4"
+       height="64"
+       width="64"
+       y="128"
+       x="192" />
+    <use
+       x="192"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#arrow4"
+       id="use4189" />
+    <use
+       id="use4191"
+       xlink:href="#arrow4"
+       height="64"
+       width="64"
+       y="256"
+       x="192" />
+    <use
+       x="192"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#arrow4"
+       id="use4193" />
+    <use
+       id="use4195"
+       xlink:href="#arrow4"
+       height="64"
+       width="64"
+       y="384"
+       x="192" />
+    <use
+       x="192"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#arrow4"
+       id="use4197" />
+    <use
+       id="use4199"
+       xlink:href="#arrow5"
+       height="64"
+       width="64"
+       y="0"
+       x="256" />
+    <use
+       x="256"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#arrow5"
+       id="use4201" />
+    <use
+       id="use4203"
+       xlink:href="#arrow5"
+       height="64"
+       width="64"
+       y="128"
+       x="256" />
+    <use
+       x="256"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#arrow5"
+       id="use4205" />
+    <use
+       id="use4207"
+       xlink:href="#arrow5"
+       height="64"
+       width="64"
+       y="256"
+       x="256" />
+    <use
+       x="256"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#arrow5"
+       id="use4209" />
+    <use
+       id="use4211"
+       xlink:href="#arrow5"
+       height="64"
+       width="64"
+       y="384"
+       x="256" />
+    <use
+       x="256"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#arrow5"
+       id="use4213" />
+    <use
+       id="use4215"
+       xlink:href="#arrow6"
+       height="64"
+       width="64"
+       y="0"
+       x="320" />
+    <use
+       x="320"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#arrow6"
+       id="use4217" />
+    <use
+       id="use4219"
+       xlink:href="#arrow6"
+       height="64"
+       width="64"
+       y="128"
+       x="320" />
+    <use
+       x="320"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#arrow6"
+       id="use4221" />
+    <use
+       id="use4223"
+       xlink:href="#arrow6"
+       height="64"
+       width="64"
+       y="256"
+       x="320" />
+    <use
+       x="320"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#arrow6"
+       id="use4225" />
+    <use
+       id="use4227"
+       xlink:href="#arrow6"
+       height="64"
+       width="64"
+       y="384"
+       x="320" />
+    <use
+       x="320"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#arrow6"
+       id="use4229" />
+    <use
+       id="use4231"
+       xlink:href="#arrow7"
+       height="64"
+       width="64"
+       y="0"
+       x="384" />
+    <use
+       x="384"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#arrow7"
+       id="use4233" />
+    <use
+       id="use4235"
+       xlink:href="#arrow7"
+       height="64"
+       width="64"
+       y="128"
+       x="384" />
+    <use
+       x="384"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#arrow7"
+       id="use4237" />
+    <use
+       id="use4239"
+       xlink:href="#arrow7"
+       height="64"
+       width="64"
+       y="256"
+       x="384" />
+    <use
+       x="384"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#arrow7"
+       id="use4241" />
+    <use
+       id="use4243"
+       xlink:href="#arrow7"
+       height="64"
+       width="64"
+       y="384"
+       x="384" />
+    <use
+       x="384"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#arrow7"
+       id="use4245" />
+    <use
+       id="use4247"
+       xlink:href="#arrow8"
+       height="64"
+       width="64"
+       y="0"
+       x="448" />
+    <use
+       x="448"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#arrow8"
+       id="use4249" />
+    <use
+       id="use4251"
+       xlink:href="#arrow8"
+       height="64"
+       width="64"
+       y="128"
+       x="448" />
+    <use
+       x="448"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#arrow8"
+       id="use4253" />
+    <use
+       id="use4255"
+       xlink:href="#arrow8"
+       height="64"
+       width="64"
+       y="256"
+       x="448" />
+    <use
+       x="448"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#arrow8"
+       id="use4257" />
+    <use
+       id="use4259"
+       xlink:href="#arrow8"
+       height="64"
+       width="64"
+       y="384"
+       x="448" />
+    <use
+       x="448"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#arrow8"
+       id="use4261" />
+  </g>
+</svg>

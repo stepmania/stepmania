@@ -1,7 +1,6 @@
 #include "global.h"
 #include "RageLog.h"
 #include "InputHandler_MacOSX_HID.h"
-#include "Foreach.h"
 #include "PrefsManager.h"
 #include "InputFilter.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
@@ -12,6 +11,8 @@
 
 #include <IOKit/IOMessage.h>
 #include <Carbon/Carbon.h>
+
+using std::vector;
 
 REGISTER_INPUT_HANDLER_CLASS2( HID, MacOSX_HID );
 
@@ -30,16 +31,18 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 	{
-		if( event.longValueSize != 0 && event.longValue != NULL )
+		if( event.longValueSize != 0 && event.longValue != nullptr )
 		{
 			free( event.longValue );
 			continue;
 		}
-		//LOG->Trace( "Got event with cookie %p, value %d", event.elementCookie, int(event.value) );
+		//LOG->Trace( "Got event with cookie %p, value %d", static_cast<void *>(event.elementCookie), int(event.value) );
 		dev->GetButtonPresses( vPresses, event.elementCookie, event.value, now );
 	}
-	FOREACH_CONST( DeviceInput, vPresses, i )
-		INPUTFILTER->ButtonPressed( *i );
+	for (auto &i: vPresses)
+	{
+		INPUTFILTER->ButtonPressed( i );
+	}
 }
 
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )
@@ -58,7 +61,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 
 	This->StartDevices();
 	{
-		const RString sError = SetThreadPrecedence( 1.0f );
+		const std::string sError = SetThreadPrecedence( 1.0f );
 		if( !sError.empty() )
 			LOG->Warn( "Could not set precedence of the input thread: %s", sError.c_str() );
 	}
@@ -66,7 +69,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 	{
 		/* The function copies the information out of the structure, so the memory
 		 * pointed to by context does not need to persist beyond the function call. */
-		CFRunLoopObserverContext context = { 0, &This->m_Sem, NULL, NULL, NULL };
+		CFRunLoopObserverContext context = { 0, &This->m_Sem, nullptr, nullptr, nullptr };
 		CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 								  false, 0, RunLoopStarted, &context);
 		CFRunLoopAddObserver( This->m_LoopRef, o, kCFRunLoopDefaultMode );
@@ -83,7 +86,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 		void *info = This->m_LoopRef;
 		void (*perform)(void *) = (void (*)(void *))CFRunLoopStop;
 		// { version, info, retain, release, copyDescription, equal, hash, schedule, cancel, perform }
-		CFRunLoopSourceContext context = { 0, info, NULL, NULL, NULL, NULL, NULL, NULL, NULL, perform };
+		CFRunLoopSourceContext context = { 0, info, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, perform };
 
 		// Pass 1 so that it is called after all inputs have been handled (they will have order = 0)
 		This->m_SourceRef = CFRunLoopSourceCreate( kCFAllocatorDefault, 1, &context );
@@ -120,8 +123,10 @@ void InputHandler_MacOSX_HID::StartDevices()
 	int n = 0;
 
 	ASSERT( m_LoopRef );
-	FOREACH( HIDDevice *, m_vDevices, i )
-		(*i)->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
+	for (auto *i: m_vDevices)
+	{
+		i->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
+	}
 
 	CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource( m_NotifyPort );
 
@@ -130,8 +135,10 @@ void InputHandler_MacOSX_HID::StartDevices()
 
 InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 {
-	FOREACH( HIDDevice *, m_vDevices, i )
-		delete *i;
+	for (auto *i: m_vDevices)
+	{
+		delete i;
+	}
 	if( PREFSMAN->m_bThreadedInput )
 	{
 		CFRunLoopSourceSignal( m_SourceRef );
@@ -142,8 +149,10 @@ InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 		LOG->Trace( "Input handler thread shut down." );
 	}
 
-	FOREACH( io_iterator_t, m_vIters, i )
-		IOObjectRelease( *i );
+	for (auto &i: m_vIters)
+	{
+		IOObjectRelease( i );
+	}
 	IONotificationPortDestroy( m_NotifyPort );
 }
 
@@ -152,7 +161,7 @@ static CFDictionaryRef GetMatchingDictionary( int usagePage, int usage )
 	// Build the matching dictionary.
 	CFMutableDictionaryRef dict;
 
-	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == NULL )
+	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == nullptr )
 		FAIL_M( "Couldn't create a matching dictionary." );
 	// Refine the search by only looking for joysticks
 	CFNumberRef usagePageRef = CFInt( usagePage );
@@ -181,7 +190,7 @@ static HIDDevice *MakeDevice( InputDevice id )
 		return new JoystickDevice;
 	if( IsPump(id) )
 		return new PumpDevice;
-	return NULL;
+	return nullptr;
 }
 
 void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice &id )
@@ -200,7 +209,7 @@ void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice 
 	// Iterate over the devices and add them
 	while( (device = IOIteratorNext(iter)) )
 	{
-		LOG->Trace( "\tFound device %d", id );
+		LOG->Trace( "\tFound device %d", static_cast<int>(id) );
 		HIDDevice *dev = MakeDevice( id );
 		int num;
 
@@ -247,10 +256,10 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 	// Add devices.
 	LOG->Trace( "Finding keyboards" );
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard, id );
-	
+
 	LOG->Trace( "Finding mice" );
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse, id );
-	
+
 	LOG->Trace( "Finding joysticks" );
 	id = DEVICE_JOY1;
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick, id );
@@ -277,77 +286,79 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 
 void InputHandler_MacOSX_HID::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices )
 {
-	FOREACH_CONST( HIDDevice *, m_vDevices, i )
-		(*i)->GetDevicesAndDescriptions( vDevices );
+	for (auto *i: m_vDevices)
+	{
+		i->GetDevicesAndDescriptions( vDevices );
+	}
 }
 
-RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput &di )
+std::string InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	if( di.device == DEVICE_KEYBOARD )
 	{
 #define OTHER(n) (KEY_OTHER_0 + (n))
 		switch( di.button )
 		{
-		case KEY_DEL: return "del";
-		case KEY_BACK: return "delete";
-		case KEY_ENTER: return "return";
-		case KEY_LALT: return "left option";
-		case KEY_RALT: return "right option";
-		case KEY_LMETA: return "left cmd";
-		case KEY_RMETA: return "right cmd";
-		case KEY_INSERT: return "help";
-		case OTHER(0): return "F17";
-		case OTHER(1): return "F18";
-		case OTHER(2): return "F19";
-		case OTHER(3): return "F20";
-		case OTHER(4): return "F21";
-		case OTHER(5): return "F22";
-		case OTHER(6): return "F23";
-		case OTHER(7): return "F25";
-		case OTHER(8): return "execute";
-		case OTHER(9): return "select";
-		case OTHER(10): return "stop";
-		case OTHER(11): return "again";
-		case OTHER(12): return "undo";
-		case OTHER(13): return "cut";
-		case OTHER(14): return "copy";
-		case OTHER(15): return "paste";
-		case OTHER(16): return "find";
-		case OTHER(17): return "mute";
-		case OTHER(18): return "volume up";
-		case OTHER(19): return "volume down";
-		case OTHER(20): return "AS/400 equal";
-		case OTHER(21): return "international 1";
-		case OTHER(22): return "international 2";
-		case OTHER(23): return "international 3";
-		case OTHER(24): return "international 4";
-		case OTHER(25): return "international 5";
-		case OTHER(26): return "international 6";
-		case OTHER(27): return "international 7";
-		case OTHER(28): return "international 8";
-		case OTHER(29): return "international 9";
-		case OTHER(30): return "lang 1";
-		case OTHER(31): return "lang 2";
-		case OTHER(32): return "lang 3";
-		case OTHER(33): return "lang 4";
-		case OTHER(34): return "lang 5";
-		case OTHER(35): return "lang 6";
-		case OTHER(36): return "lang 7";
-		case OTHER(37): return "lang 8";
-		case OTHER(38): return "lang 9";
-		case OTHER(39): return "alt erase";
-		case OTHER(40): return "sys req";
-		case OTHER(41): return "cancel";
-		case OTHER(42): return "separator";
-		case OTHER(43): return "out";
-		case OTHER(44): return "oper";
-		case OTHER(45): return "clear/again"; // XXX huh?
-		case OTHER(46): return "cr sel/props"; // XXX
-		case OTHER(47): return "ex sel";
-		case OTHER(48): return "non US backslash";
-		case OTHER(49): return "application";
-		case OTHER(50): return "prior";
-		default: break;
+			case KEY_DEL: return "del";
+			case KEY_BACK: return "delete";
+			case KEY_ENTER: return "return";
+			case KEY_LALT: return "left option";
+			case KEY_RALT: return "right option";
+			case KEY_LMETA: return "left cmd";
+			case KEY_RMETA: return "right cmd";
+			case KEY_INSERT: return "help";
+			case OTHER(0): return "F17";
+			case OTHER(1): return "F18";
+			case OTHER(2): return "F19";
+			case OTHER(3): return "F20";
+			case OTHER(4): return "F21";
+			case OTHER(5): return "F22";
+			case OTHER(6): return "F23";
+			case OTHER(7): return "F25";
+			case OTHER(8): return "execute";
+			case OTHER(9): return "select";
+			case OTHER(10): return "stop";
+			case OTHER(11): return "again";
+			case OTHER(12): return "undo";
+			case OTHER(13): return "cut";
+			case OTHER(14): return "copy";
+			case OTHER(15): return "paste";
+			case OTHER(16): return "find";
+			case OTHER(17): return "mute";
+			case OTHER(18): return "volume up";
+			case OTHER(19): return "volume down";
+			case OTHER(20): return "AS/400 equal";
+			case OTHER(21): return "international 1";
+			case OTHER(22): return "international 2";
+			case OTHER(23): return "international 3";
+			case OTHER(24): return "international 4";
+			case OTHER(25): return "international 5";
+			case OTHER(26): return "international 6";
+			case OTHER(27): return "international 7";
+			case OTHER(28): return "international 8";
+			case OTHER(29): return "international 9";
+			case OTHER(30): return "lang 1";
+			case OTHER(31): return "lang 2";
+			case OTHER(32): return "lang 3";
+			case OTHER(33): return "lang 4";
+			case OTHER(34): return "lang 5";
+			case OTHER(35): return "lang 6";
+			case OTHER(36): return "lang 7";
+			case OTHER(37): return "lang 8";
+			case OTHER(38): return "lang 9";
+			case OTHER(39): return "alt erase";
+			case OTHER(40): return "sys req";
+			case OTHER(41): return "cancel";
+			case OTHER(42): return "separator";
+			case OTHER(43): return "out";
+			case OTHER(44): return "oper";
+			case OTHER(45): return "clear/again"; // XXX huh?
+			case OTHER(46): return "cr sel/props"; // XXX
+			case OTHER(47): return "ex sel";
+			case OTHER(48): return "non US backslash";
+			case OTHER(49): return "application";
+			case OTHER(50): return "prior";
+			default: break;
 		}
 #undef OTHER
 	}
@@ -355,18 +366,18 @@ RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput
 	{
 		switch( di.button )
 		{
-		case JOY_BUTTON_1:  return "UL";
-		case JOY_BUTTON_2:  return "UR";
-		case JOY_BUTTON_3:  return "MID";
-		case JOY_BUTTON_4:  return "DL";
-		case JOY_BUTTON_5:  return "DR";
-		case JOY_BUTTON_6:  return "Esc";
-		case JOY_BUTTON_7:  return "P2 UL";
-		case JOY_BUTTON_8:  return "P2 UR";
-		case JOY_BUTTON_9:  return "P2 MID";
-		case JOY_BUTTON_10: return "P2 DL";
-		case JOY_BUTTON_11: return "P2 DR";
-		default: break;
+			case JOY_BUTTON_1:  return "UL";
+			case JOY_BUTTON_2:  return "UR";
+			case JOY_BUTTON_3:  return "MID";
+			case JOY_BUTTON_4:  return "DL";
+			case JOY_BUTTON_5:  return "DR";
+			case JOY_BUTTON_6:  return "Esc";
+			case JOY_BUTTON_7:  return "P2 UL";
+			case JOY_BUTTON_8:  return "P2 UR";
+			case JOY_BUTTON_9:  return "P2 MID";
+			case JOY_BUTTON_10: return "P2 DL";
+			case JOY_BUTTON_11: return "P2 DR";
+			default: break;
 		}
 	}
 
@@ -380,22 +391,22 @@ static wchar_t KeyCodeToChar(CGKeyCode keyCode, unsigned int modifierFlags)
 {
 	TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
 	CFDataRef uchr = (CFDataRef)TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
-	const UCKeyboardLayout *keyboardLayout = uchr ? (const UCKeyboardLayout*)CFDataGetBytePtr(uchr) : NULL;
-	
+	const UCKeyboardLayout *keyboardLayout = uchr ? (const UCKeyboardLayout*)CFDataGetBytePtr(uchr) : nullptr;
+
 	if( keyboardLayout )
 	{
 		UInt32 deadKeyState = 0;
 		UniCharCount maxStringLength = 255;
 		UniCharCount actualStringLength = 0;
 		UniChar unicodeString[maxStringLength];
-		
+
 		OSStatus status = UCKeyTranslate(keyboardLayout,
 						 keyCode, kUCKeyActionDown, modifierFlags,
 						 LMGetKbdType(), 0,
 						 &deadKeyState,
 						 maxStringLength,
 						 &actualStringLength, unicodeString);
-		
+
 		if( status != noErr )
 		{
 			fprintf(stderr, "There was an %s error translating from the '%d' key code to a human readable string: %s\n",
@@ -464,7 +475,7 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 /*
  * (c) 2005, 2006 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -474,7 +485,7 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

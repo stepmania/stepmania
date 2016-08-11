@@ -8,28 +8,27 @@
 #include "archutils/Win32/ErrorStrings.h"
 #include "archutils/Win32/USB.h"
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( Pump, Win32_Pump );
 
 InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 {
 	m_bShutdown = false;
 	const int pump_usb_vid = 0x0d2f;
-	const int pump_usb_pids[2] = { 
-		0x0001 /* older model */, 
-		0x0003 /* shipped with Exceed */ 
+	const int pump_usb_pids[2] = {
+		0x0001 /* older model */,
+		0x0003 /* shipped with Exceed */
 	};
 
 	m_pDevice = new USBDevice[NUM_PUMPS];
 
 	int iNumFound = 0;
-	// TODO: Use C++1x semantics to loop through the pids.
-	// Hardcoding for now to keep this moving.
-	for( int p = 0; p < 2; ++p )
+	for ( auto const pump_usb_pid : pump_usb_pids )
 	{
-		const int pump_usb_pid = pump_usb_pids[p];
 		for( int i = 0; i < NUM_PUMPS; ++i )
 		{
-			if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i, NULL) )
+			if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i, nullptr) )
 			{
 				iNumFound++;
 				LOG->Info( "Found Pump pad %i", iNumFound );
@@ -71,7 +70,7 @@ void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 	for( int iButton = 0; iButton < ARRAYLEN(bits); ++iButton )
 	{
 		DeviceInput di( id, enum_add2(JOY_BUTTON_1, iButton), !(iEvent & bits[iButton]) );
-		
+
 		/* If we're in a thread, our timestamp is accurate. */
 		if( InputThread.IsCreated() )
 			di.ts.Touch();
@@ -80,7 +79,7 @@ void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 	}
 }
 
-RString InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput &di )
+std::string InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	switch( di.button )
 	{
@@ -120,7 +119,7 @@ int InputHandler_Win32_Pump::InputThread_Start( void *p )
 void InputHandler_Win32_Pump::InputThreadMain()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST) )
-		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set Pump thread priority") );
+		LOG->Warn("%s", werr_format(GetLastError(), "Failed to set Pump thread priority") );
 
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
@@ -168,7 +167,7 @@ void InputHandler_Win32_Pump::Update()
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -178,7 +177,7 @@ void InputHandler_Win32_Pump::Update()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

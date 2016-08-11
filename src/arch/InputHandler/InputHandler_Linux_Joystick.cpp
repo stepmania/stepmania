@@ -1,5 +1,6 @@
 #include "global.h"
 #include "InputHandler_Linux_Joystick.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "LinuxInputManager.h"
@@ -19,19 +20,21 @@
 
 #include <set>
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( LinuxJoystick, Linux_Joystick );
 
 InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 {
 	m_bDevicesChanged = false;
-	
+
 	LOG->Trace( "InputHandler_Linux_Joystick::InputHandler_Linux_Joystick" );
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		fds[i] = -1;
-	
+
 	m_iLastFd = 0;
 
-	if( LINUXINPUT == NULL ) LINUXINPUT = new LinuxInputManager;
+	if( LINUXINPUT == nullptr ) LINUXINPUT = new LinuxInputManager;
 	LINUXINPUT->InitDriver(this);
 
 	if( fds[0] != -1 ) // LinuxInputManager found at least one valid joystick for us
@@ -62,28 +65,28 @@ void InputHandler_Linux_Joystick::StopThread()
 	LOG->Trace( "Joystick thread shut down." );
 }
 
-bool InputHandler_Linux_Joystick::TryDevice(RString dev)
+bool InputHandler_Linux_Joystick::TryDevice(std::string dev)
 {
 	struct stat st;
-	if( stat( dev, &st ) == -1 )
+	if( stat( dev.c_str(), &st ) == -1 )
 		{ LOG->Warn( "LinuxJoystick: Couldn't stat %s: %s", dev.c_str(), strerror(errno) ); return false; }
 
 	if( !S_ISCHR( st.st_mode ) )
 		{ LOG->Warn( "LinuxJoystick: Ignoring %s: not a character device", dev.c_str() ); return false; }
-	
+
 	bool ret = false;
 	bool hotplug = false;
 	if( m_InputThread.IsCreated() ) { StopThread(); hotplug = true; }
 	/* Thread is stopped! DO NOT RETURN */
 	{
-		fds[m_iLastFd] = open( dev, O_RDONLY );
+		fds[m_iLastFd] = open( dev.c_str(), O_RDONLY );
 
 		if(fds[m_iLastFd] != -1)
 		{
 			char szName[1024];
 			ZERO( szName );
 			if( ioctl(fds[m_iLastFd], JSIOCGNAME(sizeof(szName)), szName) < 0 )
-				m_sDescription[m_iLastFd] = ssprintf( "Unknown joystick at %s", dev.c_str() );
+				m_sDescription[m_iLastFd] = fmt::sprintf( "Unknown joystick at %s", dev.c_str() );
 			else
 				m_sDescription[m_iLastFd] = szName;
 
@@ -95,7 +98,7 @@ bool InputHandler_Linux_Joystick::TryDevice(RString dev)
 		else LOG->Warn("LinuxJoystick: Failed to open %s: %s", dev.c_str(), strerror(errno) );
 	}
 	if( hotplug ) StartThread();
-	
+
 	return ret;
 }
 
@@ -119,14 +122,14 @@ void InputHandler_Linux_Joystick::InputThread()
 				continue;
 
 			FD_SET(fds[i], &fdset);
-			max_fd = max(max_fd, fds[i]);
+			max_fd = std::max(max_fd, fds[i]);
 		}
 
 		if(max_fd == -1)
 			break;
 
 		struct timeval zero = {0,100000};
-		if( select(max_fd+1, &fdset, NULL, NULL, &zero) <= 0 )
+		if( select(max_fd+1, &fdset, nullptr, nullptr, &zero) <= 0 )
 			continue;
 		RageTimer now;
 
@@ -164,9 +167,9 @@ void InputHandler_Linux_Joystick::InputThread()
 			case JS_EVENT_AXIS: {
 				DeviceButton neg = enum_add2(JOY_LEFT, 2*event.number);
 				DeviceButton pos = enum_add2(JOY_RIGHT, 2*event.number);
-                                float l = SCALE( int(event.value), 0.0f, 32767, 0.0f, 1.0f );
-				ButtonPressed( DeviceInput(id, neg, max(-l,0), now) );
-				ButtonPressed( DeviceInput(id, pos, max(+l,0), now) );
+                                float l = Rage::scale( int(event.value) + 0.f, 0.0f, 32767.f, 0.0f, 1.0f );
+				ButtonPressed( DeviceInput(id, neg, std::max(-l,0.f), now) );
+				ButtonPressed( DeviceInput(id, pos, std::max(+l,0.f), now) );
 				break;
 			}
 
@@ -190,7 +193,7 @@ void InputHandler_Linux_Joystick::GetDevicesAndDescriptions( vector<InputDeviceI
 	// as part of the constructor. This isn't called until all InputHandlers have been constructed,
 	// and is (hopefully) in the same thread as TryDevice... so doublecheck our thread now.
 	if( fds[0] != -1 && !m_InputThread.IsCreated() ) StartThread();
-	
+
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 	{
 		if (fds[i] < 0)
@@ -205,7 +208,7 @@ void InputHandler_Linux_Joystick::GetDevicesAndDescriptions( vector<InputDeviceI
  * (c) 2003-2004 Glenn Maynard
  * (c) 2013 Ben "root" Anderson
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -215,7 +218,7 @@ void InputHandler_Linux_Joystick::GetDevicesAndDescriptions( vector<InputDeviceI
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

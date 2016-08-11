@@ -14,6 +14,9 @@
 #include <cstdlib>
 #include "LocalizedString.h"
 
+using std::vector;
+using std::string;
+
 AutoScreenMessage( SM_BackFromURL );
 
 REGISTER_SCREEN_CLASS( ScreenPackages );
@@ -70,7 +73,7 @@ void ScreenPackages::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textWeb );
 	this->AddChild( &m_textWeb);
 	m_Links.push_back( " " ); // what is this here for? -aj
-	m_LinkTitles.push_back( VISIT_URL );
+	m_LinkTitles.push_back( VISIT_URL.GetValue() );
 
 	m_textURL.LoadFromFont( THEME->GetPathF( m_sName,"default") );
 	m_textURL.SetShadowLength( 0 );
@@ -104,12 +107,13 @@ void ScreenPackages::Init()
 
 	// if the default url isn't empty, load it.
 	if( !DEFAULT_URL.GetValue().empty() )
-		EnterURL( DEFAULT_URL );
-
+	{
+		EnterURL( DEFAULT_URL.GetValue() );
+	}
 	UpdateProgress();
 
 	// Workaround: For some reason, the first download sometimes
-	// corrupts; by opening and closing the RageFile, this 
+	// corrupts; by opening and closing the RageFile, this
 	// problem does not occur.  Go figure?
 
 	// XXX: This is a really dirty work around!
@@ -148,7 +152,7 @@ void ScreenPackages::Update( float fDeltaTime )
 	if ( m_fLastUpdate >= 1.0 )
 	{
 		if ( m_bIsDownloading && m_bGotHeader )
-			m_sStatus = ssprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
+			m_sStatus = fmt::sprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
 
 		m_bytesLastUpdate = m_iDownloaded;
 		UpdateProgress();
@@ -164,7 +168,7 @@ bool ScreenPackages::MenuStart( const InputEventPlus &input )
 	if ( m_iDLorLST == 1 )
 	{
 		if ( m_iLinksPos == 0 )
-			ScreenTextEntry::TextEntry( SM_BackFromURL, ENTER_URL, "http://", 255 );
+			ScreenTextEntry::TextEntry( SM_BackFromURL, ENTER_URL.GetValue(), "http://", 255 );
 		else
 			EnterURL( m_Links[m_iLinksPos] );
 	}
@@ -239,8 +243,8 @@ bool ScreenPackages::MenuLeft( const InputEventPlus &input )
 		COMMAND( m_sprExistingBG, "Away" );
 		COMMAND( m_sprWebBG, "Back" );
 	}
-	else 
-	{	
+	else
+	{
 		m_iDLorLST = 0;
 		COMMAND( m_sprExistingBG, "Back" );
 		COMMAND( m_sprWebBG, "Away" );
@@ -263,7 +267,7 @@ bool ScreenPackages::MenuRight( const InputEventPlus &input )
 		COMMAND( m_sprExistingBG, "Away" );
 		COMMAND( m_sprWebBG, "Back" );
 	}
-	else 
+	else
 	{
 		m_iDLorLST = 1;
 		COMMAND( m_sprExistingBG, "Back" );
@@ -279,7 +283,7 @@ bool ScreenPackages::MenuBack( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
 	{
-		SCREENMAN->SystemMessage( DOWNLOAD_CANCELLED );
+		SCREENMAN->SystemMessage( DOWNLOAD_CANCELLED.GetValue() );
 		CancelDownload( );
 		return true;
 	}
@@ -320,7 +324,7 @@ void ScreenPackages::RefreshPackages()
 
 void ScreenPackages::UpdatePackagesList()
 {
-	RString TempText="";
+	std::string TempText="";
 	int min = m_iPackagesPos-NUM_PACKAGES_SHOW;
 	int max = m_iPackagesPos+NUM_PACKAGES_SHOW;
 	for (int i=min; i<max; i++ )
@@ -335,7 +339,7 @@ void ScreenPackages::UpdatePackagesList()
 
 void ScreenPackages::UpdateLinksList()
 {
-	RString TempText="";
+	std::string TempText="";
 	if( (unsigned) m_iLinksPos >= m_LinkTitles.size() )
 		m_iLinksPos = m_LinkTitles.size() - 1;
 	int min = m_iLinksPos-NUM_LINKS_SHOW;
@@ -393,12 +397,12 @@ void ScreenPackages::HTMLParse()
 			if ( j < l )
 				k = j;
 
-			RString TempLink = StripOutContainers( m_sBUFFER.substr(m+1,k-m-1) );
+			std::string TempLink = StripOutContainers( m_sBUFFER.substr(m+1,k-m-1) );
 			// xxx: handle https? -aj
 			if ( TempLink.substr(0,7).compare("http://") != 0 )
 				TempLink = m_sBaseAddress + TempLink;
 
-			RString TempTitle = m_sBUFFER.substr( k+1, l-k-1 );
+			std::string TempTitle = m_sBUFFER.substr( k+1, l-k-1 );
 
 			m_Links.push_back( TempLink );
 			m_LinkTitles.push_back( TempTitle );
@@ -414,10 +418,10 @@ void ScreenPackages::HTMLParse()
 	UpdateLinksList();
 }
 
-RString ScreenPackages::StripOutContainers( const RString & In )
+std::string ScreenPackages::StripOutContainers( const std::string & In )
 {
 	if( In.size() == 0 )
-		return RString();
+		return std::string();
 
 	unsigned i = 0;
 	char t = In.at(i);
@@ -428,7 +432,7 @@ RString ScreenPackages::StripOutContainers( const RString & In )
 
 	if( t == '\"' || t == '\'' )
 	{
-		unsigned j = i+1; 
+		unsigned j = i+1;
 		char u = In.at(j);
 		while( u != t && j < In.length() )
 		{
@@ -477,12 +481,12 @@ static LocalizedString INVALID_URL( "ScreenPackages", "Invalid URL." );
 static LocalizedString FILE_ALREADY_EXISTS( "ScreenPackages", "File Already Exists" );
 static LocalizedString FAILED_TO_CONNECT( "ScreenPackages", "Failed to connect." );
 static LocalizedString HEADER_SENT( "ScreenPackages", "Header Sent." );
-void ScreenPackages::EnterURL( const RString & sURL )
+void ScreenPackages::EnterURL( const std::string & sURL )
 {
-	RString Proto;
-	RString Server;
+	std::string Proto;
+	std::string Server;
 	int Port=80;
-	RString sAddress;
+	std::string sAddress;
 
 	if( !ParseHTTPAddress( sURL, Proto, Server, Port, sAddress ) )
 	{
@@ -493,20 +497,18 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	// Determine if this is a website, or a package?
 	// Criteria: does it end with *zip?
-	if( sAddress.Right(3).CompareNoCase("zip") == 0 )
-		m_bIsPackage=true;
-	else
-		m_bIsPackage = false;
+	Rage::ci_ascii_string zip{ "zip" };
+	m_bIsPackage = (zip == Rage::tail(sAddress, 3));
 
 	m_sBaseAddress = "http://" + Server;
 	if( Port != 80 )
-		m_sBaseAddress += ssprintf( ":%d", Port );
+		m_sBaseAddress += fmt::sprintf( ":%d", Port );
 	m_sBaseAddress += "/";
 
-	if( sAddress.Right(1) != "/" )
+	if (!Rage::ends_with(sAddress, "/"))
 	{
-		m_sEndName = Basename( sAddress );
-		m_sBaseAddress += Dirname( sAddress );
+		m_sEndName = Rage::base_name( sAddress );
+		m_sBaseAddress += Rage::dir_name( sAddress );
 	}
 	else
 	{
@@ -522,7 +524,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 	// if we are not talking about a file, let's not worry
 	if( m_sEndName != "" && m_bIsPackage )
 	{
-		vector<RString> AddTo;
+		vector<std::string> AddTo;
 		GetDirListing( "Packages/"+m_sEndName, AddTo, false, false );
 		if ( AddTo.size() > 0 )
 		{
@@ -556,10 +558,10 @@ void ScreenPackages::EnterURL( const RString & sURL )
 		UpdateProgress();
 		return;
 	}
-	
+
 	//Produce HTTP header
 
-	RString Header="";
+	std::string Header="";
 
 	Header = "GET "+sAddress+" HTTP/1.0\r\n";
 	Header+= "Host: " + Server + "\r\n";
@@ -575,7 +577,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 	return;
 }
 
-static size_t FindEndOfHeaders( const RString &buf )
+static size_t FindEndOfHeaders( const std::string &buf )
 {
 	size_t iPos1 = buf.find( "\n\n" );
 	size_t iPos2 = buf.find( "\r\n\r\n" );
@@ -658,7 +660,7 @@ void ScreenPackages::HTTPUpdate()
 
 	if ( ( m_iTotalBytes <= m_iDownloaded && m_iTotalBytes != -1 ) ||
 					//We have the full doc. (And we knew how big it was)
-		( m_iTotalBytes == -1 && 
+		( m_iTotalBytes == -1 &&
 			( m_wSocket.state == EzSockets::skERROR || m_wSocket.state == EzSockets::skDISCONNECTED ) ) )
 				//We didn't know how big it was, and were disconnected
 				//So that means we have it all.
@@ -666,11 +668,11 @@ void ScreenPackages::HTTPUpdate()
 		m_wSocket.close();
 		m_bIsDownloading = false;
 		m_bGotHeader=false;
-		m_sStatus = ssprintf( "Done ;%dB", int(m_iDownloaded) );
+		m_sStatus = fmt::sprintf( "Done ;%dB", int(m_iDownloaded) );
 
 		if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
 		{
-			m_sStatus = ssprintf( "%ld", m_iResponseCode ) + m_sResponseName;
+			m_sStatus = fmt::sprintf( "%ld", m_iResponseCode ) + m_sResponseName;
 		}
 		else
 		{
@@ -686,7 +688,7 @@ void ScreenPackages::HTTPUpdate()
 	}
 }
 
-bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RString &sServer, int &iPort, RString &sAddress )
+bool ScreenPackages::ParseHTTPAddress( const std::string &URL, std::string &sProto, std::string &sServer, int &iPort, std::string &sAddress )
 {
 	// [PROTO://]SERVER[:PORT][/URL]
 
@@ -695,7 +697,7 @@ bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RStr
 		"([^/:]+)"     // [1]: a.b.com
 		"(:([0-9]+))?" // [2], [3]: :1234 (optional, default 80)
 		"(/(.*))?$");    // [4], [5]: /foo.html (optional)
-	vector<RString> asMatches;
+	vector<std::string> asMatches;
 	if( !re.Compare( URL, asMatches ) )
 		return false;
 	ASSERT( asMatches.size() == 6 );
@@ -720,7 +722,7 @@ bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RStr
 /*
  * (c) 2004 Charles Lohr
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -730,7 +732,7 @@ bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RStr
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

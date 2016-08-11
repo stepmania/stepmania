@@ -43,7 +43,7 @@ static bool g_bUsingNPTL = false;
 #endif
 
 
-RString ThreadsVersion()
+std::string ThreadsVersion()
 {
 	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
@@ -87,7 +87,7 @@ static int waittid( int ThreadID, int *status, int options )
 			return ret;
 		bSupportsWall = false;
 	}
-			
+
 	/* XXX: on 2.2, we need to use __WCLONE only if ThreadID isn't the main thread;
 	 * perhaps wait and retry without it if errno == ECHILD? */
 	int ret;
@@ -100,7 +100,7 @@ static int waittid( int ThreadID, int *status, int options )
 static int PtraceAttach( int ThreadID )
 {
 	int ret;
-	ret = ptrace( PTRACE_ATTACH, ThreadID, NULL, NULL );
+	ret = ptrace( PTRACE_ATTACH, ThreadID, nullptr, nullptr );
 	if( ret == -1 )
 	{
 		printf("ptrace failed: %s\n", strerror(errno) );
@@ -120,7 +120,7 @@ static int PtraceAttach( int ThreadID )
 
 static int PtraceDetach( int ThreadID )
 {
-	return ptrace( PTRACE_DETACH, ThreadID, NULL, NULL );
+	return ptrace( PTRACE_DETACH, ThreadID, nullptr, nullptr );
 }
 
 
@@ -133,7 +133,7 @@ static uint64_t GetCurrentThreadIdInternal()
 	 * usable, unique ID, then mutexes won't work. */
 	if( RunningUnderValgrind() )
 		return (int) pthread_self();
-	
+
 	InitializePidThreadHelpers(); // for g_bUsingNPTL
 
 	/* Don't keep calling gettid() if it's not supported; it'll make valgrind spam us. */
@@ -216,14 +216,14 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 	 * it's us that attached, we will. */
 	if( PtraceAttach( int(ThreadID) ) == -1 && errno != EPERM )
 	{
-		CHECKPOINT_M( ssprintf( "%s (pid %i tid %i locking tid %i)",
+		CHECKPOINT_M( fmt::sprintf( "%s (pid %i tid %i locking tid %i)",
 					strerror(errno), getpid(), (int)GetCurrentThreadId(), int(ThreadID) ) );
 			return false;
 	}
 
 #if defined(CPU_X86_64) || defined(CPU_X86)
 	user_regs_struct regs;
-	if( ptrace( PTRACE_GETREGS, pid_t(ThreadID), NULL, &regs ) == -1 )
+	if( ptrace( PTRACE_GETREGS, pid_t(ThreadID), nullptr, &regs ) == -1 )
 		return false;
 
 	ctx->pid = pid_t(ThreadID);
@@ -256,7 +256,7 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 #include <pthread.h>
 #include <signal.h>
 
-RString ThreadsVersion()
+std::string ThreadsVersion()
 {
 	return "(unknown)";
 }
@@ -280,7 +280,7 @@ int ResumeThread( uint64_t id )
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -290,7 +290,7 @@ int ResumeThread( uint64_t id )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

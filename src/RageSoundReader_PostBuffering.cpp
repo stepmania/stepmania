@@ -27,7 +27,7 @@ int RageSoundReader_PostBuffering::Read( float *pBuf, int iFrames )
 	return iFrames;
 }
 
-bool RageSoundReader_PostBuffering::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_PostBuffering::SetProperty( const std::string &sProperty, float fValue )
 {
 	if( sProperty == "Volume" )
 	{

@@ -11,7 +11,7 @@ class MeterDisplay : public ActorFrame
 {
 public:
 	MeterDisplay();
-	void Load( RString sStreamPath, float fStreamWidth, RString sTipPath );
+	void Load( std::string sStreamPath, float fStreamWidth, std::string sTipPath );
 	virtual void LoadFromNode( const XNode* pNode );
 	virtual MeterDisplay *Copy() const;
 

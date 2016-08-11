@@ -11,6 +11,8 @@
 #include "AdjustSync.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 static bool IsGameplay()
 {
 	return SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == gameplay;
@@ -60,7 +62,7 @@ static LocalizedString STANDARD_DEVIATION( "ScreenSyncOverlay", "Standard deviat
 void ScreenSyncOverlay::UpdateText()
 {
 	// Update Status
-	vector<RString> vs;
+	vector<std::string> vs;
 
 	if( g_bShowAutoplay )
 	{
@@ -68,10 +70,10 @@ void ScreenSyncOverlay::UpdateText()
 		switch( pc )
 		{
 		case PC_HUMAN:						break;
-		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;
-		case PC_CPU:		vs.push_back(AUTO_PLAY_CPU);	break;
+		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY.GetValue());	break;
+		case PC_CPU:		vs.push_back(AUTO_PLAY_CPU.GetValue());	break;
 		default:
-			FAIL_M(ssprintf("Invalid PlayerController: %i", pc));
+			FAIL_M(fmt::sprintf("Invalid PlayerController: %i", pc));
 		}
 	}
 
@@ -79,21 +81,21 @@ void ScreenSyncOverlay::UpdateText()
 	switch( type )
 	{
 	case AutosyncType_Off:							break;
-	case AutosyncType_Song:	vs.push_back(AUTO_SYNC_SONG);		break;
-	case AutosyncType_Machine:	vs.push_back(AUTO_SYNC_MACHINE);	break;
-	case AutosyncType_Tempo:	vs.push_back(AUTO_SYNC_TEMPO);		break;
+	case AutosyncType_Song:	vs.push_back(AUTO_SYNC_SONG.GetValue());		break;
+	case AutosyncType_Machine:	vs.push_back(AUTO_SYNC_MACHINE.GetValue());	break;
+	case AutosyncType_Tempo:	vs.push_back(AUTO_SYNC_TEMPO.GetValue());		break;
 	default:
-		FAIL_M(ssprintf("Invalid autosync type: %i", type));
+		FAIL_M(fmt::sprintf("Invalid autosync type: %i", type));
 	}
 
-	if( GAMESTATE->m_pCurSong != NULL  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
+	if( GAMESTATE->m_pCurSong != nullptr  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
 	{
 		AdjustSync::GetSyncChangeTextGlobal( vs );
 		AdjustSync::GetSyncChangeTextSong( vs );
 	}
 
 	Message set_status("SetStatus");
-	set_status.SetParam("text", join("\n",vs));
+	set_status.SetParam("text", Rage::join("\n",vs));
 	m_overlay->HandleMessage(set_status);
 
 
@@ -106,16 +108,16 @@ void ScreenSyncOverlay::UpdateText()
 		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
 		float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
 		float fStdDev = AdjustSync::s_fStandardDeviation;
-		RString s;
-		s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
-		s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
-		s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
-		s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, AdjustSync::OFFSET_SAMPLE_COUNT );
-		set_adjustments.SetParam("text", s);
+		std::stringstream builder;
+		builder << OLD_OFFSET.GetValue() + fmt::sprintf( ": %0.3f\n", fOld );
+		builder << NEW_OFFSET.GetValue() + fmt::sprintf( ": %0.3f\n", fNew );
+		builder << STANDARD_DEVIATION.GetValue() + fmt::sprintf( ": 0.3f\n", fStdDev );
+		builder << COLLECTING_SAMPLE.GetValue() + fmt::sprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample + 1, OFFSET_SAMPLE_COUNT );
+		set_adjustments.SetParam("text", builder.str());
 	}
 	else
 	{
-		set_adjustments.SetParam("text", RString(""));
+		set_adjustments.SetParam("text", std::string(""));
 	}
 	m_overlay->HandleMessage(set_adjustments);
 }
@@ -161,7 +163,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 
 	if( GAMESTATE->IsCourseMode() && a != ChangeGlobalOffset )
 	{
-		SCREENMAN->SystemMessage( CANT_SYNC_WHILE_PLAYING_A_COURSE );
+		SCREENMAN->SystemMessage( CANT_SYNC_WHILE_PLAYING_A_COURSE.GetValue() );
 		return true;
 	}
 
@@ -183,7 +185,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 	case RevertSyncChanges:
 		if( input.type != IET_FIRST_PRESS )
 			return false;
-		SCREENMAN->SystemMessage( SYNC_CHANGES_REVERTED );
+		SCREENMAN->SystemMessage( SYNC_CHANGES_REVERTED.GetValue() );
 		AdjustSync::RevertSyncChanges();
 		break;
 	case ChangeSongBPM:
@@ -207,15 +209,15 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 				}
 				default: break;
 			}
-			if( GAMESTATE->m_pCurSong != NULL )
+			if( GAMESTATE->m_pCurSong != nullptr )
 			{
 				TimingData &sTiming = GAMESTATE->m_pCurSong->m_SongTiming;
 				BPMSegment * seg = sTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
 				seg->SetBPS( seg->GetBPS() + fDelta );
-				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-				FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+				auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+				for (auto *s: vpSteps)
 				{
-					TimingData &pTiming = (*s)->m_Timing;
+					TimingData &pTiming = s->m_Timing;
 					// Empty means it inherits song timing,
 					// which has already been updated.
 					if( pTiming.empty() )
@@ -259,17 +261,19 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 
 				case ChangeSongOffset:
 				{
-					if( GAMESTATE->m_pCurSong != NULL )
+					if( GAMESTATE->m_pCurSong != nullptr )
 					{
 						GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
-						const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-						FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+						auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+						for (auto *s: vpSteps)
 						{
 							// Empty means it inherits song timing,
 							// which has already been updated.
-							if( (*s)->m_Timing.empty() )
+							if( s->m_Timing.empty() )
+							{
 								continue;
-							(*s)->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+							}
+							s->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
 						}
 					}
 					break;
@@ -279,7 +283,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid sync action choice: %i", a));
+		FAIL_M(fmt::sprintf("Invalid sync action choice: %i", a));
 	}
 
 	ShowHelp();
@@ -301,7 +305,7 @@ void ScreenSyncOverlay::HideHelp()
 /*
  * (c) 2001-2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -311,7 +315,7 @@ void ScreenSyncOverlay::HideHelp()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

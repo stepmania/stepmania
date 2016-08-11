@@ -1,5 +1,6 @@
 #include "global.h"
 #include "NoteDisplay.h"
+#include "RageMath.hpp"
 #include "GameState.h"
 #include "GhostArrowRow.h"
 #include "NoteData.h"
@@ -14,13 +15,12 @@
 #include "Sprite.h"
 #include "NoteTypes.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
 #include "RageMath.h"
 
-static const double PI_180= PI / 180.0;
-static const double PI_180R= 180.0 / PI;
+static double CONSTEXPR_VARIABLE PI_180= Rage::PI / 180.0;
+static double CONSTEXPR_VARIABLE PI_180R= 180.0 / Rage::PI;
 
-const RString& NoteNotePartToString( NotePart i );
+const std::string& NoteNotePartToString( NotePart i );
 /** @brief A foreach loop going through the different NoteParts. */
 #define FOREACH_NotePart( i ) FOREACH_ENUM( NotePart, i )
 
@@ -55,15 +55,10 @@ XToString(NoteColumnSplineMode);
 StringToX(NoteColumnSplineMode);
 LuaXType(NoteColumnSplineMode);
 
-static bool IsVectorZero( const RageVector2 &v )
+static bool IsVectorZero( const Rage::Vector2 &v )
 {
 	return v.x == 0  &&  v.y == 0;
 }
-
-// Don't require that NoteSkins have more than 8 colors.  Using 9 colors to display 192nd notes
-// would double the number of texture memory needed for many NoteSkin graphics versus just having
-// 8 colors.
-static const NoteType MAX_DISPLAY_NOTE_TYPE = (NoteType)7;
 
 // cache
 struct NoteMetricCache_t
@@ -73,8 +68,8 @@ struct NoteMetricCache_t
 	bool m_bTapHoldRollOnRowMeansHold;
 	float m_fAnimationLength[NUM_NotePart];
 	bool m_bAnimationIsVivid[NUM_NotePart];
-	RageVector2 m_fAdditionTextureCoordOffset[NUM_NotePart];
-	RageVector2 m_fNoteColorTextureCoordSpacing[NUM_NotePart];
+	Rage::Vector2 m_fAdditionTextureCoordOffset[NUM_NotePart];
+	Rage::Vector2 m_fNoteColorTextureCoordSpacing[NUM_NotePart];
 
 	int m_iNoteColorCount[NUM_NotePart];
 	NoteColorType m_NoteColorType[NUM_NotePart];
@@ -91,17 +86,17 @@ struct NoteMetricCache_t
 	bool m_bTopHoldAnchorWhenReverse;
 	bool m_bHoldActiveIsAddLayer;
 
-	void Load( const RString &sButton );
+	void Load( const std::string &sButton );
 } *NoteMetricCache;
 
-void NoteMetricCache_t::Load( const RString &sButton )
+void NoteMetricCache_t::Load( const std::string &sButton )
 {
 	m_bDrawHoldHeadForTapsOnSameRow = NOTESKIN->GetMetricB(sButton,"DrawHoldHeadForTapsOnSameRow");
 	m_bDrawRollHeadForTapsOnSameRow = NOTESKIN->GetMetricB(sButton,"DrawRollHeadForTapsOnSameRow");
 	m_bTapHoldRollOnRowMeansHold = NOTESKIN->GetMetricB(sButton,"TapHoldRollOnRowMeansHold");
 	FOREACH_NotePart( p )
 	{
-		const RString &s = NotePartToString(p);
+		const std::string &s = NotePartToString(p);
 		m_fAnimationLength[p] = NOTESKIN->GetMetricF(sButton,s+"AnimationLength");
 		m_bAnimationIsVivid[p] = NOTESKIN->GetMetricB(sButton,s+"AnimationIsVivid");
 		m_fAdditionTextureCoordOffset[p].x = NOTESKIN->GetMetricF(sButton,s+"AdditionTextureCoordOffsetX");
@@ -110,7 +105,7 @@ void NoteMetricCache_t::Load( const RString &sButton )
 		m_fNoteColorTextureCoordSpacing[p].y = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingY");
 		m_iNoteColorCount[p] = NOTESKIN->GetMetricI(sButton,s+"NoteColorCount");
 
-		RString ct = NOTESKIN->GetMetric(sButton,s+"NoteColorType");
+		std::string ct = NOTESKIN->GetMetric(sButton,s+"NoteColorType");
 		m_NoteColorType[p] = StringToNoteColorType(ct);
 	}
 	//I was here -DaisuMaster
@@ -129,14 +124,15 @@ void NoteMetricCache_t::Load( const RString &sButton )
 
 struct NoteSkinAndPath
 {
-	NoteSkinAndPath( const RString sNoteSkin_, const RString sPath_, const PlayerNumber pn_, const GameController gc_ ) : sNoteSkin(sNoteSkin_), sPath(sPath_), pn(pn_), gc(gc_) { }
-	RString sNoteSkin;
-	RString sPath;
+	NoteSkinAndPath( const std::string sNoteSkin_, const std::string sPath_, const PlayerNumber pn_, const GameController gc_ ) : sNoteSkin(sNoteSkin_), sPath(sPath_), pn(pn_), gc(gc_) { }
+	std::string sNoteSkin;
+	std::string sPath;
 	PlayerNumber pn;
 	GameController gc;
 	bool operator<( const NoteSkinAndPath &other ) const
 	{
-		int cmp = strcmp(sNoteSkin, other.sNoteSkin);
+		// TODO: Use the std::string compare.
+		int cmp = strcmp(sNoteSkin.c_str(), other.sNoteSkin.c_str());
 
 		if( cmp < 0 )
 		{
@@ -174,7 +170,7 @@ struct NoteResource
 	NoteResource( const NoteSkinAndPath &nsap ): m_nsap(nsap)
 	{
 		m_iRefCount = 0;
-		m_pActor = NULL;
+		m_pActor = nullptr;
 	}
 
 	~NoteResource()
@@ -187,14 +183,14 @@ struct NoteResource
 	Actor *m_pActor; // todo: AutoActor me? -aj
 };
 
-static map<NoteSkinAndPath, NoteResource *> g_NoteResource;
+static std::map<NoteSkinAndPath, NoteResource *> g_NoteResource;
 
-static NoteResource *MakeNoteResource( const RString &sButton, const RString &sElement, PlayerNumber pn, GameController gc, bool bSpriteOnly )
+static NoteResource *MakeNoteResource( const std::string &sButton, const std::string &sElement, PlayerNumber pn, GameController gc, bool bSpriteOnly )
 {
-	RString sElementAndType = ssprintf( "%s, %s", sButton.c_str(), sElement.c_str() );
+	std::string sElementAndType = fmt::sprintf( "%s, %s", sButton.c_str(), sElement.c_str() );
 	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), sElementAndType, pn, gc );
 
-	map<NoteSkinAndPath, NoteResource *>::iterator it = g_NoteResource.find( nsap );
+	auto it = g_NoteResource.find( nsap );
 	if( it == g_NoteResource.end() )
 	{
 		NoteResource *pRes = new NoteResource( nsap );
@@ -202,8 +198,8 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 		NOTESKIN->SetPlayerNumber( pn );
 		NOTESKIN->SetGameController( gc );
 
-		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, NULL, bSpriteOnly );
-		ASSERT( pRes->m_pActor != NULL );
+		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, nullptr, bSpriteOnly );
+		ASSERT( pRes->m_pActor != nullptr );
 
 		g_NoteResource[nsap] = pRes;
 		it = g_NoteResource.find( nsap );
@@ -216,9 +212,9 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 
 static void DeleteNoteResource( NoteResource *pRes )
 {
-	ASSERT( pRes != NULL );
+	ASSERT( pRes != nullptr );
 
-	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("RefCount %i > 0", pRes->m_iRefCount) );
+	ASSERT_M( pRes->m_iRefCount > 0, fmt::sprintf("RefCount %i > 0", pRes->m_iRefCount) );
 	--pRes->m_iRefCount;
 	if( pRes->m_iRefCount )
 		return;
@@ -231,7 +227,7 @@ static void DeleteNoteResource( NoteResource *pRes )
 
 NoteColorActor::NoteColorActor()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorActor::~NoteColorActor()
@@ -240,7 +236,7 @@ NoteColorActor::~NoteColorActor()
 		DeleteNoteResource( m_p );
 }
 
-void NoteColorActor::Load( const RString &sButton, const RString &sElement, PlayerNumber pn, GameController gc )
+void NoteColorActor::Load( const std::string &sButton, const std::string &sElement, PlayerNumber pn, GameController gc )
 {
 	m_p = MakeNoteResource( sButton, sElement, pn, gc, false );
 }
@@ -255,7 +251,7 @@ Actor *NoteColorActor::Get()
 
 NoteColorSprite::NoteColorSprite()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorSprite::~NoteColorSprite()
@@ -264,7 +260,7 @@ NoteColorSprite::~NoteColorSprite()
 		DeleteNoteResource( m_p );
 }
 
-void NoteColorSprite::Load( const RString &sButton, const RString &sElement, PlayerNumber pn, GameController gc )
+void NoteColorSprite::Load( const std::string &sButton, const std::string &sElement, PlayerNumber pn, GameController gc )
 {
 	m_p = MakeNoteResource( sButton, sElement, pn, gc, true );
 }
@@ -303,19 +299,19 @@ float NCSplineHandler::BeatToTValue(float song_beat, float note_beat) const
 	return relative_beat / m_beats_per_t;
 }
 
-void NCSplineHandler::EvalForBeat(float song_beat, float note_beat, RageVector3& ret) const
+void NCSplineHandler::EvalForBeat(float song_beat, float note_beat, Rage::Vector3& ret) const
 {
 	float t_value= BeatToTValue(song_beat, note_beat);
 	m_spline.evaluate(t_value, ret);
 }
 
-void NCSplineHandler::EvalDerivForBeat(float song_beat, float note_beat, RageVector3& ret) const
+void NCSplineHandler::EvalDerivForBeat(float song_beat, float note_beat, Rage::Vector3& ret) const
 {
 	float t_value= BeatToTValue(song_beat, note_beat);
 	m_spline.evaluate_derivative(t_value, ret);
 }
 
-void NCSplineHandler::EvalForReceptor(float song_beat, RageVector3& ret) const
+void NCSplineHandler::EvalForReceptor(float song_beat, Rage::Vector3& ret) const
 {
 	float t_value= m_receptor_t;
 	if(!m_subtract_song_beat_from_curr)
@@ -346,7 +342,7 @@ void NCSplineHandler::MakeWeightedAverage(NCSplineHandler& out,
 
 void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* player_state,
 	float beat, float y_offset, float y_reverse_offset,
-	RageVector3& sp_pos, RageVector3& ae_pos) const
+	Rage::Vector3& sp_pos, Rage::Vector3& ae_pos) const
 {
 	switch(pos_handler->m_spline_mode)
 	{
@@ -365,7 +361,7 @@ void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* player_state,
 	}
 }
 void NoteColumnRenderArgs::spae_zoom_for_beat(const PlayerState* state, float beat,
-	RageVector3& sp_zoom, RageVector3& ae_zoom) const
+	Rage::Vector3& sp_zoom, Rage::Vector3& ae_zoom) const
 {
 	switch(zoom_handler->m_spline_mode)
 	{
@@ -384,16 +380,16 @@ void NoteColumnRenderArgs::spae_zoom_for_beat(const PlayerState* state, float be
 	}
 }
 void NoteColumnRenderArgs::SetPRZForActor(Actor* actor,
-	const RageVector3& sp_pos, const RageVector3& ae_pos,
-	const RageVector3& sp_rot, const RageVector3& ae_rot,
-	const RageVector3& sp_zoom, const RageVector3& ae_zoom) const
+	const Rage::Vector3& sp_pos, const Rage::Vector3& ae_pos,
+	const Rage::Vector3& sp_rot, const Rage::Vector3& ae_rot,
+	const Rage::Vector3& sp_zoom, const Rage::Vector3& ae_zoom) const
 {
 	actor->SetX(sp_pos.x + ae_pos.x);
 	actor->SetY(sp_pos.y + ae_pos.y);
 	actor->SetZ(sp_pos.z + ae_pos.z);
-	actor->SetRotationX(sp_rot.x * PI_180R + ae_rot.x);
-	actor->SetRotationY(sp_rot.y * PI_180R + ae_rot.y);
-	actor->SetRotationZ(sp_rot.z * PI_180R + ae_rot.z);
+	actor->SetRotationX(static_cast<float>(sp_rot.x * PI_180R + ae_rot.x));
+	actor->SetRotationY(static_cast<float>(sp_rot.y * PI_180R + ae_rot.y));
+	actor->SetRotationZ(static_cast<float>(sp_rot.z * PI_180R + ae_rot.z));
 	actor->SetZoomX(sp_zoom.x + ae_zoom.x);
 	actor->SetZoomY(sp_zoom.y + ae_zoom.y);
 	actor->SetZoomZ(sp_zoom.z + ae_zoom.z);
@@ -419,7 +415,7 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 	vector<GameInput> GameI;
 	GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->StyleInputToGameInput( iColNum, pn, GameI );
 
-	const RString &sButton = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->ColToButtonName( iColNum );
+	const std::string &sButton = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->ColToButtonName( iColNum );
 
 	cache->Load( sButton );
 
@@ -471,12 +467,11 @@ bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
 	const vector<NoteData::TrackMap::const_iterator>& tap_set)
 {
 	bool any_upcoming = false;
-	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
-		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	for (auto const &tapit: tap_set)
 	{
-		const TapNote& tn= (*tapit)->second;
+		const TapNote& tn= tapit->second;
 		const HoldNoteResult& result= tn.HoldResult;
-		int start_row= (*tapit)->first;
+		int start_row= tapit->first;
 		int end_row = start_row + tn.iDuration;
 
 		// TRICKY: If boomerang is on, then all notes in the range
@@ -512,7 +507,7 @@ bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
 			field_args.ghost_row->SetHoldShowing(column_args.column, tn);
 		}
 
-		ASSERT_M(NoteRowToBeat(start_row) > -2000, ssprintf("%i %i %i", start_row, end_row, column_args.column));
+		ASSERT_M(NoteRowToBeat(start_row) > -2000, fmt::sprintf("%i %i %i", start_row, end_row, column_args.column));
 
 		bool in_selection_range = false;
 		if(*field_args.selection_begin_marker != -1 && *field_args.selection_end_marker != -1)
@@ -538,17 +533,17 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 {
 	bool any_upcoming= false;
 	// draw notes from furthest to closest
-	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
-		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	for (auto const &tapit: tap_set)
 	{
-		int tap_row= (*tapit)->first;
-		const TapNote& tn= (*tapit)->second;
+		int tap_row = tapit->first;
+		const TapNote& tn = tapit->second;
 
 		// TRICKY: If boomerang is on, then all notes in the range
 		// [first_row,last_row] aren't necessarily visible.
 		// Test every note to make sure it's on screen before drawing.
 		if(!IsOnScreen(NoteRowToBeat(tap_row), column_args.column,
-				field_args.draw_pixels_after_targets, field_args.draw_pixels_before_targets))
+			static_cast<int>(field_args.draw_pixels_after_targets),
+			static_cast<int>(field_args.draw_pixels_before_targets)))
 		{
 			continue; // skip
 		}
@@ -558,7 +553,7 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 		// Well, anyone who has to investigate hitting it can use a debugger to
 		// discover the values, hopefully. -Kyz
 		ASSERT_M(NoteRowToBeat(tap_row) > -2000,
-			ssprintf("Invalid tap_row: %i, %f %f",
+			fmt::sprintf("Invalid tap_row: %i, %f %f",
 				tap_row,
 				m_pPlayerState->GetDisplayedPosition().m_fSongBeat,
 				m_pPlayerState->GetDisplayedPosition().m_fMusicSeconds));
@@ -635,10 +630,9 @@ void NoteDisplay::Update( float fDeltaTime )
 {
 	/* This function is static: it's called once per game loop, not once per
 	 * NoteDisplay.  Update each cached item exactly once. */
-	map<NoteSkinAndPath, NoteResource *>::iterator it;
-	for( it = g_NoteResource.begin(); it != g_NoteResource.end(); ++it )
+	for (auto &it: g_NoteResource)
 	{
-		NoteResource *pRes = it->second;
+		NoteResource *pRes = it.second;
 		pRes->m_pActor->Update( fDeltaTime );
 	}
 }
@@ -705,11 +699,11 @@ static float ArrowGetAlphaOrGlow( bool bGlow, const PlayerState* pPlayerState, i
 struct StripBuffer
 {
 	enum { size = 512 };
-	RageSpriteVertex *buf;
-	RageSpriteVertex *v;
+	Rage::SpriteVertex *buf;
+	Rage::SpriteVertex *v;
 	StripBuffer()
 	{
-		buf = (RageSpriteVertex *) malloc( size * sizeof(RageSpriteVertex) );
+		buf = (Rage::SpriteVertex *) malloc( size * sizeof(Rage::SpriteVertex) );
 		Init();
 	}
 	~StripBuffer()
@@ -741,15 +735,17 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	const NoteColumnRenderArgs& column_args,
 	const draw_hold_part_args& part_args, bool glow, int part_type)
 {
+	using std::max;
+	using std::min;
 	ASSERT(!vpSpr.empty());
 
 	float ae_zoom= ArrowEffects::GetZoom(m_pPlayerState);
 	Sprite *pSprite = vpSpr.front();
 
 	// draw manually in small segments
-	RectF rect = *pSprite->GetCurrentTextureCoordRect();
+	Rage::RectF rect = *pSprite->GetCurrentTextureCoordRect();
 	if(part_args.flip_texture_vertically)
-		swap(rect.top, rect.bottom);
+		std::swap(rect.top, rect.bottom);
 	const float fFrameWidth		= pSprite->GetUnzoomedWidth();
 	const float unzoomed_frame_height= pSprite->GetUnzoomedHeight();
 
@@ -782,8 +778,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	{
 		if (!part_args.anchor_to_top)
 		{
-			float tex_coord_bottom= SCALE(part_args.y_bottom - part_args.y_top,
-				0, unzoomed_frame_height, rect.top, rect.bottom);
+			float tex_coord_bottom= Rage::scale(part_args.y_bottom - part_args.y_top,
+				0.f, unzoomed_frame_height, rect.top, rect.bottom);
 			float want_tex_coord_bottom	= ceilf(tex_coord_bottom - 0.0001f);
 			add_to_tex_coord = want_tex_coord_bottom - tex_coord_bottom;
 		}
@@ -793,9 +789,9 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			/* For very large hold notes, shift the texture coordinates to be near 0, so we
 			 * don't send very large values to the renderer. */
 			const float fDistFromTop = y_start_pos - part_args.y_top;
-			float fTexCoordTop = SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
+			float fTexCoordTop = Rage::scale(fDistFromTop, 0.f, unzoomed_frame_height, rect.top, rect.bottom);
 			fTexCoordTop += add_to_tex_coord;
-			add_to_tex_coord -= floorf(fTexCoordTop);
+			add_to_tex_coord -= std::floor(fTexCoordTop);
 		}
 	}
 	// The bottom caps mysteriously hate me and their texture coords need to be
@@ -810,7 +806,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			// Shift texture coord to fit hold length If hold length is less than
 			// bottomcap frame height. (translated by hanubeki)
 			if (offset>0){
-				add_to_tex_coord = SCALE(offset, 0.0f, unzoomed_frame_height, 0.0f, 1.0f);
+				add_to_tex_coord = Rage::scale(offset, 0.0f, unzoomed_frame_height, 0.0f, 1.0f);
 			}
 			else{
 				add_to_tex_coord = 0.0f;
@@ -825,8 +821,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	const float fTexCoordCenter	= (fTexCoordLeft+fTexCoordRight)/2;
 
 	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
-	static const RageVector3 pos_z_vec(0.0f, 0.0f, 1.0f);
-	static const RageVector3 pos_y_vec(0.0f, 1.0f, 0.0f);
+	static const Rage::Vector3 pos_z_vec(0.0f, 0.0f, 1.0f);
+	static const Rage::Vector3 pos_y_vec(0.0f, 1.0f, 0.0f);
 	StripBuffer queue;
 	for(float fY = y_start_pos; !last_vert_set; fY += part_args.y_step)
 	{
@@ -841,7 +837,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		float cur_beat= part_args.top_beat;
 		if(part_args.top_beat != part_args.bottom_beat)
 		{
-			cur_beat= SCALE(fY, part_args.y_top, part_args.y_bottom, part_args.top_beat, part_args.bottom_beat);
+			cur_beat= Rage::scale(fY, part_args.y_top, part_args.y_bottom, part_args.top_beat, part_args.bottom_beat);
 		}
 
 		// Fun times ahead with vector math.  If the notes are being moved by the
@@ -864,18 +860,18 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		// TODO:  Figure out whether it's worth the time investment to figure out
 		// a way to skip the complex vector handling if the spline is disabled.
 
-		RageVector3 sp_pos;
-		RageVector3 sp_pos_forward;
-		RageVector3 sp_rot;
-		RageVector3 sp_zoom;
-		RageVector3 ae_pos;
-		RageVector3 ae_rot;
+		Rage::Vector3 sp_pos;
+		Rage::Vector3 sp_pos_forward;
+		Rage::Vector3 sp_rot;
+		Rage::Vector3 sp_zoom;
+		Rage::Vector3 ae_pos;
+		Rage::Vector3 ae_rot;
 
 		// (step 1 of vector handling, part 1)
 		// ArrowEffects only contributes to the Y component of the vector to
 		// maintain the old behavior of how holds are drawn when they wave back
 		// and forth. -Kyz
-		RageVector3 render_forward(0.0f, 1.0f, 0.0f);
+		Rage::Vector3 render_forward(0.0f, 1.0f, 0.0f);
 		column_args.spae_pos_for_beat(m_pPlayerState, cur_beat,
 			fYOffset, m_fYReverseOffsetPixels, sp_pos, ae_pos);
 		// fX and fZ are sp_pos.x + ae_pos.x and sp_pos.z + ae_pos.z. -Kyz
@@ -889,13 +885,13 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			case NCSM_Offset:
 				ae_pos.y= fY;
 				column_args.pos_handler->EvalDerivForBeat(column_args.song_beat, cur_beat, sp_pos_forward);
-				RageVec3Normalize(&sp_pos_forward, &sp_pos_forward);
+				sp_pos_forward = sp_pos_forward.GetNormalized();
 				break;
 			case NCSM_Position:
 				ae_pos.y= 0.0f;
 				render_forward.y= 0.0f;
 				column_args.pos_handler->EvalDerivForBeat(column_args.song_beat, cur_beat, sp_pos_forward);
-				RageVec3Normalize(&sp_pos_forward, &sp_pos_forward);
+				sp_pos_forward = sp_pos_forward.GetNormalized();
 				break;
 			default:
 				break;
@@ -906,7 +902,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		render_forward.z+= sp_pos_forward.z;
 		// Normalize the vector so it'll be easy to test when determining whether
 		// to use pos_z_vec or pos_y_vec for the cross product in step 2.
-		RageVec3Normalize(&render_forward, &render_forward);
+		render_forward = render_forward.GetNormalized();
 
 		// Holds are only affected by the x axis of the zoom spline because they
 		// are flat sprites. -Kyz
@@ -937,10 +933,10 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		{
 			case NCSM_Disabled:
 				// XXX: Actor rotations use degrees, Math uses radians. Convert here.
-				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * PI_180;
+				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * static_cast<float>(PI_180);
 				break;
 			case NCSM_Offset:
-				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * PI_180;
+				ae_rot.y = ArrowEffects::GetRotationY(fYOffset) * static_cast<float>(PI_180);
 				column_args.rot_handler->EvalForBeat(column_args.song_beat, cur_beat, sp_rot);
 				break;
 			case NCSM_Position:
@@ -950,7 +946,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 				break;
 		}
 
-		RageVector3 center_vert(sp_pos.x + ae_pos.x,
+		Rage::Vector3 center_vert(sp_pos.x + ae_pos.x,
 			sp_pos.y + ae_pos.y, sp_pos.z + ae_pos.z);
 
 		// Special case for hold caps, which have the same top and bottom beat.
@@ -964,14 +960,14 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		const float render_roty= (sp_rot.y + ae_rot.y);
 
 		// (step 2 of vector handling)
-		RageVector3 render_left;
-		if(abs(render_forward.z) > 0.9f) // 0.9 arbitrariliy picked.
+		Rage::Vector3 render_left;
+		if(std::abs(render_forward.z) > 0.9f) // 0.9 arbitrariliy picked.
 		{
-			RageVec3Cross(&render_left, &pos_y_vec, &render_forward);
+			render_left= Rage::CrossProduct(pos_y_vec, render_forward);
 		}
 		else
 		{
-			RageVec3Cross(&render_left, &pos_z_vec, &render_forward);
+			render_left= Rage::CrossProduct(pos_z_vec, render_forward);
 		}
 		RageAARotate(&render_left, &render_forward, render_roty);
 		const float half_width= fScaledFrameWidth * .5f;
@@ -979,17 +975,17 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		render_left.y*= half_width;
 		render_left.z*= half_width;
 
-		const RageVector3 left_vert(center_vert.x + render_left.x,
+		const Rage::Vector3 left_vert(center_vert.x + render_left.x,
 			center_vert.y + render_left.y, center_vert.z + render_left.z);
-		const RageVector3 right_vert(center_vert.x - render_left.x,
+		const Rage::Vector3 right_vert(center_vert.x - render_left.x,
 			center_vert.y - render_left.y, center_vert.z - render_left.z);
 
 		const float fDistFromTop	= (fY - y_start_pos) / ae_zoom;
-		float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
+		float fTexCoordTop		= Rage::scale(fDistFromTop, 0.f, unzoomed_frame_height, rect.top, rect.bottom);
 		fTexCoordTop += add_to_tex_coord;
 
 		const float fAlpha		= ArrowGetAlphaOrGlow(glow, m_pPlayerState, column_args.column, fYOffset, part_args.percent_fade_to_fail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
-		const RageColor color= RageColor(
+		const Rage::Color color= Rage::Color(
 			column_args.diffuse.r * color_scale,
 			column_args.diffuse.g * color_scale,
 			column_args.diffuse.b * color_scale,
@@ -998,9 +994,9 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		if(fAlpha > 0)
 			bAllAreTransparent = false;
 
-		queue.v[0].p = left_vert;  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		queue.v[1].p = center_vert; queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordCenter, fTexCoordTop);
-		queue.v[2].p = right_vert;  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v[0].p = left_vert;  queue.v[0].c = color; queue.v[0].t = Rage::Vector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = center_vert; queue.v[1].c = color; queue.v[1].t = Rage::Vector2(fTexCoordCenter, fTexCoordTop);
+		queue.v[2].p = right_vert;  queue.v[2].c = color; queue.v[2].t = Rage::Vector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=3;
 
 		if(queue.Free() < 3 || last_vert_set)
@@ -1009,7 +1005,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			 * start off the strip again. */
 			if(!bAllAreTransparent)
 			{
-				FOREACH(Sprite*, vpSpr, spr)
+				for (auto spr = vpSpr.begin(); spr != vpSpr.end(); ++spr)
 				{
 					RageTexture* pTexture = (*spr)->GetTexture();
 					DISPLAY->SetTexture(TextureUnit_1, pTexture->GetTexHandle());
@@ -1036,6 +1032,8 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	const float y_head, const float y_tail, const float top_beat,
 	const float bottom_beat, bool glow)
 {
+	using std::max;
+	using std::min;
 	// Draw the top cap
 	part_args.y_top= head_minus_top;
 	part_args.y_bottom= y_head;
@@ -1094,8 +1092,8 @@ void NoteDisplay::DrawHoldBody(const TapNote& tn,
 	part_args.flip_texture_vertically = reverse && cache->m_bFlipHoldBodyWhenReverse;
 	if(part_args.flip_texture_vertically)
 	{
-		swap( vpSprTop, vpSprBottom );
-		swap( pSpriteTop, pSpriteBottom );
+		std::swap( vpSprTop, vpSprBottom );
+		std::swap( pSpriteTop, pSpriteBottom );
 	}
 
 	const bool bWavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer();
@@ -1126,7 +1124,7 @@ void NoteDisplay::DrawHoldBody(const TapNote& tn,
 		field_args.draw_pixels_before_targets, m_fYReverseOffsetPixels);
 	if(reverse)
 	{
-		swap(part_args.y_start_pos, part_args.y_end_pos);
+		std::swap(part_args.y_start_pos, part_args.y_end_pos);
 	}
 	// So that part_args.y_start_pos can be changed when drawing the bottom.
 	const float original_y_start_pos= part_args.y_start_pos;
@@ -1153,6 +1151,7 @@ void NoteDisplay::DrawHold(const TapNote& tn,
 	const NoteColumnRenderArgs& column_args, int iRow, bool bIsBeingHeld,
 	const HoldNoteResult &Result, bool bIsAddition, float fPercentFadeToFail)
 {
+	using std::max;
 	int iEndRow = iRow + tn.iDuration;
 	float top_beat= NoteRowToVisibleBeat(m_pPlayerState, iRow);
 	float bottom_beat= NoteRowToVisibleBeat(m_pPlayerState, iEndRow);
@@ -1174,26 +1173,26 @@ void NoteDisplay::DrawHold(const TapNote& tn,
 		;	// use the default values filled in above
 	else
 		fStartYOffset = ArrowEffects::GetYOffset( m_pPlayerState, column_args.column, fStartBeat, fThrowAway, bStartIsPastPeak );
-	
+
 	float fEndPeakYOffset	= 0;
 	bool bEndIsPastPeak = false;
 	float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, column_args.column, NoteRowToBeat(iEndRow), fEndPeakYOffset, bEndIsPastPeak );
 
-	// In boomerang, the arrows reverse direction at Y offset value fPeakAtYOffset.  
-	// If fPeakAtYOffset lies inside of the hold we're drawing, then the we 
-	// want to draw the tail at that max Y offset, or else the hold will appear 
+	// In boomerang, the arrows reverse direction at Y offset value fPeakAtYOffset.
+	// If fPeakAtYOffset lies inside of the hold we're drawing, then the we
+	// want to draw the tail at that max Y offset, or else the hold will appear
 	// to magically grow as the tail approaches the max Y offset.
 	if( bStartIsPastPeak && !bEndIsPastPeak )
 		fEndYOffset	= fEndPeakYOffset;	// use the calculated PeakYOffset so that long holds don't appear to grow
-	
+
 	// Swap in reverse, so fStartYOffset is always the offset higher on the screen.
 	if( bReverse )
-		swap( fStartYOffset, fEndYOffset );
+		std::swap( fStartYOffset, fEndYOffset );
 
 	const float fYHead= ArrowEffects::GetYPos(column_args.column, fStartYOffset, m_fYReverseOffsetPixels);
 	const float fYTail= ArrowEffects::GetYPos(column_args.column, fEndYOffset, m_fYReverseOffsetPixels);
 
-	const float fColorScale		= SCALE( tn.HoldResult.fLife, 0.0f, 1.0f, cache->m_fHoldLetGoGrayPercent, 1.0f );
+	const float fColorScale		= Rage::scale( tn.HoldResult.fLife, 0.0f, 1.0f, cache->m_fHoldLetGoGrayPercent, 1.0f );
 
 	bool bFlipHeadAndTail = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 
@@ -1249,16 +1248,16 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 
 	const float fAlpha= ArrowEffects::GetAlpha(column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
 	const float fGlow= ArrowEffects::GetGlow(column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
-	const RageColor diffuse	= RageColor(
+	const Rage::Color diffuse	= Rage::Color(
 		column_args.diffuse.r * fColorScale,
 		column_args.diffuse.g * fColorScale,
 		column_args.diffuse.b * fColorScale,
 		column_args.diffuse.a * fAlpha);
-	const RageColor glow = RageColor(1, 1, 1, fGlow);
+	const Rage::Color glow = Rage::Color(1, 1, 1, fGlow);
 	// We can't actually use the glow color from the effect on the colum actor
 	// because it's used by the stealth modifier. -Kyz
 	/*
-	const RageColor glow	= RageColor(
+	const Rage::Color glow	= Rage::Color(
 		column_args.glow.r * fColorScale,
 		column_args.glow.g * fColorScale,
 		column_args.glow.b * fColorScale,
@@ -1279,12 +1278,12 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 
 	// same logical structure as in UpdateReceptorGhostStuff, I just haven't
 	// figured out a good way to combine them. -Kyz
-	RageVector3 sp_pos;
-	RageVector3 sp_rot;
-	RageVector3 sp_zoom;
-	RageVector3 ae_pos;
-	RageVector3 ae_rot;
-	RageVector3 ae_zoom;
+	Rage::Vector3 sp_pos;
+	Rage::Vector3 sp_rot;
+	Rage::Vector3 sp_zoom;
+	Rage::Vector3 ae_pos;
+	Rage::Vector3 ae_rot;
+	Rage::Vector3 ae_zoom;
 	column_args.spae_pos_for_beat(m_pPlayerState, spline_beat,
 		fYOffset, m_fYReverseOffsetPixels, sp_pos, ae_pos);
 
@@ -1326,17 +1325,17 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 		float color = 0.0f;
 		switch( cache->m_NoteColorType[part] )
 		{
-		case NoteColorType_Denominator:
-			color = float( BeatToNoteType( fBeat ) );
-			color = clamp( color, 0, (cache->m_iNoteColorCount[part]-1) );
-			break;
-		case NoteColorType_Progress:
-			color = fmodf( ceilf( fBeat * cache->m_iNoteColorCount[part] ), (float)cache->m_iNoteColorCount[part] );
-			break;
-		default:
-			FAIL_M(ssprintf("Invalid NoteColorType: %i", cache->m_NoteColorType[part]));
+			case NoteColorType_Denominator:
+				color = float( BeatToNoteType( fBeat ) );
+				color = Rage::clamp( color, 0.f, static_cast<float>(cache->m_iNoteColorCount[part]-1) );
+				break;
+			case NoteColorType_Progress:
+				color = fmodf( ceilf( fBeat * cache->m_iNoteColorCount[part] ), (float)cache->m_iNoteColorCount[part] );
+				break;
+			default:
+				FAIL_M(fmt::sprintf("Invalid NoteColorType: %i", cache->m_NoteColorType[part]));
 		}
-		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : RageVector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*color );
+		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : Rage::Vector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*color );
 	}
 
 	pActor->Draw();
@@ -1353,7 +1352,7 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 	bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollStart,
 	bool bIsAddition, float fPercentFadeToFail)
 {
-	Actor* pActor = NULL;
+	Actor* pActor = nullptr;
 	NotePart part = NotePart_Tap;
 	/*
 	if( tn.source == TapNoteSource_Addition )
@@ -1400,17 +1399,17 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 			pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, true, false );
 		}
 	}
-	
+
 	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
 	{
 		pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, false, false );
 	}
-	
+
 	else if( bOnSameRowAsRollStart  &&  cache->m_bDrawRollHeadForTapsOnSameRow )
 	{
 		pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, true, false );
 	}
-	
+
 	else
 	{
 		pActor = GetTapActor( m_TapNote, NotePart_Tap, fBeat );
@@ -1420,7 +1419,10 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 	{
 		Message msg( "SetAttack" );
 		msg.SetParam( "Modifiers", tn.sAttackModifiers );
-		pActor->HandleMessage( msg );
+		if (pActor != nullptr) // Should never be nullptr at this point.
+		{
+			pActor->HandleMessage( msg );
+		}
 	}
 
 	const float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, column_args.column, fBeat );
@@ -1428,7 +1430,9 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 	DrawActor(tn, pActor, part, field_args, column_args, fYOffset, fBeat, bIsAddition, fPercentFadeToFail, 1.0f, false);
 
 	if( tn.type == TapNoteType_Attack )
+	{
 		pActor->PlayCommand( "UnsetAttack" );
+	}
 }
 
 void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
@@ -1441,12 +1445,12 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	// sp_* will be zeroes in NCSM_Disabled, and ae_* will be zeroes in
 	// NCSM_Position, so the setting step won't have to check the mode. -Kyz
 	// sp_* are sized by the spline evaluate function.
-	RageVector3 sp_pos;
-	RageVector3 sp_rot;
-	RageVector3 sp_zoom;
-	RageVector3 ae_pos;
-	RageVector3 ae_rot;
-	RageVector3 ae_zoom;
+	Rage::Vector3 sp_pos;
+	Rage::Vector3 sp_rot;
+	Rage::Vector3 sp_zoom;
+	Rage::Vector3 ae_pos;
+	Rage::Vector3 ae_rot;
+	Rage::Vector3 ae_zoom;
 	switch(NCR_current.m_pos_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
@@ -1612,9 +1616,9 @@ void NoteColumnRenderer::FinishTweening()
 
 NoteColumnRenderer::NCR_TweenState::NCR_TweenState()
 {
-	m_rot_handler.m_spline.set_spatial_extent(0, PI*2.0f);
-	m_rot_handler.m_spline.set_spatial_extent(1, PI*2.0f);
-	m_rot_handler.m_spline.set_spatial_extent(2, PI*2.0f);
+	m_rot_handler.m_spline.set_spatial_extent(0, Rage::PI * 2.0f);
+	m_rot_handler.m_spline.set_spatial_extent(1, Rage::PI * 2.0f);
+	m_rot_handler.m_spline.set_spatial_extent(2, Rage::PI * 2.0f);
 }
 
 void NoteColumnRenderer::NCR_TweenState::MakeWeightedAverage(
@@ -1709,7 +1713,7 @@ LUA_REGISTER_DERIVED_CLASS(NoteColumnRenderer, Actor)
  * NoteColumnRenderer and associated spline stuff (c) Eric Reese 2014-2015
  * (c) 2001-2006 Brian Bugh, Ben Nordstrom, Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1719,7 +1723,7 @@ LUA_REGISTER_DERIVED_CLASS(NoteColumnRenderer, Actor)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

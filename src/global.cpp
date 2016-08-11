@@ -21,7 +21,7 @@ using CrashHandler::DebugBreak;
 #include "archutils/Unix/CrashHandler.h"
 #endif
 
-void NORETURN sm_crash( const char *reason )
+void NORETURN sm_crash( std::string const &reason )
 {
 #if ( defined(_WINDOWS) && defined(CRASH_HANDLER) ) || defined(MACOSX) || defined(_XDBG)
 	/* If we're being debugged, throw a debug break so it'll suspend the process. */

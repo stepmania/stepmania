@@ -65,11 +65,11 @@ public:
 	/**
 	 * @brief Retrieve the name of the Player based on the mode.
 	 * @return the name of the Player. */
-	RString GetName() const
+	std::string GetName() const
 	{
 		if( m_bIsDummy )
-			return ssprintf("Dummy%d",m_iDummyIndex);
-		if( IsMultiPlayer() ) 
+			return fmt::sprintf("Dummy%d",m_iDummyIndex);
+		if( IsMultiPlayer() )
 			return MultiPlayerToString( m_mp );
 		else
 			return PlayerNumberToString( m_pn );
@@ -94,12 +94,12 @@ public:
 	 * @brief The list of Steps a player has to go through in this set.
 	 *
 	 * The size may be greater than 1 if playing a course. */
-	vector<Steps*>		m_vpStepsQueue;
+	std::vector<Steps*>		m_vpStepsQueue;
 	/**
 	 * @brief The list of attack modifiers a player has to go through in this set.
 	 *
 	 * The size may be greater than 1 if playing a course. */
-	vector<AttackArray>	m_asModifiersQueue;
+	std::vector<AttackArray>	m_asModifiersQueue;
 
 	/** @brief The LifeMeter showing a Player's health. */
 	LifeMeter		*m_pLifeMeter;
@@ -178,8 +178,8 @@ public:
 	void FailFadeRemovePlayer(PlayerNumber pn);
 	void BeginBackingOutFromGameplay();
 
-	vector<float> m_HasteTurningPoints; // Values at which the meaning of GAMESTATE->m_fHasteRate changes.
-	vector<float> m_HasteAddAmounts; // Amounts that are added to speed depending on what turning point has been passed.
+	std::vector<float> m_HasteTurningPoints; // Values at which the meaning of GAMESTATE->m_fHasteRate changes.
+	std::vector<float> m_HasteAddAmounts; // Amounts that are added to speed depending on what turning point has been passed.
 	float m_fHasteTimeBetweenUpdates; // Seconds between haste updates.
 	float m_fHasteLifeSwitchPoint; // Life amount below which GAMESTATE->m_fHasteRate is based on the life amount.
 
@@ -188,8 +188,8 @@ protected:
 
 	virtual bool UseSongBackgroundAndForeground() const { return true; }
 
-	ThemeMetric<RString> PLAYER_TYPE;
-	ThemeMetric<RString> SCORE_DISPLAY_TYPE;
+	ThemeMetric<std::string> PLAYER_TYPE;
+	ThemeMetric<std::string> SCORE_DISPLAY_TYPE;
 	ThemeMetric<apActorCommands> PLAYER_INIT_COMMAND;
 	LocalizedString GIVE_UP_START_TEXT;
 	LocalizedString GIVE_UP_BACK_TEXT;
@@ -211,7 +211,7 @@ protected:
 	ThemeMetric<int> FAIL_ON_MISS_COMBO;
 	ThemeMetric<bool> ALLOW_CENTER_1_PLAYER;
 	ThemeMetric<bool> UNPAUSE_WITH_START;
-	ThemeMetric<RString> SONG_NUMBER_FORMAT;
+	ThemeMetric<std::string> SONG_NUMBER_FORMAT;
 	ThemeMetric<bool> SURVIVAL_MOD_OVERRIDE;
 
 	bool IsLastSong();
@@ -222,8 +222,8 @@ protected:
 	void GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut );
 	void LoadLights();
 	void PauseGame( bool bPause, GameController gc = GameController_Invalid );
-	void PlayAnnouncer( const RString &type, float fSeconds, float *fDeltaSeconds );
-	void PlayAnnouncer( const RString &type, float fSeconds ) { PlayAnnouncer(type, fSeconds, &m_fTimeSinceLastDancingComment); }
+	void PlayAnnouncer( const std::string &type, float fSeconds, float *fDeltaSeconds );
+	void PlayAnnouncer( const std::string &type, float fSeconds ) { PlayAnnouncer(type, fSeconds, &m_fTimeSinceLastDancingComment); }
 	void UpdateLights();
 	void SendCrossedMessages();
 
@@ -244,7 +244,7 @@ protected:
 	// These exist so that the haste rate isn't recalculated every time GetHasteRate is called, which is at least once per frame. -Kyz
 
 	/** @brief The different game states of ScreenGameplay. */
-	enum DancingState { 
+	enum DancingState {
 		STATE_INTRO = 0, /**< The starting state, pressing Back isn't allowed here. */
 		STATE_DANCING,	 /**< The main state where notes have to be pressed. */
 		STATE_OUTRO,	 /**< The ending state, pressing Back isn't allowed here. */
@@ -256,6 +256,9 @@ protected:
 	// set_paused_internal exists because GameState's pause variable needs to
 	// be kept in sync with ScreenGameplay's.
 	void set_paused_internal(bool p);
+
+	void FinishTrickLevel(int level, RageSound &sound);
+	void FinishDamageLevel(int level);
 	protected:
 
 	GameController		m_PauseController;
@@ -263,7 +266,7 @@ protected:
 	 * @brief The songs left to play.
 	 *
 	 * The size can be greater than 1 if playing a course. */
-	vector<Song*>		m_apSongsQueue;
+	std::vector<Song*>		m_apSongsQueue;
 
 	float			m_fTimeSinceLastDancingComment;	// this counter is only running while STATE_DANCING
 
@@ -323,8 +326,8 @@ protected:
 	/** @brief The NoteData that controls the lights on an arcade cabinet. */
 	NoteData		m_CabinetLightsNoteData;
 
-	vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in FillPlayerInfo
-	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut ) = 0;
+	std::vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in FillPlayerInfo
+	virtual void FillPlayerInfo( std::vector<PlayerInfo> &vPlayerInfoOut ) = 0;
 	virtual PlayerInfo &GetPlayerInfoForInput( const InputEventPlus& iep )  { return m_vPlayerInfo[iep.pn]; }
 
 	RageTimer		m_timerGameplaySeconds;
@@ -333,7 +336,7 @@ protected:
 	// announcer sound needs to be delayed.  See HandleScreenMessage for more.
 	// -Kyz
 	bool m_delaying_ready_announce;
-	
+
 	// HACK: We have no idea whether we're actually using SMOnline or not.
 	// No, seriously, NOWHERE is it stored what room we're in or whether we're in a room at all.
 	// Apparently we just hope the server is keeping track.
@@ -341,22 +344,22 @@ protected:
 	bool m_bForceNoNetwork;
 };
 
-vector<PlayerInfo>::iterator GetNextEnabledPlayerInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
-vector<PlayerInfo>::iterator GetNextEnabledPlayerInfoNotDummy	( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
-vector<PlayerInfo>::iterator GetNextEnabledPlayerNumberInfo	( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
-vector<PlayerInfo>::iterator GetNextPlayerNumberInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
-vector<PlayerInfo>::iterator GetNextVisiblePlayerInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
+std::vector<PlayerInfo>::iterator GetNextEnabledPlayerInfo		( std::vector<PlayerInfo>::iterator iter, std::vector<PlayerInfo> &v );
+std::vector<PlayerInfo>::iterator GetNextEnabledPlayerInfoNotDummy	( std::vector<PlayerInfo>::iterator iter, std::vector<PlayerInfo> &v );
+std::vector<PlayerInfo>::iterator GetNextEnabledPlayerNumberInfo	( std::vector<PlayerInfo>::iterator iter, std::vector<PlayerInfo> &v );
+std::vector<PlayerInfo>::iterator GetNextPlayerNumberInfo		( std::vector<PlayerInfo>::iterator iter, std::vector<PlayerInfo> &v );
+std::vector<PlayerInfo>::iterator GetNextVisiblePlayerInfo		( std::vector<PlayerInfo>::iterator iter, std::vector<PlayerInfo> &v );
 
 /** @brief Get each enabled Player's info. */
-#define FOREACH_EnabledPlayerInfo( v, pi )		for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerInfo		(v.begin(),v);	pi != v.end(); pi = GetNextEnabledPlayerInfo(++pi,v) )
+#define FOREACH_EnabledPlayerInfo( v, pi )		for( std::vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerInfo		(v.begin(),v);	pi != v.end(); pi = GetNextEnabledPlayerInfo(++pi,v) )
 /** @brief Get each enabled Player's info as long as it's not a dummy player. */
-#define FOREACH_EnabledPlayerInfoNotDummy( v, pi )	for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerInfoNotDummy	(v.begin(),v);	pi != v.end(); pi = GetNextEnabledPlayerInfoNotDummy(++pi,v) )
+#define FOREACH_EnabledPlayerInfoNotDummy( v, pi )	for( std::vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerInfoNotDummy	(v.begin(),v);	pi != v.end(); pi = GetNextEnabledPlayerInfoNotDummy(++pi,v) )
 /** @brief Get each enabled Player Number's info. */
-#define FOREACH_EnabledPlayerNumberInfo( v, pi )	for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerNumberInfo	(v.begin(),v);	pi != v.end(); pi = GetNextEnabledPlayerNumberInfo(++pi,v) )
+#define FOREACH_EnabledPlayerNumberInfo( v, pi )	for( std::vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerNumberInfo	(v.begin(),v);	pi != v.end(); pi = GetNextEnabledPlayerNumberInfo(++pi,v) )
 /** @brief Get each Player Number's info, regardless of whether it's enabled or not. */
-#define FOREACH_PlayerNumberInfo( v, pi )		for( vector<PlayerInfo>::iterator pi = GetNextPlayerNumberInfo		(v.begin(),v);	pi != v.end(); pi = GetNextPlayerNumberInfo(++pi,v) )
+#define FOREACH_PlayerNumberInfo( v, pi )		for( std::vector<PlayerInfo>::iterator pi = GetNextPlayerNumberInfo		(v.begin(),v);	pi != v.end(); pi = GetNextPlayerNumberInfo(++pi,v) )
 /** @brief Get each visible Player's info. */
-#define FOREACH_VisiblePlayerInfo( v, pi )		for( vector<PlayerInfo>::iterator pi = GetNextVisiblePlayerInfo		(v.begin(),v);	pi != v.end(); pi = GetNextVisiblePlayerInfo(++pi,v) )
+#define FOREACH_VisiblePlayerInfo( v, pi )		for( std::vector<PlayerInfo>::iterator pi = GetNextVisiblePlayerInfo		(v.begin(),v);	pi != v.end(); pi = GetNextVisiblePlayerInfo(++pi,v) )
 
 
 #endif
@@ -366,7 +369,7 @@ vector<PlayerInfo>::iterator GetNextVisiblePlayerInfo		( vector<PlayerInfo>::ite
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -376,7 +379,7 @@ vector<PlayerInfo>::iterator GetNextVisiblePlayerInfo		( vector<PlayerInfo>::ite
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

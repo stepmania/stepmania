@@ -12,12 +12,12 @@ class HIDDevice;
 class InputHandler_MacOSX_HID : public InputHandler
 {
 private:
-	vector<HIDDevice *> m_vDevices;
+	std::vector<HIDDevice *> m_vDevices;
 	RageThread m_InputThread;
 	RageSemaphore m_Sem;
 	CFRunLoopRef m_LoopRef;
 	CFRunLoopSourceRef m_SourceRef;
-	vector<io_iterator_t> m_vIters; // We don't really care about these but they need to stick around
+	std::vector<io_iterator_t> m_vIters; // We don't really care about these but they need to stick around
 	IONotificationPortRef m_NotifyPort;
 	RageMutex m_ChangeLock;
 	bool m_bChanged;
@@ -33,8 +33,8 @@ public:
 	~InputHandler_MacOSX_HID();
 
 	bool DevicesChanged() { LockMut( m_ChangeLock ); return m_bChanged; }
-	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
-	RString GetDeviceSpecificInputString( const DeviceInput &di );
+	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut );
+	std::string GetDeviceSpecificInputString( const DeviceInput &di );
 	wchar_t DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers );
 	static void QueueCallback( void *target, int result, void *refcon, void *sender );
 };
@@ -44,7 +44,7 @@ public:
 /*
  * (c) 2005-2006 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -54,7 +54,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

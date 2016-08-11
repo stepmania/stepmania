@@ -6,29 +6,32 @@
 #include "PrefsManager.h"
 #include "RageFile.h"
 #include "LocalizedString.h"
-#include "Foreach.h"
 #include "arch/arch_default.h"
 
-void ForceToAscii( RString &str )
+using std::vector;
+
+void ForceToAscii( std::string &str )
 {
-	for( unsigned i=0; i<str.size(); ++i )
-		if( str[i] < 0x20 || str[i] > 0x7E )
-			str[i] = '?';
+	for (auto &ch: str)
+	{
+		if (ch < 0x20 || ch > 0x7E)
+		{
+			ch = '?';
+		}
+	}
 }
 
-bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
+bool RageMovieTexture::GetFourCC( std::string fn, std::string &handler, std::string &type )
 {
-	RString ignore, ext;
+	std::string ignore, ext;
 	splitpath( fn, ignore, ignore, ext);
-	if( !ext.CompareNoCase(".mpg") ||
-		!ext.CompareNoCase(".mpeg") ||
-		!ext.CompareNoCase(".mpv") ||
-		!ext.CompareNoCase(".mpe") )
+	Rage::ci_ascii_string ciExt{ ext.c_str() };
+	if (ciExt == ".mpg" || ciExt == ".mpeg" || ciExt == ".mpv" || ciExt == ".mpe")
 	{
 		handler = type = "MPEG";
 		return true;
 	}
-	if( !ext.CompareNoCase(".ogv") )
+	if (ciExt == ".ogv")
 	{
 		handler = type = "Ogg";
 		return true;
@@ -50,7 +53,7 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 	if( file.Read((char *)type.c_str(), 4) != 4 )
 		HANDLE_ERROR("Could not read.");
 	ForceToAscii( type );
-	
+
 	if( file.Seek(0xBC) != 0xBC )
 		HANDLE_ERROR("Could not seek.");
 	handler = "    ";
@@ -65,66 +68,68 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 DriverList RageMovieTextureDriver::m_pDriverList;
 
 // Helper for MakeRageMovieTexture()
-static void DumpAVIDebugInfo( const RString& fn )
+static void DumpAVIDebugInfo( const std::string& fn )
 {
-	RString type, handler;
+	std::string type, handler;
 	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
 		return;
-	
+
 	LOG->Trace( "Movie %s has handler '%s', type '%s'", fn.c_str(), handler.c_str(), type.c_str() );
 }
 
-static Preference<RString> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
+static Preference<std::string> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
 /* Try drivers in order of preference until we find one that works. */
 static LocalizedString MOVIE_DRIVERS_EMPTY		( "Arch", "Movie Drivers cannot be empty." );
 static LocalizedString COULDNT_CREATE_MOVIE_DRIVER	( "Arch", "Couldn't create a movie driver." );
 RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
-	
-	RString sDrivers = g_sMovieDrivers;
+
+	std::string sDrivers = g_sMovieDrivers.Get();
 	if( sDrivers.empty() )
-		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
-	
-	vector<RString> DriversToTry;
-	split( sDrivers, ",", DriversToTry, true );
-	
-	if( DriversToTry.empty() )
-		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
-	
-	RageMovieTexture *ret = NULL;
-	
-	FOREACH_CONST( RString, DriversToTry, Driver )
 	{
-		LOG->Trace( "Initializing driver: %s", Driver->c_str() );
-		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( *Driver );
-		
-		if( pDriverBase == NULL )
+		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
+	}
+	auto DriversToTry = Rage::split( sDrivers, ",", Rage::EmptyEntries::skip );
+
+	if( DriversToTry.empty() )
+	{
+		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
+	}
+	RageMovieTexture *ret = nullptr;
+
+	for (auto const &Driver: DriversToTry)
+	{
+		LOG->Trace( "Initializing driver: %s", Driver.c_str() );
+		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( Driver );
+
+		if( pDriverBase == nullptr )
 		{
-			LOG->Trace( "Unknown movie driver name: %s", Driver->c_str() );
+			LOG->Trace( "Unknown movie driver name: %s", Driver.c_str() );
 			continue;
 		}
-		
-		RageMovieTextureDriver *pDriver = dynamic_cast<RageMovieTextureDriver *>( pDriverBase );
-		ASSERT( pDriver != NULL );
 
-		RString sError;
+		RageMovieTextureDriver *pDriver = dynamic_cast<RageMovieTextureDriver *>( pDriverBase );
+		ASSERT( pDriver != nullptr );
+
+		std::string sError;
 		ret = pDriver->Create( ID, sError );
 		delete pDriver;
 
-		if( ret == NULL )
+		if( ret == nullptr )
 		{
-			LOG->Trace( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
-			SAFE_DELETE( ret );
+			LOG->Trace( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
+			Rage::safe_delete( ret );
 			continue;
 		}
 		LOG->Trace( "Created movie texture \"%s\" with driver \"%s\"",
-			    ID.filename.c_str(), Driver->c_str() );
+			    ID.filename.c_str(), Driver.c_str() );
 		break;
 	}
 	if ( !ret )
+	{
 		RageException::Throw( "%s", COULDNT_CREATE_MOVIE_DRIVER.GetValue().c_str() );
-	
+	}
 	return ret;
 }
 
@@ -132,7 +137,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -142,7 +147,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

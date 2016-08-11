@@ -9,9 +9,9 @@ class LoadingWindow_Gtk: public LoadingWindow
 {
 public:
 	LoadingWindow_Gtk();
-	RString Init();
+	std::string Init();
 	~LoadingWindow_Gtk();
-	void SetText( RString str );
+	void SetText( std::string str );
 	void SetIcon( const RageSurface *pIcon );
 	void SetSplash( const RageSurface *pSplash );
 	void SetProgress( const int progress );

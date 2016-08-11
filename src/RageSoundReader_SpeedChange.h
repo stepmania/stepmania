@@ -13,7 +13,7 @@ public:
 	virtual int SetPosition( int iFrame );
 	virtual int Read( float *pBuf, int iFrames );
 	virtual RageSoundReader_SpeedChange *Copy() const { return new RageSoundReader_SpeedChange(*this); }
-	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual bool SetProperty( const std::string &sProperty, float fValue );
 	virtual int GetNextSourceFrame() const;
 	virtual float GetStreamToSourceRatio() const;
 
@@ -40,11 +40,11 @@ protected:
 	int m_iDataBufferAvailFrames;
 	struct ChannelInfo
 	{
-		vector<float> m_DataBuffer;
+		std::vector<float> m_DataBuffer;
 		int m_iCorrelatedPos;
 		int m_iLastCorrelatedPos;
 	};
-	vector<ChannelInfo> m_Channels;
+	std::vector<ChannelInfo> m_Channels;
 
 	int m_iUncorrelatedPos;
 	int m_iPos;

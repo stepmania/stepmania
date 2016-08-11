@@ -1,6 +1,6 @@
 -- Find a key in tab with the given value.
 function FindValue(tab, value)
-	for key, name in tab do
+	for key, name in pairs(tab) do
 		if value == name then
 			return key
 		end
@@ -11,7 +11,7 @@ end
 
 -- Return the index of a true value in list.
 function FindSelection(list)
-	for index, on in list do
+	for index, on in ipairs(list) do
 		if on then
 			return index
 		end
@@ -32,7 +32,7 @@ end
 function wrap(val,n)
 	local x = val
 	Trace( "wrap "..x.." "..n )
-	if x<0 then 
+	if x<0 then
 		x = x + (math.ceil(-x/n)+1)*n
 	end
 	Trace( "adjusted "..x )
@@ -122,18 +122,26 @@ end
 --Get the count of all items in a table
 function table.itemcount(t)
 	local i = 0
-	while next(t)~=nil do
-		i=i+1
+	for _, v in pairs(t) do
+		i = i+1
 	end
 	return i
 end
 
 function math.round(num, pre)
 	if pre and pre < 0 then pre = 0 end
-	local mult = 10^(pre or 0) 
-	if num >= 0 then return math.floor(num*mult+.5)/mult 
+	local mult = 10^(pre or 0)
+	if num >= 0 then return math.floor(num*mult+.5)/mult
 	else return math.ceil(num*mult-.5)/mult end
 end
+
+function math.gcd(a, b)
+	while b ~= 0 do
+		a, b = b, math.mod(a, b)
+	end
+	return a
+end
+
 -- deprecated?
 function round(val, decimal)
 	if decimal then
@@ -197,7 +205,7 @@ function ArgsIfPlayerJoinedOrNil(arg1,arg2)
 	if arg1==nil then arg1=arg2
 	elseif arg2==nil then arg2=arg1 end
 	return (GAMESTATE:IsSideJoined(PLAYER_1) and arg1 or nil),(GAMESTATE:IsSideJoined(PLAYER_2) and arg2 or nil)
-end	
+end
 
 function Center1Player()
 	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
@@ -345,16 +353,44 @@ local function round(num, idp)
 end
 
 function IsUsingWideScreen()
-	local curAspect = round(GetScreenAspectRatio(),5);
-	for k,v in pairs(AspectRatios) do
-		if AspectRatios[k] == curAspect then
-			if k == "SixteenNine" or k == "SixteenTen" then
-				return true;
-			else return false;
-			end;
-		end;
-	end;
-end;
+	local curAspect = GetScreenAspectRatio()
+	if math.abs(curAspect-16/9) <= .044 or math.abs(curAspect - 16/10) <= .044 then
+		return true
+	else
+		return false
+	end
+end
+
+function PrintTable( tbl )
+	Trace( "Printing table" )
+	for k,v in pairs(tbl) do
+		Trace( ("[%s] -> %s"):format(tostring(k),tostring(v)) )
+	end
+end
+
+-- TODO: move this into a more general section
+-- func takes a key and a value
+function foreach_by_sorted_keys(tbl, keys, func)
+	table.sort(keys)
+	for _, key in ipairs(keys) do func(key, tbl[key]) end
+end
+
+function foreach_ordered( tbl, func )
+	local string_keys= {}
+	local number_keys= {}
+	-- First person to to use this on a table that uses something else as keys
+	-- gets to extend this function to cover more types.  And a beating. -Kyz
+	for k,_ in pairs(tbl) do
+		if type(k) == "string" then
+			table.insert(string_keys, k)
+		elseif type(k) == "number" then
+			table.insert(number_keys, k)
+		end
+	end
+	-- iterate in sorted order
+	foreach_by_sorted_keys(tbl, number_keys, func)
+	foreach_by_sorted_keys(tbl, string_keys, func)
+end
 
 -- Usage:  Pass in an ActorFrame and a string to put in front of every line.
 -- indent will be appended to at each level of the recursion, to indent each
@@ -413,6 +449,14 @@ function rec_print_table(t, indent, depth_remaining)
 		end
 	end
 	Trace(indent .. "end")
+end
+
+-- Because somebody decided stepmania's scaletofit should change the position
+-- of the actor. -kyz
+function scale_to_fit(actor, width, height)
+	local xscale= width / actor:GetWidth()
+	local yscale= height / actor:GetHeight()
+	actor:zoom(math.min(xscale, yscale))
 end
 
 -- Minor text formatting functions from Kyzentun.
@@ -491,7 +535,7 @@ end
 
 -- (c) 2005-2011 Glenn Maynard, Chris Danford, SSC
 -- All rights reserved.
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a
 -- copy of this software and associated documentation files (the
 -- "Software"), to deal in the Software without restriction, including
@@ -501,7 +545,7 @@ end
 -- copyright notice(s) and this permission notice appear in all copies of
 -- the Software and that both the above copyright notice(s) and this
 -- permission notice appear in supporting documentation.
--- 
+--
 -- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 -- OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 -- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -511,4 +555,3 @@ end
 -- OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 -- OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 -- PERFORMANCE OF THIS SOFTWARE.
-

@@ -12,6 +12,7 @@
 #include "BacktraceNames.h"
 
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "CrashHandler.h"
 #include "CrashHandlerInternal.h"
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc. only */
@@ -24,9 +25,11 @@
 
 #include "ver.h"
 
+using std::vector;
+
 bool child_read( int fd, void *p, int size );
 
-const char *g_pCrashHandlerArgv0 = NULL;
+const char *g_pCrashHandlerArgv0 = nullptr;
 
 
 static void output_stack_trace( FILE *out, const void **BacktracePointers )
@@ -88,7 +91,7 @@ bool child_read( int fd, void *p, int size )
 }
 
 /* Once we get here, we should be * safe to do whatever we want;
-* heavyweights like malloc and RString are OK. (Don't crash!) */
+* heavyweights like malloc and std::string are OK. (Don't crash!) */
 static void child_process()
 {
 	/* 1. Read the CrashData. */
@@ -134,8 +137,7 @@ static void child_process()
 	if( !child_read(3, temp, size) )
 		return;
 
-	vector<RString> Checkpoints;
-	split(temp, "$$", Checkpoints);
+	auto checkpoints = Rage::split(temp, "$$");
 	delete [] temp;
 
 	/* 6. Read the crashed thread's name. */
@@ -144,7 +146,7 @@ static void child_process()
 	temp = new char [size];
 	if( !child_read(3, temp, size) )
 		return;
-	const RString CrashedThread(temp);
+	const std::string CrashedThread(temp);
 	delete[] temp;
 
 	/* Wait for the child to either finish cleaning up or die. */
@@ -153,7 +155,7 @@ static void child_process()
 
 	FD_ZERO( &rs );
 	FD_SET( 3, &rs );
-	int ret = select( 4, &rs, NULL, NULL, &timeout );
+	int ret = select( 4, &rs, nullptr, nullptr, &timeout );
 
 	if( ret == 0 )
 	{
@@ -183,7 +185,7 @@ static void child_process()
 		}
 	}
 
-	RString sCrashInfoPath = "/tmp";
+	std::string sCrashInfoPath = "/tmp";
 #if defined(MACOSX)
 	sCrashInfoPath = CrashHandler::GetLogsDirectory();
 #else
@@ -193,10 +195,10 @@ static void child_process()
 #endif
 	sCrashInfoPath += "/crashinfo.txt";
 
-	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
-	if(CrashDump == NULL)
+	FILE *CrashDump = fopen( sCrashInfoPath.c_str(), "w+" );
+	if(CrashDump == nullptr)
 	{
-		fprintf( stderr, "Couldn't open " + sCrashInfoPath + ": %s\n", strerror(errno) );
+		fprintf( stderr, ("Couldn't open " + sCrashInfoPath + ": %s\n").c_str(), strerror(errno) );
 		exit(1);
 	}
 
@@ -206,17 +208,17 @@ static void child_process()
 	fprintf( CrashDump, "--------------------------------------\n" );
 	fprintf( CrashDump, "\n" );
 
-	RString reason;
+	std::string reason;
 	switch( crash.type )
 	{
 	case CrashData::SIGNAL:
 	{
-		reason = ssprintf( "%s - %s", SignalName(crash.signal), SignalCodeName(crash.signal, crash.si.si_code) );
+		reason = fmt::sprintf( "%s - %s", SignalName(crash.signal), SignalCodeName(crash.signal, crash.si.si_code) );
 
 		/* Linux puts the PID that sent the signal in si_addr for SI_USER. */
 		if( crash.si.si_code == SI_USER )
 		{
-			reason += ssprintf( " from pid %li", (long) crash.si.si_addr );
+			reason += fmt::sprintf( " from pid %li", (long) crash.si.si_addr );
 		}
 		else
 		{
@@ -226,7 +228,7 @@ static void child_process()
 			case SIGFPE:
 			case SIGSEGV:
 			case SIGBUS:
-				reason += ssprintf( " at 0x%0*lx", int(sizeof(void*)*2), (unsigned long) crash.si.si_addr );
+				reason += fmt::sprintf( " at 0x%0*lx", int(sizeof(void*)*2), (unsigned long) crash.si.si_addr );
 			}
 			break;
 		}
@@ -242,8 +244,10 @@ static void child_process()
 	fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
 
 	fprintf(CrashDump, "Checkpoints:\n");
-	for( unsigned i=0; i<Checkpoints.size(); ++i )
-		fputs( Checkpoints[i], CrashDump );
+	for (auto &checkpoint: checkpoints)
+	{
+		fputs( checkpoint.c_str(), CrashDump );
+	}
 	fprintf( CrashDump, "\n" );
 
 	for( int i = 0; i < CrashData::MAX_BACKTRACE_THREADS; ++i )
@@ -271,10 +275,10 @@ static void child_process()
 	/* stdout may have been inadvertently closed by the crash in the parent;
 	 * write to /dev/tty instead. */
 	FILE *tty = fopen( "/dev/tty", "w" );
-	if( tty == NULL )
+	if( tty == nullptr )
 		tty = stderr;
 
-	fputs( 	"\n"
+	fputs( 	("\n"
 		 PRODUCT_ID " has crashed.  Debug information has been output to\n"
 		 "\n"
 		 "    " + sCrashInfoPath + "\n"
@@ -282,7 +286,7 @@ static void child_process()
 		 "Please report a bug at:\n"
 		 "\n"
 		 "    " REPORT_BUG_URL "\n"
-		 "\n", tty );
+		 "\n").c_str(), tty );
 #endif
 }
 

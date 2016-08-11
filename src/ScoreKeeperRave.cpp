@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScoreKeeperRave.h"
+#include "RageMath.hpp"
 #include "ThemeManager.h"
 #include "RageUtil.h"
 #include "GameState.h"
@@ -12,7 +13,7 @@
 
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
-static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, std::string &sNameOut, float &defaultValueOut )
 {
 	ScoreEvent ci = (ScoreEvent)i;
 	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( ci );
@@ -117,7 +118,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 	if( PREFSMAN->m_bMercifulDrain  &&  fUnscaledPercentChange<0 )
 	{
 		float fSuperPercentage = m_pPlayerState->m_fSuperMeter / NUM_ATTACK_LEVELS;
-		fUnscaledPercentChange *= SCALE( fSuperPercentage, 0.f, 1.f, 0.5f, 1.f);
+		fUnscaledPercentChange *= Rage::scale( fSuperPercentage, 0.f, 1.f, 0.5f, 1.f);
 	}
 
 	// more mercy: Grow super meter slower or faster depending on life.
@@ -129,24 +130,24 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		case PLAYER_1:	fLifePercentage = GAMESTATE->m_fTugLifePercentP1;		break;
 		case PLAYER_2:	fLifePercentage = 1 - GAMESTATE->m_fTugLifePercentP1;	break;
 		default:
-			FAIL_M(ssprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
+			FAIL_M(fmt::sprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
 		}
-		CLAMP( fLifePercentage, 0.f, 1.f );
+		fLifePercentage = Rage::clamp( fLifePercentage, 0.f, 1.f );
 		if( fUnscaledPercentChange > 0 )
-			fUnscaledPercentChange *= SCALE( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
+			fUnscaledPercentChange *= Rage::scale( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
 		else	// fUnscaledPercentChange <= 0
-			fUnscaledPercentChange /= SCALE( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
+			fUnscaledPercentChange /= Rage::scale( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
 	}
 
 	// mercy: drop super meter faster if at a higher level
 	if( fUnscaledPercentChange < 0 )
-		fUnscaledPercentChange *= SCALE( m_pPlayerState->m_fSuperMeter, 0.f, 1.f, 0.01f, 1.f );
+		fUnscaledPercentChange *= Rage::scale( m_pPlayerState->m_fSuperMeter, 0.f, 1.f, 0.01f, 1.f );
 
 	AttackLevel oldAL = (AttackLevel)(int)m_pPlayerState->m_fSuperMeter;
 
 	float fPercentToMove = fUnscaledPercentChange;
 	m_pPlayerState->m_fSuperMeter += fPercentToMove * m_pPlayerState->m_fSuperMeterGrowthScale;
-	CLAMP( m_pPlayerState->m_fSuperMeter, 0.f, NUM_ATTACK_LEVELS );
+	m_pPlayerState->m_fSuperMeter = Rage::clamp( m_pPlayerState->m_fSuperMeter, 0.f, NUM_ATTACK_LEVELS + 0.f );
 
 	AttackLevel newAL = (AttackLevel)(int)m_pPlayerState->m_fSuperMeter;
 
@@ -167,7 +168,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		case PLAYER_2:	bWinning = GAMESTATE->m_fTugLifePercentP1 < 0.5f;	break;
 		default:
 			bWinning = false;
-			FAIL_M(ssprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
+			FAIL_M(fmt::sprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
 		}
 		if( !bWinning )
 			m_pPlayerState->EndActiveAttacks();
@@ -178,16 +179,16 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 {
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	RString* asAttacks = GAMESTATE->m_pCurCharacters[pn]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
-	RString sAttackToGive;
+	std::string* asAttacks = GAMESTATE->m_pCurCharacters[pn]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
+	std::string sAttackToGive;
 
-	if (GAMESTATE->m_pCurCharacters[pn] != NULL)		
+	if (GAMESTATE->m_pCurCharacters[pn] != nullptr)		
 		sAttackToGive = asAttacks[ RandomInt(NUM_ATTACKS_PER_LEVEL) ];
 	else
 	{
 		// "If you add any noteskins here, you need to make sure they're cached, too." -?
 		// Noteskins probably won't work here anymore. -aj
-		RString DefaultAttacks[8] = { "1.5x", "2.0x", "0.5x", "reverse", "sudden", "boost", "brake", "wave" };
+		std::string DefaultAttacks[8] = { "1.5x", "2.0x", "0.5x", "reverse", "sudden", "boost", "brake", "wave" };
 		sAttackToGive = DefaultAttacks[ RandomInt(8) ];
 	}
 
@@ -205,7 +206,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	// apply new attack
 	pPlayerStateToAttack->LaunchAttack( a );
 
-//	SCREENMAN->SystemMessage( ssprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
+//	SCREENMAN->SystemMessage( fmt::sprintf( "attacking %d with %s", pnToAttack+1, sAttackToGive.c_str() ) );
 }
 
 /*

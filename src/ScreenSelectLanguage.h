@@ -8,7 +8,7 @@ class ScreenSelectLanguage : public ScreenSelectMaster
 {
 public:
 	virtual void Init();
-	virtual RString GetDefaultChoice();
+	virtual std::string GetDefaultChoice();
 	virtual void BeginScreen();
 	virtual bool MenuStart( const InputEventPlus &input );
 	virtual bool MenuBack( const InputEventPlus &input );

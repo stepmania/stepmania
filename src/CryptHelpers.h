@@ -3,7 +3,7 @@
 
 #if !defined(DISABLE_CRYPTO)
 
-#include "libtomcrypt/src/headers/tomcrypt.h"
+#include "tomcrypt.h"
 
 class PRNGWrapper
 {
@@ -24,7 +24,7 @@ public:
 	~RSAKeyWrapper();
 	void Unload();
 	void Generate( PRNGWrapper &prng, int iKeyLenBits );
-	bool Load( const RString &sKey, RString &sError );
+	bool Load( const std::string &sKey, std::string &sError );
 
 	rsa_key m_Key;
 };

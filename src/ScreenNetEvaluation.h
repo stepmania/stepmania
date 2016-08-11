@@ -34,7 +34,7 @@ private:
 	DifficultyIcon m_DifficultyIcon[NUM_PLAYERS];
 	//StepsDisplay m_StepsDisplays[NUM_PLAYERS];
 
-	vector<BitmapText>	m_textUsers;
+	std::vector<BitmapText>	m_textUsers;
 	int	 m_iCurrentPlayer;
 	int	 m_iActivePlayers;
 
@@ -60,7 +60,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

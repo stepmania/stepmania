@@ -2,8 +2,7 @@
 #include "RageSurface.h"
 #include "RageUtil.h"
 
-#include <limits.h>
-
+#include <limits>
 
 int32_t RageSurfacePalette::FindColor( const RageSurfaceColor &color ) const
 {
@@ -17,7 +16,7 @@ int32_t RageSurfacePalette::FindColor( const RageSurfaceColor &color ) const
 int32_t RageSurfacePalette::FindClosestColor( const RageSurfaceColor &color ) const
 {
 	int iBest = -1;
-	int iBestDist = INT_MAX;
+	int iBestDist = std::numeric_limits<int>::max();
 	for( int i = 0; i < ncolors; ++i )
 	{
 		if( colors[i] == color )
@@ -41,7 +40,7 @@ RageSurfaceFormat::RageSurfaceFormat():
 	Rmask(Mask[0]), Gmask(Mask[1]), Bmask(Mask[2]), Amask(Mask[3]),
 	Rshift(Shift[0]), Gshift(Shift[1]), Bshift(Shift[2]), Ashift(Shift[3])
 {
-	palette = NULL;	
+	palette = nullptr;	
 }
 
 RageSurfaceFormat::RageSurfaceFormat( const RageSurfaceFormat &cpy ):
@@ -62,7 +61,7 @@ void RageSurfaceFormat::GetRGB( uint32_t val, uint8_t *r, uint8_t *g, uint8_t *b
 {
 	if( BytesPerPixel == 1 )
 	{
-		ASSERT( palette != NULL );
+		ASSERT( palette != nullptr );
 		*r = palette->colors[val].r;
 		*g = palette->colors[val].g;
 		*b = palette->colors[val].b;
@@ -119,7 +118,7 @@ bool RageSurfaceFormat::Equivalent( const RageSurfaceFormat &rhs ) const
 RageSurface::RageSurface()
 {
 	format = &fmt;
-	pixels = NULL;
+	pixels = nullptr;
 	pixels_owned = true;
 }
 
@@ -138,7 +137,7 @@ RageSurface::RageSurface( const RageSurface &cpy )
 		memcpy( pixels, cpy.pixels, pitch*h );
 	}
 	else
-		pixels = NULL;
+		pixels = nullptr;
 }
 
 RageSurface::~RageSurface()

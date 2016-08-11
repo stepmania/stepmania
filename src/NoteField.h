@@ -25,9 +25,9 @@ public:
 	void DrawBoardPrimitive();
 
 	virtual void Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels, bool use_states_zoom= true );
-	virtual void Load( 
-		const NoteData* pNoteData, 
-		int iDrawDistanceAfterTargetsPixels, 
+	virtual void Load(
+		const NoteData* pNoteData,
+		int iDrawDistanceAfterTargetsPixels,
 		int iDrawDistanceBeforeTargetsPixels );
 	virtual void Unload();
 
@@ -65,8 +65,8 @@ public:
 	vector<NoteColumnRenderer> m_ColumnRenderers;
 
 protected:
-	void CacheNoteSkin( const RString &sNoteSkin );
-	void UncacheNoteSkin( const RString &sNoteSkin );
+	void CacheNoteSkin( const std::string &sNoteSkin );
+	void UncacheNoteSkin( const std::string &sNoteSkin );
 
 	bool IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const;
 
@@ -78,14 +78,14 @@ protected:
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
 	void set_text_measure_number_for_draw(
 		const float beat, const float side_sign, float x_offset,
-		const float horiz_align, const RageColor& color, const RageColor& glow);
-	void draw_timing_segment_text(const RString& text,
+		const float horiz_align, const Rage::Color& color, const Rage::Color& glow);
+	void draw_timing_segment_text(const std::string& text,
 		const float beat, const float side_sign, float x_offset,
-		const float horiz_align, const RageColor& color, const RageColor& glow);
-	void DrawAttackText(const float beat, const Attack &attack, const RageColor& glow);
-	void DrawBGChangeText(const float beat, const RString new_bg_name, const RageColor& glow);
+		const float horiz_align, const Rage::Color& color, const Rage::Color& glow);
+	void DrawAttackText(const float beat, const Attack &attack, const Rage::Color& glow);
+	void DrawBGChangeText(const float beat, const std::string new_bg_name, const Rage::Color& glow);
 	float GetWidth() const;
-	
+
 	const NoteData *m_pNoteData;
 
 	const PlayerState*	m_pPlayerState;
@@ -109,7 +109,7 @@ protected:
 	NoteFieldRenderArgs m_FieldRenderArgs;
 
 	/* All loaded note displays, mapped by their name. */
-	map<RString, NoteDisplayCols *> m_NoteDisplays;
+	std::map<std::string, NoteDisplayCols *> m_NoteDisplays;
 	NoteDisplayCols		*m_pCurDisplay;
 	NoteDisplayCols		*m_pDisplays[NUM_PlayerNumber];
 
@@ -132,7 +132,7 @@ protected:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -142,7 +142,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

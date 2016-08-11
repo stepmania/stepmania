@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSoundMixBuffer.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 
 #if defined(MACOSX)
@@ -12,7 +13,7 @@ static bool g_bVector = Vector::CheckForVector();
 RageSoundMixBuffer::RageSoundMixBuffer()
 {
 	m_iBufSize = m_iBufUsed = 0;
-	m_pMixbuf = NULL;
+	m_pMixbuf = nullptr;
 	m_iOffset = 0;
 }
 
@@ -78,8 +79,8 @@ void RageSoundMixBuffer::read( int16_t *pBuf )
 	for( unsigned iPos = 0; iPos < m_iBufUsed; ++iPos )
 	{
 		float iOut = m_pMixbuf[iPos];
-		iOut = clamp( iOut, -1.0f, +1.0f );
-		pBuf[iPos] = lrintf(iOut * 32767);
+		iOut = Rage::clamp( iOut, -1.0f, +1.0f );
+		pBuf[iPos] = std::lrint(iOut * 32767);
 	}
 	m_iBufUsed = 0;
 }

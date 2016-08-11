@@ -1,8 +1,8 @@
 #include "global.h"
 #include "SampleHistory.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Foreach.h"
 
 inline float sample_step_size(int samples_per_second)
 {
@@ -16,12 +16,13 @@ SampleHistory::SampleHistory()
 	m_fHistorySeconds = 0.0f;
 	m_fToSample = sample_step_size(m_iHistorySamplesPerSecond);
 	m_fHistorySeconds = 10.0f;
-	int iSamples = lrintf( m_iHistorySamplesPerSecond * m_fHistorySeconds );
+	int iSamples = std::lrint( m_iHistorySamplesPerSecond * m_fHistorySeconds );
 	m_afHistory.resize( iSamples );
 }
 
 float SampleHistory::GetSampleNum( float fSamplesAgo ) const
 {
+	using std::min;
 	fSamplesAgo = min( fSamplesAgo, (float) m_afHistory.size() - 1 );
 	if( fSamplesAgo < 0 )
 		fSamplesAgo = 0;
@@ -30,14 +31,14 @@ float SampleHistory::GetSampleNum( float fSamplesAgo ) const
 
 	float fSample = m_iLastHistory - fSamplesAgo - 1;
 
-	float f = floorf( fSample );
-	int iSample = lrintf(f);
+	float f = std::floor( fSample );
+	int iSample = std::lrint(f);
 	int iNextSample = iSample + 1;
 	wrap( iSample, m_afHistory.size() );
 	wrap( iNextSample, m_afHistory.size() );
 
 	float p = fSample - f;
-	float fRet = lerp( p, m_afHistory[iSample], m_afHistory[iNextSample] );
+	float fRet = Rage::lerp( p, m_afHistory[iSample], m_afHistory[iNextSample] );
 //	LOG->Trace( "%.3f: %i, %i, %.3f (f %.3f, %.3f)", fSample, iSample, iNextSample, fRet, f, p );
 	return fRet;
 }
@@ -50,6 +51,7 @@ float SampleHistory::GetSample( float fSecondsAgo ) const
 
 void SampleHistory::AddSample( float fSample, float fDeltaTime )
 {
+	using std::min;
 	while( fDeltaTime > 0.0001f )
 	{
 		float fTime = min( m_fToSample, fDeltaTime );
@@ -70,7 +72,7 @@ void SampleHistory::AddSample( float fSample, float fDeltaTime )
 /*
  * (c) 2006-2007 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -80,7 +82,7 @@ void SampleHistory::AddSample( float fSample, float fDeltaTime )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

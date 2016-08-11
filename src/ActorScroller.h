@@ -12,7 +12,7 @@ public:
 	ActorScroller();
 
 	void SetTransformFromReference( const LuaReference &ref );
-	void SetTransformFromExpression( const RString &sTransformFunction );
+	void SetTransformFromExpression( const std::string &sTransformFunction );
 	void SetTransformFromWidth( float fItemWidth );
 	void SetTransformFromHeight( float fItemHeight );
 

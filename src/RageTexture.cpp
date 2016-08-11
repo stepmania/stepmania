@@ -5,6 +5,7 @@
 #include "RageTextureManager.h"
 #include <cstring>
 
+using std::vector;
 
 RageTexture::RageTexture( RageTextureID name ):
 	m_iRefCount(1), m_bWasUsed(false), m_ID(name),
@@ -27,25 +28,30 @@ void RageTexture::CreateFrameRects()
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	m_TextureCoordRects.clear();
 
+	const float frame_w= static_cast<float>(m_iImageWidth) /
+		static_cast<float>(m_iFramesWide);
+	const float frame_h= static_cast<float>(m_iImageHeight) /
+		static_cast<float>(m_iFramesHigh);
+	const float tex_w= static_cast<float>(m_iTextureWidth);
+	const float tex_h= static_cast<float>(m_iTextureHeight);
+
 	for( int j=0; j<m_iFramesHigh; j++ )		// traverse along Y
 	{
 		for( int i=0; i<m_iFramesWide; i++ )	// traverse along X (important that this is the inner loop)
 		{
-			RectF frect( (i+0)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,	// these will all be between 0.0 and 1.0
-						 (j+0)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight, 
-						 (i+1)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth, 
-						 (j+1)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight );
+			Rage::RectF frect(((i+0) * frame_w) / tex_w, ((j+0) * frame_h) / tex_h,
+				((i+1) * frame_w) / tex_w, ((j+1) * frame_h) / tex_h);
 			m_TextureCoordRects.push_back( frect );	// the index of this array element will be (i + j*m_iFramesWide)
-			
+
 			//LOG->Trace( "Adding frect%d %f %f %f %f", (i + j*m_iFramesWide), frect.left, frect.top, frect.right, frect.bottom );
 		}
 	}
 }
 
-void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWide, int* piFramesHigh, int source_width, int source_height )
+void RageTexture::GetFrameDimensionsFromFileName( std::string sPath, int* piFramesWide, int* piFramesHigh, int source_width, int source_height )
 {
 	static Regex match( " ([0-9]+)x([0-9]+)([\\. ]|$)" );
-        vector<RString> asMatch;
+        vector<std::string> asMatch;
 	if( !match.Compare(sPath, asMatch) )
 	{
 		*piFramesWide = *piFramesHigh = 1;
@@ -74,7 +80,7 @@ void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWi
 	*piFramesHigh = maybe_height;
 }
 
-const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
+const Rage::RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
 {
 	return &m_TextureCoordRects[iFrameNo % GetNumFrames()];
 }
@@ -82,7 +88,7 @@ const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the RageTexture. */ 
+/** @brief Allow Lua to have access to the RageTexture. */
 class LunaRageTexture: public Luna<RageTexture>
 {
 public:
@@ -91,7 +97,7 @@ public:
 	static int rate( T* p, lua_State *L )			{ p->SetPlaybackRate( FArg(1) ); COMMON_RETURN_SELF; }
 	static int GetTextureCoordRect( T* p, lua_State *L )
 	{
-		const RectF *pRect = p->GetTextureCoordRect( IArg(1) );
+		const Rage::RectF *pRect = p->GetTextureCoordRect( IArg(1) );
 		lua_pushnumber( L, pRect->left );
 		lua_pushnumber( L, pRect->top );
 		lua_pushnumber( L, pRect->right );

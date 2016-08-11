@@ -34,7 +34,7 @@ enum EditState
 	NUM_EditState,
 	EditState_Invalid
 };
-const RString& EditStateToString( EditState es );
+std::string const EditStateToString( EditState es );
 LuaDeclareType( EditState );
 
 enum EditButton
@@ -463,7 +463,7 @@ public:
 		modify_keysounds_at_row, /**< Modify the keysounds at this row. */
 		NUM_AREA_MENU_CHOICES
 	};
-	void HandleArbitraryRemapping(RString const& mapstr);
+	void HandleArbitraryRemapping(std::string const& mapstr);
 	void HandleAlterMenuChoice(AlterMenuChoice choice,
 		const vector<int> &answers, bool allow_undo= true,
 		bool prompt_clear= true);

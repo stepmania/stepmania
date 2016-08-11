@@ -39,8 +39,8 @@ enum NoteColorType
 	NUM_NoteColorType,
 	NoteColorType_Invalid
 };
-const RString& NoteColorTypeToString( NoteColorType nct );
-NoteColorType StringToNoteColorType( const RString& s );
+std::string const NoteColorTypeToString( NoteColorType nct );
+NoteColorType StringToNoteColorType( const std::string& s );
 
 struct NoteResource;
 
@@ -48,7 +48,7 @@ struct NoteColorActor
 {
 	NoteColorActor();
 	~NoteColorActor();
-	void Load( const RString &sButton, const RString &sElement, PlayerNumber, GameController );
+	void Load( const std::string &sButton, const std::string &sElement, PlayerNumber, GameController );
 	Actor *Get();
 private:
 	NoteResource *m_p;
@@ -58,7 +58,7 @@ struct NoteColorSprite
 {
 	NoteColorSprite();
 	~NoteColorSprite();
-	void Load( const RString &sButton, const RString &sElement, PlayerNumber, GameController );
+	void Load( const std::string &sButton, const std::string &sElement, PlayerNumber, GameController );
 	Sprite *Get();
 private:
 	NoteResource *m_p;
@@ -74,7 +74,7 @@ enum HoldType
 };
 /** @brief Loop through each HoldType. */
 #define FOREACH_HoldType( i ) FOREACH_ENUM( HoldType, i )
-const RString &HoldTypeToString( HoldType ht );
+std::string const HoldTypeToString( HoldType ht );
 
 enum ActiveType
 {
@@ -85,7 +85,7 @@ enum ActiveType
 };
 /** @brief Loop through each ActiveType. */
 #define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, i )
-const RString &ActiveTypeToString( ActiveType at );
+std::string const ActiveTypeToString( ActiveType at );
 
 enum NoteColumnSplineMode
 {
@@ -96,7 +96,7 @@ enum NoteColumnSplineMode
 	NoteColumnSplineMode_Invalid
 };
 
-const RString& NoteColumnSplineModeToString(NoteColumnSplineMode ncsm);
+std::string const NoteColumnSplineModeToString(NoteColumnSplineMode ncsm);
 LuaDeclareType(NoteColumnSplineMode);
 
 // A little pod struct to carry the data the NoteField needs to pass to the
@@ -136,9 +136,9 @@ struct NCSplineHandler
 		m_subtract_song_beat_from_curr= true;
 	}
 	float BeatToTValue(float song_beat, float note_beat) const;
-	void EvalForBeat(float song_beat, float note_beat, RageVector3& ret) const;
-	void EvalDerivForBeat(float song_beat, float note_beat, RageVector3& ret) const;
-	void EvalForReceptor(float song_beat, RageVector3& ret) const;
+	void EvalForBeat(float song_beat, float note_beat, Rage::Vector3& ret) const;
+	void EvalDerivForBeat(float song_beat, float note_beat, Rage::Vector3& ret) const;
+	void EvalForReceptor(float song_beat, Rage::Vector3& ret) const;
 	static void MakeWeightedAverage(NCSplineHandler& out,
 		const NCSplineHandler& from, const NCSplineHandler& to, float between);
 
@@ -155,18 +155,18 @@ struct NoteColumnRenderArgs
 {
 	void spae_pos_for_beat(const PlayerState* player_state,
 		float beat, float y_offset, float y_reverse_offset,
-		RageVector3& sp_pos, RageVector3& ae_pos) const;
+		Rage::Vector3& sp_pos, Rage::Vector3& ae_pos) const;
 	void spae_zoom_for_beat(const PlayerState* state, float beat,
-		RageVector3& sp_zoom, RageVector3& ae_zoom) const;
+		Rage::Vector3& sp_zoom, Rage::Vector3& ae_zoom) const;
 	void SetPRZForActor(Actor* actor,
-		const RageVector3& sp_pos, const RageVector3& ae_pos,
-		const RageVector3& sp_rot, const RageVector3& ae_rot,
-		const RageVector3& sp_zoom, const RageVector3& ae_zoom) const;
+		const Rage::Vector3& sp_pos, const Rage::Vector3& ae_pos,
+		const Rage::Vector3& sp_rot, const Rage::Vector3& ae_rot,
+		const Rage::Vector3& sp_zoom, const Rage::Vector3& ae_zoom) const;
 	const NCSplineHandler* pos_handler;
 	const NCSplineHandler* rot_handler;
 	const NCSplineHandler* zoom_handler;
-	RageColor diffuse;
-	RageColor glow;
+	Rage::Color diffuse;
+	Rage::Color glow;
 	float song_beat;
 	int column;
 };

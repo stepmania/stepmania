@@ -12,7 +12,7 @@ public:
 	virtual int SetPosition( int iFrame );
 	virtual int Read( float *pBuffer, int iFrames );
 	virtual int GetNextSourceFrame() const;
-	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual bool SetProperty( const std::string &sProperty, float fValue );
 
 	RageSoundReader_Extend *Copy() const { return new RageSoundReader_Extend(*this); }
 	~RageSoundReader_Extend() { }

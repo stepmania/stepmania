@@ -36,7 +36,7 @@ char *strtack(char *s, const char *t, const char *s_max) {
 		++s, ++t;
 
 	if (s == s_max)
-		return NULL;
+		return nullptr;
 
 	return s+1;
 }
@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
 
 		while(readline()) {
 			long grp, start, rva;
-			char symname[2048];
+			char symname[4096];
 			int i;
 
 			if (4!=sscanf(line, "%lx:%lx %s %lx", &grp, &start, symname, &rva))

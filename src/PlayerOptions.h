@@ -7,7 +7,10 @@ class Steps;
 class Trail;
 struct lua_State;
 
-#define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) arr[Z]=1.0f; }
+#define ONE( arr ) { \
+for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) \
+arr[Z]=1.0f; \
+}
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
@@ -21,8 +24,8 @@ enum LifeType
 	NUM_LifeType,
 	LifeType_Invalid
 };
-const RString& LifeTypeToString( LifeType cat );
-const RString& LifeTypeToLocalizedString( LifeType cat );
+std::string const LifeTypeToString( LifeType cat );
+std::string const LifeTypeToLocalizedString( LifeType cat );
 LuaDeclareType( LifeType );
 
 enum DrainType
@@ -33,8 +36,8 @@ enum DrainType
 	NUM_DrainType,
 	DrainType_Invalid
 };
-const RString& DrainTypeToString( DrainType cat );
-const RString& DrainTypeToLocalizedString( DrainType cat );
+std::string const DrainTypeToString( DrainType cat );
+std::string const DrainTypeToLocalizedString( DrainType cat );
 LuaDeclareType( DrainType );
 
 /** @brief Per-player options that are not saved between sessions. */
@@ -58,7 +61,7 @@ public:
 		m_fRandAttack(0), m_SpeedfRandAttack(1.0f),
 		m_fNoAttack(0), m_SpeedfNoAttack(1.0f),
 		m_fPlayerAutoPlay(0), m_SpeedfPlayerAutoPlay(1.0f),
-		m_fPerspectiveTilt(0), m_SpeedfPerspectiveTilt(1.0f),
+		m_fTilt(0), m_SpeedfTilt(1.0f),
 		m_fSkew(0), m_SpeedfSkew(1.0f),
 		m_fPassmark(0), m_SpeedfPassmark(1.0f),
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
@@ -66,6 +69,7 @@ public:
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
 		m_sNoteSkin = "";
+		m_newskin= "default";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
 		ZERO( m_fEffects );	ONE( m_SpeedfEffects );
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
@@ -74,20 +78,20 @@ public:
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
-	RString GetString( bool bForceNoteSkin = false ) const;
-	RString GetSavedPrefsString() const;	// only the basic options that players would want for every song
+	std::string GetString( bool bForceNoteSkin = false ) const;
+	std::string GetSavedPrefsString() const;	// only the basic options that players would want for every song
 	enum ResetPrefsType
-	{ 
-		saved_prefs, 
+	{
+		saved_prefs,
 		saved_prefs_invalid_for_course
 	};
 	void ResetPrefs( ResetPrefsType type );
 	void ResetSavedPrefs() { ResetPrefs(saved_prefs); };
 	void ResetSavedPrefsInvalidForCourse() { ResetPrefs(saved_prefs_invalid_for_course); }
-	void GetMods( vector<RString> &AddTo, bool bForceNoteSkin = false ) const;
-	void GetLocalizedMods( vector<RString> &AddTo ) const;
-	void FromString( const RString &sMultipleMods );
-	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
+	void GetMods( std::vector<std::string> &AddTo, bool bForceNoteSkin = false ) const;
+	void GetLocalizedMods( std::vector<std::string> &AddTo ) const;
+	void FromString( const std::string &sMultipleMods );
+	bool FromOneModString( const std::string &sOneMod, std::string &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
 	void ChooseRandomModifiers();
 	bool ContainsTransformOrTurn() const;
 
@@ -145,7 +149,7 @@ public:
 		TURN_SHUFFLE, /**< Some of the arrow columns are changed throughout the whole song. */
 		TURN_SOFT_SHUFFLE, /**< Only shuffle arrow columns on an axis of symmetry. */
 		TURN_SUPER_SHUFFLE, /**< Every arrow is placed on a random column. */
-		NUM_TURNS 
+		NUM_TURNS
 	};
 	enum Transform {
 		TRANSFORM_NOHOLDS,
@@ -206,7 +210,7 @@ public:
 	float	m_fRandAttack,			m_SpeedfRandAttack;
 	float	m_fNoAttack,			m_SpeedfNoAttack;
 	float	m_fPlayerAutoPlay,		m_SpeedfPlayerAutoPlay;
-	float	m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
+	float	m_fTilt,		m_SpeedfTilt;		// -1 = near, 0 = overhead, +1 = space
 	float	m_fSkew,			m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
 
 	/* If this is > 0, then the player must have life above this value at the end of
@@ -222,11 +226,14 @@ public:
 	FailType m_FailType;
 	TapNoteScore m_MinTNSToHideNotes;
 
+	bool m_changed_defective_mod;
+
 	/**
 	 * @brief The Noteskin to use.
 	 *
 	 * If an empty string, it means to not change from the default. */
-	RString		m_sNoteSkin;
+	std::string m_sNoteSkin;
+	std::string m_newskin;
 
 	void NextAccel();
 	void NextEffect();
@@ -257,7 +264,7 @@ public:
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -267,7 +274,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

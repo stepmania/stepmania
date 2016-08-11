@@ -6,7 +6,6 @@
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "Preference.h"
-#include "Foreach.h"
 #include "GameInput.h"
 #include "InputMapper.h"
 // for mouse stuff: -aj
@@ -14,6 +13,8 @@
 #include "ScreenDimensions.h"
 
 #include <set>
+
+using std::vector;
 
 static const char *InputEventTypeNames[] = {
 	"FirstPress",
@@ -30,7 +31,7 @@ struct ButtonState
 	ButtonState();
 	bool m_BeingHeld; // actual current state
 	bool m_bLastReportedHeld; // last state reported by Update()
-	RString m_sComment;
+	std::string m_sComment;
 	float m_fSecsHeld;
 	DeviceInput m_DeviceInput;
 
@@ -81,7 +82,7 @@ namespace
 	 * optimize InputFilter::Update, so we don't have to process every button
 	 * we know about when most of them aren't in use. This set is protected
 	 * by queuemutex. */
-	typedef map<DeviceButtonPair, ButtonState> ButtonStateMap;
+	typedef std::map<DeviceButtonPair, ButtonState> ButtonStateMap;
 	ButtonStateMap g_ButtonStates;
 	ButtonState &GetButtonState( const DeviceInput &di )
 	{
@@ -93,7 +94,7 @@ namespace
 	}
 
 	DeviceInputList g_CurrentState;
-	set<DeviceInput> g_DisableRepeat;
+	std::set<DeviceInput> g_DisableRepeat;
 }
 
 /* Some input devices require debouncing. Do this on both press and release.
@@ -111,7 +112,7 @@ namespace
  * this won't cause timing problems, because the event timestamp is preserved. */
 static Preference<float> g_fInputDebounceTime( "InputDebounceTime", 0 );
 
-InputFilter*	INPUTFILTER = NULL;	// global and accessible from anywhere in our program
+InputFilter*	INPUTFILTER = nullptr;	// global and accessible from anywhere in our program
 
 static const float TIME_BEFORE_REPEATS = 0.375f;
 
@@ -219,7 +220,7 @@ void InputFilter::ButtonPressed( const DeviceInput &di )
 	CheckButtonChange( bs, di, now );
 }
 
-void InputFilter::SetButtonComment( const DeviceInput &di, const RString &sComment )
+void InputFilter::SetButtonComment( const DeviceInput &di, const std::string &sComment )
 {
 	LockMut(*queuemutex);
 	ButtonState &bs = GetButtonState( di );
@@ -233,9 +234,9 @@ void InputFilter::ResetDevice( InputDevice device )
 	RageTimer now;
 
 	const ButtonStateMap ButtonStates( g_ButtonStates );
-	FOREACHM_CONST( DeviceButtonPair, ButtonState, ButtonStates, b )
+	for (auto const &b: ButtonStates)
 	{
-		const DeviceButtonPair &db = b->first;
+		const DeviceButtonPair &db = b.first;
 		if( db.device == device )
 			ButtonPressed( DeviceInput(device, db.button, 0, now) );
 	}
@@ -246,7 +247,7 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 {
 	if( bs.m_BeingHeld == bs.m_bLastReportedHeld )
 		return;
-	
+
 	GameInput gi;
 
 	/* Possibly apply debounce,
@@ -265,7 +266,7 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 			return;
 		}
 	}
-	
+
 	bs.m_LastReportTime = now;
 	bs.m_bLastReportedHeld = bs.m_BeingHeld;
 	bs.m_fSecsHeld = 0;
@@ -301,9 +302,9 @@ void InputFilter::MakeButtonStateList( vector<DeviceInput> &aInputOut ) const
 {
 	aInputOut.clear();
 	aInputOut.reserve( g_ButtonStates.size() );
-	for( ButtonStateMap::const_iterator it = g_ButtonStates.begin(); it != g_ButtonStates.end(); ++it )
+	for (auto const &item: g_ButtonStates)
 	{
-		const ButtonState &bs = it->second;
+		const ButtonState &bs = item.second;
 		aInputOut.push_back( bs.m_DeviceInput );
 		aInputOut.back().ts = bs.m_LastInputTime;
 		aInputOut.back().bDown = bs.m_bLastReportedHeld;
@@ -326,7 +327,7 @@ void InputFilter::Update( float fDeltaTime )
 
 	vector<ButtonStateMap::iterator> ButtonsToErase;
 
-	FOREACHM( DeviceButtonPair, ButtonState, g_ButtonStates, b )
+	for (auto b = g_ButtonStates.begin(); b != g_ButtonStates.end(); ++b)
 	{
 		di.device = b->first.device;
 		di.button = b->first.button;
@@ -379,8 +380,10 @@ void InputFilter::Update( float fDeltaTime )
 		ReportButtonChange( di, IET_REPEAT );
 	}
 
-	FOREACH( ButtonStateMap::iterator, ButtonsToErase, it )
-		g_ButtonStates.erase( *it );
+	for (auto &it: ButtonsToErase)
+	{
+		g_ButtonStates.erase(it);
+	}
 }
 
 template<typename T, typename IT>
@@ -388,7 +391,7 @@ const T *FindItemBinarySearch( IT begin, IT end, const T &i )
 {
 	IT it = lower_bound( begin, end, i );
 	if( it == end || *it != i )
-		return NULL;
+		return nullptr;
 
 	return &*it;
 }
@@ -396,19 +399,19 @@ const T *FindItemBinarySearch( IT begin, IT end, const T &i )
 bool InputFilter::IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
-	if( pButtonState == NULL )
+	if( pButtonState == nullptr )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
-	return pDI != NULL && pDI->bDown;
+	return pDI != nullptr && pDI->bDown;
 }
 
 float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
-	if( pButtonState == NULL )
+	if( pButtonState == nullptr )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
-	if( pDI == NULL )
+	if( pDI == nullptr )
 		return 0;
 	return pDI->ts.Ago();
 }
@@ -416,15 +419,15 @@ float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pB
 float InputFilter::GetLevel( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
-	if( pButtonState == NULL )
+	if( pButtonState == nullptr )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
-	if( pDI == NULL )
+	if( pDI == nullptr )
 		return 0.0f;
 	return pDI->level;
 }
 
-RString InputFilter::GetButtonComment( const DeviceInput &di ) const
+std::string InputFilter::GetButtonComment( const DeviceInput &di ) const
 {
 	LockMut(*queuemutex);
 	return GetButtonState( di ).m_sComment;
@@ -475,8 +478,9 @@ void InputFilter::UpdateMouseWheel(float _fZ)
 
 // lua start
 #include "LuaBinding.h"
+#include "RageMath.hpp"
 
-/** @brief Allow Lua to have access to InputFilter. */ 
+/** @brief Allow Lua to have access to InputFilter. */
 class LunaInputFilter: public Luna<InputFilter>
 {
 public:
@@ -485,14 +489,14 @@ public:
 	static int GetMouseX( T* p, lua_State *L ){
 		float fX = p->GetCursorX();
 		// Scale input to the theme's dimensions
-		fX = SCALE( fX, 0, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio), SCREEN_LEFT, SCREEN_RIGHT );
+		fX = Rage::scale( fX, 0.f, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio), SCREEN_LEFT + 0.f, SCREEN_RIGHT + 0.f );
 		lua_pushnumber( L, fX );
 		return 1;
 	}
 	static int GetMouseY( T* p, lua_State *L ){
 		float fY = p->GetCursorY();
 		// Scale input to the theme's dimensions
-		fY = SCALE( fY, 0, PREFSMAN->m_iDisplayHeight, SCREEN_TOP, SCREEN_BOTTOM );
+		fY = Rage::scale( fY, 0.f, PREFSMAN->m_iDisplayHeight + 0.f, SCREEN_TOP + 0.f, SCREEN_BOTTOM + 0.f );
 		lua_pushnumber( L, fY );
 		return 1;
 	}
@@ -516,7 +520,7 @@ LUA_REGISTER_CLASS( InputFilter )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -526,7 +530,7 @@ LUA_REGISTER_CLASS( InputFilter )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,7 +1,9 @@
 #include "global.h"
 #include "CubicSpline.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include <list>
 using std::list;
 
@@ -40,19 +42,18 @@ const size_t solution_cache_limit= 16;
 bool SplineSolutionCache::find_in_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm)
 {
 	size_t out_size= outd.size();
-	for(list<Entry>::iterator entry= cache.begin();
-			entry != cache.end(); ++entry)
+	for (auto const &entry: cache)
 	{
-		if(out_size == entry->diagonals.size())
+		if(out_size == entry.diagonals.size())
 		{
 			for(size_t i= 0; i < out_size; ++i)
 			{
-				outd[i]= entry->diagonals[i];
+				outd[i]= entry.diagonals[i];
 			}
-			outm.resize(entry->multiples.size());
-			for(size_t i= 0; i < entry->multiples.size(); ++i)
+			outm.resize(entry.multiples.size());
+			for(size_t i= 0; i < entry.multiples.size(); ++i)
 			{
-				outm[i]= entry->multiples[i];
+				outm[i]= entry.multiples[i];
 			}
 			return true;
 		}
@@ -227,9 +228,9 @@ float loop_space_difference(float a, float b, float spatial_extent)
 	if(spatial_extent == 0.0f) { return norm_diff; }
 	const float plus_diff= a - (b + spatial_extent);
 	const float minus_diff= a - (b - spatial_extent);
-	const float abs_norm_diff= abs(norm_diff);
-	const float abs_plus_diff= abs(plus_diff);
-	const float abs_minus_diff= abs(minus_diff);
+	const float abs_norm_diff= std::abs(norm_diff);
+	const float abs_plus_diff= std::abs(plus_diff);
+	const float abs_minus_diff= std::abs(minus_diff);
 	if(abs_norm_diff < abs_plus_diff)
 	{
 		if(abs_norm_diff < abs_minus_diff)
@@ -365,10 +366,15 @@ bool CubicSpline::check_minimum_size()
 	}
 	float a= m_points[0].a;
 	bool all_points_identical= true;
-	for(size_t i= 0; i < m_points.size(); ++i)
+	for (auto &point: m_points)
 	{
-		m_points[i].b= m_points[i].c= m_points[i].d= 0.0f;
-		if(m_points[i].a != a) { all_points_identical= false; }
+		point.b = 0.f;
+		point.c = 0.f;
+		point.d = 0.f;
+		if (point.a != a)
+		{
+			all_points_identical= false;
+		}
 	}
 	return all_points_identical;
 }
@@ -521,6 +527,12 @@ void CubicSpline::resize(size_t s)
 	m_points.resize(s);
 }
 
+void CubicSpline::remove_point(size_t i)
+{
+	ASSERT_M(i < m_points.size(), "CubicSpline: point index must be less than the number of points.");
+	m_points.erase(m_points.begin() + i);
+}
+
 size_t CubicSpline::size() const
 {
 	return m_points.size();
@@ -567,7 +579,7 @@ void CubicSplineN::weighted_average(CubicSplineN& out,
 		out_size= to_size + static_cast<size_t>(
 			static_cast<float>(from_size - to_size) * between);
 	}
-	CLAMP(out_size, 0, limit);
+	out_size = Rage::clamp(out_size, static_cast<size_t>(0), limit);
 	out.resize(out_size);
 
 	for(size_t spli= 0; spli < out.m_splines.size(); ++spli)
@@ -603,7 +615,7 @@ void CubicSplineN::weighted_average(CubicSplineN& out,
 			float oc[4]= {0.0f, 0.0f, 0.0f, 0.0f};
 			for(int i= 0; i < 4; ++i)
 			{
-				oc[i]= lerp(between, fc[i], tc[i]);
+				oc[i]= Rage::lerp(between, fc[i], tc[i]);
 			}
 			out.m_splines[spli].set_point_and_coefficients(p, oc[0], oc[1], oc[2],
 				oc[3]);
@@ -625,10 +637,9 @@ void CubicSplineN::solve()
 {
 	if(!m_dirty) { return; }
 #define SOLVE_LOOP(solvent) \
-	for(spline_cont_t::iterator spline= m_splines.begin(); \
-		spline != m_splines.end(); ++spline) \
+    for (auto &spline: m_splines) \
 	{ \
-		spline->solvent(); \
+		spline.solvent(); \
 	}
 	if(m_polygonal)
 	{
@@ -652,10 +663,9 @@ void CubicSplineN::solve()
 #define CSN_EVAL_SOMETHING(something) \
 void CubicSplineN::something(float t, vector<float>& v) const \
 { \
-	for(spline_cont_t::const_iterator spline= m_splines.begin(); \
-			spline != m_splines.end(); ++spline) \
+	for (auto const &spline: m_splines) \
 	{ \
-		v.push_back(spline->something(t, m_loop)); \
+		v.push_back(spline.something(t, m_loop)); \
 	} \
 }
 
@@ -667,7 +677,7 @@ CSN_EVAL_SOMETHING(evaluate_third_derivative);
 #undef CSN_EVAL_SOMETHING
 
 #define CSN_EVAL_RV_SOMETHING(something) \
-void CubicSplineN::something(float t, RageVector3& v) const \
+void CubicSplineN::something(float t, Rage::Vector3& v) const \
 { \
 	ASSERT(m_splines.size() == 3); \
 	v.x= m_splines[0].something(t, m_loop); \
@@ -732,10 +742,9 @@ float CubicSplineN::get_spatial_extent(size_t i)
 
 void CubicSplineN::resize(size_t s)
 {
-	for(spline_cont_t::iterator spline= m_splines.begin();
-			spline != m_splines.end(); ++spline)
+	for (auto &spline: m_splines)
 	{
-		spline->resize(s);
+		spline.resize(s);
 	}
 	m_dirty= true;
 }
@@ -961,21 +970,9 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		lua_pushboolean(L, p->empty());
 		return 1;
 	}
-#define SET_GET_LUA(name) \
-	static int set_##name(T* p, lua_State* L) \
-	{ \
-		p->set_##name(lua_toboolean(L, 1)); \
-		COMMON_RETURN_SELF; \
-	} \
-	static int get_##name(T* p, lua_State* L) \
-	{ \
-		lua_pushboolean(L, p->get_##name()); \
-		return 1; \
-	}
-	SET_GET_LUA(loop);
-	SET_GET_LUA(polygonal);
-	SET_GET_LUA(dirty);
-#undef SET_GET_LUA
+	GETTER_SETTER_BOOL_METHOD(loop);
+	GETTER_SETTER_BOOL_METHOD(polygonal);
+	GETTER_SETTER_BOOL_METHOD(dirty);
 	static int destroy(T* p, lua_State* L)
 	{
 		if(p->m_owned_by_actor)
@@ -983,7 +980,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 			luaL_error(L, "This spline cannot be destroyed because it is "
 				"owned by an actor that relies on it existing.");
 		}
-		SAFE_DELETE(p);
+		Rage::safe_delete(p);
 		return 0;
 	}
 	LunaCubicSplineN()
@@ -1004,12 +1001,9 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		ADD_METHOD(set_dimension);
 		ADD_METHOD(get_dimension);
 		ADD_METHOD(empty);
-		ADD_METHOD(set_loop);
-		ADD_METHOD(get_loop);
-		ADD_METHOD(set_polygonal);
-		ADD_METHOD(get_polygonal);
-		ADD_METHOD(set_dirty);
-		ADD_METHOD(get_dirty);
+		ADD_GET_SET_METHODS(loop);
+		ADD_GET_SET_METHODS(polygonal);
+		ADD_GET_SET_METHODS(dirty);
 		ADD_METHOD(destroy);
 	}
 };

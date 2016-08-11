@@ -39,17 +39,17 @@ enum UnlockRewardType {
 	UnlockRewardType_Steps_Type, /**< A step pattern for a specific style is unlocked. */
 	UnlockRewardType_Course, /**< A course is unlocked. */
 	UnlockRewardType_Modifier, /**< A modifier is unlocked. */
-	NUM_UnlockRewardType, 
+	NUM_UnlockRewardType,
 	UnlockRewardType_Invalid
 };
-const RString& UnlockRewardTypeToString( UnlockRewardType i );
-const RString& UnlockRewardTypeToLocalizedString( UnlockRewardType i );
+std::string const UnlockRewardTypeToString( UnlockRewardType i );
+std::string const UnlockRewardTypeToLocalizedString( UnlockRewardType i );
 LuaDeclareType( UnlockRewardType );
 
 enum UnlockEntryStatus {
-	UnlockEntryStatus_RequrementsNotMet, 
-	UnlockEntryStatus_RequirementsMet, 
-	UnlockEntryStatus_Unlocked, 
+	UnlockEntryStatus_RequrementsNotMet,
+	UnlockEntryStatus_RequirementsMet,
+	UnlockEntryStatus_Unlocked,
 };
 
 class UnlockEntry
@@ -64,7 +64,7 @@ public:
 		m_Song(), m_dc(Difficulty_Invalid), m_Course(),
 		m_StepsType(StepsType_Invalid), m_bRequirePassHardSteps(false),
 		m_bRequirePassChallengeSteps(false), m_bRoulette(false),
-		m_sEntryID(RString(""))
+		m_sEntryID(std::string(""))
 	{
 		ZERO( m_fRequirement );
 	}
@@ -73,7 +73,7 @@ public:
 	Command m_cmd;
 
 	/* A cached pointer to the song or course this entry refers to.  Only one of
-	 * these will be non-NULL. */
+	 * these will be non-nullptr. */
 	SongID	m_Song;
 	Difficulty m_dc;
 	CourseID m_Course;
@@ -85,15 +85,15 @@ public:
 	/** @brief Must the challenge steps be passed to unlock a higher level? */
 	bool	m_bRequirePassChallengeSteps;
 	bool	m_bRoulette;
-	RString	m_sEntryID;
+	std::string	m_sEntryID;
 
 	bool	IsValid() const;
 	bool	IsLocked() const	{ return GetUnlockEntryStatus() != UnlockEntryStatus_Unlocked; }
 	UnlockEntryStatus GetUnlockEntryStatus() const;
-	RString	GetModifier() const { return m_cmd.GetArg(1).s; }
-	RString	GetDescription() const;
-	RString	GetBannerFile() const;
-	RString	GetBackgroundFile() const;
+	std::string	GetModifier() const { return m_cmd.GetArg(1).s; }
+	std::string	GetDescription() const;
+	std::string	GetBannerFile() const;
+	std::string	GetBackgroundFile() const;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -126,7 +126,7 @@ public:
 	bool StepsIsLocked( const Song *pSong, const Steps *pSteps ) const;
 	bool StepsTypeIsLocked( const Song *pSong, const Steps *pSteps, const StepsType *pSType ) const;
 	int CourseIsLocked( const Course *course ) const;
-	bool ModifierIsLocked( const RString &sOneMod ) const;
+	bool ModifierIsLocked( const std::string &sOneMod ) const;
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
@@ -137,37 +137,37 @@ public:
 	void GetPoints( const Profile *pProfile, float fScores[NUM_UnlockRequirement] ) const;
 
 	// Unlock an entry by code.
-	void UnlockEntryID( RString sEntryID );
+	void UnlockEntryID( std::string sEntryID );
 	void UnlockEntryIndex( int iEntryIndex );
 
 	// Lock an entry by code.
-	void LockEntryID( RString entryID );
+	void LockEntryID( std::string entryID );
 	void LockEntryIndex( int entryIndex );
 
 	/*
 	 * If a code is associated with at least one song or course, set the preferred song
 	 * and/or course in GAMESTATE to them.
 	 */
-	void PreferUnlockEntryID( RString sEntryID );
+	void PreferUnlockEntryID( std::string sEntryID );
 
 	// Unlocks a song.
 	void UnlockSong( const Song *pSong );
 
 	// Return the associated EntryID.
-	RString FindEntryID( const RString &sName ) const;
+	std::string FindEntryID( const std::string &sName ) const;
 
 	// All locked songs are stored here
-	vector<UnlockEntry>	m_UnlockEntries;
+	std::vector<UnlockEntry>	m_UnlockEntries;
 
-	void GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> &apEntries );
-	void GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, RString sEntryID );
-	void GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, RString sEntryID );
+	void GetUnlocksByType( UnlockRewardType t, std::vector<UnlockEntry *> &apEntries );
+	void GetSongsUnlockedByEntryID( std::vector<Song *> &apSongsOut, std::string sEntryID );
+	void GetStepsUnlockedByEntryID( std::vector<Song *> &apSongsOut, std::vector<Difficulty> &apStepsOut, std::string sEntryID );
 
 	const UnlockEntry *FindSong( const Song *pSong ) const;
 	const UnlockEntry *FindSteps( const Song *pSong, const Steps *pSteps ) const;
 	const UnlockEntry *FindStepsType( const Song *pSong, const Steps *pSteps, const StepsType *pSType ) const;
 	const UnlockEntry *FindCourse( const Course *pCourse ) const;
-	const UnlockEntry *FindModifier( const RString &sOneMod ) const;
+	const UnlockEntry *FindModifier( const std::string &sOneMod ) const;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -175,8 +175,8 @@ public:
 private:
 	// read unlocks
 	void Load();
-	
-	set<RString> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
+
+	std::set<std::string> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };
 
 extern UnlockManager*	UNLOCKMAN;  // global and accessible from anywhere in program
@@ -186,7 +186,7 @@ extern UnlockManager*	UNLOCKMAN;  // global and accessible from anywhere in prog
 /*
  * (c) 2001-2004 Kevin Slaughter, Andrew Wong, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -196,7 +196,7 @@ extern UnlockManager*	UNLOCKMAN;  // global and accessible from anywhere in prog
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

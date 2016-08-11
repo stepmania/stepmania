@@ -11,10 +11,12 @@
 #include <mach/mach_error.h>
 #include <vector>
 #include <utility>
-#include <ext/hash_map>
+#include <unordered_map>
 
 #include "RageLog.h"
 #include "RageInputDevice.h"
+
+using std::vector;
 
 /* A few helper functions. */
 
@@ -43,20 +45,6 @@ inline Boolean LongValue( CFTypeRef o, long &n )
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberLongType, &n );
 }
 
-namespace __gnu_cxx
-{
-#ifndef __LP64__
-	template<>
-	struct hash<IOHIDElementCookie> : private hash<uintptr_t>
-	{
-		size_t operator()( const IOHIDElementCookie& cookie ) const
-		{
-			return hash<unsigned long>::operator()( uintptr_t(cookie) );
-		}
-	};
-#endif
-}
-
 /* This is just awful, these aren't objects, treating them as such
  * leads to: (*object)->function(object [, argument]...)
  * Instead, do: CALL(object, function [, argument]...)
@@ -69,7 +57,7 @@ private:
 	IOHIDDeviceInterface **m_Interface;
 	IOHIDQueueInterface **m_Queue;
 	bool m_bRunning;
-	RString m_sDescription;
+	std::string m_sDescription;
 
 	static void AddLogicalDevice( const void *value, void *context );
 	static void AddElement( const void *value, void *context );
@@ -95,13 +83,13 @@ protected:
 	{
 		IOReturn ret = CALL( m_Queue, addElement, cookie, 0 );
 		if( ret != KERN_SUCCESS )
-			LOG->Warn( "Failed to add HID element with cookie %p to queue: %u", cookie, ret );
+			LOG->Warn( "Failed to add HID element with cookie %p to queue: %u", static_cast<UInt32>(cookie), ret );
 	}
 
 	// Perform a synchronous set report on the HID interface.
 	inline IOReturn SetReport( IOHIDReportType type, UInt32 reportID, void *buffer, UInt32 size, UInt32 timeoutMS )
 	{
-		return CALL( m_Interface, setReport, type, reportID, buffer, size, timeoutMS, NULL, NULL, NULL );
+		return CALL( m_Interface, setReport, type, reportID, buffer, size, timeoutMS, nullptr, nullptr, nullptr );
 	}
 public:
 	HIDDevice();
@@ -109,7 +97,7 @@ public:
 
 	bool Open( io_object_t device );
 	void StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon );
-	inline const RString& GetDescription() const { return m_sDescription; }
+	inline const std::string& GetDescription() const { return m_sDescription; }
 
 	/* Add button presses (or releases) to vPresses for the given cookie. More
 	 * than one DeviceInput can be added at a time. For example, Two axes

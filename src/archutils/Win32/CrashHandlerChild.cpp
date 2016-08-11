@@ -23,6 +23,8 @@
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
+#include "RageString.hpp"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 #include "LocalizedString.h"
@@ -36,14 +38,17 @@
 // XXX: What happens when we *don't* have version info? Does that ever actually happen?
 #include "ver.h"
 
+using std::vector;
+using std::string;
+
 // VDI symbol lookup:
 namespace VDDebugInfo
 {
 	struct Context
 	{
-		Context() { pRVAHeap=NULL; }
-		bool Loaded() const { return pRVAHeap != NULL; }
-		RString sRawBlock;
+		Context() { pRVAHeap=nullptr; }
+		bool Loaded() const { return pRVAHeap != nullptr; }
+		std::string sRawBlock;
 
 		int nBuildNumber;
 
@@ -54,12 +59,12 @@ namespace VDDebugInfo
 		const unsigned long (*pSegments)[2];
 		int nSegments;
 		char sFilename[1024];
-		RString sError;
+		std::string sError;
 	};
 
 	static void GetVDIPath( char *buf, int bufsiz )
 	{
-		GetModuleFileName( NULL, buf, bufsiz );
+		GetModuleFileName( nullptr, buf, bufsiz );
 		buf[bufsiz-5] = 0;
 		char *p = strrchr( buf, '.' );
 		if( p )
@@ -73,11 +78,11 @@ namespace VDDebugInfo
 		if( pctx->sRawBlock[0] == '\x1f' &&
 			pctx->sRawBlock[1] == '\x8b' )
 		{
-			RString sBufOut;
-			RString sError;
+			std::string sBufOut;
+			std::string sError;
 			if( !GunzipString(pctx->sRawBlock, sBufOut, sError) )
 			{
-				pctx->sError = werr_ssprintf( GetLastError(), "VDI error: %s", sError.c_str() );
+				pctx->sError = werr_format( GetLastError(), "VDI error: %s", sError.c_str() );
 				return false;
 			}
 
@@ -86,7 +91,7 @@ namespace VDDebugInfo
 
 		const unsigned char *src = (const unsigned char *) pctx->sRawBlock.data();
 
-		pctx->pRVAHeap = NULL;
+		pctx->pRVAHeap = nullptr;
 
 		static const char *header = "symbolic debug information";
 		if( memcmp(src, header, strlen(header)) )
@@ -112,7 +117,7 @@ namespace VDDebugInfo
 	void VDDebugInfoDeinit( Context *pctx )
 	{
 		if( !pctx->sRawBlock.empty() )
-			pctx->sRawBlock = RString();
+			pctx->sRawBlock = std::string();
 	}
 
 	bool VDDebugInfoInitFromFile( Context *pctx )
@@ -120,20 +125,20 @@ namespace VDDebugInfo
 		if( pctx->Loaded() )
 			return true;
 
-		pctx->sRawBlock = RString();
-		pctx->pRVAHeap = NULL;
+		pctx->sRawBlock = std::string();
+		pctx->pRVAHeap = nullptr;
 		GetVDIPath( pctx->sFilename, ARRAYLEN(pctx->sFilename) );
-		pctx->sError = RString();
+		pctx->sError = std::string();
 
-		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
+		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
 		if( h == INVALID_HANDLE_VALUE )
 		{
-			pctx->sError = werr_ssprintf( GetLastError(), "CreateFile failed" );
+			pctx->sError = werr_format( GetLastError(), "CreateFile failed" );
 			return false;
 		}
 
 		do {
-			DWORD dwFileSize = GetFileSize( h, NULL );
+			DWORD dwFileSize = GetFileSize( h, nullptr );
 			if( dwFileSize == INVALID_FILE_SIZE )
 				break;
 
@@ -141,7 +146,7 @@ namespace VDDebugInfo
 			std::fill(buffer, buffer + dwFileSize + 1, '\0' );
 
 			DWORD dwActual;
-			int iRet = ReadFile(h, buffer, dwFileSize, &dwActual, NULL);
+			int iRet = ReadFile(h, buffer, dwFileSize, &dwActual, nullptr);
 			CloseHandle(h);
 			pctx->sRawBlock = buffer;
 			delete[] buffer;
@@ -268,7 +273,7 @@ namespace SymbolLookup
 		{
 			SymSetOptions( SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS );
 
-			if( !SymInitialize(g_hParent, NULL, TRUE) )
+			if( !SymInitialize(g_hParent, nullptr, TRUE) )
 				return false;
 
 			bInitted = true;
@@ -288,7 +293,7 @@ namespace SymbolLookup
 		pSymbol->MaxNameLen = sizeof(buffer) - sizeof(SYMBOL_INFO) + 1;
 
 		if( !SymFromAddr(g_hParent, ptr, &disp, pSymbol) )
-			return NULL;
+			return nullptr;
 
 		return pSymbol;
 	}
@@ -304,7 +309,7 @@ namespace SymbolLookup
 			| UNDNAME_NO_CV_THISTYPE
 			| UNDNAME_NO_ALLOCATION_MODEL
 			| UNDNAME_NO_ACCESS_SPECIFIERS // no public:
-			| UNDNAME_NO_MS_KEYWORDS // no __cdecl 
+			| UNDNAME_NO_MS_KEYWORDS // no __cdecl
 			| UNDNAME_NO_MEMBER_TYPE // no virtual, static
 			) )
 		{
@@ -320,7 +325,7 @@ namespace SymbolLookup
 		return obuf;
 	}
 
-	RString CrashChildGetModuleBaseName( HMODULE hMod )
+	std::string CrashChildGetModuleBaseName( HMODULE hMod )
 	{
 		write( _fileno(stdout), &hMod,  sizeof(hMod) );
 
@@ -330,7 +335,7 @@ namespace SymbolLookup
 		{
 			return "???";
 		}
-		RString sName;
+		std::string sName;
 		char *buffer = new char[iSize + 1];
 		std::fill(buffer, buffer + iSize + 1, '\0');
 		if (!ReadFromParent(iFD, buffer, iSize))
@@ -367,7 +372,7 @@ namespace SymbolLookup
 			return;
 		}
 
-		RString sName = CrashChildGetModuleBaseName( (HMODULE)meminfo.AllocationBase );
+		std::string sName = CrashChildGetModuleBaseName( (HMODULE)meminfo.AllocationBase );
 
 		DWORD64 disp;
 		SYMBOL_INFO *pSymbol = GetSym( (unsigned int)ptr, disp );
@@ -383,7 +388,7 @@ namespace SymbolLookup
 		}
 
 		wsprintf( buf, "%08lx: %s!%08lx",
-			(unsigned long) ptr, sName.c_str(), 
+			(unsigned long) ptr, sName.c_str(),
 			(unsigned long) meminfo.AllocationBase );
 	}
 }
@@ -391,15 +396,15 @@ namespace SymbolLookup
 namespace
 {
 
-RString SpliceProgramPath( RString fn )
+std::string SpliceProgramPath( std::string fn )
 {
 	char szBuf[MAX_PATH];
-	GetModuleFileName( NULL, szBuf, sizeof(szBuf) );
+	GetModuleFileName( nullptr, szBuf, sizeof(szBuf) );
 
 	char szModName[MAX_PATH];
 	char *pszFile;
 	GetFullPathName( szBuf, sizeof(szModName), szModName, &pszFile );
-	strcpy( pszFile, fn );
+	strcpy( pszFile, fn.c_str() );
 
 	return szModName;
 }
@@ -408,23 +413,23 @@ namespace
 {
 	VDDebugInfo::Context g_debugInfo;
 
-	RString ReportCallStack( const void * const *Backtrace )
+	std::string ReportCallStack( const void * const *Backtrace )
 	{
 		if( !g_debugInfo.Loaded() )
-			return ssprintf( "debug resource file '%s': %s.\n", g_debugInfo.sFilename, g_debugInfo.sError.c_str() );
+			return fmt::sprintf( "debug resource file '%s': %s.\n", g_debugInfo.sFilename, g_debugInfo.sError.c_str() );
 		/*
 		if( g_debugInfo.nBuildNumber != int(version_num) )
 		{
-			return ssprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_FAMILY " -- call stack unavailable.\n",
+			return fmt::sprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_FAMILY " -- call stack unavailable.\n",
 				g_debugInfo.sFilename, g_debugInfo.nBuildNumber, int(version_num) );
 		}
 		*/
-		RString sRet;
+		std::string sRet;
 		for( int i = 0; Backtrace[i]; ++i )
 		{
 			char buf[10240];
 			SymbolLookup::SymLookup( &g_debugInfo, Backtrace[i], buf );
-			sRet += ssprintf( "%s\n", buf );
+			sRet += fmt::sprintf( "%s\n", buf );
 		}
 
 		return sRet;
@@ -434,29 +439,33 @@ namespace
 struct CompleteCrashData
 {
 	CrashInfo m_CrashInfo;
-	RString m_sInfo;
-	RString m_sAdditionalLog;
-	RString m_sCrashedThread;
-	vector<RString> m_asRecent;
-	vector<RString> m_asCheckpoints;
+	std::string m_sInfo;
+	std::string m_sAdditionalLog;
+	std::string m_sCrashedThread;
+	std::vector<std::string> m_asRecent;
+	std::vector<std::string> m_asCheckpoints;
 };
 
-static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
+static void MakeCrashReport( const CompleteCrashData &Data, std::string &sOut )
 {
-	sOut += ssprintf(
+	sOut += fmt::sprintf(
 			"%s crash report (build %s, %s @ %s)\n"
 			"--------------------------------------\n\n",
 			(string(PRODUCT_FAMILY) + product_version).c_str(), ::sm_version_git_hash, version_date, version_time );
 
-	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
-	sOut += ssprintf( "\n" );
+	sOut += fmt::sprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
+	sOut += fmt::sprintf( "\n" );
 
 	// Dump thread stacks
 	static char buf[1024*32];
-	sOut += ssprintf( "%s\n", join("\n", Data.m_asCheckpoints).c_str() );
+	// Every operation is the same in the end: entry, then new line.
+	for (auto checkpoint : Data.m_asCheckpoints)
+	{
+		sOut += fmt::format("{0}\n", checkpoint.c_str());
+	}
 
 	sOut += ReportCallStack( Data.m_CrashInfo.m_BacktracePointers );
-	sOut += ssprintf( "\n" );
+	sOut += fmt::sprintf( "\n" );
 
 	if( Data.m_CrashInfo.m_AlternateThreadBacktrace[0] )
 	{
@@ -465,40 +474,40 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 			if( !Data.m_CrashInfo.m_AlternateThreadBacktrace[i][0] )
 				continue;
 
-			sOut += ssprintf( "Thread %s:\n", Data.m_CrashInfo.m_AlternateThreadName[i] );
-			sOut += ssprintf( "\n" );
+			sOut += fmt::sprintf( "Thread %s:\n", Data.m_CrashInfo.m_AlternateThreadName[i] );
+			sOut += fmt::sprintf( "\n" );
 			sOut += ReportCallStack( Data.m_CrashInfo.m_AlternateThreadBacktrace[i] );
-			sOut += ssprintf( "" );
+			sOut += fmt::sprintf( "" );
 		}
 	}
 
-	sOut += ssprintf( "Static log:\n" );
-	sOut += ssprintf( "%s", Data.m_sInfo.c_str() );
-	sOut += ssprintf( "%s", Data.m_sAdditionalLog.c_str() );
-	sOut += ssprintf( "\n" );
+	sOut += fmt::sprintf( "Static log:\n" );
+	sOut += fmt::sprintf( "%s", Data.m_sInfo.c_str() );
+	sOut += fmt::sprintf( "%s", Data.m_sAdditionalLog.c_str() );
+	sOut += fmt::sprintf( "\n" );
 
-	sOut += ssprintf( "Partial log:\n" );
+	sOut += fmt::sprintf( "Partial log:\n" );
 	for( size_t  i = 0; i < Data.m_asRecent.size(); ++i )
-		sOut += ssprintf( "%s\n", Data.m_asRecent[i].c_str() );
-	sOut += ssprintf( "\n" );
+		sOut += fmt::sprintf( "%s\n", Data.m_asRecent[i].c_str() );
+	sOut += fmt::sprintf( "\n" );
 
-	sOut += ssprintf( "-- End of report\n" );
+	sOut += fmt::sprintf( "-- End of report\n" );
 }
 
-static void DoSave( const RString &sReport )
+static void DoSave( const std::string &sReport )
 {
-	RString sName = SpliceProgramPath( "../crashinfo.txt" );
+	std::string sName = SpliceProgramPath( "../crashinfo.txt" );
 
-	SetFileAttributes( sName, FILE_ATTRIBUTE_NORMAL );
-	FILE *pFile = fopen( sName, "w+" );
-	if( pFile == NULL )
+	SetFileAttributes( sName.c_str(), FILE_ATTRIBUTE_NORMAL );
+	FILE *pFile = fopen( sName.c_str(), "w+" );
+	if( pFile == nullptr )
 		return;
 	fprintf( pFile, "%s", sReport.c_str() );
 
 	fclose( pFile );
 
 	// Discourage changing crashinfo.txt.
-	SetFileAttributes( sName, FILE_ATTRIBUTE_READONLY );
+	SetFileAttributes( sName.c_str(), FILE_ATTRIBUTE_READONLY );
 }
 
 bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
@@ -521,7 +530,7 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	char *buffer = new char[iSize + 1];
 	std::fill(buffer, buffer + iSize + 1, '\0');
 	bool wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
-	RString tmp = buffer;
+	std::string tmp = buffer;
 	delete[] buffer;
 	if (!wasReadSuccessful)
 	{
@@ -577,7 +586,8 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	{
 		return false;
 	}
-	split(tmp, "$$", Data.m_asCheckpoints);
+	auto toDump = Rage::split(tmp, "$$");
+	Data.m_asCheckpoints.insert(Data.m_asCheckpoints.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 
 	// 6. Read the crashed thread's name.
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
@@ -639,7 +649,7 @@ void LoadLocalizedStrings()
 class CrashDialog: public WindowsDialogBox
 {
 public:
-	CrashDialog( const RString &sCrashReport, const CompleteCrashData &CrashData );
+	CrashDialog( const std::string &sCrashReport, const CompleteCrashData &CrashData );
 	~CrashDialog();
 
 protected:
@@ -649,17 +659,17 @@ private:
 	void SetDialogInitial();
 
 	NetworkPostData *m_pPost;
-	RString m_sUpdateURL;
-	const RString m_sCrashReport;
+	std::string m_sUpdateURL;
+	const std::string m_sCrashReport;
 	CompleteCrashData m_CrashData;
 };
 
-CrashDialog::CrashDialog( const RString &sCrashReport, const CompleteCrashData &CrashData ):
+CrashDialog::CrashDialog( const std::string &sCrashReport, const CompleteCrashData &CrashData ):
 	m_sCrashReport( sCrashReport ),
 	m_CrashData( CrashData )
 {
 	LoadLocalizedStrings();
-	m_pPost = NULL;
+	m_pPost = nullptr;
 }
 
 CrashDialog::~CrashDialog()
@@ -671,8 +681,8 @@ void CrashDialog::SetDialogInitial()
 {
 	HWND hDlg = GetHwnd();
 
-	SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), A_CRASH_HAS_OCCURRED.GetValue() );
-	SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+	SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), A_CRASH_HAS_OCCURRED.GetValue().c_str() );
+	SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue().c_str() );
 	ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
 	ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
 }
@@ -692,14 +702,14 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		{
 			HDC hdc = (HDC)wParam;
 			HWND hwndStatic = (HWND)lParam;
-			HBRUSH hbr = NULL;
+			HBRUSH hbr = nullptr;
 
 			// TODO: Change any attributes of the DC here
 			switch( GetDlgCtrlID(hwndStatic) )
 			{
 			case IDC_STATIC_HEADER_TEXT:
 			case IDC_STATIC_ICON:
-				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH);
 				SetBkMode( hdc, OPAQUE );
 				SetBkColor( hdc, RGB(255,255,255) );
 				break;
@@ -713,14 +723,14 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		switch(LOWORD(wParam))
 		{
 		case IDC_BUTTON_CLOSE:
-			if( m_pPost != NULL )
+			if( m_pPost != nullptr )
 			{
 				// Cancel reporting, and revert the dialog as if "report" had not been pressed.
 				m_pPost->Cancel();
 				KillTimer( hDlg, 0 );
 
 				SetDialogInitial();
-				SAFE_DELETE( m_pPost );
+				Rage::safe_delete( m_pPost );
 				return TRUE;
 			}
 
@@ -732,9 +742,9 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			return TRUE;
 		case IDC_VIEW_LOG:
 			{
-				RString sLogPath;
-				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini"), "r" );
-				if(pFile != NULL)
+				std::string sLogPath;
+				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini").c_str(), "r" );
+				if(pFile != nullptr)
 				{
 					sLogPath = SpliceProgramPath("../Logs/log.txt");
 					fclose( pFile );
@@ -742,11 +752,11 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				else
 					sLogPath = SpecialDirs::GetAppDataDir() + PRODUCT_ID +"/Logs/log.txt";
 
-				ShellExecute( NULL, "open", sLogPath, "", "", SW_SHOWNORMAL );
+				ShellExecute( nullptr, "open", sLogPath.c_str(), "", "", SW_SHOWNORMAL );
 			}
 			break;
 		case IDC_CRASH_SAVE:
-			ShellExecute( NULL, "open", SpliceProgramPath("../crashinfo.txt"), "", "", SW_SHOWNORMAL );
+			ShellExecute( nullptr, "open", SpliceProgramPath("../crashinfo.txt").c_str(), "", "", SW_SHOWNORMAL );
 			return TRUE;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();
@@ -766,8 +776,8 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 			ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), false );
 			ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), true );
-			SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), REPORTING_THE_PROBLEM.GetValue() );
-			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CANCEL.GetValue() );
+			SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), REPORTING_THE_PROBLEM.GetValue().c_str() );
+			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CANCEL.GetValue().c_str() );
 			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETRANGE, 0, MAKELPARAM(0,100) );
 			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETPOS, 0, 0 );
 
@@ -781,13 +791,13 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 			m_pPost->Start( CRASH_REPORT_HOST, CRASH_REPORT_PORT, CRASH_REPORT_PATH );
 
-			SetTimer( hDlg, 0, 100, NULL );
+			SetTimer( hDlg, 0, 100, nullptr );
 			break;
 		}
 		break;
 	case WM_TIMER:
 		{
-			if( m_pPost == NULL )
+			if( m_pPost == nullptr )
 				break;
 
 			float fProgress = m_pPost->GetProgress();
@@ -799,21 +809,21 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 				/* Grab the result, which is the data output from the HTTP request.
 				 * It's simple XML. */
-				RString sResult = m_pPost->GetResult();
-				RString sError = m_pPost->GetError();
+				std::string sResult = m_pPost->GetResult();
+				std::string sError = m_pPost->GetError();
 				if( sError.empty() && sResult.empty() )
 					sError = "No data received";
 
-				SAFE_DELETE( m_pPost );
+				Rage::safe_delete( m_pPost );
 
 				XNode xml;
 				if( sError.empty() )
 				{
-					RString sError;
+					std::string sError;
 					XmlFileUtil::Load( &xml, sResult, sError );
 					if( !sError.empty() )
 					{
-						sError = ssprintf( "Error parsing response: %s", sError.c_str() );
+						sError = fmt::sprintf( "Error parsing response: %s", sError.c_str() );
 						xml.Clear();
 					}
 				}
@@ -824,32 +834,32 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 					/* On error, don't show the "report" button again. If the submission was actually
 					* successful, then it'd be too easy to accidentally spam the server by holding
 					* down the button. */
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue().c_str() );
 				}
 				else if( xml.GetChildValue("UpdateAvailable", m_sUpdateURL) )
 				{
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue() );
-					SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue().c_str() );
+					SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue().c_str() );
 					ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
 				}
 				else if( xml.GetChildValue("ReportId", iID) )
 				{
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue().c_str() );
 				}
 				else
 				{
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue().c_str() );
 				}
 
 				if( xml.GetChildValue("ReportId", iID) )
 				{
 					char sBuf[1024];
 					GetWindowText( hDlg, sBuf, 1024 );
-					SetWindowText( hDlg, ssprintf("%s (#%i)", sBuf, iID) );
+					SetWindowText( hDlg, fmt::sprintf("%s (#%i)", sBuf, iID).c_str() );
 				}
 
 				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
-				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue().c_str() );
 			}
 		}
 	}
@@ -863,7 +873,7 @@ void ChildProcess()
 	CompleteCrashData Data;
 	ReadCrashDataFromParent( fileno(stdin), Data );
 
-	RString sCrashReport;
+	std::string sCrashReport;
 	VDDebugInfo::VDDebugInfoInitFromFile( &g_debugInfo );
 	MakeCrashReport( Data, sCrashReport );
 	VDDebugInfo::VDDebugInfoDeinit( &g_debugInfo );
@@ -875,7 +885,7 @@ void ChildProcess()
 
 	// Now that we've done that, the process is gone. Don't use g_hParent.
 	CloseHandle( SymbolLookup::g_hParent );
-	SymbolLookup::g_hParent = NULL;
+	SymbolLookup::g_hParent = nullptr;
 
 	CrashDialog cd( sCrashReport, Data );
 #if defined(AUTOMATED_CRASH_REPORTS)
@@ -899,7 +909,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
 /*
  * (c) 2003-2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -909,7 +919,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

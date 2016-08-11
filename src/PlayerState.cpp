@@ -1,11 +1,12 @@
 #include "global.h"
 #include "PlayerState.h"
-#include "Foreach.h"
 #include "GameState.h"
 #include "RageLog.h"
 #include "RadarValues.h"
 #include "Steps.h"
 #include "Song.h"
+
+using std::vector;
 
 PlayerState::PlayerState()
 {
@@ -43,10 +44,12 @@ void PlayerState::Reset()
 	for( int i=0; i<NUM_INVENTORY_SLOTS; i++ )
 		m_Inventory[i].MakeBlank();
 
+	set_defective_mode(false);
 }
 
 void PlayerState::Update( float fDelta )
 {
+	using std::max;
 	// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
 	// so we'll clear these flags here and let them get turned on later
 	m_bAttackBeganThisUpdate = false;
@@ -55,13 +58,11 @@ void PlayerState::Update( float fDelta )
 	bool bRebuildPlayerOptions = false;
 
 	// See if any delayed attacks are starting or ending.
-	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
+	for (auto &attack: m_ActiveAttacks)
 	{
-		Attack &attack = m_ActiveAttacks[s];
-
 		// You must add sattack by calling GameState::LaunchAttack,
-		// or else the sentinel value won't be 
-		// converted into the current music time.  
+		// or else the sentinel value won't be
+		// converted into the current music time.
 		ASSERT( attack.fStartSecond != ATTACK_STARTS_NOW );
 
 		bool bCurrentlyEnabled =
@@ -69,17 +70,20 @@ void PlayerState::Update( float fDelta )
 			( attack.fStartSecond < m_Position.m_fMusicSeconds &&
 			m_Position.m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining );
 
-		if( m_ActiveAttacks[s].bOn == bCurrentlyEnabled )
+		if( attack.bOn == bCurrentlyEnabled )
 			continue; // OK
 
-		if( m_ActiveAttacks[s].bOn && !bCurrentlyEnabled )
+		if( attack.bOn && !bCurrentlyEnabled )
+		{
 			m_bAttackEndedThisUpdate = true;
-		else if( !m_ActiveAttacks[s].bOn && bCurrentlyEnabled )
+		}
+		else if( !attack.bOn && bCurrentlyEnabled )
+		{
 			m_bAttackBeganThisUpdate = true;
-
+		}
 		bRebuildPlayerOptions = true;
 
-		m_ActiveAttacks[s].bOn = bCurrentlyEnabled;
+		attack.bOn = bCurrentlyEnabled;
 	}
 
 	if( bRebuildPlayerOptions )
@@ -89,7 +93,7 @@ void PlayerState::Update( float fDelta )
 	m_PlayerOptions.Update( fDelta );
 
 	if( m_fSecondsUntilAttacksPhasedOut > 0 )
-		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
+		m_fSecondsUntilAttacksPhasedOut = max( 0.f, m_fSecondsUntilAttacksPhasedOut - fDelta );
 }
 
 void PlayerState::SetPlayerNumber(PlayerNumber pn)
@@ -142,8 +146,10 @@ void PlayerState::RemoveActiveAttacks( AttackLevel al )
 
 void PlayerState::EndActiveAttacks()
 {
-	FOREACH( Attack, m_ActiveAttacks, a )
-		a->fSecsRemaining = 0;
+	for (auto &a: m_ActiveAttacks)
+	{
+		a.fSecsRemaining = 0;
+	}
 }
 
 void PlayerState::RemoveAllInventory()
@@ -160,12 +166,14 @@ void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
 	// rebuild player options
 	PlayerOptions po = m_PlayerOptions.GetStage();
 	SongOptions so = GAMESTATE->m_SongOptions.GetStage();
-	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
+	for (auto &attack: m_ActiveAttacks)
 	{
-		if( !m_ActiveAttacks[s].bOn )
+		if( !attack.bOn )
+		{
 			continue; /* hasn't started yet */
-		po.FromString( m_ActiveAttacks[s].sModifiers );
-		so.FromString( m_ActiveAttacks[s].sModifiers );
+		}
+		po.FromString( attack.sModifiers );
+		so.FromString( attack.sModifiers );
 	}
 	m_PlayerOptions.Assign( ModsLevel_Song, po );
 	if( m_PlayerNumber == GAMESTATE->GetMasterPlayerNumber() )
@@ -205,20 +213,29 @@ const SongPosition &PlayerState::GetDisplayedPosition() const
 const TimingData &PlayerState::GetDisplayedTiming() const
 {
 	Steps *steps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
-	if( steps == NULL )
+	if( steps == nullptr )
 		return GAMESTATE->m_pCurSong->m_SongTiming;
 	return *steps->GetTimingData();
+}
+
+void PlayerState::set_defective_mode(bool mode)
+{
+	m_player_needs_defective_field= mode;
+	Message msg("defective_field");
+	msg.SetParam("pn", m_PlayerNumber);
+	msg.SetParam("mode", mode);
+	MESSAGEMAN->Broadcast(msg);
 }
 
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PlayerState. */ 
+/** @brief Allow Lua to have access to the PlayerState. */
 class LunaPlayerState: public Luna<PlayerState>
 {
 public:
-	static int ApplyPreferredOptionsToOtherLevels(T* p, lua_State* L)
+	static int ApplyPreferredOptionsToOtherLevels(T* p, lua_State*)
 	{
 		p->m_PlayerOptions.Assign(ModsLevel_Preferred,
 			p->m_PlayerOptions.Get(ModsLevel_Preferred));
@@ -238,9 +255,17 @@ public:
 		PlayerOptions po;
 		po.FromString( SArg(2) );
 		p->m_PlayerOptions.Assign( m, po );
+		p->set_defective_mode(true);
 		return 0;
 	}
 	static int GetPlayerOptions( T* p, lua_State *L )
+	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+		p->m_PlayerOptions.Get(m).PushSelf(L);
+		p->set_defective_mode(true);
+		return 1;
+	}
+	static int get_player_options_no_defect(T* p, lua_State* L)
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
 		p->m_PlayerOptions.Get(m).PushSelf(L);
@@ -249,40 +274,57 @@ public:
 	static int GetPlayerOptionsArray( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
-		vector<RString> s;
+		vector<std::string> s;
 		p->m_PlayerOptions.Get(m).GetMods(s);
-		LuaHelpers::CreateTableFromArray<RString>( s, L );
+		LuaHelpers::CreateTableFromArray<std::string>( s, L );
+		p->set_defective_mode(true);
 		return 1;
 	}
 	static int GetPlayerOptionsString( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
-		RString s = p->m_PlayerOptions.Get(m).GetString();
+		std::string s = p->m_PlayerOptions.Get(m).GetString();
 		LuaHelpers::Push( L, s );
+		p->set_defective_mode(true);
 		return 1;
 	}
 	static int GetCurrentPlayerOptions( T* p, lua_State *L )
 	{
 		p->m_PlayerOptions.GetCurrent().PushSelf(L);
+		p->set_defective_mode(true);
 		return 1;
 	}
 	DEFINE_METHOD( GetHealthState, m_HealthState );
 	DEFINE_METHOD( GetSuperMeterLevel, m_fSuperMeter );
+	DEFINE_METHOD(get_read_bpm, m_fReadBPM);
+	static int get_needs_defective_field(T* p, lua_State* L)
+	{
+		lua_pushboolean(L, p->m_player_needs_defective_field);
+		return 1;
+	}
+	static int set_needs_defective_field(T* p, lua_State* L)
+	{
+		p->set_defective_mode(BArg(1));
+		COMMON_RETURN_SELF;
+	}
 
 	LunaPlayerState()
 	{
+		ADD_METHOD(get_read_bpm);
 		ADD_METHOD( ApplyPreferredOptionsToOtherLevels );
 		ADD_METHOD( GetPlayerNumber );
 		ADD_METHOD( GetMultiPlayerNumber );
 		ADD_METHOD( GetPlayerController );
 		ADD_METHOD( SetPlayerOptions );
 		ADD_METHOD( GetPlayerOptions );
+		ADD_METHOD(get_player_options_no_defect);
 		ADD_METHOD( GetPlayerOptionsArray );
 		ADD_METHOD( GetPlayerOptionsString );
 		ADD_METHOD( GetCurrentPlayerOptions );
 		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetHealthState );
 		ADD_METHOD( GetSuperMeterLevel );
+		ADD_GET_SET_METHODS(needs_defective_field);
 	}
 };
 
@@ -292,7 +334,7 @@ LUA_REGISTER_CLASS( PlayerState )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -302,7 +344,7 @@ LUA_REGISTER_CLASS( PlayerState )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

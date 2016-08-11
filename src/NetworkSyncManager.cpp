@@ -2,6 +2,7 @@
 #include "NetworkSyncManager.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
+#include "RageString.hpp"
 #include <errno.h>
 
 NetworkSyncManager *NSMAN;
@@ -12,13 +13,16 @@ NetworkSyncManager *NSMAN;
 #include "ver.h"
 
 
+using std::string;
+using std::vector;
+
 #if defined(WITHOUT_NETWORKING)
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld ) { useSMserver=false; isSMOnline = false; }
 NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
-void NetworkSyncManager::PostStartUp( const RString& ServerIP ) { }
-bool NetworkSyncManager::Connect( const RString& addy, unsigned short port ) { return false; }
-RString NetworkSyncManager::GetServerName() { return RString(); }
+void NetworkSyncManager::PostStartUp( const std::string& ServerIP ) { }
+bool NetworkSyncManager::Connect( const std::string& addy, unsigned short port ) { return false; }
+std::string NetworkSyncManager::GetServerName() { return std::string(); }
 void NetworkSyncManager::ReportNSSOnOff( int i ) { }
 void NetworkSyncManager::ReportScore( int playerID, int step, int score, int combo, float offset ) { }
 void NetworkSyncManager::ReportSongOver() { }
@@ -27,9 +31,9 @@ void NetworkSyncManager::StartRequest( short position ) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
 bool NetworkSyncManager::ChangedScoreboard( int Column ) { return false; }
-void NetworkSyncManager::SendChat( const RString& message ) { }
+void NetworkSyncManager::SendChat( const std::string& message ) { }
 void NetworkSyncManager::SelectUserSong() { }
-RString NetworkSyncManager::MD5Hex( const RString &sInput ) { return RString(); }
+std::string NetworkSyncManager::MD5Hex( const std::string &sInput ) { return std::string(); }
 int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) { }
 unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
@@ -65,14 +69,14 @@ int NetworkSyncManager::GetSMOnlineSalt()
 static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." );
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
-	LANserver = NULL;	//So we know if it has been created yet
-	BroadcastReception = NULL;
+	LANserver = nullptr;	//So we know if it has been created yet
+	BroadcastReception = nullptr;
 
-	ld->SetText( INITIALIZING_CLIENT_NETWORK );
+	ld->SetText( INITIALIZING_CLIENT_NETWORK.GetValue() );
 	NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
-   
+
 	useSMserver = false;
 	isSMOnline = false;
 	FOREACH_PlayerNumber( pn )
@@ -90,12 +94,12 @@ NetworkSyncManager::~NetworkSyncManager ()
 	//Close Connection to server nicely.
 	if( useSMserver )
 		NetPlayerClient->close();
-	SAFE_DELETE( NetPlayerClient );
+	Rage::safe_delete( NetPlayerClient );
 
-	if ( BroadcastReception ) 
+	if ( BroadcastReception )
 	{
 		BroadcastReception->close();
-		SAFE_DELETE( BroadcastReception );
+		Rage::safe_delete( BroadcastReception );
 	}
 }
 
@@ -112,13 +116,13 @@ void NetworkSyncManager::CloseConnection()
 	NetPlayerClient->close();
 }
 
-void NetworkSyncManager::PostStartUp( const RString& ServerIP )
+void NetworkSyncManager::PostStartUp( const std::string& ServerIP )
 {
-	RString sAddress;
+	std::string sAddress;
 	unsigned short iPort;
 
 	size_t cLoc = ServerIP.find( ':' );
-	if( ServerIP.find( ':' ) != RString::npos )
+	if( ServerIP.find( ':' ) != std::string::npos )
 	{
 		sAddress = ServerIP.substr( 0, cLoc );
 		char* cEnd;
@@ -162,7 +166,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 
 	m_packet.Write1( NETPROTOCOLVERSION );
 
-	m_packet.WriteNT( RString( string(PRODUCT_FAMILY) + product_version ) );
+	m_packet.WriteNT( std::string( string(PRODUCT_FAMILY) + product_version ) );
 
 	/* Block until response is received.
 	 * Move mode to blocking in order to give CPU back to the system,
@@ -204,7 +208,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 
 void NetworkSyncManager::StartUp()
 {
-	RString ServerIP;
+	std::string ServerIP;
 
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 		PostStartUp( ServerIP );
@@ -216,7 +220,7 @@ void NetworkSyncManager::StartUp()
 }
 
 
-bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
+bool NetworkSyncManager::Connect( const std::string& addy, unsigned short port )
 {
 	LOG->Info( "Beginning to connect" );
 
@@ -227,7 +231,7 @@ bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 	return useSMserver;
 }
 
-void NetworkSyncManager::ReportNSSOnOff(int i) 
+void NetworkSyncManager::ReportNSSOnOff(int i)
 {
 	m_packet.ClearPacket();
 	m_packet.Write1( NSCSMS );
@@ -235,8 +239,8 @@ void NetworkSyncManager::ReportNSSOnOff(int i)
 	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 }
 
-RString NetworkSyncManager::GetServerName() 
-{ 
+std::string NetworkSyncManager::GetServerName()
+{
 	return m_ServerName;
 }
 
@@ -270,22 +274,26 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	// If this assumption is false, read 16 seconds in either direction.
 	int iOffset = int( (offset+16.384)*2000.0f );
 
-	if( iOffset>65535 )
-		iOffset=65535;
-	if( iOffset<1 )
-		iOffset=1;
-
+	// TODO: Utilize clamp here.
+	if( iOffset > 65535 )
+	{
+		iOffset = 65535;
+	}
+	else if( iOffset < 1 )
+	{
+		iOffset = 1;
+	}
 	// Report 0 if hold, or miss (don't forget mines should report)
 	if( step == SMOST_HITMINE || step > SMOST_W1 )
 		iOffset = 0;
 
 	m_packet.Write2( (uint16_t)iOffset );
 
-	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position ); 
+	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 
 }
 
-void NetworkSyncManager::ReportSongOver() 
+void NetworkSyncManager::ReportSongOver()
 {
 	if ( !useSMserver )	//Make sure that we are using the network
 		return;
@@ -294,11 +302,11 @@ void NetworkSyncManager::ReportSongOver()
 
 	m_packet.Write1( NSCGON );
 
-	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position ); 
+	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 	return;
 }
 
-void NetworkSyncManager::ReportStyle() 
+void NetworkSyncManager::ReportStyle()
 {
 	LOG->Trace( "Sending \"Style\" to server" );
 
@@ -308,7 +316,7 @@ void NetworkSyncManager::ReportStyle()
 	m_packet.Write1( NSCSU );
 	m_packet.Write1( (int8_t)GAMESTATE->GetNumPlayersEnabled() );
 
-	FOREACH_EnabledPlayer( pn ) 
+	FOREACH_EnabledPlayer( pn )
 	{
 		m_packet.Write1( (uint8_t)pn );
 		m_packet.WriteNT( GAMESTATE->GetPlayerDisplayName(pn) );
@@ -317,7 +325,7 @@ void NetworkSyncManager::ReportStyle()
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
-void NetworkSyncManager::StartRequest( short position ) 
+void NetworkSyncManager::StartRequest( short position )
 {
 	if( !useSMserver )
 		return;
@@ -335,11 +343,11 @@ void NetworkSyncManager::StartRequest( short position )
 
 	Steps * tSteps;
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
+	if( tSteps!=nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
 		ctr = uint8_t(ctr+tSteps->GetMeter()*16);
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
+	if( tSteps!=nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
 		ctr = uint8_t( ctr+tSteps->GetMeter() );
 
 	m_packet.Write1( ctr );
@@ -347,11 +355,11 @@ void NetworkSyncManager::StartRequest( short position )
 	ctr=0;
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
+	if( tSteps!=nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
 		ctr = uint8_t( ctr + (int)tSteps->GetDifficulty()*16 );
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
+	if( tSteps!=nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
 		ctr = uint8_t( ctr + (int)tSteps->GetDifficulty() );
 
 	m_packet.Write1( ctr );
@@ -360,7 +368,7 @@ void NetworkSyncManager::StartRequest( short position )
 	ctr = char( position*16 );
 	m_packet.Write1( ctr );
 
-	if( GAMESTATE->m_pCurSong != NULL )
+	if( GAMESTATE->m_pCurSong != nullptr )
 	{
 		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sMainTitle );
 		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sSubTitle );
@@ -373,10 +381,10 @@ void NetworkSyncManager::StartRequest( short position )
 		m_packet.WriteNT( "" );
 	}
 
-	if( GAMESTATE->m_pCurCourse != NULL )
+	if( GAMESTATE->m_pCurCourse != nullptr )
 		m_packet.WriteNT( GAMESTATE->m_pCurCourse->GetDisplayFullTitle() );
 	else
-		m_packet.WriteNT( RString() );
+		m_packet.WriteNT( std::string() );
 
 	//Send Player (and song) Options
 	m_packet.WriteNT( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
@@ -388,7 +396,7 @@ void NetworkSyncManager::StartRequest( short position )
 		m_packet.WriteNT( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().GetString() );
 	}
 	for (int i=0; i<2-players; ++i)
-		m_packet.WriteNT("");	//Write a NULL if no player
+		m_packet.WriteNT("");	//Write a nullptr if no player
 
 	//This needs to be reset before ScreenEvaluation could possibly be called
 	m_EvalPlayerData.clear();
@@ -403,8 +411,8 @@ void NetworkSyncManager::StartRequest( short position )
 
 	//The following packet HAS to get through, so we turn blocking on for it as well
 	//Don't block if we are serving
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
-	
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
+
 	LOG->Trace("Waiting for RECV");
 
 	m_packet.ClearPacket();
@@ -431,7 +439,7 @@ static LocalizedString CONNECTION_SUCCESSFUL( "NetworkSyncManager", "Connection 
 static LocalizedString CONNECTION_FAILED	( "NetworkSyncManager", "Connection failed." );
 void NetworkSyncManager::DisplayStartupStatus()
 {
-	RString sMessage("");
+	std::string sMessage("");
 
 	switch (m_startupStatus)
 	{
@@ -439,7 +447,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 		//Networking wasn't attepmpted
 		return;
 	case 1:
-		sMessage = ssprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
+		sMessage = fmt::sprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
 		break;
 	case 2:
 		sMessage = CONNECTION_FAILED.GetValue();
@@ -448,7 +456,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 	SCREENMAN->SystemMessage( sMessage );
 }
 
-void NetworkSyncManager::Update(float fDeltaTime)
+void NetworkSyncManager::Update(float)
 {
 	if (useSMserver)
 		ProcessInput();
@@ -464,14 +472,14 @@ void NetworkSyncManager::Update(float fDeltaTime)
 			int port = BroadIn.Read2();
 			BroadIn.Read2();	//Num players connected.
 			uint32_t addy = EzSockets::LongFromAddrIn(BroadcastReception->fromAddr);
-			ThisServer.Address = ssprintf( "%u.%u.%u.%u:%d",
+			ThisServer.Address = fmt::sprintf( "%u.%u.%u.%u:%d",
 				(addy<<0)>>24, (addy<<8)>>24, (addy<<16)>>24, (addy<<24)>>24, port );
 
 			//It's fairly safe to assume that users will not be on networks with more than
-			//30 or 40 servers.  Until this point, maps would be slower than vectors. 
-			//So I am going to use a vector to store all of the servers.  
+			//30 or 40 servers.  Until this point, maps would be slower than vectors.
+			//So I am going to use a vector to store all of the servers.
 			//
-			//In this situation, I will traverse the vector to find the element that 
+			//In this situation, I will traverse the vector to find the element that
 			//contains the corresponding server.
 
 			unsigned int i;
@@ -493,10 +501,10 @@ static LocalizedString CONNECTION_DROPPED( "NetworkSyncManager", "Connection to 
 void NetworkSyncManager::ProcessInput()
 {
 	//If we're disconnected, just exit
-	if ((NetPlayerClient->state!=NetPlayerClient->skCONNECTED) || 
+	if ((NetPlayerClient->state!=NetPlayerClient->skCONNECTED) ||
 			NetPlayerClient->IsError())
 	{
-		SCREENMAN->SystemMessageNoAnimate( CONNECTION_DROPPED );
+		SCREENMAN->SystemMessageNoAnimate( CONNECTION_DROPPED.GetValue() );
 		useSMserver=false;
 		isSMOnline = false;
 		FOREACH_PlayerNumber(pn)
@@ -534,7 +542,7 @@ void NetworkSyncManager::ProcessInput()
 		case NSCHello: // This is already taken care of by the blocking code earlier
 		case NSCGSR:   // This is taken care of by the blocking start code
 			break;
-		case NSCGON: 
+		case NSCGON:
 			{
 				int PlayersInPack = m_packet.Read1();
 				m_EvalPlayerData.resize(PlayersInPack);
@@ -546,7 +554,7 @@ void NetworkSyncManager::ProcessInput()
 					m_EvalPlayerData[i].grade = m_packet.Read1();
 				for (int i=0; i<PlayersInPack; ++i)
 					m_EvalPlayerData[i].difficulty = (Difficulty) m_packet.Read1();
-				for (int j=0; j<NETNUMTAPSCORES; ++j) 
+				for (int j=0; j<NETNUMTAPSCORES; ++j)
 					for (int i=0; i<PlayersInPack; ++i)
 						m_EvalPlayerData[i].tapScores[j] = m_packet.Read2();
 				for (int i=0; i<PlayersInPack; ++i)
@@ -558,7 +566,7 @@ void NetworkSyncManager::ProcessInput()
 			{	//Ease scope
 				int ColumnNumber=m_packet.Read1();
 				int NumberPlayers=m_packet.Read1();
-				RString ColumnData;
+				std::string ColumnData;
 
 				switch (ColumnNumber)
 				{
@@ -570,7 +578,7 @@ void NetworkSyncManager::ProcessInput()
 				case NSSB_COMBO:
 					ColumnData = "Combo\n";
 					for (int i=0; i<NumberPlayers; ++i)
-						ColumnData += ssprintf("%d\n",m_packet.Read2());
+						ColumnData += fmt::sprintf("%d\n",m_packet.Read2());
 					break;
 				case NSSB_GRADE:
 					ColumnData = "Grade\n";
@@ -589,7 +597,7 @@ void NetworkSyncManager::ProcessInput()
 			break;
 		case NSCSU: //System message from server
 			{
-				RString SysMSG = m_packet.ReadNT();
+				std::string SysMSG = m_packet.ReadNT();
 				SCREENMAN->SystemMessage( SysMSG );
 			}
 			break;
@@ -597,7 +605,7 @@ void NetworkSyncManager::ProcessInput()
 			{
 				m_sChatText += m_packet.ReadNT() + " \n ";
 				//10000 chars backlog should be more than enough
-				m_sChatText = m_sChatText.Right(10000);
+				m_sChatText = Rage::tail(m_sChatText, 10000);
 				SCREENMAN->SendMessageToTopScreen( SM_AddToChat );
 			}
 			break;
@@ -634,7 +642,7 @@ void NetworkSyncManager::ProcessInput()
 			break;
 		case NSCSMS:
 			{
-				RString StyleName, GameName;
+				std::string StyleName, GameName;
 				GameName = m_packet.ReadNT();
 				StyleName = m_packet.ReadNT();
 
@@ -673,7 +681,7 @@ void NetworkSyncManager::ProcessInput()
 	}
 }
 
-bool NetworkSyncManager::ChangedScoreboard(int Column) 
+bool NetworkSyncManager::ChangedScoreboard(int Column)
 {
 	if (!m_scoreboardchange[Column])
 		return false;
@@ -681,12 +689,12 @@ bool NetworkSyncManager::ChangedScoreboard(int Column)
 	return true;
 }
 
-void NetworkSyncManager::SendChat(const RString& message) 
+void NetworkSyncManager::SendChat(const std::string& message)
 {
 	m_packet.ClearPacket();
 	m_packet.Write1( NSCCM );
 	m_packet.WriteNT( message );
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
 }
 
 void NetworkSyncManager::ReportPlayerOptions()
@@ -695,7 +703,7 @@ void NetworkSyncManager::ReportPlayerOptions()
 	m_packet.Write1( NSCUPOpts );
 	FOREACH_PlayerNumber (pn)
 		m_packet.WriteNT( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().GetString() );
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
 }
 
 void NetworkSyncManager::SelectUserSong()
@@ -779,10 +787,10 @@ uint32_t PacketFunctions::Read4()
 	return ntohl(Temp);
 }
 
-RString PacketFunctions::ReadNT()
+std::string PacketFunctions::ReadNT()
 {
 	//int Orig=Packet.Position;
-	RString TempStr;
+	std::string TempStr;
 	while ((Position<NETMAXBUFFERSIZE)&& (((char*)Data)[Position]!=0))
 		TempStr= TempStr + (char)Data[Position++];
 
@@ -818,7 +826,7 @@ void PacketFunctions::Write4(uint32_t data)
 	Position+=4;
 }
 
-void PacketFunctions::WriteNT(const RString& data)
+void PacketFunctions::WriteNT(const std::string& data)
 {
 	size_t index=0;
 	while( Position<NETMAXBUFFERSIZE && index<data.size() )
@@ -832,12 +840,12 @@ void PacketFunctions::ClearPacket()
 	Position = 0;
 }
 
-RString NetworkSyncManager::MD5Hex( const RString &sInput ) 
+std::string NetworkSyncManager::MD5Hex( const std::string &sInput )
 {
-	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).MakeUpper();
+	return Rage::make_upper(BinaryToHex( CryptManager::GetMD5ForString(sInput) ));
 }
 
-void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) 
+void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers )
 {
 	AllServers = m_vAllLANServers;
 }
@@ -846,17 +854,17 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 // I preferred to misplace code rather than cause unneeded headaches to non-windows users, although it would be nice to have in the wiki which files to
 // update when adding new files and how (Xcode/stepmania_xcode4.3.xcodeproj has a really crazy structure :/).
 #if defined(CMAKE_POWERED)
-unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
+unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ) { return 0; }
 #else
 unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 {
 	// Aldo: Using my own host by now, upload update_check/check_sm5.php to an official URL and change the following constants accordingly:
-	const RString sHost = "aldo.mx";
+	const std::string sHost = "aldo.mx";
 	const unsigned short uPort = 80;
-	const RString sResource = "/stepmania/check_sm5.php";
-	const RString sUserAgent = PRODUCT_ID;
-	const RString sReferer = "http://aldo.mx/stepmania/";
-	
+	const std::string sResource = "/stepmania/check_sm5.php";
+	const std::string sUserAgent = PRODUCT_ID;
+	const std::string sReferer = "http://aldo.mx/stepmania/";
+
 	if( ld )
 	{
 		ld->SetIndeterminate( true );
@@ -871,7 +879,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 
 	if( socket->connect(sHost, uPort) )
 	{
-		RString sHTTPRequest = ssprintf(
+		std::string sHTTPRequest = fmt::sprintf(
 			"GET %s HTTP/1.1"			"\r\n"
 			"Host: %s"					"\r\n"
 			"User-Agent: %s"			"\r\n"
@@ -885,7 +893,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 		);
 
 		socket->SendData(sHTTPRequest);
-		
+
 		// Aldo: EzSocket::pReadData() is a lower level function, I used it because I was having issues
 		// with EzSocket::ReadData() in 3.9, feel free to refactor this function, the low lever character
 		// manipulation might look scary to people not used to it.
@@ -896,7 +904,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 		{
 			// \r\n\r\n = Separator from HTTP Header and Body
 			char* cBodyStart = strstr(cBuffer, "\r\n\r\n");
-			if( cBodyStart != NULL )
+			if( cBodyStart != nullptr )
 			{
 				// Get the HTTP Header only
 				int iHeaderLength = cBodyStart - cBuffer;
@@ -904,45 +912,42 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 				strncpy( cHeader, cBuffer, iHeaderLength );
 				cHeader[iHeaderLength] = '\0';	// needed to make it a valid C String
 
-				RString sHTTPHeader( cHeader );
-				SAFE_DELETE( cHeader );
-				Trim( sHTTPHeader );
+				std::string sHTTPHeader( cHeader );
+				Rage::safe_delete( cHeader );
+				sHTTPHeader = Rage::trim( sHTTPHeader );
 				//LOG->Trace( sHTTPHeader.c_str() );
 
-				vector<RString> svResponse;
+				vector<std::string> svResponse;
 				split( sHTTPHeader, "\r\n", svResponse );
-			
+
 				// Check for 200 OK
-				if( svResponse[0].find("200") != RString::npos )
+				if( svResponse[0].find("200") != std::string::npos )
 				{
+					Rage::ci_ascii_string smBuild{ "X-SM-Build" };
 					// Iterate through every field until an X-SM-Build field is found
 					for( unsigned h=1; h<svResponse.size(); h++ )
 					{
-						RString::size_type sFieldPos = svResponse[h].find(": ");
-						if( sFieldPos != RString::npos )
+						std::string::size_type sFieldPos = svResponse[h].find(": ");
+						if( sFieldPos != std::string::npos )
 						{
-							RString sFieldName = svResponse[h].Left(sFieldPos),
-								sFieldValue = svResponse[h].substr(sFieldPos+2);
-
-							Trim( sFieldName );
-							Trim( sFieldValue );
-
-							if( 0 == strcasecmp(sFieldName,"X-SM-Build") )
+							auto sFieldName = Rage::trim(Rage::head( svResponse[h], sFieldPos ));
+							auto sFieldValue = Rage::trim(svResponse[h].substr(sFieldPos+2));
+							if (smBuild == sFieldName)
 							{
 								bSuccess = true;
-								uCurrentSMBuild = strtoul( sFieldValue, NULL, 10 );
+								uCurrentSMBuild = strtoul( sFieldValue, nullptr, 10 );
 								break;
 							}
 						}
 					}
-				} // if( svResponse[0].find("200") != RString::npos )
-			} // if( cBodyStart != NULL )
+				} // if( svResponse[0].find("200") != std::string::npos )
+			} // if( cBodyStart != nullptr )
 		} // if( iBytes )
-		SAFE_DELETE( cBuffer );
+		Rage::safe_delete( cBuffer );
 	} // if( socket->connect(sHost, uPort) )
-	
+
 	socket->close();
-	SAFE_DELETE( socket );
+	Rage::safe_delete( socket );
 
 	if( ld )
 	{
@@ -965,16 +970,16 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 }
 #endif
 
-static bool ConnectToServer( const RString &t ) 
-{ 
+static bool ConnectToServer( const std::string &t )
+{
 	NSMAN->PostStartUp( t );
-	NSMAN->DisplayStartupStatus(); 
+	NSMAN->DisplayStartupStatus();
 	return true;
 }
 
-extern Preference<RString> g_sLastServer;
+extern Preference<std::string> g_sLastServer;
 
-LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer) : RString(SArg(1) ) ) )
+LuaFunction( ConnectToServer, 		ConnectToServer( ( std::string(SArg(1)).length()==0 ) ? std::string(g_sLastServer.Get()) : std::string(SArg(1) ) ) )
 
 #endif
 
@@ -991,7 +996,7 @@ LuaFunction( CloseConnection,		CloseNetworkConnection() )
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1001,7 +1006,7 @@ LuaFunction( CloseConnection,		CloseNetworkConnection() )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

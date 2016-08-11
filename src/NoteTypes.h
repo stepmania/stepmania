@@ -62,6 +62,7 @@ struct HoldNoteResult
 	/** @brief Last index where fLife was greater than 0. If the tap was missed, this
 	 * will be the first index of the hold. */
 	int		iLastHeldRow;
+	float last_held_second;
 
 	/** @brief If checkpoint holds are enabled, the number of checkpoints hit. */
 	int		iCheckpointsHit;
@@ -96,8 +97,8 @@ enum TapNoteType
 	NUM_TapNoteType,
 	TapNoteType_Invalid
 };
-const RString& TapNoteTypeToString( TapNoteType tnt );
-const RString& TapNoteTypeToLocalizedString( TapNoteType tnt );
+std::string const TapNoteTypeToString( TapNoteType tnt );
+std::string const TapNoteTypeToLocalizedString( TapNoteType tnt );
 LuaDeclareType( TapNoteType );
 
 /** @brief The list of a TapNote's sub types. */
@@ -109,8 +110,8 @@ enum TapNoteSubType
 	NUM_TapNoteSubType,
 	TapNoteSubType_Invalid
 };
-const RString& TapNoteSubTypeToString( TapNoteSubType tnst );
-const RString& TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
+std::string const TapNoteSubTypeToString( TapNoteSubType tnst );
+std::string const TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
 LuaDeclareType( TapNoteSubType );
 
 /** @brief The different places a TapNote could come from. */
@@ -121,8 +122,8 @@ enum TapNoteSource
 	NUM_TapNoteSource,
 	TapNoteSource_Invalid
 };
-const RString& TapNoteSourceToString( TapNoteSource tns );
-const RString& TapNoteSourceToLocalizedString( TapNoteSource tns );
+std::string const TapNoteSourceToString( TapNoteSource tns );
+std::string const TapNoteSourceToLocalizedString( TapNoteSource tns );
 LuaDeclareType( TapNoteSource );
 
 /** @brief The various properties of a tap note. */
@@ -139,8 +140,23 @@ struct TapNote
 	/** @brief The Player that is supposed to hit this note. This is mainly for Routine Mode. */
 	PlayerNumber	pn;
 
+	// Empty until filled in by NoteData.  These exist so that the notefield
+	// doesn't have to call GetElapsedTimeFromBeat 2-6 times for every note
+	// during rendering. -Kyz
+	float occurs_at_second;
+	float end_second; // occurs_at_second plus duration.
+	// highest_subtype_on_row on row is for rendering a tap as a hold head if
+	// there is a hold head on the same row.  It needs to be a TapNoteSubType
+	// instead of a bool to handle rolls. -Kyz
+	TapNoteSubType highest_subtype_on_row;
+	// id_in_chart, id_in_column, and row_id are for passing to mods.  The mod
+	// system uses floating point for everything, so they're floats. -Kyz
+	float id_in_chart;
+	float id_in_column;
+	float row_id;
+
 	// used only if Type == attack:
-	RString		sAttackModifiers;
+	std::string		sAttackModifiers;
 	float		fAttackDurationSeconds;
 
 	// Index into Song's vector of keysound files if nonnegative:
@@ -174,7 +190,7 @@ struct TapNote
 		TapNoteType type_,
 		TapNoteSubType subType_,
 		TapNoteSource source_, 
-		RString sAttackModifiers_,
+		std::string sAttackModifiers_,
 		float fAttackDurationSeconds_,
 		int iKeysoundIndex_ ):
 		type(type_), subType(subType_), source(source_), result(),
@@ -262,8 +278,8 @@ enum NoteType
 	NUM_NoteType,
 	NoteType_Invalid
 };
-const RString& NoteTypeToString( NoteType nt );
-const RString& NoteTypeToLocalizedString( NoteType nt );
+std::string const NoteTypeToString( NoteType nt );
+std::string const NoteTypeToLocalizedString( NoteType nt );
 LuaDeclareType( NoteType );
 float NoteTypeToBeat( NoteType nt );
 int NoteTypeToRow( NoteType nt );
@@ -277,16 +293,16 @@ bool IsNoteOfType( int row, NoteType t );
 /*
 inline int   BeatToNoteRow( float fBeatNum )
 {
-	float fraction = fBeatNum - truncf(fBeatNum);
+	float fraction = fBeatNum - std::trunc(fBeatNum);
 	int integer = int(fBeatNum) * ROWS_PER_BEAT;
-	return integer + lrintf(fraction * ROWS_PER_BEAT);
+	return integer + std::lrint(fraction * ROWS_PER_BEAT);
 }
 */
 /**
  * @brief Convert the beat into a note row.
  * @param fBeatNum the beat to convert.
  * @return the note row. */
-inline int   BeatToNoteRow( float fBeatNum )		{ return lrintf( fBeatNum * ROWS_PER_BEAT ); }	// round
+inline int   BeatToNoteRow( float fBeatNum )		{ return std::lrint( fBeatNum * ROWS_PER_BEAT ); }	// round
 /**
  * @brief Convert the beat into a note row without rounding.
  * @param fBeatNum the beat to convert.

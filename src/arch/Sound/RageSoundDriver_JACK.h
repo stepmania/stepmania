@@ -12,7 +12,7 @@ public:
 	RageSoundDriver_JACK();
 	~RageSoundDriver_JACK();
 
-	RString Init();
+	std::string Init();
 
 	int GetSampleRate() const;
 	int64_t GetPosition() const;
@@ -25,7 +25,7 @@ private:
 	int sample_rate;
 
 	// Helper for Init()
-	RString ConnectPorts();
+	std::string ConnectPorts();
 
 	// JACK callbacks and trampolines
 	int ProcessCallback(jack_nframes_t nframes);

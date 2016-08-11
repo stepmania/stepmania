@@ -7,10 +7,12 @@
 #include "Song.h"
 #include "SpecialFiles.h"
 
+using std::vector;
+
 /*
  * A quick explanation of song cache hashes: Each song has two hashes; a hash of the
  * song path, and a hash of the song directory.  The former is Song::GetCacheFilePath;
- * it stays the same if the contents of the directory change.  The latter is 
+ * it stays the same if the contents of the directory change.  The latter is
  * GetHashForDirectory(m_sSongDir), and changes on each modification.
  *
  * The file hash is used as the cache filename.  We don't want to use the directory
@@ -29,12 +31,12 @@
 
 SongCacheIndex *SONGINDEX; // global and accessible from anywhere in our program
 
-RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &sPath )
+std::string SongCacheIndex::GetCacheFilePath( const std::string &sGroup, const std::string &sPath )
 {
 	/* Don't use GetHashForFile, since we don't want to spend time
 	 * checking the file size and date. */
-	RString s;
-	
+	std::string s;
+
 	if( sPath.size() > 2 && sPath[0] == '/' && sPath[sPath.size()-1] == '/' )
 		s.assign( sPath, 1, sPath.size() - 2 );
 	else if( sPath.size() > 1 && sPath[0] == '/' )
@@ -47,10 +49,10 @@ RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &
 	 * so we should probably replace them with combining diacritics.
 	 * XXX How do we do this and is it even worth it? */
 	const char *invalid = "/\xc0\xc1\xfe\xff\xf8\xf9\xfa\xfb\xfc\xfd\xf5\xf6\xf7";
-	for( size_t pos = s.find_first_of(invalid); pos != RString::npos; pos = s.find_first_of(invalid, pos) )
+	for( size_t pos = s.find_first_of(invalid); pos != std::string::npos; pos = s.find_first_of(invalid, pos) )
 		s[pos] = '_';
 	// CACHE_DIR ends with a /.
-	return ssprintf( "%s%s/%s", SpecialFiles::CACHE_DIR.c_str(), sGroup.c_str(), s.c_str() );
+	return fmt::sprintf( "%s%s/%s", SpecialFiles::CACHE_DIR.c_str(), sGroup.c_str(), s.c_str() );
 }
 
 SongCacheIndex::SongCacheIndex()
@@ -68,17 +70,19 @@ void SongCacheIndex::ReadFromDisk()
 	ReadCacheIndex();
 }
 
-static void EmptyDir( RString dir )
+static void EmptyDir( std::string dir )
 {
 	ASSERT(dir[dir.size()-1] == '/');
 
-	vector<RString> asCacheFileNames;
+	vector<std::string> asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );
-	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
+    for (auto const &name: asCacheFileNames)
 	{
-		if( !IsADirectory(dir + asCacheFileNames[i]) )
-			FILEMAN->Remove( dir + asCacheFileNames[i] );
-	}
+		if( !IsADirectory(dir + name) )
+        {
+			FILEMAN->Remove( dir + name );
+        }
+    }
 }
 
 void SongCacheIndex::ReadCacheIndex()
@@ -111,7 +115,7 @@ void SongCacheIndex::SaveCacheIndex()
 	CacheIndex.WriteFile(CACHE_INDEX);
 }
 
-void SongCacheIndex::AddCacheIndex(const RString &path, unsigned hash)
+void SongCacheIndex::AddCacheIndex(const std::string &path, unsigned hash)
 {
 	if( hash == 0 )
 		++hash; /* no 0 hash values */
@@ -123,7 +127,7 @@ void SongCacheIndex::AddCacheIndex(const RString &path, unsigned hash)
 	}
 }
 
-unsigned SongCacheIndex::GetCacheHash( const RString &path ) const
+unsigned SongCacheIndex::GetCacheHash( const std::string &path ) const
 {
 	unsigned iDirHash = 0;
 	if( !CacheIndex.GetValue( "Cache", MangleName(path), iDirHash ) )
@@ -133,18 +137,18 @@ unsigned SongCacheIndex::GetCacheHash( const RString &path ) const
 	return iDirHash;
 }
 
-RString SongCacheIndex::MangleName( const RString &Name )
+std::string SongCacheIndex::MangleName( const std::string &Name )
 {
 	/* We store paths in an INI.  We can't store '='. */
-	RString ret = Name;
-	ret.Replace( "=", "");
+	std::string ret = Name;
+	Rage::replace(ret, "=", "");
 	return ret;
 }
 
 /*
  * (c) 2002-2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -154,7 +158,7 @@ RString SongCacheIndex::MangleName( const RString &Name )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

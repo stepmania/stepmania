@@ -13,14 +13,14 @@ public:
 	/** @brief Destroy the character manager. */
 	~CharacterManager();
 
-	void GetCharacters( vector<Character*> &vpCharactersOut );
+	void GetCharacters( std::vector<Character*> &vpCharactersOut );
 	/** @brief Get one installed character at random.
 	 * @return The random character. */
 	Character* GetRandomCharacter();
 	/** @brief Get the character assigned as the default.
 	 * @return The default character. */
 	Character* GetDefaultCharacter();
-	Character* GetCharacterFromID( RString sCharacterID );
+	Character* GetCharacterFromID( std::string sCharacterID );
 
 	void DemandGraphics();
 	void UndemandGraphics();
@@ -29,19 +29,19 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	vector<Character*> m_pCharacters;
+	std::vector<Character*> m_pCharacters;
 
 };
 
 
 extern CharacterManager*	CHARMAN;	// global and accessible from anywhere in our program
-	
+
 #endif
 
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -51,7 +51,7 @@ extern CharacterManager*	CHARMAN;	// global and accessible from anywhere in our 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

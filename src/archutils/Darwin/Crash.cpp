@@ -9,7 +9,7 @@
 #endif
 #include <sys/sysctl.h>
 
-RString CrashHandler::GetLogsDirectory()
+std::string CrashHandler::GetLogsDirectory()
 {
 	FSRef fs;
 	char dir[PATH_MAX];
@@ -19,13 +19,13 @@ RString CrashHandler::GetLogsDirectory()
 	{
 		return "/tmp";
 	}
-	return RString( dir ) + "/Logs/" PRODUCT_ID;
+	return std::string( dir ) + "/Logs/" PRODUCT_ID;
 }
 
 // XXX Can we use LocalizedString here instead?
-#define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), NULL, CFSTR("Localizable") )
+#define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), nullptr, CFSTR("Localizable") )
 
-void CrashHandler::InformUserOfCrash( const RString& sPath )
+void CrashHandler::InformUserOfCrash( const std::string& sPath )
 {
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef sAlternate = LSTRING( bundle, "Quit " PRODUCT_FAMILY );
@@ -40,12 +40,12 @@ void CrashHandler::InformUserOfCrash( const RString& sPath )
 	CFStringRef sFormat = LSTRING( bundle, PRODUCT_FAMILY " has crashed. "
 				       "Debugging information has been output to\n\n%s\n\n"
 				       "Please file a bug report at\n\n%s" );
-	CFStringRef sBody = CFStringCreateWithFormat( kCFAllocatorDefault, NULL, sFormat,
+	CFStringRef sBody = CFStringCreateWithFormat( kCFAllocatorDefault, nullptr, sFormat,
 						      sPath.c_str(), REPORT_BUG_URL );
 	CFOptionFlags response = kCFUserNotificationCancelResponse;
 	CFTimeInterval timeout = 0.0; // Should we ever time out?
 	
-	CFUserNotificationDisplayAlert( timeout, kCFUserNotificationStopAlertLevel, NULL, NULL, NULL,
+	CFUserNotificationDisplayAlert( timeout, kCFUserNotificationStopAlertLevel, nullptr, nullptr, nullptr,
 					sTitle, sBody, sDefault, sAlternate, sOther, &response );
 	
 	switch( response )
@@ -85,7 +85,7 @@ bool CrashHandler::IsDebuggerPresent()
 	
 	// Call sysctl.
 	size = sizeof( info );
-	ret = sysctl( mib, sizeof(mib)/sizeof(*mib), &info, &size, NULL, 0 );
+	ret = sysctl( mib, sizeof(mib)/sizeof(*mib), &info, &size, nullptr, 0 );
 	
 	// We're being debugged if the P_TRACED flag is set.
 	

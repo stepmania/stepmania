@@ -51,7 +51,9 @@ bool SnapDisplay::NextSnapMode()
 void SnapDisplay::SnapModeChanged()
 {
 	for( int i=0; i<2; i++ )
+	{
 		m_sprIndicators[i].SetState( m_NoteType );
+	}
 }
 
 /*

@@ -3,6 +3,7 @@
 #ifndef SONG_OPTIONS_H
 #define SONG_OPTIONS_H
 
+#include <string>
 #include "EnumHelper.h"
 
 enum AutosyncType
@@ -14,8 +15,8 @@ enum AutosyncType
 	NUM_AutosyncType,
 	AutosyncType_Invalid
 };
-const RString& AutosyncTypeToString( AutosyncType cat );
-const RString& AutosyncTypeToLocalizedString( AutosyncType cat );
+std::string const AutosyncTypeToString( AutosyncType cat );
+std::string const AutosyncTypeToLocalizedString( AutosyncType cat );
 LuaDeclareType( AutosyncType );
 
 enum SoundEffectType
@@ -26,8 +27,8 @@ enum SoundEffectType
 	NUM_SoundEffectType,
 	SoundEffectType_Invalid
 };
-const RString& SoundEffectTypeToString( SoundEffectType cat );
-const RString& SoundEffectTypeToLocalizedString( SoundEffectType cat );
+std::string const SoundEffectTypeToString( SoundEffectType cat );
+std::string const SoundEffectTypeToLocalizedString( SoundEffectType cat );
 LuaDeclareType( SoundEffectType );
 
 class SongOptions
@@ -58,12 +59,12 @@ public:
 		m_bSaveScore(true), m_bSaveReplay(false) {};
 	void Init();
 	void Approach( const SongOptions& other, float fDeltaSeconds );
-	void GetMods( vector<RString> &AddTo ) const;
-	void GetLocalizedMods( vector<RString> &AddTo ) const;
-	RString GetString() const;
-	RString GetLocalizedString() const;
-	void FromString( const RString &sOptions );
-	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
+	void GetMods( std::vector<std::string> &AddTo ) const;
+	void GetLocalizedMods( std::vector<std::string> &AddTo ) const;
+	std::string GetString() const;
+	std::string GetLocalizedString() const;
+	void FromString( const std::string &sOptions );
+	bool FromOneModString(const std::string &sOneMod);	// On error, return false
 
 	bool operator==( const SongOptions &other ) const;
 	bool operator!=( const SongOptions &other ) const { return !operator==(other); }
@@ -77,7 +78,7 @@ public:
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -87,7 +88,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

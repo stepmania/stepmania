@@ -33,14 +33,14 @@ static int saved_kbd_mode;
 
 /* This is normally a singleton.  Keep track of it, so we can access it
  * from our signal handler. */
-static InputHandler_Linux_tty *handler = NULL;
+static InputHandler_Linux_tty *handler = nullptr;
 
 void InputHandler_Linux_tty::OnCrash(int signo)
 {
 	/* Make sure we delete the input handler if we crash, so we don't leave
 	 * the terminal in raw mode. */
 	delete handler;
-	handler = NULL;
+	handler = nullptr;
 }
 
 
@@ -161,7 +161,7 @@ InputHandler_Linux_tty::~InputHandler_Linux_tty()
 	tcsetattr(fd, TCSAFLUSH, &saved_kbd_termios);
 	close(fd);
 	
-	handler = NULL;
+	handler = nullptr;
 }
 
 void InputHandler_Linux_tty::Update()
@@ -173,7 +173,7 @@ void InputHandler_Linux_tty::Update()
 		FD_SET(fd, &fdset);
 
 		struct timeval zero = {0,0};
-		if ( select(fd+1, &fdset, NULL, NULL, &zero) <= 0 )
+		if ( select(fd+1, &fdset, nullptr, nullptr, &zero) <= 0 )
 			return;
 
 		unsigned char keybuf[BUFSIZ];

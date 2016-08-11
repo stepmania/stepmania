@@ -14,7 +14,7 @@ void TextBanner::LoadFromNode( const XNode* pNode )
 	ActorFrame::LoadFromNode( pNode );
 }
 
-void TextBanner::Load( RString sMetricsGroup )
+void TextBanner::Load( std::string sMetricsGroup )
 {
 	m_bInitted = true;
 
@@ -57,9 +57,9 @@ TextBanner::TextBanner( const TextBanner &cpy ):
 }
 
 void TextBanner::SetFromString( 
-	const RString &sDisplayTitle, const RString &sTranslitTitle, 
-	const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
-	const RString &sDisplayArtist, const RString &sTranslitArtist )
+	const std::string &sDisplayTitle, const std::string &sTranslitTitle, 
+	const std::string &sDisplaySubTitle, const std::string &sTranslitSubTitle, 
+	const std::string &sDisplayArtist, const std::string &sTranslitArtist )
 {
 	ASSERT( m_bInitted );
 
@@ -73,7 +73,7 @@ void TextBanner::SetFromString(
 
 void TextBanner::SetFromSong( const Song *pSong )
 {
-	if( pSong == NULL )
+	if( pSong == nullptr )
 	{
 		SetFromString( "", "", "", "", "", "" );
 		return;
@@ -99,12 +99,12 @@ public:
 	}
 	static int SetFromString( T* p, lua_State *L )
 	{
-		RString sDisplayTitle = SArg(1);
-		RString sTranslitTitle = SArg(2);
-		RString sDisplaySubTitle = SArg(3);
-		RString sTranslitSubTitle = SArg(4);
-		RString sDisplayArtist = SArg(5);
-		RString sTranslitArtist = SArg(6);
+		std::string sDisplayTitle = SArg(1);
+		std::string sTranslitTitle = SArg(2);
+		std::string sDisplaySubTitle = SArg(3);
+		std::string sTranslitSubTitle = SArg(4);
+		std::string sDisplayArtist = SArg(5);
+		std::string sTranslitArtist = SArg(6);
   		p->SetFromString( sDisplayTitle, sTranslitTitle, sDisplaySubTitle, sTranslitSubTitle, sDisplayArtist, sTranslitArtist );
 		COMMON_RETURN_SELF;
 	}

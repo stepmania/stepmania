@@ -4,6 +4,8 @@
 #include "Preference.h"
 #include "GameConstantsAndTypes.h"
 
+#include <unordered_map>
+
 class IniFile;
 
 void ValidateDisplayAspectRatio( float &val );
@@ -15,36 +17,36 @@ void ValidateSongsPerPlay( int &val );
 const int MAX_SONGS_PER_PLAY = 7;
 
 enum MusicWheelUsesSections
-{ 
-	MusicWheelUsesSections_NEVER, 
-	MusicWheelUsesSections_ALWAYS, 
-	MusicWheelUsesSections_ABC_ONLY, 
-	NUM_MusicWheelUsesSections, 
+{
+	MusicWheelUsesSections_NEVER,
+	MusicWheelUsesSections_ALWAYS,
+	MusicWheelUsesSections_ABC_ONLY,
+	NUM_MusicWheelUsesSections,
 	MusicWheelUsesSections_Invalid
 };
 /** @brief The options for allowing the W1 timing. */
 enum AllowW1
-{ 
+{
 	ALLOW_W1_NEVER, /**< The W1 timing is not used. */
 	ALLOW_W1_COURSES_ONLY, /**< The W1 timing is used for courses only. */
 	ALLOW_W1_EVERYWHERE, /**< The W1 timing is used for all modes. */
-	NUM_AllowW1, 
+	NUM_AllowW1,
 	AllowW1_Invalid
 };
 enum Maybe
-{ 
-	Maybe_ASK, 
-	Maybe_NO, 
-	Maybe_YES, 
-	NUM_Maybe, 
-	Maybe_Invalid 
+{
+	Maybe_ASK,
+	Maybe_NO,
+	Maybe_YES,
+	NUM_Maybe,
+	Maybe_Invalid
 };
-enum GetRankingName 
-{ 
-	RANKING_OFF, 
-	RANKING_ON, 
-	RANKING_LIST, 
-	NUM_GetRankingName, 
+enum GetRankingName
+{
+	RANKING_OFF,
+	RANKING_ON,
+	RANKING_LIST,
+	NUM_GetRankingName,
 	GetRankingName_Invalid
 };
 enum RandomBackgroundMode
@@ -132,16 +134,16 @@ public:
 
 	void Init();
 
-	void SetCurrentGame( const RString &sGame );
-	RString	GetCurrentGame() { return m_sCurrentGame; }
+	void SetCurrentGame( const std::string &sGame );
+	std::string	GetCurrentGame() { return m_sCurrentGame.Get(); }
 protected:
-	Preference<RString>	m_sCurrentGame;
+	Preference<std::string>	m_sCurrentGame;
 
 public:
 	// Game-specific prefs.  Copy these off and save them every time the game changes
-	Preference<RString>	m_sAnnouncer;
-	Preference<RString>	m_sTheme;
-	Preference<RString>	m_sDefaultModifiers;
+	Preference<std::string>	m_sAnnouncer;
+	Preference<std::string>	m_sTheme;
+	Preference<std::string>	m_sDefaultModifiers;
 protected:
 	void StoreGamePrefs();
 	void RestoreGamePrefs();
@@ -150,14 +152,17 @@ protected:
 		// See GamePrefs::GamePrefs in PrefsManager.cpp for some default settings
 		GamePrefs();
 
-		RString	m_sAnnouncer;
-		RString m_sTheme;
-		RString	m_sDefaultModifiers;
+		std::string	m_sAnnouncer;
+		std::string m_sTheme;
+		std::string	m_sDefaultModifiers;
 	};
-	map<RString, GamePrefs> m_mapGameNameToGamePrefs;
+	// Probably not a problem if the per-game sections are written to prefs in
+	// random order. -Kyz
+	std::unordered_map<std::string, GamePrefs> m_mapGameNameToGamePrefs;
 
 public:
 	Preference<bool>	m_bWindowed;
+	Preference<std::string>	m_sDisplayId;
 	Preference<int>	m_iDisplayWidth;
 	Preference<int>	m_iDisplayHeight;
 	Preference<float>	m_fDisplayAspectRatio;
@@ -170,6 +175,7 @@ public:
 	Preference<int>	m_iMaxTextureResolution;
 	Preference<int>	m_iRefreshRate;
 	Preference<bool>	m_bAllowMultitexture;
+	Preference<bool> m_bFullscreenIsBorderlessWindow;
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
 	Preference<bool>	m_bShowMouseCursor;
@@ -185,7 +191,7 @@ public:
 	//Preference<BackgroundCacheMode>		m_BackgroundCache;
 	Preference<bool>	m_bFastLoad;
 	Preference<bool>	m_bFastLoadAdditionalSongs;
-	Preference<RString> m_NeverCacheList;
+	Preference<std::string> m_NeverCacheList;
 
 	Preference<bool>	m_bOnlyDedicatedMenuButtons;
 	Preference<bool>	m_bMenuTimer;
@@ -238,8 +244,8 @@ public:
 	Preference<int>	m_iProgressiveNonstopLifebar;
 	Preference<bool>	m_bShowBeginnerHelper;
 	Preference<bool>	m_bDisableScreenSaver;
-	Preference<RString>	m_sLanguage;
-	Preference<RString>	m_sMemoryCardProfileSubdir; // the directory on a memory card to look in for a profile
+	Preference<std::string>	m_sLanguage;
+	Preference<std::string>	m_sMemoryCardProfileSubdir; // the directory on a memory card to look in for a profile
 	Preference<int>	m_iProductID; // Saved in HighScore to track what software version a score came from.
 	Preference<int>	m_iCenterImageTranslateX;
 	Preference<int>	m_iCenterImageTranslateY;
@@ -281,28 +287,29 @@ public:
 	Preference<bool>	m_bSubSortByNumSteps;
 	Preference<GetRankingName>	m_GetRankingName;
 
-	Preference<RString>	m_sAdditionalSongFolders;
-	Preference<RString>	m_sAdditionalCourseFolders;
-	Preference<RString>	m_sAdditionalFolders;
+	Preference<std::string>	m_sAdditionalSongFolders;
+	Preference<std::string>	m_sAdditionalCourseFolders;
+	Preference<std::string>	m_sAdditionalFolders;
 
 	// failsafe
-	Preference<RString>	m_sDefaultTheme;
+	Preference<std::string>	m_sDefaultTheme;
 
-	Preference<RString>	m_sLastSeenVideoDriver;
-	Preference<RString>	m_sVideoRenderers; // StepMania.cpp sets these on first run based on the card
+	Preference<std::string>	m_sLastSeenVideoDriver;
+	Preference<std::string>	m_sVideoRenderers; // StepMania.cpp sets these on first run based on the card
 	Preference<bool>	m_bSmoothLines;
 	Preference<int>	m_iSoundWriteAhead;
-	Preference<RString>	m_iSoundDevice;	
+	Preference<std::string>	m_iSoundDevice;
 	Preference<int>	m_iSoundPreferredSampleRate;
-	Preference<RString>	m_sLightsStepsDifficulty;
+	Preference<std::string>	m_sLightsStepsDifficulty;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
 	Preference<bool>	m_bThreadedInput;
 	Preference<bool>	m_bThreadedMovieDecode;
-	Preference<RString>	m_sTestInitialScreen;
-	Preference<bool>	m_bDebugLights;
-	Preference<bool>	m_bMonkeyInput;
-	Preference<RString>	m_sMachineName;
-	Preference<RString>	m_sCoursesToShowRanking;
+	Preference<std::string>	m_sTestInitialScreen;
+	// m_bDebugLights is not a preference because people hit it by accident and
+	// have no clue how to turn it off -Kyz
+	bool m_bDebugLights;
+	Preference<std::string>	m_sMachineName;
+	Preference<std::string>	m_sCoursesToShowRanking;
 	Preference<bool> m_MuteActions;
 	Preference<bool> m_bAllowSongDeletion; // Allow the user to remove songs from their collection through UI / keyboard shortcut
 
@@ -333,9 +340,9 @@ public:
 
 #endif
 
-	void ReadPrefsFromIni( const IniFile &ini, const RString &sSection, bool bIsStatic );
-	void ReadGamePrefsFromIni( const RString &sIni );
-	void ReadDefaultsFromIni( const IniFile &ini, const RString &sSection );
+	void ReadPrefsFromIni( const IniFile &ini, const std::string &sSection, bool bIsStatic );
+	void ReadGamePrefsFromIni( const std::string &sIni );
+	void ReadDefaultsFromIni( const IniFile &ini, const std::string &sSection );
 	void SavePrefsToIni( IniFile &ini );
 
 	void ReadPrefsFromDisk();
@@ -343,14 +350,14 @@ public:
 
 	void ResetToFactoryDefaults();
 
-	RString GetPreferencesSection() const;
+	std::string GetPreferencesSection() const;
 
 	// Lua
 	void PushSelf( lua_State *L );
 
 protected:
-	void ReadPrefsFromFile( const RString &sIni, const RString &sSection, bool bIsStatic );
-	void ReadDefaultsFromFile( const RString &sIni, const RString &sSection );
+	void ReadPrefsFromFile( const std::string &sIni, const std::string &sSection, bool bIsStatic );
+	void ReadDefaultsFromFile( const std::string &sIni, const std::string &sSection );
 };
 
 /* This is global, because it can be accessed by crash handlers and error handlers
@@ -367,7 +374,7 @@ extern PrefsManager*	PREFSMAN;	// global and accessible from anywhere in our pro
  * @author Chris Danford, Chris Gomez (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -377,7 +384,7 @@ extern PrefsManager*	PREFSMAN;	// global and accessible from anywhere in our pro
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -3,14 +3,15 @@
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
 #include "ScreenDimensions.h"
 #include "GameState.h"
 #include "FontCharAliases.h"
 #include "OptionRowHandler.h"
 #include "PrefsManager.h"
 
-void PrepareToLoadScreen( const RString &sScreenName );
+using std::vector;
+
+void PrepareToLoadScreen( const std::string &sScreenName );
 void FinishedLoadingScreen();
 
 AutoScreenMessage( SM_GoToOK );
@@ -21,16 +22,82 @@ int	ScreenMiniMenu::s_iLastRowCode = -1;
 vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
 // Hooks for profiling
-void PrepareToLoadScreen( const RString &sScreenName ) {}
+void PrepareToLoadScreen( const std::string &sScreenName ) {}
 void FinishedLoadingScreen() {}
 
 // Settings:
 namespace
 {
-	const MenuDef* g_pMenuDef = NULL;
+	const MenuDef* g_pMenuDef = nullptr;
 	ScreenMessage g_SendOnOK;
 	ScreenMessage g_SendOnCancel;
 };
+
+#define PUSH(c) do { if( !(c.empty()) ) { choices.push_back(c); } } while(0)
+
+MenuRowDef::MenuRowDef():
+	iRowCode(0), sName(""), bEnabled(false),
+	pfnEnabled(nullptr), emShowIn(), iDefaultChoice(0),
+	choices(), bThemeTitle(false), bThemeItems(false) {}
+
+MenuRowDef::MenuRowDef( int r, std::string n, MenuRowUpdateEnabled pe, EditMode s,
+					   bool bTT, bool bTI, int d):
+	iRowCode(r), sName(n), bEnabled(true),
+	pfnEnabled(pe), emShowIn(s), iDefaultChoice(d),
+	choices(), bThemeTitle(bTT), bThemeItems(bTI) {}
+
+MenuRowDef::MenuRowDef(int r, std::string n, bool e, EditMode s,
+					   bool bTT, bool bTI, int d, std::vector<std::string> options):
+	iRowCode(r), sName(n), bEnabled(e),
+	pfnEnabled(nullptr), emShowIn(s), iDefaultChoice(d),
+	choices(), bThemeTitle(bTT), bThemeItems(bTI)
+{
+	for (auto &str: options)
+	{
+		if (str != "")
+		{
+			choices.push_back(str);
+		}
+	}
+}
+
+MenuRowDef::MenuRowDef( int r, std::string n, bool e, EditMode s, bool bTT, bool bTI, int d,
+	std::string const &c0, std::string const &c1,
+	std::string const &c2, std::string const &c3,
+	std::string const &c4, std::string const &c5,
+	std::string const &c6, std::string const &c7,
+	std::string const &c8, std::string const &c9,
+	std::string const &c10, std::string const &c11,
+	std::string const &c12, std::string const &c13,
+	std::string const &c14, std::string const &c15,
+	std::string const &c16, std::string const &c17,
+	std::string const &c18, std::string const &c19,
+	std::string const &c20, std::string const &c21,
+	std::string const &c22) :
+	iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
+	emShowIn(s), iDefaultChoice(d), choices(),
+	bThemeTitle(bTT), bThemeItems(bTI)
+{
+	PUSH(c0); PUSH(c1); PUSH(c2); PUSH(c3); PUSH(c4);
+	PUSH(c5); PUSH(c6); PUSH(c7); PUSH(c8); PUSH(c9);
+	PUSH(c10); PUSH(c11); PUSH(c12); PUSH(c13); PUSH(c14);
+	PUSH(c15); PUSH(c16); PUSH(c17); PUSH(c18); PUSH(c19);
+	PUSH(c20); PUSH(c21); PUSH(c22);
+}
+
+MenuRowDef::MenuRowDef( int r, std::string n, bool e, EditMode s, bool bTT, bool bTI,
+					   int d, int low, int high ):
+iRowCode(r), sName(n), bEnabled(e),
+pfnEnabled(nullptr), emShowIn(s), iDefaultChoice(d),
+choices(), bThemeTitle(bTT), bThemeItems(bTI)
+{
+	for ( int i = low; i <= high; ++i )
+	{
+		choices.push_back(std::to_string(i).c_str());
+	}
+}
+
+#undef PUSH
 
 void ScreenMiniMenu::MiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, float fX, float fY )
 {
@@ -59,12 +126,12 @@ void ScreenMiniMenu::Init()
 
 void ScreenMiniMenu::BeginScreen()
 {
-	ASSERT( g_pMenuDef != NULL );
+	ASSERT( g_pMenuDef != nullptr );
 
 	LoadMenu( g_pMenuDef );
 	m_SMSendOnOK = g_SendOnOK;
 	m_SMSendOnCancel = g_SendOnCancel;
-	g_pMenuDef = NULL;
+	g_pMenuDef = nullptr;
 
 	ScreenOptions::BeginScreen();
 
@@ -81,9 +148,8 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 	s_viLastAnswers.resize( m_vMenuRows.size() );
 	// Convert from m_vMenuRows to vector<OptionRowDefinition>
 	vector<OptionRowHandler*> vHands;
-	for( unsigned r=0; r<m_vMenuRows.size(); r++ )
+	for (auto const &mr: m_vMenuRows)
 	{
-		const MenuRowDef &mr = m_vMenuRows[r];
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeSimple( mr );
 		vHands.push_back( pHand );
 	}
@@ -99,8 +165,9 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 	FOREACH_PlayerNumber( p )
 		vpns.push_back( p );
 	for( unsigned i=0; i<m_pRows.size(); i++ )
+	{
 		ExportOptions( i, vpns );
-
+	}
 	// Changing one option can affect whether other options are available.
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{
@@ -159,7 +226,7 @@ bool ScreenMiniMenu::FocusedItemEndsScreen( PlayerNumber pn ) const
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -169,7 +236,7 @@ bool ScreenMiniMenu::FocusedItemEndsScreen( PlayerNumber pn ) const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

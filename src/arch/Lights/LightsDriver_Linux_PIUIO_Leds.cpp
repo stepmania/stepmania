@@ -15,6 +15,7 @@
 #include "GameState.h"
 #include "Game.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 
 REGISTER_LIGHTS_DRIVER_CLASS2(PIUIO_Leds, Linux_PIUIO_Leds);
 
@@ -30,14 +31,14 @@ namespace {
 
 	const char *dance_leds[NUM_GameController][NUM_GameButton] = {
 		{
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			"/sys/class/leds/piuio::output20/brightness",
 			"/sys/class/leds/piuio::output21/brightness",
 			"/sys/class/leds/piuio::output18/brightness",
 			"/sys/class/leds/piuio::output19/brightness",
 		},
 		{
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			"/sys/class/leds/piuio::output4/brightness",
 			"/sys/class/leds/piuio::output5/brightness",
 			"/sys/class/leds/piuio::output2/brightness",
@@ -47,7 +48,7 @@ namespace {
 
 	const char *pump_leds[NUM_GameController][NUM_GameButton] = {
 		{
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			"/sys/class/leds/piuio::output2/brightness",
 			"/sys/class/leds/piuio::output3/brightness",
 			"/sys/class/leds/piuio::output4/brightness",
@@ -55,7 +56,7 @@ namespace {
 			"/sys/class/leds/piuio::output6/brightness",
 		},
 		{
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			"/sys/class/leds/piuio::output18/brightness",
 			"/sys/class/leds/piuio::output19/brightness",
 			"/sys/class/leds/piuio::output20/brightness",
@@ -66,10 +67,10 @@ namespace {
 
 	bool SetLight(const char *filename, bool on)
 	{
-		if (filename == NULL)
+		if (filename == nullptr)
 			return true;
 		FILE *f = fopen(filename, "w");
-		if (f == NULL)
+		if (f == nullptr)
 		{
 			return false;
 		}
@@ -107,8 +108,8 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
 	}
 
 	const InputScheme *pInput = &GAMESTATE->GetCurrentGame()->m_InputScheme;
-	RString sInputName = pInput->m_szName;
-	if (sInputName.EqualsNoCase("dance"))
+	Rage::ci_ascii_string game { pInput->inputName.c_str() };
+	if (game == "dance")
 	{
 		FOREACH_ENUM(GameController, c)
 		{
@@ -128,7 +129,7 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
 			}
 		}
 	}
-	else if (sInputName.EqualsNoCase("pump"))
+	else if (game == "pump")
 	{
 		FOREACH_ENUM(GameController, c)
 		{

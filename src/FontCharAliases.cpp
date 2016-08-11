@@ -3,13 +3,14 @@
 #include "Font.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageUnicode.hpp"
 
 #include <map>
 
 // Map from "&foo;" to a UTF-8 string.
-typedef map<RString, wchar_t, StdString::StdStringLessNoCase> aliasmap;
+typedef std::map<std::string, wchar_t, Rage::std_string_ci_less> aliasmap;
 static aliasmap CharAliases;
-static map<RString,RString> CharAliasRepl;
+static std::map<std::string,std::string> CharAliasRepl;
 
 /* Editing this file in VC6 will be rather ugly, since it contains a lot of UTF-8.
  * Just don't change anything you can't read. :) */
@@ -68,26 +69,25 @@ And here's one for a kanji page:
 
  */
 
+struct charAlias {
+	std::string str;
+	wchar_t chr;
+};
+
 static void InitCharAliases()
 {
 	if(!CharAliases.empty())
 		return;
 
 	CharAliases["default"]		= FONT_DEFAULT_GLYPH;	// ?
-	CharAliases["invalid"]		= INVALID_CHAR;			// 0xFFFD
+	CharAliases["invalid"]		= Rage::invalid_char;			// 0xFFFD
 
 	// The comments here are UTF-8; they won't show up in VC6
 	// (use a better editor then -aj)
+	int CONSTEXPR_VARIABLE INTERNAL = 0xe000;
 
-#define INTERNAL 0xE000
-
-	// todo: convert this into a vector?
-	// that way we can dynamically add to the list easier. -aj
-	// Hiragana:
-	struct alias {
-		const char *str;
-		wchar_t chr;
-	} aliases[] = {
+	std::vector<charAlias> aliases {
+		// Hiragana:
 		{ "ha", 	0x3042 }, /* あ */
 		{ "hi",		0x3044 }, /* い */
 		{ "hu",		0x3046 }, /* う */
@@ -173,7 +173,7 @@ static void InitCharAliases()
 		{ "hyus",	0x3085 }, /* ゅ */
 		{ "hyos",	0x3087 }, /* ょ */
 		{ "hwas",	0x308e }, /* ゎ */
-
+		
 		// Katakana:
 		{ "hq",		0x3063 }, /* っ */
 		{ "ka",		0x30a2 }, /* ア */
@@ -263,12 +263,12 @@ static void InitCharAliases()
 		{ "kyos",	0x30e7 }, /* ョ */
 		{ "kwas",	0x30ee }, /* ヮ */
 		{ "kq",		0x30c3 }, /* ッ */
-
+		
 		{ "kdot",	0x30FB }, /* ・ */
 		{ "kdash",	0x30FC }, /* ー */
-
+		
 		{ "nbsp",	0x00a0 }, /* Non-breaking space */
-
+		
 		// Symbols:
 		{ "delta",	0x0394 }, /* Δ */
 		{ "sigma",	0x03a3 }, /* Σ */
@@ -293,7 +293,7 @@ static void InitCharAliases()
 		{ "flat",	0x266D }, /* ♭ */
 		{ "natural",	0x266E }, /* ♮ */
 		{ "sharp",	0x266F }, /* ♯ */
-
+		
 		/* These are internal-use glyphs; they don't have real Unicode codepoints. */
 		{ "up",		INTERNAL },
 		{ "down",	INTERNAL },
@@ -345,32 +345,30 @@ static void InitCharAliases()
 		{ "auxrb",	INTERNAL },
 		{ "auxlt",	INTERNAL },
 		{ "auxrt",	INTERNAL },
-		{ "auxback",	INTERNAL },
-
-		{ NULL, 	0 }
+		{ "auxback",	INTERNAL }
 	};
 
 	int iNextInternalUseCodepoint = 0xE000;
-	for( unsigned n = 0; aliases[n].str; ++n )
+	for (auto const &alias: aliases)
 	{
-		int iCodepoint = aliases[n].chr;
-		if( iCodepoint == INTERNAL )
-			iCodepoint = iNextInternalUseCodepoint++;
-
-		CharAliases[aliases[n].str] = iCodepoint;
+		int codePoint = alias.chr;
+		if (codePoint == INTERNAL)
+		{
+			codePoint = iNextInternalUseCodepoint++;
+		}
+		CharAliases[alias.str] = codePoint;
 	}
 
-	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
+	for (auto const &item: CharAliases)
 	{
-		RString from = i->first;
-		RString to = WcharToUTF8(i->second);
-		from.MakeLower();
+		std::string from = Rage::make_lower(item.first);
+		std::string to = WcharToUTF8(item.second);
 		CharAliasRepl[from] = to;
 	}
 }
 
 // Replace all &markers; and &#NNNN;s with UTF-8.
-void FontCharAliases::ReplaceMarkers( RString &sText )
+void FontCharAliases::ReplaceMarkers( std::string &sText )
 {
 	InitCharAliases();
 	ReplaceEntityText( sText, CharAliasRepl );
@@ -378,7 +376,7 @@ void FontCharAliases::ReplaceMarkers( RString &sText )
 }
 
 // Replace all &markers; and &#NNNN;s with UTF-8.
-bool FontCharAliases::GetChar( RString &codepoint, wchar_t &ch )
+bool FontCharAliases::GetChar( std::string &codepoint, wchar_t &ch )
 {
 	InitCharAliases();
 	aliasmap::const_iterator i = CharAliases.find(codepoint);
@@ -392,7 +390,7 @@ bool FontCharAliases::GetChar( RString &codepoint, wchar_t &ch )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -402,7 +400,7 @@ bool FontCharAliases::GetChar( RString &codepoint, wchar_t &ch )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

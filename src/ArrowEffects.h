@@ -27,7 +27,7 @@ public:
 		return GetYOffset( pPlayerState, iCol, fNoteBeat, fThrowAway, bThrowAway, bAbsolute );
 	}
 
-	static void GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, RageVector3& ret, bool with_reverse= true)
+	static void GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, Rage::Vector3& ret, bool with_reverse= true)
 	{
 		ret.x= GetXPos(player_state, col, y_offset);
 		ret.y= GetYPos(col, y_offset, y_reverse_offset, with_reverse);

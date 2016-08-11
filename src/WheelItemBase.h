@@ -28,33 +28,33 @@ LuaDeclareType( WheelItemDataType );
 struct WheelItemBaseData
 {
 	WheelItemBaseData() {}
-	WheelItemBaseData( WheelItemDataType type, RString sText, RageColor color );
+	WheelItemBaseData( WheelItemDataType type, std::string sText, Rage::Color color );
 	virtual ~WheelItemBaseData() {}
 	WheelItemDataType m_Type;
-	RString		m_sText;
-	RageColor	m_color;	// either text color or section background color
+	std::string		m_sText;
+	Rage::Color	m_color;	// either text color or section background color
 };
 /** @brief An item on the wheel. */
 class WheelItemBase : public ActorFrame
 {
 public:
-	WheelItemBase( RString sType );
+	WheelItemBase( std::string sType );
 	WheelItemBase( const WheelItemBase &cpy );
 	virtual void DrawPrimitives();
 	virtual WheelItemBase *Copy() const { return new WheelItemBase(*this); }
 
-	void Load( RString sType );
+	void Load( std::string sType );
 	void DrawGrayBar( Actor& bar );
 	void SetExpanded( bool bExpanded ) { m_bExpanded = bExpanded; }
 
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex );
 
-	RageColor m_colorLocked;
+	Rage::Color m_colorLocked;
 
-	const RString GetText(){ ASSERT(m_pData != NULL); return m_pData->m_sText; }
-	const RageColor GetColor(){ ASSERT(m_pData != NULL); return m_pData->m_color; }
-	WheelItemDataType GetType(){ ASSERT(m_pData != NULL); return m_pData->m_Type; }
-	bool IsLoaded(){ return m_pData != NULL; }
+	const std::string GetText(){ ASSERT(m_pData != nullptr); return m_pData->m_sText; }
+	const Rage::Color GetColor(){ ASSERT(m_pData != nullptr); return m_pData->m_color; }
+	WheelItemDataType GetType(){ ASSERT(m_pData != nullptr); return m_pData->m_Type; }
+	bool IsLoaded(){ return m_pData != nullptr; }
 
 	// Lua
 	void PushSelf( lua_State *L );

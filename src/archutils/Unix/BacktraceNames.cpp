@@ -13,6 +13,7 @@
 #include <cerrno>
 
 #include "RageUtil.h"
+#include "RageString.hpp"
 
 #if defined(MACOSX)
 #include "archutils/Darwin/Crash.h"
@@ -44,7 +45,7 @@ void BacktraceNames::Demangle()
 		return;
 
 	int status = 0;
-	char *name = abi::__cxa_demangle( Symbol, NULL, NULL, &status );
+	char *name = abi::__cxa_demangle( Symbol.c_str(), nullptr, nullptr, &status );
 	if( name )
 	{
 		Symbol = name;
@@ -73,19 +74,19 @@ void BacktraceNames::Demangle() { }
 #endif
 
 
-RString BacktraceNames::Format() const
+std::string BacktraceNames::Format() const
 {
-	RString ShortenedPath = File;
+	std::string ShortenedPath = File;
 	if( ShortenedPath != "" )
 	{
 		/* Abbreviate the module name. */
 		size_t slash = ShortenedPath.rfind('/');
 		if( slash != ShortenedPath.npos )
 			ShortenedPath = ShortenedPath.substr(slash+1);
-		ShortenedPath = RString("(") + ShortenedPath + ")";
+		ShortenedPath = std::string("(") + ShortenedPath + ")";
 	}
 
-	RString ret = ssprintf( "%0*lx: ", int(sizeof(void*)*2), (long) Address );
+	std::string ret = fmt::sprintf( "%0*lx: ", int(sizeof(void*)*2), (long) Address );
 	if( Symbol != "" )
 		ret += Symbol + " ";
 	ret += ShortenedPath;
@@ -121,7 +122,7 @@ void BacktraceNames::FromAddr( void * const p )
      * between one function and the next, because the first lookup will succeed.
      */
     Dl_info di;
-    if( !dladdr((void *) p, &di) || di.dli_sname == NULL )
+    if( !dladdr((void *) p, &di) || di.dli_sname == nullptr )
     {
 		if( !dladdr( ((char *) p) - 8, &di) )
 			return;
@@ -177,7 +178,7 @@ static int osx_find_image( const void *p )
 	for( unsigned i = 0; i < image_count; i++ )
 	{
 		const struct mach_header *header = _dyld_get_image_header(i);
-		if( header == NULL )
+		if( header == nullptr )
 			continue;
 
 		/* The load commands directly follow the mach_header. */
@@ -219,7 +220,7 @@ static const char *osx_find_link_edit( const struct mach_header *header )
 			return (char *) ( scmd->vmaddr - scmd->fileoff );
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void BacktraceNames::FromAddr( void * const p )
@@ -235,7 +236,7 @@ void BacktraceNames::FromAddr( void * const p )
 
 	/* Find the link-edit pointer. */
 	const char *link_edit = osx_find_link_edit( _dyld_get_image_header(index) );
-	if( link_edit == NULL )
+	if( link_edit == nullptr )
 		return;
 	link_edit += _dyld_get_image_vmaddr_slide( index );
 
@@ -244,8 +245,8 @@ void BacktraceNames::FromAddr( void * const p )
 	const struct load_command *cmd = (struct load_command *) &header[1];
 	unsigned long diff = 0xffffffff;
 
-	const char *dli_sname = NULL;
-	void *dli_saddr = NULL;
+	const char *dli_sname = nullptr;
+	void *dli_saddr = nullptr;
 
 	for( unsigned long i = 0; i < header->ncmds; i++, cmd = next_load_command(cmd) )
 	{
@@ -280,13 +281,13 @@ void BacktraceNames::FromAddr( void * const p )
 	 * __start   -> _start
 	 * __ZN7RageLog5TraceEPKcz -> _ZN7RageLog5TraceEPKcz (so demangling will work)
 	 */
-	if( Symbol.Left(1) == "_" )
+	if (Rage::starts_with(Symbol, "_"))
 		Symbol = Symbol.substr(1);
 	/* After stripping off the leading _
 	 * _GLOBAL__I__ZN5ModelC2Ev -> _ZN5ModelC2Ev
 	 * _GLOBAL__D__Z12ForceToAsciiR7CStdStrIcE -> _Z12ForceToAsciiR7CStdStrIcE
 	 */
-	if( Symbol.Left(9) == "_GLOBAL__" )
+	if(Rage::starts_with(Symbol, "_GLOBAL__"))
 		Symbol = Symbol.substr(11);
 
 }
@@ -299,28 +300,32 @@ void BacktraceNames::FromAddr( void * const p )
     Address = (intptr_t) p;
 
     char **foo = backtrace_symbols(&p, 1);
-    if( foo == NULL )
+    if( foo == nullptr )
         return;
     FromString( foo[0] );
     free(foo);
 }
 
 /* "path(mangled name+offset) [address]" */
-void BacktraceNames::FromString( RString s )
+void BacktraceNames::FromString( std::string s )
 {
     /* Hacky parser.  I don't want to use regexes in the crash handler. */
-    RString MangledAndOffset, sAddress;
+    std::string MangledAndOffset, sAddress;
     unsigned pos = 0;
     while( pos < s.size() && s[pos] != '(' && s[pos] != '[' )
+	{
         File += s[pos++];
-    Trim( File );
+	}
+	File = Rage::trim( File );
 
     if( pos < s.size() && s[pos] == '(' )
     {
         pos++;
         while( pos < s.size() && s[pos] != ')' )
+		{
             MangledAndOffset += s[pos++];
-    }
+		}
+	}
 
     if( MangledAndOffset != "" )
     {
@@ -334,7 +339,7 @@ void BacktraceNames::FromString( RString s )
         else
         {
             Symbol = MangledAndOffset.substr(0, plus);
-            RString str = MangledAndOffset.substr(plus);
+            std::string str = MangledAndOffset.substr(plus);
             if( sscanf(str, "%i", &Offset) != 1 )
                 Offset=0;
         }

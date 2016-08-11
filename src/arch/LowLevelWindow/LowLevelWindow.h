@@ -3,9 +3,10 @@
 
 #include <set>
 
-class DisplayResolution;
-typedef set<DisplayResolution> DisplayResolutions;
+class DisplaySpec;
+typedef std::set<DisplaySpec> DisplaySpecs;
 class VideoModeParams;
+class ActualVideoModeParams;
 class RenderTarget;
 struct RenderTargetParam;
 /** @brief Handle low-level operations that OGL 1.x doesn't give us. */
@@ -16,30 +17,23 @@ public:
 
 	virtual ~LowLevelWindow() { }
 
-	virtual void *GetProcAddress( RString s ) = 0;
+	virtual void *GetProcAddress( std::string s ) = 0;
 
 	// Return "" if mode change was successful, otherwise an error message.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
-	virtual RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
-	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
+	virtual std::string TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
+	virtual void GetDisplaySpecs(DisplaySpecs &out) const = 0;
 
 	virtual void LogDebugInformation() const { }
-	virtual bool IsSoftwareRenderer( RString & /* sError */ ) { return false; }
+	virtual bool IsSoftwareRenderer( std::string & /* sError */ ) { return false; }
 
 	virtual void SwapBuffers() = 0;
 	virtual void Update() { }
 
-	virtual const VideoModeParams &GetActualVideoModeParams() const = 0;
+	virtual const ActualVideoModeParams GetActualVideoModeParams() const = 0;
 
-	virtual bool SupportsRenderToTexture() const { return false; }
-	virtual RenderTarget *CreateRenderTarget() { return NULL; }
-
-	virtual bool SupportsThreadedRendering() { return false; }
-	virtual void BeginConcurrentRenderingMainThread() { }
-	virtual void EndConcurrentRenderingMainThread() { }
-	virtual void BeginConcurrentRendering() { }
-	virtual void EndConcurrentRendering() { }
+	virtual bool SupportsFullscreenBorderlessWindow() const { return false; };
 };
 
 #endif
@@ -49,7 +43,7 @@ public:
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -59,7 +53,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

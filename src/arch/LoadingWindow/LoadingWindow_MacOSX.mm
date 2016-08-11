@@ -5,6 +5,8 @@
 #import "RageFile.h"
 #include "ThemeManager.h"
 
+using std::vector;
+
 @interface LoadingWindowHelper : NSObject
 {
 	@public
@@ -123,11 +125,11 @@ LoadingWindow_MacOSX::~LoadingWindow_MacOSX()
 	[pool release];
 }
 
-void LoadingWindow_MacOSX::SetText( RString str )
+void LoadingWindow_MacOSX::SetText( std::string str )
 {
 	if( !g_Helper )
 		return;
-	NSString *s = [[NSString alloc] initWithUTF8String:str];
+	NSString *s = [[NSString alloc] initWithUTF8String:str.c_str()];
 	[g_Helper->m_Text performSelectorOnMainThread:@selector(setString:) withObject:(s ? s : @"") waitUntilDone:NO];
 	[s release];
 }
@@ -135,8 +137,8 @@ void LoadingWindow_MacOSX::SetText( RString str )
 void LoadingWindow_MacOSX::SetSplash( const RageSurface *pSplash )
 {
 	RageFile f;
-	RString data;
-	vector<RString> vs;
+  std::string data;
+	vector<std::string> vs;
 
 	// Try to load a custom splash from the current theme, first.
 	GetDirListing( THEME->GetPathG( "Common", "splash"), vs, false, true );
@@ -149,11 +151,14 @@ void LoadingWindow_MacOSX::SetSplash( const RageSurface *pSplash )
 	}
 
 	if( vs.empty() || !f.Open(vs[0]) )
+	{
 		return;
+	}
 	f.Read( data );
 	if( data.empty() )
+	{
 		return;
-
+	}
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSImage *image = nil;
 	NSData *d = [[NSData alloc] initWithBytes:data.data() length:data.length()];

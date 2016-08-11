@@ -64,7 +64,7 @@ extern const RageTimer RageZeroTimer;
 #define PRINT_TOTAL_TIME(name) LOG->Time(#name " total time: %zu", name##_total);
 #define DECL_TOT_CALL_PAIR(name) extern uint64_t name##_total; extern uint64_t name##_call_count;
 #define DEF_TOT_CALL_PAIR(name) uint64_t name##_total= 0; uint64_t name##_call_count= 0;
-#define PRINT_TOT_CALL_PAIR(name) LOG->Time(#name " calls: %zu, time: %zu, per: %f", name##_call_count, name##_total, static_cast<float>(name##_total) / name##_call_count);
+#define PRINT_TOT_CALL_PAIR(name) LOG->Time(#name " calls: %zu, time: %zu, per: %f", name##_call_count, name##_total, static_cast<double>(name##_total) / name##_call_count);
 #define DECL_TOT_CALL_END(name) DECL_TOT_CALL_PAIR(name); extern uint64_t name##_end_count;
 #define DEF_TOT_CALL_END(name) DEF_TOT_CALL_PAIR(name); uint64_t name##_end_count= 0;
 #define PRINT_TOT_CALL_END(name) LOG->Time(#name " calls: %zu, time: %zu, early end: %zu, per: %f", name##_call_count, name##_total, name##_end_count, static_cast<float>(name##_total) / (name##_call_count - name##_end_count));

@@ -1,24 +1,34 @@
 #ifndef SCREEN_OPTIONS_MASTER_PREFS_H
 #define SCREEN_OPTIONS_MASTER_PREFS_H
 
+#include "EnumHelper.h"
+
 static const int MAX_OPTIONS=16;
-#define OPT_SAVE_PREFERENCES			(1<<0)
-#define OPT_APPLY_GRAPHICS				(1<<1)
-#define OPT_APPLY_THEME					(1<<2)
-#define OPT_CHANGE_GAME					(1<<3)
-#define OPT_APPLY_SOUND					(1<<4)
-#define OPT_APPLY_SONG					(1<<5)
-#define OPT_APPLY_ASPECT_RATIO			(1<<6)
+enum OptEffect
+{
+	OPT_SAVE_PREFERENCES		=	(1<<0),
+	OPT_APPLY_GRAPHICS			=	(1<<1),
+	OPT_APPLY_THEME				=	(1<<2),
+	OPT_CHANGE_GAME				=	(1<<3),
+	OPT_APPLY_SOUND				=	(1<<4),
+	OPT_APPLY_SONG				=	(1<<5),
+	OPT_APPLY_ASPECT_RATIO		=	(1<<6),
+	NUM_OptEffect				=	7,
+	OptEffect_Invalid			=	MAX_OPTIONS+1
+};
+const std::string OptEffectToString( OptEffect e );
+OptEffect StringToOptEffect( const std::string &e );
+LuaDeclareType( OptEffect );
 
 struct ConfOption
 {
-	static ConfOption *Find( RString name );
+	static ConfOption *Find( std::string name );
 
 	// Name of this option.
-	RString name;
+	std::string name;
 
 	// Name of the preference this option affects.
-	RString m_sPrefName;
+	std::string m_sPrefName;
 
 	typedef void (*MoveData_t)( int &sel, bool ToSel, const ConfOption *pConfOption );
 	MoveData_t MoveData;
@@ -31,29 +41,29 @@ struct ConfOption
 
 	/* Return the list of available selections; Get() and Put() use indexes into
 	 * this array. UpdateAvailableOptions() should be called before using this. */
-	void MakeOptionsList( vector<RString> &out ) const;
+	void MakeOptionsList( std::vector<std::string> &out ) const;
 
 	inline int Get() const { int sel; MoveData( sel, true, this ); return sel; }
 	inline void Put( int sel ) const { MoveData( sel, false, this ); }
 	int GetEffects() const;
 
 	ConfOption( const char *n, MoveData_t m,
-		const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
+		std::string const &c0="", std::string const &c1="", std::string const &c2="", std::string const &c3="", std::string const &c4="", std::string const &c5="", std::string const &c6="", std::string const &c7="", std::string const &c8="", std::string const &c9="", std::string const &c10="", std::string const &c11="", std::string const &c12="", std::string const &c13="", std::string const &c14="", std::string const &c15="", std::string const &c16="", std::string const &c17="", std::string const &c18="", std::string const &c19="" )
 	{
 		name = n;
 		m_sPrefName = name; // copy from name (not n), to allow refcounting
 		MoveData = m;
-		MakeOptionsListCB = NULL;
+		MakeOptionsListCB = nullptr;
 		m_iEffects = 0;
 		m_bAllowThemeItems = true;
-#define PUSH( c )	if(c) names.push_back(c);
+#define PUSH( c )	if(!(c.empty())) names.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 	}
-	void AddOption( const RString &sName ) { PUSH(sName); }
+	void AddOption( const std::string &sName ) { PUSH(sName); }
 #undef PUSH
 
 	ConfOption( const char *n, MoveData_t m,
-			void (*lst)( vector<RString> &out ) )
+			   void (*lst)( std::vector<std::string> &out ) )
 	{
 		name = n;
 		MoveData = m;
@@ -64,8 +74,8 @@ struct ConfOption
 
 
 // private:
-	vector<RString> names;
-	void (*MakeOptionsListCB)( vector<RString> &out );
+	std::vector<std::string> names;
+	void (*MakeOptionsListCB)( std::vector<std::string> &out );
 };
 
 #endif
@@ -75,7 +85,7 @@ struct ConfOption
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -85,7 +95,7 @@ struct ConfOption
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

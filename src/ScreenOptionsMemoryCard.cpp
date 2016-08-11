@@ -9,6 +9,8 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
 
 void ScreenOptionsMemoryCard::Init()
@@ -30,9 +32,8 @@ bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()
 	const vector<UsbStorageDevice> &aNewDevices = MEMCARDMAN->GetStorageDevices();
 
 	m_CurrentUsbStorageDevices.clear();
-	for( size_t i = 0; i < aNewDevices.size(); ++i )
+	for (auto const &dev: aNewDevices)
 	{
-		const UsbStorageDevice &dev = aNewDevices[i];
 		if( dev.m_State == UsbStorageDevice::STATE_CHECKING )
 			continue;
 		m_CurrentUsbStorageDevices.push_back( dev );
@@ -48,22 +49,29 @@ void ScreenOptionsMemoryCard::CreateMenu()
 {
 	vector<OptionRowHandler*> vHands;
 
-	FOREACH_CONST( UsbStorageDevice, m_CurrentUsbStorageDevices, iter )
+	for (auto &iter: m_CurrentUsbStorageDevices)
 	{
-		vector<RString> vs;
-		if( iter->sVolumeLabel.empty() )
-			vs.push_back( NO_LABEL );
+		vector<std::string> vs;
+		if( iter.sVolumeLabel.empty() )
+		{
+			vs.push_back( NO_LABEL.GetValue() );
+		}
 		else
-			vs.push_back( iter->sVolumeLabel );
-		if( iter->iVolumeSizeMB == 0 )
-			vs.push_back( SIZE_UNKNOWN );
+		{
+			vs.push_back( iter.sVolumeLabel );
+		}
+		if( iter.iVolumeSizeMB == 0 )
+		{
+			vs.push_back( SIZE_UNKNOWN.GetValue() );
+		}
 		else
-			vs.push_back( ssprintf(RString(VOLUME_SIZE).c_str(),iter->iVolumeSizeMB) );
-
+		{
+			vs.push_back( fmt::sprintf(VOLUME_SIZE.GetValue().c_str(),iter.iVolumeSizeMB) );
+		}
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 
 		OptionRowDefinition &def = vHands.back()->m_Def;
-		RString sDescription = join(", ", vs);
+		std::string sDescription = Rage::join(", ", vs);
 		def.m_sName = sDescription;
 		def.m_vsChoices.push_back( "" );
 		def.m_sExplanationName = "Memory Card";
@@ -81,7 +89,7 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		def.m_bAllowThemeTitle = true;
 		def.m_bOneChoiceForAllPlayers = true;
 	}
-	
+
 	InitMenu( vHands );
 }
 
@@ -125,7 +133,7 @@ void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 			/* Remember the old mountpoint. */
 			const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 			int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
-			RString sOldMountPoint;
+			std::string sOldMountPoint;
 			if( iRow < int(v.size()) )
 			{
 				const UsbStorageDevice &dev = v[iRow];
@@ -170,7 +178,7 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 	}
 }
 
-void ScreenOptionsMemoryCard::SelectRowWithMemoryCard( const RString &sOsMountPoint )
+void ScreenOptionsMemoryCard::SelectRowWithMemoryCard( const std::string &sOsMountPoint )
 {
 	if( sOsMountPoint.empty() )
 		return;
@@ -211,7 +219,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 		}
 		else
 		{
-			RString s = ssprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
+			std::string s = fmt::sprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
 			ScreenPrompt::Prompt( SM_None, s );
 		}
 	}
@@ -224,7 +232,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 /*
  * (c) 2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -234,7 +242,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

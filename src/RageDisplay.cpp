@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageDisplay.h"
+#include "RageMath.hpp"
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "RageMath.h"
@@ -12,13 +13,21 @@
 #include "RageSurface.h"
 #include "Preference.h"
 #include "LocalizedString.h"
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 #include "arch/ArchHooks/ArchHooks.h"
+
+// Needed for stats (GetPPS)
+#include "InputQueue.h"
+
+// This is disabled by default, as the stat is misleading to users.
+Preference<bool>  show_pps("ShowPPS", false);
+
+using std::vector;
 
 // Statistics stuff
 RageTimer	g_LastCheckTimer;
-int		g_iNumVerts;
-int		g_iFPS, g_iVPF, g_iCFPS;
+int         g_iNumVerts;
+int         g_iFPS, g_iVPF, g_iCFPS;
 
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
@@ -43,7 +52,7 @@ struct Centering
 
 static vector<Centering> g_CenteringStack( 1, Centering(0, 0, 0, 0) );
 
-RageDisplay*		DISPLAY	= NULL; // global and accessible from anywhere in our program
+RageDisplay*		DISPLAY	= nullptr; // global and accessible from anywhere in our program
 
 Preference<bool>  LOG_FPS( "LogFPS", true );
 Preference<float> g_fFrameLimitPercent( "FrameLimitPercent", 0.0f );
@@ -63,49 +72,73 @@ static const char *RagePixelFormatNames[] = {
 XToString( RagePixelFormat );
 
 /* bNeedReloadTextures is set to true if the device was re-created and we need
- * to reload textures.  On failure, an error message is returned. 
+ * to reload textures.  On failure, an error message is returned.
  * XXX: the renderer itself should probably be the one to try fallback modes */
 static LocalizedString SETVIDEOMODE_FAILED ( "RageDisplay", "SetVideoMode failed:" );
-RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
+std::string RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
 {
-	RString err;
-	vector<RString> vs;
+	std::string err;
+	vector<std::string> vs;
 
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
-		return RString();
+	{
+		return "";
+	}
 	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );
 	vs.push_back( err );
 
 	// fall back to settings that will most likely work
 	p.bpp = 16;
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
-		return RString();
+	{
+		return "";
+	}
 	vs.push_back( err );
 
-	// "Intel(R) 82810E Graphics Controller" won't accept a 16 bpp surface if 
+	// "Intel(R) 82810E Graphics Controller" won't accept a 16 bpp surface if
 	// the desktop is 32 bpp, so try 32 bpp as well.
 	p.bpp = 32;
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
-		return RString();
+	{
+		return "";
+	}
 	vs.push_back( err );
 
 	// Fall back on a known resolution good rather than 640 x 480.
-	DisplayResolutions dr;
-	this->GetDisplayResolutions( dr );
+	DisplaySpecs dr;
+	this->GetDisplaySpecs(dr);
 	if( dr.empty() )
 	{
 		vs.push_back( "No display resolutions" );
-		return SETVIDEOMODE_FAILED.GetValue() + " " + join(";",vs);
+		return SETVIDEOMODE_FAILED.GetValue() + " " + Rage::join(";",vs);
 	}
 
-	const DisplayResolution &d = *dr.begin();
-	p.width = d.iWidth;
-	p.height = d.iHeight;
+	DisplaySpec d =  *dr.begin();
+	// Try to find DisplaySpec corresponding to requested display
+	for (const auto &candidate: dr)
+	{
+		if (candidate.currentMode() != nullptr)
+		{
+			d = candidate;
+			if (candidate.id() == p.sDisplayId)
+			{
+				break;
+			}
+		}
+	}
+
+	p.sDisplayId = d.id();
+	const DisplayMode supported = d.currentMode() != nullptr ? *d.currentMode() : *d.supportedModes().begin();
+	p.width = supported.width;
+	p.height = supported.height;
+	p.rate = static_cast<int> (round(supported.refreshRate));
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
-		return RString();
+	{
+		return "";
+	}
 	vs.push_back( err );
 
-	return SETVIDEOMODE_FAILED.GetValue() + " " + join(";",vs);
+	return SETVIDEOMODE_FAILED.GetValue() + " " + Rage::join(";",vs);
 }
 
 void RageDisplay::ProcessStatsOnFlip()
@@ -117,15 +150,15 @@ void RageDisplay::ProcessStatsOnFlip()
 	{
 		float fActualTime = g_LastCheckTimer.GetDeltaTime();
 		g_iNumChecksSinceLastReset++;
-		g_iFPS = lrintf( g_iFramesRenderedSinceLastCheck / fActualTime );
+		g_iFPS = std::lrint( g_iFramesRenderedSinceLastCheck / fActualTime );
 		g_iCFPS = g_iFramesRenderedSinceLastReset / g_iNumChecksSinceLastReset;
-		g_iCFPS = lrintf( g_iCFPS / fActualTime );
+		g_iCFPS = std::lrint( g_iCFPS / fActualTime );
 		g_iVPF = g_iVertsRenderedSinceLastCheck / g_iFramesRenderedSinceLastCheck;
 		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
 		if( LOG_FPS )
 		{
-			RString sStats = GetStats();
-			sStats.Replace( "\n", ", " );
+			std::string sStats = GetStats();
+			Rage::replace(sStats, "\n", ", " );
 			LOG->Trace( "%s", sStats.c_str() );
 		}
 	}
@@ -140,18 +173,26 @@ void RageDisplay::ResetStats()
 	g_LastCheckTimer.GetDeltaTime();
 }
 
-RString RageDisplay::GetStats() const
+std::string RageDisplay::GetStats() const
 {
-	RString s;
+	std::string s;
 	// If FPS == 0, we don't have stats yet.
 	if( !GetFPS() )
 		s = "-- FPS\n-- av FPS\n-- VPF";
+	else
+		s = fmt::sprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
 
-	s = ssprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
+	s += "\n" + this->GetApiDescription();
 
-//	#if defined(_WINDOWS)
-	s += "\n"+this->GetApiDescription();
-//	#endif
+	if (show_pps)
+	{
+		s += "\n";
+		auto pps = INPUTQUEUE->GetPPS();
+		for (auto &device : pps)
+		{
+			s += fmt::sprintf("%s: %d\n", device.first, device.second);
+		}
+	}
 
 	return s;
 }
@@ -178,17 +219,17 @@ void RageDisplay::StatsAddVerts( int iNumVertsRendered ) { g_iVertsRenderedSince
 /* Draw a line as a quad.  GL_LINES with SmoothLines off can draw line
  * ends at odd angles--they're forced to axis-alignment regardless of the
  * angle of the line. */
-void RageDisplay::DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth )
+void RageDisplay::DrawPolyLine(const Rage::SpriteVertex &p1, const Rage::SpriteVertex &p2, float LineWidth )
 {
 	// soh cah toa strikes strikes again!
 	float opp = p2.p.x - p1.p.x;
 	float adj = p2.p.y - p1.p.y;
-	float hyp = powf(opp*opp + adj*adj, 0.5f);
+	float hyp = std::pow(opp*opp + adj*adj, 0.5f);
 
 	float lsin = opp/hyp;
 	float lcos = adj/hyp;
 
-	RageSpriteVertex v[4];
+	Rage::SpriteVertex v[4];
 
 	v[0] = v[1] = p1;
 	v[2] = v[3] = p2;
@@ -209,7 +250,7 @@ void RageDisplay::DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVerte
 }
 
 
-void RageDisplay::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay::DrawLineStripInternal( const Rage::SpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
 
@@ -224,17 +265,17 @@ void RageDisplay::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVer
 		DrawCircle( v[i], LineWidth/2 );
 }
 
-void RageDisplay::DrawCircleInternal( const RageSpriteVertex &p, float radius )
+void RageDisplay::DrawCircleInternal( const Rage::SpriteVertex &p, float radius )
 {
 	const int subdivisions = 32;
-	RageSpriteVertex v[subdivisions+2];
+	Rage::SpriteVertex v[subdivisions+2];
 	v[0] = p;
 
-	for(int i = 0; i < subdivisions+1; ++i) 
+	for(int i = 0; i < subdivisions+1; ++i)
 	{
-		const float fRotation = float(i) / subdivisions * 2*PI;
-		const float fX = RageFastCos(fRotation) * radius;
-		const float fY = -RageFastSin(fRotation) * radius;
+		const float fRotation = float(i) / subdivisions * 2 * Rage::PI;
+		const float fX = Rage::FastCos(fRotation) * radius;
+		const float fY = -Rage::FastSin(fRotation) * radius;
 		v[1+i] = v[0];
 		v[1+i].p.x += fX;
 		v[1+i].p.y += fY;
@@ -248,7 +289,7 @@ void RageDisplay::SetDefaultRenderStates()
 {
 	SetLighting( false );
 	SetCullMode( CULL_NONE );
-	SetZWrite( false ); 
+	SetZWrite( false );
 	SetZTestMode( ZTEST_OFF );
 	SetAlphaTest( true );
 	SetBlendMode( BLEND_NORMAL );
@@ -261,7 +302,7 @@ void RageDisplay::SetDefaultRenderStates()
 // Matrix stuff
 class MatrixStack
 {
-	vector<RageMatrix> stack;
+	vector<Rage::Matrix> stack;
 public:
 
 	MatrixStack(): stack()
@@ -287,25 +328,26 @@ public:
 	// Loads identity in the current matrix.
 	void LoadIdentity()
 	{
-		RageMatrixIdentity( &stack.back() );
+		auto &tmp = stack.back();
+		tmp = Rage::Matrix::GetIdentity();
 	}
 
 	// Loads the given matrix into the current matrix
-	void LoadMatrix( const RageMatrix& m )
+	void LoadMatrix( const Rage::Matrix& m )
 	{
 		stack.back() = m;
 	}
 
 	// Right-Multiplies the given matrix to the current matrix.
 	// (transformation is about the current world origin)
-	void MultMatrix( const RageMatrix& m )
+	void MultMatrix( const Rage::Matrix& m )
 	{
 		RageMatrixMultiply( &stack.back(), &m, &stack.back() );
 	}
 
 	// Left-Multiplies the given matrix to the current matrix
 	// (transformation is about the local origin of the object)
-	void MultMatrixLocal( const RageMatrix& m )
+	void MultMatrixLocal( const Rage::Matrix& m )
 	{
 		RageMatrixMultiply( &stack.back(), &stack.back(), &m );
 	}
@@ -315,19 +357,19 @@ public:
 	// (rotation is about the current world origin)
 	void RotateX( float degrees )
 	{
-		RageMatrix m;
+		Rage::Matrix m;
 		RageMatrixRotationX( &m, degrees );
 		MultMatrix( m );
 	}
 	void RotateY( float degrees )
 	{
-		RageMatrix m;
+		Rage::Matrix m;
 		RageMatrixRotationY( &m, degrees );
 		MultMatrix( m );
 	}
 	void RotateZ( float degrees )
 	{
-		RageMatrix m;
+		Rage::Matrix m;
 		RageMatrixRotationZ( &m, degrees );
 		MultMatrix( m );
 	}
@@ -337,19 +379,19 @@ public:
 	// local origin of the object)
 	void RotateXLocal( float degrees )
 	{
-		RageMatrix m;
+		Rage::Matrix m;
 		RageMatrixRotationX( &m, degrees );
 		MultMatrixLocal( m );
 	}
 	void RotateYLocal( float degrees )
  	{
-		RageMatrix m;
+		Rage::Matrix m;
 		RageMatrixRotationY( &m, degrees );
 		MultMatrixLocal( m );
 	}
 	void RotateZLocal( float degrees )
 	{
-		RageMatrix m;
+		Rage::Matrix m;
 		RageMatrixRotationZ( &m, degrees );
 		MultMatrixLocal( m );
 	}
@@ -358,8 +400,7 @@ public:
 	// matrix. (transformation is about the current world origin)
 	void Scale( float x, float y, float z )
  	{
-		RageMatrix m;
-		RageMatrixScaling( &m, x, y, z );
+		auto m = Rage::Matrix::GetScaling(x, y, z);
 		MultMatrix( m );
 	}
 
@@ -367,8 +408,7 @@ public:
 	// matrix. (transformation is about the local origin of the object)
 	void ScaleLocal( float x, float y, float z )
  	{
-		RageMatrix m;
-		RageMatrixScaling( &m, x, y, z );
+		auto m = Rage::Matrix::GetScaling(x, y, z);
 		MultMatrixLocal( m );
 	}
 
@@ -376,8 +416,7 @@ public:
 	// matrix. (transformation is about the current world origin)
 	void Translate( float x, float y, float z )
  	{
-		RageMatrix m;
-		RageMatrixTranslation( &m, x, y, z );
+		auto m = Rage::Matrix::GetTranslation(x, y, z);
 		MultMatrix( m );
 	}
 
@@ -385,32 +424,29 @@ public:
 	// matrix. (transformation is about the local origin of the object)
 	void TranslateLocal( float x, float y, float z )
  	{
-		RageMatrix m;
-		RageMatrixTranslation( &m, x, y, z );
+		auto m = Rage::Matrix::GetTranslation(x, y, z);
 		MultMatrixLocal( m );
 	}
 
 	void SkewX( float fAmount )
 	{
-		RageMatrix m;
-		RageMatrixSkewX( &m, fAmount );
+		auto m = Rage::Matrix::GetSkewX(fAmount);
 		MultMatrixLocal( m );
 	}
-	
+
 	void SkewY( float fAmount )
 	{
-		RageMatrix m;
-		RageMatrixSkewY( &m, fAmount );
+		auto m = Rage::Matrix::GetSkewY(fAmount);
 		MultMatrixLocal( m );
 	}
 
 	// Obtain the current matrix at the top of the stack
-	const RageMatrix* GetTop() const { return &stack.back(); }
-	void SetTop( const RageMatrix &m ) { stack.back() = m; }
+	const Rage::Matrix* GetTop() const { return &stack.back(); }
+	void SetTop( const Rage::Matrix &m ) { stack.back() = m; }
 };
 
 
-static RageMatrix g_CenteringMatrix;
+static Rage::Matrix g_CenteringMatrix;
 static MatrixStack g_ProjectionStack;
 static MatrixStack g_ViewStack;
 static MatrixStack g_WorldStack;
@@ -419,7 +455,7 @@ static MatrixStack g_TextureStack;
 
 RageDisplay::RageDisplay()
 {
-	RageMatrixIdentity( &g_CenteringMatrix );
+	g_CenteringMatrix = Rage::Matrix::GetIdentity();
 	g_ProjectionStack = MatrixStack();
 	g_ViewStack = MatrixStack();
 	g_WorldStack = MatrixStack();
@@ -441,38 +477,38 @@ RageDisplay::~RageDisplay()
 	LUA->UnsetGlobal( "DISPLAY" );
 }
 
-const RageMatrix* RageDisplay::GetCentering() const
+const Rage::Matrix* RageDisplay::GetCentering() const
 {
 	return &g_CenteringMatrix;
 }
 
-const RageMatrix* RageDisplay::GetProjectionTop() const
+const Rage::Matrix* RageDisplay::GetProjectionTop() const
 {
 	return g_ProjectionStack.GetTop();
 }
 
-const RageMatrix* RageDisplay::GetViewTop() const
+const Rage::Matrix* RageDisplay::GetViewTop() const
 {
 	return g_ViewStack.GetTop();
 }
 
-const RageMatrix* RageDisplay::GetWorldTop() const
+const Rage::Matrix* RageDisplay::GetWorldTop() const
 {
 	return g_WorldStack.GetTop();
 }
 
-const RageMatrix* RageDisplay::GetTextureTop() const
+const Rage::Matrix* RageDisplay::GetTextureTop() const
 {
 	return g_TextureStack.GetTop();
 }
 
-void RageDisplay::PushMatrix() 
-{ 
+void RageDisplay::PushMatrix()
+{
 	g_WorldStack.Push();
 }
 
-void RageDisplay::PopMatrix() 
-{ 
+void RageDisplay::PopMatrix()
+{
 	g_WorldStack.Pop();
 }
 
@@ -516,12 +552,12 @@ void RageDisplay::SkewY( float fAmount )
 	g_WorldStack.SkewY( fAmount );
 }
 
-void RageDisplay::PostMultMatrix( const RageMatrix &m )
+void RageDisplay::PostMultMatrix( const Rage::Matrix &m )
 {
 	g_WorldStack.MultMatrix( m );
 }
 
-void RageDisplay::PreMultMatrix( const RageMatrix &m )
+void RageDisplay::PreMultMatrix( const Rage::Matrix &m )
 {
 	g_WorldStack.MultMatrixLocal( m );
 }
@@ -532,13 +568,13 @@ void RageDisplay::LoadIdentity()
 }
 
 
-void RageDisplay::TexturePushMatrix() 
-{ 
+void RageDisplay::TexturePushMatrix()
+{
 	g_TextureStack.Push();
 }
 
-void RageDisplay::TexturePopMatrix() 
-{ 
+void RageDisplay::TexturePopMatrix()
+{
 	g_TextureStack.Pop();
 }
 
@@ -559,13 +595,13 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHe
 	}
 	else
 	{
-		CLAMP( fovDegrees, 0.1f, 179.9f );
-		float fovRadians = fovDegrees / 180.f * PI;
+		fovDegrees = Rage::clamp( fovDegrees, 0.1f, 179.9f );
+		float fovRadians = fovDegrees / 180.f * Rage::PI;
 		float theta = fovRadians/2;
-		float fDistCameraFromImage = fWidth/2 / tanf( theta );
+		float fDistCameraFromImage = fWidth/2 / std::tan( theta );
 
-		fVanishPointX = SCALE( fVanishPointX, 0, fWidth, fWidth, 0 );
-		fVanishPointY = SCALE( fVanishPointY, 0, fHeight, fHeight, 0 );
+		fVanishPointX = Rage::scale( fVanishPointX, 0.f, fWidth, fWidth, 0.f );
+		fVanishPointY = Rage::scale( fVanishPointY, 0.f, fHeight, fHeight, 0.f );
 
 		fVanishPointX -= fWidth/2;
 		fVanishPointY -= fHeight/2;
@@ -580,7 +616,7 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHe
 			  1,
 			  fDistCameraFromImage+1000	) );
 
-		g_ViewStack.LoadMatrix( 
+		g_ViewStack.LoadMatrix(
 			RageLookAt(
 				-fVanishPointX+fWidth/2, -fVanishPointY+fHeight/2, fDistCameraFromImage,
 				-fVanishPointX+fWidth/2, -fVanishPointY+fHeight/2, 0,
@@ -604,7 +640,7 @@ void RageDisplay::CameraPopMatrix()
 
 /* gluLookAt. The result is pre-multiplied to the matrix (M = L * M) instead of
  * post-multiplied. */
-void RageDisplay::LoadLookAt( float fFOV, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up )
+void RageDisplay::LoadLookAt( float fFOV, const Rage::Vector3 &Eye, const Rage::Vector3 &At, const Rage::Vector3 &Up )
 {
 	float fAspect = GetActualVideoModeParams().fDisplayAspectRatio;
 	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fFOV, fAspect, 1, 1000) );
@@ -616,9 +652,9 @@ void RageDisplay::LoadLookAt( float fFOV, const RageVector3 &Eye, const RageVect
 }
 
 
-RageMatrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar)
+Rage::Matrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar)
 {
-	float ymax = zNear * tanf(fovy * PI / 360.0f);
+	float ymax = zNear * std::tan(fovy * Rage::PI / 360.0f);
 	float ymin = -ymax;
 	float xmin = ymin * aspect;
 	float xmax = ymax * aspect;
@@ -632,7 +668,7 @@ RageSurface *RageDisplay::CreateSurfaceFromPixfmt( RagePixelFormat pixfmt,
 	const RagePixelFormatDesc *tpf = GetPixelFormatDesc(pixfmt);
 
 	RageSurface *surf = CreateSurfaceFrom(
-		width, height, tpf->bpp, 
+		width, height, tpf->bpp,
 		tpf->masks[0], tpf->masks[1], tpf->masks[2], tpf->masks[3],
 		(uint8_t *) pixels, pitch );
 
@@ -660,9 +696,9 @@ RagePixelFormat RageDisplay::FindPixelFormat( int iBPP, unsigned iRmask, unsigne
 /* These convert to OpenGL's coordinate system: -1,-1 is the bottom-left,
  * +1,+1 is the top-right, and Z goes from -1 (viewer) to +1 (distance).
  * It's a little odd, but very well-defined. */
-RageMatrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
+Rage::Matrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
-	RageMatrix m(
+	Rage::Matrix m(
 		2/(r-l),      0,            0,           0,
 		0,            2/(t-b),      0,           0,
 		0,            0,            -2/(zf-zn),   0,
@@ -670,14 +706,14 @@ RageMatrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, floa
 	return m;
 }
 
-RageMatrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf )
+Rage::Matrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf )
 {
 	// glFrustum
 	float A = (r+l) / (r-l);
 	float B = (t+b) / (t-b);
 	float C = -1 * (zf+zn) / (zf-zn);
 	float D = -1 * (2*zf*zn) / (zf-zn);
-	RageMatrix m(
+	Rage::Matrix m(
 		2*zn/(r-l), 0,          0,  0,
 		0,          2*zn/(t-b), 0,  0,
 		A,          B,          C,  -1,
@@ -711,29 +747,19 @@ void RageDisplay::ChangeCentering( int iTranslateX, int iTranslateY, int iAddWid
 	UpdateCentering();
 }
 
-RageMatrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY, float fAddWidth, float fAddHeight ) const
+Rage::Matrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY, float fAddWidth, float fAddHeight ) const
 {
 	// in screen space, left edge = -1, right edge = 1, bottom edge = -1. top edge = 1
-	float fWidth = (float) GetActualVideoModeParams().width;
-	float fHeight = (float) GetActualVideoModeParams().height;
-	float fPercentShiftX = SCALE( fTranslateX, 0, fWidth, 0, +2.0f );
-	float fPercentShiftY = SCALE( fTranslateY, 0, fHeight, 0, -2.0f );
-	float fPercentScaleX = SCALE( fAddWidth, 0, fWidth, 1.0f, 2.0f );
-	float fPercentScaleY = SCALE( fAddHeight, 0, fHeight, 1.0f, 2.0f );
+	float fWidth = (float) GetActualVideoModeParams().windowWidth;
+	float fHeight = (float) GetActualVideoModeParams().windowHeight;
+	float fPercentShiftX = Rage::scale( fTranslateX, 0.f, fWidth, 0.f, +2.0f );
+	float fPercentShiftY = Rage::scale( fTranslateY, 0.f, fHeight, 0.f, -2.0f );
+	float fPercentScaleX = Rage::scale( fAddWidth, 0.f, fWidth, 1.0f, 2.0f );
+	float fPercentScaleY = Rage::scale( fAddHeight, 0.f, fHeight, 1.0f, 2.0f );
 
-	RageMatrix m1;
-	RageMatrix m2;
-	RageMatrixTranslation( 
-		&m1, 
-		fPercentShiftX, 
-		fPercentShiftY, 
-		0 );
-	RageMatrixScaling( 
-		&m2, 
-		fPercentScaleX, 
-		fPercentScaleY, 
-		1 );
-	RageMatrix mOut;
+	auto m1 = Rage::Matrix::GetTranslation(fPercentShiftX, fPercentShiftY, 0);
+	auto m2 = Rage::Matrix::GetScaling(fPercentScaleX, fPercentScaleY, 1);
+	Rage::Matrix mOut;
 	RageMatrixMultiply( &mOut, &m1, &m2 );
 	return mOut;
 }
@@ -741,11 +767,11 @@ RageMatrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY
 void RageDisplay::UpdateCentering()
 {
 	const Centering &p = g_CenteringStack.back();
-	g_CenteringMatrix = GetCenteringMatrix( 
+	g_CenteringMatrix = GetCenteringMatrix(
 		(float) p.m_iTranslateX, (float) p.m_iTranslateY, (float) p.m_iAddWidth, (float) p.m_iAddHeight );
 }
 
-bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
+bool RageDisplay::SaveScreenshot( std::string sPath, GraphicsFileFormat format )
 {
 	RageTimer timer;
 	RageSurface *surface = this->CreateScreenshot();
@@ -758,7 +784,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 		// Maintain the DAR.
 		ASSERT( GetActualVideoModeParams().fDisplayAspectRatio > 0 );
 		int iHeight = 480;
-		// This used to be lrintf. However, lrintf causes odd resolutions like
+		// This used to be std::lrint. However, std::lrint causes odd resolutions like
 		// 639x480 (4:3) and 853x480 (16:9). ceilf gives correct values. -aj
 		int iWidth = static_cast<int>(ceilf( iHeight * GetActualVideoModeParams().fDisplayAspectRatio ));
 		timer.Touch();
@@ -770,13 +796,13 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 	if( !out.Open( sPath, RageFile::WRITE ) )
 	{
 		LOG->Trace("Couldn't write %s: %s", sPath.c_str(), out.GetError().c_str() );
-		SAFE_DELETE( surface );
+		Rage::safe_delete( surface );
 		return false;
 	}
 
 	bool bSuccess = false;
 	timer.Touch();
-	RString strError = "";
+	std::string strError = "";
 	switch( format )
 	{
 	case SAVE_LOSSLESS:
@@ -795,7 +821,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 	}
 //	LOG->Trace( "Saving Screenshot file took %f seconds.", timer.GetDeltaTime() );
 
-	SAFE_DELETE( surface );
+	Rage::safe_delete( surface );
 
 	if( !bSuccess )
 	{
@@ -806,7 +832,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 	return true;
 }
 
-void RageDisplay::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay::DrawQuads( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
 
@@ -818,7 +844,7 @@ void RageDisplay::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 	StatsAddVerts(iNumVerts);
 }
 
-void RageDisplay::DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay::DrawQuadStrip( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%2) == 0 );
 
@@ -830,7 +856,7 @@ void RageDisplay::DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts )
 	StatsAddVerts(iNumVerts);
 }
 
-void RageDisplay::DrawFan( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay::DrawFan( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 
@@ -839,16 +865,16 @@ void RageDisplay::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 	StatsAddVerts(iNumVerts);
 }
 
-void RageDisplay::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay::DrawStrip( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 
 	this->DrawStripInternal(v,iNumVerts);
 
-	StatsAddVerts(iNumVerts); 
+	StatsAddVerts(iNumVerts);
 }
 
-void RageDisplay::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay::DrawTriangles( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	if( iNumVerts == 0 )
 		return;
@@ -864,10 +890,10 @@ void RageDisplay::DrawCompiledGeometry( const RageCompiledGeometry *p, int iMesh
 {
 	this->DrawCompiledGeometryInternal( p, iMeshIndex );
 
-	StatsAddVerts( vMeshes[iMeshIndex].Triangles.size() );	
+	StatsAddVerts( vMeshes[iMeshIndex].Triangles.size() );
 }
 
-void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay::DrawLineStrip( const Rage::SpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
 
@@ -886,7 +912,7 @@ void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, floa
  * 6..7..8
  */
 
-void RageDisplay::DrawSymmetricQuadStrip( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay::DrawSymmetricQuadStrip( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 
@@ -898,7 +924,7 @@ void RageDisplay::DrawSymmetricQuadStrip( const RageSpriteVertex v[], int iNumVe
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay::DrawCircle( const RageSpriteVertex &v, float radius )
+void RageDisplay::DrawCircle( const Rage::SpriteVertex &v, float radius )
 {
 	this->DrawCircleInternal( v, radius );
 }
@@ -906,6 +932,7 @@ void RageDisplay::DrawCircle( const RageSpriteVertex &v, float radius )
 void RageDisplay::FrameLimitBeforeVsync( int iFPS )
 {
 	ASSERT( iFPS != 0 );
+	using std::max;
 
 	int iDelayMicroseconds = 0;
 	if( g_fFrameLimitPercent.Get() > 0.0f && !g_LastFrameEndedAt.IsZero() )
@@ -963,7 +990,7 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 	for( unsigned i=0; i<vMeshes.size(); i++ )
 	{
 		const msMesh& mesh = vMeshes[i];
-		const vector<RageModelVertex> &Vertices = mesh.Vertices;
+		const vector<Rage::ModelVertex> &Vertices = mesh.Vertices;
 		const vector<msTriangle> &Triangles = mesh.Triangles;
 
 		MeshInfo& meshInfo = m_vMeshInfo[i];
@@ -977,9 +1004,10 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 		totalVerts += Vertices.size();
 		totalTriangles += Triangles.size();
 
-		for( unsigned j = 0; j < Vertices.size(); ++j )
+        // TODO: Use std::any_of.
+        for (auto const &vertex: Vertices)
 		{
-			if( Vertices[j].TextureMatrixScale.x != 1.0f || Vertices[j].TextureMatrixScale.y != 1.0f )
+			if( vertex.TextureMatrixScale.x != 1.0f || vertex.TextureMatrixScale.y != 1.0f )
 			{
 				meshInfo.m_bNeedsTextureMatrixScale = true;
 				m_bAnyNeedsTextureMatrixScale = true;
@@ -995,7 +1023,17 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the RageDisplay. */ 
+// Register with Lua.
+static void register_REFRESH_DEFAULT(lua_State *L)
+{
+	lua_pushstring( L, "REFRESH_DEFAULT" );
+	lua_pushinteger( L, REFRESH_DEFAULT );
+	lua_settable( L, LUA_GLOBALSINDEX);
+}
+REGISTER_WITH_LUA_FUNCTION( register_REFRESH_DEFAULT );
+
+
+/** @brief Allow Lua to have access to the RageDisplay. */
 class LunaRageDisplay: public Luna<RageDisplay>
 {
 public:
@@ -1012,32 +1050,55 @@ public:
 		LuaHelpers::Push( L, params.height );
 		return 1;
 	}
-	
+
 	static int GetFPS( T* p, lua_State *L )
 	{
 		lua_pushnumber(L, p->GetFPS());
 		return 1;
 	}
-	
+
 	static int GetVPF( T* p, lua_State *L )
 	{
 		lua_pushnumber(L, p->GetVPF());
 		return 1;
 	}
-	
+
 	static int GetCumFPS( T* p, lua_State *L )
 	{
 		lua_pushnumber(L, p->GetCumFPS());
 		return 1;
 	}
 
-	LunaRageDisplay() 
+	static int GetDisplaySpecs( T* p, lua_State *L )
+	{
+		DisplaySpecs s;
+		p->GetDisplaySpecs(s);
+		pushDisplaySpecs(L, s);
+		return 1;
+	}
+
+	static int SupportsRenderToTexture( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->SupportsRenderToTexture());
+		return 1;
+	}
+
+	static int SupportsFullscreenBorderlessWindow( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->SupportsFullscreenBorderlessWindow());
+		return 1;
+	}
+
+	LunaRageDisplay()
 	{
 		ADD_METHOD( GetDisplayWidth );
 		ADD_METHOD( GetDisplayHeight );
 		ADD_METHOD( GetFPS );
 		ADD_METHOD( GetVPF );
 		ADD_METHOD( GetCumFPS );
+		ADD_METHOD( GetDisplaySpecs );
+		ADD_METHOD( SupportsRenderToTexture );
+		ADD_METHOD( SupportsFullscreenBorderlessWindow);
 	}
 };
 

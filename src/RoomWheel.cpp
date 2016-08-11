@@ -9,6 +9,8 @@
 #include "ActorUtil.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 static LocalizedString EMPTY_STRING	( "RoomWheel", "Empty" );
 
 AutoScreenMessage( SM_BackFromRoomName );
@@ -17,12 +19,14 @@ AutoScreenMessage( SM_RoomInfoDeploy );
 
 RoomWheel::~RoomWheel()
 {
-	FOREACH( WheelItemBaseData*, m_CurWheelItemData, i )
-		SAFE_DELETE( *i );
+	for (auto *i: m_CurWheelItemData)
+	{
+		Rage::safe_delete( i );
+	}
 	m_CurWheelItemData.clear();
 }
 
-void RoomWheel::Load( RString sType ) 
+void RoomWheel::Load( std::string sType )
 {
 	WheelBase::Load( sType );
 
@@ -40,7 +44,7 @@ WheelItemBase *RoomWheel::MakeItem()
 	return new RoomWheelItem;
 }
 
-RoomWheelItem::RoomWheelItem( RString sType ):
+RoomWheelItem::RoomWheelItem( std::string sType ):
 	WheelItemBase( sType )
 {
 	Load( sType );
@@ -64,7 +68,7 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 	}
 }
 
-void RoomWheelItem::Load( RString sType )
+void RoomWheelItem::Load( std::string sType )
 {
 	// colorpart gets added first in MusicWheelItem, so follow that here.
 	m_sprColorPart.Load( THEME->GetPathG(sType,"ColorPart") );
@@ -90,7 +94,7 @@ void RoomWheelItem::Load( RString sType )
 void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
 {
 	if( arrayWheelItemDatas.empty() )
-		arrayWheelItemDatas.push_back( new RoomWheelItemData(WheelItemDataType_Generic, EMPTY_STRING, "", RageColor(1,0,0,1)) );
+		arrayWheelItemDatas.push_back( new RoomWheelItemData(WheelItemDataType_Generic, EMPTY_STRING.GetValue(), "", Rage::Color(1,0,0,1)) );
 }
 
 void RoomWheel::AddPermanentItem( RoomWheelItemData *itemdata  )
@@ -127,17 +131,17 @@ void RoomWheel::RemoveItem( int index )
 	vector<WheelItemBaseData *>::iterator i = m_CurWheelItemData.begin();
 	i += index;
 
-	// If this item's data happened to be last selected, make it NULL.
+	// If this item's data happened to be last selected, make it nullptr.
 	if( m_LastSelection == *i )
-		m_LastSelection = NULL;
+		m_LastSelection = nullptr;
 
-	SAFE_DELETE( *i );
+	Rage::safe_delete( *i );
 	m_CurWheelItemData.erase( i );
 
 	if( m_CurWheelItemData.size() < 1 )
 	{
 		m_bEmpty = true;
-		m_CurWheelItemData.push_back( new WheelItemBaseData(WheelItemDataType_Generic, "- EMPTY -", RageColor(1,0,0,1)) );
+		m_CurWheelItemData.push_back( new WheelItemBaseData(WheelItemDataType_Generic, "- EMPTY -", Rage::Color(1,0,0,1)) );
 	}
 
 	RebuildWheelItems();
@@ -149,12 +153,14 @@ bool RoomWheel::Select()
 	SCREENMAN->PostMessageToTopScreen( SM_RoomInfoRetract, 0 );
 
 	if( m_iSelection > 0 )
+	{
 		return WheelBase::Select();
+	}
 	if( m_iSelection == 0 )
 	{
-		// Since this is not actually an option outside of this wheel, NULL is a good idea.
-		m_LastSelection = NULL;
-		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME, "", 255 );
+		// Since this is not actually an option outside of this wheel, nullptr is a good idea.
+		m_LastSelection = nullptr;
+		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME.GetValue(), "", 255 );
 	}
 	return false;
 }
@@ -178,7 +184,7 @@ void RoomWheel::Move( int n )
 	if( n == 0 && m_iSelection >= m_offset )
 	{
 		const RoomWheelItemData* data = GetItem( m_iSelection-m_offset );
-		if( data != NULL )
+		if( data != nullptr )
 			SCREENMAN->PostMessageToTopScreen( SM_RoomInfoDeploy, 0 );
 	}
 	else
@@ -197,7 +203,7 @@ unsigned int RoomWheel::GetNumItems() const
 /*
  * (c) 2004 Josh Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -207,7 +213,7 @@ unsigned int RoomWheel::GetNumItems() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

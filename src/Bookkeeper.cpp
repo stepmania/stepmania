@@ -1,5 +1,8 @@
 #include "global.h"
 #include "Bookkeeper.h"
+
+#include <memory>
+
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "IniFile.h"
@@ -10,9 +13,9 @@
 #include "XmlFileUtil.h"
 #include <ctime>
 
-Bookkeeper*	BOOKKEEPER = NULL;	// global and accessible from anywhere in our program
+Bookkeeper*	BOOKKEEPER = nullptr;	// global and accessible from anywhere in our program
 
-static const RString COINS_DAT = "Save/Coins.xml";
+static const std::string COINS_DAT = "Save/Coins.xml";
 
 Bookkeeper::Bookkeeper()
 {
@@ -65,16 +68,17 @@ void Bookkeeper::LoadFromNode( const XNode *pNode )
 	}
 
 	const XNode *pData = pNode->GetChild( "Data" );
-	if( pData == NULL )
+	if( pData == nullptr )
 	{
 		LOG->Warn( "Error loading bookkeeping: Data node missing" );
 		return;
 	}
 
-	FOREACH_CONST_Child( pData, day )
+	for (auto const *day: *pData)
 	{
 		Date d;
-		if( !day->GetAttrValue( "Hour", d.m_iHour ) ||
+		if( day == nullptr ||
+			!day->GetAttrValue( "Hour", d.m_iHour ) ||
 			!day->GetAttrValue( "Day", d.m_iDayOfYear ) ||
 			!day->GetAttrValue( "Year", d.m_iYear ) )
 		{
@@ -96,7 +100,7 @@ XNode* Bookkeeper::CreateNode() const
 	{
 		XNode* pData = xml->AppendChild("Data");
 
-		for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
+		for( auto it = m_mapCoinsForHour.cbegin(); it != m_mapCoinsForHour.cend(); ++it )
 		{
 			int iCoins = it->second;
 			XNode *pDay = pData->AppendChild( "Coins", iCoins );
@@ -133,20 +137,20 @@ void Bookkeeper::WriteToDisk()
 		return;
 	}
 
-	auto_ptr<XNode> xml( CreateNode() );
+	std::unique_ptr<XNode> xml( CreateNode() );
 	XmlFileUtil::SaveToFile( xml.get(), f );
 }
 
 void Bookkeeper::CoinInserted()
 {
  	Date d;
-	d.Set( time(NULL) );
+	d.Set( time(nullptr) );
 
 	++m_mapCoinsForHour[d];
 }
 
 // Return the number of coins between [beginning,ending).
-int Bookkeeper::GetNumCoinsInRange( map<Date,int>::const_iterator begin, map<Date,int>::const_iterator end ) const
+int Bookkeeper::GetNumCoinsInRange( std::map<Date,int>::const_iterator begin, std::map<Date,int>::const_iterator end ) const
 {
 	int iCoins = 0;
 
@@ -172,7 +176,7 @@ int Bookkeeper::GetCoinsTotal() const
 
 void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] ) const
 {
-	time_t lOldTime = time(NULL);
+	time_t lOldTime = time(nullptr);
 	tm time;
 	localtime_r( &lOldTime, &time );
 
@@ -188,7 +192,7 @@ void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] ) const
 
 void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] ) const
 {
-	time_t lOldTime = time(NULL);
+	time_t lOldTime = time(nullptr);
 	tm time;
 	localtime_r( &lOldTime, &time );
 
@@ -208,22 +212,23 @@ void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] ) const
 void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] ) const
 {
 	for( int i=0; i<DAYS_IN_WEEK; i++ )
-		coins[i] = 0;
-
-	for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
 	{
-		const Date &d = it->first;
+		coins[i] = 0;
+	}
+	for (auto &it: m_mapCoinsForHour)
+	{
+		const Date &d = it.first;
 		int iDayOfWeek = GetDayInYearAndYear( d.m_iDayOfYear, d.m_iYear ).tm_wday;
-		coins[iDayOfWeek] += it->second;
+		coins[iDayOfWeek] += it.second;
 	}
 }
 
 void Bookkeeper::GetCoinsByHour( int coins[HOURS_IN_DAY] ) const
 {
 	memset( coins, 0, sizeof(int) * HOURS_IN_DAY );
-	for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
+	for (auto &it: m_mapCoinsForHour)
 	{
-		const Date &d = it->first;
+		const Date &d = it.first;
 
 		if( d.m_iHour >= HOURS_IN_DAY )
 		{
@@ -231,14 +236,14 @@ void Bookkeeper::GetCoinsByHour( int coins[HOURS_IN_DAY] ) const
 			continue;
 		}
 
-		coins[d.m_iHour] += it->second;
+		coins[d.m_iHour] += it.second;
 	}
 }
 
 /*
  * (c) 2003-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -248,7 +253,7 @@ void Bookkeeper::GetCoinsByHour( int coins[HOURS_IN_DAY] ) const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

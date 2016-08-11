@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSoundUtil.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 
 void RageSoundUtil::Attenuate( float *pBuf, int iSamples, float fVolume )
@@ -24,14 +25,14 @@ void RageSoundUtil::Pan( float *buffer, int frames, float fPos )
 	float fLeftFactors[2] ={ 1-fPos, 0 };
 	float fRightFactors[2] =
 	{
-		SCALE( fPos, 0, 1, 0.5f, 0 ),
-		SCALE( fPos, 0, 1, 0.5f, 1 )
+		Rage::scale( fPos, 0.f, 1.f, 0.5f, 0.f ),
+		Rage::scale( fPos, 0.f, 1.f, 0.5f, 1.f )
 	};
 
 	if( bSwap )
 	{
-		swap( fLeftFactors[0], fRightFactors[0] );
-		swap( fLeftFactors[1], fRightFactors[1] );
+		std::swap( fLeftFactors[0], fRightFactors[0] );
+		std::swap( fLeftFactors[1], fRightFactors[1] );
 	}
 
 	for( int samp = 0; samp < frames; ++samp )
@@ -52,9 +53,9 @@ void RageSoundUtil::Fade( float *pBuffer, int iFrames, int iChannels, float fSta
 
 	for( int iFrame = 0; iFrame < iFrames; ++iFrame )
 	{
-		float fVolPercent = SCALE( iFrame, 0, iFrames, fStartVolume, fEndVolume );
+		float fVolPercent = Rage::scale( iFrame + 0.f, 0 + 0.f, iFrames + 0.f, fStartVolume, fEndVolume );
 
-		fVolPercent = clamp( fVolPercent, 0.f, 1.f );
+		fVolPercent = Rage::clamp( fVolPercent, 0.f, 1.f );
 		for( int i = 0; i < iChannels; ++i )
 		{
 			*pBuffer *= fVolPercent;
@@ -91,8 +92,8 @@ void RageSoundUtil::ConvertFloatToNativeInt16( const float *pFrom, int16_t *pTo,
 {
 	for( int i = 0; i < iSamples; ++i )
 	{
-		int iOut = lrintf( pFrom[i] * 32768.0f );
-		pTo[i] = clamp( iOut, -32768, 32767 );
+		int iOut = std::lrint( pFrom[i] * 32768.0f );
+		pTo[i] = Rage::clamp( iOut, -32768, 32767 );
 	}
 }
 

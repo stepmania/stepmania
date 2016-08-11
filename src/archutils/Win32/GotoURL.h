@@ -2,7 +2,7 @@
 #define GOTO_URL_H
 
 /** @brief Open URLs in a browser. */
-bool GotoURL( RString sUrl );
+bool GotoURL( std::string sUrl );
 
 #endif
 

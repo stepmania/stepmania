@@ -167,11 +167,11 @@ namespace
 		}
 
 		virtual ~Impl() {
-			if(out != NULL)
+			if(out != nullptr)
 			{
 				out->Flush();
 				out->Close();
-				SAFE_DELETE(out);
+				Rage::safe_delete(out);
 			}
 		}
 
@@ -184,7 +184,7 @@ namespace
 			// Only write if the message has changed since the last write.
 			if(memcmp(buffer, lastOutput, FULL_SEXTET_COUNT) != 0)
 			{
-				if(out != NULL)
+				if(out != nullptr)
 				{
 					out->Write(buffer, FULL_SEXTET_COUNT);
 					out->Flush();
@@ -205,12 +205,12 @@ namespace
 
 LightsDriver_SextetStream::LightsDriver_SextetStream()
 {
-	_impl = NULL;
+	_impl = nullptr;
 }
 
 LightsDriver_SextetStream::~LightsDriver_SextetStream()
 {
-	if(IMPL != NULL)
+	if(IMPL != nullptr)
 	{
 		delete IMPL;
 	}
@@ -218,7 +218,7 @@ LightsDriver_SextetStream::~LightsDriver_SextetStream()
 
 void LightsDriver_SextetStream::Set(const LightsState *ls)
 {
-	if(IMPL != NULL)
+	if(IMPL != nullptr)
 	{
 		IMPL->Set(ls);
 	}
@@ -234,17 +234,17 @@ REGISTER_LIGHTS_DRIVER_CLASS(SextetStreamToFile);
 #else
 	#define DEFAULT_OUTPUT_FILENAME "Data/StepMania-Lights-SextetStream.out"
 #endif
-static Preference<RString> g_sSextetStreamOutputFilename("SextetStreamOutputFilename", DEFAULT_OUTPUT_FILENAME);
+static Preference<std::string> g_sSextetStreamOutputFilename("SextetStreamOutputFilename", DEFAULT_OUTPUT_FILENAME);
 
-inline RageFile * openOutputStream(const RString& filename)
+inline RageFile * openOutputStream(const std::string& filename)
 {
 	RageFile * file = new RageFile;
 
 	if(!file->Open(filename, RageFile::WRITE|RageFile::STREAMED))
 	{
 		LOG->Warn("Error opening file '%s' for output: %s", filename.c_str(), file->GetError().c_str());
-		SAFE_DELETE(file);
-		file = NULL;
+		Rage::safe_delete(file);
+		file = nullptr;
 	}
 
 	return file;
@@ -255,14 +255,14 @@ LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile(RageFile * file
 	_impl = new Impl(file);
 }
 
-LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile(const RString& filename)
+LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile(const std::string& filename)
 {
 	_impl = new Impl(openOutputStream(filename));
 }
 
 LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile()
 {
-	_impl = new Impl(openOutputStream(g_sSextetStreamOutputFilename));
+	_impl = new Impl(openOutputStream(g_sSextetStreamOutputFilename.Get()));
 }
 
 /*

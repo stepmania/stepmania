@@ -2,23 +2,26 @@
 
 #if defined(_MSC_VER)
 /* XXX register thread */
-#pragma comment(lib, "winmm.lib") 
- 
+#pragma comment(lib, "winmm.lib")
+
 // Link with the DirectShow base class libraries
 #if defined(DEBUG)
-	#pragma comment(lib, "baseclasses/debug/strmbasd.lib") 
+	#pragma comment(lib, "baseclasses/debug/strmbasd.lib")
 #else
-	#pragma comment(lib, "baseclasses/release/strmbase.lib") 
+	#pragma comment(lib, "baseclasses/release/strmbase.lib")
 #endif
 #endif
 
 #include "MovieTexture_DShowHelper.h"
 #include "MovieTexture_DShow.h"
+#include "RageMath.hpp"
 
 /* for TEXTUREMAN->GetTextureColorDepth() */
 #include "RageTextureManager.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageLog.h"
+#include "RageString.hpp"
 #include "RageException.h"
 #include "RageSurface.h"
 #include "arch/Dialog/Dialog.h"
@@ -29,18 +32,20 @@
 #pragma comment(lib, "vfw32.lib")
 #endif
 
-RageMovieTexture *RageMovieTextureDriver_DShow::Create( RageTextureID ID, RString &sError )
+RageMovieTexture *RageMovieTextureDriver_DShow::Create( RageTextureID ID, std::string &sError )
 {
 	MovieTexture_DShow *pRet = new MovieTexture_DShow( ID );
 	sError = pRet->Init();
 	if( !sError.empty() )
-		SAFE_DELETE( pRet );
+	{
+		Rage::safe_delete( pRet );
+	}
 	return pRet;
 }
 
 REGISTER_MOVIE_TEXTURE_CLASS( DShow );
 
-static RString FourCCToString( int fcc )
+static std::string FourCCToString( int fcc )
 {
 	char c[4];
 	c[0] = char((fcc >> 0) & 0xFF);
@@ -48,16 +53,16 @@ static RString FourCCToString( int fcc )
 	c[2] = char((fcc >> 16) & 0xFF);
 	c[3] = char((fcc >> 24) & 0xFF);
 
-	RString s;
+	std::string s;
 	for( int i = 0; i < 4; ++i )
-		s += clamp( c[i], '\x20', '\x7e' );
+		s += Rage::clamp( c[i], '\x20', '\x7e' );
 
 	return s;
 }
 
-static void CheckCodecVersion( RString codec, RString desc )
+static void CheckCodecVersion( std::string codec, std::string desc )
 {
-	if( !codec.CompareNoCase("DIVX") )
+	if( Rage::ci_ascii_string{"DIVX"} == codec )
 	{
 		/* "DivX 5.0.5 Codec" */
 		Regex GetDivXVersion;
@@ -114,7 +119,7 @@ static void GetVideoCodecDebugInfo()
 		CHECKPOINT;
 		if( ICGetInfo(hic, &info, sizeof(ICINFO)) )
 		{
-			CheckCodecVersion( FourCCToString(info.fccHandler), WStringToRString(info.szDescription) );
+			CheckCodecVersion( FourCCToString(info.fccHandler), WStringTostd::string(info.szDescription) );
 			CHECKPOINT;
 
 			LOG->Info( "    %s: %ls (%ls)",
@@ -150,12 +155,12 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 	m_bPlaying = false;
 
 	m_uTexHandle = 0;
-	buffer = NULL;
+	buffer = nullptr;
 }
 
-RString MovieTexture_DShow::Init()
+std::string MovieTexture_DShow::Init()
 {
-	RString sError = Create();
+	std::string sError = Create();
 	if( sError != "" )
 		return sError;
 
@@ -164,7 +169,7 @@ RString MovieTexture_DShow::Init()
 	// flip all frame rects because movies are upside down
 	for( unsigned i=0; i<m_TextureCoordRects.size(); i++ )
 		swap(m_TextureCoordRects[i].top, m_TextureCoordRects[i].bottom);
-	return RString();
+	return std::string();
 }
 
 /* Hold buffer_lock.  If it's held, then the decoding thread is waiting
@@ -219,7 +224,7 @@ void MovieTexture_DShow::Reload()
  * and is waiting for us to do something with it. */
 void MovieTexture_DShow::CheckFrame()
 {
-	if(buffer == NULL)
+	if(buffer == nullptr)
 		return;
 
 	CHECKPOINT;
@@ -230,7 +235,7 @@ void MovieTexture_DShow::CheckFrame()
 	// DirectShow feeds us in BGR8
 	RageSurface *pFromDShow = CreateSurfaceFrom(
 		m_iSourceWidth, m_iSourceHeight,
-		24, 
+		24,
 		0xFF0000,
 		0x00FF00,
 		0x0000FF,
@@ -250,7 +255,7 @@ void MovieTexture_DShow::CheckFrame()
 	 */
 	CHECKPOINT;
 	DISPLAY->UpdateTexture(
-		m_uTexHandle, 
+		m_uTexHandle,
 		pFromDShow,
 		0, 0,
 		m_iImageWidth, m_iImageHeight );
@@ -258,7 +263,7 @@ void MovieTexture_DShow::CheckFrame()
 
 	delete pFromDShow;
 
-	buffer = NULL;
+	buffer = nullptr;
 
 	CHECKPOINT;
 
@@ -290,13 +295,13 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 	CheckFrame();
 }
 
-RString PrintCodecError( HRESULT hr, RString s )
+std::string PrintCodecError( HRESULT hr, std::string s )
 {
 	/* Actually, we might need XviD; we might want to look
 	 * at the file and try to figure out if it's something
 	 * common: DIV3, DIV4, DIV5, XVID, or maybe even MPEG2. */
-	RString err = hr_ssprintf(hr, "%s", s.c_str());
-	return 
+	std::string err = hr_ssprintf(hr, "%s", s.c_str());
+	return
 		ssprintf(
 		"There was an error initializing a movie: %s.\n"
 		"Could not locate the DivX video codec.\n"
@@ -306,16 +311,16 @@ RString PrintCodecError( HRESULT hr, RString s )
 		err.c_str() );
 }
 
-RString MovieTexture_DShow::GetActiveFilterList()
+std::string MovieTexture_DShow::GetActiveFilterList()
 {
-	RString ret;
-	
-	IEnumFilters *pEnum = NULL;
+	std::string ret;
+
+	IEnumFilters *pEnum = nullptr;
 	HRESULT hr = m_pGB->EnumFilters(&pEnum);
 	if (FAILED(hr))
 		return hr_ssprintf(hr, "EnumFilters");
 
-	IBaseFilter *pF = NULL;
+	IBaseFilter *pF = nullptr;
 	while( S_OK == pEnum->Next(1, &pF, 0) )
 	{
 		FILTER_INFO FilterInfo;
@@ -323,7 +328,7 @@ RString MovieTexture_DShow::GetActiveFilterList()
 
 		if( ret != "" )
 			ret += ", ";
-		ret += WStringToRString(FilterInfo.achName);
+		ret += WStringTostd::string(FilterInfo.achName);
 
 		if( FilterInfo.pGraph )
 			FilterInfo.pGraph->Release();
@@ -333,7 +338,7 @@ RString MovieTexture_DShow::GetActiveFilterList()
 	return ret;
 }
 
-RString MovieTexture_DShow::Create()
+std::string MovieTexture_DShow::Create()
 {
 	RageTextureID actualID = GetID();
 
@@ -341,11 +346,11 @@ RString MovieTexture_DShow::Create()
 
 	actualID.iAlphaBits = 0;
 
-	if( FAILED( hr=CoInitialize(NULL) ) )
+	if( FAILED( hr=CoInitialize(nullptr) ) )
 		RageException::Throw( hr_ssprintf(hr, "Could not CoInitialize") );
 
 	// Create the filter graph
-	if( FAILED( hr=m_pGB.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC) ) )
+	if( FAILED( hr=m_pGB.CoCreateInstance(CLSID_FilterGraph, nullptr, CLSCTX_INPROC) ) )
 		RageException::Throw( hr_ssprintf(hr, "Could not create CLSID_FilterGraph!") );
 
 	// Create the Texture Renderer object
@@ -359,7 +364,7 @@ RString MovieTexture_DShow::Create()
 
 	// Add the source filter
 	CComPtr<IBaseFilter> pFSrc;          // Source Filter
-	wstring wFileName = RStringToWstring(actualID.filename);
+	wstring wFileName = std::stringToWstring(actualID.filename);
 
 	// if this fails, it's probably because the user doesn't have DivX installed
 	/* No, it also happens if the movie can't be opened for some reason; for example,
@@ -373,7 +378,7 @@ RString MovieTexture_DShow::Create()
 	if( FAILED( hr = pFTR->FindPin( L"In", &pFTRPinIn ) ) )
 		return hr_ssprintf(hr, "Could not find input pin" );
 
-	CComPtr<IPin> pFSrcPinOut;    // Source Filter Output Pin   
+	CComPtr<IPin> pFSrcPinOut;    // Source Filter Output Pin
 	if( FAILED( hr = pFSrc->FindPin( L"Output", &pFSrcPinOut ) ) )
 		return hr_ssprintf( hr, "Could not find output pin" );
 
@@ -387,7 +392,7 @@ RString MovieTexture_DShow::Create()
 	pCTR->SetRenderTarget(this);
 
 	/* Cap the max texture size to the hardware max. */
-	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
+	actualID.iMaxSize = std::min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
 
 	// The graph is built, now get the set the output video width and height.
 	// The source and image width will always be the same since we can't scale the video
@@ -395,8 +400,8 @@ RString MovieTexture_DShow::Create()
 	m_iSourceHeight = pCTR->GetVidHeight();
 
 	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, actualID.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
+	m_iImageWidth = std::min( m_iSourceWidth, actualID.iMaxSize );
+	m_iImageHeight = std::min( m_iSourceHeight, actualID.iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);
@@ -420,14 +425,14 @@ RString MovieTexture_DShow::Create()
 	// Start the graph running
 	Play();
 
-	return RString();
+	return std::string();
 }
 
 
 void MovieTexture_DShow::NewData(const char *data)
 {
 	ASSERT(data);
-	
+
 	/* Try to lock. */
 	if( buffer_lock.TryWait() )
 	{
@@ -440,7 +445,7 @@ void MovieTexture_DShow::NewData(const char *data)
 
 	buffer_finished.Wait();
 
-	ASSERT( buffer == NULL );
+	ASSERT( buffer == nullptr );
 
 	buffer_lock.Post();
 }
@@ -557,7 +562,7 @@ void MovieTexture_DShow::SetPlaybackRate( float fRate )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -567,7 +572,7 @@ void MovieTexture_DShow::SetPlaybackRate( float fRate )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

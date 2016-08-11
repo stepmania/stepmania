@@ -9,6 +9,8 @@
 #include "PrefsManager.h"
 #include "MessageManager.h"
 
+using std::vector;
+
 // main page (group list)
 REGISTER_SCREEN_CLASS( ScreenOptionsToggleSongs );
 
@@ -18,13 +20,12 @@ void ScreenOptionsToggleSongs::BeginScreen()
 
 	vector<OptionRowHandler*> vHands;
 
-	vector<RString> asAllGroups;
+	vector<std::string> asAllGroups;
 	SONGMAN->GetSongGroupNames(asAllGroups);
-	FOREACH_CONST( RString, asAllGroups , s )
+	for (auto &sGroup: asAllGroups)
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
-		RString sGroup = *s;
 
 		def.m_sName = sGroup;
 		def.m_sExplanationName = "Select Group";
@@ -76,9 +77,8 @@ void ScreenOptionsToggleSongsSubPage::BeginScreen()
 	vector<OptionRowHandler*> vHands;
 
 	const vector<Song *> &apAllSongs = SONGMAN->GetSongs(ToggleSongs::m_sGroup);
-	FOREACH_CONST( Song *, apAllSongs , s )
+	for (auto *pSong: apAllSongs)
 	{
-		Song *pSong = *s;
 		if( UNLOCKMAN->SongIsLocked(pSong) & ~LOCKED_DISABLED )
 			continue;
 
@@ -130,7 +130,7 @@ void ScreenOptionsToggleSongsSubPage::ExportOptions( int iRow, const vector<Play
 /*
  * (c) 2007 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -140,7 +140,7 @@ void ScreenOptionsToggleSongsSubPage::ExportOptions( int iRow, const vector<Play
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,5 +1,9 @@
 #include "global.h"
 #include "ModIconRow.h"
+#include "RageMath.hpp"
+
+#include <array>
+
 #include "ThemeManager.h"
 #include "PlayerOptions.h"
 #include "GameState.h"
@@ -8,9 +12,10 @@
 #include "ActorUtil.h"
 #include "XmlFile.h"
 #include "LuaManager.h"
-#include "Foreach.h"
 
-int OptionToPreferredColumn( RString sOptionText );
+using std::vector;
+
+int OptionToPreferredColumn( std::string sOptionText );
 
 REGISTER_ACTOR_CLASS( ModIconRow );
 
@@ -23,14 +28,14 @@ ModIconRow::ModIconRow()
 
 ModIconRow::~ModIconRow()
 {
-	FOREACH( ModIcon*, m_vpModIcon, p )
+	for (auto *p: m_vpModIcon)
 	{
-		SAFE_DELETE( *p );
+		Rage::safe_delete( p );
 	}
 	this->RemoveAllChildren();
 }
 
-void ModIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
+void ModIconRow::Load( const std::string &sMetricsGroup, PlayerNumber pn )
 {
 	ASSERT_M( m_pn == PlayerNumber_Invalid, "Multiple calls to Load" );
 
@@ -46,9 +51,9 @@ void ModIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	{
 		ModIcon *p = new ModIcon;
 		p->SetName( "ModIcon" );
-		float fOffset = SCALE( i, 0, NUM_OPTION_ICONS-1, -(NUM_OPTION_ICONS-1)/2.0f, (float)(NUM_OPTION_ICONS-1)/2.0f );
+		float fOffset = Rage::scale( i + 0.f, 0.f, NUM_OPTION_ICONS-1.f, -(NUM_OPTION_ICONS-1)/2.0f, (NUM_OPTION_ICONS-1)/2.0f );
 		p->SetXY( fOffset*SPACING_X, fOffset*SPACING_Y );
-		p->Load( OPTION_ICON_METRICS_GROUP );
+		p->Load( OPTION_ICON_METRICS_GROUP.GetValue() );
 		ActorUtil::LoadAllCommands( p, sMetricsGroup );
 		m_vpModIcon.push_back( p );
 		this->AddChild( p );
@@ -68,57 +73,60 @@ void ModIconRow::HandleMessage( const Message &msg )
 
 struct OptionColumnEntry
 {
-	const char *szString;
+	std::string szString;
 	int iSlotIndex;
 
+	OptionColumnEntry(std::string str, int slot): szString(str), iSlotIndex(slot) {}
 	//void FromStack( lua_State *L, int iPos );
 };
 
 // todo: metric these? -aj
-static const OptionColumnEntry g_OptionColumnEntries[] =
+static std::array<OptionColumnEntry, 33> const g_OptionColumnEntries =
 {
-	{"Boost",		0},
-	{"Brake",		0},
-	{"Wave",		0},
-	{"Expand",		0},
-	{"Boomerang",	0},
-	//--------------------//
-	{"Drunk",		1},
-	{"Dizzy",		1},
-	{"Mini",		1},
-	{"Flip",		1},
-	{"Tornado",		1},
-	//--------------------//
-	{"Hidden",		2},
-	{"Sudden",		2},
-	{"Stealth",		2},
-	{"Blink",		2},
-	{"RandomVanish",2},
-	//--------------------//
-	{"Mirror",		3},
-	{"Left",		3},
-	{"Right",		3},
-	{"Shuffle",		3},
-	{"SuperShuffle",3},
-	//--------------------//
-	{"Little",		4},
-	{"NoHolds",		4},
-	{"Dark",		4},
-	{"Blind",		4},
-	//--------------------//
-	{"Reverse",		5},
-	{"Split",		5},
-	{"Alternate",	5},
-	{"Cross",		5},
-	{"Centered",	5},
-	//--------------------//
-	{"Incoming",	6},
-	{"Space",		6},
-	{"Hallway",		6},
-	{"Distant",		6},
+	{
+		OptionColumnEntry {"Boost", 0},
+		OptionColumnEntry {"Brake", 0},
+		OptionColumnEntry {"Wave", 0},
+		OptionColumnEntry {"Expand", 0},
+		OptionColumnEntry {"Boomerang", 0},
+		//--------------------//
+		OptionColumnEntry {"Drunk", 1},
+		OptionColumnEntry {"Dizzy", 1},
+		OptionColumnEntry {"Mini", 1},
+		OptionColumnEntry {"Flip", 1},
+		OptionColumnEntry {"Tornado", 1},
+		//--------------------//
+		OptionColumnEntry {"Hidden", 2},
+		OptionColumnEntry {"Sudden", 2},
+		OptionColumnEntry {"Stealth", 2},
+		OptionColumnEntry {"Blink", 2},
+		OptionColumnEntry {"RandomVanish", 2},
+		//--------------------//
+		OptionColumnEntry {"Mirror", 3},
+		OptionColumnEntry {"Left", 3},
+		OptionColumnEntry {"Right", 3},
+		OptionColumnEntry {"Shuffle", 3},
+		OptionColumnEntry {"SuperShuffle", 3},
+		//--------------------//
+		OptionColumnEntry {"Little", 4},
+		OptionColumnEntry {"NoHolds", 4},
+		OptionColumnEntry {"Dark", 4},
+		OptionColumnEntry {"Blind", 4},
+		//--------------------//
+		OptionColumnEntry {"Reverse", 5},
+		OptionColumnEntry {"Split", 5},
+		OptionColumnEntry {"Alternate", 5},
+		OptionColumnEntry {"Cross", 5},
+		OptionColumnEntry {"Centered", 5},
+		//--------------------//
+		OptionColumnEntry {"Incoming", 6},
+		OptionColumnEntry {"Space", 6},
+		OptionColumnEntry {"Hallway", 6},
+		OptionColumnEntry {"Distant", 6}
+	}
 };
 
-int OptionToPreferredColumn( RString sOptionText )
+int OptionToPreferredColumn( std::string sOptionText )
 {
 	// Speedups always go in column 0. digit ... x
 	if( sOptionText.size() > 1 &&
@@ -128,9 +136,13 @@ int OptionToPreferredColumn( RString sOptionText )
 		return 0;
 	}
 
-	for( unsigned i=0; i<ARRAYLEN(g_OptionColumnEntries); i++ )
-		if( g_OptionColumnEntries[i].szString == sOptionText )
-			return g_OptionColumnEntries[i].iSlotIndex;
+	for (auto const &entry : g_OptionColumnEntries)
+	{
+		if ( entry.szString == sOptionText )
+		{
+			return entry.iSlotIndex;
+		}
+	}
 
 	// This warns about C1234 and noteskins.
 //	LOG->Warn("Unknown option: '%s'", sOptionText.c_str() );
@@ -141,19 +153,17 @@ void ModIconRow::SetFromGameState()
 {
 	PlayerNumber pn = m_pn;
 
-	RString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().GetString();
-	vector<RString> vsOptions;
-	split( sOptions, ", ", vsOptions, true );
+	std::string sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().GetString();
+	auto vsOptions = Rage::split(sOptions, ", ", Rage::EmptyEntries::skip);
 
-	vector<RString> vsText;	// fill these with what will be displayed on the tabs
+	vector<std::string> vsText;	// fill these with what will be displayed on the tabs
 	vsText.resize( m_vpModIcon.size() );
 
 	// for each option, look for the best column to place it in
-	for( unsigned i=0; i<vsOptions.size(); i++ )
+	for (auto sOption: vsOptions)
 	{
-		RString sOption = vsOptions[i];
 		int iPerferredCol = OptionToPreferredColumn( sOption );
-		clamp( iPerferredCol, 0, (int)m_vpModIcon.size()-1 );
+		Rage::clamp( iPerferredCol, 0, static_cast<int>(m_vpModIcon.size()) - 1 );
 
 		if( iPerferredCol == -1 )
 			continue;	// skip
@@ -180,7 +190,7 @@ void ModIconRow::SetFromGameState()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ModIconRow. */ 
+/** @brief Allow Lua to have access to the ModIconRow. */
 class LunaModIconRow: public Luna<ModIconRow>
 {
 public:
@@ -199,7 +209,7 @@ LUA_REGISTER_DERIVED_CLASS( ModIconRow, ActorFrame )
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -209,7 +219,7 @@ LUA_REGISTER_DERIVED_CLASS( ModIconRow, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

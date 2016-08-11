@@ -25,7 +25,7 @@ Actor *CreateActor() { return new T; }
 /**
  * @brief Register the requested Actor so that it's more accessible.
  *
- * Each Actor class should have a REGISTER_ACTOR_CLASS in its CPP file. */ 
+ * Each Actor class should have a REGISTER_ACTOR_CLASS in its CPP file. */
 #define REGISTER_ACTOR_CLASS( className ) REGISTER_ACTOR_CLASS_WITH_NAME( className, className )
 
 enum FileType
@@ -42,59 +42,70 @@ enum FileType
 	NUM_FileType,
 	FileType_Invalid
 };
-const RString& FileTypeToString( FileType ft );
+namespace std
+{
+	template<>
+		struct hash<FileType>
+	{
+		std::size_t operator()(FileType const& s) const
+		{
+			return std::hash<size_t>()(static_cast<size_t>(s));
+		}
+	};
+}
+std::string const FileTypeToString( FileType ft );
 
 /** @brief Utility functions for creating and manipulating Actors. */
 namespace ActorUtil
 {
 	void InitFileTypeLists();
-	vector<RString> const& GetTypeExtensionList(FileType ft);
-	void AddTypeExtensionsToList(FileType ft, vector<RString>& add_to);
+	std::vector<std::string> const& GetTypeExtensionList(FileType ft);
+	void AddTypeExtensionsToList(FileType ft, std::vector<std::string>& add_to);
 
 	// Every screen should register its class at program initialization.
-	void Register( const RString& sClassName, CreateActorFn pfn );
+	void Register( const std::string& sClassName, CreateActorFn pfn );
 
-	apActorCommands ParseActorCommands( const RString &sCommands, const RString &sName = "" );
-	void SetXY( Actor& actor, const RString &sMetricsGroup );
-	inline void PlayCommand( Actor& actor, const RString &sCommandName ) { actor.PlayCommand( sCommandName ); }
+	apActorCommands ParseActorCommands( const std::string &sCommands, const std::string &sName = "" );
+	void SetXY( Actor& actor, const std::string &sMetricsGroup );
+	inline void PlayCommand( Actor& actor, const std::string &sCommandName ) { actor.PlayCommand( sCommandName ); }
 	inline void OnCommand( Actor& actor )
 	{
-		ASSERT_M( actor.HasCommand("On"), ssprintf("%s is missing an OnCommand.", actor.GetLineage().c_str()) );
+		ASSERT_M( actor.HasCommand("On"), fmt::sprintf("%s is missing an OnCommand.", actor.GetLineage().c_str()) );
 		actor.PlayCommand("On");
 	}
 	inline void OffCommand( Actor& actor )
 	{
-		// HACK:  It's very often that we command things to TweenOffScreen 
+		// HACK:  It's very often that we command things to TweenOffScreen
 		// that we aren't drawing.  We know that an Actor is not being
 		// used if its name is blank.  So, do nothing on Actors with a blank name.
 		// (Do "playcommand" anyway; BGAs often have no name.)
 		if( actor.GetName().empty() )
 			return;
-		ASSERT_M( actor.HasCommand("Off"), ssprintf("Actor %s is missing an OffCommand.", actor.GetLineage().c_str()) );
+		ASSERT_M( actor.HasCommand("Off"), fmt::sprintf("Actor %s is missing an OffCommand.", actor.GetLineage().c_str()) );
 		actor.PlayCommand("Off");
 	}
 
-	void LoadCommand( Actor& actor, const RString &sMetricsGroup, const RString &sCommandName );
-	void LoadCommandFromName( Actor& actor, const RString &sMetricsGroup, const RString &sCommandName, const RString &sName );
-	void LoadAllCommands( Actor& actor, const RString &sMetricsGroup );
-	void LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGroup, const RString &sName );
+	void LoadCommand( Actor& actor, const std::string &sMetricsGroup, const std::string &sCommandName );
+	void LoadCommandFromName( Actor& actor, const std::string &sMetricsGroup, const std::string &sCommandName, const std::string &sName );
+	void LoadAllCommands( Actor& actor, const std::string &sMetricsGroup );
+	void LoadAllCommandsFromName( Actor& actor, const std::string &sMetricsGroup, const std::string &sName );
 
-	inline void LoadAllCommandsAndSetXY( Actor& actor, const RString &sMetricsGroup )
+	inline void LoadAllCommandsAndSetXY( Actor& actor, const std::string &sMetricsGroup )
 	{
 		LoadAllCommands( actor, sMetricsGroup );
 		SetXY( actor, sMetricsGroup );
 	}
-	inline void LoadAllCommandsAndOnCommand( Actor& actor, const RString &sMetricsGroup )
+	inline void LoadAllCommandsAndOnCommand( Actor& actor, const std::string &sMetricsGroup )
 	{
 		LoadAllCommands( actor, sMetricsGroup );
 		OnCommand( actor );
 	}
-	inline void SetXYAndOnCommand( Actor& actor, const RString &sMetricsGroup )
+	inline void SetXYAndOnCommand( Actor& actor, const std::string &sMetricsGroup )
 	{
 		SetXY( actor, sMetricsGroup );
 		OnCommand( actor );
 	}
-	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor& actor, const RString &sMetricsGroup )
+	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor& actor, const std::string &sMetricsGroup )
 	{
 		LoadAllCommands( actor, sMetricsGroup );
 		SetXY( actor, sMetricsGroup );
@@ -102,31 +113,32 @@ namespace ActorUtil
 	}
 
 	/* convenience */
-	inline void SetXY( Actor* pActor, const RString &sMetricsGroup ) { SetXY( *pActor, sMetricsGroup ); }
-	inline void PlayCommand( Actor* pActor, const RString &sCommandName ) { if(pActor) pActor->PlayCommand( sCommandName ); }
+	inline void SetXY( Actor* pActor, const std::string &sMetricsGroup ) { SetXY( *pActor, sMetricsGroup ); }
+	inline void PlayCommand( Actor* pActor, const std::string &sCommandName ) { if(pActor) pActor->PlayCommand( sCommandName ); }
 	inline void OnCommand( Actor* pActor ) { if(pActor) ActorUtil::OnCommand( *pActor ); }
 	inline void OffCommand( Actor* pActor ) { if(pActor) ActorUtil::OffCommand( *pActor ); }
 
-	inline void LoadAllCommands( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) LoadAllCommands( *pActor, sMetricsGroup ); }
+	inline void LoadAllCommands( Actor* pActor, const std::string &sMetricsGroup ) { if(pActor) LoadAllCommands( *pActor, sMetricsGroup ); }
 
-	inline void LoadAllCommandsAndSetXY( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) LoadAllCommandsAndSetXY( *pActor, sMetricsGroup ); }
-	inline void LoadAllCommandsAndOnCommand( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) LoadAllCommandsAndOnCommand( *pActor, sMetricsGroup ); }
-	inline void SetXYAndOnCommand( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) SetXYAndOnCommand( *pActor, sMetricsGroup ); }
-	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) LoadAllCommandsAndSetXYAndOnCommand( *pActor, sMetricsGroup ); }
+	inline void LoadAllCommandsAndSetXY( Actor* pActor, const std::string &sMetricsGroup ) { if(pActor) LoadAllCommandsAndSetXY( *pActor, sMetricsGroup ); }
+	inline void LoadAllCommandsAndOnCommand( Actor* pActor, const std::string &sMetricsGroup ) { if(pActor) LoadAllCommandsAndOnCommand( *pActor, sMetricsGroup ); }
+	inline void SetXYAndOnCommand( Actor* pActor, const std::string &sMetricsGroup ) { if(pActor) SetXYAndOnCommand( *pActor, sMetricsGroup ); }
+	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor* pActor, const std::string &sMetricsGroup ) { if(pActor) LoadAllCommandsAndSetXYAndOnCommand( *pActor, sMetricsGroup ); }
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
-	Actor* LoadFromNode( const XNode* pNode, Actor *pParentActor = NULL );
-	Actor* MakeActor( const RString &sPath, Actor *pParentActor = NULL );
-	RString GetSourcePath( const XNode *pNode );
-	RString GetWhere( const XNode *pNode );
-	bool GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut, bool optional= false );
+	Actor* LoadFromNode( const XNode* pNode, Actor *pParentActor = nullptr );
+	Actor* MakeActor( const std::string &sPath, Actor *pParentActor = nullptr );
+	void MakeActorSet(std::string const& path, std::vector<Actor*>& ret);
+	std::string GetSourcePath( const XNode *pNode );
+	std::string GetWhere( const XNode *pNode );
+	bool GetAttrPath( const XNode *pNode, const std::string &sName, std::string &sOut, bool optional= false );
 	bool LoadTableFromStackShowErrors( Lua *L );
 
-	bool ResolvePath( RString &sPath, const RString &sName, bool optional= false );
+	bool ResolvePath( std::string &sPath, const std::string &sName, bool optional= false );
 
-	void SortByZPosition( vector<Actor*> &vActors );
+	void SortByZPosition( std::vector<Actor*> &vActors );
 
-	FileType GetFileType( const RString &sPath );
+	FileType GetFileType( const std::string &sPath );
 };
 
 #define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )
@@ -145,7 +157,7 @@ namespace ActorUtil
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -155,7 +167,7 @@ namespace ActorUtil
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

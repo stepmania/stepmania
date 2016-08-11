@@ -7,6 +7,8 @@
 #include "RageUtil.h"
 #include "InputEventPlus.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenTestSound );
 
 void ScreenTestSound::Init()
@@ -70,25 +72,28 @@ ScreenTestSound::~ScreenTestSound()
 	{
 		/* Delete copied sounds. */
 		vector<RageSound *> &snds = m_sSoundCopies[i];
-		for( unsigned j = 0; j < snds.size(); ++j )
-			delete snds[j];
+		for (auto *sound: snds)
+		{
+			delete sound;
+		}
 	}
 }
 
 void ScreenTestSound::UpdateText(int n)
 {
-	RString fn = Basename( s[n].s.GetLoadedFilePath() );
+	std::string fn = Rage::base_name( s[n].s.GetLoadedFilePath() );
 
 	vector<RageSound *> &snds = m_sSoundCopies[n];
 
-	RString pos;
+	// TODO: Replace with Rage::join.
+	std::string pos;
 	for(unsigned p = 0; p < snds.size(); ++p)
 	{
 		if(p) pos += ", ";
-		pos += ssprintf("%.3f", snds[p]->GetPositionSeconds());
+		pos += fmt::sprintf("%.3f", snds[p]->GetPositionSeconds());
 	}
 
-	s[n].txt.SetText(ssprintf(
+	s[n].txt.SetText(fmt::sprintf(
 		"%i: %s\n"
 		"%s\n"
 		"%s\n"
@@ -158,8 +163,10 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
 				{
 					/* Stop copied sounds. */
 					vector<RageSound *> &snds = m_sSoundCopies[i];
-					for( unsigned j = 0; j < snds.size(); ++j )
-						snds[j]->Stop();
+					for (auto *sound: snds)
+					{
+						sound->Stop();
+					}
 				}
 				break;
 			}
@@ -209,7 +216,7 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -219,7 +226,7 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

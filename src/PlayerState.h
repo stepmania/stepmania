@@ -32,7 +32,7 @@ public:
 	PlayerState();
 	/** @brief Reset the PlayerState with the initial values. */
 	void Reset();
-	/** 
+	/**
 	 * @brief Update the PlayerState based on the present time.
 	 * @param fDelta the current time. */
 	void Update( float fDelta );
@@ -42,8 +42,8 @@ public:
 	/**
 	 * @brief The PlayerNumber assigned to this Player: usually 1 or 2.
 	 *
-	 * TODO: Remove use of PlayerNumber.  All data about the player should live 
-	 * in PlayerState and callers should not use PlayerNumber to index into 
+	 * TODO: Remove use of PlayerNumber.  All data about the player should live
+	 * in PlayerState and callers should not use PlayerNumber to index into
 	 * GameState. */
 	PlayerNumber	m_PlayerNumber;
 	/**
@@ -64,19 +64,19 @@ public:
 	const TimingData   &GetDisplayedTiming()   const;
 
 	/**
-	 * @brief Holds a vector sorted by real beat, the beat that would be displayed
+	 * @brief Holds a std::vector sorted by real beat, the beat that would be displayed
 	 *        in the NoteField (because they are affected by scroll segments), and
 	 *        also the velocity.
-	 *        This vector will be populated on Player::Load() be used a lot in
+	 *        This std::vector will be populated on Player::Load() be used a lot in
 	 *        ArrowEffects to determine the target beat in O(log N).
 	 */
-	vector<CacheDisplayedBeat> m_CacheDisplayedBeat;
+	std::vector<CacheDisplayedBeat> m_CacheDisplayedBeat;
 
 	/**
-	 * @brief Holds a vector sorted by beat, the cumulative number of notes from
+	 * @brief Holds a std::vector sorted by beat, the cumulative number of notes from
 	 *        the start of the song. This will be used by [insert more description here]
 	 */
-	vector<CacheNoteStat> m_CacheNoteStat;
+	std::vector<CacheNoteStat> m_CacheNoteStat;
 
 	/**
 	 * @brief Change the PlayerOptions to their default.
@@ -85,6 +85,7 @@ public:
 	void ResetToDefaultPlayerOptions( ModsLevel l );
 	/** @brief The PlayerOptions presently in use by the Player. */
 	ModsGroup<PlayerOptions>	m_PlayerOptions;
+	void set_defective_mode(bool mode);
 
 	/**
 	 * @brief Used to push note-changing modifiers back so that notes don't pop.
@@ -114,7 +115,7 @@ public:
 	bool	m_bAttackEndedThisUpdate;	// flag for other objects to watch (play sounds)
 
 	AttackArray		m_ActiveAttacks;
-	vector<Attack>	m_ModsToApply;
+	std::vector<Attack>	m_ModsToApply;
 
 	// Haste
 	int		m_iTapsHitSinceLastHasteUpdate;
@@ -122,6 +123,10 @@ public:
 
 	// Stores the bpm that was picked for reading the chart if the player is using an mmod.
 	float m_fReadBPM;
+	// m_player_needs_defective_field is here in PlayerState so that it can be
+	// set when needed on the options screen and the Player will check it when
+	// loading in gameplay. -Kyz
+	bool m_player_needs_defective_field;
 
 	// Used in Rave
 	float	m_fSuperMeter;	// between 0 and NUM_ATTACK_LEVELS
@@ -141,7 +146,7 @@ public:
  * @author Chris Danford, Chris Gomez (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -151,7 +156,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

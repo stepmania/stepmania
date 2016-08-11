@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ArrowEffects.h"
+#include "RageMath.hpp"
 #include "Steps.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
@@ -12,7 +13,7 @@
 #include "GameState.h"
 #include "Style.h"
 #include "ThemeMetric.h"
-#include <float.h>
+#include <limits>
 
 static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
 static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
@@ -60,13 +61,13 @@ static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" )
 static ThemeMetric<float>	TINY_PERCENT_GATE( "ArrowEffects", "TinyPercentGate" );
 static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
 
-static const PlayerOptions* curr_options= NULL;
+static const PlayerOptions* curr_options= nullptr;
 
 float ArrowGetPercentVisible(float fYPosWithoutReverse);
 
 static float GetNoteFieldHeight()
 {
-	return SCREEN_HEIGHT + fabsf(curr_options->m_fPerspectiveTilt)*200;
+	return SCREEN_HEIGHT + fabsf(curr_options->m_fTilt)*200;
 }
 
 namespace
@@ -86,9 +87,10 @@ namespace
 
 void ArrowEffects::Update()
 {
+	using std::max;
 	static float fLastTime = 0;
 	float fTime = RageTimer::GetTimeSinceStartFast();
-	
+
 	FOREACH_EnabledPlayer( pn )
 	{
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(pn);
@@ -99,13 +101,13 @@ void ArrowEffects::Update()
 		const float* effects= GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_fEffects;
 
 		PerPlayerData &data = g_EffectData[pn];
-		
+
 		if( !position.m_bFreeze || !position.m_bDelay )
 		{
 			data.m_fExpandSeconds += fTime - fLastTime;
-			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, PI*2 );
+			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, Rage::PI * 2 );
 		}
-		
+
 		// Update Tornado
 		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
@@ -124,15 +126,15 @@ void ArrowEffects::Update()
 
 			int iStartCol = iColNum - iTornadoWidth;
 			int iEndCol = iColNum + iTornadoWidth;
-			CLAMP( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
-			CLAMP( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
-
-			data.m_fMinTornadoX[iColNum] = FLT_MAX;
-			data.m_fMaxTornadoX[iColNum] = FLT_MIN;
+			iStartCol = Rage::clamp( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
+			iEndCol = Rage::clamp( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
+			
+			data.m_fMinTornadoX[iColNum] = std::numeric_limits<float>::max();
+			data.m_fMaxTornadoX[iColNum] = std::numeric_limits<float>::min();
 
 			for( int i=iStartCol; i<=iEndCol; i++ )
 			{
-				data.m_fMinTornadoX[iColNum] = min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset * field_zoom );
+				data.m_fMinTornadoX[iColNum] = std::min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset * field_zoom );
 				data.m_fMaxTornadoX[iColNum] = max( data.m_fMaxTornadoX[iColNum], pCols[i].fXOffset * field_zoom);
 			}
 		}
@@ -173,7 +175,7 @@ void ArrowEffects::Update()
 			if( iFirstColOnSide == iLastColOnSide )
 				iNewColOnSide = 0;
 			else
-				iNewColOnSide = SCALE( iColOnSide, iFirstColOnSide, iLastColOnSide, iLastColOnSide, iFirstColOnSide );
+				iNewColOnSide = Rage::scale( iColOnSide, iFirstColOnSide, iLastColOnSide, iLastColOnSide, iFirstColOnSide );
 			const int iNewCol = iSideIndex*iNumColsPerSide + iNewColOnSide;
 
 			const float fOldPixelOffset = pCols[iColNum].fXOffset;
@@ -193,10 +195,10 @@ void ArrowEffects::Update()
 				TIPSY_OFFSET_ARROW_MAGNITUDE;
 			for(int col= 0; col < MAX_COLS_PER_PLAYER; ++col)
 			{
-				data.m_tipsy_result[col]= RageFastCos(
+				data.m_tipsy_result[col]= Rage::FastCos(
 					time_times_timer + (col * TIPSY_COLUMN_FREQUENCY)) *
 					arrow_times_mag;
-				data.m_tipsy_offset_result[col]= RageFastCos(
+				data.m_tipsy_offset_result[col]= Rage::FastCos(
 					time_times_offset_timer + (col * TIPSY_OFFSET_COLUMN_FREQUENCY)) *
 					arrow_times_offset_mag;
 			}
@@ -221,19 +223,19 @@ void ArrowEffects::Update()
 				break;
 
 			// -100.2 -> -0.2 -> 0.2
-			fBeat -= truncf( fBeat );
+			fBeat -= std::trunc( fBeat );
 			fBeat += 1;
-			fBeat -= truncf( fBeat );
+			fBeat -= std::trunc( fBeat );
 
 			if( fBeat >= fTotalTime )
 				break;
 
 			if( fBeat < fAccelTime )
 			{
-				data.m_fBeatFactor = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
+				data.m_fBeatFactor = Rage::scale( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
 				data.m_fBeatFactor *= data.m_fBeatFactor;
 			} else /* fBeat < fTotalTime */ {
-				data.m_fBeatFactor = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
+				data.m_fBeatFactor = Rage::scale( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
 				data.m_fBeatFactor = 1 - (1-data.m_fBeatFactor) * (1-data.m_fBeatFactor);
 			}
 
@@ -280,14 +282,14 @@ static float GetDisplayedBeat( const PlayerState* pPlayerState, float beat )
 float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )
 {
 	// Default values that are returned if boomerang is off.
-	fPeakYOffsetOut = FLT_MAX;
+	fPeakYOffsetOut = std::numeric_limits<float>::max();
 	bIsPastPeakOut = true;
 
 	float fYOffset = 0;
 	const SongPosition &position = pPlayerState->GetDisplayedPosition();
-	
+
 	float fSongBeat = position.m_fSongBeatVisible;
-	
+
 	Steps *pCurSteps = GAMESTATE->m_pCurSteps[pPlayerState->m_PlayerNumber];
 
 	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
@@ -328,7 +330,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fScrollSpeed= curr_options->m_fMaxScrollBPM /
 			(pPlayerState->m_fReadBPM * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
 	}
-	
+
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
 	{
@@ -343,24 +345,24 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	if( fAccels[PlayerOptions::ACCEL_BOOST] != 0 )
 	{
 		float fEffectHeight = GetNoteFieldHeight();
-		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+fEffectHeight/1.2f)/fEffectHeight); 
+		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+fEffectHeight/1.2f)/fEffectHeight);
 		float fAccelYAdjust =	fAccels[PlayerOptions::ACCEL_BOOST] * (fNewYOffset - fYOffset);
 		// TRICKY: Clamp this value, or else BOOST+BOOMERANG will draw a ton of arrows on the screen.
-		CLAMP( fAccelYAdjust, BOOST_MOD_MIN_CLAMP, BOOST_MOD_MAX_CLAMP );
+		fAccelYAdjust = Rage::clamp( fAccelYAdjust, BOOST_MOD_MIN_CLAMP + 0.f, BOOST_MOD_MAX_CLAMP + 0.f );
 		fYAdjust += fAccelYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_BRAKE] != 0 )
 	{
 		float fEffectHeight = GetNoteFieldHeight();
-		float fScale = SCALE( fYOffset, 0.f, fEffectHeight, 0, 1.f );
-		float fNewYOffset = fYOffset * fScale; 
+		float fScale = Rage::scale( fYOffset, 0.f, fEffectHeight, 0.f, 1.f );
+		float fNewYOffset = fYOffset * fScale;
 		float fBrakeYAdjust = fAccels[PlayerOptions::ACCEL_BRAKE] * (fNewYOffset - fYOffset);
 		// TRICKY: Clamp this value the same way as BOOST so that in BOOST+BRAKE, BRAKE doesn't overpower BOOST
-		CLAMP( fBrakeYAdjust, BRAKE_MOD_MIN_CLAMP, BRAKE_MOD_MAX_CLAMP );
+		fBrakeYAdjust = Rage::clamp( fBrakeYAdjust, BRAKE_MOD_MIN_CLAMP + 0.f, BRAKE_MOD_MAX_CLAMP + 0.f );
 		fYAdjust += fBrakeYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/WAVE_MOD_HEIGHT );
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *Rage::FastSin( fYOffset/WAVE_MOD_HEIGHT );
 
 	fYOffset += fYAdjust;
 
@@ -386,7 +388,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		/* Random speed always increases speed: a random speed of 10 indicates
 		 * [1,11]. This keeps it consistent with other mods: 0 means no effect. */
 		fScrollSpeed *=
-				SCALE( fRandom,
+				Rage::scale( fRandom,
 						0.0f, 1.0f,
 						1.0f, curr_options->m_fRandomSpeed + 1.0f );
 	}
@@ -395,13 +397,13 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	{
 		// TODO: Don't index by PlayerNumber.
 		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
-	
-		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY),
-						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
-						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
-		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 
-				      EXPAND_SPEED_SCALE_FROM_LOW, EXPAND_SPEED_SCALE_FROM_HIGH,
-				      EXPAND_SPEED_SCALE_TO_LOW, fExpandMultiplier );
+
+		float fExpandMultiplier = Rage::scale( Rage::FastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY),
+						EXPAND_MULTIPLIER_SCALE_FROM_LOW + 0.f, EXPAND_MULTIPLIER_SCALE_FROM_HIGH + 0.f,
+						EXPAND_MULTIPLIER_SCALE_TO_LOW + 0.f, EXPAND_MULTIPLIER_SCALE_TO_HIGH + 0.f );
+		fScrollSpeed *=	Rage::scale( fAccels[PlayerOptions::ACCEL_EXPAND],
+				      EXPAND_SPEED_SCALE_FROM_LOW + 0.f, EXPAND_SPEED_SCALE_FROM_HIGH + 0.f,
+				      EXPAND_SPEED_SCALE_TO_LOW + 0.f, fExpandMultiplier );
 	}
 
 	fYOffset *= fScrollSpeed;
@@ -421,11 +423,11 @@ static void ArrowGetReverseShiftAndScale(int iCol, float fYReverseOffsetPixels, 
 		fZoom = 0.01f;
 
 	float fPercentReverse = curr_options->GetReversePercentForColumn(iCol);
-	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
+	fShiftOut = Rage::scale( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
 	float fPercentCentered = curr_options->m_fScrolls[PlayerOptions::SCROLL_CENTERED];
-	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.0f );
+	fShiftOut = Rage::scale( fPercentCentered, 0.f, 1.f, fShiftOut, 0.0f );
 
-	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f );
+	fScaleOut = Rage::scale( fPercentReverse, 0.f, 1.f, 1.f, -1.f );
 }
 
 float ArrowEffects::GetYPos(int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse)
@@ -476,7 +478,7 @@ float ArrowEffects::GetYOffsetFromYPos(int iCol, float YPos, float fYReverseOffs
 	return f;
 }
 
-float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float fYOffset ) 
+float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float fYOffset )
 {
 	float fPixelOffsetFromCenter = 0; // fill this in below
 
@@ -490,26 +492,26 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
 	{
 		const float fRealPixelOffset = pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
-		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], 
-						     TORNADO_POSITION_SCALE_TO_LOW, TORNADO_POSITION_SCALE_TO_HIGH );
-		float fRads = acosf( fPositionBetween );
+		const float fPositionBetween = Rage::scale( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum],
+						     TORNADO_POSITION_SCALE_TO_LOW + 0.f, TORNADO_POSITION_SCALE_TO_HIGH + 0.f );
+		float fRads = std::acos( fPositionBetween );
 		fRads += fYOffset * TORNADO_OFFSET_FREQUENCY / SCREEN_HEIGHT;
 
-		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH,
+		const float fAdjustedPixelOffset = Rage::scale( Rage::FastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW + 0.f, TORNADO_OFFSET_SCALE_FROM_HIGH + 0.f,
 							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
 
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
-			( RageFastCos( RageTimer::GetTimeSinceStartFast() + iColNum*DRUNK_COLUMN_FREQUENCY
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] *
+			( Rage::FastCos( RageTimer::GetTimeSinceStartFast() + iColNum*DRUNK_COLUMN_FREQUENCY
 				      + fYOffset*DRUNK_OFFSET_FREQUENCY/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
 		const int iFirstCol = 0;
 		const int iLastCol = pStyle->m_iColsPerPlayer-1;
-		const int iNewCol = SCALE( iColNum, iFirstCol, iLastCol, iLastCol, iFirstCol );
+		const int iNewCol = Rage::scale( iColNum, iFirstCol, iLastCol, iLastCol, iFirstCol );
 		const float fOldPixelOffset = pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
 		const float fNewPixelOffset = pCols[iNewCol].fXOffset * pPlayerState->m_NotefieldZoom;
 		const float fDistance = fNewPixelOffset - fOldPixelOffset;
@@ -520,7 +522,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	{
-		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / BEAT_OFFSET_HEIGHT + PI/BEAT_PI_HEIGHT );
+		const float fShift = data.m_fBeatFactor*Rage::FastSin( fYOffset / BEAT_OFFSET_HEIGHT + Rage::PI / BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 
@@ -562,7 +564,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	{
 		// Allow Tiny to pull tracks together, but not to push them apart.
 		float fTinyPercent = fEffects[PlayerOptions::EFFECT_TINY];
-		fTinyPercent = min( powf(TINY_PERCENT_BASE, fTinyPercent), (float)TINY_PERCENT_GATE );
+		fTinyPercent = std::min( std::pow(TINY_PERCENT_BASE, fTinyPercent), static_cast<float>(TINY_PERCENT_GATE) );
 		fPixelOffsetFromCenter *= fTinyPercent;
 	}
 
@@ -591,7 +593,7 @@ float ArrowEffects::GetRotationY(float fYOffset)
 	return fRotation;
 }
 
-float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead ) 
+float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead )
 {
 	const float* fEffects = curr_options->m_fEffects;
 	float fRotation = 0;
@@ -604,14 +606,14 @@ float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBe
 		const float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
 		fDizzyRotation *= fEffects[PlayerOptions::EFFECT_DIZZY];
-		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
-		fDizzyRotation *= 180/PI;
+		fDizzyRotation = fmodf( fDizzyRotation, 2 * Rage::PI );
+		fDizzyRotation *= 180 / Rage::PI;
 		fRotation += fDizzyRotation;
 	}
 	return fRotation;
 }
 
-float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState ) 
+float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState )
 {
 	const float* fEffects = curr_options->m_fEffects;
 	float fRotation = 0;
@@ -620,8 +622,8 @@ float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState )
 	{
 		float fConfRotation = pPlayerState->m_Position.m_fSongBeatVisible;
 		fConfRotation *= fEffects[PlayerOptions::EFFECT_CONFUSION];
-		fConfRotation = fmodf( fConfRotation, 2*PI );
-		fConfRotation *= -180/PI;
+		fConfRotation = fmodf( fConfRotation, 2 * Rage::PI );
+		fConfRotation *= -180 / Rage::PI;
 		fRotation += fConfRotation;
 	}
 	return fRotation;
@@ -648,7 +650,7 @@ static float GetHiddenSudden()
 
 //
 //  -gray arrows-
-// 
+//
 //  ...invisible...
 //  -hidden end line-
 //  -hidden start line-
@@ -661,28 +663,28 @@ static float GetHiddenSudden()
 static float GetHiddenEndLine()
 {
 	return GetCenterLine() +
-		FADE_DIST_Y * SCALE( GetHiddenSudden(), 0.f, 1.f, -1.0f, -1.25f ) +
+		FADE_DIST_Y * Rage::scale( GetHiddenSudden(), 0.f, 1.f, -1.0f, -1.25f ) +
 		GetCenterLine() * curr_options->m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
 }
 
 static float GetHiddenStartLine()
 {
 	return GetCenterLine() +
-		FADE_DIST_Y * SCALE( GetHiddenSudden(), 0.f, 1.f, +0.0f, -0.25f ) +
+		FADE_DIST_Y * Rage::scale( GetHiddenSudden(), 0.f, 1.f, +0.0f, -0.25f ) +
 		GetCenterLine() * curr_options->m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
 }
 
 static float GetSuddenEndLine()
 {
 	return GetCenterLine() +
-		FADE_DIST_Y * SCALE( GetHiddenSudden(), 0.f, 1.f, -0.0f, +0.25f ) +
+		FADE_DIST_Y * Rage::scale( GetHiddenSudden(), 0.f, 1.f, -0.0f, +0.25f ) +
 		GetCenterLine() * curr_options->m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
 }
 
 static float GetSuddenStartLine()
 {
 	return GetCenterLine() +
-		FADE_DIST_Y * SCALE( GetHiddenSudden(), 0.f, 1.f, +1.0f, +1.25f ) +
+		FADE_DIST_Y * Rage::scale( GetHiddenSudden(), 0.f, 1.f, +1.0f, +1.25f ) +
 		GetCenterLine() * curr_options->m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
 }
 
@@ -700,14 +702,14 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse)
 
 	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] != 0 )
 	{
-		float fHiddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetHiddenStartLine(), GetHiddenEndLine(), 0, -1 );
-		CLAMP( fHiddenVisibleAdjust, -1, 0 );
+		float fHiddenVisibleAdjust = Rage::scale( fYPosWithoutReverse, GetHiddenStartLine(), GetHiddenEndLine(), 0.f, -1.f );
+		fHiddenVisibleAdjust = Rage::clamp( fHiddenVisibleAdjust, -1.f, 0.f );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * fHiddenVisibleAdjust;
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] != 0 )
 	{
-		float fSuddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetSuddenStartLine(), GetSuddenEndLine(), -1, 0 );
-		CLAMP( fSuddenVisibleAdjust, -1, 0 );
+		float fSuddenVisibleAdjust = Rage::scale( fYPosWithoutReverse, GetSuddenStartLine(), GetSuddenEndLine(), -1.f, 0.f );
+		fSuddenVisibleAdjust = Rage::clamp( fSuddenVisibleAdjust, -1.f, 0.f );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * fSuddenVisibleAdjust;
 	}
 
@@ -715,18 +717,18 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse)
 		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] != 0 )
 	{
-		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
+		float f = Rage::FastSin(RageTimer::GetTimeSinceStartFast()*10);
 		f = Quantize( f, BLINK_MOD_FREQUENCY );
-		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
+		fVisibleAdjust += Rage::scale( f, 0.f, 1.f, -1.f, 0.f );
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] != 0 )
 	{
 		const float fRealFadeDist = 80;
-		fVisibleAdjust += SCALE( fabsf(fDistFromCenterLine), fRealFadeDist, 2*fRealFadeDist, -1, 0 )
+		fVisibleAdjust += Rage::scale( fabsf(fDistFromCenterLine), fRealFadeDist, 2*fRealFadeDist, -1.f, 0.f )
 			* fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH];
 	}
 
-	return clamp( 1+fVisibleAdjust, 0, 1 );
+	return Rage::clamp( 1+fVisibleAdjust, 0.f, 1.f );
 }
 
 float ArrowEffects::GetAlpha(int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar)
@@ -743,7 +745,7 @@ float ArrowEffects::GetAlpha(int iCol, float fYOffset, float fPercentFadeToFail,
 	float fFullAlphaY = fDrawDistanceBeforeTargetsPixels*(1-fFadeInPercentOfDrawFar);
 	if( fYPosWithoutReverse > fFullAlphaY )
 	{
-		float f = SCALE( fYPosWithoutReverse, fFullAlphaY, fDrawDistanceBeforeTargetsPixels, 1.0f, 0.0f );
+		float f = Rage::scale( fYPosWithoutReverse, fFullAlphaY, fDrawDistanceBeforeTargetsPixels, 1.0f, 0.0f );
 		return f;
 	}
 	return (fPercentVisible>0.5f) ? 1.0f : 0.0f;
@@ -760,7 +762,7 @@ float ArrowEffects::GetGlow(int iCol, float fYOffset, float fPercentFadeToFail, 
 		fPercentVisible = 1 - fPercentFadeToFail;
 
 	const float fDistFromHalf = fabsf( fPercentVisible - 0.5f );
-	return SCALE( fDistFromHalf, 0, 0.5f, 1.3f, 0 );
+	return Rage::scale( fDistFromHalf, 0.f, 0.5f, 1.3f, 0.f );
 }
 
 float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteBeat )
@@ -771,8 +773,8 @@ float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteB
 	float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 	float fBeatsUntilStep = fNoteBeat - fSongBeat;
 
-	float fBrightness = SCALE( fBeatsUntilStep, 0, -1, 1.f, 0.f );
-	CLAMP( fBrightness, 0, 1 );
+	float fBrightness = Rage::scale( fBeatsUntilStep, 0.f, -1.f, 1.f, 0.f );
+	fBrightness = Rage::clamp( fBrightness, 0.f, 1.f );
 	return fBrightness;
 }
 
@@ -783,7 +785,7 @@ float ArrowEffects::GetZPos(int iCol, float fYOffset)
 	const float* fEffects = curr_options->m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( fYOffset/16.0f );
+		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*Rage::FastSin( fYOffset/16.0f );
 
 	return fZPos;
 }
@@ -813,7 +815,7 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 	float fTinyPercent = curr_options->m_fEffects[PlayerOptions::EFFECT_TINY];
 	if( fTinyPercent != 0 )
 	{
-		fTinyPercent = powf( 0.5f, fTinyPercent );
+		fTinyPercent = std::pow( 0.5f, fTinyPercent );
 		fZoom *= fTinyPercent;
 	}
 	return fZoom;
@@ -838,15 +840,15 @@ float ArrowEffects::GetFrameWidthScale( const PlayerState* pPlayerState, float f
 		float fFromEndOfOverlapped = fOverlappedTime - fSecond;
 		float fTrailingPixels = FRAME_WIDTH_LOCK_EFFECTS_TWEEN_PIXELS;
 		float fTrailingSeconds = fTrailingPixels / fPixelsPerSecond;
-		float fScaleEffect = SCALE( fFromEndOfOverlapped, 0.0f, fTrailingSeconds, 0.0f, 1.0f );
-		CLAMP( fScaleEffect, 0.0f, 1.0f );
+		float fScaleEffect = Rage::scale( fFromEndOfOverlapped, 0.0f, fTrailingSeconds, 0.0f, 1.0f );
+		fScaleEffect = Rage::clamp( fScaleEffect, 0.0f, 1.0f );
 		fWidthEffect *= fScaleEffect;
 	}
 
 	if( fWidthEffect > 0 )
-		fFrameWidthMultiplier *= SCALE( fWidthEffect, 0.0f, 1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MAX_MULTIPLIER );
+		fFrameWidthMultiplier *= Rage::scale( fWidthEffect, 0.0f, 1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MAX_MULTIPLIER + 0.f );
 	else if( fWidthEffect < 0 )
-		fFrameWidthMultiplier *= SCALE( fWidthEffect, 0.0f, -1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MIN_MULTIPLIER );
+		fFrameWidthMultiplier *= Rage::scale( fWidthEffect, 0.0f, -1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MIN_MULTIPLIER + 0.f );
 
 	return fFrameWidthMultiplier;
 }
@@ -856,7 +858,7 @@ ThemeMetric<float> FADE_BEFORE_TARGETS_PERCENT( "NoteField", "FadeBeforeTargetsP
 ThemeMetric<float> DRAW_DISTANCE_BEFORE_TARGET_PIXELS( "Player", "DrawDistanceBeforeTargetsPixels" );
 ThemeMetric<float> GRAY_ARROWS_Y_STANDARD( "Player", "ReceptorArrowsYStandard" );
 ThemeMetric<float> GRAY_ARROWS_Y_REVERSE( "Player", "ReceptorArrowsYReverse" );
-    
+
 // lua start
 #include "LuaBinding.h"
 
@@ -875,7 +877,7 @@ namespace
 		}
 		return fYReverseOffsetPixels;
 	}
-	
+
 	// ( PlayerState ps, int iCol, float fNoteBeat )
 	int GetYOffset( lua_State *L )
 	{
@@ -996,14 +998,14 @@ namespace
 		return 1;
 	}
 
-	
+
 	//( PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 	int GetGlow( lua_State *L )
 	{
 		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 		ArrowEffects::SetCurrentOptions(&ps->m_PlayerOptions.GetCurrent());
 		// Provide reasonable default values.
-		float fPercentFadeToFail = -1; // 
+		float fPercentFadeToFail = -1; //
 		float fYReverseOffsetPixels = YReverseOffset( L, 5 );
 		float fDrawDistanceBeforeTargetsPixels = DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
 		float fFadeInPercentOfDrawFar = FADE_BEFORE_TARGETS_PERCENT;
@@ -1022,7 +1024,7 @@ namespace
 		lua_pushnumber( L, ArrowEffects::GetGlow(IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
 		return 1;
 	}
-	
+
 	// ( PlayerState ps, float fNoteBeat )
 	int GetBrightness( lua_State *L )
 	{
@@ -1040,7 +1042,7 @@ namespace
 		lua_pushboolean(L, ArrowEffects::NeedZBuffer());
 		return 1;
 	}
-	
+
 	// ( PlayerState ps )
 	int GetZoom( lua_State *L )
 	{
@@ -1049,7 +1051,7 @@ namespace
 		lua_pushnumber( L, ArrowEffects::GetZoom( ps ) );
 		return 1;
 	}
-	
+
 	// ( PlayerState ps, float fYOffset, fOverlappedTime )
 	int GetFrameWidthScale( lua_State *L )
 	{
@@ -1084,7 +1086,7 @@ namespace
 		LIST_METHOD( NeedZBuffer ),
 		LIST_METHOD( GetZoom ),
 		LIST_METHOD( GetFrameWidthScale ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 
@@ -1093,7 +1095,7 @@ LUA_REGISTER_NAMESPACE( ArrowEffects )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1103,7 +1105,7 @@ LUA_REGISTER_NAMESPACE( ArrowEffects )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -2,6 +2,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "ALSA9Helpers.h"
+#include "RageMath.hpp"
 #include "ALSA9Dynamic.h"
 #include "PrefsManager.h"
 
@@ -24,7 +25,7 @@ bool Alsa9Buf::SetHWParams()
 		err = dsnd_pcm_hw_free( pcm );
 		ALSA_ASSERT("dsnd_pcm_hw_free");
 	}
-//	ASSERT_M( dsnd_pcm_state(pcm) == SND_PCM_STATE_OPEN, ssprintf("(%s)", dsnd_pcm_state_name(dsnd_pcm_state(pcm))) );
+//	ASSERT_M( dsnd_pcm_state(pcm) == SND_PCM_STATE_OPEN, fmt::sprintf("(%s)", dsnd_pcm_state_name(dsnd_pcm_state(pcm))) );
 
 	/* allocate the hardware parameters structure */
 	snd_pcm_hw_params_t *hwparams;
@@ -87,7 +88,7 @@ bool Alsa9Buf::SetSWParams()
 	/* If this fails, we might have bound dsnd_pcm_sw_params_set_avail_min to
 	 * the old SW API. */
 //	ASSERT( err <= 0 );
-	
+
 	/* Disable SND_PCM_STATE_XRUN. */
 	snd_pcm_uframes_t boundary = 0;
 	err = dsnd_pcm_sw_params_get_boundary( swparams, &boundary );
@@ -105,15 +106,76 @@ bool Alsa9Buf::SetSWParams()
 	return true;
 }
 
+// Yanked from RageUtil since this is the only spot that uses it.
+std::string alsa_printf( const char *szFormat, va_list argList )
+{
+	int constexpr blockSize = 2048;
+	static bool bExactSizeSupported;
+	static bool bInitialized = false;
+	if( !bInitialized )
+	{
+		/* Some systems return the actual size required when snprintf
+		 * doesn't have enough space.  This lets us avoid wasting time
+		 * iterating, and wasting memory. */
+		char ignore;
+		bExactSizeSupported = ( snprintf( &ignore, 0, "Hello World" ) == 11 );
+		bInitialized = true;
+	}
+
+	if( bExactSizeSupported )
+	{
+		va_list tmp;
+		va_copy( tmp, argList );
+		char ignore;
+		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
+		va_end(tmp);
+
+		char *buf = new char[iNeeded + 1];
+		std::fill(buf, buf + iNeeded + 1, '\0');
+		vsnprintf( buf, iNeeded+1, szFormat, argList );
+		std::string ret(buf);
+		delete [] buf;
+		return ret;
+	}
+
+	std::string sStr;
+
+	int iChars = blockSize;
+	int iTry = 1;
+	for (;;)
+	{
+		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
+		char *buf = new char[iChars];
+		std::fill(buf, buf + iChars, '\0');
+		int used = vsnprintf( buf, iChars - 1, szFormat, argList );
+		if ( used == -1 )
+		{
+			iChars += ( ++iTry * blockSize );
+		}
+		else
+		{
+			/* OK */
+			sStr.assign(buf, used);
+		}
+
+		delete [] buf;
+		if (used != -1)
+		{
+			break;
+		}
+	}
+	return sStr;
+}
+
 void Alsa9Buf::ErrorHandler(const char *file, int line, const char *function, int err, const char *fmt, ...)
 {
 	va_list va;
 	va_start( va, fmt );
-	RString str = vssprintf(fmt, va);
+	std::string str = alsa_printf(fmt, va);
 	va_end( va );
 
 	if( err )
-		str += ssprintf( " (%s)", dsnd_strerror(err) );
+		str += fmt::sprintf( " (%s)", dsnd_strerror(err) );
 
 	/* Annoying: these happen both normally (eg. "out of memory" when allocating too many PCM
 	 * slots) and abnormally, and there's no way to tell which is which.  I don't want to
@@ -126,23 +188,25 @@ void Alsa9Buf::InitializeErrorHandler()
 	dsnd_lib_error_set_handler( ErrorHandler );
 }
 
-static RString DeviceName()
+static std::string DeviceName()
 {
 	if( !PREFSMAN->m_iSoundDevice.Get().empty() )
-		return PREFSMAN->m_iSoundDevice;
+	{
+		return PREFSMAN->m_iSoundDevice.Get();
+	}
 	return "default";
 }
 
 void Alsa9Buf::GetSoundCardDebugInfo()
 {
-	static bool done = false;	
+	static bool done = false;
 	if( done )
 		return;
 	done = true;
 
 	if( DoesFileExist("/rootfs/proc/asound/version") )
 	{
-		RString sVersion;
+		std::string sVersion;
 		GetFileContents( "/rootfs/proc/asound/version", sVersion, true );
 		LOG->Info( "ALSA: %s", sVersion.c_str() );
 	}
@@ -152,10 +216,10 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 	int card = -1;
 	while( dsnd_card_next( &card ) >= 0 && card >= 0 )
 	{
-		const RString id = ssprintf( "hw:%d", card );
+		auto const id = fmt::sprintf( "hw:%d", card );
 		snd_ctl_t *handle;
 		int err;
-		err = dsnd_ctl_open( &handle, id, 0 );
+		err = dsnd_ctl_open( &handle, id.c_str(), 0 );
 		if ( err < 0 )
 		{
 			LOG->Info( "Couldn't open card #%i (\"%s\") to probe: %s", card, id.c_str(), dsnd_strerror(err) );
@@ -200,7 +264,7 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 
 	if( card == 0 )
 		LOG->Info( "No ALSA sound cards were found.");
-	
+
 	if( !PREFSMAN->m_iSoundDevice.Get().empty() )
 		LOG->Info( "ALSA device overridden to \"%s\"", PREFSMAN->m_iSoundDevice.Get().c_str() );
 }
@@ -212,10 +276,10 @@ Alsa9Buf::Alsa9Buf()
 	last_cursor_pos = 0;
 	preferred_writeahead = 8192;
 	preferred_chunksize = 1024;
-	pcm = NULL;
+	pcm = nullptr;
 }
 
-RString Alsa9Buf::Init( int channels_,
+std::string Alsa9Buf::Init( int channels_,
 		int iWriteahead,
 		int iChunkSize,
 		int iSampleRate )
@@ -227,16 +291,16 @@ RString Alsa9Buf::Init( int channels_,
 		samplerate = 44100;
 	else
 		samplerate = iSampleRate;
-	
+
 	GetSoundCardDebugInfo();
-		
+
 	InitializeErrorHandler();
-	
+
 	/* Open the device. */
 	int err;
-	err = dsnd_pcm_open( &pcm, DeviceName(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
+	err = dsnd_pcm_open( &pcm, DeviceName().c_str(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	if( err < 0 )
-		return ssprintf( "dsnd_pcm_open(%s): %s", DeviceName().c_str(), dsnd_strerror(err) );
+		return fmt::sprintf( "dsnd_pcm_open(%s): %s", DeviceName().c_str(), dsnd_strerror(err) );
 
 	if( !SetHWParams() )
 	{
@@ -258,7 +322,7 @@ RString Alsa9Buf::Init( int channels_,
 
 Alsa9Buf::~Alsa9Buf()
 {
-	if( pcm != NULL )
+	if( pcm != nullptr )
 		dsnd_pcm_close( pcm );
 }
 
@@ -268,12 +332,13 @@ Alsa9Buf::~Alsa9Buf()
  * hardware parameters require it, they can be ignored.) */
 int Alsa9Buf::GetNumFramesToFill()
 {
+	using std::max;
 	/* Make sure we can write ahead at least two chunks.  Otherwise, we'll only
 	 * fill one chunk ahead, and underrun. */
 	int ActualWriteahead = max( writeahead, chunksize*2 );
 
 	snd_pcm_sframes_t avail_frames = dsnd_pcm_avail_update(pcm);
-	
+
 	int total_frames = writeahead;
 	if( avail_frames > total_frames )
 	{
@@ -293,7 +358,7 @@ int Alsa9Buf::GetNumFramesToFill()
 			dsnd_pcm_forward( pcm, size );
 		}
 	}
-	
+
 	if( avail_frames < 0 )
 		avail_frames = dsnd_pcm_avail_update(pcm);
 
@@ -307,7 +372,7 @@ int Alsa9Buf::GetNumFramesToFill()
 	const snd_pcm_sframes_t filled_frames = max( 0l, total_frames - avail_frames );
 
 	/* Number of frames that don't have data, that are within the writeahead: */
-	snd_pcm_sframes_t unfilled_frames = clamp( ActualWriteahead - filled_frames, 0l, (snd_pcm_sframes_t)ActualWriteahead );
+	snd_pcm_sframes_t unfilled_frames = Rage::clamp( ActualWriteahead - filled_frames, 0l, (snd_pcm_sframes_t)ActualWriteahead );
 
 //	LOG->Trace( "total_fr: %i; avail_fr: %i; filled_fr: %i; ActualWr %i; chunksize %i; unfilled_frames %i ",
 //			total_frames, avail_frames, filled_frames, ActualWriteahead, chunksize, unfilled_frames );
@@ -410,16 +475,16 @@ void Alsa9Buf::Stop()
 	last_cursor_pos = 0;
 }
 
-RString Alsa9Buf::GetHardwareID( RString name )
+std::string Alsa9Buf::GetHardwareID( std::string name )
 {
 	InitializeErrorHandler();
 
 	if( name.empty() )
 		name = DeviceName();
-	
+
 	snd_ctl_t *handle;
 	int err;
-	err = dsnd_ctl_open( &handle, name, 0 );
+	err = dsnd_ctl_open( &handle, name.c_str(), 0 );
 	if ( err < 0 )
 	{
 		LOG->Info( "Couldn't open card \"%s\" to get ID: %s", name.c_str(), dsnd_strerror(err) );
@@ -429,7 +494,7 @@ RString Alsa9Buf::GetHardwareID( RString name )
 	snd_ctl_card_info_t *info;
 	dsnd_ctl_card_info_alloca(&info);
 	err = dsnd_ctl_card_info( handle, info );
-	RString ret = dsnd_ctl_card_info_get_id( info );
+	std::string ret = dsnd_ctl_card_info_get_id( info );
 	dsnd_ctl_close(handle);
 
 	return ret;
@@ -439,7 +504,7 @@ RString Alsa9Buf::GetHardwareID( RString name )
 /*
  * (c) 2002-2004 Glenn Maynard, Aaron VonderHaar
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -449,7 +514,7 @@ RString Alsa9Buf::GetHardwareID( RString name )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
