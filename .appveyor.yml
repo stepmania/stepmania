@@ -33,16 +33,16 @@ install:
 
     git submodule update extern/googletest
 
-    choco install cmake
+    choco install cmake -y
 
-    choco install nsis -version 2.46.0.20150406
+    choco install nsis -y -version 2.46.0.20150406
 build_script:
 - cmd: >-
     echo Running cmake now...
 
     cd "C:\Repos\wolfmania\Build"
 
-    cmake -G "Visual Studio 12 2013" -T "v120_xp" -DWITH_IRC_POST_HOOK=ON ..
+    "C:\Program Files\CMake\bin\cmake" -G "Visual Studio 12 2013" -T "v120_xp" -DWITH_IRC_POST_HOOK=ON ..
     
     msbuild "C:\Repos\wolfmania\Build\StepMania.sln" /maxcpucount:4 /verbosity:normal
     
