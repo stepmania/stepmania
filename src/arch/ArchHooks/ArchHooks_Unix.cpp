@@ -51,7 +51,7 @@ static bool IsFatalSignal( int signal )
 	}
 }
 
-static bool DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
+static bool DoCleanShutdown(int signal, siginfo_t *, const ucontext_t *)
 {
 	if( IsFatalSignal(signal) )
 		return false;
@@ -73,7 +73,7 @@ static bool DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 }
 #endif
 
-static bool EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
+static bool EmergencyShutdown(int signal, siginfo_t *, const ucontext_t *)
 {
 	if( !IsFatalSignal(signal) )
 		return false;
@@ -394,7 +394,7 @@ void ArchHooks::MountInitialFilesystems( const std::string &sDirOfExecutable )
 	FILEMAN->Mount( "dir", Root, "/" );
 }
 
-void ArchHooks::MountUserFilesystems( const std::string &sDirOfExecutable )
+void ArchHooks::MountUserFilesystems(const std::string &)
 {
 	/* Path to write general mutable user data when not Portable
 	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.

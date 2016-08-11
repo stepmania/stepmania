@@ -1471,7 +1471,7 @@ namespace
 		LOG->Warn( "%s", sString.c_str() );
 		return 0;
 	}
-	static int Flush( lua_State *L )
+	static int Flush(lua_State*)
 	{
 		LOG->Flush();
 		return 0;

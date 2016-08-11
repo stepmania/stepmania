@@ -48,7 +48,7 @@ void WorkoutGraph::SetFromCurrentWorkout()
 	SetInternal( 0 );
 }
 
-void WorkoutGraph::SetInternal( int iMinSongsPlayed )
+void WorkoutGraph::SetInternal(int)
 {
 	for (auto *p: m_vpBars)
 	{

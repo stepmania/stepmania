@@ -63,11 +63,11 @@ void ScoreDisplayLifeTime::OnLoadSong()
 {
 }
 
-void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
+void ScoreDisplayLifeTime::OnJudgment(TapNoteScore)
 {
 }
 
-void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
+void ScoreDisplayLifeTime::OnJudgment(HoldNoteScore, TapNoteScore)
 {
 }
 

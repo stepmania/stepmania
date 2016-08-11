@@ -73,7 +73,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 	this->SortByDrawOrder();
 }
 
-void Foreground::Update( float fDeltaTime )
+void Foreground::Update(float)
 {
 	using std::max;
 	// Calls to Update() should *not* be scaled by music rate. Undo it.

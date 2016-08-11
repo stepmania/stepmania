@@ -257,7 +257,7 @@ std::string OptionRow::GetRowTitle() const
 
 /* Set up text, underlines and titles for options. This can be called as soon as
  * m_pHand->m_Def is available. */
-void OptionRow::InitText( RowType type )
+void OptionRow::InitText(RowType)
 {
 	/* If we have elements already, we're being updated from a new set of options.
 	 * Delete the old ones. */

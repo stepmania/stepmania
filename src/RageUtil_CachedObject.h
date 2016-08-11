@@ -24,7 +24,7 @@ public:
 		ClearCacheNegative();
 	}
 
-	CachedObject( const CachedObject &cpy ): m_pObject(nullptr)
+	CachedObject( const CachedObject & ): m_pObject(nullptr)
 	{
 		ClearCacheNegative();
 	}
