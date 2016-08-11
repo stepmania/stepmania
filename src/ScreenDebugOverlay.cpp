@@ -1321,6 +1321,7 @@ DECLARE_ONE( DebugLineCoinMode );
 DECLARE_ONE( DebugLineSlow );
 DECLARE_ONE( DebugLineHalt );
 DECLARE_ONE( DebugLineLightsDebug );
+DECLARE_ONE( DebugLineMuteActions );
 DECLARE_ONE( DebugLineStats );
 DECLARE_ONE( DebugLineVsync );
 DECLARE_ONE( DebugLineAllowMultitexture );
@@ -1351,7 +1352,6 @@ DECLARE_ONE( DebugLineVisualDelayUp );
 DECLARE_ONE( DebugLineForceCrash );
 DECLARE_ONE( DebugLineUptime );
 DECLARE_ONE( DebugLineResetKeyMapping );
-DECLARE_ONE( DebugLineMuteActions );
 
 
 /*
