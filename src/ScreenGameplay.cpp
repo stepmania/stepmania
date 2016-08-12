@@ -1484,7 +1484,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 		const float fFirstSecond = GAMESTATE->m_pCurSong->GetFirstSecond();
 		float fStartDelay = fMinTimeToNotes - fFirstSecond;
 		fStartDelay = max( fStartDelay, fMinTimeToMusic );
-		p.m_StartSecond = -fStartDelay;
+		p.m_StartSecond = -fStartDelay * p.m_fSpeed;
 	}
 
 	ASSERT( !m_pSoundMusic->IsPlaying() );
