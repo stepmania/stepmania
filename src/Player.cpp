@@ -1093,7 +1093,7 @@ void Player::Update( float fDeltaTime )
 	}
 
 	// Check for completely judged rows.
-	UpdateJudgedRows(fDeltaTime);
+	UpdateJudgedRows();
 
 	// Check for TapNote misses
 	if (!GAMESTATE->m_bInStepEditor)
@@ -2478,12 +2478,11 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	}
 }
 
-void Player::UpdateJudgedRows(float fDeltaTime)
+void Player::UpdateJudgedRows()
 {
-	// Look into the past and future only as far as we need to
+	// Look into the future only as far as we need to
 	// catch misses and early hits
 	const int iEndRow = BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds + GetMaxStepDistanceSeconds() ) );
-	const int iStartRow = BeatToNoteRow(m_Timing->GetBeatFromElapsedTime(m_pPlayerState->m_Position.m_fMusicSeconds - GetMaxStepDistanceSeconds() - fDeltaTime - 0.1666667f));
 	bool bAllJudged = true;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
@@ -2493,10 +2492,6 @@ void Player::UpdateJudgedRows(float fDeltaTime)
 		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
 		{
 			int iRow = iter.Row();
-
-			// Do not go across rows which are too old
-			if (iStartRow > iRow)
-				continue;
 
 			// Do not judge arrows in WarpSegments or FakeSegments
 			if (!m_Timing->IsJudgableAtRow(iRow))

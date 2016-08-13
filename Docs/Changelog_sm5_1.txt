@@ -7,6 +7,16 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/08/13
+----------
+* [DX9] Removed D3DCREATE_MULTITHREADED flag because it was slower. [xwidghet]
+* [Gameplay] Multiply start delay by music rate so it doesn't change. [xwidghet]
+
+2016/08/09
+----------
+* [NewField] Rewrote mod system to allow control over how random inputs are
+  seeded.  Updated NewField_mod_system.md. [kyzentun]
+
 2016/07/26
 ----------
 * [Colors] Find the PlayerColors and PlayerDarkColors tables in your theme.
