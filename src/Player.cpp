@@ -2482,14 +2482,14 @@ void Player::UpdateJudgedRows()
 {
 	// Look into the future only as far as we need to
 	// catch misses and early hits
-	const int iEndRow = BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds + GetMaxStepDistanceSeconds() ) );
+	const float end_second= m_pPlayerState->m_Position.m_fMusicSeconds + GetMaxStepDistanceSeconds();
 	bool bAllJudged = true;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
 	{
 		NoteData::all_tracks_iterator iter = *m_pIterUnjudgedRows;
 		int iLastSeenRow = -1;
-		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
+		for( ; !iter.IsAtEnd()  &&  iter->occurs_at_second <= end_second; ++iter )
 		{
 			int iRow = iter.Row();
 
@@ -2541,7 +2541,8 @@ void Player::UpdateJudgedRows()
 		std::set<RageSound *> setSounds;
 		NoteData::all_tracks_iterator iter = *m_pIterUnjudgedMineRows;	// copy
 		int iLastSeenRow = -1;
-		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
+		float last_seen_second= -1;
+		for( ; !iter.IsAtEnd()  &&  iter->occurs_at_second <= end_second; ++iter )
 		{
 			int iRow = iter.Row();
 
@@ -2554,6 +2555,7 @@ void Player::UpdateJudgedRows()
 			if( iRow != iLastSeenRow )
 			{
 				iLastSeenRow = iRow;
+				last_seen_second= iter->occurs_at_second;
 				if( bAllJudged )
 					*m_pIterUnjudgedMineRows = iter;
 			}
@@ -2618,7 +2620,7 @@ void Player::UpdateJudgedRows()
 		}
 		// If we hit the end of the loop, m_pIterUnjudgedMineRows needs to be
 		// updated. -Kyz
-		if((iter.IsAtEnd() || iLastSeenRow == iEndRow) && bAllJudged)
+		if((iter.IsAtEnd() || last_seen_second > end_second) && bAllJudged)
 		{
 			*m_pIterUnjudgedMineRows= iter;
 		}
