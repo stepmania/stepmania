@@ -1847,8 +1847,11 @@ bool Player::IsOniDead() const
 	return m_pPlayerState->m_PlayerOptions.GetStage().m_LifeType == LifeType_Battery && m_pPlayerStageStats  && m_pPlayerStageStats->m_bFailed;
 }
 
-void Player::DoTapScoreNone()
+void Player::DoTapScoreNone(bool bStepped)
 {
+	if (!bStepped)
+		return;
+
 	Message msg( "ScoreNone" );
 	MESSAGEMAN->Broadcast( msg );
 
@@ -2368,7 +2371,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	}
 
 	if( score == TNS_None )
-		DoTapScoreNone();
+		DoTapScoreNone(!bHeld && !bRelease);
 
 	if( !bRelease )
 	{

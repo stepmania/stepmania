@@ -91,7 +91,7 @@ public:
 	}
 
 	void ScoreAllActiveHoldsLetGo();
-	void DoTapScoreNone();
+	void DoTapScoreNone(bool bStepped);
 
 	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
 
