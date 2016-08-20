@@ -192,9 +192,11 @@ void LifeMeterTime::SetLife(float value)
 	SendLifeChangedMessage(old_life, TapNoteScore_Invalid, HoldNoteScore_Invalid);
 }
 
-void LifeMeterTime::HandleTapScoreNone()
+extern ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE;
+void LifeMeterTime::HandleTapScoreNone(bool bStepped)
 {
-	// do nothing.
+	if (PENALIZE_TAP_SCORE_NONE && bStepped)
+		ChangeLife(TNS_Miss);
 }
 
 void LifeMeterTime::SendLifeChangedMessage( float fOldLife, TapNoteScore tns, HoldNoteScore hns )

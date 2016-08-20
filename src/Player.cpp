@@ -1847,7 +1847,7 @@ bool Player::IsOniDead() const
 	return m_pPlayerState->m_PlayerOptions.GetStage().m_LifeType == LifeType_Battery && m_pPlayerStageStats  && m_pPlayerStageStats->m_bFailed;
 }
 
-void Player::DoTapScoreNone()
+void Player::DoTapScoreNone(bool bStepped)
 {
 	Message msg( "ScoreNone" );
 	MESSAGEMAN->Broadcast( msg );
@@ -1865,13 +1865,13 @@ void Player::DoTapScoreNone()
 	SendComboMessages( iOldCombo, iOldMissCombo );
 
 	if( m_pLifeMeter )
-		m_pLifeMeter->HandleTapScoreNone();
+		m_pLifeMeter->HandleTapScoreNone(bStepped);
 	// TODO: Remove use of PlayerNumber
 	PlayerNumber pn = PLAYER_INVALID;
 	if( m_pCombinedLifeMeter )
-		m_pCombinedLifeMeter->HandleTapScoreNone( pn );
+		m_pCombinedLifeMeter->HandleTapScoreNone( pn, bStepped );
 
-	if( PENALIZE_TAP_SCORE_NONE )
+	if( PENALIZE_TAP_SCORE_NONE && bStepped )
 	{
 		SetJudgment( BeatToNoteRow( m_pPlayerState->m_Position.m_fSongBeat ), -1, TAP_EMPTY, TNS_Miss, 0 );
 		// the ScoreKeeper will subtract points later.
@@ -2368,7 +2368,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	}
 
 	if( score == TNS_None )
-		DoTapScoreNone();
+		DoTapScoreNone(!bHeld && !bRelease);
 
 	if( !bRelease )
 	{

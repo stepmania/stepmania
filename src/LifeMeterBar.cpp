@@ -260,9 +260,9 @@ void LifeMeterBar::SetLife(float value)
 }
 
 extern ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE;
-void LifeMeterBar::HandleTapScoreNone()
+void LifeMeterBar::HandleTapScoreNone(bool bStepped)
 {
-	if( PENALIZE_TAP_SCORE_NONE )
+	if( PENALIZE_TAP_SCORE_NONE && bStepped )
 		ChangeLife( TNS_None );
 }
 

@@ -207,9 +207,11 @@ void LifeMeterBattery::BroadcastLifeChanged(bool lost_life)
 	MESSAGEMAN->Broadcast(msg);
 }
 
-void LifeMeterBattery::HandleTapScoreNone()
+extern ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE;
+void LifeMeterBattery::HandleTapScoreNone(bool bStepped)
 {
-	// do nothing
+	if (PENALIZE_TAP_SCORE_NONE && bStepped)
+		ChangeLife(TNS_Miss);
 }
 
 void LifeMeterBattery::ChangeLife( float fDeltaLifePercent )

@@ -91,9 +91,11 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	ChangeLife( pn, fPercentToMove );
 }
 
-void CombinedLifeMeterTug::HandleTapScoreNone(PlayerNumber)
+extern ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE;
+void CombinedLifeMeterTug::HandleTapScoreNone(PlayerNumber pn, bool bStepped)
 {
-	
+	if (PENALIZE_TAP_SCORE_NONE && bStepped)
+		ChangeLife(pn, TNS_Miss);
 }
 
 void CombinedLifeMeterTug::ChangeLife(PlayerNumber pn, HoldNoteScore score, TapNoteScore)
