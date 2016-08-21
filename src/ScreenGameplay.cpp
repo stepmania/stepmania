@@ -536,7 +536,7 @@ void ScreenGameplay::Init()
 
 		// The player will be positioned in RepositionPlayers, which has to
 		// happen after notedata is loaded because it relies on the width from
-		// the NewField, which is not known until after the noteskin and data
+		// the NoteField, which is not known until after the noteskin and data
 		// are set. -Kyz
 		pi->m_pPlayer->SetX(SCREEN_CENTER_X);
 		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );
@@ -1010,24 +1010,6 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(pi->m_pn);
 		NoteData ndTransformed;
 		pStyle->GetTransformedNoteDataForStyle( pi->GetStepsAndTrailIndex(), originalNoteData, ndTransformed );
-
-		// HACK: Apply NoteSkins from global course options. Do this before
-		// Player::Load, since it needs to know which note skin to load.
-		pi->GetPlayerState()->m_ModsToApply.clear();
-		for (auto &a: pi->m_asModifiersQueue[iSongIndex])
-		{
-			if( a.fStartSecond != 0 )
-				continue;
-			a.fStartSecond = ATTACK_STARTS_NOW;	// now
-
-			PlayerOptions po;
-			po.FromString( a.sModifiers );
-			if( po.m_sNoteSkin.empty() )
-				continue;
-			a.sModifiers = po.m_sNoteSkin;
-
-			pi->GetPlayerState()->LaunchAttack( a );
-		}
 
 		/* Update attack bOn flags, and rebuild Current-level options
 		 * from Song-level options. The current NoteSkin could have changed

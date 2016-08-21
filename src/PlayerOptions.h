@@ -68,8 +68,6 @@ public:
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
-		m_sNoteSkin = "";
-		m_newskin= "default";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
 		ZERO( m_fEffects );	ONE( m_SpeedfEffects );
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
@@ -78,7 +76,7 @@ public:
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
-	std::string GetString( bool bForceNoteSkin = false ) const;
+	std::string GetString() const;
 	std::string GetSavedPrefsString() const;	// only the basic options that players would want for every song
 	enum ResetPrefsType
 	{
@@ -88,7 +86,7 @@ public:
 	void ResetPrefs( ResetPrefsType type );
 	void ResetSavedPrefs() { ResetPrefs(saved_prefs); };
 	void ResetSavedPrefsInvalidForCourse() { ResetPrefs(saved_prefs_invalid_for_course); }
-	void GetMods( std::vector<std::string> &AddTo, bool bForceNoteSkin = false ) const;
+	void GetMods(std::vector<std::string> &AddTo) const;
 	void GetLocalizedMods( std::vector<std::string> &AddTo ) const;
 	void FromString( const std::string &sMultipleMods );
 	bool FromOneModString( const std::string &sOneMod, std::string &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
@@ -227,13 +225,6 @@ public:
 	TapNoteScore m_MinTNSToHideNotes;
 
 	bool m_changed_defective_mod;
-
-	/**
-	 * @brief The Noteskin to use.
-	 *
-	 * If an empty string, it means to not change from the default. */
-	std::string m_sNoteSkin;
-	std::string m_newskin;
 
 	void NextAccel();
 	void NextEffect();

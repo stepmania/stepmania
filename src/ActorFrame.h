@@ -105,7 +105,7 @@ public:
 
 	virtual void ChildChangedDrawOrder(Actor* child);
 	// propagate_draw_order_change was made specifically for the frame wrappers
-	// that NewFieldColumn puts over its layers so it can apply mods to them.
+	// that NoteFieldColumn puts over its layers so it can apply mods to them.
 	// -Kyz
 	void propagate_draw_order_change(bool p) { m_propagate_draw_order_change= p; }
 

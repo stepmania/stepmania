@@ -11,88 +11,6 @@ end
 local explanations= {}
 local ready_indicators= {}
 
-local notefield_config= {
-	nesty_options.float_config_val(newfield_prefs_config, "hidden_offset", -1, 1, 2),
-	nesty_options.float_config_val(newfield_prefs_config, "sudden_offset", -1, 1, 2),
-	nesty_options.bool_config_val(newfield_prefs_config, "hidden"),
-	nesty_options.bool_config_val(newfield_prefs_config, "sudden"),
-	nesty_options.float_config_val(newfield_prefs_config, "fade_dist", -1, 1, 2),
-	nesty_options.bool_config_val(newfield_prefs_config, "glow_during_fade"),
-	nesty_options.float_config_val(newfield_prefs_config, "reverse", -2, 0, 0),
-	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 1),
-	nesty_options.float_config_val(newfield_prefs_config, "rotation_x", -1, 1, 2),
-	nesty_options.float_config_val(newfield_prefs_config, "rotation_y", -1, 1, 2),
-	nesty_options.float_config_val(newfield_prefs_config, "rotation_z", -1, 1, 2),
-	nesty_options.float_config_val(newfield_prefs_config, "vanish_x", -1, 1, 2),
-	nesty_options.float_config_val(newfield_prefs_config, "vanish_y", -1, 1, 2),
-	nesty_options.float_config_val(newfield_prefs_config, "fov", -1, 0, 1, 1, 179),
-	nesty_options.float_config_val(newfield_prefs_config, "yoffset", -1, 1, 2),
-	nesty_options.float_config_val(newfield_prefs_config, "zoom_x", -2, -1, 1),
-	nesty_options.float_config_val(newfield_prefs_config, "zoom_y", -2, -1, 1),
-	nesty_options.float_config_val(newfield_prefs_config, "zoom_z", -2, -1, 1),
-}
-
-local function gen_speed_menu(pn)
-	local prefs= newfield_prefs_config:get_data(pn)
-	if prefs.speed_type == "multiple" then
-		return nesty_options.float_config_val_args(newfield_prefs_config, "speed_mod", -2, -1, 1)
-	else
-		return nesty_options.float_config_val_args(newfield_prefs_config, "speed_mod", 0, 1, 3)
-	end
-end
-
-local function trisign_of_num(num)
-	if num < 0 then return -1 end
-	if num > 0 then return 1 end
-	return 0
-end
-
--- Skew needs to shift towards the center of the screen.
-local pn_skew_mult= {[PLAYER_1]= 1, [PLAYER_2]= -1}
-
-local function perspective_entry(name, skew_mult, rot_mult)
-	return {
-		name= name, translatable= true, type= "choice", execute= function(pn)
-			local conf_data= newfield_prefs_config:get_data(pn)
-			local old_rot= get_element_by_path(conf_data, "rotation_x")
-			local old_skew= get_element_by_path(conf_data, "vanish_x")
-			local new_rot= rot_mult * 30
-			local new_skew= skew_mult * 160 * pn_skew_mult[pn]
-			set_element_by_path(conf_data, "rotation_x", new_rot)
-			set_element_by_path(conf_data, "vanish_x", new_skew)
-			-- Adjust the y offset to make the receptors appear at the same final
-			-- position on the screen.
-			if new_rot < 0 then
-				set_element_by_path(conf_data, "yoffset", 180)
-			elseif new_rot > 0 then
-				set_element_by_path(conf_data, "yoffset", 140)
-			else
-				set_element_by_path(conf_data, "yoffset", get_element_by_path(newfield_prefs_config:get_default(), "yoffset"))
-			end
-			MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_name= newfield_prefs_config.name, field_name= "rotation_x", value= new_rot, pn= pn})
-		end,
-		value= function(pn)
-			local conf_data= newfield_prefs_config:get_data(pn)
-			local old_rot= get_element_by_path(conf_data, "rotation_x")
-			local old_skew= get_element_by_path(conf_data, "vanish_x")
-			if trisign_of_num(old_rot) == trisign_of_num(rot_mult) and
-			trisign_of_num(old_skew) == trisign_of_num(skew_mult) * pn_skew_mult[pn] then
-				return true
-			end
-			return false
-		end,
-	}
-end
-
-local perspective_mods= {
-	perspective_entry("overhead", 0, 0),
-	perspective_entry("distant", 0, -1),
-	perspective_entry("hallway", 0, 1),
-	perspective_entry("incoming", 1, -1),
-	perspective_entry("space", 1, 1),
-}
-
 local turn_chart_mods= {
 	nesty_options.bool_player_mod_val("Mirror"),
 	nesty_options.bool_player_mod_val("Backwards"),
@@ -163,44 +81,21 @@ local life_options= {
 }
 
 local base_options= {
-	{name= "speed_mod", menu= nesty_option_menus.adjustable_float,
-	 translatable= true, args= gen_speed_menu, exec_args= true,
-	 value= function(pn)
-		 return newfield_prefs_config:get_data(pn).speed_mod
-	 end},
-	{name= "speed_type", menu= nesty_option_menus.enum_option,
-	 translatable= true, value= function(pn)
-		 return newfield_prefs_config:get_data(pn).speed_type
-	 end,
-	 args= {
-		 name= "speed_type", enum= newfield_speed_types, fake_enum= true,
-		 obj_get= function(pn) return newfield_prefs_config:get_data(pn) end,
-		 get= function(pn, obj) return obj.speed_type end,
-		 set= function(pn, obj, value)
-			 if obj.speed_type == "multiple" and value ~= "multiple" then
-				 obj.speed_mod= math.round(obj.speed_mod * 100)
-			 elseif obj.speed_type ~= "multiple" and value == "multiple" then
-				 obj.speed_mod= obj.speed_mod / 100
-			 end
-			 obj.speed_type= value
-			 newfield_prefs_config:set_dirty(pn)
-			 MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_name= newfield_prefs_config.name, field_name= "speed_type", value= value, pn= pn})
-		 end,
-	}},
+	notefield_prefs_speed_mod_menu(),
+	notefield_prefs_speed_type_menu(),
 	nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2, 1),
 	nesty_options.float_song_mod_toggle_val("Haste", 1, 0),
-	nesty_options.submenu("perspective", perspective_mods),
-	nesty_options.float_config_toggle_val(newfield_prefs_config, "reverse", -1, 1),
-	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 0),
+	notefield_perspective_menu(),
+	nesty_options.float_config_toggle_val(notefield_prefs_config, "reverse", -1, 1),
+	nesty_options.float_config_val(notefield_prefs_config, "zoom", -2, -1, 0),
 	nesty_options.submenu("chart_mods", chart_mods),
 	{name= "newskin", translatable= true, menu= nesty_option_menus.newskins},
 	{name= "newskin_params", translatable= true, menu= nesty_option_menus.menu,
 	 args= gen_noteskin_param_menu, req_func= show_noteskin_param_menu},
 	{name= "shown_noteskins", translatable= true, menu= nesty_option_menus.shown_noteskins, args= {}},
-	nesty_options.bool_config_val(newfield_prefs_config, "hidden"),
-	nesty_options.bool_config_val(newfield_prefs_config, "sudden"),
-	nesty_options.submenu("advanced_notefield_config", notefield_config),
+	nesty_options.bool_config_val(notefield_prefs_config, "hidden"),
+	nesty_options.bool_config_val(notefield_prefs_config, "sudden"),
+	advanced_notefield_prefs_menu(),
 	nesty_options.submenu("gameplay_options", gameplay_options),
 	nesty_options.submenu("life_options", life_options),
 	nesty_options.bool_song_mod_val("AssistClap"),
@@ -209,7 +104,7 @@ local base_options= {
 	nesty_options.bool_song_mod_val("RandomBGOnly"),
 	nesty_options.float_config_val(player_config, "ScreenFilter", -2, -1, 0),
 	{name= "reload_newskins", translatable= true, type= "action",
-	 execute= function() NEWSKIN:reload_skins() end},
+	 execute= function() NOTESKIN:reload_skins() end},
 }
 
 local player_ready= {}
@@ -303,7 +198,7 @@ for pn, menu in pairs(menus) do
 	}
 	frame[#frame+1]= menu:create_actors{
 		x= menu_x[pn], y= 96, width= menu_width, height= menu_height,
-		translation_section= "newfield_options",
+		translation_section= "notefield_options",
 		num_displays= 1, pn= pn, el_height= 20,
 		menu_sounds= {
 			pop= THEME:GetPathS("Common", "Cancel"),
@@ -331,8 +226,8 @@ for pn, menu in pairs(menus) do
 		end,
 		change_explanationCommand= function(self, param)
 			local text= ""
-			if THEME:HasString("newfield_explanations", param.text) then
-				text= THEME:GetString("newfield_explanations", param.text)
+			if THEME:HasString("notefield_explanations", param.text) then
+				text= THEME:GetString("notefield_explanations", param.text)
 			end
 			self:playcommand("translated_explanation", {text= text})
 		end,

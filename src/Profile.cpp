@@ -11,7 +11,7 @@
 #include "SongManager.h"
 #include "Steps.h"
 #include "Course.h"
-#include "NewSkinManager.h"
+#include "NoteSkinManager.h"
 #include "ThemeManager.h"
 #include "CryptManager.h"
 #include "ProfileManager.h"
@@ -573,7 +573,7 @@ void Profile::get_preferred_noteskin(StepsType stype, std::string& skin) const
 	auto entry= m_preferred_noteskins.find(stype);
 	if(entry != m_preferred_noteskins.end())
 	{
-		if(!NEWSKIN->skin_supports_stepstype(entry->second, stype))
+		if(!NOTESKIN->skin_supports_stepstype(entry->second, stype))
 		{
 			entry= m_preferred_noteskins.end();
 		}
@@ -594,7 +594,7 @@ void Profile::get_preferred_noteskin(StepsType stype, std::string& skin) const
 			}
 			else
 			{
-				if(NEWSKIN->skin_supports_stepstype(pref_skin.second, stype))
+				if(NOTESKIN->skin_supports_stepstype(pref_skin.second, stype))
 				{
 					skin_counts[pref_skin.second]= 1;
 				}
@@ -602,7 +602,7 @@ void Profile::get_preferred_noteskin(StepsType stype, std::string& skin) const
 		}
 		if(skin_counts.empty())
 		{
-			skin= NEWSKIN->get_first_skin_name_for_stepstype(stype);
+			skin= NOTESKIN->get_first_skin_name_for_stepstype(stype);
 		}
 		else
 		{
@@ -625,7 +625,7 @@ void Profile::get_preferred_noteskin(StepsType stype, std::string& skin) const
 
 bool Profile::set_preferred_noteskin(StepsType stype, std::string const& skin)
 {
-	if(NEWSKIN->named_skin_exists(skin))
+	if(NOTESKIN->named_skin_exists(skin))
 	{
 		m_preferred_noteskins[stype]= skin;
 		return true;

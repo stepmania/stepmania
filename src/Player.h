@@ -18,7 +18,7 @@ class CombinedLifeMeter;
 class ScoreKeeper;
 class Inventory;
 class RageTimer;
-struct NewField;
+struct NoteField;
 class PlayerStageStats;
 class JudgedRows;
 
@@ -105,7 +105,7 @@ public:
 	static float GetMaxStepDistanceSeconds();
 	static float GetWindowSeconds( TimingWindow tw );
 	const NoteData &GetNoteData() const { return m_NoteData; }
-	bool HasVisibleParts() const { return m_new_field != nullptr; }
+	bool HasVisibleParts() const { return m_note_field != nullptr; }
 
 	void SetActorWithJudgmentPosition( Actor *pActor ) { m_pActorWithJudgmentPosition = pActor; }
 	void SetActorWithComboPosition( Actor *pActor ) { m_pActorWithComboPosition = pActor; }
@@ -171,7 +171,7 @@ protected:
 	bool			m_bDelay;
 
 	NoteData		&m_NoteData;
-	NewField		*m_new_field;
+	NoteField		*m_note_field;
 
 	AutoActor		m_sprJudgment;
 	AutoActor		m_sprCombo;

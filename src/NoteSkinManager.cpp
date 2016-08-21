@@ -1,656 +1,284 @@
 #include "global.h"
-#include "NoteSkinManager.h"
 
-#include <memory>
-
-#include "RageFileManager.h"
-#include "RageLog.h"
-#include "GameInput.h"
-#include "GameState.h"
-#include "Game.h"
-#include "Style.h"
-#include "RageUtil.h"
-#include "RageDisplay.h"
-#include "arch/Dialog/Dialog.h"
-#include "PrefsManager.h"
 #include "ActorUtil.h"
-#include "XmlFileUtil.h"
-#include "Sprite.h"
-#include <map>
+#include "NoteSkinManager.h"
+#include "RageFileManager.h"
 #include "SpecialFiles.h"
 
 using std::vector;
 
-/** @brief Have the NoteSkinManager available throughout the program. */
-NoteSkinManager*	NOTESKIN = nullptr; // global and accessible from anywhere in our program
-
-const std::string GAME_COMMON_NOTESKIN_NAME = "common";
-const std::string GAME_BASE_NOTESKIN_NAME = "default";
-
-// this isn't a global because of nondeterministic global actor ordering
-// might init this before SpecialFiles::NOTESKINS_DIR
-#define GLOBAL_BASE_DIR (SpecialFiles::NOTESKINS_DIR + GAME_COMMON_NOTESKIN_NAME + "/")
-
-static std::map<std::string,std::string> g_PathCache;
-
-struct NoteSkinData
-{
-	std::string sName;
-	IniFile metrics;
-
-	// When looking for an element, search these dirs from head to tail.
-	vector<std::string> vsDirSearchOrder;
-
-	LuaReference m_Loader;
-};
-
-namespace
-{
-	static std::map<std::string,NoteSkinData> g_mapNameToData;
-};
+NoteSkinManager* NOTESKIN= nullptr; // global and accessible from anywhere in our program
 
 NoteSkinManager::NoteSkinManager()
 {
-	m_pCurGame = nullptr;
-	m_PlayerNumber = PlayerNumber_Invalid;
-	m_GameController = GameController_Invalid;
-
 	// Register with Lua.
-	{
-		Lua *L = LUA->Get();
-		lua_pushstring( L, "NOTESKIN" );
-		this->PushSelf( L );
-		lua_settable( L, LUA_GLOBALSINDEX );
-		LUA->Release( L );
-	}
+	Lua *L = LUA->Get();
+	lua_pushstring(L, "NOTESKIN");
+	PushSelf(L);
+	lua_settable(L, LUA_GLOBALSINDEX);
+	LUA->Release(L);
+
+	load_skins();
 }
 
 NoteSkinManager::~NoteSkinManager()
 {
 	// Unregister with Lua.
-	LUA->UnsetGlobal( "NOTESKIN" );
-
-	g_mapNameToData.clear();
+	LUA->UnsetGlobal("NOTESKIN");
 }
 
-void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
+void NoteSkinManager::load_skins()
 {
-	m_pCurGame = pGame;
-
-	// clear path cache
-	g_PathCache.clear();
-
-	std::string sBaseSkinFolder = SpecialFiles::NOTESKINS_DIR + pGame->gameName + "/";
-	vector<std::string> asNoteSkinNames;
-	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
-
-	StripCvsAndSvn( asNoteSkinNames );
-	StripMacResourceForks( asNoteSkinNames );
-
-	g_mapNameToData.clear();
-	for (auto &fullName: asNoteSkinNames)
+	vector<std::string> dirs;
+	FILEMAN->GetDirListing(SpecialFiles::NOTESKINS_DIR + "*", dirs, true, true);
+	m_skins.clear();
+	m_supported_types.clear();
+	m_skins.reserve(dirs.size());
+	for(auto&& dir : dirs)
 	{
-		std::string sName = Rage::make_lower(fullName);
-		// Don't feel like changing the structure of this code to load the skin
-		// into a temp variable and move it, so if the load fails, then just
-		// delete it from the map. -Kyz
-		if(!LoadNoteSkinData(sName, g_mapNameToData[sName]))
+		std::string skin_file= dir + "/noteskin.lua";
+		// If noteskin.lua doesn't exist, maybe the folder is for something else.
+		// Ignore it.
+		if(FILEMAN->DoesFileExist(skin_file))
 		{
-			auto entry = g_mapNameToData.find(sName);
-			g_mapNameToData.erase(entry);
-		}
-	}
-}
-
-bool NoteSkinManager::LoadNoteSkinData( const std::string &sNoteSkinName, NoteSkinData& data_out )
-{
-	data_out.sName = sNoteSkinName;
-	data_out.metrics.Clear();
-	data_out.vsDirSearchOrder.clear();
-
-	// Read the current NoteSkin and all of its fallbacks
-	return LoadNoteSkinDataRecursive( sNoteSkinName, data_out );
-}
-
-bool NoteSkinManager::LoadNoteSkinDataRecursive( const std::string &sNoteSkinName_, NoteSkinData& data_out )
-{
-	std::string sNoteSkinName(sNoteSkinName_);
-
-	int iDepth = 0;
-	bool bLoadedCommon = false;
-	bool bLoadedBase = false;
-	for(;;)
-	{
-		++iDepth;
-		if(iDepth >= 20)
-		{
-			LuaHelpers::ReportScriptError("Circular NoteSkin fallback references detected.", "NOTESKIN_ERROR");
-			return false;
-		}
-
-		std::string sDir = SpecialFiles::NOTESKINS_DIR + m_pCurGame->gameName + "/" + sNoteSkinName + "/";
-		if( !FILEMAN->IsADirectory(sDir) )
-		{
-			sDir = GLOBAL_BASE_DIR + sNoteSkinName + "/";
-			if( !FILEMAN->IsADirectory(sDir) )
+			NoteSkinLoader loader;
+			if(loader.load_from_file(skin_file))
 			{
-				LuaHelpers::ReportScriptError("NoteSkin \"" + data_out.sName +
-					"\" references skin \"" + sNoteSkinName + "\" that is not present",
-					"NOTESKIN_ERROR");
-				return false;
+				m_skins.push_back(loader);
 			}
 		}
-
-		LOG->Trace( "LoadNoteSkinDataRecursive: %s (%s)", sNoteSkinName.c_str(), sDir.c_str() );
-
-		// read global fallback the current NoteSkin (if any)
-		IniFile ini;
-		ini.ReadFile( sDir+"metrics.ini" );
-		Rage::ci_ascii_string ciName{ sNoteSkinName.c_str() };
-		if (ciName == GAME_BASE_NOTESKIN_NAME)
+	}
+	for(int st= 0; st < NUM_StepsType; ++st)
+	{
+		bool supported= false;
+		for(auto&& skin : m_skins)
 		{
-			bLoadedBase = true;
-		}
-		if (ciName == GAME_COMMON_NOTESKIN_NAME)
-		{
-			bLoadedCommon = true;
-		}
-		std::string sFallback;
-		if( !ini.GetValue("Global","FallbackNoteSkin", sFallback) )
-		{
-			if( !bLoadedBase )
-				sFallback = GAME_BASE_NOTESKIN_NAME;
-			else if( !bLoadedCommon )
-				sFallback = GAME_COMMON_NOTESKIN_NAME;
-		}
-
-		XmlFileUtil::MergeIniUnder( &ini, &data_out.metrics );
-
-		data_out.vsDirSearchOrder.push_back( sDir );
-
-		if( sFallback.empty() )
-			break;
-		sNoteSkinName = sFallback;
-	}
-
-	LuaReference refScript;
-	for( vector<std::string>::reverse_iterator dir = data_out.vsDirSearchOrder.rbegin(); dir != data_out.vsDirSearchOrder.rend(); ++dir )
-	{
-		std::string sFile = *dir + "NoteSkin.lua";
-		std::string sScript;
-		if( !FILEMAN->IsAFile(sFile) )
-			continue;
-
-		if( !GetFileContents(sFile, sScript) )
-			continue;
-
-		LOG->Trace( "Load script \"%s\"", sFile.c_str() );
-
-		Lua *L = LUA->Get();
-		std::string Error= "Error running " + sFile + ": ";
-		refScript.PushSelf( L );
-		if( !LuaHelpers::RunScript(L, sScript, "@" + sFile, Error, 1, 1, true) )
-		{
-			lua_pop( L, 1 );
-		}
-		else
-		{
-			refScript.SetFromStack( L );
-		}
-		LUA->Release( L );
-	}
-	data_out.m_Loader = refScript;
-	return true;
-}
-
-
-void NoteSkinManager::GetNoteSkinNames( vector<std::string> &AddTo )
-{
-	GetNoteSkinNames( GAMESTATE->m_pCurGame, AddTo );
-}
-
-void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<std::string> &AddTo )
-{
-	GetAllNoteSkinNamesForGame( pGame, AddTo );
-}
-
-bool NoteSkinManager::NoteSkinNameInList(std::string const name, vector<std::string> name_list)
-{
-	Rage::ci_ascii_string lowerName{ name.c_str() };
-	auto isInList = [&lowerName](std::string const &entry) {
-		return lowerName == entry;
-	};
-	return std::any_of(name_list.begin(), name_list.end(), isInList);
-}
-
-bool NoteSkinManager::DoesNoteSkinExist( const std::string &sSkinName )
-{
-	vector<std::string> asSkinNames;
-	GetAllNoteSkinNamesForGame( GAMESTATE->m_pCurGame, asSkinNames );
-	return NoteSkinNameInList(sSkinName, asSkinNames);
-}
-
-bool NoteSkinManager::DoNoteSkinsExistForGame( const Game *pGame )
-{
-	vector<std::string> asSkinNames;
-	GetAllNoteSkinNamesForGame( pGame, asSkinNames );
-	return !asSkinNames.empty();
-}
-
-std::string NoteSkinManager::GetDefaultNoteSkinName()
-{
-	std::string name= THEME->GetMetric("Common", "DefaultNoteSkinName");
-	vector<std::string> all_names;
-	GetAllNoteSkinNamesForGame(GAMESTATE->m_pCurGame, all_names);
-	if(all_names.empty())
-	{
-		return "";
-	}
-	if(!NoteSkinNameInList(name, all_names))
-	{
-		name= "default";
-		if(!NoteSkinNameInList(name, all_names))
-		{
-			name= all_names[1];
-		}
-	}
-	return name;
-}
-
-void NoteSkinManager::ValidateNoteSkinName(std::string& name)
-{
-	if(name.empty() || !DoesNoteSkinExist(name))
-	{
-		LuaHelpers::ReportScriptError("Someone set a noteskin that doesn't exist.  Good job.");
-		name= GetDefaultNoteSkinName();
-	}
-}
-
-void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<std::string> &AddTo )
-{
-	if( pGame == m_pCurGame )
-	{
-		// Faster:
-		for (auto &iter: g_mapNameToData)
-		{
-			AddTo.push_back( iter.second.sName );
-		}
-	}
-	else
-	{
-		std::string sBaseSkinFolder = SpecialFiles::NOTESKINS_DIR + pGame->gameName + "/";
-		GetDirListing( sBaseSkinFolder + "*", AddTo, true );
-		StripCvsAndSvn( AddTo );
-		StripMacResourceForks( AddTo );
-	}
-}
-
-std::string NoteSkinManager::GetMetric( const std::string &sButtonName, const std::string &sValue )
-{
-	if(m_sCurrentNoteSkin.empty())
-	{
-		LuaHelpers::ReportScriptError("NOTESKIN:GetMetric: No noteskin currently set.", "NOTESKIN_ERROR");
-		return "";
-	}
-	std::string sNoteSkinName = Rage::make_lower(m_sCurrentNoteSkin);
-	auto it = g_mapNameToData.find(sNoteSkinName);
-	ASSERT_M( it != g_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
-	const NoteSkinData& data = it->second;
-
-	std::string sReturn;
-	if( data.metrics.GetValue( sButtonName, sValue, sReturn ) )
-		return sReturn;
-	if( !data.metrics.GetValue( "NoteDisplay", sValue, sReturn ) )
-	{
-		LuaHelpers::ReportScriptError("Could not read metric \"" + sButtonName +
-			"::" + sValue + "\" or \"NoteDisplay::" + sValue + "\" in \"" +
-			sNoteSkinName + "\".", "NOTESKIN_ERROR");
-		return "";
-	}
-	return sReturn;
-}
-
-int NoteSkinManager::GetMetricI( const std::string &sButtonName, const std::string &sValueName )
-{
-	return StringToInt( GetMetric(sButtonName,sValueName) );
-}
-
-float NoteSkinManager::GetMetricF( const std::string &sButtonName, const std::string &sValueName )
-{
-	return StringToFloat( GetMetric(sButtonName,sValueName) );
-}
-
-bool NoteSkinManager::GetMetricB( const std::string &sButtonName, const std::string &sValueName )
-{
-	// Could also call GetMetricI here...hmm.
-	return StringToInt( GetMetric(sButtonName,sValueName) ) != 0;
-}
-
-apActorCommands NoteSkinManager::GetMetricA( const std::string &sButtonName, const std::string &sValueName )
-{
-	return ActorUtil::ParseActorCommands( GetMetric(sButtonName,sValueName) );
-}
-
-std::string NoteSkinManager::GetPath( const std::string &sButtonName, const std::string &sElement )
-{
-	const std::string CacheString = m_sCurrentNoteSkin + "/" + sButtonName + "/" + sElement;
-	auto it = g_PathCache.find( CacheString );
-	if( it != g_PathCache.end() )
-		return it->second;
-
-	if(m_sCurrentNoteSkin.empty())
-	{
-		LuaHelpers::ReportScriptError("NOTESKIN:GetPath: No noteskin currently set.", "NOTESKIN_ERROR");
-		return "";
-	}
-	std::string sNoteSkinName = Rage::make_lower(m_sCurrentNoteSkin);
-	auto iter = g_mapNameToData.find( sNoteSkinName );
-	ASSERT( iter != g_mapNameToData.end() );
-	const NoteSkinData &data = iter->second;
-
-	std::string sPath;	// fill this in below
-	for (auto const &lIter: data.vsDirSearchOrder)
-	{
-		if( sButtonName.empty() )
-			sPath = GetPathFromDirAndFile( lIter, sElement );
-		else
-			sPath = GetPathFromDirAndFile( lIter, sButtonName+" "+sElement );
-		if( !sPath.empty() )
-			break;	// done searching
-	}
-
-	if( sPath.empty() )
-	{
-		for (auto const &lIter: data.vsDirSearchOrder)
-		{
-			if( !sButtonName.empty() )
-				sPath = GetPathFromDirAndFile( lIter, "Fallback "+sElement );
-			if( !sPath.empty() )
-				break;	// done searching
-		}
-	}
-
-	if( sPath.empty() )
-	{
-		std::string sPaths;
-		for (auto &dir: data.vsDirSearchOrder)
-		{
-			if( !sPaths.empty() )
-				sPaths += ", ";
-
-			sPaths += dir;
-		}
-
-		std::string message = fmt::sprintf(
-			"The NoteSkin element \"%s %s\" could not be found in any of the following directories:\n%s",
-			sButtonName.c_str(), sElement.c_str(),
-			sPaths.c_str() );
-
-		switch(LuaHelpers::ReportScriptError(message, "NOTESKIN_ERROR", true))
-		{
-			case Dialog::retry:
-				for (auto const &dir: data.vsDirSearchOrder)
-				{
-					FILEMAN->FlushDirCache(dir);
-				}
-				g_PathCache.clear();
-				return GetPath(sButtonName, sElement);
-			case Dialog::abort:
-				RageException::Throw("%s", message.c_str());
-			case Dialog::ignore:
-				return "";
-			default:
+			if(skin.supports_needed_buttons(static_cast<StepsType>(st)))
+			{
+				supported= true;
 				break;
-		}
-	}
-
-	int iLevel = 0;
-	while( GetExtension(sPath) == "redir" )
-	{
-		iLevel++;
-		if(iLevel >= 100)
-		{
-			LuaHelpers::ReportScriptError("Infinite recursion while looking up " +
-				sButtonName + " - " + sElement, "NOTESKIN_ERROR");
-			return "";
-		}
-		std::string sNewFileName;
-		GetFileContents( sPath, sNewFileName, true );
-		std::string sRealPath;
-
-		for (auto const &lIter: data.vsDirSearchOrder)
-		{
-			 sRealPath = GetPathFromDirAndFile( lIter, sNewFileName );
-			 if( !sRealPath.empty() )
-				 break;	// done searching
-		}
-
-		if( sRealPath == "" )
-		{
-			std::string message = fmt::sprintf(
-					"NoteSkinManager:  The redirect \"%s\" points to the file \"%s\", which does not exist. "
-					"Verify that this redirect is correct.",
-					sPath.c_str(), sNewFileName.c_str());
-
-			switch(LuaHelpers::ReportScriptError(message, "NOTESKIN_ERROR", true))
-			{
-				case Dialog::retry:
-					for (auto const &dir: data.vsDirSearchOrder)
-					{
-						FILEMAN->FlushDirCache(dir);
-					}
-					g_PathCache.clear();
-					return GetPath(sButtonName, sElement);
-				case Dialog::abort:
-					RageException::Throw("%s", message.c_str());
-				case Dialog::ignore:
-					return "";
-				default:
-					break;
 			}
 		}
-
-		sPath = sRealPath;
-	}
-
-	g_PathCache[CacheString] = sPath;
-	return sPath;
-}
-
-bool NoteSkinManager::PushActorTemplate( Lua *L, const std::string &sButton, const std::string &sElement, bool bSpriteOnly )
-{
-	auto iter = g_mapNameToData.find( m_sCurrentNoteSkin );
-	if(iter == g_mapNameToData.end())
-	{
-		LuaHelpers::ReportScriptError("No current noteskin set!", "NOTESKIN_ERROR");
-		return false;
-	}
-	const NoteSkinData &data = iter->second;
-
-	LuaThreadVariable varPlayer( "Player", LuaReference::Create(m_PlayerNumber) );
-	LuaThreadVariable varController( "Controller", LuaReference::Create(m_GameController) );
-	LuaThreadVariable varButton( "Button", sButton );
-	LuaThreadVariable varElement( "Element", sElement );
-	LuaThreadVariable varSpriteOnly( "SpriteOnly", LuaReference::Create(bSpriteOnly) );
-
-	if(data.m_Loader.IsNil())
-	{
-		LuaHelpers::ReportScriptError("No loader for noteskin!", "NOTESKIN_ERROR");
-		return false;
-	}
-	data.m_Loader.PushSelf( L );
-	lua_remove( L, -2 );
-	lua_getfield( L, -1, "Load" );
-
-	return ActorUtil::LoadTableFromStackShowErrors(L);
-}
-
-Actor *NoteSkinManager::LoadActor( const std::string &sButton, const std::string &sElement, Actor *pParent, bool bSpriteOnly )
-{
-	Lua *L = LUA->Get();
-
-	if( !PushActorTemplate(L, sButton, sElement, bSpriteOnly) )
-	{
-		LUA->Release( L );
-		// ActorUtil will warn about the error
-		return Sprite::NewBlankSprite();
-	}
-
-	std::unique_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
-	if( pNode.get() == nullptr )
-	{
-		LUA->Release( L );
-		// XNode will warn about the error
-		return Sprite::NewBlankSprite();
-	}
-
-	LUA->Release( L );
-
-	Actor *pRet = ActorUtil::LoadFromNode( pNode.get(), pParent );
-
-	if( bSpriteOnly )
-	{
-		// Make sure pActor is a Sprite (or something derived from Sprite).
-		Sprite *pSprite = dynamic_cast<Sprite *>( pRet );
-		if( pSprite == nullptr )
+		if(supported)
 		{
-			LuaHelpers::ReportScriptErrorFmt("%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str());
-			delete pRet;
-			return Sprite::NewBlankSprite();
+			m_supported_types.push_back(static_cast<StepsType>(st));
 		}
 	}
-
-	return pRet;
 }
 
-std::string NoteSkinManager::GetPathFromDirAndFile( const std::string &sDir, const std::string &sFileName )
+void NoteSkinManager::get_skins_for_stepstype(StepsType type, std::vector<NoteSkinLoader const*>& ret)
 {
-	vector<std::string> matches;		// fill this with the possible files
+	for(auto&& skin : m_skins)
+	{
+		if(skin.supports_needed_buttons(type))
+		{
+			ret.push_back(&skin);
+		}
+	}
+}
 
-	GetDirListing( sDir+sFileName+"*",		matches, false, true );
+void NoteSkinManager::get_all_skin_names(std::vector<std::string>& ret)
+{
+	for(auto&& skin : m_skins)
+	{
+		ret.push_back(skin.get_name());
+	}
+}
 
-	if( matches.empty() )
+void NoteSkinManager::get_skin_names_for_stepstype(StepsType type, std::vector<std::string>& ret)
+{
+	for(auto&& skin : m_skins)
+	{
+		if(skin.supports_needed_buttons(type))
+		{
+			ret.push_back(skin.get_name());
+		}
+	}
+}
+
+std::string NoteSkinManager::get_first_skin_name_for_stepstype(StepsType type)
+{
+	for(auto&& skin : m_skins)
+	{
+		if(skin.supports_needed_buttons(type))
+		{
+			return skin.get_name();
+		}
+	}
+	std::string stype_name= StepsTypeToString(type);
+	LuaHelpers::ReportScriptError("No noteskin supports the stepstype " + stype_name);
+	return "default";
+}
+
+std::vector<StepsType> const& NoteSkinManager::get_supported_stepstypes()
+{
+	return m_supported_types;
+}
+
+bool NoteSkinManager::skin_supports_stepstype(std::string const& skin, StepsType type)
+{
+	NoteSkinLoader const* loader= get_loader_for_skin(skin);
+	// This does not report an error when the skin is not found because it is
+	// used by the profile to pick a skin to use, and the profile might have the
+	// names of unknown skins in it.
+	if(loader == nullptr)
+	{
+		return false;
+	}
+	return loader->supports_needed_buttons(type);
+}
+
+NoteSkinLoader const* NoteSkinManager::get_loader_for_skin(std::string const& skin_name)
+{
+	for(auto&& skin : m_skins)
+	{
+		if(skin.get_name() == skin_name)
+		{
+			return &skin;
+		}
+	}
+	return nullptr;
+}
+
+std::string NoteSkinManager::get_path(
+	NoteSkinLoader const* skin, std::string file)
+{
+	if(skin == nullptr)
 	{
 		return "";
 	}
-	if( matches.size() > 1 )
+	// Check to see if the filename is already a valid path.
+	std::string resolved= file;
+	if(ActorUtil::ResolvePath(resolved, skin->get_name(), true))
 	{
-		std::string sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files: ";
-		sError+= Rage::join(", ", matches);
-		LuaHelpers::ReportScriptError(sError, "NOTESKIN_ERROR");
+		return resolved;
 	}
-
-	return matches[0];
+	// Fallback loop cases are detected and silently ignored by storing each
+	// fallback in used_fallbacks.  This allows skins to mutually fall back on
+	// each other if someone really needs to do that.
+	std::unordered_set<std::string> used_fallbacks;
+	std::string next_path= skin->get_load_path();
+	std::string next_fallback= skin->get_fallback_name();
+	std::string found_path;
+	while(!next_path.empty())
+	{
+		resolved= next_path + file;
+		next_path.clear();
+		if(ActorUtil::ResolvePath(resolved, skin->get_name(), true))
+		{
+			return resolved;
+		}
+		else if(!next_fallback.empty() &&
+			used_fallbacks.find(next_fallback) == used_fallbacks.end())
+		{
+			used_fallbacks.insert(next_fallback);
+			NoteSkinLoader const* fallback= get_loader_for_skin(next_fallback);
+			if(fallback != nullptr)
+			{
+				used_fallbacks.insert(next_fallback);
+				next_path= fallback->get_load_path();
+				next_fallback= fallback->get_fallback_name();
+			}
+		}
+	}
+	return "";
 }
 
-// lua start
+bool NoteSkinManager::named_skin_exists(std::string const& skin_name)
+{
+	for(auto&& skin : m_skins)
+	{
+		if(skin_name == skin.get_name())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the NoteSkinManager. */
-class LunaNoteSkinManager: public Luna<NoteSkinManager>
+struct LunaNoteSkinManager: Luna<NoteSkinManager>
 {
-public:
-	DEFINE_METHOD( GetPath, GetPath(SArg(1), SArg(2)) );
-	DEFINE_METHOD( GetMetric, GetMetricI(SArg(1), SArg(2)) );
-	DEFINE_METHOD( GetMetricI, GetMetricI(SArg(1), SArg(2)) );
-	DEFINE_METHOD( GetMetricF, GetMetricF(SArg(1), SArg(2)) );
-	DEFINE_METHOD( GetMetricB, GetMetricB(SArg(1), SArg(2)) );
-	static int GetMetricA( T* p, lua_State *L )		{ p->GetMetricA(SArg(1),SArg(2))->PushSelf(L); return 1; }
-	static int LoadActor( T* p, lua_State *L )
+	static int get_all_skin_names(T* p, lua_State* L)
 	{
-		std::string sButton = SArg(1);
-		std::string sElement = SArg(2);
-		if( !p->PushActorTemplate(L, sButton, sElement, false) )
-			lua_pushnil( L );
-
+		vector<std::string> names;
+		p->get_all_skin_names(names);
+		LuaHelpers::CreateTableFromArray(names, L);
 		return 1;
 	}
-#define FOR_NOTESKIN(x,n) \
-	static int x ## ForNoteSkin( T* p, lua_State *L ) \
-	{ \
-		const std::string sOldNoteSkin = p->GetCurrentNoteSkin(); \
-		std::string nsname= SArg(n+1); \
-		if(!p->DoesNoteSkinExist(nsname)) \
-		{ \
-			luaL_error(L, "Noteskin \"%s\" does not exist.", nsname.c_str()); \
-		} \
-		p->SetCurrentNoteSkin( nsname ); \
-		x( p, L ); \
-		p->SetCurrentNoteSkin( sOldNoteSkin ); \
-		return 1; \
-	}
-	FOR_NOTESKIN( GetPath, 2 );
-	FOR_NOTESKIN( GetMetric, 2 );
-	FOR_NOTESKIN( GetMetricI, 2 );
-	FOR_NOTESKIN( GetMetricF, 2 );
-	FOR_NOTESKIN( GetMetricB, 2 );
-	FOR_NOTESKIN( GetMetricA, 2 );
-	FOR_NOTESKIN( LoadActor, 2 );
-#undef FOR_NOTESKIN
-	static int GetNoteSkinNames( T* p, lua_State *L )
+	static int get_skin_names_for_stepstype(T* p, lua_State* L)
 	{
-		vector<std::string> vNoteskins;
-		p->GetNoteSkinNames( vNoteskins );
-		LuaHelpers::CreateTableFromArray(vNoteskins, L);
+		StepsType stype= Enum::Check<StepsType>(L, 1);
+		vector<std::string> names;
+		p->get_skin_names_for_stepstype(stype, names);
+		LuaHelpers::CreateTableFromArray(names, L);
 		return 1;
 	}
-	/*
-	static int GetNoteSkinNamesForGame( T* p, lua_State *L )
+	static int get_path(T* p, lua_State* L)
 	{
-		Game *pGame = Luna<Game>::check( L, 1 );
-		vector<std::string> vGameNoteskins;
-		p->GetNoteSkinNames( pGame, vGameNoteskins );
-		LuaHelpers::CreateTableFromArray(vGameNoteskins, L);
+		std::string skin_name= SArg(1);
+		std::string file_name= SArg(2);
+		NoteSkinLoader const* loader= p->get_loader_for_skin(skin_name);
+		if(loader == nullptr)
+		{
+			luaL_error(L, "No such noteskin.");
+		}
+		std::string path= p->get_path(loader, file_name);
+		if(path.empty())
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			lua_pushstring(L, path.c_str());
+		}
 		return 1;
 	}
-	*/
-	static int DoesNoteSkinExist( T* p, lua_State *L ) { lua_pushboolean(L, p->DoesNoteSkinExist( SArg(1) )); return 1; }
+	static int get_skin_parameter_defaults(T* p, lua_State* L)
+	{
+		std::string skin_name= SArg(1);
+		NoteSkinLoader const* loader= p->get_loader_for_skin(skin_name);
+		if(loader == nullptr)
+		{
+			luaL_error(L, "No such noteskin.");
+		}
+		else
+		{
+			loader->push_skin_parameter_defaults(L);
+		}
+		return 1;
+	}
+	static int get_skin_parameter_info(T* p, lua_State* L)
+	{
+		std::string skin_name= SArg(1);
+		NoteSkinLoader const* loader= p->get_loader_for_skin(skin_name);
+		if(loader == nullptr)
+		{
+			luaL_error(L, "No such noteskin.");
+		}
+		else
+		{
+			loader->push_skin_parameter_info(L);
+		}
+		return 1;
+	}
+	static int reload_skins(T* p, lua_State* L)
+	{
+		p->load_skins();
+		COMMON_RETURN_SELF;
+	}
 
 	LunaNoteSkinManager()
 	{
-		ADD_METHOD( GetPath );
-		ADD_METHOD( GetMetric );
-		ADD_METHOD( GetMetricI );
-		ADD_METHOD( GetMetricF );
-		ADD_METHOD( GetMetricB );
-		ADD_METHOD( GetMetricA );
-		ADD_METHOD( LoadActor );
-		ADD_METHOD( GetPathForNoteSkin );
-		ADD_METHOD( GetMetricForNoteSkin );
-		ADD_METHOD( GetMetricIForNoteSkin );
-		ADD_METHOD( GetMetricFForNoteSkin );
-		ADD_METHOD( GetMetricBForNoteSkin );
-		ADD_METHOD( GetMetricAForNoteSkin );
-		ADD_METHOD( LoadActorForNoteSkin );
-		ADD_METHOD( GetNoteSkinNames );
-		ADD_METHOD( DoesNoteSkinExist ); // for the current game
+		ADD_METHOD(get_all_skin_names);
+		ADD_METHOD(get_skin_names_for_stepstype);
+		ADD_METHOD(get_path);
+		ADD_METHOD(get_skin_parameter_defaults);
+		ADD_METHOD(get_skin_parameter_info);
+		ADD_METHOD(reload_skins);
 	}
 };
 
-LUA_REGISTER_CLASS( NoteSkinManager )
-// lua end
-
-/*
- * (c) 2003-2004 Chris Danford
- * All rights reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, and/or sell copies of the Software, and to permit persons to
- * whom the Software is furnished to do so, provided that the above
- * copyright notice(s) and this permission notice appear in all copies of
- * the Software and that both the above copyright notice(s) and this
- * permission notice appear in supporting documentation.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
- * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
- * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
- * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
- * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
- */
+LUA_REGISTER_CLASS(NoteSkinManager);

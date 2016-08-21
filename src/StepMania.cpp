@@ -40,7 +40,6 @@
 // StepMania global classes
 #include "ThemeManager.h"
 #include "NoteSkinManager.h"
-#include "NewSkinManager.h"
 #include "PrefsManager.h"
 #include "Song.h"
 #include "SongManager.h"
@@ -1095,7 +1094,6 @@ int sm_main(int argc, char* argv[])
 	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
 	NOTESKIN	= new NoteSkinManager;
-	NEWSKIN= new NewSkinManager;
 
 	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
@@ -1411,7 +1409,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		{
 			// Shift+F2: refresh metrics,noteskin cache and CodeDetector cache only
 			THEME->ReloadMetrics();
-			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
+			NOTESKIN->load_skins();
 			CodeDetector::RefreshCacheItems();
 			SCREENMAN->SystemMessage( RELOADED_METRICS.GetValue() );
 		}
@@ -1434,7 +1432,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			// F2 alone: refresh metrics, textures, noteskins, codedetector cache
 			THEME->ReloadMetrics();
 			TEXTUREMAN->ReloadAll();
-			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
+			NOTESKIN->load_skins();
 			CodeDetector::RefreshCacheItems();
 			SCREENMAN->SystemMessage( RELOADED_METRICS_AND_TEXTURES.GetValue() );
 		}

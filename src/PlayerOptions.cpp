@@ -4,7 +4,6 @@
 #include "RageUtil.h"
 #include "RageString.hpp"
 #include "GameState.h"
-#include "NoteSkinManager.h"
 #include "Song.h"
 #include "Course.h"
 #include "Steps.h"
@@ -77,8 +76,6 @@ void PlayerOptions::Init()
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
-	m_sNoteSkin = "";
-	m_newskin= "default";
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
@@ -122,8 +119,6 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_bMuteOnError );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
-	DO_COPY( m_sNoteSkin );
-	DO_COPY(m_newskin);
 #undef APPROACH
 #undef DO_COPY
 }
@@ -139,14 +134,14 @@ static void AddPart( vector<std::string> &AddTo, float level, std::string name )
 	AddTo.push_back( LevelStr + name );
 }
 
-std::string PlayerOptions::GetString( bool bForceNoteSkin ) const
+std::string PlayerOptions::GetString() const
 {
 	vector<std::string> v;
-	GetMods( v, bForceNoteSkin );
+	GetMods(v);
 	return Rage::join( ", ", v );
 }
 
-void PlayerOptions::GetMods( vector<std::string> &AddTo, bool bForceNoteSkin ) const
+void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 {
 	//std::string sReturn;
 
@@ -319,14 +314,6 @@ void PlayerOptions::GetMods( vector<std::string> &AddTo, bool bForceNoteSkin ) c
 		AddPart( AddTo, m_fSkew, "Skew" );
 		AddPart( AddTo, m_fTilt, "Tilt" );
 	}
-
-	// Don't display a string if using the default NoteSkin unless we force it.
-	if( bForceNoteSkin || (!m_sNoteSkin.empty() && m_sNoteSkin != CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()) )
-	{
-		std::string s = m_sNoteSkin;
-		Capitalize( s );
-		AddTo.push_back( s );
-	}
 }
 
 /* Options are added to the current settings; call Init() beforehand if
@@ -353,7 +340,6 @@ typedef void (*special_option_func_t)(PlayerOptions& options, float level, float
 static void clearall(PlayerOptions& options, float, float)
 {
 	options.Init();
-	options.m_sNoteSkin= NOTESKIN->GetDefaultNoteSkinName();
 }
 
 static void resetspeed(PlayerOptions& options, float level, float speed)
@@ -400,7 +386,6 @@ static void choose_random(PlayerOptions& options, float, float)
 
 bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &sErrorOut )
 {
-	ASSERT_M( NOTESKIN != nullptr, "The Noteskin Manager must be loaded in order to process mods." );
 	std::string sBit = Rage::trim(Rage::make_lower(sOneMod));
 
 	/* "drunk"
@@ -659,17 +644,7 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 #undef FIND_ENTRY_DEFECT_ARRAY
 #undef FIND_ENTRY_BOOL_ARRAY
 
-		if(NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit))
-		{
-			m_sNoteSkin = sBit;
-			return true;
-		}
-		else if(sBit == "noteskin" && !on) /* "no noteskin" */
-		{
-			m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
-			return true;
-		}
-		else if(sBit == "muteonerror")
+		if(sBit == "muteonerror")
 		{
 			m_bMuteOnError = on;
 			return true;
@@ -895,18 +870,6 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fPlayerAutoPlay);
 	COMPARE(m_fTilt);
 	COMPARE(m_fSkew);
-	// The noteskin name needs to be compared case-insensitively because the
-	// manager forces lowercase, but some obscure part of PlayerOptions
-	// uppercases the first letter.  The previous code that used != probably
-	// relied on std::string::operator!= misbehaving. -Kyz
-	if (Rage::ci_ascii_string{m_sNoteSkin.c_str()} != other.m_sNoteSkin)
-	{
-		return false;
-	}
-	if (Rage::ci_ascii_string {m_newskin.c_str()} != other.m_newskin)
-	{
-		return false;
-	}
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 		COMPARE(m_fAccels[i]);
 	for( int i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
@@ -948,12 +911,6 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY_SPEED(fPlayerAutoPlay);
 	CPY_SPEED(fTilt);
 	CPY_SPEED(fSkew);
-	if(!other.m_sNoteSkin.empty() &&
-		NOTESKIN->DoesNoteSkinExist(other.m_sNoteSkin))
-	{
-		CPY(m_sNoteSkin);
-	}
-	CPY(m_newskin);
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 	{
 		CPY_SPEED(fAccels[i]);
@@ -1083,7 +1040,6 @@ void PlayerOptions::GetLocalizedMods( vector<std::string> &AddTo ) const
 		{
 			asTokens.erase( asTokens.begin() );
 		}
-		// capitalize NoteSkin names
 		asTokens.back() = Capitalize( asTokens.back() );
 
 		/* Theme the mod name (the last string).  Allow this to not exist, since
@@ -1130,7 +1086,6 @@ std::string PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_bTransforms[TRANSFORM_NOLIFTS] );
 	SAVE( m_bTransforms[TRANSFORM_NOFAKES] );
 	SAVE( m_bMuteOnError );
-	SAVE( m_sNoteSkin );
 #undef SAVE
 	return po_prefs.GetString();
 }
@@ -1166,8 +1121,6 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY( m_bTransforms[TRANSFORM_NOSTRETCH] );
 	CPY( m_bTransforms[TRANSFORM_NOLIFTS] );
 	CPY( m_bTransforms[TRANSFORM_NOFAKES] );
-	// Don't clear this.
-	// CPY( m_sNoteSkin );
 #undef CPY
 }
 
@@ -1280,52 +1233,6 @@ public:
 	BOOL_INTERFACE(MuteOnError, MuteOnError);
 	ENUM_INTERFACE(FailSetting, FailType, FailType);
 	ENUM_INTERFACE(MinTNSToHideNotes, MinTNSToHideNotes, TapNoteScore);
-
-	// NoteSkins
-	static int NoteSkin(T* p, lua_State* L)
-	{
-		int original_top= lua_gettop(L);
-		if( p->m_sNoteSkin.empty()  )
-		{
-			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue().c_str() );
-		}
-		else
-		{
-			lua_pushstring( L, p->m_sNoteSkin.c_str() );
-		}
-		if(original_top >= 1 && lua_isstring(L, 1))
-		{
-			std::string skin= SArg(1);
-			if(NOTESKIN->DoesNoteSkinExist(skin))
-			{
-				p->m_sNoteSkin = skin;
-				lua_pushboolean(L, true);
-			}
-			else
-			{
-				lua_pushnil(L);
-			}
-		}
-		else
-		{
-			lua_pushnil(L);
-		}
-		OPTIONAL_RETURN_SELF(original_top);
-		return 2;
-	}
-
-	static int NewSkin(T* p, lua_State* L)
-	{
-		int original_top= lua_gettop(L);
-		std::string old= p->m_newskin;
-		if(lua_isstring(L, 1))
-		{
-			p->m_newskin= SArg(1);
-		}
-		lua_pushstring(L, old.c_str());
-		OPTIONAL_RETURN_SELF(original_top);
-		return 1;
-	}
 
 	static void SetSpeedModApproaches(T* p, float speed)
 	{
@@ -1672,8 +1579,6 @@ public:
 		ADD_METHOD(NoStretch);
 		ADD_METHOD(MuteOnError);
 
-		ADD_METHOD(NoteSkin);
-		ADD_METHOD(NewSkin);
 		ADD_METHOD(FailSetting);
 		ADD_METHOD(MinTNSToHideNotes);
 

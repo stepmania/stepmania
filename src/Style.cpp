@@ -103,29 +103,6 @@ int Style::GameInputToColumn( const GameInput &GameI ) const
 }
 
 
-void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const
-{
-	ASSERT( pn != PLAYER_INVALID );
-
-	fMixXOut = std::numeric_limits<float>::max();
-	fMaxXOut = std::numeric_limits<float>::min();
-	for( int i=0; i<m_iColsPerPlayer; i++ )
-	{
-		fMixXOut = std::min( fMixXOut, m_ColumnInfo[pn][i].fXOffset );
-		fMaxXOut = std::max( fMaxXOut, m_ColumnInfo[pn][i].fXOffset );
-	}
-}
-
-float Style::GetWidth(PlayerNumber pn) const
-{
-	float left, right;
-	GetMinAndMaxColX(pn, left, right);
-	// left and right are the center positions of the columns.  The full width
-	// needs to be from the edges.
-	float width= right - left;
-	return width + (width / static_cast<float>(m_iColsPerPlayer-1));
-}
-
 std::string Style::ColToButtonName( int iCol ) const
 {
 	const char *pzColumnName = m_ColumnInfo[PLAYER_1][iCol].pzName;
@@ -156,12 +133,6 @@ public:
 		lua_pushboolean(L, false);
 		return 1;
 	}
-	static int GetWidth(T* p, lua_State* L)
-	{
-		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		lua_pushnumber(L, p->GetWidth(pn));
-		return 1;
-	}
 	DEFINE_METHOD( LockedDifficulty,	m_bLockDifficulties )
 
 	static int GetColumnInfo( T* p, lua_State *L )
@@ -177,8 +148,6 @@ public:
 		LuaTable ret;
 		lua_pushnumber( L, p->m_ColumnInfo[pn][iCol].track+1 );
 		ret.Set( L, "Track" );
-		lua_pushnumber( L, p->m_ColumnInfo[pn][iCol].fXOffset );
-		ret.Set( L,  "XOffset" );
 		lua_pushstring( L, p->ColToButtonName(iCol).c_str() );
 		ret.Set( L, "Name" );
 
@@ -207,7 +176,6 @@ public:
 		ADD_METHOD( GetColumnDrawOrder );
 		ADD_METHOD( ColumnsPerPlayer );
 		ADD_METHOD( NeedsZoomOutWith2Players );
-		ADD_METHOD( GetWidth );
 		ADD_METHOD( LockedDifficulty );
 	}
 };

@@ -253,7 +253,6 @@ elseif(APPLE)
       cp -r "${SM_ROOT_DIR}/Data" .\;
       cp -r "${SM_ROOT_DIR}/Docs" .\;
       cp -r "${SM_ROOT_DIR}/Manual" .\;
-      cp -r "${SM_ROOT_DIR}/NewSkins" .\;
       cp -r "${SM_ROOT_DIR}/NoteSkins" .\;
       cp -r "${SM_ROOT_DIR}/Scripts" .\;
       cp -r "${SM_ROOT_DIR}/Songs" .\;
@@ -679,7 +678,6 @@ if(NOT APPLE)
   install(DIRECTORY "${SM_ROOT_DIR}/Data" DESTINATION "${SM_INSTALL_DESTINATION}")
   install(DIRECTORY "${SM_ROOT_DIR}/BackgroundTransitions" DESTINATION "${SM_INSTALL_DESTINATION}")
   install(DIRECTORY "${SM_ROOT_DIR}/Docs" DESTINATION "${SM_INSTALL_DESTINATION}")
-  install(DIRECTORY "${SM_ROOT_DIR}/NewSkins" DESTINATION "${SM_INSTALL_DESTINATION}")
   install(DIRECTORY "${SM_ROOT_DIR}/NoteSkins" DESTINATION "${SM_INSTALL_DESTINATION}")
   if (NOT SM_INSTALL_DESTINATION)
     install(DIRECTORY "${SM_ROOT_DIR}/Songs/StepMania 5" DESTINATION "Songs")

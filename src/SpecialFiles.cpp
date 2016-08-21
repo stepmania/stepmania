@@ -19,7 +19,6 @@ const std::string SpecialFiles::TYPE_TXT_FILE = "Data/Type.txt";
 const std::string SpecialFiles::SONGS_DIR = "Songs/";
 const std::string SpecialFiles::COURSES_DIR	= "Courses/";
 const std::string SpecialFiles::NOTESKINS_DIR = "NoteSkins/";
-const std::string SpecialFiles::NEWSKINS_DIR = "NewSkins/";
 const std::vector<std::string> SpecialFiles::USER_CONTENT_DIRS= {
 	"/Announcers",
 	"/BGAnimations",
@@ -29,7 +28,6 @@ const std::vector<std::string> SpecialFiles::USER_CONTENT_DIRS= {
 	"/Characters",
 	"/Courses",
 	"/NoteSkins",
-	"/NewSkins",
 	"/Packages",
 	"/Songs",
 	"/RandomMovies",

@@ -8,7 +8,7 @@
 #include "SnapDisplay.h"
 #include "Background.h"
 #include "Foreground.h"
-#include "NewField.h"
+#include "NoteField.h"
 #include "NoteTypes.h"
 #include "Song.h"
 #include "Steps.h"
@@ -283,7 +283,7 @@ protected:
 	Steps*			m_pSteps;
 
 	PlayerNumber	m_InputPlayerNumber;
-	NewField		m_NoteFieldEdit;
+	NoteField		m_NoteFieldEdit;
 	NoteData		m_NoteDataEdit;
 	SnapDisplay		m_SnapDisplay;
 
@@ -371,7 +371,7 @@ protected:
 
 
 // for MODE_RECORD
-	NewField		m_NoteFieldRecord;
+	NoteField		m_NoteFieldRecord;
 	NoteData		m_NoteDataRecord;
 	RageTimer		m_RemoveNoteButtonLastChanged;
 	bool			m_bRemoveNoteButtonDown;

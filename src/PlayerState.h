@@ -53,30 +53,11 @@ public:
 	 */
 	MultiPlayer		m_mp;
 
-	// This is used by ArrowEffects and the NoteField to zoom both appropriately
-	// to fit in the space available. -Kyz
-	float m_NotefieldZoom;
-
 	// Music statistics:
 	SongPosition m_Position;
 
 	const SongPosition &GetDisplayedPosition() const;
 	const TimingData   &GetDisplayedTiming()   const;
-
-	/**
-	 * @brief Holds a std::vector sorted by real beat, the beat that would be displayed
-	 *        in the NoteField (because they are affected by scroll segments), and
-	 *        also the velocity.
-	 *        This std::vector will be populated on Player::Load() be used a lot in
-	 *        ArrowEffects to determine the target beat in O(log N).
-	 */
-	std::vector<CacheDisplayedBeat> m_CacheDisplayedBeat;
-
-	/**
-	 * @brief Holds a std::vector sorted by beat, the cumulative number of notes from
-	 *        the start of the song. This will be used by [insert more description here]
-	 */
-	std::vector<CacheNoteStat> m_CacheNoteStat;
 
 	/**
 	 * @brief Change the PlayerOptions to their default.

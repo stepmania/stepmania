@@ -5,6 +5,13 @@ StepMania 5.1 series.  This is to inform translators of strings that need to
 be translated from English to other languages.
 ________________________________________________________________________________
 
+2016/08/21
+----------
+* Renamed section:  newfield_options renamed to notefield_options.
+* Renamed section:  newfield_explanations renamed to notefield_explanations.
+* Everything with "newskin" in the name renamed to say "noteskin" instead.
+
+
 2016/03/28
 ----------
 * New section: newfield_options.  This section is the names of options used

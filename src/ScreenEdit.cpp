@@ -8,7 +8,6 @@
 
 #include "ActorUtil.h"
 #include "AdjustSync.h"
-#include "ArrowEffects.h"
 #include "BackgroundUtil.h"
 #include "CommonMetrics.h"
 #include "GameManager.h"
@@ -20,7 +19,7 @@
 #include "InputMapper.h"
 #include "LocalizedString.h"
 #include "NoteDataUtil.h"
-#include "NewSkinManager.h"
+#include "NoteSkinManager.h"
 #include "NoteTypes.h"
 #include "NotesWriterSM.h"
 #include "PrefsManager.h"
@@ -1399,7 +1398,7 @@ static ThemeMetric<bool> LOOP_ON_CHART_END		("ScreenEdit","LoopOnChartEnd");
 
 REGISTER_SCREEN_CLASS( ScreenEdit );
 
-static void set_edit_mode_stuff_on_field(NewField& field)
+static void set_edit_mode_stuff_on_field(NoteField& field)
 {
 	field.m_being_drawn_by_player= false;
 	field.m_vanish_type= FVT_RelativeToSelf;
@@ -1485,7 +1484,7 @@ void ScreenEdit::Init()
 	// TODO:  Menu for picking the noteskin and params. -Kyz
 	LuaReference skin_params;
 	m_NoteFieldEdit.set_skin(
-		NEWSKIN->get_first_skin_name_for_stepstype(m_pSteps->m_StepsType), skin_params);
+		NOTESKIN->get_first_skin_name_for_stepstype(m_pSteps->m_StepsType), skin_params);
 	m_pSteps->GetNoteData(m_NoteDataEdit);
 	m_NoteFieldEdit.set_note_data(&m_NoteDataEdit, m_pSteps->GetTimingData(), m_pSteps->m_StepsType);
 	// TODO:  Allow setting newfield prefs. -Kyz
@@ -1495,6 +1494,8 @@ void ScreenEdit::Init()
 
 	this->AddChild( &m_NoteFieldEdit );
 
+	m_NoteFieldRecord.set_skin(
+		NOTESKIN->get_first_skin_name_for_stepstype(m_pSteps->m_StepsType), skin_params);
 	m_NoteDataRecord.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 	m_NoteFieldRecord.set_note_data(&m_NoteDataRecord, m_pSteps->GetTimingData(), m_pSteps->m_StepsType);
 	m_NoteFieldRecord.SetName("NoteFieldRecord");
@@ -1726,7 +1727,6 @@ void ScreenEdit::Update( float fDeltaTime )
 	//
 	if( m_EditState == STATE_RECORDING  ||  m_EditState == STATE_PLAYING )
 	{
-		ArrowEffects::Update();
 		/*
 		 * If any arrow is being held, continue for up to half a second after
 		 * the end marker.  This makes it possible to start a hold note near
