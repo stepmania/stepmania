@@ -12,6 +12,7 @@
 #include "ModValue.h"
 #include "NewSkin.h"
 #include "NoteData.h"
+#include "Quad.h"
 #include "Sprite.h"
 
 class NoteData;
@@ -75,10 +76,11 @@ struct NewFieldColumn : ActorFrame
 	void take_over_mods(NewFieldColumn& old_column);
 	void set_defective_mode(bool mode);
 	bool get_defective_mode();
-	void set_speed_old_way(float time_spacing, float max_scroll_bpm,
+	void set_speed(float time_spacing, float max_scroll_bpm,
 		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
 	size_t get_mod_col() { return m_column+1; }
 
+	void set_gameplay_zoom(double zoom);
 	Rage::Color get_player_color(size_t pn);
 	void get_hold_draw_time(TapNote const& tap, double const hold_beat,
 		double& beat, double& second);
@@ -138,6 +140,7 @@ struct NewFieldColumn : ActorFrame
 	void calc_transform(mod_val_inputs& input, Rage::transform& trans);
 	void calc_transform_with_glow_alpha(mod_val_inputs& input,
 		Rage::transform& trans);
+	void calc_pos_only(mod_val_inputs& input, Rage::Vector3& out);
 	void hold_render_transform(mod_val_inputs& input, Rage::transform& trans,
 		bool do_rot);
 	void calc_reverse_shift();
@@ -145,6 +148,7 @@ struct NewFieldColumn : ActorFrame
 	void apply_column_mods_to_actor(Actor* act);
 	void apply_note_mods_to_actor(Actor* act, double beat, double second,
 		double y_offset, bool use_alpha, bool use_glow);
+	float get_selection_glow();
 
 	void build_render_lists();
 	void draw_child(int child);
@@ -232,6 +236,9 @@ struct NewFieldColumn : ActorFrame
 
 	TimingSource m_timing_source;
 
+	double m_selection_start;
+	double m_selection_end;
+
 private:
 	void did_tap_note_internal(TapNoteScore tns, bool bright);
 	void did_hold_note_internal(HoldNoteScore hns, bool bright);
@@ -256,6 +263,11 @@ private:
 
 	const NoteData* m_note_data;
 	const TimingData* m_timing_data;
+
+	double m_gameplay_zoom;
+
+	Quad m_area_highlight;
+
 	// Data that needs to be stored for rendering below here.
 	// Holds and taps are put into different lists because they have to be
 	// rendered in different phases.  All hold bodies must be drawn first, then
@@ -264,6 +276,7 @@ private:
 	void draw_holds_internal();
 	void draw_lifts_internal();
 	void draw_taps_internal();
+	void draw_selection_internal();
 	NoteData::TrackMap::const_iterator first_note_visible_prev_frame;
 	std::list<render_note> render_holds;
 	std::list<render_note> render_lifts;
@@ -324,6 +337,7 @@ struct NewField : ActorFrame
 	size_t get_num_columns() { return m_columns.size(); }
 
 	void set_player_color(size_t pn, Rage::Color const& color);
+	void set_gameplay_zoom(double zoom);
 
 	void clear_steps();
 	void set_skin(std::string const& skin_name, LuaReference& skin_params);
@@ -339,9 +353,15 @@ struct NewField : ActorFrame
 	void set_read_bpm(float read_bpm) {m_defective_mods.set_read_bpm(read_bpm);}
 	void set_defective_mode(bool mode);
 	bool get_defective_mode();
-	void set_speed_old_way(float time_spacing, float max_scroll_bpm,
+	void set_speed(float time_spacing, float max_scroll_bpm,
 		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
-	void turn_on_edit_text();
+	void disable_speed_scroll_segments();
+
+	void turn_on_edit_mode();
+	double get_selection_start();
+	double get_selection_end();
+	void set_selection_start(double value);
+	void set_selection_end(double value);
 
 	void set_layer_fade_type(Actor* child, FieldLayerFadeType type);
 	FieldLayerFadeType get_layer_fade_type(Actor* child);
@@ -377,6 +397,7 @@ struct NewField : ActorFrame
 	FieldVanishType m_vanish_type;
 	bool m_being_drawn_by_player;
 	bool m_draw_beat_bars;
+	bool m_in_edit_mode;
 
 	struct field_draw_entry
 	{
@@ -389,6 +410,9 @@ struct NewField : ActorFrame
 	void change_draw_entry(int column, int child, int new_draw_order);
 	void clear_column_draw_entries();
 	double update_z_bias();
+
+	// selection_glow is needed for making notes in the selected area glow.
+	float selection_glow;
 
 private:
 	void draw_entry(field_draw_entry& entry);
@@ -426,6 +450,7 @@ private:
 	vector<field_draw_entry> m_draw_entries;
 	size_t m_first_undrawn_entry;
 	int m_curr_draw_limit;
+	double m_gameplay_zoom;
 
 	// Evaluation results of the mods need to be stored because Draw is called
 	// twice: once for the board, once for everything else.  So the mods can't

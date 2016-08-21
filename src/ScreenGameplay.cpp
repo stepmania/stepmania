@@ -529,99 +529,16 @@ void ScreenGameplay::Init()
 		this->AddChild( &m_Toasty );
 	}
 
-	// Use the margin function to calculate where the notefields should be and
-	// what size to zoom them to.  This way, themes get margins to put cut-ins
-	// in, and the engine can have players on different styles without the
-	// notefields overlapping. -Kyz
-	LuaReference margarine;
-	float margins[NUM_PLAYERS][2];
-	FOREACH_PlayerNumber(pn)
-	{
-		margins[pn][0]= 40;
-		margins[pn][1]= 40;
-	}
-	THEME->GetMetric(m_sName, "MarginFunction", margarine);
-	if(margarine.GetLuaType() != LUA_TFUNCTION)
-	{
-		LuaHelpers::ReportScriptErrorFmt("MarginFunction metric for %s must be a function.", m_sName.c_str());
-	}
-	else
-	{
-		Lua* L= LUA->Get();
-		margarine.PushSelf(L);
-		lua_createtable(L, 0, 0);
-		int next_player_slot= 1;
-		FOREACH_EnabledPlayer(pn)
-		{
-			Enum::Push(L, pn);
-			lua_rawseti(L, -2, next_player_slot);
-			++next_player_slot;
-		}
-		Enum::Push(L, GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType);
-		std::string err= "Error running MarginFunction:  ";
-		if(LuaHelpers::RunScriptOnStack(L, err, 2, 3, true))
-		{
-			std::string marge= "Margin value must be a number.";
-			margins[PLAYER_1][0]= SafeFArg(L, -3, marge, 40);
-			float center= static_cast<float>(SafeFArg(L, -2, marge, 80));
-			margins[PLAYER_1][1]= center / 2.0f;
-			margins[PLAYER_2][0]= center / 2.0f;
-			margins[PLAYER_2][1]= static_cast<float>(SafeFArg(L, -1, marge, 40));
-		}
-		lua_settop(L, 0);
-		LUA->Release(L);
-	}
-
-	float left_edge[NUM_PLAYERS]= {0.0f, SCREEN_WIDTH / 2.0f};
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		std::string sName = fmt::sprintf("Player%s", pi->GetName().c_str());
 		pi->m_pPlayer->SetName( sName );
 
-		Style const* style= GAMESTATE->GetCurrentStyle(pi->m_pn);
-		float style_width= style->GetWidth(pi->m_pn);
-		float edge= left_edge[pi->m_pn];
-		float screen_space;
-		float field_space;
-		float left_marge;
-		float right_marge;
-#define CENTER_PLAYER_BLOCK \
-		{ \
-			edge= 0.0f; \
-			screen_space= SCREEN_WIDTH; \
-			left_marge= margins[PLAYER_1][0]; \
-			right_marge= margins[PLAYER_2][1]; \
-			field_space= screen_space - left_marge - right_marge; \
-		}
-		// If pi->m_pn is set, then the player will be visible.  If not, then it's not
-		// visible and don't bother setting its position.
-		if(GAMESTATE->m_bMultiplayer && !pi->m_bIsDummy)
-		CENTER_PLAYER_BLOCK
-		else
-		{
-			screen_space= SCREEN_WIDTH / 2.0f;
-			left_marge= margins[pi->m_pn][0];
-			right_marge= margins[pi->m_pn][1];
-			field_space= screen_space - left_marge - right_marge;
-			if(Center1Player() ||
-				style->m_StyleType == StyleType_TwoPlayersSharedSides ||
-				(style_width > field_space && GAMESTATE->GetNumPlayersEnabled() == 1
-					&& (bool)ALLOW_CENTER_1_PLAYER))
-			CENTER_PLAYER_BLOCK
-		}
-#undef CENTER_PLAYER_BLOCK
-		float player_x= edge + left_marge + (field_space / 2.0f);
-		float field_zoom= field_space / style_width;
-		/*
-		LuaHelpers::ReportScriptErrorFmt("Positioning player %d at %.0f:  "
-			"screen_space %.0f, left_edge %.0f, field_space %.0f, left_marge %.0f,"
-			" right_marge %.0f, style_width %.0f, field_zoom %.2f.",
-			pi->m_pn+1, player_x, screen_space, left_edge[pi->m_pn], field_space,
-			left_marge, right_marge, style_width, field_zoom);
-		*/
-		pi->GetPlayerState()->m_NotefieldZoom= std::min(1.0f, field_zoom);
-
-		pi->m_pPlayer->SetX(player_x);
+		// The player will be positioned in RepositionPlayers, which has to
+		// happen after notedata is loaded because it relies on the width from
+		// the NewField, which is not known until after the noteskin and data
+		// are set. -Kyz
+		pi->m_pPlayer->SetX(SCREEN_CENTER_X);
 		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );
 		//ActorUtil::LoadAllCommands(pi->m_pPlayer, m_sName);
 		this->AddChild( pi->m_pPlayer );
@@ -970,10 +887,7 @@ void ScreenGameplay::InitSongQueues()
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL && SURVIVAL_MOD_OVERRIDE )
 			{
 				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage,
-										 "clearall,"
-										 + CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()
-										 + ","
-										 + CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
+					"clearall");
 				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 			}
 		}
@@ -1164,6 +1078,106 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 
 		// Hack: Course modifiers that are set to start immediately shouldn't tween on.
 		pi->GetPlayerState()->m_PlayerOptions.SetCurrentToLevel( ModsLevel_Stage );
+	}
+	RepositionPlayers();
+}
+
+void ScreenGameplay::RepositionPlayers()
+{
+	vector<double> request_widths;
+	vector<PlayerNumber> pns;
+	FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi)
+	{
+		if(pi->m_pPlayer->HasVisibleParts())
+		{
+			request_widths.push_back(pi->m_pPlayer->get_field_width());
+			pns.push_back(pi->m_pn);
+		}
+	}
+	vector<double> allowed_widths= request_widths;
+	vector<double> x_positions(request_widths.size(), SCREEN_CENTER_X);
+	LuaReference positioner;
+	THEME->GetMetric(m_sName, "PlayerPositionFunction", positioner);
+	if(positioner.GetLuaType() != LUA_TFUNCTION)
+	{
+		LuaHelpers::ReportScriptErrorFmt("PlayerPositionFunction metric for %s must be a function.", m_sName.c_str());
+	}
+	else
+	{
+		Lua* L= LUA->Get();
+		positioner.PushSelf(L);
+		lua_createtable(L, request_widths.size(), 0);
+		for(size_t w= 0; w < request_widths.size(); ++w)
+		{
+			lua_createtable(L, 2, 0);
+			// The player number is pushed as a number instead of an enum string
+			// because I'll just want to turn it into a number on the lua side
+			// anyway. -Kyz
+			lua_pushnumber(L, pns[w]);
+			lua_rawseti(L, -2, 1);
+			lua_pushnumber(L, request_widths[w]);
+			lua_rawseti(L, -2, 2);
+			lua_rawseti(L, -2, w+1);
+		}
+		std::string err= "Error running PlayerPositionFunction:  ";
+		if(LuaHelpers::RunScriptOnStack(L, err, 1, 1, true))
+		{
+			int ret_index= lua_gettop(L);
+			if(lua_type(L, ret_index) != LUA_TTABLE)
+			{
+				LuaHelpers::ReportScriptError("PlayerPositionFunction did not return a table of {position, width} pairs.");
+			}
+			else
+			{
+				size_t ret_size= lua_objlen(L, ret_index);
+				if(ret_size != allowed_widths.size())
+				{
+					LuaHelpers::ReportScriptError("PlayerPositionFunction did not return a position and width for every player.");
+				}
+				else
+				{
+					for(size_t n= 0; n < ret_size; ++n)
+					{
+						lua_rawgeti(L, ret_index, n+1);
+						int slot_index= lua_gettop(L);
+						if(lua_type(L, slot_index) != LUA_TTABLE)
+						{
+							LuaHelpers::ReportScriptErrorFmt("PlayerPositionFunction returned something invalid for player %zu", n);
+						}
+						else
+						{
+							// Enough error reporting.  If the values aren't valid, use 0.
+							// -Kyz
+							lua_rawgeti(L, slot_index, 1);
+							x_positions[n]= lua_tonumber(L, -1);
+							lua_pop(L, 1);
+							lua_rawgeti(L, slot_index, 2);
+							allowed_widths[n]= lua_tonumber(L, -1);
+							lua_pop(L, 1);
+						}
+						lua_pop(L, 1);
+					}
+				}
+			}
+		}
+		lua_settop(L, 0);
+		LUA->Release(L);
+	}
+	size_t width_slot= 0;
+	FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi)
+	{
+		if(pi->m_pPlayer->HasVisibleParts())
+		{
+			pi->m_pPlayer->SetX(x_positions[width_slot]);
+			double zoom= 1.0;
+			if(allowed_widths[width_slot] < request_widths[width_slot] &&
+				allowed_widths[width_slot] > 0.0)
+			{
+				zoom= allowed_widths[width_slot] / request_widths[width_slot];
+			}
+			pi->m_pPlayer->set_gameplay_zoom(zoom);
+			++width_slot;
+		}
 	}
 }
 
@@ -2962,8 +2976,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					SURVIVAL_MOD_OVERRIDE)
 				{
 					pi->GetPlayerState()->m_PlayerOptions.FromString(ModsLevel_Stage,
-						"clearall," + CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() +
-						"," + CommonMetrics::DEFAULT_MODIFIERS.GetValue());
+						"clearall");
 					pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 				}
 			}

@@ -32,12 +32,16 @@ static const int holds_child_index= -1;
 static const int lifts_child_index= -2;
 static const int taps_child_index= -3;
 static const int beat_bars_child_index= -4;
+static const int selection_child_index= -5;
 static const int draw_order_types= 4;
 static const int non_board_draw_order= 0;
 static const int beat_bars_draw_order= 0;
+static const int selection_draw_order= 0;
 static const int holds_draw_order= 200;
 static const int lifts_draw_order= 200;
 static const int taps_draw_order= 300;
+
+static ThemeMetric<Rage::Color> AREA_HIGHLIGHT_COLOR("NoteField", "AreaHighlightColor");
 
 static const char* FieldLayerFadeTypeNames[]= {
 	"Receptor",
@@ -124,6 +128,7 @@ NewFieldColumn::NewFieldColumn()
 	 m_note_alpha(&m_mod_manager, 1.0), m_note_glow(&m_mod_manager, 0.0),
 	 m_receptor_alpha(&m_mod_manager, 1.0), m_receptor_glow(&m_mod_manager, 0.0),
 	 m_explosion_alpha(&m_mod_manager, 1.0), m_explosion_glow(&m_mod_manager, 0.0),
+	 m_selection_start(-1.0), m_selection_end(-1.0),
 	 m_curr_beat(0.0f), m_curr_second(0.0), m_prev_curr_second(-1000.0),
 	 m_pixels_visible_before_beat(128.0f),
 	 m_pixels_visible_after_beat(1024.0f),
@@ -133,10 +138,13 @@ NewFieldColumn::NewFieldColumn()
 	 m_defective_mods(nullptr), m_in_defective_mode(false),
 	 m_note_data(nullptr),
 	 m_timing_data(nullptr),
+	 m_gameplay_zoom(1.0),
 	 reverse_scale_sign(1.0),
 	 pressed(false)
 {
 	DeleteChildrenWhenDone(true);
+	m_area_highlight.SetEffectGlowShift(2, Rage::Color(0.f, 0.f, 0.f, 0.f),
+		Rage::Color(.75f, .75f, .75f, 1.0f));
 }
 
 NewFieldColumn::~NewFieldColumn()
@@ -307,7 +315,7 @@ bool NewFieldColumn::get_defective_mode()
 	return m_in_defective_mode;
 }
 
-void NewFieldColumn::set_speed_old_way(float time_spacing,
+void NewFieldColumn::set_speed(float time_spacing,
 	float max_scroll_bpm, float scroll_speed, float scroll_bpm, float read_bpm,
 	float music_rate)
 {
@@ -446,6 +454,19 @@ void NewFieldColumn::calc_transform_with_glow_alpha(mod_val_inputs& input,
 	}
 }
 
+void NewFieldColumn::calc_pos_only(mod_val_inputs& input, Rage::Vector3& out)
+{
+	if(!m_in_defective_mode)
+	{
+		m_note_mod.pos_mod.evaluate(input, out);
+	}
+	else
+	{
+		// TODO:  Care.  calc_pos_only is only used for positioning the selection
+		// area highlight. -Kyz
+	}
+}
+
 void NewFieldColumn::hold_render_transform(mod_val_inputs& input,
 	Rage::transform& trans, bool do_rot)
 {
@@ -468,7 +489,7 @@ void NewFieldColumn::calc_reverse_shift()
 	if(!m_in_defective_mode)
 	{
 		mod_val_inputs input(m_curr_beat, m_curr_second);
-		reverse_offset= m_reverse_offset_pixels.evaluate(input);
+		reverse_offset= m_reverse_offset_pixels.evaluate(input) * m_gameplay_zoom;
 		center_percent= m_center_percent.evaluate(input);
 		reverse_scale= m_reverse_scale.evaluate(input);
 	}
@@ -545,10 +566,28 @@ void NewFieldColumn::apply_note_mods_to_actor(Actor* act, double beat,
 	act->set_transform(trans);
 }
 
+float NewFieldColumn::get_selection_glow()
+{
+	if(m_field != nullptr)
+	{
+		return m_field->selection_glow;
+	}
+	return 0.f;
+}
+
 void NewFieldColumn::UpdateInternal(float delta)
 {
 	calc_reverse_shift();
+	if(m_selection_start != -1.0)
+	{
+		m_area_highlight.Update(delta);
+	}
 	ActorFrame::UpdateInternal(delta);
+}
+
+void NewFieldColumn::set_gameplay_zoom(double zoom)
+{
+	m_gameplay_zoom= 1.0 / zoom;
 }
 
 Rage::Color NewFieldColumn::get_player_color(size_t pn)
@@ -817,6 +856,10 @@ struct hold_vert_step_state
 		second= second_lerp.lerp(y);
 		mod_val_inputs mod_input(beat, second, curr_beat, curr_second, y, note);
 		col.hold_render_transform(mod_input, trans, col.m_twirl_holds);
+		if(beat <= col.m_selection_end && beat >= col.m_selection_start)
+		{
+			trans.glow= col.get_selection_glow();
+		}
 		if(is_lift)
 		{
 			double along= (y - tex_handler.start_y) * lift_fade_dist_recip;
@@ -1435,6 +1478,8 @@ void NewFieldColumn::draw_child(int child)
 			RETURN_IF_EMPTY(render_lifts.empty());
 		case taps_child_index:
 			RETURN_IF_EMPTY(render_taps.empty());
+		case selection_child_index:
+			RETURN_IF_EMPTY(m_field == nullptr || !m_field->m_in_edit_mode);
 		default:
 			RETURN_IF_EMPTY(child < 0 || static_cast<size_t>(child) >= m_SubActors.size());
 	}
@@ -1664,6 +1709,10 @@ void NewFieldColumn::draw_taps_internal()
 					}
 				}
 				act.act->set_transform_with_glow_alpha(trans);
+				if(tap_beat <= m_selection_end && tap_beat >= m_selection_start)
+				{
+					act.act->SetGlow(Rage::Color(1, 1, 1, get_selection_glow()));
+				}
 				// Need update the z bias when drawing taps to handle 3D notes.
 				act.act->recursive_set_z_bias(m_field->update_z_bias());
 				if(m_playerize_mode == NPM_Mask)
@@ -1674,6 +1723,52 @@ void NewFieldColumn::draw_taps_internal()
 			}
 		}
 	}
+}
+
+void NewFieldColumn::draw_selection_internal()
+{
+	if(m_selection_start == -1.0)
+	{
+		return;
+	}
+	double start_second= m_timing_data->GetElapsedTimeFromBeat(m_selection_start);
+	double start_offset= calc_y_offset(m_selection_start, start_second, nullptr);
+	mod_val_inputs start_input(m_selection_start, start_second, m_curr_beat, m_curr_second, start_offset, nullptr);
+	Rage::Vector3 start_pos;
+	calc_pos_only(start_input, start_pos);
+	if(m_selection_end == -1.0)
+	{
+		if(m_add_y_offset_to_position)
+		{
+			start_pos.y+= apply_reverse_shift(start_offset);
+		}
+		m_area_highlight.set_pos(start_pos);
+		m_area_highlight.SetWidth(m_newskin->get_width());
+		m_area_highlight.SetHeight(note_size);
+		m_area_highlight.SetDiffuse(Rage::Color(0.5f, 0.5f, 0.5f, 0.5f));
+	}
+	else
+	{
+		double end_second= m_timing_data->GetElapsedTimeFromBeat(m_selection_end);
+		double end_offset= calc_y_offset(m_selection_end, end_second, nullptr);
+		mod_val_inputs end_input(m_selection_end, end_second, m_curr_beat, m_curr_second, end_offset, nullptr);
+		Rage::Vector3 end_pos;
+		calc_pos_only(end_input, end_pos);
+		if(m_add_y_offset_to_position)
+		{
+			start_pos.y+= apply_reverse_shift(start_offset);
+			end_pos.y+= apply_reverse_shift(end_offset);
+		}
+		double height= end_pos.y - start_pos.y;
+		start_pos.x= (start_pos.x + end_pos.x) * .5;
+		start_pos.y= (start_pos.y + end_pos.y) * .5;
+		start_pos.z= (start_pos.z + end_pos.z) * .5;
+		m_area_highlight.set_pos(start_pos);
+		m_area_highlight.SetWidth(m_newskin->get_width());
+		m_area_highlight.SetHeight(height);
+		m_area_highlight.SetDiffuse(AREA_HIGHLIGHT_COLOR);
+	}
+	m_area_highlight.Draw();
 }
 
 static Message create_did_message(bool bright)
@@ -1779,6 +1874,9 @@ void NewFieldColumn::draw_child_internal()
 		case taps_child_index:
 			draw_taps_internal();
 			break;
+		case selection_child_index:
+			draw_selection_internal();
+			break;
 		default:
 			if(curr_render_child >= 0 && static_cast<size_t>(curr_render_child) < m_SubActors.size())
 			{
@@ -1861,6 +1959,40 @@ static const char* FieldVanishTypeNames[] = {
 XToString(FieldVanishType);
 LuaXType(FieldVanishType);
 
+static ThemeMetric<Rage::Color> BPM_COLOR ("NoteField", "BPMColor");
+static ThemeMetric<Rage::Color> STOP_COLOR ("NoteField", "StopColor");
+static ThemeMetric<Rage::Color> DELAY_COLOR ("NoteField", "DelayColor");
+static ThemeMetric<Rage::Color> WARP_COLOR ("NoteField", "WarpColor");
+static ThemeMetric<Rage::Color> TIME_SIG_COLOR ("NoteField", "TimeSignatureColor");
+static ThemeMetric<Rage::Color> TICKCOUNT_COLOR ("NoteField", "TickcountColor");
+static ThemeMetric<Rage::Color> COMBO_COLOR ("NoteField", "ComboColor");
+static ThemeMetric<Rage::Color> LABEL_COLOR ("NoteField", "LabelColor");
+static ThemeMetric<Rage::Color> SPEED_COLOR ("NoteField", "SpeedColor");
+static ThemeMetric<Rage::Color> SCROLL_COLOR ("NoteField", "ScrollColor");
+static ThemeMetric<Rage::Color> FAKE_COLOR ("NoteField", "FakeColor");
+static ThemeMetric<bool> BPM_IS_LEFT_SIDE ("NoteField", "BPMIsLeftSide");
+static ThemeMetric<bool> STOP_IS_LEFT_SIDE ("NoteField", "StopIsLeftSide");
+static ThemeMetric<bool> DELAY_IS_LEFT_SIDE ("NoteField", "DelayIsLeftSide");
+static ThemeMetric<bool> WARP_IS_LEFT_SIDE ("NoteField", "WarpIsLeftSide");
+static ThemeMetric<bool> TIME_SIG_IS_LEFT_SIDE ("NoteField", "TimeSignatureIsLeftSide");
+static ThemeMetric<bool> TICKCOUNT_IS_LEFT_SIDE ("NoteField", "TickcountIsLeftSide");
+static ThemeMetric<bool> COMBO_IS_LEFT_SIDE ("NoteField", "ComboIsLeftSide");
+static ThemeMetric<bool> LABEL_IS_LEFT_SIDE ("NoteField", "LabelIsLeftSide");
+static ThemeMetric<bool> SPEED_IS_LEFT_SIDE ("NoteField", "SpeedIsLeftSide");
+static ThemeMetric<bool> SCROLL_IS_LEFT_SIDE ("NoteField", "ScrollIsLeftSide");
+static ThemeMetric<bool> FAKE_IS_LEFT_SIDE ("NoteField", "FakeIsLeftSide");
+static ThemeMetric<float> BPM_OFFSETX ("NoteField", "BPMOffsetX");
+static ThemeMetric<float> STOP_OFFSETX ("NoteField", "StopOffsetX");
+static ThemeMetric<float> DELAY_OFFSETX ("NoteField", "DelayOffsetX");
+static ThemeMetric<float> WARP_OFFSETX ("NoteField", "WarpOffsetX");
+static ThemeMetric<float> TIME_SIG_OFFSETX ("NoteField", "TimeSignatureOffsetX");
+static ThemeMetric<float> TICKCOUNT_OFFSETX ("NoteField", "TickcountOffsetX");
+static ThemeMetric<float> COMBO_OFFSETX ("NoteField", "ComboOffsetX");
+static ThemeMetric<float> LABEL_OFFSETX ("NoteField", "LabelOffsetX");
+static ThemeMetric<float> SPEED_OFFSETX ("NoteField", "SpeedOffsetX");
+static ThemeMetric<float> SCROLL_OFFSETX ("NoteField", "ScrollOffsetX");
+static ThemeMetric<float> FAKE_OFFSETX ("NoteField", "FakeOffsetX");
+
 NewField::NewField()
 	:m_trans_mod(&m_mod_manager),
 	 m_receptor_alpha(&m_mod_manager, 1.0), m_receptor_glow(&m_mod_manager, 0.0),
@@ -1868,10 +2000,10 @@ NewField::NewField()
 	 m_fov_mod(&m_mod_manager, 45.0),
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
-	 m_draw_beat_bars(false), m_pn(NUM_PLAYERS),
+	 m_draw_beat_bars(false), m_in_edit_mode(false), m_pn(NUM_PLAYERS),
 	 m_in_defective_mode(false),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
-	 m_steps_type(StepsType_Invalid),
+	 m_steps_type(StepsType_Invalid), m_gameplay_zoom(1.0),
 	 defective_render_y(0.0), original_y(0.0)
 {
 	DeleteChildrenWhenDone(true);
@@ -1954,12 +2086,19 @@ void NewField::UpdateInternal(float delta)
 	{
 		col.Update(delta);
 	}
+	if(m_in_edit_mode && get_selection_end() != -1.0)
+	{
+		selection_glow= Rage::scale(Rage::FastCos(
+				RageTimer::GetTimeSinceStartFast()*2), -1.f, 1.f, 0.1f, 0.3f);
+	}
 	ActorFrame::UpdateInternal(delta);
 }
 
 bool NewField::EarlyAbortDraw() const
 {
-	return m_note_data == nullptr || m_note_data->IsEmpty() || m_timing_data == nullptr || m_columns.empty() || !m_newskin.loaded_successfully() || ActorFrame::EarlyAbortDraw();
+	return m_note_data == nullptr || m_timing_data == nullptr ||
+		m_columns.empty() || !m_newskin.loaded_successfully() ||
+		ActorFrame::EarlyAbortDraw();
 }
 
 void NewField::PreDraw()
@@ -2045,6 +2184,15 @@ void NewField::set_player_color(size_t pn, Rage::Color const& color)
 		m_player_colors.resize(pn+1);
 	}
 	m_player_colors[pn]= color;
+}
+
+void NewField::set_gameplay_zoom(double zoom)
+{
+	m_gameplay_zoom= zoom;
+	for(auto&& col : m_columns)
+	{
+		col.set_gameplay_zoom(zoom);
+	}
 }
 
 void NewField::clear_steps()
@@ -2307,7 +2455,7 @@ void NewField::draw_beat_bars_internal()
 		return;
 	}
 	float const beat_step_size= 1.f;
-	float const start_beat= floor(m_curr_beat) - 2.f;
+	float const start_beat= max(0., floor(m_curr_beat) - 2.f);
 	float const max_beat= start_beat + 128.f;
 	double last_visible_beat= -1000.0;
 	bool found_end= false;
@@ -2376,6 +2524,49 @@ void NewField::draw_beat_bars_internal()
 			draw_beat_bar(sub_beat, sub_second, sub_y_offset, sub_states[sub], alpha);
 		}
 	}
+
+	const Rage::Color text_glow= Rage::Color(1,1,1,Rage::FastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f);
+	float horiz_align= align_right;
+	float side_sign= 1;
+	const vector<TimingSegment*>* segs[NUM_TimingSegmentType];
+	FOREACH_TimingSegmentType(tst)
+	{
+		segs[tst] = &(m_timing_data->GetTimingSegments(tst));
+	}
+
+#define draw_all_segments(str_exp, name, caps_name) \
+	horiz_align= caps_name##_IS_LEFT_SIDE ? align_right : align_left; \
+	side_sign= caps_name##_IS_LEFT_SIDE ? -1 : 1; \
+	for(size_t seg_index= 0; seg_index < segs[SEGMENT_##caps_name]->size(); ++seg_index) \
+	{ \
+		const name##Segment* seg= To##name((*segs[SEGMENT_##caps_name])[seg_index]); \
+		double const beat= seg->GetBeat(); \
+		if(beat < start_beat || beat > max_beat) {continue;} \
+		double const second= needs_second ? m_timing_data->GetElapsedTimeFromBeat(beat) : 0.; \
+		double const y_offset= m_columns[0].calc_y_offset(beat, second, nullptr); \
+		if(m_columns[0].y_offset_visible(y_offset) != 0) {continue;} \
+		m_field_text.SetText(str_exp); \
+		draw_field_text(beat, second, y_offset, caps_name##_OFFSETX, side_sign, \
+			horiz_align, caps_name##_COLOR, text_glow); \
+	}
+
+	draw_all_segments(FloatToString(seg->GetRatio()), Scroll, SCROLL);
+	draw_all_segments(FloatToString(seg->GetBPM()), BPM, BPM);
+	draw_all_segments(FloatToString(seg->GetPause()), Stop, STOP);
+	draw_all_segments(FloatToString(seg->GetPause()), Delay, DELAY);
+	draw_all_segments(FloatToString(seg->GetLength()), Warp, WARP);
+	draw_all_segments(fmt::sprintf("%d\n--\n%d", seg->GetNum(), seg->GetDen()),
+		TimeSignature, TIME_SIG);
+	draw_all_segments(fmt::sprintf("%d", seg->GetTicks()), Tickcount, TICKCOUNT);
+	draw_all_segments(
+		fmt::sprintf("%d/%d", seg->GetCombo(), seg->GetMissCombo()), Combo, COMBO);
+	draw_all_segments(seg->GetLabel(), Label, LABEL);
+	draw_all_segments(fmt::sprintf("%s\n%s\n%s",
+			FloatToString(seg->GetRatio()).c_str(),
+			(seg->GetUnit() == 1 ? "S" : "B"),
+			FloatToString(seg->GetDelay()).c_str()), Speed, SPEED);
+	draw_all_segments(FloatToString(seg->GetLength()), Fake, FAKE);
+#undef draw_all_segments
 }
 
 double NewField::update_z_bias()
@@ -2485,6 +2676,7 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 		add_draw_entry(static_cast<int>(i), holds_child_index, holds_draw_order);
 		add_draw_entry(static_cast<int>(i), lifts_child_index, lifts_draw_order);
 		add_draw_entry(static_cast<int>(i), taps_child_index, taps_draw_order);
+		add_draw_entry(static_cast<int>(i), selection_child_index, selection_draw_order);
 		m_columns[i].HandleMessage(pn_msg);
 		if(m_in_defective_mode)
 		{
@@ -2551,19 +2743,69 @@ bool NewField::get_defective_mode()
 	return m_in_defective_mode;
 }
 
-void NewField::set_speed_old_way(float time_spacing, float max_scroll_bpm,
+void NewField::set_speed(float time_spacing, float max_scroll_bpm,
 	float scroll_speed, float scroll_bpm, float read_bpm, float music_rate)
 {
 	for(auto&& col : m_columns)
 	{
-		col.set_speed_old_way(time_spacing, max_scroll_bpm, scroll_speed,
+		col.set_speed(time_spacing, max_scroll_bpm, scroll_speed,
 			scroll_bpm, read_bpm, music_rate);
 	}
 }
 
-void NewField::turn_on_edit_text()
+void NewField::disable_speed_scroll_segments()
+{
+	for(auto&& col : m_columns)
+	{
+		col.m_speed_segments_enabled= false;
+		col.m_scroll_segments_enabled= false;
+	}
+}
+
+void NewField::turn_on_edit_mode()
 {
 	m_draw_beat_bars= true;
+	m_in_edit_mode= true;
+}
+
+double NewField::get_selection_start()
+{
+	for(auto&& col : m_columns)
+	{
+		if(col.m_selection_start != -1.0)
+		{
+			return col.m_selection_start;
+		}
+	}
+	return -1.0;
+}
+
+double NewField::get_selection_end()
+{
+	for(auto&& col : m_columns)
+	{
+		if(col.m_selection_end != -1.0)
+		{
+			return col.m_selection_end;
+		}
+	}
+	return -1.0;
+}
+
+void NewField::set_selection_start(double value)
+{
+	for(auto&& col : m_columns)
+	{
+		col.m_selection_start= value;
+	}
+}
+
+void NewField::set_selection_end(double value)
+{
+	for(auto&& col : m_columns)
+	{
+		col.m_selection_end= value;
+	}
 }
 
 void NewField::set_layer_fade_type(Actor* child, FieldLayerFadeType type)
@@ -2603,6 +2845,12 @@ void NewField::update_displayed_time(double beat, double second)
 	if(!m_in_defective_mode)
 	{
 		mod_val_inputs input(m_curr_beat, m_curr_second);
+		Rage::transform trans;
+		m_trans_mod.evaluate(input, trans);
+		trans.zoom.x*= m_gameplay_zoom;
+		trans.zoom.y*= m_gameplay_zoom;
+		trans.zoom.z*= m_gameplay_zoom;
+		set_transform(trans);
 		SetFOV(m_fov_mod.evaluate(input));
 		double vanish_x= m_vanish_x_mod.evaluate(input);
 		double vanish_y= m_vanish_y_mod.evaluate(input);
@@ -2620,9 +2868,6 @@ void NewField::update_displayed_time(double beat, double second)
 				break;
 		}
 		SetVanishPoint(vanish_x, vanish_y);
-		Rage::transform trans;
-		m_trans_mod.evaluate(input, trans);
-		set_transform(trans);
 		evaluated_receptor_alpha= m_receptor_alpha.evaluate(input);
 		evaluated_receptor_glow= m_receptor_glow.evaluate(input);
 		evaluated_explosion_alpha= m_explosion_alpha.evaluate(input);

@@ -8,12 +8,11 @@
 #include "SnapDisplay.h"
 #include "Background.h"
 #include "Foreground.h"
-#include "NoteField.h"
+#include "NewField.h"
 #include "NoteTypes.h"
 #include "Song.h"
 #include "Steps.h"
 #include "ThemeMetric.h"
-#include "PlayerState.h"
 #include "GameInput.h"
 #include "GameplayAssist.h"
 #include "AutoKeysounds.h"
@@ -284,12 +283,15 @@ protected:
 	Steps*			m_pSteps;
 
 	PlayerNumber	m_InputPlayerNumber;
-	PlayerState		m_PlayerStateEdit;
-	NoteField		m_NoteFieldEdit;
+	NewField		m_NoteFieldEdit;
 	NoteData		m_NoteDataEdit;
 	SnapDisplay		m_SnapDisplay;
 
 	BitmapText		m_textInputTips;
+
+	size_t m_curr_speed_choice;
+	float m_curr_speed;
+	float m_goal_speed;
 	
 	/** @brief The player options before messing with attacks. */
 	ModsGroup<PlayerOptions>	originalPlayerOptions;
@@ -369,7 +371,7 @@ protected:
 
 
 // for MODE_RECORD
-	NoteField		m_NoteFieldRecord;
+	NewField		m_NoteFieldRecord;
 	NoteData		m_NoteDataRecord;
 	RageTimer		m_RemoveNoteButtonLastChanged;
 	bool			m_bRemoveNoteButtonDown;

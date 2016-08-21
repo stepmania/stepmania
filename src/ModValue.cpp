@@ -22,8 +22,6 @@ struct mod_operand
 	virtual bool needs_beat()= 0;
 	virtual bool needs_second()= 0;
 	virtual bool needs_y_offset()= 0;
-
-	mut m_update_type;
 };
 
 struct mod_input_number : mod_operand
@@ -1289,6 +1287,7 @@ void mod_function::simple_load(std::string const& name, std::string const& input
 		mod_operator_multiply* op= new mod_operator_multiply;
 		op->add_simple_operand(input_type, 0.0);
 		op->add_simple_operand("number", value);
+		organize_simple_operands(this, op);
 		m_base_operand= op;
 	}
 }

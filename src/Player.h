@@ -76,6 +76,8 @@ public:
 		ScoreKeeper* pPrimaryScoreKeeper,
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
+	double get_field_width();
+	void set_gameplay_zoom(double zoom);
 	void calc_read_bpm();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
 	bool IsOniDead() const;
@@ -207,19 +209,12 @@ protected:
 
 	std::vector<RageSound>	m_vKeysounds;
 
-	ThemeMetric<float>	GRAY_ARROWS_Y_STANDARD;
-	ThemeMetric<float>	GRAY_ARROWS_Y_REVERSE;
 	ThemeMetric2D<float>	ATTACK_DISPLAY_X;
 	ThemeMetric<float>	ATTACK_DISPLAY_Y;
 	ThemeMetric<float>	ATTACK_DISPLAY_Y_REVERSE;
 	ThemeMetric<float>	HOLD_JUDGMENT_Y_STANDARD;
 	ThemeMetric<float>	HOLD_JUDGMENT_Y_REVERSE;
 	ThemeMetric<int>	BRIGHT_GHOST_COMBO_THRESHOLD;
-	ThemeMetric<bool>	TAP_JUDGMENTS_UNDER_FIELD;
-	ThemeMetric<bool>	HOLD_JUDGMENTS_UNDER_FIELD;
-	ThemeMetric<bool>	COMBO_UNDER_FIELD;
-	ThemeMetric<int>	DRAW_DISTANCE_AFTER_TARGET_PIXELS;
-	ThemeMetric<int>	DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
 
 #define NUM_REVERSE 2
 #define NUM_CENTERED 2

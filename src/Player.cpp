@@ -307,14 +307,10 @@ void Player::Init(
 	ScoreKeeper* pPrimaryScoreKeeper,
 	ScoreKeeper* pSecondaryScoreKeeper )
 {
-	GRAY_ARROWS_Y_STANDARD.Load(			sType, "ReceptorArrowsYStandard" );
-	GRAY_ARROWS_Y_REVERSE.Load(			sType, "ReceptorArrowsYReverse" );
 	ATTACK_DISPLAY_X.Load(				sType, ATTACK_DISPLAY_X_NAME, NUM_PLAYERS, 2 );
 	ATTACK_DISPLAY_Y.Load(				sType, "AttackDisplayY" );
 	ATTACK_DISPLAY_Y_REVERSE.Load(			sType, "AttackDisplayYReverse" );
 	BRIGHT_GHOST_COMBO_THRESHOLD.Load(		sType, "BrightGhostComboThreshold" );
-	DRAW_DISTANCE_AFTER_TARGET_PIXELS.Load(		sType, "DrawDistanceAfterTargetsPixels" );
-	DRAW_DISTANCE_BEFORE_TARGET_PIXELS.Load(	sType, "DrawDistanceBeforeTargetsPixels" );
 
 	{
 		// Init judgment positions
@@ -597,42 +593,6 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	}
 }
 
-static void GenerateCacheDataStructure(PlayerState *pPlayerState, const NoteData &notes) {
-
-	pPlayerState->m_CacheDisplayedBeat.clear();
-
-	const vector<TimingSegment*> vScrolls = pPlayerState->GetDisplayedTiming().GetTimingSegments( SEGMENT_SCROLL );
-
-	float displayedBeat = 0.0f;
-	float lastRealBeat = 0.0f;
-	float lastRatio = 1.0f;
-	for ( unsigned i = 0; i < vScrolls.size(); i++ )
-	{
-		ScrollSegment *seg = ToScroll( vScrolls[i] );
-		displayedBeat += ( seg->GetBeat() - lastRealBeat ) * lastRatio;
-		lastRealBeat = seg->GetBeat();
-		lastRatio = seg->GetRatio();
-		CacheDisplayedBeat c = { seg->GetBeat(), displayedBeat, seg->GetRatio() };
-		pPlayerState->m_CacheDisplayedBeat.push_back( c );
-	}
-
-	pPlayerState->m_CacheNoteStat.clear();
-
-	NoteData::all_tracks_const_iterator it = notes.GetTapNoteRangeAllTracks( 0, MAX_NOTE_ROW, true );
-	int count = 0, lastCount = 0;
-	for( ; !it.IsAtEnd(); ++it )
-	{
-		for( int t = 0; t < notes.GetNumTracks(); t++ )
-		{
-			if( notes.GetTapNote( t, it.Row() ) != TAP_EMPTY ) count ++;
-		}
-		CacheNoteStat c = { NoteRowToBeat(it.Row()), lastCount, count  };
-		lastCount = count;
-		pPlayerState->m_CacheNoteStat.push_back(c);
-	}
-
-}
-
 void Player::Load()
 {
 	m_bLoaded = true;
@@ -710,9 +670,6 @@ void Player::Load()
 	NoteDataUtil::TransformNoteData(m_NoteData, *m_Timing, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType);
 
 	const Song* pSong = GAMESTATE->m_pCurSong;
-
-	// Generate some cache data structure.
-	GenerateCacheDataStructure(m_pPlayerState, m_NoteData);
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -812,6 +769,24 @@ void Player::Load()
 	Rage::safe_delete( m_pIterUnjudgedMineRows );
 	m_pIterUnjudgedMineRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 }
+
+double Player::get_field_width()
+{
+	if(m_new_field != nullptr)
+	{
+		return m_new_field->get_field_width();
+	}
+	return 0.0;
+}
+
+void Player::set_gameplay_zoom(double zoom)
+{
+	if(m_new_field != nullptr)
+	{
+		m_new_field->set_gameplay_zoom(zoom);
+	}
+}
+
 
 void Player::SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo )
 {
@@ -1609,7 +1584,7 @@ void Player::SetSpeedFromPlayerOptions()
 	if(m_new_field != nullptr)
 	{
 		PlayerOptions& options= m_pPlayerState->m_PlayerOptions.GetCurrent();
-		m_new_field->set_speed_old_way(options.m_fTimeSpacing,
+		m_new_field->set_speed(options.m_fTimeSpacing,
 			options.m_fMaxScrollBPM, options.m_fScrollSpeed,
 			options.m_fScrollBPM, m_pPlayerState->m_fReadBPM,
 			GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
@@ -1620,7 +1595,7 @@ void Player::SetNoteFieldToEditMode()
 {
 	if(m_new_field != nullptr)
 	{
-		m_new_field->turn_on_edit_text();
+		m_new_field->turn_on_edit_mode();
 	}
 }
 
