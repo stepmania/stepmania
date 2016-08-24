@@ -720,7 +720,7 @@ static mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int 
 	{
 		new_oper->load_from_lua(parent, L, index);
 	}
-	catch(std::string err)
+	catch(std::string& err)
 	{
 		delete new_oper;
 		throw;
@@ -809,7 +809,7 @@ static mod_operand* create_simple_input(std::string const& input_type, double va
 			mod_operand* op= create_mod_input(input_type);
 			return op;
 		}
-		catch(std::string err)
+		catch(std::string& err)
 		{
 			LuaHelpers::ReportScriptError("lol kyz messed up");
 			LuaHelpers::ReportScriptError(err);
@@ -844,7 +844,7 @@ static mod_operand* load_operand_on_stack(mod_function* parent, lua_State* L)
 				break;
 		}
 	}
-	catch(std::string err)
+	catch(std::string& err)
 	{
 		lua_pop(L, 1);
 		throw;
@@ -874,7 +874,7 @@ static void load_operands_into_container(mod_function* parent, lua_State* L, int
 			mod_operand* new_oper= load_single_operand(parent, L, index, cur);
 			container.push_back(new_oper);
 		}
-		catch(std::string err)
+		catch(std::string& err)
 		{
 			for(auto&& op : container) { delete op; }
 			container.clear();
@@ -1360,7 +1360,7 @@ static mod_function* create_mod_function(ModifiableValue* parent,
 	{
 		ret->load_from_lua(L, index, col);
 	}
-	catch(std::string err)
+	catch(std::string& err)
 	{
 		delete ret;
 		throw;
@@ -1628,7 +1628,7 @@ struct LunaModifiableValue : Luna<ModifiableValue>
 		{
 			p->add_mod(L, lua_gettop(L));
 		}
-		catch(std::string err)
+		catch(std::string& err)
 		{
 			luaL_error(L, err.c_str());
 		}
@@ -1650,7 +1650,7 @@ struct LunaModifiableValue : Luna<ModifiableValue>
 		{
 			p->add_managed_mod(L, lua_gettop(L));
 		}
-		catch(std::string err)
+		catch(std::string& err)
 		{
 			luaL_error(L, err.c_str());
 		}
@@ -1670,7 +1670,7 @@ struct LunaModifiableValue : Luna<ModifiableValue>
 			{
 				p->add_managed_mod(L, lua_gettop(L));
 			}
-			catch(std::string err)
+			catch(std::string& err)
 			{
 				lua_pop(L, 1);
 				luaL_error(L, err.c_str());
