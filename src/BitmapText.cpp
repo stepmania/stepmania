@@ -425,7 +425,7 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 		while( end < iEndGlyph  &&  m_vpFontPageTextures[end] == m_vpFontPageTextures[start] )
 			end++;
 
-		bool bHaveATexture = !bUseStrokeTexture  ||  (bUseStrokeTexture && m_vpFontPageTextures[start]->m_pTextureStroke);
+		bool bHaveATexture = !bUseStrokeTexture  || m_vpFontPageTextures[start]->m_pTextureStroke;
 		if( bHaveATexture )
 		{
 			DISPLAY->ClearAllTextures();
