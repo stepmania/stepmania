@@ -50,7 +50,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 		return nullptr;
 	}
 	OpenResult ret = Sample->Open( pFile );
-	pFile = nullptr; // Sample owns it now
+
 	if( ret == OPEN_OK )
 		return Sample;
 
