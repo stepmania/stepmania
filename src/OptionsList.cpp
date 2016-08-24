@@ -144,7 +144,7 @@ void OptionListRow::SetUnderlines( const vector<bool> &aSelections, const Option
 				const OptionRowHandler *lHandler = m_pOptions->m_Rows.find(sDest)->second;
 				int iDefault = lHandler->GetDefaultOption();
 				if( iDefault != -1 && iSelection != iDefault )
-					bSelected |= true;
+					bSelected = true;
 			}
 			else if( pTarget->m_Def.m_selectType == SELECT_MULTIPLE )
 			{
