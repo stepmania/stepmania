@@ -723,7 +723,7 @@ static mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int 
 	catch(std::string err)
 	{
 		delete new_oper;
-		throw err;
+		throw;
 	}
 	return new_oper;
 }
@@ -847,7 +847,7 @@ static mod_operand* load_operand_on_stack(mod_function* parent, lua_State* L)
 	catch(std::string err)
 	{
 		lua_pop(L, 1);
-		throw err;
+		throw;
 	}
 	lua_pop(L, 1);
 	return new_oper;
@@ -878,7 +878,7 @@ static void load_operands_into_container(mod_function* parent, lua_State* L, int
 		{
 			for(auto&& op : container) { delete op; }
 			container.clear();
-			throw err;
+			throw;
 		}
 	}
 }
@@ -1363,7 +1363,7 @@ static mod_function* create_mod_function(ModifiableValue* parent,
 	catch(std::string err)
 	{
 		delete ret;
-		throw err;
+		throw;
 	}
 	return ret;
 }
