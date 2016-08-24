@@ -56,7 +56,7 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, std::string &error )
 
 		std::string clr = color.substr( color_length+4 );
 		int r, g, b;
-		if( sscanf( clr.c_str(), "%2x%2x%2x", &r, &g, &b ) != 3 )
+		if( sscanf( clr.c_str(), "%2x%2x%2x", (unsigned int *)&r, (unsigned int *)&g, (unsigned int *)&b ) != 3 )
 			continue;
 		RageSurfaceColor colorval;
 		colorval.r = (uint8_t) r;

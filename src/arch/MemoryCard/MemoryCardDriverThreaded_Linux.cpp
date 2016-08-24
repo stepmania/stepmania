@@ -258,10 +258,10 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			}
 
 			if( ReadFile( sPath + "device/../idVendor", sBuf ) )
-				sscanf( sBuf.c_str(), "%x", &usbd.idVendor );
+				sscanf( sBuf.c_str(), "%x", (unsigned int *)&usbd.idVendor );
 
 			if( ReadFile( sPath + "device/../idProduct", sBuf ) )
-				sscanf( sBuf.c_str(), "%x", &usbd.idProduct );
+				sscanf( sBuf.c_str(), "%x", (unsigned int *)&usbd.idProduct );
 
 			if( ReadFile( sPath + "device/../serial", sBuf ) )
 			{
