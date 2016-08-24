@@ -21,7 +21,7 @@ private:
 	virtual void GoToNextScreen();
 	virtual void GoToPrevScreen();
 
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
 	virtual void ProcessMenuStart( const InputEventPlus &input );

@@ -112,7 +112,7 @@ void ScreenNameEntryTraditional::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 }
 
-void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
+void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_MenuTimer )
 	{

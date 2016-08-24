@@ -7,7 +7,7 @@ class ScreenSandbox : public Screen
 {
 public:
 	virtual bool Input( const InputEventPlus &input );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 	virtual void Update(float f);
 	virtual void DrawPrimitives();
 };

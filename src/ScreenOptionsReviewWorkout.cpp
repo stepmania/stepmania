@@ -90,7 +90,7 @@ void ScreenOptionsCourseOverview::ExportOptions( int iRow, const vector<PlayerNu
 
 static LocalizedString ERROR_SAVING_WORKOUT	( "ScreenOptionsCourseOverview", "Error saving workout." );
 static LocalizedString WORKOUT_SAVED		( "ScreenOptionsCourseOverview", "Workout saved successfully." );
-void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{

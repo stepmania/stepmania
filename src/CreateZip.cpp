@@ -1015,7 +1015,7 @@ std::string MakeDestZipFileName( std::string fn )
 	fn.erase( fn.begin(), fn.begin()+1 );
 	return fn;
 }
-bool CreateZip::AddFile(std::string fn)
+bool CreateZip::AddFile(std::string &fn)
 {
 	lasterrorZ = hz->Add(MakeDestZipFileName(fn).c_str(),fn.c_str(),ZIP_FILENAME);
 	return lasterrorZ == ZR_OK;

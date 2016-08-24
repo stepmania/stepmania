@@ -35,7 +35,7 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	static std::string GetAnnouncerDirFromName( std::string sAnnouncerName );
+	static std::string GetAnnouncerDirFromName( std::string &sAnnouncerName );
 	std::string GetPathTo( std::string AnnouncerPath, std::string sFolderName );
 	/** @brief the current announcer's name. */
 	std::string m_sCurAnnouncerName;

@@ -16,7 +16,7 @@ public:
 	~ScreenHowToPlay();
 
 	virtual void Update( float fDelta );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 
 	// Lua
 	virtual void PushSelf( lua_State *L );

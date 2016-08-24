@@ -145,7 +145,7 @@ struct DateTime
 	 *
 	 * @param sDateTime the string to attempt to convert.
 	 * @return true if the conversion worked, or false otherwise. */
-	bool FromString( const std::string sDateTime );
+	bool FromString( const std::string &sDateTime );
 };
 
 #endif

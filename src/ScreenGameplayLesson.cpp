@@ -81,7 +81,7 @@ bool ScreenGameplayLesson::Input( const InputEventPlus &input )
 	}
 }
 
-void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
+void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_NotesEnded )
 	{

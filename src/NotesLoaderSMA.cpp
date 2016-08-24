@@ -16,7 +16,7 @@
 
 using std::vector;
 
-void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const std::string sParam )
+void SMALoader::ProcessMultipliers( TimingData &out, const int &iRowsPerBeat, const std::string &sParam )
 {
 	auto arrayMultiplierExpressions = Rage::split(sParam, ",");
 
@@ -42,7 +42,7 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 	}
 }
 
-void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const std::string sParam )
+void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const std::string &sParam )
 {
 	auto vs1 = Rage::split(sParam, ",");
 
@@ -82,7 +82,7 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const std::string sPara
 	}
 }
 
-void SMALoader::ProcessSpeeds( TimingData &out, const std::string line, const int rowsPerBeat )
+void SMALoader::ProcessSpeeds( TimingData &out, const std::string &line, const int &rowsPerBeat )
 {
 	auto vs1 = Rage::split(line, ",");
 

@@ -107,7 +107,7 @@ public:
 
 	void Init();
 	void BeginScreen();
-	void HandleScreenMessage( const ScreenMessage SM );
+	void HandleScreenMessage( const ScreenMessage &SM );
 
 protected:
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );

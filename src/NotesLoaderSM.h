@@ -74,7 +74,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ParseBPMs(std::vector< std::pair<float, float> > &out,
-	               const std::string line,
+	               const std::string &line,
 	               const int rowsPerBeat = -1);
 	/**
 	 * @brief Process the BPM Segments from the string.
@@ -88,7 +88,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ParseStops(std::vector< std::pair<float, float> > &out,
-	                const std::string line,
+	                const std::string &line,
 	                const int rowsPerBeat = -1);
 	/**
 	 * @brief Process the Stop Segments from the data.
@@ -110,7 +110,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ProcessDelays(TimingData & out,
-			  const std::string line,
+			  const std::string &line,
 			  const int rowsPerBeat = -1);
 	/**
 	 * @brief Process the Time Signature Segments from the string.
@@ -118,7 +118,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ProcessTimeSignatures(TimingData & out,
-			   const std::string line,
+			   const std::string &line,
 			   const int rowsPerBeat = -1);
 	/**
 	 * @brief Process the Tickcount Segments from the string.
@@ -126,7 +126,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ProcessTickcounts(TimingData & out,
-				   const std::string line,
+				   const std::string &line,
 				   const int rowsPerBeat = -1);
 
 	/**
@@ -135,7 +135,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	virtual void ProcessSpeeds(TimingData & out,
-				   const std::string line,
+				   const std::string &line,
 				   const int rowsPerBeat = -1);
 
 	virtual void ProcessCombos(TimingData & /* out */,
@@ -148,7 +148,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	virtual void ProcessFakes(TimingData & out,
-				  const std::string line,
+				  const std::string &line,
 				  const int rowsPerBeat = -1);
 
 	virtual void ProcessBGChanges( Song &out, const std::string &sValueName,

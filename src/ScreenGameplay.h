@@ -148,7 +148,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual bool Input( const InputEventPlus &input );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 	virtual void HandleMessage( const Message &msg );
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 

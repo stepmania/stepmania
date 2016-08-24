@@ -83,7 +83,7 @@ protected:
 		const float beat, const float side_sign, float x_offset,
 		const float horiz_align, const Rage::Color& color, const Rage::Color& glow);
 	void DrawAttackText(const float beat, const Attack &attack, const Rage::Color& glow);
-	void DrawBGChangeText(const float beat, const std::string new_bg_name, const Rage::Color& glow);
+	void DrawBGChangeText(const float &beat, const std::string &new_bg_name, const Rage::Color& glow);
 	float GetWidth() const;
 
 	const NoteData *m_pNoteData;

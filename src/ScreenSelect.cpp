@@ -182,7 +182,7 @@ bool ScreenSelect::Input( const InputEventPlus &input )
 	return ScreenWithMenuElements::Input( input ); // default input handler
 }
 
-void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
+void ScreenSelect::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_BeginFadingOut )	// Screen is starting to tween out.
 	{

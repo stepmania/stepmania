@@ -299,7 +299,7 @@ void ScreenHowToPlay::Update( float fDelta )
 	ScreenAttract::Update( fDelta );
 }
 
-void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
+void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GainFocus )
 	{

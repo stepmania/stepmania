@@ -294,7 +294,7 @@ bool ScreenHighScores::Input( const InputEventPlus &input )
 		return ScreenAttract::Input( input );
 }
 
-void ScreenHighScores::HandleScreenMessage( const ScreenMessage SM )
+void ScreenHighScores::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_BeginFadingOut )	/* Screen is starting to tween out. */
 	{

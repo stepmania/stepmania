@@ -208,7 +208,7 @@ void CryptManager::GenerateRSAKeyToFile( unsigned int keyLength, std::string pri
 	}
 }
 
-void CryptManager::SignFileToFile( std::string sPath, std::string sSignatureFile )
+void CryptManager::SignFileToFile( std::string &sPath, std::string sSignatureFile )
 {
 	std::string sPrivFilename = PRIVATE_KEY_PATH;
 	if( sSignatureFile.empty() )

@@ -28,7 +28,7 @@ public:
 	virtual void Init();
 	virtual void BeginScreen();
 
-	void HandleScreenMessage( const ScreenMessage SM );
+	void HandleScreenMessage( const ScreenMessage &SM );
 
 protected:
 	struct PageToShow

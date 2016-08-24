@@ -366,7 +366,7 @@ public:
 	// Attract stuff
 	int m_iNumTimesThroughAttract;	// negative means play regardless of m_iAttractSoundFrequency setting
 	bool IsTimeToPlayAttractSounds() const;
-	void VisitAttractScreen( const std::string sScreenName );
+	void VisitAttractScreen( const std::string &sScreenName );
 
 	// PlayerState
 	/** @brief Allow access to each player's PlayerState. */

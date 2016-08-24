@@ -214,7 +214,7 @@ bool ScreenSelectProfile::Finish(){
 	return true;
 }
 
-void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage SM )
+void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_MenuTimer )
 	{

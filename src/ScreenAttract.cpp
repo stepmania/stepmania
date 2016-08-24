@@ -120,7 +120,7 @@ void ScreenAttract::StartPlayingMusic()
 	ScreenWithMenuElements::StartPlayingMusic();
 }
 
-void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
+void ScreenAttract::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_MenuTimer ||
 		SM == SM_BeginFadingOut )

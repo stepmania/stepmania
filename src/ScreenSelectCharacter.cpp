@@ -169,7 +169,7 @@ bool ScreenSelectCharacter::Input( const InputEventPlus &input )
 	return ScreenWithMenuElements::Input( input );	// default input handler
 }
 
-void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
+void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_BeginFadingOut )
 	{

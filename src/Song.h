@@ -67,7 +67,7 @@ class Song
 {
 	std::string m_sSongDir;
 public:
-	void SetSongDir( const std::string sDir ) { m_sSongDir = sDir; }
+	void SetSongDir( const std::string &sDir ) { m_sSongDir = sDir; }
 	std::string GetSongDir() { return m_sSongDir; }
 
 	/** @brief When should this song be displayed in the music wheel? */

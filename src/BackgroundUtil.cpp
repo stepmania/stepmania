@@ -268,7 +268,7 @@ void BackgroundUtil::GetSongBitmaps( const Song *pSong, std::string const &sMatc
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
-static void GetFilterToFileNames( const std::string sBaseDir, const Song *pSong, std::set<std::string> &vsPossibleFileNamesOut )
+static void GetFilterToFileNames( const std::string &sBaseDir, const Song *pSong, std::set<std::string> &vsPossibleFileNamesOut )
 {
 	vsPossibleFileNamesOut.clear();
 

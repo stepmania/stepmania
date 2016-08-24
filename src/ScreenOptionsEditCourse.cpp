@@ -366,7 +366,7 @@ void ScreenOptionsEditCourse::GoToPrevScreen()
 {
 }
 
-void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_ExportOptions )
 	{

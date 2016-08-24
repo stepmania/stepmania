@@ -94,7 +94,7 @@ void ScreenNetworkOptions::Init()
 	m_pRows[PO_SCOREBOARD]->SetOneSharedSelection(PREFSMAN->m_bEnableScoreboard);
 }
 
-void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
+void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_DoneConnecting )
 	{

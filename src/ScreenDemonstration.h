@@ -13,7 +13,7 @@ public:
 	virtual void Init();
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 
 	virtual ScreenType GetScreenType() const { return attract; }
 };

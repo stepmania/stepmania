@@ -60,7 +60,7 @@ bool ScreenNetRoom::Input( const InputEventPlus &input )
 	return ScreenNetSelectBase::Input( input );
 }
 
-void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
+void ScreenNetRoom::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToPrevScreen )
 	{

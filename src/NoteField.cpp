@@ -584,7 +584,7 @@ void NoteField::DrawAttackText(const float beat, const Attack &attack,
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawBGChangeText(const float beat, const std::string new_bg_name,
+void NoteField::DrawBGChangeText(const float &beat, const std::string &new_bg_name,
 	const Rage::Color& glow)
 {
 	set_text_measure_number_for_draw(beat, 1, 0, align_left, Rage::Color(0,1,0,1),

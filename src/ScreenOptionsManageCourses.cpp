@@ -163,7 +163,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 	AfterChangeRow( GAMESTATE->GetMasterPlayerNumber() );
 }
 
-void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{

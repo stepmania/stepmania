@@ -20,7 +20,7 @@ public:
 	void RefreshNoteSkinData( const Game* game );
 	void GetNoteSkinNames( const Game* game, std::vector<std::string> &AddTo );
 	void GetNoteSkinNames( std::vector<std::string> &AddTo );	// looks up current const Game* in GAMESTATE
-	bool NoteSkinNameInList(std::string const name, std::vector<std::string> name_list);
+	bool NoteSkinNameInList(std::string const &name, std::vector<std::string> name_list);
 	bool DoesNoteSkinExist( const std::string &sNoteSkin );	// looks up current const Game* in GAMESTATE
 	bool DoNoteSkinsExistForGame( const Game *pGame );
 	std::string GetDefaultNoteSkinName();	// looks up current const Game* in GAMESTATE

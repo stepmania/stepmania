@@ -2719,7 +2719,7 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 	GAMESTATE->FinishStage();
 }
 
-void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
+void ScreenGameplay::HandleScreenMessage( const ScreenMessage &SM )
 {
 	CHECKPOINT_M( fmt::sprintf("HandleScreenMessage(%s)", ScreenMessageHelpers::ScreenMessageToString(SM).c_str()) );
 	if( SM == SM_DoneFadingIn )

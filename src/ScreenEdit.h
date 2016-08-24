@@ -215,7 +215,7 @@ public:
 	bool InputRecordPaused( const InputEventPlus &input, EditButton EditB );
 	bool InputPlay( const InputEventPlus &input, EditButton EditB );
 	virtual void HandleMessage( const Message &msg );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 
 	void SetDirty(bool dirty);
 	bool IsDirty() const { return m_dirty; }
