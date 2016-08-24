@@ -185,10 +185,10 @@ static void child_process()
 		}
 	}
 
-	std::string sCrashInfoPath = "/tmp";
 #if defined(MACOSX)
-	sCrashInfoPath = CrashHandler::GetLogsDirectory();
+	std::string sCrashInfoPath = CrashHandler::GetLogsDirectory();
 #else
+	std::string sCrashInfoPath = "/tmp";
 	const char *home = getenv( "HOME" );
 	if( home )
 		sCrashInfoPath = home;
