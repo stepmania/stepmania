@@ -998,6 +998,11 @@ CreateZip::CreateZip()
 	hz=nullptr;
 }
 
+CreateZip::~CreateZip()
+{
+	delete hz;
+}
+
 bool CreateZip::Start( RageFile *f)
 {
 	hz = new TZip();
