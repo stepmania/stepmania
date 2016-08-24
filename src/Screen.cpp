@@ -233,7 +233,7 @@ bool Screen::Input( const InputEventPlus &input )
 	}
 }
 
-void Screen::HandleScreenMessage( const ScreenMessage SM )
+void Screen::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToNextScreen || SM == SM_GoToPrevScreen )
 	{
@@ -291,7 +291,7 @@ std::string Screen::GetPrevScreen() const
 	return PREV_SCREEN;
 }
 
-void Screen::PostScreenMessage( const ScreenMessage SM, float fDelay )
+void Screen::PostScreenMessage( const ScreenMessage &SM, float fDelay )
 {
 	ASSERT( fDelay >= 0.0 );
 
@@ -306,7 +306,7 @@ void Screen::ClearMessageQueue()
 	m_QueuedMessages.clear();
 }
 
-void Screen::ClearMessageQueue( const ScreenMessage SM )
+void Screen::ClearMessageQueue( const ScreenMessage &SM )
 {
 	for( int i=m_QueuedMessages.size()-1; i>=0; i-- )
 	{

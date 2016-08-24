@@ -123,7 +123,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 static LocalizedString THESE_STEPS_WILL_BE_LOST	("ScreenOptionsManageEditSteps", "These steps will be lost permanently.");
 static LocalizedString CONTINUE_WITH_DELETE		("ScreenOptionsManageEditSteps", "Continue with delete?");
 static LocalizedString ENTER_NAME_FOR_STEPS		("ScreenOptionsManageEditSteps", "Enter a name for these steps.");
-void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{

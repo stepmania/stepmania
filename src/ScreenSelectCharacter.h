@@ -20,7 +20,7 @@ public:
 	virtual ~ScreenSelectCharacter();
 
 	virtual bool Input( const InputEventPlus &input );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 
 	bool MenuLeft( const InputEventPlus &input );
 	bool MenuRight( const InputEventPlus &input );

@@ -40,7 +40,7 @@ bool JsonUtil::LoadFromFileShowErrors(Json::Value &root, const std::string &sFil
 	return LoadFromFileShowErrors(root, f);
 }
 
-bool JsonUtil::LoadFromStringShowErrors(Json::Value &root, std::string sData)
+bool JsonUtil::LoadFromStringShowErrors(Json::Value &root, const std::string &sData)
 {
 	std::string sError;
 	if(!LoadFromString(root, sData, sError))

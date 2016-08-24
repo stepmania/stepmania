@@ -370,7 +370,7 @@ bool ScreenNameEntry::Input( const InputEventPlus &input )
 	return ScreenWithMenuElements::Input( input ) || bHandled;
 }
 
-void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
+void ScreenNameEntry::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_MenuTimer )
 	{

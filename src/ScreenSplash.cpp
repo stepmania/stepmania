@@ -19,7 +19,7 @@ void ScreenSplash::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 }
 
-void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
+void ScreenSplash::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_DoneFadingIn )
 	{

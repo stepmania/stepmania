@@ -104,7 +104,7 @@ void ScreenOptionsMemoryCard::BeginScreen()
 	SelectRowWithMemoryCard( MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get() );
 }
 
-void ScreenOptionsMemoryCard::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsMemoryCard::HandleScreenMessage( const ScreenMessage &SM )
 {
 	ScreenOptions::HandleScreenMessage( SM );
 }

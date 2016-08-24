@@ -2375,7 +2375,7 @@ bool GameState::IsTimeToPlayAttractSounds() const
 	return false;
 }
 
-void GameState::VisitAttractScreen( const std::string sScreenName )
+void GameState::VisitAttractScreen( const std::string &sScreenName )
 {
 	if( sScreenName == CommonMetrics::FIRST_ATTRACT_SCREEN.GetValue() )
 		m_iNumTimesThroughAttract++;

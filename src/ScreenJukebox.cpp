@@ -269,7 +269,7 @@ bool ScreenJukebox::Input( const InputEventPlus &input )
 	return ScreenAttract::AttractInput( input, this );
 }
 
-void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
+void ScreenJukebox::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_NotesEnded )
 	{

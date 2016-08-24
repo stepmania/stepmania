@@ -111,7 +111,7 @@ bool ScreenPlayerOptions::Input( const InputEventPlus &input )
 	return bHandled;
 }
 
-void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
+void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_BeginFadingOut && m_bAskOptionsMessage ) // user accepts the page of options
 	{

@@ -14,7 +14,7 @@ public:
 
 	virtual void Update( float fDelta );
 	virtual bool Input( const InputEventPlus &input );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 	virtual void HandleMessage( const Message &msg );
 
 	virtual bool MenuBack( const InputEventPlus &input );

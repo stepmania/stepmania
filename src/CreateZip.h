@@ -24,7 +24,7 @@ class CreateZip
 public:
 	CreateZip();
 	bool Start(RageFile *f);
-	bool AddFile(std::string fn);
+	bool AddFile(std::string &fn);
 	bool AddDir(std::string fn);
 	bool Finish();
 	std::string GetError();

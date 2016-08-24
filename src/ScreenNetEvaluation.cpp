@@ -121,7 +121,7 @@ bool ScreenNetEvaluation::MenuDown( const InputEventPlus &input )
 	return true;
 }
 
-void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
+void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GotEval)
 	{

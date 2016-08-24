@@ -58,7 +58,7 @@ struct TimingTagWriter {
 	void Write( const int row, const float a, const float b, const unsigned short c )
 		{ Write( row, fmt::sprintf( "%.6f=%.6f=%hd", a, b, c) ); }
 
-	void Init( const std::string sTag ) { m_sNext = "#" + sTag + ":"; }
+	void Init( const std::string &sTag ) { m_sNext = "#" + sTag + ":"; }
 	void Finish( ) { m_pvsLines->push_back( ( m_sNext != "," ? m_sNext : "" ) + ";" ); }
 
 };

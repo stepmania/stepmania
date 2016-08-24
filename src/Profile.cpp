@@ -243,7 +243,7 @@ Character *Profile::GetCharacter() const
 	return CHARMAN->GetDefaultCharacter();
 }
 
-void Profile::SetCharacter(const std::string sCharacterID)
+void Profile::SetCharacter(const std::string &sCharacterID)
 {
 	if(CHARMAN->GetCharacterFromID(sCharacterID))
 		m_sCharacterID = sCharacterID;

@@ -65,7 +65,7 @@ bool AnnouncerManager::DoesAnnouncerExist( std::string sAnnouncerName )
 	return std::any_of(asAnnouncerNames.begin(), asAnnouncerNames.end(), doesExist);
 }
 
-std::string AnnouncerManager::GetAnnouncerDirFromName( std::string sAnnouncerName )
+std::string AnnouncerManager::GetAnnouncerDirFromName( std::string &sAnnouncerName )
 {
 	return ANNOUNCERS_DIR + sAnnouncerName + "/";
 }

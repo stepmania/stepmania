@@ -170,7 +170,7 @@ void ScreenRanking::BeginScreen()
 	this->HandleScreenMessage( SM_ShowNextPage );
 }
 
-void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
+void ScreenRanking::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_ShowNextPage )
 	{

@@ -141,7 +141,7 @@ public:
 	// smart accessors
 	std::string GetDisplayNameOrHighScoreName() const;
 	Character *GetCharacter() const;
-	void SetCharacter(const std::string sCharacterID);
+	void SetCharacter(const std::string &sCharacterID);
 	std::string GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
 	std::string GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
 	int GetCalculatedWeightPounds() const;	// returns a default value if m_iWeightPounds isn't set

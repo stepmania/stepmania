@@ -199,7 +199,7 @@ void ScreenMiniMenu::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 	s_viLastAnswers[r] = m_pRows[r]->GetOneSharedSelection( true );
 }
 
-void ScreenMiniMenu::HandleScreenMessage( const ScreenMessage SM )
+void ScreenMiniMenu::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{

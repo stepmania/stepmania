@@ -25,7 +25,7 @@ Command::Arg Command::GetArg( unsigned index ) const
 	return a;
 }
 
-void Command::Load( std::string const sCommand )
+void Command::Load( std::string const &sCommand )
 {
 	m_vsArgs = Rage::split(sCommand, ",", Rage::EmptyEntries::include);
 }
@@ -37,7 +37,7 @@ std::string Command::GetOriginalCommandString() const
 
 // TODO: Place this within the Rage library.
 // TODO: Return the asOut instead of just using an out parameter.
-static void SplitWithQuotes( std::string const sSource, const char Delimitor, vector<std::string> &asOut, const bool bIgnoreEmpty )
+static void SplitWithQuotes( std::string const &sSource, const char Delimitor, vector<std::string> &asOut, const bool bIgnoreEmpty )
 {
 	/* Short-circuit if the source is empty; we want to return an empty vector if
 	 * the string is empty, even if bIgnoreEmpty is true. */

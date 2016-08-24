@@ -158,7 +158,7 @@ class IMessageSubscriber
 public:
 	virtual ~IMessageSubscriber() { }
 	virtual void HandleMessage( const Message &msg ) = 0;
-	void ClearMessages( const std::string sMessage = "" );
+	void ClearMessages( const std::string &sMessage = "" );
 
 private:
 	friend class MessageManager;

@@ -124,7 +124,7 @@ void NoteMetricCache_t::Load( const std::string &sButton )
 
 struct NoteSkinAndPath
 {
-	NoteSkinAndPath( const std::string sNoteSkin_, const std::string sPath_, const PlayerNumber pn_, const GameController gc_ ) : sNoteSkin(sNoteSkin_), sPath(sPath_), pn(pn_), gc(gc_) { }
+	NoteSkinAndPath( const std::string &sNoteSkin_, const std::string &sPath_, const PlayerNumber &pn_, const GameController &gc_ ) : sNoteSkin(sNoteSkin_), sPath(sPath_), pn(pn_), gc(gc_) { }
 	std::string sNoteSkin;
 	std::string sPath;
 	PlayerNumber pn;

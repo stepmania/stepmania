@@ -16,7 +16,7 @@ class ScreenPackages : public ScreenWithMenuElements
 public:
 	virtual void Init();
 
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 
 	virtual bool MenuStart( const InputEventPlus &input );
 	virtual bool MenuUp( const InputEventPlus &input );

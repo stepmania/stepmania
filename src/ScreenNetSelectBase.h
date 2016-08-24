@@ -34,7 +34,7 @@ public:
 	virtual void Init();
 
 	bool Input( const InputEventPlus &input );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 	virtual void TweenOffScreen();
 
 	void UpdateUsers();

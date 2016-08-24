@@ -108,7 +108,7 @@ std::string DateTime::GetString() const
 	return s;
 }
 
-bool DateTime::FromString( const std::string sDateTime )
+bool DateTime::FromString( const std::string &sDateTime )
 {
 	Init();
 

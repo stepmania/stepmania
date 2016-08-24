@@ -54,7 +54,7 @@ public:
 	virtual void Init();
 	virtual void BeginScreen();
 
-	void HandleScreenMessage( const ScreenMessage SM );
+	void HandleScreenMessage( const ScreenMessage &SM );
 	virtual bool Input( const InputEventPlus &input );
 	virtual bool MenuStart( const InputEventPlus &input );
 	virtual bool MenuBack( const InputEventPlus &input );

@@ -125,7 +125,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 	return Screen::Input( input );
 }
 
-void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
+void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToNextScreen )
 		SOUND->StopMusic();

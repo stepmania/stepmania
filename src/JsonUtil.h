@@ -9,7 +9,7 @@ class RageFileBasic;
 namespace JsonUtil
 {
 	bool LoadFromString( Json::Value &root, std::string sData, std::string &sErrorOut );
-	bool LoadFromStringShowErrors(Json::Value &root, const std::string sData);
+	bool LoadFromStringShowErrors(Json::Value &root, const std::string &sData);
 	bool LoadFromFileShowErrors(Json::Value &root, const std::string &sFile);
 	bool LoadFromFileShowErrors(Json::Value &root, RageFileBasic &f);
 

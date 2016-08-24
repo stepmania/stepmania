@@ -98,7 +98,7 @@ static LocalizedString UNIQUE_PROFILE		( "ScreenSMOnlineLogin", "Each player nee
 static LocalizedString YOU_ARE_LOGGING_ON_AS	( "ScreenSMOnlineLogin", "You are logging on as:" );
 static LocalizedString ENTER_YOUR_PASSWORD	( "ScreenSMOnlineLogin", "Enter your password." );
 
-void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
+void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage &SM)
 {
 	std::string sLoginQuestion;
 //	if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) )

@@ -374,7 +374,7 @@ void ScreenSelectMaster::BeginScreen()
 	m_fLockInputSecs = this->GetTweenTimeLeft();
 }
 
-void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
+void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage &SM )
 {
 	ScreenSelect::HandleScreenMessage( SM );
 
