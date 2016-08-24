@@ -30,7 +30,6 @@ FontManager::~FontManager()
 
 Font* FontManager::LoadFont( const std::string &sFontOrTextureFilePath, std::string sChars )
 {
-	Font *pFont;
 	/* Convert the path to lowercase so that we don't load duplicates. Really,
 	 * this does not solve the duplicate problem. We could have two copies of
 	 * the same bitmap if there are equivalent but different paths
@@ -41,7 +40,7 @@ Font* FontManager::LoadFont( const std::string &sFontOrTextureFilePath, std::str
 	auto p = g_mapPathToFont.find( NewName );
 	if( p != g_mapPathToFont.end() )
 	{
-		pFont=p->second;
+		Font *pFont=p->second;
 		pFont->m_iRefCount++;
 		return pFont;
 	}

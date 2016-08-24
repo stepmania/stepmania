@@ -106,7 +106,6 @@ struct RVASorter {
 };
 
 int main(int argc, char **argv) {
-	int i;
 	long load_addr;
 
 	if (argc<3) {
