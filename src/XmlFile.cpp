@@ -19,11 +19,6 @@ XNode::XNode()
 {
 }
 
-XNode::XNode( std::string const &sName )
-{
-	m_sName = sName;
-}
-
 XNode::XNode( const XNode &cpy ):
 	m_sName( cpy.m_sName )
 {
