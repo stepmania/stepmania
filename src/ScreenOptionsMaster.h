@@ -14,7 +14,7 @@ private:
 	int m_iChangeMask;
 
 protected:
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 
 	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );

@@ -1133,14 +1133,14 @@ void RageSoundDriver_WDMKS::Read( void *pData, int iFrames, int iLastCursorPos, 
 		return;
 	}
 
-	int16_t *pBuf = (int16_t *) alloca( iFrames * iChannels * sizeof(int16_t) );
-	this->Mix( (int16_t *) pBuf, iFrames, iLastCursorPos, iCurrentFrame );
+	int16_t pBuf[iFrames * iChannels * sizeof(int16_t)];
+	this->Mix( pBuf, iFrames, iLastCursorPos, iCurrentFrame );
 
 	/* If the device has other than 2 channels, convert. */
 	if( m_pStream->m_iDeviceOutputChannels != iChannels )
 	{
-		int16_t *pTempBuf = (int16_t *) alloca( iFrames * m_pStream->m_iBytesPerOutputSample * m_pStream->m_iDeviceOutputChannels );
-		MapChannels( (int16_t *) pBuf, pTempBuf, iChannels, m_pStream->m_iDeviceOutputChannels, iFrames );
+		int16_t pTempBuf[iFrames * m_pStream->m_iBytesPerOutputSample * m_pStream->m_iDeviceOutputChannels];
+		MapChannels( pBuf, pTempBuf, iChannels, m_pStream->m_iDeviceOutputChannels, iFrames );
 		pBuf = pTempBuf;
 	}
 
@@ -1148,9 +1148,9 @@ void RageSoundDriver_WDMKS::Read( void *pData, int iFrames, int iLastCursorPos, 
 	if( m_pStream->m_DeviceSampleFormat != DeviceSampleFormat_Int16 )
 	{
 		int iSamples = iFrames * m_pStream->m_iDeviceOutputChannels;
-		void *pTempBuf = alloca( iSamples * m_pStream->m_iBytesPerOutputSample );
-		MapSampleFormatFromInt16( (int16_t *) pBuf, pTempBuf, iSamples, m_pStream->m_DeviceSampleFormat );
-		pBuf = (int16_t *) pTempBuf;
+		void pTempBuf[iSamples * m_pStream->m_iBytesPerOutputSample];
+		MapSampleFormatFromInt16( pBuf, pTempBuf, iSamples, m_pStream->m_DeviceSampleFormat );
+		pBuf = pTempBuf;
 	}
 
 	memcpy( pData, pBuf, iFrames * m_pStream->m_iDeviceOutputChannels * m_pStream->m_iBytesPerOutputSample );

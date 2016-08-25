@@ -12,7 +12,7 @@ public:
 	void Init();
 	virtual void BeginScreen();
 
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 
 protected:
 	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );

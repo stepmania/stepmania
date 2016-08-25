@@ -699,7 +699,7 @@ void ScreenMapControllers::StartWaitingForPress()
 	m_DeviceIToMap.MakeInvalid();
 }
 
-void ScreenMapControllers::HandleScreenMessage(const ScreenMessage SM)
+void ScreenMapControllers::HandleScreenMessage(const ScreenMessage &SM)
 {
 	if(SM == SM_DoSaveAndExit)
 	{

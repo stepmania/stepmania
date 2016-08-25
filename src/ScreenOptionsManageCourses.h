@@ -12,7 +12,7 @@ class ScreenOptionsManageCourses : public ScreenOptions
 public:
 	void Init();
 	virtual void BeginScreen();
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 	virtual bool MenuSelect( const InputEventPlus &input );
 
 protected:

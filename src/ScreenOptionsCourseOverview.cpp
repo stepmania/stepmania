@@ -114,7 +114,7 @@ void ScreenOptionsCourseOverview::ExportOptions(int iRow, const vector<PlayerNum
 		sValue = row.GetRowDef().m_vsChoices[ iIndex ];
 }
 
-void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToPrevScreen )
 	{

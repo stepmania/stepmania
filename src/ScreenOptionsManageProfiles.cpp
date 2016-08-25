@@ -186,7 +186,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 static LocalizedString CONFIRM_DELETE_PROFILE	( "ScreenOptionsManageProfiles", "Are you sure you want to delete the profile '%s'?" );
 static LocalizedString CONFIRM_CLEAR_PROFILE	( "ScreenOptionsManageProfiles", "Are you sure you want to clear all data in the profile '%s'?" );
 static LocalizedString ENTER_PROFILE_NAME	( "ScreenOptionsManageProfiles", "Enter a name for the profile." );
-void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{

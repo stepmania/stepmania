@@ -663,7 +663,7 @@ ssc_parser_helper_t parser_helper;
 // End parser_helper related functions. -Kyz
 /****************************************************************/
 
-void SSCLoader::ProcessBPMs( TimingData &out, const std::string sParam )
+void SSCLoader::ProcessBPMs( TimingData &out, const std::string &sParam )
 {
 	auto arrayBPMExpressions = Rage::split( sParam, "," );
 
@@ -695,7 +695,7 @@ void SSCLoader::ProcessBPMs( TimingData &out, const std::string sParam )
 	}
 }
 
-void SSCLoader::ProcessStops( TimingData &out, const std::string sParam )
+void SSCLoader::ProcessStops( TimingData &out, const std::string &sParam )
 {
 	auto arrayStopExpressions = Rage::split( sParam, "," );
 
@@ -725,7 +725,7 @@ void SSCLoader::ProcessStops( TimingData &out, const std::string sParam )
 	}
 }
 
-void SSCLoader::ProcessWarps( TimingData &out, const std::string sParam, const float fVersion )
+void SSCLoader::ProcessWarps( TimingData &out, const std::string &sParam, const float &fVersion )
 {
 	auto arrayWarpExpressions = Rage::split( sParam, "," );
 
@@ -760,7 +760,7 @@ void SSCLoader::ProcessWarps( TimingData &out, const std::string sParam, const f
 	}
 }
 
-void SSCLoader::ProcessLabels( TimingData &out, const std::string sParam )
+void SSCLoader::ProcessLabels( TimingData &out, const std::string &sParam )
 {
 	auto arrayLabelExpressions = Rage::split( sParam, "," );
 
@@ -816,7 +816,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const std::string line, const in
 	}
 }
 
-void SSCLoader::ProcessScrolls( TimingData &out, const std::string sParam )
+void SSCLoader::ProcessScrolls( TimingData &out, const std::string &sParam )
 {
 	auto vs1 = Rage::split(sParam, ",");
 

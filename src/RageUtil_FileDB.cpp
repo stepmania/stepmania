@@ -496,7 +496,6 @@ void FilenameDB::DelFile( const std::string &sPath )
 
 void FilenameDB::FlushDirCache( const std::string & /* sDir */ )
 {
-	FileSet *pFileSet = nullptr;
 	m_Mutex.Lock();
 
 	for(;;)
@@ -506,7 +505,7 @@ void FilenameDB::FlushDirCache( const std::string & /* sDir */ )
 
 		/* Grab the first entry.  Take it out of the list while we hold the
 		 * lock, to guarantee that we own it. */
-		pFileSet = dirs.begin()->second;
+		FileSet *pFileSet = dirs.begin()->second;
 
 		dirs.erase( dirs.begin() );
 

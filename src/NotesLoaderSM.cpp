@@ -466,7 +466,7 @@ void SMLoader::ProcessInstrumentTracks( Song &out, const std::string &sParam )
 	}
 }
 
-void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const std::string line, const int rowsPerBeat )
+void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const std::string &line, const int rowsPerBeat )
 {
 	auto arrayBPMChangeExpressions = Rage::split(line, ",");
 
@@ -494,7 +494,7 @@ void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const std::str
 	}
 }
 
-void SMLoader::ParseStops( vector< std::pair<float, float> > &out, const std::string line, const int rowsPerBeat )
+void SMLoader::ParseStops( vector< std::pair<float, float> > &out, const std::string &line, const int rowsPerBeat )
 {
 	auto arrayFreezeExpressions = Rage::split(line, ",");
 
@@ -758,7 +758,7 @@ void SMLoader::ProcessBPMsAndStops(TimingData &out,
 	}
 }
 
-void SMLoader::ProcessDelays( TimingData &out, const std::string line, const int rowsPerBeat )
+void SMLoader::ProcessDelays( TimingData &out, const std::string &line, const int rowsPerBeat )
 {
 	auto arrayDelayExpressions = Rage::split(line, ",");
 
@@ -788,7 +788,7 @@ void SMLoader::ProcessDelays( TimingData &out, const std::string line, const int
 	}
 }
 
-void SMLoader::ProcessTimeSignatures( TimingData &out, const std::string line, const int rowsPerBeat )
+void SMLoader::ProcessTimeSignatures( TimingData &out, const std::string &line, const int rowsPerBeat )
 {
 	auto vs1 = Rage::split(line, ",");
 
@@ -840,7 +840,7 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const std::string line, c
 	}
 }
 
-void SMLoader::ProcessTickcounts( TimingData &out, const std::string line, const int rowsPerBeat )
+void SMLoader::ProcessTickcounts( TimingData &out, const std::string &line, const int rowsPerBeat )
 {
 	auto arrayTickcountExpressions = Rage::split(line, ",");
 
@@ -863,7 +863,7 @@ void SMLoader::ProcessTickcounts( TimingData &out, const std::string line, const
 	}
 }
 
-void SMLoader::ProcessSpeeds( TimingData &out, const std::string line, const int rowsPerBeat )
+void SMLoader::ProcessSpeeds( TimingData &out, const std::string &line, const int rowsPerBeat )
 {
 	auto vs1 = Rage::split(line, ",");
 
@@ -925,7 +925,7 @@ void SMLoader::ProcessSpeeds( TimingData &out, const std::string line, const int
 	}
 }
 
-void SMLoader::ProcessFakes( TimingData &out, const std::string line, const int rowsPerBeat )
+void SMLoader::ProcessFakes( TimingData &out, const std::string &line, const int rowsPerBeat )
 {
 	auto arrayFakeExpressions = Rage::split(line, ",");
 

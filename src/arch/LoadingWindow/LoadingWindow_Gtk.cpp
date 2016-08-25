@@ -20,7 +20,7 @@ LoadingWindow_Gtk::LoadingWindow_Gtk()
 {
 }
 
-static std::string ModuleError( const std::string s )
+static std::string ModuleError( const std::string &s )
 {
 	return fmt::sprintf( "Couldn't load symbol Module_%s", s.c_str() );
 }

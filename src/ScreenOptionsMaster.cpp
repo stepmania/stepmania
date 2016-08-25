@@ -98,7 +98,7 @@ void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns
 	m_iChangeMask |= row.ExportOptions( vpns, bRowHasFocus );
 }
 
-void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_ExportOptions )
 	{

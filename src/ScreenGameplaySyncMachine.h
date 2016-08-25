@@ -14,7 +14,7 @@ public:
 
 	virtual ScreenType GetScreenType() const { return system_menu; }
 
-	void HandleScreenMessage( const ScreenMessage SM );
+	void HandleScreenMessage( const ScreenMessage &SM );
 	void ResetAndRestartCurrentSong();
 protected:
 	virtual bool UseSongBackgroundAndForeground() const { return false; }

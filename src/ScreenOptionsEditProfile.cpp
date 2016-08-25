@@ -105,7 +105,7 @@ void ScreenOptionsEditProfile::GoToPrevScreen()
 {
 }
 
-void ScreenOptionsEditProfile::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsEditProfile::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{

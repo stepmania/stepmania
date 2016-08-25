@@ -89,7 +89,7 @@ bool ScreenGameplaySyncMachine::Input( const InputEventPlus &input )
 	return ScreenGameplay::Input( _input );
 }
 
-void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
+void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_NotesEnded )
 	{

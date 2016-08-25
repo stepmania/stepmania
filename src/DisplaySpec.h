@@ -78,9 +78,9 @@ public:
 	 * Construct a specification for the display with the given ID, which supports the given modes,
 	 * and is currently disabled (has no active mode)
 	 */
-	DisplaySpec(const std::string id,
-				const std::string name,
-				const std::set<DisplayMode> modes,
+	DisplaySpec(const std::string &id,
+				const std::string &name,
+				const std::set<DisplayMode> &modes,
 				const bool isVirtual=false):
 		m_sId( id ), m_sName( name ),
 		m_sModes( modes ), m_bCurModeActive( false ), m_CurMode( { 0 } ),

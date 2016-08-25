@@ -155,7 +155,7 @@ public:
 	bool RemoveAttr( std::string const &sName );
 
 	XNode();
-	explicit XNode( std::string const &sName );
+	explicit XNode( std::string const &sName ): m_sName(sName) {};
 	XNode( const XNode &cpy );
 	~XNode() { Free(); }
 

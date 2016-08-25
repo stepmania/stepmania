@@ -72,7 +72,7 @@ void ScreenDemonstration::Init()
 	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );		// TODO: Use MenuTimer instead?
 }
 
-void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
+void ScreenDemonstration::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_NotesEnded ||
 		SM == SM_BeginFadingOut )

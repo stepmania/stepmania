@@ -1531,7 +1531,7 @@ void Replace_Unicode_Markers( std::string &sText )
 
 		int iNum;
 		if( bHex )
-			sscanf( sText.c_str()+iPos, "&x%x;", &iNum );
+			sscanf( sText.c_str()+iPos, "&x%x;", (unsigned int *)&iNum );
 		else
 			sscanf( sText.c_str()+iPos, "&#%i;", &iNum );
 		if( iNum > 0xFFFF )

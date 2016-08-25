@@ -302,7 +302,7 @@ public:
 	const std::string& GetLabelAtRow( int iNoteRow ) const { return GetLabelSegmentAtRow(iNoteRow)->GetLabel(); }
 	const std::string& GetLabelAtBeat( float fBeat ) const { return GetLabelAtRow( BeatToNoteRow(fBeat) ); }
 	void SetLabelAtRow( int iNoteRow, const std::string& sLabel ) { AddSegment( LabelSegment(iNoteRow,sLabel) ); }
-	void SetLabelAtBeat( float fBeat, const std::string sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
+	void SetLabelAtBeat( float fBeat, const std::string &sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
 	bool DoesLabelExist( const std::string& sLabel ) const;
 
 	float GetSpeedPercentAtRow( int iNoteRow ) const { return GetSpeedSegmentAtRow(iNoteRow)->GetRatio(); }

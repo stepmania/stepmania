@@ -258,10 +258,10 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			}
 
 			if( ReadFile( sPath + "device/../idVendor", sBuf ) )
-				sscanf( sBuf.c_str(), "%x", &usbd.idVendor );
+				sscanf( sBuf.c_str(), "%x", (unsigned int *)&usbd.idVendor );
 
 			if( ReadFile( sPath + "device/../idProduct", sBuf ) )
-				sscanf( sBuf.c_str(), "%x", &usbd.idProduct );
+				sscanf( sBuf.c_str(), "%x", (unsigned int *)&usbd.idProduct );
 
 			if( ReadFile( sPath + "device/../serial", sBuf ) )
 			{
@@ -308,7 +308,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 
 			char szScsiDevice[1024];
 			char szMountPoint[1024];
-			int iRet = sscanf( sLine.c_str(), "%s %s", szScsiDevice, szMountPoint );
+			int iRet = sscanf( sLine.c_str(), "%1023s %0123s", szScsiDevice, szMountPoint );
 			if( iRet != 2 || szScsiDevice[0] == '#')
 				continue;	// don't process this line
 

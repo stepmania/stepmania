@@ -574,9 +574,9 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const std:
 				int first = 0;
 				if( !asMatches[2].empty() )
 				{
-					sscanf( asMatches[2].c_str(), "%x", &first );
+					sscanf( asMatches[2].c_str(), "%x", (unsigned int *)&first );
 					int last;
-					sscanf( asMatches[3].c_str(), "%x", &last );
+					sscanf( asMatches[3].c_str(), "%x", (unsigned int *)&last );
 					if(last < first)
 					{
 						LuaHelpers::ReportScriptErrorFmt(

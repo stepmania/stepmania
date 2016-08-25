@@ -1163,7 +1163,7 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 	ScreenWithMenuElements::HandleMessage( msg );
 }
 
-void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
+void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_AllowOptionsMenuRepeat )
 	{

@@ -84,7 +84,7 @@ bool ScreenContinue::Input( const InputEventPlus &input )
 	return ScreenWithMenuElementsSimple::Input( input );
 }
 
-void ScreenContinue::HandleScreenMessage( const ScreenMessage SM )
+void ScreenContinue::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_MenuTimer )
 	{

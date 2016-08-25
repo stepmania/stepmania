@@ -547,7 +547,7 @@ bool ScreenOptions::Input( const InputEventPlus &input )
 	return Screen::Input( input );
 }
 
-void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptions::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_MenuTimer )
 	{

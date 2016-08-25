@@ -584,7 +584,7 @@ void NoteField::DrawAttackText(const float beat, const Attack &attack,
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawBGChangeText(const float beat, const std::string new_bg_name,
+void NoteField::DrawBGChangeText(const float &beat, const std::string &new_bg_name,
 	const Rage::Color& glow)
 {
 	set_text_measure_number_for_draw(beat, 1, 0, align_left, Rage::Color(0,1,0,1),
@@ -806,13 +806,12 @@ IsOnScreen(fBeat, 0, static_cast<int>(m_FieldRenderArgs.draw_pixels_after_target
 	FOREACH_TimingSegmentType( tst )
 		segs[tst] = &(pTiming->GetTimingSegments(tst));
 
-	unsigned i = 0;
 	// Draw beat bars
 	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != nullptr )
 	{
 		const vector<TimingSegment *> &tSigs = *segs[SEGMENT_TIME_SIG];
 		int iMeasureIndex = 0;
-		for (i = 0; i < tSigs.size(); i++)
+		for (unsigned i = 0; i < tSigs.size(); i++)
 		{
 			const TimeSignatureSegment *ts = ToTimeSignature(tSigs[i]);
 			int iSegmentEndRow = (i + 1 == tSigs.size()) ? m_FieldRenderArgs.last_row : tSigs[i+1]->GetRow();

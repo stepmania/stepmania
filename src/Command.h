@@ -8,7 +8,7 @@
 class Command
 {
 public:
-	void Load( std::string const sCommand );
+	void Load( std::string const &sCommand );
 
 	std::string GetOriginalCommandString() const;	// used when reporting an error in number of args
 	std::string GetName() const;	// the command name is the first argument in all-lowercase

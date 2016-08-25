@@ -245,8 +245,8 @@ void RageModelGeometry::LoadMilkshapeAscii( const std::string& _sPath, bool bNee
 					uint16_t nNormalIndices[3];
 					if( sscanf (sLine.c_str(), "%d %hd %hd %hd %hd %hd %hd %d",
 								&nFlags,
-								&nIndices[0], &nIndices[1], &nIndices[2],
-								&nNormalIndices[0], &nNormalIndices[1], &nNormalIndices[2],
+								(short *)&nIndices[0], (short *)&nIndices[1], (short *)&nIndices[2],
+								(short *)&nNormalIndices[0], (short *)&nNormalIndices[1], (short *)&nNormalIndices[2],
 								&nIndex
 						   ) != 8 )
 					{

@@ -66,10 +66,10 @@ public:
 		m_fPassmark(0), m_SpeedfPassmark(1.0f),
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
-		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
+		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes),
+		m_sNoteSkin(""),
+		m_newskin("default")
 	{
-		m_sNoteSkin = "";
-		m_newskin= "default";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
 		ZERO( m_fEffects );	ONE( m_SpeedfEffects );
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );

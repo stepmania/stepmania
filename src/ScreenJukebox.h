@@ -12,7 +12,7 @@ public:
 	virtual void Init();
 
 	virtual bool Input( const InputEventPlus &input );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void HandleScreenMessage( const ScreenMessage &SM );
 
 protected:
 	bool m_bDemonstration;

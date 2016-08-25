@@ -208,7 +208,7 @@ void CryptManager::GenerateRSAKeyToFile( unsigned int keyLength, std::string pri
 	}
 }
 
-void CryptManager::SignFileToFile( std::string sPath, std::string sSignatureFile )
+void CryptManager::SignFileToFile( std::string &sPath, std::string sSignatureFile )
 {
 	std::string sPrivFilename = PRIVATE_KEY_PATH;
 	if( sSignatureFile.empty() )
@@ -375,7 +375,7 @@ std::string CryptManager::GetMD5ForFile( std::string fn )
 	int iHash = register_hash( &md5_desc );
 	ASSERT( iHash >= 0 );
 
-	unsigned char digest[16];
+	unsigned char digest[20];
 	HashFile( file, digest, iHash );
 
 	return std::string( (const char *) digest, sizeof(digest) );

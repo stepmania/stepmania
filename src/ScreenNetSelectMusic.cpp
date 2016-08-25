@@ -137,7 +137,7 @@ bool ScreenNetSelectMusic::Input( const InputEventPlus &input )
 	return ScreenNetSelectBase::Input( input ) || handled;
 }
 
-void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
+void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToPrevScreen )
 	{

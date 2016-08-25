@@ -125,7 +125,7 @@ void ScreenPackages::Init()
 	m_fOutputFile.Close();
 }
 
-void ScreenPackages::HandleScreenMessage( const ScreenMessage SM )
+void ScreenPackages::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_GoToPrevScreen )
 	{

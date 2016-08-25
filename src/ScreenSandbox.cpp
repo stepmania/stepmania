@@ -17,7 +17,7 @@
 
 REGISTER_SCREEN_CLASS( ScreenSandbox );
 
-void ScreenSandbox::HandleScreenMessage( const ScreenMessage SM )
+void ScreenSandbox::HandleScreenMessage( const ScreenMessage &SM )
 {
 	Screen::HandleScreenMessage( SM );
 }

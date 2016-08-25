@@ -886,7 +886,7 @@ int main(int argc, char* argv[])
 						lFiles.push_back(fh.GetFileName());
 					else
 					{
-						char buf[50];
+						char buf[54 + std::char_traits<char>::length(i)];
 						sprintf(buf, "There are troubles with getting info from file number %d", i);
 						lFiles.push_back(buf);
 					}
@@ -949,7 +949,7 @@ int main(int argc, char* argv[])
 		DisplayUsage();
 		iRet = 1;
 	}
-	catch (CZipException e)
+	catch (CZipException& e)
 	{
 		printf ("Error while processing archive %s\n%s\n", (LPCTSTR) szArchive, (LPCTSTR)e.GetErrorDescription());
 		if (e.m_szFileName.IsEmpty())

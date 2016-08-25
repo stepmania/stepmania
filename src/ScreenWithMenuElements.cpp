@@ -148,7 +148,7 @@ void ScreenWithMenuElements::BeginScreen()
 	}
 }
 
-void ScreenWithMenuElements::HandleScreenMessage( const ScreenMessage SM )
+void ScreenWithMenuElements::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_MenuTimer )
 	{

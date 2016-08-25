@@ -3644,7 +3644,7 @@ static LocalizedString EDIT_EXISTING_MOD ("ScreenEdit", "Edit Existing Mod");
 static LocalizedString EDIT_ATTACK_START ("ScreenEdit", "Edit Attack Start");
 static LocalizedString EDIT_ATTACK_LENGTH ("ScreenEdit", "Edit Attack Length");
 
-void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
+void ScreenEdit::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM != SM_UpdateTextInfo )
 		m_bTextInfoNeedsUpdate = true;

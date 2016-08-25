@@ -770,7 +770,7 @@ bool ScreenEvaluation::Input( const InputEventPlus &input )
 	return ScreenWithMenuElements::Input( input );
 }
 
-void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
+void ScreenEvaluation::HandleScreenMessage( const ScreenMessage &SM )
 {
 	if( SM == SM_PlayCheer )
 	{

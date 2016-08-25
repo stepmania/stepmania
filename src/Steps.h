@@ -112,7 +112,7 @@ public:
 	std::vector<std::string> m_sAttackString;
 
 	std::string GetChartName() const			{ return parent ? Real()->GetChartName() : this->chartName; }
-	void SetChartName(const std::string name)	{ this->chartName = name; }
+	void SetChartName(const std::string &name)	{ this->chartName = name; }
 	void SetFilename( std::string fn )			{ m_sFilename = fn; }
 	std::string GetFilename() const			{ return m_sFilename; }
 	void SetSavedToDisk( bool b )			{ DeAutogen(); m_bSavedToDisk = b; }
