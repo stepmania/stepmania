@@ -29,14 +29,6 @@ namespace ScreenDimensions
 
 #define FullScreenRectF Rage::RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
 
-/**
- * @brief The size of the arrows.
- *
- * This is referenced in ArrowEffects, GameManager, NoteField, and SnapDisplay.
- * XXX: doesn't always have to be 64. -aj
- */
-#define	ARROW_SIZE	(64)
-
 #endif
 
 /**

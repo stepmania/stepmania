@@ -846,6 +846,7 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
  * from inside a screen. */
 void ScreenManager::PopAllScreens()
 {
+	m_input_redirected.clear();
 	// Make sure only the top screen receives LoseFocus.
 	bool bFirst = true;
 	while( !g_ScreenStack.empty() )

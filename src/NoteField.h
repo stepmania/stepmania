@@ -7,7 +7,6 @@
 
 #include "ActorFrame.h"
 #include "ArrowDefects.h"
-#include "AutoActor.h"
 #include "BitmapText.h"
 #include "ModValue.h"
 #include "NoteSkin.h"
@@ -322,6 +321,7 @@ struct NoteField : ActorFrame
 	virtual void DrawPrimitives();
 	void position_actor_at_column_head(Actor* act, FieldLayerRenderInfo& info,
 		size_t col);
+	double get_receptor_y();
 
 	virtual void PushSelf(lua_State *L);
 	virtual NoteField* Copy() const;
@@ -353,6 +353,7 @@ struct NoteField : ActorFrame
 	void set_read_bpm(float read_bpm) {m_defective_mods.set_read_bpm(read_bpm);}
 	void set_defective_mode(bool mode);
 	bool get_defective_mode();
+	void disable_defective_mode();
 	void set_speed(float time_spacing, float max_scroll_bpm,
 		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
 	void disable_speed_scroll_segments();

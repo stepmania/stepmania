@@ -77,6 +77,7 @@ AutoScreenMessage( SM_BackFromArbitraryRemap );
 AutoScreenMessage( SM_BackFromStepsInformation );
 AutoScreenMessage( SM_BackFromStepsData );
 AutoScreenMessage( SM_BackFromOptions );
+AutoScreenMessage(SM_BackFromNoteFieldOptions);
 AutoScreenMessage( SM_BackFromSongInformation );
 AutoScreenMessage( SM_BackFromBGChange );
 AutoScreenMessage( SM_BackFromInsertTapAttack );
@@ -810,8 +811,11 @@ static MenuDef g_MainMenu(
 	MenuRowDef(ScreenEdit::revert_from_disk,
 		"Revert from disk",
 		true, EditMode_Full, true, true, 0 ),
-	MenuRowDef(ScreenEdit::options,
+	MenuRowDef(ScreenEdit::edit_notefield_options,
 		"Editor options",
+		true, EditMode_Practice, true, true, 0 ),
+	MenuRowDef(ScreenEdit::test_notefield_options,
+		"Test play options",
 		true, EditMode_Practice, true, true, 0 ),
 	MenuRowDef(ScreenEdit::edit_song_info,
 		"Edit song info",
@@ -1475,27 +1479,22 @@ void ScreenEdit::Init()
 
 	this->AddChild( &m_Background );
 
-	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
-	m_SnapDisplay.Load();
-	// xxx: hardcoded command -aj
-	m_SnapDisplay.SetZoom( 0.5f );
-	this->AddChild( &m_SnapDisplay );
-
-	// TODO:  Menu for picking the noteskin and params. -Kyz
-	LuaReference skin_params;
-	m_NoteFieldEdit.set_skin(
-		NOTESKIN->get_first_skin_name_for_stepstype(m_pSteps->m_StepsType), skin_params);
+	// The option menu actor takes care of setting the noteskin. -Kyz
 	m_pSteps->GetNoteData(m_NoteDataEdit);
 	m_NoteFieldEdit.set_note_data(&m_NoteDataEdit, m_pSteps->GetTimingData(), m_pSteps->m_StepsType);
-	// TODO:  Allow setting newfield prefs. -Kyz
 	m_NoteFieldEdit.SetName("NoteFieldEdit");
 	set_edit_mode_stuff_on_field(m_NoteFieldEdit);
-	m_NoteFieldEdit.set_gameplay_zoom(.5);
 
 	this->AddChild( &m_NoteFieldEdit );
 
-	m_NoteFieldRecord.set_skin(
-		NOTESKIN->get_first_skin_name_for_stepstype(m_pSteps->m_StepsType), skin_params);
+	// m_SnapDisplay is positioned during drawing, to match receptors. -Kyz
+	m_SnapDisplay.SetXY(0, 0);
+	m_SnapDisplay.SetSeparation(m_NoteFieldEdit.get_field_width() * .5);
+	// Make m_NoteFieldEdit the fake parent of the snap display so the snap
+	// display will be positioned and rotated the same way. -Kyz
+	m_SnapDisplay.SetFakeParent(&m_NoteFieldEdit);
+	this->AddChild(&m_SnapDisplay);
+
 	m_NoteDataRecord.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 	m_NoteFieldRecord.set_note_data(&m_NoteDataRecord, m_pSteps->GetTimingData(), m_pSteps->m_StepsType);
 	m_NoteFieldRecord.SetName("NoteFieldRecord");
@@ -1524,6 +1523,11 @@ void ScreenEdit::Init()
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr );
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player->SetXY( PLAYER_X, PLAYER_Y );
+	// TODO:  Defective mode stuff is interfering with notefield configuration.
+	// I do not have time to dig that crap out and make it work right. -Kyz
+	m_Player->disable_defective_mode();
+	m_Player->SetNoteFieldToEditMode();
+	m_Player.Load(m_NoteDataEdit);
 	this->AddChild( m_Player );
 
 	this->AddChild( &m_Foreground );
@@ -1544,6 +1548,12 @@ void ScreenEdit::Init()
 	m_textPlayRecordHelp.SetText( PLAY_RECORD_HELP_TEXT );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textPlayRecordHelp );
 	this->AddChild( &m_textPlayRecordHelp );
+
+	m_option_menu.Load(THEME->GetPathG("ScreenEdit", "option_menu"));
+	m_option_menu->SetDrawOrder(DRAW_ORDER_TRANSITIONS);
+	m_in_option_menu= false;
+	AddChild(m_option_menu);
+	InitNoteFieldConfig();
 
 	m_soundAddNote.Load(		THEME->GetPathS("ScreenEdit","AddNote"), true );
 	m_soundRemoveNote.Load(		THEME->GetPathS("ScreenEdit","RemoveNote"), true );
@@ -1594,6 +1604,26 @@ void ScreenEdit::EndScreen()
 	ScreenWithMenuElements::EndScreen();
 
 	SOUND->HandleSongTimer( true );
+}
+
+void ScreenEdit::InitNoteFieldConfig()
+{
+	float read_bpm= m_Player->calc_read_bpm();
+	Message msg("InitNoteFieldConfig");
+	Lua* L= LUA->Get();
+	lua_createtable(L, 0, 2);
+	m_NoteFieldEdit.PushSelf(L);
+	lua_setfield(L, -2, "NoteFieldEdit");
+	NoteField* player_field= m_Player->get_note_field_because_i_really_need_it_for_edit_mode();
+	ASSERT_M(player_field != nullptr, "The edit Player's NoteField child isn't a NoteField.");
+	player_field->PushSelf(L);
+	lua_setfield(L, -2, "NoteFieldTest");
+	msg.SetParamFromStack(L, "fields");
+	msg.SetParam("read_bpm", read_bpm);
+	Enum::Push(L, m_pSteps->m_StepsType);
+	msg.SetParamFromStack(L, "stepstype");
+	LUA->Release(L);
+	m_option_menu->HandleMessage(msg);
 }
 
 // play assist ticks
@@ -2037,8 +2067,20 @@ void ScreenEdit::DrawPrimitives()
 		return;
 	}
 
-	// HACK:  Draw using the trailing beat
+	if(m_in_option_menu)
+	{
+		NoteField* field= m_Player->get_note_field_because_i_really_need_it_for_edit_mode();
+		ASSERT_M(field != nullptr, "The edit Player's NoteField child isn't a NoteField.");
+		field->set_displayed_beat(m_fTrailingBeat);
+		m_Player->SetBeingDrawnByProxy();
+	}
+
+	// HACK:  Draw using the trailing beat -Unknown author
 	m_NoteFieldEdit.set_displayed_beat(m_fTrailingBeat);
+	// Position m_SnapDisplay at the receptors. -Kyz
+	m_SnapDisplay.SetY(m_NoteFieldEdit.get_receptor_y());
+	// Counter rotate m_SnapDisplay to make it flat on. -Kyz
+	m_SnapDisplay.set_counter_rotation(&m_NoteFieldEdit);
 	ScreenWithMenuElements::DrawPrimitives();
 }
 
@@ -2053,6 +2095,11 @@ bool ScreenEdit::Input( const InputEventPlus &input )
 
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return false;
+
+	if(m_in_option_menu)
+	{
+		return false;
+	}
 
 	EditButton EditB = DeviceToEdit( input.DeviceI );
 	if( EditB == EditButton_Invalid )
@@ -3429,8 +3476,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 		m_Player.Load( m_NoteDataEdit );
 		m_Player->calc_read_bpm();
-		m_Player->SetSpeedFromPlayerOptions();
-		m_Player->SetNoteFieldToEditMode();
 
 		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay != 0 )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
@@ -3452,7 +3497,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 			m_Foreground.Unload();
 			m_Foreground.LoadFromSong( m_pSong );
 		}
-
 		break;
 	case STATE_RECORDING:
 	case STATE_RECORDING_PAUSED:
@@ -3955,6 +3999,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		// stop any music that screen may have been playing
 		SOUND->StopMusic();
+	}
+	else if(SM == SM_BackFromNoteFieldOptions)
+	{
+		m_Player->SetVisible(false);
+		m_NoteFieldEdit.SetVisible(true);
+		m_in_option_menu= false;
 	}
 	else if( SM == SM_BackFromInsertTapAttack )
 	{
@@ -4963,8 +5013,44 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case revert_from_disk:
 			ScreenPrompt::Prompt( SM_DoRevertFromDisk, REVERT_FROM_DISK.GetValue() + "\n\n" + DESTROY_ALL_UNSAVED_CHANGES.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 			break;
-		case options:
-			SCREENMAN->AddNewScreenToTop( OPTIONS_SCREEN, SM_BackFromOptions );
+		case edit_notefield_options:
+			{
+				float read_bpm= m_Player->calc_read_bpm();
+				Message msg("ShowMenu");
+				msg.SetParam("field_name", m_NoteFieldEdit.GetName());
+				msg.SetParam("read_bpm", read_bpm);
+				Lua* L= LUA->Get();
+				m_NoteFieldEdit.PushSelf(L);
+				msg.SetParamFromStack(L, "field");
+				Enum::Push(L, m_pSteps->m_StepsType);
+				msg.SetParamFromStack(L, "stepstype");
+				LUA->Release(L);
+				m_option_menu->HandleMessage(msg);
+				m_in_option_menu= true;
+			}
+			break;
+		case test_notefield_options:
+			{
+				m_Player->SetVisible(true);
+				m_NoteFieldEdit.SetVisible(false);
+				m_Player.Load( m_NoteDataEdit );
+				float read_bpm= m_Player->calc_read_bpm();
+				m_Player->SetNoteFieldToEditMode();
+				NoteField* field= m_Player->get_note_field_because_i_really_need_it_for_edit_mode();
+				ASSERT_M(field != nullptr, "The edit Player's NoteField child isn't a NoteField.");
+				field->set_displayed_beat(m_fTrailingBeat);
+				Message msg("ShowMenu");
+				msg.SetParam("field_name", std::string("NoteFieldTest"));
+				msg.SetParam("read_bpm", read_bpm);
+				Lua* L= LUA->Get();
+				field->PushSelf(L);
+				msg.SetParamFromStack(L, "field");
+				Enum::Push(L, m_pSteps->m_StepsType);
+				msg.SetParamFromStack(L, "stepstype");
+				LUA->Release(L);
+				m_option_menu->HandleMessage(msg);
+				m_in_option_menu= true;
+			}
 			break;
 		case edit_song_info:
 			{

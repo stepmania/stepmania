@@ -377,6 +377,7 @@ public:
 		SetDiffuseAlpha(trans.alpha);
 		SetGlow(Rage::Color(1, 1, 1, trans.glow));
 	}
+	virtual void set_counter_rotation(Actor* counter);
 	void  SetX( float x )				{ DestTweenState().pos.x = x; };
 	void  SetY( float y )				{ DestTweenState().pos.y = y; };
 	void  SetZ( float z )				{ DestTweenState().pos.z = z; };

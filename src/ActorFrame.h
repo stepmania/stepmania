@@ -79,6 +79,8 @@ public:
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 
+	virtual void set_counter_rotation(Actor* counter);
+
 	virtual void SetState(size_t s);
 	void SetUpdateRate(float rate) { if(rate > 0.0f) { m_fUpdateRate = rate; }}
 	float GetUpdateRate() { return m_fUpdateRate; }

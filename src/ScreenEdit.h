@@ -216,6 +216,8 @@ public:
 	virtual void HandleMessage( const Message &msg );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
+	void InitNoteFieldConfig();
+
 	void SetDirty(bool dirty);
 	bool IsDirty() const { return m_dirty; }
 
@@ -295,6 +297,13 @@ protected:
 	
 	/** @brief The player options before messing with attacks. */
 	ModsGroup<PlayerOptions>	originalPlayerOptions;
+
+	// When the user opens the option menu, a command is played on
+	// m_option_menu telling it which notefield the menu is for.  The option
+	// menu then takes over input until it closes.  The menu posts a screen
+	// message when it finishes. -Kyz
+	AutoActor m_option_menu;
+	bool m_in_option_menu;
 	
 	/**
 	 * @brief Keep a backup of the present Step TimingData when
@@ -407,7 +416,8 @@ public:
 		save, /**< Save the current chart to disk. */
 		revert_to_last_save,
 		revert_from_disk,
-		options, /**< Modify the PlayerOptions and SongOptions. */
+		edit_notefield_options,
+		test_notefield_options,
 		edit_song_info, /**< Edit some general information about the song. */
 		edit_timing_data, /**< Edit the chart's timing data. */
 		view_steps_data, /**< View step statistics. */

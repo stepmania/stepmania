@@ -3187,7 +3187,8 @@ public:
 			p->SetCurrentStyle(GAMEMAN->GetEditorStyleForStepsType(
 					steps->m_StepsType), PLAYER_INVALID);
 			p->m_pCurCourse.Set(nullptr);
-			return 0;
+			steps->PushSelf(L);
+			return 1;
 		}
 		StepsType stype= Enum::Check<StepsType>(L, 3);
 		Difficulty diff= Enum::Check<Difficulty>(L, 4);
@@ -3219,7 +3220,8 @@ public:
 		p->SetCurrentStyle(GAMEMAN->GetEditorStyleForStepsType(
 				new_steps->m_StepsType), PLAYER_INVALID);
 		p->m_pCurCourse.Set(nullptr);
-		return 0;
+		new_steps->PushSelf(L);
+		return 1;
 	}
 
 	static int GetAutoGenFarg(T* p, lua_State *L)

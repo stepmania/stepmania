@@ -89,8 +89,8 @@ local base_options= {
 	nesty_options.float_config_toggle_val(notefield_prefs_config, "reverse", -1, 1),
 	nesty_options.float_config_val(notefield_prefs_config, "zoom", -2, -1, 0),
 	nesty_options.submenu("chart_mods", chart_mods),
-	{name= "newskin", translatable= true, menu= nesty_option_menus.newskins},
-	{name= "newskin_params", translatable= true, menu= nesty_option_menus.menu,
+	{name= "noteskin", translatable= true, menu= nesty_option_menus.noteskins},
+	{name= "noteskin_params", translatable= true, menu= nesty_option_menus.menu,
 	 args= gen_noteskin_param_menu, req_func= show_noteskin_param_menu},
 	{name= "shown_noteskins", translatable= true, menu= nesty_option_menus.shown_noteskins, args= {}},
 	nesty_options.bool_config_val(notefield_prefs_config, "hidden"),
@@ -103,7 +103,7 @@ local base_options= {
 	nesty_options.bool_song_mod_val("StaticBackground"),
 	nesty_options.bool_song_mod_val("RandomBGOnly"),
 	nesty_options.float_config_val(player_config, "ScreenFilter", -2, -1, 0),
-	{name= "reload_newskins", translatable= true, type= "action",
+	{name= "reload_noteskins", translatable= true, type= "action",
 	 execute= function() NOTESKIN:reload_skins() end},
 }
 

@@ -50,11 +50,11 @@ public:
 	// DrawNoteFieldBoard exists so that the board can be drawn underneath
 	// theme elements like score. -Kyz
 	void DrawNoteFieldBoard();
-	// SetSpeedFromPlayerOptions exists so ScreenEdit can work until it's
-	// rewritten. -Kyz
-	void SetSpeedFromPlayerOptions();
 	void SetNoteFieldToEditMode();
 	void update_displayed_time();
+	void disable_defective_mode();
+	NoteField* get_note_field_because_i_really_need_it_for_edit_mode()
+	{ return m_note_field; }
 
 	struct TrackRowTapNote
 	{
@@ -78,7 +78,7 @@ public:
 	void Load();
 	double get_field_width();
 	void set_gameplay_zoom(double zoom);
-	void calc_read_bpm();
+	float calc_read_bpm();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
 	bool IsOniDead() const;
 

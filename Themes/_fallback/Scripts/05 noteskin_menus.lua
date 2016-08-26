@@ -217,7 +217,7 @@ local function noteskin_param_bool_val(param_name, param_section, type_info)
 		end,
 	}
 end
-local function gen_noteskin_param_submenu(pn, param_section, type_info, skin_defaults, add_to)
+function gen_noteskin_param_submenu(param_section, type_info, skin_defaults, add_to)
 	for field, info in pairs(type_info) do
 		if field ~= "translation" then
 			local field_type= type(skin_defaults[field])
@@ -233,7 +233,7 @@ local function gen_noteskin_param_submenu(pn, param_section, type_info, skin_def
 			if field_type == "table" then
 				submenu.menu= nesty_option_menus.menu
 				local menu_args= {}
-				gen_noteskin_param_submenu(pn, param_section[field], info, skin_defaults[field], menu_args)
+				gen_noteskin_param_submenu(param_section[field], info, skin_defaults[field], menu_args)
 				submenu.args= menu_args
 			elseif field_type == "string" then
 				if info.choices then
@@ -276,7 +276,7 @@ function gen_noteskin_param_menu(pn)
 			MESSAGEMAN:Broadcast("NoteskinParamsChanged", {pn= pn})
 		end,
 	}
-	gen_noteskin_param_submenu(pn, player_params, skin_info, skin_defaults, ret)
+	gen_noteskin_param_submenu(player_params, skin_info, skin_defaults, ret)
 	return ret
 end
 function show_noteskin_param_menu(pn)

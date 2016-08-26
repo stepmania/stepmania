@@ -1,6 +1,6 @@
 -- Various functions to cover generic parts of making a noteskin.
 
-Noteskin= {
+NoteSkin= {
 	-- common_multiple calculates the lowest common multiple of the factors.
 	common_multiple= function(number, factors)
 		for i= 1, #factors do

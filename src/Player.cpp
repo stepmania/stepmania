@@ -25,6 +25,7 @@
 #include "ActorUtil.h"
 #include "Game.h"
 #include "NetworkSyncManager.h"	//used for sending timing offset
+#include "NoteSkinManager.h"
 #include "DancingCharacters.h"
 #include "ScreenDimensions.h"
 #include "RageSoundManager.h"
@@ -468,7 +469,7 @@ void Player::Init(
 	m_fActiveRandomAttackStart = -1.0f;
 }
 
-void Player::calc_read_bpm()
+float Player::calc_read_bpm()
 {
 	// Always calculate the reading bpm, to allow switching to an mmod mid-song.
 	DisplayBpms bpms;
@@ -545,6 +546,7 @@ void Player::calc_read_bpm()
 	{
 		m_note_field->set_read_bpm(m_pPlayerState->m_fReadBPM);
 	}
+	return m_pPlayerState->m_fReadBPM;
 }
 
 /**
@@ -617,21 +619,19 @@ void Player::Load()
 		// current stepstype, it might be from the previous song and for a
 		// different stepstype. -Kyz
 		std::string skin_name;
-		// TODO: Store the skin params in the profile, preferably converting the
-		// profile to lua along the way.
 		LuaReference skin_params= GAMESTATE->m_noteskin_params[pn];
 		if(!GAMESTATE->m_bInStepEditor)
 		{
+			StepsType stype= GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
 			Profile const* prof= PROFILEMAN->GetProfile(pn);
 			if(prof != nullptr)
 			{
-				StepsType stype= GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
 				prof->get_preferred_noteskin(stype, skin_name);
 				skin_params= prof->get_noteskin_params(skin_name, stype);
 			}
 			else
 			{
-				skin_name= "kyz_fixme";
+				skin_name= NOTESKIN->get_first_skin_name_for_stepstype(stype);
 			}
 		}
 		else
@@ -639,7 +639,6 @@ void Player::Load()
 			skin_name= "default";
 		}
 		m_note_field->set_skin(skin_name, skin_params);
-
 		m_note_field->set_defective_mode(m_pPlayerState->m_player_needs_defective_field);
 	}
 
@@ -1512,6 +1511,15 @@ void Player::update_displayed_time()
 	}
 }
 
+void Player::disable_defective_mode()
+{
+	if(m_note_field != nullptr)
+	{
+		m_note_field->disable_defective_mode();
+	}
+}
+
+
 bool Player::EarlyAbortDraw() const
 {
 	// TODO: Remove use of PlayerNumber.
@@ -1574,18 +1582,6 @@ void Player::DrawTapJudgments()
 
 	if( m_sprJudgment )
 		m_sprJudgment->Draw();
-}
-
-void Player::SetSpeedFromPlayerOptions()
-{
-	if(m_note_field != nullptr)
-	{
-		PlayerOptions& options= m_pPlayerState->m_PlayerOptions.GetCurrent();
-		m_note_field->set_speed(options.m_fTimeSpacing,
-			options.m_fMaxScrollBPM, options.m_fScrollSpeed,
-			options.m_fScrollBPM, m_pPlayerState->m_fReadBPM,
-			GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
-	}
 }
 
 void Player::SetNoteFieldToEditMode()

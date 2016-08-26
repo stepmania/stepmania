@@ -1317,7 +1317,7 @@ void NoteFieldColumn::build_render_lists()
 	auto column_end= m_note_data->end(m_column);
 	auto column_begin= m_note_data->begin(m_column);
 	// TODO: I don't like calling GetBeatFromElapsedTime every frame, but
-	// boomerange has problems if the column simply depends on what was visible
+	// boomerang has problems if the column simply depends on what was visible
 	// last frame. -Kyz
 	if(true || first_note_visible_prev_frame == column_end || time_diff < 0)
 	{
@@ -2167,6 +2167,15 @@ void NoteField::position_actor_at_column_head(Actor* act,
 	m_columns[col].position_actor_at_column_head(act, info);
 }
 
+double NoteField::get_receptor_y()
+{
+	if(m_columns.empty())
+	{
+		return 0.0;
+	}
+	return m_columns[0].apply_reverse_shift(m_columns[0].head_y_offset());
+}
+
 void NoteField::push_columns_to_lua(lua_State* L)
 {
 	lua_createtable(L, m_columns.size(), 0);
@@ -2410,6 +2419,7 @@ void NoteField::draw_field_text(double beat, double second, double y_offset,
 	}
 	trans.pos.x+= ((m_field_width * .5) + x_offset) * side_sign;
 	m_field_text.set_transform_pos(trans);
+	m_field_text.set_counter_rotation(this);
 	m_field_text.SetDiffuse(color);
 	m_field_text.SetGlow(glow);
 	m_field_text.SetHorizAlign(horiz_align);
@@ -2741,6 +2751,12 @@ void NoteField::set_defective_mode(bool mode)
 bool NoteField::get_defective_mode()
 {
 	return m_in_defective_mode;
+}
+
+void NoteField::disable_defective_mode()
+{
+	set_defective_mode(false);
+	m_defective_mods.set_player_options(nullptr);
 }
 
 void NoteField::set_speed(float time_spacing, float max_scroll_bpm,

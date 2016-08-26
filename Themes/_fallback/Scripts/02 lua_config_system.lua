@@ -94,7 +94,7 @@ local lua_config_mt= {
 			return slot
 		end,
 		slot_to_prof_dir= function(self, slot, reason)
-			local prof_dir= "Save"
+			local prof_dir= "Save/"
 			slot= self:sanitize_profile_slot(slot)
 			if slot == "ProfileSlot_Invalid" then return prof_dir end
 			if slot:match("ProfileSlot") then

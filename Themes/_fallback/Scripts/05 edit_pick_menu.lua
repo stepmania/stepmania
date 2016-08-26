@@ -93,11 +93,13 @@ end
 
 local function handle_edit_setup(song, steps, stype, diff, desc)
 	GAMESTATE:JoinPlayer(PLAYER_1)
+	local edit_steps= false
 	if stype then
-		GAMESTATE:SetStepsForEditMode(song, steps, stype, diff, desc)
+		edit_steps= GAMESTATE:SetStepsForEditMode(song, steps, stype, diff, desc)
 	else
-		GAMESTATE:SetStepsForEditMode(song, steps)
+		edit_steps= GAMESTATE:SetStepsForEditMode(song, steps)
 	end
+	add_to_recently_edited(song, edit_steps)
 	SCREENMAN:GetTopScreen():SetNextScreenName("ScreenEdit")
 		:StartTransitioningScreen("SM_GoToNextScreen")
 end
@@ -327,9 +329,50 @@ local function generate_song_list(group_name)
 	return choices
 end
 
+local function find_steps_entry_in_song(steps_entry, all_steps)
+	for i, steps in ipairs(all_steps) do
+		if steps:GetStepsType() == steps_entry.stepstype
+			and steps:GetDifficulty() == steps_entry.difficulty
+		and steps:GetDescription() == steps_entry.description then
+			return steps
+		end
+	end
+end
+
+local short_name_length= 16
+local function shorten_name(name)
+	return name:sub(1, short_name_length)
+end
+
+local function recently_edited_menu()
+	local recent= editor_config:get_data().recently_edited
+	local menu_entries= {}
+	for i, entry in ipairs(recent) do
+		local song= SONGMAN:find_song_by_dir(entry.song_dir)
+		if song then
+			local steps= find_steps_entry_in_song(entry, song:GetAllSteps())
+			if steps then
+				menu_entries[#menu_entries+1]= {
+					name= shorten_name(song:GetGroupName()) .. " &leftarrow; " ..
+						shorten_name(song:GetDisplayFullTitle()) .. " &leftarrow; " ..
+						name_for_steps(steps),
+					execute= function()
+						handle_edit_setup(song, steps)
+					end,
+					on_focus= function()
+						MESSAGEMAN:Broadcast("edit_menu_selection_changed", {song= song, steps= steps})
+					end,
+				}
+			end
+		end
+	end
+	return nesty_options.submenu("recently_edited", menu_entries)
+end
+
 local function init_edit_picker()
 	local groups= SONGMAN:GetSongGroupNames()
 	song_menu_choices= {}
+	song_menu_choices[#song_menu_choices+1]= recently_edited_menu()
 	for i, group_name in ipairs(groups) do
 		song_menu_choices[#song_menu_choices+1]= {
 			name= group_name, translatable= false,

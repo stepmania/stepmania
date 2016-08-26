@@ -598,6 +598,20 @@ PropagateActorFrameCommand1Param(recursive_set_mask_color, Rage::Color);
 PropagateActorFrameCommand1Param(recursive_set_z_bias, float);
 PropagateActorFrameCommand1Param(SetState, size_t);
 
+void ActorFrame::set_counter_rotation(Actor* counter)
+{
+	TweenState& counter_dest= counter->DestTweenState();
+	float counter_x= counter_dest.rotation.x * -1.f;
+	float counter_y= counter_dest.rotation.y * -1.f;
+	float counter_z= counter_dest.rotation.z * -1.f;
+	for(auto&& sub : m_SubActors)
+	{
+		sub->SetRotationX(counter_x);
+		sub->SetRotationY(counter_y);
+		sub->SetRotationZ(counter_z);
+	}
+}
+
 
 float ActorFrame::GetTweenTimeLeft() const
 {

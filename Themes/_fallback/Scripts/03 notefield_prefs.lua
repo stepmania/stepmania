@@ -65,15 +65,16 @@ function set_notefield_default_yoffset(yoff)
 	notefield_default_prefs.yoffset= yoff
 end
 
-function apply_notefield_prefs(pn, field, prefs)
+function apply_notefield_prefs_nopn(read_bpm, field, prefs)
 	local torad= math.pi / 180
-	local pstate= GAMESTATE:GetPlayerState(pn)
-	if prefs.speed_type == "maximum" then
-		field:set_speed_mod(false, prefs.speed_mod, pstate:get_read_bpm())
-	elseif prefs.speed_type == "constant" then
-		field:set_speed_mod(true, prefs.speed_mod)
-	else
-		field:set_speed_mod(false, prefs.speed_mod)
+	if prefs.speed_type then
+		if prefs.speed_type == "maximum" then
+			field:set_speed_mod(false, prefs.speed_mod, read_bpm)
+		elseif prefs.speed_type == "constant" then
+			field:set_speed_mod(true, prefs.speed_mod)
+		else
+			field:set_speed_mod(false, prefs.speed_mod)
+		end
 	end
 	field:get_fov_mod():set_value(prefs.fov)
 	field:get_vanish_x_mod():set_value(prefs.vanish_x)
@@ -101,6 +102,11 @@ function apply_notefield_prefs(pn, field, prefs)
 	field:get_trans_zoom_x():set_value(prefs.zoom * prefs.zoom_x)
 	field:get_trans_zoom_y():set_value(prefs.zoom * prefs.zoom_y)
 	field:get_trans_zoom_z():set_value(prefs.zoom * prefs.zoom_z)
+end
+
+function apply_notefield_prefs(pn, field, prefs)
+	local pstate= GAMESTATE:GetPlayerState(pn)
+	apply_notefield_prefs_nopn(pstate:get_read_bpm(), field, prefs)
 end
 
 function find_field_apply_prefs(pn)
@@ -158,9 +164,12 @@ function advanced_notefield_prefs_menu()
 		nesty_options.float_config_val(notefield_prefs_config, "rotation_x", -1, 1, 2),
 		nesty_options.float_config_val(notefield_prefs_config, "rotation_y", -1, 1, 2),
 		nesty_options.float_config_val(notefield_prefs_config, "rotation_z", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "vanish_x", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "vanish_y", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "fov", -1, 0, 1, 1, 179),
+		-- Something tells me the notefield code still doesn't handle the vanish
+		-- point right, so the vanish point options are disabled until I'm sure
+		-- it's right. -Kyz
+--		nesty_options.float_config_val(notefield_prefs_config, "vanish_x", -1, 1, 2),
+--		nesty_options.float_config_val(notefield_prefs_config, "vanish_y", -1, 1, 2),
+--		nesty_options.float_config_val(notefield_prefs_config, "fov", -1, 0, 1, 1, 179),
 		nesty_options.float_config_val(notefield_prefs_config, "yoffset", -1, 1, 2),
 		nesty_options.float_config_val(notefield_prefs_config, "zoom_x", -2, -1, 1),
 		nesty_options.float_config_val(notefield_prefs_config, "zoom_y", -2, -1, 1),
@@ -178,15 +187,15 @@ local function gen_speed_menu(pn)
 end
 
 function notefield_prefs_speed_mod_menu()
-	return {name= "speed_mod", menu= nesty_option_menus.adjustable_float,
+	return setmetatable({name= "speed_mod", menu= nesty_option_menus.adjustable_float,
 	 translatable= true, args= gen_speed_menu, exec_args= true,
 	 value= function(pn)
 		 return notefield_prefs_config:get_data(pn).speed_mod
-	 end}
+	 end}, mergable_table_mt)
 end
 
 function notefield_prefs_speed_type_menu()
-	return {name= "speed_type", menu= nesty_option_menus.enum_option,
+	return setmetatable({name= "speed_type", menu= nesty_option_menus.enum_option,
 	 translatable= true, value= function(pn)
 		 return notefield_prefs_config:get_data(pn).speed_type
 	 end,
@@ -205,7 +214,7 @@ function notefield_prefs_speed_type_menu()
 			 MESSAGEMAN:Broadcast("ConfigValueChanged", {
 				config_name= notefield_prefs_config.name, field_name= "speed_type", value= value, pn= pn})
 		 end,
-	}}
+	}}, mergable_table_mt)
 end
 
 local function trisign_of_num(num)
@@ -218,7 +227,7 @@ end
 local pn_skew_mult= {[PLAYER_1]= 1, [PLAYER_2]= -1}
 
 local function perspective_entry(name, skew_mult, rot_mult)
-	return {
+	return setmetatable({
 		name= name, translatable= true, type= "choice", execute= function(pn)
 			local conf_data= notefield_prefs_config:get_data(pn)
 			local old_rot= get_element_by_path(conf_data, "rotation_x")
@@ -249,7 +258,7 @@ local function perspective_entry(name, skew_mult, rot_mult)
 			end
 			return false
 		end,
-	}
+	}, mergable_table_mt)
 end
 
 function notefield_perspective_menu()
