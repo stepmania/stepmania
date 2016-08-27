@@ -240,6 +240,7 @@ local function editor_menu_options(field, field_name, stepstype)
 		return nil
 	end
 	local ret= {
+		nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2, 1),
 		editor_noteskin_menu(field, stepstype),
 		editor_preferred_noteskin_menu(),
 		{name= "noteskin_params", translatable= true, menu= nesty_option_menus.menu, args= editor_noteskin_param_menu(field, stepstype)},
