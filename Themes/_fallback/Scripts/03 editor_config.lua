@@ -314,9 +314,10 @@ function editor_notefield_menu(menu_params)
 			for field_name, field in pairs(params.fields) do
 				field:set_skin(noteskin, skin_params)
 				apply_notefield_prefs_nopn(params.read_bpm, field, conf_data[field_name])
+				local vispix= 1024 / conf_data[field_name].zoom
 				for i, col in ipairs(field:get_columns()) do
-					col:set_pixels_visible_before(2048)
-					col:set_pixels_visible_after(2048)
+					col:set_pixels_visible_before(vispix)
+					col:set_pixels_visible_after(vispix)
 				end
 			end
 		end,
@@ -340,6 +341,11 @@ function editor_notefield_menu(menu_params)
 		end,
 		ConfigValueChangedMessageCommand= function(self, params)
 			apply_notefield_prefs_nopn(current_read_bpm, current_field, current_field_options)
+			local vispix= 1024 / current_field_options.zoom
+			for i, col in ipairs(current_field:get_columns()) do
+				col:set_pixels_visible_before(vispix)
+				col:set_pixels_visible_after(vispix)
+			end
 		end,
 		menu:create_actors(menu_params),
 	}
