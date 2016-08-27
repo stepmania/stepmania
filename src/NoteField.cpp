@@ -2234,6 +2234,11 @@ void NoteField::set_skin(std::string const& skin_name, LuaReference& skin_params
 	}
 }
 
+std::string const& NoteField::get_skin()
+{
+	return m_skin_walker.get_name();
+}
+
 void NoteField::set_steps(Steps* data)
 {
 	if(data == nullptr)
@@ -3210,6 +3215,11 @@ struct LunaNoteField : Luna<NoteField>
 		p->set_skin(skin_name, skin_params);
 		COMMON_RETURN_SELF;
 	}
+	static int get_skin(T* p, lua_State* L)
+	{
+		lua_pushstring(L, p->get_skin().c_str());
+		return 1;
+	}
 	static int set_steps(T* p, lua_State* L)
 	{
 		// nullptr can be passed to tell the field to clear the steps.
@@ -3290,7 +3300,7 @@ struct LunaNoteField : Luna<NoteField>
 	GETTER_SETTER_BOOL_METHOD(defective_mode);
 	LunaNoteField()
 	{
-		ADD_METHOD(set_skin);
+		ADD_GET_SET_METHODS(skin);
 		ADD_METHOD(set_steps);
 		ADD_METHOD(get_columns);
 		ADD_METHOD(get_width);

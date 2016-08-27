@@ -3475,7 +3475,20 @@ void ScreenEdit::TransitionEditState( EditState em )
 		SetupCourseAttacks();
 
 		m_Player.Load( m_NoteDataEdit );
-		m_Player->calc_read_bpm();
+		{
+			float read_bpm= m_Player->calc_read_bpm();
+			Lua* L= LUA->Get();
+			Message msg("SetTestNoteFieldSkin");
+			msg.SetParam("field_name", std::string("NoteFieldTest"));
+			msg.SetParam("read_bpm", read_bpm);
+			NoteField* field= m_Player->get_note_field_because_i_really_need_it_for_edit_mode();
+			field->PushSelf(L);
+			msg.SetParamFromStack(L, "field");
+			Enum::Push(L, m_pSteps->m_StepsType);
+			msg.SetParamFromStack(L, "stepstype");
+			LUA->Release(L);
+			m_option_menu->HandleMessage(msg);
+		}
 
 		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay != 0 )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;

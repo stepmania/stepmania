@@ -142,6 +142,12 @@ local function get_skin_choice(stepstype)
 	return skin_names[1]
 end
 
+local function set_skin_for_field(field, stepstype)
+	local skin_name= get_skin_choice(stepstype)
+	local skin_params= get_skin_params(skin_name)
+	field:set_skin(skin_name, skin_params)
+end
+
 
 local function use_multiple_speed_mod(tab)
 	return function()
@@ -181,9 +187,8 @@ end
 local function noteskin_choice(field, stepstype, choice_name)
 	return {
 		type= "choice", name= choice_name, execute= function()
-			local skin_params= get_skin_params(choice_name)
-			field:set_skin(choice_name, skin_params)
 			editor_config:get_data().noteskin_choices[stepstype]= choice_name
+			set_skin_for_field(field, stepstype)
 		end,
 		value= function()
 			return choice_name == get_skin_choice(stepstype)
@@ -225,7 +230,7 @@ local function editor_noteskin_param_menu(field, stepstype)
 		local ret= {
 			recall_init_on_pop= true, name= "noteskin_params",
 			destructor= function(self)
-				field:set_skin(skin_name, chosen_params)
+				set_skin_for_field(field, stepstype)
 			end,
 		}
 		gen_noteskin_param_submenu(chosen_params, skin_info, skin_defaults, ret)
@@ -279,6 +284,9 @@ function editor_notefield_menu(menu_params)
 	local current_field= false
 	local current_read_bpm= 140
 	local current_field_options= false
+	local current_stepstype= false
+	local edit_field= false
+	local test_field= false
 	local field_name= ""
 	local container= false
 	local menu= setmetatable({}, nesty_menu_stack_mt)
@@ -293,10 +301,15 @@ function editor_notefield_menu(menu_params)
 			editor_config:set_dirty()
 			editor_config:save()
 			in_option_menu= false
+			if edit_field:get_skin() ~= test_field:get_skin() then
+				if field_name == "NoteFieldTest" then
+					set_skin_for_field(edit_field, current_stepstype)
+				end
+			end
+			editor_screen:PostScreenMessage("SM_BackFromNoteFieldOptions", 0)
 			if container:GetParent() ~= editor_screen then
 				container:GetParent():playcommand("HideMenu")
 			end
-			editor_screen:PostScreenMessage("SM_BackFromNoteFieldOptions", 0)
 		end
 	end
 
@@ -309,9 +322,10 @@ function editor_notefield_menu(menu_params)
 		end,
 		InitNoteFieldConfigCommand= function(self, params)
 			local conf_data= editor_config:get_data()
-			local noteskin= conf_data.noteskin_choices[params.stepstype] or
-				NOTESKIN:get_skin_names_for_stepstype(params.stepstype)[1]
-			local skin_params= conf_data.noteskin_params[params.stepstype] or {}
+			local noteskin= get_skin_choice(params.stepstype)
+			local skin_params= get_skin_params(noteskin)
+			edit_field= params.fields.NoteFieldEdit
+			test_field= params.fields.NoteFieldTest
 			for field_name, field in pairs(params.fields) do
 				field:set_skin(noteskin, skin_params)
 				apply_notefield_prefs_nopn(params.read_bpm, field, conf_data[field_name])
@@ -322,9 +336,19 @@ function editor_notefield_menu(menu_params)
 				end
 			end
 		end,
+		SetTestNoteFieldSkinCommand= function(self, params)
+			set_skin_for_field(params.field, params.stepstype)
+		end,
 		ShowMenuCommand= function(self, params)
 			current_field= params.field
 			field_name= params.field_name
+			current_stepstype= params.stepstype
+			local conf_data= editor_config:get_data()
+			local noteskin= get_skin_choice(params.stepstype)
+			if current_field:get_skin() ~= noteskin then
+				local skin_params= get_skin_params(noteskin)
+				params.field:set_skin(noteskin, skin_params)
+			end
 			local menu_options= editor_menu_options(current_field, field_name, params.stepstype)
 			if not menu_options then
 				lua.ReportScriptError("Unable to generate menu options?")

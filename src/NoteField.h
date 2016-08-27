@@ -341,6 +341,7 @@ struct NoteField : ActorFrame
 
 	void clear_steps();
 	void set_skin(std::string const& skin_name, LuaReference& skin_params);
+	std::string const& get_skin();
 	void set_steps(Steps* data);
 	void set_note_data(NoteData* note_data, TimingData* timing, StepsType stype);
 	// set_player_number exists only so that the notefield layers can have
