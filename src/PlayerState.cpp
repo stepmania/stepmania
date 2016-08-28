@@ -17,7 +17,6 @@ PlayerState::PlayerState()
 
 void PlayerState::Reset()
 {
-	m_NotefieldZoom= 1.0f;
 	m_PlayerOptions.Init();
 
 	m_fLastDrawnBeat = -100;

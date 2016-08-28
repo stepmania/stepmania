@@ -1,0 +1,949 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="512"
+   height="768"
+   id="svg2985">
+  <metadata
+     id="metadata3053">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2987">
+    <path
+       d="M 2,4 H 18 L 32,6 46,4 h 16"
+       id="holdHorizontal"
+       style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+    <g
+       id="holdBody">
+      <path
+         d="m 2,6 v 180 l 4,4 h 8 l 4,-4 h 28 l 4,4 h 8 l 4,-4 V 6 L 58,2 H 6 L 2,6 z"
+         id="path3187"
+         style="stroke-width:2" />
+    </g>
+    <g
+       id="holdHead">
+      <path
+         d="M 18,32 V 22 l 4,-4 h 36 l 4,-4"
+         id="path3518"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         d="M 18,32 V 22 l 4,-4 h 24 v 14"
+         id="path3530"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+    </g>
+    <g
+       id="holdMiddle">
+      <line
+         id="line3548"
+         x1="18"
+         y1="-1"
+         x2="18"
+         y2="65"
+         style="stroke:#000000;stroke-width:2" />
+      <line
+         style="stroke:#000000;stroke-width:2"
+         y2="65"
+         x2="46"
+         y1="-1"
+         x1="46"
+         id="line3550" />
+      <use
+         id="use3572"
+         x="0"
+         y="0"
+         width="64"
+         height="4"
+         xlink:href="#holdHorizontal" />
+      <use
+         id="use3576"
+         x="0"
+         y="8"
+         width="64"
+         height="4"
+         xlink:href="#holdHorizontal" />
+      <use
+         id="use3578"
+         x="0"
+         y="16"
+         width="64"
+         height="4"
+         xlink:href="#holdHorizontal" />
+      <use
+         id="use3580"
+         x="0"
+         y="24"
+         width="64"
+         height="4"
+         xlink:href="#holdHorizontal" />
+      <use
+         id="use3582"
+         x="0"
+         y="32"
+         width="64"
+         height="4"
+         xlink:href="#holdHorizontal" />
+      <use
+         id="use3584"
+         x="0"
+         y="40"
+         width="64"
+         height="4"
+         xlink:href="#holdHorizontal" />
+      <use
+         id="use3586"
+         x="0"
+         y="48"
+         width="64"
+         height="4"
+         xlink:href="#holdHorizontal" />
+      <use
+         id="use3588"
+         x="0"
+         y="56"
+         width="64"
+         height="4"
+         xlink:href="#holdHorizontal" />
+    </g>
+    <g
+       id="holdBottom">
+      <path
+         d="m 62,-1 v 27 l -4,4 H 50 L 46,26 H 18 l -4,4 H 6 L 2,26 V -1"
+         id="path3594"
+         style="stroke-width:2" />
+      <line
+         style="stroke:#000000;stroke-width:2"
+         y2="26"
+         x2="18"
+         y1="-1"
+         x1="18"
+         id="line3596" />
+      <line
+         id="line3598"
+         x1="46"
+         y1="-1"
+         x2="46"
+         y2="26"
+         style="stroke:#000000;stroke-width:2" />
+    </g>
+    <g
+       id="holdStructure">
+      <use
+         transform="matrix(-1,0,0,1,64,0)"
+         id="use3606"
+         x="0"
+         y="0"
+         width="64"
+         height="32"
+         xlink:href="#holdHead" />
+      <use
+         id="use3608"
+         x="0"
+         y="32"
+         width="64"
+         height="64"
+         xlink:href="#holdMiddle" />
+      <use
+         id="use3610"
+         x="0"
+         y="96"
+         width="64"
+         height="64"
+         xlink:href="#holdMiddle" />
+      <use
+         id="use3612"
+         x="0"
+         y="160"
+         width="64"
+         height="32"
+         xlink:href="#holdBottom" />
+    </g>
+  </defs>
+  <g
+     id="g3225">
+    <use
+       id="use3590"
+       style="fill:#6666ff"
+       x="0"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3336"
+       style="fill:#6666ff"
+       x="64"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3614"
+       style="fill:#000099"
+       x="128"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3622"
+       style="fill:#000099"
+       x="192"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3624"
+       style="fill:#ff3333"
+       x="256"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3626"
+       style="fill:#ff3333"
+       x="320"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3628"
+       style="fill:#990000"
+       x="384"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3630"
+       style="fill:#990000"
+       x="448"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3632"
+       style="fill:#b300b3"
+       x="0"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3634"
+       style="fill:#b300b3"
+       x="64"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3636"
+       style="fill:#4d004d"
+       x="128"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3638"
+       style="fill:#4d004d"
+       x="192"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3640"
+       style="fill:#ffff33"
+       x="256"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3642"
+       style="fill:#ffff33"
+       x="320"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3644"
+       style="fill:#999900"
+       x="384"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3646"
+       style="fill:#999900"
+       x="448"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3648"
+       style="fill:#ffc0cb"
+       x="0"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3650"
+       style="fill:#ffc0cb"
+       x="64"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3652"
+       style="fill:#ff5a77"
+       x="128"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3654"
+       style="fill:#ff5a77"
+       x="192"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3656"
+       style="fill:#ffb733"
+       x="256"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3658"
+       style="fill:#ffb733"
+       x="320"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3660"
+       style="fill:#cc8400"
+       x="384"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3662"
+       style="fill:#cc8400"
+       x="448"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3664"
+       style="fill:#33ffff"
+       x="0"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3666"
+       style="fill:#33ffff"
+       x="64"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3668"
+       style="fill:#009999"
+       x="128"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3670"
+       style="fill:#009999"
+       x="192"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3672"
+       style="fill:#00e600"
+       x="256"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3674"
+       style="fill:#00e600"
+       x="320"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3676"
+       style="fill:#004d00"
+       x="384"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3678"
+       style="fill:#004d00"
+       x="448"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3602"
+       style="fill-opacity:0"
+       x="0"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3522"
+       style="fill-opacity:0"
+       x="64"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3620"
+       style="fill-opacity:0"
+       x="128"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3680"
+       style="fill-opacity:0"
+       x="192"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3682"
+       style="fill-opacity:0"
+       x="256"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3684"
+       style="fill-opacity:0"
+       x="320"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3686"
+       style="fill-opacity:0"
+       x="384"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3688"
+       style="fill-opacity:0"
+       x="448"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3690"
+       style="fill-opacity:0"
+       x="0"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3692"
+       style="fill-opacity:0"
+       x="64"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3694"
+       style="fill-opacity:0"
+       x="128"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3696"
+       style="fill-opacity:0"
+       x="192"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3698"
+       style="fill-opacity:0"
+       x="256"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3700"
+       style="fill-opacity:0"
+       x="320"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3702"
+       style="fill-opacity:0"
+       x="384"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3704"
+       style="fill-opacity:0"
+       x="448"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3706"
+       style="fill-opacity:0"
+       x="0"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3708"
+       style="fill-opacity:0"
+       x="64"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3710"
+       style="fill-opacity:0"
+       x="128"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3712"
+       style="fill-opacity:0"
+       x="192"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3714"
+       style="fill-opacity:0"
+       x="256"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3716"
+       style="fill-opacity:0"
+       x="320"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3718"
+       style="fill-opacity:0"
+       x="384"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3720"
+       style="fill-opacity:0"
+       x="448"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3722"
+       style="fill-opacity:0"
+       x="0"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3724"
+       style="fill-opacity:0"
+       x="64"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3726"
+       style="fill-opacity:0"
+       x="128"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3728"
+       style="fill-opacity:0"
+       x="192"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3730"
+       style="fill-opacity:0"
+       x="256"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3732"
+       style="fill-opacity:0"
+       x="320"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3734"
+       style="fill-opacity:0"
+       x="384"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use3736"
+       style="fill-opacity:0"
+       x="448"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdStructure" />
+    <use
+       id="use5304"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="0"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3524"
+       style="fill-opacity:0;stroke:#000000"
+       x="64"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3616"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="128"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3738"
+       style="fill-opacity:0;stroke:#000000"
+       x="192"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3740"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="256"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3742"
+       style="fill-opacity:0;stroke:#000000"
+       x="320"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3744"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="384"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3746"
+       style="fill-opacity:0;stroke:#000000"
+       x="448"
+       y="0"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3748"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="0"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3750"
+       style="fill-opacity:0;stroke:#000000"
+       x="64"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3752"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="128"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3754"
+       style="fill-opacity:0;stroke:#000000"
+       x="192"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3756"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="256"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3758"
+       style="fill-opacity:0;stroke:#000000"
+       x="320"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3760"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="384"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3762"
+       style="fill-opacity:0;stroke:#000000"
+       x="448"
+       y="192"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3764"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="0"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3766"
+       style="fill-opacity:0;stroke:#000000"
+       x="64"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3768"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="128"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3770"
+       style="fill-opacity:0;stroke:#000000"
+       x="192"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3772"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="256"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3774"
+       style="fill-opacity:0;stroke:#000000"
+       x="320"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3776"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="384"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3778"
+       style="fill-opacity:0;stroke:#000000"
+       x="448"
+       y="384"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3780"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="0"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3782"
+       style="fill-opacity:0;stroke:#000000"
+       x="64"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3784"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="128"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3786"
+       style="fill-opacity:0;stroke:#000000"
+       x="192"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3788"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="256"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3790"
+       style="fill-opacity:0;stroke:#000000"
+       x="320"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3792"
+       style="fill-opacity:0;stroke:#ffffff"
+       x="384"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+    <use
+       id="use3794"
+       style="fill-opacity:0;stroke:#000000"
+       x="448"
+       y="576"
+       width="64"
+       height="192"
+       xlink:href="#holdBody" />
+  </g>
+</svg>

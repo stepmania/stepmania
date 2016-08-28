@@ -1049,6 +1049,15 @@ Actor* Actor::GetWrapperState(size_t i)
 	return m_WrapperStates[i];
 }
 
+void Actor::set_counter_rotation(Actor* counter)
+{
+	TweenState& dest= DestTweenState();
+	TweenState& counter_dest= counter->DestTweenState();
+	dest.rotation.x= counter_dest.rotation.x * -1.f;
+	dest.rotation.y= counter_dest.rotation.y * -1.f;
+	dest.rotation.z= counter_dest.rotation.z * -1.f;
+}
+
 void Actor::BeginTweening( float time, ITween *pTween )
 {
 	ASSERT( time >= 0 );

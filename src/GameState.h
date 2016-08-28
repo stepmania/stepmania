@@ -265,9 +265,6 @@ public:
 
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
-	// if re-adding noteskin changes in courses, add functions and such here -aj
-	void GetAllUsedNoteSkins( std::vector<std::string> &out ) const;
-
 	static const float MUSIC_SECONDS_INVALID;
 
 	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.

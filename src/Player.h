@@ -18,7 +18,7 @@ class CombinedLifeMeter;
 class ScoreKeeper;
 class Inventory;
 class RageTimer;
-struct NewField;
+struct NoteField;
 class PlayerStageStats;
 class JudgedRows;
 
@@ -50,11 +50,11 @@ public:
 	// DrawNoteFieldBoard exists so that the board can be drawn underneath
 	// theme elements like score. -Kyz
 	void DrawNoteFieldBoard();
-	// SetSpeedFromPlayerOptions exists so ScreenEdit can work until it's
-	// rewritten. -Kyz
-	void SetSpeedFromPlayerOptions();
 	void SetNoteFieldToEditMode();
 	void update_displayed_time();
+	void disable_defective_mode();
+	NoteField* get_note_field_because_i_really_need_it_for_edit_mode()
+	{ return m_note_field; }
 
 	struct TrackRowTapNote
 	{
@@ -76,7 +76,9 @@ public:
 		ScoreKeeper* pPrimaryScoreKeeper,
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
-	void calc_read_bpm();
+	double get_field_width();
+	void set_gameplay_zoom(double zoom);
+	float calc_read_bpm();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
 	bool IsOniDead() const;
 
@@ -103,7 +105,7 @@ public:
 	static float GetMaxStepDistanceSeconds();
 	static float GetWindowSeconds( TimingWindow tw );
 	const NoteData &GetNoteData() const { return m_NoteData; }
-	bool HasVisibleParts() const { return m_new_field != nullptr; }
+	bool HasVisibleParts() const { return m_note_field != nullptr; }
 
 	void SetActorWithJudgmentPosition( Actor *pActor ) { m_pActorWithJudgmentPosition = pActor; }
 	void SetActorWithComboPosition( Actor *pActor ) { m_pActorWithComboPosition = pActor; }
@@ -169,7 +171,7 @@ protected:
 	bool			m_bDelay;
 
 	NoteData		&m_NoteData;
-	NewField		*m_new_field;
+	NoteField		*m_note_field;
 
 	AutoActor		m_sprJudgment;
 	AutoActor		m_sprCombo;
@@ -207,19 +209,12 @@ protected:
 
 	std::vector<RageSound>	m_vKeysounds;
 
-	ThemeMetric<float>	GRAY_ARROWS_Y_STANDARD;
-	ThemeMetric<float>	GRAY_ARROWS_Y_REVERSE;
 	ThemeMetric2D<float>	ATTACK_DISPLAY_X;
 	ThemeMetric<float>	ATTACK_DISPLAY_Y;
 	ThemeMetric<float>	ATTACK_DISPLAY_Y_REVERSE;
 	ThemeMetric<float>	HOLD_JUDGMENT_Y_STANDARD;
 	ThemeMetric<float>	HOLD_JUDGMENT_Y_REVERSE;
 	ThemeMetric<int>	BRIGHT_GHOST_COMBO_THRESHOLD;
-	ThemeMetric<bool>	TAP_JUDGMENTS_UNDER_FIELD;
-	ThemeMetric<bool>	HOLD_JUDGMENTS_UNDER_FIELD;
-	ThemeMetric<bool>	COMBO_UNDER_FIELD;
-	ThemeMetric<int>	DRAW_DISTANCE_AFTER_TARGET_PIXELS;
-	ThemeMetric<int>	DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
 
 #define NUM_REVERSE 2
 #define NUM_CENTERED 2

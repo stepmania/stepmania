@@ -2087,6 +2087,19 @@ public:
 		return 1;
 	}
 
+	static int find_song_by_dir(T* p, lua_State* L)
+	{
+		Song* song= p->GetSongFromDir(SArg(1));
+		if(song == nullptr)
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			song->PushSelf(L);
+		}
+		return 1;
+	}
 	static int FindSong( T* p, lua_State *L )		{ Song *pS = p->FindSong(SArg(1)); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int FindCourse( T* p, lua_State *L )		{ Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomSong( T* p, lua_State *L )		{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
@@ -2219,6 +2232,7 @@ public:
 	{
 		ADD_METHOD( GetAllSongs );
 		ADD_METHOD( GetAllCourses );
+		ADD_METHOD(find_song_by_dir);
 		ADD_METHOD( FindSong );
 		ADD_METHOD( FindCourse );
 		ADD_METHOD( GetRandomSong );

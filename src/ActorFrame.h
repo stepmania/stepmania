@@ -79,6 +79,8 @@ public:
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 
+	virtual void set_counter_rotation(Actor* counter);
+
 	virtual void SetState(size_t s);
 	void SetUpdateRate(float rate) { if(rate > 0.0f) { m_fUpdateRate = rate; }}
 	float GetUpdateRate() { return m_fUpdateRate; }
@@ -105,7 +107,7 @@ public:
 
 	virtual void ChildChangedDrawOrder(Actor* child);
 	// propagate_draw_order_change was made specifically for the frame wrappers
-	// that NewFieldColumn puts over its layers so it can apply mods to them.
+	// that NoteFieldColumn puts over its layers so it can apply mods to them.
 	// -Kyz
 	void propagate_draw_order_change(bool p) { m_propagate_draw_order_change= p; }
 

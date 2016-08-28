@@ -27,53 +27,27 @@ function GetExtraColorThreshold()
 	return Modes[CurGameName()] or 10
 end
 
--- GameplayMargins exists to provide a layer of backwards compatibility for
--- people using the X position metrics to set where the notefields are.
--- This makes it somewhat complex.
--- Rather than trying to understand how it works, you can simply do this:
--- (example values in parentheses)
--- 1.  Decide how much space you want in the center between notefields. (80)
--- 2.  Decide how much space you want on each side. (40)
--- 3.  Write a simple function that just returns those numbers:
---     function GameplayMargins() return 40, 80, 40 end
--- Then the engine does the work of figuring out where each notefield should
--- be centered.
-function GameplayMargins(enabled_players, styletype)
-	local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1}
-	local margins= {[PLAYER_1]= {40, 40}, [PLAYER_2]= {40, 40}}
-	-- Use a fake style width because calculating the real style width throws off
-	-- the code in the engine.
-	local fake_style_width= 272
-	-- Handle the case of a single player that is centered first because it's
-	-- simpler.
-	if Center1Player() then
-		local pn= enabled_players[1]
-		fake_style_width= 544
-		local center= _screen.cx
-		local left= center - (fake_style_width / 2)
-		local right= _screen.w - center - (fake_style_width / 2)
-		-- center margin width will be ignored.
-		return left, 80, right
+function GameplayPlayerPositions(widths)
+	local edge_pct= .1
+	local num_players= #widths
+	local edge_width= _screen.w * edge_pct
+	if num_players == 1 and Center1Player() then
+		local dist_to_edge= _screen.cx - edge_width
+		return {{_screen.cx, dist_to_edge*2}}
 	end
-	local half_screen= _screen.w / 2
-	local left= {[PLAYER_1]= 0, [PLAYER_2]= half_screen}
-	for i, pn in ipairs(enabled_players) do
-		local edge= left[pn]
-		local center= THEME:GetMetric("ScreenGameplay",
-			"Player"..ToEnumShortString(pn)..ToEnumShortString(styletype).."X")
-		-- Adjust for the p2 center being on the right side.
-		center= center - edge
-		margins[pn][1]= center - (fake_style_width / 2)
-		margins[pn][2]= half_screen - center - (fake_style_width / 2)
-		if #enabled_players == 1 then
-			margins[other[pn]][1]= margins[pn][2]
-			margins[other[pn]][2]= margins[pn][1]
+	local ret= {}
+	for i= 1, #widths do
+		local p= widths[i][1]
+		local x= THEME:GetMetric(Var("LoadingScreen"), "Player"..(p+1).."MiscX")
+		local dist_to_edge= _screen.cx
+		if x > _screen.cx then
+			dist_to_edge= _screen.w - edge_width - x
+		else
+			dist_to_edge= x - edge_width
 		end
+		ret[i]= {x, dist_to_edge * 2}
 	end
-	local left= margins[PLAYER_1][1]
-	local center= margins[PLAYER_1][2] + margins[PLAYER_2][1]
-	local right= margins[PLAYER_2][2]
-	return left, center, right
+	return ret
 end
 
 -- AllowOptionsMenu()

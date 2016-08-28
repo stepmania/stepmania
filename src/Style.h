@@ -53,7 +53,6 @@ public:
 	struct ColumnInfo
 	{
 		int track;		/**< Take note data from this track. */
-		float fXOffset;		/**< This is the x position of the column relative to the player's center. */
 		const char *pzName;	/**< The name of the column, or nullptr to use the button name mapped to it. */
 	};
 
@@ -91,8 +90,6 @@ public:
 
 	bool GetUsesCenteredArrows() const;
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const;
-	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
-	float GetWidth(PlayerNumber pn) const;
 
 	// Lua
 	void PushSelf( lua_State *L );

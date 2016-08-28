@@ -2,7 +2,6 @@
 #include "OptionRowHandler.h"
 #include "LuaManager.h"
 #include "ScreenOptionsMasterPrefs.h"
-#include "NoteSkinManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "GameState.h"
@@ -28,7 +27,6 @@ using std::vector;
 #define ENTRY(s)		THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",fmt::sprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
-#define NOTE_SKIN_SORT_ORDER	THEME->GetMetric ("ScreenOptionsMaster","NoteSkinSortOrder")
 #define STEPS_ROW_LAYOUT_TYPE	THEME->GetMetric("ScreenOptionsMaster","StepsRowLayoutType")
 #define STEPS_USE_CHART_NAME	THEME->GetMetricB("ScreenOptionsMaster","StepsUseChartName")
 
@@ -366,57 +364,6 @@ public:
 			return RELOAD_CHANGED_ALL;
 		}
 		return OptionRowHandler::Reload();
-	}
-};
-
-static void SortNoteSkins( vector<std::string> &asSkinNames )
-{
-	std::set<std::string> setSkinNames;
-	setSkinNames.insert( asSkinNames.begin(), asSkinNames.end() );
-
-	auto asSorted = Rage::split( NOTE_SKIN_SORT_ORDER, "," );
-
-	std::set<std::string> setUnusedSkinNames( setSkinNames );
-	asSkinNames.clear();
-
-	for (auto &sSkin: asSorted)
-	{
-		if( setSkinNames.find(sSkin) == setSkinNames.end() )
-		{
-			continue;
-		}
-		asSkinNames.push_back( sSkin );
-		setUnusedSkinNames.erase( sSkin );
-	}
-
-	asSkinNames.insert( asSkinNames.end(), setUnusedSkinNames.begin(), setUnusedSkinNames.end() );
-}
-
-class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
-{
-	virtual bool LoadInternal( const Commands & )
-	{
-		m_Def.m_sName = "NoteSkins";
-		m_Def.m_bOneChoiceForAllPlayers = false;
-		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
-
-		vector<std::string> arraySkinNames;
-		NOTESKIN->GetNoteSkinNames( arraySkinNames );
-		SortNoteSkins( arraySkinNames );
-
-		for( unsigned skin=0; skin<arraySkinNames.size(); skin++ )
-		{
-			if( arraySkinNames[skin] == CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() )
-			{
-				m_Def.m_iDefault = skin;
-			}
-			GameCommand mc;
-			mc.m_sPreferredModifiers = arraySkinNames[skin];
-			//ms.m_sName = arraySkinNames[skin];
-			m_aListEntries.push_back( mc );
-			m_Def.m_vsChoices.push_back( arraySkinNames[skin] );
-		}
-		return true;
 	}
 };
 
@@ -1576,8 +1523,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 			"list row command must be 'list,name' or 'list,type'.", nullptr);
 		Rage::ci_ascii_string ciParam{ sParam.c_str() };
 
-		if(	ciParam == "NoteSkins" )		MAKE( OptionRowHandlerListNoteSkins )
-		else if( ciParam == "Steps" )		MAKE( OptionRowHandlerListSteps )
+		if( ciParam == "Steps" )		MAKE( OptionRowHandlerListSteps )
 		else if( ciParam == "StepsLocked" )
 		{
 			MAKE( OptionRowHandlerListSteps );

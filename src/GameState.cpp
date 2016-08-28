@@ -326,7 +326,7 @@ void GameState::Reset()
 	m_iNumStagesOfThisSong = 0;
 	m_bLoadingNextSong = false;
 
-	NOTESKIN->RefreshNoteSkinData( m_pCurGame );
+	NOTESKIN->load_skins();
 
 	m_iGameSeed = rand();
 	m_iStageSeed = rand();
@@ -1832,8 +1832,6 @@ void GameState::GetDefaultPlayerOptions( PlayerOptions &po )
 	po.Init();
 	po.FromString( PREFSMAN->m_sDefaultModifiers.Get() );
 	po.FromString( CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
-	if( po.m_sNoteSkin.empty() )
-		po.m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
 }
 
 void GameState::GetDefaultSongOptions( SongOptions &so )
@@ -1888,41 +1886,6 @@ bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
 		return po.IsEasierForCourseAndTrail(  m_pCurCourse, m_pCurTrail[pn] );
 	else
 		return po.IsEasierForSongAndSteps(  m_pCurSong, m_pCurSteps[pn], pn);
-}
-
-/* reset noteskins (?)
- * GameState::ResetNoteSkins()
- * GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
- *
- */
-
-void GameState::GetAllUsedNoteSkins( vector<std::string> &out ) const
-{
-	FOREACH_EnabledPlayer( pn )
-	{
-		out.push_back( m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
-
-		// Add noteskins that are used in courses.
-		if( IsCourseMode() )
-		{
-			const Trail *pTrail = m_pCurTrail[pn];
-			ASSERT( pTrail != nullptr );
-
-			for (auto const &e: pTrail->m_vEntries)
-			{
-				PlayerOptions po;
-				po.FromString( e.Modifiers );
-				if( !po.m_sNoteSkin.empty() )
-				{
-					out.push_back( po.m_sNoteSkin );
-				}
-			}
-		}
-	}
-
-	// Remove duplicates.
-	sort( out.begin(), out.end() );
-	out.erase( unique( out.begin(), out.end() ), out.end() );
 }
 
 void GameState::RemoveAllActiveAttacks()	// called on end of song
@@ -3068,12 +3031,6 @@ public:
 		COMMON_RETURN_SELF;
 	}
 
-	static int RefreshNoteSkinData( T* p, lua_State *L )
-	{
-		NOTESKIN->RefreshNoteSkinData(p->m_pCurGame);
-		COMMON_RETURN_SELF;
-	}
-
 	static int Dopefish( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bDopefish);
@@ -3230,7 +3187,8 @@ public:
 			p->SetCurrentStyle(GAMEMAN->GetEditorStyleForStepsType(
 					steps->m_StepsType), PLAYER_INVALID);
 			p->m_pCurCourse.Set(nullptr);
-			return 0;
+			steps->PushSelf(L);
+			return 1;
 		}
 		StepsType stype= Enum::Check<StepsType>(L, 3);
 		Difficulty diff= Enum::Check<Difficulty>(L, 4);
@@ -3262,7 +3220,8 @@ public:
 		p->SetCurrentStyle(GAMEMAN->GetEditorStyleForStepsType(
 				new_steps->m_StepsType), PLAYER_INVALID);
 		p->m_pCurCourse.Set(nullptr);
-		return 0;
+		new_steps->PushSelf(L);
+		return 1;
 	}
 
 	static int GetAutoGenFarg(T* p, lua_State *L)
@@ -3404,7 +3363,6 @@ public:
 		ADD_METHOD( InsertCredit );
 		ADD_METHOD( CurrentOptionsDisqualifyPlayer );
 		ADD_METHOD( ResetPlayerOptions );
-		ADD_METHOD( RefreshNoteSkinData );
 		ADD_METHOD( Dopefish );
 		ADD_METHOD( LoadProfiles );
 		ADD_METHOD( SaveProfiles );

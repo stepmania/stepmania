@@ -1702,7 +1702,8 @@ nesty_options= {
 			name= field_name, translatable= true, execute= function(pn)
 				local old_val= get_element_by_path(conf:get_data(pn), field_name)
 				conf:set_dirty(pn)
-				set_element_by_path(conf:get_data(pn), field_name, not old_val)
+				local new_val= not old_val
+				set_element_by_path(conf:get_data(pn), field_name, new_val)
 				MESSAGEMAN:Broadcast("ConfigValueChanged", {
 					config_name= conf.name, field_name= field_name, value= new_val, pn= pn})
 			end,
@@ -1730,5 +1731,57 @@ nesty_options= {
 			end,
 		}
 		return setmetatable(ret, mergable_table_mt)
+	end,
+	float_table_val= function(table_name, tab, field_name, mins, scale, maxs, val_min, val_max)
+		return setmetatable({
+				name= field_name, translatable= true,
+				menu= nesty_option_menus.adjustable_float, args= {
+					name= field_name, min_scale= mins, scale= scale, max_scale= maxs,
+					val_min= val_min, val_max= val_max,
+					reset_value= get_element_by_path(tab, field_name),
+					initial_value= function()
+						return get_element_by_path(tab, field_name) or 0
+					end,
+					set= function(pn, value)
+						set_element_by_path(tab, field_name, value)
+						MESSAGEMAN:Broadcast(
+							"ConfigValueChanged", {table_name= table_name, field_name= field_name, value= value})
+					end,
+				},
+				value= function()
+					return get_element_by_path(tab, field_name)
+				end,
+												}, mergable_table_mt)
+	end,
+	bool_table_val= function(table_name, tab, field_name)
+		return setmetatable({
+				type= "bool", name= field_name, translatable= true, execute= function()
+					local old_val= get_element_by_path(tab, field_name)
+					set_element_by_path(tab, field_name, not old_val)
+					MESSAGEMAN:Broadcast(
+						"ConfigValueChanged", {table_name= table_name, field_name= field_name, value= value})
+				end,
+				value= function()
+					return get_element_by_path(tab, field_name)
+				end,
+												}, mergable_table_mt)
+	end,
+	choices_table_val= function(table_name, tab, field_name, choices)
+		return setmetatable({
+				name= field_name, translatable= true,
+				menu= nesty_option_menus.enum_option, args= {
+					name= field_name, enum= choices, fake_enum= true,
+					obj_get= function() return tab end,
+					get= function(pn, obj) return get_element_by_path(obj, field_name) end,
+					set= function(pn, obj, value)
+						set_element_by_path(obj, field_name, value)
+						MESSAGEMAN:Broadcast(
+							"ConfigValueChanged", {table_name= table_name, field_name= field_name, value= value})
+					end,
+				},
+				value= function()
+					return get_element_by_path(tab, field_name)
+				end,
+												}, mergable_table_mt)
 	end,
 }

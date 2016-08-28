@@ -366,12 +366,18 @@ public:
 		TweenState& dest= DestTweenState();
 		dest.pos= trans.pos;
 	}
+	void set_pos(Rage::Vector3 const& pos)
+	{
+		TweenState& dest= DestTweenState();
+		dest.pos= pos;
+	}
 	void set_transform_with_glow_alpha(Rage::transform const& trans)
 	{
 		set_transform(trans);
 		SetDiffuseAlpha(trans.alpha);
 		SetGlow(Rage::Color(1, 1, 1, trans.glow));
 	}
+	virtual void set_counter_rotation(Actor* counter);
 	void  SetX( float x )				{ DestTweenState().pos.x = x; };
 	void  SetY( float y )				{ DestTweenState().pos.y = y; };
 	void  SetZ( float z )				{ DestTweenState().pos.z = z; };
@@ -731,7 +737,7 @@ protected:
 	TweenState *m_pTempState;
 
 	bool	m_bFirstUpdate;
-	// Some actor types like Player, NoteField and NewField are designed with
+	// Some actor types like Player and NoteField are designed with
 	// multiple Draw calls in mind to handle their different layers.  But when
 	// they're drawn by ActorProxy, Draw is only called once.
 	// m_being_drawn_by_proxy exists so they can check that case and handle it.

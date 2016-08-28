@@ -216,6 +216,7 @@ protected:
 
 	bool IsLastSong();
 	void SetupSong( int iSongIndex );
+	void RepositionPlayers();
 	void ReloadCurrentSong();
 	virtual void LoadNextSong();
 	void StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic );

@@ -39,7 +39,6 @@ namespace SpecialFiles
 	extern const std::string COURSES_DIR;
 	/** @brief The default noteskins directory. */
 	extern const std::string NOTESKINS_DIR;
-	extern const std::string NEWSKINS_DIR;
 	extern const std::vector<std::string> USER_CONTENT_DIRS;
 	extern const std::vector<std::string> USER_DATA_DIRS;
 }

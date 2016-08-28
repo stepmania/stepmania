@@ -3,7 +3,7 @@ local filter_color= color("0.135,0.135,0.135,1")
 local layers= {
 	Def.Quad{
 		InitCommand= function(self)
-			self:hibernate(math.huge):draworder(newfield_draw_order.board)
+			self:hibernate(math.huge):draworder(notefield_draw_order.board)
 				:diffuse(filter_color)
 		end,
 		PlayerStateSetCommand= function(self, param)

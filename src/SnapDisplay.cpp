@@ -14,18 +14,18 @@ SnapDisplay::SnapDisplay()
 		m_sprIndicators[i].StopAnimating();
 		this->AddChild( &m_sprIndicators[i] );
 	}
+	m_sprIndicators[0].SetHorizAlign(align_right);
+	m_sprIndicators[1].SetHorizAlign(align_left);
 
 	m_NoteType = NOTE_TYPE_4TH;
 
 	m_iNumCols = 0;
 }
 
-void SnapDisplay::Load()
+void SnapDisplay::SetSeparation(float sep)
 {
-	m_iNumCols = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_iColsPerPlayer;
-
-	m_sprIndicators[0].SetX( -ARROW_SIZE * (m_iNumCols/2 + 0.5f) );
-	m_sprIndicators[1].SetX(  ARROW_SIZE * (m_iNumCols/2 + 0.5f) );
+	m_sprIndicators[0].SetX(-sep);
+	m_sprIndicators[1].SetX(+sep);
 }
 
 bool SnapDisplay::PrevSnapMode()
