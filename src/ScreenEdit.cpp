@@ -1415,6 +1415,8 @@ static void set_edit_mode_stuff_on_field(NoteField& field)
 
 void ScreenEdit::Init()
 {
+	m_should_invalidate= false;
+
 	m_pSoundMusic = nullptr;
 
 	GAMESTATE->m_bIsUsingStepTiming = false;
@@ -1601,6 +1603,13 @@ void ScreenEdit::BeginScreen()
 
 void ScreenEdit::EndScreen()
 {
+	// Invalidating a song just goes through the courses updating references.
+	// It's not necessary on every save, so don't do it until editing is
+	// complete. -Kyz
+	if(m_should_invalidate)
+	{
+		SONGMAN->Invalidate(GAMESTATE->m_pCurSong);
+	}
 	ScreenWithMenuElements::EndScreen();
 
 	SOUND->HandleSongTimer( true );
@@ -4397,7 +4406,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		LOG->Trace( "Save successful." );
 		CopyToLastSave();
 		SetDirty( false );
-		SONGMAN->Invalidate( GAMESTATE->m_pCurSong );
+		m_should_invalidate= true;
 
 		LocalizedString const message = (SM == SM_SaveSuccessNoSM) ?
 			SAVE_SUCCESSFUL : SAVE_SUCCESS_NO_SM_SPLIT_TIMING;
@@ -6323,7 +6332,7 @@ void ScreenEdit::RevertFromDisk()
 
 	CopyToLastSave();
 	SetDirty( false );
-	SONGMAN->Invalidate( GAMESTATE->m_pCurSong );
+	m_should_invalidate= true;
 }
 
 void ScreenEdit::SaveUndo()
