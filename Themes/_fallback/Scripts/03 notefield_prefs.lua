@@ -107,6 +107,38 @@ end
 function apply_notefield_prefs(pn, field, prefs)
 	local pstate= GAMESTATE:GetPlayerState(pn)
 	apply_notefield_prefs_nopn(pstate:get_read_bpm(), field, prefs)
+	local poptions= pstate:get_player_options_no_defect("ModsLevel_Song")
+	if prefs.speed_type == "maximum" then
+		poptions:MMod(prefs.speed_mod, 1000)
+	elseif prefs.speed_type == "constant" then
+		poptions:CMod(prefs.speed_mod, 1000)
+	else
+		poptions:XMod(prefs.speed_mod, 1000)
+	end
+	poptions:Reverse(prefs.reverse, 1000)
+	-- -1 tilt = +30 rotation_x
+	local tilt= prefs.rotation_x / -30
+	if prefs.reverse < 0 then
+		tilt = tilt * -1
+	end
+	poptions:Tilt(tilt, 1000)
+	local mini= (1 - prefs.zoom) * 2, 1000
+	if tilt > 0 then
+		mini = mini * scale(tilt, 0, 1, 1, .9)
+	else
+		mini = mini * scale(tilt, 0, -1, 1, .9)
+	end
+	poptions:Mini(mini, 1000)
+	local steps= GAMESTATE:GetCurrentSteps(pn)
+	if steps and steps:HasAttacks() then
+		pstate:set_needs_defective_field(true)
+	end
+	if GAMESTATE:IsCourseMode() then
+		local course= GAMESTATE:GetCurrentCourse()
+		if course and course:HasMods() or course:HasTimedMods() then
+			pstate:set_needs_defective_field(true)
+		end
+	end
 end
 
 function find_field_apply_prefs(pn)
