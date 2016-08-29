@@ -115,7 +115,8 @@ function apply_notefield_prefs(pn, field, prefs)
 	else
 		poptions:XMod(prefs.speed_mod, 1000)
 	end
-	poptions:Reverse(prefs.reverse, 1000)
+	local reverse= scale(prefs.reverse, 1, -1, 0, 1)
+	poptions:Reverse(reverse, 1000)
 	-- -1 tilt = +30 rotation_x
 	local tilt= prefs.rotation_x / -30
 	if prefs.reverse < 0 then
