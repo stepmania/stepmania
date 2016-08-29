@@ -63,6 +63,7 @@ LightsDriver_Win32Minimaid::~LightsDriver_Win32Minimaid()
 {
 	if (_mmmagic_loaded)
 	{
+		mm_setDDRAllOff();
 		FreeLibrary(hMMMAGICDLL);
 	}
 }

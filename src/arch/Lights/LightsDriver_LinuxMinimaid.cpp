@@ -21,6 +21,10 @@ LightsDriver_LinuxMinimaid::LightsDriver_LinuxMinimaid()
 
 LightsDriver_LinuxMinimaid::~LightsDriver_LinuxMinimaid()
 {
+	if(_mmmagic_loaded)
+	{
+		mm_setDDRAllOff();
+	}
 	// libmmmagic is actually statically linked in, so there's no wrapper
 	// destruction to do. -Kyz
 }

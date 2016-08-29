@@ -460,3 +460,17 @@ function GetCodeForGame(codeName)
 	local inputCode = CodeDetectorCodes[codeName]
 	return inputCode[gameName] or inputCode["default"]
 end
+
+function oitg_zoom_mode_actor()
+	return Def.Actor{
+		OnCommand= function(self)
+			local screen= SCREENMAN:GetTopScreen()
+			for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+				local player= screen:GetChild("Player"..ToEnumShortString(pn))
+				if player and player.set_oitg_zoom_mode then
+					player:set_oitg_zoom_mode(true)
+				end
+			end
+		end,
+	}
+end

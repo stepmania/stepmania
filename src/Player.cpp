@@ -236,6 +236,7 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 	m_drawing_notefield_board= false;
 	m_bLoaded = false;
 	m_inside_lua_set_life= false;
+	m_oitg_zoom_mode= false;
 
 	m_pPlayerState = NULL;
 	m_pPlayerStageStats = NULL;
@@ -922,9 +923,19 @@ void Player::Update( float fDeltaTime )
 			Actor::TweenState::MakeWeightedAverage( m_pActorWithComboPosition->DestTweenState(), ts1, ts2, fPercentCentered );
 		}
 
-		float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
-		if( m_pNoteField )
-			m_pNoteField->SetZoom( fNoteFieldZoom );
+		float field_zoom = 1 - fMiniPercent*0.5f;
+		if(m_pNoteField)
+		{
+			if(m_oitg_zoom_mode)
+			{
+				m_pNoteField->SetZoomX(field_zoom);
+				m_pNoteField->SetZoomY(field_zoom);
+			}
+			else
+			{
+				m_pNoteField->SetZoom(field_zoom);
+			}
+		}
 		if( m_pActorWithJudgmentPosition != NULL )
 			m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
 		if( m_pActorWithComboPosition != NULL )
@@ -3324,6 +3335,7 @@ public:
 		p->GetPlayerTimingData().PushSelf(L);
 		return 1;
 	}
+	GET_SET_BOOL_METHOD(oitg_zoom_mode, m_oitg_zoom_mode);
 	
 	LunaPlayer()
 	{
@@ -3332,6 +3344,7 @@ public:
 		ADD_METHOD( SetActorWithJudgmentPosition );
 		ADD_METHOD( SetActorWithComboPosition );
 		ADD_METHOD( GetPlayerTimingData );
+		ADD_GET_SET_METHODS(oitg_zoom_mode);
 	}
 };
 

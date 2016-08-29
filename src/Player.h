@@ -124,6 +124,12 @@ public:
 
 	void SetSendJudgmentAndComboMessages( bool b ) { m_bSendJudgmentAndComboMessages = b; }
 
+	// OITG bug:  Actor::SetZoom only sets X and Y.  When mini is applied to
+	// the notefield with SetZoom, it does not affect the range of bumpy.
+	// m_oitg_zoom_mode provides compatibility with that bug.  Only used in
+	// defective mode. -Kyz
+	bool m_oitg_zoom_mode;
+
 	// Lua
 	virtual void PushSelf( lua_State *L );
 	
