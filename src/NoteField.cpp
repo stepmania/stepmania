@@ -2001,7 +2001,7 @@ NoteField::NoteField()
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
 	 m_draw_beat_bars(false), m_in_edit_mode(false), m_pn(NUM_PLAYERS),
-	 m_in_defective_mode(false),
+	 m_in_defective_mode(false), m_oitg_zoom_mode(false),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
 	 m_steps_type(StepsType_Invalid), m_gameplay_zoom(1.0),
 	 defective_render_y(0.0), original_y(0.0)
@@ -2914,7 +2914,15 @@ void NoteField::update_displayed_time(double beat, double second)
 			zoom*= Rage::scale(tilt, 0.0f, -1.0f, 1.0f, .9f);
 			defective_render_y= Rage::scale(tilt, 0.0f, -1.0f, 0.0f, -20.0f) * reverse_mult;
 		}
-		SetZoom(zoom);
+		if(m_oitg_zoom_mode)
+		{
+			SetZoomX(zoom);
+			SetZoomY(zoom);
+		}
+		else
+		{
+			SetZoom(zoom);
+		}
 		SetRotationX(tilt_degrees);
 	}
 }
@@ -3298,6 +3306,7 @@ struct LunaNoteField : Luna<NoteField>
 		COMMON_RETURN_SELF;
 	}
 	GETTER_SETTER_BOOL_METHOD(defective_mode);
+	GET_SET_BOOL_METHOD(oitg_zoom_mode, m_oitg_zoom_mode);
 	LunaNoteField()
 	{
 		ADD_GET_SET_METHODS(skin);
@@ -3319,6 +3328,7 @@ struct LunaNoteField : Luna<NoteField>
 		ADD_METHOD(get_layer_fade_type);
 		ADD_METHOD(set_layer_fade_type);
 		ADD_GET_SET_METHODS(defective_mode);
+		ADD_GET_SET_METHODS(oitg_zoom_mode);
 	}
 };
 LUA_REGISTER_DERIVED_CLASS(NoteField, ActorFrame);

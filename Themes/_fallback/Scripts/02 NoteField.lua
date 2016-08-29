@@ -151,23 +151,6 @@ function NoteField:set_hidden_mod(line, dist, add_glow)
 				 {line - half_dist, line, 1/half_dist, 0},
 				 {line, line + half_dist, -1/half_dist, 1},
 		}}}
-		--[[
-		alpha_mod= {
-			name= "hidden", "ModFunctionType_Constant",
-			{"ModInputType_YOffset", 1, 0, phases= {
-				 default= {0, 0, 0, 0},
-				 {-32, line, 0, -1},
-			}}
-		}
-		glow_mod= {
-			name= "hidden", "ModFunctionType_Constant",
-			{"ModInputType_YOffset", 1, 0, phases= {
-				 default= {0, 0, 0, 0},
-				 {line - half_dist, line, 1/half_dist, 0},
-				 {line, line + half_dist, -1/half_dist, 1},
-			}}
-		}
-		]]
 	else
 		alpha_mod= {
 			name= "hidden", {"phase", "y_offset", {
@@ -176,17 +159,6 @@ function NoteField:set_hidden_mod(line, dist, add_glow)
 				 {0, line - half_dist, 0, -1},
 				 {line - half_dist, line + half_dist, 1/dist, -1},
 		}}}
-		--[[
-		alpha_mod= {
-			name= "hidden", "ModFunctionType_Constant",
-			{"ModInputType_YOffset", 1, 0, phases= {
-				 default= {0, 0, 0, 0},
-				 {-32, 0, 0, -1},
-				 {0, line - half_dist, 0, -1},
-				 {line - half_dist, line + half_dist, 1/dist, -1},
-			}}
-		}
-		]]
 	end
 	set_alpha_glow_mods(self, alpha_mod, glow_mod)
 end
@@ -207,23 +179,6 @@ function NoteField:set_sudden_mod(line, dist, add_glow)
 				 {line - half_dist, line, 1/half_dist, 0},
 				 {line, line + half_dist, -1/half_dist, 1},
 		}}}
-		--[[
-		alpha_mod= {
-			name= "sudden", "ModFunctionType_Constant",
-			{"ModInputType_YOffset", 1, 0, phases= {
-				 default= {0, 0, 0, 0},
-				 {line, math.huge, 0, -1},
-			}}
-		}
-		glow_mod= {
-			name= "sudden", "ModFunctionType_Constant",
-			{"ModInputType_YOffset", 1, 0, phases= {
-				 default= {0, 0, 0, 0},
-				 {line - half_dist, line, 1/half_dist, 0},
-				 {line, line + half_dist, -1/half_dist, 1},
-			}}
-		}
-		]]
 	else
 		alpha_mod= {
 			name= "sudden", {"phase", "y_offset", {
@@ -231,16 +186,6 @@ function NoteField:set_sudden_mod(line, dist, add_glow)
 				 {line - half_dist, line + half_dist, -1/dist, 0},
 				 {line + half_dist, math.huge, 0, -1},
 		}}}
-		--[[
-		alpha_mod= {
-			name= "sudden", "ModFunctionType_Constant",
-			{"ModInputType_YOffset", 1, 0, phases= {
-				 default= {0, 0, 0, 0},
-				 {line - half_dist, line + half_dist, -1/dist, 0},
-				 {line + half_dist, math.huge, 0, -1},
-			}}
-		}
-		]]
 	end
 	set_alpha_glow_mods(self, alpha_mod, glow_mod)
 end
@@ -269,4 +214,18 @@ function find_notefield_in_gameplay(screen_gameplay, pn)
 		return nil
 	end
 	return pactor:GetChild("NoteField")
+end
+
+function oitg_zoom_mode_actor()
+	return Def.Actor{
+		OnCommand= function(self)
+			local screen= SCREENMAN:GetTopScreen()
+			for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+				local field= find_notefield_in_gameplay(screen, pn)
+				if field then
+					field:set_oitg_zoom_mode(true)
+				end
+			end
+		end,
+	}
 end

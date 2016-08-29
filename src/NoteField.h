@@ -400,6 +400,11 @@ struct NoteField : ActorFrame
 	bool m_being_drawn_by_player;
 	bool m_draw_beat_bars;
 	bool m_in_edit_mode;
+	// OITG bug:  Actor::SetZoom only sets X and Y.  When mini is applied to
+	// the notefield with SetZoom, it does not affect the range of bumpy.
+	// m_oitg_zoom_mode provides compatibility with that bug.  Only used in
+	// defective mode.
+	bool m_oitg_zoom_mode;
 
 	struct field_draw_entry
 	{
