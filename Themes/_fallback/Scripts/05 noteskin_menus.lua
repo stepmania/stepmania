@@ -99,7 +99,7 @@ nesty_option_menus.noteskins= {
 			self.info_set= {nesty_menu_up_element}
 			for ni, nv in ipairs(self.ops) do
 				self.info_set[#self.info_set+1]= {
-					text= nv, value= ni == self.selected_skin, type= "bool"}
+					text= nv, value= ni == self.selected_skin, type= "choice"}
 			end
 		end,
 		interpret_start= function(self)

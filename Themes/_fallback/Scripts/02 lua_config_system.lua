@@ -103,7 +103,7 @@ local lua_config_mt= {
 				prof_dir= PROFILEMAN:LocalProfileIDToDir(slot)
 			end
 			if not prof_dir or prof_dir == "" then
-				--lua.ReportScriptError("Could not fetch profile dir to " .. reason .. " for " .. tostring(slot))
+				lua.ReportScriptError("Could not fetch profile dir to " .. reason .. " for " .. tostring(slot))
 				return
 			end
 			return prof_dir
@@ -194,6 +194,10 @@ local lua_config_mt= {
 			slot= self:sanitize_profile_slot(slot)
 			if not self:check_dirty(slot) then return end
 			local fname= self:get_filename(slot)
+			if not fname then
+				lua.ReportScriptError("Unable to save config.")
+				return
+			end
 			lua.save_lua_table(fname, self.data_set[slot])
 		end,
 		save_all= function(self)

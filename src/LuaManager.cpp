@@ -386,7 +386,7 @@ void LuaHelpers::save_lua_table_to_file(lua_State* L, int table_index,
 	RageFile* file= new RageFile;
 	if(!file->Open(filename, RageFile::WRITE))
 	{
-		LOG->Trace("Could not open %s to save lua data.", filename.c_str());
+		LuaHelpers::ReportScriptErrorFmt("Could not open %s to save lua data.", filename.c_str());
 		return;
 	}
 	std::unordered_set<void const*> visited_tables;
