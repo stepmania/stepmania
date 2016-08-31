@@ -10,6 +10,7 @@
 #include "ProfileManager.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
+#include "RageFmtWrap.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "Song.h"
@@ -549,14 +550,14 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, s
 		pSteps->GetFilename() != sPath;
 	if( bFileNameChanging  &&  DoesFileExist(sPath) )
 	{
-		sErrorOut = fmt::sprintf( DESTINATION_ALREADY_EXISTS.GetValue(), sPath.c_str() );
+		sErrorOut = rage_fmt_wrapper(DESTINATION_ALREADY_EXISTS, sPath.c_str() );
 		return false;
 	}
 
 	RageFile f;
 	if( !f.Open(sPath, RageFile::WRITE | RageFile::SLOW_FLUSH) )
 	{
-		sErrorOut = fmt::sprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
+		sErrorOut = rage_fmt_wrapper(ERROR_WRITING_FILE, sPath.c_str() );
 		return false;
 	}
 
@@ -564,7 +565,7 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, s
 	GetEditFileContents( pSong, pSteps, sTag );
 	if( f.PutLine(sTag) == -1 || f.Flush() == -1 )
 	{
-		sErrorOut = fmt::sprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
+		sErrorOut = rage_fmt_wrapper(ERROR_WRITING_FILE, sPath.c_str() );
 		return false;
 	}
 

@@ -7,6 +7,7 @@
 #include <vector>
 #include <sstream>
 #include <cstring>
+#include "LocalizedString.h"
 #include "RageMath.hpp"
 
 class RageFileDriver;

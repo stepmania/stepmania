@@ -2,6 +2,7 @@
 #include "NetworkSyncManager.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
+#include "RageFmtWrap.h"
 #include "RageString.hpp"
 #include <errno.h>
 
@@ -447,7 +448,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 		//Networking wasn't attepmpted
 		return;
 	case 1:
-		sMessage = fmt::sprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
+		sMessage = rage_fmt_wrapper(CONNECTION_SUCCESSFUL, m_ServerName.c_str() );
 		break;
 	case 2:
 		sMessage = CONNECTION_FAILED.GetValue();

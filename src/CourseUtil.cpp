@@ -14,6 +14,7 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
+#include "RageFmtWrap.h"
 
 #include <unordered_map>
 
@@ -434,7 +435,7 @@ bool EditCourseUtil::ValidateEditCourseName( const std::string &sAnswer, std::st
 	static const std::string sInvalidChars = "\\/:*?\"<>|";
 	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != nullptr )
 	{
-		sErrorOut = fmt::sprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		sErrorOut = rage_fmt_wrapper(EDIT_NAME_CANNOT_CONTAIN, sInvalidChars.c_str() );
 		return false;
 	}
 

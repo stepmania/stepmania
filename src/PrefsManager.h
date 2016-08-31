@@ -281,6 +281,7 @@ public:
 	// on different machines that don't have the same key, or else the
 	// profile's data will be discarded.
 	Preference<bool>	m_bSignProfileData;
+	Preference<bool> m_WarnOnNoProfile;
 
 	// course ranking
 	Preference<CourseSortOrders>	m_CourseSortOrder;

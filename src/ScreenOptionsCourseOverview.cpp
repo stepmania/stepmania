@@ -17,6 +17,7 @@
 #include "PlayerState.h"
 #include "Style.h"
 #include "PrefsManager.h"
+#include "RageFmtWrap.h"
 
 using std::vector;
 
@@ -169,7 +170,7 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 		{
 			if( !EditCourseUtil::RemoveAndDeleteFile(GAMESTATE->m_pCurCourse) )
 			{
-				ScreenPrompt::Prompt( SM_None, fmt::sprintf(ERROR_DELETING_FILE.GetValue(), GAMESTATE->m_pCurCourse->m_sPath.c_str()) );
+				ScreenPrompt::Prompt( SM_None, rage_fmt_wrapper(ERROR_DELETING_FILE, GAMESTATE->m_pCurCourse->m_sPath.c_str()) );
 				return;
 			}
 

@@ -15,6 +15,7 @@
 #include "RageLog.h"
 #include "LuaBinding.h"
 #include "arch/ArchHooks/ArchHooks.h" // HOOKS->GetClipboard()
+#include "RageFmtWrap.h"
 
 using std::wstring;
 
@@ -107,7 +108,7 @@ bool ScreenTextEntry::FloatValidate( const std::string &sAnswer, std::string &sE
 	float f;
 	if( StringToFloat(sAnswer, f) )
 		return true;
-	sErrorOut = fmt::sprintf( INVALID_FLOAT.GetValue().c_str(), sAnswer.c_str() );
+	sErrorOut = rage_fmt_wrapper(INVALID_FLOAT, sAnswer.c_str());
 	return false;
 }
 
@@ -117,7 +118,7 @@ bool ScreenTextEntry::IntValidate( const std::string &sAnswer, std::string &sErr
 	int f;
 	if(sAnswer >> f)
 		return true;
-	sErrorOut = fmt::sprintf( INVALID_INT.GetValue(), sAnswer.c_str() );
+	sErrorOut = rage_fmt_wrapper(INVALID_INT, sAnswer.c_str());
 	return false;
 }
 

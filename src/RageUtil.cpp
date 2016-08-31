@@ -13,6 +13,7 @@
 #include "LocalizedString.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
+#include "RageFmtWrap.h"
 
 #include <numeric>
 #include <ctime>

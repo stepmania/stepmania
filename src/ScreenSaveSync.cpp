@@ -29,9 +29,8 @@ static std::string GetPromptText()
 		AdjustSync::GetSyncChangeTextSong( vs );
 		if( !vs.empty() )
 		{
-			s += fmt::sprintf(
-				CHANGED_TIMING_OF.GetValue()+"\n"
-				"%s:\n"
+			s += CHANGED_TIMING_OF.GetValue()+"\n" +
+				fmt::sprintf("%s:\n"
 				"\n",
 				GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
 

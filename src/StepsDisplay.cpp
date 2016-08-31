@@ -14,6 +14,7 @@
 #include "GameManager.h"
 #include "PlayerState.h"
 #include "RageLog.h"
+#include "RageFmtWrap.h"
 
 REGISTER_ACTOR_CLASS( StepsDisplay );
 
@@ -242,7 +243,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		}
 		else
 		{
-			const std::string sMeter = fmt::sprintf( m_sMeterFormatString.GetValue().c_str(), params.iMeter );
+			const std::string sMeter = rage_fmt_wrapper(m_sMeterFormatString, params.iMeter);
 			m_textMeter.SetText( sMeter );
 			m_textMeter.HandleMessage( msg );
 		}

@@ -5,6 +5,7 @@
 #include "Song.h"
 #include "Steps.h"
 #include "RageLog.h"
+#include "RageFmtWrap.h"
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "Course.h"
@@ -295,7 +296,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, std::string & sTextOut, f
 				case PaneCategory_Hands:
 				case PaneCategory_Lifts:
 				case PaneCategory_Fakes:
-					sTextOut = fmt::sprintf( COUNT_FORMAT.GetValue(), fLevelOut );
+					sTextOut = rage_fmt_wrapper(COUNT_FORMAT, fLevelOut );
 					break;
 				default: break;
 			}

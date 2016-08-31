@@ -7,6 +7,7 @@
 #include "Bookkeeper.h"
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
+#include "RageFmtWrap.h"
 #include "RageUtil.h"
 #include "LocalizedString.h"
 #include "Song.h"
@@ -157,7 +158,7 @@ void ScreenBookkeeping::UpdateView()
 				iCount += pProfile->GetSongNumTimesPlayed( pSong );
 				vpSongs.push_back( pSong );
 			}
-			m_textTitle.SetText( fmt::sprintf(SONG_PLAYS.GetValue(), iCount) );
+			m_textTitle.SetText( rage_fmt_wrapper(SONG_PLAYS, iCount) );
 			SongUtil::SortSongPointerArrayByNumPlays( vpSongs, pProfile, true );
 
 			const int iSongPerCol = 15;
@@ -188,7 +189,7 @@ void ScreenBookkeeping::UpdateView()
 		break;
 	case BookkeepingView_LastDays:
 		{
-			m_textTitle.SetText( fmt::sprintf(LAST_DAYS.GetValue(), NUM_LAST_DAYS) );
+			m_textTitle.SetText( rage_fmt_wrapper(LAST_DAYS, NUM_LAST_DAYS) );
 
 			int coins[NUM_LAST_DAYS];
 			BOOKKEEPER->GetCoinsLastDays( coins );
@@ -215,7 +216,7 @@ void ScreenBookkeeping::UpdateView()
 		break;
 	case BookkeepingView_LastWeeks:
 		{
-			m_textTitle.SetText( fmt::sprintf(LAST_WEEKS.GetValue(), NUM_LAST_WEEKS) );
+			m_textTitle.SetText( rage_fmt_wrapper(LAST_WEEKS, NUM_LAST_WEEKS) );
 
 			int coins[NUM_LAST_WEEKS];
 			BOOKKEEPER->GetCoinsLastWeeks( coins );

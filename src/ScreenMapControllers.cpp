@@ -9,6 +9,7 @@
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
+#include "RageFmtWrap.h"
 
 using std::vector;
 
@@ -93,7 +94,7 @@ void ScreenMapControllers::Init()
 			text.LoadFromFont( THEME->GetPathF(m_sName,"title") );
 			PlayerNumber pn = (PlayerNumber)c;
 			text.SetName( "Label"+PlayerNumberToString(pn) );
-			std::string sText = fmt::sprintf(PLAYER_SLOTS.GetValue(), PlayerNumberToLocalizedString(pn).c_str());
+			std::string sText = rage_fmt_wrapper(PLAYER_SLOTS, PlayerNumberToLocalizedString(pn).c_str());
 			text.SetText( sText );
 			ActorUtil::LoadAllCommands( text, m_sName );
 			m_Line.back()->AddChild( &m_textLabel[c] );

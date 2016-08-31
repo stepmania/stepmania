@@ -10,6 +10,7 @@ list(APPEND SMDATA_RAGE_UTILS_SRC
 )
 
 list(APPEND SMDATA_RAGE_UTILS_HPP
+	"RageFmtWrap.h"
   "RageUtil.h"
   "RageUtil_AutoPtr.h" # TODO: Remove the need for this and replace with c++11 smart pointers
   "RageUtil_BackgroundLoader.h"

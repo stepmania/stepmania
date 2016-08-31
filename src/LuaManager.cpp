@@ -386,7 +386,7 @@ void LuaHelpers::save_lua_table_to_file(lua_State* L, int table_index,
 	RageFile* file= new RageFile;
 	if(!file->Open(filename, RageFile::WRITE))
 	{
-		LuaHelpers::ReportScriptErrorFmt("Could not open %s to save lua data.", filename.c_str());
+		LuaHelpers::ReportScriptErrorFmt("Could not open %s to save lua data: %s", filename.c_str(), file->GetError().c_str());
 		return;
 	}
 	std::unordered_set<void const*> visited_tables;
@@ -1216,6 +1216,11 @@ Dialog::Result LuaHelpers::ReportScriptError(std::string const& Error, std::stri
 	return Dialog::ok;
 }
 
+void infinite_loop_preventer(lua_State* L, lua_Debug*)
+{
+	luaL_error(L, "Infinite loop detected, too many instructions.");
+}
+
 bool LuaHelpers::RunScriptOnStack(Lua *L, std::string &Error, int Args,
 	int ReturnValues, bool ReportError, bool blank_env)
 {
@@ -1229,6 +1234,7 @@ bool LuaHelpers::RunScriptOnStack(Lua *L, std::string &Error, int Args,
 	// move the error function above the function and params
 	int ErrFunc = lua_gettop(L) - Args - 1;
 	lua_insert( L, ErrFunc );
+	lua_sethook(L, infinite_loop_preventer, LUA_MASKCOUNT, 1000000000);
 
 	// evaluate
 	int ret = lua_pcall( L, Args, ReturnValues, ErrFunc );

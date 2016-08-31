@@ -41,6 +41,7 @@
 #include "LocalizedString.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
+#include "RageFmtWrap.h"
 
 using std::vector;
 
@@ -319,10 +320,8 @@ void AdjustSync::GetSyncChangeTextGlobal( vector<std::string> &vsAddTo )
 
 		if( fabsf(fDelta) > 0.0001f )
 		{
-			vsAddTo.push_back( fmt::sprintf(
-				GLOBAL_OFFSET_FROM.GetValue(),
-				fOld, fNew,
-				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ));
+			vsAddTo.push_back(rage_fmt_wrapper(GLOBAL_OFFSET_FROM,
+				fOld, fNew, (fDelta > 0 ? EARLIER:LATER).GetValue().c_str()));
 		}
 	}
 }
@@ -349,11 +348,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<std::string> &vsAddTo )
 
 			if( fabsf(fDelta) > 0.0001f )
 			{
-				vsAddTo.push_back( fmt::sprintf(
-					SONG_OFFSET_FROM.GetValue(),
-					fOld,
-					fNew,
-					(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
+				vsAddTo.push_back(rage_fmt_wrapper(SONG_OFFSET_FROM,
+					fOld, fNew, (fDelta > 0 ? EARLIER:LATER).GetValue().c_str()));
 			}
 		}
 
@@ -375,7 +371,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<std::string> &vsAddTo )
 				break;
 			}
 
-			std::string s = fmt::sprintf( TEMPO_SEGMENT_FROM.GetValue(),
+			std::string s = rage_fmt_wrapper(TEMPO_SEGMENT_FROM,
 					FormatNumberAndSuffix(i+1).c_str(), fOld, fNew );
 
 			vsAddTo.push_back( s );
@@ -401,7 +397,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<std::string> &vsAddTo )
 				break;
 			}
 
-			std::string s = fmt::sprintf( CHANGED_STOP.GetValue(), i+1, fOld, fNew, fDelta );
+			std::string s = rage_fmt_wrapper(CHANGED_STOP, i+1, fOld, fNew, fDelta);
 			vsAddTo.push_back( s );
 		}
 
@@ -429,18 +425,18 @@ void AdjustSync::GetSyncChangeTextSong( vector<std::string> &vsAddTo )
 				break;
 			}
 
-			std::string s = fmt::sprintf( CHANGED_STOP.GetValue(),
-				i+1, fOld, fNew, fDelta );
+			std::string s = rage_fmt_wrapper(CHANGED_STOP,
+				i+1, fOld, fNew, fDelta);
 			vsAddTo.push_back( s );
 		}
 
 		if( vsAddTo.size() > iOriginalSize && s_fAverageError > 0.0f )
 		{
-			vsAddTo.push_back( fmt::sprintf(ERROR.GetValue(), s_fAverageError) );
+			vsAddTo.push_back(rage_fmt_wrapper(ERROR, s_fAverageError));
 		}
 		if( vsAddTo.size() > iOriginalSize && s_iStepsFiltered > 0 )
 		{
-			vsAddTo.push_back( fmt::sprintf(TAPS_IGNORED.GetValue(), s_iStepsFiltered) );
+			vsAddTo.push_back(rage_fmt_wrapper(TAPS_IGNORED, s_iStepsFiltered));
 		}
 #undef SEGMENTS_MISMATCH_MESSAGE
 	}

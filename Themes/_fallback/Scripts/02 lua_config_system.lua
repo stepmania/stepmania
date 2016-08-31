@@ -97,13 +97,19 @@ local lua_config_mt= {
 			local prof_dir= "Save/"
 			slot= self:sanitize_profile_slot(slot)
 			if slot == "ProfileSlot_Invalid" then return prof_dir end
+			local checked= ""
 			if slot:match("ProfileSlot") then
+				checked= "using GetProfileDir"
 				prof_dir= PROFILEMAN:GetProfileDir(slot)
 			else
+				checked= "using LocalProfileIDToDir"
 				prof_dir= PROFILEMAN:LocalProfileIDToDir(slot)
 			end
 			if not prof_dir or prof_dir == "" then
-				lua.ReportScriptError("Could not fetch profile dir to " .. reason .. " for " .. tostring(slot))
+				Trace("Could not fetch profile dir to " .. reason .. " for " .. tostring(slot) .. ".  " .. checked)
+				if PREFSMAN:GetPreference("WarnOnNoProfile") then
+					SCREENMAN:SystemMessage(THEME:GetString("Common", "NoProfileWarning"):format(ToEnumShortString(slot)))
+				end
 				return
 			end
 			return prof_dir
@@ -126,21 +132,16 @@ local lua_config_mt= {
 		end,
 		load= function(self, slot)
 			slot= self:sanitize_profile_slot(slot)
-			local prof_dir= self:slot_to_prof_dir(slot, "read " .. self.name)
-			if not prof_dir then
+			local fname= self:get_filename(slot)
+			if not fname or not FILEMAN:DoesFileExist(fname) then
 				self.data_set[slot]= DeepCopy(self:get_default(slot))
 			else
-				local fname= self:get_filename(slot)
-				if not FILEMAN:DoesFileExist(fname) then
-					self.data_set[slot]= DeepCopy(self:get_default(slot))
+				local from_file= lua.load_config_lua(fname)
+				if type(from_file) == "table" then
+					self:apply_force(from_file, slot)
+					self.data_set[slot]= from_file
 				else
-					local from_file= lua.load_config_lua(fname)
-					if type(from_file) == "table" then
-						self:apply_force(from_file, slot)
-						self.data_set[slot]= from_file
-					else
-						self.data_set[slot]= DeepCopy(self:get_default(slot))
-					end
+					self.data_set[slot]= DeepCopy(self:get_default(slot))
 				end
 			end
 			return self.data_set[slot]
@@ -195,7 +196,7 @@ local lua_config_mt= {
 			if not self:check_dirty(slot) then return end
 			local fname= self:get_filename(slot)
 			if not fname then
-				lua.ReportScriptError("Unable to save config.")
+				Trace("Unable to save config.")
 				return
 			end
 			lua.save_lua_table(fname, self.data_set[slot])

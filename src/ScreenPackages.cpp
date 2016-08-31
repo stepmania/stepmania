@@ -13,6 +13,7 @@
 #include "ScreenManager.h"
 #include <cstdlib>
 #include "LocalizedString.h"
+#include "RageFmtWrap.h"
 
 using std::vector;
 using std::string;
@@ -152,7 +153,7 @@ void ScreenPackages::Update( float fDeltaTime )
 	if ( m_fLastUpdate >= 1.0 )
 	{
 		if ( m_bIsDownloading && m_bGotHeader )
-			m_sStatus = fmt::sprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
+			m_sStatus = rage_fmt_wrapper(DOWNLOAD_PROGRESS, int((m_iDownloaded-m_bytesLastUpdate)/1024) );
 
 		m_bytesLastUpdate = m_iDownloaded;
 		UpdateProgress();

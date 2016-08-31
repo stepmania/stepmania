@@ -19,6 +19,7 @@
 #include "Profile.h"
 #include "SpecialFiles.h"
 #include "NotesWriterSM.h"
+#include "RageFmtWrap.h"
 
 using std::vector;
 
@@ -255,7 +256,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus & )
 		SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
 		if( v.size() >= size_t(MAX_EDIT_STEPS_PER_PROFILE) )
 		{
-			std::string s = fmt::sprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
+			std::string s = rage_fmt_wrapper(YOU_HAVE_MAX_STEP_EDITS, MAX_EDIT_STEPS_PER_PROFILE) +"\n\n"+YOU_MUST_DELETE.GetValue();
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}

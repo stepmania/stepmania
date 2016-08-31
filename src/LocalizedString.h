@@ -20,6 +20,8 @@ public:
 	void Load( std::string const &sGroup, std::string const &sName );
 	operator std::string const () const { return GetValue(); }
 	std::string const GetValue() const;
+	std::string const& GetGroup() const { return m_sGroup; }
+	std::string const& GetName() const { return m_sName; }
 
 	typedef ILocalizedStringImpl *(*MakeLocalizer)();
 	static void RegisterLocalizer( MakeLocalizer pFunc );

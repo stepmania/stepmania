@@ -8,6 +8,7 @@
 #include "ScreenPrompt.h"
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
+#include "RageFmtWrap.h"
 
 using std::vector;
 
@@ -66,7 +67,7 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		}
 		else
 		{
-			vs.push_back( fmt::sprintf(VOLUME_SIZE.GetValue().c_str(),iter.iVolumeSizeMB) );
+			vs.push_back(rage_fmt_wrapper(VOLUME_SIZE, iter.iVolumeSizeMB));
 		}
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 
@@ -219,7 +220,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 		}
 		else
 		{
-			std::string s = fmt::sprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
+			std::string s = rage_fmt_wrapper(ERROR_MOUNTING_CARD, MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
 			ScreenPrompt::Prompt( SM_None, s );
 		}
 	}

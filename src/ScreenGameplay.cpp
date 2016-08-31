@@ -60,6 +60,7 @@
 #include "Song.h"
 #include "XmlFileUtil.h"
 #include "Profile.h" // for replay data stuff
+#include "RageFmtWrap.h"
 
 using std::vector;
 using std::string;
@@ -1181,7 +1182,7 @@ void ScreenGameplay::LoadNextSong()
 		pi->GetPlayerStageStats()->m_iSongsPlayed++;
 		if( pi->m_ptextCourseSongNumber )
         {
-            pi->m_ptextCourseSongNumber->SetText( fmt::sprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
+            pi->m_ptextCourseSongNumber->SetText( rage_fmt_wrapper(SONG_NUMBER_FORMAT, pi->GetPlayerStageStats()->m_iSongsPassed+1) );
         }
     }
 

@@ -28,6 +28,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageFmtWrap.h"
 #include "Song.h"
 #include "SongManager.h"
 #include "SongUtil.h"
@@ -110,6 +111,16 @@ static ThemeMetric<bool> ARE_STAGE_SONG_MODS_FORCED	("GameState","AreStageSongMo
 
 static Preference<Premium> g_Premium( "Premium", Premium_DoubleFor1Credit );
 Preference<bool> GameState::m_bAutoJoin( "AutoJoin", false );
+
+static LocalizedString no_profile_warning("Common", "NoProfileWarning");
+static void show_no_profile_warning(PlayerNumber pn)
+{
+	if(PREFSMAN->m_WarnOnNoProfile)
+	{
+		std::string warning= rage_fmt_wrapper(no_profile_warning, PlayerNumberToLocalizedString(pn).c_str());
+		SCREENMAN->SystemMessage(warning);
+	}
+}
 
 GameState::GameState() :
 	processedTiming( nullptr ),
@@ -617,7 +628,10 @@ void GameState::LoadProfiles( bool bLoadEdits )
 		MEMCARDMAN->UnmountCard( pn );
 
 		if( !bSuccess )
+		{
+			show_no_profile_warning(pn);
 			continue;
+		}
 
 		// Lock the card on successful load, so we won't allow it to be changed.
 		MEMCARDMAN->LockCard( pn );
@@ -668,6 +682,7 @@ bool GameState::HaveProfileToLoad()
 			return true;
 		if( !PROFILEMAN->m_sDefaultLocalProfileID[pn].Get().empty() )
 			return true;
+		show_no_profile_warning(pn);
 	}
 
 	return false;

@@ -33,6 +33,7 @@
 #include "OptionsList.h"
 #include "RageFileManager.h"
 #include "RageUnicode.hpp"
+#include "RageFmtWrap.h"
 
 using std::vector;
 
@@ -511,7 +512,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			if ( songToDelete && PREFSMAN->m_bAllowSongDeletion.Get() )
 			{
 				m_pSongAwaitingDeletionConfirmation = songToDelete;
-				ScreenPrompt::Prompt(SM_ConfirmDeleteSong, fmt::sprintf(PERMANENTLY_DELETE.GetValue(), songToDelete->m_sMainTitle.c_str(), songToDelete->GetSongDir().c_str()), PROMPT_YES_NO);
+				ScreenPrompt::Prompt(SM_ConfirmDeleteSong, rage_fmt_wrapper(PERMANENTLY_DELETE, songToDelete->m_sMainTitle.c_str(), songToDelete->GetSongDir().c_str()), PROMPT_YES_NO);
 				return true;
 			}
 		}
@@ -2058,7 +2059,7 @@ bool ScreenSelectMusic::can_open_options_list(PlayerNumber pn)
 #include "LuaBinding.h"
 
 /** @brief Allow Lua to have access to the ScreenSelectMusic. */
-class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
+class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
 {
 public:
 	static int GetGoToOptions( T* p, lua_State *L ) { lua_pushboolean( L, p->GetGoToOptions() ); return 1; }

@@ -43,6 +43,7 @@
 #include "TimingData.h"
 #include "Game.h"
 #include "RageSoundReader.h"
+#include "RageFmtWrap.h"
 
 static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
 static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", true );
@@ -1922,12 +1923,12 @@ void ScreenEdit::UpdateTextInfo()
 
 	m_bTextInfoNeedsUpdate = false;
 
-	std::string sNoteType = fmt::sprintf( NOTES.GetValue(), NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType()).c_str() );
+	std::string sNoteType = rage_fmt_wrapper(NOTES, NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType()).c_str() );
 
 	std::string sText;
-	sText += fmt::sprintf( CURRENT_BEAT_FORMAT.GetValue(), CURRENT_BEAT.GetValue().c_str(), GetBeat() );
+	sText += rage_fmt_wrapper(CURRENT_BEAT_FORMAT, CURRENT_BEAT.GetValue().c_str(), GetBeat() );
 	float second= GetAppropriateTiming().GetElapsedTimeFromBeatNoOffset(GetBeat());
-	sText += fmt::sprintf( CURRENT_SECOND_FORMAT.GetValue(), CURRENT_SECOND.GetValue().c_str(), second );
+	sText += rage_fmt_wrapper(CURRENT_SECOND_FORMAT, CURRENT_SECOND.GetValue().c_str(), second );
 	switch( EDIT_MODE.GetValue() )
 	{
 	DEFAULT_FAIL( EDIT_MODE.GetValue() );
@@ -1936,7 +1937,7 @@ void ScreenEdit::UpdateTextInfo()
 	case EditMode_CourseMods:
 	case EditMode_Home:
 	case EditMode_Full:
-		sText += fmt::sprintf( SNAP_TO_FORMAT.GetValue(), SNAP_TO.GetValue().c_str(), sNoteType.c_str() );
+		sText += rage_fmt_wrapper(SNAP_TO_FORMAT, SNAP_TO.GetValue().c_str(), sNoteType.c_str() );
 		break;
 	}
 
@@ -1944,10 +1945,10 @@ void ScreenEdit::UpdateTextInfo()
 	double selection_end= m_NoteFieldEdit.get_selection_end();
 	if(selection_start != -1.0)
 	{
-		sText += fmt::sprintf(SELECTION_BEAT_BEGIN_FORMAT.GetValue(), SELECTION_BEAT.GetValue().c_str(), selection_start);
+		sText += rage_fmt_wrapper(SELECTION_BEAT_BEGIN_FORMAT, SELECTION_BEAT.GetValue().c_str(), selection_start);
 		if(selection_end != -1.0)
 		{
-			sText += fmt::sprintf(SELECTION_BEAT_END_FORMAT.GetValue(), selection_end);
+			sText += rage_fmt_wrapper(SELECTION_BEAT_END_FORMAT, selection_end);
 		}
 		else
 		{
@@ -1957,23 +1958,23 @@ void ScreenEdit::UpdateTextInfo()
 
 	if (EDIT_MODE.GetValue() == EditMode_Full)
 	{
-		sText += fmt::sprintf( DIFFICULTY_FORMAT.GetValue(), DIFFICULTY.GetValue().c_str(), DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
+		sText += rage_fmt_wrapper(DIFFICULTY_FORMAT, DIFFICULTY.GetValue().c_str(), DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
 		if ( m_InputPlayerNumber != PLAYER_INVALID )
 		{
-			sText += fmt::sprintf( ROUTINE_PLAYER_FORMAT.GetValue(), ROUTINE_PLAYER.GetValue().c_str(), m_InputPlayerNumber + 1 );
+			sText += rage_fmt_wrapper(ROUTINE_PLAYER_FORMAT, ROUTINE_PLAYER.GetValue().c_str(), m_InputPlayerNumber + 1 );
 		}
-		//sText += fmt::sprintf( DESCRIPTION_FORMAT.GetValue(), DESCRIPTION.GetValue().c_str(), m_pSteps->GetDescription().c_str() );
-		sText += fmt::sprintf( CHART_NAME_FORMAT.GetValue(), CHART_NAME.GetValue().c_str(), m_pSteps->GetChartName().c_str() );
-		sText += fmt::sprintf( STEP_AUTHOR_FORMAT.GetValue(), STEP_AUTHOR.GetValue().c_str(), m_pSteps->GetCredit().c_str() );
-		//sText += fmt::sprintf( CHART_STYLE_FORMAT.GetValue(), CHART_STYLE.GetValue().c_str(), m_pSteps->GetChartStyle().c_str() );
-		sText += fmt::sprintf( MAIN_TITLE_FORMAT.GetValue(), MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
+		//sText += rage_fmt_wrapper(DESCRIPTION_FORMAT, DESCRIPTION.GetValue().c_str(), m_pSteps->GetDescription().c_str() );
+		sText += rage_fmt_wrapper(CHART_NAME_FORMAT, CHART_NAME.GetValue().c_str(), m_pSteps->GetChartName().c_str() );
+		sText += rage_fmt_wrapper(STEP_AUTHOR_FORMAT, STEP_AUTHOR.GetValue().c_str(), m_pSteps->GetCredit().c_str() );
+		//sText += rage_fmt_wrapper(CHART_STYLE_FORMAT, CHART_STYLE.GetValue().c_str(), m_pSteps->GetChartStyle().c_str() );
+		sText += rage_fmt_wrapper(MAIN_TITLE_FORMAT, MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
 		if( m_pSong->m_sSubTitle.size() )
 		{
-			sText += fmt::sprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
+			sText += rage_fmt_wrapper(SUBTITLE_FORMAT, SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
 		}
-		sText += fmt::sprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
+		sText += rage_fmt_wrapper(SEGMENT_TYPE_FORMAT, SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
         const std::string tapnoteType = TapNoteTypeToString( m_selectedTap.type );
-		sText += fmt::sprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), tapnoteType.c_str() );
+		sText += rage_fmt_wrapper(TAP_NOTE_TYPE_FORMAT, TAP_NOTE_TYPE.GetValue().c_str(), tapnoteType.c_str() );
 
 		AttackArray &attacks =
 			(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
@@ -1986,48 +1987,48 @@ void ScreenEdit::UpdateTextInfo()
 	if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine)
 	{
 		std::pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
-		sText += fmt::sprintf(NUM_STEPS_FORMAT_TWO_PLAYER.GetValue(),
+		sText += rage_fmt_wrapper(NUM_STEPS_FORMAT_TWO_PLAYER,
 						  TAP_STEPS.GetValue().c_str(),
 						  tmp.first, tmp.second);
 		tmp = m_NoteDataEdit.GetNumJumpsTwoPlayer();
-		sText += fmt::sprintf(NUM_JUMPS_FORMAT_TWO_PLAYER.GetValue(),
+		sText += rage_fmt_wrapper(NUM_JUMPS_FORMAT_TWO_PLAYER,
 						  JUMPS.GetValue().c_str(),
 						  tmp.first, tmp.second);
 		tmp = m_NoteDataEdit.GetNumHandsTwoPlayer();
-		sText += fmt::sprintf(NUM_HANDS_FORMAT_TWO_PLAYER.GetValue(),
+		sText += rage_fmt_wrapper(NUM_HANDS_FORMAT_TWO_PLAYER,
 						  HANDS.GetValue().c_str(),
 						  tmp.first, tmp.second);
 		tmp = m_NoteDataEdit.GetNumHoldNotesTwoPlayer();
-		sText += fmt::sprintf(NUM_HOLDS_FORMAT_TWO_PLAYER.GetValue(),
+		sText += rage_fmt_wrapper(NUM_HOLDS_FORMAT_TWO_PLAYER,
 						  HOLDS.GetValue().c_str(),
 						  tmp.first, tmp.second);
 		tmp = m_NoteDataEdit.GetNumMinesTwoPlayer();
-		sText += fmt::sprintf(NUM_MINES_FORMAT_TWO_PLAYER.GetValue(),
+		sText += rage_fmt_wrapper(NUM_MINES_FORMAT_TWO_PLAYER,
 						  MINES.GetValue().c_str(),
 						  tmp.first, tmp.second);
 		tmp = m_NoteDataEdit.GetNumRollsTwoPlayer();
-		sText += fmt::sprintf(NUM_ROLLS_FORMAT_TWO_PLAYER.GetValue(),
+		sText += rage_fmt_wrapper(NUM_ROLLS_FORMAT_TWO_PLAYER,
 						  ROLLS.GetValue().c_str(),
 						  tmp.first, tmp.second);
 		tmp = m_NoteDataEdit.GetNumLiftsTwoPlayer();
-		sText += fmt::sprintf(NUM_LIFTS_FORMAT_TWO_PLAYER.GetValue(),
+		sText += rage_fmt_wrapper(NUM_LIFTS_FORMAT_TWO_PLAYER,
 						  LIFTS.GetValue().c_str(),
 						  tmp.first, tmp.second);
 		tmp = m_NoteDataEdit.GetNumFakesTwoPlayer();
-		sText += fmt::sprintf(NUM_FAKES_FORMAT_TWO_PLAYER.GetValue(),
+		sText += rage_fmt_wrapper(NUM_FAKES_FORMAT_TWO_PLAYER,
 						  FAKES.GetValue().c_str(),
 						  tmp.first, tmp.second);
 	}
 	else
 	{
-		sText += fmt::sprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
-		sText += fmt::sprintf( NUM_JUMPS_FORMAT.GetValue(), JUMPS.GetValue().c_str(), m_NoteDataEdit.GetNumJumps() );
-		sText += fmt::sprintf( NUM_HANDS_FORMAT.GetValue(), HANDS.GetValue().c_str(), m_NoteDataEdit.GetNumHands() );
-		sText += fmt::sprintf( NUM_HOLDS_FORMAT.GetValue(), HOLDS.GetValue().c_str(), m_NoteDataEdit.GetNumHoldNotes() );
-		sText += fmt::sprintf( NUM_MINES_FORMAT.GetValue(), MINES.GetValue().c_str(), m_NoteDataEdit.GetNumMines() );
-		sText += fmt::sprintf( NUM_ROLLS_FORMAT.GetValue(), ROLLS.GetValue().c_str(), m_NoteDataEdit.GetNumRolls() );
-		sText += fmt::sprintf( NUM_LIFTS_FORMAT.GetValue(), LIFTS.GetValue().c_str(), m_NoteDataEdit.GetNumLifts() );
-		sText += fmt::sprintf( NUM_FAKES_FORMAT.GetValue(), FAKES.GetValue().c_str(), m_NoteDataEdit.GetNumFakes() );
+		sText += rage_fmt_wrapper(NUM_STEPS_FORMAT, TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
+		sText += rage_fmt_wrapper(NUM_JUMPS_FORMAT, JUMPS.GetValue().c_str(), m_NoteDataEdit.GetNumJumps() );
+		sText += rage_fmt_wrapper(NUM_HANDS_FORMAT, HANDS.GetValue().c_str(), m_NoteDataEdit.GetNumHands() );
+		sText += rage_fmt_wrapper(NUM_HOLDS_FORMAT, HOLDS.GetValue().c_str(), m_NoteDataEdit.GetNumHoldNotes() );
+		sText += rage_fmt_wrapper(NUM_MINES_FORMAT, MINES.GetValue().c_str(), m_NoteDataEdit.GetNumMines() );
+		sText += rage_fmt_wrapper(NUM_ROLLS_FORMAT, ROLLS.GetValue().c_str(), m_NoteDataEdit.GetNumRolls() );
+		sText += rage_fmt_wrapper(NUM_LIFTS_FORMAT, LIFTS.GetValue().c_str(), m_NoteDataEdit.GetNumLifts() );
+		sText += rage_fmt_wrapper(NUM_FAKES_FORMAT, FAKES.GetValue().c_str(), m_NoteDataEdit.GetNumFakes() );
 	}
 	switch( EDIT_MODE.GetValue() )
 	{
@@ -2037,20 +2038,20 @@ void ScreenEdit::UpdateTextInfo()
 	case EditMode_Home:
 		break;
 	case EditMode_Full:
-		sText += fmt::sprintf( TIMING_MODE_FORMAT.GetValue(),
+		sText += rage_fmt_wrapper(TIMING_MODE_FORMAT,
 			  TIMING_MODE.GetValue().c_str(),
 			  ( GAMESTATE->m_bIsUsingStepTiming ?
 			   STEP_TIMING.GetValue().c_str() :
 			   SONG_TIMING.GetValue().c_str() ) );
-		sText += fmt::sprintf( BEAT_0_OFFSET_FORMAT.GetValue(),
+		sText += rage_fmt_wrapper(BEAT_0_OFFSET_FORMAT,
 			  BEAT_0_OFFSET.GetValue().c_str(),
 			  GetAppropriateTiming().m_fBeat0OffsetInSeconds );
-		sText += fmt::sprintf( PREVIEW_START_FORMAT.GetValue(), PREVIEW_START.GetValue().c_str(), m_pSong->m_fMusicSampleStartSeconds );
-		sText += fmt::sprintf( PREVIEW_LENGTH_FORMAT.GetValue(), PREVIEW_LENGTH.GetValue().c_str(), m_pSong->m_fMusicSampleLengthSeconds );
+		sText += rage_fmt_wrapper(PREVIEW_START_FORMAT, PREVIEW_START.GetValue().c_str(), m_pSong->m_fMusicSampleStartSeconds );
+		sText += rage_fmt_wrapper(PREVIEW_LENGTH_FORMAT, PREVIEW_LENGTH.GetValue().c_str(), m_pSong->m_fMusicSampleLengthSeconds );
 		if(record_hold_seconds < record_hold_default - .001f ||
 			record_hold_seconds > record_hold_default + .001f)
 		{
-			sText += fmt::sprintf(RECORD_HOLD_TIME_FORMAT.GetValue(), RECORD_HOLD_TIME.GetValue().c_str(), record_hold_seconds);
+			sText += rage_fmt_wrapper(RECORD_HOLD_TIME_FORMAT, RECORD_HOLD_TIME.GetValue().c_str(), record_hold_seconds);
 		}
 		break;
 	}
@@ -5154,12 +5155,12 @@ static bool ConvertMappingInputToMapping(std::string const& mapstr, int* mapping
 		}
 		else if(!(mapping_input[track] >> mapping[track]))
 		{
-			error= fmt::sprintf(NOT_A_TRACK.GetValue(), mapping_input[track].c_str());
+			error= rage_fmt_wrapper(NOT_A_TRACK, mapping_input[track].c_str());
 			return false;
 		}
 		if(mapping[track] < 1 || mapping[track] > static_cast<int>(tracks_for_type))
 		{
-			error= fmt::sprintf(OUT_OF_RANGE_ID.GetValue(), track+1, mapping[track], tracks_for_type);
+			error= rage_fmt_wrapper(OUT_OF_RANGE_ID, track+1, mapping[track], tracks_for_type);
 			return false;
 		}
 		// Simpler for the user if they input track ids starting at 1.
@@ -5247,7 +5248,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &ans
 				BeatToNoteRow(selection_start), BeatToNoteRow(selection_end));
 			if(note_count >= PREFSMAN->m_EditClearPromptThreshold && prompt_clear)
 			{
-				ScreenPrompt::Prompt(SM_ConfirmClearArea, fmt::sprintf(CONFIRM_CLEAR.GetValue(), note_count), PROMPT_YES_NO);
+				ScreenPrompt::Prompt(SM_ConfirmClearArea, rage_fmt_wrapper(CONFIRM_CLEAR, note_count), PROMPT_YES_NO);
 			}
 			else
 			{
@@ -6649,7 +6650,7 @@ void ScreenEdit::DoKeyboardTrackMenu()
 			++foundKeysounds;
 		}
 
-		g_KeysoundTrack.rows.push_back(MenuRowDef(i, fmt::sprintf(TRACK_NUM.GetValue(), i + 1),
+		g_KeysoundTrack.rows.push_back(MenuRowDef(i, rage_fmt_wrapper(TRACK_NUM, i + 1),
 												  true, EditMode_Full, false, false, keyIndex, choices));
 	}
 	g_KeysoundTrack.rows.push_back(MenuRowDef(m_NoteDataEdit.GetNumTracks(), "Remove Keysound",

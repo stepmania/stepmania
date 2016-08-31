@@ -16,6 +16,7 @@
 #include "LocalizedString.h"
 #include "StepMania.h"
 #include "NotesLoaderSSC.h"
+#include "RageFmtWrap.h"
 
 using std::vector;
 
@@ -60,7 +61,7 @@ static std::string ClearMachineEdits()
 	PROFILEMAN->LoadMachineProfile();
 
 	int iNumErrors = iNumAttempted-iNumSuccessful;
-	return fmt::sprintf(MACHINE_EDITS_CLEARED.GetValue(),iNumSuccessful,iNumErrors);
+	return rage_fmt_wrapper(MACHINE_EDITS_CLEARED,iNumSuccessful,iNumErrors);
 }
 
 static PlayerNumber GetFirstReadyMemoryCard()
@@ -106,7 +107,7 @@ static std::string ClearMemoryCardEdits()
 
 	MEMCARDMAN->UnmountCard(pn);
 
-	return fmt::sprintf(EDITS_CLEARED.GetValue(),iNumSuccessful,iNumAttempted-iNumSuccessful);
+	return rage_fmt_wrapper(EDITS_CLEARED,iNumSuccessful,iNumAttempted-iNumSuccessful);
 }
 
 
@@ -130,9 +131,9 @@ static std::string TransferStatsMachineToMemoryCard()
 	MEMCARDMAN->UnmountCard(pn);
 
 	if( bSaved )
-		return fmt::sprintf(MACHINE_STATS_SAVED.GetValue(),pn+1);
+		return rage_fmt_wrapper(MACHINE_STATS_SAVED,pn+1);
 	else
-		return fmt::sprintf(ERROR_SAVING_MACHINE_STATS.GetValue(),pn+1);
+		return rage_fmt_wrapper(ERROR_SAVING_MACHINE_STATS,pn+1);
 }
 
 static LocalizedString STATS_NOT_LOADED		( "ScreenServiceAction", "Stats not loaded - No memory cards ready." );
@@ -158,15 +159,15 @@ static std::string TransferStatsMemoryCardToMachine()
 	switch( lr )
 	{
 	case ProfileLoadResult_Success:
-		s = fmt::sprintf(MACHINE_STATS_LOADED.GetValue(),pn+1);
+		s = rage_fmt_wrapper(MACHINE_STATS_LOADED,pn+1);
 		break;
 	case ProfileLoadResult_FailedNoProfile:
 		*PROFILEMAN->GetMachineProfile() = backup;
-		s = fmt::sprintf(THERE_IS_NO_PROFILE.GetValue(),pn+1);
+		s = rage_fmt_wrapper(THERE_IS_NO_PROFILE,pn+1);
 		break;
 	case ProfileLoadResult_FailedTampered:
 		*PROFILEMAN->GetMachineProfile() = backup;
-		s = fmt::sprintf(PROFILE_CORRUPT.GetValue(),pn+1);
+		s = rage_fmt_wrapper(PROFILE_CORRUPT,pn+1);
 		break;
 	default:
 		FAIL_M(fmt::sprintf("Invalid profile load result: %i", lr));
@@ -256,14 +257,14 @@ static std::string CopyEdits( const std::string &sFromProfileDir, const std::str
 
 	vector<std::string> vs;
 	vs.push_back( sDisplayDir );
-	vs.push_back( fmt::sprintf( COPIED.GetValue(), iNumSucceeded ) + ", " + fmt::sprintf( OVERWRITTEN.GetValue(), iNumOverwritten ) );
+	vs.push_back( rage_fmt_wrapper(COPIED, iNumSucceeded ) + ", " + rage_fmt_wrapper(OVERWRITTEN, iNumOverwritten ) );
 	if( iNumIgnored )
 	{
-		vs.push_back( fmt::sprintf( IGNORED.GetValue(), iNumIgnored ) );
+		vs.push_back( rage_fmt_wrapper(IGNORED, iNumIgnored ) );
 	}
 	if( iNumErrored )
 	{
-		vs.push_back( fmt::sprintf( FAILED.GetValue(), iNumErrored ) );
+		vs.push_back( rage_fmt_wrapper(FAILED, iNumErrored ) );
 	}
 	return Rage::join( "\n", vs );
 }
@@ -336,7 +337,7 @@ static std::string CopyEditsMachineToMemoryCard()
 	auto sToDir = MEM_CARD_MOUNT_POINT[pn] + (std::string)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 
 	vector<std::string> vs;
-	vs.push_back( fmt::sprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
+	vs.push_back( rage_fmt_wrapper(COPIED_TO_CARD, pn+1 ) );
 	auto s = CopyEdits( sFromDir, sToDir, PREFSMAN->m_sMemoryCardProfileSubdir.Get() );
 	vs.push_back( s );
 
@@ -365,12 +366,12 @@ static std::string SyncEditsMachineToMemoryCard()
 
 	MEMCARDMAN->UnmountCard(pn);
 
-	std::string sRet = fmt::sprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
-	sRet += fmt::sprintf( ADDED.GetValue(), iNumAdded ) + ", " + fmt::sprintf( OVERWRITTEN.GetValue(), iNumOverwritten );
+	std::string sRet = rage_fmt_wrapper(COPIED_TO_CARD, pn+1 ) + " ";
+	sRet += rage_fmt_wrapper(ADDED, iNumAdded ) + ", " + rage_fmt_wrapper(OVERWRITTEN, iNumOverwritten );
 	if( iNumDeleted )
-		sRet += std::string(" ") + fmt::sprintf( DELETED.GetValue(), iNumDeleted );
+		sRet += std::string(" ") + rage_fmt_wrapper(DELETED, iNumDeleted );
 	if( iNumFailed )
-		sRet += std::string("; ") + fmt::sprintf( FAILED.GetValue(), iNumFailed );
+		sRet += std::string("; ") + rage_fmt_wrapper(FAILED, iNumFailed );
 	return sRet;
 }
 
@@ -390,7 +391,7 @@ static std::string CopyEditsMemoryCardToMachine()
 	ProfileManager::GetMemoryCardProfileDirectoriesToTry( vsSubDirs );
 
 	vector<std::string> vs;
-	vs.push_back( fmt::sprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) );
+	vs.push_back( rage_fmt_wrapper(COPIED_FROM_CARD, pn+1 ) );
 
 	for (auto &sSubDir: vsSubDirs)
 	{

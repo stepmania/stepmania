@@ -18,6 +18,7 @@
 #include "CommonMetrics.h"
 #include "LuaBinding.h"
 #include "EnumHelper.h"
+#include "RageFmtWrap.h"
 
 #include <unordered_map>
 
@@ -819,7 +820,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const std::string &sAnswer, 
 	static const std::string sInvalidChars = "\\/:*?\"<>|";
 	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != nullptr )
 	{
-		sErrorOut = fmt::sprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		sErrorOut = rage_fmt_wrapper(EDIT_NAME_CANNOT_CONTAIN, sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -869,7 +870,7 @@ bool SongUtil::ValidateCurrentStepsChartName(const std::string &answer, std::str
 	static const std::string sInvalidChars = "\\/:*?\"<>|";
 	if( strpbrk(answer.c_str(), sInvalidChars.c_str()) != nullptr )
 	{
-		error = fmt::sprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		error = rage_fmt_wrapper(CHART_NAME_CANNOT_CONTAIN, sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -905,7 +906,7 @@ bool SongUtil::ValidateCurrentStepsCredit( const std::string &sAnswer, std::stri
 	static const std::string sInvalidChars = "\\/:*?\"<>|";
 	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != nullptr )
 	{
-		sErrorOut = fmt::sprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		sErrorOut = rage_fmt_wrapper(AUTHOR_NAME_CANNOT_CONTAIN, sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -925,7 +926,7 @@ bool SongUtil::ValidateCurrentSongPreview(const std::string& answer, std::string
 	song->m_PreviewFile= real_file;
 	if(!valid)
 	{
-		error= fmt::sprintf(PREVIEW_DOES_NOT_EXIST.GetValue(), answer.c_str());
+		error= rage_fmt_wrapper(PREVIEW_DOES_NOT_EXIST, answer.c_str());
 	}
 	return valid;
 }
@@ -943,7 +944,7 @@ bool SongUtil::ValidateCurrentStepsMusic(const std::string &answer, std::string 
 	pSteps->SetMusicFile(real_file);
 	if(!valid)
 	{
-		error= fmt::sprintf(MUSIC_DOES_NOT_EXIST.GetValue(), answer.c_str());
+		error= rage_fmt_wrapper(MUSIC_DOES_NOT_EXIST, answer.c_str());
 	}
 	return valid;
 }

@@ -6,6 +6,8 @@
 #include "PlayerState.h"
 #include "Course.h"
 #include "ActorUtil.h"
+#include "RageUtil.h"
+#include "RageFmtWrap.h"
 
 LifeMeterBattery::LifeMeterBattery()
 {
@@ -247,7 +249,7 @@ int LifeMeterBattery::GetRemainingLives() const
 }
 void LifeMeterBattery::Refresh()
 {
-    m_textNumLives.SetText( fmt::sprintf(LIVES_FORMAT.GetValue(), m_iLivesLeft) );
+    m_textNumLives.SetText(rage_fmt_wrapper(LIVES_FORMAT, m_iLivesLeft));
 	if( m_iLivesLeft < 0 )
 	{
 		// hide text to avoid showing -1

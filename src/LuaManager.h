@@ -17,6 +17,7 @@ extern "C"
 
 // For Dialog::Result
 #include "arch/Dialog/Dialog.h"
+#include "RageUtil.h"
 
 class LuaManager
 {

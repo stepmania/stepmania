@@ -18,6 +18,7 @@
 #include "CourseWriterCRS.h"
 #include "RageFileManager.h"
 #include "PrefsManager.h"
+#include "RageFmtWrap.h"
 
 using std::vector;
 
@@ -240,7 +241,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus & )
 		EditCourseUtil::GetAllEditCourses( vpCourses );
 		if( vpCourses.size() >= (size_t)EditCourseUtil::MAX_PER_PROFILE )
 		{
-			std::string s = fmt::sprintf( YOU_HAVE_MAX.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), EditCourseUtil::MAX_PER_PROFILE );
+			std::string s = rage_fmt_wrapper(YOU_HAVE_MAX, EditCourseUtil::MAX_PER_PROFILE) + "\n\n" + YOU_MUST_DELETE.GetValue();
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}

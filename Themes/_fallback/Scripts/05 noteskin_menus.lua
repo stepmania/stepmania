@@ -1,6 +1,8 @@
 shown_noteskins= create_lua_config{
 	name= "shown noteskins", file= "shown_noteskins.lua", default= {},
-	match_depth= 0, use_global_as_default= true}
+	match_depth= 0, use_global_as_default= true,
+	use_alternate_config_prefix= "",
+}
 shown_noteskins:load()
 
 add_standard_lua_config_save_load_hooks(shown_noteskins)

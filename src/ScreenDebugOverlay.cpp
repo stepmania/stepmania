@@ -31,6 +31,7 @@
 #include "ScreenSyncOverlay.h"
 #include "ThemeMetric.h"
 #include "XmlToLua.h"
+#include "RageFmtWrap.h"
 
 using std::vector;
 
@@ -156,7 +157,7 @@ static std::string GetDebugButtonName( const IDebugLine *pLine )
 	case IDebugLine::all_screens:
 		return s;
 	case IDebugLine::gameplay_only:
-		return fmt::sprintf( IN_GAMEPLAY.GetValue(), s.c_str() );
+		return rage_fmt_wrapper(IN_GAMEPLAY, s.c_str());
 	default:
 		FAIL_M(fmt::sprintf("Invalid debug line type: %i", type));
 	}
