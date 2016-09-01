@@ -1218,12 +1218,21 @@ namespace
 		LuaHelpers::Push( L, b );
 		return 1;
 	}
+	int validate_edit_description(lua_State* L)
+	{
+		Song* snog= Luna<Song>::check(L, 1, true);
+		StepsType stype= Enum::Check<StepsType>(L, 2);
+		std::string desc= SArg(3);
+		lua_pushboolean(L, SongUtil::IsEditDescriptionUnique(snog, stype, desc, nullptr));
+		return 1;
+	}
 
 	const luaL_Reg SongUtilTable[] =
 	{
 		LIST_METHOD( GetPlayableSteps ),
 		LIST_METHOD( IsStepsTypePlayable ),
 		LIST_METHOD( IsStepsPlayable ),
+		LIST_METHOD(validate_edit_description),
 		{ nullptr, nullptr }
 	};
 }

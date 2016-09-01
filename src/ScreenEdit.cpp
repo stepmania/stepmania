@@ -1524,6 +1524,7 @@ void ScreenEdit::Init()
 	}
 
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr );
+	m_Player->SetName("Player");
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player->SetXY( PLAYER_X, PLAYER_Y );
 	// TODO:  Defective mode stuff is interfering with notefield configuration.

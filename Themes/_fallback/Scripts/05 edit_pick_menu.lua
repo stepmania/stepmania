@@ -116,6 +116,13 @@ local function handle_edit_description_prompt(info)
 					end, "create edit with description")
 			end
 		end,
+		Validate= function(answer, err)
+			if SongUtil.validate_edit_description(info.song, info.stype, answer) then
+				return true, ""
+			else
+				return false, THEME:GetString("SongUtil", "The name you chose conflicts with another edit. Please use a different name.")
+			end
+		end,
 	}
 	SCREENMAN:AddNewScreenToTop("ScreenTextEntry")
 	SCREENMAN:GetTopScreen():Load(text_settings)

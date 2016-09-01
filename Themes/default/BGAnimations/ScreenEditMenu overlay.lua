@@ -51,7 +51,7 @@ local steps_display_y= title_y + (spacer * 1.5)
 local steps_display_items= (_screen.h - steps_display_y) / steps_type_item_space
 
 local menu_params= {
-	name= "menu", x= _screen.cx*.5, y= 10, width= _screen.cx,
+	name= "menu", x= _screen.cx*.5, y= _screen.h*.15, width= _screen.cx,
 	translation_section= "ScreenEditMenu",
 	menu_sounds= {
 		pop= THEME:GetPathS("Common", "Cancel"),
@@ -65,7 +65,7 @@ local menu_params= {
 	},
 	num_displays= 1, el_height= 24, display_params= {
 		no_status= true,
-		height= _screen.h-32, el_zoom= menu_zoom,
+		height= _screen.h*.8, el_zoom= menu_zoom,
 		item_mt= cons_option_item_mt, item_params= {
 			text_commands= {
 				Font= "Common Normal", OnCommand= function(self)

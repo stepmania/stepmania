@@ -3226,7 +3226,7 @@ public:
 		{
 			edit_name= SArg(5);
 		}
-		SongUtil::MakeUniqueEditDescription(song, stype, edit_name);
+		edit_name= SongUtil::MakeUniqueEditDescription(song, stype, edit_name);
 		new_steps->SetDifficulty(diff);
 		new_steps->SetDescription(edit_name);
 		song->AddSteps(new_steps);
