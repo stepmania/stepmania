@@ -38,7 +38,7 @@ function GameplayPlayerPositions(widths)
 	local ret= {}
 	for i= 1, #widths do
 		local p= widths[i][1]
-		local x= THEME:GetMetric(Var("LoadingScreen"), "PlayerP"..(p+1).."MiscX")
+		local x= THEME:GetMetric("ScreenGameplay", "PlayerP"..(p+1).."MiscX")
 		local dist_to_edge= _screen.cx
 		if x > _screen.cx then
 			dist_to_edge= _screen.w - edge_width - x
