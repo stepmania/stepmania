@@ -172,7 +172,6 @@ public:
 	PlayerInfo *GetDummyPlayerInfo( int iDummyIndex );
 	void Pause(bool bPause) { PauseGame(bPause); }
 	bool IsPaused() const { return m_bPaused; }
-	float GetHasteRate();
 
 	void FailFadeRemovePlayer(PlayerInfo* pi);
 	void FailFadeRemovePlayer(PlayerNumber pn);
@@ -182,6 +181,10 @@ public:
 	std::vector<float> m_HasteAddAmounts; // Amounts that are added to speed depending on what turning point has been passed.
 	float m_fHasteTimeBetweenUpdates; // Seconds between haste updates.
 	float m_fHasteLifeSwitchPoint; // Life amount below which GAMESTATE->m_fHasteRate is based on the life amount.
+
+	float m_haste_progress; // [-1,+1]; 0 = normal speed
+	float m_last_haste_update_music_seconds;
+	float m_accumulated_haste_seconds;
 
 protected:
 	virtual void UpdateStageStats( MultiPlayer /* mp */ ) {};	// overridden for multiplayer
@@ -241,8 +244,8 @@ protected:
 	virtual void InitSongQueues();
 
 	void UpdateHasteRate();
-	float m_fCurrHasteRate;
-	// These exist so that the haste rate isn't recalculated every time GetHasteRate is called, which is at least once per frame. -Kyz
+	// UpdateHasteRate exists so that the haste rate isn't recalculated every
+	// time GetHasteRate is called, which is at least once per frame. -Kyz
 
 	/** @brief The different game states of ScreenGameplay. */
 	enum DancingState {

@@ -940,7 +940,7 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	int next_phase= HTP_Top;
 	hold_vert_step_state next_step; // The OS of the future.
 	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, next_phase, is_lift, &(note.note_iter->second));
-	bool need_glow_pass= true;
+	bool need_glow_pass= false;
 	for(double curr_y= start_y; !last_vert_set; curr_y+= y_step)
 	{
 		hold_vert_step_state curr_step= next_step;
@@ -1061,7 +1061,7 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 				{
 					verts_to_draw.swap_glow();
 				}
-				need_glow_pass= true;
+				need_glow_pass= false;
 			}
 		}
 	}

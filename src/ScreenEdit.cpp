@@ -68,7 +68,6 @@ const float time_between_autosave= 300.0f; // 5 minutes. -Kyz
 #define EDIT_HELP_TEXT		THEME->GetString(m_sName,"EditHelpText")
 
 #define SET_MOD_SCREEN THEME->GetMetric("ScreenEdit", "SetModScreen")
-#define OPTIONS_SCREEN THEME->GetMetric("ScreenEdit", "OptionsScreen")
 
 AutoScreenMessage( SM_UpdateTextInfo );
 AutoScreenMessage( SM_BackFromMainMenu );

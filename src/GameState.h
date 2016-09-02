@@ -277,9 +277,11 @@ public:
 	bool OneIsHot() const;
 
 	// Haste
-	float	m_fHasteRate; // [-1,+1]; 0 = normal speed
-	float	m_fLastHasteUpdateMusicSeconds;
-	float	m_fAccumulatedHasteSeconds;
+	// The haste rate calculated by ScreenGameplay needs to be in GameState
+	// so that PlayerOptions can use it when scaling approach speeds by the
+	// current music rate. -Kyz
+	float m_haste_rate;
+	float get_hasted_music_rate();
 
 	// used by themes that support heart rate entry.
 	RageTimer m_DanceStartTime;

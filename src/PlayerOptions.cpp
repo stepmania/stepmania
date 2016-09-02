@@ -78,10 +78,11 @@ void PlayerOptions::Init()
 	m_bMuteOnError = false;
 }
 
-void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
+void PlayerOptions::Approach(PlayerOptions const& other, float delta)
 {
+	float rated_delta= delta * GAMESTATE->get_hasted_music_rate();
 #define APPROACH( opt ) \
-	fapproach( m_ ## opt, other.m_ ## opt, fDeltaSeconds * other.m_Speed ## opt );
+	fapproach(m_##opt, other.m_##opt, rated_delta * other.m_Speed ## opt);
 #define DO_COPY( x ) \
 	x = other.x;
 
@@ -91,7 +92,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
 	APPROACH( fMaxScrollBPM );
-	fapproach( m_fScrollBPM, other.m_fScrollBPM, fDeltaSeconds * other.m_SpeedfScrollBPM*150 );
+	fapproach(m_fScrollBPM, other.m_fScrollBPM, rated_delta * other.m_SpeedfScrollBPM*150);
 	for( int i=0; i<NUM_ACCELS; i++ )
 		APPROACH( fAccels[i] );
 	for( int i=0; i<NUM_EFFECTS; i++ )
@@ -1493,6 +1494,12 @@ public:
 		return 1;
 	}
 
+	static int FromString(T* p, lua_State* L)
+	{
+		p->FromString(SArg(1));
+		COMMON_RETURN_SELF;
+	}
+
 	LunaPlayerOptions()
 	{
 		ADD_METHOD( IsEasierForSongAndSteps );
@@ -1596,6 +1603,8 @@ public:
 		ADD_METHOD( UsingReverse );
 		ADD_METHOD( GetReversePercentForColumn );
 		ADD_METHOD( GetStepAttacks );
+
+		ADD_METHOD(FromString);
 	}
 };
 

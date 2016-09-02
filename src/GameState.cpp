@@ -1246,9 +1246,6 @@ void GameState::ResetStageStatistics()
 	FOREACH_PlayerNumber( p )
 		m_pPlayerState[p]->RemoveAllInventory();
 	m_fOpponentHealthPercent = 1;
-	m_fHasteRate = 0;
-	m_fLastHasteUpdateMusicSeconds = 0;
-	m_fAccumulatedHasteSeconds = 0;
 	m_fTugLifePercentP1 = 0.5f;
 	FOREACH_PlayerNumber( p )
 	{
@@ -1272,6 +1269,16 @@ void GameState::ResetStageStatistics()
 	// Reset the round seed. Do this here and not in FinishStage so that players
 	// get new shuffle patterns if they Back out of gameplay and play again.
 	m_iStageSeed = rand();
+}
+
+float GameState::get_hasted_music_rate()
+{
+	auto& ops= m_SongOptions.GetCurrent();
+	if(ops.m_fHaste != 0.0f)
+	{
+		return m_haste_rate * ops.m_fMusicRate;
+	}
+	return ops.m_fMusicRate;
 }
 
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )

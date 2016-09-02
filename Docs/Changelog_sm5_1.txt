@@ -7,6 +7,53 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/09/01
+----------
+* [Gameplay] Use music rate in PlayerOptions::Approach for sync. [kyzentun]
+* [PlayerOptions] Expose FromString to lua to replace ApplyGameCommand. [kyzentun]
+
+2016/08/31
+----------
+* [General] Bad format strings from the translation file should emit an error
+  instead of crashing. [kyzentun]
+* [lua_config] System message when the player is not using a profile, so they
+  know why their settings aren't being saved.  This is turned off by the
+  WarnOnNoProfile preference. [kyzentun]
+* [lua] Lua interpreter will break out if it encounters an infinite loop.
+  (more than 1,000,000,000 instructions without returning) [kyzentun]
+* [Noteskins] Shown Noteskins config is now global instead of per-theme. [kyzentun]
+
+2016/08/28
+----------
+* [Gameplay] Turn on defective mode in courses and when Steps has attacks.
+  Compatibility mode for OITG's SetZoom bug.
+  [kyzentun]
+
+2016/08/26
+----------
+* [ScreenEditMenu] Added "Recently Edited" section to menu. [kyzentun]
+
+2016/08/21
+----------
+* [ArrowEffects] Obsolete.  Removed. [kyzentun]
+* [NoteField] Removed lingering traces of old NoteField and NoteSkin system.
+  Renamed NewField and NewSkin to NoteField and NoteSkin.
+	Read Docs/Themerdocs/5.1_incompatibilities/oldfield_removal_notes.md.
+	[kyzentun]
+* [PlayerOptions] Removed NoteSkin and NewSkin fields. [kyzentun]
+* [ScreenEdit] Changed editing notefield to use new notefield.
+  Nesty menu for configuring edit notefield and test play notefield.
+	ScreenEdit::OptionsScreen metric is no longer used.
+	"Graphics/ScreenEdit option_menu" can be created by the theme to style the
+	menu used to configure the notefields.
+  Options for changing noteskin, zoom, and other aspects.
+	[kyzentun]
+
+2016/08/20
+----------
+* [Player] Prevent Player::HandleTapScoreNone() from running when it should
+  not. [tertu]
+
 2016/08/13
 ----------
 * [DX9] Removed D3DCREATE_MULTITHREADED flag because it was slower. [xwidghet]
