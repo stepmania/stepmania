@@ -64,6 +64,7 @@ struct NoteFieldColumn : ActorFrame
 		double tail_beat;
 		double tail_second;
 		NoteData::TrackMap::const_iterator note_iter;
+		mod_val_inputs input;
 	};
 	void add_children_from_layers(size_t column, std::vector<NoteSkinLayer>& layers);
 	void set_note_data(size_t column, const NoteData* note_data,
@@ -83,7 +84,7 @@ struct NoteFieldColumn : ActorFrame
 	Rage::Color get_player_color(size_t pn);
 	void get_hold_draw_time(TapNote const& tap, double const hold_beat,
 		double& beat, double& second);
-	void draw_hold(QuantizedHoldRenderData& data, render_note const& note,
+	void draw_hold(QuantizedHoldRenderData& data, render_note& note,
 		double head_beat, double head_second,
 		double tail_beat, double tail_second, bool is_lift);
 	void set_displayed_time(double beat, double second);
@@ -120,12 +121,12 @@ struct NoteFieldColumn : ActorFrame
 		if(off > last_y_offset_visible) { return 1; }
 		return 0;
 	}
-	double calc_y_offset(double beat, double second, TapNote const* note);
+	double calc_y_offset(mod_val_inputs& input);
+	double calc_y_offset(double beat, double second);
 	double head_y_offset()
 	{
-		return calc_y_offset(m_curr_beat, m_curr_second, nullptr);
+		return calc_y_offset(m_curr_beat, m_curr_second);
 	}
-	double calc_lift_pretrail(double beat, double second, double yoffset);
 	double get_reverse_shift()
 	{
 		return reverse_shift;
@@ -424,9 +425,8 @@ struct NoteField : ActorFrame
 
 private:
 	void draw_entry(field_draw_entry& entry);
-	void draw_beat_bar(double beat, double second, double y_offset, int state,
-		float alpha);
-	void draw_field_text(double beat, double second, double y_offset,
+	void draw_beat_bar(mod_val_inputs& input, int state, float alpha);
+	void draw_field_text(mod_val_inputs& input,
 		double x_offset, float side_sign, float horiz_align,
 		Rage::Color const& color, Rage::Color const& glow);
 	void draw_beat_bars_internal();

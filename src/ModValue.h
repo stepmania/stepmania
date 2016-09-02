@@ -85,6 +85,12 @@ struct mod_val_inputs
 	double start_second;
 	double end_beat;
 	double end_second;
+	mod_val_inputs()
+		:column(0.0), y_offset(0.0),
+		note_id_in_chart(0.0), note_id_in_column(0.0), row_id(0.0),
+		eval_beat(0.0), eval_second(0.0), music_beat(0.0),
+		music_second(0.0), dist_beat(0.0), dist_second(0.0)
+	{}
 	mod_val_inputs(double const mb, double const ms)
 		:column(0.0), y_offset(0.0),
 		note_id_in_chart(0.0), note_id_in_column(0.0), row_id(0.0),
@@ -92,19 +98,38 @@ struct mod_val_inputs
 		music_second(ms), dist_beat(0.0), dist_second(0.0)
 	{}
 	mod_val_inputs(double const eb, double const es, double const mb,
-		double const ms, TapNote const* note)
+		double const ms)
 		:column(0.0), y_offset(0.0),
 		note_id_in_chart(0.0), note_id_in_column(0.0), row_id(0.0),
 		eval_beat(eb), eval_second(es), music_beat(mb),
 		music_second(ms), dist_beat(eb-mb), dist_second(es-ms)
-	{ set_note(note); }
+	{}
 	mod_val_inputs(double const eb, double const es, double const mb,
-		double const ms, double const yoff, TapNote const* note)
+		double const ms, double const yoff)
 		:column(0.0), y_offset(yoff),
 		note_id_in_chart(0.0), note_id_in_column(0.0), row_id(0.0),
 		eval_beat(eb), eval_second(es), music_beat(mb),
 		music_second(ms), dist_beat(eb-mb), dist_second(es-ms)
-	{ set_note(note); }
+	{}
+	void init(double const eb, double const es, double const mb,
+		double const ms, TapNote const* note)
+	{
+		eval_beat= eb;  eval_second= es;
+		music_beat= mb;  music_second= ms;
+		dist_beat= eb-mb;  dist_second= es-ms;
+		set_note(note);
+	}
+	void change_eval_beat(double const eb)
+	{
+		eval_beat= eb;
+		dist_beat= eb-music_beat;
+	}
+	void change_eval_time(double const eb, double const es)
+	{
+		change_eval_beat(eb);
+		eval_second= es;
+		dist_second= es-music_second;
+	}
 	void set_time(double sb, double ss, double eb, double es)
 	{
 		start_beat= sb;

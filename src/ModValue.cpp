@@ -1690,7 +1690,7 @@ struct LunaModifiableValue : Luna<ModifiableValue>
 	}
 	static int evaluate(T* p, lua_State* L)
 	{
-		mod_val_inputs input(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5), nullptr);
+		mod_val_inputs input(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5));
 		lua_pushnumber(L, p->evaluate(input));
 		return 1;
 	}

@@ -386,42 +386,43 @@ void NoteFieldColumn::set_displayed_second(double second)
 	set_displayed_time(m_timing_data->GetBeatFromElapsedTime(static_cast<float>(second)), second);
 }
 
-double NoteFieldColumn::calc_y_offset(double beat, double second, TapNote const* note)
+double NoteFieldColumn::calc_y_offset(mod_val_inputs& input)
 {
 	if(!m_in_defective_mode)
 	{
-		double note_beat= beat;
-		double curr_beat= m_curr_displayed_beat;
+		input.music_beat= m_curr_displayed_beat;
+		double original_beat= input.eval_beat;
 		if(m_scroll_segments_enabled)
 		{
-			if(beat == m_curr_beat)
+			if(original_beat == m_curr_beat)
 			{
-				note_beat= m_curr_displayed_beat;
+				input.change_eval_beat(m_curr_displayed_beat);
 			}
 			else
 			{
-				note_beat= m_timing_data->GetDisplayedBeat(static_cast<float>(note_beat));
+				input.change_eval_beat(m_timing_data->GetDisplayedBeat(static_cast<float>(input.eval_beat)));
 			}
 		}
-		mod_val_inputs input(note_beat, second, curr_beat, m_curr_second, note);
 		double ret= note_size * m_speed_mod.evaluate(input);
 		if(m_speed_segments_enabled)
 		{
 			ret*= m_timing_data->GetDisplayedSpeedPercent(static_cast<float>(m_curr_beat), static_cast<float>(m_curr_second));
 		}
+		input.music_beat= m_curr_beat;
+		input.change_eval_beat(original_beat);
 		return ret;
 	}
 	else
 	{
-		return m_defective_mods->get_y_offset(beat, second, m_column);
+		return m_defective_mods->get_y_offset(input.eval_beat, input.eval_second, m_column);
 	}
 	return 0.0;
 }
 
-double NoteFieldColumn::calc_lift_pretrail(double beat, double second, double yoffset)
+double NoteFieldColumn::calc_y_offset(double beat, double second)
 {
-	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, yoffset, nullptr);
-	return m_lift_pretrail_length.evaluate(input);
+	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second);
+	return calc_y_offset(input);
 }
 
 void NoteFieldColumn::calc_transform(mod_val_inputs& input,
@@ -548,7 +549,7 @@ void NoteFieldColumn::apply_column_mods_to_actor(Actor* act)
 void NoteFieldColumn::apply_note_mods_to_actor(Actor* act, double beat,
 	double second, double y_offset, bool use_alpha, bool use_glow)
 {
-	mod_val_inputs mod_input(beat, second, m_curr_beat, m_curr_beat, y_offset, nullptr);
+	mod_val_inputs mod_input(beat, second, m_curr_beat, m_curr_beat, y_offset);
 	if(use_alpha)
 	{
 		act->SetDiffuseAlpha(static_cast<float>(m_note_alpha.evaluate(mod_input)));
@@ -831,8 +832,8 @@ struct hold_vert_step_state
 	vector<double> tex_coords;
 	bool calc(NoteFieldColumn& col, double curr_y, double end_y,
 		hold_time_lerper& beat_lerp, hold_time_lerper& second_lerp,
-		double curr_beat, double curr_second, hold_texture_handler& tex_handler,
-		int& phase, bool is_lift, TapNote const* note)
+		hold_texture_handler& tex_handler,
+		int& phase, bool is_lift, NoteFieldColumn::render_note& renderable)
 	{
 		tex_coords.clear();
 		bool last_vert_set= false;
@@ -854,8 +855,9 @@ struct hold_vert_step_state
 		}
 		beat= beat_lerp.lerp(y);
 		second= second_lerp.lerp(y);
-		mod_val_inputs mod_input(beat, second, curr_beat, curr_second, y, note);
-		col.hold_render_transform(mod_input, trans, col.m_twirl_holds);
+		renderable.input.change_eval_time(beat, second);
+		renderable.input.y_offset= y;
+		col.hold_render_transform(renderable.input, trans, col.m_twirl_holds);
 		if(beat <= col.m_selection_end && beat >= col.m_selection_start)
 		{
 			trans.glow= col.get_selection_glow();
@@ -874,9 +876,11 @@ struct hold_vert_step_state
 };
 
 void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
-	render_note const& note, double head_beat, double head_second,
+	render_note& note, double head_beat, double head_second,
 	double tail_beat, double tail_second, bool is_lift)
 {
+	double const original_beat= note.input.eval_beat;
+	double const original_second= note.input.eval_second;
 	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
 	static const Rage::Vector3 pos_z_vec(0.0f, 0.0f, 1.0f);
 	static const Rage::Vector3 neg_y_vec(0.0f, -1.0f, 0.0f);
@@ -939,7 +943,8 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	int phase= HTP_Top;
 	int next_phase= HTP_Top;
 	hold_vert_step_state next_step; // The OS of the future.
-	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, next_phase, is_lift, &(note.note_iter->second));
+	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper,
+		tex_handler, next_phase, is_lift, note);
 	bool need_glow_pass= false;
 	for(double curr_y= start_y; !last_vert_set; curr_y+= y_step)
 	{
@@ -950,7 +955,9 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		}
 		phase= next_phase;
 		last_vert_set= next_last_vert_set;
-		next_last_vert_set= next_step.calc(*this, curr_y + y_step, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase, is_lift, &(note.note_iter->second));
+		next_last_vert_set= next_step.calc(*this, curr_y + y_step, end_y,
+			beat_lerper, second_lerper, tex_handler,
+			phase, is_lift, note);
 		Rage::Vector3 render_forward(0.0, 1.0, 0.0);
 		if(!m_holds_skewed_by_mods)
 		{
@@ -971,8 +978,7 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		if(m_use_moddable_hold_normal)
 		{
 			Rage::Vector3 normal;
-			mod_val_inputs mod_input(curr_step.beat, curr_step.second, m_curr_beat, m_curr_second, curr_step.y, &(note.note_iter->second));
-			m_hold_normal_mod.evaluate(mod_input, normal);
+			m_hold_normal_mod.evaluate(note.input, normal);
 			render_left= Rage::CrossProduct(normal, render_forward);
 		}
 		else
@@ -1065,6 +1071,7 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 			}
 		}
 	}
+	note.input.change_eval_time(original_beat, original_second);
 }
 
 bool NoteFieldColumn::EarlyAbortDraw() const
@@ -1144,8 +1151,11 @@ void init_render_note_for_lift_at_further_time(NoteFieldColumn::render_note& tha
 {
 	double beat_from_second= column->get_beat_from_second(pretrail_second);
 	double second_from_beat= column->get_second_from_beat(pretrail_beat);
-	double second_y_offset= column->calc_y_offset(beat_from_second, pretrail_second, &(that.note_iter->second));
-	double beat_y_offset= column->calc_y_offset(pretrail_beat, second_from_beat, &(that.note_iter->second));
+	mod_val_inputs input= that.input;
+	input.change_eval_time(beat_from_second, pretrail_second);
+	double second_y_offset= column->calc_y_offset(input);
+	input.change_eval_time(pretrail_beat, second_from_beat);
+	double beat_y_offset= column->calc_y_offset(input);
 	if(second_y_offset < beat_y_offset)
 	{
 		that.tail_y_offset= second_y_offset;
@@ -1167,88 +1177,100 @@ NoteFieldColumn::render_note::render_note(NoteFieldColumn* column,
 {
 	note_iter= column_end;
 	double beat= NoteRowToBeat(iter->first);
-	if(iter->second.type == TapNoteType_HoldHead)
+	input.init(beat, iter->second.occurs_at_second, column->get_curr_beat(),
+		column->get_curr_second(), &(iter->second));
+	switch(iter->second.type)
 	{
-		double hold_draw_beat;
-		double hold_draw_second;
-		column->get_hold_draw_time(iter->second, beat, hold_draw_beat, hold_draw_second);
-		y_offset= column->calc_y_offset(hold_draw_beat, hold_draw_second, &(iter->second));
-		tail_y_offset= column->calc_y_offset(beat + NoteRowToBeat(iter->second.iDuration), iter->second.end_second, &(iter->second));
-		int head_visible= column->y_offset_visible(y_offset);
-		int tail_visible= column->y_offset_visible(tail_y_offset);
-		// y_offset_visible returns 3 possible things:
-		// -1 (before first), 0 (in range), 1 (after last)
-		// If the head is off the top, and the tail is off the bottom, then
-		// head_visible is -1 and tail_visible is 1, but the hold needs to be
-		// drawn.
-		// value table time. I means invisible, D means draw.
-		//     -1 | 0 | 1
-		// -1 | I | D | D
-		//  0 | D | D | D
-		//  1 | D | D | I
-		// Thus, this weird condition.
-		if(head_visible + tail_visible != 2 && head_visible + tail_visible != -2)
-		{
-			note_iter= iter;
-		}
-	}
-	else if(iter->second.type == TapNoteType_Lift)
-	{
-		y_offset= column->calc_y_offset(beat, iter->second.occurs_at_second, &(iter->second));
-		double pretrail_len= column->calc_lift_pretrail(
-			beat, iter->second.occurs_at_second, y_offset);
-		// To deal with the case where a lift is right after a stop, calculate
-		// whether using pretrail_len as seconds or as beats puts the tail
-		// further away.
-		double pretrail_second= iter->second.occurs_at_second - pretrail_len;
-		double pretrail_beat= beat - pretrail_len;
-		if(note_iter == column_begin)
-		{
-			init_render_note_for_lift_at_further_time(*this, column, pretrail_beat,
-				pretrail_second);
-		}
-		else
-		{
-			auto prev_note= iter;
-			--prev_note;
-			double prev_beat= 0.0;
-			double prev_second= 0.0;
-			if(prev_note->second.type == TapNoteType_HoldHead)
+		case TapNoteType_HoldHead:
 			{
-				prev_beat= NoteRowToBeat(prev_note->first + prev_note->second.iDuration);
-				prev_second= prev_note->second.end_second;
+				double hold_draw_beat;
+				double hold_draw_second;
+				column->get_hold_draw_time(iter->second, beat, hold_draw_beat, hold_draw_second);
+				input.change_eval_time(hold_draw_beat, hold_draw_second);
+				y_offset= column->calc_y_offset(input);
+				input.change_eval_time(beat + NoteRowToBeat(iter->second.iDuration), iter->second.end_second);
+				tail_y_offset= column->calc_y_offset(input);
+				int head_visible= column->y_offset_visible(y_offset);
+				int tail_visible= column->y_offset_visible(tail_y_offset);
+				// y_offset_visible returns 3 possible things:
+				// -1 (before first), 0 (in range), 1 (after last)
+				// If the head is off the top, and the tail is off the bottom, then
+				// head_visible is -1 and tail_visible is 1, but the hold needs to be
+				// drawn.
+				// value table time. I means invisible, D means draw.
+				//     -1 | 0 | 1
+				// -1 | I | D | D
+				//  0 | D | D | D
+				//  1 | D | D | I
+				// Thus, this weird condition.
+				if(head_visible + tail_visible != 2 && head_visible + tail_visible != -2)
+				{
+					note_iter= iter;
+				}
+				input.change_eval_time(beat, iter->second.occurs_at_second);
 			}
-			else
+			break;
+		case TapNoteType_Lift:
 			{
-				prev_beat= NoteRowToBeat(prev_note->first);
-				prev_second= prev_note->second.occurs_at_second;
+				y_offset= column->calc_y_offset(input);
+				double pretrail_len= column->m_lift_pretrail_length.evaluate(input);
+				// To deal with the case where a lift is right after a stop, calculate
+				// whether using pretrail_len as seconds or as beats puts the tail
+				// further away.
+				double pretrail_second= iter->second.occurs_at_second - pretrail_len;
+				double pretrail_beat= beat - pretrail_len;
+				if(note_iter == column_begin)
+				{
+					init_render_note_for_lift_at_further_time(*this, column, pretrail_beat,
+						pretrail_second);
+				}
+				else
+				{
+					auto prev_note= iter;
+					--prev_note;
+					double prev_beat= 0.0;
+					double prev_second= 0.0;
+					if(prev_note->second.type == TapNoteType_HoldHead)
+					{
+						prev_beat= NoteRowToBeat(prev_note->first + prev_note->second.iDuration);
+						prev_second= prev_note->second.end_second;
+					}
+					else
+					{
+						prev_beat= NoteRowToBeat(prev_note->first);
+						prev_second= prev_note->second.occurs_at_second;
+					}
+					if(prev_beat > pretrail_beat || prev_second > pretrail_second)
+					{
+						input.change_eval_time(pretrail_beat, pretrail_second);
+						tail_y_offset= column->calc_y_offset(input);
+						input.change_eval_time(beat, iter->second.occurs_at_second);
+						tail_beat= pretrail_beat;
+						tail_second= pretrail_second;
+					}
+					else
+					{
+						init_render_note_for_lift_at_further_time(*this, column,
+							pretrail_beat, pretrail_second);
+					}
+				}
+				int head_visible= column->y_offset_visible(tail_y_offset);
+				int tail_visible= column->y_offset_visible(y_offset);
+				if(head_visible + tail_visible != 2 && head_visible + tail_visible != -2)
+				{
+					note_iter= iter;
+				}
 			}
-			if(prev_beat > pretrail_beat || prev_second > pretrail_second)
+			break;
+		default:
 			{
-				tail_y_offset= column->calc_y_offset(pretrail_beat, pretrail_second, &(iter->second));
-				tail_beat= pretrail_beat;
-				tail_second= pretrail_second;
+				y_offset= column->calc_y_offset(input);
+				if(column->y_offset_visible(y_offset) == 0)
+				{
+					note_iter= iter;
+				}
 			}
-			else
-			{
-				init_render_note_for_lift_at_further_time(*this, column,
-					pretrail_beat, pretrail_second);
-			}
-		}
-		int head_visible= column->y_offset_visible(tail_y_offset);
-		int tail_visible= column->y_offset_visible(y_offset);
-		if(head_visible + tail_visible != 2 && head_visible + tail_visible != -2)
-		{
-			note_iter= iter;
-		}
-	}
-	else
-	{
-		y_offset= column->calc_y_offset(beat, iter->second.occurs_at_second, &(iter->second));
-		if(column->y_offset_visible(y_offset) == 0)
-		{
-			note_iter= iter;
-		}
+			break;
 	}
 }
 
@@ -1556,9 +1578,7 @@ void NoteFieldColumn::draw_holds_internal()
 		// heads.
 		TapNote const& tn= holdit.note_iter->second;
 		double const hold_beat= NoteRowToBeat(holdit.note_iter->first);
-		double const hold_second= tn.occurs_at_second;
-		mod_val_inputs input(hold_beat, hold_second, m_curr_beat, m_curr_second, holdit.y_offset, &tn);
-		double const quantization= quantization_for_time(input);
+		double const quantization= quantization_for_time(holdit.input);
 		bool active= HOLD_COUNTS_AS_ACTIVE(tn);
 		QuantizedHoldRenderData data;
 		m_newskin->get_hold_render_data(tn.subType, m_playerize_mode, tn.pn,
@@ -1585,8 +1605,7 @@ void NoteFieldColumn::draw_lifts_internal()
 		TapNote const& tn= liftit.note_iter->second;
 		double const lift_beat= NoteRowToBeat(liftit.note_iter->first);
 		double const lift_second= tn.occurs_at_second;
-		mod_val_inputs input(lift_beat, lift_second, m_curr_beat, m_curr_second, liftit.y_offset, &tn);
-		double const quantization= quantization_for_time(input);
+		double const quantization= quantization_for_time(liftit.input);
 		QuantizedHoldRenderData data;
 		m_newskin->get_hold_render_data(TapNoteSubType_Hold, m_playerize_mode,
 			tn.pn, false, reverse, quantization, m_status.anim_percent, data);
@@ -1618,8 +1637,8 @@ void set_tap_actor_info(tap_draw_info& draw_info, NoteFieldColumn& col,
 	NoteSkinColumn* newskin, get_norm_actor_fun get_normal,
 	get_play_actor_fun get_playerized, size_t part,
 	size_t pn, double draw_beat, double draw_second, double yoff,
-	double tap_beat, double tap_second, double anim_percent, bool active,
-	bool reverse, TapNote const* note)
+	double anim_percent, bool active,
+	bool reverse, NoteFieldColumn::render_note& note)
 {
 	draw_info.draw_beat= draw_beat;
 	draw_info.y_offset= yoff;
@@ -1627,8 +1646,7 @@ void set_tap_actor_info(tap_draw_info& draw_info, NoteFieldColumn& col,
 	{
 		if(col.get_playerize_mode() != NPM_Quanta)
 		{
-			mod_val_inputs mod_input(tap_beat, tap_second, col.get_curr_beat(), col.get_curr_second(), yoff, note);
-			double const quantization= col.quantization_for_time(mod_input);
+			double const quantization= col.quantization_for_time(note.input);
 			draw_info.act= (newskin->*get_normal)(part, quantization, anim_percent,
 				active, reverse);
 		}
@@ -1718,8 +1736,8 @@ void NoteFieldColumn::draw_taps_internal()
 		{
 			set_tap_actor_info(acts[0], *this, m_newskin,
 				&NoteSkinColumn::get_tap_actor, &NoteSkinColumn::get_player_tap, part,
-				tn.pn, head_beat, tn.occurs_at_second, tapit.y_offset, tap_beat,
-				tap_second, m_status.anim_percent, active, m_status.in_reverse, &tn);
+				tn.pn, tap_beat, tap_second, tapit.y_offset,
+				m_status.anim_percent, active, m_status.in_reverse, tapit);
 		}
 		else
 		{
@@ -1728,23 +1746,23 @@ void NoteFieldColumn::draw_taps_internal()
 			{
 				set_tap_actor_info(acts[0], *this, m_newskin,
 					&NoteSkinColumn::get_optional_actor,
-					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn, head_beat,
-					head_second, tapit.y_offset, tap_beat, tap_second,
-					m_status.anim_percent, active, m_status.in_reverse, &tn);
+					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn,
+					tap_beat, tap_second, tapit.y_offset,
+					m_status.anim_percent, active, m_status.in_reverse, tapit);
 			}
 			else
 			{
 				// Put tails on the list first because they need to be under the heads.
 				set_tap_actor_info(acts[0], *this, m_newskin,
 					&NoteSkinColumn::get_optional_actor,
-					&NoteSkinColumn::get_player_optional_tap, tail_part, tn.pn, tail_beat,
-					tn.end_second, tapit.tail_y_offset, tap_beat, tap_second,
-					m_status.anim_percent, active, m_status.in_reverse, &tn);
+					&NoteSkinColumn::get_player_optional_tap, tail_part, tn.pn,
+					tail_beat, tn.end_second, tapit.tail_y_offset,
+					m_status.anim_percent, active, m_status.in_reverse, tapit);
 				set_tap_actor_info(acts[1], *this, m_newskin,
 					&NoteSkinColumn::get_optional_actor,
-					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn, head_beat,
-					head_second, tapit.y_offset, tap_beat, tap_second,
-					m_status.anim_percent, active, m_status.in_reverse, &tn);
+					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn,
+					tap_beat, tap_second, tapit.y_offset,
+					m_status.anim_percent, active, m_status.in_reverse, tapit);
 			}
 		}
 		for(auto&& act : acts)
@@ -1754,8 +1772,9 @@ void NoteFieldColumn::draw_taps_internal()
 			if(act.act != nullptr)
 			{
 				Rage::transform trans;
-				mod_val_inputs input(act.draw_beat, act.draw_second, m_curr_beat, m_curr_second, act.y_offset, &tn);
-				calc_transform_with_glow_alpha(input, trans);
+				tapit.input.change_eval_time(act.draw_beat, act.draw_second);
+				tapit.input.y_offset= act.y_offset;
+				calc_transform_with_glow_alpha(tapit.input, trans);
 				if(!m_in_defective_mode)
 				{
 					if(m_add_y_offset_to_position)
@@ -1777,6 +1796,8 @@ void NoteFieldColumn::draw_taps_internal()
 				act.act->Draw();
 			}
 		}
+		tapit.input.change_eval_time(tap_beat, tap_second);
+		tapit.input.y_offset= tapit.y_offset;
 	}
 }
 
@@ -1787,15 +1808,15 @@ void NoteFieldColumn::draw_selection_internal()
 		return;
 	}
 	double start_second= m_timing_data->GetElapsedTimeFromBeat(m_selection_start);
-	double start_offset= calc_y_offset(m_selection_start, start_second, nullptr);
-	mod_val_inputs start_input(m_selection_start, start_second, m_curr_beat, m_curr_second, start_offset, nullptr);
+	mod_val_inputs start_input(m_selection_start, start_second, m_curr_beat, m_curr_second);
+	start_input.y_offset= calc_y_offset(start_input);
 	Rage::Vector3 start_pos;
 	calc_pos_only(start_input, start_pos);
 	if(m_selection_end == -1.0)
 	{
 		if(m_add_y_offset_to_position)
 		{
-			start_pos.y+= apply_reverse_shift(start_offset);
+			start_pos.y+= apply_reverse_shift(start_input.y_offset);
 		}
 		m_area_highlight.set_pos(start_pos);
 		m_area_highlight.SetWidth(m_newskin->get_width());
@@ -1805,14 +1826,14 @@ void NoteFieldColumn::draw_selection_internal()
 	else
 	{
 		double end_second= m_timing_data->GetElapsedTimeFromBeat(m_selection_end);
-		double end_offset= calc_y_offset(m_selection_end, end_second, nullptr);
-		mod_val_inputs end_input(m_selection_end, end_second, m_curr_beat, m_curr_second, end_offset, nullptr);
+		mod_val_inputs end_input(m_selection_end, end_second, m_curr_beat, m_curr_second);
+		end_input.y_offset= calc_y_offset(end_input);
 		Rage::Vector3 end_pos;
 		calc_pos_only(end_input, end_pos);
 		if(m_add_y_offset_to_position)
 		{
-			start_pos.y+= apply_reverse_shift(start_offset);
-			end_pos.y+= apply_reverse_shift(end_offset);
+			start_pos.y+= apply_reverse_shift(start_input.y_offset);
+			end_pos.y+= apply_reverse_shift(end_input.y_offset);
 		}
 		double height= end_pos.y - start_pos.y;
 		start_pos.x= (start_pos.x + end_pos.x) * .5;
@@ -2459,18 +2480,17 @@ void NoteField::draw_entry(field_draw_entry& entry)
 	}
 }
 
-void NoteField::draw_field_text(double beat, double second, double y_offset,
+void NoteField::draw_field_text(mod_val_inputs& input,
 	double x_offset, float side_sign, float horiz_align,
 	Rage::Color const& color, Rage::Color const& glow)
 {
 	Rage::transform trans;
-	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, y_offset, nullptr);
 	m_columns[0].calc_transform(input, trans);
 	if(!m_in_defective_mode)
 	{
 		if(m_columns[0].m_add_y_offset_to_position)
 		{
-			trans.pos.y+= m_columns[0].apply_reverse_shift(y_offset);
+			trans.pos.y+= m_columns[0].apply_reverse_shift(input.y_offset);
 		}
 	}
 	else
@@ -2486,22 +2506,20 @@ void NoteField::draw_field_text(double beat, double second, double y_offset,
 	m_field_text.Draw();
 }
 
-void NoteField::draw_beat_bar(double beat, double second, double y_offset,
-	int state, float alpha)
+void NoteField::draw_beat_bar(mod_val_inputs& input, int state, float alpha)
 {
-	if(m_columns[0].y_offset_visible(y_offset) != 0 || alpha <= 0.f)
+	if(m_columns[0].y_offset_visible(input.y_offset) != 0 || alpha <= 0.f)
 	{
 		return;
 	}
 	float const bar_width= m_beat_bars.GetUnzoomedWidth();
 	Rage::transform trans;
-	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, y_offset, nullptr);
 	m_columns[0].calc_transform(input, trans);
 	if(!m_in_defective_mode)
 	{
 		if(m_columns[0].m_add_y_offset_to_position)
 		{
-			trans.pos.y+= m_columns[0].apply_reverse_shift(y_offset);
+			trans.pos.y+= m_columns[0].apply_reverse_shift(input.y_offset);
 		}
 	}
 	else
@@ -2570,10 +2588,11 @@ void NoteField::draw_beat_bars_internal()
 		double const beat= seg->GetBeat(); \
 		if(beat < first_beat || beat > last_beat) {continue;} \
 		double const second= needs_second ? m_timing_data->GetElapsedTimeFromBeat(beat) : 0.; \
-		double const y_offset= m_columns[0].calc_y_offset(beat, second, nullptr); \
-		if(m_columns[0].y_offset_visible(y_offset) != 0) {continue;} \
+		mod_val_inputs input(beat, second, m_curr_beat, m_curr_second); \
+		input.y_offset= m_columns[0].calc_y_offset(input); \
+		if(m_columns[0].y_offset_visible(input.y_offset) != 0) {continue;} \
 		m_field_text.SetText(str_exp); \
-		draw_field_text(beat, second, y_offset, caps_name##_OFFSETX, side_sign, \
+		draw_field_text(input, caps_name##_OFFSETX, side_sign, \
 			horiz_align, caps_name##_COLOR, text_glow); \
 	}
 
@@ -2610,7 +2629,10 @@ bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Ra
 	}
 	double const second= needs_second ?
 		m_timing_data->GetElapsedTimeFromBeat(beat) : 0.;
-	double const main_y_offset= m_columns[0].calc_y_offset(beat, second, nullptr);
+	// TODO: Make this do the right thing in speed and scroll segments.
+	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second);
+	input.y_offset= m_columns[0].calc_y_offset(input);
+	double const main_y_offset= input.y_offset;
 	if(step == 0.f)
 	{
 		non_visible_count= 0;
@@ -2621,10 +2643,10 @@ bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Ra
 	{
 		state= 0;
 		m_field_text.SetText(fmt::sprintf("%d", quantized_beat / 4));
-		draw_field_text(beat, second, main_y_offset, 0., -1., align_right,
+		draw_field_text(input, 0., -1., align_right,
 			measure_number_color, measure_number_glow);
 	}
-	draw_beat_bar(beat, second, main_y_offset, state, 1.f);
+	draw_beat_bar(input, state, 1.f);
 	if(m_columns[0].y_offset_visible(main_y_offset) != 0)
 	{
 		++non_visible_count;
@@ -2643,8 +2665,9 @@ bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Ra
 		double sub_beat= beat + sub_beats[sub];
 		double sub_second= needs_second ?
 			m_timing_data->GetElapsedTimeFromBeat(sub_beat) : 0.;
-		double sub_y_offset= m_columns[0].calc_y_offset(sub_beat, sub_second, nullptr);
-		double offset_diff= fabs(sub_y_offset - main_y_offset);
+		input.change_eval_time(sub_beat, sub_second);
+		input.y_offset= m_columns[0].calc_y_offset(input);
+		double offset_diff= fabs(input.y_offset - main_y_offset);
 		float alpha= ((offset_diff / note_size) - .5) * 2.;
 		switch(sub)
 		{
@@ -2657,7 +2680,7 @@ bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Ra
 			default:
 				break;
 		}
-		draw_beat_bar(sub_beat, sub_second, sub_y_offset, sub_states[sub], alpha);
+		draw_beat_bar(input, sub_states[sub], alpha);
 	}
 	return cant_draw;
 }
@@ -3210,7 +3233,7 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 		}
 		else
 		{
-			y_offset= p->calc_y_offset(beat, second, nullptr);
+			y_offset= p->calc_y_offset(beat, second);
 		}
 		bool use_alpha= lua_toboolean(L, 6) != 0;
 		bool use_glow= lua_toboolean(L, 7) != 0;
