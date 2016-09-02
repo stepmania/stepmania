@@ -242,6 +242,7 @@ private:
 	void did_tap_note_internal(TapNoteScore tns, bool bright);
 	void did_hold_note_internal(HoldNoteScore hns, bool bright);
 	void draw_child_internal();
+	void add_renderable_to_lists(render_note& renderable);
 
 	double m_curr_beat;
 	double m_curr_displayed_beat;
@@ -276,7 +277,7 @@ private:
 	void draw_lifts_internal();
 	void draw_taps_internal();
 	void draw_selection_internal();
-	NoteData::TrackMap::const_iterator first_note_visible_prev_frame;
+	NoteData::TrackMap::const_iterator note_closest_to_current_time;
 	std::list<render_note> render_holds;
 	std::list<render_note> render_lifts;
 	std::list<render_note> render_taps;
@@ -429,6 +430,7 @@ private:
 		double x_offset, float side_sign, float horiz_align,
 		Rage::Color const& color, Rage::Color const& glow);
 	void draw_beat_bars_internal();
+	bool draw_beat_bars_step(float const start_beat, float const step, Rage::Color const& measure_number_color, Rage::Color const& measure_number_glow, bool needs_second);
 	void reload_columns(NoteSkinLoader const* new_loader, LuaReference& new_params);
 	double m_curr_beat;
 	double m_curr_second;

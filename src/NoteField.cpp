@@ -210,7 +210,7 @@ void NoteFieldColumn::set_note_data(size_t column, const NoteData* note_data,
 {
 	m_note_data= note_data;
 	m_timing_data= timing_data;
-	first_note_visible_prev_frame= m_note_data->end(column);
+	note_closest_to_current_time= m_note_data->end(column);
 	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
 				&m_quantization_offset, &m_speed_mod, &m_lift_pretrail_length,
 				&m_reverse_offset_pixels, &m_reverse_scale,
@@ -1252,6 +1252,58 @@ NoteFieldColumn::render_note::render_note(NoteFieldColumn* column,
 	}
 }
 
+void NoteFieldColumn::add_renderable_to_lists(render_note& renderable)
+{
+	int tap_row= renderable.note_iter->first;
+	double tap_beat= NoteRowToBeat(tap_row);
+	const TapNote& tn= renderable.note_iter->second;
+	switch(tn.type)
+	{
+		case TapNoteType_Empty:
+			return;
+		case TapNoteType_Tap:
+		case TapNoteType_Mine:
+		case TapNoteType_Attack:
+		case TapNoteType_AutoKeysound:
+		case TapNoteType_Fake:
+			if((!tn.result.bHidden || !m_use_game_music_beat) &&
+				(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
+			{
+				render_taps.push_front(renderable);
+				imitate_did_note(tn);
+				update_upcoming(tap_beat, tn.occurs_at_second);
+				update_active_hold(tn);
+			}
+			break;
+		case TapNoteType_HoldHead:
+			if((tn.HoldResult.hns != HNS_Held || !m_use_game_music_beat) &&
+				(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
+			{
+				// Hold heads are added to the tap list to take care of rendering
+				// heads and tails in the same phase as taps.
+				render_taps.push_front(renderable);
+				render_holds.push_front(renderable);
+				imitate_did_note(tn);
+				update_upcoming(tap_beat, tn.occurs_at_second);
+				update_active_hold(tn);
+			}
+			break;
+		case TapNoteType_Lift:
+			if((!tn.result.bHidden || !m_use_game_music_beat) &&
+				(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
+			{
+				render_taps.push_front(renderable);
+				render_lifts.push_front(renderable);
+				imitate_did_note(tn);
+				update_upcoming(tap_beat, tn.occurs_at_second);
+				update_active_hold(tn);
+			}
+			break;
+		default:
+			break;
+	}
+}
+
 void NoteFieldColumn::build_render_lists()
 {
 	m_curr_displayed_beat= m_curr_beat;
@@ -1313,130 +1365,133 @@ void NoteFieldColumn::build_render_lists()
 		m_status.anim_percent+= 1.0;
 	}
 
-	double time_diff= m_curr_second - m_prev_curr_second;
 	auto column_end= m_note_data->end(m_column);
 	auto column_begin= m_note_data->begin(m_column);
-	// TODO: I don't like calling GetBeatFromElapsedTime every frame, but
-	// boomerang has problems if the column simply depends on what was visible
-	// last frame. -Kyz
-	if(true || first_note_visible_prev_frame == column_end || time_diff < 0)
+	// Don't do any note processing if there are no notes in the column. -Kyz
+	if(column_begin != column_end)
 	{
-		NoteData::TrackMap::const_iterator discard;
-		double first_beat= m_timing_data->GetBeatFromElapsedTime(m_curr_second - 1.0);
-		m_note_data->GetTapNoteRangeInclusive(m_column, BeatToNoteRow(first_beat), BeatToNoteRow(first_beat + 2), first_note_visible_prev_frame, discard);
-	}
-
-	double const max_try_second= m_curr_second + m_upcoming_time;
-	auto first_visible_this_frame= column_end;
-	double const time_to_end_visible_notes= 10.0;
-	double first_non_visible_time= -1000.0;
-	bool found_end_of_visible_notes= false;
-	for(auto curr_note= first_note_visible_prev_frame;
-			curr_note != column_end && !found_end_of_visible_notes; ++curr_note)
-	{
-		int tap_row= curr_note->first;
-		double tap_beat= NoteRowToBeat(tap_row);
-		const TapNote& tn= curr_note->second;
-		render_note renderable(this, column_begin, column_end, curr_note);
-		if(renderable.note_iter != column_end)
+		if(note_closest_to_current_time == column_end)
 		{
-			first_non_visible_time= -1000.0;
-			if(first_visible_this_frame == column_end)
+			auto almost_end= column_end;
+			--almost_end;
+			if(fabs(m_curr_beat - NoteRowToBeat(column_begin->first)) >
+				fabs(NoteRowToBeat(almost_end->first) - m_curr_beat))
 			{
-				first_visible_this_frame= curr_note;
+				note_closest_to_current_time= almost_end;
 			}
-			switch(tn.type)
+			else
 			{
-				case TapNoteType_Empty:
-					continue;
-				case TapNoteType_Tap:
-				case TapNoteType_Mine:
-				case TapNoteType_Attack:
-				case TapNoteType_AutoKeysound:
-				case TapNoteType_Fake:
-					if((!tn.result.bHidden || !m_use_game_music_beat) &&
-						(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
-					{
-						render_taps.push_front(renderable);
-						imitate_did_note(tn);
-						update_upcoming(tap_beat, tn.occurs_at_second);
-						update_active_hold(tn);
-					}
-					break;
-				case TapNoteType_HoldHead:
-					if((tn.HoldResult.hns != HNS_Held || !m_use_game_music_beat) &&
-						(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
-					{
-						// Hold heads are added to the tap list to take care of rendering
-						// heads and tails in the same phase as taps.
-						render_taps.push_front(renderable);
-						render_holds.push_front(renderable);
-						imitate_did_note(tn);
-						update_upcoming(tap_beat, tn.occurs_at_second);
-						update_active_hold(tn);
-					}
-					break;
-				case TapNoteType_Lift:
-					if((!tn.result.bHidden || !m_use_game_music_beat) &&
-						(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
-					{
-						render_taps.push_front(renderable);
-						render_lifts.push_front(renderable);
-						imitate_did_note(tn);
-						update_upcoming(tap_beat, tn.occurs_at_second);
-						update_active_hold(tn);
-					}
-					break;
-				default:
-					break;
+				note_closest_to_current_time= column_begin;
+			}
+		}
+		if(m_curr_beat - NoteRowToBeat(note_closest_to_current_time->first) > 0)
+		{
+			// Seek forward until the next note is after the current time.
+			auto next_note= note_closest_to_current_time;
+			++next_note;
+			while(next_note != column_end &&
+				(m_curr_beat - NoteRowToBeat(next_note->first) > 0))
+			{
+				note_closest_to_current_time= next_note;
+				++next_note;
 			}
 		}
 		else
 		{
-			if(first_non_visible_time > 0.0)
+			// Seek backward until the next note is before the current time.
+			auto next_note= note_closest_to_current_time;
+			while(next_note != column_begin &&
+				(m_curr_beat - NoteRowToBeat(next_note->first) < 0))
 			{
-				if(tn.occurs_at_second > m_curr_second && tn.occurs_at_second - first_non_visible_time > time_to_end_visible_notes)
-				{
-					found_end_of_visible_notes= true;
-				}
+				--next_note;
+				note_closest_to_current_time= next_note;
+			}
+		}
+		// There should be no notes between note_closest_to_current_time and the
+		// current time. -Kyz
+
+		// Work backwards from the current time until the first non visible note
+		// is reached. -Kyz
+		for(auto curr_note= note_closest_to_current_time; ; --curr_note)
+		{
+			render_note renderable(this, column_begin, column_end, curr_note);
+			if(renderable.note_iter != column_end)
+			{
+				add_renderable_to_lists(renderable);
 			}
 			else
 			{
-				first_non_visible_time= tn.occurs_at_second;
+				break;
 			}
-			/*
-			if(first_visible_this_frame != column_end ||
-				tn.occurs_at_second > max_try_second)
+			if(curr_note == column_begin)
 			{
-				found_end_of_visible_notes= true;
+				break;
 			}
-			*/
 		}
-	}
-	if(!m_status.found_upcoming)
-	{
-		for(auto curr_note= first_note_visible_prev_frame;
-				curr_note != column_end && !m_status.found_upcoming; ++curr_note)
+		// Work forwards until we hit time_to_end_visible_notes consecutive
+		// seconds of non-visible notes.  The consecutive requirement is to
+		// handle things like boomerang, where a range of notes are visible, then
+		// some notes are not, then another range is visible. -Kyz
 		{
-			int tap_row= curr_note->first;
-			double tap_beat= NoteRowToBeat(tap_row);
-			const TapNote& tn= curr_note->second;
-			if(tn.type != TapNoteType_Empty)
+			// Make sure note_closest_to_current_time is not handled twice. -Kyz
+			auto curr_note= note_closest_to_current_time;
+			++curr_note;
+			double const time_to_end_visible_notes= 10.0;
+			double first_non_visible_time= -1000.0;
+			bool found_end_of_visible_notes= false;
+			for(; curr_note != column_end && !found_end_of_visible_notes; ++curr_note)
 			{
-				if(tn.occurs_at_second > max_try_second)
+				TapNote const& tn= curr_note->second;
+				render_note renderable(this, column_begin, column_end, curr_note);
+				if(renderable.note_iter != column_end)
 				{
-					m_status.found_upcoming= true;
+					add_renderable_to_lists(renderable);
+					first_non_visible_time= -1000.0;
 				}
 				else
 				{
-					update_upcoming(tap_beat, tn.occurs_at_second);
+					if(first_non_visible_time > 0.0)
+					{
+						if(tn.occurs_at_second > m_curr_second && tn.occurs_at_second - first_non_visible_time > time_to_end_visible_notes)
+						{
+							found_end_of_visible_notes= true;
+						}
+					}
+					else
+					{
+						first_non_visible_time= tn.occurs_at_second;
+					}
 				}
 			}
 		}
+		if(!m_status.found_upcoming)
+		{
+			// By logic, note_closest_to_current_time occurs before current time,
+			// and the next note after it occurs after current time.  But, there
+			// might be empty tapnote entries, so we still need a loop. -Kyz
+			auto curr_note= note_closest_to_current_time;
+			++curr_note;
+			double const max_try_second= m_curr_second + m_upcoming_time;
+			for(; curr_note != column_end && !m_status.found_upcoming; ++curr_note)
+			{
+				int tap_row= curr_note->first;
+				double tap_beat= NoteRowToBeat(tap_row);
+				const TapNote& tn= curr_note->second;
+				if(tn.type != TapNoteType_Empty)
+				{
+					if(tn.occurs_at_second > max_try_second)
+					{
+						m_status.found_upcoming= true;
+					}
+					else
+					{
+						update_upcoming(tap_beat, tn.occurs_at_second);
+					}
+				}
+			}
+		}
+		m_prev_curr_second= m_curr_second;
 	}
-	first_note_visible_prev_frame= first_visible_this_frame;
-	m_prev_curr_second= m_curr_second;
-
 	{
 		double beat= m_curr_beat - floor(m_curr_beat);
 		Message msg("BeatUpdate");
@@ -2000,8 +2055,8 @@ NoteField::NoteField()
 	 m_fov_mod(&m_mod_manager, 45.0),
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
-	 m_draw_beat_bars(false), m_in_edit_mode(false), m_pn(NUM_PLAYERS),
-	 m_in_defective_mode(false), m_oitg_zoom_mode(false),
+	 m_draw_beat_bars(false), m_in_edit_mode(false), m_oitg_zoom_mode(false),
+	 m_pn(NUM_PLAYERS), m_in_defective_mode(false),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
 	 m_steps_type(StepsType_Invalid), m_gameplay_zoom(1.0),
 	 defective_render_y(0.0), original_y(0.0)
@@ -2470,73 +2525,30 @@ void NoteField::draw_beat_bars_internal()
 		return;
 	}
 	float const beat_step_size= 1.f;
-	float const start_beat= max(0., floor(m_curr_beat) - 2.f);
-	float const max_beat= start_beat + 128.f;
-	double last_visible_beat= -1000.0;
-	bool found_end= false;
-	std::vector<float> sub_beats= {.25, .5, .75};
-	std::vector<int> sub_states= {2, 3, 2};
+	float const start_beat= max(0., floor(m_curr_beat));
+	float first_beat= start_beat;
+	float last_beat= start_beat;
 	Rage::Color measure_number_color(1,1,1,1);
 	Rage::Color measure_number_glow(1,1,1,0);
 	bool needs_second= m_in_defective_mode ||
 		m_columns[0].m_speed_mod.needs_second() ||
 		m_columns[0].m_note_mod.needs_second();
+	bool found_begin= false;
+	for(float step= 0.f; !found_begin; --step)
+	{
+		found_begin= draw_beat_bars_step(start_beat, step, measure_number_color, measure_number_glow, needs_second);
+		if(!found_begin)
+		{
+			first_beat= start_beat + (step * beat_step_size);
+		}
+	}
+	bool found_end= false;
 	for(float step= 0.f; !found_end; ++step)
 	{
-		double const beat= start_beat + (step * beat_step_size);
-		double const second= needs_second ?
-			m_timing_data->GetElapsedTimeFromBeat(beat) : 0.;
-		double const main_y_offset= m_columns[0].calc_y_offset(beat, second, nullptr);
-		if(beat > max_beat)
+		found_end= draw_beat_bars_step(start_beat, step, measure_number_color, measure_number_glow, needs_second);
+		if(!found_end)
 		{
-			found_end= true;
-		}
-		if(step == 0.f)
-		{
-			last_visible_beat= beat;
-		}
-		int state= 1;
-		int quantized_beat= static_cast<int>(beat);
-		if(quantized_beat % 4 == 0)
-		{
-			state= 0;
-			m_field_text.SetText(fmt::sprintf("%d", quantized_beat / 4));
-			draw_field_text(beat, second, main_y_offset, 0., -1., align_right,
-				measure_number_color, measure_number_glow);
-		}
-		draw_beat_bar(beat, second, main_y_offset, state, 1.f);
-		if(m_columns[0].y_offset_visible(main_y_offset) != 0)
-		{
-			if(beat > last_visible_beat + 4.0)
-			{
-				found_end= true;
-			}
-		}
-		else
-		{
-			last_visible_beat= beat;
-		}
-		float first_and_third_sub_alpha= 1.f;
-		for(size_t sub= 0; sub < sub_beats.size(); ++sub)
-		{
-			double sub_beat= beat + sub_beats[sub];
-			double sub_second= needs_second ?
-				m_timing_data->GetElapsedTimeFromBeat(sub_beat) : 0.;
-			double sub_y_offset= m_columns[0].calc_y_offset(sub_beat, sub_second, nullptr);
-			double offset_diff= fabs(sub_y_offset - main_y_offset);
-			float alpha= ((offset_diff / note_size) - .5) * 2.;
-			switch(sub)
-			{
-				case 0:
-					first_and_third_sub_alpha= alpha;
-					break;
-				case 2:
-					alpha= first_and_third_sub_alpha;
-					break;
-				default:
-					break;
-			}
-			draw_beat_bar(sub_beat, sub_second, sub_y_offset, sub_states[sub], alpha);
+			last_beat= start_beat + (step * beat_step_size);
 		}
 	}
 
@@ -2556,7 +2568,7 @@ void NoteField::draw_beat_bars_internal()
 	{ \
 		const name##Segment* seg= To##name((*segs[SEGMENT_##caps_name])[seg_index]); \
 		double const beat= seg->GetBeat(); \
-		if(beat < start_beat || beat > max_beat) {continue;} \
+		if(beat < first_beat || beat > last_beat) {continue;} \
 		double const second= needs_second ? m_timing_data->GetElapsedTimeFromBeat(beat) : 0.; \
 		double const y_offset= m_columns[0].calc_y_offset(beat, second, nullptr); \
 		if(m_columns[0].y_offset_visible(y_offset) != 0) {continue;} \
@@ -2582,6 +2594,72 @@ void NoteField::draw_beat_bars_internal()
 			FloatToString(seg->GetDelay()).c_str()), Speed, SPEED);
 	draw_all_segments(FloatToString(seg->GetLength()), Fake, FAKE);
 #undef draw_all_segments
+}
+
+bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Rage::Color const& measure_number_color, Rage::Color const& measure_number_glow, bool needs_second)
+{
+	std::vector<float> const sub_beats= {.25, .5, .75};
+	std::vector<int> const sub_states= {2, 3, 2};
+	float const beat_step_size= 1.f;
+	static int non_visible_count= 0;
+	bool cant_draw= false;
+	double const beat= start_beat + (step * beat_step_size);
+	if(beat < 0.f)
+	{
+		return true;
+	}
+	double const second= needs_second ?
+		m_timing_data->GetElapsedTimeFromBeat(beat) : 0.;
+	double const main_y_offset= m_columns[0].calc_y_offset(beat, second, nullptr);
+	if(step == 0.f)
+	{
+		non_visible_count= 0;
+	}
+	int state= 1;
+	int quantized_beat= static_cast<int>(beat);
+	if(quantized_beat % 4 == 0)
+	{
+		state= 0;
+		m_field_text.SetText(fmt::sprintf("%d", quantized_beat / 4));
+		draw_field_text(beat, second, main_y_offset, 0., -1., align_right,
+			measure_number_color, measure_number_glow);
+	}
+	draw_beat_bar(beat, second, main_y_offset, state, 1.f);
+	if(m_columns[0].y_offset_visible(main_y_offset) != 0)
+	{
+		++non_visible_count;
+		if(non_visible_count > 4)
+		{
+			cant_draw= true;
+		}
+	}
+	else
+	{
+		non_visible_count= 0;
+	}
+	float first_and_third_sub_alpha= 1.f;
+	for(size_t sub= 0; sub < sub_beats.size(); ++sub)
+	{
+		double sub_beat= beat + sub_beats[sub];
+		double sub_second= needs_second ?
+			m_timing_data->GetElapsedTimeFromBeat(sub_beat) : 0.;
+		double sub_y_offset= m_columns[0].calc_y_offset(sub_beat, sub_second, nullptr);
+		double offset_diff= fabs(sub_y_offset - main_y_offset);
+		float alpha= ((offset_diff / note_size) - .5) * 2.;
+		switch(sub)
+		{
+			case 0:
+				first_and_third_sub_alpha= alpha;
+				break;
+			case 2:
+				alpha= first_and_third_sub_alpha;
+				break;
+			default:
+				break;
+		}
+		draw_beat_bar(sub_beat, sub_second, sub_y_offset, sub_states[sub], alpha);
+	}
+	return cant_draw;
 }
 
 double NoteField::update_z_bias()
