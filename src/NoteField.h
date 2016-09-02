@@ -278,7 +278,7 @@ private:
 	void draw_lifts_internal();
 	void draw_taps_internal();
 	void draw_selection_internal();
-	NoteData::TrackMap::const_iterator note_closest_to_current_time;
+	int note_row_closest_to_current_time;
 	std::list<render_note> render_holds;
 	std::list<render_note> render_lifts;
 	std::list<render_note> render_taps;

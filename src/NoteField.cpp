@@ -210,7 +210,7 @@ void NoteFieldColumn::set_note_data(size_t column, const NoteData* note_data,
 {
 	m_note_data= note_data;
 	m_timing_data= timing_data;
-	note_closest_to_current_time= m_note_data->end(column);
+	note_row_closest_to_current_time= -1;
 	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
 				&m_quantization_offset, &m_speed_mod, &m_lift_pretrail_length,
 				&m_reverse_offset_pixels, &m_reverse_scale,
@@ -1392,6 +1392,14 @@ void NoteFieldColumn::build_render_lists()
 	// Don't do any note processing if there are no notes in the column. -Kyz
 	if(column_begin != column_end)
 	{
+		// The note row closest to the current time is saved between frames to
+		// make finding the place to start rendering faster. -Kyz
+		if(note_row_closest_to_current_time == -1)
+		{
+			note_row_closest_to_current_time= BeatToNoteRow(m_curr_beat);
+		}
+		NoteData::TrackMap::const_iterator note_closest_to_current_time=
+			m_note_data->lower_bound(m_column, note_row_closest_to_current_time);
 		if(note_closest_to_current_time == column_end)
 		{
 			auto almost_end= column_end;
@@ -1429,6 +1437,7 @@ void NoteFieldColumn::build_render_lists()
 				note_closest_to_current_time= next_note;
 			}
 		}
+		note_row_closest_to_current_time= note_closest_to_current_time->first;
 		// There should be no notes between note_closest_to_current_time and the
 		// current time. -Kyz
 
