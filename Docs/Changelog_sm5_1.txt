@@ -7,6 +7,16 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/09/03
+----------
+* [Edit Mode] The text that marks bg changes is only drawn for one layer.
+  Pressing 'z' toggles between bg layer 1, bg layer 2, and the foreground
+  layer.
+  The color of the bg layer text is controlled by three metrics:
+  NoteField::BackgroundLayer1Color, NoteField::BackgroundLayer2Color,
+  NoteField::ForegroundLayerColor
+  [kyzentun]
+
 2016/09/01
 ----------
 * [Gameplay] Use music rate in PlayerOptions::Approach for sync. [kyzentun]
@@ -38,16 +48,16 @@ ________________________________________________________________________________
 * [ArrowEffects] Obsolete.  Removed. [kyzentun]
 * [NoteField] Removed lingering traces of old NoteField and NoteSkin system.
   Renamed NewField and NewSkin to NoteField and NoteSkin.
-	Read Docs/Themerdocs/5.1_incompatibilities/oldfield_removal_notes.md.
-	[kyzentun]
+  Read Docs/Themerdocs/5.1_incompatibilities/oldfield_removal_notes.md.
+  [kyzentun]
 * [PlayerOptions] Removed NoteSkin and NewSkin fields. [kyzentun]
 * [ScreenEdit] Changed editing notefield to use new notefield.
   Nesty menu for configuring edit notefield and test play notefield.
-	ScreenEdit::OptionsScreen metric is no longer used.
-	"Graphics/ScreenEdit option_menu" can be created by the theme to style the
-	menu used to configure the notefields.
+  ScreenEdit::OptionsScreen metric is no longer used.
+  "Graphics/ScreenEdit option_menu" can be created by the theme to style the
+  menu used to configure the notefields.
   Options for changing noteskin, zoom, and other aspects.
-	[kyzentun]
+  [kyzentun]
 
 2016/08/20
 ----------

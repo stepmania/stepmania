@@ -156,6 +156,8 @@ enum EditButton
 	
 	EDIT_BUTTON_SWITCH_TIMINGS, /**< Allow switching between Song and Step TimingData. */
 
+	EDIT_BUTTON_CHANGE_BG_LAYER, // Only bg changes on one layer are drawn. -Kyz
+
 	// Add to the name_to_edit_button list when adding to this enum. -Kyz
 	NUM_EditButton, // leave this at the end
 	EditButton_Invalid

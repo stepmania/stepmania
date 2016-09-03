@@ -251,6 +251,8 @@ void ScreenEdit::InitEditMappings()
 
 	name_to_edit_button["SWITCH_TIMINGS"]= EDIT_BUTTON_SWITCH_TIMINGS;
 
+	name_to_edit_button["CHANGE_BG_LAYER"]= EDIT_BUTTON_CHANGE_BG_LAYER;
+
 	m_EditMappingsDeviceInput.Clear();
 
 	// Common mappings:
@@ -497,6 +499,8 @@ void ScreenEdit::InitEditMappings()
 
 	// Allow song and step timing to be swapped.
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_TIMINGS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
+
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CHANGE_BG_LAYER][0]= DeviceInput(DEVICE_KEYBOARD, KEY_Cz);
 
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
@@ -3145,6 +3149,28 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		GAMESTATE->m_bIsUsingStepTiming = !GAMESTATE->m_bIsUsingStepTiming;
 		m_soundSwitchTiming.Play(true);
 		return true;
+
+	case EDIT_BUTTON_CHANGE_BG_LAYER:
+		{
+			BackgroundLayer new_layer= m_NoteFieldEdit.m_visible_bg_change_layer;
+			switch(new_layer)
+			{
+				case BACKGROUND_LAYER_1:
+					new_layer= BACKGROUND_LAYER_2;
+					break;
+				case BACKGROUND_LAYER_2:
+					new_layer= BACKGROUND_LAYER_Invalid;
+					break;
+				case BACKGROUND_LAYER_Invalid:
+				default:
+					new_layer= BACKGROUND_LAYER_1;
+					break;
+			}
+			m_NoteFieldEdit.m_visible_bg_change_layer= new_layer;
+			m_Player->get_note_field_because_i_really_need_it_for_edit_mode()->m_visible_bg_change_layer= new_layer;
+		}
+		return true;
+
 	default:
 		return false;
 	}

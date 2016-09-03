@@ -13,6 +13,7 @@
 #include "NoteData.h"
 #include "Quad.h"
 #include "Sprite.h"
+#include "Song.h"
 
 class NoteData;
 class Steps;
@@ -408,6 +409,9 @@ struct NoteField : ActorFrame
 	// defective mode.
 	bool m_oitg_zoom_mode;
 
+	// Only draw the text from one bg change layer. -Kyz
+	BackgroundLayer m_visible_bg_change_layer;
+
 	struct field_draw_entry
 	{
 		int column;
@@ -430,7 +434,13 @@ private:
 		double x_offset, float side_sign, float horiz_align,
 		Rage::Color const& color, Rage::Color const& glow);
 	void draw_beat_bars_internal();
-	bool draw_beat_bars_step(float const start_beat, float const step, Rage::Color const& measure_number_color, Rage::Color const& measure_number_glow, bool needs_second);
+	bool draw_beat_bars_step(float const start_beat, float const step,
+		Rage::Color const& measure_number_color, Rage::Color const&
+		measure_number_glow, bool needs_second);
+	void draw_bg_change_list(bool needs_second,
+		float const first_beat, float const last_beat,
+		vector<BackgroundChange>& changes, Rage::Color const& color,
+		Rage::Color const& text_glow);
 	void reload_columns(NoteSkinLoader const* new_loader, LuaReference& new_params);
 	double m_curr_beat;
 	double m_curr_second;

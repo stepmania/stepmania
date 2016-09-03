@@ -1,6 +1,7 @@
 #include "global.h"
 
 #include "ActorUtil.h"
+#include "BackgroundUtil.h"
 #include "EnumHelper.h"
 #include "Game.h"
 #include "GameManager.h"
@@ -13,6 +14,7 @@
 #include "RageMath.h"
 #include "RageUtil.h"
 #include "ScreenDimensions.h"
+#include "Song.h"
 #include "Sprite.h"
 #include "Steps.h"
 #include "Style.h"
@@ -2055,6 +2057,11 @@ static ThemeMetric<Rage::Color> LABEL_COLOR ("NoteField", "LabelColor");
 static ThemeMetric<Rage::Color> SPEED_COLOR ("NoteField", "SpeedColor");
 static ThemeMetric<Rage::Color> SCROLL_COLOR ("NoteField", "ScrollColor");
 static ThemeMetric<Rage::Color> FAKE_COLOR ("NoteField", "FakeColor");
+
+static ThemeMetric<Rage::Color> BGL1_COLOR("NoteField", "BackgroundLayer1Color");
+static ThemeMetric<Rage::Color> BGL2_COLOR("NoteField", "BackgroundLayer2Color");
+static ThemeMetric<Rage::Color> FGL_COLOR("NoteField", "ForegroundLayerColor");
+
 static ThemeMetric<bool> BPM_IS_LEFT_SIDE ("NoteField", "BPMIsLeftSide");
 static ThemeMetric<bool> STOP_IS_LEFT_SIDE ("NoteField", "StopIsLeftSide");
 static ThemeMetric<bool> DELAY_IS_LEFT_SIDE ("NoteField", "DelayIsLeftSide");
@@ -2086,6 +2093,7 @@ NoteField::NoteField()
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
 	 m_draw_beat_bars(false), m_in_edit_mode(false), m_oitg_zoom_mode(false),
+	 m_visible_bg_change_layer(BACKGROUND_LAYER_1),
 	 m_pn(NUM_PLAYERS), m_in_defective_mode(false),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
 	 m_steps_type(StepsType_Invalid), m_gameplay_zoom(1.0),
@@ -2622,6 +2630,26 @@ void NoteField::draw_beat_bars_internal()
 			FloatToString(seg->GetDelay()).c_str()), Speed, SPEED);
 	draw_all_segments(FloatToString(seg->GetLength()), Fake, FAKE);
 #undef draw_all_segments
+
+	Song* curr_song= GAMESTATE->m_pCurSong;
+	if(curr_song != nullptr)
+	{
+		BackgroundLayer const fg_layer_number= BACKGROUND_LAYER_Invalid;
+		switch(m_visible_bg_change_layer)
+		{
+			case fg_layer_number:
+				draw_bg_change_list(needs_second, first_beat, last_beat, curr_song->GetForegroundChanges(), FGL_COLOR, text_glow);
+				break;
+			case BACKGROUND_LAYER_1:
+				draw_bg_change_list(needs_second, first_beat, last_beat, curr_song->GetBackgroundChanges(m_visible_bg_change_layer), BGL1_COLOR, text_glow);
+				break;
+			case BACKGROUND_LAYER_2:
+				draw_bg_change_list(needs_second, first_beat, last_beat, curr_song->GetBackgroundChanges(m_visible_bg_change_layer), BGL2_COLOR, text_glow);
+				break;
+			default:
+				break;
+		}
+	}
 }
 
 bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Rage::Color const& measure_number_color, Rage::Color const& measure_number_glow, bool needs_second)
@@ -2638,7 +2666,6 @@ bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Ra
 	}
 	double const second= needs_second ?
 		m_timing_data->GetElapsedTimeFromBeat(beat) : 0.;
-	// TODO: Make this do the right thing in speed and scroll segments.
 	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second);
 	input.y_offset= m_columns[0].calc_y_offset(input);
 	double const main_y_offset= input.y_offset;
@@ -2692,6 +2719,33 @@ bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Ra
 		draw_beat_bar(input, sub_states[sub], alpha);
 	}
 	return cant_draw;
+}
+
+void NoteField::draw_bg_change_list(bool needs_second,
+	float const first_beat, float const last_beat,
+	vector<BackgroundChange>& changes, Rage::Color const& color,
+	Rage::Color const& text_glow)
+{
+	if(changes.empty())
+	{
+		return;
+	}
+	for(auto&& change : changes)
+	{
+		if(change.m_fStartBeat > last_beat)
+		{
+			break;
+		}
+		if(change.m_fStartBeat >= first_beat)
+		{
+			double const second= needs_second ? m_timing_data->GetElapsedTimeFromBeat(change.m_fStartBeat) : 0.;
+			mod_val_inputs input(change.m_fStartBeat, second, m_curr_beat, m_curr_second);
+			input.y_offset= m_columns[0].calc_y_offset(input);
+			if(m_columns[0].y_offset_visible(input.y_offset) != 0) {continue;}
+			m_field_text.SetText(change.GetTextDescription());
+			draw_field_text(input, 0, 1, align_left, color, text_glow);
+		}
+	}
 }
 
 double NoteField::update_z_bias()
