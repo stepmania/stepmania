@@ -80,9 +80,9 @@ std::string Rage::Color::ToString() const
 	
 	if( iA == 255 )
 	{
-		return fmt::format("#{0:X}{1:X}{2:X}", iR, iG, iB);
+		return fmt::format("#{0:02X}{1:02X}{2:02X}", iR, iG, iB);
 	}
-	return fmt::format("#{0:X}{1:X}{2:X}{3:X}", iR, iG, iB, iA);
+	return fmt::format("#{0:02X}{1:02X}{2:02X}{3:02X}", iR, iG, iB, iA);
 }
 
 bool Rage::Color::FromCommaString(std::string const &colorString)
