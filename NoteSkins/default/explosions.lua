@@ -114,8 +114,8 @@ return function(button_list, stepstype, skin_params)
 				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
 			end,
 			Def.Sprite{
-				Texture= "explosion.png", InitCommand= function(self)
-					self:visible(false):SetAllStateDelays(.05)
+				Texture= "_glow", InitCommand= function(self)
+					self:visible(false)
 				end,
 				-- The ColumnJudgment command is the way to make the actor respond to
 				-- a judgment that occurs in the column.  The param argument is a table
@@ -135,22 +135,30 @@ return function(button_list, stepstype, skin_params)
 				-- Checking the column parameter isn't necessary because the command is
 				-- only played on the column that it is for.
 				ColumnJudgmentCommand= function(self, param)
-					local diffuse= {
+					local dim_diffuse= {
 						TapNoteScore_W1= {1, 1, 1, 1},
-						TapNoteScore_W2= {1, 1, .3, 1},
-						TapNoteScore_W3= {0, 1, .4, 1},
-						TapNoteScore_W4= {.3, .8, 1, 1},
-						TapNoteScore_W5= {.8, 0, .6, 1},
-						HoldNoteScore_Held= {1, 1, 1, 1},
+						TapNoteScore_W2= {1, 1, .85, 1},
+						TapNoteScore_W3= {.5, 1, .75, 1},
+						TapNoteScore_W4= {.5, 1, 1, 1},
+						TapNoteScore_W5= {1, .5, 1, 1},
 					}
-					local exp_color= diffuse[param.tap_note_score or param.hold_note_score]
+					local bright_diffuse= {
+						TapNoteScore_W1= {1, 1, 1, 1},
+						TapNoteScore_W2= {1, 1, .9, 1},
+						TapNoteScore_W3= {.6, 1, .8, 1},
+						TapNoteScore_W4= {.6, 1, 1, 1},
+						TapNoteScore_W5= {1, .6, 1, 1},
+					}
+					local score= param.tap_note_score
+					local exp_color= dim_diffuse[score]
+					if param.bright then
+						exp_color= bright_diffuse[score]
+					end
 					if exp_color then
 						-- The hide at the end is queued so that if the notefield applies
 						-- glow to the explosion, it will still disappear at then end.
-						self:stoptweening()
-							:diffuse(exp_color):zoom(1):diffusealpha(.9):visible(true)
-							:linear(0.1):zoom(2):diffusealpha(.3)
-							:linear(0.06):diffusealpha(0)
+						self:visible(true):finishtweening():diffuse(exp_color):sleep(.1)
+							:decelerate(.5):diffusealpha(0)
 							:sleep(0):queuecommand("hide")
 					end
 				end,
@@ -159,8 +167,25 @@ return function(button_list, stepstype, skin_params)
 				end,
 			},
 			Def.Sprite{
-				Texture= "explosion.png", InitCommand= function(self)
-					self:visible(false):SetAllStateDelays(.05)
+				Texture= "hit_mine_explosion", InitCommand= function(self)
+					self:visible(false)
+				end,
+				ColumnJudgmentCommand= function(self, param)
+					if param.tap_note_score == "TapNoteScore_HitMine" then
+						self:visible(true):finishtweening()
+							:blend("BlendMode_Add"):diffuse{1, 1, 1, 1}
+							:zoom(1):rotationz(0):decelerate(.3):rotationz(90)
+							:linear(.3):rotationz(180):diffusealpha(0)
+							:sleep(0):queuecommand("hide")
+					end
+				end,
+				hideCommand= function(self)
+					self:visible(false)
+				end,
+			},
+			Def.Sprite{
+				Texture= "_glow", InitCommand= function(self)
+					self:diffusealpha(0)
 				end,
 				-- The Hold command is the way to respond to a hold being active.
 				-- When there is a hold in the column, the Hold command will be sent.
@@ -178,19 +203,15 @@ return function(button_list, stepstype, skin_params)
 					if hold_colors[param.type] then
 						if param.start then
 							self:finishtweening()
-								:zoom(1.25):diffuse(white):visible(true)
-								:diffuseblink():effectcolor1(hold_colors[param.type])
-								:effectcolor2(white):effectperiod(.1)
+								:diffusealpha(1):glowshift()
+								:effectcolor1(hold_colors[param.type])
+								:effectcolor2{1, 1, 1, .7}:effectperiod(.1)
 						elseif param.finished then
-							self:stopeffect():linear(0.06):diffusealpha(0)
-								:sleep(0):queuecommand("hide")
+							self:stopeffect():diffusealpha(0)
 						else
 							self:zoom(param.life * 1.25)
 						end
 					end
-				end,
-				hideCommand= function(self)
-					self:visible(false)
 				end,
 			},
 		}

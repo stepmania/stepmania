@@ -8,35 +8,13 @@ local skin_name= Var("skin_name")
 -- The function must return a table containing all the information and actors
 -- needed for the columns given.  Missing information or actors will be
 -- filled with zeros or blank actors.
-return function(button_list, stepstype)
+return function(button_list, stepstype, skin_parameters)
 	-- This example doesn't use the stepstype arg, but it is provided in case
 	-- someone needs it.
 
 	-- rots is a convenience conversion table to easily take care of buttons
 	-- that should be rotated.
 	local rots= {Left= 90, Down= 0, Up= 180, Right= 270}
-	local hold_flips= {
-		Left= "TexCoordFlipMode_None", Right= "TexCoordFlipMode_X",
-		Down= "TexCoordFlipMode_None", Up= "TexCoordFlipMode_Y",
-	}
-	local roll_flips= {
-		Left= "TexCoordFlipMode_None", Right= "TexCoordFlipMode_X",
-		Down= "TexCoordFlipMode_None", Up= "TexCoordFlipMode_None",
-	}
-	local rev_hold_flips= {
-		Left= "TexCoordFlipMode_None", Right= "TexCoordFlipMode_X",
-		Down= "TexCoordFlipMode_Y", Up= "TexCoordFlipMode_None",
-	}
-	local rev_roll_flips= {
-		Left= "TexCoordFlipMode_None", Right= "TexCoordFlipMode_X",
-		Down= "TexCoordFlipMode_Y", Up= "TexCoordFlipMode_Y",
-	}
-	local hold_buttons= {
-		Left= "left", Right= "left", Down= "down", Up= "down",
-	}
-	local roll_buttons= {
-		Left= "left", Right= "left", Down= "down", Up= "up",
-	}
 	-- A state_map tells Stepmania what frames to use for the quantization of
 	-- a note and the current beat.
 	-- First, Stepmania goes through the list of quanta in the state map to
@@ -115,34 +93,73 @@ return function(button_list, stepstype)
 	for i, quanta in ipairs(lift_state_map.quanta) do
 		quanta.states[1]= quanta.states[1] + 1
 	end
-	-- Mines only have a single frame in the graphics.
-	local mine_state_map= {
-		parts_per_beat= 1, quanta= {{per_beat= 1, states= {1}}}}
+	local mine_state_map= NoteSkin.single_quanta_state_map{1, 2, 3, 4, 5, 6, 7, 8}
+
 	-- Holds have active and inactive states, so they need a different state
 	-- map.
-	local active_state_map= {
-		parts_per_beat= parts_per_beat, quanta= {
-			{per_beat= 1, states= {1, 2}}, -- 4th
-			{per_beat= 2, states= {5, 6}}, -- 8th
-			{per_beat= 3, states= {9, 10}}, -- 12th
-			{per_beat= 4, states= {13, 14}}, -- 16th
-			{per_beat= 6, states= {17, 18}}, -- 24th
-			{per_beat= 8, states= {21, 22}}, -- 32nd
-			{per_beat= 12, states= {25, 26}}, -- 48th
-			{per_beat= 16, states= {29, 30}}, -- 64th
-		},
-	}
-	local inactive_quanta= {}
-	-- To make creating the inactive state map easier, the inactive states are
-	-- assumed to be the two states after the active states.
-	for i, quantum in ipairs(active_state_map.quanta) do
-		local states= {}
-		for s, state in ipairs(quantum.states) do
-			states[s]= state + 2
-		end
-		inactive_quanta[i]= {per_beat= quantum.per_beat, states= states}
+	local hold_active_map= {}
+	local hold_inactive_map= {}
+	local hold_tex= ""
+	local roll_tex= ""
+	if skin_parameters.quantize_holds then
+		hold_tex= "quant_hold"
+		roll_tex= "quant_roll"
+		hold_active_map= {
+			parts_per_beat= parts_per_beat, quanta= {
+				{per_beat= 1, states= {2}}, -- 4th
+				{per_beat= 2, states= {4}}, -- 8th
+				{per_beat= 3, states= {6}}, -- 12th
+				{per_beat= 4, states= {8}}, -- 16th
+				{per_beat= 6, states= {10}}, -- 24th
+				{per_beat= 8, states= {12}}, -- 32nd
+				{per_beat= 12, states= {14}}, -- 48th
+				{per_beat= 16, states= {16}}, -- 64th
+			},
+		}
+		hold_inactive_map= {
+			parts_per_beat= parts_per_beat, quanta= {
+				{per_beat= 1, states= {1}}, -- 4th
+				{per_beat= 2, states= {3}}, -- 8th
+				{per_beat= 3, states= {5}}, -- 12th
+				{per_beat= 4, states= {7}}, -- 16th
+				{per_beat= 6, states= {9}}, -- 24th
+				{per_beat= 8, states= {11}}, -- 32nd
+				{per_beat= 12, states= {13}}, -- 48th
+				{per_beat= 16, states= {15}}, -- 64th
+			},
+		}
+	else
+		hold_tex= "unquant_hold"
+		roll_tex= "unquant_roll"
+		hold_active_map= NoteSkin.single_quanta_state_map{2}
+		hold_inactive_map= NoteSkin.single_quanta_state_map{1}
 	end
-	local inactive_state_map= {parts_per_beat= parts_per_beat, quanta= inactive_quanta}
+	-- The length_data table tells the system how long each part is.
+	-- These are the default values, if length_data does not exist,
+	-- or one of the values is not a number, the default value will
+	-- be used.
+	local hold_length= {
+		-- start_note_offset is where to start drawing the hold body,
+		-- relative to the note the head occurs at.
+		start_note_offset= -.5,
+		-- end_note_offset is where to stop drawing the hold body,
+		-- relative to the note the hold ends at.
+		end_note_offset= .5,
+		-- head_pixs is how many pixels tall the head section of the
+		-- texture is.
+		head_pixs= 64,
+		-- body_pixs is how many pixels tall one body section is.
+		-- Remember that the body occurs twice, so this is only half
+		-- the distance from the end of the head to the beginning of
+		-- the tail.
+		-- The body occurs twice so that part of the texture can be
+		-- repeated when rendering a long hold.
+		body_pixs= 64,
+		-- tail_pixs is how many pixels tall the tail section of the
+		-- texture is.
+		tail_pixs= 64,
+	}
+
 	-- Taps are handled by a quantized_tap structure.  A quantized_tap contains
 	-- an actor for the tap, a state map to use to quantize it, and a vivid
 	-- memory of its world that was destroyed.
@@ -171,12 +188,9 @@ return function(button_list, stepstype)
 	-- rotated.
 	local columns= {}
 	for i, button in ipairs(button_list) do
-		local hold_tex= hold_buttons[button] .. "_hold 8x4.png"
-		local roll_tex= roll_buttons[button] .. "_roll 8x4.png"
 		-- There will be a section about mask textures and routine mode at the
 		-- end of the file.  Ignore mask textures and don't include them in your
 		-- noteskin if there's already too much to understand.
-		local hold_mask_tex= "down_mask_hold 8x4.png"
 		columns[i]= {
 			-- The width parameter specifies how wide the column is in pixels.
 			-- Different columns are allowed to be different widths.
@@ -217,19 +231,15 @@ return function(button_list, stepstype)
 					-- If this noteskin used 3D notes, it would set the texture_map
 					-- field instead of the state_map field:
 					-- texture_map= tap_texture_map,
-					actor= Def.Sprite{Texture= "tap_note 2x8.png",
-						-- The Mask field sets the mask texture used for the tap.
-						Mask= NOTESKIN:get_path(skin_name, "tap_mask 2x8.png"),
+					actor= Def.Sprite{Texture= "tap_note",
 						-- Use the InitCommand to rotate the arrow appropriately.
 						InitCommand= function(self) self:rotationz(rots[button]) end}},
 				NoteSkinTapPart_Mine= {
 					state_map= mine_state_map,
-					actor= Def.Sprite{Texture= "mine.png"}},
+					actor= Def.Sprite{Texture= "mine",}},
 				NoteSkinTapPart_Lift= {
 					state_map= lift_state_map,
-					actor= Def.Sprite{Texture= "tap_note 2x8.png",
-						-- The Mask field sets the mask texture used for the tap.
-						Mask= NOTESKIN:get_path(skin_name, "tap_mask 2x8.png"),
+					actor= Def.Sprite{Texture= "tap_note",
 						-- Use the InitCommand to rotate the arrow appropriately.
 						InitCommand= function(self) self:rotationz(rots[button]) end}},
 			},
@@ -287,103 +297,46 @@ return function(button_list, stepstype)
 				TapNoteSubType_Hold= {
 					-- This is the quantized_hold for the inactive state of holds.
 					{
-						state_map= inactive_state_map,
+						state_map= hold_inactive_map,
 						-- textures is a table so that the hold can be rendered as
 						-- multiple layers.  The textures must all be the same size and
 						-- frame dimensions.  The same frame from each will be rendered,
 						-- in order.  This replaces the HoldActiveIsAddLayer flag that
 						-- was in the old noteskin format.
 						textures= {hold_tex},
-						flip= hold_flips[button],
+						-- The flip field can be set to TexCoordFlipMode_X,
+						-- TexCoordFlipMode_Y, or TexCoordFlipMode_XY to flip the
+						-- texture.  The default is TexCoordFlipMode_None.
+						flip= "TexCoordFlipMode_None",
 						-- If disable_filtering is set to true, then texture filtering
 						-- will be turned off when rendering the hold.
 						disable_filtering= false,
-						-- The length_data table tells the system how long each part is.
-						-- These are the default values, if length_data does not exist,
-						-- or one of the values is not a number, the default value will
-						-- be used.
-						length_data= {
-							-- start_note_offset is where to start drawing the hold body,
-							-- relative to the note the head occurs at.
-							start_note_offset= -.5,
-							-- end_note_offset is where to stop drawing the hold body,
-							-- relative to the note the hold ends at.
-							end_note_offset= .5,
-							-- head_pixs is how many pixels tall the head section of the
-							-- texture is.
-							head_pixs= 32,
-							-- body_pixs is how many pixels tall one body section is.
-							-- Remember that the body occurs twice, so this is only half
-							-- the distance from the end of the head to the beginning of
-							-- the tail.
-							-- The body occurs twice so that part of the texture can be
-							-- repeated when rendering a long hold.
-							body_pixs= 64,
-							-- tail_pixs is how many pixels tall the tail section of the
-							-- texture is.
-							tail_pixs= 32,
-						},
+						length_data= hold_length,
 					},
 					-- This is the quantized_hold for the active state of holds.
 					{
-						state_map= active_state_map,
+						state_map= hold_active_map,
 						textures= {hold_tex},
-						flip= hold_flips[button],
+						length_data= hold_length,
 					},
 				},
 				TapNoteSubType_Roll= {
 					{
-						state_map= inactive_state_map,
+						state_map= hold_inactive_map,
 						textures= {roll_tex},
-						flip= roll_flips[button],
+						length_data= hold_length,
 					},
 					{
-						state_map= active_state_map,
+						state_map= hold_active_map,
 						textures= {roll_tex},
-						flip= roll_flips[button],
+						length_data= hold_length,
 					},
 				},
-			},
-			-- reverse_holds is the same as holds, but for when the reverse mod is
-			-- being used.  Notice that it's using the same textures, but flipping
-			-- them differently.
-			reverse_holds= {
-				TapNoteSubType_Hold= {
-					{
-						state_map= inactive_state_map,
-						textures= {hold_tex},
-						flip= rev_hold_flips[button],
-					},
-					{
-						state_map= active_state_map,
-						textures= {hold_tex},
-						flip= rev_hold_flips[button],
-					},
-				},
-				TapNoteSubType_Roll= {
-					{
-						state_map= inactive_state_map,
-						textures= {roll_tex},
-						flip= rev_roll_flips[button],
-					},
-					{
-						state_map= active_state_map,
-						textures= {roll_tex},
-						flip= rev_roll_flips[button],
-					},
-				},
-			},
-			-- hold_masks and hold_reverse_masks are for the mask textures used for
-			-- each hold type.
-			hold_masks= {
-				TapNoteSubType_Hold= hold_mask_tex,
-				TapNoteSubType_Roll= hold_mask_tex,
-			},
-			hold_reverse_masks= {
-				TapNoteSubType_Hold= hold_mask_tex,
-				TapNoteSubType_Roll= hold_mask_tex,
 			},
 		}
+		-- reverse_holds is the same as holds, but for when the reverse mod is
+		-- being used.
+		columns[i].reverse_holds= columns[i].holds
 	end
 	return {
 		columns= columns,

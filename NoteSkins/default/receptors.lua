@@ -11,8 +11,8 @@ return function(button_list, stepstype, skin_parameters)
 	local rots= {Left= 90, Down= 0, Up= 180, Right= 270}
 	local warning_time= skin_parameters.receptors.warning_time
 	for i, button in ipairs(button_list) do
-		ret[i]= Def.Sprite{
-			Texture= "receptor.png", InitCommand= function(self)
+		ret[i]= Def.ActorFrame{
+			InitCommand= function(self)
 				self:rotationz(rots[button] or 0):effectclock("beat")
 					:draworder(notefield_draw_order.receptor)
 			end,
@@ -49,11 +49,34 @@ return function(button_list, stepstype, skin_parameters)
 					self:diffuse(white)
 				end
 				if param.pressed then
-					self:zoom(.75)
+					self:playcommand("Press")
 				elseif param.lifted then
-					self:zoom(1)
+					self:playcommand("Lift")
 				end
 			end,
+			Def.Sprite{
+				Texture= "receptor ", InitCommand= function(self)
+					self:effectclock("beat"):diffuseramp():effectcolor1{.8, .8, .8, 1}
+						:effectcolor2{1, 1, 1, 1}:effecttiming(.2, 0, .8, 0)
+						:effectoffset(.05)
+				end,
+			},
+			Def.Sprite{
+				Texture= "rflash", InitCommand= function(self)
+					self:visible(false):diffusealpha(0)
+				end,
+				PressCommand= function(self)
+					self:visible(true):finishtweening():zoom(1):blend("BlendMode_Add")
+						:diffusealpha(.8):decelerate(.2):diffusealpha(.4)
+				end,
+				LiftCommand= function(self)
+					self:stoptweening():decelerate(.2):diffusealpha(0):zoom(1.2)
+						:sleep(0):queuecommand("hide")
+				end,
+				hideCommand= function(self)
+					self:visible(false)
+				end,
+			},
 		}
 	end
 	return ret

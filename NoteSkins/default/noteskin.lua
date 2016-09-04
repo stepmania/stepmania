@@ -33,6 +33,7 @@ return {
 	-- the noteskin author doesn't have to check for a field being empty or
 	-- some nonsense.
 	skin_parameters= {
+		quantize_holds= false,
 		explosions= {
 			particles= true,
 			particle_dist= 128,
@@ -52,6 +53,11 @@ return {
 	-- table in the skin_parameter_info table describing it.  If there isn't a
 	-- matching table, the theme won't be able to make menu options for it.
 	skin_parameter_info= {
+		quantize_holds= {
+			translation= {
+				en= {title= "Quantize holds", explanation= "When on, holds will be quantized."},
+			},
+		},
 		explosions= {
 			-- The translation table provides the strings the theme displays in the
 			-- menu for the option.  Each element in the translation table is for
