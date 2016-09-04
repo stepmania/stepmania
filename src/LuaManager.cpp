@@ -1571,6 +1571,10 @@ namespace
 	static int save_lua_table(lua_State* L)
 	{
 		std::string filename= SArg(1);
+		if(lua_type(L, 2) != LUA_TTABLE)
+		{
+			luaL_error(L, "Second arg to save_lua_table must be a table.");
+		}
 		LuaHelpers::save_lua_table_to_file(L, 2, filename);
 		return 0;
 	}
