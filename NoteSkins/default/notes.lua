@@ -147,17 +147,20 @@ return function(button_list, stepstype, skin_parameters)
 		end_note_offset= .5,
 		-- head_pixs is how many pixels tall the head section of the
 		-- texture is.
-		head_pixs= 64,
+		head_pixs= 32,
 		-- body_pixs is how many pixels tall one body section is.
 		-- Remember that the body occurs twice, so this is only half
 		-- the distance from the end of the head to the beginning of
 		-- the tail.
 		-- The body occurs twice so that part of the texture can be
 		-- repeated when rendering a long hold.
-		body_pixs= 64,
+		body_pixs= 32,
 		-- tail_pixs is how many pixels tall the tail section of the
 		-- texture is.
-		tail_pixs= 64,
+		tail_pixs= 32,
+		-- If the hold texture is marked as doubleres, then head_pixs, body_pixs,
+		-- and tail_pixs need to be half the pixel height each part has in the
+		-- texture.
 	}
 
 	-- Taps are handled by a quantized_tap structure.  A quantized_tap contains
