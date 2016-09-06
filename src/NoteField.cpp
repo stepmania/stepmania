@@ -2364,7 +2364,7 @@ void NoteField::set_note_data(NoteData* note_data, TimingData* timing, StepsType
 	if(stype != m_steps_type)
 	{
 		m_steps_type= stype;
-		if(m_columns.size() > 0)
+		if(NOTESKIN->skin_supports_stepstype(m_skin_walker.get_name(), stype))
 		{
 			reload_columns(&m_skin_walker, m_skin_parameters);
 		}
