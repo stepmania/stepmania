@@ -146,6 +146,7 @@ local function set_skin_for_field(field, stepstype)
 	local skin_name= get_skin_choice(stepstype)
 	local skin_params= get_skin_params(skin_name)
 	field:set_skin(skin_name, skin_params)
+	MESSAGEMAN:Broadcast("NoteskinChanged")
 end
 
 
@@ -335,6 +336,7 @@ function editor_notefield_menu(menu_params)
 					col:set_pixels_visible_after(vispix)
 				end
 			end
+			MESSAGEMAN:Broadcast("NoteskinChanged")
 		end,
 		SetTestNoteFieldSkinCommand= function(self, params)
 			set_skin_for_field(params.field, params.stepstype)

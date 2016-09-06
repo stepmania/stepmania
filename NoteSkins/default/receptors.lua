@@ -8,7 +8,7 @@ local red= {1, 0, 0, 1}
 local white= {1, 1, 1, 1}
 return function(button_list, stepstype, skin_parameters)
 	local ret= {}
-	local rots= {Left= 90, Down= 0, Up= 180, Right= 270}
+	local rots= {Left= 90, Down= 0, Up= 180, Right= 270, UpLeft= 135, UpRight= 225, DownLeft= 45, DownRight= 315}
 	local warning_time= skin_parameters.receptors.warning_time
 	for i, button in ipairs(button_list) do
 		ret[i]= Def.ActorFrame{

@@ -32,7 +32,7 @@ return function(button_list, stepstype, skin_params)
 	end
 
 	local ret= {}
-	local rots= {Left= 90, Down= 0, Up= 180, Right= 270}
+	local rots= {Left= 90, Down= 0, Up= 180, Right= 270, UpLeft= 135, UpRight= 225, DownLeft= 45, DownRight= 315}
 	for i, button in ipairs(button_list) do
 		local particles= {}
 		local particle_frames= {}

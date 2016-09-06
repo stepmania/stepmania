@@ -14,7 +14,8 @@ return function(button_list, stepstype, skin_parameters)
 
 	-- rots is a convenience conversion table to easily take care of buttons
 	-- that should be rotated.
-	local rots= {Left= 90, Down= 0, Up= 180, Right= 270}
+	local rots= {Left= 90, Down= 0, Up= 180, Right= 270, UpLeft= 135, UpRight= 225, DownLeft= 45, DownRight= 315}
+	local widths= {UpLeft= 46, UpRight= 46, DownLeft= 46, DownRight= 46}
 	-- A state_map tells Stepmania what frames to use for the quantization of
 	-- a note and the current beat.
 	-- First, Stepmania goes through the list of quanta in the state map to
@@ -200,7 +201,7 @@ return function(button_list, stepstype, skin_parameters)
 			-- Holds in this column will be stretched to this width.
 			-- If the width is not provided by the noteskin, the default of 64 will
 			-- be used.
-			width= 64,
+			width= widths[button] or 64,
 			-- The padding is the distance between this column and the adjacent
 			-- column.  A padding value of 2 means 1 pixel on each side.
 			-- The default is 0.

@@ -1427,6 +1427,7 @@ void ScreenEdit::Init()
 	GAMESTATE->m_bInStepEditor = true;
 
 	SubscribeToMessage( "Judgment" );
+	SubscribeToMessage("NoteskinChanged");
 
 	ASSERT( GAMESTATE->m_pCurSong != nullptr );
 	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != nullptr );
@@ -1480,7 +1481,7 @@ void ScreenEdit::Init()
 	modInProcess = -1;
 
 	m_curr_speed_choice= 0;
-	m_curr_speed= 0.f;
+	m_curr_speed= 0.0f;
 	m_goal_speed= 1.f;
 
 	this->AddChild( &m_Background );
@@ -1499,6 +1500,7 @@ void ScreenEdit::Init()
 	// Make m_NoteFieldEdit the fake parent of the snap display so the snap
 	// display will be positioned and rotated the same way. -Kyz
 	m_SnapDisplay.SetFakeParent(&m_NoteFieldEdit);
+	m_SnapDisplay.SetName("SnapDisplay");
 	this->AddChild(&m_SnapDisplay);
 
 	m_NoteDataRecord.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
@@ -3706,9 +3708,13 @@ void ScreenEdit::HandleMessage( const Message &msg )
 				pSoundReader->SetProperty( "Volume", bOn? 1.0f:0.0f );
 		}
 	}
-	if( msg == Message_SongModified )
+	else if( msg == Message_SongModified )
 	{
 		SetDirty( true );
+	}
+	else if(msg == "NoteskinChanged")
+	{
+		m_SnapDisplay.SetSeparation(m_NoteFieldEdit.get_field_width() * .5);
 	}
 	Screen::HandleMessage( msg );
 }

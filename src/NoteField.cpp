@@ -2100,7 +2100,6 @@ NoteField::NoteField()
 	 defective_render_y(0.0), original_y(0.0)
 {
 	DeleteChildrenWhenDone(true);
-	set_skin("default", m_skin_parameters);
 	std::vector<Actor*> layers;
 	ActorUtil::MakeActorSet(THEME->GetPathG("NoteField", "layers", true), layers);
 	for(auto&& act : layers)
@@ -2365,7 +2364,10 @@ void NoteField::set_note_data(NoteData* note_data, TimingData* timing, StepsType
 	if(stype != m_steps_type)
 	{
 		m_steps_type= stype;
-		reload_columns(&m_skin_walker, m_skin_parameters);
+		if(m_columns.size() > 0)
+		{
+			reload_columns(&m_skin_walker, m_skin_parameters);
+		}
 	}
 	else
 	{
@@ -2658,6 +2660,7 @@ bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Ra
 	std::vector<int> const sub_states= {2, 3, 2};
 	float const beat_step_size= 1.f;
 	static int non_visible_count= 0;
+	static int num_this_dir= 0;
 	bool cant_draw= false;
 	double const beat= start_beat + (step * beat_step_size);
 	if(beat < 0.f)
@@ -2672,6 +2675,12 @@ bool NoteField::draw_beat_bars_step(float const start_beat, float const step, Ra
 	if(step == 0.f)
 	{
 		non_visible_count= 0;
+		num_this_dir= 0;
+	}
+	++num_this_dir;
+	if(num_this_dir > 128)
+	{
+		cant_draw= true;
 	}
 	int state= 1;
 	int quantized_beat= static_cast<int>(beat);
