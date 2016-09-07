@@ -334,11 +334,8 @@ function noteskin_option_row()
 		SelectType= "SelectOne",
 		Choices= skins,
 		LoadSelections= function(self, list, pn)
-			local player_skin= GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred"):NoteSkin()
-			if not GAMESTATE:InStepEditor() then
-				local profile= PROFILEMAN:GetProfile(pn)
-				player_skin= profile:get_preferred_noteskin(stype)
-			end
+			local profile= PROFILEMAN:GetProfile(pn)
+			local player_skin= profile:get_preferred_noteskin(stype)
 			for i, choice in ipairs(self.Choices) do
 				if player_skin == choice then
 					list[i]= true
@@ -350,11 +347,8 @@ function noteskin_option_row()
 		SaveSelections= function(self, list, pn)
 			for i, choice in ipairs(self.Choices) do
 				if list[i] then
-					if not GAMESTATE:InStepEditor() then
-						local profile= PROFILEMAN:GetProfile(pn)
-						local player_skin= profile:set_preferred_noteskin(stype, choice)
-					end
-					GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred"):NoteSkin(choice)
+					local profile= PROFILEMAN:GetProfile(pn)
+					local player_skin= profile:set_preferred_noteskin(stype, choice)
 					return
 				end
 			end
