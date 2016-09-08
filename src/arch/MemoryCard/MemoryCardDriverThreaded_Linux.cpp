@@ -308,7 +308,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 
 			char szScsiDevice[1024];
 			char szMountPoint[1024];
-			int iRet = sscanf( sLine.c_str(), "%1023s %0123s", szScsiDevice, szMountPoint );
+			int iRet = sscanf( sLine.c_str(), "%1023s %1023s", szScsiDevice, szMountPoint );
 			if( iRet != 2 || szScsiDevice[0] == '#')
 				continue;	// don't process this line
 
