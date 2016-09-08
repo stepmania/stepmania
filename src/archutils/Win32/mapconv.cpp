@@ -106,7 +106,6 @@ struct RVASorter {
 };
 
 int main(int argc, char **argv) {
-	int i;
 	long load_addr;
 
 	if (argc<3) {
@@ -171,7 +170,7 @@ int main(int argc, char **argv) {
 			char symname[4096];
 			int i;
 
-			if (4!=sscanf(line, "%lx:%lx %s %lx", &grp, &start, symname, &rva))
+			if (4!=sscanf(line, "%lx:%lx %4095s %lx", &grp, &start, symname, &rva))
 				break;
 
 			if (!(codeseg_flags & (1<<grp)) && strcmp(symname, "___ImageBase") )
@@ -195,7 +194,7 @@ int main(int argc, char **argv) {
 				long grp, start, rva;
 				char symname[4096];
 
-				if (4!=sscanf(line, "%lx:%lx %s %lx", &grp, &start, symname, &rva))
+				if (4!=sscanf(line, "%lx:%lx %4095s %lx", &grp, &start, symname, &rva))
 					break;
 
 				if (!(codeseg_flags & (1<<grp)))
@@ -219,7 +218,7 @@ int main(int argc, char **argv) {
 			long grp, start, rva;
 			char symname[4096];
 
-			sscanf(rvabuf[i].line, "%lx:%lx %s %lx", &grp, &start, symname, &rva);
+			sscanf(rvabuf[i].line, "%lx:%lx %4095s %lx", &grp, &start, symname, &rva);
 
 			grpstart[grp] = rva - start;
 
