@@ -390,7 +390,7 @@ void NetworkStream_Win32::Open( const std::string &sHost, int iPort, ConnectionT
 
 	{
 		sockaddr_in addr;
-		addr.sin_addr.s_addr = *(DWORD *)pHost->h_addr_list[0];
+		addr.sin_addr.s_addr = *static_cast<DWORD*>(pHost->h_addr_list[0]);
 		addr.sin_family = PF_INET;
 		addr.sin_port = htons( (uint16_t) iPort );
 
