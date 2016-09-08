@@ -355,8 +355,10 @@ void NetworkStream_Win32::Open( const std::string &sHost, int iPort, ConnectionT
 	m_iPort = iPort;
 
 	// Look up the hostname.
-	hostent *pHost[MAXGETHOSTSTRUCT];
+	hostent *pHost = nullptr;
+	char pBuf[MAXGETHOSTSTRUCT];
 	{
+		pHost = (hostent *) pBuf;
 		ResolveMessageWindow mw;
 		m_hResolve = WSAAsyncGetHostByName(
 			mw.GetHwnd(),
