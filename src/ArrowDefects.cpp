@@ -377,8 +377,8 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 			expand_multiplier_scale_from_low, expand_multiplier_scale_from_high,
 			expand_multiplier_scale_to_low, expand_multiplier_scale_to_high);
 		scroll_speed*= Rage::scale(accels[PlayerOptions::ACCEL_EXPAND],
-			expand_multiplier_scale_from_low, expand_multiplier_scale_from_high,
-			expand_multiplier_scale_to_low, expand_multiplier);
+			expand_speed_scale_from_low, expand_speed_scale_from_high,
+			expand_speed_scale_to_low, expand_multiplier);
 	}
 	y_offset*= scroll_speed;
 	return y_offset;
