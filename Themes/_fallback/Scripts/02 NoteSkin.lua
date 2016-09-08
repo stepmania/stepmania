@@ -22,7 +22,7 @@ NoteSkin= {
 			largest_per_beat= math.max(per_beats[i], largest_per_beat)
 		end
 		local parts_per_beat= largest_per_beat
-		while not Noteskin.common_multiple(parts_per_beat, per_beats) do
+		while not NoteSkin.common_multiple(parts_per_beat, per_beats) do
 			parts_per_beat= parts_per_beat + largest_per_beat
 		end
 		local quanta= {}
