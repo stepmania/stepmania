@@ -23,6 +23,7 @@ class CreateZip
 	TZip* hz;
 public:
 	CreateZip();
+	~CreateZip();
 	bool Start(RageFile *f);
 	bool AddFile(std::string fn);
 	bool AddDir(std::string fn);
