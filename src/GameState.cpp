@@ -185,6 +185,8 @@ GameState::GameState() :
 
 	m_bDopefish = false;
 
+	m_haste_rate= 1.f;
+
 	sExpandedSectionName = "";
 
 	// Don't reset yet; let the first screen do it, so we can use PREFSMAN and THEME.

@@ -79,7 +79,7 @@ function NoteField:set_speed_mod(constant, speed, read_bpm)
 		-- Constant speed mods use the distance in seconds to calculate the arrow
 		-- position.
 		mod_input= "dist_second"
-		mod_mult= (speed / 60) / music_rate
+		mod_mult= {"/", (speed / 60), "music_rate"}
 		-- Hide unjudgable notes so that mines inside of warps are not rendered
 		-- on top of the arrows the warp skips to.
 		show_unjudgable= false
@@ -91,7 +91,7 @@ function NoteField:set_speed_mod(constant, speed, read_bpm)
 		-- Non-constant speed mods use the distance in beats to calculate the
 		-- arrow position.
 		mod_input= "dist_beat"
-		mod_mult= (speed / read_bpm) / music_rate
+		mod_mult= {"/", (speed / read_bpm), "music_rate"}
 	end
 	-- Each column has independent modifier state, so the speed mod needs to be
 	-- set in each column.
@@ -198,6 +198,13 @@ end
 function NoteField:clear_sudden_mod()
 	self:clear_column_mod("get_note_alpha", "sudden")
 	self:clear_column_mod("get_note_glow", "sudden")
+end
+
+function NoteField:all_columns_mod(mod_name, mod_function)
+	assert(NoteFieldColumn[mod_name], mod_name .. " is not a modifiable value.")
+	for i, col in ipairs(self:get_columns()) do
+		col[mod_name](col):add_mod(mod_function)
+	end
 end
 
 function find_pactor_in_gameplay(screen_gameplay, pn)

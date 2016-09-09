@@ -28,9 +28,23 @@ struct mod_input_number : mod_operand
 {
 	double m_value;
 	virtual double evaluate(mod_val_inputs&)
-	{ return m_value;	}
+	{ return m_value; }
 	virtual mut get_update_type()
 	{ return mut_never; }
+	virtual bool needs_beat()
+	{ return false; }
+	virtual bool needs_second()
+	{ return false; }
+	virtual bool needs_y_offset()
+	{ return false; }
+};
+
+struct mod_input_music_rate : mod_operand
+{
+	virtual double evaluate(mod_val_inputs&)
+	{ return GAMESTATE->get_hasted_music_rate(); }
+	virtual mut get_update_type()
+	{ return mut_frame; }
 	virtual bool needs_beat()
 	{ return false; }
 	virtual bool needs_second()
@@ -77,6 +91,7 @@ SIMPLE_MOD_INPUT_TYPE(end_second, mut_never, false, true, false);
 enum mit
 {
 	mit_number,
+	mit_music_rate,
 	mit_column,
 	mit_y_offset,
 	mit_note_id_in_chart,
@@ -168,6 +183,8 @@ SIMPLE_OPERATOR(multiply, multiply_wrap);
 SIMPLE_OPERATOR(divide, divide_wrap);
 SIMPLE_OPERATOR(exp, pow);
 SIMPLE_OPERATOR(log, log_wrapper);
+SIMPLE_OPERATOR(min, std::min);
+SIMPLE_OPERATOR(max, std::max);
 
 #undef plus_wrap
 #undef subtract_wrap
@@ -239,7 +256,7 @@ static double triangle_wave(double angle)
 	}
 }
 
-WAVE_OPERATOR(sine, (Rage::FastSin(angle)));
+WAVE_OPERATOR(sin, (Rage::FastSin(angle)));
 WAVE_OPERATOR(cos, (Rage::FastCos(angle)));
 WAVE_OPERATOR(tan, (tan(angle)));
 WAVE_OPERATOR(square, (square_wave(angle)));
@@ -335,7 +352,9 @@ enum mot
 	mot_divide,
 	mot_exp,
 	mot_log,
-	mot_sine,
+	mot_min,
+	mot_max,
+	mot_sin,
 	mot_cos,
 	mot_tan,
 	mot_square,
@@ -657,7 +676,9 @@ static mot str_to_mot(std::string const& str)
 		CONVENT(divide),
 		CONVENT(exp),
 		CONVENT(log),
-		CONVENT(sine),
+		CONVENT(min),
+		CONVENT(max),
+		CONVENT(sin),
 		CONVENT(cos),
 		CONVENT(tan),
 		CONVENT(square),
@@ -698,7 +719,9 @@ static mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int 
 		SET_NEW(divide);
 		SET_NEW(exp);
 		SET_NEW(log);
-		SET_NEW(sine);
+		SET_NEW(min);
+		SET_NEW(max);
+		SET_NEW(sin);
 		SET_NEW(cos);
 		SET_NEW(tan);
 		SET_NEW(square);
@@ -730,6 +753,7 @@ static mit str_to_mit(std::string const& str)
 {
 #define CONVENT(field_name) {#field_name, mit_##field_name}
 	static std::unordered_map<std::string, mit> conversion= {
+		CONVENT(music_rate),
 		CONVENT(column),
 		CONVENT(y_offset),
 		CONVENT(note_id_in_chart),
@@ -763,6 +787,7 @@ static mod_operand* create_mod_input(std::string const& str_type)
 #define ENTRY_BS_PAIR(base) RET_ENTRY(base##_beat); RET_ENTRY(base##_second);
 	switch(type)
 	{
+		RET_ENTRY(music_rate);
 		RET_ENTRY(column);
 		RET_ENTRY(y_offset);
 		RET_ENTRY(note_id_in_chart);
