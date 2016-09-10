@@ -87,11 +87,14 @@ function NoteField:set_speed_mod(constant, speed, read_bpm)
 		speed_segments_enabled= false
 		scroll_segments_enabled= false
 	else
-		read_bpm= read_bpm or 1
 		-- Non-constant speed mods use the distance in beats to calculate the
 		-- arrow position.
 		mod_input= "dist_beat"
-		mod_mult= {"/", (speed / read_bpm), "music_rate"}
+		if read_bpm then
+			mod_mult= {"/", (speed / read_bpm), "music_rate"}
+		else
+			mod_mult= speed
+		end
 	end
 	-- Each column has independent modifier state, so the speed mod needs to be
 	-- set in each column.
