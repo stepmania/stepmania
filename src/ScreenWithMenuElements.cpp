@@ -242,9 +242,8 @@ void ScreenWithMenuElements::StartPlayingMusic()
 	{
 		GameSoundManager::PlayMusicParams pmp;
 		pmp.sFile= HandleLuaMusicFile(m_sPathToMusic);
-		if(!pmp.sFile.empty() && pmp.sFile != m_prev_music_played)
+		if(!pmp.sFile.empty() && pmp.sFile != SOUND->GetMusicPath())
 		{
-			m_prev_music_played= pmp.sFile;
 			pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
 			if(DELAY_MUSIC_SECONDS > 0.0f)
 			{

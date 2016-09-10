@@ -143,6 +143,7 @@ protected:
 	bool			m_bStepsChosen[NUM_PLAYERS];	// only used in SelectionState_SelectingSteps
 	bool			m_bGoToOptions;
 	std::string			m_sSampleMusicToPlay;
+	std::string m_prev_sample_music_path;
 	TimingData		*m_pSampleMusicTimingData;
 	float			m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool			m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;

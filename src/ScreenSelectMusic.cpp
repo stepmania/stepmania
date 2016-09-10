@@ -73,6 +73,7 @@ static LocalizedString PERMANENTLY_DELETE("ScreenSelectMusic", "PermanentlyDelet
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
 void ScreenSelectMusic::Init()
 {
+	m_prev_sample_music_path= "";
 	g_ScreenStartedLoadingAt.Touch();
 	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
@@ -386,9 +387,9 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 
 		GameSoundManager::PlayMusicParams PlayParams;
 		PlayParams.sFile = HandleLuaMusicFile(m_sSampleMusicToPlay);
-		if(PlayParams.sFile != m_prev_music_played)
+		if(PlayParams.sFile != SOUND->GetMusicPath())
 		{
-			m_prev_music_played= PlayParams.sFile;
+			m_prev_sample_music_path= m_sSampleMusicToPlay;
 			PlayParams.pTiming = m_pSampleMusicTimingData;
 			PlayParams.bForceLoop = SAMPLE_MUSIC_LOOPS;
 			PlayParams.fStartSecond = m_fSampleStartSeconds;
@@ -1980,7 +1981,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	// Don't stop music if it's already playing the right file.
 	g_bSampleMusicWaiting = false;
-	if( !m_MusicWheel.IsRouletting() && SOUND->GetMusicPath() != m_sSampleMusicToPlay )
+	if(!m_MusicWheel.IsRouletting() && m_sSampleMusicToPlay != m_prev_sample_music_path)
 	{
 		SOUND->StopMusic();
 		// some SampleMusicPreviewModes don't want the sample music immediately.
