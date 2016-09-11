@@ -164,7 +164,7 @@ static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState
 
 	vector<std::string> asModifiers;
 	{
-		auto sPlayerOptions = ps.m_PlayerOptions.GetStage().GetString();
+		auto sPlayerOptions = get_player_mod_string(ps.m_PlayerNumber, false);
 		if( !sPlayerOptions.empty() )
 		{
 			asModifiers.push_back( sPlayerOptions );

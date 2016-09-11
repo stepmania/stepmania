@@ -1125,6 +1125,30 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 #undef CPY
 }
 
+std::string get_player_mod_string(PlayerNumber pn, bool hide_fail)
+{
+	LuaReference func;
+	THEME->GetMetric("Common", "ModStringFunction", func);
+	if(func.GetLuaType() != LUA_TFUNCTION)
+	{
+		LuaHelpers::ReportScriptError("Common::ModStringFunction metric must be a function.");
+		return "";
+	}
+	std::string ret;
+	Lua* L= LUA->Get();
+	func.PushSelf(L);
+	Enum::Push(L, pn);
+	lua_pushboolean(L, hide_fail);
+	std::string err= "Error running ModStringFunction:  ";
+	if(LuaHelpers::RunScriptOnStack(L, err, 2, 1, true))
+	{
+		ret= lua_tostring(L, -1);
+	}
+	lua_settop(L, 0);
+	LUA->Release(L);
+	return ret;
+}
+
 // lua start
 #include "LuaBinding.h"
 #include "OptionsBinding.h"

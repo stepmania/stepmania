@@ -1238,7 +1238,9 @@ void ScreenGameplay::LoadNextSong()
 		}
 
 		if( pi->m_ptextPlayerOptions )
-			pi->m_ptextPlayerOptions->SetText( pi->GetPlayerState()->m_PlayerOptions.GetCurrent().GetString() );
+		{
+			pi->m_ptextPlayerOptions->SetText(get_player_mod_string(pi->m_pn, false));
+		}
 		if( pi->m_pActiveAttackList )
 			pi->m_pActiveAttackList->Refresh();
 

@@ -39,4 +39,5 @@ end;
 t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 t[#t+1]= LoadActor(THEME:GetPathG("", "pause_menu"))
 t[#t+1]= notefield_prefs_actor()
+t[#t+1]= notefield_mods_actor()
 return t

@@ -69,7 +69,8 @@ function NoteField:set_speed_mod(constant, speed, read_bpm)
 	-- is the same as C600 at normal music rate.  If the speed mod was not
 	-- divided by the music rate, then a player that reads C600 normally would
 	-- have to pick C300 when using x2 music rate.
-	local music_rate= GAMESTATE:GetSongOptionsObject("ModsLevel_Current"):MusicRate()
+	-- The mod input music rate is used so that the speed mod will react when
+	-- the music rate changes during the song.
 	local mod_input= "dist_beat"
 	local mod_mult= 1
 	local show_unjudgable= true

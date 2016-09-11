@@ -103,6 +103,7 @@ local base_options= {
 	nesty_options.bool_song_mod_val("StaticBackground"),
 	nesty_options.bool_song_mod_val("RandomBGOnly"),
 	nesty_options.float_config_val(player_config, "ScreenFilter", -2, -1, 0),
+	get_notefield_mods_toggle_menu(true, true),
 	{name= "reload_noteskins", translatable= true, type= "action",
 	 execute= function() NOTESKIN:reload_skins() end},
 }

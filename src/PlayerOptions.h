@@ -250,6 +250,8 @@ public:
 	bool IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) const;
 };
 
+std::string get_player_mod_string(PlayerNumber pn, bool hide_fail);
+
 #endif
 
 /*
