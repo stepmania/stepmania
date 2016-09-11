@@ -67,10 +67,6 @@ void RollingNumbers::SetTargetNumber(float target_number)
 void RollingNumbers::UpdateText()
 {
 	std::string s = fmt::sprintf(m_text_format, m_current_number);
-	if(m_commify)
-	{
-		s = Commify(s);
-	}
 	size_t number_text_width= s.size();
 	size_t chars_wide= static_cast<size_t>(m_chars_wide);
 	if(m_chars_wide <= 0)
@@ -86,6 +82,10 @@ void RollingNumbers::UpdateText()
 		}
 		to_join.push_back(s);
 		s = Rage::join("", to_join);
+	}
+	if(m_commify)
+	{
+		s = Commify(s);
 	}
 	SetText(s);
 	ClearAttributes();
