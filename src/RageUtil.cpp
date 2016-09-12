@@ -376,7 +376,7 @@ std::string Commify(const std::string& num, const std::string& sep, const std::s
 		num_start= dash_pos + 1;
 	}
 	size_t num_size= num_end - num_start;
-	size_t commies= (num_size / 3) - (!(num_size % 3));
+	size_t commies= (num_size - 1) / 3;
 	if(commies < 1)
 	{
 		return num;

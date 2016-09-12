@@ -86,11 +86,12 @@ void RollingNumbers::UpdateText()
 	if(m_commify)
 	{
 		s = Commify(s);
+		number_text_width+= (number_text_width - 1) / 3;
 	}
+	int pad_width= s.size() - number_text_width;
 	SetText(s);
 	ClearAttributes();
-	int width_diff= chars_wide - number_text_width;
-	m_leading_text_attr.length= std::max(0, width_diff);
+	m_leading_text_attr.length= std::max(0, pad_width);
 	if(m_leading_glyph.empty())
 	{
 		m_leading_text_attr.length= 0;
