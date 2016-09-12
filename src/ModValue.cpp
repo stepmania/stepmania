@@ -434,10 +434,9 @@ private:
 void ModManager::update(double curr_beat, double curr_second)
 {
 	double const time_diff= curr_second - m_prev_curr_second;
-	if(time_diff == 0)
-	{
-		return;
-	}
+	// Do not simply return early when time_diff is 0 because per frame
+	// mod_functions still need to be updated when they are changed while the
+	// game is paused. -Kyz
 	if(time_diff > 0)
 	{
 		// Time is moving forwards.
@@ -475,7 +474,7 @@ void ModManager::update(double curr_beat, double curr_second)
 			}
 		}
 	}
-	else
+	else if(time_diff < 0)
 	{
 		// Time is moving backwards.
 		for(auto fap= m_present_funcs.begin(); fap != m_present_funcs.end();)

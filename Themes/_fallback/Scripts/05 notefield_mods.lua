@@ -134,8 +134,6 @@ add_profile_load_callback(
 		if pn then
 			profile_mods_config:load(pn)
 			player_mods[pn]= DeepCopy(profile_mods_config:get_data(pn))
-			rec_print_table(player_mods[pn])
-			lua.ReportScriptError("Loaded mods for " .. pn)
 		end
 	end
 )

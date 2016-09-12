@@ -294,6 +294,20 @@ void GameState::ResetPlayerOptions( PlayerNumber pn )
 	PlayerOptions po;
 	GetDefaultPlayerOptions( po );
 	m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
+	LuaReference clear_notefield_mods;
+	THEME->GetMetric("Common", "ClearNoteFieldModsFunction", clear_notefield_mods);
+	if(clear_notefield_mods.GetLuaType() != LUA_TFUNCTION)
+	{
+		LuaHelpers::ReportScriptError("Common::ClearNoteFieldModsFunction metric must be a function.");
+		return;
+	}
+	Lua* L= LUA->Get();
+	clear_notefield_mods.PushSelf(L);
+	Enum::Push(L, pn);
+	std::string err= "Error running ClearNoteFieldModsFunction:  ";
+	LuaHelpers::RunScriptOnStack(L, err, 1, 0, true);
+	lua_settop(L, 0);
+	LUA->Release(L);
 }
 
 void GameState::Reset()
