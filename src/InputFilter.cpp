@@ -191,12 +191,12 @@ void InputFilter::ButtonPressed( const DeviceInput &di )
 	// Filter out input that is beyond the range of the current system.
 	if(di.device >= NUM_InputDevice)
 	{
-		LOG->Trace("InputFilter::ButtonPressed: Invalid device %i", di.device);
+		LOG->Trace("InputFilter::ButtonPressed: Invalid device %i", int(di.device));
 		return;
 	}
 	if(di.button >= NUM_DeviceButton)
 	{
-		LOG->Trace("InputFilter::ButtonPressed: Invalid button %i", di.button);
+		LOG->Trace("InputFilter::ButtonPressed: Invalid button %i", int(di.button));
 		return;
 	}
 
