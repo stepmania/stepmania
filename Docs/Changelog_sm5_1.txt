@@ -7,11 +7,19 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/09/15
+----------
+* [Input] Added mouse button and wheel events for linux. [kyzentun]
+
 2016/09/10
 ----------
 * [NoteField] Added system for having a menu of notefield modifiers.
   Read Docs/Themerdocs/5.1_incompatibilities/notefield_mods_menu.md.
 	[kyzentun]
+
+================================================================================
+StepMania 5.1.-3 | 20160905
+--------------------------------------------------------------------------------
 
 2016/09/03
 ----------
