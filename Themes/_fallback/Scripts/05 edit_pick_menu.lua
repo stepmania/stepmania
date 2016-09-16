@@ -283,6 +283,7 @@ end
 local function generate_steps_list(song)
 	MESSAGEMAN:Broadcast("edit_menu_selection_changed", {song= song})
 	local all_steps= song:GetAllSteps()
+	table.sort(all_steps, steps_compare)
 	local choices= {
 		name= song:GetDisplayFullTitle(),
 		recall_init_on_pop= true,

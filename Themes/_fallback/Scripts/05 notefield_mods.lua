@@ -44,7 +44,12 @@ local notefield_mods= {
 		end,
 		rainbow= function(mag, field)
 			field:all_columns_mod("get_quantization_multiplier", {name= "base_value", 0})
-			field:all_columns_mod("get_quantization_offset", {name= "rainbow", {"*", .125, "row_id"}})
+			local phases= {}
+			local quants= {0, 1/4, 1/3, 1/8, 1/16, 1/2, 1/6, 1/12}
+			for i= 1, #quants do
+				phases[i]= {i-1, i, 0, quants[i]}
+			end
+			field:all_columns_mod("get_quantization_offset", {name= "rainbow", {"phase", {"repeat", "row_id", 0, #quants}, phases}})
 		end,
 		stealth= function(mag, field)
 			field:all_columns_mod("get_note_alpha", {name= "base_value", 1-mag})
