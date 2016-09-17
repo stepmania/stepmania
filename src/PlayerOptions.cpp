@@ -1456,6 +1456,12 @@ public:
 		return 1;
 	}
 
+	static int FromString(T* p, lua_State* L)
+	{
+		p->FromString(SArg(1));
+		COMMON_RETURN_SELF;
+	}
+
 	LunaPlayerOptions()
 	{
 		ADD_METHOD( IsEasierForSongAndSteps );
@@ -1560,6 +1566,8 @@ public:
 		ADD_METHOD( UsingReverse );
 		ADD_METHOD( GetReversePercentForColumn );
 		ADD_METHOD( GetStepAttacks );
+
+		ADD_METHOD(FromString);
 	}
 };
 

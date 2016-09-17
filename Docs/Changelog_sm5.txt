@@ -4,6 +4,20 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/09/16
+----------
+* [PlayerOptions] Added FromString function for applying a mod string the way
+  ApplyLameCommand does in oitg. [kyzentun]
+
+================================================================================
+StepMania 5.0.12 | 20160905
+--------------------------------------------------------------------------------
+
+2016/08/28
+----------
+* [Gameplay] Added oitg_zoom_mode_actor() for compatibility with oitg's
+  SetZoom bug. [kyzentun]
+
 2016/06/28
 ----------
 * [Gameplay] Moved pause menu logic to a script in _fallback.  Added
