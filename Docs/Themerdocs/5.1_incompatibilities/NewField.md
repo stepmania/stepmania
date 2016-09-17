@@ -7,12 +7,13 @@ maintain on the developer side.
 
 # Compatibility
 Noteskins made for the old system must be converted by a human to be used in
-the NewField.  Typically this involves remaking the hold graphics and writing
+the NoteField.  Typically this involves remaking the hold graphics and writing
 some new lua code to replace the metrics.
 
-Themes made for the old system should work without changes.  Old themes will
-not allow setting advanced NewField options such as noteskin parameters until
-updated by their authors.
+Themes made for the old system will have a variety of problems.
+* No setting notefield prefs.
+* No setting noteskin parameters.
+* No setting noteskin.
 
 Simfiles made to set modifiers in the old mod system will work to varying
 degrees.  They should be tested by their authors to clean up rough edges.
@@ -20,7 +21,7 @@ In particular ApplyGameCommand has been removed because it is obsolete and
 doesn't do the right thing for gimmicks anyway.
 
 ## FastNoteRendering
-The FastNoteRendering preference is obsolete.  The NewField uses a different
+The FastNoteRendering preference is obsolete.  The NoteField uses a different
 method for rendering arrows that prevents the intersection problem that
 occurred with 3D notes and FastNoteRendering, and doesn't slow the game down
 the way turning off FastNoteRendering did in the old NoteField.
@@ -31,12 +32,14 @@ ArrowDefects.  When something touches the PlayerOptions structure for a
 player, the field for that player is put into "defective mode".  When the
 field is in that mode, it ignores all the new modifier fields and instead
 only uses the stuff in PlayerOptions.  This should make old mods behave the
-same in the NewField as in the old NoteField.  This includes unwanted things
-such as theme metrics for receptor position and screen height making some
-mods appear different in different themes.
+same in the NoteField as in the old NoteField.  This includes unwanted things
+such as theme metrics for screen height making some mods appear different in
+different themes.
+
+Receptor offset in defective mode is hardcoded to the ITG values.
 
 ### Musical Sync
-Because the NewField is based around having mods synced to music, mods that
+Because the NoteField is based around having mods synced to music, mods that
 did not have musical sync in the old system are synced in ArrowDefects.
 This means that when these mods are used in conjunction with a music rate
 mod, the mod effect will happen at a different rate.  It should make them
@@ -49,22 +52,19 @@ behave more reliably as well.
 * Blink, Drunk, and Tipsy used the time since stepmania started up, and did
   not stop when the game was paused.  In ArrowDefects, these mods use the
   current music second.
+* PlayerOptions now uses the current music rate when tweening mods.  If haste
+  is on, the rate is adjusted for haste.
 
 
-# Making a theme use NewField
+# Adapting a theme to the new NoteField
 
-## NoteField actor removed
-The old NoteField has been removed from the Player actor on ScreenGameplay.
-The Player:set_newfield_preferred function no longer exists because it no
-longer has a purpose.
-
-## NewField preferences
-The _fallback theme provides a structure for preferences for the NewField.
+## NoteField preferences
+The _fallback theme provides a structure for preferences for the NoteField.
 These preferences cover normal things like speed and hidden, to more exotic
 choices such as y offset (distance from field center to receptors) and
 whether notes flash white before disappearing when hidden is on.
 
-### Enabling NewField preferences
+### Enabling NoteField preferences
 
 #### Loading and Saving
 The preferences should be automatically loaded and saved when profiles are
@@ -75,24 +75,27 @@ use add_profile_load_callback and add_profile_save_callback instead of having
 LoadProfileCustom and SaveProfileCustom functions in the theme.
 
 #### Options Screen
-NewField preferences cannot be set through the old metrics style commands
+NoteField preferences cannot be set through the old metrics style commands
 that set the old player options.  Instead, they must be set through lua
-option rows or a custom lua menu system.  The _fallback theme provides a
-custom lua menu system, and parts for building menus to set the preferences.
+option rows or a custom lua menu system.
+
+The _fallback theme provides a custom lua menu system, and parts for building
+menus to set the preferences.
+
 The default theme has an (uncommented) example options screen that uses the
 custom lua menu system named "ScreenNestyPlayerOptions".
 
 Using old metrics style commands on a normal options screen to set modifiers
 will trigger the backwards compatibility auto detection and disable the
-newfield prefs.
+notefield prefs.
 
 #### Gameplay
 Add an actor to a layer on ScreenGameplay like this:
 ```lua
-t[#t+1]= use_newfield_actor()
+t[#t+1]= notefield_prefs_actor()
 ```
-This will create an actor that will apply the newfield preferences for both
-players.  The newfield preferences will be discussed in their own
+This will create an actor that will apply the notefield preferences for both
+players.  The notefield preferences will be discussed in their own
 documentation file.
 
 #### Music Select
@@ -102,28 +105,29 @@ then when someone plays a simfile that triggers the defective mode detection,
 they'll be stuck in that mode until they start a new credit.
 
 
-### Newskin Option Row
+### Noteskin Option Row
 For themes that still use a metrics based options screen, a lua option row
-for setting the newskin is provied.
+for setting the noteskin is provied.
 ```
-LineNewSkin="lua,newskin_option_row()"
+LineNoteskin="lua,noteskin_option_row()"
 ```
 The default theme no longer uses a metrics based player options screen.
 
 
-## NewField Layers
-The "Graphics/NoteField board" file is not loaded by the NewField.  Instead,
-NewField has a layers system.
+## NoteField Layers
+The "Graphics/NoteField board" file is not loaded anymore.  Instead,
+NoteField has a layers system.
 
-The NewField loads "Graphics/NoteField layers", which returns a table of
+The NoteField loads "Graphics/NoteField layers", which returns a table of
 actors (not an ActorFrame of actors).  These actors become children of the
 field, and the field tracks their draw order.  Each column loads layers from
-the noteskin, and from "Graphics/NoteColumn layers".  The field also tracks
-the draw order of the layers in the columns.  During rendering, the field
-renders everything by draw order, in all columns.  Everything at draw order 0
-in all columns is drawn before anything at draw order 1 in any column.  This
-allows more generalized control over exactly where things are drawn.
+the noteskin, and from "Graphics/NoteColumn layers".
 
+The field also tracks the draw order of the layers in the columns.  During
+rendering, the field renders everything by draw order, in all columns.
+Everything at draw order 0 in all columns is drawn before anything at draw
+order 1 in any column.  This allows more generalized control over exactly
+where things are drawn.
 
 ### Draw Order
 
@@ -132,8 +136,8 @@ is drawn before everything except the song background on ScreenGameplay.
 This means they will be under things that the notes go over.
 
 Hold bodies have draw order 200.  Taps have draw order 300.
-There is a table named newfield_draw_order with entries for receptors and
-explosions so newskins can have a conventional draw order for each.
+There is a table named notefield_draw_order with entries for receptors and
+explosions so noteskins can have a conventional draw order for each.
 
 Anything that needs to be at a fixed position in the field should be in a
 layer file, either in NoteField layers, or NoteColumn layers.  This means
@@ -154,14 +158,14 @@ it at 50.  Putting the judgment at 350 would put it above all the notes.  250
 would put it above hold bodies, but underneath taps.
 
 #### ActorProxy
-Drawing the Player or the NewField or a NewFieldColumn with an ActorProxy
+Drawing the Player or the NoteField or a NoteFieldColumn with an ActorProxy
 will bypass some of the draw order logic.  Things with a draw order less than
 0 will not be under other theme elements when an ActorProxy is used.
 
 ### Judgment/Combo
 
 The judgment and combo actors will not use the JudgmentUnderField and
-ComboUnderField metrics when the NewField is in use.
+ComboUnderField metrics anymore.
 
 Instead, the judgment and combo actors should have a draw order set, as if
 they were layers in the field.  Consider this example:  The combo has a draw
@@ -179,9 +183,14 @@ it changes during gameplay, the change takes effect immediately.
 
 ### Hold Judgments
 
-Displaying hold judgments such as "OK" or "NG" should be handled by an actor
-in Graphics/NoteColumn layers.lua.
+Hold judgments are judgments meant to appear below the receptors when a hold
+finishes.  They should be put in the NoteColumn layers file.
 
+FieldLayerTransformType_PosOnly can be used to position an ActorFrame on the
+receptor, then the judgment sprite can be inside that frame and set a
+position relative to the receptor to appear below.
+
+ReverseChangedCommand can be used to reposition the actor for reverse mode.
 
 ### Alpha/glow and transform mods
 
@@ -231,9 +240,9 @@ end
 
 #### Draw Order Variable List
 
-02 NewField.lua defines these variables to make life convenient for themers.
+02 NoteField.lua defines these variables to make life convenient for themers.
 ```lua
-newfield_draw_order= {
+notefield_draw_order= {
 	layer_spacing= 100,
 	mid_layer_spacing= 50,
 	board= -100,
@@ -251,9 +260,9 @@ newfield_draw_order= {
 }
 ```
 
-## NewField layer messages
+## NoteField layer messages
 
-The NewField sends various info to the layers to make sizing simpler.
+The NoteField sends various info to the layers to make sizing simpler.
 The info is sent through commands that are executed on the layers.  Note that
 these commands are executed before the screen is finished loading.  You
 cannot use SCREENMAN:GetTopScreen() during them.
@@ -268,7 +277,7 @@ The param table has three entries:
 the right edge of the rightmost column.
 * columns:  A set of tables, one for each column, from left to right.  Each
 table contains the width, padding, and x position of a column.
-* field:  The NewField the board is attached to.  If you need it for some
+* field:  The NoteField the board is attached to.  If you need it for some
 reason, this is how to get it.
 
 #### Example
@@ -292,7 +301,7 @@ behind the columns.  Complain to the noteskin author.
 To size a set of quads, each one in a different column, walk through the
 columns table.
 
-## NewFieldColumn layer messages
+## NoteFieldColumn layer messages
 
 The various layers in the column, from both the noteskin and the theme, are
 sent various messages to keep their state updated.
@@ -304,7 +313,7 @@ the player the field is for.
 ### WidthSetCommand
 WidthSet is sent immediately after the OnCommand is executed.  The elements
 in the param table are:
-* ```column``` The NewFieldColumn the layer is in.
+* ```column``` The NoteFieldColumn the layer is in.
 * ```column_id``` The id of the column.
 * ```width``` The width of the column set by the noteskin.
 * ```padding``` The padding set by the noteskin.
@@ -344,33 +353,34 @@ held to dropped.
 * ```finished``` True if this is the frame after the hold ended.
 
 
-# Making a noteskin for the NewField
-Read the comments in NewSkins/default.
-_fallback/Scripts/02 NewSkin.lua has a couple minor functions for generating
+# Making a noteskin for the NoteField
+Read the comments in NoteSkins/default.
+_fallback/Scripts/02 NoteSkin.lua has a couple minor functions for generating
 state maps.
 
 ## 3D noteskins
 
-3D noteskins are not supported on the NewField in this release.
+Something about using a texture map instead of a state map.  The notes in
+the default noteskin explain it.
 
-# Newskin Parameters
+# Noteskin Parameters
 
-Newskin parameters is a system for allowing a newskin to be customized by the
-player.  The parameters are defined by the newskin and can do whatever the
+Noteskin parameters is a system for allowing a noteskin to be customized by the
+player.  The parameters are defined by the noteskin and can do whatever the
 skin author wants.  The player's choices are saved in their profile by skin
 and stepstype (so the same skin can be set different ways for different
-stepstypes).  The theme uses information provided by the newskin to give the
+stepstypes).  The theme uses information provided by the noteskin to give the
 player a menu for setting the parameters.
 
 The system is explained in more detail in comments in the default noteskin,
 with examples used to control explosion particles and the amount of warning
 time given by the receptors.
 
-Because the newskin parameter table can go to any depth and contain anything,
+Because the noteskin parameter table can go to any depth and contain anything,
 and different players can choose different skins, creating a menu for it in
 the confined OptionRow system would probably be very difficult.  OptionRow
-menus for setting newskin parameters are not provided.  The nested option
-menus system does provide menus for setting newskin parameters.
+menus for setting noteskin parameters are not provided.  The nested option
+menus system does provide menus for setting noteskin parameters.
 
 
 # Multiplayer mode
@@ -386,7 +396,7 @@ the number of quantizations by the number of players by the frames of
 animation.
 
 There are currently two methods for playerizing notes.  The playerizing
-method is set by the NewFieldColumn.
+method is set by the NoteFieldColumn.
 
 ```NotePlayerizeMode_Off``` turns off playerizing of notes.  
 ```NotePlayerizeMode_Quanta``` turns of quantizing notes and instead uses
@@ -397,37 +407,37 @@ mask is a different color for each player.
 If the theme attempts to set NotePlayerizeMode_Mask and the noteskin does not
 support it, NotePlayerizeMode_Quanta will be used instead.
 
-NewSkins/routine/notes.lua is an example of noteskin that supports
-multiplayer mode.  It has example masks and colors and explanation comments.
-
 
 # Non-modifier Functions
 
-## NewFieldColumn Functions
+## NoteFieldColumn Functions
 
-* NewFieldColumn:get_layer_fade_type(layer)  
+Find 20 mistakes in NewField_mod_system.md to unlock updated documentation
+of the functions in NoteField.
+
+* NoteFieldColumn:get_layer_fade_type(layer)  
 Returns the FieldLayerFadeType for the layer.
 
-* NewFieldColumn:set_layer_fade_type(layer, type)  
+* NoteFieldColumn:set_layer_fade_type(layer, type)  
 layer must be the actor the type is being applied to.  type is a
 FieldLayerFadeType enum value.
 
-* NewFieldColumn:get_layer_transform_type(layer)  
+* NoteFieldColumn:get_layer_transform_type(layer)  
 Returns the FieldLayerTransformType for the layer.
 
-* NewFieldColumn:set_layer_transform_type(layer, type)  
+* NoteFieldColumn:set_layer_transform_type(layer, type)  
 layer must be the actor the type is being applied to.  type is a
 FieldLayerTransformType enum value.
 
-## NewField Functions
+## NoteField Functions
 
-* NewField:get_layer_fade_type(layer)  
-Identical to NewFieldColumn:get_layer_fade_type.
+* NoteField:get_layer_fade_type(layer)  
+Identical to NoteFieldColumn:get_layer_fade_type.
 
-* NewField:set_layer_fade_type(layer, type)  
-Identical to NewFieldColumn:set_layer_fade_type.
+* NoteField:set_layer_fade_type(layer, type)  
+Identical to NoteFieldColumn:set_layer_fade_type.
 
-* NewField:set_speed_mod(constant, speed, read_bpm)  
+* NoteField:set_speed_mod(constant, speed, read_bpm)  
 set_speed_mod creates a simple speed mod from the parameters and applies it
 to all columns.  If ```constant``` is true, bpm changes, stops, speed
 segments, and similar stuff will be disabled, as in an old-style CMod, and
@@ -439,30 +449,30 @@ If ```read_bpm``` is nil, it will be treated as 1, which makes it the same as
 an old-style XMod.  If ```read_bpm``` is not nil and not a number, a theme
 error will occur.
 
-* NewField:set_rev_offset_base(revoff)  
+* NoteField:set_rev_offset_base(revoff)  
 Sets the base value for reverse_offset_pixels for all columns to revoff.
 
-* NewField:set_reverse_base(rev)  
+* NoteField:set_reverse_base(rev)  
 Sets the base value for reverse_scale for all columns to rev.
 
-* NewField:clear_column_mod(mod_field_name, mod_name)  
+* NoteField:clear_column_mod(mod_field_name, mod_name)  
 Clears the mod with mod_name in the field mod_field_name in all columns.
 
-* NewField:set_hidden_mod(line, dist, add_glow)  
+* NoteField:set_hidden_mod(line, dist, add_glow)  
 Adds a hidden mod, which makes notes disappear as they cross the line.  line
 is the y offset the mod effect is occurs at.  dist is how many pixels notes
 take to go from fully visible to fully invisible.  If add_glow is true, then
 the glow on notes will ramp up before they fade out.  If add_glow is false,
 then the hidden mod will only make the notes transparent to fade them out.
 
-* NewField:set_sudden_mod(line, dist, add_glow)  
+* NoteField:set_sudden_mod(line, dist, add_glow)  
 Similar to set_hidden_mod, this adds a sudden mod, which makes notes after
 line invisible, and notes above it visible.
 
-* NewField:clear_hidden_mod()  
+* NoteField:clear_hidden_mod()  
 Clears the hidden mod from all columns.
 
-* NewField:clear_sudden_mod()  
+* NoteField:clear_sudden_mod()  
 Clears the sudden mod from all columns.
 
 ## Other functions
@@ -470,17 +480,12 @@ Clears the sudden mod from all columns.
 * find_pactor_in_gameplay(screen_gameplay, pn)  
 Returns the player actor or nil.
 
-* find_newfield_in_gameplay(screen_gameplay, pn)  
-Returns the newfield actor or nil.
+* find_notefield_in_gameplay(screen_gameplay, pn)  
+Returns the notefield actor or nil.
 
-* use_newfield_on_gameplay()  
-Finds the player actors for all enabled players and sets them to render the
-newfield instead of the oldfield.  Also applies the newfield prefs to their
-newfields.
+* notefield_prefs_actor()
+Returns an actor that applies notefield prefs for both players.
 
-* use_newfield_actor()  
-Returns an actor that calls use_newfield_on_gameplay in its OnCommand.
-
-* newskin_option_row()  
-Returns a lua option row for picking a newskin on a metrics based options
+* noteskin_option_row()  
+Returns a lua option row for picking a noteskin on a metrics based options
 screen.
