@@ -277,8 +277,11 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 			bHandled = true;
 		}
 	}
-
-	return ScreenWithMenuElements::Input( input ) || bHandled;
+	if(bHandled)
+	{
+		return true;
+	}
+	return ScreenWithMenuElements::Input(input);
 }
 
 void ScreenTextEntry::TryAppendToAnswer( std::string s )
