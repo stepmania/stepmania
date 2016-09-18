@@ -176,7 +176,6 @@ protected:
 	void LoadStepManiaSongDir( std::string sDir, LoadingWindow *ld );
 	void LoadDWISongDir( std::string sDir );
 	bool GetExtraStageInfoFromCourse( bool bExtra2, std::string sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype );
-	void SanityCheckGroupDir( std::string sDir ) const;
 	void AddGroup( std::string sDir, std::string sGroupDirName );
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
 

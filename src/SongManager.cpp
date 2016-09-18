@@ -110,7 +110,6 @@ void SongManager::InitAll( LoadingWindow *ld )
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
 static LocalizedString UNLOADING_SONGS ( "SongManager", "Unloading songs..." );
 static LocalizedString UNLOADING_COURSES ( "SongManager", "Unloading courses..." );
-static LocalizedString SANITY_CHECKING_GROUPS("SongManager", "Sanity checking groups...");
 
 void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 {
@@ -172,25 +171,6 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 }
 
 static LocalizedString FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder \"%s\" appears to be a song folder.  All song folders must reside in a group folder.  For example, \"Songs/Originals/My Song\"." );
-void SongManager::SanityCheckGroupDir( std::string sDir ) const
-{
-	// Check to see if they put a song directly inside the group folder.
-	vector<std::string> arrayFiles;
-	GetDirListing( sDir + "/*", arrayFiles );
-	auto const & audio_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
-	for (auto const &fname: arrayFiles)
-	{
-		const std::string ext= GetExtension(fname);
-		for (auto const &aud: audio_exts)
-		{
-			if(ext == aud)
-			{
-				RageException::Throw(
-					FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str());
-			}
-		}
-	}
-}
 
 void SongManager::AddGroup( std::string sDir, std::string sGroupDirName )
 {
@@ -287,105 +267,79 @@ void SongManager::LoadStepManiaSongDir( std::string sDir, LoadingWindow *ld )
 	StripCvsAndSvn( arrayGroupDirs );
 	StripMacResourceForks( arrayGroupDirs );
 
-	vector<vector<std::string>> arrayGroupSongDirs;
-	int groupIndex, songCount, songIndex;
-
-	groupIndex = 0;
-	songCount = 0;
+	int const updates_per_group= 50;
 	if(ld)
 	{
 		ld->SetIndeterminate(false);
-		ld->SetTotalWork(arrayGroupDirs.size());
+		ld->SetTotalWork(arrayGroupDirs.size() * updates_per_group);
 	}
-	int sanity_index= 0;
-	for (auto const &sGroupDirName: arrayGroupDirs)
+	auto const & audio_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
+	for(size_t group_index= 0; group_index < arrayGroupDirs.size(); ++group_index)
 	{
-		++sanity_index;
-		if(ld && loading_window_last_update_time.Ago() > next_loading_window_update)
+		auto& group_name= arrayGroupDirs[group_index];
+		vector<std::string> song_folders;
+		GetDirListing(sDir + group_name + "/*", song_folders, true, true);
+		StripCvsAndSvn(song_folders);
+		StripMacResourceForks(song_folders);
+		// Song Select sorts songs by name, already, doesn't it?  Why do the song
+		// names need to be sorted during loading? -Kyz
+		SortStringArray(song_folders);
+		LOG->Trace("Attempting to load %i songs from \"%s\"",
+			int(song_folders.size()), sDir+group_name);
+		int loaded= 0;
+		SongPointerVector& index_entry = m_mapSongGroupIndex[group_name];
+		auto group_base_name= Rage::base_name(group_name);
+
+		for(size_t song_index= 0; song_index < song_folders.size(); ++song_index)
 		{
-			loading_window_last_update_time.Touch();
-			ld->SetProgress(sanity_index);
-			ld->SetText(SANITY_CHECKING_GROUPS.GetValue() + fmt::sprintf("\n%s",
-					Rage::base_name(sGroupDirName).c_str()));
-		}
-		// TODO: If this check fails, log a warning instead of crashing.
-		SanityCheckGroupDir(sDir+sGroupDirName);
-
-		// Find all Song folders in this group directory
-		vector<std::string> arraySongDirs;
-		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
-		StripCvsAndSvn( arraySongDirs );
-		StripMacResourceForks( arraySongDirs );
-		SortStringArray( arraySongDirs );
-
-		arrayGroupSongDirs.push_back(arraySongDirs);
-		songCount += arraySongDirs.size();
-
-	}
-
-	if( songCount==0 ) return;
-
-	if( ld ) {
-		ld->SetIndeterminate( false );
-		ld->SetTotalWork( songCount );
-	}
-
-	groupIndex = 0;
-	songIndex = 0;
-	for (auto const &sGroupDirName: arrayGroupDirs)
-	{
-		auto &arraySongDirs = arrayGroupSongDirs[groupIndex++];
-
-		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
-				   (sDir+sGroupDirName).c_str() );
-		int loaded = 0;
-
-		SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupDirName];
-
-		auto group_base_name= Rage::base_name(sGroupDirName);
-		// TODO: Confirm if reference vs copy is better. There are some
-		// inconsistencies with using a reference here on occasion.
-		for (auto const sSongDirName: arraySongDirs)
-		{
+			auto& song_dir_name= song_folders[song_index];
+			// Check to see if they put a song directly inside the group folder.
+			// TODO: If this check fails, log a warning instead of crashing.
+			std::string const ext= GetExtension(song_dir_name);
+			for(auto&& aud : audio_exts)
+			{
+				if(ext == aud)
+				{
+					RageException::Throw(
+						FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str());
+				}
+			}
 			// this is a song directory. Load a new song.
 			if(ld && loading_window_last_update_time.Ago() > next_loading_window_update)
 			{
 				loading_window_last_update_time.Touch();
-				ld->SetProgress(songIndex);
-				ld->SetText( LOADING_SONGS.GetValue() +
+				ld->SetProgress((group_index * updates_per_group) +
+					(Rage::scale(int(song_index), 0, int(song_folders.size()), 0, updates_per_group)));
+				ld->SetText(LOADING_SONGS.GetValue() +
 					fmt::sprintf("\n%s\n%s",
 						group_base_name.c_str(),
-						Rage::base_name(sSongDirName).c_str()
-					)
-				);
+						Rage::base_name(song_dir_name).c_str()));
 			}
-			Song* pNewSong = new Song;
-			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
+			Song* new_song= new Song;
+			if(!new_song->LoadFromSongDir(song_dir_name))
 			{
 				// The song failed to load.
-				delete pNewSong;
+				delete new_song;
 				continue;
 			}
-			AddSongToList(pNewSong);
-
-			index_entry.push_back( pNewSong );
-			loaded++;
-			songIndex++;
+			AddSongToList(new_song);
+			index_entry.push_back(new_song);
+			++loaded;
 		}
 
-		LOG->Trace("Loaded %i songs from \"%s\"", loaded, (sDir+sGroupDirName).c_str() );
+		LOG->Trace("Loaded %i songs from \"%s\"", loaded, (sDir+group_name).c_str());
 
 		// Don't add the group name if we didn't load any songs in this group.
-		if(!loaded) continue;
+		if(loaded <= 0) { continue; }
 
 		// Add this group to the group array.
-		AddGroup(sDir, sGroupDirName);
+		AddGroup(sDir, group_name);
 
 		// Cache and load the group banner. (and background if it has one -aj)
-		BANNERCACHE->CacheBanner( GetSongGroupBannerPath(sGroupDirName) );
+		BANNERCACHE->CacheBanner(GetSongGroupBannerPath(group_name));
 
 		// Load the group sym links (if any)
-		LoadGroupSymLinks(sDir, sGroupDirName);
+		LoadGroupSymLinks(sDir, group_name);
 	}
 
 	if( ld ) {

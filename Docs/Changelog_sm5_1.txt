@@ -7,6 +7,11 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/09/18
+----------
+* [Songs] Empty tags are not written to SSC files.  Group sanity checking
+  rolled into group loading. [kyzentun]
+
 2016/09/15
 ----------
 * [Input] Added mouse button and wheel events for linux. [kyzentun]

@@ -5,6 +5,10 @@ StepMania 5.1 series.  This is to inform translators of strings that need to
 be translated from English to other languages.
 ________________________________________________________________________________
 
+2016/09/18
+----------
+* [SongManager] Removed "Sanity checking groups..." string.
+
 2016/08/26
 ----------
 * New section: editmode_options.  This section is used by the menu for
