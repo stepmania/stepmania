@@ -283,7 +283,7 @@ void SongManager::LoadStepManiaSongDir( std::string sDir, LoadingWindow *ld )
 		StripMacResourceForks(song_folders);
 		// Song Select sorts songs by name, already, doesn't it?  Why do the song
 		// names need to be sorted during loading? -Kyz
-		SortStringArray(song_folders);
+		// SortStringArray(song_folders);
 		LOG->Trace("Attempting to load %i songs from \"%s\"",
 			int(song_folders.size()), sDir+group_name);
 		int loaded= 0;
@@ -295,13 +295,19 @@ void SongManager::LoadStepManiaSongDir( std::string sDir, LoadingWindow *ld )
 			auto& song_dir_name= song_folders[song_index];
 			// Check to see if they put a song directly inside the group folder.
 			// TODO: If this check fails, log a warning instead of crashing.
+			// -Unknown
+			// I think crashing is the only way to get the message across so people
+			// put songs in the right place. -Kyz
 			std::string const ext= GetExtension(song_dir_name);
-			for(auto&& aud : audio_exts)
+			if(!ext.empty())
 			{
-				if(ext == aud)
+				for(auto&& aud : audio_exts)
 				{
-					RageException::Throw(
-						FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str());
+					if(ext == aud)
+					{
+						RageException::Throw(
+							FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str());
+					}
 				}
 			}
 			// this is a song directory. Load a new song.
