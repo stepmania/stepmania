@@ -184,7 +184,10 @@ local lua_config_mt= {
 		get_filename= function(self, slot)
 			slot= self:sanitize_profile_slot(slot)
 			local prof_dir= self:slot_to_prof_dir(slot, "write " .. self.name)
-			if not prof_dir then return end
+			if not prof_dir then
+				SCREENMAN:SystemMessage("Unable to get profile dir for " .. ToEnumShortString(slot))
+				return
+			end
 			if self.use_alternate_config_prefix then
 				return prof_dir .. self.use_alternate_config_prefix .. self.file
 			end
@@ -196,7 +199,7 @@ local lua_config_mt= {
 			if not self:check_dirty(slot) then return end
 			local fname= self:get_filename(slot)
 			if not fname then
-				Trace("Unable to save config.")
+				SCREENMAN:SystemMessage("Unable to save config.")
 				return
 			end
 			lua.save_lua_table(fname, self.data_set[slot])

@@ -85,6 +85,7 @@ public:
 	void SetUpdateRate(float rate) { if(rate > 0.0f) { m_fUpdateRate = rate; }}
 	float GetUpdateRate() { return m_fUpdateRate; }
 	void SetFOV( float fFOV ) { m_fFOV = fFOV; }
+	float get_fov() { return m_fFOV; }
 	void SetVanishPoint( float fX, float fY) { m_fVanishX = fX; m_fVanishY = fY; }
 
 	void SetCustomLighting( bool bCustomLighting ) { m_bOverrideLighting = bCustomLighting; }
