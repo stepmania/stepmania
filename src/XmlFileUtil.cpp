@@ -709,7 +709,7 @@ namespace
 			NodesToAdd.back().SetFromStack( L );
 		}
 
-		int iLen = NodeNamesToAdd.size();
+		int iLen = lua_objlen(L, -1);
 		FOREACH_LUATABLE( L, -1 )
 		{
 			// If this entry is a table, add it recursively.
