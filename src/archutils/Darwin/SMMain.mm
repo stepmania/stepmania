@@ -220,7 +220,7 @@ int main( int argc, char **argv )
 
 	// Create SMMain and make it the app delegate.
 	sm = [[SMMain alloc] initWithArgc:argc argv:argv];
-	[NSApp setDelegate:static_cast<id<NSFileManagerDelegate>>(sm)];
+	[NSApp setDelegate:static_cast<id<NSApplicationDelegate>>(sm)];
 
 	[pool release];
 	// Start the main event loop.
