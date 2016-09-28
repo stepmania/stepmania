@@ -192,6 +192,44 @@ SIMPLE_OPERATOR(max, std::max);
 #undef divide_wrap
 #undef SIMPLE_OPERATOR
 
+#define PAIR_OPERATOR(op_name, eval) \
+struct mod_operator_##op_name : mod_operator \
+{ \
+	virtual double evaluate(mod_val_inputs& input) \
+	{ \
+		PER_NOTE_UPDATE_IF; \
+		return eval(m_operand_results[0], m_operand_results[1]); \
+	} \
+	virtual void load_from_lua(mod_function* parent, lua_State* L, int index) \
+	{ \
+		mod_operator::load_from_lua(parent, L, index); \
+		if(m_operands.size() != 2) \
+		{ \
+			throw std::string(#op_name " operator must have exactly 2 operands."); \
+		} \
+	} \
+};
+
+// Pretty sure checking for 1.0 is slower than the divide and multiply.
+#define OBLONG_WRAPPER(name) \
+static double name##_wrapper(double left, double right) \
+{ \
+	return std::name(left / right) * right; \
+}
+
+OBLONG_WRAPPER(floor);
+OBLONG_WRAPPER(ceil);
+OBLONG_WRAPPER(round);
+
+#undef OBLONG_WRAPPER
+
+PAIR_OPERATOR(mod, fmod);
+PAIR_OPERATOR(floor, floor_wrapper);
+PAIR_OPERATOR(ceil, ceil_wrapper);
+PAIR_OPERATOR(round, round_wrapper);
+
+#undef PAIR_OPERATOR
+
 #define WAVE_OPERATOR(op_name, wave_eval) \
 struct mod_operator_##op_name : mod_operator \
 { \
@@ -362,6 +400,10 @@ enum mot
 	mot_random,
 	mot_phase,
 	mot_repeat,
+	mot_mod,
+	mot_floor,
+	mot_ceil,
+	mot_round,
 	mot_spline
 };
 
@@ -659,37 +701,45 @@ void ModManager::remove_from_present(std::list<func_and_parent>::iterator fapi)
 }
 
 
+#define CONVENT(field_name) {#field_name, mot_##field_name}
+static std::unordered_map<std::string, mot> mot_conversion= {
+	{"+", mot_add},
+	{"-", mot_subtract},
+	{"*", mot_multiply},
+	{"/", mot_divide},
+	{"^", mot_exp},
+	{"v", mot_log},
+	{"%", mot_mod},
+	{"o", mot_round},
+	{"_", mot_floor},
+	CONVENT(add),
+	CONVENT(subtract),
+	CONVENT(multiply),
+	CONVENT(divide),
+	CONVENT(exp),
+	CONVENT(log),
+	CONVENT(min),
+	CONVENT(max),
+	CONVENT(sin),
+	CONVENT(cos),
+	CONVENT(tan),
+	CONVENT(square),
+	CONVENT(triangle),
+	CONVENT(random),
+	CONVENT(phase),
+	CONVENT(repeat),
+	CONVENT(mod),
+	CONVENT(floor),
+	CONVENT(ceil),
+	CONVENT(round),
+	CONVENT(spline)
+};
+#undef CONVENT
+
 static mot str_to_mot(std::string const& str)
 {
-#define CONVENT(field_name) {#field_name, mot_##field_name}
-	static std::unordered_map<std::string, mot> conversion= {
-		{"+", mot_add},
-		{"-", mot_subtract},
-		{"*", mot_multiply},
-		{"/", mot_divide},
-		{"^", mot_exp},
-		{"v", mot_log},
-		CONVENT(add),
-		CONVENT(subtract),
-		CONVENT(multiply),
-		CONVENT(divide),
-		CONVENT(exp),
-		CONVENT(log),
-		CONVENT(min),
-		CONVENT(max),
-		CONVENT(sin),
-		CONVENT(cos),
-		CONVENT(tan),
-		CONVENT(square),
-		CONVENT(triangle),
-		CONVENT(random),
-		CONVENT(phase),
-		CONVENT(repeat),
-		CONVENT(spline)
-	};
-#undef CONVENT
-	auto entry= conversion.find(str);
-	if(entry == conversion.end())
+	auto entry= mot_conversion.find(str);
+	if(entry == mot_conversion.end())
 	{
 		throw std::string(fmt::sprintf("Invalid mod operator type: %s", str.c_str()));
 	}
@@ -728,6 +778,10 @@ static mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int 
 		SET_NEW(random);
 		SET_NEW(phase);
 		SET_NEW(repeat);
+		SET_NEW(mod);
+		SET_NEW(floor);
+		SET_NEW(ceil);
+		SET_NEW(round);
 		SET_NEW(spline);
 		default: break;
 	}
@@ -748,30 +802,31 @@ static mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int 
 	return new_oper;
 }
 
+#define CONVENT(field_name) {#field_name, mit_##field_name}
+static std::unordered_map<std::string, mit> mit_conversion= {
+	CONVENT(music_rate),
+	CONVENT(column),
+	CONVENT(y_offset),
+	CONVENT(note_id_in_chart),
+	CONVENT(note_id_in_column),
+	CONVENT(row_id),
+	CONVENT(eval_beat),
+	CONVENT(eval_second),
+	CONVENT(music_beat),
+	CONVENT(music_second),
+	CONVENT(dist_beat),
+	CONVENT(dist_second),
+	CONVENT(start_beat),
+	CONVENT(start_second),
+	CONVENT(end_beat),
+	CONVENT(end_second)
+};
+#undef CONVENT
+
 static mit str_to_mit(std::string const& str)
 {
-#define CONVENT(field_name) {#field_name, mit_##field_name}
-	static std::unordered_map<std::string, mit> conversion= {
-		CONVENT(music_rate),
-		CONVENT(column),
-		CONVENT(y_offset),
-		CONVENT(note_id_in_chart),
-		CONVENT(note_id_in_column),
-		CONVENT(row_id),
-		CONVENT(eval_beat),
-		CONVENT(eval_second),
-		CONVENT(music_beat),
-		CONVENT(music_second),
-		CONVENT(dist_beat),
-		CONVENT(dist_second),
-		CONVENT(start_beat),
-		CONVENT(start_second),
-		CONVENT(end_beat),
-		CONVENT(end_second)
-	};
-#undef CONVENT
-	auto entry= conversion.find(str);
-	if(entry == conversion.end())
+	auto entry= mit_conversion.find(str);
+	if(entry == mit_conversion.end())
 	{
 		throw std::string(fmt::sprintf("Invalid mod input type: %s", str.c_str()));
 	}
@@ -1731,3 +1786,68 @@ struct LunaModifiableValue : Luna<ModifiableValue>
 	}
 };
 LUA_REGISTER_CLASS(ModifiableValue);
+
+namespace
+{
+	static int get_operator_list(lua_State* L)
+	{
+		lua_createtable(L, mot_conversion.size(), 0);
+		int table_index= lua_gettop(L);
+		int curr_entry= 1;
+		for(auto&& entry : mot_conversion)
+		{
+			lua_pushstring(L, entry.first.c_str());
+			lua_rawseti(L, table_index, curr_entry);
+			++curr_entry;
+		}
+		return 1;
+	}
+	static int get_has_operator_list(lua_State* L)
+	{
+		lua_createtable(L, 0, mot_conversion.size());
+		int table_index= lua_gettop(L);
+		for(auto&& entry : mot_conversion)
+		{
+			lua_pushstring(L, entry.first.c_str());
+			lua_pushboolean(L, true);
+			lua_settable(L, table_index);
+		}
+		return 1;
+	}
+	static int get_input_list(lua_State* L)
+	{
+		lua_createtable(L, mit_conversion.size(), 0);
+		int table_index= lua_gettop(L);
+		int curr_entry= 1;
+		for(auto&& entry : mit_conversion)
+		{
+			lua_pushstring(L, entry.first.c_str());
+			lua_rawseti(L, table_index, curr_entry);
+			++curr_entry;
+		}
+		return 1;
+	}
+	static int get_has_input_list(lua_State* L)
+	{
+		lua_createtable(L, 0, mit_conversion.size());
+		int table_index= lua_gettop(L);
+		for(auto&& entry : mit_conversion)
+		{
+			lua_pushstring(L, entry.first.c_str());
+			lua_pushboolean(L, true);
+			lua_settable(L, table_index);
+		}
+		return 1;
+	}
+
+	const luaL_Reg ModValueTable[] =
+	{
+		LIST_METHOD(get_operator_list),
+		LIST_METHOD(get_has_operator_list),
+		LIST_METHOD(get_input_list),
+		LIST_METHOD(get_has_input_list),
+		{nullptr, nullptr}
+	};
+}
+
+LUA_REGISTER_NAMESPACE(ModValue);

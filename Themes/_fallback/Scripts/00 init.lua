@@ -76,6 +76,19 @@ function foreach_ordered( tbl, func )
 	foreach_by_sorted_keys(tbl, string_keys, func)
 end
 
+function for_all_children(parent, func)
+	local children= parent:GetChildren()
+	for name, child in pairs(children) do
+		if #child > 0 then
+			for si, sc in ipairs(child) do
+				func(sc)
+			end
+		else
+			func(child)
+		end
+	end
+end
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --

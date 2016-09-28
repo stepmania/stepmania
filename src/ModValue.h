@@ -202,6 +202,9 @@ struct ModifiableVector3
 	ModifiableVector3(ModManager* man, double value)
 		:x_mod(man, value), y_mod(man, value), z_mod(man, value)
 	{}
+	ModifiableVector3(ModManager* man, double x, double y, double z)
+		:x_mod(man, x), y_mod(man, y), z_mod(man, z)
+	{}
 	void evaluate(mod_val_inputs& input, Rage::Vector3& out)
 	{
 		out.x = static_cast<float>(x_mod.evaluate(input));

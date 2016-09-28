@@ -115,13 +115,14 @@ bool operator<(NoteField::field_draw_entry const& rhs, NoteField::field_draw_ent
 NoteFieldColumn::NoteFieldColumn()
 	:m_show_unjudgable_notes(true),
 	 m_speed_segments_enabled(true), m_scroll_segments_enabled(true),
-	 m_add_y_offset_to_position(true), m_holds_skewed_by_mods(true),
+	 m_holds_skewed_by_mods(true),
 	 m_twirl_holds(true), m_use_moddable_hold_normal(false),
 	 m_time_offset(&m_mod_manager, 0.0),
 	 m_quantization_multiplier(&m_mod_manager, 1.0),
 	 m_quantization_offset(&m_mod_manager, 0.0),
 	 m_speed_mod(&m_mod_manager, 0.0),
 	 m_lift_pretrail_length(&m_mod_manager, 0.25),
+	 m_y_offset_vec_mod(&m_mod_manager, 0.0, 1.0, 0.0),
 	 m_reverse_offset_pixels(&m_mod_manager, 240.0 - note_size),
 	 m_reverse_scale(&m_mod_manager, 1.0),
 	 m_center_percent(&m_mod_manager, 0.0),
@@ -227,7 +228,7 @@ void NoteFieldColumn::set_note_data(size_t column, const NoteData* note_data,
 		moddable->set_timing(timing_data);
 		moddable->set_column(column);
 	}
-	for(auto&& moddable : {&m_hold_normal_mod})
+	for(auto&& moddable : {&m_y_offset_vec_mod, &m_hold_normal_mod})
 	{
 		moddable->set_timing(timing_data);
 		moddable->set_column(column);
@@ -267,7 +268,6 @@ void NoteFieldColumn::take_over_mods(NoteFieldColumn& other)
 	CPY(m_show_unjudgable_notes);
 	CPY(m_speed_segments_enabled);
 	CPY(m_scroll_segments_enabled);
-	CPY(m_add_y_offset_to_position);
 	CPY(m_holds_skewed_by_mods);
 	CPY(m_twirl_holds);
 	CPY(m_use_moddable_hold_normal);
@@ -277,6 +277,7 @@ void NoteFieldColumn::take_over_mods(NoteFieldColumn& other)
 	CPY_MODS(m_quantization_offset);
 	CPY_MODS(m_speed_mod);
 	CPY_MODS(m_lift_pretrail_length);
+	CPY_MODS(m_y_offset_vec_mod);
 	CPY_MODS(m_reverse_offset_pixels);
 	CPY_MODS(m_reverse_scale);
 	CPY_MODS(m_center_percent);
@@ -540,6 +541,19 @@ double NoteFieldColumn::apply_reverse_shift(double y_offset)
 	return (y_offset * reverse_scale) + reverse_shift;
 }
 
+void NoteFieldColumn::apply_yoffset_to_pos(mod_val_inputs& input,
+	Rage::Vector3& pos)
+{
+	Rage::Vector3 yoff;
+	m_y_offset_vec_mod.evaluate(input, yoff);
+	for(int i= 0; i < 3; ++i)
+	{
+		pos[i]+= static_cast<float>(
+			(reverse_scale * (yoff[i] * input.y_offset)) +
+			(reverse_shift * yoff[i]));
+	}
+}
+
 void NoteFieldColumn::apply_column_mods_to_actor(Actor* act)
 {
 	mod_val_inputs input(m_curr_beat, m_curr_second);
@@ -562,10 +576,7 @@ void NoteFieldColumn::apply_note_mods_to_actor(Actor* act, double beat,
 	}
 	Rage::transform trans;
 	calc_transform(mod_input, trans);
-	if(m_add_y_offset_to_position)
-	{
-		trans.pos.y+= static_cast<float>(apply_reverse_shift(y_offset));
-	}
+	apply_yoffset_to_pos(mod_input, trans.pos);
 	act->set_transform(trans);
 }
 
@@ -860,6 +871,9 @@ struct hold_vert_step_state
 		renderable.input.change_eval_time(beat, second);
 		renderable.input.y_offset= y;
 		col.hold_render_transform(renderable.input, trans, col.m_twirl_holds);
+		// FIXME: Hold caps need to not be squished by the reverse_scale.
+		// And they need to be affected by the y zoom.
+		col.apply_yoffset_to_pos(renderable.input, trans.pos);
 		if(beat <= col.m_selection_end && beat >= col.m_selection_start)
 		{
 			trans.glow= col.get_selection_glow();
@@ -964,15 +978,7 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		if(!m_holds_skewed_by_mods)
 		{
 			render_forward.x= next_step.trans.pos.x - curr_step.trans.pos.x;
-			if(m_add_y_offset_to_position)
-			{
-				render_forward.y= (next_step.y + next_step.trans.pos.y) -
-					(curr_step.y + curr_step.trans.pos.y);
-			}
-			else
-			{
-				render_forward.y= next_step.trans.pos.y - curr_step.trans.pos.y;
-			}
+			render_forward.y= next_step.trans.pos.y - curr_step.trans.pos.y;
 			render_forward.z= next_step.trans.pos.z - curr_step.trans.pos.z;
 			render_forward= render_forward.GetNormalized();
 		}
@@ -999,36 +1005,13 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 			RageAARotate(&render_left, &render_forward, -curr_step.trans.rot.y);
 		}
 		render_left*= (.5 * m_newskin->get_width()) * curr_step.trans.zoom.x;
-		// Hold caps need to not be squished by the reverse_scale.
-		double render_y= curr_y;
-		if(m_add_y_offset_to_position)
-		{
-			switch(phase)
-			{
-				case HTP_Top:
-					render_y= curr_step.trans.pos.y + body_start_render_y -
-						((tex_handler.body_start_y - curr_y) * reverse_scale_sign);
-					break;
-				case HTP_Bottom:
-				case HTP_Done:
-					render_y= curr_step.trans.pos.y + body_end_render_y +
-						((curr_y - tex_handler.body_end_y) * reverse_scale_sign);
-					break;
-				case HTP_Body:
-				default:
-					render_y= apply_reverse_shift(curr_y) + curr_step.trans.pos.y;
-					break;
-			}
-		}
-		else
-		{
-			render_y= curr_step.trans.pos.y;
-		}
 		const Rage::Vector3 left_vert(
-			render_left.x + curr_step.trans.pos.x, render_y + render_left.y,
+			render_left.x + curr_step.trans.pos.x,
+			render_left.y + curr_step.trans.pos.y,
 			render_left.z + curr_step.trans.pos.z);
 		const Rage::Vector3 right_vert(
-			-render_left.x + curr_step.trans.pos.x, render_y -render_left.y,
+			-render_left.x + curr_step.trans.pos.x,
+			-render_left.y + curr_step.trans.pos.y,
 			-render_left.z + curr_step.trans.pos.z);
 		const Rage::Color color(color_scale, color_scale, color_scale, curr_step.trans.alpha);
 		const Rage::Color glow_color(1.0, 1.0, 1.0, curr_step.trans.glow);
@@ -1342,10 +1325,7 @@ void NoteFieldColumn::build_render_lists()
 		m_column_mod.evaluate(input, trans);
 		set_transform(trans);
 		calc_transform(input, head_transform);
-		if(m_add_y_offset_to_position)
-		{
-			head_transform.pos.y+= apply_reverse_shift(head_y_offset());
-		}
+		apply_yoffset_to_pos(input, head_transform.pos);
 		receptor_alpha= m_receptor_alpha.evaluate(input);
 		receptor_glow= m_receptor_glow.evaluate(input);
 		explosion_alpha= m_explosion_alpha.evaluate(input);
@@ -1788,10 +1768,7 @@ void NoteFieldColumn::draw_taps_internal()
 				calc_transform_with_glow_alpha(tapit.input, trans);
 				if(!m_in_defective_mode)
 				{
-					if(m_add_y_offset_to_position)
-					{
-						trans.pos.y+= apply_reverse_shift(act.y_offset);
-					}
+					apply_yoffset_to_pos(tapit.input, trans.pos);
 				}
 				act.act->set_transform_with_glow_alpha(trans);
 				if(tap_beat <= m_selection_end && tap_beat >= m_selection_start)
@@ -1825,10 +1802,7 @@ void NoteFieldColumn::draw_selection_internal()
 	calc_pos_only(start_input, start_pos);
 	if(m_selection_end == -1.0)
 	{
-		if(m_add_y_offset_to_position)
-		{
-			start_pos.y+= apply_reverse_shift(start_input.y_offset);
-		}
+		apply_yoffset_to_pos(start_input, start_pos);
 		m_area_highlight.set_pos(start_pos);
 		m_area_highlight.SetWidth(m_newskin->get_width());
 		m_area_highlight.SetHeight(note_size);
@@ -1841,11 +1815,8 @@ void NoteFieldColumn::draw_selection_internal()
 		end_input.y_offset= calc_y_offset(end_input);
 		Rage::Vector3 end_pos;
 		calc_pos_only(end_input, end_pos);
-		if(m_add_y_offset_to_position)
-		{
-			start_pos.y+= apply_reverse_shift(start_input.y_offset);
-			end_pos.y+= apply_reverse_shift(end_input.y_offset);
-		}
+		apply_yoffset_to_pos(start_input, start_pos);
+		apply_yoffset_to_pos(end_input, end_pos);
 		double height= end_pos.y - start_pos.y;
 		start_pos.x= (start_pos.x + end_pos.x) * .5;
 		start_pos.y= (start_pos.y + end_pos.y) * .5;
@@ -2507,10 +2478,7 @@ void NoteField::draw_field_text(mod_val_inputs& input,
 	m_columns[0].calc_transform(input, trans);
 	if(!m_in_defective_mode)
 	{
-		if(m_columns[0].m_add_y_offset_to_position)
-		{
-			trans.pos.y+= m_columns[0].apply_reverse_shift(input.y_offset);
-		}
+		m_columns[0].apply_yoffset_to_pos(input, trans.pos);
 	}
 	else
 	{
@@ -2536,10 +2504,7 @@ void NoteField::draw_beat_bar(mod_val_inputs& input, int state, float alpha)
 	m_columns[0].calc_transform(input, trans);
 	if(!m_in_defective_mode)
 	{
-		if(m_columns[0].m_add_y_offset_to_position)
-		{
-			trans.pos.y+= m_columns[0].apply_reverse_shift(input.y_offset);
-		}
+		m_columns[0].apply_yoffset_to_pos(input, trans.pos);
 	}
 	else
 	{
@@ -3194,6 +3159,7 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 	GET_MEMBER(quantization_offset);
 	GET_MEMBER(speed_mod);
 	GET_MEMBER(lift_pretrail_length);
+	GET_VEC(y_offset_vec);
 	GET_MEMBER(reverse_offset_pixels);
 	GET_MEMBER(reverse_scale);
 	GET_MEMBER(center_percent);
@@ -3210,7 +3176,6 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 	GET_SET_BOOL_METHOD(show_unjudgable_notes, m_show_unjudgable_notes);
 	GET_SET_BOOL_METHOD(speed_segments_enabled, m_speed_segments_enabled);
 	GET_SET_BOOL_METHOD(scroll_segments_enabled, m_scroll_segments_enabled);
-	GET_SET_BOOL_METHOD(add_y_offset_to_position, m_add_y_offset_to_position);
 	GET_SET_BOOL_METHOD(holds_skewed_by_mods, m_holds_skewed_by_mods);
 	GET_SET_BOOL_METHOD(twirl_holds, m_twirl_holds);
 	GET_SET_BOOL_METHOD(use_moddable_hold_normal, m_use_moddable_hold_normal);
@@ -3344,6 +3309,7 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 		ADD_METHOD(get_quantization_multiplier);
 		ADD_METHOD(get_quantization_offset);
 		ADD_METHOD(get_speed_mod);
+		ADD_VEC(y_offset_vec);
 		ADD_METHOD(get_reverse_offset_pixels);
 		ADD_METHOD(get_reverse_scale);
 		ADD_METHOD(get_center_percent);
@@ -3360,7 +3326,6 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 		ADD_GET_SET_METHODS(show_unjudgable_notes);
 		ADD_GET_SET_METHODS(speed_segments_enabled);
 		ADD_GET_SET_METHODS(scroll_segments_enabled);
-		ADD_GET_SET_METHODS(add_y_offset_to_position);
 		ADD_GET_SET_METHODS(holds_skewed_by_mods);
 		ADD_GET_SET_METHODS(twirl_holds);
 		ADD_GET_SET_METHODS(use_moddable_hold_normal);

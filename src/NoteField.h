@@ -146,6 +146,7 @@ struct NoteFieldColumn : ActorFrame
 		bool do_rot);
 	void calc_reverse_shift();
 	double apply_reverse_shift(double y_offset);
+	void apply_yoffset_to_pos(mod_val_inputs& input, Rage::Vector3& pos);
 	void apply_column_mods_to_actor(Actor* act);
 	void apply_note_mods_to_actor(Actor* act, double beat, double second,
 		double y_offset, bool use_alpha, bool use_glow);
@@ -188,7 +189,6 @@ struct NoteFieldColumn : ActorFrame
 	bool m_show_unjudgable_notes;
 	bool m_speed_segments_enabled;
 	bool m_scroll_segments_enabled;
-	bool m_add_y_offset_to_position;
 	bool m_holds_skewed_by_mods;
 	bool m_twirl_holds;
 	bool m_use_moddable_hold_normal;
@@ -210,7 +210,7 @@ struct NoteFieldColumn : ActorFrame
 
 	ModManager m_mod_manager;
 	// If you add another ModifiableValue member, be sure to add it to the
-	// loop in set_column_info.  They need to have the timing data passed to
+	// loop in set_note_data.  They need to have the timing data passed to
 	// them so mods can have start and end times.
 	// Also add new ModifiableValue members to the take_over_mods function.
 	ModifiableValue m_time_offset;
@@ -219,6 +219,8 @@ struct NoteFieldColumn : ActorFrame
 
 	ModifiableValue m_speed_mod;
 	ModifiableValue m_lift_pretrail_length;
+
+	ModifiableVector3 m_y_offset_vec_mod;
 
 	ModifiableValue m_reverse_offset_pixels;
 	ModifiableValue m_reverse_scale;

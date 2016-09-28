@@ -17,6 +17,18 @@ public:
 	Vector3& operator *= (float rhs);
 	Vector3& operator /= (float rhs);
 
+	float& operator[](int i)
+	{
+		switch(i)
+		{
+			case 0: return x;
+			case 1: return y;
+			case 2: return z;
+			default: return x;
+		}
+		return x;
+	}
+
 	/** @brief Get a normalized version of the vector. */
 	Vector3 GetNormalized() const;
 

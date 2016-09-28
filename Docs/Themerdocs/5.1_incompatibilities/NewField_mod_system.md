@@ -129,7 +129,9 @@ single character name for conciseness.
 * "v"
 * "log"  
 	Log!  Log!  Log!  Better than bad, it's log!  Rolls down stairs!
-* "sine"  
+* "sin"  
+	Only takes one operand.
+* "cos"  
 	Only takes one operand.
 * "tan"  
 	Only takes one operand.
@@ -146,6 +148,21 @@ single character name for conciseness.
 	for every note, but the same number every frame.  
 	The stage seed is added to the operand, so it will be different every time
 	the song is played.
+* "%"
+* "mod"
+	The modulus operator.  Takes two operands.
+	```{"%", "music_beat", 2}``` returns music_beat % 2.
+* "_"
+* "floor"  
+	Takes two operands. ```{"_", "music_beat", 1.5}``` floors the music beat to
+	the nearest lower multiple of 1.5.
+* "ceil"  
+	Takes two operands. ```{"ceil", "music_beat", 1.5}``` seals the music beat
+	to the nearest higher multiple of 1.5.
+* "o"
+* "round"  
+	Takes two operands. ```{"o", "music_beat", 1.5}``` rounds the music beat to
+	the nearest multiple of 1.5.
 * "repeat"  
 	```{"repeat", "music_beat", 0, 2}```
 	Changes it's operand to repeat the given range.  The range elements must
@@ -168,6 +185,35 @@ single character name for conciseness.
 	If polygonal is true, the spline will not be curved.
 
 
+### Related functions
+The ModValue namespace provides a few functions for checking what input types
+and operator types are available.
+* ModValue.get_operator_list  
+	Returns a table of operator names, like this: ```{"+", "-", "*", ...}```
+* ModValue.get_has_operator_list  
+	Returns a table indexed by operator name, like this:
+	```{["+"]= true, ["-"]= true, ["*"]= true, ...}```
+* ModValue.get_input_list  
+	Similar to get_operator_list, returns table of input names.
+* ModValue.get_has_input_list
+	Similar to get_has_operator_list, returns table indexed input name.
+
+The names returned in the tables will not be sorted in any particular order.
+The "has" functions are useful for checking whether a particular operator
+exists.
+```
+local has_ops= ModValue.get_has_operator_list()
+if not has_ops.round or not has_ops.floor then ... end
+```
+is simpler and faster than
+```
+local function has(thing, list)
+	for i= 1, #list do if list[i] == thing then return true end
+	return false
+end
+local ops= ModValue.get_operator_list()
+if not has("round", ops) or not has("floor", ops) then ... end
+```
 
 ### Mod Function
 A mod function is a lua table with various fields and an operand.  All fields
@@ -362,6 +408,9 @@ The type of a modifier is in parens after the name.
   This is for that special case where you want to make hold bodies twist
   around, but need taps to rotate a different way.  Use
   set_use_moddable_hold_normal to enable it.
+* y_offset_vec (ModifiableVector3)  
+  The y offset for a note is multiplied by this vector and the result is
+  added to the position.
 * note_alpha (ModifiableValue)  
 * note_glow (ModifiableValue)  
 * receptor_alpha (ModifiableValue)  
@@ -437,10 +486,8 @@ needs the flags to tell it to turn off those things.
 * set_scroll_segments_enabled(bool)  
   If set to false, scroll segments in the chart will be ignored.
 * get_add_y_offset_to_position()
-* set_add_y_offset_to_position(bool)
-  If set to false, the y offset will not be added to a note's position.  Use
-  this when you are using get_note_trans_pos_y() mods to set the y position
-  and the y offset is getting in your way.
+* set_add_y_offset_to_position(bool)  
+  Replaced by the y_offset_vec mod.
 * get_holds_skewed_by_mods()
 * set_holds_skewed_by_mods(bool)
   Simplest with a picture comparison: true: http://i.imgur.com/oBVFQ5C.jpg
