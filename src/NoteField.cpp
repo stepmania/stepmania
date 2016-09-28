@@ -933,8 +933,6 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	hold_time_lerper beat_lerper(head_y_offset, y_off_len, head_beat, tail_beat - head_beat);
 	hold_time_lerper second_lerper(head_y_offset, y_off_len, head_second, tail_second - head_second);
 	hold_texture_handler tex_handler(note_size, head_y_offset, tail_y_offset, tex_top, tex_bottom, data);
-	double const body_start_render_y= apply_reverse_shift(tex_handler.body_start_y);
-	double const body_end_render_y= apply_reverse_shift(tex_handler.body_end_y);
 	float const color_scale= Rage::scale(note.note_iter->second.HoldResult.fLife, 0.f, 1.f, m_newskin->get_hold_gray_percent(), 1.f);
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetZTestMode(ZTEST_WRITE_ON_PASS);
@@ -2755,7 +2753,12 @@ void NoteField::reload_columns(NoteSkinLoader const* new_loader, LuaReference& n
 	double leftmost= 0.0;
 	double rightmost= 0.0;
 	double auto_place_width= 0.0;
-	for(size_t i= 0; i < m_newskin.num_columns(); ++i)
+	size_t max_column= m_newskin.num_columns();
+	if(m_note_data != nullptr)
+	{
+		max_column= std::min(max_column, size_t(m_note_data->GetNumTracks()));
+	}
+	for(size_t i= 0; i < max_column; ++i)
 	{
 		double width= m_newskin.get_column(i)->get_width();
 		double padding= m_newskin.get_column(i)->get_padding();
