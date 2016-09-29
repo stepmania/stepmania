@@ -1991,6 +1991,23 @@ public:
 		LuaHelpers::CreateTableFromArray<Steps*>( v, L );
 		return 1;
 	}
+	static int get_nonauto_steps(T* p, lua_State* L)
+	{
+		const vector<Steps*> &steps_list = p->GetAllSteps();
+		lua_createtable(L, steps_list.size(), 0);
+		int table_index= lua_gettop(L);
+		int curr_index= 1;
+		for(auto&& entry : steps_list)
+		{
+			if(!entry->IsAutogen())
+			{
+				entry->PushSelf(L);
+				lua_rawseti(L, table_index, curr_index);
+				++curr_index;
+			}
+		}
+		return 1;
+	}
 	static int GetStepsByStepsType( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -2376,6 +2393,7 @@ public:
 		ADD_METHOD( GetGenre );
 		ADD_METHOD( GetOrigin );
 		ADD_METHOD( GetAllSteps );
+		ADD_METHOD(get_nonauto_steps);
 		ADD_METHOD( GetStepsByStepsType );
 		ADD_METHOD( GetSongDir );
 		ADD_METHOD( GetMusicPath );

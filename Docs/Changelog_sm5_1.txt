@@ -7,6 +7,34 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/09/28
+----------
+* [ScreenEditMenu] Added "Recently Visited Groups" submenu.  Menu now loads
+  the most recently visited group. [kyzentun]
+* [Gameplay] Added para noteskin ported from 5.0. [kyzentun]
+* [NoteField] Added y_offset_vec modifier.  Removed add_y_offset_to_pos.
+  [kyzentun]
+* [ModValue] Added ModValue namespace with functions for getting a list of
+  available input and operator names.
+  ModValue.get_operator_list, ModValue.get_has_operator_list,
+  ModValue.get_input_list, ModValue.get_has_input_list
+  [kyzentun]
+
+2016/09/22
+----------
+* [General] Fixed bug that duplicated an actor entry if a child of a frame
+  was "false" instead of an actor.  Example:
+    Def.ActorFrame{
+      LoadActor("foo"),
+      false,
+      LoadActor("bar"),
+    }
+  The above lua would duplicate the actor "bar". [kyzentun]
+
+2016/09/20
+----------
+* [ActorFrame] Added get_fov lua function. [kyzentun]
+
 2016/09/18
 ----------
 * [Songs] Empty tags are not written to SSC files.  Group sanity checking
@@ -20,7 +48,7 @@ ________________________________________________________________________________
 ----------
 * [NoteField] Added system for having a menu of notefield modifiers.
   Read Docs/Themerdocs/5.1_incompatibilities/notefield_mods_menu.md.
-	[kyzentun]
+  [kyzentun]
 
 ================================================================================
 StepMania 5.1.-3 | 20160905

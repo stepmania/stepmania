@@ -1,5 +1,6 @@
 local default_config= {
 	recently_edited= {},
+	recent_groups= {},
 	noteskin_choices= {},
 	noteskin_params= {},
 	preferred_noteskin= "default",
@@ -50,7 +51,7 @@ local default_config= {
 editor_config= create_lua_config{
 	name= "editor_config", file= "editor_config.lua",
 	default= default_config, use_alternate_config_prefix= "",
-	exceptions= {"recently_edited", "noteskin_choices", "noteskin_params"},
+	exceptions= {"recently_edited", "recent_groups", "noteskin_choices", "noteskin_params"},
 }
 
 editor_config:load()
@@ -80,6 +81,14 @@ local function sanity_check_editor_config()
 		end
 		entry_id= entry_id - 1
 	end
+	entry_id= #config_data.recent_groups
+	while entry_id > 0 do
+		local entry= config_data.recent_groups[entry_id]
+		if type(entry) ~= "string" then
+			table.remove(config_data.recent_groups, entry_id)
+		end
+		entry_id= entry_id - 1
+	end
 end
 
 local function check_all_match(left, right)
@@ -98,6 +107,19 @@ local function remove_duplicate(container, original, dup_id, dup)
 end
 
 sanity_check_editor_config()
+
+function add_to_recent_groups(group_name)
+	local recent= editor_config:get_data().recent_groups
+	local old_id= #recent
+	while old_id > 0 do
+		if recent[old_id] == group_name then
+			table.remove(recent, old_id)
+		end
+		old_id= old_id - 1
+	end
+	table.insert(recent, 1, group_name)
+	editor_config:set_dirty()
+end
 
 function add_to_recently_edited(song, steps)
 	-- TODO: When the user edits the chart description or deletes the chart,

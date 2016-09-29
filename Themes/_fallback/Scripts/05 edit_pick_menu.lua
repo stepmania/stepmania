@@ -163,7 +163,7 @@ local function get_open_slots(song)
 		end
 		open_slots[stype]= stype_slot
 	end
-	local all_steps= song:GetAllSteps()
+	local all_steps= song:get_nonauto_steps()
 	for i, steps in ipairs(all_steps) do
 		local stype= steps:GetStepsType()
 		if editable_stepstypes[stype] then
@@ -225,7 +225,7 @@ local function generate_copy_menu(info)
 		up_text= "&leftarrow; " .. THEME:GetString("ScreenEditMenu", "copy_from_back"),
 	}
 	local copyable_steps= {}
-	local all_steps= info.song:GetAllSteps()
+	local all_steps= info.song:get_nonauto_steps()
 	table.sort(all_steps, steps_compare)
 	for i, steps in ipairs(all_steps) do
 		choices[#choices+1]= {
@@ -282,7 +282,16 @@ end
 
 local function generate_steps_list(song)
 	MESSAGEMAN:Broadcast("edit_menu_selection_changed", {song= song})
-	local all_steps= song:GetAllSteps()
+	local all_steps= song:get_nonauto_steps()
+	do
+		local id= #all_steps
+		while id > 0 do
+			if all_steps[id]:IsAutogen() then
+				table.remove(all_steps, id)
+			end
+			id= id - 1
+		end
+	end
 	table.sort(all_steps, steps_compare)
 	local choices= {
 		name= song:GetDisplayFullTitle(),
@@ -318,6 +327,7 @@ local function generate_steps_list(song)
 end
 
 local function generate_song_list(group_name)
+	add_to_recent_groups(group_name)
 	local songs= SONGMAN:GetSongsInGroup(group_name)
 	local choices= {
 		name= group_name,
@@ -358,7 +368,7 @@ local function recently_edited_menu()
 	for i, entry in ipairs(recent) do
 		local song= SONGMAN:find_song_by_dir(entry.song_dir)
 		if song then
-			local steps= find_steps_entry_in_song(entry, song:GetAllSteps())
+			local steps= find_steps_entry_in_song(entry, song:get_nonauto_steps())
 			if steps then
 				menu_entries[#menu_entries+1]= {
 					name= shorten_name(song:GetGroupName()) .. " &leftarrow; " ..
@@ -377,10 +387,35 @@ local function recently_edited_menu()
 	return nesty_options.submenu("recently_edited", menu_entries)
 end
 
+local function recent_groups_menu()
+	local function gen_entries()
+		local recent= editor_config:get_data().recent_groups
+		local menu_entries= {
+			name= "recent_groups",
+		}
+		for i, group_name in ipairs(recent) do
+			if SONGMAN:DoesSongGroupExist(group_name) then
+				menu_entries[#menu_entries+1]= {
+					name= group_name, translatable= false,
+					menu= nesty_option_menus.menu, args= function()
+						return generate_song_list(group_name)
+					end,
+					on_focus= function()
+						MESSAGEMAN:Broadcast("edit_menu_selection_changed", {group= group_name})
+					end,
+				}
+			end
+		end
+		return menu_entries
+	end
+	return nesty_options.submenu("recent_groups", gen_entries)
+end
+
 local function init_edit_picker()
 	local groups= SONGMAN:GetSongGroupNames()
 	song_menu_choices= {}
 	song_menu_choices[#song_menu_choices+1]= recently_edited_menu()
+	song_menu_choices[#song_menu_choices+1]= recent_groups_menu()
 	for i, group_name in ipairs(groups) do
 		song_menu_choices[#song_menu_choices+1]= {
 			name= group_name, translatable= false,
@@ -409,6 +444,7 @@ local function menu_input(event)
 	if not button or button == "" then return end
 	local menu_action= song_menu_stack:interpret_code(button)
 	if menu_action == "close" then
+		editor_config:save()
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
 	end
 end
@@ -474,6 +510,20 @@ function edit_pick_menu_actor(menu_params)
 			SCREENMAN:GetTopScreen():AddInputCallback(menu_input)
 			init_edit_picker()
 			song_menu_stack:push_menu_stack(nesty_option_menus.menu, song_menu_choices, THEME:GetString("ScreenEditMenu", "exit_edit_menu"))
+			local most_recent_group= editor_config:get_data().recent_groups[1]
+			if most_recent_group then
+				local menu= song_menu_stack.menu_stack[1]
+				local group_pos= false
+				for i, item in ipairs(menu.shown_data) do
+					if item.name == most_recent_group then
+						group_pos= i
+					end
+				end
+				if group_pos then
+					menu.cursor_pos= group_pos
+					song_menu_stack:interpret_code("Start")
+				end
+			end
 			song_menu_stack:update_cursor_pos()
 		end,
 		Def.Actor{
@@ -497,7 +547,7 @@ function edit_pick_menu_update_steps_display_info(steps_display)
 		if params.group then
 			steps_display:set_info_set({}, 1)
 		elseif params.song then
-			local all_steps= params.song:GetAllSteps()
+			local all_steps= params.song:get_nonauto_steps()
 			local by_steps_type= {}
 			local type_names= {}
 			for i, steps in ipairs(all_steps) do
