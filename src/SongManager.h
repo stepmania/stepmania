@@ -70,11 +70,11 @@ public:
 
 	bool IsGroupNeverCached(const std::string& group) const;
 
-	std::string GetSongGroupBannerPath( std::string sSongGroup ) const;
+	std::string GetSongGroupBannerPath(std::string const& group_name) const;
 	//std::string GetSongGroupBackgroundPath( std::string sSongGroup ) const;
 	void GetSongGroupNames( std::vector<std::string> &AddTo ) const;
-	bool DoesSongGroupExist( std::string sSongGroup ) const;
-	Rage::Color GetSongGroupColor( const std::string &sSongGroupName ) const;
+	bool DoesSongGroupExist(std::string const& group_name) const;
+	Rage::Color GetSongGroupColor(std::string const& group_name) const;
 	Rage::Color GetSongColor( const Song* pSong ) const;
 
 	std::string GetCourseGroupBannerPath( const std::string &sCourseGroup ) const;
@@ -143,7 +143,7 @@ public:
 	Song* GetRandomSong();
 	Course* GetRandomCourse();
 	// sm-ssc addition:
-	std::string GetSongGroupByIndex(unsigned index) { return m_sSongGroupNames[index]; }
+	std::string GetSongGroupByIndex(unsigned index);
 	int GetSongRank(Song* pSong);
 
 	void GetStepsLoadedFromProfile( std::vector<Steps*> &AddTo, ProfileSlot slot ) const;
@@ -176,8 +176,10 @@ protected:
 	void LoadStepManiaSongDir( std::string sDir, LoadingWindow *ld );
 	void LoadDWISongDir( std::string sDir );
 	bool GetExtraStageInfoFromCourse( bool bExtra2, std::string sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype );
-	void AddGroup( std::string sDir, std::string sGroupDirName );
+	void AddGroup(std::string dir, std::string group_dir_name);
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
+
+	std::string get_possible_group_banner(std::string group_dir_name);
 
 	void AddSongToList(Song* new_song);
 	/** @brief All of the songs that can be played. */
@@ -196,9 +198,15 @@ protected:
 		std::vector<Song*> vpSongs;
 	};
 	std::vector<PreferredSortSection> m_vPreferredSongSort;
-	std::vector<std::string>		m_sSongGroupNames;
-	std::vector<std::string>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
-	//std::vector<std::string>		m_sSongGroupBackgroundPaths; // each song group may have a background associated with it (very rarely)
+	struct GroupEntry
+	{
+		size_t id; // For GetSongGroupColor.
+		std::string banner_path;
+		// std::string background_path; // Does someone want to add background support? -Kyz
+	};
+	std::map<std::string, GroupEntry> m_song_groups;
+	std::vector<std::string> m_song_group_names; // For GetSongGroupByIndex
+	std::map<std::string, std::string> m_possible_group_banners;
 
 	typedef std::vector<Song*> SongPointerVector;
 	std::unordered_map<std::string,SongPointerVector> m_mapSongGroupIndex;

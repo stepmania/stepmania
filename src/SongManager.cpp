@@ -172,40 +172,26 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 
 static LocalizedString FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder \"%s\" appears to be a song folder.  All song folders must reside in a group folder.  For example, \"Songs/Originals/My Song\"." );
 
-void SongManager::AddGroup( std::string sDir, std::string sGroupDirName )
+void SongManager::AddGroup(std::string dir, std::string group_dir_name)
 {
-	unsigned j;
-	for(j = 0; j < m_sSongGroupNames.size(); ++j)
+	if(m_song_groups.find(dir) != m_song_groups.end())
 	{
-		if( sGroupDirName == m_sSongGroupNames[j] )
-		{
-			break;
-		}
-	}
-	if( j != m_sSongGroupNames.size() )
 		return; // the group is already added
+	}
 
 	// Look for a group banner in this group folder
-	vector<std::string> arrayGroupBanners;
-	GetDirListing( sDir+sGroupDirName+"/*.png", arrayGroupBanners );
-	GetDirListing( sDir+sGroupDirName+"/*.jpg", arrayGroupBanners );
-	GetDirListing( sDir+sGroupDirName+"/*.jpeg", arrayGroupBanners );
-	GetDirListing( sDir+sGroupDirName+"/*.gif", arrayGroupBanners );
-	GetDirListing( sDir+sGroupDirName+"/*.bmp", arrayGroupBanners );
-
-	std::string sBannerPath;
-	if( !arrayGroupBanners.empty() )
-		sBannerPath = sDir+sGroupDirName+"/"+arrayGroupBanners[0] ;
+	vector<std::string> images;
+	std::string slash_group_name= dir + group_dir_name + "/";
+	FILEMAN->GetDirListingWithMultipleExtensions(slash_group_name,
+		ActorUtil::GetTypeExtensionList(FT_Bitmap), images);
+	std::string banner_path;
+	if(!images.empty())
+	{
+		banner_path= slash_group_name + images[0];
+	}
 	else
 	{
-		// Look for a group banner in the parent folder
-		GetDirListing( sDir+sGroupDirName+".png", arrayGroupBanners );
-		GetDirListing( sDir+sGroupDirName+".jpg", arrayGroupBanners );
-		GetDirListing( sDir+sGroupDirName+".jpeg", arrayGroupBanners );
-		GetDirListing( sDir+sGroupDirName+".gif", arrayGroupBanners );
-		GetDirListing( sDir+sGroupDirName+".bmp", arrayGroupBanners );
-		if( !arrayGroupBanners.empty() )
-			sBannerPath = sDir+arrayGroupBanners[0];
+		banner_path= get_possible_group_banner(group_dir_name);
 	}
 
 	/* Other group graphics are a bit trickier, and usually don't exist.
@@ -241,8 +227,9 @@ void SongManager::AddGroup( std::string sDir, std::string sGroupDirName )
 	LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(),
 				sBannerPath != ""? sBannerPath.c_str():"(none)" );
 	*/
-	m_sSongGroupNames.push_back( sGroupDirName );
-	m_sSongGroupBannerPaths.push_back( sBannerPath );
+	GroupEntry entry= {m_song_groups.size(), banner_path};
+	m_song_groups.insert(make_pair(group_dir_name, entry));
+	m_song_group_names.push_back(group_dir_name);
 	//m_sSongGroupBackgroundPaths.push_back( sBackgroundPath );
 }
 
@@ -263,9 +250,22 @@ void SongManager::LoadStepManiaSongDir( std::string sDir, LoadingWindow *ld )
 	// Find all group directories in "Songs" folder
 	vector<std::string> arrayGroupDirs;
 	GetDirListing( sDir+"*", arrayGroupDirs, true );
-	SortStringArray( arrayGroupDirs );
 	StripCvsAndSvn( arrayGroupDirs );
 	StripMacResourceForks( arrayGroupDirs );
+	SortStringArray( arrayGroupDirs );
+
+	// TODO: Add a function to FILEMAN for getting dirs and files in separate
+	// vectors, and use that to combine the above GetDirListing and this one,
+	// so the list is only fetched once. -Kyz
+	m_possible_group_banners.clear();
+	vector<std::string> images_in_dir;
+	FILEMAN->GetDirListingWithMultipleExtensions(sDir,
+		ActorUtil::GetTypeExtensionList(FT_Bitmap), images_in_dir);
+	for(auto&& image : images_in_dir)
+	{
+		m_possible_group_banners.insert(make_pair(
+				GetFileNameWithoutExtension(image), sDir + image));
+	}
 
 	int const updates_per_group= 50;
 	if(ld)
@@ -348,6 +348,7 @@ void SongManager::LoadStepManiaSongDir( std::string sDir, LoadingWindow *ld )
 		LoadGroupSymLinks(sDir, group_name);
 	}
 
+	m_possible_group_banners.clear();
 	if( ld ) {
 		ld->SetIndeterminate( true );
 	}
@@ -426,8 +427,7 @@ void SongManager::PreloadSongImages()
 
 void SongManager::FreeSongs()
 {
-	m_sSongGroupNames.clear();
-	m_sSongGroupBannerPaths.clear();
+	m_song_groups.clear();
 	//m_sSongGroupBackgroundPaths.clear();
 
 	for (auto *song: m_pSongs)
@@ -443,7 +443,6 @@ void SongManager::FreeSongs()
 	m_pDeletedSongs.clear();
 
 	m_mapSongGroupIndex.clear();
-	m_sSongGroupBannerPaths.clear();
 
 	m_pPopularSongs.clear();
 	m_pShuffledSongs.clear();
@@ -473,14 +472,13 @@ bool SongManager::IsGroupNeverCached(const std::string& group) const
 	return m_GroupsToNeverCache.find(group) != m_GroupsToNeverCache.end();
 }
 
-std::string SongManager::GetSongGroupBannerPath( std::string sSongGroup ) const
+std::string SongManager::GetSongGroupBannerPath(std::string const& group_name) const
 {
-	for( unsigned i = 0; i < m_sSongGroupNames.size(); ++i )
+	auto entry= m_song_groups.find(group_name);
+	if(entry != m_song_groups.end())
 	{
-		if( sSongGroup == m_sSongGroupNames[i] )
-			return m_sSongGroupBannerPaths[i];
+		return entry->second.banner_path;
 	}
-
 	return std::string();
 }
 /*
@@ -497,25 +495,29 @@ std::string SongManager::GetSongGroupBackgroundPath( std::string sSongGroup ) co
 */
 void SongManager::GetSongGroupNames( vector<std::string> &AddTo ) const
 {
-	AddTo.insert(AddTo.end(), m_sSongGroupNames.begin(), m_sSongGroupNames.end() );
-}
-
-bool SongManager::DoesSongGroupExist( std::string sSongGroup ) const
-{
-	return find( m_sSongGroupNames.begin(), m_sSongGroupNames.end(), sSongGroup ) != m_sSongGroupNames.end();
-}
-
-Rage::Color SongManager::GetSongGroupColor( const std::string &sSongGroup ) const
-{
-	for( unsigned i=0; i<m_sSongGroupNames.size(); i++ )
+	AddTo.reserve(AddTo.size() + m_song_group_names.size());
+	for(auto&& entry : m_song_group_names)
 	{
-		if( m_sSongGroupNames[i] == sSongGroup )
-		{
-			return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
-		}
+		AddTo.push_back(entry);
+	}
+}
+
+bool SongManager::DoesSongGroupExist(std::string const& group_name) const
+{
+	return m_song_groups.find(group_name) != m_song_groups.end();
+}
+
+Rage::Color SongManager::GetSongGroupColor(std::string const& group_name) const
+{
+	auto entry= m_song_groups.find(group_name);
+	if(entry != m_song_groups.end())
+	{
+		return SONG_GROUP_COLOR.GetValue(entry->second.id % NUM_SONG_GROUP_COLORS);
 	}
 
-	FAIL_M( fmt::sprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
+	LuaHelpers::ReportScriptError(fmt::sprintf(
+			"requested color for song group '%s' that doesn't exist",
+			group_name.c_str()));
 	return Rage::Color(1,1,1,1);
 }
 
@@ -591,7 +593,7 @@ std::string SongManager::GetCourseGroupBannerPath( const std::string &sCourseGro
 	auto iter = m_mapCourseGroupToInfo.find(sCourseGroup);
 	if( iter == m_mapCourseGroupToInfo.end() )
 	{
-		ASSERT_M( 0, fmt::sprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
+		LuaHelpers::ReportScriptError(fmt::sprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()));
 		return std::string();
 	}
 	else
@@ -625,7 +627,7 @@ Rage::Color SongManager::GetCourseGroupColor( const std::string &sCourseGroup ) 
 		iIndex++;
 	}
 
-	ASSERT_M( 0, fmt::sprintf("requested color for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
+	LuaHelpers::ReportScriptError(fmt::sprintf("requested color for course group '%s' that doesn't exist",sCourseGroup.c_str()));
 	return Rage::Color(1,1,1,1);
 }
 
@@ -774,7 +776,7 @@ int SongManager::GetNumAdditionalSongs() const
 
 int SongManager::GetNumSongGroups() const
 {
-	return m_sSongGroupNames.size();
+	return m_song_groups.size();
 }
 
 int SongManager::GetNumCourses() const
@@ -1380,6 +1382,11 @@ Course* SongManager::GetRandomCourse()
 	return nullptr;
 }
 
+std::string SongManager::GetSongGroupByIndex(unsigned index)
+{
+	return m_song_group_names[index];
+}
+
 Song* SongManager::GetSongFromDir(std::string dir) const
 {
 	if (!Rage::ends_with(dir, "/"))
@@ -1906,6 +1913,17 @@ int SongManager::GetNumEditsLoadedFromProfile( ProfileSlot slot ) const
 	}
 	return iCount;
 }
+
+std::string SongManager::get_possible_group_banner(std::string group_dir_name)
+{
+	auto entry= m_possible_group_banners.find(group_dir_name);
+	if(entry != m_possible_group_banners.end())
+	{
+		return entry->second;
+	}
+	return std::string();
+}
+
 
 void SongManager::AddSongToList(Song* new_song)
 {

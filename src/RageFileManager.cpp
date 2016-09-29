@@ -477,11 +477,22 @@ void RageFileManager::GetDirListing( std::string const &sPath_, vector<std::stri
 	}
 }
 
-void RageFileManager::GetDirListingWithMultipleExtensions( std::string const &sPath, vector<std::string> const& ExtensionList, vector<std::string> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void RageFileManager::GetDirListingWithMultipleExtensions(
+	std::string const &path, vector<std::string> const& ext_list,
+	vector<std::string> &add_to, bool only_dirs, bool return_path_too)
 {
-	for (auto &item: ExtensionList)
+	vector<std::string> ret;
+	GetDirListing(path + "*", ret, only_dirs, return_path_too);
+	for(auto&& item : ret)
 	{
-		GetDirListing(sPath + "*." + item, AddTo, bOnlyDirs, bReturnPathToo);
+		std::string item_ext= GetExtension(item);
+		for(auto&& check_ext : ext_list)
+		{
+			if(item_ext == check_ext)
+			{
+				add_to.push_back(item);
+			}
+		}
 	}
 }
 
