@@ -271,6 +271,9 @@ void NoteFieldColumn::take_over_mods(NoteFieldColumn& other)
 	CPY(m_holds_skewed_by_mods);
 	CPY(m_twirl_holds);
 	CPY(m_use_moddable_hold_normal);
+	CPY(m_pixels_visible_before_beat);
+	CPY(m_pixels_visible_after_beat);
+	CPY(m_upcoming_time);
 #define CPY_MODS(name) name.take_over_mods(other.name);
 	CPY_MODS(m_time_offset);
 	CPY_MODS(m_quantization_multiplier);
