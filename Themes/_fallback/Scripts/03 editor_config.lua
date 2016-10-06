@@ -358,6 +358,10 @@ function editor_notefield_menu(menu_params)
 					col:set_pixels_visible_after(vispix)
 				end
 			end
+			for i, col in ipairs(edit_field:get_columns()) do
+				col:set_speed_segments_enabled(false)
+				col:set_scroll_segments_enabled(false)
+			end
 			MESSAGEMAN:Broadcast("NoteskinChanged")
 		end,
 		SetTestNoteFieldSkinCommand= function(self, params)

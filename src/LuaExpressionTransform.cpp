@@ -16,13 +16,21 @@ LuaExpressionTransform::~LuaExpressionTransform()
 void LuaExpressionTransform::SetFromReference( const LuaReference &ref )
 {
 	m_exprTransformFunction = ref;
+	if(ref.GetLuaType() != LUA_TFUNCTION)
+	{
+		LuaHelpers::ReportScriptError("Ignoring invalid transform function.");
+		m_exprTransformFunction.SetFromNil();
+	}
 }
 
 void LuaExpressionTransform::TransformItemDirect( Actor &a, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const
 {
+	if(m_exprTransformFunction.IsNil())
+	{
+		return;
+	}
 	Lua *L = LUA->Get();
 	m_exprTransformFunction.PushSelf( L );
-	ASSERT( !lua_isnil(L, -1) );
 	a.PushSelf( L );
 	LuaHelpers::Push( L, fPositionOffsetFromCenter );
 	LuaHelpers::Push( L, iItemIndex );
