@@ -72,6 +72,46 @@ public:
 	TimingData( const TimingData &cpy ) { Copy(cpy); }
 	TimingData& operator=( const TimingData &cpy ) { Copy(cpy); return *this; }
 
+	// Let's try a different method for optimizing GetBeatFromElapsedTime.
+	// Each timing segment is like a line segment.
+	// GetBeat/GetElapsedTime finds the segment at the given time, then
+	// linearly interpolates between its endpoints for the result.
+	// This should be faster than stepping forward from a known start point.
+	// -Kyz
+	struct LineSegment
+	{
+		float start_beat;
+		float start_second;
+		float end_beat;
+		float end_second;
+		// The expand modifier needs the second in a special form that doesn't
+		// increase during stops. -Kyz
+		float start_expand_second;
+		float end_expand_second;
+		// bps needed for SongPosition.
+		float bps;
+		TimingSegment* time_segment;
+
+		void set_for_next()
+		{
+			start_beat= end_beat;
+			start_second= end_second;
+			start_expand_second= end_expand_second;
+			time_segment= nullptr;
+		}
+	};
+	private:
+	std::vector<LineSegment> m_line_segments;
+	std::map<float, std::vector<LineSegment*> > m_segments_by_beat;
+	std::map<float, std::vector<LineSegment*> > m_segments_by_second;
+	public:
+
+	void PrepareLineLookup();
+	void ReleaseLineLookup();
+	float GetLineBeatFromSecond(float second) const;
+	float GetLineSecondFromBeat(float beat) const;
+	float GetExpandSeconds(float second) const;
+
 	// GetBeatArgs, GetBeatStarts, m_beat_start_lookup, m_time_start_lookup,
 	// PrepareLookup, and ReleaseLookup form a system for speeding up finding
 	// the current beat and bps from the time, or finding the time from the
@@ -111,22 +151,6 @@ public:
 	GetBeatStarts() :bpm(0), warp(0), stop(0), delay(0), last_row(0),
 			last_time(0), warp_destination(0), is_warping(false) {}
 	};
-	// map can't be used for the lookup table because its find or *_bound
-	// functions would return the wrong entry.
-	// In a std::map<int, int> with three entries, [-1]= 3, [6]= 1, [8]= 2,
-	// lower_bound(0) and upper_bound(0) both returned the entry at [6]= 1.
-	// So the lookup table is a vector of entries and FindEntryInLookup does a
-	// binary search.
-	// -Kyz
-	struct lookup_item_t
-	{
-		float first;
-		GetBeatStarts second;
-	lookup_item_t(float f, GetBeatStarts& s) :first(f), second(s) {}
-	};
-	typedef std::vector<lookup_item_t> beat_start_lookup_t;
-	beat_start_lookup_t m_beat_start_lookup;
-	beat_start_lookup_t m_time_start_lookup;
 	// displayed_beat_entry is for optimizing GetDisplayedBeat, which is used
 	// by scroll segments.
 	struct displayed_beat_entry
@@ -135,7 +159,7 @@ public:
 		float displayed_beat;
 		float velocity;
 	};
-	std::vector<displayed_beat_entry> m_displayed_beat_lookup;
+	std::map<float, displayed_beat_entry> m_displayed_beat_lookup;
 	// m_lookup_requester_count exists to track how many things have requested
 	// the lookup tables be prepared, so unrelated parts of code don't have to
 	// check for them.
@@ -147,11 +171,9 @@ public:
 	void PrepareLookup();
 	void ReleaseLookup();
 	private:
-	void ReleaseTimingLookup();
 	void ReleaseDisplayedBeatLookup();
 	void ReleaseLookupInternal();
 	public:
-	void DumpOneTable(const beat_start_lookup_t& lookup, const std::string& name);
 	void DumpLookupTables();
 
 	int GetSegmentIndexAtRow(TimingSegmentType tst, int row) const;
@@ -380,23 +402,11 @@ public:
 	float GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 		unsigned int max_segment) const;
 	void GetBeatAndBPSFromElapsedTime(GetBeatArgs& args) const;
-	float GetBeatFromElapsedTime(float elapsed_time) const	// shortcut for places that care only about the beat
-	{
-		GetBeatArgs args;
-		args.elapsed_time= elapsed_time;
-		GetBeatAndBPSFromElapsedTime(args);
-		return args.beat;
-	}
+	float GetBeatFromElapsedTime(float elapsed_time) const;	// shortcut for places that care only about the beat
 	float GetElapsedTimeFromBeat( float fBeat ) const;
 
 	void GetBeatAndBPSFromElapsedTimeNoOffset(GetBeatArgs& args) const;
-	float GetBeatFromElapsedTimeNoOffset(float elapsed_time) const	// shortcut for places that care only about the beat
-	{
-		GetBeatArgs args;
-		args.elapsed_time= elapsed_time;
-		GetBeatAndBPSFromElapsedTimeNoOffset(args);
-		return args.beat;
-	}
+	float GetBeatFromElapsedTimeNoOffset(float elapsed_time) const;	// shortcut for places that care only about the beat
 	float GetElapsedTimeFromBeatNoOffset( float fBeat ) const;
 	float GetDisplayedBeat( float fBeat ) const;
 

@@ -165,10 +165,7 @@ void ArrowDefects::update(float music_beat, float music_second)
 	float const* accels= m_options->m_fAccels;
 	if(accels[PlayerOptions::ACCEL_EXPAND] != 0.f)
 	{
-		TimingData::GetBeatArgs beat_data;
-		beat_data.elapsed_time= m_music_second;
-		m_timing_data->GetBeatAndBPSFromElapsedTime(beat_data);
-		m_expand_seconds= fmodf(m_music_second - beat_data.total_stop_time, Rage::PI * 2.0);
+		m_expand_seconds= fmodf(m_timing_data->GetExpandSeconds(m_music_second), Rage::PI * 2.0);
 	}
 	if(effects[PlayerOptions::EFFECT_TORNADO] != 0.f)
 	{

@@ -83,6 +83,265 @@ TimingData::~TimingData()
 	Clear();
 }
 
+enum
+{
+	FOUND_WARP,
+	FOUND_WARP_DESTINATION,
+	FOUND_BPM_CHANGE,
+	FOUND_STOP,
+	FOUND_DELAY,
+	FOUND_STOP_DELAY, // we have these two on the same row.
+	FOUND_MARKER,
+	NOT_FOUND
+};
+static void FindEvent(int& event_row, int& event_type,
+	TimingData::GetBeatStarts& start, float beat, bool find_marker,
+	const vector<TimingSegment*>& bpms, const vector<TimingSegment*>& warps,
+	const vector<TimingSegment*>& stops, const vector<TimingSegment*>& delays);
+
+void TimingData::PrepareLineLookup()
+{
+	auto bpms= GetTimingSegments(SEGMENT_BPM);
+	auto stops= GetTimingSegments(SEGMENT_STOP);
+	auto delays= GetTimingSegments(SEGMENT_DELAY);
+	auto warps= GetTimingSegments(SEGMENT_WARP);
+	m_line_segments.reserve(bpms.size() + stops.size() + delays.size() + warps.size());
+	GetBeatStarts status;
+	LineSegment next_line= {
+		0.f, -m_fBeat0OffsetInSeconds, 0.f, 0.f, 0.f, 0.f,
+		ToBPM(bpms[0])->GetBPS(), nullptr};
+	float spb= 1.f / next_line.bps;
+	bool finished= false;
+	// Placement order:
+	//   warp
+	//   delay
+	//   stop
+	//   bpm
+	// Stop and delay segments can be placed as complete lines.
+	// A warp needs to be broken into parts at every stop or delay that occurs
+	// inside it.
+	// When a warp occurs inside a warp, whichever has the greater destination
+	// is used.
+	// A bpm segment is placed when between two other segments.
+	// -Kyz
+	float const max_time= 16777216.f;
+	TimingSegment* curr_bpm_segment= bpms[0];
+	TimingSegment* curr_warp_segment= nullptr;
+	while(!finished)
+	{
+		int event_row= std::numeric_limits<int>::max();;
+		int event_type= NOT_FOUND;
+		FindEvent(event_row, event_type, status, max_time, false,
+			bpms, warps, stops, delays);
+		if(event_type == NOT_FOUND)
+		{
+			next_line.end_beat= next_line.start_beat + 1.f;
+			float seconds_change= next_line.start_second + spb;
+			next_line.end_second= seconds_change;
+			next_line.end_expand_second= next_line.start_expand_second + seconds_change;
+			next_line.bps= ToBPM(curr_bpm_segment)->GetBPS();
+			next_line.time_segment= curr_bpm_segment;
+			m_line_segments.push_back(next_line);
+			finished= true;
+			break;
+		}
+		float time_to_next_event= status.is_warping ? 0 :
+			NoteRowToBeat(event_row - status.last_row) * spb;
+		if(status.is_warping)
+		{
+			// Don't place a line when encountering a warp inside a warp because
+			// it should go straight to the end.
+			if(event_type != FOUND_WARP)
+			{
+				next_line.end_beat= NoteRowToBeat(event_row);
+				next_line.end_second= next_line.start_second;
+				next_line.end_expand_second= next_line.start_expand_second;
+				next_line.time_segment= curr_warp_segment;
+				m_line_segments.push_back(next_line);
+
+				next_line.set_for_next();
+			}
+		}
+		else
+		{
+			if(event_row > 0)
+			{
+				next_line.end_beat= NoteRowToBeat(event_row);
+				float beats= next_line.end_beat - next_line.start_beat;
+				float seconds= beats * spb;
+				next_line.end_second= next_line.start_second + seconds;
+				next_line.end_expand_second= next_line.start_expand_second + seconds;
+				next_line.time_segment= curr_bpm_segment;
+				m_line_segments.push_back(next_line);
+
+				next_line.set_for_next();
+			}
+		}
+		switch(event_type)
+		{
+			case FOUND_WARP_DESTINATION:
+				// Already handled in the is_warping condition above.
+				status.is_warping= false;
+				curr_warp_segment= nullptr;
+				break;
+			case FOUND_BPM_CHANGE:
+				curr_bpm_segment= bpms[status.bpm];
+				next_line.bps= ToBPM(curr_bpm_segment)->GetBPS();
+				spb= 1.f / next_line.bps;
+				++status.bpm;
+				break;
+			case FOUND_DELAY:
+			case FOUND_STOP_DELAY:
+				next_line.end_beat= next_line.start_beat;
+				next_line.end_second= next_line.start_second +
+					ToDelay(delays[status.delay])->GetPause();
+				next_line.end_expand_second= next_line.start_expand_second;
+				next_line.time_segment= delays[status.delay];
+				m_line_segments.push_back(next_line);
+
+				next_line.set_for_next();
+				++status.delay;
+				if(event_type == FOUND_DELAY)
+				{
+					break;
+				}
+			case FOUND_STOP:
+				next_line.end_beat= next_line.start_beat;
+				next_line.end_second= next_line.start_second +
+					ToStop(stops[status.stop])->GetPause();
+				next_line.end_expand_second= next_line.start_expand_second;
+				next_line.time_segment= stops[status.stop];
+				m_line_segments.push_back(next_line);
+
+				next_line.set_for_next();
+				++status.stop;
+				break;
+			case FOUND_WARP:
+				{
+					status.is_warping= true;
+					curr_warp_segment= warps[status.warp];
+					WarpSegment* ws= ToWarp(warps[status.warp]);
+					float warp_dest= ws->GetLength() + ws->GetBeat();
+					if(warp_dest > status.warp_destination)
+					{
+						status.warp_destination= warp_dest;
+					}
+					++status.warp;
+				}
+				break;
+			default:
+				break;
+		}
+		status.last_row= event_row;
+	}
+	// m_segments_by_beat and m_segments_by_second cannot be built in the
+	// traversal above that builds m_line_segments because the vector
+	// reallocates as it grows. -Kyz
+	vector<LineSegment*>* curr_segments_by_beat= &(m_segments_by_beat[0.f]);
+	vector<LineSegment*>* curr_segments_by_second= &(m_segments_by_second[-m_fBeat0OffsetInSeconds]);
+	float curr_beat= 0.f;
+	float curr_second= 0.f;
+	for(size_t seg= 0; seg < m_line_segments.size(); ++seg)
+	{
+#define ADD_SEG(bors) \
+		if(m_line_segments[seg].start_##bors > curr_##bors) \
+		{ \
+			curr_segments_by_##bors= &(m_segments_by_##bors[m_line_segments[seg].start_##bors]); \
+			curr_##bors= m_line_segments[seg].start_##bors; \
+		} \
+		curr_segments_by_##bors->push_back(&m_line_segments[seg]);
+
+		ADD_SEG(beat);
+		ADD_SEG(second);
+#undef ADD_SEG
+	}
+}
+
+void TimingData::ReleaseLineLookup()
+{
+	m_line_segments.clear();
+	m_segments_by_beat.clear();
+	m_segments_by_second.clear();
+}
+
+TimingData::LineSegment const* FindLineSegment(
+	std::map<float, std::vector<TimingData::LineSegment*> > const& sorted_segments,
+	float time)
+{
+	ASSERT_M(!sorted_segments.empty(), "FindLineSegment called on empty sorted_segments.");
+	auto seg_container= sorted_segments.lower_bound(time);
+	// lower_bound returns the first element not less than the given key.
+	// So if there is a segment at 1.0 and another at 2.0, and time is 1.5,
+	// lower_bound returns the segment at 2.0.  Thus, whatever it returns needs
+	// to be decremented. -Kyz
+	if(seg_container != sorted_segments.begin() &&
+		(seg_container == sorted_segments.end() ||
+			seg_container->first > time))
+	{
+		--seg_container;
+	}
+	// Logically, if time is greater than seg_container->first, then we'll
+	// be interpolating off of the last segment in seg_container.
+	// Otherwise, they all have the same alt-time, so it doesn't matter which
+	// we return.
+	// -Kyz
+	if(time > seg_container->first)
+	{
+		return seg_container->second.back();
+	}
+	return seg_container->second.front();
+}
+
+// Return the end time if the input dist is 0 sometimes:
+//   A: Calculating beat from second
+//      1. Segment is a warp.  Warp is instant, so return the end beat.
+//      2. Segment is a delay or stop.  Start and end beat are the same.
+//   B: Calculating second from beat
+//      1. Segment is a warp.  Start and end second are the same.
+//      2. Segment is a delay.  Delay happens before the beat, so return the
+//         end second.
+//      3. Segment is a stop.  Stop happens after the beat, so return the
+//         start second.
+//   A bpm segment does not have zero distance in either direction.
+
+float TimingData::GetLineBeatFromSecond(float from) const
+{
+	LineSegment const* segment= FindLineSegment(m_segments_by_second, from);
+	if(segment->start_second == segment->end_second)
+	{
+		return segment->end_beat;
+	}
+	return Rage::scale(from, segment->start_second, segment->end_second,
+		segment->start_beat, segment->end_beat);
+}
+
+float TimingData::GetLineSecondFromBeat(float from) const
+{
+	LineSegment const* segment= FindLineSegment(m_segments_by_beat, from);
+	if(segment->start_beat == segment->end_beat)
+	{
+		if(segment->time_segment->GetType() == SEGMENT_DELAY)
+		{
+			return segment->end_second;
+		}
+		return segment->start_second;
+	}
+	return Rage::scale(from, segment->start_beat, segment->end_beat,
+		segment->start_second, segment->end_second);
+}
+
+float TimingData::GetExpandSeconds(float from) const
+{
+	LineSegment const* segment= FindLineSegment(m_segments_by_second, from);
+	if(segment->start_second == segment->end_second ||
+		segment->start_beat == segment->end_beat)
+	{
+		return segment->end_expand_second;
+	}
+	return Rage::scale(from, segment->start_second, segment->end_second,
+		segment->start_expand_second, segment->end_expand_second);
+}
+
 void TimingData::PrepareLookup()
 {
 	++m_lookup_requester_count;
@@ -91,38 +350,12 @@ void TimingData::PrepareLookup()
 		return;
 	}
 	// If by some mistake the old lookup table is still hanging around, adding
-	// more entries would probably cause FindEntryInLookup to return the wrong
-	// thing.  So release the lookups. -Kyz
+	// more entries would probably cause problems.  Release the lookups. -Kyz
 	ReleaseLookupInternal();
-	const unsigned int segments_per_lookup= 16;
+	PrepareLineLookup();
+
 	const vector<TimingSegment*>* segs= m_avpTimingSegments;
-	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
-	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
-	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
-	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
-
-	unsigned int total_segments= bpms.size() + warps.size() + stops.size() + delays.size();
-	unsigned int lookup_entries= total_segments / segments_per_lookup;
-	m_beat_start_lookup.reserve(lookup_entries);
-	m_time_start_lookup.reserve(lookup_entries);
-	for(unsigned int curr_segment= segments_per_lookup;
-			curr_segment < total_segments; curr_segment+= segments_per_lookup)
-	{
-		GetBeatStarts beat_start;
-		beat_start.last_time= -m_fBeat0OffsetInSeconds;
-		GetBeatArgs args;
-		args.elapsed_time= std::numeric_limits<float>::max();
-		GetBeatInternal(beat_start, args, curr_segment);
-		m_beat_start_lookup.push_back(lookup_item_t(args.elapsed_time, beat_start));
-
-		GetBeatStarts time_start;
-		time_start.last_time= -m_fBeat0OffsetInSeconds;
-		GetElapsedTimeInternal(time_start, std::numeric_limits<float>::max(), curr_segment);
-		m_time_start_lookup.push_back(lookup_item_t(NoteRowToBeat(time_start.last_row), time_start));
-	}
-
 	const vector<TimingSegment*>& scrolls= segs[SEGMENT_SCROLL];
-	m_displayed_beat_lookup.reserve(scrolls.size());
 	float displayed_beat= 0.0f;
 	float last_real_beat= 0.0f;
 	float last_ratio= 1.0f;
@@ -132,7 +365,7 @@ void TimingData::PrepareLookup()
 		float scroll_beat= scroll->GetBeat();
 		float scroll_ratio= scroll->GetRatio();
 		displayed_beat+= (scroll_beat - last_real_beat) * last_ratio;
-		m_displayed_beat_lookup.push_back({scroll_beat, displayed_beat, scroll_ratio});
+		m_displayed_beat_lookup[scroll_beat]= {scroll_beat, displayed_beat, scroll_ratio};
 		last_real_beat= scroll_beat;
 		last_ratio= scroll_ratio;
 	}
@@ -140,10 +373,6 @@ void TimingData::PrepareLookup()
 	// If there are less than two entries, then FindEntryInLookup in lookup
 	// will always decide there's no appropriate entry.  So clear the table.
 	// -Kyz
-	if(m_beat_start_lookup.size() < 2)
-	{
-		ReleaseTimingLookup();
-	}
 	if(m_displayed_beat_lookup.size() < 2)
 	{
 		ReleaseDisplayedBeatLookup();
@@ -170,12 +399,6 @@ void TimingData::ReleaseLookup()
 		auto tmp= lookup; \
 		lookup.swap(tmp); \
 	}
-void TimingData::ReleaseTimingLookup()
-{
-	CLEAR_LOOKUP(m_beat_start_lookup);
-	CLEAR_LOOKUP(m_time_start_lookup);
-}
-
 void TimingData::ReleaseDisplayedBeatLookup()
 {
 	CLEAR_LOOKUP(m_displayed_beat_lookup);
@@ -184,8 +407,8 @@ void TimingData::ReleaseDisplayedBeatLookup()
 
 void TimingData::ReleaseLookupInternal()
 {
-	ReleaseTimingLookup();
 	ReleaseDisplayedBeatLookup();
+	ReleaseLineLookup();
 }
 
 std::string SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, const std::string& name)
@@ -197,84 +420,11 @@ std::string SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, c
 	return fmt::sprintf("%s: %d at end", name.c_str(), index);
 }
 
-void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const std::string& name)
-{
-	const vector<TimingSegment*>* segs= m_avpTimingSegments;
-	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
-	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
-	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
-	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
-	LOG->Trace("%s lookup table:", name.c_str());
-	
-	for(size_t lit= 0; lit < lookup.size(); ++lit)
-	{
-		const lookup_item_t& item= lookup[lit];
-		const GetBeatStarts& starts= item.second;
-		LOG->Trace("%zu: %f", lit, item.first);
-		std::string str= fmt::sprintf("  %s, %s, %s, %s,\n"
-			"  last_row: %d, last_time: %.3f,\n"
-			"  warp_destination: %.3f, is_warping: %d",
-			SegInfoStr(bpms, starts.bpm, "bpm").c_str(),
-			SegInfoStr(warps, starts.warp, "warp").c_str(),
-			SegInfoStr(stops, starts.stop, "stop").c_str(),
-			SegInfoStr(delays, starts.delay, "delay").c_str(),
-			starts.last_row, starts.last_time, starts.warp_destination, starts.is_warping);
-		LOG->Trace("%s", str.c_str());
-	}
-}
-
 void TimingData::DumpLookupTables()
 {
 	LOG->Trace("Dumping timing data lookup tables for %s:", m_sFile.c_str());
-	DumpOneTable(m_beat_start_lookup, "m_beat_start_lookup");
-	DumpOneTable(m_time_start_lookup, "m_time_start_lookup");
+	// TODO: Write debugging dump code for line segment system.
 	LOG->Trace("Finished dumping lookup tables for %s:", m_sFile.c_str());
-}
-
-TimingData::beat_start_lookup_t::const_iterator FindEntryInLookup(
-	const TimingData::beat_start_lookup_t& lookup, float entry)
-{
-	if(lookup.empty())
-	{
-		return lookup.end();
-	}
-	size_t lower= 0;
-	size_t upper= lookup.size()-1;
-	if(lookup[lower].first > entry)
-	{
-		return lookup.end();
-	}
-	if(lookup[upper].first < entry)
-	{
-		// See explanation at the end of this function. -Kyz
-		return lookup.begin() + upper - 1;
-	}
-	while(upper - lower > 1)
-	{
-		size_t next= (upper + lower) / 2;
-		if(lookup[next].first > entry)
-		{
-			upper= next;
-		}
-		else if(lookup[next].first < entry)
-		{
-			lower= next;
-		}
-		else
-		{
-			lower= next;
-			break;
-		}
-	}
-	// If the time or beat being looked up is close enough to the starting
-	// point that is returned, such as putting the time inside a stop or delay,
-	// then it can make arrows unhittable.  So always return the entry before
-	// the closest one to prevent that. -Kyz
-	if(lower == 0)
-	{
-		return lookup.end();
-	}
-	return lookup.begin() + lower - 1;
 }
 
 bool TimingData::empty() const
@@ -810,23 +960,11 @@ bool TimingData::DoesLabelExist( const std::string& sLabel ) const
 
 void TimingData::GetBeatAndBPSFromElapsedTime(GetBeatArgs& args) const
 {
-	args.elapsed_time += GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * PREFSMAN->m_fGlobalOffsetSeconds;
+	args.elapsed_time += GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds;
 	GetBeatAndBPSFromElapsedTimeNoOffset(args);
 }
 
-enum
-{
-	FOUND_WARP,
-	FOUND_WARP_DESTINATION,
-	FOUND_BPM_CHANGE,
-	FOUND_STOP,
-	FOUND_DELAY,
-	FOUND_STOP_DELAY, // we have these two on the same row.
-	FOUND_MARKER,
-	NOT_FOUND
-};
-
-void FindEvent(int& event_row, int& event_type,
+static void FindEvent(int& event_row, int& event_type,
 	TimingData::GetBeatStarts& start, float beat, bool find_marker,
 	const vector<TimingSegment*>& bpms, const vector<TimingSegment*>& warps,
 	const vector<TimingSegment*>& stops, const vector<TimingSegment*>& delays)
@@ -958,6 +1096,8 @@ void TimingData::GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
 					INC_INDEX(start.warp);
 					break;
 				}
+			default:
+				break;
 		}
 		start.last_row= event_row;
 	}
@@ -971,16 +1111,60 @@ void TimingData::GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
 	args.bps_out= bps;
 }
 
+float TimingData::GetBeatFromElapsedTime(float second) const
+{
+	if(!m_line_segments.empty())
+	{
+		return GetLineBeatFromSecond(second + GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds);
+	}
+	GetBeatArgs args;
+	args.elapsed_time= second;
+	GetBeatAndBPSFromElapsedTime(args);
+	return args.beat;
+}
+
+float TimingData::GetBeatFromElapsedTimeNoOffset(float elapsed_time) const
+{
+	if(!m_line_segments.empty())
+	{
+		return GetLineBeatFromSecond(elapsed_time);
+	}
+	GetBeatArgs args;
+	args.elapsed_time= elapsed_time;
+	GetBeatAndBPSFromElapsedTimeNoOffset(args);
+	return args.beat;
+}
+
 void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset(GetBeatArgs& args) const
 {
+	if(!m_line_segments.empty())
+	{
+		auto segment= FindLineSegment(m_segments_by_second, args.elapsed_time);
+		args.bps_out= segment->bps;
+		switch(segment->time_segment->GetType())
+		{
+			case SEGMENT_STOP:
+				args.freeze_out= true;
+				break;
+			case SEGMENT_DELAY:
+				args.delay_out= true;
+				break;
+			default:
+				break;
+		}
+		if(segment->start_second == segment->end_second)
+		{
+			args.beat= segment->end_beat;
+		}
+		else
+		{
+			args.beat= Rage::scale(args.elapsed_time, segment->start_second,
+				segment->end_second, segment->start_beat, segment->end_beat);
+		}
+		return;
+	}
 	GetBeatStarts start;
 	start.last_time= -m_fBeat0OffsetInSeconds;
-	beat_start_lookup_t::const_iterator looked_up_start=
-		FindEntryInLookup(m_beat_start_lookup, args.elapsed_time);
-	if(looked_up_start != m_beat_start_lookup.end())
-	{
-		start= looked_up_start->second;
-	}
 	GetBeatInternal(start, args, std::numeric_limits<int>::max());
 }
 
@@ -1054,19 +1238,17 @@ float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 {
 	return TimingData::GetElapsedTimeFromBeatNoOffset( fBeat )
-		- GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * PREFSMAN->m_fGlobalOffsetSeconds;
+		- GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds;
 }
 
 float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 {
+	if(!m_line_segments.empty())
+	{
+		return GetLineSecondFromBeat(fBeat);
+	}
 	GetBeatStarts start;
 	start.last_time= -m_fBeat0OffsetInSeconds;
-	beat_start_lookup_t::const_iterator looked_up_start=
-		FindEntryInLookup(m_time_start_lookup, fBeat);
-	if(looked_up_start != m_time_start_lookup.end())
-	{
-		start= looked_up_start->second;
-	}
 	GetElapsedTimeInternal(start, fBeat, std::numeric_limits<int>::max());
 	return start.last_time;
 }
@@ -1080,38 +1262,16 @@ float TimingData::GetDisplayedBeat( float fBeat ) const
 {
 	if(!m_displayed_beat_lookup.empty())
 	{
-		size_t lower= 0;
-		size_t max_entry= m_displayed_beat_lookup.size()-1;
-		size_t upper= max_entry;
-		if(fBeat >= m_displayed_beat_lookup[upper].beat)
+		auto entry= m_displayed_beat_lookup.lower_bound(fBeat);
+		if(entry != m_displayed_beat_lookup.begin() &&
+			(entry == m_displayed_beat_lookup.end() ||
+				entry->first > fBeat))
 		{
-			return beat_relative_to_displayed_beat_entry(fBeat, m_displayed_beat_lookup[upper]);
+			--entry;
 		}
-		if(fBeat <= m_displayed_beat_lookup[lower].beat)
-		{
-			return beat_relative_to_displayed_beat_entry(fBeat, m_displayed_beat_lookup[lower]);
-		}
-		while(lower <= upper)
-		{
-			size_t mid= (lower + upper) / 2;
-			displayed_beat_entry const* mid_entry= &(m_displayed_beat_lookup[mid]);
-			if(mid_entry->beat <= fBeat)
-			{
-				if(mid == max_entry || fBeat < m_displayed_beat_lookup[mid+1].beat)
-				{
-					return beat_relative_to_displayed_beat_entry(fBeat, *mid_entry);
-				}
-				else
-				{
-					lower= mid + 1;
-				}
-			}
-			else
-			{
-				upper= mid - 1;
-			}
-		}
+		return beat_relative_to_displayed_beat_entry(fBeat, entry->second);
 	}
+
 	float fOutBeat = 0;
 	unsigned i;
 	const vector<TimingSegment *> &scrolls = m_avpTimingSegments[SEGMENT_SCROLL];

@@ -1730,8 +1730,6 @@
 			<Function name='GetSongBeat'/>
 			<Function name='GetSongBeatNoOffset'/>
 			<Function name='GetSongBeatVisible'/>
-			<Function name='GetWarpBeginRow'/>
-			<Function name='GetWarpDestination'/>
 		</Class>
 		<Class base='Actor' name='Sprite'>
 			<Function name='CropTo'/>
