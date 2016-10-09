@@ -107,9 +107,15 @@ void TimingData::PrepareLineLookup()
 	auto warps= GetTimingSegments(SEGMENT_WARP);
 	m_line_segments.reserve(bpms.size() + stops.size() + delays.size() + warps.size());
 	GetBeatStarts status;
+	// Place an initial bpm segment in negative time before the song begins.
+	// Without this, if there is a stop at beat 0, arrows will not move until
+	// after beat 0 passes. -Kyz
 	LineSegment next_line= {
-		0.f, -m_fBeat0OffsetInSeconds, 0.f, 0.f, 0.f, 0.f,
-		ToBPM(bpms[0])->GetBPS(), nullptr};
+		-1.f, -m_fBeat0OffsetInSeconds - 1.f, 0.f, -m_fBeat0OffsetInSeconds,
+		-m_fBeat0OffsetInSeconds - 1.f, -m_fBeat0OffsetInSeconds,
+		ToBPM(bpms[0])->GetBPS(), bpms[0]};
+	m_line_segments.push_back(next_line);
+	next_line.set_for_next();
 	float spb= 1.f / next_line.bps;
 	bool finished= false;
 	// Placement order:
@@ -145,8 +151,6 @@ void TimingData::PrepareLineLookup()
 			finished= true;
 			break;
 		}
-		float time_to_next_event= status.is_warping ? 0 :
-			NoteRowToBeat(event_row - status.last_row) * spb;
 		if(status.is_warping)
 		{
 			// Don't place a line when encountering a warp inside a warp because

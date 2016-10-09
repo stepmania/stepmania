@@ -1220,10 +1220,10 @@ namespace
 	}
 	int validate_edit_description(lua_State* L)
 	{
-		Song* snog= Luna<Song>::check(L, 1, true);
+		Song* check_song= Luna<Song>::check(L, 1, true);
 		StepsType stype= Enum::Check<StepsType>(L, 2);
 		std::string desc= SArg(3);
-		lua_pushboolean(L, SongUtil::IsEditDescriptionUnique(snog, stype, desc, nullptr));
+		lua_pushboolean(L, SongUtil::IsEditDescriptionUnique(check_song, stype, desc, nullptr));
 		return 1;
 	}
 

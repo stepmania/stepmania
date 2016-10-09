@@ -1481,17 +1481,17 @@ Song* GameState::get_curr_song() const
 	return m_curr_song.Get();
 }
 
-void GameState::set_curr_song(Song* snog)
+void GameState::set_curr_song(Song* new_song)
 {
 	Song* curr= m_curr_song.Get();
 	if(curr != nullptr)
 	{
 		curr->m_SongTiming.ReleaseLookup();
 	}
-	m_curr_song.Set(snog);
-	if(snog != nullptr)
+	m_curr_song.Set(new_song);
+	if(new_song != nullptr)
 	{
-		snog->m_SongTiming.PrepareLookup();
+		new_song->m_SongTiming.PrepareLookup();
 	}
 }
 
@@ -2729,10 +2729,10 @@ public:
 	}
 	static int GetCurrentSong( T* p, lua_State *L )
 	{
-		Song* snog= p->get_curr_song();
-		if(snog != nullptr)
+		Song* curr_song= p->get_curr_song();
+		if(curr_song != nullptr)
 		{
-			snog->PushSelf(L);
+			curr_song->PushSelf(L);
 		}
 		else
 		{

@@ -255,7 +255,7 @@ public:
 	BroadcastOnChangePtr<Song>	m_curr_song;
 	public:
 	Song* get_curr_song() const;
-	void set_curr_song(Song* snog);
+	void set_curr_song(Song* new_song);
 	// The last Song that the user manually changed to.
 	Song*		m_pPreferredSong;
 	BroadcastOnChangePtr1D<Steps,NUM_PLAYERS> m_pCurSteps;
