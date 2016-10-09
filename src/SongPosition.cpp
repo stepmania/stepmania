@@ -11,9 +11,9 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 	else
 		m_LastBeatUpdate.Touch();
 
-	TimingData::GetBeatArgs beat_info;
-	beat_info.elapsed_time= fPositionSeconds;
-	timing.GetBeatAndBPSFromElapsedTime(beat_info);
+	TimingData::DetailedTimeInfo beat_info;
+	beat_info.second= fPositionSeconds;
+	timing.GetDetailedInfoForSecond(beat_info);
 	m_fSongBeat= beat_info.beat;
 	m_fCurBPS= beat_info.bps_out;
 	m_bFreeze= beat_info.freeze_out;

@@ -94,19 +94,92 @@ enum
 	FOUND_MARKER,
 	NOT_FOUND
 };
-static void FindEvent(int& event_row, int& event_type,
-	TimingData::GetBeatStarts& start, float beat, bool find_marker,
-	const vector<TimingSegment*>& bpms, const vector<TimingSegment*>& warps,
-	const vector<TimingSegment*>& stops, const vector<TimingSegment*>& delays);
 
-void TimingData::PrepareLineLookup()
+enum
+{
+	SEARCH_NONE,
+	SEARCH_BEAT,
+	SEARCH_SECOND
+};
+
+struct FindEventStatus
+{
+	unsigned int bpm;
+	unsigned int warp;
+	unsigned int stop;
+	unsigned int delay;
+	int last_row;
+	float last_time;
+	float warp_destination;
+	bool is_warping;
+	FindEventStatus() :bpm(0), warp(0), stop(0), delay(0), last_row(0),
+		last_time(0), warp_destination(0), is_warping(false) {}
+};
+
+static void FindEvent(int& event_row, int& event_type,
+	FindEventStatus& status, float beat, bool find_marker,
+	const vector<TimingSegment*>& bpms, const vector<TimingSegment*>& warps,
+	const vector<TimingSegment*>& stops, const vector<TimingSegment*>& delays)
+{
+	if(status.is_warping && BeatToNoteRow(status.warp_destination) < event_row)
+	{
+		event_row= BeatToNoteRow(status.warp_destination);
+		event_type= FOUND_WARP_DESTINATION;
+	}
+	if(status.bpm < bpms.size() && bpms[status.bpm]->GetRow() < event_row)
+	{
+		event_row= bpms[status.bpm]->GetRow();
+		event_type= FOUND_BPM_CHANGE;
+	}
+	if(status.delay < delays.size() && delays[status.delay]->GetRow() < event_row)
+	{
+		event_row= delays[status.delay]->GetRow();
+		event_type= FOUND_DELAY;
+	}
+	if(find_marker && BeatToNoteRow(beat) < event_row)
+	{
+		event_row= BeatToNoteRow(beat);
+		event_type= FOUND_MARKER;
+	}
+	if(status.stop < stops.size() && stops[status.stop]->GetRow() < event_row)
+	{
+		int tmp_row= event_row;
+		event_row= stops[status.stop]->GetRow();
+		event_type= (tmp_row == event_row) ? FOUND_STOP_DELAY : FOUND_STOP;
+	}
+	if(status.warp < warps.size() && warps[status.warp]->GetRow() < event_row)
+	{
+		event_row= warps[status.warp]->GetRow();
+		event_type= FOUND_WARP;
+	}
+}
+
+void TimingData::PrepareLineLookup(int search_mode, float search_time,
+	LineSegment* search_ret)
 {
 	auto bpms= GetTimingSegments(SEGMENT_BPM);
 	auto stops= GetTimingSegments(SEGMENT_STOP);
 	auto delays= GetTimingSegments(SEGMENT_DELAY);
 	auto warps= GetTimingSegments(SEGMENT_WARP);
-	m_line_segments.reserve(bpms.size() + stops.size() + delays.size() + warps.size());
-	GetBeatStarts status;
+	if(search_mode == SEARCH_NONE)
+	{
+		m_line_segments.reserve(bpms.size() + stops.size() + delays.size() + warps.size());
+	}
+	FindEventStatus status;
+#define SEARCH_NONE_CASE \
+	case SEARCH_NONE: m_line_segments.push_back(next_line); break;
+#define RETURN_IF_BEAT_COMPARE \
+	if(next_line.end_beat > search_time) \
+	{ \
+		(*search_ret)= next_line; \
+		return; \
+	}
+#define RETURN_IF_SECOND_COMPARE \
+	if(next_line.end_second > search_time) \
+	{ \
+		(*search_ret)= next_line; \
+		return; \
+	}
 	// Place an initial bpm segment in negative time before the song begins.
 	// Without this, if there is a stop at beat 0, arrows will not move until
 	// after beat 0 passes. -Kyz
@@ -114,7 +187,18 @@ void TimingData::PrepareLineLookup()
 		-1.f, -m_fBeat0OffsetInSeconds - 1.f, 0.f, -m_fBeat0OffsetInSeconds,
 		-m_fBeat0OffsetInSeconds - 1.f, -m_fBeat0OffsetInSeconds,
 		ToBPM(bpms[0])->GetBPS(), bpms[0]};
-	m_line_segments.push_back(next_line);
+	switch(search_mode)
+	{
+		SEARCH_NONE_CASE;
+		case SEARCH_BEAT:
+			RETURN_IF_BEAT_COMPARE;
+			break;
+		case SEARCH_SECOND:
+			RETURN_IF_SECOND_COMPARE;
+			break;
+		default:
+			break;
+	}
 	next_line.set_for_next();
 	float spb= 1.f / next_line.bps;
 	bool finished= false;
@@ -147,7 +231,17 @@ void TimingData::PrepareLineLookup()
 			next_line.end_expand_second= next_line.start_expand_second + seconds_change;
 			next_line.bps= ToBPM(curr_bpm_segment)->GetBPS();
 			next_line.time_segment= curr_bpm_segment;
-			m_line_segments.push_back(next_line);
+			switch(search_mode)
+			{
+				SEARCH_NONE_CASE;
+				case SEARCH_BEAT:
+				case SEARCH_SECOND:
+					(*search_ret)= next_line;
+					return;
+					break;
+				default:
+					break;
+			}
 			finished= true;
 			break;
 		}
@@ -161,8 +255,18 @@ void TimingData::PrepareLineLookup()
 				next_line.end_second= next_line.start_second;
 				next_line.end_expand_second= next_line.start_expand_second;
 				next_line.time_segment= curr_warp_segment;
-				m_line_segments.push_back(next_line);
-
+				switch(search_mode)
+				{
+					SEARCH_NONE_CASE;
+					case SEARCH_BEAT:
+						RETURN_IF_BEAT_COMPARE;
+						break;
+					case SEARCH_SECOND:
+						// A search for a second can't end inside a warp.
+						break;
+					default:
+						break;
+				}
 				next_line.set_for_next();
 			}
 		}
@@ -176,8 +280,18 @@ void TimingData::PrepareLineLookup()
 				next_line.end_second= next_line.start_second + seconds;
 				next_line.end_expand_second= next_line.start_expand_second + seconds;
 				next_line.time_segment= curr_bpm_segment;
-				m_line_segments.push_back(next_line);
-
+				switch(search_mode)
+				{
+					SEARCH_NONE_CASE;
+					case SEARCH_BEAT:
+						RETURN_IF_BEAT_COMPARE;
+						break;
+					case SEARCH_SECOND:
+						RETURN_IF_SECOND_COMPARE;
+						break;
+					default:
+						break;
+				}
 				next_line.set_for_next();
 			}
 		}
@@ -201,8 +315,19 @@ void TimingData::PrepareLineLookup()
 					ToDelay(delays[status.delay])->GetPause();
 				next_line.end_expand_second= next_line.start_expand_second;
 				next_line.time_segment= delays[status.delay];
-				m_line_segments.push_back(next_line);
-
+				switch(search_mode)
+				{
+					SEARCH_NONE_CASE;
+					case SEARCH_BEAT:
+						// Delay occurs before the beat, so the beat being searched for
+						// can't be inside the delay.
+						break;
+					case SEARCH_SECOND:
+						RETURN_IF_SECOND_COMPARE;
+						break;
+					default:
+						break;
+				}
 				next_line.set_for_next();
 				++status.delay;
 				if(event_type == FOUND_DELAY)
@@ -215,7 +340,24 @@ void TimingData::PrepareLineLookup()
 					ToStop(stops[status.stop])->GetPause();
 				next_line.end_expand_second= next_line.start_expand_second;
 				next_line.time_segment= stops[status.stop];
-				m_line_segments.push_back(next_line);
+				switch(search_mode)
+				{
+					SEARCH_NONE_CASE;
+					case SEARCH_BEAT:
+						// Stop occurs after the beat, so use this segment if the beat is
+						// equal.
+						if(next_line.end_beat == search_time)
+						{
+							(*search_ret)= next_line;
+							return;
+						}
+						break;
+					case SEARCH_SECOND:
+						RETURN_IF_SECOND_COMPARE;
+						break;
+					default:
+						break;
+				}
 
 				next_line.set_for_next();
 				++status.stop;
@@ -238,6 +380,10 @@ void TimingData::PrepareLineLookup()
 		}
 		status.last_row= event_row;
 	}
+#undef SEARCH_NONE_CASE
+#undef RETURN_IF_BEAT_COMPARE
+#undef RETURN_IF_SECOND_COMPARE
+	ASSERT_M(search_mode == SEARCH_NONE, "PrepareLineLookup made it to the end while not in search_mode none.");
 	// m_segments_by_beat and m_segments_by_second cannot be built in the
 	// traversal above that builds m_line_segments because the vector
 	// reallocates as it grows. -Kyz
@@ -336,14 +482,22 @@ float TimingData::GetLineSecondFromBeat(float from) const
 
 float TimingData::GetExpandSeconds(float from) const
 {
-	LineSegment const* segment= FindLineSegment(m_segments_by_second, from);
-	if(segment->start_second == segment->end_second ||
-		segment->start_beat == segment->end_beat)
+	LineSegment segment;
+	if(!m_line_segments.empty())
 	{
-		return segment->end_expand_second;
+		segment= *FindLineSegment(m_segments_by_second, from);
 	}
-	return Rage::scale(from, segment->start_second, segment->end_second,
-		segment->start_expand_second, segment->end_expand_second);
+	else
+	{
+		const_cast<TimingData*>(this)->PrepareLineLookup(SEARCH_SECOND, from, &segment);
+	}
+	if(segment.start_second == segment.end_second ||
+		segment.start_beat == segment.end_beat)
+	{
+		return segment.end_expand_second;
+	}
+	return Rage::scale(from, segment.start_second, segment.end_second,
+		segment.start_expand_second, segment.end_expand_second);
 }
 
 void TimingData::PrepareLookup()
@@ -356,7 +510,7 @@ void TimingData::PrepareLookup()
 	// If by some mistake the old lookup table is still hanging around, adding
 	// more entries would probably cause problems.  Release the lookups. -Kyz
 	ReleaseLookupInternal();
-	PrepareLineLookup();
+	PrepareLineLookup(SEARCH_NONE, 0.f, nullptr);
 
 	const vector<TimingSegment*>* segs= m_avpTimingSegments;
 	const vector<TimingSegment*>& scrolls= segs[SEGMENT_SCROLL];
@@ -962,299 +1116,115 @@ bool TimingData::DoesLabelExist( const std::string& sLabel ) const
 	return false;
 }
 
-void TimingData::GetBeatAndBPSFromElapsedTime(GetBeatArgs& args) const
+void TimingData::GetDetailedInfoForSecond(DetailedTimeInfo& args) const
 {
-	args.elapsed_time += GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds;
-	GetBeatAndBPSFromElapsedTimeNoOffset(args);
-}
-
-static void FindEvent(int& event_row, int& event_type,
-	TimingData::GetBeatStarts& start, float beat, bool find_marker,
-	const vector<TimingSegment*>& bpms, const vector<TimingSegment*>& warps,
-	const vector<TimingSegment*>& stops, const vector<TimingSegment*>& delays)
-{
-	if(start.is_warping && BeatToNoteRow(start.warp_destination) < event_row)
-	{
-		event_row= BeatToNoteRow(start.warp_destination);
-		event_type= FOUND_WARP_DESTINATION;
-	}
-	if(start.bpm < bpms.size() && bpms[start.bpm]->GetRow() < event_row)
-	{
-		event_row= bpms[start.bpm]->GetRow();
-		event_type= FOUND_BPM_CHANGE;
-	}
-	if(start.delay < delays.size() && delays[start.delay]->GetRow() < event_row)
-	{
-		event_row= delays[start.delay]->GetRow();
-		event_type= FOUND_DELAY;
-	}
-	if(find_marker && BeatToNoteRow(beat) < event_row)
-	{
-		event_row= BeatToNoteRow(beat);
-		event_type= FOUND_MARKER;
-	}
-	if(start.stop < stops.size() && stops[start.stop]->GetRow() < event_row)
-	{
-		int tmp_row= event_row;
-		event_row= stops[start.stop]->GetRow();
-		event_type= (tmp_row == event_row) ? FOUND_STOP_DELAY : FOUND_STOP;
-	}
-	if(start.warp < warps.size() && warps[start.warp]->GetRow() < event_row)
-	{
-		event_row= warps[start.warp]->GetRow();
-		event_type= FOUND_WARP;
-	}
-}
-
-void TimingData::GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
-	unsigned int max_segment) const
-{
-	const vector<TimingSegment*>* segs= m_avpTimingSegments;
-	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
-	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
-	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
-	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
-	unsigned int curr_segment= start.bpm+start.warp+start.stop+start.delay;
-
-	float bps= GetBPMAtRow(start.last_row) / 60.0f;
-#define INC_INDEX(index) ++curr_segment; ++index;
-
-	while(curr_segment < max_segment)
-	{
-		int event_row= std::numeric_limits<int>::max();
-		int event_type= NOT_FOUND;
-		FindEvent(event_row, event_type, start, 0, false, bpms, warps, stops,
-			delays);
-		if(event_type == NOT_FOUND)
-		{
-			break;
-		}
-		float time_to_next_event= start.is_warping ? 0 :
-			NoteRowToBeat(event_row - start.last_row) / bps;
-		float next_event_time= start.last_time + time_to_next_event;
-		if(args.elapsed_time < next_event_time)
-		{
-			break;
-		}
-		start.last_time= next_event_time;
-		switch(event_type)
-		{
-			case FOUND_WARP_DESTINATION:
-				start.is_warping= false;
-				break;
-			case FOUND_BPM_CHANGE:
-				bps= ToBPM(bpms[start.bpm])->GetBPS();
-				INC_INDEX(start.bpm);
-				break;
-			case FOUND_DELAY:
-			case FOUND_STOP_DELAY:
-				{
-					const DelaySegment* ss= ToDelay(delays[start.delay]);
-					time_to_next_event= ss->GetPause();
-					next_event_time= start.last_time + time_to_next_event;
-					if(args.elapsed_time < next_event_time)
-					{
-						args.freeze_out= false;
-						args.delay_out= true;
-						args.beat= ss->GetBeat();
-						args.bps_out= bps;
-						return;
-					}
-					args.total_stop_time+= time_to_next_event;
-					start.last_time= next_event_time;
-					INC_INDEX(start.delay);
-					if(event_type == FOUND_DELAY)
-					{
-						break;
-					}
-				}
-			case FOUND_STOP:
-				{
-					const StopSegment* ss= ToStop(stops[start.stop]);
-					time_to_next_event= ss->GetPause();
-					next_event_time= start.last_time + time_to_next_event;
-					if(args.elapsed_time < next_event_time)
-					{
-						args.freeze_out= true;
-						args.delay_out= false;
-						args.beat= ss->GetBeat();
-						args.bps_out= bps;
-						return;
-					}
-					args.total_stop_time+= time_to_next_event;
-					start.last_time= next_event_time;
-					INC_INDEX(start.stop);
-					break;
-				}
-			case FOUND_WARP:
-				{
-					start.is_warping= true;
-					const WarpSegment* ws= ToWarp(warps[start.warp]);
-					float warp_sum= ws->GetLength() + ws->GetBeat();
-					if(warp_sum > start.warp_destination)
-					{
-						start.warp_destination= warp_sum;
-					}
-					args.warp_begin_out= event_row;
-					args.warp_dest_out= start.warp_destination;
-					INC_INDEX(start.warp);
-					break;
-				}
-			default:
-				break;
-		}
-		start.last_row= event_row;
-	}
-#undef INC_INDEX
-	if(args.elapsed_time == std::numeric_limits<float>::max())
-	{
-		args.elapsed_time= start.last_time;
-	}
-	args.beat= NoteRowToBeat(start.last_row) +
-		(args.elapsed_time - start.last_time) * bps;
-	args.bps_out= bps;
+	args.second += GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds;
+	GetDetailedInfoForSecondNoOffset(args);
 }
 
 float TimingData::GetBeatFromElapsedTime(float second) const
 {
+	float globoff= GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds;
 	if(!m_line_segments.empty())
 	{
-		return GetLineBeatFromSecond(second + GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds);
+		return GetLineBeatFromSecond(second + globoff);
 	}
-	GetBeatArgs args;
-	args.elapsed_time= second;
-	GetBeatAndBPSFromElapsedTime(args);
-	return args.beat;
-}
-
-float TimingData::GetBeatFromElapsedTimeNoOffset(float elapsed_time) const
-{
-	if(!m_line_segments.empty())
+	else
 	{
-		return GetLineBeatFromSecond(elapsed_time);
+		LineSegment segment;
+		const_cast<TimingData*>(this)->PrepareLineLookup(SEARCH_SECOND,
+			second + globoff, &segment);
+		if(segment.start_second == segment.end_second)
+		{
+			return segment.end_beat;
+		}
+		return Rage::scale(second, segment.start_second, segment.end_second,
+			segment.start_beat, segment.end_beat);
 	}
-	GetBeatArgs args;
-	args.elapsed_time= elapsed_time;
-	GetBeatAndBPSFromElapsedTimeNoOffset(args);
-	return args.beat;
 }
 
-void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset(GetBeatArgs& args) const
+float TimingData::GetBeatFromElapsedTimeNoOffset(float second) const
 {
 	if(!m_line_segments.empty())
 	{
-		auto segment= FindLineSegment(m_segments_by_second, args.elapsed_time);
-		args.bps_out= segment->bps;
-		switch(segment->time_segment->GetType())
-		{
-			case SEGMENT_STOP:
-				args.freeze_out= true;
-				break;
-			case SEGMENT_DELAY:
-				args.delay_out= true;
-				break;
-			default:
-				break;
-		}
-		if(segment->start_second == segment->end_second)
-		{
-			args.beat= segment->end_beat;
-		}
-		else
-		{
-			args.beat= Rage::scale(args.elapsed_time, segment->start_second,
-				segment->end_second, segment->start_beat, segment->end_beat);
-		}
-		return;
+		return GetLineBeatFromSecond(second);
 	}
-	GetBeatStarts start;
-	start.last_time= -m_fBeat0OffsetInSeconds;
-	GetBeatInternal(start, args, std::numeric_limits<int>::max());
-}
-
-float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
-	unsigned int max_segment) const
-{
-	const vector<TimingSegment*>* segs= m_avpTimingSegments;
-	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
-	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
-	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
-	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
-	unsigned int curr_segment= start.bpm+start.warp+start.stop+start.delay;
-
-	float bps= GetBPMAtRow(start.last_row) / 60.0f;
-#define INC_INDEX(index) ++curr_segment; ++index;
-	bool find_marker= beat < std::numeric_limits<float>::max();
-
-	while(curr_segment < max_segment)
+	else
 	{
-		int event_row= std::numeric_limits<int>::max();
-		int event_type= NOT_FOUND;
-		FindEvent(event_row, event_type, start, beat, find_marker, bpms, warps, stops,
-			delays);
-		float time_to_next_event= start.is_warping ? 0 :
-			NoteRowToBeat(event_row - start.last_row) / bps;
-		float next_event_time= start.last_time + time_to_next_event;
-		start.last_time= next_event_time;
-		switch(event_type)
+		LineSegment segment;
+		const_cast<TimingData*>(this)->PrepareLineLookup(SEARCH_SECOND,
+			second, &segment);
+		if(segment.start_second == segment.end_second)
 		{
-			case FOUND_WARP_DESTINATION:
-				start.is_warping= false;
-				break;
-			case FOUND_BPM_CHANGE:
-				bps= ToBPM(bpms[start.bpm])->GetBPS();
-				INC_INDEX(start.bpm);
-				break;
-			case FOUND_STOP:
-			case FOUND_STOP_DELAY:
-				time_to_next_event= ToStop(stops[start.stop])->GetPause();
-				next_event_time= start.last_time + time_to_next_event;
-				start.last_time= next_event_time;
-				INC_INDEX(start.stop);
-				break;
-			case FOUND_DELAY:
-				time_to_next_event= ToDelay(delays[start.delay])->GetPause();
-				next_event_time= start.last_time + time_to_next_event;
-				start.last_time= next_event_time;
-				INC_INDEX(start.delay);
-				break;
-			case FOUND_MARKER:
-				return start.last_time;
-			case FOUND_WARP:
-				{
-					start.is_warping= true;
-					WarpSegment* ws= ToWarp(warps[start.warp]);
-					float warp_sum= ws->GetLength() + ws->GetBeat();
-					if(warp_sum > start.warp_destination)
-					{
-						start.warp_destination= warp_sum;
-					}
-					INC_INDEX(start.warp);
-					break;
-				}
+			return segment.end_beat;
 		}
-		start.last_row= event_row;
+		return Rage::scale(second, segment.start_second, segment.end_second,
+			segment.start_beat, segment.end_beat);
 	}
-#undef INC_INDEX
-	return start.last_time;
 }
 
-float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
+void TimingData::GetDetailedInfoForSecondNoOffset(DetailedTimeInfo& args) const
 {
-	return TimingData::GetElapsedTimeFromBeatNoOffset( fBeat )
+	LineSegment segment;
+	if(!m_line_segments.empty())
+	{
+		segment= *FindLineSegment(m_segments_by_second, args.second);
+	}
+	else
+	{
+		const_cast<TimingData*>(this)->PrepareLineLookup(SEARCH_SECOND,
+			args.second, &segment);
+	}
+	args.bps_out= segment.bps;
+	switch(segment.time_segment->GetType())
+	{
+		case SEGMENT_STOP:
+			args.freeze_out= true;
+			break;
+		case SEGMENT_DELAY:
+			args.delay_out= true;
+			break;
+		default:
+			break;
+	}
+	if(segment.start_second == segment.end_second)
+	{
+		args.beat= segment.end_beat;
+	}
+	else
+	{
+		args.beat= Rage::scale(args.second, segment.start_second,
+			segment.end_second, segment.start_beat, segment.end_beat);
+	}
+}
+
+float TimingData::GetElapsedTimeFromBeat(float beat) const
+{
+	return TimingData::GetElapsedTimeFromBeatNoOffset(beat)
 		- GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds;
 }
 
-float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
+float TimingData::GetElapsedTimeFromBeatNoOffset(float beat) const
 {
 	if(!m_line_segments.empty())
 	{
-		return GetLineSecondFromBeat(fBeat);
+		return GetLineSecondFromBeat(beat);
 	}
-	GetBeatStarts start;
-	start.last_time= -m_fBeat0OffsetInSeconds;
-	GetElapsedTimeInternal(start, fBeat, std::numeric_limits<int>::max());
-	return start.last_time;
+	else
+	{
+		LineSegment segment;
+		const_cast<TimingData*>(this)->PrepareLineLookup(SEARCH_BEAT, beat, &segment);
+		if(segment.start_beat == segment.end_beat)
+		{
+			if(segment.time_segment->GetType() == SEGMENT_DELAY)
+			{
+				return segment.end_second;
+			}
+			return segment.start_second;
+		}
+		return Rage::scale(beat, segment.start_beat, segment.end_beat,
+			segment.start_second, segment.end_second);
+	}
 }
 
 static float beat_relative_to_displayed_beat_entry(float beat, TimingData::displayed_beat_entry const& entry)
@@ -1262,18 +1232,18 @@ static float beat_relative_to_displayed_beat_entry(float beat, TimingData::displ
 	return entry.displayed_beat + (entry.velocity * (beat - entry.beat));
 }
 
-float TimingData::GetDisplayedBeat( float fBeat ) const
+float TimingData::GetDisplayedBeat(float beat) const
 {
 	if(!m_displayed_beat_lookup.empty())
 	{
-		auto entry= m_displayed_beat_lookup.lower_bound(fBeat);
+		auto entry= m_displayed_beat_lookup.lower_bound(beat);
 		if(entry != m_displayed_beat_lookup.begin() &&
 			(entry == m_displayed_beat_lookup.end() ||
-				entry->first > fBeat))
+				entry->first > beat))
 		{
 			--entry;
 		}
-		return beat_relative_to_displayed_beat_entry(fBeat, entry->second);
+		return beat_relative_to_displayed_beat_entry(beat, entry->second);
 	}
 
 	float fOutBeat = 0;
@@ -1281,11 +1251,11 @@ float TimingData::GetDisplayedBeat( float fBeat ) const
 	const vector<TimingSegment *> &scrolls = m_avpTimingSegments[SEGMENT_SCROLL];
 	for( i=0; i<scrolls.size()-1; i++ )
 	{
-		if( scrolls[i+1]->GetBeat() > fBeat )
+		if( scrolls[i+1]->GetBeat() > beat )
 			break;
 		fOutBeat += (scrolls[i+1]->GetBeat() - scrolls[i]->GetBeat()) * ToScroll(scrolls[i])->GetRatio();
 	}
-	fOutBeat += (fBeat - scrolls[i]->GetBeat()) * ToScroll(scrolls[i])->GetRatio();
+	fOutBeat += (beat - scrolls[i]->GetBeat()) * ToScroll(scrolls[i])->GetRatio();
 	return fOutBeat;
 }
 

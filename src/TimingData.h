@@ -77,6 +77,9 @@ public:
 	// GetBeat/GetElapsedTime finds the segment at the given time, then
 	// linearly interpolates between its endpoints for the result.
 	// This should be faster than stepping forward from a known start point.
+	// PrepareLookup should be called before gameplay starts, so that the lookup
+	// tables are populated.  ReleaseLookup should be called after gameplay
+	// finishes so that memory isn't wasted.
 	// -Kyz
 	struct LineSegment
 	{
@@ -94,7 +97,7 @@ public:
 
 		void set_for_next()
 		{
-			start_beat= end_beat;
+		start_beat= end_beat;
 			start_second= end_second;
 			start_expand_second= end_expand_second;
 			time_segment= nullptr;
@@ -105,52 +108,27 @@ public:
 	std::map<float, std::vector<LineSegment*> > m_segments_by_beat;
 	std::map<float, std::vector<LineSegment*> > m_segments_by_second;
 
-	void PrepareLineLookup();
+	void PrepareLineLookup(int search_mode, float search_time,
+		LineSegment* search_ret);
 	void ReleaseLineLookup();
 	float GetLineBeatFromSecond(float second) const;
 	float GetLineSecondFromBeat(float beat) const;
 	public:
 	float GetExpandSeconds(float second) const;
 
-	// GetBeatArgs, GetBeatStarts, m_beat_start_lookup, m_time_start_lookup,
-	// PrepareLookup, and ReleaseLookup form a system for speeding up finding
-	// the current beat and bps from the time, or finding the time from the
-	// current beat.
-	// The lookup tables contain indices for the beat and time finding
-	// functions to start at so they don't have to walk through all the timing
-	// segments.
-	// PrepareLookup should be called before gameplay starts, so that the lookup
-	// tables are populated.  ReleaseLookup should be called after gameplay
-	// finishes so that memory isn't wasted.
-	// -Kyz
-	struct GetBeatArgs
+	struct DetailedTimeInfo
 	{
-		float elapsed_time;
-		// total_stop_time is the total time used by stops and delays.
-		float total_stop_time; // Used by mods.
+		float second;
 		float beat;
 		float bps_out;
 		float warp_dest_out;
 		int warp_begin_out;
 		bool freeze_out;
 		bool delay_out;
-	GetBeatArgs() :elapsed_time(0), total_stop_time(0), beat(0), bps_out(0),
-			warp_dest_out(0),
+	DetailedTimeInfo() :second(0), beat(0), bps_out(0), warp_dest_out(0),
 			warp_begin_out(-1), freeze_out(false), delay_out(false) {}
 	};
-	struct GetBeatStarts
-	{
-		unsigned int bpm;
-		unsigned int warp;
-		unsigned int stop;
-		unsigned int delay;
-		int last_row;
-		float last_time;
-		float warp_destination;
-		bool is_warping;
-	GetBeatStarts() :bpm(0), warp(0), stop(0), delay(0), last_row(0),
-			last_time(0), warp_destination(0), is_warping(false) {}
-	};
+
 	// displayed_beat_entry is for optimizing GetDisplayedBeat, which is used
 	// by scroll segments.
 	struct displayed_beat_entry
@@ -397,18 +375,14 @@ public:
 
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
 
-	void GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
-		unsigned int max_segment) const;
-	float GetElapsedTimeInternal(GetBeatStarts& start, float beat,
-		unsigned int max_segment) const;
-	void GetBeatAndBPSFromElapsedTime(GetBeatArgs& args) const;
-	float GetBeatFromElapsedTime(float elapsed_time) const;	// shortcut for places that care only about the beat
-	float GetElapsedTimeFromBeat( float fBeat ) const;
+	void GetDetailedInfoForSecond(DetailedTimeInfo& args) const;
+	float GetBeatFromElapsedTime(float second) const;
+	float GetElapsedTimeFromBeat(float beat) const;
 
-	void GetBeatAndBPSFromElapsedTimeNoOffset(GetBeatArgs& args) const;
-	float GetBeatFromElapsedTimeNoOffset(float elapsed_time) const;	// shortcut for places that care only about the beat
-	float GetElapsedTimeFromBeatNoOffset( float fBeat ) const;
-	float GetDisplayedBeat( float fBeat ) const;
+	void GetDetailedInfoForSecondNoOffset(DetailedTimeInfo& args) const;
+	float GetBeatFromElapsedTimeNoOffset(float second) const;
+	float GetElapsedTimeFromBeatNoOffset(float beat) const;
+	float GetDisplayedBeat(float beat) const;
 
 	bool HasBpmChanges() const { return GetTimingSegments(SEGMENT_BPM).size() > 1; }
 	bool HasStops() const { return !GetTimingSegments(SEGMENT_STOP).empty(); }

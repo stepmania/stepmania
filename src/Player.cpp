@@ -2392,9 +2392,9 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	int iMissIfOlderThanThisRow;
 	const float fEarliestTime = m_pPlayerState->m_Position.m_fMusicSeconds - fMissIfOlderThanSeconds;
 	{
-		TimingData::GetBeatArgs beat_info;
-		beat_info.elapsed_time= fEarliestTime;
-		m_Timing->GetBeatAndBPSFromElapsedTime(beat_info);
+		TimingData::DetailedTimeInfo beat_info;
+		beat_info.second= fEarliestTime;
+		m_Timing->GetDetailedInfoForSecond(beat_info);
 
 		iMissIfOlderThanThisRow = BeatToNoteRow(beat_info.beat);
 		if(beat_info.freeze_out || beat_info.delay_out )
