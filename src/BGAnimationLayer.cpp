@@ -75,7 +75,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const std::string& sPath )
 
 	if( lcPath.find("usesongbg") != std::string::npos )
 	{
-		const Song* pSong = GAMESTATE->m_pCurSong;
+		const Song* pSong = GAMESTATE->get_curr_song();
 		std::string sSongBGPath;
 		if( pSong && pSong->HasBackground() )
 			sSongBGPath = pSong->GetBackgroundPath();

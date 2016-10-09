@@ -127,7 +127,7 @@ void Inventory::Update( float fDelta )
 		}
 	}
 
-	Song &song = *GAMESTATE->m_pCurSong;
+	Song &song = *GAMESTATE->get_curr_song();
 	// use items if this player is CPU-controlled
 	if( m_pPlayerState->m_PlayerController != PC_HUMAN &&
 		GAMESTATE->m_Position.m_fSongBeat < song.GetLastBeat() )

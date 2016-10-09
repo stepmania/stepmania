@@ -93,7 +93,7 @@ void ScreenOptionsCourseOverview::BeginScreen()
 	ScreenOptions::BeginScreen();
 
 	// clear the current song in case it's set when we back out from gameplay
-	GAMESTATE->m_pCurSong.Set( nullptr );
+	GAMESTATE->set_curr_song(nullptr);
 }
 
 ScreenOptionsCourseOverview::~ScreenOptionsCourseOverview()

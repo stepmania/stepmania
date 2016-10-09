@@ -470,7 +470,7 @@ void EditCourseUtil::UpdateAndSetTrail()
 
 void EditCourseUtil::PrepareForPlay()
 {
-	GAMESTATE->m_pCurSong.Set( nullptr );	// CurSong will be set if we back out.  Set it back to nullptr so that ScreenStage won't show the last song.
+	GAMESTATE->set_curr_song(nullptr);	// CurSong will be set if we back out.  Set it back to nullptr so that ScreenStage won't show the last song.
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
 	GAMESTATE->m_bSideIsJoined[0] = true;
 

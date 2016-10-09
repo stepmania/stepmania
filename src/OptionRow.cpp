@@ -229,9 +229,9 @@ std::string OptionRow::GetRowTitle() const
 		if( bShowBpmInSpeedTitle )
 		{
 			DisplayBpms bpms;
-			if( GAMESTATE->m_pCurSong )
+			if( GAMESTATE->get_curr_song() )
 			{
-				const Song* pSong = GAMESTATE->m_pCurSong;
+				const Song* pSong = GAMESTATE->get_curr_song();
 				pSong->GetDisplayBpms( bpms );
 			}
 			else if( GAMESTATE->m_pCurCourse )

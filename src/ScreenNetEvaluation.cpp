@@ -210,7 +210,7 @@ void ScreenNetEvaluation::UpdateStats()
 
 	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
 	Difficulty dc = NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty;
-	Steps *pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, st, dc );
+	Steps *pSteps = SongUtil::GetOneSteps( GAMESTATE->get_curr_song(), st, dc );
 
 	// broadcast a message so themes know that the active player has changed. -aj
 	Message msg("UpdateNetEvalStats");

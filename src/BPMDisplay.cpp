@@ -253,12 +253,12 @@ void BPMDisplay::SetVarious()
 
 void BPMDisplay::SetFromGameState()
 {
-	if( GAMESTATE->m_pCurSong.Get() )
+	if(GAMESTATE->get_curr_song())
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			CycleRandomly();
 		else
-			SetBpmFromSong( GAMESTATE->m_pCurSong );
+			SetBpmFromSong( GAMESTATE->get_curr_song() );
 		return;
 	}
 	if( GAMESTATE->m_pCurCourse.Get() )

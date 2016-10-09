@@ -40,7 +40,7 @@ void ScreenGameplaySyncMachine::Init()
 	m_Song.SetSongDir( Rage::dir_name(sFile) );
 	m_Song.TidyUpData();
 
-	GAMESTATE->m_pCurSong.Set( &m_Song );
+	GAMESTATE->set_curr_song(&m_Song);
 	// Needs proper StepsType -freem
 	vector<Steps*> vpSteps;
 	SongUtil::GetPlayableSteps( &m_Song, vpSteps );
@@ -107,7 +107,7 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 		}
 		GAMESTATE->m_PlayMode.Set( PlayMode_Invalid );
 		GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
-		GAMESTATE->m_pCurSong.Set( nullptr );
+		GAMESTATE->set_curr_song(nullptr);
 	}
 }
 

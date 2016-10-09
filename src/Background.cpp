@@ -953,7 +953,7 @@ void BrightnessOverlay::SetActualBrightness()
 	// anything. -Kyz
 	/*
 	// HACK: Always show training in full brightness
-	if( GAMESTATE->m_pCurSong && GAMESTATE->m_pCurSong->IsTutorial() )
+	if( GAMESTATE->get_curr_song() && GAMESTATE->get_curr_song()->IsTutorial() )
 		fBaseBGBrightness = 1.0f;
 	*/
 

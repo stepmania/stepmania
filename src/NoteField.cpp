@@ -2599,7 +2599,7 @@ void NoteField::draw_beat_bars_internal()
 	draw_all_segments(FloatToString(seg->GetLength()), Fake, FAKE);
 #undef draw_all_segments
 
-	Song* curr_song= GAMESTATE->m_pCurSong;
+	Song* curr_song= GAMESTATE->get_curr_song();
 	if(curr_song != nullptr)
 	{
 		BackgroundLayer const fg_layer_number= BACKGROUND_LAYER_Invalid;

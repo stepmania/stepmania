@@ -171,8 +171,8 @@ void DancingCharacters::LoadNextSong()
 	m_fThisCameraStartBeat = 0;
 	m_fThisCameraEndBeat = 0;
 
-	ASSERT( GAMESTATE->m_pCurSong != nullptr );
-	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->GetFirstBeat();
+	ASSERT( GAMESTATE->get_curr_song() != nullptr );
+	m_fThisCameraEndBeat = GAMESTATE->get_curr_song()->GetFirstBeat();
 
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsPlayerEnabled(p) )
@@ -218,7 +218,7 @@ void DancingCharacters::Update( float fDelta )
 	bWasGameplayStarting = bGameplayStarting;
 
 	static float fLastBeat = GAMESTATE->m_Position.m_fSongBeat;
-	float firstBeat = GAMESTATE->m_pCurSong->GetFirstBeat();
+	float firstBeat = GAMESTATE->get_curr_song()->GetFirstBeat();
 	float fThisBeat = GAMESTATE->m_Position.m_fSongBeat;
 	if( fLastBeat < firstBeat && fThisBeat >= firstBeat )
 	{

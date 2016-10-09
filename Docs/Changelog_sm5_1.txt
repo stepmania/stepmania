@@ -11,12 +11,11 @@ ________________________________________________________________________________
 ----------
 * [TimingData] Replaced starting point lookup table system with new idea
   based on transforming timing segments into line segments and using linear
-	interpolation.  Cuts SetOccuranceTimeForAllTaps to 1/3 as much time, which
-	means GetElapsedTimeFromBeat is much faster than before. [kyzentun]
+  interpolation.  Cuts SetOccuranceTimeForAllTaps to 1/3 as much time, which
+  means GetElapsedTimeFromBeat is much faster than before. [kyzentun]
 * [SongPosition] Removed GetWarpBeginRow and GetWarpDestination lua
   functions.  It's impossible for SongPosition Update to result in a beat
-	that is inside a warp, so they were useless anyway. [kyzentun]
-
+  that is inside a warp, so they were useless anyway. [kyzentun]
 
 2016/09/28
 ----------

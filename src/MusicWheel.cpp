@@ -190,7 +190,7 @@ void MusicWheel::BeginScreen()
 		{
 			vector<Song*> vTemp = SONGMAN->GetSongs(GAMESTATE->m_sPreferredSongGroup);
 			ASSERT(vTemp.size() > 0);
-			GAMESTATE->m_pCurSong.Set(vTemp[0]);
+			GAMESTATE->set_curr_song(vTemp[0]);
 		};
 		SetOpenSection(GAMESTATE->m_sPreferredSongGroup);
 		SelectSongOrCourse();
@@ -220,11 +220,11 @@ void MusicWheel::BeginScreen()
 
 	/* Invalidate current Song if it can't be played
 	 * because there are not enough stages remaining. */
-	if(GAMESTATE->m_pCurSong != nullptr &&
-		GameState::GetNumStagesMultiplierForSong(GAMESTATE->m_pCurSong) >
+	if(GAMESTATE->get_curr_song() != nullptr &&
+		GameState::GetNumStagesMultiplierForSong(GAMESTATE->get_curr_song()) >
 		GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer())
 	{
-		GAMESTATE->m_pCurSong.Set(nullptr);
+		GAMESTATE->set_curr_song(nullptr);
 	}
 
 	/* Invalidate current Steps if it can't be played
@@ -234,9 +234,9 @@ void MusicWheel::BeginScreen()
 		if(GAMESTATE->m_pCurSteps[p] != nullptr)
 		{
 			vector<Steps*> vpPossibleSteps;
-			if(GAMESTATE->m_pCurSong != nullptr)
+			if(GAMESTATE->get_curr_song() != nullptr)
 			{
-				SongUtil::GetPlayableSteps(GAMESTATE->m_pCurSong, vpPossibleSteps);
+				SongUtil::GetPlayableSteps(GAMESTATE->get_curr_song(), vpPossibleSteps);
 			}
 			bool bStepsIsPossible = find(vpPossibleSteps.begin(), vpPossibleSteps.end(), GAMESTATE->m_pCurSteps[p]) == vpPossibleSteps.end();
 			if(!bStepsIsPossible)
@@ -284,7 +284,7 @@ bool MusicWheel::SelectSongOrCourse()
 {
 	if( GAMESTATE->m_pPreferredSong && SelectSong( GAMESTATE->m_pPreferredSong ) )
 		return true;
-	if( GAMESTATE->m_pCurSong && SelectSong( GAMESTATE->m_pCurSong ) )
+	if( GAMESTATE->get_curr_song() && SelectSong( GAMESTATE->get_curr_song() ) )
 		return true;
 	if( GAMESTATE->m_pPreferredCourse && SelectCourse( GAMESTATE->m_pPreferredCourse ) )
 		return true;
@@ -451,7 +451,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 			continue;
 
 		// If we're on an extra stage, and this song is selected, ignore #SELECTABLE.
-		if( pSong != GAMESTATE->m_pCurSong || !GAMESTATE->IsAnExtraStage() )
+		if( pSong != GAMESTATE->get_curr_song() || !GAMESTATE->IsAnExtraStage() )
 		{
 			// Hide songs that asked to be hidden via #SELECTABLE.
 			if( iLocked & LOCKED_SELECTABLE )
@@ -993,7 +993,7 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 			}
 
 			/* If we're on an extra stage, and this song is selected, ignore #SELECTABLE. */
-			if( pSong != GAMESTATE->m_pCurSong || !GAMESTATE->IsAnExtraStage() )
+			if( pSong != GAMESTATE->get_curr_song() || !GAMESTATE->IsAnExtraStage() )
 			{
 				/* Hide songs that asked to be hidden via #SELECTABLE. */
 				if( iLocked & LOCKED_SELECTABLE )

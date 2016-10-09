@@ -38,7 +38,7 @@ public:
 		m_Def.m_vsChoices.clear();
 		m_vpSteps.clear();
 
-		Song *pSong = GAMESTATE->m_pCurSong;
+		Song *pSong = GAMESTATE->get_curr_song();
 		if( pSong ) // playing a song
 		{
 			GetStepsForSong( pSong, m_vpSteps );
@@ -383,7 +383,7 @@ void ScreenOptionsEditCourse::SetCurrentSong()
 
 	if( row.GetRowType() == OptionRow::RowType_Exit )
 	{
-		GAMESTATE->m_pCurSong.Set( nullptr );
+		GAMESTATE->set_curr_song(nullptr);
 		GAMESTATE->m_pCurSteps[PLAYER_1].Set( nullptr );
 	}
 	else
@@ -401,14 +401,14 @@ void ScreenOptionsEditCourse::SetCurrentSong()
 		}
 		if ( pSong != nullptr )
 		{
-			GAMESTATE->m_pCurSong.Set( pSong );
+			GAMESTATE->set_curr_song(pSong);
 		}
 	}
 }
 
 void ScreenOptionsEditCourse::SetCurrentSteps()
 {
-	Song *pSong = GAMESTATE->m_pCurSong;
+	Song *pSong = GAMESTATE->get_curr_song();
 	if( pSong )
 	{
 		int iRow = m_iCurrentRow[PLAYER_1];

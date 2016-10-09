@@ -482,8 +482,8 @@ float Player::calc_read_bpm()
 	}
 	else
 	{
-		ASSERT(GAMESTATE->m_pCurSong != nullptr);
-		GAMESTATE->m_pCurSong->GetDisplayBpms(bpms);
+		ASSERT(GAMESTATE->get_curr_song() != nullptr);
+		GAMESTATE->get_curr_song()->GetDisplayBpms(bpms);
 	}
 
 	float fMaxBPM = 0;
@@ -531,11 +531,11 @@ float Player::calc_read_bpm()
 		{
 			if(M_MOD_HIGH_CAP > 0)
 			{
-				GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM(fThrowAway, fMaxBPM, M_MOD_HIGH_CAP);
+				GAMESTATE->get_curr_song()->m_SongTiming.GetActualBPM(fThrowAway, fMaxBPM, M_MOD_HIGH_CAP);
 			}
 			else
 			{
-				GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM(fThrowAway, fMaxBPM);
+				GAMESTATE->get_curr_song()->m_SongTiming.GetActualBPM(fThrowAway, fMaxBPM);
 			}
 		}
 	}
@@ -668,7 +668,7 @@ void Player::Load()
 	/* Apply transforms. */
 	NoteDataUtil::TransformNoteData(m_NoteData, *m_Timing, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType);
 
-	const Song* pSong = GAMESTATE->m_pCurSong;
+	const Song* pSong = GAMESTATE->get_curr_song();
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -819,7 +819,7 @@ void Player::Update( float fDeltaTime )
 
 	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
 
-	if( GAMESTATE->m_pCurSong==nullptr || IsOniDead() )
+	if( GAMESTATE->get_curr_song()==nullptr || IsOniDead() )
 		return;
 
 	ActorFrame::Update( fDeltaTime );
@@ -1483,11 +1483,11 @@ void Player::ApplyWaitingTransforms()
 		po.FromString( mod.sModifiers );
 
 		float fStartBeat, fEndBeat;
-		mod.GetRealtimeAttackBeats( GAMESTATE->m_pCurSong, m_pPlayerState, fStartBeat, fEndBeat );
+		mod.GetRealtimeAttackBeats( GAMESTATE->get_curr_song(), m_pPlayerState, fStartBeat, fEndBeat );
 		fEndBeat = min( fEndBeat, m_NoteData.GetLastBeat() );
 
 		LOG->Trace( "Applying transform '%s' from %f to %f to '%s'", mod.sModifiers.c_str(), fStartBeat, fEndBeat,
-			GAMESTATE->m_pCurSong->GetTranslitMainTitle().c_str() );
+			GAMESTATE->get_curr_song()->GetTranslitMainTitle().c_str() );
 
 		NoteDataUtil::TransformNoteData(m_NoteData, *m_Timing, po, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat));
 	}
@@ -1924,9 +1924,9 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 
 	float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 
-	if( GAMESTATE->m_pCurSong )
+	if( GAMESTATE->get_curr_song() )
 	{
-		fSongBeat = GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
+		fSongBeat = GAMESTATE->get_curr_song()->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
 
 		if( GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber] )
 			fSongBeat = m_Timing->GetBeatFromElapsedTime( fPositionSeconds );
@@ -3182,7 +3182,7 @@ void Player::SetCombo( unsigned int iCombo, unsigned int iMisses )
 	else
 	{
 		bPastBeginning = m_pPlayerState->m_Position.m_fMusicSeconds
-			> GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
+			> GAMESTATE->get_curr_song()->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
 	}
 
 	if( m_bSendJudgmentAndComboMessages )

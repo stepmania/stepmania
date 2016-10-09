@@ -97,7 +97,7 @@ void ScreenJukebox::SetSong()
 			continue;	// skip
 
 		// Found something we can use!
-		GAMESTATE->m_pCurSong.Set( pSong );
+		GAMESTATE->set_curr_song(pSong);
 		// We just changed the song. Reset the original sync data.
 		AdjustSync::ResetOriginalSyncData();
 		FOREACH_PlayerNumber( p )
@@ -185,7 +185,7 @@ void ScreenJukebox::Init()
 
 	SetSong();
 
-//	ASSERT( GAMESTATE->m_pCurSong );
+//	ASSERT( GAMESTATE->get_curr_song() );
 
 	GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 
@@ -235,7 +235,7 @@ void ScreenJukebox::Init()
 	// Now that we've set up, init the base class.
 	ScreenGameplay::Init();
 
-	if( GAMESTATE->m_pCurSong == nullptr )	// we didn't find a song.
+	if( GAMESTATE->get_curr_song() == nullptr )	// we didn't find a song.
 	{
 		SCREENMAN->SystemMessage( NO_MATCHING_STEPS.GetValue() );
 		this->PostScreenMessage( SM_GoToPrevScreen, 0 );	// Abort demonstration.
@@ -300,7 +300,7 @@ void ScreenJukebox::InitSongQueues()
 	int iIndexToKeep = -1;
 	for( unsigned i=0; i<m_apSongsQueue.size(); i++ )
 	{
-		if( m_apSongsQueue[i] == GAMESTATE->m_pCurSong )
+		if( m_apSongsQueue[i] == GAMESTATE->get_curr_song() )
 		{
 			iIndexToKeep = i;
 			break;

@@ -104,12 +104,12 @@ public:
 	std::vector<LineSegment> m_line_segments;
 	std::map<float, std::vector<LineSegment*> > m_segments_by_beat;
 	std::map<float, std::vector<LineSegment*> > m_segments_by_second;
-	public:
 
 	void PrepareLineLookup();
 	void ReleaseLineLookup();
 	float GetLineBeatFromSecond(float second) const;
 	float GetLineSecondFromBeat(float beat) const;
+	public:
 	float GetExpandSeconds(float second) const;
 
 	// GetBeatArgs, GetBeatStarts, m_beat_start_lookup, m_time_start_lookup,
