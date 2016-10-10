@@ -422,7 +422,7 @@ void TimingData::ReleaseLineLookup()
 {
 	if(!m_line_segments.empty())
 	{
-		full_clear_container(m_line_segments);
+		m_line_segments.shrink_to_fit();
 		full_clear_container(m_segments_by_beat);
 		full_clear_container(m_segments_by_second);
 	}
@@ -652,7 +652,7 @@ void TimingData::ShiftRange(int start_row, int end_row,
 			// the rows of the segments, the second time removing segments that
 			// have been run over by a segment being moved.  Attempts to combine
 			// both operations into a single loop were error prone. -Kyz
-			for(size_t i= first_affected; i <= static_cast<int>(last_affected) && i < segs.size(); ++i)
+			for(size_t i= first_affected; i <= static_cast<size_t>(last_affected) && i < segs.size(); ++i)
 			{
 				int seg_row= segs[i]->GetRow();
 				if(seg_row > 0 && seg_row >= start_row && seg_row <= end_row)
@@ -662,7 +662,7 @@ void TimingData::ShiftRange(int start_row, int end_row,
 				}
 			}
 #define ERASE_SEG(s) if(segs.size() > 1) { EraseSegment(segs, s, segs[s]); --i; --last_affected; erased= true; }
-			for(size_t i= first_affected; i <= static_cast<int>(last_affected) && i < segs.size(); ++i)
+			for(size_t i= first_affected; i <= static_cast<size_t>(last_affected) && i < segs.size(); ++i)
 			{
 				bool erased= false;
 				int seg_row= segs[i]->GetRow();
