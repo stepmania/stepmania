@@ -1486,6 +1486,8 @@ void ScreenEdit::Init()
 
 	this->AddChild( &m_Background );
 
+	m_pSteps->GetTimingData()->RequestLookup();
+
 	// The option menu actor takes care of setting the noteskin. -Kyz
 	m_pSteps->GetNoteData(m_NoteDataEdit);
 	m_NoteFieldEdit.set_note_data(&m_NoteDataEdit, m_pSteps->GetTimingData(), m_pSteps->m_StepsType);
@@ -1588,6 +1590,7 @@ void ScreenEdit::Init()
 
 ScreenEdit::~ScreenEdit()
 {
+	m_pSteps->GetTimingData()->ReleaseLookup();
 	// UGLY: Don't delete the Song's steps.
 	m_SongLastSave.DetachSteps();
 

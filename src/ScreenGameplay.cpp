@@ -1511,7 +1511,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 	{
 		if(GAMESTATE->m_pCurSteps[pn])
 		{
-			GAMESTATE->m_pCurSteps[pn]->GetTimingData()->PrepareLookup();
+			GAMESTATE->m_pCurSteps[pn]->GetTimingData()->RequestLookup();
 		}
 	}
 }

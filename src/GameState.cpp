@@ -1491,7 +1491,7 @@ void GameState::set_curr_song(Song* new_song)
 	m_curr_song.Set(new_song);
 	if(new_song != nullptr)
 	{
-		new_song->m_SongTiming.PrepareLookup();
+		new_song->m_SongTiming.RequestLookup();
 	}
 }
 

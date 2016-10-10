@@ -77,9 +77,12 @@ public:
 	// GetBeat/GetElapsedTime finds the segment at the given time, then
 	// linearly interpolates between its endpoints for the result.
 	// This should be faster than stepping forward from a known start point.
-	// PrepareLookup should be called before gameplay starts, so that the lookup
+	// RequestLookup should be called before gameplay starts, so that the lookup
 	// tables are populated.  ReleaseLookup should be called after gameplay
 	// finishes so that memory isn't wasted.
+	// RequestLookup actually tracks a requester count and only builds the
+	// lookup table if it hasn't already been requested.
+	// PrepareLookup is internal, for updating the lookup table directly.
 	// -Kyz
 	struct LineSegment
 	{
@@ -103,6 +106,14 @@ public:
 			time_segment= nullptr;
 		}
 	};
+	// displayed_beat_entry is for optimizing GetDisplayedBeat, which is used
+	// by scroll segments.
+	struct displayed_beat_entry
+	{
+		float beat;
+		float displayed_beat;
+		float velocity;
+	};
 	private:
 	std::vector<LineSegment> m_line_segments;
 	std::map<float, std::vector<LineSegment*> > m_segments_by_beat;
@@ -113,6 +124,19 @@ public:
 	void ReleaseLineLookup();
 	float GetLineBeatFromSecond(float second) const;
 	float GetLineSecondFromBeat(float beat) const;
+
+	std::map<float, displayed_beat_entry> m_displayed_beat_lookup;
+	// m_lookup_requester_count exists to track how many things have requested
+	// the lookup tables be prepared, so unrelated parts of code don't have to
+	// check for them.
+	// The lookup tables are only created if m_lookup_requester_count is 0 when
+	// PrepareLookup is called, and only released when it reaches 0 again.
+	// -Kyz
+	int m_lookup_requester_count;
+
+	void ReleaseDisplayedBeatLookup();
+	void ReleaseLookupInternal();
+
 	public:
 	float GetExpandSeconds(float second) const;
 
@@ -129,30 +153,11 @@ public:
 			warp_begin_out(-1), freeze_out(false), delay_out(false) {}
 	};
 
-	// displayed_beat_entry is for optimizing GetDisplayedBeat, which is used
-	// by scroll segments.
-	struct displayed_beat_entry
-	{
-		float beat;
-		float displayed_beat;
-		float velocity;
-	};
-	std::map<float, displayed_beat_entry> m_displayed_beat_lookup;
-	// m_lookup_requester_count exists to track how many things have requested
-	// the lookup tables be prepared, so unrelated parts of code don't have to
-	// check for them.
-	// The lookup tables are only created if m_lookup_requester_count is 0 when
-	// PrepareLookup is called, and only released when it reaches 0 again.
-	// -Kyz
-	int m_lookup_requester_count;
-
+	void RequestLookup();
 	void PrepareLookup();
 	void ReleaseLookup();
-	private:
-	void ReleaseDisplayedBeatLookup();
-	void ReleaseLookupInternal();
-	public:
 	void DumpLookupTables();
+	int get_lookup_requester_count() { return m_lookup_requester_count; }
 
 	int GetSegmentIndexAtRow(TimingSegmentType tst, int row) const;
 	int GetSegmentIndexAtBeat(TimingSegmentType tst, float beat) const

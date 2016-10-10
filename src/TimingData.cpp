@@ -15,6 +15,17 @@ static const int INVALID_INDEX = -1;
 
 TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );
 
+// According to The C++ Programming Language 3rd Ed., decreasing the size
+// of a vector doesn't actually free the memory it has allocated.  So this
+// small trick is required to actually free the memory. -Kyz
+template<typename T>
+	void full_clear_container(T& container)
+{
+	container.clear();
+	T tmp;
+	container.swap(tmp);
+}
+
 TimingData::TimingData(float fOffset)
 	:m_lookup_requester_count(0), m_fBeat0OffsetInSeconds(fOffset)
 {
@@ -409,9 +420,12 @@ void TimingData::PrepareLineLookup(int search_mode, float search_time,
 
 void TimingData::ReleaseLineLookup()
 {
-	m_line_segments.clear();
-	m_segments_by_beat.clear();
-	m_segments_by_second.clear();
+	if(!m_line_segments.empty())
+	{
+		full_clear_container(m_line_segments);
+		full_clear_container(m_segments_by_beat);
+		full_clear_container(m_segments_by_second);
+	}
 }
 
 TimingData::LineSegment const* FindLineSegment(
@@ -500,13 +514,18 @@ float TimingData::GetExpandSeconds(float from) const
 		segment.start_expand_second, segment.end_expand_second);
 }
 
-void TimingData::PrepareLookup()
+void TimingData::RequestLookup()
 {
 	++m_lookup_requester_count;
 	if(m_lookup_requester_count > 1)
 	{
 		return;
 	}
+	PrepareLookup();
+}
+
+void TimingData::PrepareLookup()
+{
 	// If by some mistake the old lookup table is still hanging around, adding
 	// more entries would probably cause problems.  Release the lookups. -Kyz
 	ReleaseLookupInternal();
@@ -548,20 +567,13 @@ void TimingData::ReleaseLookup()
 	ReleaseLookupInternal();
 }
 
-	// According to The C++ Programming Language 3rd Ed., decreasing the size
-	// of a vector doesn't actually free the memory it has allocated.  So this
-	// small trick is required to actually free the memory. -Kyz
-#define CLEAR_LOOKUP(lookup) \
-	{ \
-		lookup.clear(); \
-		auto tmp= lookup; \
-		lookup.swap(tmp); \
-	}
 void TimingData::ReleaseDisplayedBeatLookup()
 {
-	CLEAR_LOOKUP(m_displayed_beat_lookup);
+	if(!m_displayed_beat_lookup.empty())
+	{
+		full_clear_container(m_displayed_beat_lookup);
+	}
 }
-#undef CLEAR_LOOKUP
 
 void TimingData::ReleaseLookupInternal()
 {
@@ -955,6 +967,28 @@ static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegmen
 	Rage::safe_delete( cur );
 }
 
+struct lookup_updater_for_segment_add
+{
+	lookup_updater_for_segment_add(TimingData* para)
+		:parent(para)
+	{}
+	~lookup_updater_for_segment_add()
+	{
+		// Updating the lookup in place seems complicated and bug prone.  So just
+		// destroy it and rebuild it entirely.  Rebuilding doesn't take
+		// substantial time, and AddSegment when the lookup exists should only
+		// happen in edit mode, when the user changes a timing element.
+		// TODO:  Create a multi-AddSegment that edit mode can use when pasting
+		// chunks of timing data.
+		// -Kyz
+		if(parent->get_lookup_requester_count() > 0)
+		{
+			parent->PrepareLookup();
+		}
+	}
+	TimingData* parent;
+};
+
 // NOTE: the pointer we're passed is a reference to a temporary,
 // so we must deep-copy it (with ::Copy) for new allocations.
 void TimingData::AddSegment( const TimingSegment *seg )
@@ -963,6 +997,9 @@ void TimingData::AddSegment( const TimingSegment *seg )
 	LOG->Trace( "AddSegment( %s )", TimingSegmentTypeToString(seg->GetType()).c_str() );
 	seg->DebugPrint();
 #endif
+	// NEET trick: class that will trigger the lookup table rebuild when it is
+	// destroyed.
+	lookup_updater_for_segment_add lookup_me_senpai(this);
 
 	TimingSegmentType tst = seg->GetType();
 	vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
