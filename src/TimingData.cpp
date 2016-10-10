@@ -422,6 +422,7 @@ void TimingData::ReleaseLineLookup()
 {
 	if(!m_line_segments.empty())
 	{
+		m_line_segments.clear();
 		m_line_segments.shrink_to_fit();
 		full_clear_container(m_segments_by_beat);
 		full_clear_container(m_segments_by_second);
