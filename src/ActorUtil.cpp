@@ -141,7 +141,7 @@ namespace
 			if (hackFile == "songbackground")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
-				Song *pSong = GAMESTATE->m_pCurSong;
+				Song *pSong = GAMESTATE->get_curr_song();
 				if (pSong && pSong->HasBackground())
 					pVal->SetValue(pSong->GetBackgroundPath());
 				else
@@ -152,7 +152,7 @@ namespace
 			else if ( hackFile == "songbanner")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
-				Song *pSong = GAMESTATE->m_pCurSong;
+				Song *pSong = GAMESTATE->get_curr_song();
 				if (pSong && pSong->HasBanner())
 					pVal->SetValue(pSong->GetBannerPath());
 				else

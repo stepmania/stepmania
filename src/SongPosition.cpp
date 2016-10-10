@@ -11,15 +11,13 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 	else
 		m_LastBeatUpdate.Touch();
 
-	TimingData::GetBeatArgs beat_info;
-	beat_info.elapsed_time= fPositionSeconds;
-	timing.GetBeatAndBPSFromElapsedTime(beat_info);
+	TimingData::DetailedTimeInfo beat_info;
+	beat_info.second= fPositionSeconds;
+	timing.GetDetailedInfoForSecond(beat_info);
 	m_fSongBeat= beat_info.beat;
 	m_fCurBPS= beat_info.bps_out;
 	m_bFreeze= beat_info.freeze_out;
 	m_bDelay= beat_info.delay_out;
-	m_iWarpBeginRow= beat_info.warp_begin_out;
-	m_fWarpDestination= beat_info.warp_dest_out;
 	
 	// "Crash reason : -243478.890625 -48695.773438"
 	// The question is why is -2000 used as the limit? -aj
@@ -32,14 +30,11 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 	m_fSongBeatNoOffset = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
 	
 	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
-	beat_info.elapsed_time= m_fMusicSecondsVisible;
-	timing.GetBeatAndBPSFromElapsedTime(beat_info);
-	m_fSongBeatVisible= beat_info.beat;
+	m_fSongBeatVisible= timing.GetBeatFromElapsedTime(m_fMusicSecondsVisible);
 }
 
 void SongPosition::Reset()
 {
-
 	m_fMusicSecondsVisible = 0;
 	m_fSongBeatVisible = 0;
 
@@ -51,9 +46,6 @@ void SongPosition::Reset()
 	//m_bStop = false;
 	m_bFreeze = false;
 	m_bDelay = false;
-	m_iWarpBeginRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
-	m_fWarpDestination = -1; // Set when a warp is encountered. also see above. -aj
-
 }
 
 //lua start
@@ -69,8 +61,6 @@ public:
 	DEFINE_METHOD( GetCurBPS, m_fCurBPS );
 	DEFINE_METHOD( GetFreeze, m_bFreeze );
 	DEFINE_METHOD( GetDelay, m_bDelay );
-	DEFINE_METHOD( GetWarpBeginRow, m_iWarpBeginRow );
-	DEFINE_METHOD( GetWarpDestination, m_fWarpDestination );
 
 	LunaSongPosition()
 	{
@@ -82,8 +72,6 @@ public:
 		ADD_METHOD( GetCurBPS );
 		ADD_METHOD( GetFreeze );
 		ADD_METHOD( GetDelay );
-		ADD_METHOD( GetWarpBeginRow );
-		ADD_METHOD( GetWarpDestination );
 	}
 };
 

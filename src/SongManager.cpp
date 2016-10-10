@@ -1269,19 +1269,19 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 	std::string sGroup = GAMESTATE->m_sPreferredSongGroup;
 	if( sGroup == GROUP_ALL )
 	{
-		if( GAMESTATE->m_pCurSong == nullptr )
+		if( GAMESTATE->get_curr_song() == nullptr )
 		{
 			// This normally shouldn't happen, but it's helpful to permit it for testing.
-			LuaHelpers::ReportScriptErrorFmt( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == nullptr" );
-			GAMESTATE->m_pCurSong.Set( GetRandomSong() );
+			LuaHelpers::ReportScriptErrorFmt( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->get_curr_song() == nullptr" );
+			GAMESTATE->set_curr_song(GetRandomSong());
 		}
-		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
+		sGroup = GAMESTATE->get_curr_song()->m_sGroupName;
 	}
 
 	ASSERT_M( sGroup != "", fmt::sprintf("%p '%s' '%s'",
-		static_cast<void *>(GAMESTATE->m_pCurSong.Get()),
-		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
-		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );
+		static_cast<void *>(GAMESTATE->get_curr_song()),
+		GAMESTATE->get_curr_song()? GAMESTATE->get_curr_song()->GetSongDir().c_str():"",
+		GAMESTATE->get_curr_song()? GAMESTATE->get_curr_song()->m_sGroupName.c_str():"") );
 
 	// Check preferred group
 	if( GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut, sd->m_StepsType) )

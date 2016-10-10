@@ -7,6 +7,15 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/10/08
+----------
+* [TimingData] Replaced starting point lookup table system with new idea
+  based on transforming timing segments into line segments and using linear
+  interpolation.  Cuts SetOccuranceTimeForAllTaps to 1/3 as much time, which
+  means GetElapsedTimeFromBeat is much faster than before. [kyzentun]
+* [SongPosition] Removed GetWarpBeginRow and GetWarpDestination lua
+  functions. [kyzentun]
+
 2016/09/28
 ----------
 * [ScreenEditMenu] Added "Recently Visited Groups" submenu.  Menu now loads

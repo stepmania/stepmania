@@ -618,7 +618,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	}
 
 	// Send crossed messages
-	if( GAMESTATE->m_pCurSong )
+	if( GAMESTATE->get_curr_song() )
 	{
 		static int iBeatLastCrossed = 0;
 

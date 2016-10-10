@@ -127,7 +127,7 @@ void PaneDisplay::LoadFromNode( const XNode *pNode )
 
 void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, std::string & sTextOut, float & fLevelOut )
 {
-	const Song *pSong = GAMESTATE->m_pCurSong;
+	const Song *pSong = GAMESTATE->get_curr_song();
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];

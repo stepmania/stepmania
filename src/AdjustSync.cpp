@@ -59,10 +59,10 @@ void AdjustSync::ResetOriginalSyncData()
 {
 	s_vpTimingDataOriginal.clear();
 
-	if( GAMESTATE->m_pCurSong )
+	if( GAMESTATE->get_curr_song() )
 	{
-		s_vpTimingDataOriginal.push_back(GAMESTATE->m_pCurSong->m_SongTiming);
-		auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+		s_vpTimingDataOriginal.push_back(GAMESTATE->get_curr_song()->m_SongTiming);
+		auto const & vpSteps = GAMESTATE->get_curr_song()->GetAllSteps();
 		for (auto *s: vpSteps)
 		{
 			s_vpTimingDataOriginal.push_back(s->m_Timing);
@@ -103,7 +103,7 @@ void AdjustSync::SaveSyncChanges()
 
 	/* TODO: Save all of the timing data changes.
 	 * Luckily, only the song timing data needs comparing here. */
-	if( GAMESTATE->m_pCurSong && s_vpTimingDataOriginal[0] != GAMESTATE->m_pCurSong->m_SongTiming )
+	if( GAMESTATE->get_curr_song() && s_vpTimingDataOriginal[0] != GAMESTATE->get_curr_song()->m_SongTiming )
 	{
 		if( GAMESTATE->IsEditing() )
 		{
@@ -111,7 +111,7 @@ void AdjustSync::SaveSyncChanges()
 		}
 		else
 		{
-			GAMESTATE->m_pCurSong->Save();
+			GAMESTATE->get_curr_song()->Save();
 		}
 	}
 	if( s_fGlobalOffsetSecondsOriginal != PREFSMAN->m_fGlobalOffsetSeconds )
@@ -128,10 +128,10 @@ void AdjustSync::RevertSyncChanges()
 	PREFSMAN->m_fGlobalOffsetSeconds.Set( s_fGlobalOffsetSecondsOriginal );
 
 	// The first one is ALWAYS the song timing.
-	GAMESTATE->m_pCurSong->m_SongTiming = s_vpTimingDataOriginal[0];
+	GAMESTATE->get_curr_song()->m_SongTiming = s_vpTimingDataOriginal[0];
 
 	unsigned location = 1;
-	auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+	auto const & vpSteps = GAMESTATE->get_curr_song()->GetAllSteps();
 	for (auto *s: vpSteps)
 	{
 		s->m_Timing = s_vpTimingDataOriginal[location];
@@ -201,8 +201,8 @@ void AdjustSync::AutosyncOffset()
 		{
 			case AutosyncType_Song:
 			{
-				GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += mean;
-				auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+				GAMESTATE->get_curr_song()->m_SongTiming.m_fBeat0OffsetInSeconds += mean;
+				auto const & vpSteps = GAMESTATE->get_curr_song()->GetAllSteps();
 				for (auto *s: vpSteps)
 				{
 					// Empty TimingData means it's inherited
@@ -257,9 +257,9 @@ void AdjustSync::AutosyncTempo()
 		if( !CalcLeastSquares( s_vAutosyncTempoData, fSlope, fIntercept, fFilteredError ) )
 			return;
 
-		GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fIntercept;
+		GAMESTATE->get_curr_song()->m_SongTiming.m_fBeat0OffsetInSeconds += fIntercept;
 		const float fScaleBPM = 1.0f/(1.0f - fSlope);
-		TimingData &timing = GAMESTATE->m_pCurSong->m_SongTiming;
+		TimingData &timing = GAMESTATE->get_curr_song()->m_SongTiming;
 
 		const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
 		for (unsigned i = 0; i < bpms.size(); i++)
@@ -329,7 +329,7 @@ void AdjustSync::GetSyncChangeTextGlobal( vector<std::string> &vsAddTo )
 // XXX: needs cleanup still -- vyhd
 void AdjustSync::GetSyncChangeTextSong( vector<std::string> &vsAddTo )
 {
-	if( GAMESTATE->m_pCurSong.Get() )
+	if(GAMESTATE->get_curr_song())
 	{
 #define SEGMENTS_MISMATCH_MESSAGE(orig, test, segments_name) \
 	if(orig.size() != test.size()) \
@@ -339,7 +339,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<std::string> &vsAddTo )
 
 		unsigned int iOriginalSize = vsAddTo.size();
 		TimingData &original = s_vpTimingDataOriginal[0];
-		TimingData &testing = GAMESTATE->m_pCurSong->m_SongTiming;
+		TimingData &testing = GAMESTATE->get_curr_song()->m_SongTiming;
 
 		{
 			float fOld = Quantize( original.m_fBeat0OffsetInSeconds, 0.001f );

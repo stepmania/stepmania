@@ -88,7 +88,7 @@ void ScreenSyncOverlay::UpdateText()
 		FAIL_M(fmt::sprintf("Invalid autosync type: %i", type));
 	}
 
-	if( GAMESTATE->m_pCurSong != nullptr  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
+	if( GAMESTATE->get_curr_song() != nullptr  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
 	{
 		AdjustSync::GetSyncChangeTextGlobal( vs );
 		AdjustSync::GetSyncChangeTextSong( vs );
@@ -209,12 +209,12 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 				}
 				default: break;
 			}
-			if( GAMESTATE->m_pCurSong != nullptr )
+			if( GAMESTATE->get_curr_song() != nullptr )
 			{
-				TimingData &sTiming = GAMESTATE->m_pCurSong->m_SongTiming;
+				TimingData &sTiming = GAMESTATE->get_curr_song()->m_SongTiming;
 				BPMSegment * seg = sTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
 				seg->SetBPS( seg->GetBPS() + fDelta );
-				auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+				auto const & vpSteps = GAMESTATE->get_curr_song()->GetAllSteps();
 				for (auto *s: vpSteps)
 				{
 					TimingData &pTiming = s->m_Timing;
@@ -261,10 +261,10 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 
 				case ChangeSongOffset:
 				{
-					if( GAMESTATE->m_pCurSong != nullptr )
+					if( GAMESTATE->get_curr_song() != nullptr )
 					{
-						GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
-						auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+						GAMESTATE->get_curr_song()->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
+						auto const & vpSteps = GAMESTATE->get_curr_song()->GetAllSteps();
 						for (auto *s: vpSteps)
 						{
 							// Empty means it inherits song timing,

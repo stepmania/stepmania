@@ -133,7 +133,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 			return false;
 	}
 
-	if( m_pSong && GAMESTATE->m_pCurSong.Get() != m_pSong )
+	if(m_pSong && GAMESTATE->get_curr_song() != m_pSong)
 		return false;
 	if( m_pSteps && GAMESTATE->m_pCurSteps[pn].Get() != m_pSteps )
 		return false;
@@ -298,7 +298,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		// This must be processed after "song" and "style" commands.
 		if( !m_bInvalid )
 		{
-			Song *pSong = (m_pSong != nullptr)? m_pSong:GAMESTATE->m_pCurSong;
+			Song *pSong = (m_pSong != nullptr)? m_pSong:GAMESTATE->get_curr_song();
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
 			if( pSong == nullptr || pStyle == nullptr )
 			{
@@ -800,7 +800,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_pSong )
 	{
-		GAMESTATE->m_pCurSong.Set( m_pSong );
+		GAMESTATE->set_curr_song(m_pSong);
 		GAMESTATE->m_pPreferredSong = m_pSong;
 	}
 	if( m_pSteps )

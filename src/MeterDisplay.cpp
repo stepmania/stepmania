@@ -79,10 +79,10 @@ void MeterDisplay::SetStreamWidth( float fStreamWidth )
 
 void SongMeterDisplay::Update( float fDeltaTime )
 {
-	if( GAMESTATE->m_pCurSong )
+	if( GAMESTATE->get_curr_song() )
 	{
-		float fSongStartSeconds = GAMESTATE->m_pCurSong->GetFirstSecond();
-		float fSongEndSeconds = GAMESTATE->m_pCurSong->GetLastSecond();
+		float fSongStartSeconds = GAMESTATE->get_curr_song()->GetFirstSecond();
+		float fSongEndSeconds = GAMESTATE->get_curr_song()->GetLastSecond();
 		float fPercentPositionSong = Rage::scale( GAMESTATE->m_Position.m_fMusicSeconds, fSongStartSeconds, fSongEndSeconds, 0.0f, 1.0f );
 		fPercentPositionSong = Rage::clamp( fPercentPositionSong, 0.f, 1.f );
 

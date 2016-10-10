@@ -998,7 +998,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 		}
 		else
 		{
-			GAMESTATE->m_pCurSong->GetDisplayBpms( bpms );
+			GAMESTATE->get_curr_song()->GetDisplayBpms( bpms );
 		}
 		pSong->GetDisplayBpms( bpms );
 

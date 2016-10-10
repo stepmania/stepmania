@@ -173,7 +173,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	else
 	{
 		// long ver and marathon ver songs have higher max possible scores
-		int iLengthMultiplier = GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong );
+		int iLengthMultiplier = GameState::GetNumStagesMultiplierForSong( GAMESTATE->get_curr_song() );
 
 		/* This is no longer just simple additive/subtractive scoring,
 		 * but start with capping the score at the size of the score counter. */

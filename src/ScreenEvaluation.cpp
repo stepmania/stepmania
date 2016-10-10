@@ -112,9 +112,9 @@ void ScreenEvaluation::Init()
 		enum_add( ss.m_Stage, rand()%3 );
 		ss.m_EarnedExtraStage = (EarnedExtraStage)(rand() % NUM_EarnedExtraStage);
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
-		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
-		ss.m_vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
-		ss.m_vpPossibleSongs.push_back( GAMESTATE->m_pCurSong );
+		GAMESTATE->set_curr_song(SONGMAN->GetRandomSong());
+		ss.m_vpPlayedSongs.push_back( GAMESTATE->get_curr_song() );
+		ss.m_vpPossibleSongs.push_back( GAMESTATE->get_curr_song() );
 		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
 		GAMESTATE->m_iCurrentStageIndex = 0;
 		FOREACH_ENUM( PlayerNumber, p )
@@ -128,7 +128,7 @@ void ScreenEvaluation::Init()
 			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_fMusicRate, 1.1f );
 
 			GAMESTATE->JoinPlayer( p );
-			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
+			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->get_curr_song()->GetAllSteps()[0] );
 			if( GAMESTATE->m_pCurCourse )
 			{
 				vector<Trail*> apTrails;
@@ -152,7 +152,7 @@ void ScreenEvaluation::Init()
 
 		FOREACH_PlayerNumber( p )
 		{
-			float fSeconds = GAMESTATE->m_pCurSong->GetStepsSeconds();
+			float fSeconds = GAMESTATE->get_curr_song()->GetStepsSeconds();
 			ss.m_player[p].m_iActualDancePoints = RandomInt( 3 );
 			ss.m_player[p].m_iPossibleDancePoints = 2;
 			if( RandomInt(2) )
@@ -289,7 +289,7 @@ void ScreenEvaluation::Init()
 			if( GAMESTATE->IsCourseMode() )
 				m_LargeBanner.LoadFromCourse( GAMESTATE->m_pCurCourse );
 			else
-				m_LargeBanner.LoadFromSong( GAMESTATE->m_pCurSong );
+				m_LargeBanner.LoadFromSong( GAMESTATE->get_curr_song() );
 			m_LargeBanner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 			m_LargeBanner.SetName( "LargeBanner" );
 			ActorUtil::LoadAllCommands( m_LargeBanner, m_sName );

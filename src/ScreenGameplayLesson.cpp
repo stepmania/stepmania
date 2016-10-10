@@ -18,7 +18,7 @@ ScreenGameplayLesson::ScreenGameplayLesson()
 void ScreenGameplayLesson::Init()
 {
 	ASSERT( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()) != nullptr );
-	ASSERT( GAMESTATE->m_pCurSong != nullptr );
+	ASSERT( GAMESTATE->get_curr_song() != nullptr );
 
 	/* Now that we've set up, init the base class. */
 	ScreenGameplayNormal::Init();
@@ -30,7 +30,7 @@ void ScreenGameplayLesson::Init()
 	m_DancingState = STATE_DANCING;
 
 	// Load pages
-	Song *pSong = GAMESTATE->m_pCurSong;
+	Song *pSong = GAMESTATE->get_curr_song();
 	std::string sDir = pSong->GetSongDir();
 	vector<std::string> vs;
 	GetDirListing( sDir+"Page*", vs, true, true );

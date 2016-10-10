@@ -28,7 +28,7 @@ void NoteData::Init()
 void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
 {
 	ASSERT_M(timing_data != nullptr, "SetOccuranceTimeForAllTaps cannot run without timing data.");
-	timing_data->PrepareLookup();
+	timing_data->RequestLookup();
 	int curr_row= -1;
 	NoteData::all_tracks_iterator curr_note=
 		GetTapNoteRangeAllTracks(0, MAX_NOTE_ROW);

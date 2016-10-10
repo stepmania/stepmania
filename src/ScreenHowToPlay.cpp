@@ -172,7 +172,7 @@ void ScreenHowToPlay::Init()
 			pSteps->GetNoteData( tempNoteData );
 			pStyle->GetTransformedNoteDataForStyle( PLAYER_1, tempNoteData, m_NoteData );
 
-			GAMESTATE->m_pCurSong.Set( &m_Song );
+			GAMESTATE->set_curr_song(&m_Song);
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set(pSteps);
 			GAMESTATE->m_bGameplayLeadIn.Set( false );
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
@@ -258,10 +258,10 @@ void ScreenHowToPlay::Step()
 
 void ScreenHowToPlay::Update( float fDelta )
 {
-	if( GAMESTATE->m_pCurSong != nullptr )
+	if( GAMESTATE->get_curr_song() != nullptr )
 	{
 		RageTimer tm;
-		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm );
+		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->get_curr_song()->m_SongTiming, tm );
 		m_fFakeSecondsIntoSong += fDelta;
 
 		static int iLastNoteRowCounted = 0;

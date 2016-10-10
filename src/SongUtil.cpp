@@ -881,7 +881,7 @@ bool SongUtil::ValidateCurrentStepsChartName(const std::string &answer, std::str
 	if (pSteps->GetChartName() == answer) return true;
 
 	// TODO next commit: borrow code from EditStepsDescription.
-	bool result = SongUtil::IsChartNameUnique(GAMESTATE->m_pCurSong, pSteps->m_StepsType,
+	bool result = SongUtil::IsChartNameUnique(GAMESTATE->get_curr_song(), pSteps->m_StepsType,
 											  answer, pSteps);
 	if (!result)
 	{
@@ -918,7 +918,7 @@ bool SongUtil::ValidateCurrentSongPreview(const std::string& answer, std::string
 {
 	if(answer.empty())
 	{ return true; }
-	Song* song= GAMESTATE->m_pCurSong;
+	Song* song= GAMESTATE->get_curr_song();
 	std::string real_file= song->m_PreviewFile;
 	song->m_PreviewFile= answer;
 	std::string path= song->GetPreviewMusicPath();
@@ -1220,10 +1220,10 @@ namespace
 	}
 	int validate_edit_description(lua_State* L)
 	{
-		Song* snog= Luna<Song>::check(L, 1, true);
+		Song* check_song= Luna<Song>::check(L, 1, true);
 		StepsType stype= Enum::Check<StepsType>(L, 2);
 		std::string desc= SArg(3);
-		lua_pushboolean(L, SongUtil::IsEditDescriptionUnique(snog, stype, desc, nullptr));
+		lua_pushboolean(L, SongUtil::IsEditDescriptionUnique(check_song, stype, desc, nullptr));
 		return 1;
 	}
 
