@@ -369,11 +369,11 @@ void NetworkSyncManager::StartRequest( short position )
 	ctr = char( position*16 );
 	m_packet.Write1( ctr );
 
-	if( GAMESTATE->m_pCurSong != nullptr )
+	if( GAMESTATE->get_curr_song() != nullptr )
 	{
-		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sMainTitle );
-		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sSubTitle );
-		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sArtist );
+		m_packet.WriteNT( GAMESTATE->get_curr_song()->m_sMainTitle );
+		m_packet.WriteNT( GAMESTATE->get_curr_song()->m_sSubTitle );
+		m_packet.WriteNT( GAMESTATE->get_curr_song()->m_sArtist );
 	}
 	else
 	{

@@ -407,7 +407,7 @@ void ScreenGameplay::Init()
 
 	m_pCombinedLifeMeter = nullptr;
 
-	if( GAMESTATE->m_pCurSong == nullptr && GAMESTATE->m_pCurCourse == nullptr )
+	if( GAMESTATE->get_curr_song() == nullptr && GAMESTATE->m_pCurCourse == nullptr )
 		return;	// ScreenDemonstration will move us to the next screen.  We just need to survive for one update without crashing.
 
 	/* Save settings to the profile now.  Don't do this on extra stages, since the
@@ -895,7 +895,7 @@ void ScreenGameplay::InitSongQueues()
 	}
 	else
 	{
-		m_apSongsQueue.push_back( GAMESTATE->m_pCurSong );
+		m_apSongsQueue.push_back( GAMESTATE->get_curr_song() );
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			Steps *pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
@@ -1197,8 +1197,8 @@ void ScreenGameplay::LoadNextSong()
 
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
-	GAMESTATE->m_pCurSong.Set( m_apSongsQueue[iPlaySongIndex] );
-	STATSMAN->m_CurStageStats.m_vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
+	GAMESTATE->set_curr_song(m_apSongsQueue[iPlaySongIndex]);
+	STATSMAN->m_CurStageStats.m_vpPlayedSongs.push_back( GAMESTATE->get_curr_song() );
 
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
@@ -1219,7 +1219,7 @@ void ScreenGameplay::LoadNextSong()
 
 	SetupSong( iPlaySongIndex );
 
-	Song* pSong = GAMESTATE->m_pCurSong;
+	Song* pSong = GAMESTATE->get_curr_song();
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		Steps* pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
@@ -1313,8 +1313,8 @@ void ScreenGameplay::LoadNextSong()
 	// Load lyrics
 	// XXX: don't load this here (who and why? -aj)
 	LyricsLoader LL;
-	if( GAMESTATE->m_pCurSong->HasLyrics()  )
-		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
+	if( GAMESTATE->get_curr_song()->HasLyrics()  )
+		LL.LoadFromLRCFile(GAMESTATE->get_curr_song()->GetLyricsPath(), *GAMESTATE->get_curr_song());
 
 	// Set up song-specific graphics.
 
@@ -1342,7 +1342,7 @@ void ScreenGameplay::LoadNextSong()
 
 		// BeginnerHelper disabled, or failed to load.
 		if( m_pSongBackground )
-			m_pSongBackground->LoadFromSong( GAMESTATE->m_pCurSong );
+			m_pSongBackground->LoadFromSong( GAMESTATE->get_curr_song() );
 
 		if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
@@ -1381,7 +1381,7 @@ void ScreenGameplay::LoadNextSong()
 		m_pCombinedLifeMeter->OnLoadSong();
 
 	if( m_pSongForeground )
-		m_pSongForeground->LoadFromSong( GAMESTATE->m_pCurSong );
+		m_pSongForeground->LoadFromSong( GAMESTATE->get_curr_song() );
 
 	m_fTimeSinceLastDancingComment = 0;
 
@@ -1418,9 +1418,9 @@ void ScreenGameplay::LoadLights()
 
 	// First, check if the song has explicit lights
 	m_CabinetLightsNoteData.Init();
-	ASSERT( GAMESTATE->m_pCurSong != nullptr );
+	ASSERT( GAMESTATE->get_curr_song() != nullptr );
 
-	const Steps *pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, StepsType_lights_cabinet, Difficulty_Medium );
+	const Steps *pSteps = SongUtil::GetClosestNotes( GAMESTATE->get_curr_song(), StepsType_lights_cabinet, Difficulty_Medium );
 	if( pSteps != nullptr )
 	{
 		pSteps->GetNoteData( m_CabinetLightsNoteData );
@@ -1456,7 +1456,7 @@ void ScreenGameplay::LoadLights()
 			d1 = StringToDifficulty( asDifficulties[0] );
 	}
 
-	pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d1 );
+	pSteps = SongUtil::GetClosestNotes( GAMESTATE->get_curr_song(), st, d1 );
 
 	// If we can't find anything at all, stop.
 	if( pSteps == nullptr )
@@ -1481,7 +1481,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 	p.StopMode = RageSoundParams::M_CONTINUE;
 
 	{
-		const float fFirstSecond = GAMESTATE->m_pCurSong->GetFirstSecond();
+		const float fFirstSecond = GAMESTATE->get_curr_song()->GetFirstSecond();
 		float fStartDelay = fMinTimeToNotes - fFirstSecond;
 		fStartDelay = max( fStartDelay, fMinTimeToMusic );
 		p.m_StartSecond = -fStartDelay * p.m_fSpeed;
@@ -1492,7 +1492,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 		float fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut;
 		GetMusicEndTiming( fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut );
 
-		if( fSecondsToStartFadingOutMusic < GAMESTATE->m_pCurSong->m_fMusicLengthSeconds )
+		if( fSecondsToStartFadingOutMusic < GAMESTATE->get_curr_song()->m_fMusicLengthSeconds )
 		{
 			p.m_fFadeOutSeconds = MUSIC_FADE_OUT_SECONDS;
 			p.m_LengthSeconds = fSecondsToStartFadingOutMusic + MUSIC_FADE_OUT_SECONDS - p.m_StartSecond;
@@ -1511,7 +1511,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 	{
 		if(GAMESTATE->m_pCurSteps[pn])
 		{
-			GAMESTATE->m_pCurSteps[pn]->GetTimingData()->PrepareLookup();
+			GAMESTATE->m_pCurSteps[pn]->GetTimingData()->RequestLookup();
 		}
 	}
 }
@@ -1575,8 +1575,8 @@ void ScreenGameplay::PlayAnnouncer( const std::string &type, float fSeconds, flo
 	/* Don't play before the first beat, or after we're finished. */
 	if( m_DancingState != STATE_DANCING )
 		return;
-	if(GAMESTATE->m_pCurSong == nullptr  ||	// this will be true on ScreenDemonstration sometimes
-	   GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->m_pCurSong->GetFirstBeat())
+	if(GAMESTATE->get_curr_song() == nullptr  ||	// this will be true on ScreenDemonstration sometimes
+	   GAMESTATE->m_Position.m_fSongBeat < GAMESTATE->get_curr_song()->GetFirstBeat())
 		return;
 
 	if( *fDeltaSeconds < fSeconds )
@@ -1594,12 +1594,12 @@ void ScreenGameplay::UpdateSongPosition( float fDeltaTime )
 	RageTimer tm;
 	const float fSeconds = m_pSoundMusic->GetPositionSeconds( nullptr, &tm );
 	const float fAdjust = SOUND->GetFrameTimingAdjustment( fDeltaTime );
-	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, GAMESTATE->m_pCurSong->m_SongTiming, tm+fAdjust );
+	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, GAMESTATE->get_curr_song()->m_SongTiming, tm+fAdjust );
 }
 
 void ScreenGameplay::BeginScreen()
 {
-	if( GAMESTATE->m_pCurSong == nullptr  )
+	if( GAMESTATE->get_curr_song() == nullptr  )
 		return;
 
 	ScreenWithMenuElements::BeginScreen();
@@ -1648,7 +1648,7 @@ bool ScreenGameplay::AllAreFailing()
 void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut )
 {
 	using std::max;
-	float fLastStepSeconds = GAMESTATE->m_pCurSong->GetLastSecond();
+	float fLastStepSeconds = GAMESTATE->get_curr_song()->GetLastSecond();
 	fLastStepSeconds += Player::GetMaxStepDistanceSeconds();
 
 	float fTransitionLength;
@@ -1661,10 +1661,10 @@ void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, fl
 
 	// Align the end of the music fade to the end of the transition.
 	float fSecondsToFinishFadingOutMusic = fSecondsToStartTransitioningOut + fTransitionLength;
-	if( fSecondsToFinishFadingOutMusic < GAMESTATE->m_pCurSong->m_fMusicLengthSeconds )
+	if( fSecondsToFinishFadingOutMusic < GAMESTATE->get_curr_song()->m_fMusicLengthSeconds )
 		fSecondsToStartFadingOutMusic = fSecondsToFinishFadingOutMusic - MUSIC_FADE_OUT_SECONDS;
 	else
-		fSecondsToStartFadingOutMusic = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds; // don't fade
+		fSecondsToStartFadingOutMusic = GAMESTATE->get_curr_song()->m_fMusicLengthSeconds; // don't fade
 
 	/* Make sure we keep going long enough to register a miss for the last note, and
 	 * never start fading before the last note. */
@@ -1677,7 +1677,7 @@ void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, fl
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
-	if( GAMESTATE->m_pCurSong == nullptr  )
+	if( GAMESTATE->get_curr_song() == nullptr  )
 	{
 		/* ScreenDemonstration will move us to the next screen.  We just need to
 		 * survive for one update without crashing.  We need to call Screen::Update
@@ -1700,11 +1700,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	/* This happens if ScreenDemonstration::HandleScreenMessage sets a new screen when
 	 * PREFSMAN->m_bDelayedScreenLoad. */
-	if( GAMESTATE->m_pCurSong == nullptr )
+	if( GAMESTATE->get_curr_song() == nullptr )
 		return;
 	/* This can happen if ScreenDemonstration::HandleScreenMessage sets a new screen when
 	 * !PREFSMAN->m_bDelayedScreenLoad.  (The new screen was loaded when we called Screen::Update,
-	 * and the ctor might set a new GAMESTATE->m_pCurSong, so the above check can fail.) */
+	 * and the ctor might set a new GAMESTATE->get_curr_song(), so the above check can fail.) */
 	if( SCREENMAN->GetTopScreen() != this )
 		return;
 
@@ -1853,7 +1853,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			// update fGameplaySeconds
 			STATSMAN->m_CurStageStats.m_fGameplaySeconds += fUnscaledDeltaTime;
 			float curBeat = GAMESTATE->m_Position.m_fSongBeat;
-			Song &s = *GAMESTATE->m_pCurSong;
+			Song &s = *GAMESTATE->get_curr_song();
 
 			if( curBeat >= s.GetFirstBeat() && curBeat < s.GetLastBeat() )
 			{
@@ -2250,7 +2250,7 @@ void ScreenGameplay::UpdateLights()
 	}
 
 	// Before the first beat of the song, all cabinet lights solid on (except for menu buttons).
-	Song &s = *GAMESTATE->m_pCurSong;
+	Song &s = *GAMESTATE->get_curr_song();
 	bool bOverrideCabinetBlink = (GAMESTATE->m_Position.m_fSongBeat < s.GetFirstBeat());
 	FOREACH_CabinetLight( cl )
 	{
@@ -2280,7 +2280,7 @@ void ScreenGameplay::SendCrossedMessages()
 		static int iRowLastCrossed = 0;
 
 		float fPositionSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
-		float fSongBeat = GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
+		float fSongBeat = GAMESTATE->get_curr_song()->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		iRowNow = max( 0, iRowNow );
@@ -2318,7 +2318,7 @@ void ScreenGameplay::SendCrossedMessages()
 			float fNoteWillCrossInSeconds = MESSAGE_SPACING_SECONDS * i;
 
 			float fPositionSeconds = GAMESTATE->m_Position.m_fMusicSeconds + fNoteWillCrossInSeconds;
-			float fSongBeat = GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
+			float fSongBeat = GAMESTATE->get_curr_song()->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds );
 
 			int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 			iRowNow = max( 0, iRowNow );
@@ -2616,7 +2616,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
  */
 void ScreenGameplay::SaveStats()
 {
-	float fMusicLen = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
+	float fMusicLen = GAMESTATE->get_curr_song()->m_fMusicLengthSeconds;
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
@@ -3213,10 +3213,10 @@ void ScreenGameplay::SaveReplay()
 
 			// song information node
 			SongID songID;
-			songID.FromSong(GAMESTATE->m_pCurSong);
+			songID.FromSong(GAMESTATE->get_curr_song());
 			XNode *pSongInfoNode = songID.CreateNode();
-			pSongInfoNode->AppendChild("Title", GAMESTATE->m_pCurSong->GetDisplayFullTitle());
-			pSongInfoNode->AppendChild("Artist", GAMESTATE->m_pCurSong->GetDisplayArtist());
+			pSongInfoNode->AppendChild("Title", GAMESTATE->get_curr_song()->GetDisplayFullTitle());
+			pSongInfoNode->AppendChild("Artist", GAMESTATE->get_curr_song()->GetDisplayArtist());
 			p->AppendChild(pSongInfoNode);
 
 			// steps information
@@ -3224,7 +3224,7 @@ void ScreenGameplay::SaveReplay()
 			stepsID.FromSteps( GAMESTATE->m_pCurSteps[pn] );
 			XNode *pStepsInfoNode = stepsID.CreateNode();
 			// hashing = argh
-			//pStepsInfoNode->AppendChild("StepsHash", stepsID.ToSteps(GAMESTATE->m_pCurSong,false)->GetHash());
+			//pStepsInfoNode->AppendChild("StepsHash", stepsID.ToSteps(GAMESTATE->get_curr_song(),false)->GetHash());
 			p->AppendChild(pStepsInfoNode);
 
 			// player information node (rival data sup)

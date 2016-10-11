@@ -134,7 +134,7 @@ GameState::GameState() :
 	m_PreferredDifficulty(	Message_PreferredDifficultyP1Changed ),
 	m_PreferredCourseDifficulty(	Message_PreferredCourseDifficultyP1Changed ),
 	m_SortOrder(			Message_SortOrderChanged ),
-	m_pCurSong(				Message_CurrentSongChanged ),
+	m_curr_song(Message_CurrentSongChanged),
 	m_pCurSteps(			Message_CurrentStepsP1Changed ),
 	m_pCurCourse(			Message_CurrentCourseChanged ),
 	m_pCurTrail(			Message_CurrentTrailP1Changed ),
@@ -360,7 +360,7 @@ void GameState::Reset()
 
 	m_AdjustTokensBySongCostForFinalStageCheck= true;
 
-	m_pCurSong.Set( GetDefaultSong() );
+	set_curr_song(GetDefaultSong());
 	m_pPreferredSong = nullptr;
 	m_pCurCourse.Set( nullptr );
 	m_pPreferredCourse = nullptr;
@@ -735,14 +735,14 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 {
 	using std::max;
 	int iNumStagesOfThisSong = 1;
-	if( m_pCurSong )
+	if(get_curr_song() != nullptr)
 	{
 		/* Extra stages need to only count as one stage in case a multi-stage
 		 * song is chosen. */
 		if( IsAnExtraStage() )
 			iNumStagesOfThisSong = 1;
 		else
-			iNumStagesOfThisSong = GameState::GetNumStagesMultiplierForSong( m_pCurSong );
+		iNumStagesOfThisSong = GameState::GetNumStagesMultiplierForSong(get_curr_song());
 	}
 	else if( m_pCurCourse )
 		iNumStagesOfThisSong = PREFSMAN->m_iSongsPerPlay;
@@ -957,7 +957,7 @@ bool GameState::CanSafelyEnterGameplay(std::string& reason)
 {
 	if(!IsCourseMode())
 	{
-		Song const* song= m_pCurSong;
+		Song const* song= get_curr_song();
 		if(song == nullptr)
 		{
 			reason= "Current song is nullptr.";
@@ -997,7 +997,7 @@ bool GameState::CanSafelyEnterGameplay(std::string& reason)
 					GAMEMAN->GetStepsTypeInfo(style->m_StepsType).stepTypeName);
 				return false;
 			}
-			if(steps->m_pSong != m_pCurSong)
+			if(steps->m_pSong != get_curr_song())
 			{
 				reason= fmt::sprintf("Steps for player %d are not for the current song.",
 					pn+1);
@@ -1335,8 +1335,8 @@ update player position code goes here
 float GameState::GetSongPercent( float beat ) const
 {
 	// 0 = first step; 1 = last step
-	float curTime = this->m_pCurSong->m_SongTiming.GetElapsedTimeFromBeat(beat);
-	return (curTime - m_pCurSong->GetFirstSecond()) / m_pCurSong->GetLastSecond();
+	float curTime = get_curr_song()->m_SongTiming.GetElapsedTimeFromBeat(beat);
+	return (curTime - get_curr_song()->GetFirstSecond()) / get_curr_song()->GetLastSecond();
 }
 
 int GameState::GetNumStagesLeft( PlayerNumber pn ) const
@@ -1367,13 +1367,13 @@ bool GameState::IsFinalStageForAnyHumanPlayer() const
 bool GameState::IsFinalStageForEveryHumanPlayer() const
 {
 	int song_cost= 1;
-	if(m_pCurSong != nullptr)
+	if(get_curr_song() != nullptr)
 	{
-		if(m_pCurSong->IsLong())
+		if(get_curr_song()->IsLong())
 		{
 			song_cost= 2;
 		}
-		else if(m_pCurSong->IsMarathon())
+		else if(get_curr_song()->IsMarathon())
 		{
 			song_cost= 3;
 		}
@@ -1474,6 +1474,25 @@ int GameState::GetLoadingCourseSongIndex() const
 	if( m_bLoadingNextSong )
 		++iIndex;
 	return iIndex;
+}
+
+Song* GameState::get_curr_song() const
+{
+	return m_curr_song.Get();
+}
+
+void GameState::set_curr_song(Song* new_song)
+{
+	Song* curr= m_curr_song.Get();
+	if(curr != nullptr)
+	{
+		curr->m_SongTiming.ReleaseLookup();
+	}
+	m_curr_song.Set(new_song);
+	if(new_song != nullptr)
+	{
+		new_song->m_SongTiming.RequestLookup();
+	}
 }
 
 static LocalizedString PLAYER1	("GameState","Player 1");
@@ -1921,9 +1940,13 @@ bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
 	// Check the stored player options for disqualify.  Don't disqualify because
 	// of mods that were forced.
 	if( IsCourseMode() )
-		return po.IsEasierForCourseAndTrail(  m_pCurCourse, m_pCurTrail[pn] );
+	{
+		return po.IsEasierForCourseAndTrail(m_pCurCourse, m_pCurTrail[pn]);
+	}
 	else
-		return po.IsEasierForSongAndSteps(  m_pCurSong, m_pCurSteps[pn], pn);
+	{
+		return po.IsEasierForSongAndSteps(get_curr_song(), m_pCurSteps[pn], pn);
+	}
 }
 
 void GameState::RemoveAllActiveAttacks()	// called on end of song
@@ -2704,11 +2727,30 @@ public:
 		p->m_noteskin_params[pn].SetFromStack(L);
 		COMMON_RETURN_SELF;
 	}
-	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int GetCurrentSong( T* p, lua_State *L )
+	{
+		Song* curr_song= p->get_curr_song();
+		if(curr_song != nullptr)
+		{
+			curr_song->PushSelf(L);
+		}
+		else
+		{
+			lua_pushnil(L);
+		}
+		return 1;
+	}
 	static int SetCurrentSong( T* p, lua_State *L )
 	{
-		if( lua_isnil(L,1) ) { p->m_pCurSong.Set( nullptr ); }
-		else { Song *pS = Luna<Song>::check( L, 1, true ); p->m_pCurSong.Set( pS ); }
+		if(lua_isnil(L,1))
+		{
+			p->set_curr_song(nullptr);
+		}
+		else
+		{
+			Song *pS = Luna<Song>::check(L, 1, true);
+			p->set_curr_song(pS);
+		}
 		COMMON_RETURN_SELF;
 	}
 	static int CanSafelyEnterGameplay(T* p, lua_State* L)
@@ -2933,7 +2975,7 @@ public:
 
 	static int GetCurrentStepsCredits( T* t, lua_State *L )
 	{
-		const Song* pSong = t->m_pCurSong;
+		const Song* pSong = t->get_curr_song();
 		if( pSong == nullptr )
 			return 0;
 
@@ -3220,7 +3262,7 @@ public:
 		// Form 1.
 		if(steps != nullptr && lua_gettop(L) == 2)
 		{
-			p->m_pCurSong.Set(song);
+			p->set_curr_song(song);
 			p->m_pCurSteps[PLAYER_1].Set(steps);
 			p->SetCurrentStyle(GAMEMAN->GetEditorStyleForStepsType(
 					steps->m_StepsType), PLAYER_INVALID);
@@ -3253,7 +3295,7 @@ public:
 		new_steps->SetDifficulty(diff);
 		new_steps->SetDescription(edit_name);
 		song->AddSteps(new_steps);
-		p->m_pCurSong.Set(song);
+		p->set_curr_song(song);
 		p->m_pCurSteps[PLAYER_1].Set(new_steps);
 		p->SetCurrentStyle(GAMEMAN->GetEditorStyleForStepsType(
 				new_steps->m_StepsType), PLAYER_INVALID);

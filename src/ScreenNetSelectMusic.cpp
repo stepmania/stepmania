@@ -272,7 +272,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_SongChanged )
 	{
-		GAMESTATE->m_pCurSong.Set( m_MusicWheel.GetSelectedSong() );
+		GAMESTATE->set_curr_song(m_MusicWheel.GetSelectedSong());
 		MusicChanged();
 	}
 	else if( SM == SM_SMOnlinePack )
@@ -363,11 +363,11 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 		}
 	}
 
-	if( GAMESTATE->m_pCurSong == nullptr )
+	if( GAMESTATE->get_curr_song() == nullptr )
 		return false;
 	StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType;
 	vector <Steps *> MultiSteps;
-	MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
+	MultiSteps = GAMESTATE->get_curr_song()->GetStepsByStepsType( st );
 	if(MultiSteps.size() == 0)
 		m_DC[pn] = NUM_Difficulty;
 	else
@@ -426,7 +426,7 @@ bool ScreenNetSelectMusic::MenuStart( const InputEventPlus & )
 	if( pSong == nullptr )
 		return false;
 
-	GAMESTATE->m_pCurSong.Set( pSong );
+	GAMESTATE->set_curr_song(pSong);
 
 	if( NSMAN->useSMserver )
 	{
@@ -471,7 +471,7 @@ void ScreenNetSelectMusic::TweenOffScreen()
 void ScreenNetSelectMusic::StartSelectedSong()
 {
 	Song * pSong = m_MusicWheel.GetSelectedSong();
-	GAMESTATE->m_pCurSong.Set( pSong );
+	GAMESTATE->set_curr_song(pSong);
 	FOREACH_EnabledPlayer (pn)
 	{
 		StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType; //StepsType_dance_single;
@@ -492,7 +492,7 @@ void ScreenNetSelectMusic::StartSelectedSong()
 
 void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
-	if( GAMESTATE->m_pCurSong == nullptr )
+	if( GAMESTATE->get_curr_song() == nullptr )
 	{
 		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid );
 		//m_DifficultyIcon[pn].SetFromSteps( pn, nullptr );	// It will blank it out
@@ -501,7 +501,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 
 	StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType;
 
-	Steps * pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->m_pCurSong, st, m_DC[pn] );
+	Steps * pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->get_curr_song(), st, m_DC[pn] );
 	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 
 	if( ( m_DC[pn] < NUM_Difficulty ) && ( m_DC[pn] >= Difficulty_Beginner ) )
@@ -512,7 +512,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 
 void ScreenNetSelectMusic::MusicChanged()
 {
-	if( GAMESTATE->m_pCurSong == nullptr )
+	if( GAMESTATE->get_curr_song() == nullptr )
 	{
 		FOREACH_EnabledPlayer (pn)
 			UpdateDifficulties( pn );
@@ -528,7 +528,7 @@ void ScreenNetSelectMusic::MusicChanged()
 		m_DC[pn] = GAMESTATE->m_PreferredDifficulty[pn];
 		StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType;
 		vector <Steps *> MultiSteps;
-		MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
+		MultiSteps = GAMESTATE->get_curr_song()->GetStepsByStepsType( st );
 		if(MultiSteps.size() == 0)
 			m_DC[pn] = NUM_Difficulty;
 		else
@@ -566,18 +566,18 @@ void ScreenNetSelectMusic::MusicChanged()
 	// Copied from ScreenSelectMusic
 	// TODO: Update me! -aj
 	SOUND->StopMusic();
-	if( GAMESTATE->m_pCurSong->HasMusic() )
+	if( GAMESTATE->get_curr_song()->HasMusic() )
 	{
 		// don't play the same sound over and over
-		if (Rage::ci_ascii_string{ SOUND->GetMusicPath().c_str() } != GAMESTATE->m_pCurSong->GetMusicPath())
+		if (Rage::ci_ascii_string{ SOUND->GetMusicPath().c_str() } != GAMESTATE->get_curr_song()->GetMusicPath())
 		{
 			SOUND->StopMusic();
 			SOUND->PlayMusic(
-				GAMESTATE->m_pCurSong->GetPreviewMusicPath(),
+				GAMESTATE->get_curr_song()->GetPreviewMusicPath(),
 				nullptr,
 				true,
-				GAMESTATE->m_pCurSong->GetPreviewStartSeconds(),
-				GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds );
+				GAMESTATE->get_curr_song()->GetPreviewStartSeconds(),
+				GAMESTATE->get_curr_song()->m_fMusicSampleLengthSeconds );
 		}
 	}
 }

@@ -268,7 +268,7 @@ void StepsDisplayList::PositionItems()
 
 void StepsDisplayList::SetFromGameState()
 {
-	const Song *pSong = GAMESTATE->m_pCurSong;
+	const Song *pSong = GAMESTATE->get_curr_song();
 	unsigned i = 0;
 
 	if( pSong == nullptr )

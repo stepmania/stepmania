@@ -107,7 +107,7 @@ void LifeMeterTime::OnLoadSong()
 	{
 		// Placeholderish, at least this way it won't crash when someone tries it
 		// out in non-course mode. -Kyz
-		Song* song= GAMESTATE->m_pCurSong;
+		Song* song= GAMESTATE->get_curr_song();
 		ASSERT(song != nullptr);
 		float song_len= song->m_fMusicLengthSeconds;
 		Steps* steps= GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber];

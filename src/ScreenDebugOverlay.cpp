@@ -1145,7 +1145,7 @@ class DebugLineConvertXML : public IDebugLine
 	virtual std::string GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( std::string &sMessageOut )
 	{
-		Song* cur_song= GAMESTATE->m_pCurSong;
+		Song* cur_song= GAMESTATE->get_curr_song();
 		if(cur_song)
 		{
 			convert_xmls_in_dir(cur_song->GetSongDir() + "/");

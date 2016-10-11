@@ -32,7 +32,7 @@ static std::string GetPromptText()
 			s += CHANGED_TIMING_OF.GetValue()+"\n" +
 				fmt::sprintf("%s:\n"
 				"\n",
-				GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
+				GAMESTATE->get_curr_song()->GetDisplayFullTitle().c_str() );
 
 			s += Rage::join( "\n", vs ) + "\n\n";
 		}

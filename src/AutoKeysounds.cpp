@@ -44,7 +44,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 	//
 	// Load sounds.
 	//
-	Song* pSong = GAMESTATE->m_pCurSong;
+	Song* pSong = GAMESTATE->get_curr_song();
 	std::string sSongDir = pSong->GetSongDir();
 
 	/*
@@ -259,7 +259,7 @@ void AutoKeysounds::FinishLoading()
 {
 	m_sSound.Unload();
 
-	Song* pSong = GAMESTATE->m_pCurSong;
+	Song* pSong = GAMESTATE->get_curr_song();
 
 	vector<RageSoundReader *> apSounds;
 	LoadTracks( pSong, m_pSharedSound, m_pPlayerSounds[0], m_pPlayerSounds[1] );
@@ -340,7 +340,7 @@ void AutoKeysounds::Update( float fDelta )
 	bool bCrossedABeat = false;
 	{
 		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+		float fSongBeat = GAMESTATE->get_curr_song()->GetBeatFromElapsedTime( fPositionSeconds );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		iRowNow = std::max( 0, iRowNow );

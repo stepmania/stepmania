@@ -413,12 +413,12 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				m_aListEntries.push_back( mc );
 			}
 		}
-		else if(GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()) && GAMESTATE->m_pCurSong) // playing a song
+		else if(GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()) && GAMESTATE->get_curr_song()) // playing a song
 		{
 			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
 
 			vector<Steps*> vpSteps;
-			Song *pSong = GAMESTATE->m_pCurSong;
+			Song *pSong = GAMESTATE->get_curr_song();
 			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 			StepsUtil::RemoveLockedSteps( pSong, vpSteps );
 			StepsUtil::SortNotesArrayByDifficulty( vpSteps );
@@ -526,17 +526,17 @@ public:
 		m_vDifficulties.clear();
 		m_vSteps.clear();
 
-		if( GAMESTATE->m_pCurSong )
+		if( GAMESTATE->get_curr_song() )
 		{
 			FOREACH_ENUM( Difficulty, dc )
 			{
 				if( dc == Difficulty_Edit )
 					continue;
 				m_vDifficulties.push_back( dc );
-				Steps* pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->m_pCurSong, *m_pst, dc );
+				Steps* pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->get_curr_song(), *m_pst, dc );
 				m_vSteps.push_back( pSteps );
 			}
-			SongUtil::GetSteps( GAMESTATE->m_pCurSong, m_vSteps, *m_pst, Difficulty_Edit );
+			SongUtil::GetSteps( GAMESTATE->get_curr_song(), m_vSteps, *m_pst, Difficulty_Edit );
 			m_vDifficulties.resize( m_vSteps.size(), Difficulty_Edit );
 
 			if( sParam == "EditSteps" )
@@ -761,8 +761,10 @@ class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 	{
 		const vector<Song*> &vpSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
-		if( GAMESTATE->m_pCurSong == nullptr )
-			GAMESTATE->m_pCurSong.Set( vpSongs[0] );
+		if(GAMESTATE->get_curr_song() == nullptr)
+		{
+			GAMESTATE->set_curr_song(vpSongs[0]);
+		}
 
 		m_Def.m_sName = "SongsInCurrentSongGroup";
 		m_Def.m_bOneChoiceForAllPlayers = true;

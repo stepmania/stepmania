@@ -1033,7 +1033,7 @@ void ScreenSelectMusic::ChangeSteps( PlayerNumber pn, int dir )
 
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
-	if( GAMESTATE->m_pCurSong )
+	if( GAMESTATE->get_curr_song() )
 	{
 		m_iSelection[pn] += dir;
 		if( WRAP_CHANGE_STEPS )
@@ -1604,11 +1604,11 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 	{
 		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
-		if( GAMESTATE->m_pCurSong )
+		if( GAMESTATE->get_curr_song() )
 		{
 			m_iSelection[pn] = Rage::clamp( m_iSelection[pn], 0, static_cast<int>(m_vpSteps.size())-1 );
 
-			Song* pSong = GAMESTATE->m_pCurSong;
+			Song* pSong = GAMESTATE->get_curr_song();
 			Steps* pSteps = m_vpSteps.empty()? nullptr: m_vpSteps[m_iSelection[pn]];
 
 			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
@@ -1740,7 +1740,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_MenuTimer->Stall();
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
-	GAMESTATE->m_pCurSong.Set( pSong );
+	GAMESTATE->set_curr_song(pSong);
 	if( pSong )
 		GAMESTATE->m_pPreferredSong = pSong;
 

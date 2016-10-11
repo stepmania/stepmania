@@ -247,7 +247,15 @@ public:
 	// State Info used during gameplay
 
 	// nullptr on ScreenSelectMusic if the currently selected wheel item isn't a Song.
-	BroadcastOnChangePtr<Song>	m_pCurSong;
+	// m_curr_song is private so that when it changes the timing data lookup
+	// table can be built and released.  Being able to use the lookup table
+	// should mean less time spent in SongPosition::Update when on SelectMusic
+	// and playing the sample music. -Kyz
+	private:
+	BroadcastOnChangePtr<Song>	m_curr_song;
+	public:
+	Song* get_curr_song() const;
+	void set_curr_song(Song* new_song);
 	// The last Song that the user manually changed to.
 	Song*		m_pPreferredSong;
 	BroadcastOnChangePtr1D<Steps,NUM_PLAYERS> m_pCurSteps;

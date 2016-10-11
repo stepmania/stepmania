@@ -64,7 +64,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
 	SONGMAN->LoadStepEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
 	SONGMAN->LoadCourseEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
-	GAMESTATE->m_pCurSong.Set( nullptr );
+	GAMESTATE->set_curr_song(nullptr);
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( nullptr );
 
 	vector<OptionRowHandler*> vHands;
@@ -194,7 +194,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 				{
 					Steps *pSteps = GetStepsWithFocus();
 					Song *pSong = pSteps->m_pSong;
-					GAMESTATE->m_pCurSong.Set( pSong );
+					GAMESTATE->set_curr_song(pSong);
 					GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
 					ScreenOptions::BeginFadingOut();
@@ -235,7 +235,7 @@ void ScreenOptionsManageEditSteps::AfterChangeRow( PlayerNumber pn )
 	Steps *pSteps = GetStepsWithFocus();
 	Song *pSong = pSteps ? pSteps->m_pSong : nullptr;
 
-	GAMESTATE->m_pCurSong.Set( pSong );
+	GAMESTATE->set_curr_song(pSong);
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
 	ScreenOptions::AfterChangeRow( pn );

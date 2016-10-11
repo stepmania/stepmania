@@ -237,7 +237,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		const HighScore &hs = m_player[p].m_HighScore;
 		StepsType st = GAMESTATE->GetCurrentStyle(p)->m_StepsType;
 
-		const Song* pSong = GAMESTATE->m_pCurSong;
+		const Song* pSong = GAMESTATE->get_curr_song();
 		const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 
 		// Don't save DQ'd scores
@@ -306,7 +306,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		}
 		else
 		{
-			Song* pSong = GAMESTATE->m_pCurSong;
+			Song* pSong = GAMESTATE->get_curr_song();
 			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 			pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
 		}

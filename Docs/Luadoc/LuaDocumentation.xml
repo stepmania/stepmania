@@ -5065,12 +5065,6 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetSongBeatVisible' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
-	<Function name='GetWarpBeginRow' return='int' arguments=''>
-		Returns the row where a warp appears.
-	</Function>
-	<Function name='GetWarpDestination' return='float' arguments=''>
-		Returns the warp destination length.
-	</Function>
 </Class>
 <Class name='Sprite'>
 	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>
