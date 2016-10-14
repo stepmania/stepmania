@@ -1661,19 +1661,17 @@ void NoteFieldColumn::draw_taps_internal()
 		NoteSkinTapPart part= NSTP_Tap;
 		NoteSkinTapOptionalPart head_part= NoteSkinTapOptionalPart_Invalid;
 		NoteSkinTapOptionalPart tail_part= NoteSkinTapOptionalPart_Invalid;
-		double head_beat;
+		double head_beat= tap_beat;
 		double tail_beat;
-		double head_second;
+		double head_second= tap_second;
 		bool active= false;
 		switch(tn.type)
 		{
 			case TapNoteType_Mine:
 				part= NSTP_Mine;
-				head_beat= tap_beat;
 				break;
 			case TapNoteType_Lift:
 				part= NSTP_Lift;
-				head_beat= tap_beat;
 				break;
 			case TapNoteType_HoldHead:
 				part= NoteSkinTapPart_Invalid;
@@ -1720,7 +1718,6 @@ void NoteFieldColumn::draw_taps_internal()
 							break;
 					}
 				}
-				head_beat= tap_beat;
 				break;
 		}
 		vector<tap_draw_info> acts(2);
@@ -1728,7 +1725,7 @@ void NoteFieldColumn::draw_taps_internal()
 		{
 			set_tap_actor_info(acts[0], *this, m_newskin,
 				&NoteSkinColumn::get_tap_actor, &NoteSkinColumn::get_player_tap, part,
-				tn.pn, tap_beat, tap_second, tapit.y_offset,
+				tn.pn, head_beat, head_second, tapit.y_offset,
 				m_status.anim_percent, active, m_status.in_reverse, tapit);
 		}
 		else
@@ -1739,7 +1736,7 @@ void NoteFieldColumn::draw_taps_internal()
 				set_tap_actor_info(acts[0], *this, m_newskin,
 					&NoteSkinColumn::get_optional_actor,
 					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn,
-					tap_beat, tap_second, tapit.y_offset,
+					head_beat, head_second, tapit.y_offset,
 					m_status.anim_percent, active, m_status.in_reverse, tapit);
 			}
 			else
@@ -1753,7 +1750,7 @@ void NoteFieldColumn::draw_taps_internal()
 				set_tap_actor_info(acts[1], *this, m_newskin,
 					&NoteSkinColumn::get_optional_actor,
 					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn,
-					tap_beat, tap_second, tapit.y_offset,
+					head_beat, head_second, tapit.y_offset,
 					m_status.anim_percent, active, m_status.in_reverse, tapit);
 			}
 		}
