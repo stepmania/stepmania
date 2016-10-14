@@ -20,14 +20,14 @@ t[#t+1] = Def.ActorFrame {
 			if GAMESTATE:GetCurrentCourse() then
 				self:settext( curStageIndex+1 .. " / " .. GAMESTATE:GetCurrentCourse():GetEstimatedNumStages() );
 			elseif GAMESTATE:IsEventMode() then
-				self:settextf("Stage %s", curStageIndex);
+				self:settextf(THEME:GetString("ScreenWithMenuElements", "StageCounter"), curStageIndex);
 			else
 				local thed_stage= thified_curstage_index(curScreen:find("Evaluation"))
 				if THEME:GetMetric(curScreen,"StageDisplayUseShortString") then
 					self:settext(thed_stage)
 					self:zoom(0.75);
 				else
-					self:settextf("%s Stage", thed_stage);
+					self:settextf(THEME:GetString("ScreenWithMenuElements", "StageCounter"), thed_stage);
 					self:zoom(1);
 				end;
 			end;
