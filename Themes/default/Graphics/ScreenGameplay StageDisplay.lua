@@ -24,7 +24,7 @@ local t = Def.ActorFrame {
 				self:settextf("%i / %i", songsPlayed, GAMESTATE:GetCurrentCourse():GetEstimatedNumStages());
 			else
 				if GAMESTATE:IsEventMode() then
-					self:settextf(THEME:GetString("ScreenWithMenuElements", "EventStageCounter"), curStageIndex);
+					self:settextf(THEME:GetString("ScreenWithMenuElements", "StageCounter"), curStageIndex);
 				else
 					local thed_stage= thified_curstage_index(false)
 					if THEME:GetMetric(curScreen,"StageDisplayUseShortString") then
