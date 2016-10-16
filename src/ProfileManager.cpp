@@ -191,7 +191,7 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, std::string sPro
 		}
 	}
 
-	LOG->Trace( "Done loading profile - result %d", lr );
+	LOG->Trace("Done loading profile - result %d", int(lr));
 
 	return lr;
 }
