@@ -191,6 +191,12 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, std::string sPro
 		}
 	}
 
+	if(lr == ProfileLoadResult_Success)
+	{
+		Profile* prof= GetProfile(pn);
+		prof->LoadCustomFunction(sProfileDir, pn);
+	}
+
 	LOG->Trace("Done loading profile - result %d", int(lr));
 
 	return lr;
