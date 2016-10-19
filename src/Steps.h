@@ -124,6 +124,8 @@ public:
 	void SetChartStyle( std::string sChartStyle );
 	static bool MakeValidEditDescription( std::string &sPreferredDescription );	// return true if was modified
 
+	void ChangeFilenamesForCustomSong();
+
 	void SetLoadedFromProfile( ProfileSlot slot )	{ m_LoadedFromProfile = slot; }
 	void SetMeter( int meter );
 	void SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] );

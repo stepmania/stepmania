@@ -19,6 +19,8 @@ class RageFileDriver;
 /** @brief Get the length of the array. */
 #define ARRAYLEN(a) (sizeof(a) / sizeof((a)[0]))
 
+extern const std::string CUSTOM_SONG_PATH;
+
 // TODO: Rename this to TryClamp or something a little more accurate
 // so as to not be confusing.
 template<typename T, typename U, typename V>
@@ -345,6 +347,7 @@ struct tm GetLocalTime();
  * element will end up in Dir, not FName: "c:\games\stepmania\".
  * */
 void splitpath( const std::string &Path, std::string &Dir, std::string &Filename, std::string &Ext );
+std::string custom_songify_path(std::string const& path);
 
 std::string SetExtension( const std::string &path, const std::string &ext );
 std::string GetExtension( const std::string &sPath );

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "GameState.h"
 #include "Actor.h"
+#include "ActorUtil.h"
 #include "AdjustSync.h"
 #include "AnnouncerManager.h"
 #include "Bookkeeper.h"
@@ -26,6 +27,7 @@
 #include "Profile.h"
 #include "ProfileManager.h"
 #include "RageFile.h"
+#include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageFmtWrap.h"
@@ -1474,6 +1476,59 @@ int GameState::GetLoadingCourseSongIndex() const
 	if( m_bLoadingNextSong )
 		++iIndex;
 	return iIndex;
+}
+
+static std::vector<std::string> const prepare_song_failures= {
+	"success",
+	"no_current_song",
+	"card_mount_failed",
+	"load_interrupted"
+};
+
+int GameState::prepare_song_for_gameplay()
+{
+	Song* curr= get_curr_song();
+	if(curr == nullptr)
+	{
+		return 1;
+	}
+	if(curr->m_LoadedFromProfile == ProfileSlot_Invalid)
+	{
+		return 0;
+	}
+	ProfileSlot prof_slot= curr->m_LoadedFromProfile;
+	PlayerNumber slot_as_pn= PlayerNumber(prof_slot);
+	if(!PROFILEMAN->ProfileWasLoadedFromMemoryCard(slot_as_pn))
+	{
+		return 0;
+	}
+	if(!MEMCARDMAN->MountCard(slot_as_pn))
+	{
+		return 2;
+	}
+	std::string prof_dir= PROFILEMAN->GetProfileDir(prof_slot);
+	// Song loading changes its paths to point to the cache area. -Kyz
+	std::string to_dir= curr->GetSongDir();
+	std::string from_dir= curr->GetPreCustomifyDir();
+	// The problem of what files to copy is complicated by steps being able to
+	// specify their own music file, and the variety of step file formats.
+	// Complex logic to figure out what files the song actually uses would be
+	// bug prone.  Just copy all audio files and step files. -Kyz
+	vector<std::string> copy_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
+	copy_exts.push_back("sm");
+	copy_exts.push_back("ssc");
+	copy_exts.push_back("lrc");
+	vector<std::string> files_in_dir;
+	FILEMAN->GetDirListingWithMultipleExtensions(from_dir, copy_exts, files_in_dir);
+	for(auto&& fname : files_in_dir)
+	{
+		if(!FileCopy(from_dir + fname, to_dir + fname))
+		{
+			return 3;
+		}
+	}
+	MEMCARDMAN->UnmountCard(slot_as_pn);
+	return 0;
 }
 
 Song* GameState::get_curr_song() const
@@ -3329,6 +3384,12 @@ public:
 		p->m_autogen_fargs[si]= v;
 		COMMON_RETURN_SELF;
 	}
+	static int prepare_song_for_gameplay(T* p, lua_State* L)
+	{
+		int result= p->prepare_song_for_gameplay();
+		lua_pushstring(L, prepare_song_failures[result].c_str());
+		return 1;
+	}
 
 	LunaGameState()
 	{
@@ -3455,6 +3516,7 @@ public:
 		ADD_METHOD( SetStepsForEditMode );
 		ADD_METHOD( GetAutoGenFarg );
 		ADD_METHOD( SetAutoGenFarg );
+		ADD_METHOD(prepare_song_for_gameplay);
 	}
 };
 

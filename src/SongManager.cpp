@@ -63,6 +63,7 @@ static Preference<bool> g_bHideIncompleteCourses( "HideIncompleteCourses", false
 
 std::string SONG_GROUP_COLOR_NAME( size_t i )   { return fmt::sprintf( "SongGroupColor%i", (int) i+1 ); }
 std::string COURSE_GROUP_COLOR_NAME( size_t i ) { return fmt::sprintf( "CourseGroupColor%i", (int) i+1 ); }
+std::string profile_song_group_color_name(size_t i) { return fmt::sprintf("ProfileSongGroupColor%i", (int)i+1); }
 
 static const float next_loading_window_update= 0.02f;
 
@@ -81,6 +82,8 @@ SongManager::SongManager()
 	SONG_GROUP_COLOR		.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
 	NUM_COURSE_GROUP_COLORS	.Load( "SongManager", "NumCourseGroupColors" );
 	COURSE_GROUP_COLOR		.Load( "SongManager", COURSE_GROUP_COLOR_NAME, NUM_COURSE_GROUP_COLORS );
+	num_profile_song_group_colors.Load("SongManager", "NumProfileSongGroupColors");
+	profile_song_group_colors.Load("SongManager", profile_song_group_color_name, num_profile_song_group_colors);
 }
 
 SongManager::~SongManager()
@@ -514,6 +517,17 @@ Rage::Color SongManager::GetSongGroupColor(std::string const& group_name) const
 	{
 		return SONG_GROUP_COLOR.GetValue(entry->second.id % NUM_SONG_GROUP_COLORS);
 	}
+	FOREACH_EnabledPlayer(pn)
+	{
+		Profile* prof= PROFILEMAN->GetProfile(pn);
+		if(prof != nullptr)
+		{
+			if(prof->GetDisplayNameOrHighScoreName() == group_name)
+			{
+				return profile_song_group_colors.GetValue(pn % num_profile_song_group_colors);
+			}
+		}
+	}
 
 	LuaHelpers::ReportScriptError(fmt::sprintf(
 			"requested color for song group '%s' that doesn't exist",
@@ -685,6 +699,17 @@ const vector<Song*> &SongManager::GetSongs( const std::string &sGroupName ) cons
 	auto iter = m_mapSongGroupIndex.find(sGroupName);
 	if ( iter != m_mapSongGroupIndex.end() )
 		return iter->second;
+	FOREACH_EnabledPlayer(pn)
+	{
+		Profile* prof= PROFILEMAN->GetProfile(pn);
+		if(prof != nullptr)
+		{
+			if(prof->GetDisplayNameOrHighScoreName() == sGroupName)
+			{
+				return prof->m_songs;
+			}
+		}
+	}
 	return vEmpty;
 }
 

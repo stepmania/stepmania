@@ -300,6 +300,12 @@ PrefsManager::PrefsManager() :
 
 	m_bQuirksMode			( "QuirksMode",		false ),
 
+	m_custom_songs_enable("CustomSongsEnable", false),
+	m_custom_songs_max_count("CustomSongsMaxCount", 1000), // No limit. -- 2 Unlimited
+	m_custom_songs_load_timeout("CustomSongsLoadTimeout", 5.f),
+	m_custom_songs_max_seconds("CustomSongsMaxSeconds", 120.f),
+	m_custom_songs_max_megabytes("CustomSongsMaxMegabytes", 5.f),
+
 	/* Debug: */
 	m_bLogToDisk			( "LogToDisk",		true ),
 #if defined(DEBUG)
