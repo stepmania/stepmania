@@ -34,87 +34,19 @@ bool HexToBinary(const std::string&, std::string&);
 
 RandomGen g_RandomNumberGenerator;
 
-MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)
-{
-	Reset( iSeed );
-}
-
-void MersenneTwister::Reset( int iSeed )
-{
-	if( iSeed == 0 )
-		iSeed = static_cast<int>(time(nullptr));
-
-	m_Values[0] = iSeed;
-	m_iNext = 0;
-	for( int i = 1; i < 624; ++i )
-		m_Values[i] = ((69069 * m_Values[i-1]) + 1) & 0xFFFFFFFF;
-
-	GenerateValues();
-}
-
-void MersenneTwister::GenerateValues()
-{
-	static const unsigned mask[] = { 0, 0x9908B0DF };
-
-	for( int i = 0; i < 227; ++i )
-	{
-		int iVal = (m_Values[i] & 0x80000000) | (m_Values[i+1] & 0x7FFFFFFF);
-		int iNext = (i + 397);
-
-		m_Values[i] = m_Values[iNext];
-		m_Values[i] ^= (iVal >> 1);
-		m_Values[i] ^= mask[iVal&1];
-	}
-
-	for( int i = 227; i < 623; ++i )
-	{
-		int iVal = (m_Values[i] & 0x80000000) | (m_Values[i+1] & 0x7FFFFFFF);
-		int iNext = (i + 397) - 624;
-
-		m_Values[i] = m_Values[iNext];
-		m_Values[i] ^= (iVal >> 1);
-		m_Values[i] ^= mask[iVal&1];
-	}
-
-	int iVal = (m_Values[623] & 0x80000000) + (m_Values[0] & 0x7FFFFFFF);
-	int iNext = (623 + 397) - 624;
-	m_Values[623] = m_Values[iNext] ^ (iVal>>1);
-	m_Values[623] ^= mask[iVal&1];
-}
-
-int MersenneTwister::Temper( int iVal )
-{
-	iVal ^= (iVal >> 11);
-	iVal ^= (iVal << 7) & 0x9D2C5680;
-	iVal ^= (iVal << 15) & 0xEFC60000;
-	iVal ^= (iVal >> 18);
-	return iVal;
-}
-
-int MersenneTwister::operator()()
-{
-	if( m_iNext == 624 )
-	{
-		m_iNext = 0;
-		GenerateValues();
-	}
-
-	return Temper( m_Values[m_iNext++] );
-}
-
 /* Extend MersenneTwister into Lua space. This is intended to replace
  * math.randomseed and math.random, so we conform to their behavior. */
 
 namespace
 {
-	MersenneTwister g_LuaPRNG;
+	RandomGen g_LuaPRNG;
 
 	/* To map from [0..2^31-1] to [0..1), we divide by 2^31. */
 	const double DIVISOR = pow( double(2), double(31) );
 
 	static int Seed( lua_State *L )
 	{
-		g_LuaPRNG.Reset( IArg(1) );
+		g_LuaPRNG.seed(IArg(1));
 		return 0;
 	}
 
@@ -135,7 +67,7 @@ namespace
 			{
 				int upper = IArg(1);
 				luaL_argcheck( L, 1 <= upper, 1, "interval is empty" );
-				lua_pushnumber( L, g_LuaPRNG(upper) + 1 );
+				lua_pushnumber( L, random_up_to(g_LuaPRNG, upper) + 1 );
 				return 1;
 			}
 			/* [l..u] */
@@ -144,7 +76,7 @@ namespace
 				int lower = IArg(1);
 				int upper = IArg(2);
 				luaL_argcheck( L, lower < upper, 2, "interval is empty" );
-				lua_pushnumber( L, (int(g_LuaPRNG()) % (upper-lower+1)) + lower );
+				lua_pushnumber( L, RandomInt(lower, upper));
 				return 1;
 			}
 
