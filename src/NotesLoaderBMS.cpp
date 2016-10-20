@@ -484,7 +484,7 @@ struct bmsCommandTree
 			while (randomStack.size() < currentNode->branchHeight + 1) // if we're on branch level N we need N+1 values.
 				randomStack.push_back(0);
 
-			randomStack[currentNode->branchHeight] = rand() % StringToInt(value) + 1;
+			randomStack[currentNode->branchHeight] = random_up_to(g_RandomNumberGenerator, StringToInt(value)) + 1;
 		}
 		else
 		{

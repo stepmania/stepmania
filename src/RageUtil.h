@@ -214,17 +214,24 @@ typedef std::mt19937 RandomGen;
 
 extern RandomGen g_RandomNumberGenerator;
 
+void seed_lua_prng();
+
 inline int random_up_to(RandomGen& rng, int limit)
 {
 	RandomGen::result_type res= rng();
 	// Cutting off the incomplete [0,n) chunk at the max value makes the result
 	// more evenly distributed. -Kyz
-	RandomGen::result_type up_to_max= (RandomGen::max() / limit) * limit;
+	RandomGen::result_type up_to_max= RandomGen::max() - (RandomGen::max() % limit);
 	while(res > up_to_max)
 	{
 		res= rng();
 	}
-	return int(res);
+	return int(res % limit);
+}
+
+inline int random_up_to(int limit)
+{
+	return random_up_to(g_RandomNumberGenerator, limit);
 }
 
 /**
@@ -233,7 +240,7 @@ inline int random_up_to(RandomGen& rng, int limit)
  */
 inline float RandomFloat()
 {
-	return g_RandomNumberGenerator() / 2147483648.0f;
+	return float(g_RandomNumberGenerator() / 4294967296.0);
 }
 
 /**

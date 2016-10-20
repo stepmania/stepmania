@@ -3232,7 +3232,6 @@ std::string Player::ApplyRandomAttack()
 	if( GAMESTATE->m_RandomAttacks.size() < 1 )
 		return "";
 
-	//int iAttackToUse = rand() % GAMESTATE->m_RandomAttacks.size();
 	DateTime now = DateTime::GetNowDate();
 	int iSeed = now.tm_hour * now.tm_min * now.tm_sec * now.tm_mday;
 	RandomGen rnd( GAMESTATE->m_iStageSeed * iSeed );

@@ -586,7 +586,7 @@ void NetworkPostData::CreateMimeData( const std::map<std::string,std::string> &m
 	// Find a non-conflicting mime boundary.
 	while(1)
 	{
-		sMimeBoundaryOut = fmt::sprintf( "--%08i", rand() );
+		sMimeBoundaryOut = fmt::sprintf( "--%08i", rand() ); // TODO: Find someone to build on windows and change this to use g_RandomNumberGenerator. -Kyz
 		for (auto const &d: mapNameToData)
 		{
 			if( d.second.find(sMimeBoundaryOut) != std::string::npos )

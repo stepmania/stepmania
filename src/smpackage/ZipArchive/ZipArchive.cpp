@@ -1665,7 +1665,7 @@ void CZipArchive::CryptCryptHeader(long iCrc, CZipAutoBuffer &buf)
 	char c;
 	for (int i = 0; i < ZIPARCHIVE_ENCR_HEADER_LEN - 2; i++)
 	{
-		int t1 = rand();
+		int t1 = rand(); // TODO:  Use mersenne twister from std.
 		c = (char)(t1 >> 6);
 		if (!c)
 			c = (char)t1;

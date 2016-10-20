@@ -41,8 +41,8 @@ namespace
 {
 	RandomGen g_LuaPRNG;
 
-	/* To map from [0..2^31-1] to [0..1), we divide by 2^31. */
-	const double DIVISOR = pow( double(2), double(31) );
+	/* To map from [0..2^32-1] to [0..1), we divide by 2^32. */
+	const double DIVISOR = 4294967296.0;
 
 	static int Seed( lua_State *L )
 	{
@@ -58,7 +58,7 @@ namespace
 			case 0:
 			{
 				double r = double(g_LuaPRNG()) / DIVISOR;
-				lua_pushnumber( L, r );
+				lua_pushnumber(L, r);
 				return 1;
 			}
 
@@ -66,8 +66,8 @@ namespace
 			case 1:
 			{
 				int upper = IArg(1);
-				luaL_argcheck( L, 1 <= upper, 1, "interval is empty" );
-				lua_pushnumber( L, random_up_to(g_LuaPRNG, upper) + 1 );
+				luaL_argcheck(L, 1 <= upper, 1, "interval is empty");
+				lua_pushnumber(L, random_up_to(g_LuaPRNG, upper) + 1);
 				return 1;
 			}
 			/* [l..u] */
@@ -75,8 +75,8 @@ namespace
 			{
 				int lower = IArg(1);
 				int upper = IArg(2);
-				luaL_argcheck( L, lower < upper, 2, "interval is empty" );
-				lua_pushnumber( L, RandomInt(lower, upper));
+				luaL_argcheck(L, lower < upper, 2, "interval is empty");
+				lua_pushnumber(L, random_up_to(g_LuaPRNG, upper - lower + 1) + lower);
 				return 1;
 			}
 
@@ -97,6 +97,11 @@ namespace
 }
 
 LUA_REGISTER_NAMESPACE( MersenneTwister );
+
+void seed_lua_prng()
+{
+	g_LuaPRNG.seed(static_cast<unsigned int>(time(nullptr)));
+}
 
 void fapproach( float& val, float other_val, float to_move )
 {

@@ -33,7 +33,7 @@ void ScreenNameEntryTraditional::Init()
 		{
 			StageStats ss;
 			const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
-			ss.m_vpPlayedSongs.push_back( apSongs[rand()%apSongs.size()] );
+			ss.m_vpPlayedSongs.push_back(apSongs[random_up_to(g_RandomNumberGenerator, apSongs.size())]);
 			ss.m_vpPossibleSongs = ss.m_vpPlayedSongs;
 			ss.m_playMode = GAMESTATE->m_PlayMode;
 			ASSERT( ss.m_vpPlayedSongs[0]->GetAllSteps().size() );
