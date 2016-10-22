@@ -109,8 +109,8 @@ void ScreenEvaluation::Init()
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
 		ss.m_playMode = GAMESTATE->m_PlayMode;
 		ss.m_Stage = Stage_1st;
-		enum_add( ss.m_Stage, rand()%3 );
-		ss.m_EarnedExtraStage = (EarnedExtraStage)(rand() % NUM_EarnedExtraStage);
+		enum_add(ss.m_Stage, random_up_to(3));
+		ss.m_EarnedExtraStage = (EarnedExtraStage)(random_up_to(NUM_EarnedExtraStage));
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->set_curr_song(SONGMAN->GetRandomSong());
 		ss.m_vpPlayedSongs.push_back( GAMESTATE->get_curr_song() );
@@ -185,11 +185,11 @@ void ScreenEvaluation::Init()
 			ss.m_player[p].m_iTapNoteScores[TNS_W3] = RandomInt( 3 );
 			ss.m_player[p].m_iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_W1, false);
 			ss.m_player[p].m_fLifeRemainingSeconds = randomf( 90, 580 );
-			ss.m_player[p].m_iScore = rand() % (900*1000*1000);
-			ss.m_player[p].m_iPersonalHighScoreIndex = (rand() % 3) - 1;
-			ss.m_player[p].m_iMachineHighScoreIndex = (rand() % 3) - 1;
-			ss.m_player[p].m_PeakComboAward = (PeakComboAward)(rand()%NUM_PeakComboAward);
-			ss.m_player[p].m_StageAward = (StageAward)(rand()%NUM_StageAward);
+			ss.m_player[p].m_iScore = random_up_to(900*1000*1000);
+			ss.m_player[p].m_iPersonalHighScoreIndex = (random_up_to(3)) - 1;
+			ss.m_player[p].m_iMachineHighScoreIndex = (random_up_to(3)) - 1;
+			ss.m_player[p].m_PeakComboAward = (PeakComboAward)(random_up_to(NUM_PeakComboAward));
+			ss.m_player[p].m_StageAward = (StageAward)(random_up_to(NUM_StageAward));
 
 			FOREACH_ENUM( RadarCategory, rc )
 			{
@@ -211,8 +211,8 @@ void ScreenEvaluation::Init()
 					case RadarCategory_Rolls:
 					case RadarCategory_Lifts:
 					case RadarCategory_Fakes:
-						ss.m_player[p].m_radarPossible[rc] = 1 + (rand() % 200);
-						ss.m_player[p].m_radarActual[rc] = rand() % (int)(ss.m_player[p].m_radarPossible[rc]);
+						ss.m_player[p].m_radarPossible[rc] = 1 + (random_up_to(200));
+						ss.m_player[p].m_radarActual[rc] = random_up_to(int(ss.m_player[p].m_radarPossible[rc]));
 						break;
 					default: break;
 				}

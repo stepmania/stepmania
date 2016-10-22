@@ -393,7 +393,7 @@ static void CourseSortSongs( SongSort sort, vector<Song*> &vpPossibleSongs, Rand
 	{
 	DEFAULT_FAIL(sort);
 	case SongSort_Randomize:
-		random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
+		std::shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
 		break;
 	case SongSort_MostPlays:
 		if( PROFILEMAN )
@@ -453,7 +453,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		* will change every time it's viewed, and the displayed order will have no
 		* bearing on what you'll actually play. */
 		tmp_entries = m_vEntries;
-		random_shuffle( tmp_entries.begin(), tmp_entries.end(), rnd );
+		std::shuffle( tmp_entries.begin(), tmp_entries.end(), rnd );
 	}
 
 	const vector<CourseEntry> &entries = m_bShuffle ? tmp_entries:m_vEntries;
@@ -612,9 +612,13 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 					int iAdd;
 					if( iMaxDist == iMinDist )
+					{
 						iAdd = iMaxDist;
+					}
 					else
-						iAdd = rnd( iMaxDist - iMinDist ) + iMinDist;
+					{
+						iAdd = random_up_to(rnd, iMaxDist - iMinDist) + iMinDist;
+					}
 					iLowMeter += iAdd;
 					iHighMeter += iAdd;
 				}
@@ -819,9 +823,13 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 
 				int iAdd;
 				if( iMaxDist == iMinDist )
+				{
 					iAdd = iMaxDist;
+				}
 				else
-					iAdd = rnd( iMaxDist - iMinDist ) + iMinDist;
+				{
+					iAdd = random_up_to(rnd, iMaxDist - iMinDist) + iMinDist;
+				}
 				iLowMeter += iAdd;
 				iHighMeter += iAdd;
 			}

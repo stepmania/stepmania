@@ -980,6 +980,9 @@ static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "LoadingWindow", "Couldn't o
 
 int sm_main(int argc, char* argv[])
 {
+	g_RandomNumberGenerator.seed(static_cast<unsigned int>(time(nullptr)));
+	seed_lua_prng();
+
 	RageThreadRegister thread( "Main thread" );
 	RageException::SetCleanupHandler( HandleException );
 
@@ -1076,8 +1079,6 @@ int sm_main(int argc, char* argv[])
 	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
 	if(pLoadingWindow == nullptr)
 		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
-
-	srand( static_cast<unsigned int>(time(nullptr)) ); // seed number generator
 
 	/* Do this early, so we have debugging output if anything else fails. LOG and
 	 * Dialog must be set up first. It shouldn't take long, but it might take a

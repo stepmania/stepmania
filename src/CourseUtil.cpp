@@ -316,7 +316,7 @@ void CourseUtil::AutogenOniFromArtist( const std::string &sArtistName, std::stri
 	 * song set changes. */
 	{
 		RandomGen rng( GetHashForString( sArtistName ) + aSongs.size() );
-		random_shuffle( aSongs.begin(), aSongs.end(), rng );
+		std::shuffle( aSongs.begin(), aSongs.end(), rng );
 	}
 
 	// Only use up to four songs.
