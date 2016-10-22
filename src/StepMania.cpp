@@ -1029,6 +1029,8 @@ int sm_main(int argc, char* argv[])
 
 	WriteLogHeader();
 
+	FILEMAN->send_init_mount_errors_to_log();
+
 	// Set up alternative filesystem trees.
 	auto const &addFolders = PREFSMAN->m_sAdditionalFolders.Get();
 	if( addFolders != "" )

@@ -73,12 +73,19 @@ public:
 	RageFileDriver *GetFileDriver( std::string sMountpoint );
 	void ReleaseFileDriver( RageFileDriver *pDriver );
 
+	// Mounting errors that occur before LOG exists need to be stored and sent
+	// to LOG after LOG is created.  Printing them to stderr is useless because
+	// nobody runs stepmania from a terminal. -Kyz
+	void send_init_mount_errors_to_log();
+
 	// Lua
 	void PushSelf( lua_State *L );
 
 private:
 	RageFileBasic *OpenForReading( const std::string &sPath, int iMode, int &iError );
 	RageFileBasic *OpenForWriting( const std::string &sPath, int iMode, int &iError );
+
+	std::vector<std::string> m_init_mount_errors;
 };
 
 extern RageFileManager *FILEMAN;
