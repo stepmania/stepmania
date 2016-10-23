@@ -163,7 +163,15 @@ struct mod_operator_replace : mod_operator
 #define plus_wrap(left, right) (left + right)
 #define subtract_wrap(left, right) (left - right)
 #define multiply_wrap(left, right) (left * right)
-#define divide_wrap(left, right) (left / right)
+
+static double divide_wrap(double left, double right)
+{
+	if(right == 0.0)
+	{
+		return 0.0;
+	}
+	return left / right;
+}
 
 #define SIMPLE_OPERATOR(op_name, eval) \
 struct mod_operator_##op_name : mod_operator \
@@ -199,7 +207,6 @@ SIMPLE_OPERATOR(max, std::max);
 #undef plus_wrap
 #undef subtract_wrap
 #undef multiply_wrap
-#undef divide_wrap
 #undef SIMPLE_OPERATOR
 
 #define PAIR_OPERATOR(op_name, eval) \
@@ -220,10 +227,20 @@ struct mod_operator_##op_name : mod_operator \
 	} \
 };
 
+static double fmod_wrapper(double left, double right)
+{
+	if(right == 0.0)
+	{
+		return 0.0;
+	}
+	return fmod(left, right);
+}
+
 // Pretty sure checking for 1.0 is slower than the divide and multiply.
 #define OBLONG_WRAPPER(name) \
 static double name##_wrapper(double left, double right) \
 { \
+	if(right == 0.0) { return left; } \
 	return std::name(left / right) * right; \
 }
 
@@ -233,7 +250,7 @@ OBLONG_WRAPPER(round);
 
 #undef OBLONG_WRAPPER
 
-PAIR_OPERATOR(mod, fmod);
+PAIR_OPERATOR(mod, fmod_wrapper);
 PAIR_OPERATOR(floor, floor_wrapper);
 PAIR_OPERATOR(ceil, ceil_wrapper);
 PAIR_OPERATOR(round, round_wrapper);

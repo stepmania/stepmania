@@ -194,6 +194,16 @@ single character name for conciseness.
 	Note that this is substantially slower than doing the same thing with an
 	equation.
 
+#### Division by zero
+The result of dividing by 0 is 0, not infinity.  The result of modulus by 0
+is the first operand.
+
+This should prevent cases where division or modulus accidentally
+makes notes vanish, such as this:
+```
+column:get_note_pos_x():add_mod{{'*', 32, {'sin', {'%', {'*', 'music_beat', math.pi/4}, {'*', math.pi * 4, {'sin', {'*', 'eval_beat', math.pi/4}}}}}}}
+```
+
 
 ### Related functions
 The ModValue namespace provides a few functions for checking what input types

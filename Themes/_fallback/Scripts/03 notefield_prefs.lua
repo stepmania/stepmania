@@ -220,7 +220,7 @@ local function gen_speed_menu(pn)
 			set_element_by_path(prefs, "speed_mod", value)
 			notefield_prefs_config:set_dirty(pn)
 			MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_data= notefield_prefs_config.name, field_name= "speed_mod", value= value, pn= pn})
+				config_name= notefield_prefs_config.name, field_name= "speed_mod", value= value, pn= pn})
 		end,
 	}
 	if prefs.speed_type == "multiple" then
