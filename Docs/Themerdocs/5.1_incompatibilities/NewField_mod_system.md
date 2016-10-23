@@ -69,10 +69,10 @@ To render a note, the notefield takes a few basic properties from the note
 and gives them to the modifiers as input.  Things that are not notes use the
 current music time as the eval time.
 * "column"  
-  The column the note is in.
+	The column the note is in.
 * "y_offset"  
-  y_offset is the value calculated by the speed mod, before reverse effects
-  are applied.  y_offset is zero for the speed mod, reverse mods, and
+	y_offset is the value calculated by the speed mod, before reverse effects
+	are applied.  y_offset is zero for the speed mod, reverse mods, and
 	receptor and explosion mods.
 * "note_id_in_chart"
 * "note_id_in_column"
@@ -93,6 +93,10 @@ current music time as the eval time.
 * "end_beat"
 * "end_second"  
 	End time set in the mod function.
+* "prefunres"  
+	This input field will be renamed when someone submits a better name.
+	Mod functions for a modifiable value are evaluated in order.  The result
+	from the previous mod functions is stored in prefunres.
 
 #### Why are there both Beat and Second inputs?
 Because C mods exist.  And for other things that find it more convenient to
@@ -183,6 +187,12 @@ single character name for conciseness.
 	The first operand is the t value to evaluate the spline with.  The other
 	operands are the points.  If loop is true, the spline is a looping spline.
 	If polygonal is true, the spline will not be curved.
+* lua  
+	```{function(yoff) return yoff % 64 end, "y_offset"}```
+	If a lua function is used instead of a type name, that function will be
+	passed the results of its operands.  The function must return a number.
+	Note that this is substantially slower than doing the same thing with an
+	equation.
 
 
 ### Related functions
