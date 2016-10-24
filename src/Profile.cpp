@@ -1800,6 +1800,10 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( std::string sDir )
 	if( wstr.size() > PROFILE_MAX_DISPLAY_NAME_LENGTH )
 		wstr = wstr.substr(0, PROFILE_MAX_DISPLAY_NAME_LENGTH);
 	m_sDisplayName = WStringToString(wstr);
+	if(m_sDisplayName.empty())
+	{
+		m_sDisplayName= "Unknown Player";
+	}
 	// TODO: strip invalid chars?
 	if( m_iWeightPounds != 0 )
 		m_iWeightPounds = Rage::clamp( m_iWeightPounds, 20, 1000 );

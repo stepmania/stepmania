@@ -212,11 +212,30 @@ end
 
 local function gen_speed_menu(pn)
 	local prefs= notefield_prefs_config:get_data(pn)
+	local float_args= {
+		name= "speed_mod", initial_value= function(pn)
+			return get_element_by_path(prefs, "speed_mod") or 0
+		end,
+		set= function(pn, value)
+			set_element_by_path(prefs, "speed_mod", value)
+			notefield_prefs_config:set_dirty(pn)
+			MESSAGEMAN:Broadcast("ConfigValueChanged", {
+				config_name= notefield_prefs_config.name, field_name= "speed_mod", value= value, pn= pn})
+		end,
+	}
 	if prefs.speed_type == "multiple" then
-		return nesty_options.float_config_val_args(notefield_prefs_config, "speed_mod", -2, -1, 1)
+		float_args.min_scale= -2
+		float_args.scale= -1
+		float_args.max_scale= 1
+		float_args.reset_value= 1
 	else
-		return nesty_options.float_config_val_args(notefield_prefs_config, "speed_mod", 0, 1, 3)
+		float_args.min_scale= 0
+		float_args.scale= 1
+		float_args.max_scale= 3
+		float_args.reset_value= 250
+		-- TODO: Make separate m and x speed mod reset values configurable.
 	end
+	return float_args
 end
 
 function notefield_prefs_speed_mod_menu()

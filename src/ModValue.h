@@ -85,11 +85,12 @@ struct mod_val_inputs
 	double start_second;
 	double end_beat;
 	double end_second;
+	double prefunres;
 	mod_val_inputs()
 		:column(0.0), y_offset(0.0),
 		note_id_in_chart(0.0), note_id_in_column(0.0), row_id(0.0),
 		eval_beat(0.0), eval_second(0.0), music_beat(0.0),
-		music_second(0.0), dist_beat(0.0), dist_second(0.0)
+		music_second(0.0), dist_beat(0.0), dist_second(0.0), prefunres(0.0)
 	{}
 	mod_val_inputs(double const mb, double const ms)
 		:column(0.0), y_offset(0.0),

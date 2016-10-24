@@ -13,7 +13,6 @@
 #include <array>
 
 using std::vector;
-using std::random_shuffle;
 
 // TODO: Remove these constants that aren't time signature-aware
 static const int BEATS_PER_MEASURE = 4;
@@ -1554,19 +1553,19 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 				switch(st) {
 					case StepsType_beat_single5:
 					{
-						random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[5], rnd );
-						random_shuffle( &iTakeFromTrack[6], &iTakeFromTrack[11], rnd );
+						std::shuffle( &iTakeFromTrack[0], &iTakeFromTrack[5], rnd );
+						std::shuffle( &iTakeFromTrack[6], &iTakeFromTrack[11], rnd );
 						break;
 					}
 					case StepsType_beat_single7:
 					{
-						random_shuffle( &iTakeFromTrack[1], &iTakeFromTrack[8], rnd );
-						random_shuffle( &iTakeFromTrack[9], &iTakeFromTrack[16], rnd );
+						std::shuffle( &iTakeFromTrack[1], &iTakeFromTrack[8], rnd );
+						std::shuffle( &iTakeFromTrack[9], &iTakeFromTrack[16], rnd );
 						break;
 					}
 					default:
 					{
-						random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[NumTracks], rnd );
+						std::shuffle( &iTakeFromTrack[0], &iTakeFromTrack[NumTracks], rnd );
 						break;
 					}
 				}

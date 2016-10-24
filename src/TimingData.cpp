@@ -194,10 +194,11 @@ void TimingData::PrepareLineLookup(int search_mode, float search_time,
 	// Place an initial bpm segment in negative time before the song begins.
 	// Without this, if there is a stop at beat 0, arrows will not move until
 	// after beat 0 passes. -Kyz
+	float first_bps= ToBPM(bpms[0])->GetBPS();
 	LineSegment next_line= {
-		-1.f, -m_fBeat0OffsetInSeconds - 1.f, 0.f, -m_fBeat0OffsetInSeconds,
-		-m_fBeat0OffsetInSeconds - 1.f, -m_fBeat0OffsetInSeconds,
-		ToBPM(bpms[0])->GetBPS(), bpms[0]};
+		-first_bps, -m_fBeat0OffsetInSeconds-1.f, 0.f, -m_fBeat0OffsetInSeconds,
+		-m_fBeat0OffsetInSeconds-1.f, -m_fBeat0OffsetInSeconds,
+		first_bps, bpms[0]};
 	switch(search_mode)
 	{
 		SEARCH_NONE_CASE;

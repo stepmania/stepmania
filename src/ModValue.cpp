@@ -79,12 +79,13 @@ SIMPLE_MOD_INPUT_TYPE(music_beat, mut_frame, true, false, false);
 SIMPLE_MOD_INPUT_TYPE(music_second, mut_frame, false, true, false);
 SIMPLE_MOD_INPUT_TYPE(dist_beat, mut_note, true, false, false);
 SIMPLE_MOD_INPUT_TYPE(dist_second, mut_note, false, true, false);
-// start_dist and end dist can be done with:
-// {"MO_subtract", "MI_music_beat" "MI_start_beat"}
+// start dist and end dist can be done with:
+// {"subtract", "music_beat" "start_beat"}
 SIMPLE_MOD_INPUT_TYPE(start_beat, mut_never, true, false, false);
 SIMPLE_MOD_INPUT_TYPE(start_second, mut_never, false, true, false);
 SIMPLE_MOD_INPUT_TYPE(end_beat, mut_never, true, false, false);
 SIMPLE_MOD_INPUT_TYPE(end_second, mut_never, false, true, false);
+SIMPLE_MOD_INPUT_TYPE(prefunres, mut_note, false, false, false);
 
 #undef SIMPLE_MOD_INPUT_TYPE
 
@@ -106,7 +107,8 @@ enum mit
 	mit_start_beat,
 	mit_start_second,
 	mit_end_beat,
-	mit_end_second
+	mit_end_second,
+	mit_prefunres
 };
 
 struct mod_operator : mod_operand
@@ -150,10 +152,26 @@ virtual double evaluate(mod_val_inputs& input) \
 	return m_eval_result; \
 }
 
+struct mod_operator_replace : mod_operator
+{
+	virtual void load_from_lua(mod_function*, lua_State*, int)
+	{
+		throw std::string("mod operator replace really just exists to be used as a sum type.");
+	}
+};
+
 #define plus_wrap(left, right) (left + right)
 #define subtract_wrap(left, right) (left - right)
 #define multiply_wrap(left, right) (left * right)
-#define divide_wrap(left, right) (left / right)
+
+static double divide_wrap(double left, double right)
+{
+	if(right == 0.0)
+	{
+		return 0.0;
+	}
+	return left / right;
+}
 
 #define SIMPLE_OPERATOR(op_name, eval) \
 struct mod_operator_##op_name : mod_operator \
@@ -189,7 +207,6 @@ SIMPLE_OPERATOR(max, std::max);
 #undef plus_wrap
 #undef subtract_wrap
 #undef multiply_wrap
-#undef divide_wrap
 #undef SIMPLE_OPERATOR
 
 #define PAIR_OPERATOR(op_name, eval) \
@@ -210,10 +227,20 @@ struct mod_operator_##op_name : mod_operator \
 	} \
 };
 
+static double fmod_wrapper(double left, double right)
+{
+	if(right == 0.0)
+	{
+		return 0.0;
+	}
+	return fmod(left, right);
+}
+
 // Pretty sure checking for 1.0 is slower than the divide and multiply.
 #define OBLONG_WRAPPER(name) \
 static double name##_wrapper(double left, double right) \
 { \
+	if(right == 0.0) { return left; } \
 	return std::name(left / right) * right; \
 }
 
@@ -223,7 +250,7 @@ OBLONG_WRAPPER(round);
 
 #undef OBLONG_WRAPPER
 
-PAIR_OPERATOR(mod, fmod);
+PAIR_OPERATOR(mod, fmod_wrapper);
 PAIR_OPERATOR(floor, floor_wrapper);
 PAIR_OPERATOR(ceil, ceil_wrapper);
 PAIR_OPERATOR(round, round_wrapper);
@@ -380,10 +407,23 @@ struct mod_operator_spline : mod_operator
 	bool m_has_per_note_points;
 };
 
+struct mod_operator_lua : mod_operator
+{
+	EVAL_RESULT_EVAL;
+	void lua_eval();
+	virtual void load_from_lua(mod_function* parent, lua_State* L, int index);
+	void per_frame_update(mod_val_inputs& input);
+	void per_note_update(mod_val_inputs& input);
+
+	double m_eval_result;
+	LuaReference m_func;
+};
+
 #undef EVAL_RESULT_EVAL
 
 enum mot
 {
+	mot_replace,
 	mot_add,
 	mot_subtract,
 	mot_multiply,
@@ -404,7 +444,8 @@ enum mot
 	mot_floor,
 	mot_ceil,
 	mot_round,
-	mot_spline
+	mot_spline,
+	mot_lua
 };
 
 static mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int index);
@@ -712,6 +753,7 @@ static std::unordered_map<std::string, mot> mot_conversion= {
 	{"%", mot_mod},
 	{"o", mot_round},
 	{"_", mot_floor},
+	CONVENT(replace),
 	CONVENT(add),
 	CONVENT(subtract),
 	CONVENT(multiply),
@@ -732,7 +774,8 @@ static std::unordered_map<std::string, mot> mot_conversion= {
 	CONVENT(floor),
 	CONVENT(ceil),
 	CONVENT(round),
-	CONVENT(spline)
+	CONVENT(spline),
+	CONVENT(lua)
 };
 #undef CONVENT
 
@@ -749,43 +792,52 @@ static mot str_to_mot(std::string const& str)
 static mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int index)
 {
 	lua_rawgeti(L, index, 1);
-	if(lua_type(L, -1) != LUA_TSTRING)
+	int op_field_type= lua_type(L, -1);
+	mod_operator* new_oper= nullptr;
+	if(op_field_type == LUA_TFUNCTION)
 	{
 		lua_pop(L, 1);
-		throw std::string("Mod operator type must be a string.");
+		new_oper= new mod_operator_lua;
 	}
-	std::string str_type= lua_tostring(L, -1);
-	lua_pop(L, 1);
-	mot op_type= str_to_mot(str_type);
-	mod_operator* new_oper= nullptr;
-#define SET_NEW(op_name) \
-	case mot_##op_name: new_oper= new mod_operator_##op_name; break;
-	switch(op_type)
+	else if(op_field_type == LUA_TSTRING)
 	{
-		SET_NEW(add);
-		SET_NEW(subtract);
-		SET_NEW(multiply);
-		SET_NEW(divide);
-		SET_NEW(exp);
-		SET_NEW(log);
-		SET_NEW(min);
-		SET_NEW(max);
-		SET_NEW(sin);
-		SET_NEW(cos);
-		SET_NEW(tan);
-		SET_NEW(square);
-		SET_NEW(triangle);
-		SET_NEW(random);
-		SET_NEW(phase);
-		SET_NEW(repeat);
-		SET_NEW(mod);
-		SET_NEW(floor);
-		SET_NEW(ceil);
-		SET_NEW(round);
-		SET_NEW(spline);
-		default: break;
-	}
+		std::string str_type= lua_tostring(L, -1);
+		lua_pop(L, 1);
+		mot op_type= str_to_mot(str_type);
+#define SET_NEW(op_name) \
+		case mot_##op_name: new_oper= new mod_operator_##op_name; break;
+		switch(op_type)
+		{
+			SET_NEW(add);
+			SET_NEW(subtract);
+			SET_NEW(multiply);
+			SET_NEW(divide);
+			SET_NEW(exp);
+			SET_NEW(log);
+			SET_NEW(min);
+			SET_NEW(max);
+			SET_NEW(sin);
+			SET_NEW(cos);
+			SET_NEW(tan);
+			SET_NEW(square);
+			SET_NEW(triangle);
+			SET_NEW(random);
+			SET_NEW(phase);
+			SET_NEW(repeat);
+			SET_NEW(mod);
+			SET_NEW(floor);
+			SET_NEW(ceil);
+			SET_NEW(round);
+			SET_NEW(spline);
+			default: break;
+		}
 #undef SET_NEW
+	}
+	else
+	{
+		lua_pop(L, 1);
+		throw std::string("Mod operator type must be a string or function.");
+	}
 	if(new_oper == nullptr)
 	{
 		throw std::string("Unknown mod operator type.");
@@ -819,7 +871,8 @@ static std::unordered_map<std::string, mit> mit_conversion= {
 	CONVENT(start_beat),
 	CONVENT(start_second),
 	CONVENT(end_beat),
-	CONVENT(end_second)
+	CONVENT(end_second),
+	CONVENT(prefunres)
 };
 #undef CONVENT
 
@@ -852,6 +905,7 @@ static mod_operand* create_mod_input(std::string const& str_type)
 		ENTRY_BS_PAIR(dist);
 		ENTRY_BS_PAIR(start);
 		ENTRY_BS_PAIR(end);
+		RET_ENTRY(prefunres);
 		default: break;
 	}
 #undef ENTRY_BS_PAIR
@@ -1258,6 +1312,11 @@ void mod_operator_spline::load_from_lua(mod_function* parent, lua_State* L, int 
 	{
 		m_spline.solve(m_loop, m_polygonal);
 	}
+
+	if(m_update_type == mut_never)
+	{
+		spline_eval();
+	}
 }
 
 void mod_operator_spline::per_frame_update(mod_val_inputs& input)
@@ -1302,6 +1361,57 @@ void mod_operator_spline::spline_eval()
 	m_eval_result= m_spline.evaluate(static_cast<float>(m_operand_results[0]), m_loop);
 }
 
+void mod_operator_lua::lua_eval()
+{
+	Lua* L= LUA->Get();
+	m_func.PushSelf(L);
+	for(auto&& res : m_operand_results)
+	{
+		lua_pushnumber(L, res);
+	}
+	std::string err= "Error running lua mod operator:  ";
+	if(LuaHelpers::RunScriptOnStack(L, err, m_operand_results.size(), 1, true))
+	{
+		if(!lua_isnumber(L, 1))
+		{
+			LuaHelpers::ReportScriptError("lua mod operator didn't return a number.");
+		}
+		m_eval_result= lua_tonumber(L, 1);
+	}
+	lua_settop(L, 0);
+	LUA->Release(L);
+}
+
+void mod_operator_lua::load_from_lua(mod_function* parent, lua_State* L, int index)
+{
+	lua_rawgeti(L, index, 1);
+	m_func.SetFromStack(L);
+	if(m_func.GetLuaType() != LUA_TFUNCTION)
+	{
+		throw std::string("First operand to mod operator lua must be a function.");
+	}
+	mod_operator::load_from_lua(parent, L, index);
+	if(m_update_type == mut_never)
+	{
+		lua_eval();
+	}
+}
+
+void mod_operator_lua::per_frame_update(mod_val_inputs& input)
+{
+	mod_operator::per_frame_update(input);
+	if(m_per_note_operands.empty())
+	{
+		lua_eval();
+	}
+}
+
+void mod_operator_lua::per_note_update(mod_val_inputs& input)
+{
+	mod_operator::per_note_update(input);
+	lua_eval();
+}
+
 mod_function::~mod_function()
 {
 	delete m_base_operand;
@@ -1329,6 +1439,7 @@ void mod_function::load_from_lua(lua_State* L, int index, uint32_t col)
 		m_sum_type= str_to_mot(str_type);
 		switch(m_sum_type)
 		{
+			case mot_replace:
 			case mot_add:
 			case mot_subtract:
 			case mot_multiply:
@@ -1471,7 +1582,7 @@ ModifiableValue::~ModifiableValue()
 
 double ModifiableValue::evaluate(mod_val_inputs& input)
 {
-	double sum= 0;
+	input.prefunres= 0.0;
 	if(!m_mods.empty())
 	{
 		for(auto&& mod : m_mods)
@@ -1479,17 +1590,20 @@ double ModifiableValue::evaluate(mod_val_inputs& input)
 			input.column= m_column;
 			switch(mod->m_sum_type)
 			{
+				case mot_replace:
+					input.prefunres= mod->evaluate(input);
+					break;
 				case mot_add:
-					sum+= mod->evaluate(input);
+					input.prefunres+= mod->evaluate(input);
 					break;
 				case mot_subtract:
-					sum-= mod->evaluate(input);
+					input.prefunres-= mod->evaluate(input);
 					break;
 				case mot_multiply:
-					sum*= mod->evaluate(input);
+					input.prefunres*= mod->evaluate(input);
 					break;
 				case mot_divide:
-					sum/= mod->evaluate(input);
+					input.prefunres/= mod->evaluate(input);
 					break;
 				default:
 					break;
@@ -1503,24 +1617,27 @@ double ModifiableValue::evaluate(mod_val_inputs& input)
 			input.column= m_column;
 			switch(mod.second->m_sum_type)
 			{
+				case mot_replace:
+					input.prefunres= mod.second->evaluate(input);
+					break;
 				case mot_add:
-					sum+= mod.second->evaluate_with_time(input);
+					input.prefunres+= mod.second->evaluate_with_time(input);
 					break;
 				case mot_subtract:
-					sum-= mod.second->evaluate_with_time(input);
+					input.prefunres-= mod.second->evaluate_with_time(input);
 					break;
 				case mot_multiply:
-					sum*= mod.second->evaluate_with_time(input);
+					input.prefunres*= mod.second->evaluate_with_time(input);
 					break;
 				case mot_divide:
-					sum/= mod.second->evaluate_with_time(input);
+					input.prefunres/= mod.second->evaluate_with_time(input);
 					break;
 				default:
 					break;
 			}
 		}
 	}
-	return sum;
+	return input.prefunres;
 }
 
 std::list<mod_function*>::iterator ModifiableValue::find_mod(

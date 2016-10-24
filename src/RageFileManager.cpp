@@ -357,6 +357,16 @@ void RageFileManager::MountUserFilesystems()
 	HOOKS->MountUserFilesystems( RageFileManagerUtil::sDirOfExecutable );
 }
 
+void RageFileManager::send_init_mount_errors_to_log()
+{
+	ASSERT_M(LOG != nullptr, "Cannot call RageFileManager::send_init_mount_errors_to_log before LOG is created.");
+	for(auto&& message : m_init_mount_errors)
+	{
+		LOG->Warn(message);
+	}
+	m_init_mount_errors.clear();
+}
+
 RageFileManager::~RageFileManager()
 {
 	// Unregister with Lua.
@@ -618,12 +628,17 @@ bool RageFileManager::Mount( const std::string &sType, const std::string &sRoot_
 	RageFileDriver *pDriver = MakeFileDriver( sType, sRoot );
 	if( pDriver == nullptr )
 	{
-		CHECKPOINT_M( fmt::sprintf("Can't mount unknown VFS type \"%s\", root \"%s\"", sType.c_str(), sRoot.c_str() ) );
+		std::string message= fmt::sprintf("Can't mount unknown VFS type \"%s\", root \"%s\"", sType.c_str(), sRoot.c_str());
+		CHECKPOINT_M(message);
 
-		if( LOG )
-			LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", sType.c_str(), sRoot.c_str() );
+		if(LOG)
+		{
+			LOG->Warn(message);
+		}
 		else
-			fprintf( stderr, "Can't mount unknown VFS type \"%s\", root \"%s\"\n", sType.c_str(), sRoot.c_str() );
+		{
+			m_init_mount_errors.push_back(message);
+		}
 		return false;
 	}
 
