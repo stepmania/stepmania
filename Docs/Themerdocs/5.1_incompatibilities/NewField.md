@@ -412,8 +412,148 @@ support it, NotePlayerizeMode_Quanta will be used instead.
 
 ## NoteFieldColumn Functions
 
-Find 20 mistakes in NewField_mod_system.md to unlock updated documentation
-of the functions in NoteField.
+* NoteFieldColumn:get_time_offset  
+Returns the ModifiableValue for offsetting the displayed note time (in
+seconds) from the current time.
+
+* NoteFieldColumn::get_quantization_parts_per_beat  
+Returns the ModifiableValue for changing the parts_per_beat value a note has
+before it is used for quantization.  This can change 4ths into 8ths, or vice
+versa.
+
+This does not change the parts_per_beat that is passed to other modifiers.
+
+* NoteFieldColumn::get_quantization_part_id  
+The part_id counterpart to get_quantization_parts_per_beat.
+
+* NoteFieldColumn::get_speed_mod  
+Returns the ModifiableValue for the speed mod.  This controls the y offset a
+note has, which is its distance from the receptor.
+
+* NoteFieldColumn::get_y_offset_vec_x
+* NoteFieldColumn::get_y_offset_vec_y
+* NoteFieldColumn::get_y_offset_vec_z  
+When positioning a note, the y offset value is multiplied by this 3D vector.
+The vector defaults to {0, 1, 0}, which makes the notes approach from below.
+
+* NoteFieldColumn::get_reverse_offset_pixels  
+This ModifiableValue controls the distance from the center of the notefield
+to the receptor.  The player can configure the default value in their
+notefield prefs.
+
+* NoteFieldColumn::get_reverse_scale  
+ModifiableValue for controlling reverse.  1 makes the arrows scroll up, -1
+makes the arrows scroll down.
+
+* NoteFieldColumn::get_center_percent  
+ModifiableValue for controlling center.  Center kind of scales the
+reverse_offset_pixels value.  When the center percent is 0, the receptor is
+reverse_offset_pixels from the center of the field.  When the center percent
+is 1, the receptor is at the center of the field.
+
+* NoteFieldColumn::get_note_pos_x
+* NoteFieldColumn::get_note_pos_y
+* NoteFieldColumn::get_note_pos_z
+* NoteFieldColumn::get_note_rot_x
+* NoteFieldColumn::get_note_rot_y
+* NoteFieldColumn::get_note_rot_z
+* NoteFieldColumn::get_note_zoom_x
+* NoteFieldColumn::get_note_zoom_y
+* NoteFieldColumn::get_note_zoom_z  
+Functions for accessing the ModifiableValues used to position, rotate, and
+scale each note.
+
+* NoteFieldColumn::get_column_pos_x
+* NoteFieldColumn::get_column_pos_y
+* NoteFieldColumn::get_column_pos_z
+* NoteFieldColumn::get_column_rot_x
+* NoteFieldColumn::get_column_rot_y
+* NoteFieldColumn::get_column_rot_z
+* NoteFieldColumn::get_column_zoom_x
+* NoteFieldColumn::get_column_zoom_y
+* NoteFieldColumn::get_column_zoom_z  
+These ModifiableValues are used to position, rotate, and scale the column.
+Because the column is an ActorFrame and the notes, receptors, and explosions
+are actors rendered inside it.
+
+* NoteFieldColumn::get_hold_normal_x
+* NoteFieldColumn::get_hold_normal_y
+* NoteFieldColumn::get_hold_normal_z  
+If the moddable hold normal flag is true, the result of this vector is
+perpendicular to the surface of a hold.  This allows twisting holds without
+applying a rotation to notes.  
+When the flag is false, the normal is calculated from note positions.
+
+* NoteFieldColumn::get_use_moddable_hold_normal
+* NoteFieldColumn::set_use_moddable_hold_normal  
+Query or set the value of the moddable hold normal flag.
+
+* NoteFieldColumn::get_note_alpha
+* NoteFieldColumn::get_note_glow  
+The alpha and glow values for notes are separately controllable by
+ModifiableValues.
+
+* NoteFieldColumn::get_receptor_alpha
+* NoteFieldColumn::get_receptor_glow
+* NoteFieldColumn::get_explosion_alpha
+* NoteFieldColumn::get_explosion_glow  
+The noteskin and theme can add layers to the column and set the fade type for
+each layer.  A layer with the receptor fade type is affected by the receptor
+alpha and glow ModifiableValues.  Similar for explosion fade type layers.
+
+* NoteFieldColumn::get_use_game_music_beat
+* NoteFieldColumn::set_use_game_music_beat  
+When the use game music flag is true (normal case), the column uses the
+music time passed by its parent notefield.  When false, the column does not
+update its music time, and must be updated by calling the set_curr_beat or
+set_curr_second functions.
+
+* NoteFieldColumn::get_show_unjudgable_notes
+* NoteFieldColumn::set_show_unjudgable_notes  
+This flag is used to hide fake notes inside a warp when a cmod is used.
+
+* NoteFieldColumn::get_speed_segments_enabled
+* NoteFieldColumn::set_speed_segments_enabled
+* NoteFieldColumn::get_scroll_segments_enabled
+* NoteFieldColumn::set_scroll_segments_enabled  
+These flags are used to turn off speed and scroll segments when a cmod is
+used.
+
+* NoteFieldColumn::get_holds_skewed_by_mods
+* NoteFieldColumn::set_holds_skewed_by_mods  
+If holds are skewed by mods, then mods like drunk make the hold look thinner
+in places because the verts on the left and right edges have the same y value
+as the corresponding point in the center.  
+When this flag is false, the engine calculates a forward vector and arranges
+the left and right verts to be perpendicular to that.  This makes drunk curve
+holds.
+
+* NoteFieldColumn::get_twirl_holds
+* NoteFieldColumn::set_twirl_holds  
+If this flag is falce, y rotation of notes does not affect holds.
+
+* NoteFieldColumn::get_playerize_mode
+* NoteFieldColumn::set_playerize_mode  
+NotePlayerizeMode enum for controlling how notes are playerized in couples
+mode.  NotePlayerizeMode_Mask requires support in the noteskin, so it will
+probably not work.
+
+* NoteFieldColumn::get_curr_beat
+* NoteFieldColumn::set_curr_beat
+* NoteFieldColumn::get_curr_second
+* NoteFieldColumn::set_curr_second  
+Functions for getting and setting the time the column uses to render.
+
+* NoteFieldColumn::set_pixels_visible_before
+* NoteFieldColumn::set_pixels_visible_after  
+The pixels visible values are actually y offset values.  A note with a y offset value in this range is rendered, with adjustments for reverse.
+
+* NoteFieldColumn::get_upcoming_time
+* NoteFieldColumn::set_upcoming_time  
+Column layers are passed a time to the next upcoming note.  This value
+controls how far ahead the column looks for a note.
+
+This is where Kyz stopped writing new stuff and went to run errands.
 
 * NoteFieldColumn:get_layer_fade_type(layer)  
 Returns the FieldLayerFadeType for the layer.
