@@ -412,30 +412,292 @@ support it, NotePlayerizeMode_Quanta will be used instead.
 
 ## NoteFieldColumn Functions
 
-Find 20 mistakes in NewField_mod_system.md to unlock updated documentation
-of the functions in NoteField.
+* NoteFieldColumn:get_time_offset()  
+Returns the ModifiableValue for offsetting the displayed note time (in
+seconds) from the current time.
 
-* NoteFieldColumn:get_layer_fade_type(layer)  
-Returns the FieldLayerFadeType for the layer.
+* NoteFieldColumn::get_quantization_parts_per_beat()  
+Returns the ModifiableValue for changing the parts_per_beat value a note has
+before it is used for quantization.  This can change 4ths into 8ths, or vice
+versa.
 
-* NoteFieldColumn:set_layer_fade_type(layer, type)  
-layer must be the actor the type is being applied to.  type is a
-FieldLayerFadeType enum value.
+This does not change the parts_per_beat that is passed to other modifiers.
 
-* NoteFieldColumn:get_layer_transform_type(layer)  
-Returns the FieldLayerTransformType for the layer.
+* NoteFieldColumn::get_quantization_part_id()  
+The part_id counterpart to get_quantization_parts_per_beat.
 
-* NoteFieldColumn:set_layer_transform_type(layer, type)  
-layer must be the actor the type is being applied to.  type is a
-FieldLayerTransformType enum value.
+* NoteFieldColumn::get_speed_mod  
+Returns the ModifiableValue for the speed mod.  This controls the y offset a
+note has, which is its distance from the receptor.
+
+* NoteFieldColumn::get_y_offset_vec_x()
+* NoteFieldColumn::get_y_offset_vec_y()
+* NoteFieldColumn::get_y_offset_vec_z()  
+When positioning a note, the y offset value is multiplied by this 3D vector.
+The vector defaults to {0, 1, 0}, which makes the notes approach from below.
+
+* NoteFieldColumn::get_reverse_offset_pixels()  
+This ModifiableValue controls the distance from the center of the notefield
+to the receptor.  The player can configure the default value in their
+notefield prefs.
+
+* NoteFieldColumn::get_reverse_scale()  
+ModifiableValue for controlling reverse.  1 makes the arrows scroll up, -1
+makes the arrows scroll down.
+
+* NoteFieldColumn::get_center_percent()  
+ModifiableValue for controlling center.  Center kind of scales the
+reverse_offset_pixels value.  When the center percent is 0, the receptor is
+reverse_offset_pixels from the center of the field.  When the center percent
+is 1, the receptor is at the center of the field.
+
+* NoteFieldColumn::get_note_pos_x()
+* NoteFieldColumn::get_note_pos_y()
+* NoteFieldColumn::get_note_pos_z()
+* NoteFieldColumn::get_note_rot_x()
+* NoteFieldColumn::get_note_rot_y()
+* NoteFieldColumn::get_note_rot_z()
+* NoteFieldColumn::get_note_zoom_x()
+* NoteFieldColumn::get_note_zoom_y()
+* NoteFieldColumn::get_note_zoom_z()  
+Functions for accessing the ModifiableValues used to position, rotate, and
+scale each note.
+
+* NoteFieldColumn::get_column_pos_x()
+* NoteFieldColumn::get_column_pos_y()
+* NoteFieldColumn::get_column_pos_z()
+* NoteFieldColumn::get_column_rot_x()
+* NoteFieldColumn::get_column_rot_y()
+* NoteFieldColumn::get_column_rot_z()
+* NoteFieldColumn::get_column_zoom_x()
+* NoteFieldColumn::get_column_zoom_y()
+* NoteFieldColumn::get_column_zoom_z()  
+These ModifiableValues are used to position, rotate, and scale the column.
+Because the column is an ActorFrame and the notes, receptors, and explosions
+are actors rendered inside it.
+
+* NoteFieldColumn::get_hold_normal_x()
+* NoteFieldColumn::get_hold_normal_y()
+* NoteFieldColumn::get_hold_normal_z()  
+If the moddable hold normal flag is true, the result of this vector is
+perpendicular to the surface of a hold.  This allows twisting holds without
+applying a rotation to notes.  
+When the flag is false, the normal is calculated from note positions.
+
+* NoteFieldColumn::get_use_moddable_hold_normal()
+* NoteFieldColumn::set_use_moddable_hold_normal(bool)  
+Query or set the value of the moddable hold normal flag.
+
+* NoteFieldColumn::get_note_alpha()
+* NoteFieldColumn::get_note_glow()  
+The alpha and glow values for notes are separately controllable by
+ModifiableValues.
+
+* NoteFieldColumn::get_receptor_alpha()
+* NoteFieldColumn::get_receptor_glow()
+* NoteFieldColumn::get_explosion_alpha()
+* NoteFieldColumn::get_explosion_glow()  
+The noteskin and theme can add layers to the column and set the fade type for
+each layer.  A layer with the receptor fade type is affected by the receptor
+alpha and glow ModifiableValues.  Similar for explosion fade type layers.
+
+* NoteFieldColumn::get_use_game_music_beat()
+* NoteFieldColumn::set_use_game_music_beat(bool)  
+When the use game music flag is true (normal case), the column uses the
+music time passed by its parent notefield.  When false, the column does not
+update its music time, and must be updated by calling the set_curr_beat or
+set_curr_second functions.
+
+* NoteFieldColumn::get_show_unjudgable_notes()
+* NoteFieldColumn::set_show_unjudgable_notes(bool)  
+This flag is used to hide fake notes inside a warp when a cmod is used.
+
+* NoteFieldColumn::get_speed_segments_enabled()
+* NoteFieldColumn::set_speed_segments_enabled(bool)
+* NoteFieldColumn::get_scroll_segments_enabled()
+* NoteFieldColumn::set_scroll_segments_enabled(bool)  
+These flags are used to turn off speed and scroll segments when a cmod is
+used.
+
+* NoteFieldColumn::get_holds_skewed_by_mods()
+* NoteFieldColumn::set_holds_skewed_by_mods(bool)  
+If holds are skewed by mods, then mods like drunk make the hold look thinner
+in places because the verts on the left and right edges have the same y value
+as the corresponding point in the center.  
+When this flag is false, the engine calculates a forward vector and arranges
+the left and right verts to be perpendicular to that.  This makes drunk curve
+holds.
+
+* NoteFieldColumn::get_twirl_holds()
+* NoteFieldColumn::set_twirl_holds(bool)  
+If this flag is falce, y rotation of notes does not affect holds.
+
+* NoteFieldColumn::get_playerize_mode()
+* NoteFieldColumn::set_playerize_mode(NotePlayerizeMode)  
+NotePlayerizeMode enum for controlling how notes are playerized in couples
+mode.  NotePlayerizeMode_Mask requires support in the noteskin, so it will
+probably not work.
+
+* NoteFieldColumn::get_curr_beat()
+* NoteFieldColumn::set_curr_beat(float)
+* NoteFieldColumn::get_curr_second()
+* NoteFieldColumn::set_curr_second(float)  
+Functions for getting and setting the time the column uses to render.
+
+* NoteFieldColumn::set_pixels_visible_before(float)
+* NoteFieldColumn::set_pixels_visible_after(float)  
+The pixels visible values are actually y offset values.  A note with a y offset value in this range is rendered, with adjustments for reverse.
+
+* NoteFieldColumn::get_upcoming_time()
+* NoteFieldColumn::set_upcoming_time(float)  
+Column layers are passed a time to the next upcoming note.  This value
+controls how far ahead the column looks for a note.
+
+* NoteFieldColumn::get_layer_fade_type(layer)
+* NoteFieldColumn::set_layer_fade_type(layer, FieldLayerFadeType)  
+layer must be an actor that is a child of the column.  
+This function is how receptors and explosions in the noteskin tell the column
+what glow and alpha mods to apply to the layer.  
+Type names: ```FieldLayerFadeType_Receptor```, ```FieldLayerFadeType_Note```, ```FieldLayerFadeType_Explosion```, ```FieldLayerFadeType_None```.
+
+* NoteFieldColumn::get_layer_transform_type(layer)
+* NoteFieldColumn::set_layer_transform_type(layer, FieldLayerTransformType)  
+layer must be an actor that is a child of the column.  
+Any child of the column (such as the receptor) defaults to
+FieldLayerTransformType_Full.  FieldLayerTransformType_PosOnly disables the
+rotation from note mods.  FieldLayerTransformType_None disables the
+positioning and rotation from note mods.
+Type names: ```FieldLayerTransformType_Full```, ```FieldLayerTransformType_PosOnly```, ```FieldLayerTransformType_None```
+
+### Why do these exist functions
+These functions do not serve their purpose well or reliable and are subject
+to change whenever I get a better idea.
+
+* NoteFieldColumn::receptor_y_offset()  
+Returns the y offset given to receptors.  Usually 0 unless the speed mod
+returns non-zero for a time distance of 0.
+
+* NoteFieldColumn::get_reverse_shift()  
+Returns the current reverse shift value.  I don't know how this could be
+useful, probably just needed it for debugging one day.
+
+* NoteFieldColumn::apply_column_mods_to_actor(actor)  
+Use the column's ModifiableValues to position the actor.
+
+* NoteFieldColumn::apply_note_mods_to_actor(actor, bool time_is_offset, float beat, float second, float y_offset, bool use_alpha, bool use_glow)  
+Applies note modifiers to the actor as if it were a note inside the column.
+This will not position the actor perfectly to move with the notes unless the
+actor is a child of the column.  Even then it probably won't be positioned
+right.
+
+
 
 ## NoteField Functions
 
-* NoteField:get_layer_fade_type(layer)  
-Identical to NoteFieldColumn:get_layer_fade_type.
+* NoteField:get_columns()  
+Returns a table of the NoteFieldColumns in the NoteField.
 
+* NoteField:get_width()  
+The width of each column, and thus the field, is controlled by the noteskin.
+get_width() returns the total width of all columns and their padding.
+
+* NoteField:get_curr_beat()
+* NoteField:set_curr_beat(float)
+* NoteField:get_curr_second()
+* NoteField:set_curr_second(float)  
+Normally, the NoteField is given a current time by the Player it is for, and
+that is passed to each column.  
+These functions allow setting the current time instead of using the time from
+the Player.
+
+* NoteField:get_trans_pos_x()
+* NoteField:get_trans_pos_y()
+* NoteField:get_trans_pos_z()
+* NoteField:get_trans_rot_x()
+* NoteField:get_trans_rot_y()
+* NoteField:get_trans_rot_z()
+* NoteField:get_trans_zoom_x()
+* NoteField:get_trans_zoom_y()
+* NoteField:get_trans_zoom_z()  
+ModifiableValues for controlling the position of the NoteField.  
+The player has a menu for configuring the values they prefer.
+
+* NoteField:get_receptor_alpha()
+* NoteField:get_receptor_glow()
+* NoteField:get_explosion_alpha()
+* NoteField:get_explosion_glow()  
+The NoteField doesn't have receptor or explosion layers unless the theme adds
+layers and sets their fade type.  But if those layers exist, these
+ModifiableValues set their alpha and glow.
+
+* NoteField:get_fov_mod()  
+For when you want a mod that changes the FOV.
+
+* NoteField:get_vanish_x_mod()
+* NoteField:get_vanish_y_mod()
+* NoteField:get_vanish_type()
+* NoteField:set_vanish_type(FieldVanishType)  
+Incoming and Space perspectives in the old system worked in part by moving
+the vanish point towards the center of the screen.  
+These functions allow controlling the vanish point with mods.  
+Since the vanish point used to calculate the projection matrix has to be a
+point on the screen, this is not simple.  
+With FieldVanishType_RelativeToParent (the default), the Player and NoteField
+positions are added to the result from the mods.  
+With FieldVanishType_RelativeToSelf, only the NoteField position is added.  
+With FieldVanishType_RelativeToOrigin, the mod result is used raw.  
+I'm not entirely satisfied with this system because it's not really right if
+the Player rotates, and other problems when the NoteField isn't attached to a
+Player.
+
+* NoteField:set_player_color(int, color)  
+In the unlikely event that a noteskin provides masks and a chart for multiple
+players is being played in NotePlayerizeMode_Mask, this function can be used
+to set what color each player's notes are masked with.
+
+* NoteField:get_layer_fade_type()
 * NoteField:set_layer_fade_type(layer, type)  
-Identical to NoteFieldColumn:set_layer_fade_type.
+Similar to the NoteFieldColumn functions of the same name.  Layers in the
+NoteField can control which alpha and glow mods affect them.
+
+### Compatibility functions
+For compatibility with gimmick files made for 5.0.
+
+* NoteField:get_defective_mode()
+* NoteField:set_defective_mode(bool)  
+Turning on defective mode disables all the ModifiableValue fields in
+NoteFieldColumn and NoteField to use the modifier values in PlayerOptions
+instead.  
+There are a variety of checks to detect something using PlayerOptions and set
+this flag to true automatically.
+
+* NoteField:get_oitg_zoom_mode()
+* NoteField:set_oitg_zoom_mode(bool)  
+OITG has a bug where Actor:SetZoom does not set the z zoom.  This affects how
+Mini (which sets notefield zoom) and Bumpy (which sets note z position)
+interact.  
+Any gimmick simfile ported from oitg needs this flag set to true.  
+The oitg_zoom_mode_actor() function provides an easy to use wrapper for
+setting this flag for all players.
+
+
+### Arcana functions
+These functions are meant for engine internal use.  Using them right usually
+requires knowledge of other parts of the engine.
+
+* NoteField:get_skin()
+* NoteField:set_skin(name, params)  
+Setting the noteskin should be left up to the code in the engine that fetches
+the right params from the profile.  
+Loading the noteskin is slow, if you change the noteskin during gameplay, the
+notes will hitch.
+
+* NoteField:set_steps(steps)  
+Change the Steps being displayed by the notefield.  This will cause the game
+to hitch while the note data is loaded from the simfile.
+
+
+### Functions provided by _fallback
 
 * NoteField:set_speed_mod(constant, speed, read_bpm)  
 set_speed_mod creates a simple speed mod from the parameters and applies it
@@ -475,6 +737,9 @@ Clears the hidden mod from all columns.
 * NoteField:clear_sudden_mod()  
 Clears the sudden mod from all columns.
 
+* NoteField:all_columns_mod(mod_name, mod_function)  
+Loop that calls add_mod for the given mod and passes it the mod_function.
+
 ## Other functions
 
 * find_pactor_in_gameplay(screen_gameplay, pn)  
@@ -482,6 +747,9 @@ Returns the player actor or nil.
 
 * find_notefield_in_gameplay(screen_gameplay, pn)  
 Returns the notefield actor or nil.
+
+* oitg_zoom_mode_actor()  
+Returns an actor that sets the oitg zoom mode flag to true for all players.
 
 * notefield_prefs_actor()
 Returns an actor that applies notefield prefs for both players.

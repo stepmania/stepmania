@@ -25,6 +25,33 @@ void NoteData::Init()
 	m_TapNotes = vector<TrackMap>();	// ensure that the memory is freed
 }
 
+static void fractionate_number(double number,
+	int max_denom, int& numerator, int& denominator)
+{
+	double fraction_dist= 10.0;
+	double min_dist= 1.0/10000.0;
+	for(int denom= 2; denom <= max_denom; ++denom)
+	{
+		int numer= number * denom;
+		double dist= std::fabs(number - (double(numer) / double(denom)));
+		if(dist < fraction_dist)
+		{
+			numerator= numer;
+			denominator= denom;
+			fraction_dist= dist;
+			if(dist < min_dist)
+			{
+				break;
+			}
+		}
+	}
+	if(numerator == 0 || numerator == denominator)
+	{
+		numerator= 1;
+		denominator= 1;
+	}
+}
+
 void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
 {
 	ASSERT_M(timing_data != nullptr, "SetOccuranceTimeForAllTaps cannot run without timing data.");
@@ -38,6 +65,11 @@ void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
 	vector<int> column_ids(GetNumTracks(), 0);
 	int curr_note_id= 0;
 	int curr_row_id= -1; // Start at -1 so that the first row update sets to 0.
+	// TODO:  Quantization should actually be done by NotesLoader, to allow the
+	// data to be saved in the file format. -Kyz
+	// Only do quantization calculations once per row.
+	int curr_row_parts_per_beat= 1;
+	int curr_row_part_id= 1;
 	while(!curr_note.IsAtEnd())
 	{
 		if(curr_note.Row() != curr_row)
@@ -51,6 +83,21 @@ void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
 			curr_row= curr_note.Row();
 			curr_row_second= timing_data->GetElapsedTimeFromBeat(NoteRowToBeat(curr_row));
 			++curr_row_id;
+
+			// Quantization.
+			// This could be condensed down to a single line without all the
+			// intermediate variables, but I want the reasoning to be clear.
+			// -Kyz
+			TimeSignatureSegment* signature= timing_data->GetTimeSignatureSegmentAtRow(curr_row);
+			float note_beat= NoteRowToBeat(curr_row);
+			float signature_start= signature->GetBeat();
+			float beats_per_measure= signature->GetNum();
+			float note_value_per_beat= signature->GetDen();
+			float measure_length_in_fourths= 4 * (beats_per_measure / note_value_per_beat);
+			float dist_from_sig_start= note_beat - signature_start;
+			float beat_in_measure= fmod(dist_from_sig_start, measure_length_in_fourths);
+			fractionate_number(fmod(beat_in_measure, 1.f), ROWS_PER_BEAT, curr_row_part_id,
+				curr_row_parts_per_beat);
 		}
 		if(curr_note->type != TapNoteType_Empty)
 		{
@@ -58,6 +105,8 @@ void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
 			curr_note->id_in_chart= static_cast<float>(curr_note_id);
 			curr_note->id_in_column= static_cast<float>(column_ids[curr_note.Track()]);
 			curr_note->row_id= static_cast<float>(curr_row_id);
+			curr_note->parts_per_beat= curr_row_parts_per_beat;
+			curr_note->part_id= curr_row_part_id;
 			++curr_note_id;
 			++column_ids[curr_note.Track()];
 			notes_on_curr_row.push_back(&(*curr_note));

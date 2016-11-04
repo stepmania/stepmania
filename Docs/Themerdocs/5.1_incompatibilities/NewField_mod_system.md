@@ -129,10 +129,13 @@ single character name for conciseness.
 	The multiplication operator.  Returns "a * b * c * ...".
 * "^"
 * "exp"  
-	Exponentiationalificationizate.  Returns "a^b^c^...".
+	Exponentiation.  Returns "a^b^c^...".
 * "v"
 * "log"  
-	Log!  Log!  Log!  Better than bad, it's log!  Rolls down stairs!
+	```{'log', 1}``` returns log(1)  
+	```{'log', 1, 2}``` returns log(1) / log(2)  
+	```{'log', 1, 2, 3}``` returns (log(1) / log(2)) / log(3)  
+	And so on.
 * "sin"  
 	Only takes one operand.
 * "cos"  
@@ -143,8 +146,6 @@ single character name for conciseness.
 	Only takes one operand.  Square wave version of sine.
 * "triangle"  
 	Only takes one operand.  Triangle wave version of sine.
-* "flat"
-	Only takes one operand.  Flat wave version of sine.
 * "random"  
 	Only takes one operand.  Returns a random number generated from its
 	operand.  ```{"random", "music_beat"}``` means a different random number
@@ -161,7 +162,7 @@ single character name for conciseness.
 	Takes two operands. ```{"_", "music_beat", 1.5}``` floors the music beat to
 	the nearest lower multiple of 1.5.
 * "ceil"  
-	Takes two operands. ```{"ceil", "music_beat", 1.5}``` seals the music beat
+	Takes two operands. ```{"ceil", "music_beat", 1.5}``` rounds the music beat
 	to the nearest higher multiple of 1.5.
 * "o"
 * "round"  
@@ -169,7 +170,7 @@ single character name for conciseness.
 	the nearest multiple of 1.5.
 * "repeat"  
 	```{"repeat", "music_beat", 0, 2}```
-	Changes it's operand to repeat the given range.  The range elements must
+	Changes its operand to repeat the given range.  The range elements must
 	be numbers.
 * "phase"  
 	```{"phase", "music_beat", {default= {0, 0, 1, 0}, {0, 4, -1, 0}, {4, 8, 2, -4}}}```
@@ -196,7 +197,8 @@ single character name for conciseness.
 
 #### Division by zero
 The result of dividing by 0 is 0, not infinity.  The result of modulus by 0
-is the first operand.
+is 0.  The result of floor, ceil, or round by 0 is the first operand.
+(i.e. the result of floor(3.5, 0) is 3.5)
 
 This should prevent cases where division or modulus accidentally
 makes notes vanish, such as this:
@@ -288,9 +290,9 @@ functions is used to create and access them.
   Examples section in ```ModFunction``` for an explanation of the arg.  
   ```add_mod``` returns the ```ModifiableValue``` it was called on.  
 * remove_mod(name)  
-  Removes the ```ModFunction``` with the given name in the list.
+  Removes the ```ModFunction```s with the given name in the list.
 * clear_mods()  
-  Removes all ```ModFunction``` from the list.
+  Removes all ```ModFunction```s from the list.
 * add_managed_mod(ModFunction)  
   Identical to add_mod, but for managed mods.
 * add_managed_mod_set({ModFunction, ...})  
@@ -299,8 +301,6 @@ functions is used to create and access them.
   Identical to remove_mod, but for managed mods.
 * clear_managed_mods()  
   Identical to clear_mods, but for managed mods.
-* get_value()  
-  Returns the base value of the ```ModifiableValue```.
 * set_value(value)  
   Convenience wrapper around ```add_mod{name= "base_value", value}```.
 
@@ -312,7 +312,7 @@ column:get_note_pos_y():add_mod{name= "tipsy", {
 	}
 }
 ```
-This add a mod that makes the notes drift up and down.  As a normal equation
+This adds a mod that makes the notes drift up and down.  As a normal equation
 it would look like this: ```64 * .4 * cos((music_second * 1.2) + (column * 1.8))```
 The music second and column are added together to make the columns out of
 phase with each other.
@@ -390,11 +390,8 @@ The type of a modifier is in parens after the name.
 * reverse_offset_pixels (ModifiableValue)  
   ```reverse_offset_pixels``` is the distance from the center of the column
   to the receptor.  In the old notefield, this was calculated from the
-  ReceptorArrowsYStandard and ReceptorArrowsYReverse metrics.  The default
-  value is calculated from the screen height and ```note_size```:
-  ```default_offset= SCREEN_CENTER_Y - note_size;```
-  It places the center of the receptor ```note_size``` pixels from the top of
-  the screen.  
+  ReceptorArrowsYStandard and ReceptorArrowsYReverse metrics.  The player
+	can configure the value they prefer in the profile.  
   A value of 128 puts the receptor 128 pixels above the center.  
   ```reverse_offset_pixels``` is evaluated once per frame, with only the
   current time of the column.  The eval inputs for it are identical to
@@ -448,7 +445,6 @@ The type of a modifier is in parens after the name.
 * get_reverse_offset_pixels()
 * get_reverse_scale()
 * get_center_percent()
-* get_rekt()
 * get_note_pos_x()
 * get_note_pos_y()
 * get_note_pos_z()
@@ -872,7 +868,7 @@ with their own tween stack.
 
 Standard actor tweens are not synced to the music.  If a simfile with
 animations is played at a non-standard music rate, the animations all occur
-at the wrong time.  The Creator (God Himself) can add special code to detect
+at the wrong time.  The mod author can add special code to detect
 the music rate and adjust animation times to compensate.  This workaround
 requires careful handling of every animation, making it difficult to do 100%
 right.  In a better system, such a workaround shouldn't be necessary.
@@ -943,7 +939,7 @@ Skipping backwards is even worse.  Tweens only have one direction, forward.
 Either the system has to fake skipping backwards by starting at the beginning
 and moving forward, or the creator must be forced to set preceding states at
 every step.  Or the system could track every tween state on a list and
-elimininate running lua after every tween.
+eliminate running lua after every tween.
 
 ### Repeating animations
 

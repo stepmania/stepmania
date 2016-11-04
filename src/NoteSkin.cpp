@@ -207,109 +207,267 @@ void unload_texture_list(vector<RageTexture*>& tex_list)
 	}
 }
 
-bool QuantizedStateMap::load_from_lua(lua_State* L, int index, string& insanity_diagnosis)
+Quantizer::Quantum const& Quantizer::get_quantum(note_quant_anim_data& input)
 {
+	if(input.player_mode)
+	{
+		int pn= input.part_id;
+		if(input.rainbow_mode)
+		{
+			if(m_quanta_set.empty())
+			{
+				return m_unknown_quanta.quanta[input.row_id % m_unknown_quanta.quanta.size()];
+			}
+			pn%= m_quanta_set.size();
+			Quanta& quanta= m_quanta_set[pn];
+			return quanta.quanta[input.row_id % quanta.quanta.size()];
+		}
+		else
+		{
+			if(m_quanta_set.empty())
+			{
+				return m_unknown_quanta.quanta[pn % m_unknown_quanta.quanta.size()];
+			}
+			pn%= m_quanta_set.size();
+			Quanta& quanta= m_quanta_set[pn];
+			for(size_t qi= 0; qi < quanta.quanta.size(); ++qi)
+			{
+				if(qi >= m_quanta_set.size() || input.parts_per_beat == m_quanta_set[qi].parts_per_beat)
+				{
+					return quanta.quanta[qi];
+				}
+			}
+			return quanta.quanta.back();
+		}
+	}
+	else
+	{
+		if(input.rainbow_mode)
+		{
+			if(m_quanta_set.empty())
+			{
+				return m_unknown_quanta.quanta[input.row_id % m_unknown_quanta.quanta.size()];
+			}
+			input.row_id%= m_quant_total;
+			for(auto&& quanta : m_quanta_set)
+			{
+				if(input.row_id < static_cast<int>(quanta.quanta.size()))
+				{
+					return quanta.quanta[input.row_id];
+				}
+				input.row_id-= quanta.quanta.size();
+			}
+			return m_unknown_quanta.quanta[0];
+		}
+		else
+		{
+			for(auto&& quanta : m_quanta_set)
+			{
+				if(input.parts_per_beat == quanta.parts_per_beat)
+				{
+					for(auto&& qt : quanta.quanta)
+					{
+						if(input.part_id == qt.part_id)
+						{
+							return qt;
+						}
+					}
+					return quanta.quanta[0];
+				}
+			}
+			return m_unknown_quanta.quanta[input.part_id%m_unknown_quanta.quanta.size()];
+		}
+	}
+}
+
+size_t Quantizer::get_quant_total()
+{
+	return m_quant_total;
+}
+
+bool Quantizer::load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis)
+{
+	/*
+		{
+			[1]= {
+				[1]= {trans_x= 0, trans_y= 0, state, state, state, ...},
+				[3]= {trans_x= 0, trans_y= 0, state, state, state, ...},
+			},
+			[3]= {
+				[1]= {trans_x= 0, trans_y= 0, state, state, state, ...},
+				[3]= {trans_x= 0, trans_y= 0, state, state, state, ...},
+			},
+			unknown= {
+				{trans_x= 0, trans_y= 0, state, state, state, ...},
+				{trans_x= 0, trans_y= 0, state, state, state, ...},
+			},
+		}
+	 */
 	// Loading is atomic:  If a single error occurs during loading the data,
 	// none of it is used.
 	// Pop the table we're loading from off the stack when returning.
+	m_unknown_quanta.quanta.clear();
 	int original_top= lua_gettop(L) - 1;
 #define RETURN_NOT_SANE(message) lua_settop(L, original_top); insanity_diagnosis= message; return false;
-	lua_getfield(L, index, "quanta");
-	if(!lua_istable(L, -1))
+
+	bool unknown_set_found= false;
+	lua_pushnil(L);
+	while(lua_next(L, index) != 0)
 	{
-		RETURN_NOT_SANE("No quanta found");
-	}
-	size_t num_quanta= get_table_len(L, -1, max_quanta, "quanta", insanity_diagnosis);
-	if(num_quanta == 0)
-	{
-		RETURN_NOT_SANE(insanity_diagnosis);
-	}
-	int quanta_index= lua_gettop(L);
-	vector<QuantizedStates> temp_quanta(num_quanta);
-	for(size_t i= 0; i < temp_quanta.size(); ++i)
-	{
-		lua_rawgeti(L, quanta_index, i+1);
-		if(!lua_istable(L, -1))
+		switch(lua_type(L, -2))
 		{
-			RETURN_NOT_SANE(fmt::sprintf("Invalid quantum %zu.", i+1));
-		}
-		lua_getfield(L, -1, "per_beat");
-		if(!lua_isnumber(L, -1))
-		{
-			RETURN_NOT_SANE(fmt::sprintf("Invalid per_beat value in quantum %zu.", i+1));
-		}
-		temp_quanta[i].per_beat= lua_tointeger(L, -1);
-		lua_pop(L, 1);
-		lua_getfield(L, -1, "states");
-		if(!lua_istable(L, -1))
-		{
-			RETURN_NOT_SANE(fmt::sprintf("Invalid states in quantum %zu.", i+1));
-		}
-		if(!load_simple_table(L, lua_gettop(L), max_states,
-				temp_quanta[i].states, static_cast<size_t>(1), max_states, "states",
-				insanity_diagnosis))
-		{
-			RETURN_NOT_SANE(fmt::sprintf("Invalid states in quantum %zu: %s", i+1, insanity_diagnosis.c_str()));
+			case LUA_TNUMBER:
+				m_quanta_set.push_back(Quanta());
+				m_quanta_set.back().parts_per_beat= lua_tointeger(L, -2);
+				if(!load_quanta(m_quanta_set.back(), L, lua_gettop(L)))
+				{
+					LuaHelpers::ReportScriptErrorFmt("Ignoring malformed quanta set for %d parts_per_beat.", m_quanta_set.back().parts_per_beat);
+					m_quanta_set.pop_back();
+				}
+				break;
+			case LUA_TSTRING:
+				// Just for fun, let's not actually care what the key value is.
+				unknown_set_found= true;
+				if(!load_quanta(m_unknown_quanta, L, lua_gettop(L)))
+				{
+					unknown_set_found= false;
+					LuaHelpers::ReportScriptError("Ignoring malformed quanta set for unknown parts_per_beat.");
+				}
+				break;
+			default:
+				break;
 		}
 		lua_pop(L, 1);
 	}
-	lua_getfield(L, index, "parts_per_beat");
-	if(!lua_isnumber(L, -1))
+	// Allow quantization data that only contains an entry for unknowns.
+	// Allow data that does not contain an unknown entry, use the last known.
+	// Do not allow blank data.
+	if(!unknown_set_found && m_quanta_set.empty())
 	{
-		RETURN_NOT_SANE("Invalid parts_per_beat.");
+		RETURN_NOT_SANE("Blank quantization data is not valid.");
 	}
-	m_parts_per_beat= lua_tointeger(L, -1);
 #undef RETURN_NOT_SANE
+	finalize_load();
 	lua_settop(L, original_top);
-	m_quanta.swap(temp_quanta);
 	return true;
 }
 
-bool QuantizedTextureMap::load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis)
+bool Quantizer::load_quanta(Quanta& dest, lua_State* L, int index)
 {
-	// Pop the table we're loading from off the stack when returning.
+	int original_top= lua_gettop(L);
+	lua_pushnil(L);
+	while(lua_next(L, index) != 0)
+	{
+		if(lua_isnumber(L, -2) && lua_istable(L, -1))
+		{
+			dest.quanta.push_back(Quantum());
+			Quantum& curr_quant= dest.quanta.back();
+			curr_quant.part_id= lua_tointeger(L, -2);
+			int quant_index= lua_gettop(L);
+			curr_quant.trans_x= get_optional_double(L, quant_index, "trans_x", 0.);
+			curr_quant.trans_y= get_optional_double(L, quant_index, "trans_y", 0.);
+			std::string dont_care;
+			// load_simple_table pops the table, but only on success.
+			if(!load_simple_table(L, quant_index, max_states, curr_quant.states,
+					static_cast<size_t>(1), max_states, "quantum", dont_care))
+			{
+				lua_pop(L, 1);
+				curr_quant.states.clear();
+			}
+		}
+		else
+		{
+			lua_pop(L, 1);
+		}
+	}
+	std::sort(dest.quanta.begin(), dest.quanta.end(),
+		[](Quantum& left, Quantum& right)
+		{
+			return left.part_id < right.part_id;
+		});
+	lua_settop(L, original_top);
+	return !dest.quanta.empty();
+}
+
+bool Quantizer::load_from_state_map(lua_State* L, int index, std::string& insanity_diagnosis)
+{
+	m_unknown_quanta.quanta.clear();
 	int original_top= lua_gettop(L) - 1;
 #define RETURN_NOT_SANE(message) lua_settop(L, original_top); insanity_diagnosis= message; return false;
+	// The parts_per_beat field in the state map is irrelevant now.
 	lua_getfield(L, index, "quanta");
 	if(!lua_istable(L, -1))
 	{
 		RETURN_NOT_SANE("No quanta found");
 	}
-	size_t num_quanta= get_table_len(L, -1, max_quanta, "quanta", insanity_diagnosis);
-	if(num_quanta == 0)
-	{
-		RETURN_NOT_SANE(insanity_diagnosis);
-	}
+	// Each quantum in the state map is loaded as a Quanta with a single
+	// entry.  The per_beat of each quantum is the parts_per_beat of the
+	// Quanta.
 	int quanta_index= lua_gettop(L);
-	vector<TextureQuanta> temp_quanta(num_quanta);
-	for(size_t i= 0; i < temp_quanta.size(); ++i)
+	size_t num_quanta= lua_objlen(L, quanta_index);
+	m_quanta_set.resize(num_quanta);
+	for(size_t qind= 0; qind < num_quanta; ++qind)
 	{
-		lua_rawgeti(L, quanta_index, i+1);
-		if(!lua_istable(L, -1))
+		Quanta& curr_quanta= m_quanta_set[qind];
+		curr_quanta.quanta.resize(1);
+		lua_rawgeti(L, quanta_index, qind+1);
+		if(lua_istable(L, -1))
 		{
-			RETURN_NOT_SANE(fmt::sprintf("Invalid quantum %zu.", i+1));
+			int this_quantum= lua_gettop(L);
+			lua_getfield(L, this_quantum, "per_beat");
+			curr_quanta.parts_per_beat= lua_tointeger(L, -1);
+			lua_pop(L, 1);
+			curr_quanta.quanta[0].part_id= 1;
+			curr_quanta.quanta[0].trans_x= get_optional_double(L, this_quantum, "trans_x", 0.);
+			curr_quanta.quanta[0].trans_y= get_optional_double(L, this_quantum, "trans_y", 0.);
+			lua_getfield(L, this_quantum, "states");
+			if(lua_istable(L, -1))
+			{
+				if(!load_simple_table(L, lua_gettop(L), max_states,
+						curr_quanta.quanta[0].states, static_cast<size_t>(1), max_states,
+						"states", insanity_diagnosis))
+				{
+					RETURN_NOT_SANE(fmt::sprintf("Invalid states in quantum %zu: %s",
+							qind+1, insanity_diagnosis.c_str()));
+				}
+			}
+			else
+			{
+				lua_pop(L, 1);
+			}
 		}
-		int this_quanta= lua_gettop(L);
-		lua_getfield(L, this_quanta, "per_beat");
-		if(!lua_isnumber(L, -1))
-		{
-			RETURN_NOT_SANE(fmt::sprintf("Invalid per_beat value in quantum %zu.", i+1));
-		}
-		temp_quanta[i].per_beat= lua_tointeger(L, -1);
-		temp_quanta[i].trans_x= get_optional_double(L, this_quanta, "trans_x", .0);
-		temp_quanta[i].trans_y= get_optional_double(L, this_quanta, "trans_y", .0);
 		lua_pop(L, 1);
 	}
-	lua_getfield(L, index, "parts_per_beat");
-	if(!lua_isnumber(L, -1))
+	if(m_quanta_set.empty())
 	{
-		RETURN_NOT_SANE("Invalid parts_per_beat.");
+		RETURN_NOT_SANE("Cannot load quantization from empty state map.");
 	}
-	m_parts_per_beat= lua_tointeger(L, -1);
 #undef RETURN_NOT_SANE
-	m_quanta.swap(temp_quanta);
+	finalize_load();
 	lua_settop(L, original_top);
 	return true;
+}
+
+void Quantizer::finalize_load()
+{
+	std::sort(m_quanta_set.begin(), m_quanta_set.end(),
+		[](Quanta& left, Quanta& right)
+		{
+			return left.parts_per_beat < right.parts_per_beat;
+		});
+	if(m_unknown_quanta.quanta.empty() && !m_quanta_set.empty())
+	{
+		m_unknown_quanta= m_quanta_set.back();
+	}
+	m_quant_total= 0;
+	for(auto&& quanta : m_quanta_set)
+	{
+		m_quant_total+= quanta.quanta.size();
+	}
+	if(m_quant_total == 0)
+	{
+		m_quant_total= m_unknown_quanta.quanta.size();
+	}
 }
 
 bool QuantizedTap::load_from_lua(lua_State* L, int index, string& insanity_diagnosis)
@@ -317,54 +475,70 @@ bool QuantizedTap::load_from_lua(lua_State* L, int index, string& insanity_diagn
 	// Pop the table we're loading from off the stack when returning.
 	int original_top= lua_gettop(L) - 1;
 #define RETURN_NOT_SANE(message) lua_settop(L, original_top); insanity_diagnosis= message; return false;
-	bool found_state_or_texture_map= false;
-	lua_getfield(L, index, "state_map");
-	if(lua_istable(L, -1))
+	// Look for the quantizer fields first, and fall back to the state_map
+	// fields for backwards compatibility.
+	lua_getfield(L, index, "quantizer");
+	if(!lua_istable(L, -1))
 	{
-		found_state_or_texture_map= true;
-		m_use_texture_map= false;
-		if(!m_state_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+		lua_pop(L, 1);
+		lua_getfield(L, index, "state_map");
+		if(!lua_istable(L, -1))
 		{
-			RETURN_NOT_SANE(insanity_diagnosis);
-		}
-		lua_getfield(L, index, "inactive_state_map");
-		if(lua_istable(L, -1))
-		{
-			if(!m_inactive_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+			lua_pop(L, 1);
+			lua_getfield(L, index, "texture_map");
+			if(!lua_istable(L, -1))
 			{
-				RETURN_NOT_SANE(insanity_diagnosis);
+				RETURN_NOT_SANE("Tap note lacks quantizer data.");
+			}
+			if(!m_quantizer.load_from_state_map(L, lua_gettop(L), insanity_diagnosis))
+			{
+				RETURN_NOT_SANE(fmt::sprintf("Tap quantization data not valid: %s", insanity_diagnosis.c_str()));
+			}
+			lua_getfield(L, index, "inactive_texture_map");
+			if(!lua_istable(L, -1))
+			{
+				lua_pop(L, 1);
+				m_inactive_quantizer= m_quantizer;
+			}
+			else if(!m_inactive_quantizer.load_from_state_map(L, lua_gettop(L), insanity_diagnosis))
+			{
+				RETURN_NOT_SANE(fmt::sprintf("Tap inactive quantization data not valid: %s", insanity_diagnosis.c_str()));
 			}
 		}
 		else
 		{
-			m_inactive_map= m_state_map;
-		}
-	}
-	lua_getfield(L, index, "texture_map");
-	if(lua_istable(L, -1))
-	{
-		found_state_or_texture_map= true;
-		m_use_texture_map= true;
-		if(!m_texture_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
-		{
-			RETURN_NOT_SANE(insanity_diagnosis);
-		}
-		lua_getfield(L, index, "inactive_texture_map");
-		if(lua_istable(L, -1))
-		{
-			if(!m_inactive_texture_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+			if(!m_quantizer.load_from_state_map(L, lua_gettop(L), insanity_diagnosis))
 			{
-				RETURN_NOT_SANE(insanity_diagnosis);
+				RETURN_NOT_SANE(fmt::sprintf("Tap quantization data not valid: %s", insanity_diagnosis.c_str()));
+			}
+			lua_getfield(L, index, "inactive_state_map");
+			if(!lua_istable(L, -1))
+			{
+				lua_pop(L, 1);
+				m_inactive_quantizer= m_quantizer;
+			}
+			else if(!m_inactive_quantizer.load_from_state_map(L, lua_gettop(L), insanity_diagnosis))
+			{
+				RETURN_NOT_SANE(fmt::sprintf("Tap inactive quantization data not valid: %s", insanity_diagnosis.c_str()));
 			}
 		}
-		else
-		{
-			m_inactive_texture_map= m_texture_map;
-		}
 	}
-	if(!found_state_or_texture_map)
+	else
 	{
-		RETURN_NOT_SANE("Could not find state or texture map.");
+		if(!m_quantizer.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+		{
+			RETURN_NOT_SANE(fmt::sprintf("Tap quantization data not valid: %s", insanity_diagnosis.c_str()));
+		}
+		lua_getfield(L, index, "inactive_quantizer");
+		if(!lua_istable(L, -1))
+		{
+			lua_pop(L, 1);
+			m_inactive_quantizer= m_quantizer;
+		}
+		else if(!m_inactive_quantizer.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+		{
+			RETURN_NOT_SANE(fmt::sprintf("Tap inactive quantization data not valid: %s", insanity_diagnosis.c_str()));
+		}
 	}
 	lua_getfield(L, index, "actor");
 	if(!lua_istable(L, -1))
@@ -383,8 +557,6 @@ bool QuantizedTap::load_from_lua(lua_State* L, int index, string& insanity_diagn
 	}
 	m_actor.Load(act);
 	m_frame.AddChild(m_actor);
-	lua_getfield(L, index, "vivid");
-	m_vivid= lua_toboolean(L, -1);
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
 	return true;
@@ -400,15 +572,23 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NoteSkinLoader const*
 	// Pop the table we're loading from off the stack when returning.
 	int original_top= lua_gettop(L) - 1;
 #define RETURN_NOT_SANE(message) lua_settop(L, original_top); insanity_diagnosis= message; return false;
-	lua_getfield(L, index, "state_map");
+	lua_getfield(L, index, "quantizer");
 	if(!lua_istable(L, -1))
 	{
-		RETURN_NOT_SANE("No state map found.");
+		lua_pop(L, 1);
+		lua_getfield(L, index, "state_map");
+		if(!lua_istable(L, -1))
+		{
+			RETURN_NOT_SANE("Hold note lacks quantizer data.");
+		}
+		if(!m_quantizer.load_from_state_map(L, lua_gettop(L), insanity_diagnosis))
+		{
+			RETURN_NOT_SANE(fmt::sprintf("Hold quantization data not valid: %s", insanity_diagnosis.c_str()));
+		}
 	}
-	QuantizedStateMap temp_map;
-	if(!temp_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+	else if(!m_quantizer.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
 	{
-		RETURN_NOT_SANE(insanity_diagnosis);
+		RETURN_NOT_SANE(fmt::sprintf("Hold quantization data not valid: %s", insanity_diagnosis.c_str()));
 	}
 	lua_getfield(L, index, "textures");
 	if(!lua_istable(L, -1))
@@ -466,12 +646,9 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NoteSkinLoader const*
 		m_part_lengths.body_pixs= 64.0;
 		m_part_lengths.tail_pixs= 32.0;
 	}
-	lua_getfield(L, index, "vivid");
-	m_vivid= lua_toboolean(L, -1);
 	m_texture_filtering= !get_optional_bool(L, index, "disable_filtering");
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
-	m_state_map.swap(temp_map);
 	unload_texture_list(m_parts);
 	m_parts.swap(temp_parts);
 	return true;
@@ -519,73 +696,48 @@ void NoteSkinColumn::update_taps()
 	}
 }
 
-// I didn't want to use a macro to make get_tap_actor and get_player_tap be
-// the same, but then the reverse logic had to be added, which made them
-// complex.  So GET_TAP_BODY is to make sure they don't drift apart.
-#define GET_TAP_BODY(get_func, quant_param) \
-	ASSERT_M(type < m_taps.size(), "Invalid NoteSkinTapPart type."); \
-	if(reverse && !m_reverse_taps.empty()) \
-	{ \
-		m_reverse_taps[type].get_func(quant_param, beat, active); \
-	} \
-	return m_taps[type].get_func(quant_param, beat, active);
-
-Actor* NoteSkinColumn::get_tap_actor(size_t type,
-	double quantization, double beat, bool active, bool reverse)
+Actor* NoteSkinColumn::get_tap_actor(size_t type, bool active, bool reverse,
+	note_quant_anim_data& input)
 {
-	GET_TAP_BODY(get_quantized, quantization);
+	if(reverse && !m_reverse_taps.empty())
+	{
+		return m_reverse_taps[type].get_quantized(input, active);
+	}
+	return m_taps[type].get_quantized(input, active);
 }
-
-Actor* NoteSkinColumn::get_player_tap(size_t type, size_t pn, double beat,
-	bool active, bool reverse)
-{
-	GET_TAP_BODY(get_playerized, pn);
-}
-
-#undef GET_TAP_BODY
 
 // Heads fall back to taps.  Since NoteSkinTapOptionalPart alternates between
 // Head and Tail, an easy way to check whether a head is being fetched is to
 // use type % 2.
-#define GET_OPTIONAL_TAP_BODY(get_tap_func, get_func, quant_param) \
-	ASSERT_M(type < m_optional_taps.size(), "Invalid NoteSkinTapOptionalPart type."); \
-	auto* use_taps= &m_optional_taps; \
-	if(reverse && !m_reverse_optional_taps.empty()) \
-	{ \
-		use_taps= &m_reverse_optional_taps; \
-	} \
-	QuantizedTap* tap= (*use_taps)[type]; \
-	if(tap == nullptr) \
-	{ \
-		tap= (*use_taps)[type % 2]; \
-	} \
-	if(tap == nullptr) \
-	{ \
-		if(type % 2 == 0) \
-		{ \
-			return get_tap_func(NSTP_Tap, quant_param, beat, active, reverse); \
-		} \
-		return nullptr; \
-	} \
-	return tap->get_func(quant_param, beat, active);
 
-Actor* NoteSkinColumn::get_optional_actor(size_t type,
-	double quantization, double beat, bool active, bool reverse)
+Actor* NoteSkinColumn::get_optional_actor(size_t type, bool active,
+	bool reverse, note_quant_anim_data& input)
 {
-	GET_OPTIONAL_TAP_BODY(get_tap_actor, get_quantized, quantization);
+	ASSERT_M(type < m_optional_taps.size(), "Invalid NoteSkinTapOptionalPart type.");
+	auto* use_taps= &m_optional_taps;
+	if(reverse && !m_reverse_optional_taps.empty())
+	{
+		use_taps= &m_reverse_optional_taps;
+	}
+	QuantizedTap* tap= (*use_taps)[type];
+	if(tap == nullptr)
+	{
+		tap= (*use_taps)[type % 2];
+	}
+	if(tap == nullptr)
+	{
+		if(type % 2 == 0)
+		{
+			return get_tap_actor(NSTP_Tap, active, reverse, input);
+		}
+		return nullptr;
+	}
+	return tap->get_quantized(input, active);
 }
-
-Actor* NoteSkinColumn::get_player_optional_tap(size_t type, size_t pn,
-	double beat, bool active, bool reverse)
-{
-	GET_OPTIONAL_TAP_BODY(get_player_tap, get_playerized, pn);
-}
-
-#undef GET_OPTIONAL_TAP_BODY
 
 void NoteSkinColumn::get_hold_render_data(TapNoteSubType sub_type,
-	NotePlayerizeMode playerize_mode, size_t pn, bool active, bool reverse,
-	double quantization, double beat, QuantizedHoldRenderData& data)
+	NotePlayerizeMode playerize_mode, bool active, bool reverse,
+	note_quant_anim_data& input, QuantizedHoldRenderData& data)
 {
 	if(sub_type >= NUM_TapNoteSubType)
 	{
@@ -594,14 +746,7 @@ void NoteSkinColumn::get_hold_render_data(TapNoteSubType sub_type,
 	}
 	auto& hold_set= reverse ? m_reverse_holds : m_holds;
 	auto& mask_set= reverse ? m_hold_reverse_player_masks : m_hold_player_masks;
-	if(playerize_mode != NPM_Quanta)
-	{
-		hold_set[sub_type][active].get_quantized(quantization, beat, data);
-	}
-	else
-	{
-		hold_set[sub_type][active].get_playerized(pn, beat, data);
-	}
+	hold_set[sub_type][active].get_quantized(input, data);
 	if(playerize_mode == NPM_Mask && !mask_set.empty())
 	{
 		data.mask= mask_set[sub_type];
@@ -941,15 +1086,6 @@ bool NoteSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns,
 		}
 	}
 	lua_settop(L, columns_index-1);
-	lua_getfield(L, index, "vivid_operation");
-	if(lua_isboolean(L, -1))
-	{
-		bool vivid= lua_toboolean(L, -1);
-		for(auto&& column : temp_columns)
-		{
-			column.vivid_operation(vivid);
-		}
-	}
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
 	m_columns.swap(temp_columns);

@@ -207,6 +207,11 @@ vector<float> TimeSignatureSegment::GetValues() const
 	return ret;
 }
 
+std::string TimeSignatureSegment::to_frac_string() const
+{
+	return fmt::sprintf("%i/%i", GetNum(), GetDen());
+}
+
 std::string SpeedSegment::ToString(int dec) const
 {
 	const std::string str = "%.0" + std::to_string(dec)

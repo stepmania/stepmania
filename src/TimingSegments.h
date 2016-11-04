@@ -477,6 +477,7 @@ struct TimeSignatureSegment : public TimingSegment
 
 	std::string ToString( int dec ) const;
 	std::vector<float> GetValues() const;
+	std::string to_frac_string() const;
 
 	/**
 	 * @brief Retrieve the number of note rows per measure within the TimeSignatureSegment.

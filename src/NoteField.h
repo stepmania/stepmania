@@ -132,12 +132,8 @@ struct NoteFieldColumn : ActorFrame
 	{
 		return reverse_shift;
 	}
-	double quantization_for_time(mod_val_inputs& input)
-	{
-		double mult= m_quantization_multiplier.evaluate(input) * m_newskin->get_quantum_mult();
-		double offset= m_quantization_offset.evaluate(input);
-		return std::fmod((input.eval_beat * mult) + offset, 1.0);
-	}
+	void fill_quantum_anime_data(mod_val_inputs& input, int pn,
+		note_quant_anim_data& data);
 	void calc_transform(mod_val_inputs& input, Rage::transform& trans);
 	void calc_transform_with_glow_alpha(mod_val_inputs& input,
 		Rage::transform& trans);
@@ -214,8 +210,8 @@ struct NoteFieldColumn : ActorFrame
 	// them so mods can have start and end times.
 	// Also add new ModifiableValue members to the take_over_mods function.
 	ModifiableValue m_time_offset;
-	ModifiableValue m_quantization_multiplier;
-	ModifiableValue m_quantization_offset;
+	ModifiableValue m_quantization_parts_per_beat;
+	ModifiableValue m_quantization_part_id;
 
 	ModifiableValue m_speed_mod;
 	ModifiableValue m_lift_pretrail_length;

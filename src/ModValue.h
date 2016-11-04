@@ -75,6 +75,8 @@ struct mod_val_inputs
 	double note_id_in_chart;
 	double note_id_in_column;
 	double row_id;
+	double parts_per_beat;
+	double part_id;
 	double eval_beat;
 	double eval_second;
 	double music_beat;
@@ -89,12 +91,14 @@ struct mod_val_inputs
 	mod_val_inputs()
 		:column(0.0), y_offset(0.0),
 		note_id_in_chart(0.0), note_id_in_column(0.0), row_id(0.0),
+		parts_per_beat(0.0), part_id(0.0),
 		eval_beat(0.0), eval_second(0.0), music_beat(0.0),
 		music_second(0.0), dist_beat(0.0), dist_second(0.0), prefunres(0.0)
 	{}
 	mod_val_inputs(double const mb, double const ms)
 		:column(0.0), y_offset(0.0),
 		note_id_in_chart(0.0), note_id_in_column(0.0), row_id(0.0),
+		parts_per_beat(0.0), part_id(0.0),
 		eval_beat(mb), eval_second(ms), music_beat(mb),
 		music_second(ms), dist_beat(0.0), dist_second(0.0)
 	{}
@@ -102,6 +106,7 @@ struct mod_val_inputs
 		double const ms)
 		:column(0.0), y_offset(0.0),
 		note_id_in_chart(0.0), note_id_in_column(0.0), row_id(0.0),
+		parts_per_beat(0.0), part_id(0.0),
 		eval_beat(eb), eval_second(es), music_beat(mb),
 		music_second(ms), dist_beat(eb-mb), dist_second(es-ms)
 	{}
@@ -109,6 +114,7 @@ struct mod_val_inputs
 		double const ms, double const yoff)
 		:column(0.0), y_offset(yoff),
 		note_id_in_chart(0.0), note_id_in_column(0.0), row_id(0.0),
+		parts_per_beat(0.0), part_id(0.0),
 		eval_beat(eb), eval_second(es), music_beat(mb),
 		music_second(ms), dist_beat(eb-mb), dist_second(es-ms)
 	{}
@@ -145,6 +151,8 @@ struct mod_val_inputs
 			note_id_in_chart= note->id_in_chart;
 			note_id_in_column= note->id_in_column;
 			row_id= note->row_id;
+			parts_per_beat= note->parts_per_beat;
+			part_id= note->part_id;
 		}
 	}
 };

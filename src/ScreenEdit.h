@@ -219,6 +219,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	void InitNoteFieldConfig();
+	void update_note_occurance();
 
 	void SetDirty(bool dirty);
 	bool IsDirty() const { return m_dirty; }
@@ -617,7 +618,7 @@ public:
 		bpm,
 		stop,
 		delay,
-//		time_signature,
+		time_signature,
 		label,
 		tickcount,
 		combo,

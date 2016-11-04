@@ -73,6 +73,8 @@ SIMPLE_MOD_INPUT_TYPE(y_offset, mut_note, false, false, true);
 SIMPLE_MOD_INPUT_TYPE(note_id_in_chart, mut_note, false, false, false);
 SIMPLE_MOD_INPUT_TYPE(note_id_in_column, mut_note, false, false, false);
 SIMPLE_MOD_INPUT_TYPE(row_id, mut_note, false, false, false);
+SIMPLE_MOD_INPUT_TYPE(parts_per_beat, mut_note, false, false, false);
+SIMPLE_MOD_INPUT_TYPE(part_id, mut_note, false, false, false);
 SIMPLE_MOD_INPUT_TYPE(eval_beat, mut_note, true, false, false);
 SIMPLE_MOD_INPUT_TYPE(eval_second, mut_note, false, true, false);
 SIMPLE_MOD_INPUT_TYPE(music_beat, mut_frame, true, false, false);
@@ -98,6 +100,8 @@ enum mit
 	mit_note_id_in_chart,
 	mit_note_id_in_column,
 	mit_row_id,
+	mit_parts_per_beat,
+	mit_part_id,
 	mit_eval_beat,
 	mit_eval_second,
 	mit_music_beat,
@@ -862,6 +866,8 @@ static std::unordered_map<std::string, mit> mit_conversion= {
 	CONVENT(note_id_in_chart),
 	CONVENT(note_id_in_column),
 	CONVENT(row_id),
+	CONVENT(parts_per_beat),
+	CONVENT(part_id),
 	CONVENT(eval_beat),
 	CONVENT(eval_second),
 	CONVENT(music_beat),
@@ -900,6 +906,8 @@ static mod_operand* create_mod_input(std::string const& str_type)
 		RET_ENTRY(note_id_in_chart);
 		RET_ENTRY(note_id_in_column);
 		RET_ENTRY(row_id);
+		RET_ENTRY(parts_per_beat);
+		RET_ENTRY(part_id);
 		ENTRY_BS_PAIR(eval);
 		ENTRY_BS_PAIR(music);
 		ENTRY_BS_PAIR(dist);

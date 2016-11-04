@@ -118,8 +118,8 @@ NoteFieldColumn::NoteFieldColumn()
 	 m_holds_skewed_by_mods(true),
 	 m_twirl_holds(true), m_use_moddable_hold_normal(false),
 	 m_time_offset(&m_mod_manager, 0.0),
-	 m_quantization_multiplier(&m_mod_manager, 1.0),
-	 m_quantization_offset(&m_mod_manager, 0.0),
+	 m_quantization_parts_per_beat(&m_mod_manager, 0.0),
+	 m_quantization_part_id(&m_mod_manager, 0.0),
 	 m_speed_mod(&m_mod_manager, 0.0),
 	 m_lift_pretrail_length(&m_mod_manager, 0.25),
 	 m_y_offset_vec_mod(&m_mod_manager, 0.0, 1.0, 0.0),
@@ -148,6 +148,9 @@ NoteFieldColumn::NoteFieldColumn()
 	DeleteChildrenWhenDone(true);
 	m_area_highlight.SetEffectGlowShift(2, Rage::Color(0.f, 0.f, 0.f, 0.f),
 		Rage::Color(.75f, .75f, .75f, 1.0f));
+
+	m_quantization_parts_per_beat.add_simple_mod("base_value", "parts_per_beat", 1.0);
+	m_quantization_part_id.add_simple_mod("base_value", "part_id", 1.0);
 }
 
 NoteFieldColumn::~NoteFieldColumn()
@@ -214,8 +217,8 @@ void NoteFieldColumn::set_note_data(size_t column, const NoteData* note_data,
 	m_note_data= note_data;
 	m_timing_data= timing_data;
 	note_row_closest_to_current_time= -1;
-	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
-				&m_quantization_offset, &m_speed_mod, &m_lift_pretrail_length,
+	for(auto&& moddable : {&m_time_offset, &m_quantization_parts_per_beat,
+				&m_quantization_part_id, &m_speed_mod, &m_lift_pretrail_length,
 				&m_reverse_offset_pixels, &m_reverse_scale,
 				&m_center_percent, &m_note_alpha, &m_note_glow, &m_receptor_alpha,
 				&m_receptor_glow, &m_explosion_alpha, &m_explosion_glow})
@@ -276,8 +279,8 @@ void NoteFieldColumn::take_over_mods(NoteFieldColumn& other)
 	CPY(m_upcoming_time);
 #define CPY_MODS(name) name.take_over_mods(other.name);
 	CPY_MODS(m_time_offset);
-	CPY_MODS(m_quantization_multiplier);
-	CPY_MODS(m_quantization_offset);
+	CPY_MODS(m_quantization_parts_per_beat);
+	CPY_MODS(m_quantization_part_id);
 	CPY_MODS(m_speed_mod);
 	CPY_MODS(m_lift_pretrail_length);
 	CPY_MODS(m_y_offset_vec_mod);
@@ -429,6 +432,25 @@ double NoteFieldColumn::calc_y_offset(double beat, double second)
 {
 	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second);
 	return calc_y_offset(input);
+}
+
+void NoteFieldColumn::fill_quantum_anime_data(mod_val_inputs& input,
+	int pn, note_quant_anim_data& data)
+{
+	data.parts_per_beat= m_quantization_parts_per_beat.evaluate(input);
+	data.row_id= input.row_id;
+	data.beat= fmod(input.eval_beat, 1.0) * m_status.anim_percent;
+	data.rainbow_mode= false; // TODO: Rainbow mode.
+	if(m_playerize_mode == NPM_Quanta)
+	{
+		data.player_mode= true;
+		data.part_id= pn;
+	}
+	else
+	{
+		data.player_mode= false;
+		data.part_id= m_quantization_part_id.evaluate(input);
+	}
 }
 
 void NoteFieldColumn::calc_transform(mod_val_inputs& input,
@@ -1570,11 +1592,12 @@ void NoteFieldColumn::draw_holds_internal()
 		// heads.
 		TapNote const& tn= holdit.note_iter->second;
 		double const hold_beat= NoteRowToBeat(holdit.note_iter->first);
-		double const quantization= quantization_for_time(holdit.input);
+		note_quant_anim_data animu;
+		fill_quantum_anime_data(holdit.input, tn.pn, animu);
 		bool active= HOLD_COUNTS_AS_ACTIVE(tn);
 		QuantizedHoldRenderData data;
-		m_newskin->get_hold_render_data(tn.subType, m_playerize_mode, tn.pn,
-			active, reverse, quantization, m_status.anim_percent, data);
+		m_newskin->get_hold_render_data(tn.subType, m_playerize_mode, active,
+			reverse, animu, data);
 		double hold_draw_beat;
 		double hold_draw_second;
 		get_hold_draw_time(tn, hold_beat, hold_draw_beat, hold_draw_second);
@@ -1597,10 +1620,11 @@ void NoteFieldColumn::draw_lifts_internal()
 		TapNote const& tn= liftit.note_iter->second;
 		double const lift_beat= NoteRowToBeat(liftit.note_iter->first);
 		double const lift_second= tn.occurs_at_second;
-		double const quantization= quantization_for_time(liftit.input);
+		note_quant_anim_data animu;
+		fill_quantum_anime_data(liftit.input, tn.pn, animu);
 		QuantizedHoldRenderData data;
 		m_newskin->get_hold_render_data(TapNoteSubType_Hold, m_playerize_mode,
-			tn.pn, false, reverse, quantization, m_status.anim_percent, data);
+			false, reverse, animu, data);
 		if(!data.parts.empty())
 		{
 			// The tail of a lift comes before the note, so pass the tail time in
@@ -1610,9 +1634,6 @@ void NoteFieldColumn::draw_lifts_internal()
 		}
 	}
 }
-
-typedef Actor* (NoteSkinColumn::* get_norm_actor_fun)(size_t, double, double, bool, bool);
-typedef Actor* (NoteSkinColumn::* get_play_actor_fun)(size_t, size_t, double, bool, bool);
 
 struct tap_draw_info
 {
@@ -1625,30 +1646,20 @@ struct tap_draw_info
 	{}
 };
 
+typedef Actor* (NoteSkinColumn::* get_actor_fun)(size_t, bool, bool,
+		note_quant_anim_data&);
+
 void set_tap_actor_info(tap_draw_info& draw_info, NoteFieldColumn& col,
-	NoteSkinColumn* newskin, get_norm_actor_fun get_normal,
-	get_play_actor_fun get_playerized, size_t part,
-	size_t pn, double draw_beat, double draw_second, double yoff,
-	double anim_percent, bool active,
-	bool reverse, NoteFieldColumn::render_note& note)
+	NoteSkinColumn* newskin, get_actor_fun get_actor,
+	size_t part,  double draw_beat, double draw_second, double yoff,
+	bool active, bool reverse, NoteFieldColumn::render_note& note)
 {
+	note_quant_anim_data animu;
+	col.fill_quantum_anime_data(note.input, note.note_iter->second.pn, animu);
 	draw_info.draw_beat= draw_beat;
 	draw_info.y_offset= yoff;
-	if(col.y_offset_visible(yoff) == 0)
-	{
-		if(col.get_playerize_mode() != NPM_Quanta)
-		{
-			double const quantization= col.quantization_for_time(note.input);
-			draw_info.act= (newskin->*get_normal)(part, quantization, anim_percent,
-				active, reverse);
-		}
-		else
-		{
-			draw_info.act= (newskin->*get_playerized)(part, pn, anim_percent,
-				active, reverse);
-		}
-		draw_info.draw_second= draw_second;
-	}
+	draw_info.act= (newskin->*get_actor)(part, active, reverse, animu);
+	draw_info.draw_second= draw_second;
 }
 
 void NoteFieldColumn::draw_taps_internal()
@@ -1724,9 +1735,9 @@ void NoteFieldColumn::draw_taps_internal()
 		if(part != NoteSkinTapPart_Invalid)
 		{
 			set_tap_actor_info(acts[0], *this, m_newskin,
-				&NoteSkinColumn::get_tap_actor, &NoteSkinColumn::get_player_tap, part,
-				tn.pn, head_beat, head_second, tapit.y_offset,
-				m_status.anim_percent, active, m_status.in_reverse, tapit);
+				&NoteSkinColumn::get_tap_actor, part,
+				head_beat, head_second, tapit.y_offset,
+				active, m_status.in_reverse, tapit);
 		}
 		else
 		{
@@ -1734,24 +1745,21 @@ void NoteFieldColumn::draw_taps_internal()
 			if(tail_part == NoteSkinTapOptionalPart_Invalid)
 			{
 				set_tap_actor_info(acts[0], *this, m_newskin,
-					&NoteSkinColumn::get_optional_actor,
-					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn,
+					&NoteSkinColumn::get_optional_actor, head_part,
 					head_beat, head_second, tapit.y_offset,
-					m_status.anim_percent, active, m_status.in_reverse, tapit);
+					active, m_status.in_reverse, tapit);
 			}
 			else
 			{
 				// Put tails on the list first because they need to be under the heads.
 				set_tap_actor_info(acts[0], *this, m_newskin,
-					&NoteSkinColumn::get_optional_actor,
-					&NoteSkinColumn::get_player_optional_tap, tail_part, tn.pn,
+					&NoteSkinColumn::get_optional_actor, tail_part,
 					tail_beat, tn.end_second, tapit.tail_y_offset,
-					m_status.anim_percent, active, m_status.in_reverse, tapit);
+					active, m_status.in_reverse, tapit);
 				set_tap_actor_info(acts[1], *this, m_newskin,
-					&NoteSkinColumn::get_optional_actor,
-					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn,
+					&NoteSkinColumn::get_optional_actor, head_part,
 					head_beat, head_second, tapit.y_offset,
-					m_status.anim_percent, active, m_status.in_reverse, tapit);
+					active, m_status.in_reverse, tapit);
 			}
 		}
 		for(auto&& act : acts)
@@ -3158,8 +3166,8 @@ if(!p->timing_is_safe()) \
 struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 {
 	GET_MEMBER(time_offset);
-	GET_MEMBER(quantization_multiplier);
-	GET_MEMBER(quantization_offset);
+	GET_MEMBER(quantization_parts_per_beat);
+	GET_MEMBER(quantization_part_id);
 	GET_MEMBER(speed_mod);
 	GET_MEMBER(lift_pretrail_length);
 	GET_VEC(y_offset_vec);
@@ -3237,7 +3245,7 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 		Actor* act= Luna<Actor>::check(L, 1);
 		bool time_is_offset= lua_toboolean(L, 2) != 0;
 		double beat= p->get_curr_beat();
-		double second= p->get_curr_beat();
+		double second= p->get_curr_second();
 		double y_offset= 0;
 		static const int bindex= 3;
 		static const int sindex= 4;
@@ -3309,8 +3317,8 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 	LunaNoteFieldColumn()
 	{
 		ADD_METHOD(get_time_offset);
-		ADD_METHOD(get_quantization_multiplier);
-		ADD_METHOD(get_quantization_offset);
+		ADD_METHOD(get_quantization_parts_per_beat);
+		ADD_METHOD(get_quantization_part_id);
 		ADD_METHOD(get_speed_mod);
 		ADD_VEC(y_offset_vec);
 		ADD_METHOD(get_reverse_offset_pixels);

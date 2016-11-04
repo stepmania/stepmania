@@ -85,149 +85,54 @@ LuaDeclareType(NotePlayerizeMode);
 struct NoteSkinLoader;
 struct TimingSource;
 
-struct QuantizedStateMap
+// The notefield may apply modifiers to change the quantization data in the
+// note before it is passed to the noteskin.
+struct note_quant_anim_data
+{
+	int parts_per_beat;
+	int part_id;
+	int row_id;
+	float beat;
+	bool player_mode;
+	bool rainbow_mode;
+};
+
+struct Quantizer
 {
 	static const size_t max_quanta= 256;
 	static const size_t max_states= 256;
-	// A QuantizedStateMap has a list of the quantizations the noteskin has.
-	// A quantization occurs a fixed integer number of times per beat and has a
-	// few states for its animation.
-	struct QuantizedStates
+	struct Quantum
 	{
-		size_t per_beat;
-		std::vector<size_t> states;
-	};
-
-	QuantizedStateMap()
-	{
-		clear();
-	}
-
-	QuantizedStates const& calc_quantization(double quantization) const
-	{
-		// Real world use case for solving the fizzbuzz problem.  Find the
-		// largest factor for a number from the entries in a short list.
-		size_t beat_part= static_cast<size_t>((quantization * m_parts_per_beat) + .5);
-		for(auto&& quantum : m_quanta)
-		{
-			size_t spacing= static_cast<size_t>(m_parts_per_beat / quantum.per_beat);
-			if(spacing * quantum.per_beat != m_parts_per_beat)
-			{
-				// This quantum is finer than what is supported by the parts per
-				// beat.  Skipping it allows a noteskin author to twiddle the
-				// quantization of the skin by changing the parts per beat without
-				// changing the list of quantizations.
-				continue;
-			}
-			if(beat_part % spacing == 0)
-			{
-				return quantum;
-			}
-		}
-		return m_quanta.back();
-	}
-	size_t calc_frame(QuantizedStates const& quantum, double quantization,
-		double beat, bool vivid) const
-	{
-		size_t frame_index= static_cast<size_t>(
-			floor(((vivid ? quantization : 0.0) + beat) * quantum.states.size()))
-			% quantum.states.size();
-		return quantum.states[frame_index];
-	}
-	size_t calc_state(double quantization, double beat, bool vivid) const
-	{
-		QuantizedStates const& quantum= calc_quantization(quantization);
-		return calc_frame(quantum, quantization, beat, vivid);
-	}
-	size_t calc_player_state(size_t pn, double beat, bool vivid) const
-	{
-		QuantizedStates const& quantum= m_quanta[pn%m_quanta.size()];
-		return calc_frame(quantum, 0.0, beat, vivid);
-	}
-	bool load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis);
-	void swap(QuantizedStateMap& other)
-	{
-		size_t tmp= m_parts_per_beat;
-		m_parts_per_beat= other.m_parts_per_beat;
-		other.m_parts_per_beat= tmp;
-		m_quanta.swap(other.m_quanta);
-	}
-	void clear()
-	{
-		m_parts_per_beat= 1;
-		m_quanta.resize(1);
-		m_quanta[0]= {1, {1}};
-	}
-private:
-	size_t m_parts_per_beat;
-	std::vector<QuantizedStates> m_quanta;
-};
-
-struct QuantizedTextureMap
-{
-	static const size_t max_quanta= 256;
-
-	struct TextureQuanta
-	{
-		size_t per_beat;
+		int part_id;
 		float trans_x;
 		float trans_y;
+		std::vector<size_t> states;
+		size_t beat_to_state(double beat) const
+		{
+			return states[size_t(floor(beat * states.size())) % states.size()];
+		}
+	};
+	struct Quanta
+	{
+		int parts_per_beat;
+		std::vector<Quantum> quanta;
 	};
 
-	QuantizedTextureMap()
-	{
-		clear();
-	}
+	Quantum const& get_quantum(note_quant_anim_data& input);
 
-	TextureQuanta const& calc_quantization(double quantization) const
-	{
-		size_t beat_part= static_cast<size_t>((quantization * m_parts_per_beat) + .5);
-		for(auto&& quantum : m_quanta)
-		{
-			size_t spacing= m_parts_per_beat / quantum.per_beat;
-			if(spacing * quantum.per_beat != m_parts_per_beat)
-			{
-				continue;
-			}
-			if(beat_part % spacing == 0)
-			{
-				return quantum;
-			}
-		}
-		return m_quanta.back();
-	}
+	size_t get_quant_total();
 
-	void calc_trans(double quantization, double beat, bool vivid, float& trans_x, float& trans_y, float& seconds_in)
-	{
-		TextureQuanta const& quantum= calc_quantization(quantization);
-		trans_x= quantum.trans_x;
-		trans_y= quantum.trans_y;
-		seconds_in= vivid ? beat+quantization : beat;
-	}
-	void calc_player_trans(size_t pn, double beat, float& trans_x,
-		float& trans_y, float& seconds_in)
-	{
-		TextureQuanta const& quantum= m_quanta[pn%m_quanta.size()];
-		trans_x= quantum.trans_x;
-		trans_y= quantum.trans_y;
-		seconds_in= beat;
-	}
 	bool load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis);
-	void swap(QuantizedTextureMap& other)
-	{
-		std::swap(m_parts_per_beat, other.m_parts_per_beat);
-		m_quanta.swap(other.m_quanta);
-	}
-	void clear()
-	{
-		m_parts_per_beat= 1;
-		m_quanta.resize(1);
-		m_quanta[0]= {1, 0, 0};
-	}
+	// load_from_state_map is for backwards compatibility.
+	bool load_from_state_map(lua_State* L, int index, std::string& insanity_diagnosis);
 
 private:
-	size_t m_parts_per_beat;
-	std::vector<TextureQuanta> m_quanta;
+	bool load_quanta(Quanta& dest, lua_State* L, int index);
+	void finalize_load();
+
+	std::vector<Quanta> m_quanta_set;
+	Quanta m_unknown_quanta;
+	size_t m_quant_total;
 };
 
 struct QuantizedTap
@@ -240,64 +145,27 @@ struct QuantizedTap
 	{
 		m_actor->Update(1.0f);
 	}
-	Actor* get_common(size_t state)
+	Actor* get_quantized(note_quant_anim_data& input, bool active)
 	{
-		m_actor->SetState(state);
-		// Return the frame and not the actor because the notefield is going to
-		// apply mod transforms to it.  Returning the actor would make the mod
-		// transform stomp on the rotation the noteskin supplies.
+		Quantizer::Quantum const& quant= active ?
+			m_quantizer.get_quantum(input) :
+			m_inactive_quantizer.get_quantum(input);
+		if(quant.states.empty())
+		{
+			m_actor->SetSecondsIntoAnimation(input.beat);
+			m_actor->SetTextureTranslate(quant.trans_x, quant.trans_y);
+		}
+		else
+		{
+			m_actor->SetState(quant.beat_to_state(input.beat));
+		}
 		return &m_frame;
 	}
-	Actor* get_quantized(double quantization, double beat, bool active)
-	{
-		if(m_use_texture_map)
-		{
-			float trans_x, trans_y, seconds_in;
-			active ? m_texture_map.calc_trans(quantization, beat, m_vivid,
-				trans_x, trans_y, seconds_in) :
-				m_inactive_texture_map.calc_trans(quantization, beat, m_vivid,
-					trans_x, trans_y, seconds_in);
-			m_actor->SetSecondsIntoAnimation(seconds_in);
-			m_actor->SetTextureTranslate(trans_x, trans_y);
-			return &m_frame;
-		}
-		else
-		{
-			const size_t state= active ?
-				m_state_map.calc_state(quantization, beat, m_vivid) :
-				m_inactive_map.calc_state(quantization, beat, m_vivid);
-			return get_common(state);
-		}
-	}
-	Actor* get_playerized(size_t pn, double beat, bool active)
-	{
-		if(m_use_texture_map)
-		{
-			float trans_x, trans_y, seconds_in;
-			active ? m_texture_map.calc_player_trans(pn, beat,
-				trans_x, trans_y, seconds_in) :
-				m_inactive_texture_map.calc_player_trans(pn, beat,
-					trans_x, trans_y, seconds_in);
-			m_actor->SetSecondsIntoAnimation(seconds_in);
-			m_actor->SetTextureTranslate(trans_x, trans_y);
-			return &m_frame;
-		}
-		else
-		{
-			const size_t state= active ?
-				m_state_map.calc_player_state(pn, beat, m_vivid) :
-				m_inactive_map.calc_player_state(pn, beat, m_vivid);
-			return get_common(state);
-		}
-	}
 	bool load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis);
-	bool m_vivid;
+	// What happened to vivid?
 private:
-	QuantizedStateMap m_state_map;
-	QuantizedStateMap m_inactive_map;
-	QuantizedTextureMap m_texture_map;
-	QuantizedTextureMap m_inactive_texture_map;
-	bool m_use_texture_map;
+	Quantizer m_quantizer;
+	Quantizer m_inactive_quantizer;
 	AutoActor m_actor;
 	ActorFrame m_frame;
 };
@@ -344,15 +212,16 @@ struct QuantizedHoldRenderData
 struct QuantizedHold
 {
 	static const size_t max_hold_layers= 32;
-	QuantizedStateMap m_state_map;
+	Quantizer m_quantizer;
 	std::vector<RageTexture*> m_parts;
 	TexCoordFlipMode m_flip;
-	bool m_vivid;
 	bool m_texture_filtering;
 	hold_part_lengths m_part_lengths;
 	~QuantizedHold();
-	void get_common(size_t state, QuantizedHoldRenderData& ret)
+	void get_quantized(note_quant_anim_data& input, QuantizedHoldRenderData& ret)
 	{
+		Quantizer::Quantum const& quant= m_quantizer.get_quantum(input);
+		const size_t state= quant.beat_to_state(input.beat);
 		for(size_t i= 0; i < m_parts.size(); ++i)
 		{
 			ret.parts.push_back(m_parts[i]);
@@ -365,16 +234,6 @@ struct QuantizedHold
 		ret.part_lengths= m_part_lengths;
 		ret.texture_filtering= m_texture_filtering;
 	}
-	void get_quantized(double quantization, double beat, QuantizedHoldRenderData& ret)
-	{
-		const size_t state= m_state_map.calc_state(quantization, beat, m_vivid);
-		get_common(state, ret);
-	}
-	void get_playerized(size_t pn, double beat, QuantizedHoldRenderData& ret)
-	{
-		const size_t state= m_state_map.calc_player_state(pn, beat, m_vivid);
-		get_common(state, ret);
-	}
 	bool load_from_lua(lua_State* L, int index, NoteSkinLoader const* load_skin, std::string& insanity_diagnosis);
 };
 
@@ -382,13 +241,13 @@ struct NoteSkinColumn
 {
 	void set_timing_source(TimingSource* source);
 	void update_taps();
-	Actor* get_tap_actor(size_t type, double quantization, double beat, bool active, bool reverse);
-	Actor* get_optional_actor(size_t type, double quantization, double beat, bool active, bool reverse);
-	Actor* get_player_tap(size_t type, size_t pn, double beat, bool active, bool reverse);
-	Actor* get_player_optional_tap(size_t type, size_t pn, double beat, bool active, bool reverse);
+	Actor* get_tap_actor(size_t type, bool active, bool reverse,
+		note_quant_anim_data& input);
+	Actor* get_optional_actor(size_t type, bool active, bool reverse,
+		note_quant_anim_data& input);
 	void get_hold_render_data(TapNoteSubType sub_type,
-		NotePlayerizeMode playerize_mode, size_t pn, bool active, bool reverse,
-		double quantization, double beat, QuantizedHoldRenderData& data);
+		NotePlayerizeMode playerize_mode, bool active, bool reverse,
+		note_quant_anim_data& input, QuantizedHoldRenderData& data);
 	double get_width() { return m_width; }
 	double get_padding() { return m_padding; }
 	double get_custom_x() { return m_custom_x; }
@@ -412,40 +271,6 @@ struct NoteSkinColumn
 		NoteSkinLoader const* load_skin, std::string& insanity_diagnosis);
 	bool load_from_lua(lua_State* L, int index, NoteSkinLoader const* load_skin,
 		std::string& insanity_diagnosis);
-	void vivid_operation(bool vivid)
-	{
-		for(auto&& tap_set : {&m_taps, &m_reverse_taps})
-		{
-			for(auto&& tap : *tap_set)
-			{
-				tap.m_vivid= vivid;
-			}
-		}
-		for(auto&& tap_set : {&m_optional_taps, &m_reverse_optional_taps})
-		{
-			for(auto&& tap : *tap_set)
-			{
-				if(tap != nullptr)
-				{
-					tap->m_vivid= vivid;
-				}
-			}
-		}
-		for(auto&& subtype : m_holds)
-		{
-			for(auto&& action : subtype)
-			{
-				action.m_vivid= vivid;
-			}
-		}
-		for(auto&& subtype : m_reverse_holds)
-		{
-			for(auto&& action : subtype)
-			{
-				action.m_vivid= vivid;
-			}
-		}
-	}
 	void clear_optionals()
 	{
 		for(auto&& tap_set : {&m_optional_taps, &m_reverse_optional_taps})

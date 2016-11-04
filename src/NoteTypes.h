@@ -155,6 +155,11 @@ struct TapNote
 	float id_in_column;
 	float row_id;
 
+	// Quantization data.  This probably means something, but nobody knows
+	// what. -Kyz
+	int parts_per_beat;
+	int part_id;
+
 	// used only if Type == attack:
 	std::string		sAttackModifiers;
 	float		fAttackDurationSeconds;

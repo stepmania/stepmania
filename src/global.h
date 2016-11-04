@@ -104,7 +104,7 @@ void NORETURN sm_crash( std::string const &reason );
 #endif
 
 /** @brief Use this to catch switching on invalid values */
-#define DEFAULT_FAIL(i) 	default: FAIL_M( fmt::sprintf("%s = %i", #i, (i)) )
+#define DEFAULT_FAIL(i) 	default: FAIL_M(fmt::sprintf("%s = %i", #i, int(i)))
 
 void ShowWarningOrTrace( const char *file, int line, std::string const &message, bool bWarning ); // don't pull in LOG here
 #define WARN(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, true))
