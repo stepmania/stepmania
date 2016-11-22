@@ -191,7 +191,14 @@ list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
   "arch/LowLevelWindow/LowLevelWindow.h"
 )
 
-if(WIN32)
+if(SDL2_FOUND)
+  list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
+    "arch/LowLevelWindow/LowLevelWindow_SDL.cpp"
+  )
+  list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
+    "arch/LowLevelWindow/LowLevelWindow_SDL.h"
+  )
+elseif(WIN32)
   list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
     "arch/LowLevelWindow/LowLevelWindow_Win32.cpp"
   )
@@ -205,16 +212,14 @@ elseif(APPLE)
   list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
     "arch/LowLevelWindow/LowLevelWindow_MacOSX.h"
   )
-else(UNIX)
-  if (X11_FOUND)
-    list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
-      "arch/LowLevelWindow/LowLevelWindow_X11.cpp"
-    )
-    list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
-      "arch/LowLevelWindow/LowLevelWindow_X11.h"
-    )
-  endif()
-endif(WIN32)
+elseif (X11_FOUND)
+  list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
+    "arch/LowLevelWindow/LowLevelWindow_X11.cpp"   
+  )
+  list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
+    "arch/LowLevelWindow/LowLevelWindow_X11.h"
+  )
+endif()
 
 source_group("Arch Specific\\\\Low Level Window" FILES ${SMDATA_ARCH_LOWLEVEL_SRC} ${SMDATA_ARCH_LOWLEVEL_HPP})
 
