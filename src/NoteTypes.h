@@ -274,6 +274,7 @@ enum NoteType
 	NOTE_TYPE_32ND,	/**< thirty-second note */
 	NOTE_TYPE_48TH, /**< sixteenth note triplet */
 	NOTE_TYPE_64TH,	/**< sixty-fourth note */
+	NOTE_TYPE_96TH, /**< thirty-second note triplet */
 	NOTE_TYPE_192ND,/**< sixty-fourth note triplet */
 	NUM_NoteType,
 	NoteType_Invalid
