@@ -137,6 +137,8 @@ public:
 			FOREACH_ENUM( RankingCategory,rc )
 				m_CategoryHighScores[st][rc].Init();
 	}
+	~Profile();
+	void ClearSongs();
 
 	// smart accessors
 	std::string GetDisplayNameOrHighScoreName() const;
@@ -214,6 +216,7 @@ public:
 	std::unordered_map<std::string,std::string> m_sDefaultModifiers;
 	pref_noteskin_container m_preferred_noteskins;
 	noteskin_param_container m_noteskin_params;
+	std::vector<Song*> m_songs;
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
@@ -401,6 +404,7 @@ public:
 		InitCategoryScores();
 		InitScreenshotData();
 		InitCalorieData();
+		ClearSongs();
 	}
 	void InitEditableData();
 	void init_noteskin_params();
@@ -418,6 +422,7 @@ public:
 	void HandleStatsPrefixChange( std::string dir, bool require_signature );
 	ProfileLoadResult LoadAllFromDir( std::string sDir, bool bRequireSignature );
 	ProfileLoadResult LoadStatsFromDir( std::string dir, bool require_signature );
+	void LoadSongsFromDir(std::string const& dir, ProfileSlot prof_slot);
 	void LoadTypeFromDir(std::string dir);
 	void LoadCustomFunction(std::string dir, PlayerNumber pn);
 	bool SaveAllToDir(std::string sDir, bool bSignData, PlayerNumber pn) const;

@@ -5,6 +5,7 @@
 #include "XmlFile.h"
 #include "IniFile.h"
 #include "GameManager.h"
+#include "GameState.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "Song.h"
@@ -75,6 +76,29 @@ static const char* ProfileTypeNames[] = {
 XToString(ProfileType);
 StringToX(ProfileType);
 LuaXType(ProfileType);
+
+Profile::~Profile()
+{
+	ClearSongs();
+}
+
+void Profile::ClearSongs()
+{
+	if(m_songs.empty())
+	{
+		return;
+	}
+	Song* gamestate_curr_song= GAMESTATE->get_curr_song();
+	for(auto&& curr_song : m_songs)
+	{
+		if(curr_song == gamestate_curr_song)
+		{
+			GAMESTATE->set_curr_song(nullptr);
+		}
+		delete curr_song;
+	}
+	m_songs.clear();
+}
 
 
 int Profile::HighScoresForASong::GetNumTimesPlayed() const
@@ -1269,6 +1293,59 @@ ProfileLoadResult Profile::LoadAllFromDir( std::string sDir, bool bRequireSignat
 	LoadCustomFunction(sDir, PlayerNumber_Invalid);
 
 	return ProfileLoadResult_Success;
+}
+
+// Custom songs are not stored with all the normal songs because walking the
+// entire song list to remove custom songs when unloading the profile is
+// wasteful. -Kyz
+
+void Profile::LoadSongsFromDir(std::string const& dir, ProfileSlot prof_slot)
+{
+	if(!PREFSMAN->m_custom_songs_enable)
+	{
+		return;
+	}
+	std::string songs_folder= dir + "Songs";
+	if(FILEMAN->DoesFileExist(songs_folder))
+	{
+		LOG->Trace("Found songs folder in profile.");
+		vector<std::string> song_folders;
+		RageTimer song_load_start_time;
+		song_load_start_time.Touch();
+		FILEMAN->GetDirListing(songs_folder + "/*", song_folders, true, true);
+		StripCvsAndSvn(song_folders);
+		StripMacResourceForks(song_folders);
+		LOG->Trace("Found %i songs in profile.", int(song_folders.size()));
+		// Only songs that are successfully loaded count towards the limit. -Kyz
+		for(size_t song_index= 0; song_index < song_folders.size()
+					&& m_songs.size() < PREFSMAN->m_custom_songs_max_count;
+				++song_index)
+		{
+			auto& song_dir_name= song_folders[song_index];
+			Song* new_song= new Song;
+			if(!new_song->LoadFromSongDir(song_dir_name, false, prof_slot))
+			{
+				// The song failed to load.
+				LOG->Trace("Song %s failed to load.", song_dir_name.c_str());
+				delete new_song;
+			}
+			else
+			{
+				new_song->SetEnabled(true);
+				m_songs.push_back(new_song);
+			}
+			if(song_load_start_time.Ago() > PREFSMAN->m_custom_songs_load_timeout)
+			{
+				break;
+			}
+		}
+		float load_time= song_load_start_time.Ago();
+		LOG->Trace("Successfully loaded %i songs in %.6f from profile.", m_songs.size(), load_time);
+	}
+	else
+	{
+		LOG->Trace("No songs folder in profile.");
+	}
 }
 
 ProfileLoadResult Profile::LoadStatsFromDir(std::string dir, bool require_signature)
@@ -3011,6 +3088,17 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD( GetGUID,		m_sGuid );
+	static int get_songs(T* p, lua_State* L)
+	{
+		lua_createtable(L, p->m_songs.size(), 0);
+		int song_tab= lua_gettop(L);
+		for(size_t i= 0; i < p->m_songs.size(); ++i)
+		{
+			p->m_songs[i]->PushSelf(L);
+			lua_rawseti(L, song_tab, i+1);
+		}
+		return 1;
+	}
 
 	LunaProfile()
 	{
@@ -3084,6 +3172,7 @@ public:
 		ADD_METHOD( GetLastPlayedCourse );
 		ADD_METHOD(get_last_stepstype);
 		ADD_METHOD( GetGUID );
+		ADD_METHOD(get_songs);
 	}
 };
 

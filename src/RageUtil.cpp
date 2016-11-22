@@ -30,6 +30,8 @@ using std::istringstream;
 using std::stringstream;
 using std::isfinite;
 
+const std::string CUSTOM_SONG_PATH= "/@mem/";
+
 bool HexToBinary(const std::string&, std::string&);
 
 RandomGen g_RandomNumberGenerator;
@@ -659,6 +661,16 @@ void splitpath( const std::string &sPath, std::string &sDir, std::string &sFilen
 	{
 		sFilename = sBase;
 	}
+}
+
+std::string custom_songify_path(std::string const& path)
+{
+	vector<std::string> parts= Rage::split(path, "/", Rage::EmptyEntries::include);
+	if(parts.size() < 2)
+	{
+		return CUSTOM_SONG_PATH + path;
+	}
+	return CUSTOM_SONG_PATH + parts[parts.size()-2] + "/" + parts[parts.size()-1];
 }
 
 /* "foo.bar", "baz" -> "foo.baz"

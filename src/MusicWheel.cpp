@@ -9,6 +9,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "NetworkSyncManager.h"
+#include "ProfileManager.h"
 #include "Song.h"
 #include "Course.h"
 #include "Steps.h"
@@ -430,6 +431,17 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 	default:
 		apAllSongs = SONGMAN->GetAllSongs();
 		break;
+	}
+	FOREACH_PlayerNumber(pn)
+	{
+		if(GAMESTATE->IsPlayerEnabled(pn))
+		{
+			Profile* prof= PROFILEMAN->GetProfile(pn);
+			for(auto&& song : prof->m_songs)
+			{
+				apAllSongs.push_back(song);
+			}
+		}
 	}
 
 	// filter songs that we don't have enough stages to play

@@ -229,6 +229,8 @@ protected:
 	ThemeMetric1D<Rage::Color>	SONG_GROUP_COLOR;
 	ThemeMetric<int>		NUM_COURSE_GROUP_COLORS;
 	ThemeMetric1D<Rage::Color>	COURSE_GROUP_COLOR;
+	ThemeMetric<int> num_profile_song_group_colors;
+	ThemeMetric1D<Rage::Color> profile_song_group_colors;
 };
 
 extern SongManager*	SONGMAN;	// global and accessible from anywhere in our program
