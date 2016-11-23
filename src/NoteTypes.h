@@ -258,7 +258,7 @@ const int MAX_NOTE_TRACKS = 16;
  *
  * XXX: Some other forks try to keep this flexible by putting this in the simfile.
  * Is this a recommended course of action? -Wolfman2000 */
-const int ROWS_PER_BEAT	= 48;
+const int ROWS_PER_BEAT	= 384;
 
 /** @brief The max number of rows allowed for a Steps pattern. */
 const int MAX_NOTE_ROW = (1<<30);
@@ -274,7 +274,14 @@ enum NoteType
 	NOTE_TYPE_32ND,	/**< thirty-second note */
 	NOTE_TYPE_48TH, /**< sixteenth note triplet */
 	NOTE_TYPE_64TH,	/**< sixty-fourth note */
+	NOTE_TYPE_96TH,	/**< thirty-second note triplet */
+	NOTE_TYPE_128TH,/**< one hundred twenty-eighth note */
 	NOTE_TYPE_192ND,/**< sixty-fourth note triplet */
+	NOTE_TYPE_256TH,/**< two hundred fifty-sixth note */ // Higher quants added just to test out and experiment with the new noteskin system
+	NOTE_TYPE_384TH,/**< one hundred twenty-eighth note triplet */
+	NOTE_TYPE_512TH,/**< five hundred twelfth note */
+	NOTE_TYPE_768TH,/**< two hundred fifty-sixth note triplet */
+	NOTE_TYPE_1536TH,/**< five hundred twelfth note triplet */
 	NUM_NoteType,
 	NoteType_Invalid
 };
