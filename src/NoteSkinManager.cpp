@@ -546,7 +546,7 @@ class LunaNoteSkinManager: public Luna<NoteSkinManager>
 {
 public:
 	DEFINE_METHOD( GetPath, GetPath(SArg(1), SArg(2)) );
-	DEFINE_METHOD( GetMetric, GetMetricI(SArg(1), SArg(2)) );
+	DEFINE_METHOD( GetMetric, GetMetric(SArg(1), SArg(2)) );
 	DEFINE_METHOD( GetMetricI, GetMetricI(SArg(1), SArg(2)) );
 	DEFINE_METHOD( GetMetricF, GetMetricF(SArg(1), SArg(2)) );
 	DEFINE_METHOD( GetMetricB, GetMetricB(SArg(1), SArg(2)) );

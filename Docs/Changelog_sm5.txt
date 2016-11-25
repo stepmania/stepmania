@@ -1,3 +1,12 @@
+StepMania 5.1 Changelog
+________________________________________________________________________________
+The StepMania 5.1 Changelog covers all post-5.0.12 changes.
+________________________________________________________________________________
+
+2016/11/24
+----------
+* [NoteSkinManager] Fixed NOTESKIN:GetMetric() [shakesoda]
+
 StepMania 5 Changelog
 ________________________________________________________________________________
 The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
