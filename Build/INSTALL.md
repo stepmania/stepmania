@@ -37,5 +37,5 @@ The `StepMania.app` package can be copied to `/Applications` and it will work as
 Linux
 ===
 After installing, run `sudo make install`. The files will be placed in the location specified:
-by default, that is now `/usr/local/stepmania-5.0`.
+by default, that is now `/usr/local/stepmania-5.1`.
 

@@ -603,7 +603,7 @@ target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 if(WIN32)
   set(SM_INSTALL_DESTINATION ".")
 else()
-  set(SM_INSTALL_DESTINATION "stepmania-5.0")
+  set(SM_INSTALL_DESTINATION "stepmania-5.1")
 endif()
 
 if(NOT APPLE)

@@ -22,7 +22,7 @@ init:
 
     set SM_COMMIT_SHORT=%APPVEYOR_REPO_COMMIT:~0,7%
 
-    set SM_SETUP_EXE_NAME=StepMania-5.0-git-%SM_COMMIT_SHORT%-win32.exe
+    set SM_SETUP_EXE_NAME=StepMania-5.1-git-%SM_COMMIT_SHORT%-win32.exe
 
     curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_PENDING% %GITHUB_API_URL%
 
