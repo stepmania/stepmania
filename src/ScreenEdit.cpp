@@ -52,7 +52,7 @@ const float time_between_autosave= 300.0f; // 5 minutes. -Kyz
 #define PLAYER_X		(SCREEN_CENTER_X)
 #define PLAYER_Y		(SCREEN_CENTER_Y)
 #define PLAYER_HEIGHT		(360)
-#define PLAYER_Y_STANDARD	(PLAYER_Y-PLAYER_HEIGHT/2)
+#define PLAYER_Y_STANDARD	(PLAYER_Y-((SCREEN_HEIGHT/480)*(PLAYER_HEIGHT/2)))
 
 #define EDIT_X			(SCREEN_CENTER_X)
 #define EDIT_Y			(PLAYER_Y)
@@ -1456,7 +1456,7 @@ void ScreenEdit::Init()
 	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
 	m_SnapDisplay.Load();
 	// xxx: hardcoded command -aj
-	m_SnapDisplay.SetZoom( 0.5f );
+	m_SnapDisplay.SetZoom( SCREEN_HEIGHT/480*0.5 );
 	this->AddChild( &m_SnapDisplay );
 
 	// We keep track of this bit of state so that when the user is in Edit/Sync Songs and makes a change to the NoteSkins,
@@ -1494,7 +1494,7 @@ void ScreenEdit::Init()
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
-	m_NoteFieldEdit.SetZoom( 0.5f );
+	m_NoteFieldEdit.SetZoom( SCREEN_HEIGHT/480*0.5 );
 	m_NoteFieldEdit.Init( &m_PlayerStateEdit, PLAYER_HEIGHT*2, false );
 	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 850 );
 	this->AddChild( &m_NoteFieldEdit );
@@ -1528,6 +1528,7 @@ void ScreenEdit::Init()
 	m_Player->CacheAllUsedNoteSkins();
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player->SetXY( PLAYER_X, PLAYER_Y );
+	m_Player->SetZoom( SCREEN_HEIGHT/480 );
 	this->AddChild( m_Player );
 
 	this->AddChild( &m_Foreground );
