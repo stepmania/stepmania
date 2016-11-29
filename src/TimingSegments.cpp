@@ -121,9 +121,8 @@ void FakeSegment::DebugPrint() const
 
 RString FakeSegment::ToString(int dec) const
 {
-	RString str = "%.0" + IntToString(dec)
-	+ "f=%.0" + IntToString(dec) + "f";
-	return ssprintf(str.c_str(), GetBeat(), GetLength());
+	RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%s", FormatDouble(GetBeat()).c_str(), FormatDouble(str.c_str(), GetLength()).c_str());
 }
 
 void FakeSegment::Scale( int start, int length, int newLength )
@@ -138,9 +137,8 @@ void FakeSegment::Scale( int start, int length, int newLength )
 
 RString WarpSegment::ToString(int dec) const
 {
-	RString str = "%.0" + IntToString(dec)
-	+ "f=%.0" + IntToString(dec) + "f";
-	return ssprintf(str.c_str(), GetBeat(), GetLength());
+	RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%s", FormatDouble(GetBeat()).c_str(), FormatDouble(str.c_str(), GetLength()).c_str());
 }
 
 void WarpSegment::Scale( int start, int length, int newLength )
@@ -156,46 +154,67 @@ void WarpSegment::Scale( int start, int length, int newLength )
 
 RString TickcountSegment::ToString(int dec) const
 {
-	const RString str = "%.0" + IntToString(dec) + "f=%i";
-	return ssprintf(str.c_str(), GetBeat(), GetTicks());
+	const RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%s", FormatDouble(GetBeat()).c_str(), FormatDouble(str.c_str(), GetTicks()).c_str());
 }
 RString ComboSegment::ToString(int dec) const
 {
-	RString str = "%.0" + IntToString(dec) + "f=%i";
+	RString str = "%.0" + IntToString(dec) + "f";
 	if (GetCombo() == GetMissCombo())
 	{
-		return ssprintf(str.c_str(), GetBeat(), GetCombo());
+		return ssprintf("%s=%i", FormatDouble(GetBeat()).c_str(), GetCombo());
 	}
-	str += "=%i";
-	return ssprintf(str.c_str(), GetBeat(), GetCombo(), GetMissCombo());
+	return ssprintf("%s=%i=%i", FormatDouble(GetBeat()).c_str(), GetCombo(), GetMissCombo());
+}
+
+vector<float> ComboSegment::GetValues() const
+{
+	vector<float> ret;
+	ret.push_back(GetCombo());
+	ret.push_back(GetMissCombo());
+	return ret;
 }
 
 RString LabelSegment::ToString(int dec) const
 {
-	const RString str = "%.0" + IntToString(dec) + "f=%s";
-	return ssprintf(str.c_str(), GetBeat(), GetLabel().c_str());
+	const RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%s", FormatDouble(str.c_str(), GetBeat()).c_str(), GetLabel().c_str());
 }
 
 RString BPMSegment::ToString(int dec) const
 {
-	const RString str = "%.0" + IntToString(dec)
-	+ "f=%.0" + IntToString(dec) + "f";
-	return ssprintf(str.c_str(), GetBeat(), GetBPM());
+	const RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%s", FormatDouble(GetBeat()).c_str(), FormatDouble(str.c_str(), GetBPM()).c_str());
 }
 
 RString TimeSignatureSegment::ToString(int dec) const
 {
-	const RString str = "%.0" + IntToString(dec) + "f=%i=%i";
-	return ssprintf(str.c_str(), GetBeat(), GetNum(), GetDen());
+	const RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%i=%i", FormatDouble(str.c_str(), GetBeat()).c_str(), GetNum(), GetDen());
+}
+
+vector<float> TimeSignatureSegment::GetValues() const
+{
+	vector<float> ret;
+	ret.push_back(GetNum());
+	ret.push_back(GetDen());
+	return ret;
 }
 
 RString SpeedSegment::ToString(int dec) const
 {
-	const RString str = "%.0" + IntToString(dec)
-		+ "f=%.0" + IntToString(dec) + "f=%.0"
-		+ IntToString(dec) + "f=%u";
-	return ssprintf(str.c_str(), GetBeat(), GetRatio(),
-					GetDelay(), GetUnit());
+	const RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%s=%s=%u", FormatDouble(str.c_str(), GetBeat()).c_str(), FormatDouble(str.c_str(), GetRatio()).c_str(), 
+			FormatDouble(str.c_str(), GetDelay()).c_str(), static_cast<unsigned int>(GetUnit()));
+}
+
+vector<float> SpeedSegment::GetValues() const
+{
+	vector<float> ret;
+	ret.push_back(GetRatio());
+	ret.push_back(GetDelay());
+	ret.push_back(GetUnit());
+	return ret;
 }
 
 void SpeedSegment::Scale( int start, int oldLength, int newLength )
@@ -220,23 +239,20 @@ void SpeedSegment::Scale( int start, int oldLength, int newLength )
 
 RString ScrollSegment::ToString(int dec) const
 {
-	const RString str = "%.0" + IntToString(dec)
-		+ "f=%.0" + IntToString(dec) + "f";
-	return ssprintf(str.c_str(), GetBeat(), GetRatio());
+	const RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%s", FormatDouble(str.c_str(), GetBeat()).c_str(), FormatDouble(str.c_str(), GetRatio()).c_str());
 }
 
 RString StopSegment::ToString(int dec) const
 {
-	const RString str = "%.0" + IntToString(dec)
-	+ "f=%.0" + IntToString(dec) + "f";
-	return ssprintf(str.c_str(), GetBeat(), GetPause());
+	const RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%s", FormatDouble(str.c_str(), GetBeat()).c_str(), FormatDouble(str.c_str(), GetPause()).c_str());
 }
 
 RString DelaySegment::ToString(int dec) const
 {
-	const RString str = "%.0" + IntToString(dec)
-	+ "f=%.0" + IntToString(dec) + "f";
-	return ssprintf(str.c_str(), GetBeat(), GetPause());
+	const RString str = "%.0" + IntToString(dec) + "f";
+	return ssprintf("%s=%s", FormatDouble(str.c_str(), GetBeat()).c_str(), FormatDouble(str.c_str(), GetPause()).c_str());
 }
 
 /**
