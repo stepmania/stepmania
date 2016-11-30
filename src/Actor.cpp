@@ -425,17 +425,14 @@ void Actor::PreDraw() // calculate actor properties
 	// Somthing below may set m_pTempState to tempState
 	m_pTempState = &m_current;
 
-	// set temporary drawing properties based on Effects
-	static TweenState tempState;
-
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect == no_effect )
 	{
 	}
 	else
 	{
-		m_pTempState = &tempState;
-		tempState = m_current;
+		m_pTempState= & m_current_with_effects;
+		m_current_with_effects= m_current;
 
 		const float fTotalPeriod = GetEffectPeriod();
 		ASSERT( fTotalPeriod > 0 );
@@ -474,77 +471,77 @@ void Actor::PreDraw() // calculate actor properties
 		float fPercentBetweenColors = RageFastSin( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
 		ASSERT_M( fPercentBetweenColors >= 0 && fPercentBetweenColors <= 1,
 			ssprintf("PercentBetweenColors: %f, PercentThroughEffect: %f", fPercentBetweenColors, fPercentThroughEffect) );
-		float fOriginalAlpha = tempState.diffuse[0].a;
+		float fOriginalAlpha = m_current_with_effects.diffuse[0].a;
 
 		// todo: account for SSC_FUTURES -aj
 		switch( m_Effect )
 		{
 		case diffuse_blink:
-			/* XXX: Should diffuse_blink and diffuse_shift multiply the tempState color? 
+			/* XXX: Should diffuse_blink and diffuse_shift multiply the m_current_with_effects color? 
 			 * (That would have the same effect with 1,1,1,1, and allow tweening the diffuse
 			 * while blinking and shifting.) */
 			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
-				tempState.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
-				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
+				m_current_with_effects.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
+				m_current_with_effects.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case diffuse_shift:
 			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
-				tempState.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
-				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
+				m_current_with_effects.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
+				m_current_with_effects.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case diffuse_ramp:
 			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
-				tempState.diffuse[i] = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
-				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
+				m_current_with_effects.diffuse[i] = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
+				m_current_with_effects.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case glow_blink:
-			tempState.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
-			tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+			m_current_with_effects.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
+			m_current_with_effects.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 			break;
 		case glow_shift:
-			tempState.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
-			tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+			m_current_with_effects.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
+			m_current_with_effects.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 			break;
 		case glow_ramp:
-			tempState.glow = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
-			tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+			m_current_with_effects.glow = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
+			m_current_with_effects.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 			break;
 		case rainbow:
-			tempState.diffuse[0] = RageColor(
+			m_current_with_effects.diffuse[0] = RageColor(
 				RageFastCos( fPercentBetweenColors*2*PI ) * 0.5f + 0.5f,
 				RageFastCos( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
 				RageFastCos( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
 				fOriginalAlpha );
 			for( int i=1; i<NUM_DIFFUSE_COLORS; i++ )
-				tempState.diffuse[i] = tempState.diffuse[0];
+				m_current_with_effects.diffuse[i] = m_current_with_effects.diffuse[0];
 			break;
 		case wag:
-			tempState.rotation += m_vEffectMagnitude * RageFastSin( fPercentThroughEffect * 2.0f * PI );
+			m_current_with_effects.rotation += m_vEffectMagnitude * RageFastSin( fPercentThroughEffect * 2.0f * PI );
 			break;
 		case spin:
 			// nothing needs to be here
 			break;
 		case vibrate:
-			tempState.pos.x += m_vEffectMagnitude.x * randomf(-1.0f, 1.0f) * GetZoom();
-			tempState.pos.y += m_vEffectMagnitude.y * randomf(-1.0f, 1.0f) * GetZoom();
-			tempState.pos.z += m_vEffectMagnitude.z * randomf(-1.0f, 1.0f) * GetZoom();
+			m_current_with_effects.pos.x += m_vEffectMagnitude.x * randomf(-1.0f, 1.0f) * GetZoom();
+			m_current_with_effects.pos.y += m_vEffectMagnitude.y * randomf(-1.0f, 1.0f) * GetZoom();
+			m_current_with_effects.pos.z += m_vEffectMagnitude.z * randomf(-1.0f, 1.0f) * GetZoom();
 			break;
 		case bounce:
 			{
 				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
-				tempState.pos += m_vEffectMagnitude * fPercentOffset;
+				m_current_with_effects.pos += m_vEffectMagnitude * fPercentOffset;
 			}
 			break;
 		case bob:
 			{
 				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI*2 );
-				tempState.pos += m_vEffectMagnitude * fPercentOffset;
+				m_current_with_effects.pos += m_vEffectMagnitude * fPercentOffset;
 			}
 			break;
 		case pulse:
@@ -553,13 +550,13 @@ void Actor::PreDraw() // calculate actor properties
 				float fMaxZoom = m_vEffectMagnitude[1];
 				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
 				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
-				tempState.scale *= fZoom;
+				m_current_with_effects.scale *= fZoom;
 
 				// Use the color as a Vector3 to scale the effect for added control
 				RageColor c = SCALE( fPercentOffset, 0.f, 1.f, m_effectColor1, m_effectColor2 );
-				tempState.scale.x *= c.r;
-				tempState.scale.y *= c.g;
-				tempState.scale.z *= c.b;
+				m_current_with_effects.scale.x *= c.r;
+				m_current_with_effects.scale.y *= c.g;
+				m_current_with_effects.scale.z *= c.b;
 			}
 			break;
 		default:
@@ -572,28 +569,28 @@ void Actor::PreDraw() // calculate actor properties
 
 	if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
 	{
-		if( m_pTempState != &tempState )
+		if( m_pTempState != &m_current_with_effects )
 		{
-			m_pTempState = &tempState;
-			tempState = m_current;
+			m_pTempState = &m_current_with_effects;
+			m_current_with_effects = m_current;
 		}
 
 		for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 		{
-			tempState.diffuse[i] *= m_internalDiffuse;
+			m_current_with_effects.diffuse[i] *= m_internalDiffuse;
 		}
 	}
 
 	if( m_internalGlow.a > 0 )
 	{
-		if( m_pTempState != &tempState )
+		if( m_pTempState != &m_current_with_effects )
 		{
-			m_pTempState = &tempState;
-			tempState = m_current;
+			m_pTempState = &m_current_with_effects;
+			m_current_with_effects = m_current;
 		}
 
 		// Blend using Screen mode
-		tempState.glow = tempState.glow + m_internalGlow - m_internalGlow * tempState.glow;
+		m_current_with_effects.glow = m_current_with_effects.glow + m_internalGlow - m_internalGlow * m_current_with_effects.glow;
 	}
 }
 

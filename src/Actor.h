@@ -660,6 +660,7 @@ protected:
 	RageVector2	m_size;
 	TweenState	m_current;
 	TweenState	m_start;
+	TweenState	m_current_with_effects;
 	struct TweenStateAndInfo
 	{
 		TweenState state;
