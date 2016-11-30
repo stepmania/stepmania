@@ -382,6 +382,45 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 	    msg == Message_PreferredDifficultyP1Changed ||
 	    msg == Message_PreferredDifficultyP2Changed )
 	{
+		const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
+		MusicWheelItemType type = MusicWheelItemType_Invalid;
+
+		switch( pWID->m_Type )
+		{
+			DEFAULT_FAIL( pWID->m_Type );
+			case WheelItemDataType_Song:
+				type = MusicWheelItemType_Song;
+			case WheelItemDataType_Section:
+				if( GAMESTATE->sExpandedSectionName == pWID->m_sText )
+					type = MusicWheelItemType_SectionExpanded;
+				else
+					type = MusicWheelItemType_SectionCollapsed;
+			case WheelItemDataType_Course:
+				type = MusicWheelItemType_Course;
+			case WheelItemDataType_Sort:
+				if( pWID->m_pAction->m_pm != PlayMode_Invalid )
+					type = MusicWheelItemType_Mode;
+				else
+					type = MusicWheelItemType_Sort;
+			case WheelItemDataType_Roulette:
+				type = MusicWheelItemType_Roulette;
+			case WheelItemDataType_Random:
+				type = MusicWheelItemType_Random;
+			case WheelItemDataType_Portal:
+				type = MusicWheelItemType_Portal;
+			case WheelItemDataType_Custom:
+				type = MusicWheelItemType_Custom;
+		}
+
+		Message msg( "Set" );
+		msg.SetParam( "Song", pWID->m_pSong );
+		msg.SetParam( "Course", pWID->m_pCourse );
+		msg.SetParam( "Text", pWID->m_sText );
+		msg.SetParam( "Type", MusicWheelItemTypeToString(type) );
+		msg.SetParam( "Color", pWID->m_color );
+		msg.SetParam( "Label", pWID->m_sLabel );
+		this->HandleMessage( msg );
+		
 		RefreshGrades();
 	}
 
