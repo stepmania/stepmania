@@ -125,12 +125,14 @@ list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_HPP
 )
 
 if(APPLE)
-  list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC
-    "arch/MovieTexture/MovieTexture_FFMpeg.cpp"
-  )
-  list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_HPP
-    "arch/MovieTexture/MovieTexture_FFMpeg.h"
-  )
+  if (${HAS_FFMPEG})
+    list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC
+      "arch/MovieTexture/MovieTexture_FFMpeg.cpp"
+    )
+    list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_HPP
+      "arch/MovieTexture/MovieTexture_FFMpeg.h"
+    )
+  endif()
 elseif(MSVC)
   list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC
     "arch/MovieTexture/MovieTexture_FFMpeg.cpp"
@@ -281,7 +283,7 @@ if(NOT APPLE)
   list(APPEND SMDATA_ARCH_LIGHTS_HPP
     "arch/Lights/LightsDriver_Export.h"
   )
-  
+
   if(WIN32)
     list(APPEND SMDATA_ARCH_LIGHTS_SRC
       "arch/Lights/LightsDriver_Win32Parallel.cpp"
@@ -501,4 +503,3 @@ list(APPEND SMDATA_ALL_ARCH_HPP
   ${SMDATA_ARCH_SOUND_HPP}
   ${SMDATA_ARCH_THREADS_HPP}
 )
-
