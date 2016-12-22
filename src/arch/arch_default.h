@@ -45,7 +45,11 @@
 #include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
 #if defined(LINUX)
+#if defined(HAVE_SDL)
+#define DEFAULT_INPUT_DRIVER_LIST "SDL"
+#else
 #define DEFAULT_INPUT_DRIVER_LIST "X11,LinuxEvent,LinuxJoystick"
+#endif
 #else
 #define DEFAULT_INPUT_DRIVER_LIST "X11"
 #endif
