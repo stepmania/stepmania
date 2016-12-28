@@ -230,6 +230,21 @@ t[#t+1] = StandardDecorationFromFileOptional("SongInformation","SongInformation"
 t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("GameType","GameType");
+
+local lang = THEME:GetCurLanguage()
+local g_path = "/Themes/default/Graphics/"
+local extra1 = g_path.."ScreenStageInformation Stage extra1"
+local extra2 = g_path.."ScreenStageInformation Stage extra2"
+
+if lang ~= "en" and FILEMAN:DoesFileExist(extra1.." (lang "..lang..")") and FILEMAN:DoesFileExist(extra2.." (lang "..lang..")") then
+	extra1 = extra1.." (lang "..lang..")"
+	extra2 = extra2.." (lang "..lang..")"
+else
+	extra1 = extra1..".png"
+	extra2 = extra2..".png"
+end
+	
+
 t[#t+1] = Def.ActorFrame {
 	Condition=GAMESTATE:HasEarnedExtraStage() and GAMESTATE:IsExtraStage() and not GAMESTATE:IsExtraStage2();
 	InitCommand=cmd(draworder,105);
@@ -237,7 +252,7 @@ t[#t+1] = Def.ActorFrame {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
 		OnCommand=cmd(play);
 	};
-	LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra1" ) ) .. {
+	LoadActor( extra1 ) .. {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
 		InitCommand=cmd(Center);
 		OnCommand=cmd(diffusealpha,0;zoom,0.85;bounceend,1;zoom,1;diffusealpha,1;sleep,0;glow,Color("White");decelerate,1;glow,Color("Invisible");smooth,0.35;zoom,0.25;y,SCREEN_BOTTOM-72);
@@ -250,7 +265,7 @@ t[#t+1] = Def.ActorFrame {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
 		OnCommand=cmd(play);
 	};
-	LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra2" ) ) .. {
+	LoadActor( extra2 ) .. {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
 		InitCommand=cmd(Center);
 		OnCommand=cmd(diffusealpha,0;zoom,0.85;bounceend,1;zoom,1;diffusealpha,1;sleep,0;glow,Color("White");decelerate,1;glow,Color("Invisible");smooth,0.35;zoom,0.25;y,SCREEN_BOTTOM-72);
