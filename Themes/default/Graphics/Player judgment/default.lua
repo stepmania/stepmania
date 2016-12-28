@@ -52,6 +52,18 @@ local TNSFrames = {
 	TapNoteScore_W5 = 4;
 	TapNoteScore_Miss = 5;
 };
+
+--different language support
+local lang = THEME:GetCurLanguage()
+local g_path = "/Themes/default/Graphics/"
+local judgment_file = g_path.."Judgment Normal 1x6"
+
+if lang ~= "en" and FILEMAN:DoesFileExist(judgment_file.." (lang "..lang..").png") then
+	judgment_file = judgment_file.." (lang "..lang..").png"
+else
+	judgment_file = judgment_file..".png"
+end
+
 local frame = Def.ActorFrame {
 	InitCommand = function(self)
 		if player_config:get_data(player).JudgmentUnderField then
@@ -61,7 +73,7 @@ local frame = Def.ActorFrame {
 		end
 		c = self:GetChildren();
 	end,
-	LoadActor(THEME:GetPathG("Judgment","Normal")) .. {
+	LoadActor(judgment_file) .. {
 		Name="Judgment";
 		InitCommand=cmd(pause;visible,false);
 		OnCommand=THEME:GetMetric("Judgment","JudgmentOnCommand");

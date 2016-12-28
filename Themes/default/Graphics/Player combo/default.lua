@@ -15,6 +15,20 @@ local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
 
 local ShowFlashyCombo = player_config:get_data(player).FlashyCombo
 
+--different language support
+local lang = THEME:GetCurLanguage()
+local cur_dir= "/Themes/default/Graphics/Player combo/"
+local combo_label = cur_dir.."_combo"
+local miss_label = cur_dir.."_misses"
+
+if lang ~= "en" and FILEMAN:DoesFileExist(combo_label.." (lang "..lang..").png") and FILEMAN:DoesFileExist(miss_label.." (lang "..lang..").png")  then
+	combo_label = combo_label.." (lang "..lang..").png"
+	miss_label = miss_label.." (lang "..lang..").png"
+else
+	combo_label = combo_label..".png"
+	miss_label = miss_label..".png"
+end
+
 local t = Def.ActorFrame {
 	InitCommand= function(self)
 		if player_config:get_data(player).ComboUnderField then
@@ -46,11 +60,11 @@ local t = Def.ActorFrame {
 			Name="Number";
 			OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
 		};
-		LoadActor("_combo")..{
+		LoadActor(combo_label)..{
 			Name="ComboLabel";
 			OnCommand = THEME:GetMetric("Combo", "ComboLabelOnCommand");
 		};
-		LoadActor("_misses")..{
+		LoadActor(miss_label)..{
 			Name="MissLabel";
 			OnCommand = THEME:GetMetric("Combo", "MissLabelOnCommand");
 		};
