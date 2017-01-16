@@ -1631,7 +1631,15 @@ Player::PlayerNoteFieldPositioner::PlayerNoteFieldPositioner(
 		y_offset= SCALE(tilt, 0.f, -1.f, 0.f, -20.f) * reverse_mult;
 	}
 	player->m_pNoteField->SetY(original_y + y_offset);
-	player->m_pNoteField->SetZoom(zoom);
+	if(player->m_oitg_zoom_mode)
+	{
+		player->m_pNoteField->SetZoomX(zoom);
+		player->m_pNoteField->SetZoomY(zoom);
+	}
+	else
+	{
+		player->m_pNoteField->SetZoom(zoom);
+	}
 	player->m_pNoteField->SetRotationX(tilt_degrees);
 }
 
