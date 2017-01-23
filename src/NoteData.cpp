@@ -269,6 +269,12 @@ int NoteData::GetNumTracksWithTapOrHoldHead( int row ) const
 	return iNum;
 }
 
+void NoteData::LogNonEmptyRows() {
+	NonEmptyRowVector.clear();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS(*this, row)
+		NonEmptyRowVector.push_back(row);
+}
+
 int NoteData::GetFirstTrackWithTap( int row ) const
 {
 	for( int t=0; t<GetNumTracks(); t++ )
