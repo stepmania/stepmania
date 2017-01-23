@@ -219,6 +219,12 @@ void NoteData::ClearAll()
 		m_TapNotes[t].clear();
 }
 
+void NoteData::LogNonEmptyRows() {
+	NonEmptyRowVector.clear();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS(*this, row)
+		NonEmptyRowVector.push_back(row);
+}
+
 /* Copy [rowFromBegin,rowFromEnd) from pFrom to this. (Note that this does
  * *not* overlay; all data in the range is overwritten.) */
 void NoteData::CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd, int rowToBegin )
