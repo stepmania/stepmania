@@ -60,6 +60,7 @@ AutoScreenMessage( SM_AddToChat );
 AutoScreenMessage( SM_ChangeSong );
 AutoScreenMessage( SM_GotEval );
 AutoScreenMessage( SM_UsersUpdate );
+AutoScreenMessage( SM_FriendsUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
 int NetworkSyncManager::GetSMOnlineSalt()
@@ -399,6 +400,29 @@ void NetworkSyncManager::StartRequest( short position )
 	for (int i=0; i<2-players; ++i)
 		m_packet.WriteNT("");	//Write a nullptr if no player
 
+	//Send song hash/chartkey and rate
+	if (m_ServerVersion >= 129) {
+		tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+		if (tSteps != NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1)) {
+			tSteps->Decompress();
+			m_packet.WriteNT(tSteps->GenerateChartKey());
+			tSteps->Compress();
+		}
+		else
+			m_packet.WriteNT("");
+
+		tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
+		if (tSteps != NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2)) {
+			tSteps->Decompress();
+			m_packet.WriteNT(tSteps->GenerateChartKey());
+			tSteps->Compress();
+		} else
+			m_packet.WriteNT("");
+		float rate = GAMESTATE->m_SongOptions.GetPreferred().m_fMusicRate;
+		std::ostringstream buff;
+		buff << rate;
+		m_packet.WriteNT(buff.str());
+	}
 	//This needs to be reset before ScreenEvaluation could possibly be called
 	m_EvalPlayerData.clear();
 
@@ -675,6 +699,21 @@ void NetworkSyncManager::ProcessInput()
 					GAMESTATE->m_pPlayerState[iPlayerNumber]->LaunchAttack( a );
 				}
 				m_packet.ClearPacket();
+			}
+			break;
+		case FLU:
+			{
+				int PlayersInThisPacket = m_packet.Read1();
+				fl_PlayerNames.clear();
+				fl_PlayerStates.clear();
+				for (int i = 0; i<PlayersInThisPacket; ++i)
+				{
+					int PStatus = m_packet.Read1();
+					fl_PlayerStates.push_back(PStatus);
+					fl_PlayerNames.push_back(m_packet.ReadNT());
+					LOG->Trace("FLU: %d %s", PStatus, fl_PlayerNames[i]);
+				}
+				SCREENMAN->SendMessageToTopScreen(SM_FriendsUpdate);
 			}
 			break;
 		}
