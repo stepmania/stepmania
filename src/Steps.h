@@ -124,6 +124,18 @@ public:
 	void SetChartStyle( std::string sChartStyle );
 	static bool MakeValidEditDescription( std::string &sPreferredDescription );	// return true if was modified
 
+
+	/* This is a reimplementation of the lua version of the script to generate chart keys, except this time
+	using the notedata stored in game memory immediately after reading it than parsing it using lua. - Mina */
+	std::string GenerateChartKey(NoteData &nd, TimingData *td);
+	std::string GenerateChartKey();
+	std::string ChartKey = "Invalid";
+	std::string ChartKeyRecord = "Invalid";
+	std::string GetChartKey() const { return ChartKey; }
+	std::string GetChartKeyRecord() const;
+	void SetChartKey(const std::string &k) { ChartKey = k; }
+
+
 	void ChangeFilenamesForCustomSong();
 
 	void SetLoadedFromProfile( ProfileSlot slot )	{ m_LoadedFromProfile = slot; }

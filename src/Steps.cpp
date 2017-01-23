@@ -33,6 +33,9 @@
 /* register DisplayBPM with StringConversion */
 #include "EnumHelper.h"
 
+// For hashing wife chart keys - Mina
+#include "CryptManager.h"
+
 using std::vector;
 
 static const char *DisplayBPMNames[] =
@@ -629,6 +632,62 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 	m_bAreCachedRadarValuesJustLoaded = true;
 }
 
+std::string Steps::GenerateChartKey()
+{
+	ChartKey = this->GenerateChartKey(*m_pNoteData, this->GetTimingData());
+	return ChartKey;
+}
+std::string Steps::GenerateChartKey(NoteData &nd, TimingData *td)
+{
+	std::string k = "";
+	std::string o = "";
+	float bpm;
+	nd.LogNonEmptyRows();
+	std::vector<int>& nerv = nd.GetNonEmptyRowVector();
+
+
+	std::string firstHalf = "";
+	std::string secondHalf = "";
+
+#pragma omp parallel sections
+	{
+#pragma omp section
+		{
+			for (size_t r = 0; r < nerv.size() / 2; r++) {
+				int row = nerv[r];
+				for (int t = 0; t < nd.GetNumTracks(); ++t) {
+					const TapNote &tn = nd.GetTapNote(t, row);
+					firstHalf.append(std::to_string(tn.type));
+				}
+				bpm = td->GetBPMAtRow(row);
+				firstHalf.append(std::to_string(static_cast<int>(bpm + 0.374643f)));
+			}
+		}
+
+#pragma omp section
+		{
+			for (size_t r = nerv.size() / 2; r < nerv.size(); r++) {
+				int row = nerv[r];
+				for (int t = 0; t < nd.GetNumTracks(); ++t) {
+					const TapNote &tn = nd.GetTapNote(t, row);
+					secondHalf.append(std::to_string(tn.type));
+				}
+				bpm = td->GetBPMAtRow(row);
+				secondHalf.append(std::to_string(static_cast<int>(bpm + 0.374643f)));
+			}
+		}
+	}
+	k = firstHalf + secondHalf;
+
+	//ChartKeyRecord = k;
+	o.append("X");	// I was thinking of using "C" to indicate chart.. however.. X is cooler... - Mina
+	o.append(BinaryToHex(CryptManager::GetSHA1ForString(k)));
+	return o;
+}
+
+std::string Steps::GetChartKeyRecord() const {
+	return ChartKeyRecord;
+}
 // lua start
 #include "LuaBinding.h"
 /** @brief Allow Lua to have access to the Steps. */
@@ -759,6 +818,11 @@ public:
 		return 1;
 	}
 
+	static int GetChartKey(T* p, lua_State *L) {
+		lua_pushstring(L, p->GetChartKey().c_str());
+		return 1;
+	}
+
 	LunaSteps()
 	{
 		ADD_METHOD( GetAuthorCredit );
@@ -784,6 +848,7 @@ public:
 		ADD_METHOD( IsDisplayBpmRandom );
 		ADD_METHOD( PredictMeter );
 		ADD_METHOD( GetDisplayBPMType );
+		ADD_METHOD(GetChartKey);
 		ADD_METHOD(count_notes_in_columns);
 	}
 };

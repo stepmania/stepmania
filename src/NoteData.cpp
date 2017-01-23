@@ -1444,6 +1444,14 @@ template<typename ND, typename iter, typename TN>
 	}
 }
 
+
+void NoteData::LogNonEmptyRows() {
+	NonEmptyRowVector.clear();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS(*this, row)
+		NonEmptyRowVector.push_back(row);
+}
+
+
 template<typename ND, typename iter, typename TN>
 NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND, iter, TN>::operator++() // preincrement
 {
