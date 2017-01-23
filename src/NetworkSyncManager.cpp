@@ -409,10 +409,9 @@ void NetworkSyncManager::StartRequest( short position )
 			tSteps->Compress();
 		} else
 			m_packet.WriteNT("");
-		float rate = GAMESTATE->m_SongOptions.GetPreferred().m_fMusicRate;
-		std::ostringstream buff;
-		buff << rate;
-		m_packet.WriteNT(buff.str());
+		
+		int rate = (int)(GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * 100);
+		m_packet.Write2(rate);
 	}
 	
 	//This needs to be reset before ScreenEvaluation could possibly be called
