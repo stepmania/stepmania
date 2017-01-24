@@ -638,7 +638,6 @@ void NetworkSyncManager::ProcessInput()
 				//Send songhash
 				if (m_ServerVersion >= 129) {
 					Song * song = GAMESTATE->m_pCurSong;
-					vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
 					std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
 					if (!IsAFile(sPath))
 						sPath = SetExtension(song->GetSongFilePath(), "dwi");
@@ -777,7 +776,6 @@ void NetworkSyncManager::SelectUserSong()
 	//Send songhash
 	if (m_ServerVersion >= 129) {
 		Song * song = GAMESTATE->m_pCurSong;
-		vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
 		std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
 		if (!IsAFile(sPath))
 			sPath = SetExtension(song->GetSongFilePath(), "dwi");
