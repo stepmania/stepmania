@@ -11,6 +11,9 @@ NetworkSyncManager *NSMAN;
 
 #include "ver.h"
 
+//Song file hashing --Nick12
+#include "CryptManager.h"
+
 
 #if defined(WITHOUT_NETWORKING)
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld ) { useSMserver=false; isSMOnline = false; }
@@ -632,6 +635,14 @@ void NetworkSyncManager::ProcessInput()
 				m_sMainTitle = m_packet.ReadNT();
 				m_sArtist = m_packet.ReadNT();
 				m_sSubTitle = m_packet.ReadNT();
+				//Send songhash
+				if (m_ServerVersion >= 129) {
+					Song * song = GAMESTATE->get_curr_song();
+					vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
+					std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
+					m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+				}
+
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}
 			break;
@@ -745,6 +756,13 @@ void NetworkSyncManager::SelectUserSong()
 	m_packet.WriteNT( m_sMainTitle );
 	m_packet.WriteNT( m_sArtist );
 	m_packet.WriteNT( m_sSubTitle );
+	//Send songhash
+	if (m_ServerVersion >= 129) {
+		Song * song = GAMESTATE->get_curr_song();
+		vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
+		std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
+		m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+	}
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
