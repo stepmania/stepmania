@@ -129,7 +129,7 @@ public:
 	std::string GenerateChartKey(NoteData &nd, TimingData *td);
 	std::string GenerateChartKey();
 	std::string ChartKey;
-	std::string GetChartKey() const { return ChartKey; }
+	std::string GetChartKey();
 	void SetChartKey(const std::string &k) { ChartKey = k; }
 
 	void SetLoadedFromProfile( ProfileSlot slot )	{ m_LoadedFromProfile = slot; }
