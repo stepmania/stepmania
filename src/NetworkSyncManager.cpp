@@ -766,7 +766,7 @@ void NetworkSyncManager::SelectUserSong()
 			sPath = SetExtension(song->GetSongFilePath(), "jso");
 		if (!IsAFile(sPath))
 			sPath = SetExtension(song->GetSongFilePath(), "ssc");
-		if (!IsAFile(sPath))
+		if (IsAFile(sPath))
 			m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
 		else
 			m_packet.WriteNT("");
