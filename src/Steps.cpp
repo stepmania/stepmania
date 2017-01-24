@@ -656,7 +656,9 @@ std::string Steps::GenerateChartKey(NoteData &nd, TimingData *td)
 					firstHalf.append(os.str());
 				}
 				bpm = td->GetBPMAtRow(row);
-				firstHalf.append(std::to_string(static_cast<int>(bpm + 0.374643f)));
+				std::ostringstream os;
+				os << static_cast<int>(bpm + 0.374643f);
+				firstHalf.append(os.str());
 			}
 		}
 
@@ -671,7 +673,9 @@ std::string Steps::GenerateChartKey(NoteData &nd, TimingData *td)
 					secondHalf.append(os.str());
 				}
 				bpm = td->GetBPMAtRow(row);
-				secondHalf.append(std::to_string(static_cast<int>(bpm + 0.374643f)));
+				std::ostringstream os;
+				os << static_cast<int>(bpm + 0.374643f);
+				firstHalf.append(os.str());
 			}
 		}
 	}
