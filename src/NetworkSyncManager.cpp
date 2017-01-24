@@ -637,11 +637,29 @@ void NetworkSyncManager::ProcessInput()
 				m_sSubTitle = m_packet.ReadNT();
 				//Send songhash
 				if (m_ServerVersion >= 129) {
-					Song * song = GAMESTATE->get_curr_song();
+					Song * song = GAMESTATE->m_pCurSong;
 					vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
 					std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
-					m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+					if (!IsAFile(sPath))
+						sPath = SetExtension(song->GetSongFilePath(), "dwi");
+					if (!IsAFile(sPath))
+						sPath = SetExtension(song->GetSongFilePath(), "sma");
+					if (!IsAFile(sPath))
+						sPath = SetExtension(song->GetSongFilePath(), "bms");
+					if (!IsAFile(sPath))
+						sPath = SetExtension(song->GetSongFilePath(), "kfs");
+					if (!IsAFile(sPath))
+						sPath = SetExtension(song->GetSongFilePath(), "json");
+					if (!IsAFile(sPath))
+						sPath = SetExtension(song->GetSongFilePath(), "jso");
+					if (!IsAFile(sPath))
+						sPath = SetExtension(song->GetSongFilePath(), "ssc");
+					if (!IsAFile(sPath))
+						m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+					else
+						m_packet.WriteNT("");
 				}
+
 
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}
@@ -758,11 +776,29 @@ void NetworkSyncManager::SelectUserSong()
 	m_packet.WriteNT( m_sSubTitle );
 	//Send songhash
 	if (m_ServerVersion >= 129) {
-		Song * song = GAMESTATE->get_curr_song();
+		Song * song = GAMESTATE->m_pCurSong;
 		vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
 		std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
-		m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+		if (!IsAFile(sPath))
+			sPath = SetExtension(song->GetSongFilePath(), "dwi");
+		if (!IsAFile(sPath))
+			sPath = SetExtension(song->GetSongFilePath(), "sma");
+		if (!IsAFile(sPath))
+			sPath = SetExtension(song->GetSongFilePath(), "bms");
+		if (!IsAFile(sPath))
+			sPath = SetExtension(song->GetSongFilePath(), "kfs");
+		if (!IsAFile(sPath))
+			sPath = SetExtension(song->GetSongFilePath(), "json");
+		if (!IsAFile(sPath))
+			sPath = SetExtension(song->GetSongFilePath(), "jso");
+		if (!IsAFile(sPath))
+			sPath = SetExtension(song->GetSongFilePath(), "ssc");
+		if (!IsAFile(sPath))
+			m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+		else
+			m_packet.WriteNT("");
 	}
+
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
