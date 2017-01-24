@@ -707,7 +707,6 @@ void NetworkSyncManager::ProcessInput()
 					int PStatus = m_packet.Read1();
 					fl_PlayerStates.push_back(PStatus);
 					fl_PlayerNames.push_back(m_packet.ReadNT());
-					LOG->Trace("FLU: %d %s", PStatus, fl_PlayerNames[i]);
 				}
 				SCREENMAN->SendMessageToTopScreen(SM_FriendsUpdate);
 			}
