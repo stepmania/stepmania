@@ -128,7 +128,7 @@ public:
 	using the notedata stored in game memory immediately after reading it than parsing it using lua. - Mina */
 	std::string GenerateChartKey(NoteData &nd, TimingData *td);
 	std::string GenerateChartKey();
-	std::string ChartKey = "Invalid";
+	std::string ChartKey;
 	std::string GetChartKey() const { return ChartKey; }
 	void SetChartKey(const std::string &k) { ChartKey = k; }
 
