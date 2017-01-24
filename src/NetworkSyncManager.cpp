@@ -13,6 +13,9 @@ NetworkSyncManager *NSMAN;
 
 #include "ver.h"
 
+//Song file hashing --Nick12
+#include "CryptManager.h"
+
 
 using std::string;
 using std::vector;
@@ -639,7 +642,23 @@ void NetworkSyncManager::ProcessInput()
 				m_iSelectMode = m_packet.Read1();
 				m_sMainTitle = m_packet.ReadNT();
 				m_sArtist = m_packet.ReadNT();
-				m_sSubTitle = m_packet.ReadNT();
+					m_sSubTitle = m_packet.ReadNT();
+				//Send songhash
+				if (m_ServerVersion >= 129) {
+					Song * song = GAMESTATE->get_curr_song();
+					vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
+					/* We work with a .sm filehash now
+					(this made a hash of the concatenation of a song's charthashs)
+					std::string str;
+					str = "";
+					for (unsigned int i = 0; i < steps.size(); ++i)
+						str.append(steps[i]->GetChartKey());
+					m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForString( str ) ) ); 
+					*/
+					std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
+					m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+				}
+
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}
 			break;
@@ -754,6 +773,21 @@ void NetworkSyncManager::SelectUserSong()
 	m_packet.WriteNT( m_sMainTitle );
 	m_packet.WriteNT( m_sArtist );
 	m_packet.WriteNT( m_sSubTitle );
+	//Send songhash
+	if (m_ServerVersion >= 129) {
+		Song * song = GAMESTATE->get_curr_song();
+		vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
+		/* We work with a .sm filehash now (this makes a hash of the concatenation of a song's charthashs)
+		std::string str;
+		str = "";
+		for (unsigned int i = 0; i < steps.size(); ++i)
+			str.append(steps[i]->GetChartKey());
+		m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForString( str ) ) ); 
+		*/
+		std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
+		m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+	}
+
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
