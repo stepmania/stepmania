@@ -29,7 +29,6 @@ enum NSCommand
 	NSCSMOnline,	// 12 [SMLC_SMO]
 	NSCFormatted,	// 13 [SMLC_RESERVED1]
 	NSCAttack,		// 14 [SMLC_RESERVED2]
- 	NSCAttack,		// 14 [SMLC_RESERVED2]
 	XML,		// 15 [SMLC_RESERVED3]
 	FLU,		// 15 [SMLC_FriendListUpdate]
 	NUM_NS_COMMANDS
