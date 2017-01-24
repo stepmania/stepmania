@@ -617,10 +617,18 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 	m_bAreCachedRadarValuesJustLoaded = true;
 }
 
-//Chart key hashing
 std::string Steps::GenerateChartKey()
 {
 	ChartKey = this->GenerateChartKey(*m_pNoteData, this->GetTimingData());
+	return ChartKey;
+}
+std::string Steps::GetChartKey()
+{
+	if (ChartKey.empty()) {
+		this->Decompress();
+		ChartKey = this->GenerateChartKey(*m_pNoteData, this->GetTimingData());
+		this->Compress();
+	}
 	return ChartKey;
 }
 std::string Steps::GenerateChartKey(NoteData &nd, TimingData *td)
@@ -643,7 +651,9 @@ std::string Steps::GenerateChartKey(NoteData &nd, TimingData *td)
 				int row = nerv[r];
 				for (int t = 0; t < nd.GetNumTracks(); ++t) {
 					const TapNote &tn = nd.GetTapNote(t, row);
-					firstHalf.append(std::to_string(tn.type));
+					std::ostringstream os;
+					os << tn.type;
+					firstHalf.append(os.str());
 				}
 				bpm = td->GetBPMAtRow(row);
 				firstHalf.append(std::to_string(static_cast<int>(bpm + 0.374643f)));
@@ -656,7 +666,9 @@ std::string Steps::GenerateChartKey(NoteData &nd, TimingData *td)
 				int row = nerv[r];
 				for (int t = 0; t < nd.GetNumTracks(); ++t) {
 					const TapNote &tn = nd.GetTapNote(t, row);
-					secondHalf.append(std::to_string(tn.type));
+					std::ostringstream os;
+					os << tn.type;
+					secondHalf.append(os.str());
 				}
 				bpm = td->GetBPMAtRow(row);
 				secondHalf.append(std::to_string(static_cast<int>(bpm + 0.374643f)));
