@@ -751,7 +751,7 @@ void NetworkSyncManager::SelectUserSong()
 	m_packet.WriteNT( m_sSubTitle );
 	//Send songhash
 	if (m_ServerVersion >= 129) {
-		m_packet.WriteNT(GAMESTATE->get_curr_song()->GetFileHash());
+		m_packet.WriteNT(GAMESTATE->m_pCurSong->GetFileHash());
 	}
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
