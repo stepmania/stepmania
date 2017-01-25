@@ -1595,7 +1595,7 @@ vector<RString> Song::GetFGChanges1ToVectorString() const
 std::string Song::GetFileHash()
 {
 	if (m_sFileHash.empty()) {
-		std::string sPath = SetExtension(GetSongFilePath(), "sm");
+		RString sPath = SetExtension(GetSongFilePath(), "sm");
 		if (!IsAFile(sPath))
 			sPath = SetExtension(GetSongFilePath(), "dwi");
 		if (!IsAFile(sPath))
