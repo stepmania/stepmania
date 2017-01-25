@@ -169,8 +169,11 @@ public:
 	RString m_sMainTitle;
 	RString m_sArtist;
 	RString m_sSubTitle;
+	RString m_sFileHash;
 	int m_iSelectMode;
 	void SelectUserSong();
+
+	int GetServerVersion();
 
 	RString m_sChatText;
 
