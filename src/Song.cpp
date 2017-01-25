@@ -40,6 +40,8 @@
 #include <set>
 #include <float.h>
 
+//-Nick12 Used for song file hashing
+#include <CryptManager.h>
 
 /**
  * @brief The internal version of the cache for StepMania.
