@@ -1592,7 +1592,7 @@ vector<RString> Song::GetFGChanges1ToVectorString() const
 	return this->GetChangesToVectorString(this->GetForegroundChanges());
 }
 
-std::string Song::GetFileHash()
+RString Song::GetFileHash()
 {
 	if (m_sFileHash.empty()) {
 		RString sPath = SetExtension(GetSongFilePath(), "sm");
