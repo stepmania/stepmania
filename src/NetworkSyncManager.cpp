@@ -413,6 +413,7 @@ void NetworkSyncManager::StartRequest( short position )
 
 		int rate = (int)(GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * 100);
 		m_packet.Write1(rate);
+		m_packet.WriteNT(GAMESTATE->m_pCurSong->GetFileHash());
 	}
 	
 	//This needs to be reset before ScreenEvaluation could possibly be called
