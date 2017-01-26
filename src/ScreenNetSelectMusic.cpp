@@ -182,19 +182,6 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		vector <Song *> AllSongs = SONGMAN->GetAllSongs();
 		unsigned i;
 		bool found = false;
-		//If we couldnt find it using file hash search for it without it, if using SMSERVER < 129 it will also go here
-		if(!found)
-			for (i = 0; i < AllSongs.size(); i++)
-			{
-				m_cSong = AllSongs[i];
-				if (ciArtist == m_cSong->GetTranslitArtist() &&
-					ciMain == m_cSong->GetTranslitMainTitle() &&
-					ciSub == m_cSong->GetTranslitSubTitle())
-				{
-					break;
-				}
-			}
-
 		if (NSMAN->GetServerVersion() >= 129)
 		{
 			//Dont earch by filehash if none was sent
