@@ -182,25 +182,6 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		vector <Song *> AllSongs = SONGMAN->GetAllSongs();
 		unsigned i;
 		bool found = false;
-		if (NSMAN->GetServerVersion() >= 129)
-		{
-			Rage::ci_ascii_string ciFileHash{ NSMAN->m_sFileHash.c_str() };
-			//Dont earch by filehash if none was sent
-			if(!NSMAN->m_sFileHash.empty())
-				for (i = 0; i < AllSongs.size(); i++)
-				{
-					m_cSong = AllSongs[i];
-					if (ciArtist == m_cSong->GetTranslitArtist() &&
-						ciMain == m_cSong->GetTranslitMainTitle() &&
-						ciSub == m_cSong->GetTranslitSubTitle() &&
-						ciFileHash == m_cSong->GetFileHash())
-					{
-						found = true;
-						break;
-					}
-				}
-
-		}
 		//If we couldnt find it using file hash search for it without it, if using SMSERVER < 129 it will also go here
 		if(!found)
 			for (i = 0; i < AllSongs.size(); i++)
@@ -209,6 +190,37 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 				if (ciArtist == m_cSong->GetTranslitArtist() &&
 					ciMain == m_cSong->GetTranslitMainTitle() &&
 					ciSub == m_cSong->GetTranslitSubTitle())
+				{
+					break;
+				}
+			}
+
+		if (NSMAN->GetServerVersion() >= 129)
+		{
+			//Dont earch by filehash if none was sent
+			if(!NSMAN->m_sFileHash.empty())
+				for (i = 0; i < AllSongs.size(); i++)
+				{
+					m_cSong = AllSongs[i];
+					if (NSMAN->m_sArtist == m_cSong->GetTranslitArtist() &&
+						NSMAN->m_sMainTitle == m_cSong->GetTranslitMainTitle() &&
+						NSMAN->m_sSubTitle == m_cSong->GetTranslitSubTitle() &&
+						NSMAN->m_sFileHash == m_cSong->GetFileHash())
+					{
+						found = true;
+						break;
+					}
+				}
+
+		}
+		//If we couldnt find it using file hash search for it without using it, if using SMSERVER < 129 it will go here
+		if(!found)
+			for (i = 0; i < AllSongs.size(); i++)
+			{
+				m_cSong = AllSongs[i];
+				if (NSMAN->m_sArtist == m_cSong->GetTranslitArtist() &&
+					NSMAN->m_sMainTitle == m_cSong->GetTranslitMainTitle() &&
+					NSMAN->m_sSubTitle == m_cSong->GetTranslitSubTitle())
 				{
 					break;
 				}
