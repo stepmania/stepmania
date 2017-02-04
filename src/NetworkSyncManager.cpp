@@ -241,6 +241,53 @@ RString NetworkSyncManager::GetServerName()
 	return m_ServerName;
 }
 
+//Same as the one below except for ctr = uint8_t(STATSMAN->m_CurStageStats.m_player[playerID].GetGrade() * 16 + numNotes);
+//Im keeping the old one because it's used for single tap notes
+void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset, int numNotes)
+{
+	if (!useSMserver) //Make sure that we are using the network
+		return;
+
+	LOG->Trace("Player ID %i combo = %i", playerID, combo);
+	m_packet.ClearPacket();
+
+	m_packet.Write1(NSCGSU);
+	step = TranslateStepType(step);
+	uint8_t ctr = (uint8_t)(playerID * 16 + step - (SMOST_HITMINE - 1));
+	m_packet.Write1(ctr);
+
+	ctr = uint8_t(STATSMAN->m_CurStageStats.m_player[playerID].GetGrade() * 16 + numNotes);
+
+	if (STATSMAN->m_CurStageStats.m_player[playerID].m_bFailed)
+		ctr = uint8_t(112);	//Code for failed (failed constant seems not to work)
+
+	m_packet.Write1(ctr);
+	m_packet.Write4(score);
+	m_packet.Write2((uint16_t)combo);
+	m_packet.Write2((uint16_t)m_playerLife[playerID]);
+
+	// Offset Info
+	// Note: if a 0 is sent, then disregard data.
+
+	// ASSUMED: No step will be more than 16 seconds off center.
+	// If this assumption is false, read 16 seconds in either direction.
+	int iOffset = int((offset + 16.384)*2000.0f);
+
+	if (iOffset>65535)
+		iOffset = 65535;
+	if (iOffset<1)
+		iOffset = 1;
+
+	// Report 0 if hold, or miss (don't forget mines should report)
+	if (step == SMOST_HITMINE || step > SMOST_W1)
+		iOffset = 0;
+
+	m_packet.Write2((uint16_t)iOffset);
+
+	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
+
+}
+
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset)
 {
 	if( !useSMserver ) //Make sure that we are using the network
@@ -636,6 +683,8 @@ void NetworkSyncManager::ProcessInput()
 				//Read songhash
 				if (m_ServerVersion >= 129) {
 					m_sFileHash = m_packet.ReadNT();
+				} else {
+					m_sFileHash = "" ;
 				}
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}

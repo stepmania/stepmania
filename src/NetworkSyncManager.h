@@ -116,6 +116,7 @@ public:
 
     // If "useSMserver" then send score to server
 	void ReportScore( int playerID, int step, int score, int combo, float offset );	
+	void ReportScore(int playerID, int step, int score, int combo, float offset, int numNotes);
 	void ReportSongOver();
 	void ReportStyle(); // Report style, players, and names
 	void ReportNSSOnOff( int i );	// Report song selection screen on/off
