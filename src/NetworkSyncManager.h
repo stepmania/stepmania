@@ -7,7 +7,7 @@
 
 class LoadingWindow;
 
-const int NETPROTOCOLVERSION=3;
+const int NETPROTOCOLVERSION=4;
 const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
 const int NETNUMTAPSCORES=8;
 
@@ -29,6 +29,8 @@ enum NSCommand
 	NSCSMOnline,	// 12 [SMLC_SMO]
 	NSCFormatted,	// 13 [SMLC_RESERVED1]
 	NSCAttack,		// 14 [SMLC_RESERVED2]
+	XML,		// 15 [SMLC_RESERVED3]
+	FLU,		// 15 [SMLC_FriendListUpdate]
 	NUM_NS_COMMANDS
 };
 
@@ -145,6 +147,10 @@ public:
 	vector<int> m_ActivePlayer;
 	vector<RString> m_PlayerNames;
 
+	//friendlist
+	std::vector<RString> fl_PlayerNames;
+	std::vector<int> fl_PlayerStates;
+	
 	// Used for ScreenNetEvaluation
 	vector<EndOfGame_PlayerData> m_EvalPlayerData;
 
@@ -163,8 +169,11 @@ public:
 	RString m_sMainTitle;
 	RString m_sArtist;
 	RString m_sSubTitle;
+	RString m_sFileHash;
 	int m_iSelectMode;
 	void SelectUserSong();
+
+	int GetServerVersion();
 
 	RString m_sChatText;
 

@@ -55,6 +55,7 @@ AutoScreenMessage( SM_AddToChat );
 AutoScreenMessage( SM_ChangeSong );
 AutoScreenMessage( SM_GotEval );
 AutoScreenMessage( SM_UsersUpdate );
+AutoScreenMessage( SM_FriendsUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
 int NetworkSyncManager::GetSMOnlineSalt()
@@ -390,6 +391,31 @@ void NetworkSyncManager::StartRequest( short position )
 	for (int i=0; i<2-players; ++i)
 		m_packet.WriteNT("");	//Write a NULL if no player
 
+	//Send song hash/chartkey
+	if (m_ServerVersion >= 129) {
+		tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+		if (tSteps != NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1)) {
+			m_packet.WriteNT(tSteps->GetChartKey());
+		} 
+		else 
+		{
+			m_packet.WriteNT("");
+		}
+
+		tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
+		if (tSteps != NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2)) {
+			m_packet.WriteNT(tSteps->GetChartKey());
+		} 
+		else 
+		{
+			m_packet.WriteNT("");
+		}
+
+		int rate = (int)(GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * 100);
+		m_packet.Write1(rate);
+		m_packet.WriteNT(GAMESTATE->m_pCurSong->GetFileHash());
+	}
+	
 	//This needs to be reset before ScreenEvaluation could possibly be called
 	m_EvalPlayerData.clear();
 
@@ -607,6 +633,10 @@ void NetworkSyncManager::ProcessInput()
 				m_sMainTitle = m_packet.ReadNT();
 				m_sArtist = m_packet.ReadNT();
 				m_sSubTitle = m_packet.ReadNT();
+				//Read songhash
+				if (m_ServerVersion >= 129) {
+					m_sFileHash = m_packet.ReadNT();
+				}
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}
 			break;
@@ -668,6 +698,20 @@ void NetworkSyncManager::ProcessInput()
 				m_packet.ClearPacket();
 			}
 			break;
+		case FLU:
+			{
+				int PlayersInThisPacket = m_packet.Read1();
+				fl_PlayerNames.clear();
+				fl_PlayerStates.clear();
+				for (int i = 0; i<PlayersInThisPacket; ++i)
+				{
+					int PStatus = m_packet.Read1();
+					fl_PlayerStates.push_back(PStatus);
+					fl_PlayerNames.push_back(m_packet.ReadNT());
+				}
+				SCREENMAN->SendMessageToTopScreen(SM_FriendsUpdate);
+			}
+			break;
 		}
 		m_packet.ClearPacket();
 	}
@@ -698,6 +742,10 @@ void NetworkSyncManager::ReportPlayerOptions()
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
+int NetworkSyncManager::GetServerVersion()
+{
+	return m_ServerVersion;
+}
 void NetworkSyncManager::SelectUserSong()
 {
 	m_packet.ClearPacket();
@@ -706,6 +754,10 @@ void NetworkSyncManager::SelectUserSong()
 	m_packet.WriteNT( m_sMainTitle );
 	m_packet.WriteNT( m_sArtist );
 	m_packet.WriteNT( m_sSubTitle );
+	//Send songhash
+	if (m_ServerVersion >= 129) {
+		m_packet.WriteNT(GAMESTATE->m_pCurSong->GetFileHash());
+	}
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
