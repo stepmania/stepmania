@@ -181,14 +181,37 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 		vector <Song *> AllSongs = SONGMAN->GetAllSongs();
 		unsigned i;
-		for( i=0; i < AllSongs.size(); i++ )
+		bool found = false;
+		if (NSMAN->GetServerVersion() >= 129)
 		{
-			m_cSong = AllSongs[i];
-			if( ( !m_cSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
-					( !m_cSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
-					( !m_cSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
-					break;
+			//Dont earch by filehash if none was sent
+			if(!NSMAN->m_sFileHash.empty())
+				for (i = 0; i < AllSongs.size(); i++)
+				{
+					m_cSong = AllSongs[i];
+					if (NSMAN->m_sArtist == m_cSong->GetTranslitArtist() &&
+						NSMAN->m_sMainTitle == m_cSong->GetTranslitMainTitle() &&
+						NSMAN->m_sSubTitle == m_cSong->GetTranslitSubTitle() &&
+						NSMAN->m_sFileHash == m_cSong->GetFileHash())
+					{
+						found = true;
+						break;
+					}
+				}
+
 		}
+		//If we couldnt find it using file hash search for it without using it, if using SMSERVER < 129 it will go here
+		if(!found)
+			for (i = 0; i < AllSongs.size(); i++)
+			{
+				m_cSong = AllSongs[i];
+				if (NSMAN->m_sArtist == m_cSong->GetTranslitArtist() &&
+					NSMAN->m_sMainTitle == m_cSong->GetTranslitMainTitle() &&
+					NSMAN->m_sSubTitle == m_cSong->GetTranslitSubTitle())
+				{
+					break;
+				}
+			}
 
 		bool haveSong = i != AllSongs.size();
 
