@@ -21,6 +21,7 @@ bool NetworkSyncManager::Connect( const RString& addy, unsigned short port ) { r
 RString NetworkSyncManager::GetServerName() { return RString(); }
 void NetworkSyncManager::ReportNSSOnOff( int i ) { }
 void NetworkSyncManager::ReportScore( int playerID, int step, int score, int combo, float offset ) { }
+void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset, int numNotes) { }
 void NetworkSyncManager::ReportSongOver() { }
 void NetworkSyncManager::ReportStyle() {}
 void NetworkSyncManager::StartRequest( short position ) { }
