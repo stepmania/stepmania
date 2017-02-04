@@ -157,9 +157,16 @@ private:
 	void RemoveATIFromList(all_tracks_iterator* iter) const;
 	void RemoveATIFromList(all_tracks_const_iterator* iter) const;
 
+	// Mina stuf (Used for chartkey hashing)
+	std::vector<int> NonEmptyRowVector;
+	
 public:
 	void Init();
 
+	// Mina stuf (Used for chartkey hashing)
+	void LogNonEmptyRows();
+	std::vector<int>& GetNonEmptyRowVector() { return NonEmptyRowVector; };
+	
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
 	bool IsComposite() const;
