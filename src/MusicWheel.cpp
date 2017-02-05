@@ -1709,6 +1709,15 @@ public:
 		return 1;
 	}
 
+	static int Move(T* p, lua_State *L)
+	{
+		if (lua_isnil(L, 1)) { p->Move(0); }
+		else
+		{
+			p->Move(IArg(1));
+		}
+		return 1;
+	}
 
 	LunaMusicWheel()
 	{
@@ -1717,6 +1726,7 @@ public:
 		ADD_METHOD( IsRouletting );
 		ADD_METHOD( SelectSong );
 		ADD_METHOD( SelectCourse );
+		ADD_METHOD( Move );
 	}
 };
 

@@ -15,6 +15,9 @@ class ColorBitmapText : public BitmapText
 public:
 	void SetText( const RString &sText, const RString &sAlternateText = "", int iWrapWidthPixels = -1 );
 	void DrawPrimitives();
+	int lines = 0;
+	void ResetText();
+	void SetMaxLines(int iNumLines, int iDirection, unsigned int &scroll);
 	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
 	void SimpleAddLine( const RString &sAddition, int iWidthPixels );
 	void SetMaxLines( int iNumLines, int iDirection );
@@ -39,6 +42,24 @@ public:
 
 	void UpdateUsers();
 	void UpdateTextInput();
+
+
+	bool usersVisible = true;
+	bool enableChatboxInput = true;
+	void SetChatboxVisible(bool visibility);
+	void SetUsersVisible(bool visibility);
+	vector<BitmapText>* ToUsers();
+	void Scroll(int movescroll);
+	RString GetPreviousMsg();
+	RString GetNextMsg();
+	void SetInputText(RString text);
+	void ShowPreviousMsg();
+	void ShowNextMsg();
+	unsigned int GetScroll() { return scroll; }
+	unsigned int GetLines() { return m_textChatOutput.lines; }
+	// Lua
+	virtual void PushSelf(lua_State *L);
+
 private:
 	//Chatting
 	ColorBitmapText		m_textChatInput;
@@ -46,6 +67,9 @@ private:
 	AutoActor			m_sprChatInputBox;
 	AutoActor			m_sprChatOutputBox;
 	RString				m_sTextInput;
+	unsigned int m_sTextLastestInputsIndex;
+	vector<RString>		m_sTextLastestInputs;
+	unsigned int	    scroll;
 	RString				m_actualText;
 
 	vector <BitmapText>	m_textUsers;

@@ -189,28 +189,40 @@ void ScreenNetRoom::TweenOffScreen()
 	NSMAN->ReportNSSOnOff( 6 );
 }
 
-bool ScreenNetRoom::MenuStart( const InputEventPlus &input )
+bool ScreenNetRoom::MenuStart(const InputEventPlus &input)
 {
+	SelectCurrent();
+	ScreenNetSelectBase::MenuStart(input);
+	return true;
+}
+
+RoomWheel* ScreenNetRoom::GetRoomWheel()
+{
+	return &m_RoomWheel;
+}
+
+void ScreenNetRoom::SelectCurrent()
+{
+
 	m_RoomWheel.Select();
-	RoomWheelItemData* rwd = dynamic_cast<RoomWheelItemData*>( m_RoomWheel.LastSelected() ); 
-	if( rwd )
+	RoomWheelItemData* rwd = dynamic_cast<RoomWheelItemData*>(m_RoomWheel.LastSelected());
+	if (rwd)
 	{
-		if ( rwd->m_iFlags % 2 )
+		if (rwd->m_iFlags % 2)
 		{
 			m_sLastPickedRoom = rwd->m_sText;
-			ScreenTextEntry::TextEntry( SM_BackFromReqPass, ENTER_ROOM_REQPASSWORD, "", 255 );
-		} 
+			ScreenTextEntry::TextEntry(SM_BackFromReqPass, ENTER_ROOM_REQPASSWORD, "", 255);
+		}
 		else
 		{
 			NSMAN->m_SMOnlinePacket.ClearPacket();
-			NSMAN->m_SMOnlinePacket.Write1( 1 );
-			NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
-			NSMAN->m_SMOnlinePacket.WriteNT( rwd->m_sText );
-			NSMAN->SendSMOnline( );
+			NSMAN->m_SMOnlinePacket.Write1(1);
+			NSMAN->m_SMOnlinePacket.Write1(1); //Type (enter a room)
+			NSMAN->m_SMOnlinePacket.WriteNT(rwd->m_sText);
+			NSMAN->SendSMOnline();
 		}
 	}
-	ScreenNetSelectBase::MenuStart( input );
-	return true;
+	return;
 }
 
 bool ScreenNetRoom::MenuBack( const InputEventPlus &input )
@@ -311,6 +323,31 @@ void ScreenNetRoom::CreateNewRoom( const RString& rName,  const RString& rDesc, 
 		NSMAN->m_SMOnlinePacket.WriteNT( rPass );
 	NSMAN->SendSMOnline( );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the PlayerState. */
+class LunaScreenNetRoom : public Luna<ScreenNetRoom>
+{
+public:
+	static int GetMusicWheel(T* p, lua_State *L) {
+		p->GetRoomWheel()->PushSelf(L);
+		return 1;
+	}
+	static int SelectCurrent(T* p, lua_State *L) {
+		p->SelectCurrent();
+		return 1;
+	}
+	LunaScreenNetRoom()
+	{
+		ADD_METHOD(GetMusicWheel);
+		ADD_METHOD(SelectCurrent);
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS(ScreenNetRoom, ScreenNetSelectBase)
+// lua end
 
 #endif
 
