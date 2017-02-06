@@ -569,24 +569,28 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowEffects::GetRotationX(float fYOffset)
+float ArrowEffects::GetRotationX(const PlayerState* pPlayerState, float fYOffset)
 {
 	const float* fEffects = curr_options->m_fEffects;
 	float fRotation = 0;
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION_X] != 0 || fEffects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET] != 0 )
+		fRotation += ReceptorGetRotationX( pPlayerState );
 	if( fEffects[PlayerOptions::EFFECT_ROLL] != 0 )
 	{
-		fRotation = fEffects[PlayerOptions::EFFECT_ROLL] * fYOffset/2;
+		fRotation += fEffects[PlayerOptions::EFFECT_ROLL] * fYOffset/2;
 	}
 	return fRotation;
 }
 
-float ArrowEffects::GetRotationY(float fYOffset)
+float ArrowEffects::GetRotationY(const PlayerState* pPlayerState, float fYOffset)
 {
 	const float* fEffects = curr_options->m_fEffects;
 	float fRotation = 0;
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION_Y] != 0 || fEffects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET] != 0 )
+		fRotation += ReceptorGetRotationY( pPlayerState );
 	if( fEffects[PlayerOptions::EFFECT_TWIRL] != 0 )
 	{
-		fRotation = fEffects[PlayerOptions::EFFECT_TWIRL] * fYOffset/2;
+		fRotation += fEffects[PlayerOptions::EFFECT_TWIRL] * fYOffset/2;
 	}
 	return fRotation;
 }
@@ -595,7 +599,7 @@ float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBe
 {
 	const float* fEffects = curr_options->m_fEffects;
 	float fRotation = 0;
-	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 || fEffects[PlayerOptions::EFFECT_CONFUSION_OFFSET] != 0 )
 		fRotation += ReceptorGetRotationZ( pPlayerState );
 
 	// As usual, enable dizzy hold heads at your own risk. -Wolfman2000
@@ -616,6 +620,9 @@ float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState )
 	const float* fEffects = curr_options->m_fEffects;
 	float fRotation = 0;
 
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION_OFFSET] != 0 )
+		fRotation += fEffects[PlayerOptions::EFFECT_CONFUSION_OFFSET] * 180.0f/PI;
+	
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
 	{
 		float fConfRotation = pPlayerState->m_Position.m_fSongBeatVisible;
@@ -624,6 +631,47 @@ float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState )
 		fConfRotation *= -180/PI;
 		fRotation += fConfRotation;
 	}
+	
+	return fRotation;
+}
+
+float ArrowEffects::ReceptorGetRotationX( const PlayerState* pPlayerState ) 
+{
+	const float* fEffects = curr_options->m_fEffects;
+	float fRotation = 0;
+
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET] != 0 )
+		fRotation += fEffects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET] * 180.0f/PI;
+	
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION_X] != 0 )
+	{
+		float fConfRotation = pPlayerState->m_Position.m_fSongBeatVisible;
+		fConfRotation *= fEffects[PlayerOptions::EFFECT_CONFUSION_X];
+		fConfRotation = fmodf( fConfRotation, 2*PI );
+		fConfRotation *= -180/PI;
+		fRotation += fConfRotation;
+	}
+	
+	return fRotation;
+}
+
+float ArrowEffects::ReceptorGetRotationY( const PlayerState* pPlayerState ) 
+{
+	const float* fEffects = curr_options->m_fEffects;
+	float fRotation = 0;
+
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET] != 0 )
+		fRotation += fEffects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET] * 180.0f/PI;
+	
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION_Y] != 0 )
+	{
+		float fConfRotation = pPlayerState->m_Position.m_fSongBeatVisible;
+		fConfRotation *= fEffects[PlayerOptions::EFFECT_CONFUSION_Y];
+		fConfRotation = fmodf( fConfRotation, 2*PI );
+		fConfRotation *= -180/PI;
+		fRotation += fConfRotation;
+	}
+	
 	return fRotation;
 }
 
@@ -933,7 +981,7 @@ namespace
 	{
 		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 		ArrowEffects::SetCurrentOptions(&ps->m_PlayerOptions.GetCurrent());
-		lua_pushnumber(L, ArrowEffects::GetRotationX(FArg(2)));
+		lua_pushnumber(L, ArrowEffects::GetRotationX(ps,FArg(2)));
 		return 1;
 	}
 
@@ -942,7 +990,7 @@ namespace
 	{
 		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 		ArrowEffects::SetCurrentOptions(&ps->m_PlayerOptions.GetCurrent());
-		lua_pushnumber(L, ArrowEffects::GetRotationY(FArg(2)));
+		lua_pushnumber(L, ArrowEffects::GetRotationY(ps,FArg(2)));
 		return 1;
 	}
 

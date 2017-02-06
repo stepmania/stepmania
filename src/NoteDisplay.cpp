@@ -937,10 +937,10 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		{
 			case NCSM_Disabled:
 				// XXX: Actor rotations use degrees, Math uses radians. Convert here.
-				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * PI_180;
+				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset) * PI_180;
 				break;
 			case NCSM_Offset:
-				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * PI_180;
+				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset) * PI_180;
 				column_args.rot_handler->EvalForBeat(column_args.song_beat, cur_beat, sp_rot);
 				break;
 			case NCSM_Position:
@@ -1293,17 +1293,17 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 		case NCSM_Disabled:
 			if(!bIsHoldCap)
 			{
-				ae_rot.x= ArrowEffects::GetRotationX(fYOffset);
+				ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset);
 			}
-			ae_rot.y= ArrowEffects::GetRotationY(fYOffset);
+			ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset);
 			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
 			break;
 		case NCSM_Offset:
 			if(!bIsHoldCap)
 			{
-				ae_rot.x= ArrowEffects::GetRotationX(fYOffset);
+				ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset);
 			}
-			ae_rot.y= ArrowEffects::GetRotationY(fYOffset);
+			ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset);
 			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
 			column_args.rot_handler->EvalForBeat(column_args.song_beat, spline_beat, sp_rot);
 			break;
@@ -1466,9 +1466,13 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	{
 		case NCSM_Disabled:
 			ae_rot.z= ArrowEffects::ReceptorGetRotationZ(player_state);
+			ae_rot.x= ArrowEffects::ReceptorGetRotationX(player_state);
+			ae_rot.y= ArrowEffects::ReceptorGetRotationY(player_state);
 			break;
 		case NCSM_Offset:
 			ae_rot.z= ArrowEffects::ReceptorGetRotationZ(player_state);
+			ae_rot.x= ArrowEffects::ReceptorGetRotationX(player_state);
+			ae_rot.y= ArrowEffects::ReceptorGetRotationY(player_state);
 			NCR_current.m_rot_handler.EvalForReceptor(song_beat, sp_rot);
 			break;
 		case NCSM_Position:
