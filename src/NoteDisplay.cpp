@@ -1291,18 +1291,12 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 	switch(column_args.rot_handler->m_spline_mode)
 	{
 		case NCSM_Disabled:
-			if(!bIsHoldCap)
-			{
-				ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset);
-			}
+			ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset, bIsHoldCap);
 			ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset);
 			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
 			break;
 		case NCSM_Offset:
-			if(!bIsHoldCap)
-			{
-				ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset);
-			}
+			ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset, bIsHoldCap);
 			ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset);
 			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
 			column_args.rot_handler->EvalForBeat(column_args.song_beat, spline_beat, sp_rot);

@@ -57,7 +57,7 @@ public:
 
 	// Due to the handling logic for holds on Twirl, we need to use an offset instead.
 	// It's more intuitive for Roll to be based off offset, so use an offset there too.
-	static float GetRotationX(const PlayerState* pPlayerState, float fYOffset);
+	static float GetRotationX(const PlayerState* pPlayerState, float fYOffset, bool bIsHoldCap);
 	static float GetRotationY(const PlayerState* pPlayerState, float fYOffset);
 	
 	static float ReceptorGetRotationX(	const PlayerState* pPlayerState);

@@ -569,13 +569,13 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowEffects::GetRotationX(const PlayerState* pPlayerState, float fYOffset)
+float ArrowEffects::GetRotationX(const PlayerState* pPlayerState, float fYOffset, bool bIsHoldCap)
 {
 	const float* fEffects = curr_options->m_fEffects;
 	float fRotation = 0;
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION_X] != 0 || fEffects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET] != 0 )
 		fRotation += ReceptorGetRotationX( pPlayerState );
-	if( fEffects[PlayerOptions::EFFECT_ROLL] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_ROLL] != 0 && !bIsHoldCap )
 	{
 		fRotation += fEffects[PlayerOptions::EFFECT_ROLL] * fYOffset/2;
 	}
@@ -981,7 +981,8 @@ namespace
 	{
 		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 		ArrowEffects::SetCurrentOptions(&ps->m_PlayerOptions.GetCurrent());
-		lua_pushnumber(L, ArrowEffects::GetRotationX(ps,FArg(2)));
+		bool bIsHoldCap = false;
+		lua_pushnumber(L, ArrowEffects::GetRotationX(ps,FArg(2), bIsHoldCap));
 		return 1;
 	}
 
