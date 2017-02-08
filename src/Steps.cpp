@@ -33,6 +33,9 @@
 /* register DisplayBPM with StringConversion */
 #include "EnumHelper.h"
 
+// For hashing hart keys - Mina
+#include "CryptManager.h"
+
 static const char *DisplayBPMNames[] =
 {
 	"Actual",
@@ -613,6 +616,77 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 	copy( v, v + NUM_PLAYERS, m_CachedRadarValues );
 	m_bAreCachedRadarValuesJustLoaded = true;
 }
+
+std::string Steps::GenerateChartKey()
+{
+	ChartKey = this->GenerateChartKey(*m_pNoteData, this->GetTimingData());
+	return ChartKey;
+}
+std::string Steps::GetChartKey()
+{
+	if (ChartKey.empty()) {
+		this->Decompress();
+		ChartKey = this->GenerateChartKey(*m_pNoteData, this->GetTimingData());
+		this->Compress();
+	}
+	return ChartKey;
+}
+std::string Steps::GenerateChartKey(NoteData &nd, TimingData *td)
+{
+	std::string k = "";
+	std::string o = "";
+	float bpm;
+	nd.LogNonEmptyRows();
+	std::vector<int>& nerv = nd.GetNonEmptyRowVector();
+
+
+	std::string firstHalf = "";
+	std::string secondHalf = "";
+
+#pragma omp parallel sections
+	{
+#pragma omp section
+		{
+			for (size_t r = 0; r < nerv.size() / 2; r++) {
+				int row = nerv[r];
+				for (int t = 0; t < nd.GetNumTracks(); ++t) {
+					const TapNote &tn = nd.GetTapNote(t, row);
+					std::ostringstream os;
+					os << tn.type;
+					firstHalf.append(os.str());
+				}
+				bpm = td->GetBPMAtRow(row);
+				std::ostringstream os;
+				os << static_cast<int>(bpm + 0.374643f);
+				firstHalf.append(os.str());
+			}
+		}
+
+#pragma omp section
+		{
+			for (size_t r = nerv.size() / 2; r < nerv.size(); r++) {
+				int row = nerv[r];
+				for (int t = 0; t < nd.GetNumTracks(); ++t) {
+					const TapNote &tn = nd.GetTapNote(t, row);
+					std::ostringstream os;
+					os << tn.type;
+					secondHalf.append(os.str());
+				}
+				bpm = td->GetBPMAtRow(row);
+				std::ostringstream os;
+				os << static_cast<int>(bpm + 0.374643f);
+				firstHalf.append(os.str());
+			}
+		}
+	}
+	k = firstHalf + secondHalf;
+
+	//ChartKeyRecord = k;
+	o.append("X");	// I was thinking of using "C" to indicate chart.. however.. X is cooler... - Mina
+	o.append(BinaryToHex(CryptManager::GetSHA1ForString(k)));
+	return o;
+}
+
 
 // lua start
 #include "LuaBinding.h"

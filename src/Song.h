@@ -188,6 +188,9 @@ public:
 	/** @brief The transliterated artist of the Song, if it exists. */
 	RString m_sArtistTranslit;
 
+	RString m_sFileHash;
+	RString GetFileHash();
+
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit*
 	 * below. Otherwise, they return the main titles. */
 	RString GetDisplayMainTitle() const;
