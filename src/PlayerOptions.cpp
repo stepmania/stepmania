@@ -209,6 +209,11 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],		"Drunk" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],		"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION],	"Confusion" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_OFFSET],	"ConfusionOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_X],	"ConfusionX" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_X_OFFSET],	"ConfusionXOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y],	"ConfusionY" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y_OFFSET],	"ConfusionYOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_MINI],		"Mini" );
 	AddPart( AddTo, m_fEffects[EFFECT_TINY],		"Tiny" );
 	AddPart( AddTo, m_fEffects[EFFECT_FLIP],		"Flip" );
@@ -512,6 +517,11 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"drunk", EFFECT_DRUNK},
 			{"dizzy", EFFECT_DIZZY},
 			{"confusion", EFFECT_CONFUSION},
+			{"confusionoffset", EFFECT_CONFUSION_OFFSET},
+			{"confusionx", EFFECT_CONFUSION_X},
+			{"confusionxoffset", EFFECT_CONFUSION_X_OFFSET},
+			{"confusiony", EFFECT_CONFUSION_Y},
+			{"confusionyoffset", EFFECT_CONFUSION_Y_OFFSET},
 			{"mini", EFFECT_MINI},
 			{"tiny", EFFECT_TINY},
 			{"flip", EFFECT_FLIP},
@@ -1191,6 +1201,11 @@ public:
 	FLOAT_INTERFACE(Drunk, Effects[PlayerOptions::EFFECT_DRUNK], true);
 	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
 	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION], true);
+	FLOAT_INTERFACE(ConfusionOffset, Effects[PlayerOptions::EFFECT_CONFUSION_OFFSET], true);
+	FLOAT_INTERFACE(ConfusionX, Effects[PlayerOptions::EFFECT_CONFUSION_X], true);
+	FLOAT_INTERFACE(ConfusionXOffset, Effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET], true);
+	FLOAT_INTERFACE(ConfusionY, Effects[PlayerOptions::EFFECT_CONFUSION_Y], true);
+	FLOAT_INTERFACE(ConfusionYOffset, Effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET], true);
 	FLOAT_INTERFACE(Mini, Effects[PlayerOptions::EFFECT_MINI], true);
 	FLOAT_INTERFACE(Tiny, Effects[PlayerOptions::EFFECT_TINY], true);
 	FLOAT_INTERFACE(Flip, Effects[PlayerOptions::EFFECT_FLIP], true);
@@ -1544,6 +1559,11 @@ public:
 		ADD_METHOD(Drunk);
 		ADD_METHOD(Dizzy);
 		ADD_METHOD(Confusion);
+		ADD_METHOD(ConfusionOffset);
+		ADD_METHOD(ConfusionX);
+		ADD_METHOD(ConfusionXOffset);
+		ADD_METHOD(ConfusionY);
+		ADD_METHOD(ConfusionYOffset);
 		ADD_METHOD(Mini);
 		ADD_METHOD(Tiny);
 		ADD_METHOD(Flip);

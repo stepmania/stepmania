@@ -541,10 +541,32 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 		trans.rot.x= Rage::DegreesToRadians(
 			effects[PlayerOptions::EFFECT_ROLL] * y_offset * .5f);
 	}
+	if(effects[PlayerOptions::EFFECT_CONFUSION_OFFSET] != 0.f)
+	{
+		trans.rot.z+= effects[PlayerOptions::EFFECT_CONFUSION_OFFSET];
+	}
 	if(effects[PlayerOptions::EFFECT_CONFUSION] != 0.f)
 	{
-		trans.rot.z+= fmodf(m_music_beat *
+		trans.rot.z-= fmodf(m_music_beat *
 			effects[PlayerOptions::EFFECT_CONFUSION], 2.0 * Rage::PI);
+	}
+	if(effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET] != 0.f)
+	{
+		trans.rot.x+= effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET];
+	}
+	if(effects[PlayerOptions::EFFECT_CONFUSION_X] != 0.f)
+	{
+		trans.rot.x-= fmodf(m_music_beat *
+			effects[PlayerOptions::EFFECT_CONFUSION_X], 2.0 * Rage::PI);
+	}
+	if(effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET] != 0.f)
+	{
+		trans.rot.y+= effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET];
+	}
+	if(effects[PlayerOptions::EFFECT_CONFUSION_Y] != 0.f)
+	{
+		trans.rot.y-= fmodf(m_music_beat *
+			effects[PlayerOptions::EFFECT_CONFUSION_Y], 2.0 * Rage::PI);
 	}
 	if(effects[PlayerOptions::EFFECT_DIZZY] != 0.f)
 	{
