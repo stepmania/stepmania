@@ -3519,6 +3519,11 @@ save yourself some time, copy this for undocumented things:
 		If the optional second argument is passed, sets the speed at which the transition occurs.
 	</Function>
 	<Function name='Confusion' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionX' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionXOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionY' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionYOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Cover' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Cross' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Dark' return='float, float' arguments='float value, float approach_speed'> </Function>
