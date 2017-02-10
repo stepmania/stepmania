@@ -124,6 +124,14 @@ public:
 	void SetChartStyle( RString sChartStyle );
 	static bool MakeValidEditDescription( RString &sPreferredDescription );	// return true if was modified
 
+	/* This is a reimplementation of the lua version of the script to generate chart keys, except this time
+	using the notedata stored in game memory immediately after reading it than parsing it using lua. - Mina */
+	RString GenerateChartKey(NoteData &nd, TimingData *td);
+	RString GenerateChartKey();
+	RString ChartKey;
+	RString GetChartKey();
+	void SetChartKey(const RString &k) { ChartKey = k; }
+
 	void SetLoadedFromProfile( ProfileSlot slot )	{ m_LoadedFromProfile = slot; }
 	void SetMeter( int meter );
 	void SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] );

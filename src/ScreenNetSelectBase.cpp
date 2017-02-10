@@ -28,6 +28,7 @@
 
 AutoScreenMessage( SM_AddToChat );
 AutoScreenMessage( SM_UsersUpdate );
+AutoScreenMessage( SM_FriendsUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
 REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
@@ -134,6 +135,10 @@ void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_UsersUpdate )
 	{
 		UpdateUsers();
+	}
+	else if (SM == SM_FriendsUpdate)
+	{
+		MESSAGEMAN->Broadcast("FriendsUpdate");
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );

@@ -21,6 +21,7 @@ bool NetworkSyncManager::Connect( const RString& addy, unsigned short port ) { r
 RString NetworkSyncManager::GetServerName() { return RString(); }
 void NetworkSyncManager::ReportNSSOnOff( int i ) { }
 void NetworkSyncManager::ReportScore( int playerID, int step, int score, int combo, float offset ) { }
+void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset, int numNotes) { }
 void NetworkSyncManager::ReportSongOver() { }
 void NetworkSyncManager::ReportStyle() {}
 void NetworkSyncManager::StartRequest( short position ) { }
@@ -55,6 +56,7 @@ AutoScreenMessage( SM_AddToChat );
 AutoScreenMessage( SM_ChangeSong );
 AutoScreenMessage( SM_GotEval );
 AutoScreenMessage( SM_UsersUpdate );
+AutoScreenMessage( SM_FriendsUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
 int NetworkSyncManager::GetSMOnlineSalt()
@@ -240,6 +242,53 @@ RString NetworkSyncManager::GetServerName()
 	return m_ServerName;
 }
 
+//Same as the one below except for ctr = uint8_t(STATSMAN->m_CurStageStats.m_player[playerID].GetGrade() * 16 + numNotes);
+//Im keeping the old one because it's used for single tap notes
+void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset, int numNotes)
+{
+	if (!useSMserver) //Make sure that we are using the network
+		return;
+
+	LOG->Trace("Player ID %i combo = %i", playerID, combo);
+	m_packet.ClearPacket();
+
+	m_packet.Write1(NSCGSU);
+	step = TranslateStepType(step);
+	uint8_t ctr = (uint8_t)(playerID * 16 + step - (SMOST_HITMINE - 1));
+	m_packet.Write1(ctr);
+
+	ctr = uint8_t(STATSMAN->m_CurStageStats.m_player[playerID].GetGrade() * 16 + numNotes);
+
+	if (STATSMAN->m_CurStageStats.m_player[playerID].m_bFailed)
+		ctr = uint8_t(112);	//Code for failed (failed constant seems not to work)
+
+	m_packet.Write1(ctr);
+	m_packet.Write4(score);
+	m_packet.Write2((uint16_t)combo);
+	m_packet.Write2((uint16_t)m_playerLife[playerID]);
+
+	// Offset Info
+	// Note: if a 0 is sent, then disregard data.
+
+	// ASSUMED: No step will be more than 16 seconds off center.
+	// If this assumption is false, read 16 seconds in either direction.
+	int iOffset = int((offset + 16.384)*2000.0f);
+
+	if (iOffset>65535)
+		iOffset = 65535;
+	if (iOffset<1)
+		iOffset = 1;
+
+	// Report 0 if hold, or miss (don't forget mines should report)
+	if (step == SMOST_HITMINE || step > SMOST_W1)
+		iOffset = 0;
+
+	m_packet.Write2((uint16_t)iOffset);
+
+	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
+
+}
+
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset)
 {
 	if( !useSMserver ) //Make sure that we are using the network
@@ -390,6 +439,31 @@ void NetworkSyncManager::StartRequest( short position )
 	for (int i=0; i<2-players; ++i)
 		m_packet.WriteNT("");	//Write a NULL if no player
 
+	//Send song hash/chartkey
+	if (m_ServerVersion >= 129) {
+		tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+		if (tSteps != NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1)) {
+			m_packet.WriteNT(tSteps->GetChartKey());
+		} 
+		else 
+		{
+			m_packet.WriteNT("");
+		}
+
+		tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
+		if (tSteps != NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2)) {
+			m_packet.WriteNT(tSteps->GetChartKey());
+		} 
+		else 
+		{
+			m_packet.WriteNT("");
+		}
+
+		int rate = (int)(GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * 100);
+		m_packet.Write1(rate);
+		m_packet.WriteNT(GAMESTATE->m_pCurSong->GetFileHash());
+	}
+	
 	//This needs to be reset before ScreenEvaluation could possibly be called
 	m_EvalPlayerData.clear();
 
@@ -607,6 +681,12 @@ void NetworkSyncManager::ProcessInput()
 				m_sMainTitle = m_packet.ReadNT();
 				m_sArtist = m_packet.ReadNT();
 				m_sSubTitle = m_packet.ReadNT();
+				//Read songhash
+				if (m_ServerVersion >= 129) {
+					m_sFileHash = m_packet.ReadNT();
+				} else {
+					m_sFileHash = "" ;
+				}
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}
 			break;
@@ -668,6 +748,20 @@ void NetworkSyncManager::ProcessInput()
 				m_packet.ClearPacket();
 			}
 			break;
+		case FLU:
+			{
+				int PlayersInThisPacket = m_packet.Read1();
+				fl_PlayerNames.clear();
+				fl_PlayerStates.clear();
+				for (int i = 0; i<PlayersInThisPacket; ++i)
+				{
+					int PStatus = m_packet.Read1();
+					fl_PlayerStates.push_back(PStatus);
+					fl_PlayerNames.push_back(m_packet.ReadNT());
+				}
+				SCREENMAN->SendMessageToTopScreen(SM_FriendsUpdate);
+			}
+			break;
 		}
 		m_packet.ClearPacket();
 	}
@@ -698,6 +792,10 @@ void NetworkSyncManager::ReportPlayerOptions()
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
+int NetworkSyncManager::GetServerVersion()
+{
+	return m_ServerVersion;
+}
 void NetworkSyncManager::SelectUserSong()
 {
 	m_packet.ClearPacket();
@@ -706,6 +804,10 @@ void NetworkSyncManager::SelectUserSong()
 	m_packet.WriteNT( m_sMainTitle );
 	m_packet.WriteNT( m_sArtist );
 	m_packet.WriteNT( m_sSubTitle );
+	//Send songhash
+	if (m_ServerVersion >= 129) {
+		m_packet.WriteNT(GAMESTATE->m_pCurSong->GetFileHash());
+	}
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 

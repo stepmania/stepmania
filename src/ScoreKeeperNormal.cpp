@@ -605,7 +605,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	float offset = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.fTapNoteOffset;
 	NSMAN->ReportScore( pn, scoreOfLastTap,
 			m_pPlayerStageStats->m_iScore,
-			m_pPlayerStageStats->m_iCurCombo, offset );
+			m_pPlayerStageStats->m_iCurCombo, offset, m_iNumNotesHitThisRow);
 	Message msg( "ScoreChanged" );
 	msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
