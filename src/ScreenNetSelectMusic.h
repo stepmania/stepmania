@@ -22,6 +22,11 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	void StartSelectedSong();
+	bool SelectCurrent();
+
+	MusicWheel* GetMusicWheel();
+	// Lua
+	virtual void PushSelf(lua_State *L);
 
 protected:
 	virtual bool MenuStart( const InputEventPlus &input );

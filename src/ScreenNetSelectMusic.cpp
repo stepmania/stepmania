@@ -424,36 +424,40 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	return true;
 }
 
-bool ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuStart(const InputEventPlus &input)
 {
+	return SelectCurrent();
+}
+bool ScreenNetSelectMusic::SelectCurrent()
+{
+
 	bool bResult = m_MusicWheel.Select();
 
-	if( !bResult )
+	if (!bResult)
 		return true;
 
-	if( m_MusicWheel.GetSelectedType() != WheelItemDataType_Song )
+	if (m_MusicWheel.GetSelectedType() != WheelItemDataType_Song)
 		return true;
 
 	Song * pSong = m_MusicWheel.GetSelectedSong();
 
-	if( pSong == NULL )
+	if (pSong == NULL)
 		return false;
 
-	GAMESTATE->m_pCurSong.Set( pSong );
+	GAMESTATE->m_pCurSong.Set(pSong);
 
-	if( NSMAN->useSMserver )
+	if (NSMAN->useSMserver)
 	{
 		NSMAN->m_sArtist = pSong->GetTranslitArtist();
 		NSMAN->m_sMainTitle = pSong->GetTranslitMainTitle();
 		NSMAN->m_sSubTitle = pSong->GetTranslitSubTitle();
 		NSMAN->m_iSelectMode = 2; // Command for user selecting song
-		NSMAN->SelectUserSong ();
+		NSMAN->SelectUserSong();
 	}
 	else
 		StartSelectedSong();
 	return true;
 }
-
 bool ScreenNetSelectMusic::MenuBack( const InputEventPlus &input )
 {
 	SOUND->StopMusic();
@@ -602,6 +606,37 @@ void ScreenNetSelectMusic::Update( float fDeltaTime )
 	}
 	ScreenNetSelectBase::Update( fDeltaTime );
 }
+
+MusicWheel* ScreenNetSelectMusic::GetMusicWheel()
+{
+	return &m_MusicWheel;
+}
+
+
+// lua start
+#include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the PlayerState. */
+class LunaScreenNetSelectMusic : public Luna<ScreenNetSelectMusic>
+{
+public:
+	static int GetMusicWheel(T* p, lua_State *L) {
+		p->GetMusicWheel()->PushSelf(L);
+		return 1;
+	}
+	static int SelectCurrent(T* p, lua_State *L) {
+		p->SelectCurrent();
+		return 1;
+	}
+	LunaScreenNetSelectMusic()
+	{
+		ADD_METHOD(GetMusicWheel);
+		ADD_METHOD(SelectCurrent);
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS(ScreenNetSelectMusic, ScreenNetSelectBase)
+// lua end
 
 #endif
 

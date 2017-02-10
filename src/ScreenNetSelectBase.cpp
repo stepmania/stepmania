@@ -63,6 +63,8 @@ void ScreenNetSelectBase::Init()
 	m_textChatOutput.SetText( NSMAN->m_sChatText );
 	m_textChatOutput.SetMaxLines( SHOW_CHAT_LINES, 1 );
 
+	scroll = 0;
+
 	//Display users list
 	UpdateUsers();
 
@@ -84,13 +86,38 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 
 	switch( input.DeviceI.button )
 	{
+	case KEY_PGUP:
+		if (!bHoldingCtrl) {
+			ShowPreviousMsg();
+			break;
+		}
+		else {
+			Scroll(1);
+			Scroll(1);
+			break;
+		}
+	case KEY_PGDN:
+		if (!bHoldingCtrl) {
+			ShowNextMsg();
+			break;
+		}
+		else {
+			Scroll(-1);
+			Scroll(-1);
+			break;
+		}
 	case KEY_ENTER:
 	case KEY_KP_ENTER:
 		if (!bHoldingCtrl)
 		{
-			if ( m_sTextInput != "" )
-				NSMAN->SendChat( m_sTextInput );
-			m_sTextInput="";
+			if (m_sTextInput != "") {
+				NSMAN->SendChat(m_sTextInput);
+				m_sTextLastestInputs.push_back(m_sTextInput);
+				m_sTextLastestInputsIndex = 0;
+				if (m_sTextLastestInputs.size() > 10)
+					m_sTextLastestInputs.erase(m_sTextLastestInputs.begin());
+			}
+			m_sTextInput = "";
 			UpdateTextInput();
 			return true;
 		}
@@ -106,7 +133,9 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 
 		if( (c >= L' ') && (!bHoldingCtrl) )
 		{
-			m_sTextInput += WStringToRString(wstring()+c);
+			if (!enableChatboxInput)
+				return true;
+			m_sTextInput += WStringToRString(wstring() + c);
 			UpdateTextInput();
 		}
 
@@ -197,6 +226,53 @@ void ScreenNetSelectBase::UpdateUsers()
 
 		this->AddChild( &m_textUsers[i] );
 	}
+	if (!usersVisible)
+		for (unsigned i = 0; i < NSMAN->m_ActivePlayer.size(); i++)
+			m_textUsers[i].SetVisible(false);
+	MESSAGEMAN->Broadcast("UsersUpdate");
+}
+
+void ScreenNetSelectBase::Scroll(int movescroll)
+{
+	if (scroll + movescroll >= 0 && scroll + movescroll <= m_textChatOutput.lines - SHOW_CHAT_LINES)
+		scroll += movescroll;
+	m_textChatOutput.ResetText();
+	m_textChatOutput.SetMaxLines(SHOW_CHAT_LINES, 1, scroll);
+	return;
+}
+
+RString ScreenNetSelectBase::GetPreviousMsg()
+{
+	m_sTextLastestInputsIndex += 1;
+	if (m_sTextLastestInputsIndex <= m_sTextLastestInputs.size() && m_sTextLastestInputsIndex > 0)
+		return m_sTextLastestInputs[m_sTextLastestInputs.size() - m_sTextLastestInputsIndex];
+	m_sTextLastestInputsIndex = m_sTextLastestInputs.size();
+	return m_sTextLastestInputsIndex == 0 ? "" : m_sTextLastestInputs[m_sTextLastestInputs.size() - m_sTextLastestInputsIndex];
+}
+
+RString ScreenNetSelectBase::GetNextMsg()
+{
+	m_sTextLastestInputsIndex -= 1;
+	if (m_sTextLastestInputsIndex <= m_sTextLastestInputs.size() && m_sTextLastestInputsIndex > 0)
+		return m_sTextLastestInputs[m_sTextLastestInputs.size() - m_sTextLastestInputsIndex];
+	m_sTextLastestInputsIndex = 0;
+	return "";
+}
+void ScreenNetSelectBase::ShowPreviousMsg()
+{
+	SetInputText(GetPreviousMsg());
+	return;
+}
+void ScreenNetSelectBase::ShowNextMsg()
+{
+	SetInputText(GetNextMsg());
+	return;
+}
+void ScreenNetSelectBase::SetInputText(RString text)
+{
+	m_sTextInput = text;
+	UpdateTextInput();
+	return;
 }
 
 /** ColorBitmapText ***********************************************************/
@@ -324,8 +400,190 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 	if( iLineWidth > 0 )
 		SimpleAddLine( sCurrentLine, iLineWidth );
 
+	lines = m_wTextLines.size();
+
 	BuildChars();
 	UpdateBaseZoom();
+}
+
+void ColorBitmapText::ResetText()
+{
+	ASSERT(m_pFont != NULL);
+
+	int iWrapWidthPixels = m_iWrapWidthPixels;
+
+	// Set up the first color.
+	m_vColors.clear();
+	ColorChange change;
+	change.c = RageColor(1, 1, 1, 1);
+	change.l = 0;
+	m_vColors.push_back(change);
+
+	m_wTextLines.clear();
+
+	RString sCurrentLine = "";
+	int		iLineWidth = 0;
+
+	RString sCurrentWord = "";
+	int		iWordWidth = 0;
+	int		iGlyphsSoFar = 0;
+
+	for (unsigned i = 0; i < m_sText.length(); i++)
+	{
+		int iCharsLeft = m_sText.length() - i - 1;
+
+		// First: Check for the special (color) case.
+
+		if (m_sText.length() > 8 && i < m_sText.length() - 9)
+		{
+			RString FirstThree = m_sText.substr(i, 3);
+			if (FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8)
+			{
+				ColorChange cChange;
+				unsigned int r, g, b;
+				sscanf(m_sText.substr(i, 9).c_str(), "|%*c0%2x%2x%2x", &r, &g, &b);
+				cChange.c = RageColor(r / 255.f, g / 255.f, b / 255.f, 1.f);
+				cChange.l = iGlyphsSoFar;
+				if (iGlyphsSoFar == 0)
+					m_vColors[0] = cChange;
+				else
+					m_vColors.push_back(cChange);
+				i += 8;
+				continue;
+			}
+		}
+
+		int iCharLength = min(utf8_get_char_len(m_sText[i]), iCharsLeft + 1);
+		RString curCharStr = m_sText.substr(i, iCharLength);
+		wchar_t curChar = utf8_get_char(curCharStr);
+		i += iCharLength - 1;
+		int iCharWidth = m_pFont->GetLineWidthInSourcePixels(wstring() + curChar);
+
+		switch (curChar)
+		{
+		case L' ':
+			if ( /* iLineWidth == 0 &&*/ iWordWidth == 0)
+				break;
+			sCurrentLine += sCurrentWord + " ";
+			iLineWidth += iWordWidth + iCharWidth;
+			sCurrentWord = "";
+			iWordWidth = 0;
+			iGlyphsSoFar++;
+			break;
+		case L'\n':
+			if (iLineWidth + iWordWidth > iWrapWidthPixels)
+			{
+				SimpleAddLine(sCurrentLine, iLineWidth);
+				if (iWordWidth > 0)
+					iLineWidth = iWordWidth +	//Add the width of a space
+					m_pFont->GetLineWidthInSourcePixels(L" ");
+				sCurrentLine = sCurrentWord + " ";
+				iWordWidth = 0;
+				sCurrentWord = "";
+				iGlyphsSoFar++;
+			}
+			else
+			{
+				SimpleAddLine(sCurrentLine + sCurrentWord, iLineWidth + iWordWidth);
+				sCurrentLine = "";	iLineWidth = 0;
+				sCurrentWord = "";	iWordWidth = 0;
+			}
+			break;
+		default:
+			if (iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0)
+			{
+				SimpleAddLine(sCurrentWord, iWordWidth);
+				sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
+			}
+			else if (iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels)
+			{
+				SimpleAddLine(sCurrentLine, iLineWidth);
+				sCurrentLine = "";
+				iLineWidth = 0;
+				sCurrentWord += curCharStr;
+				iWordWidth += iCharWidth;
+			}
+			else
+			{
+				sCurrentWord += curCharStr;
+				iWordWidth += iCharWidth;
+			}
+			iGlyphsSoFar++;
+			break;
+		}
+	}
+
+	if (iWordWidth > 0)
+	{
+		sCurrentLine += sCurrentWord;
+		iLineWidth += iWordWidth;
+	}
+
+	if (iLineWidth > 0)
+		SimpleAddLine(sCurrentLine, iLineWidth);
+	lines = m_wTextLines.size();
+	BuildChars();
+	UpdateBaseZoom();
+}
+
+void ColorBitmapText::SetMaxLines(int iNumLines, int iDirection, unsigned int &scroll)
+{
+	iNumLines = max(0, iNumLines);
+	iNumLines = min((int)m_wTextLines.size(), iNumLines);
+	if (iDirection == 0)
+	{
+		// Crop all bottom lines
+		m_wTextLines.resize(iNumLines);
+		m_iLineWidths.resize(iNumLines);
+	}
+	else
+	{
+		// Because colors are relative to the beginning, we have to crop them back
+		unsigned shift = 0;
+		if (scroll >  m_iLineWidths.size() - iNumLines)
+			scroll = m_iLineWidths.size() - iNumLines;
+
+		for (unsigned i = 0; i < m_wTextLines.size() - iNumLines - scroll; i++)
+			shift += m_wTextLines[i].length();
+
+		// When we're cutting out text, we need to maintain the last
+		// color, so our text at the top doesn't become colorless.
+		RageColor LastColor;
+
+		for (unsigned i = 0; i < m_vColors.size(); i++)
+		{
+			m_vColors[i].l -= shift;
+			if (m_vColors[i].l < 0)
+			{
+				LastColor = m_vColors[i].c;
+				m_vColors.erase(m_vColors.begin() + i);
+				i--;
+			}
+		}
+
+		// If we already have a color set for the first char
+		// do not override it.
+		if (m_vColors.size() > 0 && m_vColors[0].l > 0)
+		{
+			ColorChange tmp;
+			tmp.c = LastColor;
+			tmp.l = 0;
+			m_vColors.insert(m_vColors.begin(), tmp);
+		}
+
+		if (scroll == 0 || m_iLineWidths.size() <= iNumLines || scroll > m_iLineWidths.size() - iNumLines) {
+			m_wTextLines.erase(m_wTextLines.begin(), m_wTextLines.end() - iNumLines);
+			m_iLineWidths.erase(m_iLineWidths.begin(), m_iLineWidths.end() - iNumLines);
+		}
+		else {
+			m_wTextLines.erase(m_wTextLines.begin(), m_wTextLines.end() - iNumLines - scroll);
+			m_iLineWidths.erase(m_iLineWidths.begin(), m_iLineWidths.end() - iNumLines - scroll);
+
+			m_wTextLines.erase(m_wTextLines.end() - scroll, m_wTextLines.end());
+			m_iLineWidths.erase(m_iLineWidths.begin(), m_iLineWidths.end());
+		}
+	}
+	BuildChars();
 }
 
 void ColorBitmapText::SimpleAddLine( const RString &sAddition, const int iWidthPixels) 
@@ -438,6 +696,149 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 	BuildChars();
 }
 
+
+void ScreenNetSelectBase::SetChatboxVisible(bool visibility)
+{
+	m_textChatInput.SetVisible(visibility);
+	m_textChatOutput.SetVisible(visibility);
+	return;
+}
+void ScreenNetSelectBase::SetUsersVisible(bool visibility)
+{
+	usersVisible = visibility;
+	for (unsigned int i = 0; i < m_textUsers.size(); i++)
+		m_textUsers[i].SetVisible(visibility);
+	return;
+}
+
+vector<BitmapText>* ScreenNetSelectBase::ToUsers()
+{
+	return &m_textUsers;
+}
+
+// lua start
+#include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the PlayerState. */
+class LunaScreenNetSelectBase : public Luna<ScreenNetSelectBase>
+{
+	static int ChatboxInput(T* p, lua_State *L)
+	{
+		if (!lua_isnil(L, 1))
+			p->enableChatboxInput = BArg(1);
+		return 1;
+	}
+	static int UsersVisible(T* p, lua_State *L)
+	{
+		if (!lua_isnil(L, 1))
+			p->SetUsersVisible(BArg(1));
+		return 1;
+	}
+	static int ChatboxVisible(T* p, lua_State *L)
+	{
+		if (!lua_isnil(L, 1))
+			p->SetChatboxVisible(BArg(1));
+		return 1;
+	}
+	static int GetUserQty(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->ToUsers()->size());
+		return 1;
+	}
+	static int GetUser(T* p, lua_State *L)
+	{
+		if (IArg(1) <= p->ToUsers()->size() && IArg(1) >= 1)
+			lua_pushstring(L, (*(p->ToUsers()))[IArg(1) - 1].GetText());
+		else
+			lua_pushstring(L, "");
+		return 1;
+	}
+	static int GetUserState(T* p, lua_State *L)
+	{
+		if (IArg(1) <= p->ToUsers()->size() && IArg(1) >= 1)
+			lua_pushnumber(L, NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[IArg(1) - 1]]);
+		else
+			lua_pushnumber(L, 0);
+		return 1;
+	}
+	/* 
+	static int GetFriendQty(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, NSMAN->fl_PlayerNames.size());
+		return 1;
+	}
+	static int GetFriendName(T* p, lua_State *L)
+	{
+		if (IArg(1) <= NSMAN->fl_PlayerNames.size() && IArg(1) >= 1)
+			lua_pushstring(L, (NSMAN->fl_PlayerNames[IArg(1) - 1]).c_str());
+		else
+			lua_pushstring(L, "");
+		return 1;
+	}
+	static int GetFriendState(T* p, lua_State *L)
+	{
+		if (IArg(1) <= NSMAN->fl_PlayerStates.size() && IArg(1) >= 1)
+			lua_pushnumber(L, NSMAN->fl_PlayerStates[IArg(1) - 1]);
+		else
+			lua_pushnumber(L, 0);
+		return 1;
+	}
+	*/
+	static int ScrollChatUp(T* p, lua_State *L)
+	{
+		p->Scroll(1);
+		return 1;
+	}
+	static int ScrollChatDown(T* p, lua_State *L)
+	{
+		p->Scroll(-1);
+		return 1;
+	}
+	static int ShowNextMsg(T* p, lua_State *L)
+	{
+		p->ShowNextMsg();
+		return 1;
+	}
+	static int ShowPreviousMsg(T* p, lua_State *L)
+	{
+		p->ShowPreviousMsg();
+		return 1;
+	}
+	static int GetChatScroll(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetScroll());
+		return 1;
+	}
+	static int GetChatLines(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetLines());
+		return 1;
+	}
+public:
+	LunaScreenNetSelectBase()
+	{
+		ADD_METHOD(GetUser);
+		ADD_METHOD(UsersVisible);
+		ADD_METHOD(ChatboxInput);
+		ADD_METHOD(ChatboxVisible);
+		ADD_METHOD(GetUserQty);
+		ADD_METHOD(GetUserState);
+		/*
+		ADD_METHOD(GetFriendQty);
+		ADD_METHOD(GetFriendState);
+		ADD_METHOD(GetFriendName);
+		*/
+		ADD_METHOD(ScrollChatUp);
+		ADD_METHOD(ScrollChatDown);
+		ADD_METHOD(ShowNextMsg);
+		ADD_METHOD(ShowPreviousMsg);
+		ADD_METHOD(GetChatScroll);
+		ADD_METHOD(GetChatLines);
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS(ScreenNetSelectBase, ScreenWithMenuElements)
+// lua end
 
 #endif
 
