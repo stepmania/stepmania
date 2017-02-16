@@ -163,7 +163,7 @@ void Bookkeeper::WriteCoinsFile( int coins )
     ini.WriteFile( SpecialFiles::COINS_INI );
 }
 
-void Bookkeeper::ReadCoinsFile( int &coins)
+void Bookkeeper::ReadCoinsFile( int &coins )
 {
     IniFile ini;
     ini.ReadFile( SpecialFiles::COINS_INI );

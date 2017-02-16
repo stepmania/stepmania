@@ -514,7 +514,7 @@ namespace
 
 		GAMESTATE->JoinPlayer( pn );
 
-        // On Join, make sure to update Coins File
+		// On Join, make sure to update Coins File
 		BOOKKEEPER->WriteCoinsFile(GAMESTATE->m_iCoins.Get());
 
 		return true;
