@@ -5,6 +5,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
+#include "Bookkeeper.h"
 #include "PlayerOptions.h"
 #include "ProfileManager.h"
 #include "Profile.h"
@@ -718,6 +719,9 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins - iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit );
 			LOG->Trace( "Deducted %i coins, %i remaining",
 					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins.Get() );
+
+            //Credit Used, make sure to update CoinsFile
+            BOOKKEEPER->WriteCoinsFile(GAMESTATE->m_iCoins.Get());
 		}
 		
 		// If only one side is joined and we picked a style that requires both

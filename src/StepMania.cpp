@@ -1281,8 +1281,11 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	{
 		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
 	}
-	
+
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
+
+    // On InsertCoin, make sure to update Coins file
+    BOOKKEEPER->WriteCoinsFile(GAMESTATE->m_iCoins.Get());
 
 	// If inserting coins, play an appropriate sound; if deducting coins, don't play anything.
 	if (iNum > 0)
@@ -1322,6 +1325,9 @@ void StepMania::ClearCredits()
 	LOG->Trace("%i coins cleared", GAMESTATE->m_iCoins.Get() );
 	GAMESTATE->m_iCoins.Set( 0 );
 	SCREENMAN->PlayInvalidSound();
+
+    // Update Coins file to make sure credits are cleared.
+    BOOKKEEPER->WriteCoinsFile(GAMESTATE->m_iCoins.Get());
 
 	// TODO: remove this redundant message and things that depend on it
 	Message msg( "CoinInserted" );

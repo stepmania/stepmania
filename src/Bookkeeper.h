@@ -21,6 +21,9 @@ public:
 	void GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] ) const;
 	void GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] ) const;
 	void GetCoinsByHour( int coins[HOURS_IN_DAY] ) const;
+	void WriteCoinsFile( int coins ) ;
+	void ReadCoinsFile( int &coins ) ;
+
 
 	void LoadFromNode( const XNode *pNode );
 	XNode* CreateNode() const;
