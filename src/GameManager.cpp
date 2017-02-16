@@ -2650,7 +2650,7 @@ static const Style g_Style_KB9_7k =
 	"kb9-7k",			// m_szName
 	StepsType_kb7_single,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
-	5,				// m_iColsPerPlayer
+	7,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
 			{ TRACK_1, nullptr },
