@@ -1129,7 +1129,9 @@ static vector<vector<string> > button_lists = {
 // StepsType_pump_routine,
 	{"DownLeft", "UpLeft", "Center", "UpRight", "DownRight", "DownLeft", "UpLeft", "Center", "UpRight", "DownRight"},
 // StepsType_kb7_single,
-	{"Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7"},
+	{"Left 3", "Left 2", "Left 1", "Center", "Right 1", "Right 2", "Right 3"},
+// StepsType_kb9_single,
+	{"Left 4", "Left 3", "Left 2", "Left 1", "Center", "Right 1", "Right 2", "Right 3", "Right 4"},
 	// ez2 buttons are probably wrong because the button mapping logic in Style
 	// is too convoluted.
 // StepsType_ez2_single,

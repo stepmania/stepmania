@@ -65,6 +65,7 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	// kb7
 	{ "kb7-single",		7,	true,	StepsTypeCategory_Single },
 	// { "kb7-small",		7,	true,	StepsTypeCategory_Single },
+	{ "kb9-single",		9,	true,	StepsTypeCategory_Single },
 	// ez2dancer
 	{ "ez2-single",		5,	true,	StepsTypeCategory_Single },	// Single: TL,LHH,D,RHH,TR
 	{ "ez2-double",		10,	true,	StepsTypeCategory_Double },	// Double: Single x2
@@ -2688,7 +2689,7 @@ static const Style g_Style_KB9_9k =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"kb9-9k",			// m_szName
-	StepsType_popn_nine,		// m_StepsType
+	StepsType_kb9_single,			// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	9,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
