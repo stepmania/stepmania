@@ -4,10 +4,12 @@
 #include "RageLog.h"
 #include "IniFile.h"
 #include "GameConstantsAndTypes.h"
+#include "GameState.h"
 #include "SongManager.h"
 #include "RageFile.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
+#include "SpecialFiles.h"
 #include <ctime>
 
 Bookkeeper*	BOOKKEEPER = NULL;	// global and accessible from anywhere in our program
@@ -120,6 +122,17 @@ void Bookkeeper::ReadFromDisk()
 	if( !XmlFileUtil::LoadFromFileShowErrors(xml, COINS_DAT) )
 		return;
 
+    int numCoins = 0;
+    ReadCoinsFile(numCoins);
+
+	if ( numCoins < 0 )
+		numCoins = 0;
+	else if ( numCoins / PREFSMAN->m_iCoinsPerCredit > MAX_NUM_CREDITS )
+		numCoins = 0;
+
+    LOG->Trace("Number of Coins to Load on boot: %i", numCoins);
+    GAMESTATE->m_iCoins.Set(numCoins);
+
 	LoadFromNode( &xml );
 }
 
@@ -143,6 +156,20 @@ void Bookkeeper::CoinInserted()
 	d.Set( time(NULL) );
 
 	++m_mapCoinsForHour[d];
+}
+
+void Bookkeeper::WriteCoinsFile( int coins )
+{
+    IniFile ini;
+    ini.SetValue( "Bookkeeping", "Coins", coins);
+    ini.WriteFile( SpecialFiles::COINS_INI );
+}
+
+void Bookkeeper::ReadCoinsFile( int &coins )
+{
+    IniFile ini;
+    ini.ReadFile( SpecialFiles::COINS_INI );
+    ini.GetValue( "Bookkeeping", "Coins", coins);
 }
 
 // Return the number of coins between [beginning,ending).
