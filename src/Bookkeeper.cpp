@@ -127,6 +127,8 @@ void Bookkeeper::ReadFromDisk()
 
 	if ( numCoins < 0 )
 		numCoins = 0;
+	else if ( numCoins / PREFSMAN->m_iCoinsPerCredit > MAX_NUM_CREDITS )
+		numCoins = 0;
 
     LOG->Trace("Number of Coins to Load on boot: %i", numCoins);
     GAMESTATE->m_iCoins.Set(numCoins);
