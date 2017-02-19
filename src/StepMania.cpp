@@ -589,14 +589,6 @@ std::array<VideoCardDefaults, 17> const g_VideoCardDefaults =
 			false
 		),
 		VideoCardDefaults(
-			"Intel.*", /* fallback: all unknown Intel cards to D3D, since Intel is notoriously bad at OpenGL */
-			"d3d,opengl",
-			640,480,
-			16,16,16,
-			2048,
-			false
-		),
-		VideoCardDefaults(
 			// Cards that have problems with OpenGL:
 			// ASSERT fail somewhere in RageDisplay_OpenGL "Trident Video Accelerator CyberBlade"
 			// bug 764499: ASSERT fail after glDeleteTextures for "SiS 650_651_740"
@@ -635,7 +627,7 @@ std::array<VideoCardDefaults, 17> const g_VideoCardDefaults =
 			640,480,
 			32,32,32,
 			2048,
-			false  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
+			true
 		)
 	}
 };
