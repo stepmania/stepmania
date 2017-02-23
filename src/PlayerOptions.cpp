@@ -240,11 +240,12 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	for( int i=0; i<16; i++)
 	{
 		RString s = ssprintf( "MoveX%d", i );
-		AddPart( AddTo, m_fMovesX[0],				s );
+		
+		AddPart( AddTo, m_fMovesX[i],				s );
 		s = ssprintf( "MoveY%d", i );
-		AddPart( AddTo, m_fMovesY[0],				s );
+		AddPart( AddTo, m_fMovesY[i],				s );
 		s = ssprintf( "MoveZ%d", i );
-		AddPart( AddTo, m_fMovesZ[0],				s );
+		AddPart( AddTo, m_fMovesZ[i],				s );
 	}
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
@@ -585,7 +586,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
 	else if( sBit == "random" )				ChooseRandomModifiers();
-	//There has to be a better way than this for movex/y/z.
+	
 	else if( sBit == "movex0")				SET_FLOAT( fMovesX[0] )
 	else if( sBit == "movex1")				SET_FLOAT( fMovesX[1] )
 	else if( sBit == "movex2")				SET_FLOAT( fMovesX[2] )
@@ -1234,7 +1235,7 @@ public:
 	FLOAT_INTERFACE(Tilt, PerspectiveTilt, true);
 	FLOAT_INTERFACE(Passmark, Passmark, true); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
 	FLOAT_INTERFACE(RandomSpeed, RandomSpeed, true);
-	//There has to be a better way to do this for MoveX/Y/Z.
+	
 	FLOAT_INTERFACE(MoveX0, MovesX[0], true);
 	FLOAT_INTERFACE(MoveX1, MovesX[1], true);
 	FLOAT_INTERFACE(MoveX2, MovesX[2], true);
@@ -1251,6 +1252,7 @@ public:
 	FLOAT_INTERFACE(MoveX13, MovesX[13], true);
 	FLOAT_INTERFACE(MoveX14, MovesX[14], true);
 	FLOAT_INTERFACE(MoveX15, MovesX[15], true);
+	
 	FLOAT_INTERFACE(MoveY0, MovesY[0], true);
 	FLOAT_INTERFACE(MoveY1, MovesY[1], true);
 	FLOAT_INTERFACE(MoveY2, MovesY[2], true);
@@ -1267,6 +1269,7 @@ public:
 	FLOAT_INTERFACE(MoveY13, MovesY[13], true);
 	FLOAT_INTERFACE(MoveY14, MovesY[14], true);
 	FLOAT_INTERFACE(MoveY15, MovesY[15], true);
+	
 	FLOAT_INTERFACE(MoveZ0, MovesZ[0], true);
 	FLOAT_INTERFACE(MoveZ1, MovesZ[1], true);
 	FLOAT_INTERFACE(MoveZ2, MovesZ[2], true);
@@ -1708,7 +1711,7 @@ public:
 		ADD_METHOD(NoStretch);
 		ADD_METHOD(MuteOnError);
 		
-		//This is the same issue for MoveX/Y/Z: Is there a more compact way to do this?
+		
 		ADD_METHOD(MoveX0);
 		ADD_METHOD(MoveX1);
 		ADD_METHOD(MoveX2);
@@ -1725,6 +1728,7 @@ public:
 		ADD_METHOD(MoveX13);
 		ADD_METHOD(MoveX14);
 		ADD_METHOD(MoveX15);
+		
 		ADD_METHOD(MoveY0);
 		ADD_METHOD(MoveY1);
 		ADD_METHOD(MoveY2);
@@ -1741,6 +1745,7 @@ public:
 		ADD_METHOD(MoveY13);
 		ADD_METHOD(MoveY14);
 		ADD_METHOD(MoveY15);
+		
 		ADD_METHOD(MoveZ0);
 		ADD_METHOD(MoveZ1);
 		ADD_METHOD(MoveZ2);
