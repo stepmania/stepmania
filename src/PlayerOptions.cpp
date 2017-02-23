@@ -110,6 +110,12 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fSkew );
 	APPROACH( fPassmark );
 	APPROACH( fRandomSpeed );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesX[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesY[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesZ[i] );
 
 	DO_COPY( m_bSetScrollSpeed );
 	for( int i=0; i<NUM_TURNS; i++ )
@@ -226,6 +232,57 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
 	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
+	//Can we compact this for MoveX/Y/Z?
+	AddPart( AddTo, m_fMovesX[0],				"MoveX0" );
+	AddPart( AddTo, m_fMovesX[1],				"MoveX1" );
+	AddPart( AddTo, m_fMovesX[2],				"MoveX2" );
+	AddPart( AddTo, m_fMovesX[3],				"MoveX3" );
+	AddPart( AddTo, m_fMovesX[4],				"MoveX4" );
+	AddPart( AddTo, m_fMovesX[5],				"MoveX5" );
+	AddPart( AddTo, m_fMovesX[6],				"MoveX6" );
+	AddPart( AddTo, m_fMovesX[7],				"MoveX7" );
+	AddPart( AddTo, m_fMovesX[8],				"MoveX8" );
+	AddPart( AddTo, m_fMovesX[9],				"MoveX9" );
+	AddPart( AddTo, m_fMovesX[10],				"MoveX10" );
+	AddPart( AddTo, m_fMovesX[11],				"MoveX11" );
+	AddPart( AddTo, m_fMovesX[12],				"MoveX12" );
+	AddPart( AddTo, m_fMovesX[13],				"MoveX13" );
+	AddPart( AddTo, m_fMovesX[14],				"MoveX14" );
+	AddPart( AddTo, m_fMovesX[15],				"MoveX15" );
+	
+	AddPart( AddTo, m_fMovesY[0],				"MoveY0" );
+	AddPart( AddTo, m_fMovesY[1],				"MoveY1" );
+	AddPart( AddTo, m_fMovesY[2],				"MoveY2" );
+	AddPart( AddTo, m_fMovesY[3],				"MoveY3" );
+	AddPart( AddTo, m_fMovesY[4],				"MoveY4" );
+	AddPart( AddTo, m_fMovesY[5],				"MoveY5" );
+	AddPart( AddTo, m_fMovesY[6],				"MoveY6" );
+	AddPart( AddTo, m_fMovesY[7],				"MoveY7" );
+	AddPart( AddTo, m_fMovesY[8],				"MoveY8" );
+	AddPart( AddTo, m_fMovesY[9],				"MoveY9" );
+	AddPart( AddTo, m_fMovesY[10],				"MoveY10" );
+	AddPart( AddTo, m_fMovesY[11],				"MoveY11" );
+	AddPart( AddTo, m_fMovesY[12],				"MoveY12" );
+	AddPart( AddTo, m_fMovesY[13],				"MoveY13" );
+	AddPart( AddTo, m_fMovesY[14],				"MoveY14" );
+	AddPart( AddTo, m_fMovesY[15],				"MoveY15" );
+	
+	AddPart( AddTo, m_fMovesZ[0],				"MoveZ0" );
+	AddPart( AddTo, m_fMovesZ[1],				"MoveZ1" );
+	AddPart( AddTo, m_fMovesZ[2],				"MoveZ2" );
+	AddPart( AddTo, m_fMovesZ[3],				"MoveZ3" );
+	AddPart( AddTo, m_fMovesZ[4],				"MoveZ4" );
+	AddPart( AddTo, m_fMovesZ[5],				"MoveZ5" );
+	AddPart( AddTo, m_fMovesZ[6],				"MoveZ6" );
+	AddPart( AddTo, m_fMovesZ[7],				"MoveZ7" );
+	AddPart( AddTo, m_fMovesZ[8],				"MoveZ8" );
+	AddPart( AddTo, m_fMovesZ[9],				"MoveZ9" );
+	AddPart( AddTo, m_fMovesZ[10],				"MoveZ10" );
+	AddPart( AddTo, m_fMovesZ[11],				"MoveZ11" );
+	AddPart( AddTo, m_fMovesZ[12],				"MoveZ12" );
+	AddPart( AddTo, m_fMovesZ[13],				"MoveZ13" );
+	AddPart( AddTo, m_fMovesZ[14],				"MoveZ14" );
+	AddPart( AddTo, m_fMovesZ[15],				"MoveZ15" );
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN_OFFSET],	"HiddenOffset" );
@@ -565,6 +622,58 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
 	else if( sBit == "random" )				ChooseRandomModifiers();
+	//There has to be a better way than this for movex/y/z.
+	else if( sBit == "movex0")				SET_FLOAT( fMovesX[0] )
+	else if( sBit == "movex1")				SET_FLOAT( fMovesX[1] )
+	else if( sBit == "movex2")				SET_FLOAT( fMovesX[2] )
+	else if( sBit == "movex3")				SET_FLOAT( fMovesX[3] )
+	else if( sBit == "movex4")				SET_FLOAT( fMovesX[4] )
+	else if( sBit == "movex5")				SET_FLOAT( fMovesX[5] )
+	else if( sBit == "movex6")				SET_FLOAT( fMovesX[6] )
+	else if( sBit == "movex7")				SET_FLOAT( fMovesX[7] )
+	else if( sBit == "movex8")				SET_FLOAT( fMovesX[8] )
+	else if( sBit == "movex9")				SET_FLOAT( fMovesX[9] )
+	else if( sBit == "movex10")				SET_FLOAT( fMovesX[10] )
+	else if( sBit == "movex11")				SET_FLOAT( fMovesX[11] )
+	else if( sBit == "movex12")				SET_FLOAT( fMovesX[12] )
+	else if( sBit == "movex13")				SET_FLOAT( fMovesX[13] )
+	else if( sBit == "movex14")				SET_FLOAT( fMovesX[14] )
+	else if( sBit == "movex15")				SET_FLOAT( fMovesX[15] )
+	
+	else if( sBit == "movey0")				SET_FLOAT( fMovesY[0] )
+	else if( sBit == "movey1")				SET_FLOAT( fMovesY[1] )
+	else if( sBit == "movey2")				SET_FLOAT( fMovesY[2] )
+	else if( sBit == "movey3")				SET_FLOAT( fMovesY[3] )
+	else if( sBit == "movey4")				SET_FLOAT( fMovesY[4] )
+	else if( sBit == "movey5")				SET_FLOAT( fMovesY[5] )
+	else if( sBit == "movey6")				SET_FLOAT( fMovesY[6] )
+	else if( sBit == "movey7")				SET_FLOAT( fMovesY[7] )
+	else if( sBit == "movey8")				SET_FLOAT( fMovesY[8] )
+	else if( sBit == "movey9")				SET_FLOAT( fMovesY[9] )
+	else if( sBit == "movey10")				SET_FLOAT( fMovesY[10] )
+	else if( sBit == "movey11")				SET_FLOAT( fMovesY[11] )
+	else if( sBit == "movey12")				SET_FLOAT( fMovesY[12] )
+	else if( sBit == "movey13")				SET_FLOAT( fMovesY[13] )
+	else if( sBit == "movey14")				SET_FLOAT( fMovesY[14] )
+	else if( sBit == "movey15")				SET_FLOAT( fMovesY[15] )
+	
+	else if( sBit == "movez0")				SET_FLOAT( fMovesZ[0] )
+	else if( sBit == "movez1")				SET_FLOAT( fMovesZ[1] )
+	else if( sBit == "movez2")				SET_FLOAT( fMovesZ[2] )
+	else if( sBit == "movez3")				SET_FLOAT( fMovesZ[3] )
+	else if( sBit == "movez4")				SET_FLOAT( fMovesZ[4] )
+	else if( sBit == "movez5")				SET_FLOAT( fMovesZ[5] )
+	else if( sBit == "movez6")				SET_FLOAT( fMovesZ[6] )
+	else if( sBit == "movez7")				SET_FLOAT( fMovesZ[7] )
+	else if( sBit == "movez8")				SET_FLOAT( fMovesZ[8] )
+	else if( sBit == "movez9")				SET_FLOAT( fMovesZ[9] )
+	else if( sBit == "movez10")				SET_FLOAT( fMovesZ[10] )
+	else if( sBit == "movez11")				SET_FLOAT( fMovesZ[11] )
+	else if( sBit == "movez12")				SET_FLOAT( fMovesZ[12] )
+	else if( sBit == "movez13")				SET_FLOAT( fMovesZ[13] )
+	else if( sBit == "movez14")				SET_FLOAT( fMovesZ[14] )
+	else if( sBit == "movez15")				SET_FLOAT( fMovesZ[15] )
+	
 	// deprecated mods/left in for compatibility
 	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 	// end of the list
@@ -869,6 +978,18 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	{
 		CPY(m_bTransforms[i]);
 	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesX[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesY[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesZ[i]);
+	}
 #undef CPY
 #undef CPY_SPEED
 	return *this;
@@ -1144,6 +1265,56 @@ public:
 	FLOAT_INTERFACE(Tilt, PerspectiveTilt, true);
 	FLOAT_INTERFACE(Passmark, Passmark, true); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
 	FLOAT_INTERFACE(RandomSpeed, RandomSpeed, true);
+	//There has to be a better way to do this for MoveX/Y/Z.
+	FLOAT_INTERFACE(MoveX0, MovesX[0], true);
+	FLOAT_INTERFACE(MoveX1, MovesX[1], true);
+	FLOAT_INTERFACE(MoveX2, MovesX[2], true);
+	FLOAT_INTERFACE(MoveX3, MovesX[3], true);
+	FLOAT_INTERFACE(MoveX4, MovesX[4], true);
+	FLOAT_INTERFACE(MoveX5, MovesX[5], true);
+	FLOAT_INTERFACE(MoveX6, MovesX[6], true);
+	FLOAT_INTERFACE(MoveX7, MovesX[7], true);
+	FLOAT_INTERFACE(MoveX8, MovesX[8], true);
+	FLOAT_INTERFACE(MoveX9, MovesX[9], true);
+	FLOAT_INTERFACE(MoveX10, MovesX[10], true);
+	FLOAT_INTERFACE(MoveX11, MovesX[11], true);
+	FLOAT_INTERFACE(MoveX12, MovesX[12], true);
+	FLOAT_INTERFACE(MoveX13, MovesX[13], true);
+	FLOAT_INTERFACE(MoveX14, MovesX[14], true);
+	FLOAT_INTERFACE(MoveX15, MovesX[15], true);
+	FLOAT_INTERFACE(MoveY0, MovesY[0], true);
+	FLOAT_INTERFACE(MoveY1, MovesY[1], true);
+	FLOAT_INTERFACE(MoveY2, MovesY[2], true);
+	FLOAT_INTERFACE(MoveY3, MovesY[3], true);
+	FLOAT_INTERFACE(MoveY4, MovesY[4], true);
+	FLOAT_INTERFACE(MoveY5, MovesY[5], true);
+	FLOAT_INTERFACE(MoveY6, MovesY[6], true);
+	FLOAT_INTERFACE(MoveY7, MovesY[7], true);
+	FLOAT_INTERFACE(MoveY8, MovesY[8], true);
+	FLOAT_INTERFACE(MoveY9, MovesY[9], true);
+	FLOAT_INTERFACE(MoveY10, MovesY[10], true);
+	FLOAT_INTERFACE(MoveY11, MovesY[11], true);
+	FLOAT_INTERFACE(MoveY12, MovesY[12], true);
+	FLOAT_INTERFACE(MoveY13, MovesY[13], true);
+	FLOAT_INTERFACE(MoveY14, MovesY[14], true);
+	FLOAT_INTERFACE(MoveY15, MovesY[15], true);
+	FLOAT_INTERFACE(MoveZ0, MovesZ[0], true);
+	FLOAT_INTERFACE(MoveZ1, MovesZ[1], true);
+	FLOAT_INTERFACE(MoveZ2, MovesZ[2], true);
+	FLOAT_INTERFACE(MoveZ3, MovesZ[3], true);
+	FLOAT_INTERFACE(MoveZ4, MovesZ[4], true);
+	FLOAT_INTERFACE(MoveZ5, MovesZ[5], true);
+	FLOAT_INTERFACE(MoveZ6, MovesZ[6], true);
+	FLOAT_INTERFACE(MoveZ7, MovesZ[7], true);
+	FLOAT_INTERFACE(MoveZ8, MovesZ[8], true);
+	FLOAT_INTERFACE(MoveZ9, MovesZ[9], true);
+	FLOAT_INTERFACE(MoveZ10, MovesZ[10], true);
+	FLOAT_INTERFACE(MoveZ11, MovesZ[11], true);
+	FLOAT_INTERFACE(MoveZ12, MovesZ[12], true);
+	FLOAT_INTERFACE(MoveZ13, MovesZ[13], true);
+	FLOAT_INTERFACE(MoveZ14, MovesZ[14], true);
+	FLOAT_INTERFACE(MoveZ15, MovesZ[15], true);
+	
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -1567,6 +1738,56 @@ public:
 		ADD_METHOD(NoQuads);
 		ADD_METHOD(NoStretch);
 		ADD_METHOD(MuteOnError);
+		
+		//This is the same issue for MoveX/Y/Z: Is there a more compact way to do this?
+		ADD_METHOD(MoveX0);
+		ADD_METHOD(MoveX1);
+		ADD_METHOD(MoveX2);
+		ADD_METHOD(MoveX3);
+		ADD_METHOD(MoveX4);
+		ADD_METHOD(MoveX5);
+		ADD_METHOD(MoveX6);
+		ADD_METHOD(MoveX7);
+		ADD_METHOD(MoveX8);
+		ADD_METHOD(MoveX9);
+		ADD_METHOD(MoveX10);
+		ADD_METHOD(MoveX11);
+		ADD_METHOD(MoveX12);
+		ADD_METHOD(MoveX13);
+		ADD_METHOD(MoveX14);
+		ADD_METHOD(MoveX15);
+		ADD_METHOD(MoveY0);
+		ADD_METHOD(MoveY1);
+		ADD_METHOD(MoveY2);
+		ADD_METHOD(MoveY3);
+		ADD_METHOD(MoveY4);
+		ADD_METHOD(MoveY5);
+		ADD_METHOD(MoveY6);
+		ADD_METHOD(MoveY7);
+		ADD_METHOD(MoveY8);
+		ADD_METHOD(MoveY9);
+		ADD_METHOD(MoveY10);
+		ADD_METHOD(MoveY11);
+		ADD_METHOD(MoveY12);
+		ADD_METHOD(MoveY13);
+		ADD_METHOD(MoveY14);
+		ADD_METHOD(MoveY15);
+		ADD_METHOD(MoveZ0);
+		ADD_METHOD(MoveZ1);
+		ADD_METHOD(MoveZ2);
+		ADD_METHOD(MoveZ3);
+		ADD_METHOD(MoveZ4);
+		ADD_METHOD(MoveZ5);
+		ADD_METHOD(MoveZ6);
+		ADD_METHOD(MoveZ7);
+		ADD_METHOD(MoveZ8);
+		ADD_METHOD(MoveZ9);
+		ADD_METHOD(MoveZ10);
+		ADD_METHOD(MoveZ11);
+		ADD_METHOD(MoveZ12);
+		ADD_METHOD(MoveZ13);
+		ADD_METHOD(MoveZ14);
+		ADD_METHOD(MoveZ15);
 
 		ADD_METHOD(NoteSkin);
 		ADD_METHOD(FailSetting);

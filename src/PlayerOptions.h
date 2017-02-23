@@ -71,6 +71,8 @@ public:
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
 		ZERO( m_fScrolls );	ONE( m_SpeedfScrolls );
 		ZERO( m_bTurns );	ZERO( m_bTransforms );
+		ZERO( m_fMovesX ) ;	ZERO( m_fMovesY );
+		ZERO( m_fMovesZ );
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
@@ -219,6 +221,10 @@ public:
 	float		m_fPassmark,			m_SpeedfPassmark;
 
 	float	m_fRandomSpeed,			m_SpeedfRandomSpeed;
+	/* The maximum column number is 16.*/
+	float	m_fMovesX[16],			m_SpeedfMovesX[16];
+	float	m_fMovesY[16],			m_SpeedfMovesY[16];
+	float	m_fMovesZ[16],			m_SpeedfMovesZ[16];
 
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
