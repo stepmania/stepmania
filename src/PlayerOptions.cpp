@@ -76,6 +76,10 @@ void PlayerOptions::Init()
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
 	m_sNoteSkin = "";
+	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
+	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
+	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
+	
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
@@ -232,57 +236,16 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
 	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
-	//Can we compact this for MoveX/Y/Z?
-	AddPart( AddTo, m_fMovesX[0],				"MoveX0" );
-	AddPart( AddTo, m_fMovesX[1],				"MoveX1" );
-	AddPart( AddTo, m_fMovesX[2],				"MoveX2" );
-	AddPart( AddTo, m_fMovesX[3],				"MoveX3" );
-	AddPart( AddTo, m_fMovesX[4],				"MoveX4" );
-	AddPart( AddTo, m_fMovesX[5],				"MoveX5" );
-	AddPart( AddTo, m_fMovesX[6],				"MoveX6" );
-	AddPart( AddTo, m_fMovesX[7],				"MoveX7" );
-	AddPart( AddTo, m_fMovesX[8],				"MoveX8" );
-	AddPart( AddTo, m_fMovesX[9],				"MoveX9" );
-	AddPart( AddTo, m_fMovesX[10],				"MoveX10" );
-	AddPart( AddTo, m_fMovesX[11],				"MoveX11" );
-	AddPart( AddTo, m_fMovesX[12],				"MoveX12" );
-	AddPart( AddTo, m_fMovesX[13],				"MoveX13" );
-	AddPart( AddTo, m_fMovesX[14],				"MoveX14" );
-	AddPart( AddTo, m_fMovesX[15],				"MoveX15" );
 	
-	AddPart( AddTo, m_fMovesY[0],				"MoveY0" );
-	AddPart( AddTo, m_fMovesY[1],				"MoveY1" );
-	AddPart( AddTo, m_fMovesY[2],				"MoveY2" );
-	AddPart( AddTo, m_fMovesY[3],				"MoveY3" );
-	AddPart( AddTo, m_fMovesY[4],				"MoveY4" );
-	AddPart( AddTo, m_fMovesY[5],				"MoveY5" );
-	AddPart( AddTo, m_fMovesY[6],				"MoveY6" );
-	AddPart( AddTo, m_fMovesY[7],				"MoveY7" );
-	AddPart( AddTo, m_fMovesY[8],				"MoveY8" );
-	AddPart( AddTo, m_fMovesY[9],				"MoveY9" );
-	AddPart( AddTo, m_fMovesY[10],				"MoveY10" );
-	AddPart( AddTo, m_fMovesY[11],				"MoveY11" );
-	AddPart( AddTo, m_fMovesY[12],				"MoveY12" );
-	AddPart( AddTo, m_fMovesY[13],				"MoveY13" );
-	AddPart( AddTo, m_fMovesY[14],				"MoveY14" );
-	AddPart( AddTo, m_fMovesY[15],				"MoveY15" );
-	
-	AddPart( AddTo, m_fMovesZ[0],				"MoveZ0" );
-	AddPart( AddTo, m_fMovesZ[1],				"MoveZ1" );
-	AddPart( AddTo, m_fMovesZ[2],				"MoveZ2" );
-	AddPart( AddTo, m_fMovesZ[3],				"MoveZ3" );
-	AddPart( AddTo, m_fMovesZ[4],				"MoveZ4" );
-	AddPart( AddTo, m_fMovesZ[5],				"MoveZ5" );
-	AddPart( AddTo, m_fMovesZ[6],				"MoveZ6" );
-	AddPart( AddTo, m_fMovesZ[7],				"MoveZ7" );
-	AddPart( AddTo, m_fMovesZ[8],				"MoveZ8" );
-	AddPart( AddTo, m_fMovesZ[9],				"MoveZ9" );
-	AddPart( AddTo, m_fMovesZ[10],				"MoveZ10" );
-	AddPart( AddTo, m_fMovesZ[11],				"MoveZ11" );
-	AddPart( AddTo, m_fMovesZ[12],				"MoveZ12" );
-	AddPart( AddTo, m_fMovesZ[13],				"MoveZ13" );
-	AddPart( AddTo, m_fMovesZ[14],				"MoveZ14" );
-	AddPart( AddTo, m_fMovesZ[15],				"MoveZ15" );
+	for( int i=0; i<16; i++)
+	{
+		RString s = ssprintf( "MoveX%d", i );
+		AddPart( AddTo, m_fMovesX[0],				s );
+		s = ssprintf( "MoveY%d", i );
+		AddPart( AddTo, m_fMovesY[0],				s );
+		s = ssprintf( "MoveZ%d", i );
+		AddPart( AddTo, m_fMovesZ[0],				s );
+	}
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN_OFFSET],	"HiddenOffset" );
@@ -920,6 +883,12 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 		COMPARE(m_bTurns[i]);
 	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 		COMPARE(m_bTransforms[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesX[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesY[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesZ[i]);
 #undef COMPARE
 	return true;
 }

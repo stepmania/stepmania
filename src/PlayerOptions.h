@@ -71,8 +71,9 @@ public:
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
 		ZERO( m_fScrolls );	ONE( m_SpeedfScrolls );
 		ZERO( m_bTurns );	ZERO( m_bTransforms );
-		ZERO( m_fMovesX ) ;	ZERO( m_fMovesY );
-		ZERO( m_fMovesZ );
+		ZERO( m_fMovesX );	ONE( m_SpeedfMovesX );
+		ZERO( m_fMovesY );	ONE( m_SpeedfMovesY );
+		ZERO( m_fMovesZ );	ONE( m_SpeedfMovesZ );
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
