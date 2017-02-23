@@ -3517,6 +3517,15 @@ save yourself some time, copy this for undocumented things:
 		If the optional second argument is passed, sets the speed at which the transition occurs.<br />
 		MMods are not tweenable or settable on ScreenGameplay.  Use XMods if you need such an effect.
 	</Function>
+	<Function name='MoveXn' return= 'float, float' arguments='float value, float approach_speed'>
+		Use 0-15 in place of 'n' to move a specific column.
+	</Function>
+	<Function name='MoveYn' return= 'float, float' arguments='float value, float approach_speed'>
+		Use 0-15 in place of 'n' to move a specific column.
+	</Function>
+	<Function name='MoveZn' return= 'float, float' arguments='float value, float approach_speed'>
+		Use 0-15 in place of 'n' to move a specific column.
+	</Function>
 	<Function name='MuteOnError' return='bool' arguments='bool value'> </Function>
 	<Function name='NoAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='NoFakes' return='bool' arguments='bool value'> </Function>
