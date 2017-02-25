@@ -1161,6 +1161,9 @@
 			<Function name='MinTNSToHideNotes' />
 			<Function name='Mirror'/>
 			<Function name='MMod'/>
+			<Function name='MoveXn'/>
+			<Function name='MoveYn'/>
+			<Function name='MoveZn'/>
 			<Function name='MuteOnError'/>
 			<Function name='NoAttack'/>
 			<Function name='NoFakes'/>

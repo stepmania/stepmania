@@ -884,10 +884,10 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		switch(column_args.pos_handler->m_spline_mode)
 		{
 			case NCSM_Disabled:
-				ae_pos.y= fY;
+				ae_pos.y= fY + ArrowEffects::GetMoveY(column_args.column);
 				break;
 			case NCSM_Offset:
-				ae_pos.y= fY;
+				ae_pos.y= fY + ArrowEffects::GetMoveY(column_args.column);
 				column_args.pos_handler->EvalDerivForBeat(column_args.song_beat, cur_beat, sp_pos_forward);
 				RageVec3Normalize(&sp_pos_forward, &sp_pos_forward);
 				break;

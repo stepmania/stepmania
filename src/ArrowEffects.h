@@ -29,9 +29,9 @@ public:
 
 	static void GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, RageVector3& ret, bool with_reverse= true)
 	{
-		ret.x= GetXPos(player_state, col, y_offset);
-		ret.y= GetYPos(col, y_offset, y_reverse_offset, with_reverse);
-		ret.z= GetZPos(col, y_offset);
+		ret.x= GetMoveX(col) + GetXPos(player_state, col, y_offset);
+		ret.y= GetMoveY(col) + GetYPos(col, y_offset, y_reverse_offset, with_reverse);
+		ret.z= GetMoveZ(col) + GetZPos(col, y_offset);
 	}
 
 	/**
@@ -62,6 +62,10 @@ public:
 	
 	static float ReceptorGetRotationX(	const PlayerState* pPlayerState);
 	static float ReceptorGetRotationY(	const PlayerState* pPlayerState);
+	
+	static float GetMoveX(int iCol);
+	static float GetMoveY(int iCol);
+	static float GetMoveZ(int iCol);
 
 	// fXPos is a horizontal position in pixels relative to the center of the field.
 	// This depends on the column of the arrow and possibly the Arrow effect and
