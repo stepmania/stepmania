@@ -265,7 +265,6 @@ public:
 };
 
 #define ADD_MULTICOL_METHOD( method_name) \
-	ADD_METHOD( method_name##0 ); \
 	ADD_METHOD( method_name##1 ); \
 	ADD_METHOD( method_name##2 ); \
 	ADD_METHOD( method_name##3 ); \
@@ -280,24 +279,25 @@ public:
 	ADD_METHOD( method_name##12 ); \
 	ADD_METHOD( method_name##13 ); \
 	ADD_METHOD( method_name##14 ); \
-	ADD_METHOD( method_name##15 );
+	ADD_METHOD( method_name##15 ); \
+	ADD_METHOD( method_name##16 );
 #define MULTICOL_FLOAT_INTERFACE(func_name, member, valid) \
-	FLOAT_INTERFACE(func_name##0, member[0], valid); \
-	FLOAT_INTERFACE(func_name##1, member[1], valid); \
-	FLOAT_INTERFACE(func_name##2, member[2], valid); \
-	FLOAT_INTERFACE(func_name##3, member[3], valid); \
-	FLOAT_INTERFACE(func_name##4, member[4], valid); \
-	FLOAT_INTERFACE(func_name##5, member[5], valid); \
-	FLOAT_INTERFACE(func_name##6, member[6], valid); \
-	FLOAT_INTERFACE(func_name##7, member[7], valid); \
-	FLOAT_INTERFACE(func_name##8, member[8], valid); \
-	FLOAT_INTERFACE(func_name##9, member[9], valid); \
-	FLOAT_INTERFACE(func_name##10, member[10], valid); \
-	FLOAT_INTERFACE(func_name##11, member[11], valid); \
-	FLOAT_INTERFACE(func_name##12, member[12], valid); \
-	FLOAT_INTERFACE(func_name##13, member[13], valid); \
-	FLOAT_INTERFACE(func_name##14, member[14], valid); \
-	FLOAT_INTERFACE(func_name##15, member[15], valid);
+	FLOAT_INTERFACE(func_name##1, member[0], valid); \
+	FLOAT_INTERFACE(func_name##2, member[1], valid); \
+	FLOAT_INTERFACE(func_name##3, member[2], valid); \
+	FLOAT_INTERFACE(func_name##4, member[3], valid); \
+	FLOAT_INTERFACE(func_name##5, member[4], valid); \
+	FLOAT_INTERFACE(func_name##6, member[5], valid); \
+	FLOAT_INTERFACE(func_name##7, member[6], valid); \
+	FLOAT_INTERFACE(func_name##8, member[7], valid); \
+	FLOAT_INTERFACE(func_name##9, member[8], valid); \
+	FLOAT_INTERFACE(func_name##10, member[9], valid); \
+	FLOAT_INTERFACE(func_name##11, member[10], valid); \
+	FLOAT_INTERFACE(func_name##12, member[11], valid); \
+	FLOAT_INTERFACE(func_name##13, member[12], valid); \
+	FLOAT_INTERFACE(func_name##14, member[13], valid); \
+	FLOAT_INTERFACE(func_name##15, member[14], valid); \
+	FLOAT_INTERFACE(func_name##16, member[15], valid);
 
 #endif
 

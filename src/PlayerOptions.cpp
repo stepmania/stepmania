@@ -239,12 +239,12 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	
 	for( int i=0; i<16; i++)
 	{
-		RString s = ssprintf( "MoveX%d", i );
+		RString s = ssprintf( "MoveX%d", i+1 );
 		
 		AddPart( AddTo, m_fMovesX[i],				s );
-		s = ssprintf( "MoveY%d", i );
+		s = ssprintf( "MoveY%d", i+1 );
 		AddPart( AddTo, m_fMovesY[i],				s );
-		s = ssprintf( "MoveZ%d", i );
+		s = ssprintf( "MoveZ%d", i+1 );
 		AddPart( AddTo, m_fMovesZ[i],				s );
 	}
 
@@ -591,11 +591,11 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	{
 	    for (int i=0; i<16; i++)
 	    {
-		RString s = ssprintf( "movex%d", i );
+		RString s = ssprintf( "movex%d", i+1 );
 		    if( sBit == s)				SET_FLOAT( fMovesX[i] )
-		s = ssprintf( "movey%d", i );
+		s = ssprintf( "movey%d", i+1 );
 		    if( sBit == s)				SET_FLOAT( fMovesY[i] )
-		s = ssprintf( "movez%d", i );
+		s = ssprintf( "movez%d", i+1 );
 		    if( sBit == s)				SET_FLOAT( fMovesZ[i] )
 	    }
 	}
