@@ -264,6 +264,41 @@ public:
 	bool IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) const;
 };
 
+#define ADD_MULTICOL_METHOD( method_name) \
+	ADD_METHOD( method_name##0 ); \
+	ADD_METHOD( method_name##1 ); \
+	ADD_METHOD( method_name##2 ); \
+	ADD_METHOD( method_name##3 ); \
+	ADD_METHOD( method_name##4 ); \
+	ADD_METHOD( method_name##5 ); \
+	ADD_METHOD( method_name##6 ); \
+	ADD_METHOD( method_name##7 ); \
+	ADD_METHOD( method_name##8 ); \
+	ADD_METHOD( method_name##9 ); \
+	ADD_METHOD( method_name##10 ); \
+	ADD_METHOD( method_name##11 ); \
+	ADD_METHOD( method_name##12 ); \
+	ADD_METHOD( method_name##13 ); \
+	ADD_METHOD( method_name##14 ); \
+	ADD_METHOD( method_name##15 );
+#define MULTICOL_FLOAT_INTERFACE(func_name, member, valid) \
+	FLOAT_INTERFACE(func_name##0, member[0], valid); \
+	FLOAT_INTERFACE(func_name##1, member[1], valid); \
+	FLOAT_INTERFACE(func_name##2, member[2], valid); \
+	FLOAT_INTERFACE(func_name##3, member[3], valid); \
+	FLOAT_INTERFACE(func_name##4, member[4], valid); \
+	FLOAT_INTERFACE(func_name##5, member[5], valid); \
+	FLOAT_INTERFACE(func_name##6, member[6], valid); \
+	FLOAT_INTERFACE(func_name##7, member[7], valid); \
+	FLOAT_INTERFACE(func_name##8, member[8], valid); \
+	FLOAT_INTERFACE(func_name##9, member[9], valid); \
+	FLOAT_INTERFACE(func_name##10, member[10], valid); \
+	FLOAT_INTERFACE(func_name##11, member[11], valid); \
+	FLOAT_INTERFACE(func_name##12, member[12], valid); \
+	FLOAT_INTERFACE(func_name##13, member[13], valid); \
+	FLOAT_INTERFACE(func_name##14, member[14], valid); \
+	FLOAT_INTERFACE(func_name##15, member[15], valid);
+
 #endif
 
 /*
