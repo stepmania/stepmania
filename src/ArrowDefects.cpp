@@ -490,6 +490,34 @@ float ArrowDefects::get_z_pos(float y_offset)
 	return 0.f;
 }
 
+
+float ArrowDefects::get_move_x(size_t col)
+{
+	if( m_options->m_fMovesX[col] != 0.f )
+	{
+		return 64 * m_options->m_fMovesX[col];
+	}
+	return 0.f;
+}
+
+float ArrowDefects::get_move_y(size_t col)
+{
+	if( m_options->m_fMovesY[col] != 0.f )
+	{
+		return 64 * m_options->m_fMovesY[col];
+	}
+	return 0.f;
+}
+
+float ArrowDefects::get_move_z(size_t col)
+{
+	if( m_options->m_fMovesZ[col] != 0.f )
+	{
+		return 64 * m_options->m_fMovesZ[col];
+	}
+	return 0.f;
+}
+
 float ArrowDefects::get_rotation_y(float y_offset)
 {
 	if(m_options->m_fEffects[PlayerOptions::EFFECT_TWIRL] != 0.f)
@@ -527,11 +555,11 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 	float shifted_offset, size_t col, Rage::transform& trans)
 {
 	float const* effects= m_options->m_fEffects;
-	trans.pos.x= get_x_pos(col, y_offset);
+	trans.pos.x= get_move_x(col) + get_x_pos(col, y_offset);
 	// get_y_pos is passed the reverse shifted y offset to avoid applying the
 	// shift wrong. -Kyz
-	trans.pos.y= get_y_pos(col, shifted_offset);
-	trans.pos.z= get_z_pos(y_offset);
+	trans.pos.y= get_move_y(col) + get_y_pos(col, shifted_offset);
+	trans.pos.z= get_move_z(col) + get_z_pos(y_offset);
 	trans.rot.x= 0.f;
 	trans.rot.y= get_rotation_y(y_offset);
 	trans.rot.z= 0.f;
@@ -585,11 +613,11 @@ void ArrowDefects::get_transform_with_glow_alpha(float note_beat,
 void ArrowDefects::hold_render_transform(float y_offset, size_t col,
 	Rage::transform& trans)
 {
-	trans.pos.x= get_x_pos(col, y_offset);
+	trans.pos.x= get_move_x(col) + get_x_pos(col, y_offset);
 	// get_y_pos is passed a y offset of 0 because the hold rendering logic
 	// applies the reverse shift. -Kyz
-	trans.pos.y= get_y_pos(col, 0.f);
-	trans.pos.z= get_z_pos(y_offset);
+	trans.pos.y= get_move_y(col) + get_y_pos(col, 0.f);
+	trans.pos.z= get_move_z(col) + get_z_pos(y_offset);
 	trans.rot.x= 0.f;
 	trans.rot.y= get_rotation_y(y_offset);
 	trans.rot.z= 0.f;

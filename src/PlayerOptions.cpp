@@ -76,6 +76,9 @@ void PlayerOptions::Init()
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
+	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
+	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
+	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
 }
 
 void PlayerOptions::Approach(PlayerOptions const& other, float delta)
@@ -111,6 +114,12 @@ void PlayerOptions::Approach(PlayerOptions const& other, float delta)
 	APPROACH( fSkew );
 	APPROACH( fPassmark );
 	APPROACH( fRandomSpeed );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesX[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesY[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesZ[i] );
 
 	DO_COPY( m_bSetScrollSpeed );
 	for( int i=0; i<NUM_TURNS; i++ )
@@ -225,6 +234,17 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
 	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
+	
+	for( int i=0; i<16; i++)
+	{
+		std::string s = fmt::sprintf( "MoveX%d", i+1 );
+		
+		AddPart( AddTo, m_fMovesX[i],				s );
+		s = fmt::sprintf( "MoveY%d", i+1 );
+		AddPart( AddTo, m_fMovesY[i],				s );
+		s = fmt::sprintf( "MoveZ%d", i+1 );
+		AddPart( AddTo, m_fMovesZ[i],				s );
+	}
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN_OFFSET],	"HiddenOffset" );
@@ -472,6 +492,18 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 		SET_FLOAT( fMaxScrollBPM )
 		m_fTimeSpacing = 0;
 		m_changed_defective_mod= true;
+	}
+	else if( sBit.find("move") != sBit.npos)
+	{
+	    for (int i=0; i<16; i++)
+	    {
+		std::string s = fmt::sprintf( "movex%d", i+1 );
+		    if( sBit == s)				SET_FLOAT( fMovesX[i] )
+		s = fmt::sprintf( "movey%d", i+1 );
+		    if( sBit == s)				SET_FLOAT( fMovesY[i] )
+		s = fmt::sprintf( "movez%d", i+1 );
+		    if( sBit == s)				SET_FLOAT( fMovesZ[i] )
+	    }
 	}
 	else
 	{
@@ -893,6 +925,12 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 		COMPARE(m_bTurns[i]);
 	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 		COMPARE(m_bTransforms[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesX[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesY[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesZ[i]);
 #undef COMPARE
 	return true;
 }
@@ -945,6 +983,18 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 	{
 		CPY(m_bTransforms[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesX[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesY[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesZ[i]);
 	}
 #undef CPY
 #undef CPY_SPEED
@@ -1239,6 +1289,9 @@ public:
 	FLOAT_INTERFACE(Tilt, Tilt, true);
 	FLOAT_INTERFACE(Passmark, Passmark, true); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
 	FLOAT_INTERFACE(RandomSpeed, RandomSpeed, true);
+	MULTICOL_FLOAT_INTERFACE(MoveX, MovesX, true);
+	MULTICOL_FLOAT_INTERFACE(MoveY, MovesY, true);
+	MULTICOL_FLOAT_INTERFACE(MoveZ, MovesZ, true);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -1629,6 +1682,10 @@ public:
 		ADD_METHOD(NoQuads);
 		ADD_METHOD(NoStretch);
 		ADD_METHOD(MuteOnError);
+		
+		ADD_MULTICOL_METHOD(MoveX);
+		ADD_MULTICOL_METHOD(MoveY);
+		ADD_MULTICOL_METHOD(MoveZ);
 
 		ADD_METHOD(FailSetting);
 		ADD_METHOD(MinTNSToHideNotes);
