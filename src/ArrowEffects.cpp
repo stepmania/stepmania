@@ -858,7 +858,7 @@ float ArrowEffects::GetZPos(int iCol, float fYOffset)
 	const float* fEffects = curr_options->m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( fYOffset/16.0f );
+		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
 
 	return fZPos;
 }

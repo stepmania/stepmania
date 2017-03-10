@@ -232,6 +232,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],		"BumpyOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],		"BumpyPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
@@ -489,19 +491,27 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "boomerang" )				SET_FLOAT( fAccels[ACCEL_BOOMERANG] )
 	else if( sBit == "drunk" )				SET_FLOAT( fEffects[EFFECT_DRUNK] )
 	else if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
-	else if( sBit == "confusion" )				SET_FLOAT( fEffects[EFFECT_CONFUSION] )
-	else if( sBit == "confusionoffset" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_OFFSET] )
-	else if( sBit == "confusionx" )				SET_FLOAT( fEffects[EFFECT_CONFUSION_X] )
-	else if( sBit == "confusionxoffset" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_X_OFFSET] )
-	else if( sBit == "confusiony" )				SET_FLOAT( fEffects[EFFECT_CONFUSION_Y] )
-	else if( sBit == "confusionyoffset" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_Y_OFFSET] )
+	else if( sBit.find("confusion") != sBit.npos)
+	{
+	    if( sBit == "confusion" )				SET_FLOAT( fEffects[EFFECT_CONFUSION] )
+	    else if( sBit == "confusionoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_OFFSET] )
+	    else if( sBit == "confusionx" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_X] )
+	    else if( sBit == "confusionxoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_X_OFFSET] )
+	    else if( sBit == "confusiony" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_Y] )
+	    else if( sBit == "confusionyoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_Y_OFFSET] )
+	}
 	else if( sBit == "mini" )				SET_FLOAT( fEffects[EFFECT_MINI] )
 	else if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
 	else if( sBit == "flip" )				SET_FLOAT( fEffects[EFFECT_FLIP] )
 	else if( sBit == "invert" )				SET_FLOAT( fEffects[EFFECT_INVERT] )
 	else if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
 	else if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
-	else if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
+	else if( sBit.find("bumpy") != sBit.npos)
+	{
+	    if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
+	    else if( sBit == "bumpyoffset" )			SET_FLOAT( fEffects[EFFECT_BUMPY_OFFSET] )
+	    else if( sBit == "bumpyperiod" )			SET_FLOAT( fEffects[EFFECT_BUMPY_PERIOD] )
+	}
 	else if( sBit == "beat" )				SET_FLOAT( fEffects[EFFECT_BEAT] )
 	else if( sBit == "xmode" )				SET_FLOAT( fEffects[EFFECT_XMODE] )
 	else if( sBit == "twirl" )				SET_FLOAT( fEffects[EFFECT_TWIRL] )
@@ -1171,6 +1181,8 @@ public:
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
+	FLOAT_INTERFACE(BumpyOffset, Effects[PlayerOptions::EFFECT_BUMPY_OFFSET], true);
+	FLOAT_INTERFACE(BumpyPeriod, Effects[PlayerOptions::EFFECT_BUMPY_PERIOD], true);
 	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT], true);
 	FLOAT_INTERFACE(Xmode, Effects[PlayerOptions::EFFECT_XMODE], true);
 	FLOAT_INTERFACE(Twirl, Effects[PlayerOptions::EFFECT_TWIRL], true);
@@ -1567,6 +1579,8 @@ public:
 		ADD_METHOD(Tornado);
 		ADD_METHOD(Tipsy);
 		ADD_METHOD(Bumpy);
+		ADD_METHOD(BumpyOffset);
+		ADD_METHOD(BumpyPeriod);
 		ADD_METHOD(Beat);
 		ADD_METHOD(Xmode);
 		ADD_METHOD(Twirl);
