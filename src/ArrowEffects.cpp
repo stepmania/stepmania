@@ -185,7 +185,7 @@ void ArrowEffects::Update()
 		if(effects[PlayerOptions::EFFECT_TIPSY] != 0)
 		{
 			const float time= RageTimer::GetTimeSinceStartFast();
-			const float time_times_timer= time * TIPSY_TIMER_FREQUENCY;
+			const float time_times_timer= time * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * TIPSY_TIMER_FREQUENCY) + TIPSY_TIMER_FREQUENCY);
 			const float arrow_times_mag= ARROW_SIZE * TIPSY_ARROW_MAGNITUDE;
 			const float time_times_offset_timer= time *
 				TIPSY_OFFSET_TIMER_FREQUENCY;
@@ -194,7 +194,7 @@ void ArrowEffects::Update()
 			for(int col= 0; col < MAX_COLS_PER_PLAYER; ++col)
 			{
 				data.m_tipsy_result[col]= RageFastCos(
-					time_times_timer + (col * TIPSY_COLUMN_FREQUENCY)) *
+					time_times_timer + (col * ((effects[PlayerOptions::EFFECT_TIPSY_OFFSET] * TIPSY_COLUMN_FREQUENCY) + TIPSY_COLUMN_FREQUENCY))) *
 					arrow_times_mag;
 				data.m_tipsy_offset_result[col]= RageFastCos(
 					time_times_offset_timer + (col * TIPSY_OFFSET_COLUMN_FREQUENCY)) *

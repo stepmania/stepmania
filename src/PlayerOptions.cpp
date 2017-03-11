@@ -231,6 +231,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_INVERT],		"Invert" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],		"BumpyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],		"BumpyPeriod" );
@@ -505,7 +507,12 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "flip" )				SET_FLOAT( fEffects[EFFECT_FLIP] )
 	else if( sBit == "invert" )				SET_FLOAT( fEffects[EFFECT_INVERT] )
 	else if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
-	else if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
+	else if( sBit.find("tipsy") != sBit.npos)
+	{
+	    if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
+	    else if( sBit == "tipsyspeed" )			SET_FLOAT( fEffects[EFFECT_TIPSY_SPEED] )
+	    else if( sBit == "tipsyoffset" )			SET_FLOAT( fEffects[EFFECT_TIPSY_OFFSET] )
+	}
 	else if( sBit.find("bumpy") != sBit.npos)
 	{
 	    if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
@@ -1180,6 +1187,8 @@ public:
 	FLOAT_INTERFACE(Invert, Effects[PlayerOptions::EFFECT_INVERT], true);
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
+	FLOAT_INTERFACE(TipsySpeed, Effects[PlayerOptions::EFFECT_TIPSY_SPEED], true);
+	FLOAT_INTERFACE(TipsyOffset, Effects[PlayerOptions::EFFECT_TIPSY_OFFSET], true);
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
 	FLOAT_INTERFACE(BumpyOffset, Effects[PlayerOptions::EFFECT_BUMPY_OFFSET], true);
 	FLOAT_INTERFACE(BumpyPeriod, Effects[PlayerOptions::EFFECT_BUMPY_PERIOD], true);
@@ -1578,6 +1587,8 @@ public:
 		ADD_METHOD(Invert);
 		ADD_METHOD(Tornado);
 		ADD_METHOD(Tipsy);
+		ADD_METHOD(TipsySpeed);
+		ADD_METHOD(TipsyOffset);
 		ADD_METHOD(Bumpy);
 		ADD_METHOD(BumpyOffset);
 		ADD_METHOD(BumpyPeriod);
