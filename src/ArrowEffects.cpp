@@ -494,7 +494,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], 
 						     TORNADO_POSITION_SCALE_TO_LOW, TORNADO_POSITION_SCALE_TO_HIGH );
 		float fRads = acosf( fPositionBetween );
-		fRads += fYOffset * TORNADO_OFFSET_FREQUENCY / SCREEN_HEIGHT;
+		fRads += (fYOffset + fEffects[PlayerOptions::EFFECT_TORNADO_OFFSET]) * ((fEffects[PlayerOptions::EFFECT_TORNADO_PERIOD] * TORNADO_OFFSET_FREQUENCY) +  TORNADO_OFFSET_FREQUENCY) / SCREEN_HEIGHT;
 
 		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH,
 							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );

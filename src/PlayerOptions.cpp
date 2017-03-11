@@ -235,6 +235,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_FLIP],		"Flip" );
 	AddPart( AddTo, m_fEffects[EFFECT_INVERT],		"Invert" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_PERIOD],	"TornadoPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_OFFSET],	"TornadoOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
@@ -525,7 +527,12 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
 	else if( sBit == "flip" )				SET_FLOAT( fEffects[EFFECT_FLIP] )
 	else if( sBit == "invert" )				SET_FLOAT( fEffects[EFFECT_INVERT] )
-	else if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
+	else if( sBit.find("tornado") != sBit.npos)
+	{
+	    if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
+	    else if( sBit == "tornadoperiod" )			SET_FLOAT( fEffects[EFFECT_TORNADO_PERIOD] )
+	    else if( sBit == "tornadooffset" )			SET_FLOAT( fEffects[EFFECT_TORNADO_OFFSET] )
+	}
 	else if( sBit.find("tipsy") != sBit.npos)
 	{
 	    if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
@@ -1210,6 +1217,8 @@ public:
 	FLOAT_INTERFACE(Flip, Effects[PlayerOptions::EFFECT_FLIP], true);
 	FLOAT_INTERFACE(Invert, Effects[PlayerOptions::EFFECT_INVERT], true);
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
+	FLOAT_INTERFACE(TornadoPeriod, Effects[PlayerOptions::EFFECT_TORNADO_PERIOD], true);
+	FLOAT_INTERFACE(TornadoOffset, Effects[PlayerOptions::EFFECT_TORNADO_OFFSET], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
 	FLOAT_INTERFACE(TipsySpeed, Effects[PlayerOptions::EFFECT_TIPSY_SPEED], true);
 	FLOAT_INTERFACE(TipsyOffset, Effects[PlayerOptions::EFFECT_TIPSY_OFFSET], true);
@@ -1615,6 +1624,8 @@ public:
 		ADD_METHOD(Flip);
 		ADD_METHOD(Invert);
 		ADD_METHOD(Tornado);
+		ADD_METHOD(TornadoPeriod);
+		ADD_METHOD(TornadoOffset);
 		ADD_METHOD(Tipsy);
 		ADD_METHOD(TipsySpeed);
 		ADD_METHOD(TipsyOffset);
