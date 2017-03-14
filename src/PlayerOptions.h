@@ -106,12 +106,17 @@ public:
 		ACCEL_BOOST, /**< The arrows start slow, then zoom towards the targets. */
 		ACCEL_BRAKE, /**< The arrows start fast, then slow down as they approach the targets. */
 		ACCEL_WAVE,
+		ACCEL_WAVE_PERIOD,
 		ACCEL_EXPAND,
+		ACCEL_EXPAND_PERIOD,
 		ACCEL_BOOMERANG, /**< The arrows start from above the targets, go down, then come back up. */
 		NUM_ACCELS
 	};
 	enum Effect	{
 		EFFECT_DRUNK,
+		EFFECT_DRUNK_SPEED,
+		EFFECT_DRUNK_OFFSET,
+		EFFECT_DRUNK_PERIOD,
 		EFFECT_DIZZY,
 		EFFECT_CONFUSION,
 		EFFECT_CONFUSION_OFFSET,
@@ -124,9 +129,18 @@ public:
 		EFFECT_FLIP,
 		EFFECT_INVERT,
 		EFFECT_TORNADO,
+		EFFECT_TORNADO_PERIOD,
+		EFFECT_TORNADO_OFFSET,
 		EFFECT_TIPSY,
+		EFFECT_TIPSY_SPEED,
+		EFFECT_TIPSY_OFFSET,
 		EFFECT_BUMPY,
+		EFFECT_BUMPY_OFFSET,
+		EFFECT_BUMPY_PERIOD,
 		EFFECT_BEAT,
+		EFFECT_BEAT_OFFSET,
+		EFFECT_BEAT_PERIOD,
+		EFFECT_BEAT_MULT,
 		EFFECT_XMODE,
 		EFFECT_TWIRL,
 		EFFECT_ROLL,

@@ -97,13 +97,14 @@ void ArrowEffects::Update()
 		? GAMESTATE->m_pPlayerState[pn]->m_Position : GAMESTATE->m_Position;
 		const float field_zoom= GAMESTATE->m_pPlayerState[pn]->m_NotefieldZoom;
 		const float* effects= GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_fEffects;
+		const float* accels= GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_fAccels;
 
 		PerPlayerData &data = g_EffectData[pn];
 		
 		if( !position.m_bFreeze || !position.m_bDelay )
 		{
 			data.m_fExpandSeconds += fTime - fLastTime;
-			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, PI*2 );
+			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, (PI*2)/(accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1) );
 		}
 		
 		// Update Tornado
@@ -185,7 +186,7 @@ void ArrowEffects::Update()
 		if(effects[PlayerOptions::EFFECT_TIPSY] != 0)
 		{
 			const float time= RageTimer::GetTimeSinceStartFast();
-			const float time_times_timer= time * TIPSY_TIMER_FREQUENCY;
+			const float time_times_timer= time * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * TIPSY_TIMER_FREQUENCY) + TIPSY_TIMER_FREQUENCY);
 			const float arrow_times_mag= ARROW_SIZE * TIPSY_ARROW_MAGNITUDE;
 			const float time_times_offset_timer= time *
 				TIPSY_OFFSET_TIMER_FREQUENCY;
@@ -194,7 +195,7 @@ void ArrowEffects::Update()
 			for(int col= 0; col < MAX_COLS_PER_PLAYER; ++col)
 			{
 				data.m_tipsy_result[col]= RageFastCos(
-					time_times_timer + (col * TIPSY_COLUMN_FREQUENCY)) *
+					time_times_timer + (col * ((effects[PlayerOptions::EFFECT_TIPSY_OFFSET] * TIPSY_COLUMN_FREQUENCY) + TIPSY_COLUMN_FREQUENCY))) *
 					arrow_times_mag;
 				data.m_tipsy_offset_result[col]= RageFastCos(
 					time_times_offset_timer + (col * TIPSY_OFFSET_COLUMN_FREQUENCY)) *
@@ -212,7 +213,7 @@ void ArrowEffects::Update()
 		// Update Beat
 		do {
 			float fAccelTime = 0.2f, fTotalTime = 0.5f;
-			float fBeat = position.m_fSongBeatVisible + fAccelTime;
+			float fBeat = ((position.m_fSongBeatVisible + fAccelTime + effects[PlayerOptions::EFFECT_BEAT_OFFSET]) * (effects[PlayerOptions::EFFECT_BEAT_MULT]+1));
 
 			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
 
@@ -360,7 +361,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fYAdjust += fBrakeYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/WAVE_MOD_HEIGHT );
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/((fAccels[PlayerOptions::ACCEL_WAVE_PERIOD]*WAVE_MOD_HEIGHT)+WAVE_MOD_HEIGHT) );
 
 	fYOffset += fYAdjust;
 
@@ -396,7 +397,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		// TODO: Don't index by PlayerNumber.
 		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
 	
-		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY),
+		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY*(fAccels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1)),
 						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
 						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 
@@ -493,7 +494,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], 
 						     TORNADO_POSITION_SCALE_TO_LOW, TORNADO_POSITION_SCALE_TO_HIGH );
 		float fRads = acosf( fPositionBetween );
-		fRads += fYOffset * TORNADO_OFFSET_FREQUENCY / SCREEN_HEIGHT;
+		fRads += (fYOffset + fEffects[PlayerOptions::EFFECT_TORNADO_OFFSET]) * ((fEffects[PlayerOptions::EFFECT_TORNADO_PERIOD] * TORNADO_OFFSET_FREQUENCY) +  TORNADO_OFFSET_FREQUENCY) / SCREEN_HEIGHT;
 
 		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH,
 							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
@@ -503,8 +504,8 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
-			( RageFastCos( RageTimer::GetTimeSinceStartFast() + iColNum*DRUNK_COLUMN_FREQUENCY
-				      + fYOffset*DRUNK_OFFSET_FREQUENCY/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
+			( RageFastCos( RageTimer::GetTimeSinceStartFast()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_SPEED]) + iColNum*((fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET]*DRUNK_COLUMN_FREQUENCY)+DRUNK_COLUMN_FREQUENCY)
+				      + fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_PERIOD]*DRUNK_OFFSET_FREQUENCY)+DRUNK_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
 		const int iFirstCol = 0;
@@ -520,7 +521,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	{
-		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / BEAT_OFFSET_HEIGHT + PI/BEAT_PI_HEIGHT );
+		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_PERIOD]*BEAT_OFFSET_HEIGHT)+BEAT_OFFSET_HEIGHT) + PI/BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 
@@ -858,7 +859,7 @@ float ArrowEffects::GetZPos(int iCol, float fYOffset)
 	const float* fEffects = curr_options->m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( fYOffset/16.0f );
+		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
 
 	return fZPos;
 }
