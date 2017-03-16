@@ -219,7 +219,7 @@ void ArrowDefects::update(float music_beat, float music_second)
 	{
 		float const accel_time= .2f;
 		float const total_time= .5f;
-		float beat= m_music_beat + accel_time;
+		float beat= (m_music_beat + accel_time + effects[PlayerOptions::EFFECT_BEAT_OFFSET]) * (effects[PlayerOptions::EFFECT_BEAT_MULT]+1);
 		bool const even_beat= (int(beat) % 2) != 0;
 		m_beat_factor= 0;
 		if(beat >= 0.f)
@@ -421,7 +421,7 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	if(effects[PlayerOptions::EFFECT_BEAT] != 0.f)
 	{
 		float const shift= m_beat_factor * Rage::FastSin(y_offset /
-			beat_offset_height + Rage::PI / beat_pi_height);
+			((effects[PlayerOptions::EFFECT_BEAT_PERIOD] * beat_offset_height) + beat_offset_height) + Rage::PI / beat_pi_height);
 		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_BEAT] * shift;
 	}
 	if(effects[PlayerOptions::EFFECT_XMODE] != 0.f)
@@ -482,10 +482,11 @@ float ArrowDefects::get_y_pos(size_t col, float y_offset)
 
 float ArrowDefects::get_z_pos(float y_offset)
 {
-	if(m_options->m_fEffects[PlayerOptions::EFFECT_BUMPY] != 0.f)
+	float const* effects= m_options->m_fEffects;
+	if(effects[PlayerOptions::EFFECT_BUMPY] != 0.f)
 	{
-		return m_options->m_fEffects[PlayerOptions::EFFECT_BUMPY] *
-			40 * Rage::FastSin(y_offset / 16.f);
+		return effects[PlayerOptions::EFFECT_BUMPY] *
+			40 * Rage::FastSin((y_offset + (100.f * effects[PlayerOptions::EFFECT_BUMPY_OFFSET])) / ((effects[PlayerOptions::EFFECT_BUMPY_PERIOD] * 16.f) + 16.f));
 	}
 	return 0.f;
 }
