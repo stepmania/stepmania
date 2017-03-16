@@ -216,6 +216,9 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
 
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],		"Drunk" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_SPEED],		"DrunkSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_OFFSET],	"DrunkOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_PERIOD],	"DrunkPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],		"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION],	"Confusion" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_OFFSET],	"ConfusionOffset" );
@@ -229,6 +232,8 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_INVERT],		"Invert" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
@@ -547,6 +552,9 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 		};
 		static std::unordered_map<std::string, Effect> effect_options= {
 			{"drunk", EFFECT_DRUNK},
+			{"drunkspeed", EFFECT_DRUNK_SPEED},
+			{"drunkoffset", EFFECT_DRUNK_OFFSET},
+			{"drunkperiod", EFFECT_DRUNK_PERIOD},
 			{"dizzy", EFFECT_DIZZY},
 			{"confusion", EFFECT_CONFUSION},
 			{"confusionoffset", EFFECT_CONFUSION_OFFSET},
@@ -560,6 +568,8 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"invert", EFFECT_INVERT},
 			{"tornado", EFFECT_TORNADO},
 			{"tipsy", EFFECT_TIPSY},
+			{"tipsyspeed", EFFECT_TIPSY_SPEED},
+			{"tipsyoffset", EFFECT_TIPSY_OFFSET},
 			{"bumpy", EFFECT_BUMPY},
 			{"beat", EFFECT_BEAT},
 			{"xmode", EFFECT_XMODE},
@@ -1249,6 +1259,9 @@ public:
 	FLOAT_INTERFACE(Expand, Accels[PlayerOptions::ACCEL_EXPAND], true);
 	FLOAT_INTERFACE(Boomerang, Accels[PlayerOptions::ACCEL_BOOMERANG], true);
 	FLOAT_INTERFACE(Drunk, Effects[PlayerOptions::EFFECT_DRUNK], true);
+	FLOAT_INTERFACE(DrunkSpeed, Effects[PlayerOptions::EFFECT_DRUNK_SPEED], true);
+	FLOAT_INTERFACE(DrunkOffset, Effects[PlayerOptions::EFFECT_DRUNK_OFFSET], true);
+	FLOAT_INTERFACE(DrunkPeriod, Effects[PlayerOptions::EFFECT_DRUNK_PERIOD], true);
 	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
 	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION], true);
 	FLOAT_INTERFACE(ConfusionOffset, Effects[PlayerOptions::EFFECT_CONFUSION_OFFSET], true);
@@ -1262,6 +1275,8 @@ public:
 	FLOAT_INTERFACE(Invert, Effects[PlayerOptions::EFFECT_INVERT], true);
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
+	FLOAT_INTERFACE(TipsySpeed, Effects[PlayerOptions::EFFECT_TIPSY_SPEED], true);
+	FLOAT_INTERFACE(TipsyOffset, Effects[PlayerOptions::EFFECT_TIPSY_OFFSET], true);
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
 	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT], true);
 	FLOAT_INTERFACE(Xmode, Effects[PlayerOptions::EFFECT_XMODE], true);
@@ -1610,6 +1625,9 @@ public:
 		ADD_METHOD(Expand);
 		ADD_METHOD(Boomerang);
 		ADD_METHOD(Drunk);
+		ADD_METHOD(DrunkSpeed);
+		ADD_METHOD(DrunkOffset);
+		ADD_METHOD(DrunkPeriod);
 		ADD_METHOD(Dizzy);
 		ADD_METHOD(Confusion);
 		ADD_METHOD(ConfusionOffset);
@@ -1623,6 +1641,8 @@ public:
 		ADD_METHOD(Invert);
 		ADD_METHOD(Tornado);
 		ADD_METHOD(Tipsy);
+		ADD_METHOD(TipsySpeed);
+		ADD_METHOD(TipsyOffset);
 		ADD_METHOD(Bumpy);
 		ADD_METHOD(Beat);
 		ADD_METHOD(Xmode);

@@ -200,12 +200,12 @@ void ArrowDefects::update(float music_beat, float music_second)
 	}
 	if(effects[PlayerOptions::EFFECT_TIPSY] != 0.f)
 	{
-		float const time_times_timer= m_music_second * tipsy_timer_frequency;
+		float const time_times_timer= m_music_second * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * tipsy_timer_frequency) + tipsy_timer_frequency);
 		float const arrow_times_mag= arrow_spacing * tipsy_arrow_magnitude;
 		for(size_t col= 0; col < m_num_columns; ++col)
 		{
 			m_tipsy_result[col]= Rage::FastCos(time_times_timer +
-				(col * tipsy_column_frequency)) * arrow_times_mag;
+				(col * ((effects[PlayerOptions::EFFECT_TIPSY_OFFSET] * tipsy_column_frequency) + tipsy_column_frequency))) * arrow_times_mag;
 		}
 	}
 	else
@@ -401,8 +401,8 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	if(effects[PlayerOptions::EFFECT_DRUNK] != 0.f)
 	{
 		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_DRUNK] *
-			(Rage::FastCos(m_music_second + (col * drunk_column_frequency) +
-				((y_offset * drunk_offset_frequency) / SCREEN_HEIGHT)) *
+			(Rage::FastCos((m_music_second * (1+effects[PlayerOptions::EFFECT_DRUNK_SPEED])) + (col * ((effects[PlayerOptions::EFFECT_DRUNK_OFFSET] * drunk_column_frequency) + drunk_column_frequency)) +
+				((y_offset * ((effects[PlayerOptions::EFFECT_DRUNK_PERIOD]*drunk_offset_frequency)+drunk_offset_frequency)) / SCREEN_HEIGHT)) *
 				arrow_spacing * drunk_arrow_magnitude);
 	}
 	if(effects[PlayerOptions::EFFECT_FLIP] != 0.f)
