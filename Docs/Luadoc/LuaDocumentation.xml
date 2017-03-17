@@ -3504,6 +3504,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='BatteryLives' return='int' arguments='int num'>	</Function>
 	<Function name='Backwards' return='bool' arguments='bool value'> </Function>
 	<Function name='Beat' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatMult' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Big' return='bool' arguments='bool value'> </Function>
 	<Function name='Blink' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Blind' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3512,6 +3515,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Boost' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Brake' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Bumpy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BumpyOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BumpyPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Centered' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='CMod' return='float, float' arguments='float value, float approach_speed'>
 		If the player has a CMod set, returns the value of that CMod and its associated approach speed.  Returns nil otherwise.<br />
@@ -3536,8 +3541,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='DrainSetting' return= 'DrainType' arguments='DrainType type'>	</Function>
 	<Function name='Drunk' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Echo' return='bool' arguments='bool value'> </Function>
 	<Function name='Expand' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ExpandPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='FailSetting' return='FailType' arguments='FailType'>
 		Sets the <Link class='ENUM' function='FailType' /> for the player, if the optional argument is provided.  Returns the <Link class='ENUM' function='FailType' /> that was previously set.
 	</Function>
@@ -3672,7 +3681,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='Tiny' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Tipsy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TipsyOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TipsySpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Tornado' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TornadoOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TornadoPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='TurnNone' return='bool' arguments='bool value'> </Function>
 	<Function name='Twirl' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Twister' return='bool' arguments='bool value'> </Function>
@@ -3680,6 +3693,7 @@ save yourself some time, copy this for undocumented things:
 		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1.0</code>)
 	</Function>
 	<Function name='Wave' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='WavePeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Wide' return='bool' arguments='bool value'> </Function>
 	<Function name='XMod' return='float, float' arguments='float value, float approach_speed'>
 		If the player has a XMod set, returns the value of that XMod and its associated approach speed.  Returns nil otherwise.<br />
