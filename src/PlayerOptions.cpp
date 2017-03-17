@@ -212,7 +212,9 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fAccels[ACCEL_BOOST],		"Boost" );
 	AddPart( AddTo, m_fAccels[ACCEL_BRAKE],		"Brake" );
 	AddPart( AddTo, m_fAccels[ACCEL_WAVE],			"Wave" );
+	AddPart( AddTo, m_fAccels[ACCEL_WAVE_PERIOD],		"WavePeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_EXPAND],		"Expand" );
+	AddPart( AddTo, m_fAccels[ACCEL_EXPAND_PERIOD],		"ExpandPeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
 
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],		"Drunk" );
@@ -231,6 +233,8 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_FLIP],		"Flip" );
 	AddPart( AddTo, m_fEffects[EFFECT_INVERT],		"Invert" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_PERIOD],	"TornadoPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_OFFSET],	"TornadoOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
@@ -551,7 +555,9 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"brake", ACCEL_BRAKE},
 			{"land", ACCEL_BRAKE},
 			{"wave", ACCEL_WAVE},
+			{"waveperiod", ACCEL_WAVE_PERIOD},
 			{"expand", ACCEL_EXPAND},
+			{"expandperiod", ACCEL_EXPAND_PERIOD},
 			{"dwiwave", ACCEL_EXPAND},
 			{"boomerang", ACCEL_BOOMERANG},
 		};
@@ -572,6 +578,8 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"flip", EFFECT_FLIP},
 			{"invert", EFFECT_INVERT},
 			{"tornado", EFFECT_TORNADO},
+			{"tornadoperiod", EFFECT_TORNADO_PERIOD},
+			{"tornadooffset", EFFECT_TORNADO_OFFSET},
 			{"tipsy", EFFECT_TIPSY},
 			{"tipsyspeed", EFFECT_TIPSY_SPEED},
 			{"tipsyoffset", EFFECT_TIPSY_OFFSET},
@@ -1266,7 +1274,9 @@ public:
 	FLOAT_INTERFACE(Boost, Accels[PlayerOptions::ACCEL_BOOST], true);
 	FLOAT_INTERFACE(Brake, Accels[PlayerOptions::ACCEL_BRAKE], true);
 	FLOAT_INTERFACE(Wave, Accels[PlayerOptions::ACCEL_WAVE], true);
+	FLOAT_INTERFACE(WavePeriod, Accels[PlayerOptions::ACCEL_WAVE_PERIOD], true);
 	FLOAT_INTERFACE(Expand, Accels[PlayerOptions::ACCEL_EXPAND], true);
+	FLOAT_INTERFACE(ExpandPeriod, Accels[PlayerOptions::ACCEL_EXPAND_PERIOD], true);
 	FLOAT_INTERFACE(Boomerang, Accels[PlayerOptions::ACCEL_BOOMERANG], true);
 	FLOAT_INTERFACE(Drunk, Effects[PlayerOptions::EFFECT_DRUNK], true);
 	FLOAT_INTERFACE(DrunkSpeed, Effects[PlayerOptions::EFFECT_DRUNK_SPEED], true);
@@ -1284,6 +1294,8 @@ public:
 	FLOAT_INTERFACE(Flip, Effects[PlayerOptions::EFFECT_FLIP], true);
 	FLOAT_INTERFACE(Invert, Effects[PlayerOptions::EFFECT_INVERT], true);
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
+	FLOAT_INTERFACE(TornadoPeriod, Effects[PlayerOptions::EFFECT_TORNADO_PERIOD], true);
+	FLOAT_INTERFACE(TornadoOffset, Effects[PlayerOptions::EFFECT_TORNADO_OFFSET], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
 	FLOAT_INTERFACE(TipsySpeed, Effects[PlayerOptions::EFFECT_TIPSY_SPEED], true);
 	FLOAT_INTERFACE(TipsyOffset, Effects[PlayerOptions::EFFECT_TIPSY_OFFSET], true);
@@ -1637,7 +1649,9 @@ public:
 		ADD_METHOD(Boost);
 		ADD_METHOD(Brake);
 		ADD_METHOD(Wave);
+		ADD_METHOD(WavePeriod);
 		ADD_METHOD(Expand);
+		ADD_METHOD(ExpandPeriod);
 		ADD_METHOD(Boomerang);
 		ADD_METHOD(Drunk);
 		ADD_METHOD(DrunkSpeed);
@@ -1655,6 +1669,8 @@ public:
 		ADD_METHOD(Flip);
 		ADD_METHOD(Invert);
 		ADD_METHOD(Tornado);
+		ADD_METHOD(TornadoPeriod);
+		ADD_METHOD(TornadoOffset);
 		ADD_METHOD(Tipsy);
 		ADD_METHOD(TipsySpeed);
 		ADD_METHOD(TipsyOffset);

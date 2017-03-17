@@ -165,7 +165,7 @@ void ArrowDefects::update(float music_beat, float music_second)
 	float const* accels= m_options->m_fAccels;
 	if(accels[PlayerOptions::ACCEL_EXPAND] != 0.f)
 	{
-		m_expand_seconds= fmodf(m_timing_data->GetExpandSeconds(m_music_second), Rage::PI * 2.0);
+		m_expand_seconds= fmodf(m_timing_data->GetExpandSeconds(m_music_second), (Rage::PI * 2.0) / ((accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1)));
 	}
 	if(effects[PlayerOptions::EFFECT_TORNADO] != 0.f)
 	{
@@ -346,7 +346,7 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 	if(accels[PlayerOptions::ACCEL_WAVE] != 0)
 	{
 		y_adjust+= accels[PlayerOptions::ACCEL_WAVE] * wave_mod_magnitude *
-			Rage::FastSin(y_offset / wave_mod_height);
+			Rage::FastSin(y_offset / ((accels[PlayerOptions::ACCEL_WAVE_PERIOD]*wave_mod_height)+wave_mod_height));
 	}
 	y_offset+= y_adjust;
 	if(accels[PlayerOptions::ACCEL_BOOMERANG] != 0.f)
@@ -370,7 +370,7 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 	if(accels[PlayerOptions::ACCEL_EXPAND] != 0.f)
 	{
 		float expand_multiplier= Rage::scale(
-			Rage::FastCos(m_expand_seconds * expand_multiplier_frequency),
+			Rage::FastCos(m_expand_seconds * expand_multiplier_frequency * (accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1)),
 			expand_multiplier_scale_from_low, expand_multiplier_scale_from_high,
 			expand_multiplier_scale_to_low, expand_multiplier_scale_to_high);
 		scroll_speed*= Rage::scale(accels[PlayerOptions::ACCEL_EXPAND],
@@ -391,7 +391,7 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 			m_min_tornado_x[col], m_max_tornado_x[col],
 			tornado_position_scale_to_low, tornado_position_scale_to_high);
 		float rads= std::acos(position_between);
-		rads+= y_offset * tornado_offset_frequency / SCREEN_HEIGHT;
+		rads+= (y_offset + effects[PlayerOptions::EFFECT_TORNADO_OFFSET]) * ((effects[PlayerOptions::EFFECT_TORNADO_PERIOD] * tornado_offset_frequency) +  tornado_offset_frequency) / SCREEN_HEIGHT;
 		float const adjusted_pixel_offset= Rage::scale(Rage::FastCos(rads),
 			tornado_offset_scale_from_low, tornado_offset_scale_from_high,
 			m_min_tornado_x[col], m_max_tornado_x[col]);

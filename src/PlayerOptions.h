@@ -108,7 +108,9 @@ public:
 		ACCEL_BOOST, /**< The arrows start slow, then zoom towards the targets. */
 		ACCEL_BRAKE, /**< The arrows start fast, then slow down as they approach the targets. */
 		ACCEL_WAVE,
+		ACCEL_WAVE_PERIOD,
 		ACCEL_EXPAND,
+		ACCEL_EXPAND_PERIOD,
 		ACCEL_BOOMERANG, /**< The arrows start from above the targets, go down, then come back up. */
 		NUM_ACCELS
 	};
@@ -129,6 +131,8 @@ public:
 		EFFECT_FLIP,
 		EFFECT_INVERT,
 		EFFECT_TORNADO,
+		EFFECT_TORNADO_PERIOD,
+		EFFECT_TORNADO_OFFSET,
 		EFFECT_TIPSY,
 		EFFECT_TIPSY_SPEED,
 		EFFECT_TIPSY_OFFSET,
