@@ -254,6 +254,13 @@ void ScreenEdit::InitEditMappings()
 	name_to_edit_button["CHANGE_BG_LAYER"]= EDIT_BUTTON_CHANGE_BG_LAYER;
 
 	m_EditMappingsDeviceInput.Clear();
+	m_PlayMappingsDeviceInput.Clear();
+	m_RecordMappingsDeviceInput.Clear();
+	m_RecordPausedMappingsDeviceInput.Clear();
+	m_EditMappingsMenuButton.Clear();
+	m_PlayMappingsMenuButton.Clear();
+	m_RecordMappingsMenuButton.Clear();
+	m_RecordPausedMappingsMenuButton.Clear();
 
 	// Common mappings:
 	switch( EDIT_MODE.GetValue() )
