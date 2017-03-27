@@ -1076,6 +1076,11 @@ public:
 		else
 		{
 			RageTextureID ID( SArg(1) );
+			if(lua_isstring(L, 2))
+			{
+				RString additional_hints= SArg(2);
+				ID.AdditionalTextureHints= additional_hints;
+			}
 			p->Load( ID );
 		}
 		COMMON_RETURN_SELF;
