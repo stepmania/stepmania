@@ -52,8 +52,7 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 		lua_pushnil( L );
 		lua_pushnil( L );
 
-		RString Error= "Error running LoadFunction: ";
-		LuaHelpers::RunScriptOnStack(L, Error, 2, 1, true); // 2 args, 1 result
+		LuaHelpers::RunScriptOnStack(L, 2, 1); // 2 args, 1 result
 
 		m_iNumItems = (int) luaL_checknumber( L, -1 );
 		lua_pop( L, 1 );
@@ -126,8 +125,7 @@ void DynamicActorScroller::ConfigureActor( Actor *pActor, int iItem )
 	pActor->PushSelf( L );
 	LuaHelpers::Push( L, iItem );
 
-	RString Error= "Error running LoadFunction: ";
-	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true); // 2 args, 0 results
+	LuaHelpers::RunScriptOnStack(L, 2, 0); // 2 args, 0 results
 
 	LUA->Release(L);
 }

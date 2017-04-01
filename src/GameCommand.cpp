@@ -762,8 +762,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			ASSERT( !lua_isnil(L, -1) );
 
 			lua_pushnumber( L, *pn ); // 1st parameter
-			RString error= "Lua GameCommand error: ";
-			LuaHelpers::RunScriptOnStack(L, error, 1, 0, true);
+			LuaHelpers::RunScriptOnStack(L, 1, 0);
 		}
 		LUA->Release(L);
 	}

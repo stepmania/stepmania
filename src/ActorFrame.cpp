@@ -243,8 +243,7 @@ void ActorFrame::DrawPrimitives()
 			return;
 		}
 		this->PushSelf( L );
-		RString Error= "Error running DrawFunction: ";
-		LuaHelpers::RunScriptOnStack(L, Error, 1, 0, true); // 1 arg, 0 results
+		LuaHelpers::RunScriptOnStack(L, 1, 0); // 1 arg, 0 results
 		LUA->Release(L);
 		return;
 	}
@@ -494,8 +493,7 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		}
 		this->PushSelf( L );
 		lua_pushnumber( L, fDeltaTime );
-		RString Error= "Error running UpdateFunction: ";
-		LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true); // 1 args, 0 results
+		LuaHelpers::RunScriptOnStack(L, 2, 0); // 1 args, 0 results
 		LUA->Release(L);
 	}
 }

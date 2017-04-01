@@ -1076,8 +1076,7 @@ void NoteField::FadeToFail()
 		member_name.PushSelf(L);
 
 #define OPEN_RUN_BLOCK(arg_count) \
-	RString error= "Error running callback: "; \
-	if(LuaHelpers::RunScriptOnStack(L, error, arg_count, arg_count, true)) \
+	if(LuaHelpers::RunScriptOnStack(L, arg_count, arg_count)) \
 	{
 
 #define CLOSE_RUN_AND_CALLBACK_BLOCKS  } lua_settop(L, 0);  LUA->Release(L); }

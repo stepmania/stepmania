@@ -120,8 +120,7 @@ void ScreenSelectMaster::Init()
 			Lua* L= LUA->Get();
 			command.PushSelf(L);
 			lua_pushnumber(L, m_aGameCommands.size());
-			RString err= m_sName + "::IconChoicePosFunction: ";
-			if(!LuaHelpers::RunScriptOnStack(L, err, 1, 1, true))
+			if(!LuaHelpers::RunScriptOnStack(L, 1, 1))
 			{
 				positions_set_by_lua= false;
 			}
