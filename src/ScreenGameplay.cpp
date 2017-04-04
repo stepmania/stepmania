@@ -547,8 +547,7 @@ void ScreenGameplay::Init()
 			++next_player_slot;
 		}
 		Enum::Push(L, GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType);
-		RString err= "Error running MarginFunction:  ";
-		if(LuaHelpers::RunScriptOnStack(L, err, 2, 3, true))
+		if(LuaHelpers::RunScriptOnStack(L, 2, 3))
 		{
 			RString marge= "Margin value must be a number.";
 			margins[PLAYER_1][0]= SafeFArg(L, -3, marge, 40);

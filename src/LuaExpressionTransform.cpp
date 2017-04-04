@@ -26,8 +26,7 @@ void LuaExpressionTransform::TransformItemDirect( Actor &a, float fPositionOffse
 	LuaHelpers::Push( L, fPositionOffsetFromCenter );
 	LuaHelpers::Push( L, iItemIndex );
 	LuaHelpers::Push( L, iNumItems );
-	RString error= "Lua error in Transform function: ";
-	LuaHelpers::RunScriptOnStack(L, error, 4, 0, true);
+	LuaHelpers::RunScriptOnStack(L, 4, 0);
 	LUA->Release(L);
 }
 

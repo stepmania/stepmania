@@ -344,10 +344,9 @@ int ScoreKeeperNormal::CalcNextToastyAt(int level)
 			break;
 		case LUA_TFUNCTION:
 			{
-				RString err= "Error running ToastyTriggersAt: ";
 				LuaHelpers::Push(L, m_pPlayerState->m_PlayerNumber);
 				lua_pushnumber(L, level);
-				if(LuaHelpers::RunScriptOnStack(L, err, 2, 1, true))
+				if(LuaHelpers::RunScriptOnStack(L, 2, 1))
 				{
 					if(lua_isnumber(L, -1))
 					{

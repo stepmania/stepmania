@@ -1297,8 +1297,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 		pParamTable->PushSelf( L );
 
 	// call function with 2 arguments and 0 results
-	RString Error= "Error playing command:";
-	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
+	LuaHelpers::RunScriptOnStack(L, 2, 0);
 
 	LUA->Release(L);
 }

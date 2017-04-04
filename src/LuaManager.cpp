@@ -829,36 +829,19 @@ void LuaHelpers::ReportScriptErrorFmt(const char *fmt, ...)
 	ReportScriptError(Buff);
 }
 
-bool LuaHelpers::RunScriptOnStack( Lua *L, RString &Error, int Args, int ReturnValues, bool ReportError )
+bool LuaHelpers::RunScriptOnStack(Lua *L, int Args, int ReturnValues)
 {
-	lua_pushcfunction( L, GetLuaStack );
-
-	// move the error function above the function and params
-	int ErrFunc = lua_gettop(L) - Args - 1;
-	lua_insert( L, ErrFunc );
-
 	// evaluate
-	int ret = lua_pcall( L, Args, ReturnValues, ErrFunc );
+	int ret = lua_pcall(L, Args, ReturnValues, 0);
 	if( ret )
 	{
-		if(ReportError)
-		{
-			RString lerror;
-			LuaHelpers::Pop( L, lerror );
-			Error+= lerror;
-			ReportScriptError(Error);
-		}
-		else
-		{
-			LuaHelpers::Pop( L, Error );
-		}
-		lua_remove( L, ErrFunc );
+		lua_pop(L, 1);
 		for( int i = 0; i < ReturnValues; ++i )
+		{
 			lua_pushnil( L );
+		}
 		return false;
 	}
-
-	lua_remove( L, ErrFunc );
 	return true;
 }
 
@@ -881,7 +864,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &Script, const RString &Name, 
 	// move the function above the params
 	lua_insert( L, lua_gettop(L) - Args );
 
-	return LuaHelpers::RunScriptOnStack( L, Error, Args, ReturnValues, ReportError );
+	return LuaHelpers::RunScriptOnStack(L, Args, ReturnValues);
 }
 
 bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
