@@ -272,7 +272,8 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 	lua_pushvalue( L, -1 );
 	func.SetFromStack( L );
 
-	if( !LuaHelpers::RunScriptOnStack(L, 0, 1) )
+	RString Error= "Lua runtime error: ";
+	if( !LuaHelpers::RunScriptOnStack(L, Error, 0, 1, true) )
 	{
 		lua_pop( L, 1 );
 		return false;
@@ -286,7 +287,7 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 		lua_Debug debug;
 		lua_getinfo( L, ">nS", &debug );
 
-		RString Error = ssprintf( "%s: must return a table", debug.short_src );
+		Error = ssprintf( "%s: must return a table", debug.short_src );
 
 		LuaHelpers::ReportScriptError(Error, "LUA_ERROR");
 		return false;

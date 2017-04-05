@@ -1060,7 +1060,8 @@ void Profile::LoadCustomFunction( RString sDir )
 	LuaHelpers::Push(L, sDir);
 
 	// Run it
-	LuaHelpers::RunScriptOnStack(L, 2, 0);
+	RString Error= "Error running CustomLoadFunction: ";
+	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
 
 	LUA->Release(L);
 }
@@ -1343,7 +1344,8 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 	LuaHelpers::Push(L, sDir);
 
 	// Run it
-	LuaHelpers::RunScriptOnStack(L, 2, 0);
+	RString Error= "Error running CustomSaveFunction: ";
+	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
 
 	LUA->Release(L);
 

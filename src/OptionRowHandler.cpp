@@ -904,7 +904,8 @@ public:
 				return false;
 			}
 			m_pLuaTable->PushSelf( L );
-			LuaHelpers::RunScriptOnStack(L, 1, 1);
+			RString error= RowName + " \"EnabledForPlayers\": ";
+			LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
 			if(!lua_istable(L, -1))
 			{
 				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" did not return a table.", RowName.c_str());
@@ -987,7 +988,8 @@ public:
 		// Argument 1 (self):
 		m_pLuaTable->PushSelf( L );
 
-		LuaHelpers::RunScriptOnStack( L, 1, 1 );
+		RString error= "EnabledForPlayers: ";
+		LuaHelpers::RunScriptOnStack( L, error, 1, 1, true );
 		m_Def.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
 
 		lua_pushnil( L );
@@ -1147,7 +1149,8 @@ public:
 
 			ASSERT( lua_gettop(L) == 6 ); // vbSelectedOut, m_iLuaTable, function, self, arg, arg
 
-			LuaHelpers::RunScriptOnStack( L, 3, 0 );
+			RString error= "LoadSelections: ";
+			LuaHelpers::RunScriptOnStack( L, error, 3, 0, true );
 			ASSERT( lua_gettop(L) == 2 );
 
 			lua_pop( L, 1 ); // pop option table
@@ -1202,7 +1205,8 @@ public:
 
 			ASSERT( lua_gettop(L) == 6 ); // vbSelectedOut, m_iLuaTable, function, self, arg, arg
 
-			LuaHelpers::RunScriptOnStack( L, 3, 0 );
+			RString error= "SaveSelections: ";
+			LuaHelpers::RunScriptOnStack( L, error, 3, 0, true );
 			ASSERT( lua_gettop(L) == 2 );
 
 			lua_pop( L, 1 ); // pop option table
@@ -1233,7 +1237,8 @@ public:
 			LuaHelpers::Push(L, pn);
 			// Convert choice to a lua index so it matches up with the Choices table.
 			lua_pushinteger(L, choice+1);
-			LuaHelpers::RunScriptOnStack(L, 3, 1);
+			RString error= "NotifyOfSelection: ";
+			LuaHelpers::RunScriptOnStack(L, error, 3, 1, true);
 			if(lua_toboolean(L, -1))
 			{
 				lua_pop(L, 1);

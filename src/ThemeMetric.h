@@ -146,7 +146,8 @@ public:
 
 			// call function with 0 arguments and 1 result
 			m_Value.PushSelf( L );
-			LuaHelpers::RunScriptOnStack(L, 0, 1);
+			RString error= m_sGroup + ": " + m_sName + ": ";
+			LuaHelpers::RunScriptOnStack(L, error, 0, 1, true);
 			if(!lua_isnil(L, -1))
 			{
 				LuaHelpers::Pop( L, m_currentValue );

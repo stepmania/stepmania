@@ -80,7 +80,7 @@ namespace LuaHelpers
 	 * when reporting.  The error is reported through LOG->Warn and
 	 * SCREENMAN->SystemMessage.
 	 */
-	bool RunScriptOnStack(Lua *L, int Args = 0, int ReturnValues = 0);
+	bool RunScriptOnStack( Lua *L, RString &Error, int Args = 0, int ReturnValues = 0, bool ReportError = false );
 
 	/* LoadScript the given script, and RunScriptOnStack it.
 	 * iArgs arguments are at the top of the stack. */
