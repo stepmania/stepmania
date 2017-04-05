@@ -415,6 +415,26 @@ function rec_print_table(t, indent, depth_remaining)
 	Trace(indent .. "end")
 end
 
+function rec_count_children(parent)
+	local total= 1
+	if #parent > 0 and type(parent) == "table" then
+		for i, c in ipairs(parent) do
+			total= total + rec_count_children(c)
+		end
+	elseif parent.GetChildren then
+		local pname= (parent.GetName and parent:GetName()) or ""
+		local children= parent:GetChildren()
+		for k, v in pairs(children) do
+			if #v > 0 then
+				total= total + rec_count_children(v)
+			else
+				total= total + rec_count_children(v)
+			end
+		end
+	end
+	return total
+end
+
 -- Minor text formatting functions from Kyzentun.
 -- TODO:  Figure out why BitmapText:maxwidth doesn't do what I want.
 -- Intentionally undocumented because they should be moved to BitmapText ASAP
