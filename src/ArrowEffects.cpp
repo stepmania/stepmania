@@ -524,6 +524,15 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_PERIOD]*BEAT_OFFSET_HEIGHT)+BEAT_OFFSET_HEIGHT) + PI/BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
+	
+	if( fEffects[PlayerOptions::EFFECT_SQUARE] != 0 )
+	{
+		if(RageFastSin(((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_OFFSET])))/(60+(fEffects[PlayerOptions::EFFECT_SQUARE_PERIOD]*60)))) > 0){
+			fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_SQUARE] * ARROW_SIZE * 0.5f;
+		}else{
+			fPixelOffsetFromCenter -= fEffects[PlayerOptions::EFFECT_SQUARE] * ARROW_SIZE * 0.5f;
+		}
+	}
 
 	if( fEffects[PlayerOptions::EFFECT_XMODE] != 0 )
 	{
@@ -860,6 +869,15 @@ float ArrowEffects::GetZPos(int iCol, float fYOffset)
 
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
+	
+	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
+	{
+		if(RageFastSin(((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET])))/(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD]*ARROW_SIZE)))) > 0){
+			fZPos += fEffects[PlayerOptions::EFFECT_SQUARE_Z] * ARROW_SIZE * 0.5f;
+		}else{
+			fZPos -= fEffects[PlayerOptions::EFFECT_SQUARE_Z] * ARROW_SIZE * 0.5f;
+		}
+	}
 
 	return fZPos;
 }

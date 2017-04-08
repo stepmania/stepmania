@@ -246,6 +246,12 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE],		"Square" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_OFFSET],	"SquareOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_PERIOD],	"SquarePeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z],		"SquareZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z_OFFSET],	"SquareZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z_PERIOD],	"SquareZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_MULT],		"BeatMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
@@ -554,6 +560,15 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "beatoffset" )			SET_FLOAT( fEffects[EFFECT_BEAT_OFFSET] )
 	    else if( sBit == "beatperiod" )			SET_FLOAT( fEffects[EFFECT_BEAT_PERIOD] )
 	    else if( sBit == "beatmult" )			SET_FLOAT( fEffects[EFFECT_BEAT_MULT] )
+	}
+	else if( sBit.find("square") != sBit.npos)
+	{
+	    if( sBit == "square" )				SET_FLOAT( fEffects[EFFECT_SQUARE] )
+	    else if( sBit == "squareoffset" )			SET_FLOAT( fEffects[EFFECT_SQUARE_OFFSET] )
+	    else if( sBit == "squareperiod" )			SET_FLOAT( fEffects[EFFECT_SQUARE_PERIOD] )
+	    else if( sBit == "squarez" )				SET_FLOAT( fEffects[EFFECT_SQUARE_Z] )
+	    else if( sBit == "squarezoffset" )			SET_FLOAT( fEffects[EFFECT_SQUARE_Z_OFFSET] )
+	    else if( sBit == "squarezperiod" )			SET_FLOAT( fEffects[EFFECT_SQUARE_Z_PERIOD] )
 	}
 	else if( sBit == "xmode" )				SET_FLOAT( fEffects[EFFECT_XMODE] )
 	else if( sBit == "twirl" )				SET_FLOAT( fEffects[EFFECT_TWIRL] )
@@ -1238,6 +1253,12 @@ public:
 	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
 	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
 	FLOAT_INTERFACE(BeatMult, Effects[PlayerOptions::EFFECT_BEAT_MULT], true);
+	FLOAT_INTERFACE(Square, Effects[PlayerOptions::EFFECT_SQUARE], true);
+	FLOAT_INTERFACE(SquareOffset, Effects[PlayerOptions::EFFECT_SQUARE_OFFSET], true);
+	FLOAT_INTERFACE(SquarePeriod, Effects[PlayerOptions::EFFECT_SQUARE_PERIOD], true);
+	FLOAT_INTERFACE(SquareZ, Effects[PlayerOptions::EFFECT_SQUARE_Z], true);
+	FLOAT_INTERFACE(SquareZOffset, Effects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET], true);
+	FLOAT_INTERFACE(SquareZPeriod, Effects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD], true);
 	FLOAT_INTERFACE(Xmode, Effects[PlayerOptions::EFFECT_XMODE], true);
 	FLOAT_INTERFACE(Twirl, Effects[PlayerOptions::EFFECT_TWIRL], true);
 	FLOAT_INTERFACE(Roll, Effects[PlayerOptions::EFFECT_ROLL], true);
@@ -1648,6 +1669,12 @@ public:
 		ADD_METHOD(BeatOffset);
 		ADD_METHOD(BeatPeriod);
 		ADD_METHOD(BeatMult);
+		ADD_METHOD(Square);
+		ADD_METHOD(SquareOffset);
+		ADD_METHOD(SquarePeriod);
+		ADD_METHOD(SquareZ);
+		ADD_METHOD(SquareZOffset);
+		ADD_METHOD(SquareZPeriod);
 		ADD_METHOD(Xmode);
 		ADD_METHOD(Twirl);
 		ADD_METHOD(Roll);
