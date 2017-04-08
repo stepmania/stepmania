@@ -501,6 +501,10 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
 	}
+	
+	if( fEffects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 40*RageFastSin( (fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
+	
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
@@ -892,6 +896,8 @@ bool ArrowEffects::NeedZBuffer()
 	{
 		return true;
 	}
+	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
+		return true;
 	return false;
 }
 

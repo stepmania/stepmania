@@ -241,8 +241,11 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
-	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],		"BumpyOffset" );
-	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],		"BumpyPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],	"BumpyOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],	"BumpyPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X],		"BumpyX" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X_OFFSET],	"BumpyXOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X_PERIOD],	"BumpyXPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
@@ -553,6 +556,9 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
 	    else if( sBit == "bumpyoffset" )			SET_FLOAT( fEffects[EFFECT_BUMPY_OFFSET] )
 	    else if( sBit == "bumpyperiod" )			SET_FLOAT( fEffects[EFFECT_BUMPY_PERIOD] )
+	    else if( sBit == "bumpyx" )				SET_FLOAT( fEffects[EFFECT_BUMPY_X] )
+	    else if( sBit == "bumpyxoffset" )			SET_FLOAT( fEffects[EFFECT_BUMPY_X_OFFSET] )
+	    else if( sBit == "bumpyxperiod" )			SET_FLOAT( fEffects[EFFECT_BUMPY_X_PERIOD] )
 	}
 	else if( sBit.find("beat") != sBit.npos)
 	{
@@ -566,7 +572,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    if( sBit == "square" )				SET_FLOAT( fEffects[EFFECT_SQUARE] )
 	    else if( sBit == "squareoffset" )			SET_FLOAT( fEffects[EFFECT_SQUARE_OFFSET] )
 	    else if( sBit == "squareperiod" )			SET_FLOAT( fEffects[EFFECT_SQUARE_PERIOD] )
-	    else if( sBit == "squarez" )				SET_FLOAT( fEffects[EFFECT_SQUARE_Z] )
+	    else if( sBit == "squarez" )			SET_FLOAT( fEffects[EFFECT_SQUARE_Z] )
 	    else if( sBit == "squarezoffset" )			SET_FLOAT( fEffects[EFFECT_SQUARE_Z_OFFSET] )
 	    else if( sBit == "squarezperiod" )			SET_FLOAT( fEffects[EFFECT_SQUARE_Z_PERIOD] )
 	}
@@ -1249,6 +1255,9 @@ public:
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
 	FLOAT_INTERFACE(BumpyOffset, Effects[PlayerOptions::EFFECT_BUMPY_OFFSET], true);
 	FLOAT_INTERFACE(BumpyPeriod, Effects[PlayerOptions::EFFECT_BUMPY_PERIOD], true);
+	FLOAT_INTERFACE(BumpyX, Effects[PlayerOptions::EFFECT_BUMPY_X], true);
+	FLOAT_INTERFACE(BumpyXOffset, Effects[PlayerOptions::EFFECT_BUMPY_X_OFFSET], true);
+	FLOAT_INTERFACE(BumpyXPeriod, Effects[PlayerOptions::EFFECT_BUMPY_X_PERIOD], true);
 	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT], true);
 	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
 	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
@@ -1665,6 +1674,9 @@ public:
 		ADD_METHOD(Bumpy);
 		ADD_METHOD(BumpyOffset);
 		ADD_METHOD(BumpyPeriod);
+		ADD_METHOD(BumpyX);
+		ADD_METHOD(BumpyXOffset);
+		ADD_METHOD(BumpyXPeriod);
 		ADD_METHOD(Beat);
 		ADD_METHOD(BeatOffset);
 		ADD_METHOD(BeatPeriod);
