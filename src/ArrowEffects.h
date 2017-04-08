@@ -31,7 +31,7 @@ public:
 	{
 		ret.x= GetMoveX(col) + GetXPos(player_state, col, y_offset);
 		ret.y= GetMoveY(col) + GetYPos(col, y_offset, y_reverse_offset, with_reverse);
-		ret.z= GetMoveZ(col) + GetZPos(col, y_offset);
+		ret.z= GetMoveZ(col) + GetZPos(player_state, col, y_offset);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public:
 	 * @param iCol the specific arrow column.
 	 * @param fYPos the Y position of the arrow.
 	 * @return the Z position. */
-	static float GetZPos(int iCol, float fYPos);
+	static float GetZPos( const PlayerState* pPlayerState, int iCol, float fYPos);
 
 	// Enable this if any ZPos effects are enabled.
 	static bool NeedZBuffer();

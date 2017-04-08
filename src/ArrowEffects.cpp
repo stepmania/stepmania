@@ -51,6 +51,13 @@ static ThemeMetric<float>	TORNADO_POSITION_SCALE_TO_HIGH( "ArrowEffects", "Torna
 static ThemeMetric<float>	TORNADO_OFFSET_FREQUENCY( "ArrowEffects", "TornadoOffsetFrequency" );
 static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_LOW( "ArrowEffects", "TornadoOffsetScaleFromLow" );
 static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_HIGH( "ArrowEffects", "TornadoOffsetScaleFromHigh" );
+
+static ThemeMetric<float>	TORNADO_Z_POSITION_SCALE_TO_LOW( "ArrowEffects", "TornadoZPositionScaleToLow" );
+static ThemeMetric<float>	TORNADO_Z_POSITION_SCALE_TO_HIGH( "ArrowEffects", "TornadoZPositionScaleToHigh" );
+static ThemeMetric<float>	TORNADO_Z_OFFSET_FREQUENCY( "ArrowEffects", "TornadoZOffsetFrequency" );
+static ThemeMetric<float>	TORNADO_Z_OFFSET_SCALE_FROM_LOW( "ArrowEffects", "TornadoZOffsetScaleFromLow" );
+static ThemeMetric<float>	TORNADO_Z_OFFSET_SCALE_FROM_HIGH( "ArrowEffects", "TornadoZOffsetScaleFromHigh" );
+
 static ThemeMetric<float>	DRUNK_COLUMN_FREQUENCY( "ArrowEffects", "DrunkColumnFrequency" );
 static ThemeMetric<float>	DRUNK_OFFSET_FREQUENCY( "ArrowEffects", "DrunkOffsetFrequency" );
 static ThemeMetric<float>	DRUNK_ARROW_MAGNITUDE( "ArrowEffects", "DrunkArrowMagnitude" );
@@ -75,6 +82,8 @@ namespace
 	{
 		float m_fMinTornadoX[MAX_COLS_PER_PLAYER];
 		float m_fMaxTornadoX[MAX_COLS_PER_PLAYER];
+		float m_fMinTornadoZ[MAX_COLS_PER_PLAYER];
+		float m_fMaxTornadoZ[MAX_COLS_PER_PLAYER];
 		float m_fInvertDistance[MAX_COLS_PER_PLAYER];
 		float m_tipsy_result[MAX_COLS_PER_PLAYER];
 		float m_tipsy_offset_result[MAX_COLS_PER_PLAYER];
@@ -135,6 +144,28 @@ void ArrowEffects::Update()
 			{
 				data.m_fMinTornadoX[iColNum] = min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset * field_zoom );
 				data.m_fMaxTornadoX[iColNum] = max( data.m_fMaxTornadoX[iColNum], pCols[i].fXOffset * field_zoom);
+			}
+		}
+		
+		// Update TornadoZ
+		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
+		{
+			// Because this works in the z direction, having many columns
+			// isn't as much of an issue, so checking isn't necessary
+			int iTornadoWidth = 3;
+
+			int iStartCol = iColNum - iTornadoWidth;
+			int iEndCol = iColNum + iTornadoWidth;
+			CLAMP( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
+			CLAMP( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
+
+			data.m_fMinTornadoZ[iColNum] = FLT_MAX;
+			data.m_fMaxTornadoZ[iColNum] = FLT_MIN;
+
+			for( int i=iStartCol; i<=iEndCol; i++ )
+			{
+				data.m_fMinTornadoZ[iColNum] = min( data.m_fMinTornadoZ[iColNum], pCols[i].fXOffset * field_zoom );
+				data.m_fMaxTornadoZ[iColNum] = max( data.m_fMaxTornadoZ[iColNum], pCols[i].fXOffset * field_zoom);
 			}
 		}
 
@@ -866,11 +897,30 @@ float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteB
 }
 
 
-float ArrowEffects::GetZPos(int iCol, float fYOffset)
+float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fYOffset)
 {
 	float fZPos=0;
 	const float* fEffects = curr_options->m_fEffects;
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber);
+	
+	// TODO: Don't index by PlayerNumber.
+	const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pPlayerState->m_PlayerNumber];
+	PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
 
+	if( fEffects[PlayerOptions::EFFECT_TORNADO_Z] != 0 )
+	{
+		const float fRealPixelOffset = pCols[iCol].fXOffset * pPlayerState->m_NotefieldZoom;
+		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoZ[iCol], data.m_fMaxTornadoZ[iCol], 
+						     TORNADO_Z_POSITION_SCALE_TO_LOW, TORNADO_Z_POSITION_SCALE_TO_HIGH );
+		float fRads = acosf( fPositionBetween );
+		fRads += (fYOffset + fEffects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET]) * ((fEffects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD] * TORNADO_Z_OFFSET_FREQUENCY) +  TORNADO_Z_OFFSET_FREQUENCY) / SCREEN_HEIGHT;
+
+		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_Z_OFFSET_SCALE_FROM_LOW, TORNADO_Z_OFFSET_SCALE_FROM_HIGH,
+							 data.m_fMinTornadoZ[iCol], data.m_fMaxTornadoZ[iCol] );
+
+		fZPos += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO_Z];
+	}
+	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
 	
@@ -1024,7 +1074,7 @@ namespace
 	{
 		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 		ArrowEffects::SetCurrentOptions(&ps->m_PlayerOptions.GetCurrent());
-		lua_pushnumber(L, ArrowEffects::GetZPos(IArg(2)-1, FArg(3)));
+		lua_pushnumber(L, ArrowEffects::GetZPos( ps, IArg(2)-1, FArg(3)));
 		return 1;
 	}
 
