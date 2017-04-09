@@ -78,7 +78,6 @@ static float GetNoteFieldHeight()
 
 float ArrowEffects::GetTime()
 {
-	LOG->Trace( ssprintf("GetTimeMult %.3f", curr_options->m_fModTimerOffset ) );
 	float mult = 1.f + curr_options->m_fModTimerMult;
 	float offset = curr_options->m_fModTimerOffset;
 	ModTimerType modtimer = curr_options->m_ModTimerType;
