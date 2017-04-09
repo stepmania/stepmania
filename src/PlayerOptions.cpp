@@ -252,6 +252,10 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH],		"Sawtooth" );
+	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_PERIOD],	"SawtoothPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_Z],		"SawtoothZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_Z_PERIOD],	"SawtoothZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_SQUARE],		"Square" );
 	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_OFFSET],	"SquareOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_PERIOD],	"SquarePeriod" );
@@ -575,6 +579,13 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "beatoffset" )			SET_FLOAT( fEffects[EFFECT_BEAT_OFFSET] )
 	    else if( sBit == "beatperiod" )			SET_FLOAT( fEffects[EFFECT_BEAT_PERIOD] )
 	    else if( sBit == "beatmult" )			SET_FLOAT( fEffects[EFFECT_BEAT_MULT] )
+	}
+	else if( sBit.find("sawtooth") != sBit.npos)
+	{
+	    if( sBit == "sawtooth" )				SET_FLOAT( fEffects[EFFECT_SAWTOOTH] )
+	    else if( sBit == "sawtoothperiod" )			SET_FLOAT( fEffects[EFFECT_SAWTOOTH_PERIOD] )
+	    else if( sBit == "sawtoothz" )			SET_FLOAT( fEffects[EFFECT_SAWTOOTH_Z] )
+	    else if( sBit == "sawtoothzperiod" )		SET_FLOAT( fEffects[EFFECT_SAWTOOTH_Z_PERIOD] )
 	}
 	else if( sBit.find("square") != sBit.npos)
 	{
@@ -1280,6 +1291,10 @@ public:
 	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
 	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
 	FLOAT_INTERFACE(BeatMult, Effects[PlayerOptions::EFFECT_BEAT_MULT], true);
+	FLOAT_INTERFACE(Sawtooth, Effects[PlayerOptions::EFFECT_SAWTOOTH], true);
+	FLOAT_INTERFACE(SawtoothPeriod, Effects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD], true);
+	FLOAT_INTERFACE(SawtoothZ, Effects[PlayerOptions::EFFECT_SAWTOOTH_Z], true);
+	FLOAT_INTERFACE(SawtoothZPeriod, Effects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD], true);
 	FLOAT_INTERFACE(Square, Effects[PlayerOptions::EFFECT_SQUARE], true);
 	FLOAT_INTERFACE(SquareOffset, Effects[PlayerOptions::EFFECT_SQUARE_OFFSET], true);
 	FLOAT_INTERFACE(SquarePeriod, Effects[PlayerOptions::EFFECT_SQUARE_PERIOD], true);
@@ -1705,6 +1720,10 @@ public:
 		ADD_METHOD(BeatOffset);
 		ADD_METHOD(BeatPeriod);
 		ADD_METHOD(BeatMult);
+		ADD_METHOD(Sawtooth);
+		ADD_METHOD(SawtoothPeriod);
+		ADD_METHOD(SawtoothZ);
+		ADD_METHOD(SawtoothZPeriod);
 		ADD_METHOD(Square);
 		ADD_METHOD(SquareOffset);
 		ADD_METHOD(SquarePeriod);
