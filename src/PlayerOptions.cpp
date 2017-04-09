@@ -1264,6 +1264,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	}
 	CPY(m_LifeType);
 	CPY(m_DrainType);
+	CPY(m_BatteryLives);
 	CPY(m_ModTimerType);
 	CPY(m_fModTimerMult);
 	CPY(m_fModTimerOffset);
