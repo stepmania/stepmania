@@ -76,6 +76,26 @@ static float GetNoteFieldHeight()
 	return SCREEN_HEIGHT + fabsf(curr_options->m_fPerspectiveTilt)*200;
 }
 
+float ArrowEffects::GetTime()
+{
+	LOG->Trace( ssprintf("GetTimeMult %.3f", curr_options->m_fModTimerOffset ) );
+	float mult = 1.f + curr_options->m_fModTimerMult;
+	float offset = curr_options->m_fModTimerOffset;
+	ModTimerType modtimer = curr_options->m_ModTimerType;
+	switch(modtimer)
+	{
+	    case ModTimerType_Default:
+	    case ModTimerType_Game:
+		return (RageTimer::GetTimeSinceStartFast()+offset)*mult;
+	    case ModTimerType_Beat:
+		return (GAMESTATE->m_Position.m_fSongBeatVisible+offset)*mult;
+	    case ModTimerType_Song:
+		return (GAMESTATE->m_Position.m_fMusicSeconds+offset)*mult;
+	    default:
+		return RageTimer::GetTimeSinceStartFast()+offset;
+	}
+}
+
 namespace
 {
 	struct PerPlayerData
@@ -216,7 +236,7 @@ void ArrowEffects::Update()
 		// Update Tipsy
 		if(effects[PlayerOptions::EFFECT_TIPSY] != 0)
 		{
-			const float time= RageTimer::GetTimeSinceStartFast();
+			const float time= ArrowEffects::GetTime();
 			const float time_times_timer= time * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * TIPSY_TIMER_FREQUENCY) + TIPSY_TIMER_FREQUENCY);
 			const float arrow_times_mag= ARROW_SIZE * TIPSY_ARROW_MAGNITUDE;
 			const float time_times_offset_timer= time *
@@ -544,7 +564,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
-			( RageFastCos( RageTimer::GetTimeSinceStartFast()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_SPEED]) + iColNum*((fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET]*DRUNK_COLUMN_FREQUENCY)+DRUNK_COLUMN_FREQUENCY)
+			( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_SPEED]) + iColNum*((fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET]*DRUNK_COLUMN_FREQUENCY)+DRUNK_COLUMN_FREQUENCY)
 				      + fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_PERIOD]*DRUNK_OFFSET_FREQUENCY)+DRUNK_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
@@ -849,7 +869,7 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse)
 		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] != 0 )
 	{
-		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
+		float f = RageFastSin(ArrowEffects::GetTime()*10);
 		f = Quantize( f, BLINK_MOD_FREQUENCY );
 		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
 	}

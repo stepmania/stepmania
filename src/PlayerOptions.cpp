@@ -30,6 +30,16 @@ XToString( DrainType );
 XToLocalizedString( DrainType );
 LuaXType( DrainType );
 
+static const char *ModTimerTypeNames[] = {
+	"Game",
+	"Beat",
+	"Song",
+	"Default",
+};
+XToString( ModTimerType );
+XToLocalizedString( ModTimerType );
+LuaXType( ModTimerType );
+
 void NextFloat( float fValues[], int size );
 void NextBool( bool bValues[], int size );
 
@@ -51,6 +61,7 @@ void PlayerOptions::Init()
 {
 	m_LifeType = LifeType_Bar;
 	m_DrainType = DrainType_Normal;
+	m_ModTimerType = ModTimerType_Default;
 	m_BatteryLives = 4;
 	m_MinTNSToHideNotes= PREFSMAN->m_MinTNSToHideNotes;
 	m_bSetScrollSpeed = false;
@@ -72,6 +83,8 @@ void PlayerOptions::Init()
 	m_fSkew = 0;			m_SpeedfSkew = 1.0f;
 	m_fPassmark = 0;		m_SpeedfPassmark = 1.0f;
 	m_fRandomSpeed = 0;		m_SpeedfRandomSpeed = 1.0f;
+	m_fModTimerMult = 0;		m_SpeedfModTimerMult = 1.0f;
+	m_fModTimerOffset = 0;		m_SpeedfModTimerOffset = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
@@ -91,7 +104,10 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 
 	DO_COPY( m_LifeType );
 	DO_COPY( m_DrainType );
+	DO_COPY( m_ModTimerType );
 	DO_COPY( m_BatteryLives );
+	APPROACH( fModTimerMult );
+	APPROACH( fModTimerOffset );
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
 	APPROACH( fMaxScrollBPM );
@@ -210,6 +226,23 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 		RString s = ssprintf( "C%.0f", m_fScrollBPM );
 		AddTo.push_back( s );
 	}
+	
+	switch(m_ModTimerType)
+	{
+		case ModTimerType_Game:
+			AddTo.push_back("ModTimerGame");
+			break;
+		case ModTimerType_Beat:
+			AddTo.push_back("ModTimerBeat");
+			break;
+		case ModTimerType_Song:
+			AddTo.push_back("ModTimerSong");
+			break;
+		case ModTimerType_Default:
+			break;
+		default:
+			FAIL_M(ssprintf("Invalid ModTimerType: %i", m_ModTimerType));
+	}
 
 	AddPart( AddTo, m_fAccels[ACCEL_BOOST],		"Boost" );
 	AddPart( AddTo, m_fAccels[ACCEL_BRAKE],		"Brake" );
@@ -301,6 +334,9 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fScrolls[SCROLL_CROSS],		"Cross" );
 	AddPart( AddTo, m_fScrolls[SCROLL_CENTERED],	"Centered" );
 
+	AddPart( AddTo, m_fModTimerMult,	"ModTimerMult" );
+	AddPart( AddTo, m_fModTimerOffset,	"ModTimerOffset" );
+	
 	AddPart( AddTo, m_fDark,	"Dark" );
 
 	AddPart( AddTo, m_fBlind,	"Blind" );
@@ -514,6 +550,15 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	{
 		// level is a percentage for every other option, so multiply by 100. -Kyz
 		m_BatteryLives= level * 100.0f;
+	}
+	else if( sBit.find("modtimer") != sBit.npos)
+	{
+	    if( sBit == "modtimerdefault" )			{ m_ModTimerType= ModTimerType_Default; }
+	    else if( sBit == "modtimersong" )			{ m_ModTimerType= ModTimerType_Song; }
+	    else if( sBit == "modtimerbeat" )			{ m_ModTimerType= ModTimerType_Beat; }
+	    else if( sBit == "modtimergame" )			{ m_ModTimerType= ModTimerType_Game; }
+	    else if( sBit == "modtimermult" )			SET_FLOAT( fModTimerMult )
+	    else if( sBit == "modtimeroffset" )			SET_FLOAT( fModTimerOffset )
 	}
 	else if( sBit == "bar" ) { m_LifeType= LifeType_Bar; }
 	else if( sBit == "battery" ) { m_LifeType= LifeType_Battery; }
@@ -923,6 +968,9 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 #define COMPARE(x) { if( x != other.x ) return false; }
 	COMPARE(m_LifeType);
 	COMPARE(m_DrainType);
+	COMPARE(m_ModTimerType);
+	COMPARE(m_fModTimerMult);
+	COMPARE(m_fModTimerOffset);
 	COMPARE(m_BatteryLives);
 	COMPARE(m_fTimeSpacing);
 	COMPARE(m_fScrollSpeed);
@@ -978,6 +1026,9 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 #define CPY_SPEED(x) m_ ## x = other.m_ ## x; m_Speed ## x = other.m_Speed ## x;
 	CPY(m_LifeType);
 	CPY(m_DrainType);
+	CPY(m_ModTimerType);
+	CPY(m_fModTimerMult);
+	CPY(m_fModTimerOffset);
 	CPY(m_BatteryLives);
 	CPY_SPEED(fTimeSpacing);
 	CPY_SPEED(fScrollSpeed);
@@ -1213,7 +1264,9 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	}
 	CPY(m_LifeType);
 	CPY(m_DrainType);
-	CPY(m_BatteryLives);
+	CPY(m_ModTimerType);
+	CPY(m_fModTimerMult);
+	CPY(m_fModTimerOffset);
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
@@ -1260,7 +1313,10 @@ public:
 
 	ENUM_INTERFACE(LifeSetting, LifeType, LifeType);
 	ENUM_INTERFACE(DrainSetting, DrainType, DrainType);
+	ENUM_INTERFACE(ModTimerSetting, ModTimerType, ModTimerType)
 	INT_INTERFACE(BatteryLives, BatteryLives);
+	FLOAT_INTERFACE(ModTimerMult, ModTimerMult, true);
+	FLOAT_INTERFACE(ModTimerOffset, ModTimerOffset, true);
 	FLOAT_INTERFACE(TimeSpacing, TimeSpacing, true);
 	FLOAT_INTERFACE(MaxScrollBPM, MaxScrollBPM, true);
 	FLOAT_INTERFACE(ScrollSpeed, ScrollSpeed, true);
@@ -1695,6 +1751,9 @@ public:
 
 		ADD_METHOD(LifeSetting);
 		ADD_METHOD(DrainSetting);
+		ADD_METHOD(ModTimerSetting);
+		ADD_METHOD(ModTimerMult);
+		ADD_METHOD(ModTimerOffset);
 		ADD_METHOD(BatteryLives);
 		ADD_METHOD(TimeSpacing);
 		ADD_METHOD(MaxScrollBPM);
