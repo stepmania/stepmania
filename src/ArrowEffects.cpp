@@ -565,6 +565,9 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 	
+	if( fEffects[PlayerOptions::EFFECT_ZIGZAG] != 0 )
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_ZIGZAG]*ARROW_SIZE/2) * ((2/PI)*asinf((RageFastSin(PI*(1/(fEffects[PlayerOptions::EFFECT_ZIGZAG_PERIOD]+1))*((fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_ZIGZAG_OFFSET])))/ARROW_SIZE)))));
+	
 	if( fEffects[PlayerOptions::EFFECT_SAWTOOTH] != 0 )
 		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_SAWTOOTH]*ARROW_SIZE) * ((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1)*fYOffset)/ARROW_SIZE - floor((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1)*fYOffset)/ARROW_SIZE));
 	
@@ -934,6 +937,9 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
+		
+	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 )
+		fZPos += (fEffects[PlayerOptions::EFFECT_ZIGZAG_Z]*ARROW_SIZE/2) * ((2/PI)*asinf((RageFastSin(PI*(1/(fEffects[PlayerOptions::EFFECT_ZIGZAG_Z_PERIOD]+1))*((fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_ZIGZAG_Z_OFFSET])))/ARROW_SIZE)))));
 	
 	if( fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
 		fZPos += (fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z]*ARROW_SIZE) * ((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*fYOffset)/ARROW_SIZE - floor((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*fYOffset)/ARROW_SIZE));
@@ -963,8 +969,11 @@ bool ArrowEffects::NeedZBuffer()
 	{
 		return true;
 	}
-	if( fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 ||
+		fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
+	{
 		return true;
+	}
 	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
 		return true;
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )

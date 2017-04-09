@@ -252,6 +252,12 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG],		"Zigzag" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_PERIOD],	"ZigzagPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_OFFSET],	"ZigzagOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_Z],		"ZigzagZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_Z_PERIOD],	"ZigzagZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_Z_OFFSET],	"ZigzagZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH],		"Sawtooth" );
 	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_PERIOD],	"SawtoothPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_Z],		"SawtoothZ" );
@@ -579,6 +585,15 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "beatoffset" )			SET_FLOAT( fEffects[EFFECT_BEAT_OFFSET] )
 	    else if( sBit == "beatperiod" )			SET_FLOAT( fEffects[EFFECT_BEAT_PERIOD] )
 	    else if( sBit == "beatmult" )			SET_FLOAT( fEffects[EFFECT_BEAT_MULT] )
+	}
+	else if( sBit.find("zigzag") != sBit.npos)
+	{
+	    if( sBit == "zigzag" )				SET_FLOAT( fEffects[EFFECT_ZIGZAG] )
+	    else if( sBit == "zigzagperiod" )			SET_FLOAT( fEffects[EFFECT_ZIGZAG_PERIOD] )
+	    else if( sBit == "zigzagoffset" )			SET_FLOAT( fEffects[EFFECT_ZIGZAG_OFFSET] )
+	    else if( sBit == "zigzagz" )			SET_FLOAT( fEffects[EFFECT_ZIGZAG_Z] )
+	    else if( sBit == "zigzagzperiod" )			SET_FLOAT( fEffects[EFFECT_ZIGZAG_Z_PERIOD] )
+	    else if( sBit == "zigzagzoffset" )			SET_FLOAT( fEffects[EFFECT_ZIGZAG_Z_OFFSET] )
 	}
 	else if( sBit.find("sawtooth") != sBit.npos)
 	{
@@ -1291,6 +1306,12 @@ public:
 	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
 	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
 	FLOAT_INTERFACE(BeatMult, Effects[PlayerOptions::EFFECT_BEAT_MULT], true);
+	FLOAT_INTERFACE(Zigzag, Effects[PlayerOptions::EFFECT_ZIGZAG], true);
+	FLOAT_INTERFACE(ZigzagPeriod, Effects[PlayerOptions::EFFECT_ZIGZAG_PERIOD], true);
+	FLOAT_INTERFACE(ZigzagOffset, Effects[PlayerOptions::EFFECT_ZIGZAG_OFFSET], true);
+	FLOAT_INTERFACE(ZigzagZ, Effects[PlayerOptions::EFFECT_ZIGZAG_Z], true);
+	FLOAT_INTERFACE(ZigzagZPeriod, Effects[PlayerOptions::EFFECT_ZIGZAG_Z_PERIOD], true);
+	FLOAT_INTERFACE(ZigzagZOffset, Effects[PlayerOptions::EFFECT_ZIGZAG_Z_OFFSET], true);
 	FLOAT_INTERFACE(Sawtooth, Effects[PlayerOptions::EFFECT_SAWTOOTH], true);
 	FLOAT_INTERFACE(SawtoothPeriod, Effects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD], true);
 	FLOAT_INTERFACE(SawtoothZ, Effects[PlayerOptions::EFFECT_SAWTOOTH_Z], true);
@@ -1720,6 +1741,12 @@ public:
 		ADD_METHOD(BeatOffset);
 		ADD_METHOD(BeatPeriod);
 		ADD_METHOD(BeatMult);
+		ADD_METHOD(Zigzag);
+		ADD_METHOD(ZigzagPeriod);
+		ADD_METHOD(ZigzagOffset);
+		ADD_METHOD(ZigzagZ);
+		ADD_METHOD(ZigzagZPeriod);
+		ADD_METHOD(ZigzagZOffset);
 		ADD_METHOD(Sawtooth);
 		ADD_METHOD(SawtoothPeriod);
 		ADD_METHOD(SawtoothZ);
