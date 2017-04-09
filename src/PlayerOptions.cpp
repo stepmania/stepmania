@@ -258,6 +258,9 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z],		"SquareZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z_OFFSET],	"SquareZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z_PERIOD],	"SquareZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_X],		"ParabolaX" );
+	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Y],		"ParabolaY" );
+	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Z],		"ParabolaZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_MULT],		"BeatMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
@@ -581,6 +584,12 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "squarez" )			SET_FLOAT( fEffects[EFFECT_SQUARE_Z] )
 	    else if( sBit == "squarezoffset" )			SET_FLOAT( fEffects[EFFECT_SQUARE_Z_OFFSET] )
 	    else if( sBit == "squarezperiod" )			SET_FLOAT( fEffects[EFFECT_SQUARE_Z_PERIOD] )
+	}
+	else if( sBit.find("parabola") != sBit.npos)
+	{
+	    if( sBit == "parabolax" )				SET_FLOAT( fEffects[EFFECT_PARABOLA_X] )
+	    else if( sBit == "parabolay" )			SET_FLOAT( fEffects[EFFECT_PARABOLA_Y] )
+	    else if( sBit == "parabolaz" )			SET_FLOAT( fEffects[EFFECT_PARABOLA_Z] )
 	}
 	else if( sBit == "xmode" )				SET_FLOAT( fEffects[EFFECT_XMODE] )
 	else if( sBit == "twirl" )				SET_FLOAT( fEffects[EFFECT_TWIRL] )
@@ -1277,6 +1286,9 @@ public:
 	FLOAT_INTERFACE(SquareZ, Effects[PlayerOptions::EFFECT_SQUARE_Z], true);
 	FLOAT_INTERFACE(SquareZOffset, Effects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET], true);
 	FLOAT_INTERFACE(SquareZPeriod, Effects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD], true);
+	FLOAT_INTERFACE(ParabolaX, Effects[PlayerOptions::EFFECT_PARABOLA_X], true);
+	FLOAT_INTERFACE(ParabolaY, Effects[PlayerOptions::EFFECT_PARABOLA_Y], true);
+	FLOAT_INTERFACE(ParabolaZ, Effects[PlayerOptions::EFFECT_PARABOLA_Z], true);
 	FLOAT_INTERFACE(Xmode, Effects[PlayerOptions::EFFECT_XMODE], true);
 	FLOAT_INTERFACE(Twirl, Effects[PlayerOptions::EFFECT_TWIRL], true);
 	FLOAT_INTERFACE(Roll, Effects[PlayerOptions::EFFECT_ROLL], true);
@@ -1699,6 +1711,9 @@ public:
 		ADD_METHOD(SquareZ);
 		ADD_METHOD(SquareZOffset);
 		ADD_METHOD(SquareZPeriod);
+		ADD_METHOD(ParabolaX);
+		ADD_METHOD(ParabolaY);
+		ADD_METHOD(ParabolaZ);
 		ADD_METHOD(Xmode);
 		ADD_METHOD(Twirl);
 		ADD_METHOD(Roll);

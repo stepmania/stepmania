@@ -368,7 +368,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	}
 
 	const float* fAccels = curr_options->m_fAccels;
-	//const float* fEffects = curr_options->m_fEffects;
+	const float* fEffects = curr_options->m_fEffects;
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
 
@@ -393,6 +393,9 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
 		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/((fAccels[PlayerOptions::ACCEL_WAVE_PERIOD]*WAVE_MOD_HEIGHT)+WAVE_MOD_HEIGHT) );
+	
+	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Y] != 0 )
+		fYAdjust += fEffects[PlayerOptions::EFFECT_PARABOLA_Y] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
 
 	fYOffset += fYAdjust;
 
@@ -497,6 +500,8 @@ float ArrowEffects::GetYOffsetFromYPos(int iCol, float YPos, float fYReverseOffs
 	// TODO: Don't index by PlayerNumber.
 	PerPlayerData& data= g_EffectData[curr_options->m_pn];
 	f+= fEffects[PlayerOptions::EFFECT_TIPSY] * data.m_tipsy_offset_result[iCol];
+	
+	f+= fEffects[PlayerOptions::EFFECT_PARABOLA_Y] * (YPos/ARROW_SIZE) * (YPos/ARROW_SIZE);
 
 	float fShift, fScale;
 	ArrowGetReverseShiftAndScale(iCol, fYReverseOffsetPixels, fShift, fScale);
@@ -559,6 +564,9 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_PERIOD]*BEAT_OFFSET_HEIGHT)+BEAT_OFFSET_HEIGHT) + PI/BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
+	
+	if( fEffects[PlayerOptions::EFFECT_PARABOLA_X] != 0 )
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_PARABOLA_X] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE] != 0 )
 	{
@@ -923,6 +931,9 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
+
+	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
+		fZPos += fEffects[PlayerOptions::EFFECT_PARABOLA_Z] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
 	{
