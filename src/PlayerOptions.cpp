@@ -256,6 +256,10 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_SPEED],		"DrunkSpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_OFFSET],	"DrunkOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_PERIOD],	"DrunkPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z],		"DrunkZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_SPEED],		"DrunkZSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_OFFSET],	"DrunkZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_PERIOD],	"DrunkZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],		"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION],	"Confusion" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_OFFSET],	"ConfusionOffset" );
@@ -585,6 +589,10 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "drunkspeed" )			SET_FLOAT( fEffects[EFFECT_DRUNK_SPEED] )
 	    else if( sBit == "drunkoffset" )			SET_FLOAT( fEffects[EFFECT_DRUNK_OFFSET] )
 	    else if( sBit == "drunkperiod" )			SET_FLOAT( fEffects[EFFECT_DRUNK_PERIOD] )
+	    else if( sBit == "drunkz" )				SET_FLOAT( fEffects[EFFECT_DRUNK_Z] )
+	    else if( sBit == "drunkzspeed" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_SPEED] )
+	    else if( sBit == "drunkzoffset" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_OFFSET] )
+	    else if( sBit == "drunkzperiod" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_PERIOD] )
 	}
 	else if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
 	else if( sBit.find("confusion") != sBit.npos)
@@ -1333,6 +1341,10 @@ public:
 	FLOAT_INTERFACE(DrunkSpeed, Effects[PlayerOptions::EFFECT_DRUNK_SPEED], true);
 	FLOAT_INTERFACE(DrunkOffset, Effects[PlayerOptions::EFFECT_DRUNK_OFFSET], true);
 	FLOAT_INTERFACE(DrunkPeriod, Effects[PlayerOptions::EFFECT_DRUNK_PERIOD], true);
+	FLOAT_INTERFACE(DrunkZ, Effects[PlayerOptions::EFFECT_DRUNK_Z], true);
+	FLOAT_INTERFACE(DrunkZSpeed, Effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED], true);
+	FLOAT_INTERFACE(DrunkZOffset, Effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET], true);
+	FLOAT_INTERFACE(DrunkZPeriod, Effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD], true);
 	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
 	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION], true);
 	FLOAT_INTERFACE(ConfusionOffset, Effects[PlayerOptions::EFFECT_CONFUSION_OFFSET], true);
@@ -1771,6 +1783,10 @@ public:
 		ADD_METHOD(DrunkSpeed);
 		ADD_METHOD(DrunkOffset);
 		ADD_METHOD(DrunkPeriod);
+		ADD_METHOD(DrunkZ);
+		ADD_METHOD(DrunkZSpeed);
+		ADD_METHOD(DrunkZOffset);
+		ADD_METHOD(DrunkZPeriod);
 		ADD_METHOD(Dizzy);
 		ADD_METHOD(Confusion);
 		ADD_METHOD(ConfusionOffset);

@@ -61,6 +61,11 @@ static ThemeMetric<float>	TORNADO_Z_OFFSET_SCALE_FROM_HIGH( "ArrowEffects", "Tor
 static ThemeMetric<float>	DRUNK_COLUMN_FREQUENCY( "ArrowEffects", "DrunkColumnFrequency" );
 static ThemeMetric<float>	DRUNK_OFFSET_FREQUENCY( "ArrowEffects", "DrunkOffsetFrequency" );
 static ThemeMetric<float>	DRUNK_ARROW_MAGNITUDE( "ArrowEffects", "DrunkArrowMagnitude" );
+
+static ThemeMetric<float>	DRUNK_Z_COLUMN_FREQUENCY( "ArrowEffects", "DrunkZColumnFrequency" );
+static ThemeMetric<float>	DRUNK_Z_OFFSET_FREQUENCY( "ArrowEffects", "DrunkZOffsetFrequency" );
+static ThemeMetric<float>	DRUNK_Z_ARROW_MAGNITUDE( "ArrowEffects", "DrunkZArrowMagnitude" );
+
 static ThemeMetric<float>	BEAT_OFFSET_HEIGHT( "ArrowEffects", "BeatOffsetHeight" );
 static ThemeMetric<float>	BEAT_PI_HEIGHT( "ArrowEffects", "BeatPIHeight" );
 static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" );
@@ -559,12 +564,12 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 40*RageFastSin( (fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
-	
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
 			( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_SPEED]) + iColNum*((fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET]*DRUNK_COLUMN_FREQUENCY)+DRUNK_COLUMN_FREQUENCY)
 				      + fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_PERIOD]*DRUNK_OFFSET_FREQUENCY)+DRUNK_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
+
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
 		const int iFirstCol = 0;
@@ -965,6 +970,9 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 
 	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_PARABOLA_Z] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
+
+	if( fEffects[PlayerOptions::EFFECT_DRUNK_Z] != 0 )
+		fZPos += fEffects[PlayerOptions::EFFECT_DRUNK_Z] * ( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + iCol*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*DRUNK_Z_COLUMN_FREQUENCY)+DRUNK_Z_COLUMN_FREQUENCY) + fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*DRUNK_Z_OFFSET_FREQUENCY)+DRUNK_Z_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
 	{
@@ -988,6 +996,8 @@ bool ArrowEffects::NeedZBuffer()
 	{
 		return true;
 	}
+	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
+		return true;
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
 	{
