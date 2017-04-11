@@ -289,6 +289,15 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_MULT],		"BeatMult" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Y],		"BeatY" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Y_OFFSET],	"BeatYOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Y_PERIOD],	"BeatYPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Y_MULT],		"BeatYMult" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Z],		"BeatZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Z_OFFSET],	"BeatZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Z_PERIOD],	"BeatZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Z_MULT],		"BeatZMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG],		"Zigzag" );
 	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_PERIOD],	"ZigzagPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_OFFSET],	"ZigzagOffset" );
@@ -308,7 +317,6 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_X],		"ParabolaX" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Y],		"ParabolaY" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Z],		"ParabolaZ" );
-	AddPart( AddTo, m_fEffects[EFFECT_BEAT_MULT],		"BeatMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
 	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
@@ -613,7 +621,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
 	    else if( sBit == "tornadoperiod" )			SET_FLOAT( fEffects[EFFECT_TORNADO_PERIOD] )
 	    else if( sBit == "tornadooffset" )			SET_FLOAT( fEffects[EFFECT_TORNADO_OFFSET] )
-	    else if( sBit == "tornadoz" )				SET_FLOAT( fEffects[EFFECT_TORNADO_Z] )
+	    else if( sBit == "tornadoz" )			SET_FLOAT( fEffects[EFFECT_TORNADO_Z] )
 	    else if( sBit == "tornadozperiod" )			SET_FLOAT( fEffects[EFFECT_TORNADO_Z_PERIOD] )
 	    else if( sBit == "tornadozoffset" )			SET_FLOAT( fEffects[EFFECT_TORNADO_Z_OFFSET] )
 	}
@@ -638,6 +646,14 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "beatoffset" )			SET_FLOAT( fEffects[EFFECT_BEAT_OFFSET] )
 	    else if( sBit == "beatperiod" )			SET_FLOAT( fEffects[EFFECT_BEAT_PERIOD] )
 	    else if( sBit == "beatmult" )			SET_FLOAT( fEffects[EFFECT_BEAT_MULT] )
+	    else if( sBit == "beaty" )				SET_FLOAT( fEffects[EFFECT_BEAT_Y] )
+	    else if( sBit == "beatyoffset" )			SET_FLOAT( fEffects[EFFECT_BEAT_Y_OFFSET] )
+	    else if( sBit == "beatyperiod" )			SET_FLOAT( fEffects[EFFECT_BEAT_Y_PERIOD] )
+	    else if( sBit == "beatymult" )			SET_FLOAT( fEffects[EFFECT_BEAT_Y_MULT] )
+	    else if( sBit == "beatz" )				SET_FLOAT( fEffects[EFFECT_BEAT_Z] )
+	    else if( sBit == "beatzoffset" )			SET_FLOAT( fEffects[EFFECT_BEAT_Z_OFFSET] )
+	    else if( sBit == "beatzperiod" )			SET_FLOAT( fEffects[EFFECT_BEAT_Z_PERIOD] )
+	    else if( sBit == "beatzmult" )			SET_FLOAT( fEffects[EFFECT_BEAT_Z_MULT] )
 	}
 	else if( sBit.find("zigzag") != sBit.npos)
 	{
@@ -1035,8 +1051,8 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_LifeType);
 	CPY(m_DrainType);
 	CPY(m_ModTimerType);
-	CPY(m_fModTimerMult);
-	CPY(m_fModTimerOffset);
+	CPY_SPEED(fModTimerMult);
+	CPY_SPEED(fModTimerOffset);
 	CPY(m_BatteryLives);
 	CPY_SPEED(fTimeSpacing);
 	CPY_SPEED(fScrollSpeed);
@@ -1375,6 +1391,14 @@ public:
 	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
 	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
 	FLOAT_INTERFACE(BeatMult, Effects[PlayerOptions::EFFECT_BEAT_MULT], true);
+	FLOAT_INTERFACE(BeatY, Effects[PlayerOptions::EFFECT_BEAT_Y], true);
+	FLOAT_INTERFACE(BeatYOffset, Effects[PlayerOptions::EFFECT_BEAT_Y_OFFSET], true);
+	FLOAT_INTERFACE(BeatYPeriod, Effects[PlayerOptions::EFFECT_BEAT_Y_PERIOD], true);
+	FLOAT_INTERFACE(BeatYMult, Effects[PlayerOptions::EFFECT_BEAT_Y_MULT], true);
+	FLOAT_INTERFACE(BeatZ, Effects[PlayerOptions::EFFECT_BEAT_Z], true);
+	FLOAT_INTERFACE(BeatZOffset, Effects[PlayerOptions::EFFECT_BEAT_Z_OFFSET], true);
+	FLOAT_INTERFACE(BeatZPeriod, Effects[PlayerOptions::EFFECT_BEAT_Z_PERIOD], true);
+	FLOAT_INTERFACE(BeatZMult, Effects[PlayerOptions::EFFECT_BEAT_Z_MULT], true);
 	FLOAT_INTERFACE(Zigzag, Effects[PlayerOptions::EFFECT_ZIGZAG], true);
 	FLOAT_INTERFACE(ZigzagPeriod, Effects[PlayerOptions::EFFECT_ZIGZAG_PERIOD], true);
 	FLOAT_INTERFACE(ZigzagOffset, Effects[PlayerOptions::EFFECT_ZIGZAG_OFFSET], true);
@@ -1817,6 +1841,14 @@ public:
 		ADD_METHOD(BeatOffset);
 		ADD_METHOD(BeatPeriod);
 		ADD_METHOD(BeatMult);
+		ADD_METHOD(BeatY);
+		ADD_METHOD(BeatYOffset);
+		ADD_METHOD(BeatYPeriod);
+		ADD_METHOD(BeatYMult);
+		ADD_METHOD(BeatZ);
+		ADD_METHOD(BeatZOffset);
+		ADD_METHOD(BeatZPeriod);
+		ADD_METHOD(BeatZMult);
 		ADD_METHOD(Zigzag);
 		ADD_METHOD(ZigzagPeriod);
 		ADD_METHOD(ZigzagOffset);

@@ -68,6 +68,12 @@ static ThemeMetric<float>	DRUNK_Z_ARROW_MAGNITUDE( "ArrowEffects", "DrunkZArrowM
 
 static ThemeMetric<float>	BEAT_OFFSET_HEIGHT( "ArrowEffects", "BeatOffsetHeight" );
 static ThemeMetric<float>	BEAT_PI_HEIGHT( "ArrowEffects", "BeatPIHeight" );
+
+static ThemeMetric<float>	BEAT_Y_OFFSET_HEIGHT( "ArrowEffects", "BeatYOffsetHeight" );
+static ThemeMetric<float>	BEAT_Y_PI_HEIGHT( "ArrowEffects", "BeatYPIHeight" );
+static ThemeMetric<float>	BEAT_Z_OFFSET_HEIGHT( "ArrowEffects", "BeatZOffsetHeight" );
+static ThemeMetric<float>	BEAT_Z_PI_HEIGHT( "ArrowEffects", "BeatZPIHeight" );
+
 static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" );
 static ThemeMetric<float>	TINY_PERCENT_GATE( "ArrowEffects", "TinyPercentGate" );
 static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
@@ -112,6 +118,8 @@ namespace
 		float m_tipsy_result[MAX_COLS_PER_PLAYER];
 		float m_tipsy_offset_result[MAX_COLS_PER_PLAYER];
 		float m_fBeatFactor;
+		float m_fBeatYFactor;
+		float m_fBeatZFactor;
 		float m_fExpandSeconds;
 	};
 	PerPlayerData g_EffectData[NUM_PLAYERS];
@@ -296,6 +304,72 @@ void ArrowEffects::Update()
 			if( bEvenBeat )
 				data.m_fBeatFactor *= -1;
 			data.m_fBeatFactor *= 20.0f;
+		} while( false );
+
+		// Update BeatY
+		do {
+			float fAccelTime = 0.2f, fTotalTime = 0.5f;
+			float fBeat = ((position.m_fSongBeatVisible + fAccelTime + effects[PlayerOptions::EFFECT_BEAT_Y_OFFSET]) * (effects[PlayerOptions::EFFECT_BEAT_Y_MULT]+1));
+
+			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
+
+			data.m_fBeatYFactor = 0;
+			if( fBeat < 0 )
+				break;
+
+			// -100.2 -> -0.2 -> 0.2
+			fBeat -= truncf( fBeat );
+			fBeat += 1;
+			fBeat -= truncf( fBeat );
+
+			if( fBeat >= fTotalTime )
+				break;
+
+			if( fBeat < fAccelTime )
+			{
+				data.m_fBeatYFactor = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
+				data.m_fBeatYFactor *= data.m_fBeatYFactor;
+			} else /* fBeat < fTotalTime */ {
+				data.m_fBeatYFactor = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
+				data.m_fBeatYFactor = 1 - (1-data.m_fBeatYFactor) * (1-data.m_fBeatYFactor);
+			}
+
+			if( bEvenBeat )
+				data.m_fBeatYFactor *= -1;
+			data.m_fBeatYFactor *= 20.0f;
+		} while( false );
+
+		// Update BeatZ
+		do {
+			float fAccelTime = 0.2f, fTotalTime = 0.5f;
+			float fBeat = ((position.m_fSongBeatVisible + fAccelTime + effects[PlayerOptions::EFFECT_BEAT_Z_OFFSET]) * (effects[PlayerOptions::EFFECT_BEAT_Z_MULT]+1));
+
+			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
+
+			data.m_fBeatZFactor = 0;
+			if( fBeat < 0 )
+				break;
+
+			// -100.2 -> -0.2 -> 0.2
+			fBeat -= truncf( fBeat );
+			fBeat += 1;
+			fBeat -= truncf( fBeat );
+
+			if( fBeat >= fTotalTime )
+				break;
+
+			if( fBeat < fAccelTime )
+			{
+				data.m_fBeatZFactor = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
+				data.m_fBeatZFactor *= data.m_fBeatZFactor;
+			} else /* fBeat < fTotalTime */ {
+				data.m_fBeatZFactor = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
+				data.m_fBeatZFactor = 1 - (1-data.m_fBeatZFactor) * (1-data.m_fBeatZFactor);
+			}
+
+			if( bEvenBeat )
+				data.m_fBeatZFactor *= -1;
+			data.m_fBeatZFactor *= 20.0f;
 		} while( false );
 	}
 	fLastTime = fTime;
@@ -506,6 +580,12 @@ float ArrowEffects::GetYPos(int iCol, float fYOffset, float fYReverseOffsetPixel
 	// TODO: Don't index by PlayerNumber.
 	PerPlayerData& data= g_EffectData[curr_options->m_pn];
 	f+= fEffects[PlayerOptions::EFFECT_TIPSY] * data.m_tipsy_result[iCol];
+
+	if( fEffects[PlayerOptions::EFFECT_BEAT_Y] != 0 )
+	{
+		const float fShift = data.m_fBeatYFactor*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_Y_PERIOD]*BEAT_Y_OFFSET_HEIGHT)+BEAT_Y_OFFSET_HEIGHT) + PI/BEAT_Y_PI_HEIGHT );
+		f += fEffects[PlayerOptions::EFFECT_BEAT_Y] * fShift;
+	}
 
 	// In beware's DDR Extreme-focused fork of StepMania 3.9, this value is
 	// floored, making arrows show on integer Y coordinates. Supposedly it makes
@@ -973,6 +1053,12 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK_Z] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_DRUNK_Z] * ( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + iCol*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*DRUNK_Z_COLUMN_FREQUENCY)+DRUNK_Z_COLUMN_FREQUENCY) + fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*DRUNK_Z_OFFSET_FREQUENCY)+DRUNK_Z_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
+
+	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 )
+	{
+		const float fShift = data.m_fBeatZFactor*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_Z_PERIOD]*BEAT_Z_OFFSET_HEIGHT)+BEAT_Z_OFFSET_HEIGHT) + PI/BEAT_Z_PI_HEIGHT );
+		fZPos += fEffects[PlayerOptions::EFFECT_BEAT_Z] * fShift;
+	}
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
 	{
@@ -996,7 +1082,7 @@ bool ArrowEffects::NeedZBuffer()
 	{
 		return true;
 	}
-	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 )
 		return true;
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
