@@ -314,6 +314,14 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z],		"SquareZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z_OFFSET],	"SquareZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z_PERIOD],	"SquareZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL],		"Digital" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_STEPS],	"DigitalSteps" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_PERIOD],	"DigitalPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_OFFSET],	"DigitalOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z],		"DigitalZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_STEPS],	"DigitalZSteps" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_PERIOD],	"DigitalZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_OFFSET],	"DigitalZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_X],		"ParabolaX" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Y],		"ParabolaY" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Z],		"ParabolaZ" );
@@ -654,6 +662,17 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "beatzoffset" )			SET_FLOAT( fEffects[EFFECT_BEAT_Z_OFFSET] )
 	    else if( sBit == "beatzperiod" )			SET_FLOAT( fEffects[EFFECT_BEAT_Z_PERIOD] )
 	    else if( sBit == "beatzmult" )			SET_FLOAT( fEffects[EFFECT_BEAT_Z_MULT] )
+	}
+	else if( sBit.find("digital") != sBit.npos)
+	{
+	    if( sBit == "digital" )				SET_FLOAT( fEffects[EFFECT_DIGITAL] )
+	    else if( sBit == "digitalsteps" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_STEPS] )
+	    else if( sBit == "digitalperiod" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_PERIOD] )
+	    else if( sBit == "digitaloffset" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_OFFSET] )
+	    else if( sBit == "digitalz" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_Z] )
+	    else if( sBit == "digitalzsteps" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_Z_STEPS] )
+	    else if( sBit == "digitalzperiod" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_Z_PERIOD] )
+	    else if( sBit == "digitalzoffset" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_Z_OFFSET] )
 	}
 	else if( sBit.find("zigzag") != sBit.npos)
 	{
@@ -1415,6 +1434,14 @@ public:
 	FLOAT_INTERFACE(SquareZ, Effects[PlayerOptions::EFFECT_SQUARE_Z], true);
 	FLOAT_INTERFACE(SquareZOffset, Effects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET], true);
 	FLOAT_INTERFACE(SquareZPeriod, Effects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD], true);
+	FLOAT_INTERFACE(Digital, Effects[PlayerOptions::EFFECT_DIGITAL], true);
+	FLOAT_INTERFACE(DigitalSteps, Effects[PlayerOptions::EFFECT_DIGITAL_STEPS], true);
+	FLOAT_INTERFACE(DigitalPeriod, Effects[PlayerOptions::EFFECT_DIGITAL_PERIOD], true);
+	FLOAT_INTERFACE(DigitalOffset, Effects[PlayerOptions::EFFECT_DIGITAL_OFFSET], true);
+	FLOAT_INTERFACE(DigitalZ, Effects[PlayerOptions::EFFECT_DIGITAL_Z], true);
+	FLOAT_INTERFACE(DigitalZSteps, Effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS], true);
+	FLOAT_INTERFACE(DigitalZPeriod, Effects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD], true);
+	FLOAT_INTERFACE(DigitalZOffset, Effects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET], true);
 	FLOAT_INTERFACE(ParabolaX, Effects[PlayerOptions::EFFECT_PARABOLA_X], true);
 	FLOAT_INTERFACE(ParabolaY, Effects[PlayerOptions::EFFECT_PARABOLA_Y], true);
 	FLOAT_INTERFACE(ParabolaZ, Effects[PlayerOptions::EFFECT_PARABOLA_Z], true);
@@ -1865,6 +1892,14 @@ public:
 		ADD_METHOD(SquareZ);
 		ADD_METHOD(SquareZOffset);
 		ADD_METHOD(SquareZPeriod);
+		ADD_METHOD(Digital);
+		ADD_METHOD(DigitalSteps);
+		ADD_METHOD(DigitalPeriod);
+		ADD_METHOD(DigitalOffset);
+		ADD_METHOD(DigitalZ);
+		ADD_METHOD(DigitalZSteps);
+		ADD_METHOD(DigitalZPeriod);
+		ADD_METHOD(DigitalZOffset);
 		ADD_METHOD(ParabolaX);
 		ADD_METHOD(ParabolaY);
 		ADD_METHOD(ParabolaZ);

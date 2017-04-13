@@ -677,6 +677,9 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	
 	if( fEffects[PlayerOptions::EFFECT_PARABOLA_X] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_PARABOLA_X] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
+
+	if( fEffects[PlayerOptions::EFFECT_DIGITAL] != 0 )
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_DIGITAL] * ARROW_SIZE * 0.5f) * round((fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1)*RageFastSin(((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET])))/(60+(fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD]*60)))))/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE] != 0 )
 	{
@@ -1060,6 +1063,9 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 		fZPos += fEffects[PlayerOptions::EFFECT_BEAT_Z] * fShift;
 	}
 	
+	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
+		fZPos += (fEffects[PlayerOptions::EFFECT_DIGITAL_Z] * ARROW_SIZE * 0.5f) * round((fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1)*RageFastSin(((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET])))/(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD]*ARROW_SIZE)))))/(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
 	{
 		if(RageFastSin(((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET])))/(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD]*ARROW_SIZE)))) > 0){
@@ -1082,7 +1088,10 @@ bool ArrowEffects::NeedZBuffer()
 	{
 		return true;
 	}
-	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 ||
+		fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
+		return true;
+	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
 		return true;
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
