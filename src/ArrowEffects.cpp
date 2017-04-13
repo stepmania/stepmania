@@ -1091,8 +1091,6 @@ bool ArrowEffects::NeedZBuffer()
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
 		return true;
-	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
-		return true;
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
 	{
