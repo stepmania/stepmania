@@ -3540,7 +3540,6 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='ModTimerMult' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='ModTimerOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Mini' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='MaxScrollBPM' return='float, float' arguments='float value, float approach_speed'>
 		MaxScrollBPM is one of the variables for controlling the speed mod.<br />
 		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
