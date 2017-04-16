@@ -1401,6 +1401,8 @@ void HandleInputEvents(float fDeltaTime)
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_BACK_IN_EVENT_MODE) )
 		{
 			input.MenuI = GAME_BUTTON_BACK;
+			SCREENMAN->Input( input );
+			input.pn = PLAYER_2;
 		}
 
 		SCREENMAN->Input( input );
