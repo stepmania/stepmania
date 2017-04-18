@@ -643,7 +643,8 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 40*RageFastSin( (fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 40*RageFastSin( 
+			(fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
@@ -670,16 +671,23 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG] != 0 )
-		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_ZIGZAG]*ARROW_SIZE/2) * ((2/PI)*asinf((RageFastSin(PI*(1/(fEffects[PlayerOptions::EFFECT_ZIGZAG_PERIOD]+1))*((fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_ZIGZAG_OFFSET])))/ARROW_SIZE)))));
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_ZIGZAG]*ARROW_SIZE/2) * 
+			((2/PI) * asinf( (RageFastSin( PI * (1/(fEffects[PlayerOptions::EFFECT_ZIGZAG_PERIOD]+1)) * 
+				((fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_ZIGZAG_OFFSET])))/ARROW_SIZE) ))));
 	
 	if( fEffects[PlayerOptions::EFFECT_SAWTOOTH] != 0 )
-		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_SAWTOOTH]*ARROW_SIZE) * ((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1)*fYOffset)/ARROW_SIZE - floor((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1)*fYOffset)/ARROW_SIZE));
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_SAWTOOTH]*ARROW_SIZE) * 
+			((0.5f / (fEffects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1) * fYOffset) / ARROW_SIZE - 
+			floor((0.5f / (fEffects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1) * fYOffset) / ARROW_SIZE) );
 	
 	if( fEffects[PlayerOptions::EFFECT_PARABOLA_X] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_PARABOLA_X] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
 
 	if( fEffects[PlayerOptions::EFFECT_DIGITAL] != 0 )
-		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_DIGITAL] * ARROW_SIZE * 0.5f) * round((fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1)*RageFastSin(((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET])))/(60+(fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD]*60)))))/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_DIGITAL] * ARROW_SIZE * 0.5f) *
+			round((fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * RageFastSin(
+				((fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET]) ) ) / 
+					(60 + (fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD] * 60)) ) ) )/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE] != 0 )
 	{
@@ -1034,7 +1042,8 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoZ[iCol], data.m_fMaxTornadoZ[iCol], 
 						     TORNADO_Z_POSITION_SCALE_TO_LOW, TORNADO_Z_POSITION_SCALE_TO_HIGH );
 		float fRads = acosf( fPositionBetween );
-		fRads += (fYOffset + fEffects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET]) * ((fEffects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD] * TORNADO_Z_OFFSET_FREQUENCY) +  TORNADO_Z_OFFSET_FREQUENCY) / SCREEN_HEIGHT;
+		fRads += (fYOffset + fEffects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET]) *
+		((fEffects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD] * TORNADO_Z_OFFSET_FREQUENCY) +  TORNADO_Z_OFFSET_FREQUENCY) / SCREEN_HEIGHT;
 
 		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_Z_OFFSET_SCALE_FROM_LOW, TORNADO_Z_OFFSET_SCALE_FROM_HIGH,
 							 data.m_fMinTornadoZ[iCol], data.m_fMaxTornadoZ[iCol] );
@@ -1046,16 +1055,22 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
 		
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 )
-		fZPos += (fEffects[PlayerOptions::EFFECT_ZIGZAG_Z]*ARROW_SIZE/2) * ((2/PI)*asinf((RageFastSin(PI*(1/(fEffects[PlayerOptions::EFFECT_ZIGZAG_Z_PERIOD]+1))*((fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_ZIGZAG_Z_OFFSET])))/ARROW_SIZE)))));
+		fZPos += (fEffects[PlayerOptions::EFFECT_ZIGZAG_Z]*ARROW_SIZE/2) * 
+			((2/PI)*asinf((RageFastSin(PI*(1/(fEffects[PlayerOptions::EFFECT_ZIGZAG_Z_PERIOD]+1)) * 
+				((fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_ZIGZAG_Z_OFFSET])))/ARROW_SIZE) ))));
 	
 	if( fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
-		fZPos += (fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z]*ARROW_SIZE) * ((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*fYOffset)/ARROW_SIZE - floor((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*fYOffset)/ARROW_SIZE));
+		fZPos += (fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z]*ARROW_SIZE) * 
+			((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*fYOffset)/ARROW_SIZE - 
+				floor((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*fYOffset)/ARROW_SIZE));
 
 	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_PARABOLA_Z] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK_Z] != 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_DRUNK_Z] * ( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + iCol*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*DRUNK_Z_COLUMN_FREQUENCY)+DRUNK_Z_COLUMN_FREQUENCY) + fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*DRUNK_Z_OFFSET_FREQUENCY)+DRUNK_Z_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
+		fZPos += fEffects[PlayerOptions::EFFECT_DRUNK_Z] * 
+			( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + iCol*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*DRUNK_Z_COLUMN_FREQUENCY)+DRUNK_Z_COLUMN_FREQUENCY)
+				+ fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*DRUNK_Z_OFFSET_FREQUENCY)+DRUNK_Z_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 )
 	{
@@ -1064,7 +1079,10 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
-		fZPos += (fEffects[PlayerOptions::EFFECT_DIGITAL_Z] * ARROW_SIZE * 0.5f) * round((fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1)*RageFastSin(((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET])))/(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD]*ARROW_SIZE)))))/(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+		fZPos += (fEffects[PlayerOptions::EFFECT_DIGITAL_Z] * ARROW_SIZE * 0.5f) *
+			round((fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1) * RageFastSin(
+				((fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET]) ) ) / 
+					(ARROW_SIZE + (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD] * ARROW_SIZE)) )))/(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
 	{
@@ -1090,6 +1108,8 @@ bool ArrowEffects::NeedZBuffer()
 	}
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
+		return true;
+	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
 		return true;
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
