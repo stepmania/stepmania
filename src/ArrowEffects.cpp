@@ -643,8 +643,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 40*RageFastSin( 
-			(fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 40*RageFastSin( (fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
@@ -691,11 +690,15 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE] != 0 )
 	{
-		if(RageFastSin(((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_OFFSET])))/(60+(fEffects[PlayerOptions::EFFECT_SQUARE_PERIOD]*60)))) > 0){
-			fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_SQUARE] * ARROW_SIZE * 0.5f;
-		}else{
-			fPixelOffsetFromCenter -= fEffects[PlayerOptions::EFFECT_SQUARE] * ARROW_SIZE * 0.5f;
+		float fAngle = fmod( ((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_OFFSET]))) / 
+			(60+(fEffects[PlayerOptions::EFFECT_SQUARE_PERIOD]*60))) , (PI * 2) );
+		//Hack: This ensures the hold notes don't flicker right before they're hit.
+		if(fAngle < 0.1f*0.1f)
+		{
+		    fAngle+= PI * 2;
 		}
+		fPixelOffsetFromCenter += (fAngle >= PI ? -(fEffects[PlayerOptions::EFFECT_SQUARE] * ARROW_SIZE * 0.5f) :
+			(fEffects[PlayerOptions::EFFECT_SQUARE] * ARROW_SIZE * 0.5f) );
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_XMODE] != 0 )
@@ -1086,11 +1089,15 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
 	{
-		if(RageFastSin(((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET])))/(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD]*ARROW_SIZE)))) > 0){
-			fZPos += fEffects[PlayerOptions::EFFECT_SQUARE_Z] * ARROW_SIZE * 0.5f;
-		}else{
-			fZPos -= fEffects[PlayerOptions::EFFECT_SQUARE_Z] * ARROW_SIZE * 0.5f;
+		float fZAngle = fmod( ((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET]))) / 
+			(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD]*ARROW_SIZE))) , (PI * 2) );
+		//Hack: This ensures the hold notes don't flicker right before they're hit.
+		if(fZAngle < 0.1f*0.1f)
+		{
+		    fZAngle+= PI * 2;
 		}
+		fZPos += (fZAngle >= PI ? -(fEffects[PlayerOptions::EFFECT_SQUARE_Z] * ARROW_SIZE * 0.5f) :
+			(fEffects[PlayerOptions::EFFECT_SQUARE_Z] * ARROW_SIZE * 0.5f) );
 	}
 
 	return fZPos;
@@ -1108,8 +1115,6 @@ bool ArrowEffects::NeedZBuffer()
 	}
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
-		return true;
-	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
 		return true;
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
