@@ -688,13 +688,13 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	if( fEffects[PlayerOptions::EFFECT_DIGITAL] != 0 )
 		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_DIGITAL] * ARROW_SIZE * 0.5f) *
 			round((fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * RageFastSin(
-				((fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET]) ) ) / 
-					(60 + (fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD] * 60)) ) ) )/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+				(PI * (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET]) ) ) / 
+					(ARROW_SIZE + (fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD] * ARROW_SIZE)) ) ) )/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE] != 0 )
 	{
-		float fResult = RageSquare( ((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_OFFSET]))) / 
-			(60+(fEffects[PlayerOptions::EFFECT_SQUARE_PERIOD]*60))) );
+		float fResult = RageSquare( (PI * (fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_OFFSET]))) / 
+			(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_SQUARE_PERIOD]*ARROW_SIZE))) );
 		
 		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_SQUARE] * ARROW_SIZE * 0.5f) * fResult;
 	}
@@ -1085,12 +1085,12 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
 		fZPos += (fEffects[PlayerOptions::EFFECT_DIGITAL_Z] * ARROW_SIZE * 0.5f) *
 			round((fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1) * RageFastSin(
-				((fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET]) ) ) / 
+				(PI * (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET]) ) ) / 
 					(ARROW_SIZE + (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD] * ARROW_SIZE)) )))/(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
 	{
-		float fResult = RageSquare( ((fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET]))) / 
+		float fResult = RageSquare( (PI * (fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET]))) / 
 			(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD]*ARROW_SIZE))) );
 		fZPos += (fEffects[PlayerOptions::EFFECT_SQUARE_Z] * ARROW_SIZE * 0.5f) * fResult;
 	}
