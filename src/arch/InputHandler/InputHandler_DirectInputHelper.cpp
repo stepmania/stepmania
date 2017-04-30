@@ -401,6 +401,11 @@ static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, L
 	return DIENUM_CONTINUE;
 }
 
+XIDevice::XIDevice()
+{
+	dev = InputDevice_Invalid;
+}
+
 /*
  * (c) 2003-2011 Glenn Maynard, AJ Kelly
  * All rights reserved.
