@@ -53,6 +53,15 @@ struct DIDevice
 	void Close();
 };
 
+struct XIDevice
+{
+	std::string m_sName;
+	DWORD m_dwXInputSlot;
+	InputDevice dev;
+
+	XIDevice();
+};
+
 #endif
 
 /*
