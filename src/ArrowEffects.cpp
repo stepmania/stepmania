@@ -14,6 +14,8 @@
 #include "ThemeMetric.h"
 #include <float.h>
 
+static char const dimension_names[4]= "XYZ";
+
 static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
 static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
 static ThemeMetric<bool>	HIDDEN_SUDDEN_PAST_RECEPTOR( "ArrowEffects", "DrawHiddenNotesAfterReceptor");
@@ -46,17 +48,17 @@ static ThemeMetric<float>	TIPSY_ARROW_MAGNITUDE( "ArrowEffects", "TipsyArrowMagn
 static ThemeMetric<float>	TIPSY_OFFSET_TIMER_FREQUENCY( "ArrowEffects", "TipsyOffsetTimerFrequency" );
 static ThemeMetric<float>	TIPSY_OFFSET_COLUMN_FREQUENCY( "ArrowEffects", "TipsyOffsetColumnFrequency" );
 static ThemeMetric<float>	TIPSY_OFFSET_ARROW_MAGNITUDE( "ArrowEffects", "TipsyOffsetArrowMagnitude" );
-static ThemeMetric<float>	TORNADO_POSITION_SCALE_TO_LOW( "ArrowEffects", "TornadoPositionScaleToLow" );
-static ThemeMetric<float>	TORNADO_POSITION_SCALE_TO_HIGH( "ArrowEffects", "TornadoPositionScaleToHigh" );
-static ThemeMetric<float>	TORNADO_OFFSET_FREQUENCY( "ArrowEffects", "TornadoOffsetFrequency" );
-static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_LOW( "ArrowEffects", "TornadoOffsetScaleFromLow" );
-static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_HIGH( "ArrowEffects", "TornadoOffsetScaleFromHigh" );
 
-static ThemeMetric<float>	TORNADO_Z_POSITION_SCALE_TO_LOW( "ArrowEffects", "TornadoZPositionScaleToLow" );
-static ThemeMetric<float>	TORNADO_Z_POSITION_SCALE_TO_HIGH( "ArrowEffects", "TornadoZPositionScaleToHigh" );
-static ThemeMetric<float>	TORNADO_Z_OFFSET_FREQUENCY( "ArrowEffects", "TornadoZOffsetFrequency" );
-static ThemeMetric<float>	TORNADO_Z_OFFSET_SCALE_FROM_LOW( "ArrowEffects", "TornadoZOffsetScaleFromLow" );
-static ThemeMetric<float>	TORNADO_Z_OFFSET_SCALE_FROM_HIGH( "ArrowEffects", "TornadoZOffsetScaleFromHigh" );
+static RString TPSTL_NAME(size_t i) { return ssprintf("Tornado%cPositionScaleToLow", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_POSITION_SCALE_TO_LOW("ArrowEffects", TPSTL_NAME, 3);
+static RString TPSTH_NAME(size_t i) { return ssprintf("Tornado%cPositionScaleToHigh", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_POSITION_SCALE_TO_HIGH("ArrowEffects", TPSTH_NAME, 3);
+static RString TOF_NAME(size_t i) { return ssprintf("Tornado%cOffsetFrequency", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_OFFSET_FREQUENCY("ArrowEffects", TOF_NAME, 3);
+static RString TOSFL_NAME(size_t i) { return ssprintf("Tornado%cOffsetScaleFromLow", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_OFFSET_SCALE_FROM_LOW("ArrowEffects", TOSFL_NAME, 3);
+static RString TOSFH_NAME(size_t i) { return ssprintf("Tornado%cOffsetScaleFromHigh", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_OFFSET_SCALE_FROM_HIGH("ArrowEffects", TOSFH_NAME, 3);
 
 static ThemeMetric<float>	DRUNK_COLUMN_FREQUENCY( "ArrowEffects", "DrunkColumnFrequency" );
 static ThemeMetric<float>	DRUNK_OFFSET_FREQUENCY( "ArrowEffects", "DrunkOffsetFrequency" );
@@ -110,10 +112,8 @@ namespace
 {
 	struct PerPlayerData
 	{
-		float m_fMinTornadoX[MAX_COLS_PER_PLAYER];
-		float m_fMaxTornadoX[MAX_COLS_PER_PLAYER];
-		float m_fMinTornadoZ[MAX_COLS_PER_PLAYER];
-		float m_fMaxTornadoZ[MAX_COLS_PER_PLAYER];
+		float m_MinTornado[3][MAX_COLS_PER_PLAYER];
+		float m_MaxTornado[3][MAX_COLS_PER_PLAYER];
 		float m_fInvertDistance[MAX_COLS_PER_PLAYER];
 		float m_tipsy_result[MAX_COLS_PER_PLAYER];
 		float m_tipsy_offset_result[MAX_COLS_PER_PLAYER];
@@ -121,9 +121,101 @@ namespace
 		float m_fBeatYFactor;
 		float m_fBeatZFactor;
 		float m_fExpandSeconds;
+
+		// m_prev_style is for checking whether ArrowEffects::Init needs to be
+		// called.  Finding all the placed ArrowEffects is used and making sure
+		// they all call Init after changing style is non-trivial and more likely
+		// to cause bugs. -Kyz
+		Style const* m_prev_style;
 	};
 	PerPlayerData g_EffectData[NUM_PLAYERS];
+	int const dim_x= 0;
+	int const dim_y= 1;
+	int const dim_z= 2;
+
+	float tornado_position_scale_to_low[3];
+	float tornado_position_scale_to_high[3];
+	float tornado_offset_frequency[3];
+	float tornado_offset_scale_from_low[3];
+	float tornado_offset_scale_from_high[3];
 };
+
+static float CalculateTornadoOffsetFromMagnitude(int dimension, int col_id,
+	float magnitude, float effect_offset, float period,
+	const Style::ColumnInfo* pCols, float field_zoom,
+	PerPlayerData& data, float y_offset)
+{
+	float const real_pixel_offset= pCols[col_id].fXOffset * field_zoom;
+	float const position_between= SCALE(real_pixel_offset,
+		data.m_MinTornado[dimension][col_id] * field_zoom,
+		data.m_MaxTornado[dimension][col_id] * field_zoom,
+		tornado_position_scale_to_low[dimension],
+		tornado_position_scale_to_high[dimension]);
+	float rads= acosf(position_between);
+	float frequency= tornado_offset_frequency[dimension];
+	rads+= (y_offset + effect_offset) * ((period * frequency) + frequency) / SCREEN_HEIGHT;
+	float const adjusted_pixel_offset= SCALE(RageFastCos(rads),
+		tornado_offset_scale_from_low[dimension],
+		tornado_offset_scale_from_high[dimension],
+		data.m_MinTornado[dimension][col_id] * field_zoom,
+		data.m_MaxTornado[dimension][col_id] * field_zoom);
+	return (adjusted_pixel_offset - real_pixel_offset) * magnitude;
+}
+
+void ArrowEffects::Init(PlayerNumber pn)
+{
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pn);
+	const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
+	PerPlayerData &data = g_EffectData[pn];
+	// Init tornado limits.
+	// This used to run every frame, but it doesn't actually depend on anything
+	// that changes every frame.  In openitg, it runs for every note. -Kyz
+
+	// TRICKY: Tornado is very unplayable in doubles, so use a smaller
+	// tornado width if there are many columns
+
+	/* the wide_field check makes an assumption for dance mode.
+	 * perhaps check if we are actually playing on singles without,
+	 * say more than 6 columns. That would exclude IIDX, pop'n, and
+	 * techno-8, all of which would be very hectic.
+	 * certain non-singles modes (like halfdoubles 6cols)
+	 * could possibly have tornado enabled.
+	 * let's also take default resolution (640x480) into mind. -aj */
+	bool wide_field= pStyle->m_iColsPerPlayer > 4;
+	int max_player_col= pStyle->m_iColsPerPlayer-1;
+	for(int dimension= 0; dimension < 3; ++dimension)
+	{
+		int width= 3;
+		// wide_field only matters for x, which is dimension 0. -Kyz
+		if(dimension == 0 && wide_field)
+		{
+			width= 2;
+		}
+		for(int col_id= 0; col_id <= max_player_col; ++col_id)
+		{
+			int start_col= col_id - width;
+			int end_col= col_id + width;
+			CLAMP(start_col, 0, max_player_col);
+			CLAMP(end_col, 0, max_player_col);
+			data.m_MinTornado[dimension][col_id]= FLT_MAX;
+			data.m_MaxTornado[dimension][col_id]= FLT_MIN;
+			for(int i= start_col; i <= end_col; ++i)
+			{
+				// Using the x offset when the dimension might be y or z feels so
+				// wrong, but it provides min and max values when otherwise the
+				// limits would just be zero, which would make it do nothing. -Kyz
+				data.m_MinTornado[dimension][col_id] = min(pCols[i].fXOffset, data.m_MinTornado[dimension][col_id]);
+				data.m_MaxTornado[dimension][col_id] = max(pCols[i].fXOffset, data.m_MaxTornado[dimension][col_id]);
+			}
+		}
+
+		tornado_position_scale_to_low[dimension]= TORNADO_POSITION_SCALE_TO_LOW.GetValue(dimension);
+		tornado_position_scale_to_high[dimension]= TORNADO_POSITION_SCALE_TO_HIGH.GetValue(dimension);
+		tornado_offset_frequency[dimension]= TORNADO_OFFSET_FREQUENCY.GetValue(dimension);
+		tornado_offset_scale_from_low[dimension]= TORNADO_OFFSET_SCALE_FROM_LOW.GetValue(dimension);
+		tornado_offset_scale_from_high[dimension]= TORNADO_OFFSET_SCALE_FROM_HIGH.GetValue(dimension);
+	}
+}
 
 void ArrowEffects::Update()
 {
@@ -142,65 +234,18 @@ void ArrowEffects::Update()
 
 		PerPlayerData &data = g_EffectData[pn];
 		
+		if(pStyle != data.m_prev_style)
+		{
+			Init(pn);
+			data.m_prev_style= pStyle;
+		}
+
 		if( !position.m_bFreeze || !position.m_bDelay )
 		{
 			data.m_fExpandSeconds += fTime - fLastTime;
 			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, (PI*2)/(accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1) );
 		}
 		
-		// Update Tornado
-		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
-		{
-			// TRICKY: Tornado is very unplayable in doubles, so use a smaller
-			// tornado width if there are many columns
-
-			/* the below makes an assumption for dance mode.
-			 * perhaps check if we are actually playing on singles without,
-			 * say more than 6 columns. That would exclude IIDX, pop'n, and
-			 * techno-8, all of which would be very hectic.
-			 * certain non-singles modes (like halfdoubles 6cols)
-			 * could possibly have tornado enabled.
-			 * let's also take default resolution (640x480) into mind. -aj */
-			bool bWideField = pStyle->m_iColsPerPlayer > 4;
-			int iTornadoWidth = bWideField ? 2 : 3;
-
-			int iStartCol = iColNum - iTornadoWidth;
-			int iEndCol = iColNum + iTornadoWidth;
-			CLAMP( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
-			CLAMP( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
-
-			data.m_fMinTornadoX[iColNum] = FLT_MAX;
-			data.m_fMaxTornadoX[iColNum] = FLT_MIN;
-
-			for( int i=iStartCol; i<=iEndCol; i++ )
-			{
-				data.m_fMinTornadoX[iColNum] = min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset * field_zoom );
-				data.m_fMaxTornadoX[iColNum] = max( data.m_fMaxTornadoX[iColNum], pCols[i].fXOffset * field_zoom);
-			}
-		}
-		
-		// Update TornadoZ
-		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
-		{
-			// Because this works in the z direction, having many columns
-			// isn't as much of an issue, so checking isn't necessary
-			int iTornadoWidth = 3;
-
-			int iStartCol = iColNum - iTornadoWidth;
-			int iEndCol = iColNum + iTornadoWidth;
-			CLAMP( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
-			CLAMP( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
-
-			data.m_fMinTornadoZ[iColNum] = FLT_MAX;
-			data.m_fMaxTornadoZ[iColNum] = FLT_MIN;
-
-			for( int i=iStartCol; i<=iEndCol; i++ )
-			{
-				data.m_fMinTornadoZ[iColNum] = min( data.m_fMinTornadoZ[iColNum], pCols[i].fXOffset * field_zoom );
-				data.m_fMaxTornadoZ[iColNum] = max( data.m_fMaxTornadoZ[iColNum], pCols[i].fXOffset * field_zoom);
-			}
-		}
-
 		// Update Invert
 		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
@@ -630,16 +675,11 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
 	{
-		const float fRealPixelOffset = pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
-		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], 
-						     TORNADO_POSITION_SCALE_TO_LOW, TORNADO_POSITION_SCALE_TO_HIGH );
-		float fRads = acosf( fPositionBetween );
-		fRads += (fYOffset + fEffects[PlayerOptions::EFFECT_TORNADO_OFFSET]) * ((fEffects[PlayerOptions::EFFECT_TORNADO_PERIOD] * TORNADO_OFFSET_FREQUENCY) +  TORNADO_OFFSET_FREQUENCY) / SCREEN_HEIGHT;
-
-		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH,
-							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
-
-		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
+		fPixelOffsetFromCenter += CalculateTornadoOffsetFromMagnitude(dim_x,
+			iColNum, fEffects[PlayerOptions::EFFECT_TORNADO],
+			fEffects[PlayerOptions::EFFECT_TORNADO_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TORNADO_PERIOD],
+			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset);
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
@@ -1039,17 +1079,11 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 
 	if( fEffects[PlayerOptions::EFFECT_TORNADO_Z] != 0 )
 	{
-		const float fRealPixelOffset = pCols[iCol].fXOffset * pPlayerState->m_NotefieldZoom;
-		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoZ[iCol], data.m_fMaxTornadoZ[iCol], 
-						     TORNADO_Z_POSITION_SCALE_TO_LOW, TORNADO_Z_POSITION_SCALE_TO_HIGH );
-		float fRads = acosf( fPositionBetween );
-		fRads += (fYOffset + fEffects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET]) *
-		((fEffects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD] * TORNADO_Z_OFFSET_FREQUENCY) +  TORNADO_Z_OFFSET_FREQUENCY) / SCREEN_HEIGHT;
-
-		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_Z_OFFSET_SCALE_FROM_LOW, TORNADO_Z_OFFSET_SCALE_FROM_HIGH,
-							 data.m_fMinTornadoZ[iCol], data.m_fMaxTornadoZ[iCol] );
-
-		fZPos += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO_Z];
+		fZPos += CalculateTornadoOffsetFromMagnitude(dim_z, iCol,
+			fEffects[PlayerOptions::EFFECT_TORNADO_Z],
+			fEffects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD],
+			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset);
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )

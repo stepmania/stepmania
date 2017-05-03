@@ -2,6 +2,7 @@
 #define ARROWEFFECTS_H
 
 #include "RageTypes.h"
+#include "PlayerNumber.h"
 
 class PlayerState;
 class PlayerOptions;
@@ -9,6 +10,7 @@ class PlayerOptions;
 class ArrowEffects
 {
 public:
+	static void Init(PlayerNumber pn);
 	static float GetTime();
 	static void Update();
 	// SetCurrentOptions and the hidden static variable it set exists so that
