@@ -121,34 +121,24 @@ namespace
 		float m_fBeatYFactor;
 		float m_fBeatZFactor;
 		float m_fExpandSeconds;
+
+		// m_prev_style is for checking whether ArrowEffects::Init needs to be
+		// called.  Finding all the placed ArrowEffects is used and making sure
+		// they all call Init after changing style is non-trivial and more likely
+		// to cause bugs. -Kyz
+		Style const* m_prev_style;
 	};
 	PerPlayerData g_EffectData[NUM_PLAYERS];
 	int const dim_x= 0;
 	int const dim_y= 1;
 	int const dim_z= 2;
-};
 
-static void UpdateTornado(int dimension, int width, int max_player_col,
-	float field_zoom, const Style::ColumnInfo* pCols, PerPlayerData& data)
-{
-	for(int col_id= 0; col_id < MAX_COLS_PER_PLAYER; ++col_id)
-	{
-		int start_col= col_id - width;
-		int end_col= col_id + width;
-		CLAMP(start_col, 0, max_player_col);
-		CLAMP(end_col, 0, max_player_col);
-		data.m_MinTornado[dimension][col_id]= FLT_MAX;
-		data.m_MaxTornado[dimension][col_id]= FLT_MIN;
-		for(int i= start_col; i <= end_col; ++i)
-		{
-			// Using the x offset when the dimension might be y or z feels so
-			// wrong, but it provides min and max values when otherwise the limits
-			// would just be zero, which would make it do nothing. -Kyz
-			data.m_MinTornado[dimension][col_id]= min(data.m_MinTornado[dimension][col_id], pCols[i].fXOffset * field_zoom);
-			data.m_MaxTornado[dimension][col_id]= max(data.m_MaxTornado[dimension][col_id], pCols[i].fXOffset * field_zoom);
-		}
-	}
-}
+	float tornado_position_scale_to_low[3];
+	float tornado_position_scale_to_high[3];
+	float tornado_offset_frequency[3];
+	float tornado_offset_scale_from_low[3];
+	float tornado_offset_scale_from_high[3];
+};
 
 static float CalculateTornadoOffsetFromMagnitude(int dimension, int col_id,
 	float magnitude, float effect_offset, float period,
@@ -156,17 +146,75 @@ static float CalculateTornadoOffsetFromMagnitude(int dimension, int col_id,
 	PerPlayerData& data, float y_offset)
 {
 	float const real_pixel_offset= pCols[col_id].fXOffset * field_zoom;
-	float position_between= SCALE(real_pixel_offset, - data.m_MinTornado[dimension][col_id], data.m_MaxTornado[dimension][col_id],
-		TORNADO_POSITION_SCALE_TO_LOW.GetValue(dimension),
-		TORNADO_POSITION_SCALE_TO_HIGH.GetValue(dimension));
+	float const position_between= SCALE(real_pixel_offset,
+		data.m_MinTornado[dimension][col_id] * field_zoom,
+		data.m_MaxTornado[dimension][col_id] * field_zoom,
+		tornado_position_scale_to_low[dimension],
+		tornado_position_scale_to_high[dimension]);
 	float rads= acosf(position_between);
-	float frequency= TORNADO_OFFSET_FREQUENCY.GetValue(dimension);
+	float frequency= tornado_offset_frequency[dimension];
 	rads+= (y_offset + effect_offset) * ((period * frequency) + frequency) / SCREEN_HEIGHT;
 	float const adjusted_pixel_offset= SCALE(RageFastCos(rads),
-		TORNADO_OFFSET_SCALE_FROM_LOW.GetValue(dimension),
-		TORNADO_OFFSET_SCALE_FROM_HIGH.GetValue(dimension),
-		data.m_MinTornado[dimension][col_id], data.m_MaxTornado[dimension][col_id]);
+		tornado_offset_scale_from_low[dimension],
+		tornado_offset_scale_from_high[dimension],
+		data.m_MinTornado[dimension][col_id] * field_zoom,
+		data.m_MaxTornado[dimension][col_id] * field_zoom);
 	return (adjusted_pixel_offset - real_pixel_offset) * magnitude;
+}
+
+void ArrowEffects::Init(PlayerNumber pn)
+{
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pn);
+	const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
+	PerPlayerData &data = g_EffectData[pn];
+	// Init tornado limits.
+	// This used to run every frame, but it doesn't actually depend on anything
+	// that changes every frame.  In openitg, it runs for every note. -Kyz
+
+	// TRICKY: Tornado is very unplayable in doubles, so use a smaller
+	// tornado width if there are many columns
+
+	/* the wide_field check makes an assumption for dance mode.
+	 * perhaps check if we are actually playing on singles without,
+	 * say more than 6 columns. That would exclude IIDX, pop'n, and
+	 * techno-8, all of which would be very hectic.
+	 * certain non-singles modes (like halfdoubles 6cols)
+	 * could possibly have tornado enabled.
+	 * let's also take default resolution (640x480) into mind. -aj */
+	bool wide_field= pStyle->m_iColsPerPlayer > 4;
+	int max_player_col= pStyle->m_iColsPerPlayer-1;
+	for(int dimension= 0; dimension < 3; ++dimension)
+	{
+		int width= 3;
+		// wide_field only matters for x, which is dimension 0. -Kyz
+		if(dimension == 0 && wide_field)
+		{
+			width= 2;
+		}
+		for(int col_id= 0; col_id <= max_player_col; ++col_id)
+		{
+			int start_col= col_id - width;
+			int end_col= col_id + width;
+			CLAMP(start_col, 0, max_player_col);
+			CLAMP(end_col, 0, max_player_col);
+			data.m_MinTornado[dimension][col_id]= FLT_MAX;
+			data.m_MaxTornado[dimension][col_id]= FLT_MIN;
+			for(int i= start_col; i <= end_col; ++i)
+			{
+				// Using the x offset when the dimension might be y or z feels so
+				// wrong, but it provides min and max values when otherwise the
+				// limits would just be zero, which would make it do nothing. -Kyz
+				data.m_MinTornado[dimension][col_id] = min(pCols[i].fXOffset, data.m_MinTornado[dimension][col_id]);
+				data.m_MaxTornado[dimension][col_id] = max(pCols[i].fXOffset, data.m_MaxTornado[dimension][col_id]);
+			}
+		}
+
+		tornado_position_scale_to_low[dimension]= TORNADO_POSITION_SCALE_TO_LOW.GetValue(dimension);
+		tornado_position_scale_to_high[dimension]= TORNADO_POSITION_SCALE_TO_HIGH.GetValue(dimension);
+		tornado_offset_frequency[dimension]= TORNADO_OFFSET_FREQUENCY.GetValue(dimension);
+		tornado_offset_scale_from_low[dimension]= TORNADO_OFFSET_SCALE_FROM_LOW.GetValue(dimension);
+		tornado_offset_scale_from_high[dimension]= TORNADO_OFFSET_SCALE_FROM_HIGH.GetValue(dimension);
+	}
 }
 
 void ArrowEffects::Update()
@@ -186,30 +234,18 @@ void ArrowEffects::Update()
 
 		PerPlayerData &data = g_EffectData[pn];
 		
+		if(pStyle != data.m_prev_style)
+		{
+			Init(pn);
+			data.m_prev_style= pStyle;
+		}
+
 		if( !position.m_bFreeze || !position.m_bDelay )
 		{
 			data.m_fExpandSeconds += fTime - fLastTime;
 			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, (PI*2)/(accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1) );
 		}
 		
-		// TRICKY: Tornado is very unplayable in doubles, so use a smaller
-		// tornado width if there are many columns
-
-		/* the wide_field check makes an assumption for dance mode.
-		 * perhaps check if we are actually playing on singles without,
-		 * say more than 6 columns. That would exclude IIDX, pop'n, and
-		 * techno-8, all of which would be very hectic.
-		 * certain non-singles modes (like halfdoubles 6cols)
-		 * could possibly have tornado enabled.
-		 * let's also take default resolution (640x480) into mind. -aj */
-		bool wide_field= pStyle->m_iColsPerPlayer > 4;
-		int max_player_col= pStyle->m_iColsPerPlayer-1;
-		UpdateTornado(dim_x, (wide_field ? 2 : 3), max_player_col, field_zoom, pCols, data);
-		// Because this works in the z direction, having many columns
-		// isn't as much of an issue, so checking isn't necessary. -- who?
-		UpdateTornado(dim_y, 3, max_player_col, field_zoom, pCols, data);
-		UpdateTornado(dim_z, 3, max_player_col, field_zoom, pCols, data);
-
 		// Update Invert
 		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
