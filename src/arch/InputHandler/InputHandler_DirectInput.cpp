@@ -773,6 +773,8 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 	}
 }
 
+const short XINPUT_GAMEPAD_THUMB_MIN = MINSHORT;
+const short XINPUT_GAMEPAD_THUMB_MAX = MAXSHORT;
 
 void InputHandler_DInput::UpdateXInput( XIDevice &device, const RageTimer &tm )
 {
@@ -783,18 +785,29 @@ void InputHandler_DInput::UpdateXInput( XIDevice &device, const RageTimer &tm )
 	if (XInputGetState(device.m_dwXInputSlot, &state) == ERROR_SUCCESS)
 	{
 		// map joysticks
-		float lx = Rage::scale(int(state.Gamepad.sThumbLX) + 0.f, 0.0f, 100.0f, 0.0f, 1.0f);
+		float lx = 0.f;
+		float ly = 0.f;
+		if (sqrt(pow(state.Gamepad.sThumbLX, 2) + pow(state.Gamepad.sThumbLY, 2)) > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+		{
+			lx = Rage::scale(state.Gamepad.sThumbLX + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
+			ly = Rage::scale(state.Gamepad.sThumbLY + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
+		}
 		ButtonPressed(DeviceInput(device.dev, JOY_LEFT, max(-lx, 0.f), tm));
 		ButtonPressed(DeviceInput(device.dev, JOY_RIGHT, max(+lx, 0.f), tm));
-		float ly = Rage::scale(int(state.Gamepad.sThumbLY) + 0.f, 0.0f, 100.0f, 0.0f, 1.0f);
-		ButtonPressed(DeviceInput(device.dev, JOY_UP, max(-ly, 0.f), tm));
-		ButtonPressed(DeviceInput(device.dev, JOY_DOWN, max(+ly, 0.f), tm));
-		float rx = Rage::scale(int(state.Gamepad.sThumbRX) + 0.f, 0.0f, 100.0f, 0.0f, 1.0f);
+		ButtonPressed(DeviceInput(device.dev, JOY_UP, max(+ly, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_DOWN, max(-ly, 0.f), tm));
+
+		float rx = 0.f;
+		float ry = 0.f;
+		if (sqrt(pow(state.Gamepad.sThumbRX, 2) + pow(state.Gamepad.sThumbRY, 2)) > XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
+		{
+			rx = Rage::scale(state.Gamepad.sThumbRX + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
+			ry = Rage::scale(state.Gamepad.sThumbRY + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
+		}
 		ButtonPressed(DeviceInput(device.dev, JOY_LEFT_2, max(-rx, 0.f), tm));
 		ButtonPressed(DeviceInput(device.dev, JOY_RIGHT_2, max(+rx, 0.f), tm));
-		float ry = Rage::scale(int(state.Gamepad.sThumbRY) + 0.f, 0.0f, 100.0f, 0.0f, 1.0f);
-		ButtonPressed(DeviceInput(device.dev, JOY_UP_2, max(-ry, 0.f), tm));
-		ButtonPressed(DeviceInput(device.dev, JOY_DOWN_2, max(+ry, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_UP_2, max(+ry, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_DOWN_2, max(-ry, 0.f), tm));
 
 		// map buttons
 		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_1, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_A), tm));
