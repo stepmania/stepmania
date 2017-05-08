@@ -4,6 +4,9 @@
 #define MODEL_TYPES_H
 
 #include "RageTypes.h"
+#include "RageMatrix.hpp"
+#include "RageModelVertex.hpp"
+#include "RageVector4.hpp"
 
 struct msTriangle
 {
@@ -13,17 +16,17 @@ struct msTriangle
 
 struct msMesh
 {
-	RString			sName;
+	std::string			sName;
 	char			nMaterialIndex;
 
-	vector<RageModelVertex>	Vertices;
+	std::vector<Rage::ModelVertex>	Vertices;
 
-	// OPTIMIZATION: If all verts in a mesh are transformed by the same bone, 
+	// OPTIMIZATION: If all verts in a mesh are transformed by the same bone,
 	// then send the transform to the graphics card for the whole mesh instead
 	// of transforming each vertex on the CPU;
 	char			m_iBoneIndex;	// -1 = no bone
 
-	vector<msTriangle>	Triangles;
+	std::vector<msTriangle>	Triangles;
 };
 
 class RageTexture;
@@ -36,7 +39,7 @@ public:
 	~AnimatedTexture();
 
 	void LoadBlank();
-	void Load( const RString &sTexOrIniFile );
+	void Load( const std::string &sTexOrIniFile );
 	void Unload();
 	void Update( float fDelta );
 
@@ -47,7 +50,7 @@ public:
 	float GetAnimationLengthSeconds() const;
 	void SetSecondsIntoAnimation( float fSeconds );
 	float GetSecondsIntoAnimation() const;
-	RageVector2 GetTextureTranslate();
+	Rage::Vector2 GetTextureTranslate();
 
 	bool		m_bSphereMapped;
 	BlendMode	m_BlendMode;
@@ -55,8 +58,8 @@ public:
 	bool NeedsNormals() const { return m_bSphereMapped; }
 
 private:
-	RageVector2		m_vTexOffset;
-	RageVector2		m_vTexVelocity;
+	Rage::Vector2		m_vTexOffset;
+	Rage::Vector2		m_vTexVelocity;
 
 	int m_iCurState;
 	float m_fSecsIntoFrame;
@@ -65,26 +68,26 @@ private:
 		AnimatedTextureState(
 			RageTexture* pTexture_,
 			float		fDelaySecs_,
-			RageVector2	vTranslate_
+			Rage::Vector2	vTranslate_
 				     ):
 			pTexture(pTexture_), fDelaySecs(fDelaySecs_),
 			vTranslate(vTranslate_) {}
 
 		RageTexture* pTexture;
 		float		fDelaySecs;
-		RageVector2	vTranslate;
+		Rage::Vector2	vTranslate;
 	};
-	vector<AnimatedTextureState> vFrames;
+	std::vector<AnimatedTextureState> vFrames;
 };
 
 struct msMaterial
 {
 	int		nFlags;
-	RString		sName;
-	RageColor	Ambient;
-	RageColor	Diffuse;
-	RageColor	Specular;
-	RageColor	Emissive;
+	std::string		sName;
+	Rage::Color	Ambient;
+	Rage::Color	Diffuse;
+	Rage::Color	Specular;
+	Rage::Color	Emissive;
 	float		fShininess;
 	float		fTransparency;
 
@@ -97,30 +100,30 @@ struct msMaterial
 struct msPositionKey
 {
 	float fTime;
-	RageVector3 Position;
+	Rage::Vector3 Position;
 };
 
 struct msRotationKey
 {
 	float fTime;
-	RageVector4 Rotation;
+	Rage::Vector4 Rotation;
 };
 
 struct msBone
 {
 	int			nFlags;
-	RString			sName;
-	RString			sParentName;
-	RageVector3		Position;
-	RageVector3		Rotation;
+	std::string			sName;
+	std::string			sParentName;
+	Rage::Vector3		Position;
+	Rage::Vector3		Rotation;
 
-	vector<msPositionKey>	PositionKeys;
-	vector<msRotationKey>	RotationKeys;
+	std::vector<msPositionKey>	PositionKeys;
+	std::vector<msRotationKey>	RotationKeys;
 };
 
 struct msAnimation
 {
-	int FindBoneByName( const RString &sName ) const
+	int FindBoneByName( const std::string &sName ) const
 	{
 		for( unsigned i=0; i<Bones.size(); i++ )
 			if( Bones[i].sName == sName )
@@ -128,17 +131,17 @@ struct msAnimation
 		return -1;
 	}
 
-	bool LoadMilkshapeAsciiBones( RString sAniName, RString sPath );
+	bool LoadMilkshapeAsciiBones( std::string sAniName, std::string sPath );
 
-	vector<msBone>		Bones;
+	std::vector<msBone>		Bones;
 	int			nTotalFrames;
 };
 
 struct myBone_t
 {
-	RageMatrix		m_Relative;
-	RageMatrix		m_Absolute;
-	RageMatrix		m_Final;
+	Rage::Matrix		m_Relative;
+	Rage::Matrix		m_Absolute;
+	Rage::Matrix		m_Final;
 };
 
 #endif
@@ -146,7 +149,7 @@ struct myBone_t
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -156,7 +159,7 @@ struct myBone_t
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

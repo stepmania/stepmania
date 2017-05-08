@@ -1,31 +1,31 @@
 #include "global.h"
 #include "LightsDriver.h"
 #include "RageLog.h"
-#include "Foreach.h"
 #include "arch/arch_default.h"
+
+using std::vector;
 
 DriverList LightsDriver::m_pDriverList;
 
-void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
+void LightsDriver::Create( const std::string &sDrivers, vector<LightsDriver *> &Add )
 {
 	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
 
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
-	
-	FOREACH_CONST( RString, asDriversToTry, Driver )
+	auto asDriversToTry = Rage::split(sDrivers, ",", Rage::EmptyEntries::skip);
+
+	for (auto const &Driver: asDriversToTry)
 	{
-		RageDriver *pRet = m_pDriverList.Create( *Driver );
-		if( pRet == NULL )
+		RageDriver *pRet = m_pDriverList.Create( Driver );
+		if( pRet == nullptr )
 		{
-			LOG->Trace( "Unknown lights driver: %s", Driver->c_str() );
+			LOG->Trace( "Unknown lights driver: %s", Driver.c_str() );
 			continue;
 		}
 
 		LightsDriver *pDriver = dynamic_cast<LightsDriver *>( pRet );
-		ASSERT( pDriver != NULL );
+		ASSERT( pDriver != nullptr );
 
-		LOG->Info( "Lights driver: %s", Driver->c_str() );
+		LOG->Info( "Lights driver: %s", Driver.c_str() );
 		Add.push_back( pDriver );
 	}
 }
@@ -33,7 +33,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 /*
  * (c) 2002-2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -43,7 +43,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

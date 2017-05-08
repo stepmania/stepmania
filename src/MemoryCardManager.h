@@ -8,7 +8,7 @@
 #include "Preference.h"
 
 
-extern const RString MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
+extern const std::string MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
 
 class MemoryCardManager
 {
@@ -19,7 +19,7 @@ public:
 	void Update();
 
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
-	RString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
+	std::string GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
 
 	void WaitForCheckingToComplete();
 	bool CardInserted( PlayerNumber pn );
@@ -37,19 +37,19 @@ public:
 
 	bool GetCardLocked( PlayerNumber pn ) const { return m_bCardLocked[pn]; }
 
-	bool PathIsMemCard( RString sDir ) const;
+	bool PathIsMemCard( std::string sDir ) const;
 
 	bool IsNameAvailable( PlayerNumber pn ) const;
-	RString GetName( PlayerNumber pn ) const;
+	std::string GetName( PlayerNumber pn ) const;
 
-	const vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
+	const std::vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
 
-	static Preference1D<RString>	m_sMemoryCardOsMountPoint;
+	static Preference1D<std::string>	m_sMemoryCardOsMountPoint;
 	static Preference1D<int>	m_iMemoryCardUsbBus;
 	static Preference1D<int>	m_iMemoryCardUsbPort;
 	static Preference1D<int>	m_iMemoryCardUsbLevel;
 
-	static Preference<RString>	m_sEditorMemoryCardOsMountPoint;
+	static Preference<std::string>	m_sEditorMemoryCardOsMountPoint;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -58,7 +58,7 @@ protected:
 	void UpdateAssignments();
 	void CheckStateChanges();
 
-	vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
+	std::vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
 
 	bool	m_bCardLocked[NUM_PLAYERS];
 	bool	m_bMounted[NUM_PLAYERS];	// card is currently mounted
@@ -67,7 +67,7 @@ protected:
 	UsbStorageDevice m_FinalDevice[NUM_PLAYERS];	// device in the memory card slot when we finalized, blank if none
 
 	MemoryCardState m_State[NUM_PLAYERS];
-	RString m_sError[NUM_PLAYERS]; // if MemoryCardState_Error
+	std::string m_sError[NUM_PLAYERS]; // if MemoryCardState_Error
 
 	RageSound m_soundReady;
 	RageSound m_soundError;
@@ -82,7 +82,7 @@ extern MemoryCardManager*	MEMCARDMAN;	// global and accessible from anywhere in 
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -92,7 +92,7 @@ extern MemoryCardManager*	MEMCARDMAN;	// global and accessible from anywhere in 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

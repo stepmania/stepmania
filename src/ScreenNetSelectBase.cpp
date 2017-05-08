@@ -11,11 +11,14 @@
 #include "MenuTimer.h"
 #include "NetworkSyncManager.h"
 #include "RageUtil.h"
+#include "RageUnicode.hpp"
 #include "GameState.h"
 #include "InputEventPlus.h"
 #include "RageInput.h"
 #include "Font.h"
 #include "RageDisplay.h"
+
+using std::wstring;
 
 #define CHAT_TEXT_OUTPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextOutputWidth")
 #define CHAT_TEXT_INPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextInputWidth")
@@ -76,7 +79,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 		return false;
 
-	bool bHoldingCtrl = 
+	bool bHoldingCtrl =
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	// If we are disconnected, assume no chatting.
@@ -105,7 +108,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 
 		if( (c >= L' ') && (!bHoldingCtrl) )
 		{
-			m_sTextInput += WStringToRString(wstring()+c);
+			m_sTextInput += WStringToString(wstring()+c);
 			UpdateTextInput();
 		}
 
@@ -146,13 +149,15 @@ void ScreenNetSelectBase::TweenOffScreen()
 	OFF_COMMAND( m_textChatInput );
 	OFF_COMMAND( m_textChatOutput );
 
-	for( unsigned i=0; i<m_textUsers.size(); i++ )
-		OFF_COMMAND( m_textUsers[i] );
+	for (auto &user: m_textUsers)
+	{
+		OFF_COMMAND(user);
+	}
 }
 
 void ScreenNetSelectBase::UpdateTextInput()
 {
-	m_textChatInput.SetText( m_sTextInput );  
+	m_textChatInput.SetText( m_sTextInput );
 }
 
 void ScreenNetSelectBase::UpdateUsers()
@@ -160,9 +165,10 @@ void ScreenNetSelectBase::UpdateUsers()
 	float tX = USERS_X - USER_SPACING_X;
 	float tY = USERS_Y;
 
-	for( unsigned i=0; i< m_textUsers.size(); i++)
-		this->RemoveChild( &m_textUsers[i] );
-
+	for (auto &user: m_textUsers)
+	{
+		this->RemoveChild( &user );
+	}
 	m_textUsers.clear();
 
 	m_textUsers.resize( NSMAN->m_ActivePlayer.size() );
@@ -188,18 +194,19 @@ void ScreenNetSelectBase::UpdateUsers()
 
 		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
 		m_textUsers[i].RunCommands( THEME->GetMetricA( m_sName,
-			ssprintf("Users%dCommand", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
+			fmt::sprintf("Users%dCommand", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
 
 		this->AddChild( &m_textUsers[i] );
 	}
 }
 
 /** ColorBitmapText ***********************************************************/
-void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
+void ColorBitmapText::SetText( const std::string& _sText, const std::string& _sAlternateText, int iWrapWidthPixels )
 {
-	ASSERT( m_pFont != NULL );
+	using std::min;
+	ASSERT( m_pFont != nullptr );
 
-	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
+	std::string sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
 	if( iWrapWidthPixels == -1 )	// wrap not specified
 		iWrapWidthPixels = m_iWrapWidthPixels;
@@ -212,16 +219,16 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 	// Set up the first color.
 	m_vColors.clear();
 	ColorChange change;
-	change.c = RageColor (1, 1, 1, 1);
+	change.c = Rage::Color (1, 1, 1, 1);
 	change.l = 0;
 	m_vColors.push_back( change );
 
 	m_wTextLines.clear();
 
-	RString sCurrentLine = "";
+	std::string sCurrentLine = "";
 	int		iLineWidth = 0;
 
-	RString sCurrentWord = "";
+	std::string sCurrentWord = "";
 	int		iWordWidth = 0;
 	int		iGlyphsSoFar = 0;
 
@@ -233,13 +240,13 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 
 		if( m_sText.length() > 8 && i < m_sText.length() - 9 )
 		{
-			RString FirstThree = m_sText.substr( i, 3 );
-			if( FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8 )
+			std::string FirstThree = m_sText.substr( i, 3 );
+			if (Rage::ci_ascii_string{"|c0"} == FirstThree && iCharsLeft > 8)
 			{
 				ColorChange cChange;
 				unsigned int r, g, b;
 				sscanf( m_sText.substr( i, 9 ).c_str(), "|%*c0%2x%2x%2x", &r, &g, &b );
-				cChange.c = RageColor( r/255.f, g/255.f, b/255.f, 1.f );
+				cChange.c = Rage::Color( r/255.f, g/255.f, b/255.f, 1.f );
 				cChange.l = iGlyphsSoFar;
 				if( iGlyphsSoFar == 0 )
 					m_vColors[0] = cChange;
@@ -250,9 +257,9 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			}
 		}
 
-		int iCharLength = min( utf8_get_char_len(m_sText[i]), iCharsLeft + 1 );
-		RString curCharStr = m_sText.substr( i, iCharLength );
-		wchar_t curChar = utf8_get_char( curCharStr );
+        int iCharLength = min( Rage::utf8_get_char_len(m_sText[i]), iCharsLeft + 1 );
+		std::string curCharStr = m_sText.substr( i, iCharLength );
+		wchar_t curChar = Rage::utf8_get_char( curCharStr );
 		i += iCharLength - 1;
 		int iCharWidth = m_pFont->GetLineWidthInSourcePixels( wstring() + curChar );
 
@@ -278,7 +285,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 				iWordWidth = 0;
 				sCurrentWord = "";
 				iGlyphsSoFar++;
-			} 
+			}
 			else
 			{
 				SimpleAddLine( sCurrentLine + sCurrentWord, iLineWidth + iWordWidth );
@@ -295,7 +302,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			else if( iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels )
 			{
 				SimpleAddLine( sCurrentLine, iLineWidth );
-				sCurrentLine = ""; 
+				sCurrentLine = "";
 				iLineWidth = 0;
 				sCurrentWord += curCharStr;
 				iWordWidth += iCharWidth;
@@ -323,9 +330,9 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 	UpdateBaseZoom();
 }
 
-void ColorBitmapText::SimpleAddLine( const RString &sAddition, const int iWidthPixels) 
+void ColorBitmapText::SimpleAddLine( const std::string &sAddition, const int iWidthPixels)
 {
-	m_wTextLines.push_back( RStringToWstring( sAddition ) );
+	m_wTextLines.push_back( StringToWstring( sAddition ) );
 	m_iLineWidths.push_back( iWidthPixels );
 }
 
@@ -342,10 +349,12 @@ void ColorBitmapText::DrawPrimitives( )
 		{
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateWorld( m_fShadowLengthX, m_fShadowLengthY, 0 );	// shift by 5 units
-			RageColor c = m_ShadowColor;
+			Rage::Color c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
-			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = c;
+			for (auto &vertex: m_aVertices)
+			{
+				vertex.c = c;
+			}
 			DrawChars( true );
 
 			DISPLAY->PopMatrix();
@@ -353,7 +362,7 @@ void ColorBitmapText::DrawPrimitives( )
 
 		// render the diffuse pass
 		int loc = 0, cur = 0;
-		RageColor c = m_pTempState->diffuse[0];
+		Rage::Color c = m_pTempState->diffuse[0];
 
 		for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 		{
@@ -367,7 +376,9 @@ void ColorBitmapText::DrawPrimitives( )
 				}
 			}
 			for( unsigned j=0; j<4; j++ )
+			{
 				m_aVertices[i+j].c = c;
+			}
 		}
 
 		DrawChars( false );
@@ -378,17 +389,21 @@ void ColorBitmapText::DrawPrimitives( )
 	{
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
-		for( unsigned i=0; i<m_aVertices.size(); i++ )
-			m_aVertices[i].c = m_pTempState->glow;
+		for (auto &vertex: m_aVertices)
+		{
+			vertex.c = m_pTempState->glow;
+		}
 		DrawChars( false );
 	}
 }
 
 void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 {
+	using std::max;
+	using std::min;
 	iNumLines = max( 0, iNumLines );
 	iNumLines = min( (int)m_wTextLines.size(), iNumLines );
-	if( iDirection == 0 ) 
+	if( iDirection == 0 )
 	{
 		// Crop all bottom lines
 		m_wTextLines.resize( iNumLines );
@@ -404,7 +419,7 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 
 		// When we're cutting out text, we need to maintain the last
 		// color, so our text at the top doesn't become colorless.
-		RageColor LastColor;
+		Rage::Color LastColor;
 
 		for( unsigned i = 0; i < m_vColors.size(); i++ )
 		{
@@ -440,7 +455,7 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
  * (c) 2004 Charles Lohr
  * All rights reserved.
  *      Elements from ScreenTextEntry
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -450,7 +465,7 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

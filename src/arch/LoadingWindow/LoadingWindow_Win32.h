@@ -14,7 +14,7 @@ public:
 	~LoadingWindow_Win32();
 
 	void Paint();
-	void SetText( RString sText );
+	void SetText( std::string sText );
 	void SetIcon( const RageSurface *pIcon );
 	void SetSplash( const RageSurface *pSplash );
 	void SetProgress( const int progress );
@@ -24,7 +24,7 @@ public:
 private:
 	AppInstance handle;
 	HWND hwnd;
-	RString text[3];
+	std::string text[3];
 	HICON m_hIcon;
 
 	static BOOL CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );

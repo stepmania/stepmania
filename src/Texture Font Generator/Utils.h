@@ -1,19 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-inline float truncf( float f )	{ return float(int(f)); };
-inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
-
-inline long int lrintf( float f )
-{
-	int retval;
-	
-	_asm fld f;
-	_asm fistp retval;
-
-	return retval;
-}
-
 struct Surface
 {
 	Surface() { pRGBA = NULL; }

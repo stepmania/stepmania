@@ -1,12 +1,27 @@
 #include "global.h"
 #include "InputFilter.h"
+#include "InputQueue.h"
 #include "RageUtil.h"
 #include "InputHandler.h"
 #include "RageLog.h"
+#include "RageUnicode.hpp"
 #include "LocalizedString.h"
 #include "arch/arch_default.h"
 #include "InputHandler_MonkeyKeyboard.h"
-#include "Foreach.h"
+
+using std::vector;
+using std::wstring;
+
+void InputHandler::UpdateCounter()
+{
+	m_iUpdatesPerSecond++;
+
+	if (m_LastReset.Ago() > 1.0f) {
+		m_LastReset.Touch();
+		INPUTQUEUE->SetPPS(m_sName, m_iUpdatesPerSecond);
+		m_iUpdatesPerSecond = 0;
+	}
+}
 
 void InputHandler::UpdateTimer()
 {
@@ -57,15 +72,15 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 	case KEY_KP_EQUAL:	c = L'=';	break;
 	}
 
-	// Handle some default US keyboard modifiers for derived InputHandlers that 
+	// Handle some default US keyboard modifiers for derived InputHandlers that
 	// don't implement DeviceButtonToChar.
 	if( bUseCurrentKeyModifiers )
 	{
-		bool bHoldingShift = 
+		bool bHoldingShift =
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
 
-		bool bHoldingCtrl = 
+		bool bHoldingCtrl =
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
 
@@ -73,7 +88,7 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 
 		if( bHoldingShift && !bHoldingCtrl )
 		{
-			MakeUpper( &c, 1 );
+			c = Rage::make_upper(c);
 
 			switch( c )
 			{
@@ -102,7 +117,7 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 		}
 
 	}
-	
+
 	return c;
 }
 
@@ -120,25 +135,25 @@ static LocalizedString PGUP	( "DeviceButton", "PgUp" );
 static LocalizedString PGDN	( "DeviceButton", "PgDn" );
 static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
 
-RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
+std::string InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	if( di.device == InputDevice_Invalid )
-		return RString();
+		return std::string();
 
 	if( di.device == DEVICE_KEYBOARD )
 	{
 		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c && c != L' ' ) // Don't show "Key  " for space.
-			return InputDeviceToString( di.device ) + " " + Capitalize( WStringToRString(wstring()+c) );
+			return InputDeviceToString( di.device ) + " " + Capitalize( WStringToString(wstring()+c) );
 	}
 
-	RString s = DeviceButtonToString( di.button );
+	std::string s = DeviceButtonToString( di.button );
 	if( di.device != DEVICE_KEYBOARD )
 		s = InputDeviceToString( di.device ) + " " + s;
 	return s;
 }
 
-RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
+std::string InputHandler::GetLocalizedInputString( const DeviceInput &di )
 {
 	switch( di.button )
 	{
@@ -158,7 +173,7 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 	default:
 		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c && c != L' ' ) // Don't show "Key  " for space.
-			return Capitalize( WStringToRString(wstring()+c) );
+			return Capitalize( WStringToString(wstring()+c) );
 
 		return DeviceButtonToString( di.button );
 	}
@@ -167,38 +182,41 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 DriverList InputHandler::m_pDriverList;
 
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
-void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add )
+void InputHandler::Create( const std::string &drivers_, vector<InputHandler *> &Add )
 {
-	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
-	vector<RString> DriversToTry;
-	split( drivers, ",", DriversToTry, true );
-	
+	const std::string drivers = drivers_.empty()? std::string(DEFAULT_INPUT_DRIVER_LIST):drivers_;
+	auto DriversToTry = Rage::split( drivers, ",", Rage::EmptyEntries::skip );
+
 	if( DriversToTry.empty() )
-		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
-	
-	FOREACH_CONST( RString, DriversToTry, s )
 	{
-		RageDriver *pDriver = InputHandler::m_pDriverList.Create( *s );
-		if( pDriver == NULL )
+		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
+	}
+	for (auto const &s: DriversToTry)
+	{
+		RageDriver *pDriver = InputHandler::m_pDriverList.Create( s );
+		if( pDriver == nullptr )
 		{
-			LOG->Trace( "Unknown Input Handler name: %s", s->c_str() );
+			LOG->Trace( "Unknown Input Handler name: %s", s.c_str() );
 			continue;
 		}
 
 		InputHandler *ret = dynamic_cast<InputHandler *>( pDriver );
 		DEBUG_ASSERT( ret );
+		ret->m_sName = s;
+
 		Add.push_back( ret );
 	}
 
-	// Always add
-	Add.push_back( new InputHandler_MonkeyKeyboard );
+	// Monkey input shouuld only ever be used by devs.
+	// If you actually need it, recompile with it on or something. -Kyz
+	// Add.push_back( new InputHandler_MonkeyKeyboard );
 }
 
 
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -208,7 +226,7 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

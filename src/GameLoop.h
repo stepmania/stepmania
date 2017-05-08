@@ -5,10 +5,8 @@ namespace GameLoop
 {
 	void RunGameLoop();
 	void SetUpdateRate( float fUpdateRate );
-	void ChangeTheme(const RString &sNewTheme);
-	void ChangeGame(const RString& new_game, const RString& new_theme= "");
-	void StartConcurrentRendering();
-	void FinishConcurrentRendering();
+	void ChangeTheme(const std::string &sNewTheme);
+	void ChangeGame(const std::string& new_game, const std::string& new_theme= "");
 };
 
 #endif

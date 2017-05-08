@@ -15,6 +15,8 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
 AutoScreenMessage( SM_SMOnlinePack );
@@ -45,7 +47,7 @@ void ScreenSMOnlineLogin::Init()
 	{
 		// Give myself a message so that I can bail out later
 		PostScreenMessage(SM_NoProfilesDefined, 0);
-		SAFE_DELETE(pHand);
+		Rage::safe_delete(pHand);
 	}
 	else
 		vHands.push_back( pHand );
@@ -62,12 +64,12 @@ void ScreenSMOnlineLogin::ImportOptions( int iRow, const vector<PlayerNumber> &v
 	{
 	case 0:
 		{
-			vector<RString> vsProfiles;
+			vector<std::string> vsProfiles;
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 			FOREACH_PlayerNumber( pn )
 			{
-				vector<RString>::iterator iter = find(vsProfiles.begin(), vsProfiles.end(), ProfileManager::m_sDefaultLocalProfileID[pn].Get() );
+				vector<std::string>::iterator iter = find(vsProfiles.begin(), vsProfiles.end(), ProfileManager::m_sDefaultLocalProfileID[pn].Get() );
 				if( iter != vsProfiles.end() )
 					m_pRows[0]->SetOneSelection((PlayerNumber) pn, iter - vsProfiles.begin());
 			}
@@ -82,7 +84,7 @@ void ScreenSMOnlineLogin::ExportOptions( int iRow, const vector<PlayerNumber> &v
 	{
 	case 0:
 		{
-			vector<RString> vsProfiles;
+			vector<std::string> vsProfiles;
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 			FOREACH_EnabledPlayer( pn )
@@ -98,7 +100,7 @@ static LocalizedString ENTER_YOUR_PASSWORD	( "ScreenSMOnlineLogin", "Enter your 
 
 void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 {
-	RString sLoginQuestion;
+	std::string sLoginQuestion;
 //	if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) )
 
 	if( SM == SM_PasswordDone )
@@ -110,7 +112,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 	}
 	else if( SM == SM_NoProfilesDefined )
 	{
-		SCREENMAN->SystemMessage(DEFINE_A_PROFILE);
+		SCREENMAN->SystemMessage(DEFINE_A_PROFILE.GetValue());
 		SCREENMAN->SetNewScreen("ScreenOptionsManageProfiles");
 	}
 	else if( SM == SM_SMOnlinePack )
@@ -136,7 +138,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 				m_iPlayer++;
 				if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) && m_iPlayer < NUM_PLAYERS )
 				{
-					ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, NULL );
+					ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, nullptr );
 				}
 				else
 				{
@@ -146,8 +148,8 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			}
 			else
 			{
-				RString Response = NSMAN->m_SMOnlinePacket.ReadNT();
-				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, NULL );
+				std::string Response = NSMAN->m_SMOnlinePacket.ReadNT();
+				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, nullptr );
 			}
 		}
 	}
@@ -157,8 +159,9 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 		vector<PlayerNumber> v;
 		v.push_back( GAMESTATE->GetMasterPlayerNumber() );
 		for( unsigned r=0; r<m_pRows.size(); r++ )
+		{
 			ExportOptions( r, v );
-
+		}
 		PREFSMAN->SavePrefsToDisk();
 		FOREACH_EnabledPlayer(pn)
 		{
@@ -168,7 +171,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 		if(GAMESTATE->IsPlayerEnabled((PlayerNumber) 0) && GAMESTATE->IsPlayerEnabled((PlayerNumber) 1) &&
 			(GAMESTATE->GetPlayerDisplayName((PlayerNumber) 0) == GAMESTATE->GetPlayerDisplayName((PlayerNumber) 1)))
 		{
-			SCREENMAN->SystemMessage( UNIQUE_PROFILE );
+			SCREENMAN->SystemMessage( UNIQUE_PROFILE.GetValue() );
 			SCREENMAN->SetNewScreen("ScreenSMOnlineLogin");
 		}
 		else
@@ -177,7 +180,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			while(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
 				++m_iPlayer;
 			sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue() + "\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n" + ENTER_YOUR_PASSWORD.GetValue();
-			ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, NULL );
+			ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, nullptr );
 		}
 		return;
 	}
@@ -190,29 +193,29 @@ bool ScreenSMOnlineLogin::MenuStart( const InputEventPlus &input )
 	return ScreenOptions::MenuStart( input );
 }
 
-RString ScreenSMOnlineLogin::GetSelectedProfileID()
+std::string ScreenSMOnlineLogin::GetSelectedProfileID()
 {
-	vector<RString> vsProfiles;
+	vector<std::string> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 	const OptionRow &row = *m_pRows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
-		return RString();
+		return std::string();
 	return vsProfiles[ Selection-1 ];
 }
 
-void ScreenSMOnlineLogin::SendLogin( RString sPassword )
+void ScreenSMOnlineLogin::SendLogin( std::string sPassword )
 {
-	RString PlayerName = GAMESTATE->GetPlayerDisplayName( (PlayerNumber) m_iPlayer );
+	std::string PlayerName = GAMESTATE->GetPlayerDisplayName( (PlayerNumber) m_iPlayer );
 
-	RString HashedName = NSMAN->MD5Hex( sPassword );
+	std::string HashedName = NSMAN->MD5Hex( sPassword );
 
 	int authMethod = 0;
 	if ( NSMAN->GetSMOnlineSalt() != 0 )
 	{
 		authMethod = 1;
-		HashedName = NSMAN->MD5Hex( HashedName + ssprintf("%d", NSMAN->GetSMOnlineSalt()) );
+		HashedName = NSMAN->MD5Hex( HashedName + fmt::sprintf("%d", NSMAN->GetSMOnlineSalt()) );
 	}
 
 	NSMAN->m_SMOnlinePacket.ClearPacket();
@@ -229,7 +232,7 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
 /*
  * (c) 2004-2005 Charles Lohr, Adam Lowman
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -239,7 +242,7 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

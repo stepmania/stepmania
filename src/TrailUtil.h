@@ -35,15 +35,19 @@ class TrailID
 public:
 	TrailID(): st(StepsType_Invalid), cd(Difficulty_Invalid),
 		m_Cache() { m_Cache.Unset(); }
-	void Unset() { FromTrail(NULL); }
+	void Unset() { FromTrail(nullptr); }
 	void FromTrail( const Trail *p );
 	Trail *ToTrail( const Course *p, bool bAllowNull ) const;
 	bool operator<( const TrailID &rhs ) const;
 	bool MatchesStepsType( StepsType s ) const { return st == s; }
+	bool operator==(const TrailID& rhs) const
+	{
+		return st == rhs.st && cd == rhs.cd;
+	}
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
-	RString ToString() const;
+	std::string ToString() const;
 	bool IsValid() const;
 	static void Invalidate( Song* pStaleSong );
 };

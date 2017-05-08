@@ -1,4 +1,3 @@
-gameplay_pause_count= 0
 course_stopped_by_pause_menu= false
 
 local prompt_text= {
@@ -8,10 +7,6 @@ local prompt_text= {
 }
 local prompt_actor= false
 
-local pause_buttons= {Start= false, Select= true, Back= true}
-local pause_double_tap_time= 1
-local tap_debounce_time= .1
-local pause_press_times= {}
 local screen_gameplay= false
 local menu_items= {[PLAYER_1]= {}, [PLAYER_2]= {}}
 local menu_frames= {}
@@ -162,21 +157,6 @@ menu_actions.MenuRight= menu_actions.Right
 menu_actions.MenuUp= menu_actions.Up
 menu_actions.MenuDown= menu_actions.Down
 
-local down_status= {}
-
-local function other_button_down(button)
-	for other_button, down in pairs(down_status) do
-		if down and other_button ~= button then
-			return true
-		end
-	end
-	return false
-end
-
-local function detect_lr_press()
-	return down_status.MenuLeft and down_status.MenuRight
-end
-
 local function pause_and_show(pn)
 	gameplay_pause_count= gameplay_pause_count + 1
 	screen_gameplay:PauseGame(true)
@@ -202,12 +182,7 @@ local function input(event)
 	if not enabled_players[pn] then return end
 	local button= event.GameButton
 	if not button then return end
-	if event.type == "InputEventType_Release" then
-		down_status[event.button]= false
-		return
-	end
-	down_status[event.button]= true
-	if screen_gameplay:GetName() == "ScreenGameplaySyncMachine" then return end
+	if event.type == "InputEventType_Release" then return end
 	local is_paused= screen_gameplay:IsPaused()
 	if is_paused then
 		if menu_is_showing[pn] then
@@ -216,35 +191,10 @@ local function input(event)
 				return
 			end
 		else
-			if pause_buttons[button] or detect_lr_press() then
+			if button == "Start" then
 				show_menu(pn)
 				return
 			end
-		end
-	else
-		button= event.button
-		if event.type ~= "InputEventType_FirstPress" then return end
-		if detect_lr_press() then
-			pause_and_show(pn)
-		elseif pause_buttons[button] then
-			if GAMESTATE:GetCoinMode() == "CoinMode_Pay" then return end
-			if pause_press_times[pn] and not other_button_down(button) then
-				local time_since_press= GetTimeSinceStart() - pause_press_times[pn]
-				if time_since_press > tap_debounce_time then
-					if time_since_press <= pause_double_tap_time then
-						pause_and_show(pn)
-					else
-						show_prompt(button)
-						pause_press_times[pn]= GetTimeSinceStart()
-					end
-				end
-			else
-				show_prompt(button)
-				pause_press_times[pn]= GetTimeSinceStart()
-			end
-		else
-			hide_prompt()
-			pause_press_times[pn]= nil
 		end
 	end
 end
@@ -252,8 +202,19 @@ end
 local frame= Def.ActorFrame{
 	OnCommand= function(self)
 		screen_gameplay= SCREENMAN:GetTopScreen()
+		if screen_gameplay:GetName() == "ScreenGameplaySyncMachine" then return end
 		screen_gameplay:AddInputCallback(input)
 	end,
+	PlayerHitPauseMessageCommand= function(self, params)
+		pause_and_show(params.pn)
+	end,
+	ShowPausePromptMessageCommand= function(self, params)
+		show_prompt(params.button)
+	end,
+	HidePausePromptMessageCommand= function(self)
+		hide_prompt()
+	end,
+	pause_controller_actor(),
 	Def.BitmapText{
 		Font= "Common Normal", InitCommand= function(self)
 			prompt_actor= self
@@ -261,6 +222,7 @@ local frame= Def.ActorFrame{
 		end,
 		ShowCommand= function(self, param)
 			self:stoptweening():settext(param.text):accelerate(.25):diffusealpha(1)
+				:sleep(1):queuecommand("Hide")
 		end,
 		HideCommand= function(self)
 			self:stoptweening():decelerate(.25):diffusealpha(0)

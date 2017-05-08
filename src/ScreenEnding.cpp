@@ -33,10 +33,10 @@ ScreenEnding::ScreenEnding()
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->JoinPlayer( PLAYER_2 );
-		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
+		GAMESTATE->set_curr_song(SONGMAN->GetRandomSong());
 		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
-		GAMESTATE->m_pCurSteps[PLAYER_2].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
+		GAMESTATE->m_pCurSteps[PLAYER_1].Set( GAMESTATE->get_curr_song()->GetAllSteps()[0] );
+		GAMESTATE->m_pCurSteps[PLAYER_2].Set( GAMESTATE->get_curr_song()->GetAllSteps()[0] );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iStepsPlayed = 1;
@@ -89,8 +89,8 @@ void ScreenEnding::Init()
 		if( !PROFILEMAN->IsPersistentProfile(p) )
 			continue;
 	
-		m_sprRemoveMemoryCard[p].SetName( ssprintf("RemoveCardP%d",p+1) );
-		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",ssprintf("remove card P%d",p+1)) );
+		m_sprRemoveMemoryCard[p].SetName( fmt::sprintf("RemoveCardP%d",p+1) );
+		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",fmt::sprintf("remove card P%d",p+1)) );
 		switch( MEMCARDMAN->GetCardState(p) )
 		{
 			case MemoryCardState_Removed:

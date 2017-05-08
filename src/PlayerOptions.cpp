@@ -1,16 +1,17 @@
 #include "global.h"
 #include "PlayerOptions.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "GameState.h"
-#include "NoteSkinManager.h"
 #include "Song.h"
 #include "Course.h"
 #include "Steps.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
 #include "Style.h"
 #include "CommonMetrics.h"
-#include <float.h>
+
+using std::vector;
 
 static const char *LifeTypeNames[] = {
 	"Bar",
@@ -68,20 +69,23 @@ void PlayerOptions::Init()
 	m_fRandAttack = 0;		m_SpeedfRandAttack = 1.0f;
 	m_fNoAttack = 0;		m_SpeedfNoAttack = 1.0f;
 	m_fPlayerAutoPlay = 0;		m_SpeedfPlayerAutoPlay = 1.0f;
-	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
+	m_fTilt = 0;		m_SpeedfTilt = 1.0f;
 	m_fSkew = 0;			m_SpeedfSkew = 1.0f;
 	m_fPassmark = 0;		m_SpeedfPassmark = 1.0f;
 	m_fRandomSpeed = 0;		m_SpeedfRandomSpeed = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
-	m_sNoteSkin = "";
+	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
+	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
+	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
 }
 
-void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
+void PlayerOptions::Approach(PlayerOptions const& other, float delta)
 {
+	float rated_delta= delta * GAMESTATE->get_hasted_music_rate();
 #define APPROACH( opt ) \
-	fapproach( m_ ## opt, other.m_ ## opt, fDeltaSeconds * other.m_Speed ## opt );
+	fapproach(m_##opt, other.m_##opt, rated_delta * other.m_Speed ## opt);
 #define DO_COPY( x ) \
 	x = other.x;
 
@@ -91,7 +95,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
 	APPROACH( fMaxScrollBPM );
-	fapproach( m_fScrollBPM, other.m_fScrollBPM, fDeltaSeconds * other.m_SpeedfScrollBPM*150 );
+	fapproach(m_fScrollBPM, other.m_fScrollBPM, rated_delta * other.m_SpeedfScrollBPM*150);
 	for( int i=0; i<NUM_ACCELS; i++ )
 		APPROACH( fAccels[i] );
 	for( int i=0; i<NUM_EFFECTS; i++ )
@@ -106,10 +110,16 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fRandAttack );
 	APPROACH( fNoAttack );
 	APPROACH( fPlayerAutoPlay );
-	APPROACH( fPerspectiveTilt );
+	APPROACH( fTilt );
 	APPROACH( fSkew );
 	APPROACH( fPassmark );
 	APPROACH( fRandomSpeed );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesX[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesY[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesZ[i] );
 
 	DO_COPY( m_bSetScrollSpeed );
 	for( int i=0; i<NUM_TURNS; i++ )
@@ -119,31 +129,31 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_bMuteOnError );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
-	DO_COPY( m_sNoteSkin );
 #undef APPROACH
 #undef DO_COPY
 }
 
-static void AddPart( vector<RString> &AddTo, float level, RString name )
+static void AddPart( vector<std::string> &AddTo, float level, std::string name )
 {
 	if( level == 0 )
+	{
 		return;
-
-	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", lrintf(level*100) );
+	}
+	const std::string LevelStr = (level == 1)? std::string(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
 
-RString PlayerOptions::GetString( bool bForceNoteSkin ) const
+std::string PlayerOptions::GetString() const
 {
-	vector<RString> v;
-	GetMods( v, bForceNoteSkin );
-	return join( ", ", v );
+	vector<std::string> v;
+	GetMods(v);
+	return Rage::join( ", ", v );
 }
 
-void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
+void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 {
-	//RString sReturn;
+	//std::string sReturn;
 
 	switch(m_LifeType)
 	{
@@ -156,32 +166,30 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 				case DrainType_SuddenDeath:
 					AddTo.push_back("SuddenDeath");
 					break;
-				case DrainType_Normal:
-				default:
-					break;
+				default: break;
 			}
 			break;
 		case LifeType_Battery:
-			AddTo.push_back(ssprintf("%dLives", m_BatteryLives));
+			AddTo.push_back(fmt::sprintf("%dLives", m_BatteryLives));
 			break;
 		case LifeType_Time:
 			AddTo.push_back("LifeTime");
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid LifeType: %i", m_LifeType));
+			FAIL_M(fmt::sprintf("Invalid LifeType: %i", m_LifeType));
 	}
 
 	if( !m_fTimeSpacing )
 	{
 		if( m_fMaxScrollBPM )
 		{
-			RString s = ssprintf( "m%.0f", m_fMaxScrollBPM );
+			std::string s = fmt::sprintf( "m%.0f", m_fMaxScrollBPM );
 			AddTo.push_back( s );
 		}
 		else if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
 		{
 			/* -> 1.00 */
-			RString s = ssprintf( "%2.2f", m_fScrollSpeed );
+			std::string s = fmt::sprintf( "%2.2f", m_fScrollSpeed );
 			if( s[s.size()-1] == '0' )
 			{
 				/* -> 1.0 */
@@ -197,30 +205,60 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	}
 	else
 	{
-		RString s = ssprintf( "C%.0f", m_fScrollBPM );
+		std::string s = fmt::sprintf( "C%.0f", m_fScrollBPM );
 		AddTo.push_back( s );
 	}
 
 	AddPart( AddTo, m_fAccels[ACCEL_BOOST],		"Boost" );
 	AddPart( AddTo, m_fAccels[ACCEL_BRAKE],		"Brake" );
 	AddPart( AddTo, m_fAccels[ACCEL_WAVE],			"Wave" );
+	AddPart( AddTo, m_fAccels[ACCEL_WAVE_PERIOD],		"WavePeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_EXPAND],		"Expand" );
+	AddPart( AddTo, m_fAccels[ACCEL_EXPAND_PERIOD],		"ExpandPeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
 
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],		"Drunk" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_SPEED],		"DrunkSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_OFFSET],	"DrunkOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_PERIOD],	"DrunkPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],		"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION],	"Confusion" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_OFFSET],	"ConfusionOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_X],	"ConfusionX" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_X_OFFSET],	"ConfusionXOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y],	"ConfusionY" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y_OFFSET],	"ConfusionYOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_MINI],		"Mini" );
 	AddPart( AddTo, m_fEffects[EFFECT_TINY],		"Tiny" );
 	AddPart( AddTo, m_fEffects[EFFECT_FLIP],		"Flip" );
 	AddPart( AddTo, m_fEffects[EFFECT_INVERT],		"Invert" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_PERIOD],	"TornadoPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_OFFSET],	"TornadoOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],	"BumpyOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],	"BumpyPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_MULT],		"BeatMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
 	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
+	
+	for( int i=0; i<16; i++)
+	{
+		std::string s = fmt::sprintf( "MoveX%d", i+1 );
+		
+		AddPart( AddTo, m_fMovesX[i],				s );
+		s = fmt::sprintf( "MoveY%d", i+1 );
+		AddPart( AddTo, m_fMovesY[i],				s );
+		s = fmt::sprintf( "MoveZ%d", i+1 );
+		AddPart( AddTo, m_fMovesZ[i],				s );
+	}
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN_OFFSET],	"HiddenOffset" );
@@ -289,67 +327,106 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	case FailType_EndOfSong:			AddTo.push_back("FailAtEnd");	break;
 	case FailType_Off:				AddTo.push_back("FailOff");	break;
 	default:
-		FAIL_M(ssprintf("Invalid FailType: %i", m_FailType));
+		FAIL_M(fmt::sprintf("Invalid FailType: %i", m_FailType));
 	}
 
-	if( m_fSkew==0 && m_fPerspectiveTilt==0 )
+	if( m_fSkew==0 && m_fTilt==0 )
 	{
 		AddTo.push_back( "Overhead" );
 	}
 	else if( m_fSkew == 0 )
 	{
-		if( m_fPerspectiveTilt > 0 )
-			AddPart( AddTo, m_fPerspectiveTilt, "Distant" );
+		if( m_fTilt > 0 )
+			AddPart( AddTo, m_fTilt, "Distant" );
 		else
-			AddPart( AddTo, -m_fPerspectiveTilt, "Hallway" );
+			AddPart( AddTo, -m_fTilt, "Hallway" );
 	}
-	else if( fabsf(m_fSkew-m_fPerspectiveTilt) < 0.0001f )
+	else if( fabsf(m_fSkew-m_fTilt) < 0.0001f )
 	{
 		AddPart( AddTo, m_fSkew, "Space" );
 	}
-	else if( fabsf(m_fSkew+m_fPerspectiveTilt) < 0.0001f )
+	else if( fabsf(m_fSkew+m_fTilt) < 0.0001f )
 	{
 		AddPart( AddTo, m_fSkew, "Incoming" );
 	}
 	else
 	{
 		AddPart( AddTo, m_fSkew, "Skew" );
-		AddPart( AddTo, m_fPerspectiveTilt, "Tilt" );
-	}
-
-	// Don't display a string if using the default NoteSkin unless we force it.
-	if( bForceNoteSkin || (!m_sNoteSkin.empty() && m_sNoteSkin != CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()) )
-	{
-		RString s = m_sNoteSkin;
-		Capitalize( s );
-		AddTo.push_back( s );
+		AddPart( AddTo, m_fTilt, "Tilt" );
 	}
 }
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void PlayerOptions::FromString( const RString &sMultipleMods )
+void PlayerOptions::FromString( std::string const &sMultipleMods )
 {
-	RString sTemp = sMultipleMods;
-	vector<RString> vs;
-	split( sTemp, ",", vs, true );
-	RString sThrowAway;
-	FOREACH( RString, vs, s )
+	m_changed_defective_mod= false;
+	std::string sTemp = sMultipleMods;
+	auto vs = Rage::split(sTemp, ",", Rage::EmptyEntries::skip);
+	std::string sThrowAway;
+	for (auto &s: vs)
 	{
-		if (!FromOneModString( *s, sThrowAway ))
+		if (!FromOneModString( s, sThrowAway ))
 		{
-			LOG->Trace( "Attempted to load a non-existing mod \'%s\' for the Player. Ignoring.", (*s).c_str() );
+			LOG->Trace( "Attempted to load a non-existing mod \'%s\' for the Player. Ignoring.", s.c_str() );
 		}
 	}
 }
 
-bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
-{
-	ASSERT_M( NOTESKIN != NULL, "The Noteskin Manager must be loaded in order to process mods." );
+typedef void (*special_option_func_t)(PlayerOptions& options, float level, float speed);
 
-	RString sBit = sOneMod;
-	sBit.MakeLower();
-	Trim( sBit );
+#define SET_FLOAT(opt) {options.m_##opt= level; options.m_Speed##opt= speed;}
+
+static void clearall(PlayerOptions& options, float, float)
+{
+	options.Init();
+}
+
+static void resetspeed(PlayerOptions& options, float level, float speed)
+{
+	/* level is set to the values from Init() because all speed related
+		 fields are being reset to initial values, and they each have different
+		 initial values.  -kyz */
+	level= 0;
+	SET_FLOAT(fMaxScrollBPM);
+	SET_FLOAT(fTimeSpacing);
+	level= 1.0f;
+	SET_FLOAT(fScrollSpeed);
+	level= CMOD_DEFAULT;
+	SET_FLOAT(fScrollBPM)
+}
+
+static void battery_lives(PlayerOptions& options, float level, float)
+{
+	// level is a percentage for every other option, so multiply by 100. -Kyz
+	options.m_BatteryLives = static_cast<int>(level * 100.0f);
+}
+
+static void no_turn(PlayerOptions& options, float level, float)
+{
+	for(int i= 0; i < PlayerOptions::NUM_TURNS; ++i)
+	{
+		options.m_bTurns[i]= (level > .5f);
+	}
+}
+
+static void default_fail(PlayerOptions& options, float, float)
+{
+	PlayerOptions po;
+	GAMESTATE->GetDefaultPlayerOptions( po );
+	options.m_FailType = po.m_FailType;
+}
+
+static void choose_random(PlayerOptions& options, float, float)
+{
+	options.ChooseRandomModifiers();
+}
+
+#undef SET_FLOAT
+
+bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &sErrorOut )
+{
+	std::string sBit = Rage::trim(Rage::make_lower(sOneMod));
 
 	/* "drunk"
 	 * "no drunk"
@@ -358,36 +435,37 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 
 	float level = 1;
 	float speed = 1;
-	vector<RString> asParts;
-	split( sBit, " ", asParts, true );
+	auto asParts = Rage::split(sBit, " ", Rage::EmptyEntries::skip);
 
-	FOREACH_CONST( RString, asParts, s )
+	for (auto const &s: asParts)
 	{
-		if( *s == "no" )
+		if( s == "no" )
 		{
 			level = 0;
 		}
-		else if( isdigit((*s)[0]) || (*s)[0] == '-' )
+		else if( isdigit(s[0]) || s[0] == '-' )
 		{
 			/* If the last character is a *, they probably said "123*" when
 			 * they meant "*123". */
-			if( s->Right(1) == "*" )
+			if( Rage::ends_with(s, "*") )
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris
-				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s->c_str(), StringToInt(*s) );
+				sErrorOut = fmt::sprintf("Invalid player options \"%s\"; did you mean '*%d'?", s.c_str(), StringToInt(s) );
 				return false;
 			}
 			else
 			{
-				level = StringToFloat( *s ) / 100.0f;
+				level = StringToFloat( s ) / 100.0f;
 			}
 		}
-		else if( *s[0]=='*' )
+		else if( s[0]=='*' )
 		{
-			sscanf( *s, "*%f", &speed );
-			if( !isfinite(speed) )
+			std::sscanf( s.c_str(), "*%f", &speed );
+			if( !std::isfinite(speed) )
+			{
 				speed = 1.0f;
+			}
 		}
 	}
 
@@ -397,7 +475,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	const bool on = (level > 0.5f);
 
 	static Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
-	vector<RString> matches;
+	vector<std::string> matches;
 	if( mult.Compare(sBit, matches) )
 	{
 		StringConversion::FromString( matches[0], level );
@@ -405,164 +483,245 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		SET_FLOAT( fTimeSpacing )
 		m_fTimeSpacing = 0;
 		m_fMaxScrollBPM = 0;
+		m_changed_defective_mod= true;
 	}
-	else if( sscanf( sBit, "c%f", &level ) == 1 )
+	else if( sscanf( sBit.c_str(), "c%f", &level ) == 1 )
 	{
-		if( !isfinite(level) || level <= 0.0f )
+		if( !std::isfinite(level) || level <= 0.0f )
 			level = CMOD_DEFAULT;
 		SET_FLOAT( fScrollBPM )
 		SET_FLOAT( fTimeSpacing )
 		m_fTimeSpacing = 1;
 		m_fMaxScrollBPM = 0;
+		m_changed_defective_mod= true;
 	}
 	// oITG's m-mods
-	else if( sscanf( sBit, "m%f", &level ) == 1 )
+	else if( sscanf( sBit.c_str(), "m%f", &level ) == 1 )
 	{
 		// OpenITG doesn't have this block:
 		/*
-		if( !isfinite(level) || level <= 0.0f )
+		if( !std::isfinite(level) || level <= 0.0f )
 			level = CMOD_DEFAULT;
 		*/
 		SET_FLOAT( fMaxScrollBPM )
 		m_fTimeSpacing = 0;
+		m_changed_defective_mod= true;
 	}
-
-	else if( sBit == "clearall" )
+	else if( sBit.find("move") != sBit.npos)
 	{
-		Init();
-		m_sNoteSkin= NOTESKIN->GetDefaultNoteSkinName();
+	    for (int i=0; i<16; i++)
+	    {
+		std::string s = fmt::sprintf( "movex%d", i+1 );
+		    if( sBit == s)				SET_FLOAT( fMovesX[i] )
+		s = fmt::sprintf( "movey%d", i+1 );
+		    if( sBit == s)				SET_FLOAT( fMovesY[i] )
+		s = fmt::sprintf( "movez%d", i+1 );
+		    if( sBit == s)				SET_FLOAT( fMovesZ[i] )
+	    }
 	}
-	else if( sBit == "resetspeed" )
-	{
-		/* level is set to the values from Init() because all speed related
-		   fields are being reset to initial values, and they each have different
-		   initial values.  -kyz */
-		level= 0;
-		SET_FLOAT(fMaxScrollBPM);
-		SET_FLOAT(fTimeSpacing);
-		level= 1.0f;
-		SET_FLOAT(fScrollSpeed);
-		level= CMOD_DEFAULT;
-		SET_FLOAT(fScrollBPM)
-	}
-	else if( sBit == "life" || sBit == "lives" )
-	{
-		// level is a percentage for every other option, so multiply by 100. -Kyz
-		m_BatteryLives= level * 100.0f;
-	}
-	else if( sBit == "bar" ) { m_LifeType= LifeType_Bar; }
-	else if( sBit == "battery" ) { m_LifeType= LifeType_Battery; }
-	else if( sBit == "lifetime" ) { m_LifeType= LifeType_Time; }
-	else if( sBit == "norecover" || sBit == "power-drop" ) { m_DrainType= DrainType_NoRecover; }
-	else if( sBit == "suddendeath" || sBit == "death" ) { m_DrainType= DrainType_SuddenDeath; }
-	else if( sBit == "normal-drain" ) { m_DrainType= DrainType_Normal; }
-	else if( sBit == "boost" )				SET_FLOAT( fAccels[ACCEL_BOOST] )
-	else if( sBit == "brake" || sBit == "land" )		SET_FLOAT( fAccels[ACCEL_BRAKE] )
-	else if( sBit == "wave" )				SET_FLOAT( fAccels[ACCEL_WAVE] )
-	else if( sBit == "expand" || sBit == "dwiwave" )	SET_FLOAT( fAccels[ACCEL_EXPAND] )
-	else if( sBit == "boomerang" )				SET_FLOAT( fAccels[ACCEL_BOOMERANG] )
-	else if( sBit == "drunk" )				SET_FLOAT( fEffects[EFFECT_DRUNK] )
-	else if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
-	else if( sBit == "confusion" )				SET_FLOAT( fEffects[EFFECT_CONFUSION] )
-	else if( sBit == "mini" )				SET_FLOAT( fEffects[EFFECT_MINI] )
-	else if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
-	else if( sBit == "flip" )				SET_FLOAT( fEffects[EFFECT_FLIP] )
-	else if( sBit == "invert" )				SET_FLOAT( fEffects[EFFECT_INVERT] )
-	else if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
-	else if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
-	else if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
-	else if( sBit == "beat" )				SET_FLOAT( fEffects[EFFECT_BEAT] )
-	else if( sBit == "xmode" )				SET_FLOAT( fEffects[EFFECT_XMODE] )
-	else if( sBit == "twirl" )				SET_FLOAT( fEffects[EFFECT_TWIRL] )
-	else if( sBit == "roll" )				SET_FLOAT( fEffects[EFFECT_ROLL] )
-	else if( sBit == "hidden" )				SET_FLOAT( fAppearances[APPEARANCE_HIDDEN] )
-	else if( sBit == "hiddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_HIDDEN_OFFSET] )
-	else if( sBit == "sudden" )				SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )
-	else if( sBit == "suddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_SUDDEN_OFFSET] )
-	else if( sBit == "stealth" )				SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
-	else if( sBit == "blink" )				SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
-	else if( sBit == "randomvanish" )			SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
-	else if( sBit == "turn" && !on )			ZERO( m_bTurns ); /* "no turn" */
-	else if( sBit == "mirror" )				m_bTurns[TURN_MIRROR] = on;
-	else if( sBit == "backwards" )			m_bTurns[TURN_BACKWARDS] = on;
-	else if( sBit == "left" )				m_bTurns[TURN_LEFT] = on;
-	else if( sBit == "right" )				m_bTurns[TURN_RIGHT] = on;
-	else if( sBit == "shuffle" )				m_bTurns[TURN_SHUFFLE] = on;
-	else if( sBit == "softshuffle" )				m_bTurns[TURN_SOFT_SHUFFLE] = on;
-	else if( sBit == "supershuffle" )			m_bTurns[TURN_SUPER_SHUFFLE] = on;
-	else if( sBit == "little" )				m_bTransforms[TRANSFORM_LITTLE] = on;
-	else if( sBit == "wide" )				m_bTransforms[TRANSFORM_WIDE] = on;
-	else if( sBit == "big" )				m_bTransforms[TRANSFORM_BIG] = on;
-	else if( sBit == "quick" )				m_bTransforms[TRANSFORM_QUICK] = on;
-	else if( sBit == "bmrize" )				m_bTransforms[TRANSFORM_BMRIZE] = on;
-	else if( sBit == "skippy" )				m_bTransforms[TRANSFORM_SKIPPY] = on;
-	else if( sBit == "mines" )				m_bTransforms[TRANSFORM_MINES] = on;
-	else if( sBit == "attackmines" )			m_bTransforms[TRANSFORM_ATTACKMINES] = on;
-	else if( sBit == "echo" )				m_bTransforms[TRANSFORM_ECHO] = on;
-	else if( sBit == "stomp" )				m_bTransforms[TRANSFORM_STOMP] = on;
-	else if( sBit == "planted" )				m_bTransforms[TRANSFORM_PLANTED] = on;
-	else if( sBit == "floored" )				m_bTransforms[TRANSFORM_FLOORED] = on;
-	else if( sBit == "twister" )				m_bTransforms[TRANSFORM_TWISTER] = on;
-	else if( sBit == "holdrolls" )				m_bTransforms[TRANSFORM_HOLDROLLS] = on;
-	else if( sBit == "nojumps" )				m_bTransforms[TRANSFORM_NOJUMPS] = on;
-	else if( sBit == "nohands" )				m_bTransforms[TRANSFORM_NOHANDS] = on;
-	else if( sBit == "noquads" )				m_bTransforms[TRANSFORM_NOQUADS] = on;
-	else if( sBit == "reverse" )				SET_FLOAT( fScrolls[SCROLL_REVERSE] )
-	else if( sBit == "split" )				SET_FLOAT( fScrolls[SCROLL_SPLIT] )
-	else if( sBit == "alternate" )				SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
-	else if( sBit == "cross" )				SET_FLOAT( fScrolls[SCROLL_CROSS] )
-	else if( sBit == "centered" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
-	else if( sBit == "noholds" )				m_bTransforms[TRANSFORM_NOHOLDS] = on;
-	else if( sBit == "norolls" )				m_bTransforms[TRANSFORM_NOROLLS] = on;
-	else if( sBit == "nomines" )				m_bTransforms[TRANSFORM_NOMINES] = on;
-	else if( sBit == "nostretch" )				m_bTransforms[TRANSFORM_NOSTRETCH] = on;
-	else if( sBit == "nolifts" )				m_bTransforms[TRANSFORM_NOLIFTS] = on;
-	else if( sBit == "nofakes" )				m_bTransforms[TRANSFORM_NOFAKES] = on;
-	else if( sBit == "dark" )				SET_FLOAT( fDark )
-	else if( sBit == "blind" )				SET_FLOAT( fBlind )
-	else if( sBit == "cover" )				SET_FLOAT( fCover )
-	else if( sBit == "randomattacks" )			SET_FLOAT( fRandAttack )
-	else if( sBit == "noattacks" )				SET_FLOAT( fNoAttack )
-	else if( sBit == "playerautoplay" )			SET_FLOAT( fPlayerAutoPlay )
-	else if( sBit == "passmark" )				SET_FLOAT( fPassmark )
-	else if( sBit == "overhead" )				{ m_fSkew = 0;		m_fPerspectiveTilt = 0;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-	else if( sBit == "incoming" )				{ m_fSkew = level;	m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-	else if( sBit == "space" )				{ m_fSkew = level;	m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-	else if( sBit == "hallway" )				{ m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-	else if( sBit == "distant" )				{ m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-	else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )
-	{
-		m_sNoteSkin = sBit;
-	}
-	else if( sBit == "skew" ) SET_FLOAT( fSkew )
-	else if( sBit == "tilt" ) SET_FLOAT( fPerspectiveTilt )
-	else if( sBit == "noteskin" && !on ) /* "no noteskin" */
-	{
-		m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
-	}
-	else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
-	else if( sBit == "failarcade" || 
-		 sBit == "failimmediate" )			m_FailType = FailType_Immediate;
-	else if( sBit == "failendofsong" ||
-		 sBit == "failimmediatecontinue" )		m_FailType = FailType_ImmediateContinue;
-	else if( sBit == "failatend" )				m_FailType = FailType_EndOfSong;
-	else if( sBit == "failoff" )				m_FailType = FailType_Off;
-	else if( sBit == "faildefault" )
-	{
-		PlayerOptions po;
-		GAMESTATE->GetDefaultPlayerOptions( po );
-		m_FailType = po.m_FailType;
-	}
-	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
-	else if( sBit == "random" )				ChooseRandomModifiers();
-	// deprecated mods/left in for compatibility
-	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
-	// end of the list
 	else
 	{
+		static std::unordered_map<std::string, special_option_func_t> special_options= {
+			{"clearall", clearall},
+			{"resetspeed", resetspeed},
+			{"life", battery_lives},
+			{"lives", battery_lives},
+			{"turn", no_turn},
+			{"faildefault", default_fail},
+			{"random", choose_random},
+		};
+		static std::unordered_map<std::string, LifeType> life_types= {
+			{"bar", LifeType_Bar},
+			{"batter", LifeType_Battery},
+			{"lifetime", LifeType_Time},
+		};
+		static std::unordered_map<std::string, DrainType> drain_types= {
+			{"norecover", DrainType_NoRecover},
+			{"suddendeath", DrainType_SuddenDeath},
+			{"death", DrainType_SuddenDeath},
+			{"normal-drain", DrainType_Normal},
+		};
+		static std::unordered_map<std::string, FailType> fail_types= {
+			{"failarcade", FailType_Immediate},
+			{"failimmediate", FailType_Immediate},
+			{"failendofsong", FailType_ImmediateContinue},
+			{"failimmediatecontinue", FailType_ImmediateContinue},
+			{"failatend", FailType_EndOfSong},
+			{"failoff", FailType_Off},
+			{"failarcade", FailType_Immediate},
+		};
+		static std::unordered_map<std::string, Accel> accel_options= {
+			{"boost", ACCEL_BOOST},
+			{"brake", ACCEL_BRAKE},
+			{"land", ACCEL_BRAKE},
+			{"wave", ACCEL_WAVE},
+			{"waveperiod", ACCEL_WAVE_PERIOD},
+			{"expand", ACCEL_EXPAND},
+			{"expandperiod", ACCEL_EXPAND_PERIOD},
+			{"dwiwave", ACCEL_EXPAND},
+			{"boomerang", ACCEL_BOOMERANG},
+		};
+		static std::unordered_map<std::string, Effect> effect_options= {
+			{"drunk", EFFECT_DRUNK},
+			{"drunkspeed", EFFECT_DRUNK_SPEED},
+			{"drunkoffset", EFFECT_DRUNK_OFFSET},
+			{"drunkperiod", EFFECT_DRUNK_PERIOD},
+			{"dizzy", EFFECT_DIZZY},
+			{"confusion", EFFECT_CONFUSION},
+			{"confusionoffset", EFFECT_CONFUSION_OFFSET},
+			{"confusionx", EFFECT_CONFUSION_X},
+			{"confusionxoffset", EFFECT_CONFUSION_X_OFFSET},
+			{"confusiony", EFFECT_CONFUSION_Y},
+			{"confusionyoffset", EFFECT_CONFUSION_Y_OFFSET},
+			{"mini", EFFECT_MINI},
+			{"tiny", EFFECT_TINY},
+			{"flip", EFFECT_FLIP},
+			{"invert", EFFECT_INVERT},
+			{"tornado", EFFECT_TORNADO},
+			{"tornadoperiod", EFFECT_TORNADO_PERIOD},
+			{"tornadooffset", EFFECT_TORNADO_OFFSET},
+			{"tipsy", EFFECT_TIPSY},
+			{"tipsyspeed", EFFECT_TIPSY_SPEED},
+			{"tipsyoffset", EFFECT_TIPSY_OFFSET},
+			{"bumpy", EFFECT_BUMPY},
+			{"bumpyoffset", EFFECT_BUMPY_OFFSET},
+			{"bumpyperiod", EFFECT_BUMPY_PERIOD},
+			{"beat", EFFECT_BEAT},
+			{"beatoffset", EFFECT_BEAT_OFFSET},
+			{"beatperiod", EFFECT_BEAT_PERIOD},
+			{"beatmult", EFFECT_BEAT_MULT},
+			{"xmode", EFFECT_XMODE},
+			{"twirl", EFFECT_TWIRL},
+			{"roll", EFFECT_ROLL},
+		};
+		static std::unordered_map<std::string, Appearance> appear_options= {
+			{"hidden", APPEARANCE_HIDDEN},
+			{"hiddenoffset", APPEARANCE_HIDDEN_OFFSET},
+			{"sudden", APPEARANCE_SUDDEN},
+			{"suddenoffset", APPEARANCE_SUDDEN_OFFSET},
+			{"stealth", APPEARANCE_STEALTH},
+			{"blink", APPEARANCE_BLINK},
+			{"randomvanish", APPEARANCE_RANDOMVANISH},
+		};
+		static std::unordered_map<std::string, Scroll> scroll_options= {
+			{"reverse", SCROLL_REVERSE},
+			{"split", SCROLL_SPLIT},
+			{"alternate", SCROLL_ALTERNATE},
+			{"cross", SCROLL_CROSS},
+			{"centered", SCROLL_CENTERED},
+			{"converge", SCROLL_CENTERED},
+		};
+		static std::unordered_map<std::string, Turn> turn_options= {
+			{"mirror", TURN_MIRROR},
+			{"backwards", TURN_BACKWARDS},
+			{"left", TURN_LEFT},
+			{"right", TURN_RIGHT},
+			{"shuffle", TURN_SHUFFLE},
+			{"softshuffle", TURN_SOFT_SHUFFLE},
+			{"supershuffle", TURN_SUPER_SHUFFLE},
+		};
+		static std::unordered_map<std::string, Transform> transform_options= {
+			{"little", TRANSFORM_LITTLE},
+			{"wide", TRANSFORM_WIDE},
+			{"big", TRANSFORM_BIG},
+			{"quick", TRANSFORM_QUICK},
+			{"bmrize", TRANSFORM_BMRIZE},
+			{"skippy", TRANSFORM_SKIPPY},
+			{"mines", TRANSFORM_MINES},
+			{"attackmines", TRANSFORM_ATTACKMINES},
+			{"echo", TRANSFORM_ECHO},
+			{"stomp", TRANSFORM_STOMP},
+			{"planted", TRANSFORM_PLANTED},
+			{"floored", TRANSFORM_FLOORED},
+			{"twister", TRANSFORM_TWISTER},
+			{"holdrolls", TRANSFORM_HOLDROLLS},
+			{"nojumps", TRANSFORM_NOJUMPS},
+			{"nohands", TRANSFORM_NOHANDS},
+			{"noquads", TRANSFORM_NOQUADS},
+			{"noholds", TRANSFORM_NOHOLDS},
+			{"norolls", TRANSFORM_NOROLLS},
+			{"nomines", TRANSFORM_NOMINES},
+			{"nostretch", TRANSFORM_NOSTRETCH},
+			{"nolifts", TRANSFORM_NOLIFTS},
+			{"nofakes", TRANSFORM_NOFAKES},
+		};
+		static std::unordered_map<std::string, std::pair<float PlayerOptions::*, float PlayerOptions::*> > other_options= {
+			{"dark", {&PlayerOptions::m_fDark, &PlayerOptions::m_SpeedfDark}},
+			{"blind", {&PlayerOptions::m_fBlind, &PlayerOptions::m_SpeedfBlind}},
+			{"cover", {&PlayerOptions::m_fCover, &PlayerOptions::m_SpeedfCover}},
+			{"randomattacks", {&PlayerOptions::m_fRandAttack, &PlayerOptions::m_SpeedfRandAttack}},
+			{"noattacks", {&PlayerOptions::m_fNoAttack, &PlayerOptions::m_SpeedfNoAttack}},
+			{"playerautoplay", {&PlayerOptions::m_fPlayerAutoPlay, &PlayerOptions::m_SpeedfPlayerAutoPlay}},
+			{"passmark", {&PlayerOptions::m_fPassmark, &PlayerOptions::m_SpeedfPassmark}},
+			{"skew", {&PlayerOptions::m_fSkew, &PlayerOptions::m_SpeedfSkew}},
+			{"tilt", {&PlayerOptions::m_fTilt, &PlayerOptions::m_SpeedfTilt}},
+			{"randomspeed", {&PlayerOptions::m_fRandomSpeed, &PlayerOptions::m_SpeedfRandomSpeed}},
+		};
+		static std::unordered_map<std::string, std::pair<float, float> > perspective_options= {
+			{"overhead", {0.f, 0.f}},
+			{"incoming", {1.f, -1.f}},
+			{"space", {1.f, 1.f}},
+			{"hallway", {0.f, -1.f}},
+			{"distant", {0.f, 1.f}},
+		};
+#define FIND_ENTRY_COMMON_START(option_set) \
+		{ auto entry= option_set.find(sBit); if(entry != option_set.end()) {
+#define FIND_ENTRY_CLOSE }}
+#define FIND_ENTRY_NO_SPEED(option_set, member) \
+		FIND_ENTRY_COMMON_START(option_set) \
+			member= entry->second; \
+			return true; \
+		FIND_ENTRY_CLOSE;
+#define FIND_ENTRY_DEFECT_ARRAY(option_set, array_name) \
+		FIND_ENTRY_COMMON_START(option_set) \
+			m_##array_name[entry->second]= level; \
+			m_Speed##array_name[entry->second]= speed; \
+			m_changed_defective_mod= true; \
+		FIND_ENTRY_CLOSE;
+#define FIND_ENTRY_BOOL_ARRAY(option_set, array_name) \
+		FIND_ENTRY_COMMON_START(option_set) \
+			m_##array_name[entry->second]= on; \
+		FIND_ENTRY_CLOSE;
+		auto special_entry= special_options.find(sBit);
+		if(special_entry != special_options.end())
+		{
+			special_entry->second(*this, level, speed);
+			return true;
+		}
+		FIND_ENTRY_DEFECT_ARRAY(accel_options, fAccels);
+		FIND_ENTRY_DEFECT_ARRAY(effect_options, fEffects);
+		FIND_ENTRY_DEFECT_ARRAY(appear_options, fAppearances);
+		FIND_ENTRY_DEFECT_ARRAY(scroll_options, fScrolls);
+		FIND_ENTRY_COMMON_START(other_options)
+			(this->*(entry->second.first)) = level;
+			(this->*(entry->second.second)) = speed;
+			m_changed_defective_mod= true;
+		FIND_ENTRY_CLOSE;
+		FIND_ENTRY_COMMON_START(perspective_options)
+			m_fSkew= level * entry->second.first;
+			m_fTilt= level * entry->second.second;
+			m_SpeedfSkew= m_SpeedfTilt= speed;
+			m_changed_defective_mod= true;
+		FIND_ENTRY_CLOSE;
+		FIND_ENTRY_NO_SPEED(life_types, m_LifeType);
+		FIND_ENTRY_NO_SPEED(drain_types, m_DrainType);
+		FIND_ENTRY_NO_SPEED(fail_types, m_FailType);
+		FIND_ENTRY_BOOL_ARRAY(turn_options, bTurns);
+		FIND_ENTRY_BOOL_ARRAY(transform_options, bTransforms);
+
+#undef FIND_ENTRY_COMMON_START
+#undef FIND_ENTRY_CLOSE
+#undef FIND_ENTRY_NO_SPEED
+#undef FIND_ENTRY_DEFECT_ARRAY
+#undef FIND_ENTRY_BOOL_ARRAY
+
+		if(sBit == "muteonerror")
+		{
+			m_bMuteOnError = on;
+			return true;
+		}
 		return false;
 	}
-
 	return true;
 }
 
@@ -640,16 +799,17 @@ void PlayerOptions::NextScroll()
 
 void PlayerOptions::NextPerspective()
 {
-	switch( (int)m_fPerspectiveTilt )
+	switch( (int)m_fTilt )
 	{
-	case -1:		m_fPerspectiveTilt =  0;	break;
-	case  0:		m_fPerspectiveTilt = +1;	break;
-	case +1: default:	m_fPerspectiveTilt = -1;	break;
+	case -1:		m_fTilt =  0;	break;
+	case  0:		m_fTilt = +1;	break;
+	case +1: default:	m_fTilt = -1;	break;
 	}
 }
 
 void PlayerOptions::ChooseRandomModifiers()
 {
+	m_changed_defective_mod= true;
 	if( RandomFloat(0,1)<RANDOM_SPEED_CHANCE )
 		m_fScrollSpeed = 1.5f;
 	if( RandomFloat(0,1)<RANDOM_REVERSE_CHANCE )
@@ -736,7 +896,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 {
 	float f = 0;
 	ASSERT(m_pn == PLAYER_1 || m_pn == PLAYER_2);
-	ASSERT(GAMESTATE->GetCurrentStyle(m_pn) != NULL);
+	ASSERT(GAMESTATE->GetCurrentStyle(m_pn) != nullptr);
 	int iNumCols = GAMESTATE->GetCurrentStyle(m_pn)->m_iColsPerPlayer;
 
 	f += m_fScrolls[SCROLL_REVERSE];
@@ -755,7 +915,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 	if( f > 2 )
 		f = fmodf( f, 2 );
 	if( f > 1 )
-		f = SCALE( f, 1.f, 2.f, 1.f, 0.f );
+		f = Rage::scale( f, 1.f, 2.f, 1.f, 0.f );
 	return f;
 }
 
@@ -779,16 +939,8 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fRandAttack);
 	COMPARE(m_fNoAttack);
 	COMPARE(m_fPlayerAutoPlay);
-	COMPARE(m_fPerspectiveTilt);
+	COMPARE(m_fTilt);
 	COMPARE(m_fSkew);
-	// The noteskin name needs to be compared case-insensitively because the
-	// manager forces lowercase, but some obscure part of PlayerOptions
-	// uppercases the first letter.  The previous code that used != probably
-	// relied on RString::operator!= misbehaving. -Kyz
-	if(strcasecmp(m_sNoteSkin, other.m_sNoteSkin) != 0)
-	{
-		return false;
-	}
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 		COMPARE(m_fAccels[i]);
 	for( int i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
@@ -801,6 +953,12 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 		COMPARE(m_bTurns[i]);
 	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 		COMPARE(m_bTransforms[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesX[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesY[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesZ[i]);
 #undef COMPARE
 	return true;
 }
@@ -828,13 +986,8 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY_SPEED(fRandAttack);
 	CPY_SPEED(fNoAttack);
 	CPY_SPEED(fPlayerAutoPlay);
-	CPY_SPEED(fPerspectiveTilt);
+	CPY_SPEED(fTilt);
 	CPY_SPEED(fSkew);
-	if(!other.m_sNoteSkin.empty() &&
-		NOTESKIN->DoesNoteSkinExist(other.m_sNoteSkin))
-	{
-		CPY(m_sNoteSkin);
-	}
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 	{
 		CPY_SPEED(fAccels[i]);
@@ -858,6 +1011,18 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 	{
 		CPY(m_bTransforms[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesX[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesY[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesZ[i]);
 	}
 #undef CPY
 #undef CPY_SPEED
@@ -889,7 +1054,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )
 		return true;
 
-	// Inserted holds can be really easy on some songs, and scores will be 
+	// Inserted holds can be really easy on some songs, and scores will be
 	// highly hold-weighted, and very little tap score weighted.
 	if( m_bTransforms[TRANSFORM_LITTLE] )	return true;
 	if( m_bTransforms[TRANSFORM_PLANTED] )	return true;
@@ -898,13 +1063,13 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 
 	// This makes songs with sparse notes easier.
 	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
-	
+
 	// Removing attacks is easier in general.
 	if ((m_fNoAttack && pSteps->HasAttacks()) || m_fRandAttack)
 		return true;
-	
+
 	if( m_fCover )	return true;
-	
+
 	// M-mods make songs with indefinite BPMs easier because
 	// they ensure that the song has a scrollable speed.
 	if( m_fMaxScrollBPM != 0 )
@@ -921,7 +1086,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 		}
 		else
 		{
-			GAMESTATE->m_pCurSong->GetDisplayBpms( bpms );
+			GAMESTATE->get_curr_song()->GetDisplayBpms( bpms );
 		}
 		pSong->GetDisplayBpms( bpms );
 
@@ -935,45 +1100,42 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 
 bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) const
 {
-	ASSERT( pCourse != NULL );
-	ASSERT( pTrail != NULL );
+	ASSERT( pCourse != nullptr );
+	ASSERT( pTrail != nullptr );
 
-	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-	{
-		if( e->pSong && IsEasierForSongAndSteps(e->pSong, e->pSteps, PLAYER_1) )
-			return true;
-	}
-	return false;
+	auto isEasier = [this](TrailEntry const &e) {
+		return e.pSong && this->IsEasierForSongAndSteps(e.pSong, e.pSteps, PLAYER_1);
+	};
+
+	return std::any_of(pTrail->m_vEntries.begin(), pTrail->m_vEntries.end(), isEasier);
 }
 
-void PlayerOptions::GetLocalizedMods( vector<RString> &AddTo ) const
+void PlayerOptions::GetLocalizedMods( vector<std::string> &AddTo ) const
 {
-	vector<RString> vMods;
+	vector<std::string> vMods;
 	GetMods( vMods );
-	FOREACH_CONST( RString, vMods, s )
+	for (auto const &sOneMod: vMods)
 	{
-		const RString& sOneMod = *s;
-
 		ASSERT( !sOneMod.empty() );
 
-		vector<RString> asTokens;
-		split( sOneMod, " ", asTokens );
+		auto asTokens = Rage::split(sOneMod, " ");
 
 		if( asTokens.empty() )
+		{
 			continue;
-
+		}
 		// Strip the approach speed token, if any
 		if( asTokens[0][0] == '*' )
+		{
 			asTokens.erase( asTokens.begin() );
-
-		// capitalize NoteSkin names
+		}
 		asTokens.back() = Capitalize( asTokens.back() );
 
 		/* Theme the mod name (the last string).  Allow this to not exist, since
 		 * characters might use modifiers that don't exist in the theme. */
 		asTokens.back() = CommonMetrics::LocalizeOptionItem( asTokens.back(), true );
 
-		RString sLocalizedMod = join( " ", asTokens );
+		std::string sLocalizedMod = Rage::join( " ", asTokens );
 		AddTo.push_back( sLocalizedMod );
 	}
 }
@@ -993,7 +1155,7 @@ bool PlayerOptions::ContainsTransformOrTurn() const
 	return false;
 }
 
-RString PlayerOptions::GetSavedPrefsString() const
+std::string PlayerOptions::GetSavedPrefsString() const
 {
 	PlayerOptions po_prefs;
 #define SAVE(x) po_prefs.x = this->x;
@@ -1002,7 +1164,7 @@ RString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_fScrollBPM );
 	SAVE( m_fMaxScrollBPM );
 	SAVE( m_fScrolls[SCROLL_REVERSE] );
-	SAVE( m_fPerspectiveTilt );
+	SAVE( m_fTilt );
 	SAVE( m_bTransforms[TRANSFORM_NOHOLDS] );
 	SAVE( m_bTransforms[TRANSFORM_NOROLLS] );
 	SAVE( m_bTransforms[TRANSFORM_NOMINES] );
@@ -1013,7 +1175,6 @@ RString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_bTransforms[TRANSFORM_NOLIFTS] );
 	SAVE( m_bTransforms[TRANSFORM_NOFAKES] );
 	SAVE( m_bMuteOnError );
-	SAVE( m_sNoteSkin );
 #undef SAVE
 	return po_prefs.GetString();
 }
@@ -1039,7 +1200,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_BatteryLives);
 	CPY(m_MinTNSToHideNotes);
 
-	CPY( m_fPerspectiveTilt );
+	CPY( m_fTilt );
 	CPY( m_bTransforms[TRANSFORM_NOHOLDS] );
 	CPY( m_bTransforms[TRANSFORM_NOROLLS] );
 	CPY( m_bTransforms[TRANSFORM_NOMINES] );
@@ -1049,16 +1210,38 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY( m_bTransforms[TRANSFORM_NOSTRETCH] );
 	CPY( m_bTransforms[TRANSFORM_NOLIFTS] );
 	CPY( m_bTransforms[TRANSFORM_NOFAKES] );
-	// Don't clear this.
-	// CPY( m_sNoteSkin );
 #undef CPY
+}
+
+std::string get_player_mod_string(PlayerNumber pn, bool hide_fail)
+{
+	LuaReference func;
+	THEME->GetMetric("Common", "ModStringFunction", func);
+	if(func.GetLuaType() != LUA_TFUNCTION)
+	{
+		LuaHelpers::ReportScriptError("Common::ModStringFunction metric must be a function.");
+		return "";
+	}
+	std::string ret;
+	Lua* L= LUA->Get();
+	func.PushSelf(L);
+	Enum::Push(L, pn);
+	lua_pushboolean(L, hide_fail);
+	std::string err= "Error running ModStringFunction:  ";
+	if(LuaHelpers::RunScriptOnStack(L, err, 2, 1, true))
+	{
+		ret= lua_tostring(L, -1);
+	}
+	lua_settop(L, 0);
+	LUA->Release(L);
+	return ret;
 }
 
 // lua start
 #include "LuaBinding.h"
 #include "OptionsBinding.h"
 
-/** @brief Allow Lua to have access to PlayerOptions. */ 
+/** @brief Allow Lua to have access to PlayerOptions. */
 class LunaPlayerOptions: public Luna<PlayerOptions>
 {
 public:
@@ -1091,19 +1274,38 @@ public:
 	FLOAT_INTERFACE(Boost, Accels[PlayerOptions::ACCEL_BOOST], true);
 	FLOAT_INTERFACE(Brake, Accels[PlayerOptions::ACCEL_BRAKE], true);
 	FLOAT_INTERFACE(Wave, Accels[PlayerOptions::ACCEL_WAVE], true);
+	FLOAT_INTERFACE(WavePeriod, Accels[PlayerOptions::ACCEL_WAVE_PERIOD], true);
 	FLOAT_INTERFACE(Expand, Accels[PlayerOptions::ACCEL_EXPAND], true);
+	FLOAT_INTERFACE(ExpandPeriod, Accels[PlayerOptions::ACCEL_EXPAND_PERIOD], true);
 	FLOAT_INTERFACE(Boomerang, Accels[PlayerOptions::ACCEL_BOOMERANG], true);
 	FLOAT_INTERFACE(Drunk, Effects[PlayerOptions::EFFECT_DRUNK], true);
+	FLOAT_INTERFACE(DrunkSpeed, Effects[PlayerOptions::EFFECT_DRUNK_SPEED], true);
+	FLOAT_INTERFACE(DrunkOffset, Effects[PlayerOptions::EFFECT_DRUNK_OFFSET], true);
+	FLOAT_INTERFACE(DrunkPeriod, Effects[PlayerOptions::EFFECT_DRUNK_PERIOD], true);
 	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
 	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION], true);
+	FLOAT_INTERFACE(ConfusionOffset, Effects[PlayerOptions::EFFECT_CONFUSION_OFFSET], true);
+	FLOAT_INTERFACE(ConfusionX, Effects[PlayerOptions::EFFECT_CONFUSION_X], true);
+	FLOAT_INTERFACE(ConfusionXOffset, Effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET], true);
+	FLOAT_INTERFACE(ConfusionY, Effects[PlayerOptions::EFFECT_CONFUSION_Y], true);
+	FLOAT_INTERFACE(ConfusionYOffset, Effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET], true);
 	FLOAT_INTERFACE(Mini, Effects[PlayerOptions::EFFECT_MINI], true);
 	FLOAT_INTERFACE(Tiny, Effects[PlayerOptions::EFFECT_TINY], true);
 	FLOAT_INTERFACE(Flip, Effects[PlayerOptions::EFFECT_FLIP], true);
 	FLOAT_INTERFACE(Invert, Effects[PlayerOptions::EFFECT_INVERT], true);
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
+	FLOAT_INTERFACE(TornadoPeriod, Effects[PlayerOptions::EFFECT_TORNADO_PERIOD], true);
+	FLOAT_INTERFACE(TornadoOffset, Effects[PlayerOptions::EFFECT_TORNADO_OFFSET], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
+	FLOAT_INTERFACE(TipsySpeed, Effects[PlayerOptions::EFFECT_TIPSY_SPEED], true);
+	FLOAT_INTERFACE(TipsyOffset, Effects[PlayerOptions::EFFECT_TIPSY_OFFSET], true);
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
+	FLOAT_INTERFACE(BumpyOffset, Effects[PlayerOptions::EFFECT_BUMPY_OFFSET], true);
+	FLOAT_INTERFACE(BumpyPeriod, Effects[PlayerOptions::EFFECT_BUMPY_PERIOD], true);
 	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT], true);
+	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
+	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
+	FLOAT_INTERFACE(BeatMult, Effects[PlayerOptions::EFFECT_BEAT_MULT], true);
 	FLOAT_INTERFACE(Xmode, Effects[PlayerOptions::EFFECT_XMODE], true);
 	FLOAT_INTERFACE(Twirl, Effects[PlayerOptions::EFFECT_TWIRL], true);
 	FLOAT_INTERFACE(Roll, Effects[PlayerOptions::EFFECT_ROLL], true);
@@ -1126,9 +1328,12 @@ public:
 	FLOAT_INTERFACE(NoAttack, NoAttack, true);
 	FLOAT_INTERFACE(PlayerAutoPlay, PlayerAutoPlay, true);
 	FLOAT_INTERFACE(Skew, Skew, true);
-	FLOAT_INTERFACE(Tilt, PerspectiveTilt, true);
+	FLOAT_INTERFACE(Tilt, Tilt, true);
 	FLOAT_INTERFACE(Passmark, Passmark, true); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
 	FLOAT_INTERFACE(RandomSpeed, RandomSpeed, true);
+	MULTICOL_FLOAT_INTERFACE(MoveX, MovesX, true);
+	MULTICOL_FLOAT_INTERFACE(MoveY, MovesY, true);
+	MULTICOL_FLOAT_INTERFACE(MoveZ, MovesZ, true);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -1164,39 +1369,6 @@ public:
 	ENUM_INTERFACE(FailSetting, FailType, FailType);
 	ENUM_INTERFACE(MinTNSToHideNotes, MinTNSToHideNotes, TapNoteScore);
 
-	// NoteSkins
-	static int NoteSkin(T* p, lua_State* L)
-	{
-		int original_top= lua_gettop(L);
-		if( p->m_sNoteSkin.empty()  )
-		{
-			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() );
-		}
-		else
-		{
-			lua_pushstring( L, p->m_sNoteSkin );
-		}
-		if(original_top >= 1 && lua_isstring(L, 1))
-		{
-			RString skin= SArg(1);
-			if(NOTESKIN->DoesNoteSkinExist(skin))
-			{
-				p->m_sNoteSkin = skin;
-				lua_pushboolean(L, true);
-			}
-			else
-			{
-				lua_pushnil(L);
-			}
-		}
-		else
-		{
-			lua_pushnil(L);
-		}
-		OPTIONAL_RETURN_SELF(original_top);
-		return 2;
-	}
-
 	static void SetSpeedModApproaches(T* p, float speed)
 	{
 		p->m_SpeedfScrollBPM= speed;
@@ -1224,7 +1396,7 @@ public:
 		if(original_top >= 1 && lua_isnumber(L, 1))
 		{
 			float speed= FArg(1);
-			if(!isfinite(speed) || speed <= 0.0f)
+			if(!std::isfinite(speed) || speed <= 0.0f)
 			{
 				luaL_error(L, "CMod speed must be finite and greater than 0.");
 			}
@@ -1285,7 +1457,7 @@ public:
 		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			float speed= FArg(1);
-			if(!isfinite(speed) || speed <= 0.0f)
+			if(!std::isfinite(speed) || speed <= 0.0f)
 			{
 				luaL_error(L, "MMod speed must be finite and greater than 0.");
 			}
@@ -1302,19 +1474,19 @@ public:
 		return 2;
 	}
 
-	static void SetPerspectiveApproach(T* p, lua_State* L, float speed)
+	static void SetPerspectiveApproach(T* p, lua_State*, float speed)
 	{
-		p->m_SpeedfPerspectiveTilt= speed;
+		p->m_SpeedfTilt= speed;
 		p->m_SpeedfSkew= speed;
 	}
 
 	static int Overhead(T* p, lua_State* L)
 	{
 		int original_top= lua_gettop(L);
-		lua_pushboolean(L, (p->m_fPerspectiveTilt == 0.0f && p->m_fSkew == 0.0f));
+		lua_pushboolean(L, (p->m_fTilt == 0.0f && p->m_fSkew == 0.0f));
 		if(lua_toboolean(L, 1))
 		{
-			p->m_fPerspectiveTilt= 0;
+			p->m_fTilt= 0;
 			p->m_fSkew= 0;
 		}
 		if(lua_isnumber(L, 2) && original_top >= 2)
@@ -1328,8 +1500,8 @@ public:
 	static int Incoming(T* p, lua_State* L)
 	{
 		int original_top= lua_gettop(L);
-		if((p->m_fSkew > 0.0f && p->m_fPerspectiveTilt < 0.0f) ||
-			(p->m_fSkew < 0.0f && p->m_fPerspectiveTilt > 0.0f))
+		if((p->m_fSkew > 0.0f && p->m_fTilt < 0.0f) ||
+			(p->m_fSkew < 0.0f && p->m_fTilt > 0.0f))
 		{
 			lua_pushnumber(L, p->m_fSkew);
 			lua_pushnumber(L, p->m_SpeedfSkew);
@@ -1342,7 +1514,7 @@ public:
 		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			float value= FArg(1);
-			p->m_fPerspectiveTilt= -value;
+			p->m_fTilt= -value;
 			p->m_fSkew= value;
 		}
 		if(lua_isnumber(L, 2) && original_top >= 2)
@@ -1356,8 +1528,8 @@ public:
 	static int Space(T* p, lua_State* L)
 	{
 		int original_top= lua_gettop(L);
-		if((p->m_fSkew > 0.0f && p->m_fPerspectiveTilt > 0.0f) ||
-			(p->m_fSkew < 0.0f && p->m_fPerspectiveTilt < 0.0f))
+		if((p->m_fSkew > 0.0f && p->m_fTilt > 0.0f) ||
+			(p->m_fSkew < 0.0f && p->m_fTilt < 0.0f))
 		{
 			lua_pushnumber(L, p->m_fSkew);
 			lua_pushnumber(L, p->m_SpeedfSkew);
@@ -1370,7 +1542,7 @@ public:
 		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			float value= FArg(1);
-			p->m_fPerspectiveTilt= value;
+			p->m_fTilt= value;
 			p->m_fSkew= value;
 		}
 		if(lua_isnumber(L, 2) && original_top >= 2)
@@ -1384,10 +1556,10 @@ public:
 	static int Hallway(T* p, lua_State* L)
 	{
 		int original_top= lua_gettop(L);
-		if(p->m_fSkew == 0.0f && p->m_fPerspectiveTilt < 0.0f)
+		if(p->m_fSkew == 0.0f && p->m_fTilt < 0.0f)
 		{
-			lua_pushnumber(L, -p->m_fPerspectiveTilt);
-			lua_pushnumber(L, p->m_SpeedfPerspectiveTilt);
+			lua_pushnumber(L, -p->m_fTilt);
+			lua_pushnumber(L, p->m_SpeedfTilt);
 		}
 		else
 		{
@@ -1396,7 +1568,7 @@ public:
 		}
 		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
-			p->m_fPerspectiveTilt= -FArg(1);
+			p->m_fTilt= -FArg(1);
 			p->m_fSkew= 0;
 		}
 		if(lua_isnumber(L, 2) && original_top >= 2)
@@ -1406,14 +1578,14 @@ public:
 		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
-	
+
 	static int Distant(T* p, lua_State* L)
 	{
 		int original_top= lua_gettop(L);
-		if(p->m_fSkew == 0.0f && p->m_fPerspectiveTilt > 0.0f)
+		if(p->m_fSkew == 0.0f && p->m_fTilt > 0.0f)
 		{
-			lua_pushnumber(L, p->m_fPerspectiveTilt);
-			lua_pushnumber(L, p->m_SpeedfPerspectiveTilt);
+			lua_pushnumber(L, p->m_fTilt);
+			lua_pushnumber(L, p->m_SpeedfTilt);
 		}
 		else
 		{
@@ -1422,7 +1594,7 @@ public:
 		}
 		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
-			p->m_fPerspectiveTilt= FArg(1);
+			p->m_fTilt= FArg(1);
 			p->m_fSkew= 0;
 		}
 		if(lua_isnumber(L, 2) && original_top >= 2)
@@ -1456,6 +1628,12 @@ public:
 		return 1;
 	}
 
+	static int FromString(T* p, lua_State* L)
+	{
+		p->FromString(SArg(1));
+		COMMON_RETURN_SELF;
+	}
+
 	LunaPlayerOptions()
 	{
 		ADD_METHOD( IsEasierForSongAndSteps );
@@ -1471,19 +1649,38 @@ public:
 		ADD_METHOD(Boost);
 		ADD_METHOD(Brake);
 		ADD_METHOD(Wave);
+		ADD_METHOD(WavePeriod);
 		ADD_METHOD(Expand);
+		ADD_METHOD(ExpandPeriod);
 		ADD_METHOD(Boomerang);
 		ADD_METHOD(Drunk);
+		ADD_METHOD(DrunkSpeed);
+		ADD_METHOD(DrunkOffset);
+		ADD_METHOD(DrunkPeriod);
 		ADD_METHOD(Dizzy);
 		ADD_METHOD(Confusion);
+		ADD_METHOD(ConfusionOffset);
+		ADD_METHOD(ConfusionX);
+		ADD_METHOD(ConfusionXOffset);
+		ADD_METHOD(ConfusionY);
+		ADD_METHOD(ConfusionYOffset);
 		ADD_METHOD(Mini);
 		ADD_METHOD(Tiny);
 		ADD_METHOD(Flip);
 		ADD_METHOD(Invert);
 		ADD_METHOD(Tornado);
+		ADD_METHOD(TornadoPeriod);
+		ADD_METHOD(TornadoOffset);
 		ADD_METHOD(Tipsy);
+		ADD_METHOD(TipsySpeed);
+		ADD_METHOD(TipsyOffset);
 		ADD_METHOD(Bumpy);
+		ADD_METHOD(BumpyOffset);
+		ADD_METHOD(BumpyPeriod);
 		ADD_METHOD(Beat);
+		ADD_METHOD(BeatOffset);
+		ADD_METHOD(BeatPeriod);
+		ADD_METHOD(BeatMult);
 		ADD_METHOD(Xmode);
 		ADD_METHOD(Twirl);
 		ADD_METHOD(Roll);
@@ -1541,8 +1738,11 @@ public:
 		ADD_METHOD(NoQuads);
 		ADD_METHOD(NoStretch);
 		ADD_METHOD(MuteOnError);
+		
+		ADD_MULTICOL_METHOD(MoveX);
+		ADD_MULTICOL_METHOD(MoveY);
+		ADD_MULTICOL_METHOD(MoveZ);
 
-		ADD_METHOD(NoteSkin);
 		ADD_METHOD(FailSetting);
 		ADD_METHOD(MinTNSToHideNotes);
 
@@ -1560,6 +1760,8 @@ public:
 		ADD_METHOD( UsingReverse );
 		ADD_METHOD( GetReversePercentForColumn );
 		ADD_METHOD( GetStepAttacks );
+
+		ADD_METHOD(FromString);
 	}
 };
 
@@ -1569,7 +1771,7 @@ LUA_REGISTER_CLASS( PlayerOptions )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1579,7 +1781,7 @@ LUA_REGISTER_CLASS( PlayerOptions )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

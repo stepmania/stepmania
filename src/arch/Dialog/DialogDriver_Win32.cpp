@@ -25,7 +25,7 @@ int __stdcall AfxMessageBox(LPCTSTR lpszText, UINT nType, UINT nIDHelp);
 REGISTER_DIALOG_DRIVER_CLASS( Win32 );
 
 static bool g_bHush;
-static RString g_sMessage;
+static std::string g_sMessage;
 static bool g_bAllowHush;
 
 #if !defined(SMPACKAGE)
@@ -52,9 +52,9 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 			SetWindowLong( hHushButton, GWL_STYLE, iStyle );
 
 			// Set static text.
-			RString sMessage = g_sMessage;
-			sMessage.Replace( "\n", "\r\n" );
-			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage );
+			std::string sMessage = g_sMessage;
+			Rage::replace(sMessage, "\n", "\r\n" );
+			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage.c_str() );
 
 			// Focus is on any of the controls in the dialog by default.
 			// I'm not sure why. Set focus to the button manually. -Chris
@@ -91,14 +91,14 @@ static HWND GetHwnd()
 
 #if !defined(SMPACKAGE)
 static LocalizedString ERROR_WINDOW_TITLE("Dialog-Prompt", "Error");
-static RString GetWindowTitle()
+static std::string GetWindowTitle()
 {
-	RString s = ERROR_WINDOW_TITLE.GetValue();
+	std::string s = ERROR_WINDOW_TITLE.GetValue();
 	return s;
 }
 #endif
 
-void DialogDriver_Win32::OK( RString sMessage, RString sID )
+void DialogDriver_Win32::OK( std::string sMessage, std::string sID )
 {
 	g_bAllowHush = sID != "";
 	g_sMessage = sMessage;
@@ -112,7 +112,7 @@ void DialogDriver_Win32::OK( RString sMessage, RString sID )
 		Dialog::IgnoreMessage( sID );
 }
 
-Dialog::Result DialogDriver_Win32::OKCancel( RString sMessage, RString sID )
+Dialog::Result DialogDriver_Win32::OKCancel( std::string sMessage, std::string sID )
 {
 	g_bAllowHush = sID != "";
 	g_sMessage = sMessage;
@@ -120,7 +120,7 @@ Dialog::Result DialogDriver_Win32::OKCancel( RString sMessage, RString sID )
 
 #if !defined(SMPACKAGE)
 	//DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), ::GetHwnd(), OKWndProc );
-	int result = ::MessageBox( NULL, sMessage, GetWindowTitle(), MB_OKCANCEL );
+	int result = ::MessageBox( nullptr, sMessage.c_str(), GetWindowTitle().c_str(), MB_OKCANCEL );
 #else
 	int result = ::AfxMessageBox( ConvertUTF8ToACP(sMessage).c_str(), MB_OKCANCEL, 0 );
 #endif
@@ -137,7 +137,7 @@ Dialog::Result DialogDriver_Win32::OKCancel( RString sMessage, RString sID )
 }
 
 #if !defined(SMPACKAGE)
-static RString g_sErrorString;
+static std::string g_sErrorString;
 
 static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -148,9 +148,9 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			DialogUtil::SetHeaderFont( hWnd, IDC_STATIC_HEADER_TEXT );
 		
 			// Set static text
-			RString sMessage = g_sErrorString;
-			sMessage.Replace( "\n", "\r\n" );
-			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage );
+			std::string sMessage = g_sErrorString;
+			Rage::replace(sMessage, "\n", "\r\n" );
+			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage.c_str() );
 		}
 		break;
 	case WM_COMMAND:
@@ -162,17 +162,17 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 				STARTUPINFO	si;
 				ZeroMemory( &si, sizeof(si) );
 
-				RString sAppDataDir = SpecialDirs::GetAppDataDir();
-				RString sCommand = "notepad \"" + sAppDataDir + PRODUCT_ID + "/Logs/log.txt\"";
+				std::string sAppDataDir = SpecialDirs::GetAppDataDir();
+				std::string sCommand = "notepad \"" + sAppDataDir + PRODUCT_ID + "/Logs/log.txt\"";
 				CreateProcess(
-					NULL,		// pointer to name of executable module
+					nullptr,		// pointer to name of executable module
 					const_cast<char *>(sCommand.c_str()),	// pointer to command line string
-					NULL,  // process security attributes
-					NULL,   // thread security attributes
+					nullptr,  // process security attributes
+					nullptr,   // thread security attributes
 					false,  // handle inheritance flag
 					0, // creation flags
-					NULL,  // pointer to new environment block
-					NULL,   // pointer to current directory name
+					nullptr,  // pointer to new environment block
+					nullptr,   // pointer to current directory name
 					&si,  // pointer to STARTUPINFO
 					&pi  // pointer to PROCESS_INFORMATION
 				);
@@ -194,7 +194,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 		{
 			HDC hdc = (HDC)wParam;
 			HWND hwndStatic = (HWND)lParam;
-			HBRUSH hbr = NULL;
+			HBRUSH hbr = nullptr;
 
 			// TODO:  Change any attributes of the DC here
 			switch( GetDlgCtrlID(hwndStatic) )
@@ -215,20 +215,20 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 }
 #endif
 
-void DialogDriver_Win32::Error( RString sError, RString sID )
+void DialogDriver_Win32::Error( std::string sError, std::string sID )
 {
 #if !defined(SMPACKAGE)
 	g_sErrorString = sError;
 
 	// throw up a pretty error dialog
 	AppInstance handle;
-	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG), NULL, ErrorWndProc );
+	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG), nullptr, ErrorWndProc );
 #else
 	::AfxMessageBox( ConvertUTF8ToACP(sError).c_str(), MB_OK, 0 );
 #endif
 }
 
-Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString ID )
+Dialog::Result DialogDriver_Win32::AbortRetryIgnore( std::string sMessage, std::string ID )
 {
 	int iRet = 0;
 #if !defined(SMPACKAGE)
@@ -242,11 +242,11 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString I
 	case IDRETRY:	return Dialog::retry;
 	case IDIGNORE:	return Dialog::ignore;
 	default:
-		FAIL_M(ssprintf("Unexpected response to Abort/Retry/Ignore dialog: %i", iRet));
+		FAIL_M(fmt::sprintf("Unexpected response to Abort/Retry/Ignore dialog: %i", iRet));
 	}
 } 
 
-Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
+Dialog::Result DialogDriver_Win32::AbortRetry( std::string sMessage, std::string sID )
 {
 	int iRet = 0;
 #if !defined(SMPACKAGE)
@@ -259,11 +259,11 @@ Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
 	case IDRETRY:	return Dialog::retry;
 	case IDCANCEL:	return Dialog::abort;
 	default:
-		FAIL_M(ssprintf("Unexpected response to Retry/Cancel dialog: %i", iRet));
+		FAIL_M(fmt::sprintf("Unexpected response to Retry/Cancel dialog: %i", iRet));
 	}
 } 
 
-Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
+Dialog::Result DialogDriver_Win32::YesNo( std::string sMessage, std::string sID )
 {
 	int iRet = 0;
 #if !defined(SMPACKAGE)
@@ -276,7 +276,7 @@ Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
 	case IDYES:	return Dialog::yes;
 	case IDNO:	return Dialog::no;
 	default:
-		FAIL_M(ssprintf("Unexpected response to Yes/No dialog: %i", iRet));
+		FAIL_M(fmt::sprintf("Unexpected response to Yes/No dialog: %i", iRet));
 	}
 }
 

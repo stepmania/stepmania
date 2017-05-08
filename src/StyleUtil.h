@@ -7,21 +7,40 @@ class XNode;
 
 class StyleID
 {
-	RString sGame;
-	RString sStyle;
+	std::string sGame;
+	std::string sStyle;
 
 public:
 	StyleID(): sGame(""), sStyle("") { }
-	void Unset() { FromStyle(NULL); }
+	void Unset() { FromStyle(nullptr); }
 	void FromStyle( const Style *p );
 	const Style *ToStyle() const;
 	bool operator<( const StyleID &rhs ) const;
+	bool operator==(const StyleID& rhs) const
+	{ return sGame == rhs.sGame && sStyle == rhs.sStyle; }
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 	bool IsValid() const;
 	static void FlushCache( Song* pStaleSong );
+
+	std::string get_game() const { return sGame; }
+	std::string get_style() const { return sStyle; }
 };
+
+namespace std
+{
+	template<>
+    struct hash<StyleID>
+	{
+		std::size_t operator()(StyleID const& s) const
+		{
+			std::size_t const h1(std::hash<std::string>()(s.get_game()));
+			std::size_t const h2(std::hash<std::string>()(s.get_style()));
+			return h1 ^ (h2 << 1);
+		}
+	};
+}
 
 #endif
 

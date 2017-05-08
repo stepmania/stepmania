@@ -14,24 +14,21 @@ public:
 	Character();
 	~Character() { }
 
-	bool Load( RString sCharDir ); // return true if successful
+	bool Load( std::string sCharDir ); // return true if successful
 
-	RString GetTakingABreakPath() const;
-	RString GetCardPath() const { return m_sCardPath; }
-	RString GetIconPath() const { return m_sIconPath; }
+	std::string GetTakingABreakPath() const;
+	std::string GetCardPath() const { return m_sCardPath; }
+	std::string GetIconPath() const { return m_sIconPath; }
 
-	RString GetModelPath() const;
-	RString GetRestAnimationPath() const;
-	RString GetWarmUpAnimationPath() const;
-	RString GetDanceAnimationPath() const;
-	RString GetSongSelectIconPath() const;
-	RString GetStageIconPath() const;
+	std::string GetModelPath() const;
+	std::string GetRestAnimationPath() const;
+	std::string GetWarmUpAnimationPath() const;
+	std::string GetDanceAnimationPath() const;
+	std::string GetSongSelectIconPath() const;
+	std::string GetStageIconPath() const;
 	bool Has2DElems();
 
-	bool IsDefaultCharacter() const
-	{
-		return m_sCharacterID.CompareNoCase("default") == 0;
-	}
+	bool IsDefaultCharacter() const;
 
 	void DemandGraphics();
 	void UndemandGraphics();
@@ -40,15 +37,15 @@ public:
 	void PushSelf( Lua *L );
 
 	// smart accessor
-	const RString &GetDisplayName() { return !m_sDisplayName.empty() ? m_sDisplayName : m_sCharacterID; }
+	const std::string &GetDisplayName() { return !m_sDisplayName.empty() ? m_sDisplayName : m_sCharacterID; }
 
-	RString m_sCharDir;
-	RString m_sCharacterID;
+	std::string m_sCharDir;
+	std::string m_sCharacterID;
 
 private:
-	RString m_sDisplayName;
-	RString m_sCardPath;
-	RString m_sIconPath;
+	std::string m_sDisplayName;
+	std::string m_sCardPath;
+	std::string m_sIconPath;
 
 public:
 	apActorCommands m_cmdInit;
@@ -59,7 +56,7 @@ public:
 	 * All of the variables listed below here will be filled in if true. */
 	bool	m_bUsableInRave;
 
-	RString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
+	std::string	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 	RageTexturePreloader m_Preload;
 	int m_iPreloadRefcount;
 };

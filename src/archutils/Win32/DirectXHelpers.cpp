@@ -12,19 +12,14 @@
 #  pragma comment(lib, "dxerr.lib")
 #endif
 
-RString hr_ssprintf( int hr, const char *fmt, ... )
+std::string hr_final(std::string const &msg, int hr)
 {
-	va_list	va;
-	va_start(va, fmt);
-	RString s = vssprintf( fmt, va );
-	va_end(va);
-
 #if defined(USE_DXERR9)
-	const char *szError = DXGetErrorString9( hr );
+	const char *szError = DXGetErrorString9(hr);
 #else
-	const char *szError = DXGetErrorString( hr );
+	const char *szError = DXGetErrorString(hr);
 #endif
-	return s + ssprintf( " (%s)", szError );
+	return msg + fmt::sprintf(" (%s)", szError);
 }
 
 /*

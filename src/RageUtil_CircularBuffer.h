@@ -3,6 +3,8 @@
 #ifndef RAGE_UTIL_CIRCULAR_BUFFER
 #define RAGE_UTIL_CIRCULAR_BUFFER
 
+#include <cstring>
+
 /* Lock-free circular buffer.  This should be threadsafe if one thread is reading
  * and another is writing. */
 template<class T>
@@ -25,7 +27,7 @@ class CircBuf
 public:
 	CircBuf()
 	{
-		buf = NULL;
+		buf = nullptr;
 		clear();
 	}
 
@@ -33,7 +35,7 @@ public:
 	{
 		delete[] buf;
 	}
-		
+
 	void swap( CircBuf &rhs )
 	{
 		std::swap( size, rhs.size );
@@ -59,11 +61,11 @@ public:
 		if( size )
 		{
 			buf = new T[size];
-			memcpy( buf, cpy.buf, size*sizeof(T) );
+			std::memcpy( buf, cpy.buf, size*sizeof(T) );
 		}
 		else
 		{
-			buf = NULL;
+			buf = nullptr;
 		}
 	}
 
@@ -82,7 +84,7 @@ public:
 			/* The buffer looks like "eeeeeeeeeeee" (e = empty, D = data). */
 			return 0;
 	}
-	
+
 	/* Return the number of writable elements. */
 	unsigned num_writable() const
 	{
@@ -113,7 +115,7 @@ public:
 
 		clear();
 		delete[] buf;
-		buf = NULL;
+		buf = nullptr;
 
 		/* Reserve an extra byte.  We'll never fill more than n bytes; the extra
 		 * byte is to guarantee that read_pos != write_pos when the buffer is full,
@@ -139,13 +141,13 @@ public:
 	{
 		write_pos = (write_pos + n) % size;
 	}
-	
+
 	/* Indicate that n elements have been read. */
 	void advance_read_pointer( int n )
 	{
 		read_pos = (read_pos + n) % size;
 	}
-	
+
 	void get_write_pointers( T *pPointers[2], unsigned pSizes[2] )
 	{
 		const int rpos = read_pos;
@@ -164,7 +166,7 @@ public:
 		{
 			/* The buffer looks like "DDeeeeeeeeDD" (e = empty, D = data). */
 			pPointers[0] = buf+wpos;
-			pPointers[1] = NULL;
+			pPointers[1] = nullptr;
 
 			pSizes[0] = rpos - wpos;
 			pSizes[1] = 0;
@@ -197,7 +199,7 @@ public:
 		{
 			/* The buffer looks like "eeeeDDDDeeee" (e = empty, D = data). */
 			pPointers[0] = buf+rpos;
-			pPointers[1] = NULL;
+			pPointers[1] = nullptr;
 
 			pSizes[0] = wpos - rpos;
 			pSizes[1] = 0;
@@ -214,30 +216,32 @@ public:
 		else
 		{
 			/* The buffer looks like "eeeeeeeeeeee" (e = empty, D = data). */
-			pPointers[0] = NULL;
-			pPointers[1] = NULL;
+			pPointers[0] = nullptr;
+			pPointers[1] = nullptr;
 
 			pSizes[0] = 0;
 			pSizes[1] = 0;
 		}
 	}
-	
+
 	/* Write buffer_size elements from buffer, and advance the write pointer.  If
 	 * the data will not fit entirely, the write pointer will be unchanged
 	 * and false will be returned. */
 	bool write( const T *buffer, unsigned buffer_size )
 	{
+		using std::min;
+		using std::max;
 		T *p[2];
 		unsigned sizes[2];
 		get_write_pointers( p, sizes );
 
 		if( buffer_size > sizes[0] + sizes[1] )
 			return false;
-		
+
 		const int from_first = min( buffer_size, sizes[0] );
-		memcpy( p[0], buffer, from_first*sizeof(T) );
+		std::memcpy( p[0], buffer, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memcpy( p[1], buffer+from_first, max(buffer_size-sizes[0], 0u)*sizeof(T) );
+			std::memcpy( p[1], buffer+from_first, max(buffer_size-sizes[0], 0u)*sizeof(T) );
 
 		advance_write_pointer( buffer_size );
 
@@ -249,6 +253,8 @@ public:
 	 * and false will be returned. */
 	bool read( T *buffer, unsigned buffer_size )
 	{
+		using std::max;
+		using std::min;
 		T *p[2];
 		unsigned sizes[2];
 		get_read_pointers( p, sizes );
@@ -257,15 +263,15 @@ public:
 			return false;
 
 		const int from_first = min( buffer_size, sizes[0] );
-		memcpy( buffer, p[0], from_first*sizeof(T) );
+		std::memcpy( buffer, p[0], from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memcpy( buffer+from_first, p[1], max(buffer_size-sizes[0], 0u)*sizeof(T) );
+			std::memcpy( buffer+from_first, p[1], max(buffer_size-sizes[0], 0u)*sizeof(T) );
 
 		/* Set the data that we just read to 0xFF.  This way, if we're passing pointesr
 		 * through, we can tell if we accidentally get a stale pointer. */
-		memset( p[0], 0xFF, from_first*sizeof(T) );
+		std::memset( p[0], 0xFF, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memset( p[1], 0xFF, max(buffer_size-sizes[0], 0u)*sizeof(T) );
+			std::memset( p[1], 0xFF, max(buffer_size-sizes[0], 0u)*sizeof(T) );
 
 		advance_read_pointer( buffer_size );
 		return true;

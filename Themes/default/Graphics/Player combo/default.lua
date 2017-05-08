@@ -13,12 +13,37 @@ local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
 local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom");
 local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
 
-local ShowFlashyCombo = ThemePrefs.Get("FlashyCombo")
+local ShowFlashyCombo = player_config:get_data(player).FlashyCombo
+
+--different language support
+local lang = THEME:GetCurLanguage()
+local cur_dir= "/Themes/default/Graphics/Player combo/"
+local combo_label = cur_dir.."_combo"
+local miss_label = cur_dir.."_misses"
+
+if lang ~= "en" and FILEMAN:DoesFileExist(combo_label.." (lang "..lang..").png") and FILEMAN:DoesFileExist(miss_label.." (lang "..lang..").png")  then
+	combo_label = combo_label.." (lang "..lang..").png"
+	miss_label = miss_label.." (lang "..lang..").png"
+else
+	combo_label = combo_label..".png"
+	miss_label = miss_label..".png"
+end
 
 local t = Def.ActorFrame {
-	InitCommand=cmd(vertalign,bottom);
+	InitCommand= function(self)
+		if player_config:get_data(player).ComboUnderField then
+			self:draworder(notefield_draw_order.under_field)
+		else
+			self:draworder(notefield_draw_order.over_field)
+		end
+		c = self:GetChildren();
+		cf = c.ComboFrame:GetChildren();
+		cf.Number:visible(false);
+		cf.ComboLabel:visible(false)
+		cf.MissLabel:visible(false)
+	end,
 	-- flashy combo elements:
- 	LoadActor(THEME:GetPathG("Combo","100Milestone")) .. {
+	LoadActor(THEME:GetPathG("Combo","100Milestone"), player) .. {
 		Name="OneHundredMilestone";
 		InitCommand=cmd(visible,ShowFlashyCombo);
 		FiftyMilestoneCommand=cmd(playcommand,"Milestone");
@@ -35,22 +60,15 @@ local t = Def.ActorFrame {
 			Name="Number";
 			OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
 		};
-		LoadActor("_combo")..{
+		LoadActor(combo_label)..{
 			Name="ComboLabel";
 			OnCommand = THEME:GetMetric("Combo", "ComboLabelOnCommand");
 		};
-		LoadActor("_misses")..{
+		LoadActor(miss_label)..{
 			Name="MissLabel";
 			OnCommand = THEME:GetMetric("Combo", "MissLabelOnCommand");
 		};
 	};
-	InitCommand = function(self)
-		c = self:GetChildren();
-		cf = c.ComboFrame:GetChildren();
-		cf.Number:visible(false);
-		cf.ComboLabel:visible(false)
-		cf.MissLabel:visible(false)
-	end;
 	-- Milestones:
 	-- 25,50,100,250,600 Multiples;
 --[[ 		if (iCombo % 100) == 0 then

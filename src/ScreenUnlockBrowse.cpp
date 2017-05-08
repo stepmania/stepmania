@@ -2,20 +2,20 @@
 #include "ScreenUnlockBrowse.h"
 #include "UnlockManager.h"
 
-
 REGISTER_SCREEN_CLASS( ScreenUnlockBrowse );
 
 void ScreenUnlockBrowse::Init()
 {
 	// fill m_aGameCommands before calling Init()
-	FOREACH_CONST( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+	auto &entries = UNLOCKMAN->m_UnlockEntries;
+	for (auto ue = entries.begin(); ue != entries.end(); ++ue)
 	{
 		GameCommand gc;
 		UnlockEntryStatus st = ue->GetUnlockEntryStatus();
 		switch( st )
 		{
 		default:
-			FAIL_M(ssprintf("Invalid UnlockEntryStatus: %i", st));
+			FAIL_M(fmt::sprintf("Invalid UnlockEntryStatus: %i", st));
 		case UnlockEntryStatus_RequirementsMet:
 		case UnlockEntryStatus_Unlocked:
 			gc.m_bInvalid = false;
@@ -25,8 +25,8 @@ void ScreenUnlockBrowse::Init()
 		}
 		gc.m_iIndex = ue - UNLOCKMAN->m_UnlockEntries.begin();
 		// gc.m_sUnlockEntryID = ue->m_sEntryID;
-		gc.m_sName = ssprintf("%d",gc.m_iIndex);
-		
+		gc.m_sName = fmt::sprintf("%d",gc.m_iIndex);
+
 		m_aGameCommands.push_back( gc );
 	}
 
@@ -71,7 +71,7 @@ void ScreenUnlockBrowse::HandleMessage( const Message &msg )
 /*
  * (c) 2006 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -81,7 +81,7 @@ void ScreenUnlockBrowse::HandleMessage( const Message &msg )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

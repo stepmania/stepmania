@@ -5,11 +5,10 @@
 #include "LuaManager.h"
 #include "MessageManager.h"
 #include "SubscriptionManager.h"
-#include "Foreach.h"
 
 static SubscriptionManager<IPreference> m_Subscribers;
 
-IPreference::IPreference( const RString& sName ):
+IPreference::IPreference( std::string const & sName ):
 	m_sName( sName ),
 	m_bIsStatic( false )
 {
@@ -21,42 +20,55 @@ IPreference::~IPreference()
 	m_Subscribers.Unsubscribe( this );
 }
 
-IPreference *IPreference::GetPreferenceByName( const RString &sName )
+IPreference *IPreference::GetPreferenceByName( std::string const &sName )
 {
-	FOREACHS( IPreference*, *m_Subscribers.m_pSubscribers, p )
+	Rage::ci_ascii_string ciName{ sName.c_str() };
+	for (auto *p: *m_Subscribers.m_pSubscribers)
 	{
-		if( !(*p)->GetName().CompareNoCase( sName ) )
-			return *p;
+		if (ciName == p->GetName())
+		{
+			return p;
+		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void IPreference::LoadAllDefaults()
 {
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->LoadDefault();
+	for (auto *p: *m_Subscribers.m_pSubscribers)
+	{
+		p->LoadDefault();
+	}
 }
 
 void IPreference::ReadAllPrefsFromNode( const XNode* pNode, bool bIsStatic )
 {
-	ASSERT( pNode != NULL );
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->ReadFrom( pNode, bIsStatic );
+	ASSERT( pNode != nullptr );
+	for (auto *p: *m_Subscribers.m_pSubscribers)
+	{
+		p->ReadFrom( pNode, bIsStatic );
+	}
 }
 
 void IPreference::SavePrefsToNode( XNode* pNode )
 {
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->WriteTo( pNode );
+	for (auto *p: *m_Subscribers.m_pSubscribers)
+	{
+		p->WriteTo( pNode );
+	}
 }
 
 void IPreference::ReadAllDefaultsFromNode( const XNode* pNode )
 {
-	if( pNode == NULL )
+	if( pNode == nullptr )
+	{
 		return;
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->ReadDefaultFrom( pNode );
+	}
+	for (auto *p: *m_Subscribers.m_pSubscribers)
+	{
+		p->ReadDefaultFrom( pNode );
+	}
 }
 
 void IPreference::PushValue( lua_State *L ) const
@@ -77,7 +89,7 @@ void IPreference::SetFromStack( lua_State *L )
 
 void IPreference::ReadFrom( const XNode* pNode, bool bIsStatic )
 {
-	RString sVal;
+	std::string sVal;
 	if( pNode->GetAttrValue(m_sName, sVal) )
 	{
 		FromString( sVal );
@@ -94,13 +106,13 @@ void IPreference::WriteTo( XNode* pNode ) const
 /* Load our value from the node, and make it the new default. */
 void IPreference::ReadDefaultFrom( const XNode* pNode )
 {
-	RString sVal;
+	std::string sVal;
 	if( !pNode->GetAttrValue(m_sName, sVal) )
 		return;
 	SetDefaultFromString( sVal );
 }
 
-void BroadcastPreferenceChanged( const RString& sPreferenceName )
+void BroadcastPreferenceChanged( const std::string& sPreferenceName )
 {
 	if( MESSAGEMAN )
 		MESSAGEMAN->Broadcast( sPreferenceName+"Changed" );
@@ -109,7 +121,7 @@ void BroadcastPreferenceChanged( const RString& sPreferenceName )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -119,7 +131,7 @@ void BroadcastPreferenceChanged( const RString& sPreferenceName )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

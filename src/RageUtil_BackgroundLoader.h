@@ -18,14 +18,14 @@ public:
 	~BackgroundLoader();
 
 	/* Read the file in a background thread.  Files will be read in the order requested. */
-	void CacheFile( const RString &file );
+	void CacheFile( const std::string &file );
 
 	/* Return true if the requested CacheFile request has finished.  If true is returned,
 	 * the cached file can be read using the path returned in sActualPath. */
-	bool IsCacheFileFinished( const RString &sFile, RString &sActualPath );
+	bool IsCacheFileFinished( const std::string &sFile, std::string &sActualPath );
 
 	/* Call this when finished with a cached file, to release any resources. */
-	void FinishedWithCachedFile( RString sFile );
+	void FinishedWithCachedFile( std::string sFile );
 
 	/* Abort all loads. */
 	void Abort();
@@ -36,10 +36,10 @@ private:
 	void LoadThread();
 	static int LoadThread_Start( void *p ) { ((BackgroundLoader *) p)->LoadThread(); return 0; }
 
-	RString GetRequest();
+	std::string GetRequest();
 
-	RString GetCachePath( RString sPath ) const;
-	RString m_sCachePathPrefix;
+	std::string GetCachePath( std::string sPath ) const;
+	std::string m_sCachePathPrefix;
 
 	RageSemaphore m_StartSem;
 
@@ -47,15 +47,13 @@ private:
 	 * while doing expensive operations, like reading files. */
 	RageMutex m_Mutex;
 
-	vector<RString> m_CacheRequests;
+	std::vector<std::string> m_CacheRequests;
 
 	/* Filename to number of completed requests */
-	map<RString,int> m_FinishedRequests;
+	std::map<std::string,int> m_FinishedRequests;
 
 	bool m_sThreadIsActive;
 	bool m_sThreadShouldAbort;
-
-	RageFileDriverCached *m_pDriver;
 };
 
 #endif
@@ -63,7 +61,7 @@ private:
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -73,7 +71,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

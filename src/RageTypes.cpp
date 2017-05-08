@@ -1,107 +1,92 @@
 #include "global.h"
 #include "RageTypes.h"
+#include "RageMath.hpp"
 #include "LuaManager.h"
 
-void RageColor::PushTable( lua_State *L ) const
+void PushTable( Rage::Color const &color, lua_State *L )
 {
-	lua_newtable( L );
-	int iTable = lua_gettop(L);
-
-	lua_pushnumber( L, r );
-	lua_rawseti( L, iTable, 1 );
-	lua_pushnumber( L, g );
-	lua_rawseti( L, iTable, 2 );
-	lua_pushnumber( L, b );
-	lua_rawseti( L, iTable, 3 );
-	lua_pushnumber( L, a );
-	lua_rawseti( L, iTable, 4 );
+	lua_newtable(L);
+	int table = lua_gettop(L);
+	
+	lua_pushnumber(L, color.r);
+	lua_rawseti(L, table, 1);
+	lua_pushnumber(L, color.g);
+	lua_rawseti(L, table, 2);
+	lua_pushnumber(L, color.b);
+	lua_rawseti(L, table, 3);
+	lua_pushnumber(L, color.a);
+	lua_rawseti(L, table, 4);
 }
 
-void RageColor::FromStack( lua_State *L, int iPos )
+void FromStack( Rage::Color &color, lua_State *L, int pos)
 {
-	if( lua_type(L, iPos) != LUA_TTABLE )
+	if (lua_type(L, pos) != LUA_TTABLE)
+	{
 		return;
-
-	lua_pushvalue( L, iPos );
-	int iFrom = lua_gettop( L );
-
-	lua_rawgeti( L, iFrom, 1 );
-	r = (float)lua_tonumber( L, -1 );
-	lua_rawgeti( L, iFrom, 2 );
-	g = (float)lua_tonumber( L, -1 );
-	lua_rawgeti( L, iFrom, 3 );
-	b = (float)lua_tonumber( L, -1 );
-	lua_rawgeti( L, iFrom, 4 );
-	a = (float)lua_tonumber( L, -1 );
-	lua_pop( L, 5 );
+	}
+	
+	lua_pushvalue(L, pos);
+	int from = lua_gettop(L);
+	
+	lua_rawgeti(L, from, 1);
+	color.r = static_cast<float>(lua_tonumber(L, -1));
+	lua_rawgeti(L, from, 2);
+	color.g = static_cast<float>(lua_tonumber(L, -1));
+	lua_rawgeti(L, from, 3);
+	color.b = static_cast<float>(lua_tonumber(L, -1));
+	lua_rawgeti(L, from, 4);
+	color.a = static_cast<float>(lua_tonumber(L, -1));
+	
+	lua_pop(L, 5);
 }
 
-void RageColor::FromStackCompat( lua_State *L, int iPos )
+void FromStackCompat( Rage::Color &color, lua_State *L, int pos)
 {
-	if( lua_type(L, iPos) == LUA_TTABLE )
+	if (lua_type(L, pos) == LUA_TTABLE)
 	{
-		FromStack( L, iPos );
+		// Utilize the shortcut variant.
+		FromStack(color, L, pos);
 	}
 	else
 	{
-		r = FArg(iPos+0);
-		g = FArg(iPos+1);
-		b = FArg(iPos+2);
-		a = FArg(iPos+3);
+		color.r = FArg(pos + 0);
+		color.g = FArg(pos + 1);
+		color.b = FArg(pos + 2);
+		color.a = FArg(pos + 3);
 	}
 }
 
-RString RageColor::ToString() const
+void lerp_rage_color(Rage::Color& out, Rage::Color const& a, Rage::Color const& b, float t)
 {
-	int iR = clamp( (int) lrintf(r * 255), 0, 255 );
-	int iG = clamp( (int) lrintf(g * 255), 0, 255 );
-	int iB = clamp( (int) lrintf(b * 255), 0, 255 );
-	int iA = clamp( (int) lrintf(a * 255), 0, 255 );
-
-	if( iA == 255 )
-		return ssprintf( "#%02X%02X%02X", iR, iG, iB );
-	else
-		return ssprintf( "#%02X%02X%02X%02X", iR, iG, iB, iA );
+	out.b= Rage::lerp(t, a.b, b.b);
+	out.g= Rage::lerp(t, a.g, b.g);
+	out.r= Rage::lerp(t, a.r, b.r);
+	out.a= Rage::lerp(t, a.a, b.a);
 }
 
-RString RageColor::NormalizeColorString( RString sColor )
+void WeightedAvergeOfRSVs(Rage::SpriteVertex& average_out, Rage::SpriteVertex const& rsv1, Rage::SpriteVertex const& rsv2, float percent_between)
 {
-	if( sColor.empty() )
-		return "";
-	RageColor c;
-	if( !c.FromString(sColor) )
-		return "";
-	return c.ToString();
-}
-
-void lerp_rage_color(RageColor& out, RageColor const& a, RageColor const& b, float t)
-{
-	out.b= lerp(t, a.b, b.b);
-	out.g= lerp(t, a.g, b.g);
-	out.r= lerp(t, a.r, b.r);
-	out.a= lerp(t, a.a, b.a);
-}
-
-void WeightedAvergeOfRSVs(RageSpriteVertex& average_out, RageSpriteVertex const& rsv1, RageSpriteVertex const& rsv2, float percent_between)
-{
-	average_out.p= lerp(percent_between, rsv1.p, rsv2.p);
-	average_out.n= lerp(percent_between, rsv1.n, rsv2.n);
-	average_out.c.b= lerp(percent_between, rsv1.c.b, rsv2.c.b);
-	average_out.c.g= lerp(percent_between, rsv1.c.g, rsv2.c.g);
-	average_out.c.r= lerp(percent_between, rsv1.c.r, rsv2.c.r);
-	average_out.c.a= lerp(percent_between, rsv1.c.a, rsv2.c.a);
-	average_out.t= lerp(percent_between, rsv1.t, rsv2.t);
+	average_out.p= Rage::lerp(percent_between, rsv1.p, rsv2.p);
+	average_out.n= Rage::lerp(percent_between, rsv1.n, rsv2.n);
+	average_out.c.b= Rage::lerp(percent_between, rsv1.c.b, rsv2.c.b);
+	average_out.c.g= Rage::lerp(percent_between, rsv1.c.g, rsv2.c.g);
+	average_out.c.r= Rage::lerp(percent_between, rsv1.c.r, rsv2.c.r);
+	average_out.c.a= Rage::lerp(percent_between, rsv1.c.a, rsv2.c.a);
+	average_out.t= Rage::lerp(percent_between, rsv1.t, rsv2.t);
 }
 
 /** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
-	template<> bool FromStack<RageColor>( lua_State *L, RageColor &Object, int iOffset )
+	template<> bool FromStack<Rage::Color>( lua_State *L, Rage::Color &Object, int iOffset )
 	{
-		Object.FromStack( L, iOffset );
+		FromStack( Object, L, iOffset );
 		return true;
 	}
-	template<> void Push<RageColor>( lua_State *L, const RageColor &Object ) { Object.PushTable( L ); }
+	template<> void Push<Rage::Color>( lua_State *L, const Rage::Color &Object )
+	{
+		PushTable( Object, L );
+	}
 }
 
 static const char *CullModeNames[] =
@@ -209,10 +194,10 @@ LuaXType( TextGlowMode );
 
 int LuaFunc_color( lua_State *L )
 {
-	RString sColor = SArg(1);
-	RageColor c;
+	std::string sColor = SArg(1);
+	Rage::Color c;
 	c.FromString( sColor );
-	c.PushTable( L );
+	PushTable( c, L );
 	return 1;
 }
 LUAFUNC_REGISTER_COMMON(color);
@@ -222,11 +207,11 @@ int LuaFunc_lerp_color(lua_State *L)
 	// Args:  percent, color, color
 	// Returns:  color
 	float percent= FArg(1);
-	RageColor a, b, c;
-	a.FromStack(L, 2);
-	b.FromStack(L, 3);
+	Rage::Color a, b, c;
+	FromStack(a, L, 2);
+	FromStack(b, L, 3);
 	lerp_rage_color(c, a, b, percent);
-	c.PushTable(L);
+	PushTable(c, L);
 	return 1;
 }
 LUAFUNC_REGISTER_COMMON(lerp_color);

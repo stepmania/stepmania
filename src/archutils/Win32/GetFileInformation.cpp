@@ -11,7 +11,7 @@
 #pragma comment(lib, "version.lib")
 #endif
 
-bool GetFileVersion( RString sFile, RString &sOut )
+bool GetFileVersion( std::string sFile, std::string &sOut )
 {
 	do {
 		// Cast away const to work around header bug in VC6.
@@ -20,7 +20,7 @@ bool GetFileVersion( RString sFile, RString &sOut )
 		if( !iSize )
 			break;
 
-		RString VersionBuffer( iSize, ' ' );
+		std::string VersionBuffer( iSize, ' ' );
 		// Also VC6:
 		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), NULL, iSize, const_cast<char *>(VersionBuffer.c_str()) ) )
 			break;
@@ -38,30 +38,30 @@ bool GetFileVersion( RString sFile, RString &sOut )
 		char *str;
 		UINT len;
 
-		RString sRes = ssprintf( "\\StringFileInfo\\%04x%04x\\FileVersion",
+		std::string sRes = fmt::sprintf( "\\StringFileInfo\\%04x%04x\\FileVersion",
 			iTrans[0], iTrans[1] );
 		if( !VerQueryValue( (void *) VersionBuffer.c_str(), (char *) sRes.c_str(),
 				(void **) &str,  &len ) || len < 1)
 			break;
 
-		sOut = RString( str, len-1 );
+		sOut = std::string( str, len-1 );
 	} while(0);
 
 	// Get the size and date.
 	struct stat st;
-	if( stat( sFile, &st ) != -1 )
+	if( stat( sFile.c_str(), &st ) != -1 )
 	{
 		struct tm t;
 		gmtime_r( &st.st_mtime, &t );
 		if( !sOut.empty() )
 			sOut += " ";
-		sOut += ssprintf( "[%ib, %02i-%02i-%04i]", st.st_size, t.tm_mon+1, t.tm_mday, t.tm_year+1900 );
+		sOut += fmt::sprintf( "[%ib, %02i-%02i-%04i]", st.st_size, t.tm_mon+1, t.tm_mday, t.tm_year+1900 );
 	}
 
 	return true;
 }
 
-RString FindSystemFile( RString sFile )
+std::string FindSystemFile( std::string sFile )
 {
 	char szWindowsPath[MAX_PATH];
 	GetWindowsDirectory( szWindowsPath, MAX_PATH );
@@ -73,31 +73,31 @@ RString FindSystemFile( RString sFile )
 		"/system/",
 		"/system/drivers/",
 		"/",
-		NULL
+		nullptr
 	};
 
 	for( int i = 0; szPaths[i]; ++i )
 	{
-		RString sPath = ssprintf( "%s%s%s", szWindowsPath, szPaths[i], sFile.c_str() );
+		std::string sPath = fmt::sprintf( "%s%s%s", szWindowsPath, szPaths[i], sFile.c_str() );
 		struct stat buf;
-		if( !stat(sPath, &buf) )
+		if( !stat(sPath.c_str(), &buf) )
 			return sPath;
 	}
 
-	return RString();
+	return std::string();
 }
 
 /* Get the full path of the process running in iProcessID. On error, false is
  * returned and an error message is placed in sName. */
-bool GetProcessFileName( uint32_t iProcessID, RString &sName )
+bool GetProcessFileName( uint32_t iProcessID, std::string &sName )
 {
 	/* This method works in everything except for NT4, and only uses
 	 * kernel32.lib functions. */
 	do {
 		HANDLE hSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, iProcessID );
-		if( hSnap == NULL )
+		if( hSnap == nullptr )
 		{
-			sName = werr_ssprintf( GetLastError(), "CreateToolhelp32Snapshot" );
+			sName = werr_format( GetLastError(), "CreateToolhelp32Snapshot" );
 			break;
 		}
 
@@ -113,14 +113,14 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 			return true;
 		}
 
-		sName = werr_ssprintf( GetLastError(), "Module32First" );
+		sName = werr_format( GetLastError(), "Module32First" );
 	} while(0);
 
 	// This method only works in NT/2K/XP.
 	do {
-		static HINSTANCE hPSApi = NULL;
+		static HINSTANCE hPSApi = nullptr;
 		typedef DWORD (WINAPI* pfnGetProcessImageFileNameA)(HANDLE hProcess, LPSTR lpImageFileName, DWORD nSize);
-		static pfnGetProcessImageFileNameA pGetProcessImageFileName = NULL;
+		static pfnGetProcessImageFileNameA pGetProcessImageFileName = nullptr;
 		static bool bTried = false;
 
 		if( !bTried )
@@ -128,28 +128,28 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 			bTried = true;
 
 			hPSApi = LoadLibrary("psapi.dll");
-			if( hPSApi == NULL )
+			if( hPSApi == nullptr )
 			{
-				sName = werr_ssprintf( GetLastError(), "LoadLibrary" );
+				sName = werr_format( GetLastError(), "LoadLibrary" );
 				break;
 			}
 			else
 			{
 				pGetProcessImageFileName = (pfnGetProcessImageFileNameA) GetProcAddress( hPSApi, "GetProcessImageFileNameA" );
-				if( pGetProcessImageFileName == NULL )
+				if( pGetProcessImageFileName == nullptr )
 				{
-					sName = werr_ssprintf( GetLastError(), "GetProcAddress" );
+					sName = werr_format( GetLastError(), "GetProcAddress" );
 					break;
 				}
 			}
 		}
 
-		if( pGetProcessImageFileName != NULL )
+		if( pGetProcessImageFileName != nullptr )
 		{
 			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, NULL, iProcessID );
-			if( hProc == NULL )
+			if( hProc == nullptr )
 			{
-				sName = werr_ssprintf( GetLastError(), "OpenProcess" );
+				sName = werr_format( GetLastError(), "OpenProcess" );
 				break;
 			}
 
@@ -165,7 +165,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 				return true;
 			}
 
-			sName = werr_ssprintf( GetLastError(), "GetProcessImageFileName" );
+			sName = werr_format( GetLastError(), "GetProcessImageFileName" );
 		}
 	} while(0);
 

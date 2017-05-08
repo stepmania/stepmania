@@ -10,7 +10,7 @@ class RageSoundDriver_DSound_Software: public RageSoundDriver
 public:
 	RageSoundDriver_DSound_Software();
 	virtual ~RageSoundDriver_DSound_Software();
-	RString Init();
+	std::string Init();
 
 	int64_t GetPosition() const;
 	float GetPlayLatency() const;

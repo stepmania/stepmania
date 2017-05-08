@@ -19,18 +19,21 @@ set(SM_EXE_NAME "StepMania")
 # Some OS specific helpers.
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(LINUX TRUE)
+  set(SM_CPP_STANDARD "gnu++11")
 else()
   set(LINUX FALSE)
 endif()
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
   set(MACOSX TRUE)
+  set(SM_CPP_STANDARD "gnu++14")
 else()
   set(MACOSX FALSE)
 endif()
 
 if (CMAKE_SYSTEM_NAME MATCHES "BSD")
   set(BSD TRUE)
+  set(SM_CPP_STANDARD "gnu++11")
 else()
   set(BSD FALSE)
 endif()
@@ -48,6 +51,21 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Set up the linker flags for MSVC builds.
 configure_msvc_runtime()
 
+if(WITH_UNIT_TESTS)
+	# Determine which projects can be compiled in.
+	if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+		if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+			set(CAN_COMPILE_TESTS OFF)
+		else()
+			set(CAN_COMPILE_TESTS ON)
+		endif()
+	else()
+		set(CAN_COMPILE_TESTS ON)
+	endif()
+else()
+  set(CAN_COMPILE_TESTS OFF)
+endif()
+
 # Checks the standard include directories for c-style headers.
 # We may use C++ in this project, but the check works better with plain C headers.
 include(CheckIncludeFiles)
@@ -57,9 +75,7 @@ check_include_files(dlfcn.h HAVE_DLFCN_H)
 check_include_files(dirent.h HAVE_DIRENT_H)
 check_include_files(errno.h HAVE_ERRNO_H)
 check_include_files(fcntl.h HAVE_FCNTL_H)
-check_include_files(float.h HAVE_FLOAT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
-check_include_files(limits.h HAVE_LIMITS_H)
 check_include_files(math.h HAVE_MATH_H)
 check_include_files(memory.h HAVE_MEMORY_H)
 check_include_files(stdarg.h HAVE_STDARG_H)
@@ -90,30 +106,17 @@ include(CheckCXXSymbolExists)
 # Mostly Windows functions.
 check_function_exists(_mkdir HAVE__MKDIR)
 check_cxx_symbol_exists(_snprintf cstdio HAVE__SNPRINTF)
-check_cxx_symbol_exists(stricmp cstring HAVE_STRICMP)
-check_cxx_symbol_exists(_stricmp cstring HAVE__STRICMP)
 
 # Mostly non-Windows functions.
 check_function_exists(fcntl HAVE_FCNTL)
 check_function_exists(fork HAVE_FORK)
 check_function_exists(mkdir HAVE_MKDIR)
 check_cxx_symbol_exists(snprintf cstdio HAVE_SNPRINTF)
-check_cxx_symbol_exists(strcasecmp cstring HAVE_STRCASECMP)
 check_function_exists(waitpid HAVE_WAITPID)
 
 
 # Mostly universal symbols.
-check_cxx_symbol_exists(powf cmath HAVE_POWF)
-check_cxx_symbol_exists(sqrtf cmath HAVE_SQRTF)
-check_cxx_symbol_exists(sinf cmath HAVE_SINF)
-check_cxx_symbol_exists(tanf cmath HAVE_TANF)
-check_cxx_symbol_exists(cosf cmath HAVE_COSF)
-check_cxx_symbol_exists(acosf cmath HAVE_ACOSF)
-check_cxx_symbol_exists(truncf cmath HAVE_TRUNCF)
-check_cxx_symbol_exists(roundf cmath HAVE_ROUNDF)
-check_cxx_symbol_exists(lrintf cmath HAVE_LRINTF)
 check_cxx_symbol_exists(strtof cstdlib HAVE_STRTOF)
-check_symbol_exists(M_PI math.h HAVE_M_PI)
 check_symbol_exists(size_t stddef.h HAVE_SIZE_T_STDDEF)
 check_symbol_exists(size_t stdlib.h HAVE_SIZE_T_STDLIB)
 check_symbol_exists(size_t stdio.h HAVE_SIZE_T_STDIO)
@@ -125,7 +128,7 @@ if (MINGW)
   check_symbol_exists(PBM_SETMARQUEE commctrl.h HAVE_PBM_SETMARQUEE)
 endif()
 
-# Checks to make it easier to work with 32-bit/64-bit builds if required.
+# Checks to make it easier to work with fixed size types.
 include(CheckTypeSize)
 check_type_size(int16_t SIZEOF_INT16_T)
 check_type_size(uint16_t SIZEOF_UINT16_T)
@@ -218,6 +221,18 @@ if(WITH_OGG)
   endif()
 endif()
 
+if(WITH_SDL)
+
+    find_package(SDL2)
+    
+    if(NOT SDL2_FOUND)
+        message(FATAL_ERROR "SDL2 Library was not found. If you wish to compile without SDL2, set WITH_SDL to OFF when configuring.")
+    else()
+        set(HAS_SDL TRUE)
+    endif()
+
+endif()
+
 find_package(nasm)
 find_package(yasm)
 
@@ -268,6 +283,11 @@ if(WIN32)
     get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
   endif()
 elseif(MACOSX)
+  # TODO: Better way of determining if OGG is required.
+  # Also: Keep WITH_OGG checks together.
+  if (WITH_OGG)
+    include("${SM_CMAKE_DIR}/SetupOggVorbis.cmake")
+  endif()
 
   if (WITH_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
@@ -278,9 +298,8 @@ elseif(MACOSX)
   set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
   # When SDL2 is introduced, this may change.
-  set(CMAKE_OSX_ARCHITECTURES "i386")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.6.8")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.7.0")
 
   find_library(MAC_FRAME_ACCELERATE Accelerate ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   find_library(MAC_FRAME_APPKIT AppKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
@@ -346,11 +365,18 @@ elseif(LINUX)
 
   find_package(Dl)
 
-  find_package(Xrandr)
+  find_package(Xrandr REQUIRED)
   if (${XRANDR_FOUND})
     set(HAS_XRANDR TRUE)
   else()
-    set(HAX_XRANDR FALSE)
+    set(HAS_XRANDR FALSE)
+  endif()
+
+  find_package(Xinerama)
+  if (${XINERAMA_FOUND})
+    set(HAS_XINERAMA TRUE)
+  else()
+    set(HAS_XINERAMA FALSE)
   endif()
 
   find_package(PulseAudio)

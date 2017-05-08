@@ -7,26 +7,26 @@ class RageDisplay_Null: public RageDisplay
 {
 public:
 	RageDisplay_Null();
-	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
+	virtual std::string Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
 
-	virtual RString GetApiDescription() const { return "Null"; }
-	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
+	virtual std::string GetApiDescription() const { return "Null"; }
+	virtual void GetDisplaySpecs(DisplaySpecs &out) const;
 	const RagePixelFormatDesc *GetPixelFormatDesc(RagePixelFormat pf) const;
 
 	bool BeginFrame() { return true; }
 	void EndFrame();
-	VideoModeParams GetActualVideoModeParams() const { return m_Params; }
+	ActualVideoModeParams GetActualVideoModeParams() const { return m_Params; }
 	void SetBlendMode( BlendMode ) { }
 	bool SupportsTextureFormat( RagePixelFormat, bool /* realtime */ =false ) { return true; }
 	bool SupportsPerVertexMatrixScale() { return false; }
-	unsigned CreateTexture( 
-		RagePixelFormat, 
+	unsigned CreateTexture(
+		RagePixelFormat,
 		RageSurface* /* img */,
 		bool /* bGenerateMipMaps */ ) { return 1; }
-	void UpdateTexture( 
-		unsigned /* iTexHandle */, 
+	void UpdateTexture(
+		unsigned /* iTexHandle */,
 		RageSurface* /* img */,
-		int /* xoffset */, int /* yoffset */, int /* width */, int /* height */ 
+		int /* xoffset */, int /* yoffset */, int /* width */, int /* height */
 		) { }
 	void DeleteTexture( unsigned /* iTexHandle */ ) { }
 	void ClearAllTextures() { }
@@ -44,21 +44,21 @@ public:
 	void ClearZBuffer() { }
 	void SetCullMode( CullMode ) { }
 	void SetAlphaTest( bool ) { }
-	void SetMaterial( 
-		const RageColor & /* unreferenced: emissive */,
-		const RageColor & /* unreferenced: ambient */,
-		const RageColor & /* unreferenced: diffuse */,
-		const RageColor & /* unreferenced: specular */,
+	void SetMaterial(
+		const Rage::Color & /* unreferenced: emissive */,
+		const Rage::Color & /* unreferenced: ambient */,
+		const Rage::Color & /* unreferenced: diffuse */,
+		const Rage::Color & /* unreferenced: specular */,
 		float /* unreferenced: shininess */
 		) { }
 	void SetLighting( bool ) { }
 	void SetLightOff( int /* index */ ) { }
 	void SetLightDirectional( 
 		int /* index */, 
-		const RageColor & /* unreferenced: ambient */, 
-		const RageColor & /* unreferenced: diffuse */, 
-		const RageColor & /* unreferenced: specular */, 
-		const RageVector3 & /* unreferenced: dir */ ) { }
+		const Rage::Color & /* unreferenced: ambient */, 
+		const Rage::Color & /* unreferenced: diffuse */, 
+		const Rage::Color & /* unreferenced: specular */, 
+		const Rage::Vector3 & /* unreferenced: dir */ ) { }
 
 	void SetSphereEnvironmentMapping( TextureUnit /* tu */, bool /* b */ ) { }
 	void SetCelShaded( int /* stage */ ) { }
@@ -67,19 +67,19 @@ public:
 	void DeleteCompiledGeometry( RageCompiledGeometry* );
 
 protected:
-	void DrawQuadsInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawQuadStripInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawFanInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawStripInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawTrianglesInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int /* iMeshIndex */ ) { }
-	void DrawLineStripInternal( const RageSpriteVertex v[], int /* iNumVerts */, float /* LineWidth */ ) { }
-	void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int /* iNumVerts */ ) { }
+	void DrawQuadsInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawQuadStripInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawFanInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawStripInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawTrianglesInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawCompiledGeometryInternal( const RageCompiledGeometry *, int /* iMeshIndex */ ) { }
+	void DrawLineStripInternal( const Rage::SpriteVertex [], int /* iNumVerts */, float /* LineWidth */ ) { }
+	void DrawSymmetricQuadStripInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
 
 	VideoModeParams m_Params;
-	RString TryVideoMode( const VideoModeParams &p, bool & /* bNewDeviceOut */ ) { m_Params = p; return RString(); }
+	std::string TryVideoMode( const VideoModeParams &p, bool & /* bNewDeviceOut */ ) { m_Params = p; return std::string(); }
 	RageSurface* CreateScreenshot();
-	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
+	Rage::Matrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 	bool SupportsSurfaceFormat( RagePixelFormat ) { return true; }
 };
 

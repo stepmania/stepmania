@@ -23,17 +23,15 @@ important function overrides and the "Var" alias (for lua.GetThreadVariable).
 
 "01 alias.lua" contains various aliases for commands.
 
-"01 IniFile.lua" is an .ini file parser, which is used in vyhd's ThemePrefs.
+"01 IniFile.lua" is an .ini file parser.
 ________________________________________________________________________________
 02 - Defaults
-The "02" scripts are pretty much the same scripts you'd find in StepMania 4's
-default theme, with some additions.
+The "02" scripts are pretty much scripts, with some additions.
 ________________________________________________________________________________
 03 - Extensions
-Scripts that extend normal (StepMania 4 default theme) functionality belong
-in the fourth ring. A number of these scripts come from KKI Labs (EnvUtils2,
-CustomSpeedMods, UserPreferences2), while others are from other themes (HSV)
-or written for sm-ssc (DateTime, Gameplay).
+Scripts that extend normal functionality belong in the fourth ring. A number
+of these scripts come from KKI Labs (???), while others are from other themes
+(???) or written for sm-ssc (Gameplay).
 ________________________________________________________________________________
 04 - ?
 Scoring is the only file in the fifth ring.

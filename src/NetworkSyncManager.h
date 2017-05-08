@@ -61,7 +61,7 @@ struct EndOfGame_PlayerData
 	int grade;
 	Difficulty difficulty;
 	int tapScores[NETNUMTAPSCORES];	//This will be a const soon enough
-	RString playerOptions;
+	std::string playerOptions;
 };
 
 enum NSScoreBoardColumn
@@ -77,8 +77,8 @@ enum NSScoreBoardColumn
 
 struct NetServerInfo
 {
-	RString Name;
-	RString Address;
+	std::string Name;
+	std::string Address;
 };
 
 class EzSockets;
@@ -96,37 +96,37 @@ public:
 	uint8_t Read1();
 	uint16_t Read2();
 	uint32_t Read4();
-	RString ReadNT();
+	std::string ReadNT();
 
 	void Write1( uint8_t Data );
 	void Write2( uint16_t Data );
 	void Write4( uint32_t Data );
-	void WriteNT( const RString& Data );
+	void WriteNT( const std::string& Data );
 
 	void ClearPacket();
 };
 /** @brief Uses ezsockets for primitive song syncing and score reporting. */
-class NetworkSyncManager 
+class NetworkSyncManager
 {
 public:
-	NetworkSyncManager( LoadingWindow *ld = NULL );
+	NetworkSyncManager( LoadingWindow *ld = nullptr );
 	~NetworkSyncManager();
 
     // If "useSMserver" then send score to server
-	void ReportScore( int playerID, int step, int score, int combo, float offset );	
+	void ReportScore( int playerID, int step, int score, int combo, float offset );
 	void ReportSongOver();
 	void ReportStyle(); // Report style, players, and names
 	void ReportNSSOnOff( int i );	// Report song selection screen on/off
 	void StartRequest( short position );	// Request a start; Block until granted.
-	RString GetServerName();
+	std::string GetServerName();
 
 	// SMOnline stuff
 	// FIXME: This should NOT be public. PERIOD.
 	void SendSMOnline( );
 
-	bool Connect( const RString& addy, unsigned short port );
+	bool Connect( const std::string& addy, unsigned short port );
 
-	void PostStartUp( const RString& ServerIP );
+	void PostStartUp( const std::string& ServerIP );
 
 	void CloseConnection();
 
@@ -140,33 +140,33 @@ public:
 	bool isSMOnline;
 	bool isSMOLoggedIn[NUM_PLAYERS];
 
-	vector<int> m_PlayerStatus;
+	std::vector<int> m_PlayerStatus;
 	int m_ActivePlayers;
-	vector<int> m_ActivePlayer;
-	vector<RString> m_PlayerNames;
+	std::vector<int> m_ActivePlayer;
+	std::vector<std::string> m_PlayerNames;
 
 	// Used for ScreenNetEvaluation
-	vector<EndOfGame_PlayerData> m_EvalPlayerData;
+	std::vector<EndOfGame_PlayerData> m_EvalPlayerData;
 
-	// Used together: 
+	// Used together:
 	bool ChangedScoreboard(int Column);	// Returns true if scoreboard changed since function was last called.
-	RString m_Scoreboard[NUM_NSScoreBoardColumn];
+	std::string m_Scoreboard[NUM_NSScoreBoardColumn];
 
 	// Used for chatting
-	void SendChat(const RString& message);
-	RString m_WaitingChat;
+	void SendChat(const std::string& message);
+	std::string m_WaitingChat;
 
 	// Used for options
 	void ReportPlayerOptions();
 
 	// Used for song checking/changing
-	RString m_sMainTitle;
-	RString m_sArtist;
-	RString m_sSubTitle;
+	std::string m_sMainTitle;
+	std::string m_sArtist;
+	std::string m_sSubTitle;
 	int m_iSelectMode;
 	void SelectUserSong();
 
-	RString m_sChatText;
+	std::string m_sChatText;
 
 	// FIXME: This should NOT be public. PERIOD. It probably shouldn't be a member at all.
 	PacketFunctions	m_SMOnlinePacket;
@@ -175,9 +175,9 @@ public:
 
 	int GetSMOnlineSalt();
 
-	RString MD5Hex( const RString &sInput );
+	std::string MD5Hex( const std::string &sInput );
 
-	void GetListOfLANServers( vector<NetServerInfo>& AllServers );
+	void GetListOfLANServers( std::vector<NetServerInfo>& AllServers );
 
 	// Aldo: Please move this method to a new class, I didn't want to create new files because I don't know how to properly update the files for each platform.
 	// I preferred to misplace code rather than cause unneeded headaches to non-windows users, although it would be nice to have in the wiki which files to
@@ -194,18 +194,18 @@ private:
 	int m_step;
 	int m_score;
 	int m_combo;
-    
+
 	int m_startupStatus;	// Used to see if attempt was successful or not.
 	int m_iSalt;
 
 	bool m_scoreboardchange[NUM_NSScoreBoardColumn];
 
-	RString m_ServerName;
- 
+	std::string m_ServerName;
+
 	EzSockets *NetPlayerClient;
 	EzSockets *BroadcastReception;
 
-	vector<NetServerInfo> m_vAllLANServers;
+	std::vector<NetServerInfo> m_vAllLANServers;
 
 	int m_ServerVersion; // ServerVersion
 
@@ -214,13 +214,13 @@ private:
 };
 
 extern NetworkSyncManager *NSMAN;
- 
+
 #endif
- 
+
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -230,7 +230,7 @@ extern NetworkSyncManager *NSMAN;
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

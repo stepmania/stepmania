@@ -8,8 +8,6 @@
 #include "Style.h"
 #include "SongUtil.h"
 
-static const int NUM_SCORE_DIGITS = 9;
-
 #define USERSBG_WIDTH		THEME->GetMetricF("ScreenNetEvaluation","UsersBGWidth")
 #define USERSBG_HEIGHT		THEME->GetMetricF("ScreenNetEvaluation","UsersBGHeight")
 #define USERSBG_COMMAND		THEME->GetMetricA("ScreenNetEvaluation","UsersBGCommand")
@@ -45,8 +43,8 @@ void ScreenNetEvaluation::Init()
 	m_rectUsersBG.SetName( "UsersBG" );
 
 	m_rectUsersBG.SetXY(
-		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dX",m_iShowSide)),
-		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dY",m_iShowSide)) );
+		THEME->GetMetricF("ScreenNetEvaluation",fmt::sprintf("UsersBG%dX",m_iShowSide)),
+		THEME->GetMetricF("ScreenNetEvaluation",fmt::sprintf("UsersBG%dY",m_iShowSide)) );
 	LOAD_ALL_COMMANDS_AND_ON_COMMAND( m_rectUsersBG );
 
 	this->AddChild( &m_rectUsersBG );
@@ -64,11 +62,12 @@ void ScreenNetEvaluation::RedoUserTexts()
 	if ( m_iActivePlayers == (int)m_textUsers.size() )
 		return;
 
-	for( unsigned int i=0; i < m_textUsers.size(); ++i )
-		this->RemoveChild( &m_textUsers[i] );
-
-	float cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",m_iShowSide));
-	float cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",m_iShowSide));
+	for (auto &user: m_textUsers)
+	{
+		this->RemoveChild( &user );
+	}
+	float cx = THEME->GetMetricF("ScreenNetEvaluation",fmt::sprintf("User%dX",m_iShowSide));
+	float cy = THEME->GetMetricF("ScreenNetEvaluation",fmt::sprintf("User%dY",m_iShowSide));
 
 	m_iCurrentPlayer = 0;
 	m_textUsers.clear();
@@ -77,7 +76,7 @@ void ScreenNetEvaluation::RedoUserTexts()
 	for( int i=0; i<m_iActivePlayers; ++i )
 	{
 		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"names") );
-		m_textUsers[i].SetName( ssprintf("User") );
+		m_textUsers[i].SetName( fmt::sprintf("User") );
 		m_textUsers[i].SetShadowLength( 1 );
 		m_textUsers[i].SetXY( cx, cy );
 
@@ -188,7 +187,7 @@ void ScreenNetEvaluation::UpdateStats()
 	if( THEME->GetMetricB(m_sName,"ShowGradeArea") )
 		m_Grades[m_pActivePlayer].SetGrade( (Grade)NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
 	if( THEME->GetMetricB(m_sName,"ShowScoreArea") )
-		m_textScore[m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score );
+		m_textScore[m_pActivePlayer].SetTargetNumber( static_cast<float>(NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score) );
 
 	//Values greater than 6 will cause a crash
 	if( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
@@ -203,7 +202,7 @@ void ScreenNetEvaluation::UpdateStats()
 		// should not be shown.
 		if( !m_textJudgmentLineNumber[j][m_pActivePlayer].GetName().empty() )
 		{
-			m_textJudgmentLineNumber[j][m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] );
+			m_textJudgmentLineNumber[j][m_pActivePlayer].SetTargetNumber( static_cast<float>(NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j]) );
 		}
 	}
 
@@ -211,7 +210,7 @@ void ScreenNetEvaluation::UpdateStats()
 
 	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
 	Difficulty dc = NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty;
-	Steps *pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, st, dc );
+	Steps *pSteps = SongUtil::GetOneSteps( GAMESTATE->get_curr_song(), st, dc );
 
 	// broadcast a message so themes know that the active player has changed. -aj
 	Message msg("UpdateNetEvalStats");

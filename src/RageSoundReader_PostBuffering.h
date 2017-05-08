@@ -11,7 +11,7 @@ public:
 	RageSoundReader_PostBuffering( RageSoundReader *pSource );
 	RageSoundReader_PostBuffering *Copy() const { return new RageSoundReader_PostBuffering(*this); }
 	virtual int Read( float *pBuf, int iFrames );
-	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual bool SetProperty( const std::string &sProperty, float fValue );
 
 private:
 	float m_fVolume;

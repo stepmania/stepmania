@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ArchHooks.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageFileManager.h"
@@ -13,6 +14,7 @@
 #pragma comment(lib, "winmm.lib")
 #endif
 
+using std::vector;
 
 static bool g_bTimerInitialized;
 
@@ -40,26 +42,24 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	return ret;
 }
 
-static RString GetMountDir( const RString &sDirOfExecutable )
+static std::string GetMountDir( const std::string &sDirOfExecutable )
 {
 	/* All Windows data goes in the directory one level above the executable. */
-	CHECKPOINT_M( ssprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
-	vector<RString> asParts;
-	split( sDirOfExecutable, "/", asParts );
-	CHECKPOINT_M( ssprintf( "... %i asParts", asParts.size()) );
-	ASSERT_M( asParts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
-	RString sDir = join( "/", asParts.begin(), asParts.end()-1 );
-	return sDir;
+	CHECKPOINT_M( fmt::sprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
+	auto asParts = Rage::split(sDirOfExecutable, "/");
+	CHECKPOINT_M( fmt::sprintf( "... %i asParts", asParts.size()) );
+	ASSERT_M( asParts.size() > 1, fmt::sprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
+	return Rage::join( "/", asParts.begin(), asParts.end()-1 );
 }
 
-void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( const std::string &sDirOfExecutable )
 {
-	RString sDir = GetMountDir( sDirOfExecutable );
+	std::string sDir = GetMountDir( sDirOfExecutable );
 	
 	FILEMAN->Mount( "dir", sDir, "/" );
 }
 
-void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+void ArchHooks::MountUserFilesystems( const std::string &sDirOfExecutable )
 {
 	/*
 	 * Look, I know what you're thinking: "Hey, let's put all this stuff into
@@ -68,30 +68,30 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	 * happen. Just don't do it, seriously. Keep them in one place.
 	 * - Colby
 	 */
-	RString sAppDataDir = SpecialDirs::GetAppDataDir() + PRODUCT_ID;
-	//RString sCommonAppDataDir = SpecialDirs::GetCommonAppDataDir() + PRODUCT_ID;
-	//RString sLocalAppDataDir = SpecialDirs::GetLocalAppDataDir() + PRODUCT_ID;
-	//RString sPicturesDir = SpecialDirs::GetPicturesDir() + PRODUCT_ID;
-
-	FILEMAN->Mount( "dir", sAppDataDir + "/Announcers", "/Announcers" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/BGAnimations", "/BGAnimations" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/BackgroundEffects", "/BackgroundEffects" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/BackgroundTransitions", "/BackgroundTransitions" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/CDTitles", "/CDTitles" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Characters", "/Characters" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Courses", "/Courses" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/NoteSkins", "/NoteSkins" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Screenshots", "/Screenshots" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Songs", "/Songs" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/RandomMovies", "/RandomMovies" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Themes", "/Themes" );
+	// After writing code to deal with OS X's special cases for scattering the
+	// different folders all over, I have to agree with Colby.  For Windows and
+	// Linux users, we can just tell them one folder location that has all the
+	// stuff in it.  But on OS X, the wiki has to list 5 different folders for
+	// people to find stuff in.
+	// -Kyz
+	std::string user_data_path = SpecialDirs::GetAppDataDir() + PRODUCT_ID;
+	//std::string sCommonAppDataDir = SpecialDirs::GetCommonAppDataDir() + PRODUCT_ID;
+	//std::string sLocalAppDataDir = SpecialDirs::GetLocalAppDataDir() + PRODUCT_ID;
+	//std::string sPicturesDir = SpecialDirs::GetPicturesDir() + PRODUCT_ID;
+	for(auto&& fs_dir : SpecialFiles::USER_CONTENT_DIRS)
+	{
+		FILEMAN->Mount("dir", user_data_path + fs_dir, fs_dir);
+	}
+	for(auto&& fs_dir : SpecialFiles::USER_DATA_DIRS)
+	{
+		FILEMAN->Mount("dir", user_data_path + fs_dir, fs_dir);
+	}
+	// The User Packages dir was the only one where the mount point didn't
+	// match the folder name when I changed this to use a loop. -Kyz
+	FILEMAN->Mount( "dir", user_data_path + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
 }
 
-static RString LangIdToString( LANGID l )
+static std::string LangIdToString( LANGID l )
 {
 	switch( PRIMARYLANGID(l) )
 	{
@@ -179,7 +179,7 @@ static LANGID GetLanguageID()
 	return GetUserDefaultLangID();
 }
 
-RString ArchHooks::GetPreferredLanguage()
+std::string ArchHooks::GetPreferredLanguage()
 {
 	return LangIdToString( GetLanguageID() );
 }

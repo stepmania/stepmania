@@ -1,6 +1,5 @@
 #include "global.h"
 #include "PrefsManager.h"
-#include "Foreach.h"
 #include "IniFile.h"
 #include "LuaManager.h"
 #include "Preference.h"
@@ -20,7 +19,7 @@
 //STATIC_INI_PATH	= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
 //TYPE_TXT_FILE	= "Data/Type.txt";
 
-PrefsManager*	PREFSMAN = NULL;	// global and accessible from anywhere in our program
+PrefsManager*	PREFSMAN = nullptr;	// global and accessible from anywhere in our program
 
 static const char *MusicWheelUsesSectionsNames[] = {
 	"Never",
@@ -155,7 +154,7 @@ void ValidateDisplayAspectRatio( float &val )
 
 void ValidateSongsPerPlay( int &val )
 {
-	CLAMP(val,0,MAX_SONGS_PER_PLAY);
+	val = Rage::clamp(val,0,MAX_SONGS_PER_PLAY);
 }
 
 PrefsManager::PrefsManager() :
@@ -166,6 +165,7 @@ PrefsManager::PrefsManager() :
 	m_sDefaultModifiers		( "DefaultModifiers",		"" ),
 
 	m_bWindowed			( "Windowed",			true ),
+	m_sDisplayId			( "DisplayId", "" ),
 	m_iDisplayWidth			( "DisplayWidth",		854 ),
 	m_iDisplayHeight		( "DisplayHeight",		480 ),
 	m_fDisplayAspectRatio		( "DisplayAspectRatio",		16/9.f, ValidateDisplayAspectRatio ),
@@ -178,6 +178,7 @@ PrefsManager::PrefsManager() :
 	m_iMaxTextureResolution		( "MaxTextureResolution",	2048 ),
 	m_iRefreshRate			( "RefreshRate",		REFRESH_DEFAULT ),
 	m_bAllowMultitexture		( "AllowMultitexture",		true ),
+	m_bFullscreenIsBorderlessWindow( "FullscreenIsBorderlessWindow", false ),
 	m_bShowStats			( "ShowStats",			TRUE_IF_DEBUG),
 	m_bShowBanners			( "ShowBanners",		true ),
 	m_bShowMouseCursor		( "ShowMouseCursor",		true ),
@@ -272,6 +273,7 @@ PrefsManager::PrefsManager() :
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),
 
 	m_bSignProfileData		( "SignProfileData",			false ),
+	m_WarnOnNoProfile("WarnOnNoProfile", true),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),
@@ -286,18 +288,23 @@ PrefsManager::PrefsManager() :
 	m_iSoundDevice			( "SoundDevice",			"" ),
 	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		0 ),
 	m_sLightsStepsDifficulty	( "LightsStepsDifficulty",		"medium" ),
-	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ), 
+	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ),
 	m_bThreadedInput		( "ThreadedInput",			true ),
 	m_bThreadedMovieDecode		( "ThreadedMovieDecode",		true ),
 	m_sTestInitialScreen		( "TestInitialScreen",			"" ),
-	m_bDebugLights			( "DebugLights",			false ),
-	m_bMonkeyInput			( "MonkeyInput",			false ),
+	m_bDebugLights(false),
 	m_sMachineName			( "MachineName",			"" ),
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
 	m_MuteActions			( "MuteActions",			false ),
 	m_bAllowSongDeletion		( "AllowSongDeletion",			false ),
 
 	m_bQuirksMode			( "QuirksMode",		false ),
+
+	m_custom_songs_enable("CustomSongsEnable", false),
+	m_custom_songs_max_count("CustomSongsMaxCount", 1000), // No limit. -- 2 Unlimited
+	m_custom_songs_load_timeout("CustomSongsLoadTimeout", 5.f),
+	m_custom_songs_max_seconds("CustomSongsMaxSeconds", 120.f),
+	m_custom_songs_max_megabytes("CustomSongsMaxMegabytes", 5.f),
 
 	/* Debug: */
 	m_bLogToDisk			( "LogToDisk",		true ),
@@ -356,7 +363,7 @@ PrefsManager::~PrefsManager()
 	LUA->UnsetGlobal( "PREFSMAN" );
 }
 
-void PrefsManager::SetCurrentGame( const RString &sGame )
+void PrefsManager::SetCurrentGame( const std::string &sGame )
 {
 	if( m_sCurrentGame.Get() == sGame )
 		return;	// redundant
@@ -374,10 +381,10 @@ void PrefsManager::StoreGamePrefs()
 	ASSERT( !m_sCurrentGame.Get().empty() );
 
 	// save off old values
-	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame];
-	gp.m_sAnnouncer = m_sAnnouncer;
-	gp.m_sTheme = m_sTheme;
-	gp.m_sDefaultModifiers = m_sDefaultModifiers;
+	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame.ToString()];
+	gp.m_sAnnouncer = m_sAnnouncer.Get();
+	gp.m_sTheme = m_sTheme.Get();
+	gp.m_sDefaultModifiers = m_sDefaultModifiers.Get();
 }
 
 void PrefsManager::RestoreGamePrefs()
@@ -386,7 +393,7 @@ void PrefsManager::RestoreGamePrefs()
 
 	// load prefs
 	GamePrefs gp;
-	map<RString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
+	auto iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
 	if( iter != m_mapGameNameToGamePrefs.end() )
 		gp = iter->second;
 
@@ -423,7 +430,7 @@ void PrefsManager::ResetToFactoryDefaults()
 	SavePrefsToDisk();
 }
 
-void PrefsManager::ReadPrefsFromFile( const RString &sIni, const RString &sSection, bool bIsStatic )
+void PrefsManager::ReadPrefsFromFile( const std::string &sIni, const std::string &sSection, bool bIsStatic )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
@@ -432,15 +439,15 @@ void PrefsManager::ReadPrefsFromFile( const RString &sIni, const RString &sSecti
 	ReadPrefsFromIni( ini, sSection, bIsStatic );
 }
 
-static const RString GAME_SECTION_PREFIX = "Game-";
+static const std::string GAME_SECTION_PREFIX = "Game-";
 
-void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection, bool bIsStatic )
+void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const std::string &sSection, bool bIsStatic )
 {
 	// Apply our fallback recursively (if any) before applying ourself.
 	static int s_iDepth = 0;
 	s_iDepth++;
 	ASSERT( s_iDepth < 100 );
-	RString sFallback;
+	std::string sFallback;
 	if( ini.GetValue(sSection,"Fallback",sFallback) )
 	{
 		ReadPrefsFromIni( ini, sFallback, bIsStatic );
@@ -449,7 +456,7 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection
 
 	/*
 	IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
-	if( pPref == NULL )
+	if( pPref == nullptr )
 	{
 		LOG->Warn( "Unknown preference in [%s]: %s", sClassName.c_str(), sName->c_str() );
 		continue;
@@ -462,19 +469,21 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection
 		IPreference::ReadAllPrefsFromNode( pChild, bIsStatic );
 }
 
-void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
+void PrefsManager::ReadGamePrefsFromIni( const std::string &sIni )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
-		return;
-
-	FOREACH_CONST_Child( &ini, section )
 	{
-		RString section_name= section->GetName();
-		if( !BeginsWith(section_name, GAME_SECTION_PREFIX) )
+		return;
+	}
+	for (auto const *section: ini)
+	{
+		std::string section_name= section->GetName();
+		if( !Rage::starts_with(section_name, GAME_SECTION_PREFIX) )
+		{
 			continue;
-
-		RString sGame = section_name.Right( section_name.length() - GAME_SECTION_PREFIX.length() );
+		}
+		std::string sGame = Rage::tail(section_name, section_name.length() - GAME_SECTION_PREFIX.length() );
 		GamePrefs &gp = m_mapGameNameToGamePrefs[ sGame ];
 
 		// todo: read more prefs here? -aj
@@ -484,7 +493,7 @@ void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
 	}
 }
 
-void PrefsManager::ReadDefaultsFromFile( const RString &sIni, const RString &sSection )
+void PrefsManager::ReadDefaultsFromFile( const std::string &sIni, const std::string &sSection )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
@@ -493,11 +502,11 @@ void PrefsManager::ReadDefaultsFromFile( const RString &sIni, const RString &sSe
 	ReadDefaultsFromIni( ini, sSection );
 }
 
-void PrefsManager::ReadDefaultsFromIni( const IniFile &ini, const RString &sSection )
+void PrefsManager::ReadDefaultsFromIni( const IniFile &ini, const std::string &sSection )
 {
 	// Apply our fallback recursively (if any) before applying ourself.
 	// TODO: detect circular?
-	RString sFallback;
+	std::string sFallback;
 	if( ini.GetValue(sSection,"Fallback",sFallback) )
 		ReadDefaultsFromIni( ini, sFallback );
 
@@ -517,25 +526,25 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 		StoreGamePrefs();
 
 	XNode* pNode = ini.GetChild( "Options" );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		pNode = ini.AppendChild( "Options" );
 	IPreference::SavePrefsToNode( pNode );
 
-	FOREACHM_CONST( RString, GamePrefs, m_mapGameNameToGamePrefs, iter )
+	for (auto const &iter: m_mapGameNameToGamePrefs)
 	{
-		RString sSection = "Game-" + RString( iter->first );
+		std::string sSection = "Game-" + std::string( iter.first );
 
 		// todo: write more values here? -aj
-		ini.SetValue( sSection, "Announcer",		iter->second.m_sAnnouncer );
-		ini.SetValue( sSection, "Theme",		iter->second.m_sTheme );
-		ini.SetValue( sSection, "DefaultModifiers",	iter->second.m_sDefaultModifiers );
+		ini.SetValue( sSection, "Announcer",		iter.second.m_sAnnouncer );
+		ini.SetValue( sSection, "Theme",		iter.second.m_sTheme );
+		ini.SetValue( sSection, "DefaultModifiers",	iter.second.m_sDefaultModifiers );
 	}
 }
 
 
-RString PrefsManager::GetPreferencesSection() const
+std::string PrefsManager::GetPreferencesSection() const
 {
-	RString sSection = "Options";
+	std::string sSection = "Options";
 
 	// OK if this fails
 	GetFileContents( SpecialFiles::TYPE_TXT_FILE, sSection, true );
@@ -550,15 +559,15 @@ RString PrefsManager::GetPreferencesSection() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PrefsManager. */ 
+/** @brief Allow Lua to have access to the PrefsManager. */
 class LunaPrefsManager: public Luna<PrefsManager>
 {
 public:
-	static int GetPreference( T* p, lua_State *L )
+	static int GetPreference(T*, lua_State *L)
 	{
-		RString sName = SArg(1);
+		std::string sName = SArg(1);
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "GetPreference: unknown preference \"%s\"", sName.c_str() );
 			lua_pushnil( L );
@@ -568,12 +577,12 @@ public:
 		pPref->PushValue( L );
 		return 1;
 	}
-	static int SetPreference( T* p, lua_State *L )
+	static int SetPreference(T* p, lua_State *L)
 	{
-		RString sName = SArg(1);
+		std::string sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreference: unknown preference \"%s\"", sName.c_str() );
 			COMMON_RETURN_SELF;
@@ -583,12 +592,12 @@ public:
 		pPref->SetFromStack( L );
 		COMMON_RETURN_SELF;
 	}
-	static int SetPreferenceToDefault( T* p, lua_State *L )
+	static int SetPreferenceToDefault(T* p, lua_State *L)
 	{
-		RString sName = SArg(1);
+		std::string sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
 			COMMON_RETURN_SELF;
@@ -598,12 +607,12 @@ public:
 		LOG->Trace( "Restored preference \"%s\" to default \"%s\"", sName.c_str(), pPref->ToString().c_str() );
 		COMMON_RETURN_SELF;
 	}
-	static int PreferenceExists( T* p, lua_State *L )
+	static int PreferenceExists(T*, lua_State *L)
 	{
-		RString sName = SArg(1);
+		std::string sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			lua_pushboolean( L, false );
 			return 1;
@@ -611,9 +620,9 @@ public:
 		lua_pushboolean( L, true );
 		return 1;
 	}
-	
+
 	static int SavePreferences( T* p, lua_State *L ) { p->SavePrefsToDisk(); COMMON_RETURN_SELF; }
-	
+
 	LunaPrefsManager()
 	{
 		ADD_METHOD( GetPreference );
@@ -630,7 +639,7 @@ LUA_REGISTER_CLASS( PrefsManager )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -640,7 +649,7 @@ LUA_REGISTER_CLASS( PrefsManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

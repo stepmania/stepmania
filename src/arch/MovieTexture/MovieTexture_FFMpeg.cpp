@@ -4,6 +4,7 @@
 #include "RageDisplay.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageFile.h"
 #include "RageSurface.h"
 
@@ -32,7 +33,7 @@ static void FixLilEndian()
 				case 24: m = Swap24(m); break;
 				case 32: m = Swap32(m); break;
 				default:
-					 FAIL_M(ssprintf("Unsupported BPP value: %i", pf.bpp));
+					 FAIL_M(fmt::sprintf("Unsupported BPP value: %i", pf.bpp));
 			}
 			pf.masks[mask] = m;
 		}
@@ -95,7 +96,7 @@ RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int 
 	iAVTexfmt = pfd->pf;
 	fmtout = pfd->YUV;
 
-	LOG->Trace( "Texture pixel format: %i %i (%ibpp, %08x %08x %08x %08x)", iAVTexfmt, fmtout,
+	LOG->Trace( "Texture pixel format: %i %i (%ibpp, %08x %08x %08x %08x)", iAVTexfmt, static_cast<int>(fmtout),
 		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 
 	if( pfd->YUV == PixelFormatYCbCr_YUYV422 )
@@ -109,8 +110,8 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 {
 	FixLilEndian();
 
-	m_fctx = NULL;
-	m_pStream = NULL;
+	m_fctx = nullptr;
+	m_pStream = nullptr;
 	m_iCurrentPacketOffset = -1;
 	m_Frame = avcodec::av_frame_alloc();
 
@@ -127,16 +128,16 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 	if (m_swsctx)
 	{
 		avcodec::sws_freeContext(m_swsctx);
-		m_swsctx = NULL;
+		m_swsctx = nullptr;
 	}
-    if (m_avioContext != NULL )
+    if (m_avioContext != nullptr )
     {
         RageFile *file = (RageFile *)m_avioContext->opaque;
         file->Close();
         delete file;
         avcodec::av_free(m_avioContext);
     }
-    if ( m_buffer != NULL )
+    if ( m_buffer != nullptr )
     {
         avcodec::av_free(m_buffer);
     }
@@ -150,9 +151,9 @@ void MovieDecoder_FFMpeg::Init()
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
 	m_fLastFrame = 0;
-	m_swsctx = NULL;
-	m_avioContext = NULL;
-	m_buffer = NULL;
+	m_swsctx = nullptr;
+	m_avioContext = nullptr;
+	m_buffer = nullptr;
 
 	if( m_iCurrentPacketOffset != -1 )
 	{
@@ -270,7 +271,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 		int iGotFrame;
 		/* Hack: we need to send size = 0 to flush frames at the end, but we have
 		 * to give it a buffer to read from since it tries to read anyway. */
-		m_Packet.data = m_Packet.size ? m_Packet.data : NULL;
+		m_Packet.data = m_Packet.size ? m_Packet.data : nullptr;
 		int len = avcodec::avcodec_decode_video2(
 				m_pStream->codec, 
 				m_Frame, &iGotFrame,
@@ -341,13 +342,13 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 	 * XXX 2: The problem of doing this in Open() is that m_AVTexfmt is not
 	 * already initialized with its correct value.
 	 */
-	if( m_swsctx == NULL )
+	if( m_swsctx == nullptr )
 	{
 		m_swsctx = avcodec::sws_getCachedContext( m_swsctx,
 				GetWidth(), GetHeight(), m_pStream->codec->pix_fmt,
 				GetWidth(), GetHeight(), m_AVTexfmt,
-				sws_flags, NULL, NULL, NULL );
-		if( m_swsctx == NULL )
+				sws_flags, nullptr, nullptr, nullptr );
+		if( m_swsctx == nullptr )
 		{
 			LOG->Warn("Cannot initialize sws conversion context for (%d,%d) %d->%d", GetWidth(), GetHeight(), m_pStream->codec->pix_fmt, m_AVTexfmt);
 			return;
@@ -359,19 +360,17 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 			pict.data, pict.linesize );
 }
 
-static RString averr_ssprintf( int err, const char *fmt, ... )
+template<typename... Args>
+static std::string averr_format( int err, std::string const &msg, Args const & ...args)
 {
 	ASSERT( err < 0 );
-
-	va_list     va;
-	va_start(va, fmt);
-	RString s = vssprintf( fmt, va );
-	va_end(va); 
+	
+	std::string s = fmt::sprintf(msg, args...);
 
 	size_t errbuf_size = 512;
 	char* errbuf = new char[errbuf_size];
 	avcodec::av_strerror(err, errbuf, errbuf_size);
-	RString Error = ssprintf("%i: %s", err, errbuf);
+	std::string Error = fmt::sprintf("%i: %s", err, errbuf);
 	delete[] errbuf;
 
 	return s + " (" + Error + ")";
@@ -409,7 +408,7 @@ static int64_t AVIORageFile_Seek( void *opaque, int64_t offset, int whence )
 	return f->Seek( (int) offset, whence );
 }
 
-RString MovieDecoder_FFMpeg::Open( RString sFile )
+std::string MovieDecoder_FFMpeg::Open( std::string sFile )
 {
 	MovieTexture_FFMpeg::RegisterProtocols();
     
@@ -421,54 +420,61 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 
 	if( !f->Open(sFile, RageFile::READ) )
 	{
-		RString errorMessage = f->GetError();
-		RString error = ssprintf("MovieDecoder_FFMpeg: Error opening \"%s\": %s", sFile.c_str(), errorMessage.c_str() );
+		std::string errorMessage = f->GetError();
+		std::string error = fmt::sprintf("MovieDecoder_FFMpeg: Error opening \"%s\": %s", sFile.c_str(), errorMessage.c_str() );
 		delete f;
 		return error;
 	}
 
 	m_buffer = (unsigned char *)avcodec::av_malloc(STEPMANIA_FFMPEG_BUFFER_SIZE);
-	m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, NULL, AVIORageFile_Seek);
+	m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, nullptr, AVIORageFile_Seek);
 	m_fctx->pb = m_avioContext;
-	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), NULL, NULL );
+	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), nullptr, nullptr );
 	if( ret < 0 )
-		return RString( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
+		return std::string( averr_format(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
-	ret = avcodec::avformat_find_stream_info( m_fctx, NULL );
+	ret = avcodec::avformat_find_stream_info( m_fctx, nullptr );
 	if( ret < 0 )
-		return RString( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
+		return std::string( averr_format(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
-	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0 );
+	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0 );
 	if ( stream_idx < 0 ||
 		static_cast<unsigned int>(stream_idx) >= m_fctx->nb_streams ||
-		m_fctx->streams[stream_idx] == NULL )
+		m_fctx->streams[stream_idx] == nullptr )
 		return "Couldn't find any video streams";
 	m_pStream = m_fctx->streams[stream_idx];
 
 	if( m_pStream->codec->codec_id == avcodec::CODEC_ID_NONE )
-		return ssprintf( "Unsupported codec %08x", m_pStream->codec->codec_tag );
+		return fmt::sprintf( "Unsupported codec %08x", m_pStream->codec->codec_tag );
 
-	RString sError = OpenCodec();
+	std::string sError = OpenCodec();
 	if( !sError.empty() )
-		return ssprintf( "AVCodec (%s): %s", sFile.c_str(), sError.c_str() );
+		return fmt::sprintf( "AVCodec (%s): %s", sFile.c_str(), sError.c_str() );
 
 	LOG->Trace( "Bitrate: %i", m_pStream->codec->bit_rate );
-	LOG->Trace( "Codec pixel format: %s", avcodec::av_get_pix_fmt_name(m_pStream->codec->pix_fmt) );
-
-	return RString();
+	char const* fmt_name= avcodec::av_get_pix_fmt_name(m_pStream->codec->pix_fmt);
+	if(fmt_name == nullptr)
+	{
+		LOG->Trace("Codec pixel format: Unknown");
+	}
+	else
+	{
+		LOG->Trace("Codec pixel format: %s", fmt_name);
+	}
+	return std::string();
 }
 
-RString MovieDecoder_FFMpeg::OpenCodec()
+std::string MovieDecoder_FFMpeg::OpenCodec()
 {
 	Init();
 
-	ASSERT( m_pStream != NULL );
+	ASSERT( m_pStream != nullptr );
 	if( m_pStream->codec->codec )
 		avcodec::avcodec_close( m_pStream->codec );
 
 	avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStream->codec->codec_id );
-	if( pCodec == NULL )
-		return ssprintf( "Couldn't find decoder %i", m_pStream->codec->codec_id );
+	if( pCodec == nullptr )
+		return fmt::sprintf( "Couldn't find decoder %i", m_pStream->codec->codec_id );
 
 	m_pStream->codec->workaround_bugs   = 1;
 	m_pStream->codec->idct_algo         = FF_IDCT_AUTO;
@@ -479,12 +485,12 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 
 	LOG->Trace("Opening codec %s", pCodec->name );
 
-	int ret = avcodec::avcodec_open2( m_pStream->codec, pCodec, NULL );
+	int ret = avcodec::avcodec_open2( m_pStream->codec, pCodec, nullptr );
 	if( ret < 0 )
-		return RString( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
-	ASSERT( m_pStream->codec->codec != NULL );
+		return std::string( averr_format(ret, "Couldn't open codec \"%s\"", pCodec->name) );
+	ASSERT( m_pStream->codec->codec != nullptr );
 
-	return RString();
+	return std::string();
 }
 
 void MovieDecoder_FFMpeg::Close()
@@ -492,13 +498,13 @@ void MovieDecoder_FFMpeg::Close()
 	if( m_pStream && m_pStream->codec->codec )
 	{
 		avcodec::avcodec_close( m_pStream->codec );
-		m_pStream = NULL;
+		m_pStream = nullptr;
 	}
 
 	if( m_fctx )
 	{
 		avcodec::avformat_close_input( &m_fctx );
-		m_fctx = NULL;
+		m_fctx = nullptr;
 	}
 
 	Init();
@@ -520,12 +526,12 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 {
 }
 
-RageMovieTexture *RageMovieTextureDriver_FFMpeg::Create( RageTextureID ID, RString &sError )
+RageMovieTexture *RageMovieTextureDriver_FFMpeg::Create( RageTextureID ID, std::string &sError )
 {
 	MovieTexture_FFMpeg *pRet = new MovieTexture_FFMpeg( ID );
 	sError = pRet->Init();
 	if( !sError.empty() )
-		SAFE_DELETE( pRet );
+		Rage::safe_delete( pRet );
 	return pRet;
 }
 

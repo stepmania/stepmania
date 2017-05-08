@@ -27,7 +27,16 @@ else
 	};
 end
 
-local stage_num_actor= THEME:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(sStage), true)
+local lang = THEME:GetCurLanguage()
+local g_path = "/Themes/default/Graphics/"
+local stage_num_actor= g_path.."ScreenStageInformation stage "..ToEnumShortString(sStage)
+
+if lang ~= "en" and FILEMAN:DoesFileExist(stage_num_actor.." (lang "..lang..").png") then
+	stage_num_actor = stage_num_actor.." (lang "..lang..").png"
+else
+	stage_num_actor = stage_num_actor..".png"
+end
+
 if stage_num_actor ~= "" and FILEMAN:DoesFileExist(stage_num_actor) then
 	stage_num_actor= LoadActor(stage_num_actor)
 else

@@ -49,11 +49,23 @@ local t = Def.ActorFrame {
 		Name="BPMRangeNew",
 		InitCommand= function(self)
 			self:x(68):maxwidth(88/bpm_text_zoom):shadowlength(1):zoom(bpm_text_zoom)
-			local speed, mode= GetSpeedModeAndValueFromPoptions(PlayerNumber)
-			self:playcommand("SpeedChoiceChanged", {pn= PlayerNumber, mode= mode, speed= speed})
+			self:playcommand("ConfigValueChanged", {pn= PlayerNumber, field_name= "speed_mod"})
 		end,
 		BPMWillNotChangeCommand=cmd(stopeffect),
 		BPMWillChangeCommand=cmd(diffuseshift;effectcolor1,Color.White;effectcolor2,Color.Orange),
+		ConfigValueChangedMessageCommand= function(self, param)
+			if param.field_name == "speed_mod" or param.field_name == "speed_type" then
+				local prefs= notefield_prefs_config:get_data(param.pn)
+				local mode_conversion= {maximum= "m", multiple= "x", constant= "C"}
+				local speed= prefs.speed_mod
+				local mode= mode_conversion[prefs.speed_type]
+				if mode == "x" then
+					speed= speed * 100
+				end
+				self:playcommand(
+					"SpeedChoiceChanged", {pn= param.pn, speed= speed, mode= mode})
+			end
+		end,
 		SpeedChoiceChangedMessageCommand= function(self, param)
 			if param.pn ~= PlayerNumber then return end
 			local text= ""

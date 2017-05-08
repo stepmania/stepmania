@@ -14,6 +14,7 @@
 #include "GameManager.h"
 #include "PlayerState.h"
 #include "RageLog.h"
+#include "RageFmtWrap.h"
 
 REGISTER_ACTOR_CLASS( StepsDisplay );
 
@@ -44,11 +45,11 @@ StepsDisplay::StepsDisplay()
  * so I'm trying it first in only this object.
  */
 
-void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlayerState )
+void StepsDisplay::Load( const std::string &sMetricsGroup, const PlayerState *pPlayerState )
 {
 	m_sMetricsGroup = sMetricsGroup;
 
-	/* We can't use global ThemeMetric<RString>s, because we can have multiple
+	/* We can't use global ThemeMetric<std::string>s, because we can have multiple
 	 * StepsDisplays on screen at once, with different names. */
 	m_iNumTicks.Load(m_sMetricsGroup,"NumTicks");
 	m_iMaxTicks.Load(m_sMetricsGroup,"MaxTicks");
@@ -68,7 +69,7 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 
 	if( m_bShowTicks )
 	{
-		RString sChars = "10"; // on, off (todo: make this metricable -aj)
+		std::string sChars = "10"; // on, off (todo: make this metricable -aj)
 		m_textTicks.SetName( "Ticks" );
 		m_textTicks.LoadFromTextureAndChars( THEME->GetPathF(m_sMetricsGroup,"ticks"), sChars );
 		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTicks, m_sMetricsGroup );
@@ -150,25 +151,25 @@ void StepsDisplay::SetFromGameState( PlayerNumber pn )
 
 void StepsDisplay::SetFromSteps( const Steps* pSteps )
 {
-	if( pSteps == NULL )
+	if( pSteps == nullptr )
 	{
 		Unset();
 		return;
 	}
 
-	SetParams params = { pSteps, NULL, pSteps->GetMeter(), pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid };
+	SetParams params = { pSteps, nullptr, pSteps->GetMeter(), pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid };
 	SetInternal( params );
 }
 
 void StepsDisplay::SetFromTrail( const Trail* pTrail )
 {
-	if( pTrail == NULL )
+	if( pTrail == nullptr )
 	{
 		Unset();
 		return;
 	}
 
-	SetParams params = { NULL, pTrail, pTrail->GetMeter(), pTrail->m_StepsType, pTrail->m_CourseDifficulty, pTrail->m_CourseType };
+	SetParams params = { nullptr, pTrail, pTrail->GetMeter(), pTrail->m_StepsType, pTrail->m_CourseDifficulty, pTrail->m_CourseType };
 	SetInternal( params );
 }
 
@@ -179,7 +180,7 @@ void StepsDisplay::Unset()
 
 void StepsDisplay::SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType st, int iMeter, Difficulty dc, CourseType ct )
 {
-	SetParams params = { NULL, NULL, iMeter, st, dc, ct };
+	SetParams params = { nullptr, nullptr, iMeter, st, dc, ct };
 	SetInternal( params );
 }
 
@@ -188,7 +189,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	this->SetVisible( true );
 	Message msg( "Set" );
 
-	RString sCustomDifficulty;
+	std::string sCustomDifficulty;
 	if( params.pSteps )
 		sCustomDifficulty = StepsToCustomDifficulty(params.pSteps);
 	else if( params.pTrail )
@@ -197,16 +198,16 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		sCustomDifficulty = GetCustomDifficulty( params.st, params.dc, params.ct );
 	msg.SetParam( "CustomDifficulty", sCustomDifficulty );
 
-	RString sDisplayDescription;
+	std::string sDisplayDescription;
 	if( params.pSteps  &&  params.pSteps->IsAnEdit() )
 		sDisplayDescription = params.pSteps->GetDescription();
 	else if( sCustomDifficulty.empty() )
-		sDisplayDescription = RString();
+		sDisplayDescription = std::string();
 	else
 		sDisplayDescription = CustomDifficultyToLocalizedString( sCustomDifficulty );
 	msg.SetParam( "DisplayDescription", sDisplayDescription );
-	
-	RString sDisplayCredit;
+
+	std::string sDisplayCredit;
 	if( params.pSteps )
 		sDisplayCredit = params.pSteps->GetCredit();
 
@@ -225,10 +226,10 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		char on = char('1');
 		char off = '0';
 
-		RString sNewText;
-		int iNumOn = min( (int)m_iMaxTicks, params.iMeter );
+		std::string sNewText;
+		int iNumOn = std::min( m_iMaxTicks.GetValue(), params.iMeter );
 		sNewText.insert( sNewText.end(), iNumOn, on );
-		int iNumOff = max( 0, m_iNumTicks-iNumOn );
+		int iNumOff = std::max( 0, m_iNumTicks.GetValue() - iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
 		m_textTicks.SetText( sNewText );
 		m_textTicks.HandleMessage( msg );
@@ -238,11 +239,11 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	{
 		if( params.iMeter == 0 )	// Unset calls with this
 		{
-			m_textMeter.SetText( m_sZeroMeterString );
+			m_textMeter.SetText( m_sZeroMeterString.GetValue() );
 		}
 		else
 		{
-			const RString sMeter = ssprintf( m_sMeterFormatString.GetValue().c_str(), params.iMeter );
+			const std::string sMeter = rage_fmt_wrapper(m_sMeterFormatString, params.iMeter);
 			m_textMeter.SetText( sMeter );
 			m_textMeter.HandleMessage( msg );
 		}
@@ -271,7 +272,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		if( params.st != StepsType_Invalid )
 		{
 			/*
-			RString sStepsType = GAMEMAN->GetStepsTypeInfo(params.st).szName;
+			std::string sStepsType = GAMEMAN->GetStepsTypeInfo(params.st).szName;
 			m_sprStepsType.Load( THEME->GetPathG(m_sMetricsGroup,"StepsType "+sStepsType) );
 			*/
 			m_sprStepsType->HandleMessage( msg );
@@ -284,16 +285,16 @@ void StepsDisplay::SetInternal( const SetParams &params )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StepsDisplay. */ 
+/** @brief Allow Lua to have access to the StepsDisplay. */
 class LunaStepsDisplay: public Luna<StepsDisplay>
 {
 public:
-	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), NULL ); COMMON_RETURN_SELF; }
+	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), nullptr ); COMMON_RETURN_SELF; }
 	static int SetFromSteps( T* p, lua_State *L )
-	{ 
+	{
 		if( lua_isnil(L,1) )
 		{
-			p->SetFromSteps( NULL );
+			p->SetFromSteps( nullptr );
 		}
 		else
 		{
@@ -303,10 +304,10 @@ public:
 		COMMON_RETURN_SELF;
 	}
 	static int SetFromTrail( T* p, lua_State *L )
-	{ 
+	{
 		if( lua_isnil(L,1) )
 		{
-			p->SetFromTrail( NULL );
+			p->SetFromTrail( nullptr );
 		}
 		else
 		{
@@ -337,7 +338,7 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplay, ActorFrame )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -347,7 +348,7 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplay, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

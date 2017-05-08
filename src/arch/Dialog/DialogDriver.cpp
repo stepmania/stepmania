@@ -1,14 +1,17 @@
 #include "global.h"
 #include "DialogDriver.h"
-#include "Foreach.h"
 #include "RageLog.h"
+#include "RageUtil.hpp"
 
-map<istring, CreateDialogDriverFn> *RegisterDialogDriver::g_pRegistrees;
-RegisterDialogDriver::RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn )
+using std::vector;
+
+std::map<Rage::ci_ascii_string, CreateDialogDriverFn> *RegisterDialogDriver::g_pRegistrees;
+RegisterDialogDriver::RegisterDialogDriver( const Rage::ci_ascii_string &sName, CreateDialogDriverFn pfn )
 {
-	if( g_pRegistrees == NULL )
-		g_pRegistrees = new map<istring, CreateDialogDriverFn>;
-
+	if( g_pRegistrees == nullptr )
+	{
+		g_pRegistrees = new std::map<Rage::ci_ascii_string, CreateDialogDriverFn>;
+	}
 	ASSERT( g_pRegistrees->find(sName) == g_pRegistrees->end() );
 	(*g_pRegistrees)[sName] = pfn;
 }
@@ -17,37 +20,39 @@ REGISTER_DIALOG_DRIVER_CLASS( Null );
 
 DialogDriver *DialogDriver::Create()
 {
-	RString sDrivers = "win32,macosx,null";
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
+	std::string sDrivers = "win32,macosx,null";
+	auto asDriversToTry = Rage::split( sDrivers, ",", Rage::EmptyEntries::skip );
 
 	ASSERT( asDriversToTry.size() != 0 );
 
-	FOREACH_CONST( RString, asDriversToTry, Driver )
+	for (auto const &Driver: asDriversToTry)
 	{
-		map<istring, CreateDialogDriverFn>::const_iterator iter = RegisterDialogDriver::g_pRegistrees->find( istring(*Driver) );
+		auto iter = RegisterDialogDriver::g_pRegistrees->find( Rage::ci_ascii_string{Driver.c_str()} );
 
 		if( iter == RegisterDialogDriver::g_pRegistrees->end() )
+		{
 			continue;
-
+		}
 		DialogDriver *pRet = (iter->second)();
 		DEBUG_ASSERT( pRet );
-		const RString sError = pRet->Init();
+		const std::string sError = pRet->Init();
 
 		if( sError.empty() )
-			return pRet;
+		{	return pRet;
+		}
 		if( LOG )
-			LOG->Info( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
-		SAFE_DELETE( pRet );
+		{	LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
+		}
+		Rage::safe_delete( pRet );
 	}
-	return NULL;
+	return nullptr;
 }
 
 
 /*
  * (c) 2002-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -57,7 +62,7 @@ DialogDriver *DialogDriver::Create()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

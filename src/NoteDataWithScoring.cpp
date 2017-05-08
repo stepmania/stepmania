@@ -1,5 +1,6 @@
 #include "global.h"
 #include "NoteDataWithScoring.h"
+#include "RageMath.hpp"
 #include "NoteData.h"
 #include "PlayerStageStats.h"
 #include "Game.h"
@@ -8,6 +9,9 @@
 #include "ThemeMetric.h"
 #include "RageLog.h"
 #include "TimingData.h"
+#include <numeric>
+
+using std::vector;
 
 namespace
 {
@@ -29,13 +33,13 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 		if (tn.type == TapNoteType_Empty ||
 			tn.type == TapNoteType_Mine ||
 			tn.type == TapNoteType_Fake ||
-			tn.type == TapNoteType_AutoKeysound) 
+			tn.type == TapNoteType_AutoKeysound)
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
 
 		TapNoteScore tns = tn.result.tns;
-		
+
 		if( tns == TNS_Miss || tns == TNS_None )
 			return t;
 
@@ -66,7 +70,7 @@ int MinTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 		if (tn.type == TapNoteType_Empty ||
 			tn.type == TapNoteType_Mine ||
 			tn.type == TapNoteType_Fake ||
-			tn.type == TapNoteType_AutoKeysound) 
+			tn.type == TapNoteType_AutoKeysound)
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
@@ -97,13 +101,13 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
 	// Allow this to be configurable between LastTapNoteScoreTrack and
 	// MinTapNoteScore; this change inspired by PumpMania (Zmey, et al) -aj
 	/*
-	LOG->Trace( ssprintf("hi i'm NoteDataWithScoring::LastTapNoteWithResult(NoteData in, iRow=%i, PlayerNumber pn)", iRow) );
+	LOG->Trace( fmt::sprintf("hi i'm NoteDataWithScoring::LastTapNoteWithResult(NoteData in, iRow=%i, PlayerNumber pn)", iRow) );
 	int iTrack = 0;
 	switch(LAST_OR_MINIMUM_TNS)
 	{
 		case TapNoteScoreJudgeType_MinimumScore:
 			iTrack = MinTapNoteScoreTrack( in, iRow, pn );
-			LOG->Trace( ssprintf("TapNoteScoreJudgeType_MinimumScore omg iTrack is %i and iRow is %i",iTrack,iRow) );
+			LOG->Trace( fmt::sprintf("TapNoteScoreJudgeType_MinimumScore omg iTrack is %i and iRow is %i",iTrack,iRow) );
 			break;
 		case TapNoteScoreJudgeType_LastScore:
 		default:
@@ -115,7 +119,7 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
 	if( iTrack == -1 )
 		return TAP_EMPTY;
 
-	//LOG->Trace( ssprintf("returning in.GetTapNote(iTrack=%i, iRow=%i)", iTrack, iRow) );
+	//LOG->Trace( fmt::sprintf("returning in.GetTapNote(iTrack=%i, iRow=%i)", iTrack, iRow) );
 	return in.GetTapNote( iTrack, iRow );
 }
 
@@ -123,6 +127,7 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
  * taps have been hit), return TNS_None or TNS_Miss. */
 TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row, PlayerNumber plnum )
 {
+	using std::min;
 	//LOG->Trace("Hey I'm NoteDataWithScoring::MinTapNoteScore");
 	TapNoteScore score = TNS_W1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
@@ -138,7 +143,7 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 		score = min( score, tn.result.tns );
 	}
 
-	//LOG->Trace( ssprintf("OMG score is?? %s",TapNoteScoreToString(score).c_str()) );
+	//LOG->Trace( fmt::sprintf("OMG score is?? %s",TapNoteScoreToString(score).c_str()) );
 	return score;
 }
 
@@ -158,8 +163,8 @@ float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, const 
 	 * length of the longest recorded combo. This is only subtly different:
 	 * it's the percent of the song the longest combo took to get. */
 	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
-	float fComboPercent = SCALE(MaxCombo.m_fSizeSeconds, 0, fSongSeconds, 0.0f, 1.0f);
-	return clamp( fComboPercent, 0.0f, 1.0f );
+	float fComboPercent = Rage::scale(MaxCombo.m_fSizeSeconds, 0.f, fSongSeconds, 0.0f, 1.0f);
+	return Rage::clamp( fComboPercent, 0.0f, 1.0f );
 }
 
 // Return the ratio of actual to possible dance points.
@@ -170,7 +175,7 @@ float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, const Pl
 		return 1;
 
 	const int ActualDP = pss.m_iActualDancePoints;
-	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
+	return Rage::clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
 }
 }
 
@@ -231,7 +236,7 @@ struct garv_state
 	{}
 };
 
-static void DoRowEndRadarActualCalc(garv_state& state, RadarValues& out)
+static void DoRowEndRadarActualCalc(garv_state& state)
 {
 	if(state.judgable && state.last_tns_on_row != TapNoteScore_Invalid)
 	{
@@ -249,12 +254,11 @@ static void DoRowEndRadarActualCalc(garv_state& state, RadarValues& out)
 		{
 			if(state.worst_tns_on_row >= state.hands_tns)
 			{
-				size_t holds_down= 0;
-				for(size_t n= 0; n < state.hold_ends.size(); ++n)
-				{
-					holds_down+= (state.curr_row <= state.hold_ends[n].last_held_row);
-				}
-				state.hands_hit+= (holds_down == state.hold_ends.size());
+				auto countHolds = [&state](size_t const curr, hold_status const status) {
+					return curr + (state.curr_row <= status.last_held_row);
+				};
+				size_t holds_down = std::accumulate(state.hold_ends.begin(), state.hold_ends.end(), 0, countHolds);
+				state.hands_hit += (holds_down == state.hold_ends.size());
 			}
 		}
 	}
@@ -272,6 +276,7 @@ static void UpdateHittable(int curr_row, int& first, int& last)
 void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	const PlayerStageStats &pss, float song_seconds, RadarValues& out)
 {
+	using std::max;
 	// Anybody editing this function should also examine
 	// NoteDataUtil::CalculateRadarValues to make sure it handles things the
 	// same way.
@@ -298,7 +303,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	{
 		if(curr_note.Row() != state.curr_row)
 		{
-			DoRowEndRadarActualCalc(state, out);
+			DoRowEndRadarActualCalc(state);
 			state.curr_row= curr_note.Row();
 			state.num_notes_on_curr_row= 0;
 			state.num_holds_on_curr_row= 0;
@@ -379,64 +384,63 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 		}
 		++curr_note;
 	}
-	DoRowEndRadarActualCalc(state, out);
+	DoRowEndRadarActualCalc(state);
 
 	// ScreenGameplay passes in the RadarValues that were calculated by
 	// NoteDataUtil::CalculateRadarValues, so those are reused here. -Kyz
-	int note_count= out[RadarCategory_Notes];
-	int jump_count= out[RadarCategory_Jumps];
-	int hold_count= out[RadarCategory_Holds];
-	int tap_count= out[RadarCategory_TapsAndHolds];
-	float hittable_steps_length= max(0, 
+	int note_count = static_cast<int>(out[RadarCategory_Notes]);
+	int jump_count = static_cast<int>(out[RadarCategory_Jumps]);
+	int hold_count = static_cast<int>(out[RadarCategory_Holds]);
+	float hittable_steps_length = max(0.f,
 		timing->GetElapsedTimeFromBeat(NoteRowToBeat(last_hittable_row)) -
 		timing->GetElapsedTimeFromBeat(NoteRowToBeat(first_hittable_row)));
-	// The for loop and the assert are used to ensure that all fields of 
+	// The for loop and the assert are used to ensure that all fields of
 	// RadarValue get set in here.
 	FOREACH_ENUM(RadarCategory, rc)
 	{
 		switch(rc)
 		{
 			case RadarCategory_Stream:
-				out[rc]= clamp(float(state.notes_hit_for_stream) / note_count, 0.0f, 1.0f);
+				out[rc]= Rage::clamp(float(state.notes_hit_for_stream) / note_count, 0.0f, 1.0f);
 				break;
 			case RadarCategory_Voltage:
 				out[rc]= GetActualVoltageRadarValue(in, hittable_steps_length, pss);
 				break;
 			case RadarCategory_Air:
-				out[rc]= clamp(float(state.jumps_hit_for_air) / jump_count, 0.0f, 1.0f);
+				out[rc]= Rage::clamp(float(state.jumps_hit_for_air) / jump_count, 0.0f, 1.0f);
 				break;
 			case RadarCategory_Freeze:
-				out[rc]= clamp(float(state.holds_held) / hold_count, 0.0f, 1.0f);
+				out[rc]= Rage::clamp(float(state.holds_held) / hold_count, 0.0f, 1.0f);
 				break;
 			case RadarCategory_Chaos:
 				out[rc]= GetActualChaosRadarValue(in, song_seconds, pss);
 				break;
 			case RadarCategory_TapsAndHolds:
-				out[rc]= state.taps_hit;
+				out[rc] = static_cast<float>(state.taps_hit);
 				break;
 			case RadarCategory_Jumps:
-				out[rc]= state.jumps_hit;
+				out[rc] = static_cast<float>(state.jumps_hit);
 				break;
 			case RadarCategory_Holds:
-				out[rc]= state.holds_held;
+				out[rc] = static_cast<float>(state.holds_held);
 				break;
 			case RadarCategory_Mines:
-				out[rc]= state.mines_avoided;
+				out[rc] = static_cast<float>(state.mines_avoided);
 				break;
 			case RadarCategory_Hands:
-				out[rc]= state.hands_hit;
+				out[rc] = static_cast<float>(state.hands_hit);
 				break;
 			case RadarCategory_Rolls:
-				out[rc]= state.rolls_held;
+				out[rc] = static_cast<float>(state.rolls_held);
 				break;
 			case RadarCategory_Lifts:
-				out[rc]= state.lifts_hit;
+				out[rc] = static_cast<float>(state.lifts_hit);
 				break;
 			case RadarCategory_Fakes:
-				out[rc]= out[rc];
+				out[rc] = out[rc];
 				break;
 			case RadarCategory_Notes:
-				out[rc]= state.notes_hit;
+				out[rc] = static_cast<float>(state.notes_hit);
 				break;
 			DEFAULT_FAIL(rc);
 		}
@@ -446,7 +450,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -456,7 +460,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

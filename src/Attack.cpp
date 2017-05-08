@@ -3,15 +3,16 @@
 #include "GameState.h"
 #include "RageUtil.h"
 #include "Song.h"
-#include "Foreach.h"
 #include "PlayerOptions.h"
 #include "PlayerState.h"
 
+using std::vector;
+
 void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const
 {
-	ASSERT( pSong != NULL );
-	ASSERT_M( fStartSecond >= 0, ssprintf("StartSecond: %f",fStartSecond) );
-	
+	ASSERT( pSong != nullptr );
+	ASSERT_M( fStartSecond >= 0, fmt::sprintf("StartSecond: %f",fStartSecond) );
+
 	const TimingData &timing = pSong->m_SongTiming;
 	fStartBeat = timing.GetBeatFromElapsedTime( fStartSecond );
 	fEndBeat = timing.GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
@@ -22,7 +23,8 @@ void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBe
  * prevent popping when the attack has note modifers. */
 void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
 {
-	ASSERT( pSong != NULL );
+	using std::min;
+	ASSERT( pSong != nullptr );
 
 	if( fStartSecond >= 0 )
 	{
@@ -30,26 +32,26 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 		return;
 	}
 
-	ASSERT( pPlayerState != NULL );
+	ASSERT( pPlayerState != nullptr );
 
 	/* If reasonable, push the attack forward 8 beats so that notes on screen don't change suddenly. */
 	fStartBeat = min( GAMESTATE->m_Position.m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );
-	fStartBeat = truncf(fStartBeat)+1;
+	fStartBeat = std::trunc(fStartBeat)+1;
 
 	const TimingData &timing = pSong->m_SongTiming;
 	const float lStartSecond = timing.GetElapsedTimeFromBeat( fStartBeat );
 	const float fEndSecond = lStartSecond + fSecsRemaining;
 	fEndBeat = timing.GetBeatFromElapsedTime( fEndSecond );
-	fEndBeat = truncf(fEndBeat)+1;
+	fEndBeat = std::trunc(fEndBeat)+1;
 
 	// loading the course should have caught this.
-	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("EndBeat %f >= StartBeat %f", fEndBeat, fStartBeat) );
+	ASSERT_M( fEndBeat >= fStartBeat, fmt::sprintf("EndBeat %f >= StartBeat %f", fEndBeat, fStartBeat) );
 }
 
 bool Attack::operator== ( const Attack &rhs ) const
 {
 #define EQUAL(a) (a==rhs.a)
-	return 
+	return
 		EQUAL(level) &&
 		EQUAL(fStartSecond) &&
 		EQUAL(fSecsRemaining) &&
@@ -65,7 +67,7 @@ bool Attack::ContainsTransformOrTurn() const
 	return po.ContainsTransformOrTurn();
 }
 
-Attack Attack::FromGlobalCourseModifier( const RString &sModifiers )
+Attack Attack::FromGlobalCourseModifier( const std::string &sModifiers )
 {
 	Attack a;
 	a.fStartSecond = 0;
@@ -76,54 +78,50 @@ Attack Attack::FromGlobalCourseModifier( const RString &sModifiers )
 	return a;
 }
 
-RString Attack::GetTextDescription() const
+std::string Attack::GetTextDescription() const
 {
-	RString s = sModifiers + " " + ssprintf("(%.2f seconds)", fSecsRemaining);
+	std::string s = sModifiers + " " + fmt::sprintf("(%.2f seconds)", fSecsRemaining);
 	return s;
 }
 
 int Attack::GetNumAttacks() const
 {
-	vector<RString> tmp;
-	split(this->sModifiers, ",", tmp);
-	return tmp.size();
+	return Rage::split(this->sModifiers, ",").size();
 }
 
 bool AttackArray::ContainsTransformOrTurn() const
 {
-	FOREACH_CONST( Attack, *this, a )
-	{
-		if( a->ContainsTransformOrTurn() )
-			return true;
-	}
-	return false;
+	auto containsTransformTurn = [](Attack const &a) {
+		return a.ContainsTransformOrTurn();
+	};
+	return std::any_of(this->begin(), this->end(), containsTransformTurn);
 }
 
-vector<RString> AttackArray::ToVectorString() const
+vector<std::string> AttackArray::ToVectorString() const
 {
-	vector<RString> ret;
-	FOREACH_CONST( Attack, *this, a )
+	vector<std::string> ret;
+	for (auto const &a: *this)
 	{
-		ret.push_back(ssprintf("TIME=%f:LEN=%f:MODS=%s",
-				       a->fStartSecond,
-				       a->fSecsRemaining,
-				       a->sModifiers.c_str()));
+		ret.push_back(fmt::sprintf("TIME=%f:LEN=%f:MODS=%s",
+				       a.fStartSecond,
+				       a.fSecsRemaining,
+				       a.sModifiers.c_str()));
 	}
 	return ret;
 }
 
 void AttackArray::UpdateStartTimes(float delta)
 {
-	FOREACH(Attack, *this, a)
+	for (auto &a: *this)
 	{
-		a->fStartSecond += delta;
+		a.fStartSecond += delta;
 	}
 }
 
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -133,7 +131,7 @@ void AttackArray::UpdateStartTimes(float delta)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

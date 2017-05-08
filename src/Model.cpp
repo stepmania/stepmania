@@ -1,7 +1,9 @@
 #include "global.h"
 #include "Model.h"
+#include "RageMath.hpp"
 #include "ModelTypes.h"
 #include "RageMath.h"
+#include "RageMatrix.hpp"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageTextureManager.h"
@@ -10,27 +12,31 @@
 #include "RageLog.h"
 #include "ActorUtil.h"
 #include "ModelManager.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 #include "PrefsManager.h"
+
+#include <numeric>
+
+using std::vector;
 
 REGISTER_ACTOR_CLASS( Model );
 
 static const float FRAMES_PER_SECOND = 30;
-static const RString DEFAULT_ANIMATION_NAME = "default";
+static const std::string DEFAULT_ANIMATION_NAME = "default";
 
 Model::Model()
 {
 	m_bTextureWrapping = true;
 	SetUseZBuffer( true );
 	SetCullMode( CULL_BACK );
-	m_pGeometry = NULL;
-	m_pCurAnimation = NULL;
+	m_pGeometry = nullptr;
+	m_pCurAnimation = nullptr;
 	m_fDefaultAnimationRate = 1;
 	m_fCurAnimationRate = 1;
 	m_bLoop = true;
 	m_bDrawCelShaded = false;
-	m_pTempGeometry = NULL;
+	m_pTempGeometry = nullptr;
+	m_loaded_safely= false;
 }
 
 Model::~Model()
@@ -43,55 +49,70 @@ void Model::Clear()
 	if( m_pGeometry )
 	{
 		MODELMAN->UnloadModel( m_pGeometry );
-		m_pGeometry = NULL;
+		m_pGeometry = nullptr;
 	}
 	m_vpBones.clear();
 	m_Materials.clear();
 	m_mapNameToAnimation.clear();
-	m_pCurAnimation = NULL;
+	m_pCurAnimation = nullptr;
 	RecalcAnimationLengthSeconds();
 
 	if( m_pTempGeometry )
 		DISPLAY->DeleteCompiledGeometry( m_pTempGeometry );
 }
 
-void Model::Load( const RString &sFile )
+void Model::Load( const std::string &sFile )
 {
 	if( sFile == "" ) return;
 
-	RString sExt = GetExtension(sFile);
-	sExt.MakeLower();
+	std::string sExt = Rage::make_lower(GetExtension(sFile));
 	if( sExt=="txt" )
-		LoadMilkshapeAscii( sFile );
+	{
+		std::string load_fail_reason;
+		if(!LoadMilkshapeAscii(sFile, load_fail_reason))
+		{
+			LuaHelpers::ReportScriptErrorFmt("Could not load model file %s: %s",
+				sFile.c_str(), load_fail_reason.c_str());
+			m_loaded_safely= false;
+			return;
+		}
+	}
 	RecalcAnimationLengthSeconds();
 }
 
-#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str() )
-
 // TODO: Move MS3D loading into its own class. - Colby
-void Model::LoadMilkshapeAscii( const RString &sPath )
+bool Model::LoadMilkshapeAscii(const std::string &file, std::string& load_fail_reason)
 {
-	LoadPieces( sPath, sPath, sPath );
+	return LoadPieces(file, file, file, load_fail_reason);
 }
 
-void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPath, const RString &sBonesPath )
+bool Model::LoadPieces(const std::string &sMeshesPath,
+	const std::string &sMaterialsPath, const std::string &sBonesPath,
+	std::string& load_fail_reason)
 {
 	Clear();
 
 	// TRICKY: Load materials before geometry so we can figure out whether the materials require normals.
-	LoadMaterialsFromMilkshapeAscii( sMaterialsPath );
+	if(!LoadMaterialsFromMilkshapeAscii(sMaterialsPath, load_fail_reason))
+	{
+		return false;
+	}
 
-	ASSERT( m_pGeometry == NULL );
+	ASSERT( m_pGeometry == nullptr );
 	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sMeshesPath, this->MaterialsNeedNormals() );
 
 	// Validate material indices.
-	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
+	for (auto const mesh: m_pGeometry->m_Meshes)
 	{
-		const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-
-		if( pMesh->nMaterialIndex >= (int) m_Materials.size() )
-			RageException::Throw( "Model \"%s\" mesh \"%s\" references material index %i, but there are only %i materials.",
-				sMeshesPath.c_str(), pMesh->sName.c_str(), pMesh->nMaterialIndex, (int)m_Materials.size() );
+		if( mesh.nMaterialIndex >= (int) m_Materials.size() )
+		{
+			load_fail_reason= fmt::sprintf("Model \"%s\" mesh \"%s\" references"
+				"material index %i, but there are only %i materials.",
+				sMeshesPath.c_str(), mesh.sName.c_str(), mesh.nMaterialIndex,
+				static_cast<int>(m_Materials.size()));
+			m_loaded_safely= false;
+			return false;
+		}
 	}
 
 	if( LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBonesPath ) )
@@ -105,53 +126,71 @@ void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPat
 		m_pTempGeometry->Set( m_vTempMeshes, this->MaterialsNeedNormals() );
 	}
 	RecalcAnimationLengthSeconds();
+	return true;
 }
 
 void Model::LoadFromNode( const XNode* pNode )
 {
-	RString s1, s2, s3;
-	ActorUtil::GetAttrPath( pNode, "Meshes", s1 );
-	ActorUtil::GetAttrPath( pNode, "Materials", s2 );
-	ActorUtil::GetAttrPath( pNode, "Bones", s3 );
-	if( !s1.empty() || !s2.empty() || !s3.empty() )
+	std::string mesh_path, material_path, bone_path;
+	ActorUtil::GetAttrPath(pNode, "Meshes", mesh_path);
+	ActorUtil::GetAttrPath(pNode, "Materials", material_path);
+	ActorUtil::GetAttrPath(pNode, "Bones", bone_path);
+	if(mesh_path.empty() || material_path.empty() || bone_path.empty())
 	{
-		ASSERT( !s1.empty() && !s2.empty() && !s3.empty() );
-		LoadPieces( s1, s2, s3 );
+		LuaHelpers::ReportScriptErrorFmt("%s: Def.Model must have Meshes, "
+			"Materials, and Bones paths.", ActorUtil::GetWhere(pNode).c_str());
+		m_loaded_safely= false;
+		return;
 	}
+	std::string load_fail_reason;
+	if(!LoadPieces(mesh_path, material_path, bone_path, load_fail_reason))
+	{
+		LuaHelpers::ReportScriptErrorFmt("%s: Def.Model loading failed: %s",
+			ActorUtil::GetWhere(pNode).c_str(), load_fail_reason.c_str());
+		m_loaded_safely= false;
+		return;
+	}
+	m_loaded_safely= true;
 
 	Actor::LoadFromNode( pNode );
 	RecalcAnimationLengthSeconds();
 }
 
 
-void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
+bool Model::LoadMaterialsFromMilkshapeAscii(const std::string &_sPath,
+	std::string& load_fail_reason)
 {
-	RString sPath = _sPath;
+#define LOAD_FAIL load_fail_reason= fmt::sprintf("Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str()); return false;
+	std::string sPath = _sPath;
 
 	FixSlashesInPlace(sPath);
-	const RString sDir = Dirname( sPath );
+	const std::string sDir = Rage::dir_name( sPath );
 
 	RageFile f;
 	if( !f.Open( sPath ) )
-		RageException::Throw( "Model::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
+	{
+		load_fail_reason= fmt::sprintf("Model::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str());
+		return false;
+	}
 
-	RString sLine;
+	std::string sLine;
 	int iLineNum = 0;
 
 	while( f.GetLine( sLine ) > 0 )
 	{
 		iLineNum++;
 
-		if( !strncmp (sLine, "//", 2) )
+		if( !strncmp (sLine.c_str(), "//", 2) )
+		{
 			continue;
-
+		}
 		int nFrame;
-		if( sscanf(sLine, "Frames: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frames: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pModel->nTotalFrames = nFrame;
 		}
-		if( sscanf(sLine, "Frame: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frame: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pModel->nFrame = nFrame;
@@ -159,7 +198,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 
 		// materials
 		int nNumMaterials = 0;
-		if( sscanf(sLine, "Materials: %d", &nNumMaterials) == 1 )
+		if( sscanf(sLine.c_str(), "Materials: %d", &nNumMaterials) == 1 )
 		{
 			m_Materials.resize( nNumMaterials );
 
@@ -171,65 +210,95 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 
 				// name
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
-				if( sscanf(sLine, "\"%255[^\"]\"", szName) != 1 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
+				if( sscanf(sLine.c_str(), "\"%255[^\"]\"", szName) != 1 )
+				{
+					LOAD_FAIL;
+				}
 				Material.sName = szName;
 
 				// ambient
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
-				RageVector4 Ambient;
-				if( sscanf(sLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
+				Rage::Vector4 Ambient;
+				if( sscanf(sLine.c_str(), "%f %f %f %f", &Ambient.x, &Ambient.y, &Ambient.z, &Ambient.w) != 4 )
+				{
+					LOAD_FAIL;
+				}
 				memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
 
 				// diffuse
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
-				RageVector4 Diffuse;
-				if( sscanf(sLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
+				Rage::Vector4 Diffuse;
+				if( sscanf(sLine.c_str(), "%f %f %f %f", &Diffuse.x, &Diffuse.y, &Diffuse.z, &Diffuse.w) != 4 )
+				{
+					LOAD_FAIL;
+				}
 				memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
 
 				// specular
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
-				RageVector4 Specular;
-				if( sscanf(sLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
+				Rage::Vector4 Specular;
+				if( sscanf(sLine.c_str(), "%f %f %f %f", &Specular.x, &Specular.y, &Specular.z, &Specular.w) != 4 )
+				{
+					LOAD_FAIL;
+				}
 				memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
 
 				// emissive
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
-				RageVector4 Emissive;
-				if( sscanf (sLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
+				Rage::Vector4 Emissive;
+				if( sscanf (sLine.c_str(), "%f %f %f %f", &Emissive.x, &Emissive.y, &Emissive.z, &Emissive.w) != 4 )
+				{
+					LOAD_FAIL;
+				}
 				memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
 
 				// shininess
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
 				float fShininess;
 				if( !StringConversion::FromString(sLine, fShininess) )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
 				Material.fShininess = fShininess;
 
 				// transparency
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
 				float fTransparency;
 				if( !StringConversion::FromString(sLine, fTransparency) )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
 				Material.fTransparency = fTransparency;
 
 				// diffuse texture
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%255[^\"]\"", szName );
-				RString sDiffuseTexture = szName;
+				sscanf( sLine.c_str(), "\"%255[^\"]\"", szName );
+				std::string sDiffuseTexture = szName;
 
 				if( sDiffuseTexture == "" )
 				{
@@ -237,21 +306,26 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				}
 				else
 				{
-					RString sTexturePath = sDir + sDiffuseTexture;
+					std::string sTexturePath = sDir + sDiffuseTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( !IsAFile(sTexturePath) )
-						RageException::Throw( "\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str() );
+					{
+						load_fail_reason= fmt::sprintf("\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str());
+						return false;
+					}
 
 					Material.diffuse.Load( sTexturePath );
 				}
 
 				// alpha texture
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%255[^\"]\"", szName );
-				RString sAlphaTexture = szName;
+				sscanf( sLine.c_str(), "\"%255[^\"]\"", szName );
+				std::string sAlphaTexture = szName;
 
 				if( sAlphaTexture == "" )
 				{
@@ -259,20 +333,25 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				}
 				else
 				{
-					RString sTexturePath = sDir + sAlphaTexture;
+					std::string sTexturePath = sDir + sAlphaTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( !IsAFile(sTexturePath) )
-						RageException::Throw( "\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str() );
+					{
+						load_fail_reason= fmt::sprintf("\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str());
+						return false;
+					}
 
 					Material.alpha.Load( sTexturePath );
 				}
 			}
 		}
 	}
+#undef LOAD_FAIL
+	return true;
 }
 
-bool Model::LoadMilkshapeAsciiBones( const RString &sAniName, const RString &sPath )
+bool Model::LoadMilkshapeAsciiBones( const std::string &sAniName, const std::string &sPath )
 {
 	m_mapNameToAnimation[sAniName] = msAnimation();
 	msAnimation &Animation = m_mapNameToAnimation[sAniName];
@@ -288,7 +367,7 @@ bool Model::LoadMilkshapeAsciiBones( const RString &sAniName, const RString &sPa
 
 bool Model::EarlyAbortDraw() const
 {
-	return m_pGeometry == NULL || m_pGeometry->m_Meshes.empty();
+	return m_pGeometry == nullptr || m_pGeometry->m_Meshes.empty() || !m_loaded_safely;
 }
 
 void Model::DrawCelShaded()
@@ -298,13 +377,13 @@ void Model::DrawCelShaded()
 	DISPLAY->SetCullMode(CULL_FRONT);
 	this->SetZWrite(false); // XXX: Why on earth isn't the culling working? -Colby
 	this->Draw();
-	
+
 	// Second pass: cel shading
 	DISPLAY->SetCelShaded(2);
 	DISPLAY->SetCullMode(CULL_BACK);
 	this->SetZWrite(true);
 	this->Draw();
-	
+
 	DISPLAY->SetCelShaded(0);
 }
 
@@ -334,9 +413,9 @@ void Model::DrawPrimitives()
 				// apply material
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
 
-				RageColor Emissive = mat.Emissive;
-				RageColor Ambient = mat.Ambient;
-				RageColor Diffuse = mat.Diffuse;
+				Rage::Color Emissive = mat.Emissive;
+				Rage::Color Ambient = mat.Ambient;
+				Rage::Color Diffuse = mat.Diffuse;
 
 				Emissive *= m_pTempState->diffuse[0];
 				Ambient *= m_pTempState->diffuse[0];
@@ -344,7 +423,7 @@ void Model::DrawPrimitives()
 
 				DISPLAY->SetMaterial( Emissive, Ambient, Diffuse, mat.Specular, mat.fShininess );
 
-				RageVector2 vTexTranslate = mat.diffuse.GetTextureTranslate();
+				Rage::Vector2 vTexTranslate = mat.diffuse.GetTextureTranslate();
 				if( vTexTranslate.x != 0  ||  vTexTranslate.y != 0 )
 				{
 					DISPLAY->TexturePushMatrix();
@@ -412,10 +491,10 @@ void Model::DrawPrimitives()
 			}
 			else
 			{
-				static const RageColor emissive( 0,0,0,0 );
-				static const RageColor ambient( 0.2f,0.2f,0.2f,1 );
-				static const RageColor diffuse( 0.7f,0.7f,0.7f,1 );
-				static const RageColor specular( 0.2f,0.2f,0.2f,1 );
+				static const Rage::Color emissive( 0,0,0,0 );
+				static const Rage::Color ambient( 0.2f,0.2f,0.2f,1 );
+				static const Rage::Color diffuse( 0.7f,0.7f,0.7f,1 );
+				static const Rage::Color specular( 0.2f,0.2f,0.2f,1 );
 				static const float shininess = 1;
 				DISPLAY->SetMaterial( emissive, ambient, diffuse, specular, shininess );
 				DISPLAY->ClearAllTextures();
@@ -438,10 +517,10 @@ void Model::DrawPrimitives()
 			const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 
 			// apply material
-			RageColor emissive = RageColor(0,0,0,0);
-			RageColor ambient = RageColor(0,0,0,0);
-			RageColor diffuse = m_pTempState->glow;
-			RageColor specular = RageColor(0,0,0,0);
+			Rage::Color emissive = Rage::Color(0,0,0,0);
+			Rage::Color ambient = Rage::Color(0,0,0,0);
+			Rage::Color diffuse = m_pTempState->glow;
+			Rage::Color specular = Rage::Color(0,0,0,0);
 			float shininess = 1;
 
 			DISPLAY->SetMaterial( emissive, ambient, diffuse, specular, shininess );
@@ -472,8 +551,16 @@ void Model::DrawMesh( int i ) const
 	{
 		DISPLAY->PushMatrix();
 
-		const RageMatrix &mat = m_vpBones[pMesh->m_iBoneIndex].m_Final;
+		const Rage::Matrix &mat = m_vpBones[pMesh->m_iBoneIndex].m_Final;
 		DISPLAY->PreMultMatrix( mat );
+
+		Rage::Matrix inverse = m_vpBones[pMesh->m_iBoneIndex].m_Absolute.GetTranspose();
+		Rage::Vector3 vTmp = Rage::Vector3( inverse.m[3][0], inverse.m[3][1], inverse.m[3][2] );
+		vTmp = vTmp.TransformNormal( inverse );
+		inverse.m[3][0] = -vTmp.x;
+		inverse.m[3][1] = -vTmp.y;
+		inverse.m[3][2] = -vTmp.z;
+		DISPLAY->PreMultMatrix( inverse );
 	}
 
 	// Draw it
@@ -484,13 +571,13 @@ void Model::DrawMesh( int i ) const
 		DISPLAY->PopMatrix();
 }
 
-void Model::SetDefaultAnimation( RString sAnimation, float fPlayRate )
+void Model::SetDefaultAnimation( std::string sAnimation, float fPlayRate )
 {
 	m_sDefaultAnimation = sAnimation;
 	m_fDefaultAnimationRate = fPlayRate;
 }
 
-void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
+void Model::PlayAnimation( const std::string &sAniName, float fPlayRate )
 {
 	if( m_mapNameToAnimation.find(sAniName) == m_mapNameToAnimation.end() )
 		return;
@@ -511,13 +598,13 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 	for( unsigned i = 0; i < m_pCurAnimation->Bones.size(); i++ )
 	{
 		const msBone *pBone = &m_pCurAnimation->Bones[i];
-		const RageVector3 &vRot = pBone->Rotation;
+		const Rage::Vector3 &vRot = pBone->Rotation;
 
 		RageMatrixAngles( &m_vpBones[i].m_Relative, vRot );
 
-		m_vpBones[i].m_Relative.m[3][0] = pBone->Position[0];
-		m_vpBones[i].m_Relative.m[3][1] = pBone->Position[1];
-		m_vpBones[i].m_Relative.m[3][2] = pBone->Position[2];
+		m_vpBones[i].m_Relative.m[3][0] = pBone->Position.x;
+		m_vpBones[i].m_Relative.m[3][1] = pBone->Position.y;
+		m_vpBones[i].m_Relative.m[3][2] = pBone->Position.z;
 
 		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->sParentName );
 		if( nParentBone != -1 )
@@ -532,26 +619,24 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 	}
 
 	// subtract out the bone's resting position
-	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
+	for (auto &mesh: m_pGeometry->m_Meshes)
 	{
-		msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-		vector<RageModelVertex> &Vertices = pMesh->Vertices;
-		for( unsigned j = 0; j < Vertices.size(); j++ )
+		vector<Rage::ModelVertex> &Vertices = mesh.Vertices;
+		for (auto &vertex: Vertices)
 		{
 			// int iBoneIndex = (pMesh->m_iBoneIndex!=-1) ? pMesh->m_iBoneIndex : bone;
-			RageVector3 &pos = Vertices[j].p;
-			int8_t bone = Vertices[j].bone;
+			Rage::Vector3 &pos = vertex.p;
+			int8_t bone = vertex.bone;
 			if( bone != -1 )
 			{
-				pos[0] -= m_vpBones[bone].m_Absolute.m[3][0];
-				pos[1] -= m_vpBones[bone].m_Absolute.m[3][1];
-				pos[2] -= m_vpBones[bone].m_Absolute.m[3][2];
+				pos.x -= m_vpBones[bone].m_Absolute.m[3][0];
+				pos.y -= m_vpBones[bone].m_Absolute.m[3][1];
+				pos.z -= m_vpBones[bone].m_Absolute.m[3][2];
 
-				RageVector3 vTmp;
+				Rage::Vector3 vTmp;
 
-				RageMatrix inverse;
-				RageMatrixTranspose( &inverse, &m_vpBones[bone].m_Absolute );	// transpose = inverse for rotation matrices
-				RageVec3TransformNormal( &vTmp, &pos, &inverse );
+				Rage::Matrix inverse = m_vpBones[bone].m_Absolute.GetTranspose(); // transpose = inverse for rotation matrices
+				vTmp = pos.TransformNormal(inverse);
 
 				pos = vTmp;
 			}
@@ -566,13 +651,13 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 void Model::SetPosition( float fSeconds )
 {
 	m_fCurFrame = FRAMES_PER_SECOND * fSeconds;
-	m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
+	m_fCurFrame = Rage::clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
 }
 
 void Model::AdvanceFrame( float fDeltaTime )
 {
-	if( m_pGeometry == NULL || 
-		m_pGeometry->m_Meshes.empty() || 
+	if( m_pGeometry == nullptr ||
+		m_pGeometry->m_Meshes.empty() ||
 		!m_pCurAnimation )
 	{
 		return; // bail early
@@ -592,7 +677,7 @@ void Model::AdvanceFrame( float fDeltaTime )
 		else if( m_bLoop )
 			wrap( m_fCurFrame, (float) m_pCurAnimation->nTotalFrames );
 		else
-			m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
+			m_fCurFrame = Rage::clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
 	}
 
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
@@ -611,65 +696,65 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		}
 
 		// search for the adjacent position keys
-		const msPositionKey *pLastPositionKey = NULL, *pThisPositionKey = NULL;
-		for( size_t j = 0; j < pBone->PositionKeys.size(); ++j )
+		const msPositionKey *pLastPositionKey = nullptr, *pThisPositionKey = nullptr;
+		for (auto const &positionKey: pBone->PositionKeys)
 		{
-			const msPositionKey *pPositionKey = &pBone->PositionKeys[j];
-			if( pPositionKey->fTime >= fFrame )
+			if( positionKey.fTime >= fFrame )
 			{
-				pThisPositionKey = pPositionKey;
+				pThisPositionKey = &positionKey;
 				break;
 			}
-			pLastPositionKey = pPositionKey;
+			pLastPositionKey = &positionKey;
 		}
 
-		RageVector3 vPos;
-		if( pLastPositionKey != NULL && pThisPositionKey != NULL )
+		Rage::Vector3 vPos;
+		if( pLastPositionKey != nullptr && pThisPositionKey != nullptr )
 		{
-			const float s = SCALE( fFrame, pLastPositionKey->fTime, pThisPositionKey->fTime, 0, 1 );
+			const float s = Rage::scale( fFrame, pLastPositionKey->fTime, pThisPositionKey->fTime, 0.f, 1.f );
 			vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
 		}
-		else if( pLastPositionKey == NULL )
-			vPos = pThisPositionKey->Position;
-		else if( pThisPositionKey == NULL )
-			vPos = pLastPositionKey->Position;
-
-		// search for the adjacent rotation keys
-		const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
-		for( size_t j = 0; j < pBone->RotationKeys.size(); ++j )
+		else if( pLastPositionKey == nullptr )
 		{
-			const msRotationKey *pRotationKey = &pBone->RotationKeys[j];
-			if( pRotationKey->fTime >= fFrame )
+			vPos = pThisPositionKey->Position;
+		}
+		else if( pThisPositionKey == nullptr )
+		{
+			vPos = pLastPositionKey->Position;
+		}
+		// search for the adjacent rotation keys
+		const msRotationKey *pLastRotationKey = nullptr, *pThisRotationKey = nullptr;
+		for (auto const &rotationKey: pBone->RotationKeys)
+		{
+			if( rotationKey.fTime >= fFrame )
 			{
-				pThisRotationKey = pRotationKey;
+				pThisRotationKey = &rotationKey;
 				break;
 			}
-			pLastRotationKey = pRotationKey;
+			pLastRotationKey = &rotationKey;
 		}
 
-		RageVector4 vRot;
-		if( pLastRotationKey != NULL && pThisRotationKey != NULL )
+		Rage::Vector4 vRot;
+		if( pLastRotationKey != nullptr && pThisRotationKey != nullptr )
 		{
-			const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
+			const float s = Rage::scale( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0.f, 1.f );
 			RageQuatSlerp( &vRot, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
 		}
-		else if( pLastRotationKey == NULL )
+		else if( pLastRotationKey == nullptr )
 		{
 			vRot = pThisRotationKey->Rotation;
 		}
-		else if( pThisRotationKey == NULL )
+		else if( pThisRotationKey == nullptr )
 		{
 			vRot = pLastRotationKey->Rotation;
 		}
 
-		RageMatrix m;
-		RageMatrixIdentity( &m );
+		auto m = Rage::Matrix::GetIdentity();
 		RageMatrixFromQuat( &m, vRot );
-		m.m[3][0] = vPos[0];
-		m.m[3][1] = vPos[1];
-		m.m[3][2] = vPos[2];
+		m.m[3][0] = vPos.x;
+		m.m[3][1] = vPos.y;
+		m.m[3][2] = vPos.z;
 
-		RageMatrix RelativeFinal;
+		Rage::Matrix RelativeFinal;
 		RageMatrixMultiply( &RelativeFinal, &vpBones[i].m_Relative, &m );
 
 		int iParentBone = pAnimation->FindBoneByName( pBone->sParentName );
@@ -682,21 +767,21 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 
 void Model::UpdateTempGeometry()
 {
-	if( m_pGeometry == NULL || m_pTempGeometry == NULL )
+	if( m_pGeometry == nullptr || m_pTempGeometry == nullptr )
 		return;
 
 	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 	{
 		const msMesh &origMesh = m_pGeometry->m_Meshes[i];
 		msMesh &tempMesh = m_vTempMeshes[i];
-		const vector<RageModelVertex> &origVertices = origMesh.Vertices;
-		vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
+		const vector<Rage::ModelVertex> &origVertices = origMesh.Vertices;
+		vector<Rage::ModelVertex> &tempVertices = tempMesh.Vertices;
 		for( unsigned j = 0; j < origVertices.size(); j++ )
 		{
-			RageVector3 &tempPos =			tempVertices[j].p;
-			RageVector3 &tempNormal =		tempVertices[j].n;
-			const RageVector3 &originalPos =	origVertices[j].p;
-			const RageVector3 &originalNormal =	origVertices[j].n;
+			Rage::Vector3 &tempPos =			tempVertices[j].p;
+			Rage::Vector3 &tempNormal =		tempVertices[j].n;
+			const Rage::Vector3 &originalPos =	origVertices[j].p;
+			const Rage::Vector3 &originalNormal =	origVertices[j].n;
 			int8_t bone =				origVertices[j].bone;
 
 			if( bone == -1 )
@@ -706,8 +791,8 @@ void Model::UpdateTempGeometry()
 			}
 			else
 			{
-				RageVec3TransformNormal( &tempNormal, &originalNormal, &m_vpBones[bone].m_Final );
-				RageVec3TransformCoord( &tempPos, &originalPos, &m_vpBones[bone].m_Final );
+				tempNormal = originalNormal.TransformNormal(m_vpBones[bone].m_Final);
+				tempPos = originalPos.TransformCoords(m_vpBones[bone].m_Final);
 			}
 		}
 	}
@@ -716,80 +801,111 @@ void Model::UpdateTempGeometry()
 	m_pTempGeometry->Change( m_vTempMeshes );
 }
 
-void Model::Update( float fDelta )
+void Model::UpdateInternal(float delta)
 {
-	Actor::Update( fDelta );
-	AdvanceFrame( fDelta );
-
-	for( unsigned i = 0; i < m_Materials.size(); ++i )
+	Actor::UpdateInternal(delta);
+	float effect_delta= GetEffectDeltaTime();
+	AdvanceFrame(effect_delta);
+	for(auto&& mat : m_Materials)
 	{
-		m_Materials[i].diffuse.Update( fDelta );
-		m_Materials[i].alpha.Update( fDelta );
+		mat.diffuse.Update(effect_delta);
+		mat.alpha.Update(effect_delta);
 	}
 }
 
 int Model::GetNumStates() const
 {
-	int iMaxStates = 0;
-	FOREACH_CONST( msMaterial, m_Materials, m )
-		iMaxStates = max( iMaxStates, m->diffuse.GetNumStates() );
-	return iMaxStates;
+	auto findMax = [](int highest, msMaterial const &m) {
+		return std::max(highest, m.diffuse.GetNumStates());
+	};
+	return std::accumulate(m_Materials.begin(), m_Materials.end(), 0, findMax);
 }
 
-void Model::SetState( int iNewState )
+void Model::SetState( size_t iNewState )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (auto &m: m_Materials)
 	{
-		m->diffuse.SetState( iNewState );
-		m->alpha.SetState( iNewState );
+		m.diffuse.SetState( iNewState );
+		m.alpha.SetState( iNewState );
 	}
 }
 
 void Model::RecalcAnimationLengthSeconds()
 {
 	m_animation_length_seconds= 0;
-	FOREACH_CONST(msMaterial, m_Materials, m)
+	for (auto &m: m_Materials)
 	{
-		m_animation_length_seconds= max(m_animation_length_seconds,
-			m->diffuse.GetAnimationLengthSeconds());
+		m_animation_length_seconds= std::max(m_animation_length_seconds,
+			m.diffuse.GetAnimationLengthSeconds());
 	}
 }
 
 void Model::SetSecondsIntoAnimation( float fSeconds )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (auto &m: m_Materials)
 	{
-		m->diffuse.SetSecondsIntoAnimation( fSeconds );
-		m->alpha.SetSecondsIntoAnimation( fSeconds );
+		m.diffuse.SetSecondsIntoAnimation( fSeconds );
+		m.alpha.SetSecondsIntoAnimation( fSeconds );
 	}
 }
 
 bool Model::MaterialsNeedNormals() const
 {
-	FOREACH_CONST( msMaterial, m_Materials, m )
-	{
-		if( m->NeedsNormals() )
-			return true;
-	}
-	return false;
+	auto needsNormals = [](msMaterial const &m) {
+		return m.NeedsNormals();
+	};
+	return std::any_of(m_Materials.begin(), m_Materials.end(), needsNormals);
 }
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Model. */ 
+/** @brief Allow Lua to have access to the Model. */
 class LunaModel: public Luna<Model>
 {
 public:
-	static int position( T* p, lua_State *L )	{ p->SetPosition( FArg(1) ); COMMON_RETURN_SELF; }
-	static int playanimation( T* p, lua_State *L )	{ p->PlayAnimation(SArg(1),FArg(2)); COMMON_RETURN_SELF; }
-	static int SetDefaultAnimation( T* p, lua_State *L )	{ p->SetDefaultAnimation(SArg(1),FArg(2)); COMMON_RETURN_SELF; }
-	static int GetDefaultAnimation( T* p, lua_State *L )	{ lua_pushstring( L, p->GetDefaultAnimation() ); return 1; }
-	static int loop( T* p, lua_State *L )		{ p->SetLoop(BArg(1)); COMMON_RETURN_SELF; }
-	static int rate( T* p, lua_State *L )		{ p->SetRate(FArg(1)); COMMON_RETURN_SELF; }
-	static int GetNumStates( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumStates() ); return 1; }
-	//static int CelShading( T* p, lua_State *L )		{ p->SetCelShading(BArg(1)); COMMON_RETURN_SELF; }
-
+	static int position( T* p, lua_State *L )
+	{
+		p->SetPosition( FArg(1) );
+		COMMON_RETURN_SELF;
+	}
+	static int playanimation( T* p, lua_State *L )
+	{
+		p->PlayAnimation(SArg(1),FArg(2));
+		COMMON_RETURN_SELF;
+	}
+	static int SetDefaultAnimation( T* p, lua_State *L )
+	{
+		p->SetDefaultAnimation(SArg(1),FArg(2));
+		COMMON_RETURN_SELF;
+	}
+	static int GetDefaultAnimation( T* p, lua_State *L )
+	{
+		lua_pushstring( L, p->GetDefaultAnimation().c_str() );
+		return 1;
+	}
+	static int loop( T* p, lua_State *L )
+	{
+		p->SetLoop(BArg(1));
+		COMMON_RETURN_SELF;
+	}
+	static int rate( T* p, lua_State *L )
+	{
+		p->SetRate(FArg(1));
+		COMMON_RETURN_SELF;
+	}
+	static int GetNumStates( T* p, lua_State *L )
+	{
+		lua_pushnumber( L, p->GetNumStates() );
+		return 1;
+	}
+	/*
+	static int CelShading( T* p, lua_State *L )
+	{
+		p->SetCelShading(BArg(1));
+		COMMON_RETURN_SELF;
+	}
+	*/
 	LunaModel()
 	{
 		ADD_METHOD( position );
@@ -811,7 +927,7 @@ LUA_REGISTER_DERIVED_CLASS( Model, Actor )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -821,7 +937,7 @@ LUA_REGISTER_DERIVED_CLASS( Model, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -14,7 +14,9 @@
 
 #include <map>
 
-Difficulty DwiCompatibleStringToDifficulty( const RString& sDC );
+using std::vector;
+
+Difficulty DwiCompatibleStringToDifficulty( const std::string& sDC );
 
 static std::map<int,int> g_mapDanceNoteToNoteDataColumn;
 
@@ -44,7 +46,7 @@ enum DanceNotes
  * @param note2Out The second result based on the character.
  * @param sPath the path to the file.
  */
-static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out, const RString &sPath )
+static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out, const std::string &sPath )
 {
 	switch( c )
 	{
@@ -71,7 +73,7 @@ static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Ou
 	case 'K':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
 	case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
 	case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
-	default:	
+	default:
 			LOG->UserLog( "Song file", sPath, "has an invalid DWI note character '%c'.", c );
 			note1Out = DANCE_NOTE_NONE;		note2Out = DANCE_NOTE_NONE;		break;
 	}
@@ -87,7 +89,7 @@ static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Ou
 			note2Out += 6;
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid GameController: %i", i));
+		FAIL_M(fmt::sprintf("Invalid GameController: %i", i));
 	}
 }
 
@@ -99,7 +101,7 @@ static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Ou
  * @param col2Out The second result based on the character.
  * @param sPath the path to the file.
  */
-static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out, const RString &sPath )
+static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out, const std::string &sPath )
 {
 	int note1, note2;
 	DWIcharToNote( c, i, note1, note2, sPath );
@@ -122,12 +124,12 @@ static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2O
  * point, <...> was changed to indicate jumps, and `' was used for
  * 1/192nds.  So, we have to do a check to figure out what it really
  * means.  If it contains 0s, it's most likely 192nds; otherwise,
- * it's most likely a jump.  Search for a 0 before the next >: 
+ * it's most likely a jump.  Search for a 0 before the next >:
  * @param sStepData the step data.
  * @param pos the position of the step data.
  * @return true if it's a 192nd note, false otherwise.
  */
-static bool Is192( const RString &sStepData, size_t pos )
+static bool Is192( const std::string &sStepData, size_t pos )
 {
 	while( pos < sStepData.size() )
 	{
@@ -137,7 +139,7 @@ static bool Is192( const RString &sStepData, size_t pos )
 			return true;
 		++pos;
 	}
-	
+
 	return false;
 }
 /** @brief All DWI files use 4 beats per measure. */
@@ -145,10 +147,9 @@ const int BEATS_PER_MEASURE = 4;
 
 /* We prefer the normal names; recognize a number of others, too. (They'll get
  * normalized when written to SMs, etc.) */
-Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
+Difficulty DwiCompatibleStringToDifficulty( const std::string& sDC )
 {
-	RString s2 = sDC;
-	s2.MakeLower();
+	std::string s2 = Rage::make_lower(sDC);
 	if( s2 == "beginner" )			return Difficulty_Beginner;
 	else if( s2 == "easy" )		return Difficulty_Easy;
 	else if( s2 == "basic" )		return Difficulty_Easy;
@@ -170,7 +171,7 @@ Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
 	else							return Difficulty_Invalid;
 }
 
-static StepsType GetTypeFromMode(const RString &mode)
+static StepsType GetTypeFromMode(const std::string &mode)
 {
 	if( mode == "SINGLE" )
 		return StepsType_dance_single;
@@ -184,8 +185,8 @@ static StepsType GetTypeFromMode(const RString &mode)
 	return StepsType_Invalid; // just in case.
 }
 
-static NoteData ParseNoteData(RString &step1, RString &step2,
-			      Steps &out, const RString &path)
+static NoteData ParseNoteData(std::string &step1, std::string &step2,
+			      Steps &out, const std::string &path)
 {
 	g_mapDanceNoteToNoteDataColumn.clear();
 	switch( out.m_StepsType )
@@ -217,13 +218,13 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 			break;
 			DEFAULT_FAIL( out.m_StepsType );
 	}
-	
+
 	NoteData newNoteData;
 	newNoteData.SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
-	
+
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
-		RString sStepData;
+		std::string sStepData;
 		switch( pad )
 		{
 			case 0:
@@ -236,15 +237,15 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				break;
 				DEFAULT_FAIL( pad );
 		}
-		
-		sStepData.Replace("\n", "");
-		sStepData.Replace("\r", "");
-		sStepData.Replace("\t", "");
-		sStepData.Replace(" ", "");
-		
+
+		Rage::replace(sStepData, "\n", "");
+		Rage::replace(sStepData, "\r", "");
+		Rage::replace(sStepData, "\t", "");
+		Rage::replace(sStepData, " ", "");
+
 		double fCurrentBeat = 0;
 		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
-		
+
 		for( size_t i=0; i<sStepData.size(); )
 		{
 			char c = sStepData[i++];
@@ -263,7 +264,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				case '`':
 					fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 					break;
-					
+
 					// ends a series
 				case ')':
 				case ']':
@@ -272,7 +273,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				case '>':
 					fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
 					break;
-					
+
 				default:	// this is a note character
 				{
 					if( c == '!' )
@@ -283,7 +284,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 							     "has an unexpected character: '!'." );
 						continue;
 					}
-					
+
 					bool jump = false;
 					if( c == '<' )
 					{
@@ -293,21 +294,21 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 							fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 							break;
 						}
-						
+
 						/* It's a jump.
 						 * We need to keep reading notes until we hit a >. */
 						jump = true;
 						i++;
 					}
-					
+
 					const int iIndex = BeatToNoteRow( (float)fCurrentBeat );
 					i--;
 					do {
 						c = sStepData[i++];
-						
+
 						if( jump && c == '>' )
 							break;
-						
+
 						int iCol1, iCol2;
 						DWIcharToNoteCol(
 								 c,
@@ -315,7 +316,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 								 iCol1,
 								 iCol2,
 								 path );
-						
+
 						if( iCol1 != -1 )
 							newNoteData.SetTapNote(iCol1,
 									       iIndex,
@@ -324,25 +325,25 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 							newNoteData.SetTapNote(iCol2,
 									       iIndex,
 									       TAP_ORIGINAL_TAP);
-						
+
 						if(i>=sStepData.length())
 						{
 							break;
 							//we ran out of data
 							//while looking for the ending > mark
 						}
-						
+
 						if( sStepData[i] == '!' )
 						{
 							i++;
 							const char holdChar = sStepData[i++];
-							
+
 							DWIcharToNoteCol(holdChar,
 									 (GameController)pad,
 									 iCol1,
 									 iCol2,
 									 path );
-							
+
 							if( iCol1 != -1 )
 								newNoteData.SetTapNote(iCol1,
 										       iIndex,
@@ -360,7 +361,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 			}
 		}
 	}
-	
+
 	/* Fill in iDuration. */
 	for( int t=0; t<newNoteData.GetNumTracks(); ++t )
 	{
@@ -369,7 +370,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 			TapNote tn = newNoteData.GetTapNote( t, iHeadRow  );
 			if( tn.type != TapNoteType_HoldHead )
 				continue;
-			
+
 			int iTailRow = iHeadRow;
 			bool bFound = false;
 			while( !bFound && newNoteData.GetNextTapNoteRowForTrack(t, iTailRow) )
@@ -383,21 +384,21 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				newNoteData.SetTapNote( t, iHeadRow, tn );
 				bFound = true;
 			}
-			
+
 			if( !bFound )
 			{
 				/* The hold was never closed.  */
 				LOG->UserLog("Song file",
 					     path,
-					     "failed to close a hold note in \"%s\" on track %i", 
+					     "failed to close a hold note in \"%s\" on track %i",
 					     DifficultyToString(out.GetDifficulty()).c_str(),
 					     t);
-				
+
 				newNoteData.SetTapNote( t, iHeadRow, TAP_EMPTY );
 			}
 		}
 	}
-	
+
 	ASSERT( newNoteData.GetNumTracks() > 0 );
 	return newNoteData;
 }
@@ -413,14 +414,14 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
  * @param sPath the path to the file.
  * @return the success or failure of the operation.
  */
-static bool LoadFromDWITokens( 
-	RString sMode, 
-	RString sDescription,
-	RString sNumFeet,
-	RString sStepData1, 
-	RString sStepData2,
+static bool LoadFromDWITokens(
+	std::string sMode,
+	std::string sDescription,
+	std::string sNumFeet,
+	std::string sStepData1,
+	std::string sStepData2,
 	Steps &out,
-	const RString &sPath )
+	const std::string &sPath )
 {
 	CHECKPOINT_M( "DWILoader::LoadFromDWITokens()" );
 
@@ -452,7 +453,7 @@ static bool LoadFromDWITokens(
  * @param arg3 Seconds if not empty.
  * @return the proper timestamp.
  */
-static float ParseBrokenDWITimestamp( const RString &arg1, const RString &arg2, const RString &arg3 )
+static float ParseBrokenDWITimestamp( const std::string &arg1, const std::string &arg2, const std::string &arg3 )
 {
 	if( arg1.empty() )
 		return 0;
@@ -476,12 +477,12 @@ static float ParseBrokenDWITimestamp( const RString &arg1, const RString &arg2, 
 }
 
 
-void DWILoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+void DWILoader::GetApplicableFiles( std::string const &sPath, vector<std::string> &out )
 {
-	GetDirListing( sPath + RString("*.dwi"), out );
+	GetDirListing( sPath + "*.dwi", out );
 }
 
-bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
+bool DWILoader::LoadNoteDataFromSimfile( const std::string &path, Steps &out )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( path, false ) )  // don't unescape
@@ -492,17 +493,15 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			     msd.GetError().c_str() );
 		return false;
 	}
-	
+
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &params = msd.GetValue(i);
-		RString valueName = params[0];
-		
-		if(valueName.EqualsNoCase("SINGLE")  || 
-		   valueName.EqualsNoCase("DOUBLE")  ||
-		   valueName.EqualsNoCase("COUPLE")  || 
-		   valueName.EqualsNoCase("SOLO") )
+		std::string valueName = params[0];
+		Rage::ci_ascii_string tagName{ valueName.c_str() };
+
+		if(tagName == "SINGLE" || tagName == "DOUBLE" || tagName == "COUPLE" || tagName == "SOLO")
 		{
 			if (out.m_StepsType != GetTypeFromMode(valueName))
 				continue;
@@ -510,8 +509,8 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 				continue;
 			if (out.GetMeter() != StringToInt(params[2]))
 				continue;
-			RString step1 = params[3];
-			RString step2 = (iNumParams==5) ? params[4] : RString("");
+			std::string step1 = params[3];
+			std::string step2 = (iNumParams==5) ? params[4] : std::string("");
 			out.SetNoteData(ParseNoteData(step1, step2, out, path));
 			return true;
 		}
@@ -519,9 +518,9 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	return false;
 }
 
-bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &BlacklistedImages )
+bool DWILoader::LoadFromDir( const std::string &sPath_, Song &out, std::set<std::string> &BlacklistedImages )
 {
-	vector<RString> aFileNames;
+	vector<std::string> aFileNames;
 	GetApplicableFiles( sPath_, aFileNames );
 
 	if( aFileNames.size() > 1 )
@@ -532,7 +531,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 
 	/* We should have exactly one; if we had none, we shouldn't have been called to begin with. */
 	ASSERT( aFileNames.size() == 1 );
-	const RString sPath = sPath_ + aFileNames[0];
+	const std::string sPath = sPath_ + aFileNames[0];
 
 	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.c_str() );
 
@@ -549,7 +548,8 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
+		std::string sValueName = sParams[0];
+		Rage::ci_ascii_string tagName{ sValueName.c_str() };
 
 		if( iNumParams < 1 )
 		{
@@ -558,10 +558,10 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 		}
 
 		// handle the data
-		if( sValueName.EqualsNoCase("FILE") )
+		if( tagName == "FILE" )
 			out.m_sMusicFile = sParams[1];
 
-		else if( sValueName.EqualsNoCase("TITLE") )
+		else if(tagName == "TITLE" )
 		{
 			NotesLoader::GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
 
@@ -571,22 +571,22 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			ConvertString( out.m_sSubTitle, "utf-8,english" );
 		}
 
-		else if( sValueName.EqualsNoCase("ARTIST") )
+		else if(tagName == "ARTIST" )
 		{
 			out.m_sArtist = sParams[1];
 			ConvertString( out.m_sArtist, "utf-8,english" );
 		}
-		
-		else if( sValueName.EqualsNoCase("GENRE") )
+
+		else if(tagName == "GENRE" )
 		{
 			out.m_sGenre = sParams[1];
 			ConvertString( out.m_sGenre, "utf-8,english" );
 		}
 
-		else if( sValueName.EqualsNoCase("CDTITLE") )
+		else if(tagName == "CDTITLE" )
 			out.m_sCDTitleFile = sParams[1];
 
-		else if( sValueName.EqualsNoCase("BPM") )
+		else if(tagName == "BPM" )
 		{
 			const float fBPM = StringToFloat( sParams[1] );
 
@@ -600,20 +600,20 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 				out.m_SongTiming.AddSegment( BPMSegment(0, fBPM) );
 			}
 		}
-		else if( sValueName.EqualsNoCase("DISPLAYBPM") )
+		else if(tagName == "DISPLAYBPM" )
 		{
 			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*];
 		    int iMin, iMax;
 			/* We can't parse this as a float with sscanf, since '.' is a valid
 			 * character in a float.  (We could do it with a regex, but it's not
 			 * worth bothering with since we don't display fractional BPM anyway.) */
-		    if( sscanf( sParams[1], "%i..%i", &iMin, &iMax ) == 2 )
+		    if( sscanf( sParams[1].c_str(), "%i..%i", &iMin, &iMax ) == 2 )
 			{
 				out.m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
 				out.m_fSpecifiedBPMMin = (float) iMin;
 				out.m_fSpecifiedBPMMax = (float) iMax;
 			}
-			else if( sscanf( sParams[1], "%i", &iMin ) == 1 )
+			else if( sscanf( sParams[1].c_str(), "%i", &iMin ) == 1 )
 			{
 				out.m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
 				out.m_fSpecifiedBPMMin = out.m_fSpecifiedBPMMax = (float) iMin;
@@ -624,14 +624,14 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("GAP") )
+		else if(tagName == "GAP" )
 			// the units of GAP is 1/1000 second
 			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt(sParams[1]) / 1000.0f;
 
-		else if( sValueName.EqualsNoCase("SAMPLESTART") )
+		else if(tagName == "SAMPLESTART" )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 
-		else if( sValueName.EqualsNoCase("SAMPLELENGTH") )
+		else if(tagName == "SAMPLELENGTH" )
 		{
 			float sampleLength = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 			if (sampleLength > 0 && sampleLength < 1) {
@@ -642,18 +642,15 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 
 		}
 
-		else if( sValueName.EqualsNoCase("FREEZE") )
+		else if(tagName == "FREEZE" )
 		{
-			vector<RString> arrayFreezeExpressions;
-			split( sParams[1], ",", arrayFreezeExpressions );
-
-			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
+			auto arrayFreezeExpressions = Rage::split( sParams[1], "," );
+			for (auto &freeze: arrayFreezeExpressions)
 			{
-				vector<RString> arrayFreezeValues;
-				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
+				auto arrayFreezeValues = Rage::split(freeze, "=");
 				if( arrayFreezeValues.size() != 2 )
 				{
-					LOG->UserLog( "Song file", sPath, "has an invalid FREEZE: '%s'.", arrayFreezeExpressions[f].c_str() );
+					LOG->UserLog( "Song file", sPath, "has an invalid FREEZE: '%s'.", freeze.c_str() );
 					continue;
 				}
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
@@ -664,18 +661,16 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("CHANGEBPM")  || sValueName.EqualsNoCase("BPMCHANGE") )
+		else if(tagName == "CHANGEBPM" || tagName == "BPMCHANGE" )
 		{
-			vector<RString> arrayBPMChangeExpressions;
-			split( sParams[1], ",", arrayBPMChangeExpressions );
+			auto arrayBPMChangeExpressions = Rage::split(sParams[1], ",");
 
-			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
+			for (auto &change: arrayBPMChangeExpressions)
 			{
-				vector<RString> arrayBPMChangeValues;
-				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
+				auto arrayBPMChangeValues = Rage::split(change, "=");
 				if( arrayBPMChangeValues.size() != 2 )
 				{
-					LOG->UserLog( "Song file", sPath, "has an invalid CHANGEBPM: '%s'.", arrayBPMChangeExpressions[b].c_str() );
+					LOG->UserLog( "Song file", sPath, "has an invalid CHANGEBPM: '%s'.", change.c_str() );
 					continue;
 				}
 
@@ -689,18 +684,15 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("SINGLE")  || 
-			 sValueName.EqualsNoCase("DOUBLE")  ||
-			 sValueName.EqualsNoCase("COUPLE")  || 
-			 sValueName.EqualsNoCase("SOLO") )
+		else if(tagName == "SINGLE" || tagName == "DOUBLE" || tagName == "COUPLE" || tagName == "SOLO")
 		{
 			Steps* pNewNotes = out.CreateSteps();
-			LoadFromDWITokens( 
-				sParams[0], 
-				sParams[1], 
-				sParams[2], 
-				sParams[3], 
-				(iNumParams==5) ? sParams[4] : RString(""),
+			LoadFromDWITokens(
+				sParams[0],
+				sParams[1],
+				sParams[2],
+				sParams[3],
+				(iNumParams==5) ? sParams[4] : std::string(""),
 				*pNewNotes,
 				sPath
 				);
@@ -712,29 +704,27 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			else
 				delete pNewNotes;
 		}
-		else if( sValueName.EqualsNoCase("DISPLAYTITLE") ||
-			sValueName.EqualsNoCase("DISPLAYARTIST") )
+		else if(tagName == "DISPLAYTITLE" || tagName == "DISPLAYARTIST" )
 		{
 			/* We don't want to support these tags.  However, we don't want
 			 * to pick up images used here as song images (eg. banners). */
-			RString param = sParams[1];
+			std::string param = sParams[1];
 			/* "{foo} ... {foo2}" */
 			size_t pos = 0;
-			while( pos < RString::npos )
+			while( pos < std::string::npos )
 			{
 
 				size_t startpos = param.find('{', pos);
-				if( startpos == RString::npos )
+				if( startpos == std::string::npos )
 					break;
 				size_t endpos = param.find('}', startpos);
-				if( endpos == RString::npos )
+				if( endpos == std::string::npos )
 					break;
 
-				RString sub = param.substr( startpos+1, endpos-startpos-1 );
+				std::string sub = Rage::make_lower(param.substr( startpos+1, endpos-startpos-1 ));
 
 				pos = endpos + 1;
 
-				sub.MakeLower();
 				BlacklistedImages.insert( sub );
 			}
 		}
@@ -750,7 +740,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -760,7 +750,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

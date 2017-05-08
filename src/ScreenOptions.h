@@ -15,14 +15,14 @@ class OptionRowHandler;
 AutoScreenMessage( SM_ExportOptions );
 
 /** @brief The list of input modes for the given row. */
-enum InputMode 
-{ 
+enum InputMode
+{
 	INPUTMODE_INDIVIDUAL,		/**< each player controls their own cursor */
 	INPUTMODE_SHARE_CURSOR,		/**< both players control the same cursor */
 	NUM_InputMode,			/**< The number of input modes available. */
 	InputMode_Invalid
 };
-InputMode StringToInputMode( const RString& str );
+InputMode StringToInputMode( const std::string& str );
 
 /** @brief A custom foreach loop for the player options for each player. */
 #define FOREACH_OptionsPlayer( pn ) \
@@ -37,7 +37,7 @@ public:
 	ScreenOptions();
 	virtual void Init();
 	virtual void BeginScreen();
-	void InitMenu( const vector<OptionRowHandler*> &vHands );
+	void InitMenu( const std::vector<OptionRowHandler*> &vHands );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual bool Input( const InputEventPlus &input );
@@ -51,13 +51,13 @@ public:
 	friend class LunaScreenOptions;
 
 protected:
-	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
-	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
+	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns ) = 0;
+	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns ) = 0;
 
 	void RestartOptions();
-	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, 
+	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow,
 			int &iWidthOut, int &iXOut, int &iYOut ) const;
-	RString GetExplanationText( int iRow ) const;
+	std::string GetExplanationText( int iRow ) const;
 	void RefreshIcons( int iRow, PlayerNumber pn );
 	void PositionCursor( PlayerNumber pn );
 	void PositionRows( bool bTween );
@@ -66,7 +66,7 @@ protected:
 
 	void BeginFadingOut();
 	virtual bool FocusedItemEndsScreen( PlayerNumber pn ) const;
-	RString GetNextScreenForFocusedItem( PlayerNumber pn ) const;
+	std::string GetNextScreenForFocusedItem( PlayerNumber pn ) const;
 
 	void ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDelta, bool bRepeat );
 	void ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat );
@@ -97,7 +97,7 @@ protected:
 	int GetCurrentRow( PlayerNumber pn = PLAYER_1 ) const { return m_iCurrentRow[pn]; }
 	bool AllAreOnLastRow() const;
 	OptionRow* GetRow( int iRow ) const { return m_pRows[iRow]; }
-        //void SetOptionRowFromName( const RString& nombre );
+        //void SetOptionRowFromName( const std::string& nombre );
 	int GetNumRows() const { return static_cast<int>(m_pRows.size()); }
 
 protected:	// derived classes need access to these
@@ -106,7 +106,7 @@ protected:	// derived classes need access to these
 	void SetInputMode( InputMode im ) { m_InputMode = im; }
 
 	/** @brief Map menu lines to m_OptionRow entries. */
-	vector<OptionRow*>	m_pRows;
+	std::vector<OptionRow*>	m_pRows;
 	/** @brief The current row each player is on. */
 	int			m_iCurrentRow[NUM_PLAYERS];
 
@@ -120,7 +120,7 @@ protected:	// derived classes need access to these
 	bool			m_bWasOnExit[NUM_PLAYERS];
 
 	/** @brief True if at least one player pressed Start after selecting the song.
-	 * 
+	 *
 	 * TRICKY: People hold Start to get to PlayerOptions, then the repeat events
 	 * cause them to zip to the bottom. So, ignore Start repeat events until
 	 * we've seen one first pressed event. */
@@ -162,18 +162,18 @@ protected:	// derived classes need access to these
 	ThemeMetric<bool>		ALLOW_REPEATING_CHANGE_VALUE_INPUT;
 	ThemeMetric<float>		CURSOR_TWEEN_SECONDS;
 	ThemeMetric<bool>		WRAP_VALUE_IN_ROW;
-	ThemeMetric<RString>	OPTION_ROW_NORMAL_METRICS_GROUP;
-	ThemeMetric<RString>	OPTION_ROW_EXIT_METRICS_GROUP;
+	ThemeMetric<std::string>	OPTION_ROW_NORMAL_METRICS_GROUP;
+	ThemeMetric<std::string>	OPTION_ROW_EXIT_METRICS_GROUP;
 };
 
 #endif
 
 /**
  * @file
- * @author Chris Danford, Glenn Maynard (c) 2001-2004 
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -183,7 +183,7 @@ protected:	// derived classes need access to these
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

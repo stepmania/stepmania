@@ -2,12 +2,13 @@
 #include "CharacterManager.h"
 #include "Character.h"
 #include "GameState.h"
-#include "Foreach.h"
 #include "LuaManager.h"
+
+using std::vector;
 
 #define CHARACTERS_DIR "/Characters/"
 
-CharacterManager*	CHARMAN = NULL;	// global object accessible from anywhere in the program
+CharacterManager*	CHARMAN = nullptr;	// global object accessible from anywhere in the program
 
 CharacterManager::CharacterManager()
 {
@@ -20,32 +21,34 @@ CharacterManager::CharacterManager()
 		LUA->Release( L );
 	}
 
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-		SAFE_DELETE( m_pCharacters[i] );
+	for (auto *character: m_pCharacters)
+	{
+		Rage::safe_delete( character );
+	}
 	m_pCharacters.clear();
 
-	vector<RString> as;
+	vector<std::string> as;
 	GetDirListing( CHARACTERS_DIR "*", as, true, true );
 	StripCvsAndSvn( as );
 	StripMacResourceForks( as );
 
 	bool FoundDefault = false;
-	for( unsigned i=0; i<as.size(); i++ )
+	Rage::ci_ascii_string defChar{ "default" };
+	for (auto &item: as)
 	{
-		RString sCharName, sDummy;
-		splitpath(as[i], sDummy, sCharName, sDummy);
-		sCharName.MakeLower();
+		std::string sCharName, sDummy;
+		splitpath(item, sDummy, sCharName, sDummy);
 
-		if( sCharName.CompareNoCase("default")==0 )
+		if( defChar == sCharName )
 			FoundDefault = true;
 
 		Character* pChar = new Character;
-		if( pChar->Load( as[i] ) )
+		if( pChar->Load( item ) )
 			m_pCharacters.push_back( pChar );
 		else
 			delete pChar;
 	}
-	
+
 	if( !FoundDefault )
 		RageException::Throw( "'Characters/default' is missing." );
 
@@ -56,18 +59,23 @@ CharacterManager::CharacterManager()
 
 CharacterManager::~CharacterManager()
 {
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-		SAFE_DELETE( m_pCharacters[i] );
-
+	for (auto *character: m_pCharacters)
+	{
+		Rage::safe_delete( character );
+	}
 	// Unregister with Lua.
 	LUA->UnsetGlobal( "CHARMAN" );
 }
 
 void CharacterManager::GetCharacters( vector<Character*> &apCharactersOut )
 {
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-		if( !m_pCharacters[i]->IsDefaultCharacter() )
-			apCharactersOut.push_back( m_pCharacters[i] );
+	for (auto *character: m_pCharacters)
+	{
+		if( !character->IsDefaultCharacter() )
+		{
+			apCharactersOut.push_back( character );
+		}
+	}
 }
 
 Character* CharacterManager::GetRandomCharacter()
@@ -82,52 +90,60 @@ Character* CharacterManager::GetRandomCharacter()
 
 Character* CharacterManager::GetDefaultCharacter()
 {
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
+	for (auto *character: m_pCharacters)
 	{
-		if( m_pCharacters[i]->IsDefaultCharacter() )
-			return m_pCharacters[i];
+		if( character->IsDefaultCharacter() )
+		{
+			return character;
+		}
 	}
 
 	/* We always have the default character. */
 	FAIL_M("There must be a default character available!");
-	return NULL;
+	return nullptr;
 }
 
 void CharacterManager::DemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->DemandGraphics();
+	for (auto *c: m_pCharacters)
+	{
+		c->DemandGraphics();
+	}
 }
 
 void CharacterManager::UndemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->UndemandGraphics();
+	for (auto *c: m_pCharacters)
+	{
+		c->UndemandGraphics();
+	}
 }
 
-Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
+Character* CharacterManager::GetCharacterFromID( std::string sCharacterID )
 {
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
+	for (auto *character: m_pCharacters)
 	{
-		if( m_pCharacters[i]->m_sCharacterID == sCharacterID )
-			return m_pCharacters[i];
+		if( character->m_sCharacterID == sCharacterID )
+		{
+			return character;
+		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the CharacterManager. */ 
+/** @brief Allow Lua to have access to the CharacterManager. */
 class LunaCharacterManager: public Luna<CharacterManager>
 {
 public:
 	static int GetCharacter( T* p, lua_State *L )
 	{
 		Character *pCharacter = p->GetCharacterFromID(SArg(1));
-		if( pCharacter != NULL )
+		if( pCharacter != nullptr )
 			pCharacter->PushSelf( L );
 		else
 			lua_pushnil( L );
@@ -137,7 +153,7 @@ public:
 	static int GetRandomCharacter( T* p, lua_State *L )
 	{
 		Character *pCharacter = p->GetRandomCharacter();
-		if( pCharacter != NULL )
+		if( pCharacter != nullptr )
 			pCharacter->PushSelf( L );
 		else
 			lua_pushnil( L );
@@ -177,7 +193,7 @@ LUA_REGISTER_CLASS( CharacterManager )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -187,7 +203,7 @@ LUA_REGISTER_CLASS( CharacterManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -11,7 +11,7 @@ public:
 	InputHandler_X11();
 	~InputHandler_X11();
 	void Update();
-	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
+	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut );
 };
 
 #endif

@@ -10,29 +10,31 @@
 #include "RageLog.h"
 #include <set>
 
+using std::vector;
 
-static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error, RString format, bool &bKeepTrying )
+static RageSurface *TryOpenFile( std::string sPath, bool bHeaderOnly, std::string &error, std::string format, bool &bKeepTrying )
 {
-	RageSurface *ret = NULL;
+	RageSurface *ret = nullptr;
 	RageSurfaceUtils::OpenResult result;
-	if( !format.CompareNoCase("png") )
+	Rage::ci_ascii_string ciFormat{ format.c_str() };
+	if( ciFormat == "png" )
 		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("gif") )
+	else if( ciFormat == "gif" )
 		result = RageSurface_Load_GIF( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("jpg") || !format.CompareNoCase("jpeg") )
+	else if( ciFormat == "jpg" || ciFormat == "jpeg" )
 		result = RageSurface_Load_JPEG( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("bmp") )
+	else if( ciFormat == "bmp" )
 		result = RageSurface_Load_BMP( sPath, ret, bHeaderOnly, error );
 	else
 	{
 		error = "Unsupported format";
 		bKeepTrying = true;
-		return NULL;
+		return nullptr;
 	}
 
 	if( result == RageSurfaceUtils::OPEN_OK )
 	{
-		ASSERT( ret != NULL );
+		ASSERT( ret != nullptr );
 		return ret;
 	}
 
@@ -47,7 +49,7 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 	 * wrong file format.  The error message always looks like "unknown file format" or
 	 * "Not Vorbis data"; ignore it so we always give a consistent error message, and
 	 * continue trying other file formats.
-	 * 
+	 *
 	 * OPEN_FATAL_ERROR: Either the file was opened successfully and appears to be the
 	 * correct format, but a fatal format-specific error was encountered that will probably
 	 * not be fixed by using a different reader (for example, an Ogg file that doesn't
@@ -71,30 +73,28 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 		default: break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, bool bHeaderOnly )
+RageSurface *RageSurfaceUtils::LoadFile( const std::string &sPath, std::string &error, bool bHeaderOnly )
 {
 	{
 		RageFile TestOpen;
 		if( !TestOpen.Open( sPath ) )
 		{
 			error = TestOpen.GetError();
-			return NULL;
+			return nullptr;
 		}
 	}
 
-	set<RString> FileTypes;
-	vector<RString> const& exts= ActorUtil::GetTypeExtensionList(FT_Bitmap);
-	for(vector<RString>::const_iterator curr= exts.begin();
-			curr != exts.end(); ++curr)
+	std::set<std::string> FileTypes;
+	auto const& exts= ActorUtil::GetTypeExtensionList(FT_Bitmap);
+	for (auto &curr: exts)
 	{
-		FileTypes.insert(*curr);
+		FileTypes.insert(curr);
 	}
 
-	RString format = GetExtension(sPath);
-	format.MakeLower();
+	std::string format = Rage::make_lower(GetExtension(sPath));
 
 	bool bKeepTrying = true;
 
@@ -107,23 +107,27 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 		FileTypes.erase( format );
 	}
 
-	for( set<RString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
+	for (auto &it: FileTypes)
 	{
-		RageSurface *ret = TryOpenFile( sPath, bHeaderOnly, error, *it, bKeepTrying );
+		if (!bKeepTrying)
+		{
+			break;
+		}
+		RageSurface *ret = TryOpenFile( sPath, bHeaderOnly, error, it, bKeepTrying );
 		if( ret )
 		{
-			LOG->UserLog( "Graphic file", sPath, "is really %s", it->c_str() );
+			LOG->UserLog( "Graphic file", sPath, "is really %s", it.c_str() );
 			return ret;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -133,7 +137,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

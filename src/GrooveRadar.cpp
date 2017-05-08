@@ -1,5 +1,6 @@
 #include "global.h"
 #include "GrooveRadar.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
@@ -13,12 +14,14 @@
 // I feel weird about this coupling, but it has to be done. -aj
 #include "GameState.h"
 
+using std::vector;
+
 REGISTER_ACTOR_CLASS(GrooveRadar);
 
 static const ThemeMetric<float>	RADAR_EDGE_WIDTH	("GrooveRadar","EdgeWidth");
 static const ThemeMetric<float>	RADAR_CENTER_ALPHA	("GrooveRadar","CenterAlpha");
 
-static float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
+static float RADAR_VALUE_ROTATION( int iValueIndex ) {	return Rage::PI / 2 + Rage::PI * 2 / 5.f * iValueIndex; }
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
@@ -34,7 +37,7 @@ GrooveRadar::GrooveRadar()
 		// todo: remove dependency on radar base being a sprite. -aj
 		m_GrooveRadarValueMap[p].SetRadius( m_sprRadarBase->GetZoomedWidth() );
 		m_Frame.AddChild( &m_GrooveRadarValueMap[p] );
-		m_GrooveRadarValueMap[p].SetName( ssprintf("RadarValueMapP%d",p+1) );
+		m_GrooveRadarValueMap[p].SetName( fmt::sprintf("RadarValueMapP%d",p+1) );
 		ActorUtil::LoadAllCommands( m_GrooveRadarValueMap[p], "GrooveRadar" );
 	}
 
@@ -42,7 +45,7 @@ GrooveRadar::GrooveRadar()
 
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
-		m_sprRadarLabels[c].SetName( ssprintf("Label%i",c+1) );
+		m_sprRadarLabels[c].SetName( fmt::sprintf("Label%i",c+1) );
 		m_sprRadarLabels[c].Load( THEME->GetPathG("GrooveRadar","labels 1x5") );
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
@@ -58,7 +61,7 @@ void GrooveRadar::LoadFromNode( const XNode* pNode )
 
 void GrooveRadar::SetEmpty( PlayerNumber pn )
 {
-	SetFromSteps( pn, NULL );
+	SetFromSteps( pn, nullptr );
 }
 
 void GrooveRadar::SetFromRadarValues( PlayerNumber pn, const RadarValues &rv )
@@ -66,9 +69,9 @@ void GrooveRadar::SetFromRadarValues( PlayerNumber pn, const RadarValues &rv )
 	m_GrooveRadarValueMap[pn].SetFromSteps( rv );
 }
 
-void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // NULL means no Song
+void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // nullptr means no Song
 {
-	if( pSteps == NULL )
+	if( pSteps == nullptr )
 	{
 		m_GrooveRadarValueMap[pn].SetEmpty();
 		return;
@@ -107,7 +110,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
 	{
 		const float fValueCurrent = m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew;
 		m_fValuesOld[c] = fValueCurrent;
-		m_fValuesNew[c] = clamp(rv[c], 0.0, 1.0);
+		m_fValuesNew[c] = Rage::clamp(static_cast<float>(rv[c]), 0.f, 1.f);
 	}
 
 	if( !m_bValuesVisible ) // the values WERE invisible
@@ -134,9 +137,10 @@ void GrooveRadar::GrooveRadarValueMap::SetFromValues( vector<float> vals )
 
 void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
 {
+	using std::min;
 	ActorFrame::Update( fDeltaTime );
 
-	m_PercentTowardNew = min( m_PercentTowardNew+4.0f*fDeltaTime, 1 );
+	m_PercentTowardNew = min( m_PercentTowardNew+4.0f*fDeltaTime, 1.f );
 }
 
 void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
@@ -148,7 +152,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
-	RageSpriteVertex v[12]; // needed to draw 5 fan primitives and 10 strip primitives
+	Rage::SpriteVertex v[12]; // needed to draw 5 fan primitives and 10 strip primitives
 
 	// xxx: We could either make the values invisible or draw a dot
 	// (simulating real DDR). TODO: Make that choice up to the themer. -aj
@@ -156,10 +160,10 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		return;
 
 	// use a fan to draw the volume
-	RageColor color = this->m_pTempState->diffuse[0];
+	Rage::Color color = this->m_pTempState->diffuse[0];
 	color.a = 0.5f;
-	v[0].p = RageVector3( 0, 0, 0 );
-	RageColor midcolor = color;
+	v[0].p = Rage::Vector3( 0, 0, 0 );
+	Rage::Color midcolor = color;
 	midcolor.a = RADAR_CENTER_ALPHA;
 	v[0].c = midcolor;
 	v[1].c = color;
@@ -167,13 +171,13 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	for( int i=0; i<NUM_SHOWN_RADAR_CATEGORIES+1; i++ ) // do one extra to close the fan
 	{
 		const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
-		const float fDistFromCenter = 
+		const float fDistFromCenter =
 			( m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew + 0.07f ) * fRadius;
 		const float fRotation = RADAR_VALUE_ROTATION(i);
-		const float fX = RageFastCos(fRotation) * fDistFromCenter;
-		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
+		const float fX = Rage::FastCos(fRotation) * fDistFromCenter;
+		const float fY = -Rage::FastSin(fRotation) * fDistFromCenter;
 
-		v[1+i].p = RageVector3( fX, fY, 0 );
+		v[1+i].p = Rage::Vector3( fX, fY, 0 );
 		v[1+i].c = v[1].c;
 	}
 
@@ -183,13 +187,13 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	for( int i=0; i<=NUM_SHOWN_RADAR_CATEGORIES; i++ )
 	{
 		const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
-		const float fDistFromCenter = 
+		const float fDistFromCenter =
 			( m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew + 0.07f ) * fRadius;
 		const float fRotation = RADAR_VALUE_ROTATION(i);
-		const float fX = RageFastCos(fRotation) * fDistFromCenter;
-		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
+		const float fX = Rage::FastCos(fRotation) * fDistFromCenter;
+		const float fY = -Rage::FastSin(fRotation) * fDistFromCenter;
 
-		v[i].p = RageVector3( fX, fY, 0 );
+		v[i].p = Rage::Vector3( fX, fY, 0 );
 		v[i].c = this->m_pTempState->diffuse[0];
 	}
 
@@ -208,12 +212,12 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the GrooveRadar. */ 
+/** @brief Allow Lua to have access to the GrooveRadar. */
 class LunaGrooveRadar: public Luna<GrooveRadar>
 {
 public:
 	static int SetFromRadarValues( T* p, lua_State *L )
-	{ 
+	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )
 		{
@@ -257,7 +261,7 @@ LUA_REGISTER_DERIVED_CLASS( GrooveRadar, ActorFrame )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -267,7 +271,7 @@ LUA_REGISTER_DERIVED_CLASS( GrooveRadar, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

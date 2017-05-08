@@ -94,7 +94,7 @@ void FadingBanner::Load( RageTextureID ID, bool bLowResToHighRes )
  * corresponding high-res banner. */
 void FadingBanner::BeforeChange( bool bLowResToHighRes )
 {
-	RString sCommand;
+	std::string sCommand;
 	if( bLowResToHighRes )
 		sCommand = "FadeFromCached";
 	else
@@ -113,7 +113,7 @@ void FadingBanner::BeforeChange( bool bLowResToHighRes )
 
 /* If this returns true, a low-resolution banner was loaded, and the full-res
  * banner should be loaded later. */
-bool FadingBanner::LoadFromCachedBanner( const RString &path )
+bool FadingBanner::LoadFromCachedBanner( const std::string &path )
 {
 	// If we're already on the given banner, don't fade again.
 	if( path != "" && m_Banner[m_iIndexLatest].GetTexturePath() == path )
@@ -166,7 +166,7 @@ bool FadingBanner::LoadFromCachedBanner( const RString &path )
 
 void FadingBanner::LoadFromSong( const Song* pSong )
 {
-	if( pSong == NULL )
+	if( pSong == nullptr )
 	{
 		LoadFallback();
 		return;
@@ -174,7 +174,7 @@ void FadingBanner::LoadFromSong( const Song* pSong )
 
 	/* Don't call HasBanner. That'll do disk access and cause the music wheel
 	 * to skip. */
-	RString sPath = pSong->GetBannerPath();
+	std::string sPath = pSong->GetBannerPath();
 	if( sPath.empty() )
 		LoadFallback();
 	else
@@ -187,15 +187,15 @@ void FadingBanner::LoadMode()
 	m_Banner[m_iIndexLatest].LoadMode();
 }
 
-void FadingBanner::LoadFromSongGroup( RString sSongGroup )
+void FadingBanner::LoadFromSongGroup( std::string sSongGroup )
 {
-	const RString sGroupBannerPath = SONGMAN->GetSongGroupBannerPath( sSongGroup );
+	const std::string sGroupBannerPath = SONGMAN->GetSongGroupBannerPath( sSongGroup );
 	LoadFromCachedBanner( sGroupBannerPath );
 }
 
 void FadingBanner::LoadFromCourse( const Course* pCourse )
 {
-	if( pCourse == NULL )
+	if( pCourse == nullptr )
 	{
 		LoadFallback();
 		return;
@@ -203,7 +203,7 @@ void FadingBanner::LoadFromCourse( const Course* pCourse )
 
 	/* Don't call HasBanner. That'll do disk access and cause the music wheel
 	 * to skip. */
-	RString sPath = pCourse->GetBannerPath();
+	std::string sPath = pCourse->GetBannerPath();
 	if( sPath.empty() )
 		LoadCourseFallback();
 	else
@@ -254,7 +254,7 @@ void FadingBanner::LoadCourseFallback()
 	m_Banner[m_iIndexLatest].LoadCourseFallback();
 }
 
-void FadingBanner::LoadCustom( RString sBanner )
+void FadingBanner::LoadCustom( std::string sBanner )
 {
 	BeforeChange();
 	m_Banner[m_iIndexLatest].Load( THEME->GetPathG( "Banner", sBanner ) );
@@ -272,25 +272,25 @@ public:
 	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); COMMON_RETURN_SELF; }
 	static int LoadFromSong( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadFromSong( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadFromSong( nullptr ); }
 		else { Song *pS = Luna<Song>::check(L,1); p->LoadFromSong( pS ); }
 		COMMON_RETURN_SELF;
 	}
 	static int LoadFromCourse( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadFromCourse( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadFromCourse( nullptr ); }
 		else { Course *pC = Luna<Course>::check(L,1); p->LoadFromCourse( pC ); }
 		COMMON_RETURN_SELF;
 	}
 	static int LoadIconFromCharacter( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( nullptr ); }
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		COMMON_RETURN_SELF;
 	}
 	static int LoadCardFromCharacter( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( nullptr ); }
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		COMMON_RETURN_SELF;
 	}

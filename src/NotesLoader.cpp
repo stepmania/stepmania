@@ -1,5 +1,8 @@
 #include "global.h"
 #include "NotesLoader.h"
+
+#include <array>
+
 #include "NotesLoaderSM.h"
 #include "NotesLoaderSMA.h"
 #include "NotesLoaderSSC.h"
@@ -8,26 +11,34 @@
 #include "NotesLoaderKSF.h"
 #include "RageUtil.h"
 
-void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
-{
-	const RString sLeftSeps[]  = { "\t", " -", " ~", " (", " [" };
+using std::vector;
+using std::string;
 
-	for( unsigned i=0; i<ARRAYLEN(sLeftSeps); i++ )
+void NotesLoader::GetMainAndSubTitlesFromFullTitle( const std::string &sFullTitle, std::string &sMainTitleOut, std::string &sSubTitleOut )
+{
+	std::array<std::string, 5> sLeftSeps =
 	{
-		size_t iBeginIndex = sFullTitle.find( sLeftSeps[i] );
+		{
+			"\t", " -", " ~", " (", " ["
+		}
+	};
+
+	for (auto const &sep: sLeftSeps)
+	{
+		size_t iBeginIndex = sFullTitle.find( sep );
 		if( iBeginIndex == string::npos )
 			continue;
-		sMainTitleOut = sFullTitle.Left( (int) iBeginIndex );
+		sMainTitleOut = Rage::head(sFullTitle, iBeginIndex);
 		sSubTitleOut = sFullTitle.substr( iBeginIndex+1, sFullTitle.size()-iBeginIndex+1 );
 		return;
 	}
-	sMainTitleOut = sFullTitle; 
-	sSubTitleOut = ""; 
+	sMainTitleOut = sFullTitle;
+	sSubTitleOut = "";
 };
 
-bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages, bool load_autosave )
+bool NotesLoader::LoadFromDir( const std::string &sPath, Song &out, std::set<std::string> &BlacklistedImages, bool load_autosave )
 {
-	vector<RString> list;
+	vector<std::string> list;
 
 	BlacklistedImages.clear();
 	SSCLoader loaderSSC;
@@ -35,31 +46,43 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	if( !list.empty() )
 	{
 		if( !loaderSSC.LoadFromDir( sPath, out, load_autosave ) )
-		{ return false; }
+		{
+			return false;
+		}
 		return true;
 	}
 	SMALoader loaderSMA;
 	loaderSMA.GetApplicableFiles( sPath, list );
 	if (!list.empty() )
+	{
 		return loaderSMA.LoadFromDir( sPath, out );
+	}
 	SMLoader loaderSM;
 	loaderSM.GetApplicableFiles( sPath, list );
 	if (!list.empty() )
+	{
 		return loaderSM.LoadFromDir( sPath, out );
+	}
 	DWILoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
+	{
 		return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );
+	}
 	BMSLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return BMSLoader::LoadFromDir( sPath, out );
 	/*
 	PMSLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
+	{
 		return PMSLoader::LoadFromDir( sPath, out );
+	}
 	*/
 	KSFLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
+	{
 		return KSFLoader::LoadFromDir( sPath, out );
+	}
 	return false;
 }
 
@@ -67,7 +90,7 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 /*
  * (c) 2001-2004,2007 Chris Danford, Glenn Maynard, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -77,7 +100,7 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

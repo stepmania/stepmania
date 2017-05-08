@@ -5,6 +5,8 @@
 #include "RageMath.h"
 #include "RageDisplay.h"
 
+using std::vector;
+
 #define MS_MAX_NAME	32
 
 RageModelGeometry::RageModelGeometry ()
@@ -29,7 +31,7 @@ void RageModelGeometry::OptimizeBones()
 
 		// check to see if all vertices have the same bone index
 		bool bAllVertsUseSameBone = true;
-		
+
 		char iBoneIndex	= mesh.Vertices[0].bone;
 
 		for (unsigned j = 1; j < mesh.Vertices.size(); j++)
@@ -77,12 +79,14 @@ void RageModelGeometry::MergeMeshes( int iFromIndex, int iToIndex )
 
 bool RageModelGeometry::HasAnyPerVertexBones() const
 {
-	for( unsigned i = 0; i < m_Meshes.size(); ++i )
+	// TODO: Find a way to std::any_of this.
+	for (auto const &mesh: m_Meshes)
 	{
-		const msMesh& mesh = m_Meshes[i];
-		for( unsigned j = 0; j < mesh.Vertices.size(); ++j )
-			if( mesh.Vertices[j].bone != -1 )
+		for (auto const &vertex: mesh.Vertices)
+		{
+			if( vertex.bone != -1 )
 				return true;
+		}
 	}
 
 	return false;
@@ -90,17 +94,17 @@ bool RageModelGeometry::HasAnyPerVertexBones() const
 
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str() )
 
-void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNormals )
+void RageModelGeometry::LoadMilkshapeAscii( const std::string& _sPath, bool bNeedsNormals )
 {
-	RString sPath = _sPath;
+	std::string sPath = _sPath;
 	FixSlashesInPlace(sPath);
-	const RString sDir = Dirname( sPath );
+	const std::string sDir = Rage::dir_name( sPath );
 
 	RageFile f;
 	if( !f.Open( sPath ) )
 		RageException::Throw( "RageModelGeometry::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 
-	RString sLine;
+	std::string sLine;
 	int iLineNum = 0;
 	char szName[MS_MAX_NAME];
 	int nFlags, nIndex;
@@ -111,23 +115,23 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 	{
 		iLineNum++;
 
-		if( !strncmp(sLine, "//", 2) )
+		if( !strncmp(sLine.c_str(), "//", 2) )
 			continue;
 
 		int nFrame;
-		if( sscanf(sLine, "Frames: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frames: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pRageModelGeometry->nTotalFrames = nFrame;
 		}
-		if( sscanf(sLine, "Frame: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frame: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pRageModelGeometry->nFrame = nFrame;
 		}
 
 		int nNumMeshes = 0;
-		if( sscanf(sLine, "Meshes: %d", &nNumMeshes) == 1 )
+		if( sscanf(sLine.c_str(), "Meshes: %d", &nNumMeshes) == 1 )
 		{
 			ASSERT( m_Meshes.empty() );
 			m_Meshes.resize( nNumMeshes );
@@ -135,14 +139,14 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 			for( int i = 0; i < nNumMeshes; i++ )
 			{
 				msMesh &mesh = m_Meshes[i];
-				vector<RageModelVertex> &Vertices = mesh.Vertices;
+				vector<Rage::ModelVertex> &Vertices = mesh.Vertices;
 				vector<msTriangle> &Triangles = mesh.Triangles;
 
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 
 				// mesh: name, flags, material index
-				if( sscanf (sLine, "\"%31[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3 )
+				if( sscanf (sLine.c_str(), "\"%31[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3 )
 					THROW;
 
 				mesh.sName = szName;
@@ -158,22 +162,22 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					THROW;
 
 				int nNumVertices = 0;
-				if( sscanf (sLine, "%d", &nNumVertices) != 1 )
+				if( sscanf (sLine.c_str(), "%d", &nNumVertices) != 1 )
 					THROW;
 
 				Vertices.resize( nNumVertices );
 
 				for( int j = 0; j < nNumVertices; j++ )
 				{
-					RageModelVertex &v = Vertices[j];
+					Rage::ModelVertex &v = Vertices[j];
 
 					if( f.GetLine( sLine ) <= 0 )
 						THROW;
 
-					if( sscanf(sLine, "%d %f %f %f %f %f %d",
+					if( sscanf(sLine.c_str(), "%d %f %f %f %f %f %d",
 								&nFlags,
-								&v.p[0], &v.p[1], &v.p[2],
-								&v.t[0], &v.t[1],
+								&v.p.x, &v.p.y, &v.p.z,
+								&v.t.x, &v.t.y,
 								&nIndex
 						   ) != 7 )
 					{
@@ -187,8 +191,8 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 						v.TextureMatrixScale.y = 0;
 					if( nFlags & 4 )
 					{
-						v.t[0] = v.p[0] / v.t[0];
-						v.t[1] = v.p[1] / v.t[1];
+						v.t.x = v.p.x / v.t.x;
+						v.t.y = v.p.y / v.t.y;
 					}
 					v.bone = (uint8_t) nIndex;
 					RageVec3AddToBounds( v.p, m_vMins, m_vMaxs );
@@ -202,21 +206,21 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					THROW;
 
 				int nNumNormals = 0;
-				if( sscanf(sLine, "%d", &nNumNormals) != 1 )
+				if( sscanf(sLine.c_str(), "%d", &nNumNormals) != 1 )
 					THROW;
 
-				vector<RageVector3> Normals;
+				vector<Rage::Vector3> Normals;
 				Normals.resize( nNumNormals );
 				for( int j = 0; j < nNumNormals; j++ )
 				{
 					if( f.GetLine( sLine ) <= 0 )
 						THROW;
 
-					RageVector3 Normal;
-					if( sscanf(sLine, "%f %f %f", &Normal[0], &Normal[1], &Normal[2]) != 3 )
+					Rage::Vector3 Normal;
+					if( sscanf(sLine.c_str(), "%f %f %f", &Normal.x, &Normal.y, &Normal.z) != 3 )
 						THROW;
 
-					RageVec3Normalize( (RageVector3*)&Normal, (RageVector3*)&Normal );
+					Normal = Normal.GetNormalized();
 					Normals[j] = Normal;
 				}
 
@@ -227,7 +231,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					THROW;
 
 				int nNumTriangles = 0;
-				if( sscanf (sLine, "%d", &nNumTriangles) != 1 )
+				if( sscanf (sLine.c_str(), "%d", &nNumTriangles) != 1 )
 					THROW;
 
 				Triangles.resize( nNumTriangles );
@@ -239,7 +243,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 
 					uint16_t nIndices[3];
 					uint16_t nNormalIndices[3];
-					if( sscanf (sLine, "%d %hd %hd %hd %hd %hd %hd %d",
+					if( sscanf (sLine.c_str(), "%d %hd %hd %hd %hd %hd %hd %d",
 								&nFlags,
 								&nIndices[0], &nIndices[1], &nIndices[2],
 								&nNormalIndices[0], &nNormalIndices[1], &nNormalIndices[2],
@@ -252,12 +256,12 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					// deflate the normals into vertices
 					for( int k=0; k<3; k++ )
 					{
-						ASSERT_M( nIndices[k] < Vertices.size(), ssprintf("mesh \"%s\" tri #%i accesses vertex %i, but we only have %i",
+						ASSERT_M( nIndices[k] < Vertices.size(), fmt::sprintf("mesh \"%s\" tri #%i accesses vertex %i, but we only have %i",
 							szName, j, nIndices[k], int(Vertices.size())) );
-						ASSERT_M( nNormalIndices[k] < Normals.size(), ssprintf("mesh \"%s\" tri #%i accesses normal %i, but we only have %i",
+						ASSERT_M( nNormalIndices[k] < Normals.size(), fmt::sprintf("mesh \"%s\" tri #%i accesses normal %i, but we only have %i",
 							szName, j, nNormalIndices[k], int(Normals.size())) );
-						RageModelVertex& vertex = Vertices[ nIndices[k] ];
-						RageVector3& normal = Normals[ nNormalIndices[k] ];
+						Rage::ModelVertex& vertex = Vertices[ nIndices[k] ];
+						Rage::Vector3& normal = Normals[ nNormalIndices[k] ];
 						vertex.n = normal;
 						//mesh.Vertices[nIndices[k]].n = Normals[ nNormalIndices[k] ];
 					}

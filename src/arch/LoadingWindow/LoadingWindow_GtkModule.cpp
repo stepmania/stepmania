@@ -33,7 +33,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 
 	splash = gtk_image_new_from_file(splash_image_path);
 
-	label = gtk_label_new(NULL);
+	label = gtk_label_new(nullptr);
 	gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
 	gtk_label_set_ellipsize(GTK_LABEL(label),PANGO_ELLIPSIZE_END);
 	gtk_label_set_line_wrap(GTK_LABEL(label),FALSE);
@@ -49,7 +49,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 
 	gtk_widget_show_all(window);
 	gtk_main_iteration_do(FALSE);
-	return NULL;
+	return nullptr;
 }
 
 extern "C" void Shutdown()
@@ -79,9 +79,9 @@ GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
 	RageSurfaceUtils::Blit( pSrc, pSurface , -1, -1 );
 
 	GdkPixbuf *pBuf = gdk_pixbuf_new_from_data( pSurface->pixels, GDK_COLORSPACE_RGB,
-		true, 8, pSurface->w, pSurface->h , pSurface->pitch, DeletePixels, NULL);
+		true, 8, pSurface->w, pSurface->h , pSurface->pitch, DeletePixels, nullptr);
 
-	if( pBuf != NULL )
+	if( pBuf != nullptr )
 		pSurface->pixels_owned = false;
 
 	delete pSurface;
@@ -91,7 +91,7 @@ GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
 extern "C" void SetIcon( const RageSurface *pSrcImg )
 {
 	GdkPixbuf *pBuf = MakePixbuf( pSrcImg );
-	if( pBuf != NULL )
+	if( pBuf != nullptr )
 	{
 		gtk_window_set_icon( GTK_WINDOW(window), pBuf );
 		g_object_unref(pBuf);
@@ -102,7 +102,7 @@ extern "C" void SetIcon( const RageSurface *pSrcImg )
 extern "C" void SetSplash( const RageSurface *pSplash )
 {
 	GdkPixbuf *pBuf = MakePixbuf( pSplash );
-	if( pBuf != NULL )
+	if( pBuf != nullptr )
 	{
 		gtk_image_set_from_pixbuf(GTK_IMAGE(splash), pBuf);
 		g_object_unref(pBuf);

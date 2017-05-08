@@ -2,6 +2,7 @@
 
 #include "RageDisplay.h"
 #include "RageDisplay_GLES2.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageTimer.h"
@@ -11,7 +12,7 @@
 #include "RageSurface.h"
 #include "RageTextureManager.h"
 
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
@@ -20,6 +21,8 @@
 #ifdef NO_GL_FLUSH
 #define glFlush()
 #endif
+
+using std::vector;
 
 namespace
 {
@@ -192,7 +195,7 @@ namespace
 				case 24: m = Swap24(m); break;
 				case 32: m = Swap32(m); break;
 				default:
-					 FAIL_M(ssprintf("Unsupported BPP value: %i", pf.bpp));
+					 FAIL_M(fmt::sprintf("Unsupported BPP value: %i", pf.bpp));
 				}
 				pf.masks[mask] = m;
 			}
@@ -220,16 +223,16 @@ RageDisplay_GLES2::RageDisplay_GLES2()
 	FixLittleEndian();
 //	RageDisplay_GLES2_Helpers::Init();
 
-	g_pWind = NULL;
+	g_pWind = nullptr;
 }
 
-RString
+std::string
 RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
 {
 	g_pWind = LowLevelWindow::Create();
 
 	bool bIgnore = false;
-	RString sError = SetVideoMode( p, bIgnore );
+	std::string sError = SetVideoMode( p, bIgnore );
 	if (sError != "")
 		return sError;
 
@@ -284,7 +287,7 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 				continue;
 			}
 
-			string sList = ssprintf( "  %s: ", type.c_str() );
+			string sList = fmt::sprintf( "  %s: ", type.c_str() );
 			while( next <= last )
 			{
 				vector<string> segments;
@@ -303,21 +306,19 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 		}
 #else
 		const char *szExtensionString = (const char *) glGetString(GL_EXTENSIONS);
-		vector<RString> asExtensions;
-		split( szExtensionString, " ", asExtensions );
+		auto asExtensions = Rage::split(szExtensionString, " ");
 		sort( asExtensions.begin(), asExtensions.end() );
 		size_t iNextToPrint = 0;
 		while( iNextToPrint < asExtensions.size() )
 		{
 			size_t iLastToPrint = iNextToPrint;
-			RString sType;
+			std::string sType;
 			for( size_t i = iNextToPrint; i<asExtensions.size(); ++i )
 			{
-				vector<RString> asBits;
-				split( asExtensions[i], "_", asBits );
-				RString sThisType;
+				auto asBits = Rage::split(asExtensions[i], "_");
+				std::string sThisType;
 				if (asBits.size() > 2)
-					sThisType = join( "_", asBits.begin(), asBits.begin()+2 );
+					sThisType = Rage::join( "_", asBits.begin(), asBits.begin()+2 );
 				if (i > iNextToPrint && sThisType != sType)
 					break;
 				sType = sThisType;
@@ -331,12 +332,11 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 				continue;
 			}
 
-			RString sList = ssprintf( "  %s: ", sType.c_str() );
+			auto sList = fmt::sprintf( "  %s: ", sType.c_str() );
 			while( iNextToPrint <= iLastToPrint )
 			{
-				vector<RString> asBits;
-				split( asExtensions[iNextToPrint], "_", asBits );
-				RString sShortExt = join( "_", asBits.begin()+2, asBits.end() );
+				auto asBits = Rage::split(asExtensions[iNextToPrint], "_");
+				std::string sShortExt = Rage::join( "_", asBits.begin()+2, asBits.end() );
 				sList += sShortExt;
 				if (iNextToPrint < iLastToPrint)
 					sList += ", ";
@@ -359,20 +359,20 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 	//glGetFloatv( GL_LINE_WIDTH_RANGE, g_line_range );
 	//glGetFloatv( GL_POINT_SIZE_RANGE, g_point_range );
 
-	return RString();
+	return std::string();
 }
 
 // Return true if mode change was successful.
 // bNewDeviceOut is set true if a new device was created and textures
 // need to be reloaded.
-RString RageDisplay_GLES2::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
+std::string RageDisplay_GLES2::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	VideoModeParams vm = p;
 	vm.windowed = 1; // force windowed until I trust this thing.
 	LOG->Warn( "RageDisplay_GLES2::TryVideoMode( %d, %d, %d, %d, %d, %d )",
 		vm.windowed, vm.width, vm.height, vm.bpp, vm.rate, vm.vsync );
 
-	RString err = g_pWind->TryVideoMode( vm, bNewDeviceOut );
+	std::string err = g_pWind->TryVideoMode( vm, bNewDeviceOut );
 	if (err != "")
 		return err;	// failed to set video mode
 
@@ -388,8 +388,10 @@ RString RageDisplay_GLES2::TryVideoMode( const VideoModeParams &p, bool &bNewDev
 
 		/* Delete all render targets.  They may have associated resources other than
 		 * the texture itself. */
-		//FOREACHM( unsigned, RenderTarget *, g_mapRenderTargets, rt )
-		//	delete rt->second;
+		//for (auto &rt: g_mapRenderTargets)
+		//{
+		// 	delete rt.second;
+		//}
 		//g_mapRenderTargets.clear();
 
 		/* Recreate all vertex buffers. */
@@ -400,7 +402,7 @@ RString RageDisplay_GLES2::TryVideoMode( const VideoModeParams &p, bool &bNewDev
 
 	ResolutionChanged();
 
-	return RString();
+	return std::string();
 }
 
 int RageDisplay_GLES2::GetMaxTextureSize() const
@@ -444,10 +446,10 @@ RageDisplay_GLES2::~RageDisplay_GLES2()
 }
 
 void
-RageDisplay_GLES2::GetDisplayResolutions( DisplayResolutions &out ) const
+RageDisplay_GLES2::GetDisplaySpecs(DisplaySpecs &out) const
 {
 	out.clear();
-	g_pWind->GetDisplayResolutions( out );
+	g_pWind->GetDisplaySpecs(out);
 }
 
 RageSurface*
@@ -470,10 +472,10 @@ RageDisplay_GLES2::GetPixelFormatDesc(RagePixelFormat pf) const
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
-RageMatrix
+  Rage::Matrix
 RageDisplay_GLES2::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
-	RageMatrix m(
+	Rage::Matrix m(
 		2/(r-l),      0,            0,           0,
 		0,            2/(t-b),      0,           0,
 		0,            0,            -2/(zf-zn),   0,
@@ -484,7 +486,7 @@ RageDisplay_GLES2::GetOrthoMatrix( float l, float r, float b, float t, float zn,
 class RageCompiledGeometryGLES2 : public RageCompiledGeometry
 {
 public:
-	
+
 	void Allocate( const vector<msMesh> &vMeshes )
 	{
 		// TODO
@@ -511,13 +513,13 @@ RageDisplay_GLES2::DeleteCompiledGeometry( RageCompiledGeometry *p )
 	delete p;
 }
 
-RString
+std::string
 RageDisplay_GLES2::GetApiDescription() const
 {
 	return "OpenGL ES 2.0";
 }
 
-VideoModeParams
+ActualVideoModeParams
 RageDisplay_GLES2::GetActualVideoModeParams() const
 {
 	return g_pWind->GetActualVideoModeParams();
@@ -571,10 +573,10 @@ RageDisplay_GLES2::CreateTexture(
 }
 
 void
-RageDisplay_GLES2::UpdateTexture( 
-	unsigned iTexHandle, 
+RageDisplay_GLES2::UpdateTexture(
+	unsigned iTexHandle,
 	RageSurface* img,
-	int xoffset, int yoffset, int width, int height 
+	int xoffset, int yoffset, int width, int height
 	)
 {
 	// TODO
@@ -629,7 +631,7 @@ RageDisplay_GLES2::SetTexture( TextureUnit tu, unsigned iTexture )
 	}
 }
 
-void 
+void
 RageDisplay_GLES2::SetTextureMode( TextureUnit tu, TextureMode tm )
 {
 	// TODO
@@ -645,7 +647,7 @@ void
 RageDisplay_GLES2::SetTextureFiltering( TextureUnit tu, bool b )
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b ? GL_LINEAR : GL_NEAREST);
-	
+
 	GLint iMinFilter = 0;
 	if (b)
 	{
@@ -699,8 +701,8 @@ RageDisplay_GLES2::SetZWrite( bool b )
 void
 RageDisplay_GLES2::SetZBias( float f )
 {
-	float fNear = SCALE( f, 0.0f, 1.0f, 0.05f, 0.0f );
-	float fFar = SCALE( f, 0.0f, 1.0f, 1.0f, 0.95f );
+	float fNear = Rage::scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
+	float fFar = Rage::scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
 
 	glDepthRange( fNear, fFar );
 }
@@ -719,23 +721,19 @@ RageDisplay_GLES2::SetZTestMode( ZTestMode mode )
 	case ZTEST_WRITE_ON_PASS: glDepthFunc( GL_LEQUAL ); break;
 	case ZTEST_WRITE_ON_FAIL: glDepthFunc( GL_GREATER ); break;
 	default:
-		FAIL_M(ssprintf("Invalid ZTestMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid ZTestMode: %i", mode));
 	}
 	State::bZTestEnabled = true;
 }
 
 
-
-
-
 /*
-
 
 void RageDisplay_Legacy::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
-	if (glBlendEquation != NULL)
+	if (glBlendEquation != nullptr)
 	{
 		if (mode == BLEND_INVERT_DEST)
 			glBlendEquation( GL_FUNC_SUBTRACT );
@@ -834,7 +832,7 @@ RageDisplay_GLES2::SetCullMode( CullMode mode )
 		glDisable( GL_CULL_FACE );
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid CullMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid CullMode: %i", mode));
 	}
 }
 
@@ -849,11 +847,11 @@ RageDisplay_GLES2::SetAlphaTest( bool b )
 }
 
 void
-RageDisplay_GLES2::SetMaterial( 
-	const RageColor &emissive,
-	const RageColor &ambient,
-	const RageColor &diffuse,
-	const RageColor &specular,
+RageDisplay_GLES2::SetMaterial(
+	const Rage::Color &emissive,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
 	float shininess
 	)
 {
@@ -875,7 +873,7 @@ RageDisplay_GLES2::SetPolygonMode(PolygonMode pm)
 	case POLYGON_FILL:	m = GL_FILL; break;
 	case POLYGON_LINE:	m = GL_LINE; break;
 	default:
-		FAIL_M(ssprintf("Invalid PolygonMode: %i", pm));
+		FAIL_M(fmt::sprintf("Invalid PolygonMode: %i", pm));
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, m);
 }
@@ -893,12 +891,12 @@ RageDisplay_GLES2::SetLightOff( int index )
 }
 
 void
-RageDisplay_GLES2::SetLightDirectional( 
-	int index, 
-	const RageColor &ambient, 
-	const RageColor &diffuse, 
-	const RageColor &specular, 
-	const RageVector3 &dir )
+RageDisplay_GLES2::SetLightDirectional(
+	int index,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
+	const Rage::Vector3 &dir )
 {
 	// TODO
 }
@@ -916,51 +914,51 @@ RageDisplay_GLES2::SetCelShaded( int stage )
 }
 
 void
-RageDisplay_GLES2::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawQuadsInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawFanInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawTrianglesInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int 
+RageDisplay_GLES2::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int
 	iMeshIndex )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
+RageDisplay_GLES2::DrawLineStripInternal( const Rage::SpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	// TODO
 }
 
 // Is this even used?
 void
-RageDisplay_GLES2::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }

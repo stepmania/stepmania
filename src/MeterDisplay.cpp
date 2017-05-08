@@ -1,5 +1,6 @@
 #include "global.h"
 #include "MeterDisplay.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "GameState.h"
 #include "Song.h"
@@ -15,7 +16,7 @@ MeterDisplay::MeterDisplay()
 {
 }
 
-void MeterDisplay::Load( RString sStreamPath, float fStreamWidth, RString sTipPath )
+void MeterDisplay::Load( std::string sStreamPath, float fStreamWidth, std::string sTipPath )
 {
 	m_sprStream.Load( sStreamPath );
 	this->AddChild( m_sprStream );
@@ -32,7 +33,7 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 	LOG->Trace( "MeterDisplay::LoadFromNode(%s)", ActorUtil::GetWhere(pNode).c_str() );
 
 	const XNode *pStream = pNode->GetChild( "Stream" );
-	if( pStream == NULL )
+	if( pStream == nullptr )
 	{
 		LuaHelpers::ReportScriptErrorFmt("%s: MeterDisplay: missing the \"Stream\" attribute", ActorUtil::GetWhere(pNode).c_str());
 		return;
@@ -43,7 +44,7 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 	this->AddChild( m_sprStream );
 
 	const XNode* pChild = pNode->GetChild( "Tip" );
-	if( pChild != NULL )
+	if( pChild != nullptr )
 	{
 		m_sprTip.LoadActorFromNode( pChild, this );
 		m_sprTip->SetName( "Tip" );
@@ -67,7 +68,7 @@ void MeterDisplay::SetPercent( float fPercent )
 	m_sprStream->SetCropRight( 1-fPercent );
 
 	if( m_sprTip.IsLoaded() )
-		m_sprTip->SetX( SCALE(fPercent, 0.f, 1.f, -m_fStreamWidth/2, m_fStreamWidth/2) );
+		m_sprTip->SetX( Rage::scale(fPercent, 0.f, 1.f, -m_fStreamWidth/2, m_fStreamWidth/2) );
 }
 
 void MeterDisplay::SetStreamWidth( float fStreamWidth )
@@ -78,12 +79,12 @@ void MeterDisplay::SetStreamWidth( float fStreamWidth )
 
 void SongMeterDisplay::Update( float fDeltaTime )
 {
-	if( GAMESTATE->m_pCurSong )
+	if( GAMESTATE->get_curr_song() )
 	{
-		float fSongStartSeconds = GAMESTATE->m_pCurSong->GetFirstSecond();
-		float fSongEndSeconds = GAMESTATE->m_pCurSong->GetLastSecond();
-		float fPercentPositionSong = SCALE( GAMESTATE->m_Position.m_fMusicSeconds, fSongStartSeconds, fSongEndSeconds, 0.0f, 1.0f );
-		CLAMP( fPercentPositionSong, 0, 1 );
+		float fSongStartSeconds = GAMESTATE->get_curr_song()->GetFirstSecond();
+		float fSongEndSeconds = GAMESTATE->get_curr_song()->GetLastSecond();
+		float fPercentPositionSong = Rage::scale( GAMESTATE->m_Position.m_fMusicSeconds, fSongStartSeconds, fSongEndSeconds, 0.0f, 1.0f );
+		fPercentPositionSong = Rage::clamp( fPercentPositionSong, 0.f, 1.f );
 
 		SetPercent( fPercentPositionSong );
 	}

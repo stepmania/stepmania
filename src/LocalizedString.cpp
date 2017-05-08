@@ -1,7 +1,7 @@
 #include "global.h"
 #include "LocalizedString.h"
-#include "Foreach.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "SubscriptionManager.h"
 
 static SubscriptionManager<LocalizedString> m_Subscribers;
@@ -11,15 +11,15 @@ class LocalizedStringImplDefault: public ILocalizedStringImpl
 public:
 	static ILocalizedStringImpl *Create() { return new LocalizedStringImplDefault; }
 
-	void Load( const RString& sGroup, const RString& sName )
+	void Load( std::string const &sGroup, std::string const &sName )
 	{
 		m_sValue = sName;
 	}
 
-	const RString &GetLocalized() const { return m_sValue; }
+	std::string const GetLocalized() const { return m_sValue; }
 
 private:
-	RString m_sValue;
+	std::string m_sValue;
 };
 
 static LocalizedString::MakeLocalizer g_pMakeLocalizedStringImpl = LocalizedStringImplDefault::Create;
@@ -27,20 +27,19 @@ static LocalizedString::MakeLocalizer g_pMakeLocalizedStringImpl = LocalizedStri
 void LocalizedString::RegisterLocalizer( MakeLocalizer pFunc )
 {
 	g_pMakeLocalizedStringImpl = pFunc;
-	FOREACHS( LocalizedString*, *m_Subscribers.m_pSubscribers, l )
+	for (auto *pLoc: *m_Subscribers.m_pSubscribers)
 	{
-		LocalizedString *pLoc = *l;
 		pLoc->CreateImpl();
 	}
 }
 
-LocalizedString::LocalizedString( const RString& sGroup, const RString& sName )
+LocalizedString::LocalizedString( std::string const &sGroup, std::string const &sName )
 {
 	m_Subscribers.Subscribe( this );
 
 	m_sGroup = sGroup;
 	m_sName = sName;
-	m_pImpl = NULL;
+	m_pImpl = nullptr;
 
 	CreateImpl();
 }
@@ -51,7 +50,7 @@ LocalizedString::LocalizedString(LocalizedString const& other)
 
 	m_sGroup = other.m_sGroup;
 	m_sName = other.m_sName;
-	m_pImpl = NULL;
+	m_pImpl = nullptr;
 
 	CreateImpl();
 }
@@ -60,24 +59,24 @@ LocalizedString::~LocalizedString()
 {
 	m_Subscribers.Unsubscribe( this );
 
-	SAFE_DELETE( m_pImpl );
+	Rage::safe_delete( m_pImpl );
 }
 
 void LocalizedString::CreateImpl()
 {
-	SAFE_DELETE( m_pImpl );
+	Rage::safe_delete( m_pImpl );
 	m_pImpl = g_pMakeLocalizedStringImpl();
 	m_pImpl->Load(  m_sGroup, m_sName );
 }
 
-void LocalizedString::Load( const RString& sGroup, const RString& sName )
+void LocalizedString::Load( std::string const &sGroup, std::string const &sName )
 {
 	m_sGroup = sGroup;
 	m_sName = sName;
 	CreateImpl();
 }
 
-const RString &LocalizedString::GetValue() const
+std::string const LocalizedString::GetValue() const
 {
 	return m_pImpl->GetLocalized();
 }

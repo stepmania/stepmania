@@ -1,5 +1,5 @@
-#ifndef MEMORY_CARD_ENUMERATOR_NULL_H
-#define MEMORY_CARD_ENUMERATOR_NULL_H
+#ifndef MEMORY_CARD_ENUMERATOR_nullptr_H
+#define MEMORY_CARD_ENUMERATOR_nullptr_H
 
 #include "MemoryCardDriver.h"
 
@@ -8,10 +8,10 @@ class MemoryCardDriver_Null : public MemoryCardDriver
 public:
 	MemoryCardDriver_Null() {}
 	virtual bool USBStorageDevicesChanged() { return false; }
-	virtual void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut ) { }
-	virtual bool Mount( UsbStorageDevice* pDevice ) { return false; }
-	virtual void Unmount( UsbStorageDevice* pDevice ) {}
-	virtual void Flush( UsbStorageDevice* pDevice ) {}
+	virtual void GetUSBStorageDevices( std::vector<UsbStorageDevice>& ) { }
+	virtual bool Mount( UsbStorageDevice* ) { return false; }
+	virtual void Unmount( UsbStorageDevice* ) {}
+	virtual void Flush( UsbStorageDevice* ) {}
 };
 
 #endif
@@ -19,7 +19,7 @@ public:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -29,7 +29,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -40,16 +40,16 @@ public:
 	 * it may give more information, such as the name of the archive the file
 	 * is in.  It has no parsable meaning.
 	 */
-	const RString &GetRealPath() const { return m_Path; }
-	RString GetPath() const;
+	const std::string &GetRealPath() const { return m_Path; }
+	std::string GetPath() const;
 
-	bool Open( const RString& path, int mode = READ );
+	bool Open( const std::string& path, int mode = READ );
 	void Close();
-	bool IsOpen() const { return m_File != NULL; }
+	bool IsOpen() const { return m_File != nullptr; }
 	int GetMode() const { return m_Mode; }
 
 	bool AtEOF() const;
-	RString GetError() const;
+	std::string GetError() const;
 	void ClearError();
 
 	int Tell() const;
@@ -59,9 +59,9 @@ public:
 
 	/* Raw I/O: */
 	int Read( void *buffer, size_t bytes );
-	int Read( RString &buffer, int bytes = -1 );
+	int Read( std::string &buffer, int bytes = -1 );
 	int Write( const void *buffer, size_t bytes );
-	int Write( const RString& string ) { return Write( string.data(), string.size() ); }
+	int Write( const std::string& string ) { return Write( string.data(), string.size() ); }
 	int Flush();
 
 	/* These are just here to make wrappers (eg. vorbisfile, SDL_rwops) easier. */
@@ -70,8 +70,8 @@ public:
 	int Seek( int offset, int whence );
 
 	/* Line-based I/O: */
-	int GetLine( RString &out );
-	int PutLine( const RString &str );
+	int GetLine( std::string &out );
+	int PutLine( const std::string &str );
 
 	void EnableCRC32( bool on=true );
 	bool GetCRC32( uint32_t *iRet );
@@ -79,11 +79,11 @@ public:
 	// Lua
 	virtual void PushSelf( lua_State *L );
 private:
-	void SetError( const RString &err );
+	void SetError( const std::string &err );
 	
 	RageFileBasic *m_File;
-	RString	m_Path;
-	RString	m_sError;
+	std::string	m_Path;
+	std::string	m_sError;
 	int		m_Mode;
 	
 	// Swallow up warnings. If they must be used, define them.
@@ -95,15 +95,15 @@ namespace FileReading
 {
 	/* On error, these set sError to the error message.  If sError is already
 	 * non-empty, nothing happens. */
-	void ReadBytes( RageFileBasic &f, void *buf, int size, RString &sError );
-	void SkipBytes( RageFileBasic &f, int size, RString &sError );
-	void Seek( RageFileBasic &f, int iOffset, RString &sError );
-	RString ReadString( RageFileBasic &f, int size, RString &sError );
-	uint8_t read_8( RageFileBasic &f, RString &sError );
-	int16_t read_16_le( RageFileBasic &f, RString &sError );
-	uint16_t read_u16_le( RageFileBasic &f, RString &sError );
-	int32_t read_32_le( RageFileBasic &f, RString &sError );
-	uint32_t read_u32_le( RageFileBasic &f, RString &sError );
+	void ReadBytes( RageFileBasic &f, void *buf, int size, std::string &sError );
+	void SkipBytes( RageFileBasic &f, int size, std::string &sError );
+	void Seek( RageFileBasic &f, int iOffset, std::string &sError );
+	std::string ReadString( RageFileBasic &f, int size, std::string &sError );
+	uint8_t read_8( RageFileBasic &f, std::string &sError );
+	int16_t read_16_le( RageFileBasic &f, std::string &sError );
+	uint16_t read_u16_le( RageFileBasic &f, std::string &sError );
+	int32_t read_32_le( RageFileBasic &f, std::string &sError );
+	uint32_t read_u32_le( RageFileBasic &f, std::string &sError );
 };
 
 #endif

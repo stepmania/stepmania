@@ -3,11 +3,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstdarg>
+#include <cstring>
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
 #include <cerrno>
-#include <limits.h>
 #if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
 #endif
@@ -34,11 +34,11 @@ static void safe_print( int fd, ... )
 	for(;;)
 	{
 		const char *p = va_arg( ap, const char * );
-		if( p == NULL )
+		if( p == nullptr )
 		{
 			break;
 		}
-		size_t len = strlen( p );
+		size_t len = std::strlen( p );
 		while( len )
 		{
 			ssize_t result = write( fd, p, strlen(p) );
@@ -58,7 +58,7 @@ static void GetExecutableName( char *buf, int bufsize )
 {
 	/* Reading /proc/self/exe always gives the running binary, even if it no
 	 * longer exists. */
-	strncpy( buf, "/proc/self/exe", bufsize );
+	std::strncpy( buf, "/proc/self/exe", bufsize );
 	buf[bufsize-1] = 0;
 }
 #else
@@ -85,16 +85,16 @@ static void NORETURN spawn_child_process( int from_parent )
 	char path[1024];
 	char magic[32];
 	GetExecutableName( path, sizeof(path) );
-	strncpy( magic, CHILD_MAGIC_PARAMETER, sizeof(magic) );
+	std::strncpy( magic, CHILD_MAGIC_PARAMETER, sizeof(magic) );
 
 	/* Use execve; it's the lowest-level of the exec calls.  The others may allocate. */
-	char *argv[3] = { path, magic, NULL };
-	char *envp[1] = { NULL };
+	char *argv[3] = { path, magic, nullptr };
+	char *envp[1] = { nullptr };
 	execve( path, argv, envp );
 
 	/* If we got here, the exec failed.  We can't call strerror. */
-	// safe_print(fileno(stderr), "Crash handler execl(", path, ") failed: ", strerror(errno), "\n", NULL);
-	safe_print( fileno(stderr), "Crash handler execl(", path, ") failed: ", itoa( errno ), "\n", NULL );
+	// safe_print(fileno(stderr), "Crash handler execl(", path, ") failed: ", strerror(errno), "\n", nullptr);
+	safe_print( fileno(stderr), "Crash handler execl(", path, ") failed: ", itoa( errno ), "\n", nullptr );
 	_exit(1);
 }
 
@@ -107,7 +107,7 @@ static int retried_write( int fd, const void *buf, size_t count )
 		ret = write( fd, buf, count );
 	}
 	while( ret == -1 && errno == EINTR && tries-- );
-	
+
 	return ret;
 }
 
@@ -116,13 +116,13 @@ static bool parent_write( int to_child, const void *p, size_t size )
 	int ret = retried_write( to_child, p, size );
 	if( ret == -1 )
 	{
-		safe_print( fileno(stderr), "Unexpected write() result (", strerror(errno), ")\n", NULL );
+		safe_print( fileno(stderr), "Unexpected write() result (", std::strerror(errno), ")\n", nullptr );
 		return false;
 	}
 
 	if( size_t(ret) != size )
 	{
-		safe_print( fileno(stderr), "Unexpected write() result (", itoa(ret), ")\n", NULL );
+		safe_print( fileno(stderr), "Unexpected write() result (", itoa(ret), ")\n", nullptr );
 		return false;
 	}
 
@@ -134,10 +134,10 @@ static void parent_process( int to_child, const CrashData *crash )
 	/* 1. Write the CrashData. */
 	if( !parent_write(to_child, crash, sizeof(CrashData)) )
 		return;
-	
+
 	/* 2. Write info. */
 	const char *p = RageLog::GetInfo();
-	int size = strlen( p )+1;
+	int size = std::strlen( p )+1;
 	if( !parent_write(to_child, &size, sizeof(size)) )
 		return;
 	if( !parent_write(to_child, p, size) )
@@ -150,11 +150,11 @@ static void parent_process( int to_child, const CrashData *crash )
 		return;
 	if( !parent_write(to_child, p, size) )
 		return;
-	
+
 	/* 4. Write RecentLogs. */
 	int cnt = 0;
 	const char *ps[1024];
-	while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != NULL )
+	while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != nullptr )
 		++cnt;
 
 	parent_write(to_child, &cnt, sizeof(cnt));
@@ -175,7 +175,7 @@ static void parent_process( int to_child, const CrashData *crash )
 		return;
 	if( !parent_write(to_child, buf, size) )
 		return;
-	
+
 	/* 6. Write the crashed thread's name. */
 	p = RageThread::GetCurrentThreadName();
 	size = strlen( p )+1;
@@ -188,7 +188,7 @@ static void parent_process( int to_child, const CrashData *crash )
 
 /* The parent process is the crashed process.  It'll send data to the
  * child, who will do stuff with it.  The parent then waits for the
- * child to quit, and exits. 
+ * child to quit, and exits.
  *
  * We can do whatever fancy things we want in the child process.  However,
  * let's not open any windows until we at least try to shut down OpenGL,
@@ -211,19 +211,19 @@ static void parent_process( int to_child, const CrashData *crash )
 
 static void RunCrashHandler( const CrashData *crash )
 {
-	if( g_pCrashHandlerArgv0 == NULL )
+	if( g_pCrashHandlerArgv0 == nullptr )
 	{
-		safe_print( fileno(stderr), "Crash handler failed: CrashHandlerHandleArgs was not called\n", NULL );
+		safe_print( fileno(stderr), "Crash handler failed: CrashHandlerHandleArgs was not called\n", nullptr );
 		_exit( 1 );
 	}
-	
+
 	/* Block SIGPIPE, so we get EPIPE. */
 	struct sigaction sa;
-	memset( &sa, 0, sizeof(sa) );
+	std::memset( &sa, 0, sizeof(sa) );
 	sa.sa_handler = SIG_IGN;
-	if( sigaction( SIGPIPE, &sa, NULL ) != 0 )
+	if( sigaction( SIGPIPE, &sa, nullptr ) != 0 )
 	{
-		safe_print( fileno(stderr), "sigaction() failed: %s", strerror(errno), NULL );
+		safe_print( fileno(stderr), "sigaction() failed: %s", std::strerror(errno), nullptr );
 		/* non-fatal */
 	}
 
@@ -237,22 +237,22 @@ static void RunCrashHandler( const CrashData *crash )
 		switch( crash->type )
 		{
 		case CrashData::SIGNAL:
-			safe_print( fileno(stderr), "Fatal signal (", SignalName(crash->signal), ")", NULL );
+			safe_print( fileno(stderr), "Fatal signal (", SignalName(crash->signal), ")", nullptr );
 			break;
 
 		case CrashData::FORCE_CRASH:
-			safe_print( fileno(stderr), "Crash handler failed: \"", crash->reason, "\"", NULL );
+			safe_print( fileno(stderr), "Crash handler failed: \"", crash->reason, "\"", nullptr );
 			break;
 
 		default:
-			safe_print( fileno(stderr), "Unexpected RunCrashHandler call (", itoa(crash->type), ")", NULL );
+			safe_print( fileno(stderr), "Unexpected RunCrashHandler call (", itoa(crash->type), ")", nullptr );
 			break;
 		}
 
 		if( active == 1 )
-			safe_print( fileno(stderr), " while still in the crash handler\n", NULL);
+			safe_print( fileno(stderr), " while still in the crash handler\n", nullptr);
 		else if( active == 2 )
-			safe_print( fileno(stderr), " while in the crash handler child\n", NULL);
+			safe_print( fileno(stderr), " while in the crash handler child\n", nullptr);
 
 		_exit( 1 );
 	}
@@ -261,20 +261,20 @@ static void RunCrashHandler( const CrashData *crash )
 	/* Stop other threads.  XXX: This prints a spurious ptrace error if any threads
 	 * are already suspended, which happens in ForceCrashHandlerDeadlock(). */
 	RageThread::HaltAllThreads();
-	
+
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
 	 * a process and exec ourself to get a clean environment to work in. */
 	int fds[2];
 	if( pipe(fds) != 0 )
 	{
-		safe_print( fileno(stderr), "Crash handler pipe() failed: ", strerror(errno), "\n", NULL );
+		safe_print( fileno(stderr), "Crash handler pipe() failed: ", std::strerror(errno), "\n", nullptr );
 		exit( 1 );
 	}
 
 	pid_t childpid = fork();
 	if( childpid == -1 )
 	{
-		safe_print( fileno(stderr), "Crash handler fork() failed: ", strerror(errno), "\n", NULL );
+		safe_print( fileno(stderr), "Crash handler fork() failed: ", std::strerror(errno), "\n", nullptr );
 		_exit( 1 );
 	}
 
@@ -305,7 +305,7 @@ static void RunCrashHandler( const CrashData *crash )
 		RageThread::ResumeAllThreads();
 
 		if( WIFSIGNALED(status) )
-			safe_print( fileno(stderr), "Crash handler child exited with signal ", itoa(WTERMSIG(status)), "\n", NULL );
+			safe_print( fileno(stderr), "Crash handler child exited with signal ", itoa(WTERMSIG(status)), "\n", nullptr );
 	}
 }
 
@@ -313,46 +313,46 @@ static void BacktraceAllThreads( CrashData& crash )
 {
 	int iCnt = 1;
 	uint64_t iID;
-	
+
 	for( int i = 0; RageThread::EnumThreadIDs(i, iID); ++i )
 	{
 		if( iID == GetInvalidThreadId() || iID == RageThread::GetCurrentThreadID() )
 			continue;
-		
+
 		BacktraceContext ctx;
 		if( GetThreadBacktraceContext( iID, &ctx ) )
 			GetBacktrace( crash.BacktracePointers[iCnt], BACKTRACE_MAX_SIZE, &ctx );
-		strncpy( crash.m_ThreadName[iCnt], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
-		
+		std::strncpy( crash.m_ThreadName[iCnt], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
+
 		++iCnt;
-		
+
 		if( iCnt == CrashData::MAX_BACKTRACE_THREADS )
 			break;
 	}
 }
 
-void CrashHandler::ForceCrash( const char *reason )
+void CrashHandler::ForceCrash( std::string const &reason )
 {
 	CrashData crash;
-	memset( &crash, 0, sizeof(crash) );
+	std::memset( &crash, 0, sizeof(crash) );
 
 	crash.type = CrashData::FORCE_CRASH;
-	strncpy( crash.reason, reason, sizeof(crash.reason) );
+	std::strncpy( crash.reason, reason.c_str(), sizeof(crash.reason) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
-	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, NULL );
+	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, nullptr );
 
 	RunCrashHandler( &crash );
 }
 
-void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
+void CrashHandler::ForceDeadlock( std::string reason, uint64_t iID )
 {
 	CrashData crash;
-	memset( &crash, 0, sizeof(crash) );
+	std::memset( &crash, 0, sizeof(crash) );
 
 	crash.type = CrashData::FORCE_CRASH;
 
-	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, NULL );
+	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, nullptr );
 
 	if( iID == GetInvalidThreadId() )
 	{
@@ -366,12 +366,12 @@ void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 			reason += "; GetThreadBacktraceContext failed";
 		else
 			GetBacktrace( crash.BacktracePointers[1], BACKTRACE_MAX_SIZE, &ctx );
-		strncpy( crash.m_ThreadName[1], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
+		std::strncpy( crash.m_ThreadName[1], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
 	}
 
-	strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
+	std::strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
-	strncpy( crash.reason, reason, min(sizeof(crash.reason) - 1, reason.length()) );
+	std::strncpy( crash.reason, reason.c_str(), std::min(sizeof(crash.reason) - 1, reason.length()) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
 	RunCrashHandler( &crash );
@@ -384,7 +384,7 @@ void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext
 	static volatile bool bInCrashSignalHandler = false;
 	if( bInCrashSignalHandler )
 	{
-		safe_print( 2, "Fatal: crash from within the crash signal handler\n", NULL );
+		safe_print( 2, "Fatal: crash from within the crash signal handler\n", nullptr );
 		_exit(1);
 	}
 
@@ -396,7 +396,7 @@ void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext
 	asm volatile("nop");
 
 	CrashData crash;
-	memset( &crash, 0, sizeof(crash) );
+	std::memset( &crash, 0, sizeof(crash) );
 
 	crash.type = CrashData::SIGNAL;
 	crash.signal = signal;
@@ -410,7 +410,7 @@ void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext
 		BacktraceAllThreads( crash );
 #endif
 
-	strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
+	std::strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
 	bInCrashSignalHandler = false;
 
@@ -426,7 +426,7 @@ void CrashHandler::InitializeCrashHandler()
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -436,7 +436,7 @@ void CrashHandler::InitializeCrashHandler()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

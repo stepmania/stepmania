@@ -17,7 +17,7 @@ XToString( WheelItemDataType );
 StringToX( WheelItemDataType );
 LuaXType( WheelItemDataType );
 
-WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, RString sText, RageColor color )
+WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, std::string sText, Rage::Color color )
 {
 	m_Type = type;
 	m_sText = sText;
@@ -35,23 +35,23 @@ WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 	//	m_pGrayBar = m_sprBar;
 }
 
-WheelItemBase::WheelItemBase(RString sType)
+WheelItemBase::WheelItemBase(std::string sType)
 {
 	SetName( sType );
-	m_pData = NULL;
+	m_pData = nullptr;
 	m_bExpanded = false;
-	m_pGrayBar = NULL;
+	m_pGrayBar = nullptr;
 	Load(sType);
 }
 
-void WheelItemBase::Load( RString sType )
+void WheelItemBase::Load(std::string)
 {
-	m_colorLocked = RageColor(0,0,0,0.25f);
+	m_colorLocked = Rage::Color(0,0,0,0.25f);
 }
 
-void WheelItemBase::LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex )
+void WheelItemBase::LoadFromWheelItemData(const WheelItemBaseData* pWID, int, bool, int)
 {
-	ASSERT( pWID != NULL );
+	ASSERT( pWID != nullptr );
 	m_pData = pWID;
 }
 
@@ -60,11 +60,11 @@ void WheelItemBase::DrawGrayBar( Actor& bar )
 	if( m_colorLocked.a == 0 )
 		return;
 
-	RageColor glow = bar.GetGlow();
-	RageColor diffuse = bar.GetDiffuse();
+	Rage::Color glow = bar.GetGlow();
+	Rage::Color diffuse = bar.GetDiffuse();
 
 	bar.SetGlow( m_colorLocked );
-	bar.SetDiffuse( RageColor(0,0,0,0) );
+	bar.SetDiffuse( Rage::Color(0,0,0,0) );
 
 	bar.Draw();
 
@@ -76,7 +76,7 @@ void WheelItemBase::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 
-	if( m_pGrayBar != NULL )
+	if( m_pGrayBar != nullptr )
 		DrawGrayBar( *m_pGrayBar );
 }
 

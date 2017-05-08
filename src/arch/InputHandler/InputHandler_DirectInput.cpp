@@ -1,6 +1,6 @@
 #include "global.h"
 #include "InputHandler_DirectInput.h"
-
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "archutils/Win32/AppInstance.h"
@@ -11,9 +11,10 @@
 #include "InputFilter.h"
 #include "PrefsManager.h"
 #include "GamePreferences.h" //needed for Axis Fix
-#include "Foreach.h"
 
 #include "InputHandler_DirectInputHelper.h"
+
+using std::vector;
 
 REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
 
@@ -105,7 +106,7 @@ static int GetNumJoysticksSlow()
 	HRESULT hr = g_dinput->EnumDevices( DI8DEVCLASS_GAMECTRL, CountDevicesCallback, &iCount, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 	{
-		LOG->Warn( hr_ssprintf(hr, "g_dinput->EnumDevices") );
+		LOG->Warn( hr_format(hr, "g_dinput->EnumDevices") );
 	}
 	return iCount;
 }
@@ -120,25 +121,25 @@ InputHandler_DInput::InputHandler_DInput()
 	g_iNumJoysticks = 0;
 
 	AppInstance inst;
-	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, NULL);
+	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, nullptr);
 	if( hr != DI_OK )
-		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
+		RageException::Throw( hr_format(hr, "InputHandler_DInput: DirectInputCreate") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_KEYBOARD)" );
-	hr = g_dinput->EnumDevices( DI8DEVCLASS_KEYBOARD, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_KEYBOARD, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
-		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
+		RageException::Throw( hr_format(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_JOYSTICK)" );
-	hr = g_dinput->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
-		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
+		RageException::Throw( hr_format(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	// mouse
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_MOUSE)" );
-	hr = g_dinput->EnumDevices( DI8DEVCLASS_POINTER, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_POINTER, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
-		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
+		RageException::Throw( hr_format(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
@@ -200,7 +201,7 @@ InputHandler_DInput::~InputHandler_DInput()
 
 	Devices.clear();
 	g_dinput->Release();
-	g_dinput = NULL;
+	g_dinput = nullptr;
 }
 
 void InputHandler_DInput::WindowReset()
@@ -268,7 +269,7 @@ static HRESULT GetDeviceState( LPDIRECTINPUTDEVICE8 dev, int size, void *ptr )
 		hr = dev->Acquire();
 		if( hr != DI_OK )
 		{
-			LOG->Trace( hr_ssprintf(hr, "?") );
+			LOG->Trace( hr_format(hr, "?") );
 			return hr;
 		}
 
@@ -282,10 +283,12 @@ static HRESULT GetDeviceState( LPDIRECTINPUTDEVICE8 dev, int size, void *ptr )
  * figure it out. Be sure to call InputHandler::Update() between each poll. */
 void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 {
+	using std::max;
+
 	switch( device.type )
 	{
 	default:
-		FAIL_M(ssprintf("Unsupported DI device type: %i", device.type));
+		FAIL_M(fmt::sprintf("Unsupported DI device type: %i", device.type));
 	case DIDevice::KEYBOARD:
 		{
 			unsigned char keys[256];
@@ -296,7 +299,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 
 			if( hr != DI_OK )
 			{
-				LOG->MapLog( "UpdatePolled", hr_ssprintf(hr, "Failures on polled keyboard update") );
+				LOG->MapLog( "UpdatePolled", hr_format(hr, "Failures on polled keyboard update") );
 				return;
 			}
 
@@ -350,15 +353,15 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 							{ neg = JOY_AUX_1; pos = JOY_AUX_2;	val = state.rglSlider[0]; }
 						else if( in.ofs == DIJOFS_SLIDER(1) )
 							{ neg = JOY_AUX_3; pos = JOY_AUX_4;	val = state.rglSlider[1]; }
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 											"Controller '%s' is returning an unknown joystick offset, %i",
 											device.m_sName.c_str(), in.ofs );
 
 						if( neg != DeviceButton_Invalid )
 						{
-							float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
-							ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
-							ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
+							float l = Rage::scale( int(val) + 0.f, 0.0f, 100.0f, 0.0f, 1.0f );
+							ButtonPressed( DeviceInput(dev, neg, max(-l,0.f), tm) );
+							ButtonPressed( DeviceInput(dev, pos, max(+l,0.f), tm) );
 						}
 
 						break;
@@ -400,8 +403,13 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 			{
 				case input_t::BUTTON:
 				{
-					DeviceInput di( dev, enum_add2(MOUSE_LEFT, in.num), !!state.rgbButtons[in.ofs - DIMOFS_BUTTON0], tm );
-					ButtonPressed( di );
+					// msdn says state.rgbButtons is only 4 elements, so creating di
+					// crashes if the mouse has more buttons. -Kyz
+					if(in.ofs <= DIMOFS_BUTTON3)
+					{
+						DeviceInput di( dev, enum_add2(MOUSE_LEFT, in.num), !!state.rgbButtons[in.ofs - DIMOFS_BUTTON0], tm );
+						ButtonPressed( di );
+					}
 					break;
 				}
 				case input_t::AXIS:
@@ -417,27 +425,27 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 						neg = MOUSE_WHEELDOWN; pos = MOUSE_WHEELUP;
 						val = state.lZ;
 						//LOG->Trace("MouseWheel polled: %i",val);
-						INPUTFILTER->UpdateMouseWheel(val);
+						INPUTFILTER->UpdateMouseWheel(static_cast<float>(val));
 						if( val == 0 )
 						{
 							// release all
 							ButtonPressed( DeviceInput(dev, pos, 0, tm) );
 							ButtonPressed( DeviceInput(dev, neg, 0, tm) );
 						}
-						else if( int(val) > 0 )
+						else if( val > 0 )
 						{
 							// positive values: WheelUp
 							ButtonPressed( DeviceInput(dev, pos, 1, tm) );
 							ButtonPressed( DeviceInput(dev, neg, 0, tm) );
 						}
-						else if( int(val) < 0 )
+						else if( val < 0 )
 						{
 							// negative values: WheelDown
 							ButtonPressed( DeviceInput(dev, neg, 1, tm) );
 							ButtonPressed( DeviceInput(dev, pos, 0, tm) );
 						}
 					}
-					else LOG->MapLog( "unknown input", 
+					else LOG->MapLog( "unknown input",
 											"Mouse '%s' is returning an unknown mouse offset, %i",
 											device.m_sName.c_str(), in.ofs );
 					break;
@@ -450,6 +458,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 
 void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm )
 {
+	using std::max;
+	using std::min;
 	DWORD numevents;
 	DIDEVICEOBJECTDATA evtbuf[INPUT_QSIZE];
 
@@ -463,7 +473,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 
 	if( hr != DI_OK )
 	{
-		LOG->Trace( hr_ssprintf(hr, "UpdateBuffered: IDirectInputDevice2_GetDeviceData") );
+		LOG->Trace( hr_format(hr, "UpdateBuffered: IDirectInputDevice2_GetDeviceData") );
 		return;
 	}
 
@@ -504,7 +514,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						if( in.ofs == DIMOFS_BUTTON0 ) mouseInput = MOUSE_LEFT;
 						else if( in.ofs == DIMOFS_BUTTON1 ) mouseInput = MOUSE_RIGHT;
 						else if( in.ofs == DIMOFS_BUTTON2 ) mouseInput = MOUSE_MIDDLE;
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 								 "Mouse '%s' is returning an unknown mouse offset [button], %i",
 								 device.m_sName.c_str(), in.ofs );
 						ButtonPressed( DeviceInput(dev, mouseInput, !!evtbuf[i].dwData, tm) );
@@ -518,7 +528,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 					DeviceButton up = DeviceButton_Invalid, down = DeviceButton_Invalid;
 					if(dev == DEVICE_MOUSE)
 					{
-						float l = int(evtbuf[i].dwData);
+						float l = static_cast<float>(evtbuf[i].dwData);
 						POINT cursorPos;
 						GetCursorPos(&cursorPos);
 						// convert screen coordinates to client
@@ -534,7 +544,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 							{
 								up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
 								float fWheelDelta = l;
-								//l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
+								//l = Rage::scale( int(evtbuf[i].dwData) + 0.f, -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
 								if( l > 0 )
 								{
 									DeviceInput diUp = DeviceInput(dev, up, 1.0f, tm);
@@ -576,7 +586,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								}
 							}
 						}
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 										 "Mouse '%s' is returning an unknown mouse offset [axis], %i",
 										 device.m_sName.c_str(), in.ofs );
 					}
@@ -591,11 +601,11 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						else if( in.ofs == DIJOFS_RZ ) { up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; }
 						else if( in.ofs == DIJOFS_SLIDER(0) ) { up = JOY_AUX_1; down = JOY_AUX_2; }
 						else if( in.ofs == DIJOFS_SLIDER(1) ) { up = JOY_AUX_3; down = JOY_AUX_4; }
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 										 "Controller '%s' is returning an unknown joystick offset, %i",
 										 device.m_sName.c_str(), in.ofs );
-						
-						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
+
+						float l = Rage::scale( int(evtbuf[i].dwData) + 0.f, 0.0f, 100.0f, 0.0f, 1.0f );
 						if(GamePreferences::m_AxisFix)
 						{
 						  ButtonPressed( DeviceInput(dev, up, (l == 0) || (l == -1), tm) );
@@ -604,8 +614,8 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						}
 						else
 						{
-						  ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
-						  ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) ); 
+						  ButtonPressed( DeviceInput(dev, up, max(-l,0.f), tm) );
+						  ButtonPressed( DeviceInput(dev, down, max(+l,0.f), tm) );
 						}
 					}
 					break;
@@ -723,13 +733,13 @@ bool InputHandler_DInput::DevicesChanged()
 void InputHandler_DInput::InputThreadMain()
 {
 	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST))
-		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set DirectInput thread priority"));
+		LOG->Warn("%s", werr_format(GetLastError(), "Failed to set DirectInput thread priority"));
 
 	// Enable priority boosting.
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
 	vector<DIDevice*> BufferedDevices;
-	HANDLE Handle = CreateEvent( NULL, FALSE, FALSE, NULL );
+	HANDLE Handle = CreateEvent( nullptr, FALSE, FALSE, nullptr );
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( !Devices[i].buffered )
@@ -752,10 +762,13 @@ void InputHandler_DInput::InputThreadMain()
 			// Update buffered devices.
 			PollAndAcquireDevices( true );
 
+			/* NB: This sleep is interruptable - so it *doesn't* increase your latency
+			 * in the slightest. Unsure of this, I set it to 500ms and played a song.
+			 * Judging by the AAA I got, gameplay was unaffected. -Colby */
 			int ret = WaitForSingleObjectEx( Handle, 50, true );
 			if( ret == -1 )
 			{
-				LOG->Trace( werr_ssprintf(GetLastError(), "WaitForSingleObjectEx failed") );
+				LOG->Trace("%s", werr_format(GetLastError(), "WaitForSingleObjectEx failed") );
 				continue;
 			}
 
@@ -764,6 +777,8 @@ void InputHandler_DInput::InputThreadMain()
 			RageTimer now;
 			for( unsigned i = 0; i < BufferedDevices.size(); ++i )
 				UpdateBuffered( *BufferedDevices[i], now );
+
+			InputHandler::UpdateCounter();
 		}
 		CHECKPOINT;
 
@@ -780,7 +795,7 @@ void InputHandler_DInput::InputThreadMain()
 			continue;
 
 		Devices[i].Device->Unacquire();
-		Devices[i].Device->SetEventNotification( NULL );
+		Devices[i].Device->SetEventNotification( nullptr );
 	}
 
 	CloseHandle(Handle);
@@ -812,7 +827,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 	unsigned short result[2]; // ToAscii writes a max of 2 chars
 	ZERO( result );
 
-	if( pToUnicodeEx != NULL )
+	if( pToUnicodeEx != nullptr )
 	{
 		int iNum = pToUnicodeEx( vk, scancode, keys, (LPWSTR)result, 2, 0, layout );
 		if( iNum == 1 )
@@ -824,7 +839,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 		// iNum == 2 will happen only for dead keys. See MSDN for ToAsciiEx.
 		if( iNum == 1 )
 		{
-			RString s = RString()+(char)result[0];
+			std::string s = std::string()+(char)result[0];
 			return ConvertCodepageToWString( s, CP_ACP )[0];
 		}
 	}
@@ -844,24 +859,28 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 		return '\0';
 	}
 
-	FOREACH_CONST( DIDevice, Devices, d )
+	for (auto &d: Devices)
 	{
-		if( d->type != DIDevice::KEYBOARD )
-			continue;
-
-		FOREACH_CONST( input_t, d->Inputs, i )
+		if( d.type != DIDevice::KEYBOARD )
 		{
-			if( button != i->num )
+			continue;
+		}
+		for (auto &i: d.Inputs)
+		{
+			if( button != i.num )
+			{
 				continue;
-
+			}
 			unsigned char keys[256];
 			ZERO( keys );
 			if( bUseCurrentKeyModifiers )
 				GetKeyboardState(keys);
 			// todo: handle Caps Lock -freem
-			wchar_t c = ScancodeAndKeysToChar( i->ofs, keys );
+			wchar_t c = ScancodeAndKeysToChar( i.ofs, keys );
 			if( c )
+			{
 				return c;
+			}
 		}
 	}
 
@@ -871,7 +890,7 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -881,7 +900,7 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

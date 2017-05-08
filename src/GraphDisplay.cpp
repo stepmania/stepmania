@@ -1,5 +1,6 @@
 #include "global.h"
 #include "GraphDisplay.h"
+#include "RageMath.hpp"
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
 #include "RageDisplay.h"
@@ -8,9 +9,10 @@
 #include "RageLog.h"
 #include "RageMath.h"
 #include "StageStats.h"
-#include "Foreach.h"
 #include "Song.h"
 #include "XmlFile.h"
+
+using std::vector;
 
 //#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")
 REGISTER_ACTOR_CLASS( GraphDisplay );
@@ -28,15 +30,18 @@ public:
 
 		DISPLAY->ClearAllTextures();
 
-		// Must call this after setting the texture or else texture 
+		// Must call this after setting the texture or else texture
 		// parameters have no effect.
 		Actor::SetTextureRenderStates();
 
-		for( unsigned i = 0; i < m_Quads.size(); ++i )
-			m_Quads[i].c = this->m_pTempState->diffuse[0];
-		for( unsigned i = 0; i < m_pCircles.size(); ++i )
-			m_pCircles[i].c = this->m_pTempState->diffuse[0];
-
+		for (auto &quad: m_Quads)
+		{
+			quad.c = this->m_pTempState->diffuse[0];
+		}
+		for (auto &circle: m_pCircles)
+		{
+			circle.c = this->m_pTempState->diffuse[0];
+		}
 		DISPLAY->DrawQuads( &m_Quads[0], m_Quads.size() );
 
 		int iFans = m_pCircles.size() / iCircleVertices;
@@ -44,22 +49,22 @@ public:
 			DISPLAY->DrawFan( &m_pCircles[0]+iCircleVertices*i, iCircleVertices );
 	}
 
-	static void MakeCircle( const RageSpriteVertex &v, RageSpriteVertex *pVerts, int iSubdivisions, float fRadius )
+	static void MakeCircle( const Rage::SpriteVertex &v, Rage::SpriteVertex *pVerts, int iSubdivisions, float fRadius )
 	{
 		pVerts[0] = v;
 
 		for( int i = 0; i < iSubdivisions+1; ++i )
 		{
-			const float fRotation = float(i) / iSubdivisions * 2*PI;
-			const float fX = RageFastCos(fRotation) * fRadius;
-			const float fY = -RageFastSin(fRotation) * fRadius;
+			const float fRotation = float(i) / iSubdivisions * 2 * Rage::PI;
+			const float fX = Rage::FastCos(fRotation) * fRadius;
+			const float fY = -Rage::FastSin(fRotation) * fRadius;
 			pVerts[1+i] = v;
 			pVerts[1+i].p.x += fX;
 			pVerts[1+i].p.y += fY;
 		}
 	}
 
-	void Set( const RageSpriteVertex *m_LineStrip, int iSize )
+	void Set( const Rage::SpriteVertex *m_LineStrip, int iSize )
 	{
 		m_pCircles.resize( iSize * iCircleVertices );
 
@@ -67,29 +72,29 @@ public:
 		{
 			MakeCircle( m_LineStrip[i], &m_pCircles[0] + iCircleVertices*i, iSubdivisions, 1 );
 		}
-		
+
 		int iNumLines = iSize-1;
 		m_Quads.resize( iNumLines * 4 );
 		for( int i = 0; i < iNumLines; ++i )
 		{
-			const RageSpriteVertex &p1 = m_LineStrip[i];
-			const RageSpriteVertex &p2 = m_LineStrip[i+1];
+			const Rage::SpriteVertex &p1 = m_LineStrip[i];
+			const Rage::SpriteVertex &p2 = m_LineStrip[i+1];
 
 			float opp = p2.p.x - p1.p.x;
 			float adj = p2.p.y - p1.p.y;
-			float hyp = powf(opp*opp + adj*adj, 0.5f);
+			float hyp = std::pow(opp*opp + adj*adj, 0.5f);
 
 			float lsin = opp/hyp;
 			float lcos = adj/hyp;
 
-			RageSpriteVertex *v = &m_Quads[i*4];
+			Rage::SpriteVertex *v = &m_Quads[i*4];
 			v[0] = v[1] = p1;
 			v[2] = v[3] = p2;
 
 			int iLineWidth = 2;
 			float ydist = lsin * iLineWidth/2;
 			float xdist = lcos * iLineWidth/2;
-			
+
 			v[0].p.x += xdist;
 			v[0].p.y -= ydist;
 			v[1].p.x -= xdist;
@@ -105,28 +110,28 @@ public:
 	virtual GraphLine *Copy() const;
 
 private:
-	vector<RageSpriteVertex> m_Quads;
-	vector<RageSpriteVertex> m_pCircles;
+	vector<Rage::SpriteVertex> m_Quads;
+	vector<Rage::SpriteVertex> m_pCircles;
 };
 REGISTER_ACTOR_CLASS( GraphLine );
 
 class GraphBody: public Actor
 {
 public:
-	GraphBody( RString sFile )
+	GraphBody( std::string sFile )
 	{
 		m_pTexture = TEXTUREMAN->LoadTexture( sFile );
 
 		for( int i = 0; i < 2*VALUE_RESOLUTION; ++i )
 		{
-			m_Slices[i].c = RageColor(1,1,1,1);
-			m_Slices[i].t = RageVector2( 0,0 );
+			m_Slices[i].c = Rage::Color(1,1,1,1);
+			m_Slices[i].t = Rage::Vector2( 0,0 );
 		}
 	}
 	~GraphBody()
 	{
 		TEXTUREMAN->UnloadTexture( m_pTexture );
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 	}
 
 	void DrawPrimitives()
@@ -136,7 +141,7 @@ public:
 		DISPLAY->ClearAllTextures();
 		DISPLAY->SetTexture( TextureUnit_1, m_pTexture->GetTexHandle() );
 
-		// Must call this after setting the texture or else texture 
+		// Must call this after setting the texture or else texture
 		// parameters have no effect.
 		Actor::SetTextureRenderStates();
 
@@ -145,22 +150,24 @@ public:
 	}
 
 	RageTexture* m_pTexture;
-	RageSpriteVertex m_Slices[2*VALUE_RESOLUTION];
+	Rage::SpriteVertex m_Slices[2*VALUE_RESOLUTION];
 };
 
 GraphDisplay::GraphDisplay()
 {
-	m_pGraphLine = NULL;
-	m_pGraphBody = NULL;
+	m_pGraphLine = nullptr;
+	m_pGraphBody = nullptr;
 }
 
 GraphDisplay::~GraphDisplay()
 {
-	FOREACH( Actor*, m_vpSongBoundaries, p )
-		SAFE_DELETE( *p );
+	for (auto *p: m_vpSongBoundaries)
+	{
+		Rage::safe_delete( p );
+	}
 	m_vpSongBoundaries.clear();
-	SAFE_DELETE( m_pGraphLine );
-	SAFE_DELETE( m_pGraphBody );
+	Rage::safe_delete( m_pGraphLine );
+	Rage::safe_delete( m_pGraphBody );
 }
 
 void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
@@ -169,22 +176,25 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 	m_Values.resize( VALUE_RESOLUTION );
 	pss.GetLifeRecord( &m_Values[0], VALUE_RESOLUTION, ss.GetTotalPossibleStepsSeconds() );
-	for( unsigned i=0; i<ARRAYLEN(m_Values); i++ )
-		CLAMP( m_Values[i], 0.f, 1.f );
+    for (auto &value: m_Values)
+    {
+        value = Rage::clamp( value, 0.f, 1.f );
+    }
 
 	UpdateVerts();
 
 	// Show song boundaries
 	float fSec = 0;
-	FOREACH_CONST( Song*, ss.m_vpPossibleSongs, song )
+	auto &songs = ss.m_vpPossibleSongs;
+	for (auto song = songs.begin(); song != songs.end(); ++song)
 	{
-		if( song == ss.m_vpPossibleSongs.end()-1 )
+		if( song == songs.end()-1 )
 			continue;
 		fSec += (*song)->GetStepsSeconds();
 
 		Actor *p = m_sprSongBoundary->Copy();
 		m_vpSongBoundaries.push_back( p );
-		float fX = SCALE( fSec, 0, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
+		float fX = Rage::scale( fSec, 0.f, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
 		p->SetX( fX );
 		this->AddChild( p );
 	}
@@ -207,7 +217,7 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 		if( fMinLifeSoFar > 0.0f  &&  fMinLifeSoFar < 0.1f )
 		{
-			float fX = SCALE( float(iMinLifeSoFarAt), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
+			float fX = Rage::scale( float(iMinLifeSoFarAt), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
 			m_sprBarely->SetX( fX );
 		}
 		else
@@ -218,10 +228,10 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 	}
 }
 
-void GraphDisplay::Load( RString sMetricsGroup )
+void GraphDisplay::Load( std::string sMetricsGroup )
 {
-	m_size.x = THEME->GetMetricI( sMetricsGroup, "BodyWidth" );
-	m_size.y = THEME->GetMetricI( sMetricsGroup, "BodyHeight" );
+	m_size.x = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyWidth"));
+	m_size.y = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyHeight"));
 
 	m_sprBacking.Load( THEME->GetPathG(sMetricsGroup,"Backing") );
 	m_sprBacking->ZoomToWidth( m_size.x );
@@ -248,25 +258,25 @@ void GraphDisplay::UpdateVerts()
 	m_quadVertices.top = -m_size.y/2;
 	m_quadVertices.bottom = m_size.y/2;
 
-	RageSpriteVertex LineStrip[VALUE_RESOLUTION];
+	Rage::SpriteVertex LineStrip[VALUE_RESOLUTION];
 	for( int i = 0; i < VALUE_RESOLUTION; ++i )
 	{
-		const float fX = SCALE( float(i), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
-		const float fY = SCALE( m_Values[i], 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
+		const float fX = Rage::scale( float(i), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
+		const float fY = Rage::scale( m_Values[i], 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
 
-		m_pGraphBody->m_Slices[i*2+0].p = RageVector3( fX, fY, 0 );
-		m_pGraphBody->m_Slices[i*2+1].p = RageVector3( fX, m_quadVertices.bottom, 0 );
+		m_pGraphBody->m_Slices[i*2+0].p = Rage::Vector3( fX, fY, 0 );
+		m_pGraphBody->m_Slices[i*2+1].p = Rage::Vector3( fX, m_quadVertices.bottom, 0 );
 
-		const RectF *pRect = m_pGraphBody->m_pTexture->GetTextureCoordRect( 0 );
+		const Rage::RectF *pRect = m_pGraphBody->m_pTexture->GetTextureCoordRect( 0 );
 
-		const float fU = SCALE( fX, m_quadVertices.left, m_quadVertices.right, pRect->left, pRect->right );
-		const float fV = SCALE( fY, m_quadVertices.top, m_quadVertices.bottom, pRect->top, pRect->bottom );
-		m_pGraphBody->m_Slices[i*2+0].t = RageVector2( fU, fV );
-		m_pGraphBody->m_Slices[i*2+1].t = RageVector2( fU, pRect->bottom );
+		const float fU = Rage::scale( fX, m_quadVertices.left, m_quadVertices.right, pRect->left, pRect->right );
+		const float fV = Rage::scale( fY, m_quadVertices.top, m_quadVertices.bottom, pRect->top, pRect->bottom );
+		m_pGraphBody->m_Slices[i*2+0].t = Rage::Vector2( fU, fV );
+		m_pGraphBody->m_Slices[i*2+1].t = Rage::Vector2( fU, pRect->bottom );
 
-		LineStrip[i].p = RageVector3( fX, fY, 0 );
-		LineStrip[i].c = RageColor( 1,1,1,1 );
-		LineStrip[i].t = RageVector2( 0,0 );
+		LineStrip[i].p = Rage::Vector3( fX, fY, 0 );
+		LineStrip[i].c = Rage::Color( 1,1,1,1 );
+		LineStrip[i].t = Rage::Vector2( 0,0 );
 	}
 
 	m_pGraphLine->Set( LineStrip, VALUE_RESOLUTION );
@@ -275,7 +285,7 @@ void GraphDisplay::UpdateVerts()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the GraphDisplay. */ 
+/** @brief Allow Lua to have access to the GraphDisplay. */
 class LunaGraphDisplay: public Luna<GraphDisplay>
 {
 public:
@@ -288,11 +298,11 @@ public:
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
 		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
-		if(pStageStats == NULL)
+		if(pStageStats == nullptr)
 		{
 			luaL_error(L, "The StageStats passed to GraphDisplay:Set are nil.");
 		}
-		if(pPlayerStageStats == NULL)
+		if(pPlayerStageStats == nullptr)
 		{
 			luaL_error(L, "The PlayerStageStats passed to GraphDisplay:Set are nil.");
 		}
@@ -313,7 +323,7 @@ LUA_REGISTER_DERIVED_CLASS( GraphDisplay, ActorFrame )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -323,7 +333,7 @@ LUA_REGISTER_DERIVED_CLASS( GraphDisplay, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -2,10 +2,13 @@
 #include "DebugInfoHunt.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "VideoDriverInfo.h"
 #include "RegistryAccess.h"
 #include <windows.h>
 #include <mmsystem.h>
+
+using std::vector;
 
 static void LogVideoDriverInfo( VideoDriverInfo info )
 {
@@ -26,7 +29,7 @@ static void GetMemoryDebugInfo()
 
 static void GetDisplayDriverDebugInfo()
 {
-	RString sPrimaryDeviceName = GetPrimaryVideoName();
+	std::string sPrimaryDeviceName = GetPrimaryVideoName();
 
 	if( sPrimaryDeviceName == "" )
 		LOG->Info( "Primary display driver could not be determined." );
@@ -66,17 +69,15 @@ static void GetDisplayDriverDebugInfo()
 	}
 }
 
-static RString wo_ssprintf( MMRESULT err, const char *fmt, ...)
+template<typename... Args>
+static std::string waveout_format(MMRESULT err, std::string const &msg, Args const & ...args)
 {
 	char buf[MAXERRORLENGTH];
 	waveOutGetErrorText(err, buf, MAXERRORLENGTH);
 
-	va_list	va;
-	va_start(va, fmt);
-	RString s = vssprintf( fmt, va );
-	va_end(va);
+	auto s = fmt::format(msg, args...);
 
-	return s += ssprintf( "(%s)", buf );
+	return s + fmt::sprintf("(%s)", buf);
 }
 
 static void GetDriveDebugInfo9x()
@@ -89,22 +90,24 @@ static void GetDriveDebugInfo9x()
 	 *    DMACurrentlyUsed  0 or 1
 	 *    DeviceDesc        "GENERIC IDE  DISK TYPE01"
 	 */
-	vector<RString> Drives;
-	if( !RegistryAccess::GetRegSubKeys( "HKEY_LOCAL_MACHINE\\Enum\\ESDI", Drives ) )
+	std::vector<std::string> Drives;
+	if (!RegistryAccess::GetRegSubKeys("HKEY_LOCAL_MACHINE\\Enum\\ESDI", Drives))
+	{
 		return;
-
+	}
 	for( unsigned drive = 0; drive < Drives.size(); ++drive )
 	{
-		vector<RString> IDs;
-		if( !RegistryAccess::GetRegSubKeys( Drives[drive], IDs ) )
+		vector<std::string> IDs;
+		if (!RegistryAccess::GetRegSubKeys(Drives[drive], IDs))
+		{
 			continue;
-
+		}
 		for( unsigned id = 0; id < IDs.size(); ++id )
 		{
-			RString DeviceDesc;
+			std::string DeviceDesc;
 
 			RegistryAccess::GetRegValue( IDs[id], "DeviceDesc", DeviceDesc );
-			TrimRight( DeviceDesc );
+			DeviceDesc = Rage::trim_right( DeviceDesc );
 
 			int DMACurrentlyUsed = -1;
 			RegistryAccess::GetRegValue( IDs[id], "DMACurrentlyUsed", DMACurrentlyUsed );
@@ -128,7 +131,7 @@ static void GetDriveDebugInfoNT()
 	 *		     Identifier  "WDC WD1200JB-75CRA0"
 	 *			 Type        "DiskPeripheral"
 	 */
-	vector<RString> Ports;
+	std::vector<std::string> Ports;
 	if( !RegistryAccess::GetRegSubKeys( "HKEY_LOCAL_MACHINE\\HARDWARE\\DEVICEMAP\\Scsi", Ports ) )
 		return;
 
@@ -137,30 +140,30 @@ static void GetDriveDebugInfoNT()
 		int DMAEnabled = -1;
 		RegistryAccess::GetRegValue( Ports[i], "DMAEnabled", DMAEnabled );
 
-		RString Driver;
+		std::string Driver;
 		RegistryAccess::GetRegValue( Ports[i], "Driver", Driver );
 
-		vector<RString> Busses;
+		std::vector<std::string> Busses;
 		if( !RegistryAccess::GetRegSubKeys( Ports[i], Busses, "Scsi Bus .*" ) )
 			continue;
 
 		for( unsigned bus = 0; bus < Busses.size(); ++bus )
 		{
-			vector<RString> TargetIDs;
+			std::vector<std::string> TargetIDs;
 			if( !RegistryAccess::GetRegSubKeys( Busses[bus], TargetIDs, "Target Id .*" ) )
 				continue;
 
 			for( unsigned tid = 0; tid < TargetIDs.size(); ++tid )
 			{
-				vector<RString> LUIDs;
+				std::vector<std::string> LUIDs;
 				if( !RegistryAccess::GetRegSubKeys( TargetIDs[tid], LUIDs, "Logical Unit Id .*" ) )
 					continue;
 
 				for( unsigned luid = 0; luid < LUIDs.size(); ++luid )
 				{
-					RString Identifier;
+					std::string Identifier;
 					RegistryAccess::GetRegValue( LUIDs[luid], "Identifier", Identifier );
-					TrimRight( Identifier );
+					Identifier = Rage::trim_right( Identifier );
 					LOG->Info( "Drive: \"%s\" Driver: %s DMA: %s",
 						Identifier.c_str(), Driver.c_str(), DMAEnabled == 1? "yes":DMAEnabled == -1? "N/A":"NO" );
 				}
@@ -199,7 +202,7 @@ static void GetWindowsVersionDebugInfo()
 		return;
 	}
 
-	RString Ver = ssprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
+	std::string Ver = fmt::sprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
 	if(ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 	{
 		if(ovi.dwMinorVersion == 0)
@@ -265,7 +268,7 @@ static void GetWindowsVersionDebugInfo()
 			Ver += "unknown NT-based";
 	} else Ver += "???";
 
-	Ver += ssprintf(") build %i [%s]", ovi.dwBuildNumber & 0xffff, ovi.szCSDVersion);
+	Ver += fmt::sprintf(") build %i [%s]", ovi.dwBuildNumber & 0xffff, ovi.szCSDVersion);
 	LOG->Info("%s", Ver.c_str());
 }
 
@@ -280,7 +283,7 @@ static void GetSoundDriverDebugInfo()
 		MMRESULT ret = waveOutGetDevCaps(i, &caps, sizeof(caps));
 		if(ret != MMSYSERR_NOERROR)
 		{
-			LOG->Info(wo_ssprintf(ret, "waveOutGetDevCaps(%i) failed", i));
+			LOG->Info(waveout_format(ret, "waveOutGetDevCaps(%i) failed", i));
 			continue;
 		}
 		LOG->Info("Sound device %i: %s, %i.%i, MID %i, PID %i %s", i, caps.szPname,

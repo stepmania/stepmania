@@ -10,7 +10,7 @@ namespace NotesWriterDWI
 	 * @param sPath the path to write the file.
 	 * @param out the Song to be written out.
 	 * @return its success or failure. */
-	bool Write( RString sPath, const Song &out );
+	bool Write( std::string sPath, const Song &out );
 }
 
 #endif

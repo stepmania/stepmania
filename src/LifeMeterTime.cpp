@@ -37,7 +37,7 @@ static const float g_fTimeMeterSecondsChangeInit[] =
 };
 COMPILE_ASSERT( ARRAYLEN(g_fTimeMeterSecondsChangeInit) == NUM_ScoreEvent );
 
-static void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+static void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, std::string &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "TimeMeterSecondsChange" + ScoreEventToString( (ScoreEvent)i );
 	defaultValueOut = g_fTimeMeterSecondsChangeInit[i];
@@ -50,7 +50,7 @@ LifeMeterTime::LifeMeterTime()
 {
 	m_fLifeTotalGainedSeconds = 0;
 	m_fLifeTotalLostSeconds = 0;
-	m_pStream = NULL;
+	m_pStream = nullptr;
 }
 
 LifeMeterTime::~LifeMeterTime()
@@ -62,7 +62,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 {
 	LifeMeter::Load( pPlayerState, pPlayerStageStats );
 
-	const RString sType = "LifeMeterTime";
+	const std::string sType = "LifeMeterTime";
 
 	m_sprBackground.Load( THEME->GetPathG(sType,"background") );
 	m_sprBackground->SetName( "Background" );
@@ -73,7 +73,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 	m_quadDangerGlow.ZoomToWidth( METER_WIDTH );
 	m_quadDangerGlow.ZoomToHeight( METER_HEIGHT );
 	// hardcoded effects...
-	m_quadDangerGlow.SetEffectDiffuseShift( 1.0f, RageColor(1,0,0,0.8f), RageColor(1,0,0,0) );
+	m_quadDangerGlow.SetEffectDiffuseShift( 1.0f, Rage::Color(1,0,0,0.8f), Rage::Color(1,0,0,0) );
 	m_quadDangerGlow.SetEffectClock( Actor::CLOCK_BGM_BEAT );
 	this->AddChild( &m_quadDangerGlow );
 
@@ -82,7 +82,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 	m_pStream->Load( bExtra ? "StreamDisplayExtra" : "StreamDisplay" );
 	this->AddChild( m_pStream );
 
-	RString sExtra = bExtra ? "extra " : "";
+	std::string sExtra = bExtra ? "extra " : "";
 	m_sprFrame.Load( THEME->GetPathG(sType,sExtra+"frame") );
 	m_sprFrame->SetName( "Frame" );
 	this->AddChild( m_sprFrame );
@@ -100,18 +100,18 @@ void LifeMeterTime::OnLoadSong()
 	if(GAMESTATE->IsCourseMode())
 	{
 		Course* pCourse = GAMESTATE->m_pCurCourse;
-		ASSERT( pCourse != NULL );
+		ASSERT( pCourse != nullptr );
 		fGainSeconds= pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].fGainSeconds;
 	}
 	else
 	{
 		// Placeholderish, at least this way it won't crash when someone tries it
 		// out in non-course mode. -Kyz
-		Song* song= GAMESTATE->m_pCurSong;
-		ASSERT(song != NULL);
+		Song* song= GAMESTATE->get_curr_song();
+		ASSERT(song != nullptr);
 		float song_len= song->m_fMusicLengthSeconds;
 		Steps* steps= GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber];
-		ASSERT(steps != NULL);
+		ASSERT(steps != nullptr);
 		RadarValues radars= steps->GetRadarValues(m_pPlayerState->m_PlayerNumber);
 		float scorable_things= radars[RadarCategory_TapsAndHolds] +
 			radars[RadarCategory_Lifts];
@@ -141,7 +141,7 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	switch( tns )
 	{
 	default:
-		FAIL_M(ssprintf("Invalid TapNoteScore: %i", tns));
+		FAIL_M(fmt::sprintf("Invalid TapNoteScore: %i", tns));
 	case TNS_W1:		fMeterChange = g_fTimeMeterSecondsChange[SE_W1];		break;
 	case TNS_W2:		fMeterChange = g_fTimeMeterSecondsChange[SE_W2];		break;
 	case TNS_W3:		fMeterChange = g_fTimeMeterSecondsChange[SE_W3];		break;
@@ -167,7 +167,7 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	switch( hns )
 	{
 	default:
-		FAIL_M(ssprintf("Invalid HoldNoteScore: %i", hns));
+		FAIL_M(fmt::sprintf("Invalid HoldNoteScore: %i", hns));
 	case HNS_Held:	fMeterChange = g_fTimeMeterSecondsChange[SE_Held];	break;
 	case HNS_LetGo:	fMeterChange = g_fTimeMeterSecondsChange[SE_LetGo];	break;
 	case HNS_Missed:	fMeterChange = g_fTimeMeterSecondsChange[SE_Missed];	break;
@@ -226,11 +226,12 @@ bool LifeMeterTime::IsFailing() const
 
 void LifeMeterTime::Update( float fDeltaTime )
 {
+	using std::max;
 	// update current stage stats so ScoreDisplayLifeTime can show the right thing
 	float fSecs = GetLifeSeconds();
-	fSecs = max( 0, fSecs );
+	fSecs = max( 0.f, fSecs );
 	m_pPlayerStageStats->m_fLifeRemainingSeconds = fSecs;
-	
+
 	LifeMeter::Update( fDeltaTime );
 
 	m_pStream->SetPercent( GetLife() );
@@ -246,7 +247,7 @@ void LifeMeterTime::Update( float fDeltaTime )
 float LifeMeterTime::GetLife() const
 {
 	float fPercent = GetLifeSeconds() / FULL_LIFE_SECONDS;
-	CLAMP( fPercent, 0, 1 );
+	fPercent = Rage::clamp( fPercent, 0.f, 1.f );
 	return fPercent;
 }
 
@@ -259,7 +260,7 @@ float LifeMeterTime::GetLifeSeconds() const
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -269,7 +270,7 @@ float LifeMeterTime::GetLifeSeconds() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

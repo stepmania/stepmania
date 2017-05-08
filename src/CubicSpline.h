@@ -9,6 +9,24 @@ struct lua_State;
 struct CubicSpline
 {
 CubicSpline() :m_spatial_extent(0.0f) {}
+	void solve(bool loop, bool polygonal)
+	{
+		if(polygonal)
+		{
+			solve_polygonal();
+		}
+		else
+		{
+			if(loop)
+			{
+				solve_looped();
+			}
+			else
+			{
+				solve_straight();
+			}
+		}
+	}
 	void solve_looped();
 	void solve_straight();
 	void solve_polygonal();
@@ -22,6 +40,7 @@ CubicSpline() :m_spatial_extent(0.0f) {}
 	void get_coefficients(size_t i, float& b, float& c, float& d) const;
 	void set_point_and_coefficients(size_t i, float a, float b, float c, float d);
 	void get_point_and_coefficients(size_t i, float& a, float& b, float& c, float& d) const;
+	void remove_point(size_t i);
 	void resize(size_t s);
 	size_t size() const;
 	bool empty() const;
@@ -50,8 +69,8 @@ struct CubicSplineN
 	void evaluate_derivative(float t, vector<float>& v) const;
 	void evaluate_second_derivative(float t, vector<float>& v) const;
 	void evaluate_third_derivative(float t, vector<float>& v) const;
-	void evaluate(float t, RageVector3& v) const;
-	void evaluate_derivative(float t, RageVector3& v) const;
+	void evaluate(float t, Rage::Vector3& v) const;
+	void evaluate_derivative(float t, Rage::Vector3& v) const;
 	void set_point(size_t i, const vector<float>& v);
 	void set_coefficients(size_t i, const vector<float>& b,
 		const vector<float>& c, const vector<float>& d);

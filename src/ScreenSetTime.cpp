@@ -50,23 +50,23 @@ void ScreenSetTime::Init()
 		BitmapText &value = m_textValue[s];
 
 		title.LoadFromFont( THEME->GetPathF("Common","title") );
-		title.SetDiffuse( RageColor(1,1,1,1) );
+		title.SetDiffuse( Rage::Color(1,1,1,1) );
 		title.SetText( SetTimeSelectionToString(s) );
 		title.SetXY( GetTitleX(s), GetTitleY(s) );
 		this->AddChild( &title );
 
-		title.SetDiffuse( RageColor(1,1,1,0) );
+		title.SetDiffuse( Rage::Color(1,1,1,0) );
 		title.BeginTweening( 0.3f, TWEEN_LINEAR );
-		title.SetDiffuse( RageColor(1,1,1,1) );
+		title.SetDiffuse( Rage::Color(1,1,1,1) );
 
 		value.LoadFromFont( THEME->GetPathF("Common","normal") );
-		value.SetDiffuse( RageColor(1,1,1,1) );
+		value.SetDiffuse( Rage::Color(1,1,1,1) );
 		value.SetXY( GetValueX(s), GetValueY(s) );
 		this->AddChild( &value );
 
-		value.SetDiffuse( RageColor(1,1,1,0) );
+		value.SetDiffuse( Rage::Color(1,1,1,0) );
 		value.BeginTweening( 0.3f, TWEEN_LINEAR );
-		value.SetDiffuse( RageColor(1,1,1,1) );
+		value.SetDiffuse( Rage::Color(1,1,1,1) );
 	}
 
 	m_soundChangeSelection.Load( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
@@ -81,7 +81,7 @@ void ScreenSetTime::Update( float fDelta )
 {
 	Screen::Update( fDelta );
 
-	time_t iNow = time(NULL);
+	time_t iNow = time(nullptr);
 	iNow += m_TimeOffset;
 
 	tm now;
@@ -90,14 +90,14 @@ void ScreenSetTime::Update( float fDelta )
 	int iPrettyHour = now.tm_hour%12;
 	if( iPrettyHour == 0 )
 		iPrettyHour = 12;
-	RString sPrettyHour = ssprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
+	std::string sPrettyHour = fmt::sprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
 
 	m_textValue[hour]	.SetText( sPrettyHour );
-	m_textValue[minute]	.SetText( ssprintf("%02d",now.tm_min) );
-	m_textValue[second]	.SetText( ssprintf("%02d",now.tm_sec) );
-	m_textValue[year]	.SetText( ssprintf("%02d",now.tm_year+1900) );
+	m_textValue[minute]	.SetText( fmt::sprintf("%02d",now.tm_min) );
+	m_textValue[second]	.SetText( fmt::sprintf("%02d",now.tm_sec) );
+	m_textValue[year]	.SetText( fmt::sprintf("%02d",now.tm_year+1900) );
 	m_textValue[month]	.SetText( MonthToString((Month)now.tm_mon) );
-	m_textValue[day]	.SetText( ssprintf("%02d",now.tm_mday) );
+	m_textValue[day]	.SetText( fmt::sprintf("%02d",now.tm_mday) );
 }
 
 bool ScreenSetTime::Input( const InputEventPlus &input )
@@ -113,7 +113,7 @@ bool ScreenSetTime::Input( const InputEventPlus &input )
 
 void ScreenSetTime::ChangeValue( int iDirection )
 {
-	time_t iNow = time(NULL);
+	time_t iNow = time(nullptr);
 	time_t iAdjusted = iNow + m_TimeOffset;
 
 	tm adjusted;
@@ -129,7 +129,7 @@ void ScreenSetTime::ChangeValue( int iDirection )
 	case month:		adjusted.tm_mon += iDirection;	break;
 	case day:		adjusted.tm_mday += iDirection;	break;
 	default:
-		FAIL_M(ssprintf("Invalid SetTimeSelection: %i", m_Selection));
+		FAIL_M(fmt::sprintf("Invalid SetTimeSelection: %i", m_Selection));
 	}
 
 	/* Normalize: */
@@ -152,8 +152,8 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 
 	m_textValue[OldSelection].StopEffect();
 	m_textValue[m_Selection].SetEffectDiffuseShift( 1.f,
-		RageColor(0.3f,0.3f,0.3f,1), 
-		RageColor(1,1,1,1) );
+		Rage::Color(0.3f,0.3f,0.3f,1), 
+		Rage::Color(1,1,1,1) );
 
 	if( iDirection != 0 )
 		m_soundChangeSelection.Play(true);
@@ -194,7 +194,7 @@ bool ScreenSetTime::MenuStart( const InputEventPlus &input )
 	else if( m_Selection == NUM_SetTimeSelection -1 )	// last row
 	{
 		/* Save the new time. */
-		time_t iNow = time(NULL);
+		time_t iNow = time(nullptr);
 		time_t iAdjusted = iNow + m_TimeOffset;
 
 		tm adjusted;
@@ -210,11 +210,11 @@ bool ScreenSetTime::MenuStart( const InputEventPlus &input )
 		{
 			BitmapText &title = m_textTitle[s];
 			title.BeginTweening( 0.3f, TWEEN_LINEAR );
-			title.SetDiffuse( RageColor(1,1,1,0) );
+			title.SetDiffuse( Rage::Color(1,1,1,0) );
 
 			BitmapText &value = m_textValue[s];
 			value.BeginTweening( 0.3f, TWEEN_LINEAR );
-			value.SetDiffuse( RageColor(1,1,1,0) );
+			value.SetDiffuse( Rage::Color(1,1,1,0) );
 		}
 
 		SCREENMAN->PlayStartSound();

@@ -4,16 +4,18 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "InputEventPlus.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenSelectLanguage );
 
 void ScreenSelectLanguage::Init()
 {
 	// fill m_aGameCommands before calling Init()
-	vector<RString> vs;
+	vector<std::string> vs;
 	THEME->GetLanguages( vs );
-	SortRStringArray( vs, true );
+	SortStringArray( vs, true );
 
-	FOREACH_CONST( RString, vs, s )
+	for (auto s = vs.begin(); s != vs.end(); ++s)
 	{
 		const LanguageInfo *pLI = GetLanguageInfo( *s );
 
@@ -22,7 +24,7 @@ void ScreenSelectLanguage::Init()
 		gc.m_sName = *s;
 		gc.m_bInvalid = false;
 		if( pLI )
-			gc.m_sText = THEME->GetString("NativeLanguageNames", pLI->szEnglishName);
+			gc.m_sText = THEME->GetString("NativeLanguageNames", pLI->englishName);
 		else
 			gc.m_sText = *s;
 
@@ -32,7 +34,7 @@ void ScreenSelectLanguage::Init()
 	ScreenSelectMaster::Init();
 }
 
-RString ScreenSelectLanguage::GetDefaultChoice()
+std::string ScreenSelectLanguage::GetDefaultChoice()
 {
 	return HOOKS->GetPreferredLanguage();
 }
@@ -45,10 +47,10 @@ void ScreenSelectLanguage::BeginScreen()
 bool ScreenSelectLanguage::MenuStart( const InputEventPlus &input )
 {
 	int iIndex = this->GetSelectionIndex( input.pn );
-	RString sLangCode = m_aGameCommands[iIndex].m_sName;
+	std::string sLangCode = m_aGameCommands[iIndex].m_sName;
 	PREFSMAN->m_sLanguage.Set( sLangCode );
 	PREFSMAN->SavePrefsToDisk();
-	THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
+	THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage.Get(), PREFSMAN->m_bPseudoLocalize );
 
 	m_soundStart.Play(true);
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
@@ -63,7 +65,7 @@ bool ScreenSelectLanguage::MenuBack( const InputEventPlus &input )
 /*
  * (c) 2006 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -73,7 +75,7 @@ bool ScreenSelectLanguage::MenuBack( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

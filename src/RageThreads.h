@@ -11,8 +11,8 @@ public:
 	RageThread( const RageThread &cpy );
 	~RageThread();
 
-	void SetName( const RString &n ) { m_sName = n; }
-	RString GetName() const { return m_sName; }
+	void SetName( const std::string &n ) { m_sName = n; }
+	std::string GetName() const { return m_sName; }
 	void Create( int (*fn)(void *), void *data );
 
 	void Halt( bool Kill=false);
@@ -31,7 +31,7 @@ public:
 	static const char *GetThreadNameByID( uint64_t iID );
 	static bool EnumThreadIDs( int n, uint64_t &iID );
 	int Wait();
-	bool IsCreated() const { return m_pSlot != NULL; }
+	bool IsCreated() const { return m_pSlot != nullptr; }
 
 	/* A system can define HAVE_TLS, indicating that it can compile thread_local
 	 * code, but an individual environment may not actually have functional TLS.
@@ -45,7 +45,7 @@ public:
 
 private:
 	ThreadSlot *m_pSlot;
-	RString m_sName;
+	std::string m_sName;
 
 	static bool s_bSystemSupportsTLS;
 	static bool s_bIsShowingDialog;
@@ -62,7 +62,7 @@ private:
 class RageThreadRegister
 {
 public:
-	RageThreadRegister( const RString &sName );
+	RageThreadRegister( const std::string &sName );
 	~RageThreadRegister();
 
 private:
@@ -75,7 +75,7 @@ private:
 namespace Checkpoints
 {
 	void LogCheckpoints( bool yes=true );
-	void SetCheckpoint( const char *file, int line, const char *message );
+	void SetCheckpoint( const char *file, int line, std::string const &message );
 	void GetLogs( char *pBuf, int iSize, const char *delim );
 };
 
@@ -90,19 +90,19 @@ class MutexImpl;
 class RageMutex
 {
 public:
-	RString GetName() const { return m_sName; }
-	void SetName( const RString &s ) { m_sName = s; }
+	std::string GetName() const { return m_sName; }
+	void SetName( const std::string &s ) { m_sName = s; }
 	virtual void Lock();
 	virtual bool TryLock();
 	virtual void Unlock();
 	virtual bool IsLockedByThisThread() const;
 
-	RageMutex( const RString &name );
+	RageMutex( const std::string &name );
 	virtual ~RageMutex();
 
 protected:
 	MutexImpl *m_pMutex;
-	RString m_sName;
+	std::string m_sName;
 
 	int m_UniqueID;
 	
@@ -131,9 +131,9 @@ class LockMutex
 
 public:
 	LockMutex(RageMutex &mut, const char *file, int line);
-	LockMutex(RageMutex &mut): mutex(mut), file(NULL), line(-1), locked_at(-1), locked(true) { mutex.Lock(); }
+	LockMutex(RageMutex &mut): mutex(mut), file(nullptr), line(-1), locked_at(-1), locked(true) { mutex.Lock(); }
 	~LockMutex();
-	LockMutex(LockMutex &cpy): mutex(cpy.mutex), file(NULL), line(-1), locked_at(cpy.locked_at), locked(true) { mutex.Lock(); }
+	LockMutex(LockMutex &cpy): mutex(cpy.mutex), file(nullptr), line(-1), locked_at(cpy.locked_at), locked(true) { mutex.Lock(); }
 
 	/**
 	 * @brief Unlock the mutex (before this would normally go out of scope).
@@ -151,16 +151,16 @@ class EventImpl;
 class RageEvent: public RageMutex
 {
 public:
-	RageEvent( RString name );
+	RageEvent( std::string name );
 	~RageEvent();
 
 	/*
-	 * If pTimeout is non-NULL, the event will be automatically signalled at the given
+	 * If pTimeout is non-nullptr, the event will be automatically signalled at the given
 	 * time.  Note that implementing this timeout is optional; not all archs support it. 
 	 * If false is returned, the wait timed out (and the mutex is locked, as if the
 	 * event had been signalled).
 	 */
-	bool Wait( RageTimer *pTimeout = NULL );
+	bool Wait( RageTimer *pTimeout = nullptr );
 	void Signal();
 	void Broadcast();
 	bool WaitTimeoutSupported() const;
@@ -176,10 +176,10 @@ class SemaImpl;
 class RageSemaphore
 {
 public:
-	RageSemaphore( RString sName, int iInitialValue = 0 );
+	RageSemaphore( std::string sName, int iInitialValue = 0 );
 	~RageSemaphore();
 
-	RString GetName() const { return m_sName; }
+	std::string GetName() const { return m_sName; }
 	int GetValue() const;
 	void Post();
 	void Wait( bool bFailOnTimeout=true );
@@ -187,7 +187,7 @@ public:
 
 private:
 	SemaImpl *m_pSema;
-	RString m_sName;
+	std::string m_sName;
 	
 	// Swallow up warnings. If they must be used, define them.
 	RageSemaphore& operator=(const RageSemaphore& rhs);

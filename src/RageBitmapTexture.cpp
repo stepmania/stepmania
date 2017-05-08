@@ -13,7 +13,10 @@
 #include "arch/Dialog/Dialog.h"
 #include "StepMania.h"
 
-static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight )
+using std::vector;
+using std::string;
+
+static void GetResolutionFromFileName( std::string sPath, int &iWidth, int &iHeight )
 {
 	/* Match:
 	 *  Foo (res 512x128).png
@@ -22,7 +25,7 @@ static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight 
 	 * Be careful that this doesn't get mixed up with frame dimensions. */
 	static Regex re( "\\([^\\)]*res ([0-9]+)x([0-9]+).*\\)" );
 
-	vector<RString> asMatches;
+	vector<std::string> asMatches;
 	if( !re.Compare(sPath, asMatches) )
 		return;
 
@@ -66,13 +69,15 @@ void RageBitmapTexture::Reload()
  */
 void RageBitmapTexture::Create()
 {
+	using std::min;
+	using std::max;
 	RageTextureID actualID = GetID();
 
 	ASSERT( actualID.filename != "" );
 
 	/* Load the image into a RageSurface. */
-	RString error;
-	RageSurface *pImg= NULL;
+	std::string error;
+	RageSurface *pImg= nullptr;
 	if(actualID.filename == TEXTUREMAN->GetScreenTextureID().filename)
 	{
 		pImg= TEXTUREMAN->GetScreenSurface();
@@ -83,14 +88,14 @@ void RageBitmapTexture::Create()
 	}
 
 	/* Tolerate corrupt/unknown images. */
-	if( pImg == NULL )
+	if( pImg == nullptr )
 	{
-		RString warning = ssprintf("RageBitmapTexture: Couldn't load %s: %s",
+		std::string warning = fmt::sprintf("RageBitmapTexture: Couldn't load %s: %s",
 			actualID.filename.c_str(), error.c_str());
 		LOG->Warn("%s", warning.c_str());
 		Dialog::OK(warning, "missing_texture");
 		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
-		ASSERT( pImg != NULL );
+		ASSERT( pImg != nullptr );
 	}
 
 	if( actualID.bHotPinkColorKey )
@@ -107,8 +112,7 @@ void RageBitmapTexture::Create()
 	}
 
 	// look in the file name for a format hints
-	RString sHintString = GetID().filename + actualID.AdditionalTextureHints;
-	sHintString.MakeLower();
+	std::string sHintString = Rage::make_lower(GetID().filename + actualID.AdditionalTextureHints);
 
 	if( sHintString.find("32bpp") != string::npos )			actualID.iColorDepth = 32;
 	else if( sHintString.find("16bpp") != string::npos )		actualID.iColorDepth = 16;
@@ -169,8 +173,8 @@ void RageBitmapTexture::Create()
 		m_iTextureHeight = max( 8, m_iTextureHeight );
 	}
 
-	ASSERT_M( m_iTextureWidth <= actualID.iMaxSize, ssprintf("w %i, %i", m_iTextureWidth, actualID.iMaxSize) );
-	ASSERT_M( m_iTextureHeight <= actualID.iMaxSize, ssprintf("h %i, %i", m_iTextureHeight, actualID.iMaxSize) );
+	ASSERT_M( m_iTextureWidth <= actualID.iMaxSize, fmt::sprintf("w %i, %i", m_iTextureWidth, actualID.iMaxSize) );
+	ASSERT_M( m_iTextureHeight <= actualID.iMaxSize, fmt::sprintf("h %i, %i", m_iTextureHeight, actualID.iMaxSize) );
 
 	if( actualID.bStretch )
 	{
@@ -180,7 +184,7 @@ void RageBitmapTexture::Create()
 		m_iImageHeight = m_iTextureHeight;
 	}
 
-	if( pImg->w != m_iImageWidth || pImg->h != m_iImageHeight ) 
+	if( pImg->w != m_iImageWidth || pImg->h != m_iImageHeight )
 		RageSurfaceUtils::Zoom( pImg, m_iImageWidth, m_iImageHeight );
 
 	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(RagePixelFormat_PAL) )
@@ -227,7 +231,7 @@ void RageBitmapTexture::Create()
 		case 32:
 			pixfmt = RagePixelFormat_RGBA8;
 			break;
-		default: FAIL_M( ssprintf("%i", actualID.iColorDepth) );
+		default: FAIL_M( fmt::sprintf("%i", actualID.iColorDepth) );
 		}
 	}
 
@@ -244,7 +248,7 @@ void RageBitmapTexture::Create()
 	 * We actually want to dither only if the destination has greater color depth
 	 * on at least one color channel than the source. For example, it doesn't
 	 * make sense to do this when pixfmt is RGBA5551 if the image is only RGBA555. */
-	if( actualID.bDither && 
+	if( actualID.bDither &&
 		(pixfmt==RagePixelFormat_RGBA4 || pixfmt==RagePixelFormat_RGB5A1) )
 	{
 		// Dither down to the destination format.
@@ -265,7 +269,7 @@ void RageBitmapTexture::Create()
 	/* Scale up to the texture size, if needed. */
 	RageSurfaceUtils::ConvertSurface( pImg, m_iTextureWidth, m_iTextureHeight,
 		pImg->fmt.BitsPerPixel, pImg->fmt.Mask[0], pImg->fmt.Mask[1], pImg->fmt.Mask[2], pImg->fmt.Mask[3] );
-	
+
 	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, pImg, actualID.bMipMaps );
 
 	CreateFrameRects();
@@ -308,13 +312,13 @@ void RageBitmapTexture::Create()
 			float fBetterSourceHeight = this->GetFramesHigh() * fBetterFrameHeight;
 			if( fFrameWidth!=fBetterFrameWidth || fFrameHeight!=fBetterFrameHeight )
 			{
-				RString sWarning = ssprintf(
+				std::string sWarning = fmt::sprintf(
 					"The graphic '%s' has frame dimensions that aren't a multiple of %d.\n"
 					"The entire image is %dx%d and frame size is %.1fx%.1f.\n"
-					"Image quality will be much improved if you resize the graphic to %.0fx%.0f, which is a frame size of %.0fx%.0f.", 
-					actualID.filename.c_str(), 
+					"Image quality will be much improved if you resize the graphic to %.0fx%.0f, which is a frame size of %.0fx%.0f.",
+					actualID.filename.c_str(),
 					iDimensionMultiple,
-					this->GetSourceWidth(), this->GetSourceHeight(), 
+					this->GetSourceWidth(), this->GetSourceHeight(),
 					fFrameWidth, fFrameHeight,
 					fBetterSourceWidth, fBetterSourceHeight,
 					fBetterFrameWidth, fBetterFrameHeight );
@@ -341,7 +345,7 @@ void RageBitmapTexture::Create()
 	}
 
 
-	RString sProperties;
+	std::string sProperties;
 	sProperties += RagePixelFormatToString( pixfmt ) + " ";
 	if( actualID.iAlphaBits == 0 ) sProperties += "opaque ";
 	if( actualID.iAlphaBits == 1 ) sProperties += "matte ";
@@ -362,7 +366,7 @@ void RageBitmapTexture::Destroy()
 /*
  * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -372,7 +376,7 @@ void RageBitmapTexture::Destroy()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -382,4 +386,4 @@ void RageBitmapTexture::Destroy()
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
- */ 
+ */

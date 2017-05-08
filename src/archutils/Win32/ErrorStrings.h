@@ -1,11 +1,32 @@
 #ifndef ERROR_STRINGS_H
 #define ERROR_STRINGS_H
 
-RString werr_ssprintf( int err, const char *fmt, ... );
-RString ConvertWstringToCodepage( wstring s, int iCodePage );
-RString ConvertUTF8ToACP( const RString &s );
-wstring ConvertCodepageToWString( RString s, int iCodePage );
-RString ConvertACPToUTF8( const RString &s );
+#include <string>
+#include <windows.h>
+#include "format.h"
+#include "RageString.hpp"
+
+template<typename... Args>
+std::string werr_format(int err, std::string const &msg, Args const & ...args)
+{
+	char buf[1024] = "";
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
+		0, err, 0, buf, sizeof(buf), nullptr);
+
+	// Why is FormatMessage returning text ending with \r\n? (who? -aj)
+	// Perhaps it's because you're on Windows, where newlines are \r\n. -aj
+	std::string text = buf;
+	Rage::replace(text, "\n", "");
+	Rage::replace(text, "\r", " "); // foo\r\nbar -> foo bar
+	text = Rage::trim_right(text); // "foo\r\n" -> "foo"
+
+	std::string s = fmt::format(msg, args...);
+	return s += fmt::sprintf(" (%s)", text.c_str());
+}
+std::string ConvertWstringToCodepage( std::wstring s, int iCodePage );
+std::string ConvertUTF8ToACP( const std::string &s );
+std::wstring ConvertCodepageToWString( std::string s, int iCodePage );
+std::string ConvertACPToUTF8( const std::string &s );
 
 #endif
 

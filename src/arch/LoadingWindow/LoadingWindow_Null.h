@@ -1,15 +1,15 @@
-#ifndef LOADING_WINDOW_NULL_H
-#define LOADING_WINDOW_NULL_H
+#ifndef LOADING_WINDOW_nullptr_H
+#define LOADING_WINDOW_nullptr_H
 
 #include "LoadingWindow.h"
 
 class LoadingWindow_Null: public LoadingWindow
 {
 public:
-	void SetText( RString str ) { }
-	void SetSplash( const RageSurface *pSplash ) { }
+	void SetText( std::string ) { }
+	void SetSplash( const RageSurface * ) { }
 };
-#define USE_LOADING_WINDOW_NULL
+#define USE_LOADING_WINDOW_nullptr
 
 #endif
 

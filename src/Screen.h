@@ -13,15 +13,15 @@
 
 class InputEventPlus;
 class Screen;
-typedef Screen* (*CreateScreenFn)(const RString& sClassName);
+typedef Screen* (*CreateScreenFn)(const std::string& sClassName);
 /**
  * @brief Allow registering the screen for easier access.
  *
  * Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
  */
-struct RegisterScreenClass { RegisterScreenClass( const RString &sClassName, CreateScreenFn pfn ); };
+struct RegisterScreenClass { RegisterScreenClass( const std::string &sClassName, CreateScreenFn pfn ); };
 #define REGISTER_SCREEN_CLASS( className ) \
-	static Screen* Create##className( const RString &sName ) { LuaThreadVariable var( "LoadingScreen", sName ); Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
+	static Screen* Create##className( const std::string &sName ) { LuaThreadVariable var( "LoadingScreen", sName ); Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
 	static RegisterScreenClass register_##className( #className, Create##className )
 
 /** @brief The different types of screens available. */
@@ -34,7 +34,7 @@ enum ScreenType
 	NUM_ScreenType, /**< The number of screen types. */
 	ScreenType_Invalid
 };
-const RString& ScreenTypeToString( ScreenType st );
+std::string const ScreenTypeToString( ScreenType st );
 LuaDeclareType( ScreenType );
 
 /** @brief Class that holds a screen-full of Actors. */
@@ -46,7 +46,7 @@ public:
 	virtual ~Screen();
 
 	/**
-	 * @brief This is called immediately after construction, 
+	 * @brief This is called immediately after construction,
 	 * to allow initializing after all derived classes exist.
 	 *
 	 * Don't call it directly; use InitScreen instead. */
@@ -89,12 +89,12 @@ protected:
 	/** @brief Holds the messages sent to a Screen. */
 	struct QueuedScreenMessage {
 		/** @brief The message being held. */
-		ScreenMessage SM;  
+		ScreenMessage SM;
 		/** @brief How long the message is up. */
 		float fDelayRemaining;
 	};
 	/** @brief The list of messages that are sent to a Screen. */
-	vector<QueuedScreenMessage>	m_QueuedMessages;
+	std::vector<QueuedScreenMessage>	m_QueuedMessages;
 	static bool SortMessagesByDelayRemaining(const QueuedScreenMessage &m1, const QueuedScreenMessage &m2);
 
 	InputQueueCodeSet	m_Codes;
@@ -111,8 +111,8 @@ protected:
 	 * @brief The next screen to go to once this screen is done.
 	 *
 	 * If this is blank, the NextScreen metric will be used. */
-	RString m_sNextScreen;
-	RString m_sPrevScreen;
+	std::string m_sNextScreen;
+	std::string m_sPrevScreen;
 	ScreenMessage m_smSendOnPop;
 
 	float m_fLockInputSecs;
@@ -121,10 +121,10 @@ protected:
 	bool m_bRunning;
 
 public:
-	RString GetNextScreenName() const;
-	RString GetPrevScreen() const;
-	void SetNextScreenName(RString const& name);
-	void SetPrevScreenName(RString const& name);
+	std::string GetNextScreenName() const;
+	std::string GetPrevScreen() const;
+	void SetNextScreenName(std::string const& name);
+	void SetPrevScreenName(std::string const& name);
 
 	bool PassInputToLua(const InputEventPlus& input);
 	void AddInputCallbackFromStack(lua_State* L);
@@ -151,8 +151,8 @@ private:
 	// void* is the key so that we can use lua_topointer to find the callback
 	// to remove when removing a callback.
 	typedef void const* callback_key_t;
-	map<callback_key_t, LuaReference> m_InputCallbacks;
-	vector<callback_key_t> m_DelayedCallbackRemovals;
+	std::map<callback_key_t, LuaReference> m_InputCallbacks;
+	std::vector<callback_key_t> m_DelayedCallbackRemovals;
 	bool m_CallingInputCallbacks;
 	void InternalRemoveCallback(callback_key_t key);
 };
@@ -164,7 +164,7 @@ private:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -174,7 +174,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

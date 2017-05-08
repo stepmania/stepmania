@@ -4,7 +4,7 @@
 struct UsbStorageDevice
 {
 	UsbStorageDevice() { MakeBlank(); }
-	
+
 	void MakeBlank()
 	{
 		// -1 means "don't know"
@@ -27,10 +27,10 @@ struct UsbStorageDevice
 	int iBus;
 	int iPort;
 	int iLevel;
-	RString sSerial;
-	RString sDevice;
-	RString	sOsMountDir;	// WITHOUT trailing slash
-	RString sSysPath;   // Linux: /sys/block name
+	std::string sSerial;
+	std::string sDevice;
+	std::string	sOsMountDir;	// WITHOUT trailing slash
+	std::string sSysPath;   // Linux: /sys/block name
 	enum State
 	{
 		/* Empty device.  This is used only by MemoryCardManager. */
@@ -53,21 +53,21 @@ struct UsbStorageDevice
 		State_INVALID
 	};
 	State m_State;
-	RString m_sError;
+	std::string m_sError;
 
-	void SetError( const RString &sError ) { m_State = STATE_ERROR; m_sError = sError; }
+	void SetError( const std::string &sError ) { m_State = STATE_ERROR; m_sError = sError; }
 
 	bool bIsNameAvailable;  // Name in the profile on the memory card.
-	RString sName;  // Name in the profile on the memory card.
+	std::string sName;  // Name in the profile on the memory card.
 	int idVendor;
 	int idProduct;
-	RString sVendor;
-	RString sProduct;
-	RString sVolumeLabel;
+	std::string sVendor;
+	std::string sProduct;
+	std::string sVolumeLabel;
 	int iVolumeSizeMB;
 
 	bool IsBlank() const { return m_State == STATE_NONE; }
-	void SetOsMountDir( const RString &s );
+	void SetOsMountDir( const std::string &s );
 
 	bool operator==(const UsbStorageDevice& other) const;
 };
@@ -87,19 +87,19 @@ public:
 
 	/* Poll for memory card changes.  If anything has changed, fill in vStorageDevicesOut
 	 * and return true. */
-	bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut );
+	bool DoOneUpdate( bool bMount, std::vector<UsbStorageDevice>& vStorageDevicesOut );
 
 protected:
 	/* This may be called before GetUSBStorageDevices; return false if the results of
 	 * GetUSBStorageDevices have not changed.  (This is an optimization.) */
 	virtual bool USBStorageDevicesChanged() { return true; }
-	virtual void GetUSBStorageDevices( vector<UsbStorageDevice>& /* vDevicesOut */ ) { }
+	virtual void GetUSBStorageDevices( std::vector<UsbStorageDevice>& /* vDevicesOut */ ) { }
 
 	/* Test the device.  On failure, call pDevice->SetError() appropriately, and return false. */
 	virtual bool TestWrite( UsbStorageDevice* ) { return true; }
 
 private:
-	vector<UsbStorageDevice> m_vDevicesLastSeen;
+	std::vector<UsbStorageDevice> m_vDevicesLastSeen;
 	bool NeedUpdate( bool bMount );
 };
 
@@ -108,7 +108,7 @@ private:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -118,7 +118,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

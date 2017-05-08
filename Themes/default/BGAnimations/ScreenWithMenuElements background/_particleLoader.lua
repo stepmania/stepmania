@@ -1,4 +1,4 @@
-local hideFancyElements = (ThemePrefs.Get("FancyUIBG") == false)
+local hideFancyElements = (theme_config:get_data().FancyUIBG == false)
 local t = Def.ActorFrame{};
 if hideFancyElements then return t; end
 

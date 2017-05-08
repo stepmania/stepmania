@@ -1,12 +1,13 @@
 #include "global.h"
 #include "ScrollBar.h"
+#include "RageMath.hpp"
 #include "ThemeManager.h"
 #include "RageUtil.h"
 
 
 ScrollBar::ScrollBar()
 {
-	RString sMetricsGroup = "ScrollBar";
+	std::string sMetricsGroup = "ScrollBar";
 
 	m_sprMiddle.Load( THEME->GetPathG(sMetricsGroup,"middle") );
 	this->AddChild( m_sprMiddle );
@@ -22,10 +23,10 @@ ScrollBar::ScrollBar()
 	m_sprScrollTickThumb.Load( THEME->GetPathG(sMetricsGroup,"TickThumb") );
 	this->AddChild( m_sprScrollTickThumb );
 
-	for( unsigned i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
+	for (auto &actor: m_sprScrollStretchThumb)
 	{
-		m_sprScrollStretchThumb[i].Load( THEME->GetPathG(sMetricsGroup,"StretchThumb") );
-		this->AddChild( m_sprScrollStretchThumb[i] );
+		actor.Load( THEME->GetPathG(sMetricsGroup,"StretchThumb") );
+		this->AddChild( actor );
 	}
 
 	SetBarHeight( 100 );
@@ -38,8 +39,10 @@ void ScrollBar::SetBarHeight( int iHeight )
 	m_sprTop->SetY( -m_iBarHeight/2.0f );
 	m_sprBottom->SetY( +m_iBarHeight/2.0f );
 	m_sprScrollTickThumb->SetY( 0 );
-	for( unsigned i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
-		m_sprScrollStretchThumb[i]->SetY( 0 );
+	for (auto &actor: m_sprScrollStretchThumb)
+	{
+		actor->SetY(0);
+	}
 }
 
 void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
@@ -51,8 +54,8 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 
 	/* Set tick thumb */
 	{
-		float fY = SCALE( fCenterPercent, 0.0f, 1.0f, -iBarContentHeight/2.0f, iBarContentHeight/2.0f );
-		fY = roundf( fY );
+		float fY = Rage::scale( fCenterPercent, 0.0f, 1.0f, -iBarContentHeight/2.0f, iBarContentHeight/2.0f );
+		fY = std::roundf( fY );
 		m_sprScrollTickThumb->SetY( fY );
 	}
 
@@ -69,22 +72,22 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 
 	if( fStartPercent < fEndPercent )	// we only need to one 1 stretch thumb part
 	{
-		fPartTopY[0]	= SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartBottomY[0]	= SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartTopY[1]	= 0; 
-		fPartBottomY[1]	= 0; 
+		fPartTopY[0]	= Rage::scale( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartBottomY[0]	= Rage::scale( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartTopY[1]	= 0;
+		fPartBottomY[1]	= 0;
 	}
 	else	// we need two stretch thumb parts
 	{
-		fPartTopY[0]	= SCALE( 0.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartBottomY[0]	= SCALE( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartTopY[1]	= SCALE( fStartPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartBottomY[1]	= SCALE( 1.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPartTopY[0]	= Rage::scale( 0.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartBottomY[0]	= Rage::scale( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartTopY[1]	= Rage::scale( fStartPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartBottomY[1]	= Rage::scale( 1.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
 	}
 
-	for( unsigned i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
+	for( unsigned i = 0; i < m_sprScrollStretchThumb.size(); ++i )
 	{
-		RectF rect(
+		Rage::RectF rect(
 			-m_sprScrollStretchThumb[i]->GetUnzoomedWidth()/2,
 			fPartTopY[i],
 			+m_sprScrollStretchThumb[i]->GetUnzoomedWidth()/2,
@@ -97,7 +100,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -107,7 +110,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -5,6 +5,8 @@
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 REGISTER_ACTOR_CLASS( HelpDisplay );
 
 HelpDisplay::HelpDisplay()
@@ -14,15 +16,15 @@ HelpDisplay::HelpDisplay()
 	m_fSecsBetweenSwitches = 1;
 }
 
-void HelpDisplay::Load( const RString &sType )
+void HelpDisplay::Load( const std::string &sType )
 {
 	RunCommands( THEME->GetMetricA(sType,"TipOnCommand") );
 	m_fSecsUntilSwitch = THEME->GetMetricF(sType,"TipShowTime");
 	m_fSecsBetweenSwitches = THEME->GetMetricF(sType,"TipSwitchTime");
 }
 
-void HelpDisplay::SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt )
-{ 
+void HelpDisplay::SetTips( vector<std::string> const &arrayTips, vector<std::string> const &arrayTipsAlt )
+{
 	ASSERT( arrayTips.size() == arrayTipsAlt.size() );
 
 	if( arrayTips == m_arrayTips && arrayTipsAlt == m_arrayTipsAlt )
@@ -41,6 +43,7 @@ void HelpDisplay::SetTips( const vector<RString> &arrayTips, const vector<RStrin
 
 void HelpDisplay::Update( float fDeltaTime )
 {
+	using std::max;
 	float fHibernate = m_fHibernateSecondsLeft;
 
 	BitmapText::Update( fDeltaTime );
@@ -48,7 +51,7 @@ void HelpDisplay::Update( float fDeltaTime )
 	if( m_arrayTips.empty() )
 		return;
 
-	m_fSecsUntilSwitch -= max( fDeltaTime - fHibernate, 0 );
+	m_fSecsUntilSwitch -= max( fDeltaTime - fHibernate, 0.f );
 	if( m_fSecsUntilSwitch > 0 )
 		return;
 
@@ -63,7 +66,7 @@ void HelpDisplay::Update( float fDeltaTime )
 #include "LuaBinding.h"
 #include "FontCharAliases.h"
 
-/** @brief Allow Lua to have access to the HelpDisplay. */ 
+/** @brief Allow Lua to have access to the HelpDisplay. */
 class LunaHelpDisplay: public Luna<HelpDisplay>
 {
 public:
@@ -71,21 +74,24 @@ public:
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );
 		lua_pushvalue( L, 1 );
-		vector<RString> arrayTips;
+		vector<std::string> arrayTips;
 		LuaHelpers::ReadArrayFromTable( arrayTips, L );
 		lua_pop( L, 1 );
-		for( unsigned i = 0; i < arrayTips.size(); ++i )
-			FontCharAliases::ReplaceMarkers( arrayTips[i] );
+		for (auto &tip: arrayTips)
+		{
+			FontCharAliases::ReplaceMarkers( tip );
+		}
 		if( lua_gettop(L) > 1 && !lua_isnil( L, 2 ) )
 		{
-			vector<RString> arrayTipsAlt;
+			vector<std::string> arrayTipsAlt;
 			luaL_checktype( L, 2, LUA_TTABLE );
 			lua_pushvalue( L, 2 );
 			LuaHelpers::ReadArrayFromTable( arrayTipsAlt, L );
 			lua_pop( L, 1 );
-			for( unsigned i = 0; i < arrayTipsAlt.size(); ++i )
-				FontCharAliases::ReplaceMarkers( arrayTipsAlt[i] );
-
+			for (auto &tip: arrayTipsAlt)
+			{
+				FontCharAliases::ReplaceMarkers( tip );
+			}
 			p->SetTips( arrayTips, arrayTipsAlt );
 		}
 		else
@@ -95,15 +101,14 @@ public:
 	}
 	static int SetTipsColonSeparated( T* p, lua_State *L )
 	{
-		vector<RString> vs;
-		split( SArg(1), "::", vs );
+		auto vs = Rage::split(luaL_checkstring(L,1), "::");
 		p->SetTips( vs );
 		COMMON_RETURN_SELF;
 	}
 
 	static int gettips( T* p, lua_State *L )
 	{
-		vector<RString> arrayTips, arrayTipsAlt;
+		vector<std::string> arrayTips, arrayTipsAlt;
 		p->GetTips( arrayTips, arrayTipsAlt );
 
 		LuaHelpers::CreateTableFromArray( arrayTips, L );
@@ -127,7 +132,7 @@ LUA_REGISTER_DERIVED_CLASS( HelpDisplay, BitmapText )
 /*
  * (c) 2001-2003 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -137,7 +142,7 @@ LUA_REGISTER_DERIVED_CLASS( HelpDisplay, BitmapText )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

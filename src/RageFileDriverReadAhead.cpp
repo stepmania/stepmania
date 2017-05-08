@@ -117,6 +117,7 @@ void RageFileDriverReadAhead::FillBuffer( int iBytes )
 
 int RageFileDriverReadAhead::ReadInternal( void *pBuffer, size_t iBytes )
 {
+	using std::min;
 	int iRet = -1;
 	if( m_bReadAheadNeeded && m_iFilePos < (int) m_sBuffer.size() )
 	{

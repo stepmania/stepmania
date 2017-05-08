@@ -1,5 +1,7 @@
 #include "global.h"
 #include "DancingCharacters.h"
+#include "RageMath.hpp"
+#include "RageMatrix.hpp"
 #include "GameConstantsAndTypes.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
@@ -13,8 +15,8 @@
 
 int Neg1OrPos1();
 
-#define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
-#define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
+#define DC_X( choice )	THEME->GetMetricF("DancingCharacters",fmt::sprintf("2DCharacterXP%d",choice+1))
+#define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",fmt::sprintf("2DCharacterYP%d",choice+1))
 
 /*
  * TODO:
@@ -63,8 +65,8 @@ DancingCharacters::DancingCharacters(): m_bDrawDangerLight(false),
 			continue;
 
 		// load in any potential 2D stuff
-		RString sCharacterDirectory = pChar->m_sCharDir;
-		RString sCurrentAnim;
+		std::string sCharacterDirectory = pChar->m_sCharDir;
+		std::string sCurrentAnim;
 		sCurrentAnim = sCharacterDirectory + "2DIdle";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
@@ -138,13 +140,16 @@ DancingCharacters::DancingCharacters(): m_bDrawDangerLight(false),
 				break;
 		}
 
-		m_pCharacter[p]->LoadMilkshapeAscii( pChar->GetModelPath() );
-		m_pCharacter[p]->LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
-		m_pCharacter[p]->LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
-		m_pCharacter[p]->LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
-		m_pCharacter[p]->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
+		std::string load_fail_reason;
+		if(m_pCharacter[p]->LoadMilkshapeAscii(pChar->GetModelPath(), load_fail_reason))
+		{
+			m_pCharacter[p]->LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
+			m_pCharacter[p]->LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
+			m_pCharacter[p]->LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
+			m_pCharacter[p]->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
 
-		m_pCharacter[p]->RunCommands( pChar->m_cmdInit );
+			m_pCharacter[p]->RunCommands( pChar->m_cmdInit );
+		}
 	}
 }
 
@@ -166,8 +171,8 @@ void DancingCharacters::LoadNextSong()
 	m_fThisCameraStartBeat = 0;
 	m_fThisCameraEndBeat = 0;
 
-	ASSERT( GAMESTATE->m_pCurSong != NULL );
-	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->GetFirstBeat();
+	ASSERT( GAMESTATE->get_curr_song() != nullptr );
+	m_fThisCameraEndBeat = GAMESTATE->get_curr_song()->GetFirstBeat();
 
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsPlayerEnabled(p) )
@@ -188,8 +193,8 @@ void DancingCharacters::Update( float fDelta )
 	{
 		// make the characters move
 		float fBPM = GAMESTATE->m_Position.m_fCurBPS*60;
-		float fUpdateScale = SCALE( fBPM, 60.f, 300.f, 0.75f, 1.5f );
-		CLAMP( fUpdateScale, 0.75f, 1.5f );
+		float fUpdateScale = Rage::scale( fBPM, 60.f, 300.f, 0.75f, 1.5f );
+		fUpdateScale = Rage::clamp( fUpdateScale, 0.75f, 1.5f );
 
 		/* It's OK for the animation to go slower than natural when we're
 		 * at a very low music rate. */
@@ -213,7 +218,7 @@ void DancingCharacters::Update( float fDelta )
 	bWasGameplayStarting = bGameplayStarting;
 
 	static float fLastBeat = GAMESTATE->m_Position.m_fSongBeat;
-	float firstBeat = GAMESTATE->m_pCurSong->GetFirstBeat();
+	float firstBeat = GAMESTATE->get_curr_song()->GetFirstBeat();
 	float fThisBeat = GAMESTATE->m_Position.m_fSongBeat;
 	if( fLastBeat < firstBeat && fThisBeat >= firstBeat )
 	{
@@ -316,21 +321,21 @@ void DancingCharacters::DrawPrimitives()
 	if(m_fThisCameraStartBeat == m_fThisCameraEndBeat)
 		fPercentIntoSweep = 0;
 	else 
-		fPercentIntoSweep = SCALE(GAMESTATE->m_Position.m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
-	float fCameraPanY = SCALE( fPercentIntoSweep, 0.f, 1.f, m_CameraPanYStart, m_CameraPanYEnd );
-	float fCameraHeight = SCALE( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
+		fPercentIntoSweep = Rage::scale(GAMESTATE->m_Position.m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
+	float fCameraPanY = Rage::scale( fPercentIntoSweep, 0.f, 1.f, m_CameraPanYStart, m_CameraPanYEnd );
+	float fCameraHeight = Rage::scale( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
 
-	RageVector3 m_CameraPoint( 0, fCameraHeight, -m_CameraDistance );
-	RageMatrix CameraRot;
+	Rage::Vector3 m_CameraPoint( 0, fCameraHeight, -m_CameraDistance );
+	Rage::Matrix CameraRot;
 	RageMatrixRotationY( &CameraRot, fCameraPanY );
-	RageVec3TransformCoord( &m_CameraPoint, &m_CameraPoint, &CameraRot );
+	m_CameraPoint = m_CameraPoint.TransformCoords(CameraRot);
 
-	RageVector3 m_LookAt( 0, m_fLookAtHeight, 0 );
+	Rage::Vector3 m_LookAt( 0, m_fLookAtHeight, 0 );
 
 	DISPLAY->LoadLookAt( 45,
 		m_CameraPoint,
 		m_LookAt,
-		RageVector3(0,1,0) );
+		Rage::Vector3(0,1,0) );
 
 	FOREACH_EnabledPlayer( p )
 	{
@@ -339,15 +344,15 @@ void DancingCharacters::DrawPrimitives()
 
 		DISPLAY->SetLighting( true );
 
-		RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
-		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(1,0.95f,0.925f,1));
-		RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
+		Rage::Color ambient  = bFailed ? Rage::Color(0.2f,0.1f,0.1f,1) : (bDanger ? Rage::Color(0.4f,0.1f,0.1f,1) : Rage::Color(0.4f,0.4f,0.4f,1));
+		Rage::Color diffuse  = bFailed ? Rage::Color(0.4f,0.1f,0.1f,1) : (bDanger ? Rage::Color(0.8f,0.1f,0.1f,1) : Rage::Color(1,0.95f,0.925f,1));
+		Rage::Color specular = Rage::Color(0.8f,0.8f,0.8f,1);
 		DISPLAY->SetLightDirectional( 
 			0,
 			ambient, 
 			diffuse,
 			specular,
-			RageVector3(-3, -7.5f, +9) );
+			Rage::Vector3(-3, -7.5f, +9) );
 
 		if( PREFSMAN->m_bCelShadeModels )
 		{

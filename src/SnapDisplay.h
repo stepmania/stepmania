@@ -11,7 +11,7 @@ class SnapDisplay : public ActorFrame
 public:
 	SnapDisplay();
 
-	void Load();
+	void SetSeparation(float sep);
 
 	bool PrevSnapMode();
 	bool NextSnapMode();

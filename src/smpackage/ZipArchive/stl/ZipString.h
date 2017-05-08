@@ -136,10 +136,10 @@ public:
 		va_list arguments;
 		va_start (arguments, lpszFormat);
 		TCHAR* pBuf = NULL;
-		int iCounter = 1, uTotal = 0;
+		int uTotal = 0;
 		do 
 		{
-			int nLen = sizeof(TCHAR) * iCounter*1024;
+			int nLen = sizeof(TCHAR) * 1024;
 			pBuf = (TCHAR*)realloc((void*)pBuf, nLen);
 			if (!pBuf)
 				return;
@@ -147,8 +147,6 @@ public:
 			if (uTotal == -1 || (uTotal == nLen - 1) ) // for some implementations
 			{
 				pBuf[nLen - 1] = _T('\0');
-				if (iCounter == 7)
-					break;
 			}
 			else
 			{

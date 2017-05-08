@@ -16,7 +16,7 @@ public:
 	virtual GrooveRadar *Copy() const;
 	virtual void LoadFromNode( const XNode* pNode );
 
-	/** 
+	/**
 	 * @brief Give the Player an empty GrooveRadar.
 	 * @param pn the Player to give an empty GrooveRadar. */
 	void SetEmpty( PlayerNumber pn );
@@ -24,9 +24,9 @@ public:
 	/**
 	 * @brief Give the Player a GrooveRadar based on some Steps.
 	 * @param pn the Player to give a GrooveRadar.
-	 * @param pSteps the Steps to use to make the radar. If NULL, there are no Steps. */
+	 * @param pSteps the Steps to use to make the radar. If nullptr, there are no Steps. */
 	void SetFromSteps( PlayerNumber pn, Steps* pSteps );
-	void SetFromValues( PlayerNumber pn, vector<float> vals );
+	void SetFromValues( PlayerNumber pn, std::vector<float> vals );
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -46,7 +46,7 @@ protected:
 
 		void SetEmpty();
 		void SetFromSteps( const RadarValues &rv );
-		void SetFromValues( vector<float> vals );
+		void SetFromValues( std::vector<float> vals );
 
 		void SetRadius( float f ) { m_size.x = f; m_size.y = f; }
 
@@ -72,7 +72,7 @@ protected:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -82,7 +82,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

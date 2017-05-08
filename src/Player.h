@@ -2,7 +2,7 @@
 #define PLAYER_H
 
 #include "ActorFrame.h"
-#include "HoldJudgment.h"
+#include "AutoActor.h"
 #include "NoteDataWithScoring.h"
 #include "RageSound.h"
 #include "AttackDisplay.h"
@@ -18,7 +18,7 @@ class CombinedLifeMeter;
 class ScoreKeeper;
 class Inventory;
 class RageTimer;
-class NoteField;
+struct NoteField;
 class PlayerStageStats;
 class JudgedRows;
 
@@ -45,30 +45,16 @@ public:
 	~Player();
 
 	virtual void Update( float fDeltaTime );
+	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
-	// PushPlayerMatrix and PopPlayerMatrix are separate functions because
-	// they need to be used twice so that the notefield board can rendered
-	// underneath the combo and judgment.  They're not embedded in
-	// PlayerMatrixPusher so that some nutjob can later decide to expose them
-	// to lua. -Kyz
-	void PushPlayerMatrix(float x, float skew, float center_y);
-	void PopPlayerMatrix();
-
-	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	// DrawNoteFieldBoard exists so that the board can be drawn underneath
+	// theme elements like score. -Kyz
 	void DrawNoteFieldBoard();
-
-	// Here's a fun construct for people that haven't seen it before:
-	// This object does some task when it's created, then cleans up when it's
-	// destroyed.  That way, you stick it inside a block, and can't forget the
-	// cleanup. -Kyz
-	struct PlayerNoteFieldPositioner
-	{
-		PlayerNoteFieldPositioner(Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse);
-		~PlayerNoteFieldPositioner();
-		Player* player;
-		float original_y;
-		float y_offset;
-	};
+	void SetNoteFieldToEditMode();
+	void update_displayed_time();
+	void disable_defective_mode();
+	NoteField* get_note_field_because_i_really_need_it_for_edit_mode()
+	{ return m_note_field; }
 
 	struct TrackRowTapNote
 	{
@@ -76,23 +62,26 @@ public:
 		int iRow;
 		TapNote *pTN;
 	};
-	void UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTapNote> &vTN );
+	void UpdateHoldNotes( int iSongRow, float fDeltaTime, std::vector<TrackRowTapNote> &vTN );
 
-	void Init( 
-		const RString &sType,
-		PlayerState* pPlayerState, 
+	void Init(
+		const std::string &sType,
+		PlayerState* pPlayerState,
 		PlayerStageStats* pPlayerStageStats,
-		LifeMeter* pLM, 
-		CombinedLifeMeter* pCombinedLM, 
-		ScoreDisplay* pScoreDisplay, 
-		ScoreDisplay* pSecondaryScoreDisplay, 
-		Inventory* pInventory, 
-		ScoreKeeper* pPrimaryScoreKeeper, 
+		LifeMeter* pLM,
+		CombinedLifeMeter* pCombinedLM,
+		ScoreDisplay* pScoreDisplay,
+		ScoreDisplay* pSecondaryScoreDisplay,
+		Inventory* pInventory,
+		ScoreKeeper* pPrimaryScoreKeeper,
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
+	double get_field_width();
+	void set_gameplay_zoom(double zoom);
+	float calc_read_bpm();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
 	bool IsOniDead() const;
-	
+
 	/**
 	 * @brief Retrieve the Player's TimingData.
 	 *
@@ -104,12 +93,11 @@ public:
 	}
 
 	void ScoreAllActiveHoldsLetGo();
-	void DoTapScoreNone();
+	void DoTapScoreNone(bool bStepped);
 
 	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
 
 	void FadeToFail();
-	void CacheAllUsedNoteSkins();
 	TapNoteScore GetLastTapNoteScore() const { return m_LastTapNoteScore; }
 	void ApplyWaitingTransforms();
 	void SetPaused( bool bPaused ) { m_bPaused = bPaused; }
@@ -117,7 +105,7 @@ public:
 	static float GetMaxStepDistanceSeconds();
 	static float GetWindowSeconds( TimingWindow tw );
 	const NoteData &GetNoteData() const { return m_NoteData; }
-	bool HasVisibleParts() const { return m_pNoteField != NULL; }
+	bool HasVisibleParts() const { return m_note_field != nullptr; }
 
 	void SetActorWithJudgmentPosition( Actor *pActor ) { m_pActorWithJudgmentPosition = pActor; }
 	void SetActorWithComboPosition( Actor *pActor ) { m_pActorWithComboPosition = pActor; }
@@ -126,7 +114,7 @@ public:
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
-	
+
 	PlayerState * GetPlayerState() { return this->m_pPlayerState; }
 	void ChangeLife(float delta);
 	void SetLife(float value);
@@ -138,14 +126,14 @@ protected:
 	void FlashGhostRow( int iRow );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( const TapNote &tn );
-	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold );
+	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const std::vector<int> &viColsWithHold );
 	void DrawTapJudgments();
-	void DrawHoldJudgments();
 	void SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo );
 	void PlayKeysound( const TapNote &tn, TapNoteScore score );
 
+	void send_judge_message(Message& msg);
 	void SetMineJudgment( TapNoteScore tns , int iTrack );
-	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn ) { SetJudgment( iRow, iFirstTrack, tn, tn.result.tns, tn.result.fTapNoteOffset ); }	
+	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn ) { SetJudgment( iRow, iFirstTrack, tn, tn.result.tns, tn.result.fTapNoteOffset ); }
 	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn, TapNoteScore tns, float fTapNoteOffset );	// -1 if no track as in TNS_Miss
 	void SetHoldJudgment( TapNote &tn, int iTrack );
 	void SetCombo( unsigned int iCombo, unsigned int iMisses );
@@ -162,7 +150,7 @@ protected:
 	int GetClosestNonEmptyRowDirectional( int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
 	int GetClosestNonEmptyRow( int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const;
 
-	RString ApplyRandomAttack();
+	std::string ApplyRandomAttack();
 
 	inline void HideNote( int col, int row )
 	{
@@ -178,15 +166,12 @@ protected:
 	/** @brief The player's present stage stats. */
 	PlayerStageStats	*m_pPlayerStageStats;
 	TimingData      *m_Timing;
-	float			m_fNoteFieldHeight;
 
 	bool			m_bPaused;
 	bool			m_bDelay;
 
 	NoteData		&m_NoteData;
-	NoteField		*m_pNoteField;
-
-	vector<HoldJudgment*>	m_vpHoldJudgment;
+	NoteField		*m_note_field;
 
 	AutoActor		m_sprJudgment;
 	AutoActor		m_sprCombo;
@@ -220,23 +205,16 @@ protected:
 
 	float			m_fActiveRandomAttackStart;
 
-	vector<bool>	m_vbFretIsDown;
+	std::vector<bool>	m_vbFretIsDown;
 
-	vector<RageSound>	m_vKeysounds;
+	std::vector<RageSound>	m_vKeysounds;
 
-	ThemeMetric<float>	GRAY_ARROWS_Y_STANDARD;
-	ThemeMetric<float>	GRAY_ARROWS_Y_REVERSE;
 	ThemeMetric2D<float>	ATTACK_DISPLAY_X;
 	ThemeMetric<float>	ATTACK_DISPLAY_Y;
 	ThemeMetric<float>	ATTACK_DISPLAY_Y_REVERSE;
 	ThemeMetric<float>	HOLD_JUDGMENT_Y_STANDARD;
 	ThemeMetric<float>	HOLD_JUDGMENT_Y_REVERSE;
 	ThemeMetric<int>	BRIGHT_GHOST_COMBO_THRESHOLD;
-	ThemeMetric<bool>	TAP_JUDGMENTS_UNDER_FIELD;
-	ThemeMetric<bool>	HOLD_JUDGMENTS_UNDER_FIELD;
-	ThemeMetric<bool>	COMBO_UNDER_FIELD;
-	ThemeMetric<int>	DRAW_DISTANCE_AFTER_TARGET_PIXELS;
-	ThemeMetric<int>	DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
 
 #define NUM_REVERSE 2
 #define NUM_CENTERED 2
@@ -245,7 +223,7 @@ protected:
 
 	bool m_bSendJudgmentAndComboMessages;
 	bool m_bTickHolds;
-	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	// This exists so that the board can be drawn underneath theme elements. -Kyz
 	bool m_drawing_notefield_board;
 };
 
@@ -268,7 +246,7 @@ public:
 /*
  * (c) 2001-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -278,7 +256,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

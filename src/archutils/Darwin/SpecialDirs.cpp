@@ -10,16 +10,16 @@ static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 	FSRef fs;
 
 	if( FSFindFolder(kUserDomain, folderType, kDontCreateFolder, &fs) )
-		FAIL_M( ssprintf("FSFindFolder(%lu) failed.", folderType) );
+		FAIL_M( fmt::sprintf("FSFindFolder(%lu) failed.", folderType) );
 	if( FSRefMakePath(&fs, (UInt8 *)dir, PATH_MAX) )
 		FAIL_M( "FSRefMakePath() failed." );
 }
 
-RString SpecialDirs::GetDesktopDir()
+std::string SpecialDirs::GetDesktopDir()
 {
 	char dir[PATH_MAX];
 	PathForFolderType( dir, kDesktopFolderType );
-	return RString( ssprintf("%s/" PRODUCT_ID, dir) );
+	return std::string( fmt::sprintf("%s/" PRODUCT_ID, dir) );
 }
 
 

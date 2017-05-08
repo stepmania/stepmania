@@ -12,7 +12,11 @@
 #include "InputEventPlus.h"
 #include "RageInput.h"
 #include "RageLog.h"
+#include "RageUnicode.hpp"
 #include "CommonMetrics.h"
+
+using std::vector;
+using std::wstring;
 
 REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
 
@@ -29,7 +33,7 @@ void ScreenNameEntryTraditional::Init()
 		{
 			StageStats ss;
 			const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
-			ss.m_vpPlayedSongs.push_back( apSongs[rand()%apSongs.size()] );
+			ss.m_vpPlayedSongs.push_back(apSongs[random_up_to(g_RandomNumberGenerator, apSongs.size())]);
 			ss.m_vpPossibleSongs = ss.m_vpPlayedSongs;
 			ss.m_playMode = GAMESTATE->m_PlayMode;
 			ASSERT( ss.m_vpPlayedSongs[0]->GetAllSteps().size() );
@@ -81,7 +85,7 @@ void ScreenNameEntryTraditional::BeginScreen()
 		GAMESTATE->GetRankingFeats( pn, aFeats );
 
 		bool bNoStagesLeft = GAMESTATE->m_iPlayerStageTokens[pn] <= 0;
-		m_bEnteringName[pn] = ( aFeats.size() > 0 || 
+		m_bEnteringName[pn] = ( aFeats.size() > 0 ||
 				       PROFILEMAN->ProfileFromMemoryCardIsNew(pn) ) && bNoStagesLeft;
 		m_bFinalized[pn] = !m_bEnteringName[pn];
 	}
@@ -97,7 +101,7 @@ void ScreenNameEntryTraditional::BeginScreen()
 		const Profile *pProfile = PROFILEMAN->GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
 		{
-			m_sSelection[pn] = RStringToWstring( pProfile->m_sLastUsedHighScoreName );
+			m_sSelection[pn] = StringToWstring( pProfile->m_sLastUsedHighScoreName );
 			if( (int) m_sSelection[pn].size() > MAX_RANKING_NAME_LENGTH )
 				m_sSelection[pn].erase( MAX_RANKING_NAME_LENGTH );
 		}
@@ -160,13 +164,13 @@ bool ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 	m_bFinalized[pn] = true;
 
 	UpdateSelectionText( pn ); /* hide NAME_ cursor */
-	RString sSelection = WStringToRString( m_sSelection[pn] );
+	std::string sSelection = WStringToString( m_sSelection[pn] );
 
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 	pProfile->m_sLastUsedHighScoreName = sSelection;
 
-	Trim( sSelection, " " );
+	sSelection = Rage::trim( sSelection, " " );
 
 	GAMESTATE->StoreRankingName( pn, sSelection );
 
@@ -190,7 +194,7 @@ void ScreenNameEntryTraditional::UpdateSelectionText( PlayerNumber pn )
 
 	Message msg("EntryChanged");
 	msg.SetParam( "PlayerNumber", pn );
-	msg.SetParam( "Text", WStringToRString(sText) );
+	msg.SetParam( "Text", WStringToString(sText) );
 	this->HandleMessage( msg );
 }
 
@@ -215,7 +219,7 @@ bool ScreenNameEntryTraditional::EnterKey( PlayerNumber pn, wchar_t sLetter )
 	return true;
 }
 
-void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, const RString &sKey )
+void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, const std::string &sKey )
 {
 	Message msg("SelectKey");
 	msg.SetParam( "PlayerNumber", pn );
@@ -239,15 +243,15 @@ bool ScreenNameEntryTraditional::Backspace( PlayerNumber pn )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenNameEntryTraditional. */ 
+/** @brief Allow Lua to have access to the ScreenNameEntryTraditional. */
 class LunaScreenNameEntryTraditional: public Luna<ScreenNameEntryTraditional>
 {
 public:
 	static int EnterKey( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		RString sKey = SArg(2);
-		bool bRet = p->EnterKey( pn, utf8_get_char(sKey) );
+		std::string sKey = SArg(2);
+		bool bRet = p->EnterKey( pn, Rage::utf8_get_char(sKey) );
 		LuaHelpers::Push( L, bRet );
 		return 1;
 	}
@@ -297,7 +301,7 @@ public:
 	static int GetSelection( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		LuaHelpers::Push( L, WStringToRString(p->m_sSelection[pn]) );
+		LuaHelpers::Push( L, WStringToString(p->m_sSelection[pn]) );
 		return 1;
 	}
 
@@ -320,7 +324,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenNameEntryTraditional, ScreenWithMenuElements )
 /*
  * (c) 2001-2007 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -330,7 +334,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenNameEntryTraditional, ScreenWithMenuElements )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

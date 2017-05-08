@@ -1,5 +1,6 @@
 #include "global.h"
 #include "DualScrollBar.h"
+#include "RageMath.hpp"
 #include "ThemeManager.h"
 #include "RageUtil.h"
 
@@ -9,19 +10,19 @@ DualScrollBar::DualScrollBar()
 	m_fBarTime = 1;
 }
 
-void DualScrollBar::Load( const RString &sType )
+void DualScrollBar::Load( const std::string &sType )
 {
 	FOREACH_PlayerNumber( pn )
 	{
-		m_sprScrollThumbUnderHalf[pn].Load( THEME->GetPathG(sType,ssprintf("thumb p%i",pn+1)) );
-		m_sprScrollThumbUnderHalf[pn]->SetName( ssprintf("ThumbP%i", pn+1) );
+		m_sprScrollThumbUnderHalf[pn].Load( THEME->GetPathG(sType,fmt::sprintf("thumb p%i",pn+1)) );
+		m_sprScrollThumbUnderHalf[pn]->SetName( fmt::sprintf("ThumbP%i", pn+1) );
 		this->AddChild( m_sprScrollThumbUnderHalf[pn] );
 	}
 
 	FOREACH_PlayerNumber( pn )
 	{
-		m_sprScrollThumbOverHalf[pn].Load( THEME->GetPathG(sType, ssprintf("thumb p%i",pn+1)) );
-		m_sprScrollThumbOverHalf[pn]->SetName( ssprintf("ThumbP%i", pn+1) );
+		m_sprScrollThumbOverHalf[pn].Load( THEME->GetPathG(sType, fmt::sprintf("thumb p%i",pn+1)) );
+		m_sprScrollThumbOverHalf[pn]->SetName( fmt::sprintf("ThumbP%i", pn+1) );
 		this->AddChild( m_sprScrollThumbOverHalf[pn] );
 	}
 
@@ -51,11 +52,11 @@ void DualScrollBar::SetPercentage( PlayerNumber pn, float fPercent )
 	/* Position both thumbs. */
 	m_sprScrollThumbUnderHalf[pn]->StopTweening();
 	m_sprScrollThumbUnderHalf[pn]->BeginTweening( m_fBarTime );
-	m_sprScrollThumbUnderHalf[pn]->SetY( SCALE( fPercent, 0, 1, top, bottom ) );
+	m_sprScrollThumbUnderHalf[pn]->SetY( Rage::scale( fPercent, 0.f, 1.f, top, bottom ) );
 
 	m_sprScrollThumbOverHalf[pn]->StopTweening();
 	m_sprScrollThumbOverHalf[pn]->BeginTweening( m_fBarTime );
-	m_sprScrollThumbOverHalf[pn]->SetY( SCALE( fPercent, 0, 1, top, bottom ) );
+	m_sprScrollThumbOverHalf[pn]->SetY( Rage::scale( fPercent, 0.f, 1.f, top, bottom ) );
 }
 
 /*

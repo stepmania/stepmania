@@ -1,6 +1,5 @@
-[SM5 public nightly build | last update 2014/aug 04]
-This is a list of all the known Actor classes in SM5. You can use these by
-prefixing "Def." on the end of the name (e.g. Def.PaneDisplay).
+This is a list of all the Actor classes available to Lua in SM5. You can
+use these by prepend a "Def." to the the class name (e.g. Def.PaneDisplay).
 
 Actor
 ActorFrame
@@ -9,7 +8,6 @@ ActorMultiTexture
 ActorMultiVertex
 ActorProxy
 ActorScroller
-ActorSound
 Banner
 BGAnimation
 BitmapText

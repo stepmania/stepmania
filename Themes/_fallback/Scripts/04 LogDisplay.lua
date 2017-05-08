@@ -146,7 +146,7 @@ local log_display_mt= {
 					end
 				end,
 				[name_mess]= function(subself, mess)
-					if not PREFSMAN:GetPreference("ShowThemeErrors")
+					if false and not PREFSMAN:GetPreference("ShowThemeErrors")
 					and self.name == "ScriptError" then
 						subself:visible(false)
 						return

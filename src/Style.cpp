@@ -2,13 +2,13 @@
 
 /*
  * Styles define a set of columns for each player, and information about those
- * columns, like what Instruments are used play those columns and what track 
+ * columns, like what Instruments are used play those columns and what track
  * to use to populate the column's notes.
- * A "track" is the term used to descibe a particular vertical sting of note 
+ * A "track" is the term used to descibe a particular vertical sting of note
  * in NoteData.
- * A "column" is the term used to describe the vertical string of notes that 
- * a player sees on the screen while they're playing.  Column notes are 
- * picked from a track, but columns and tracks don't have a 1-to-1 
+ * A "column" is the term used to describe the vertical string of notes that
+ * a player sees on the screen while they're playing.  Column notes are
+ * picked from a track, but columns and tracks don't have a 1-to-1
  * correspondance.  For example, dance-versus has 8 columns but only 4 tracks
  * because two players place from the same set of 4 tracks.
  */
@@ -19,7 +19,9 @@
 #include "RageUtil.h"
 #include "InputMapper.h"
 #include "NoteData.h"
-#include <float.h>
+#include <limits>
+
+using std::vector;
 
 bool Style::GetUsesCenteredArrows() const
 {
@@ -50,7 +52,7 @@ void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& ori
 void Style::StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>& ret ) const
 {
 	ASSERT_M( pn < NUM_PLAYERS  &&  iCol < MAX_COLS_PER_PLAYER,
-		ssprintf("P%i C%i", pn, iCol) );
+		fmt::sprintf("P%i C%i", pn, iCol) );
 	bool bUsingOneSide = m_StyleType != StyleType_OnePlayerTwoSides && m_StyleType != StyleType_TwoPlayersSharedSides;
 
 	FOREACH_ENUM( GameController, gc)
@@ -77,7 +79,7 @@ void Style::StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>&
 	}
 	if(unlikely(ret.empty()))
 	{
-		FAIL_M( ssprintf("Invalid column number %i for player %i in the style %s", iCol, pn, m_szName) );
+		FAIL_M( fmt::sprintf("Invalid column number %i for player %i in the style %s", iCol, int(pn), m_szName) );
 	}
 };
 
@@ -101,33 +103,10 @@ int Style::GameInputToColumn( const GameInput &GameI ) const
 }
 
 
-void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const
-{
-	ASSERT( pn != PLAYER_INVALID );
-
-	fMixXOut = FLT_MAX;
-	fMaxXOut = FLT_MIN;
-	for( int i=0; i<m_iColsPerPlayer; i++ )
-	{
-		fMixXOut = min( fMixXOut, m_ColumnInfo[pn][i].fXOffset );
-		fMaxXOut = max( fMaxXOut, m_ColumnInfo[pn][i].fXOffset );
-	}
-}
-
-float Style::GetWidth(PlayerNumber pn) const
-{
-	float left, right;
-	GetMinAndMaxColX(pn, left, right);
-	// left and right are the center positions of the columns.  The full width
-	// needs to be from the edges.
-	float width= right - left;
-	return width + (width / static_cast<float>(m_iColsPerPlayer-1));
-}
-
-RString Style::ColToButtonName( int iCol ) const
+std::string Style::ColToButtonName( int iCol ) const
 {
 	const char *pzColumnName = m_ColumnInfo[PLAYER_1][iCol].pzName;
-	if( pzColumnName != NULL )
+	if( pzColumnName != nullptr )
 		return pzColumnName;
 
 	vector<GameInput> GI;
@@ -138,26 +117,20 @@ RString Style::ColToButtonName( int iCol ) const
 // Lua bindings
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Style. */ 
+/** @brief Allow Lua to have access to the Style. */
 class LunaStyle: public Luna<Style>
 {
 public:
-	static int GetName( T* p, lua_State *L )		{ LuaHelpers::Push( L, (RString) p->m_szName ); return 1; }
+	static int GetName( T* p, lua_State *L )		{ LuaHelpers::Push( L, (std::string) p->m_szName ); return 1; }
 	DEFINE_METHOD( GetStyleType,		m_StyleType )
 	DEFINE_METHOD( GetStepsType,		m_StepsType )
 	DEFINE_METHOD( ColumnsPerPlayer,	m_iColsPerPlayer )
-	static int NeedsZoomOutWith2Players(T* p, lua_State *L)
+	static int NeedsZoomOutWith2Players(T*, lua_State *L)
 	{
 		// m_bNeedsZoomOutWith2Players was removed in favor of having
 		// ScreenGameplay use the style's width and margin values to calculate
 		// the zoom.  So this always returns false. -Kyz
 		lua_pushboolean(L, false);
-		return 1;
-	}
-	static int GetWidth(T* p, lua_State* L)
-	{
-		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		lua_pushnumber(L, p->GetWidth(pn));
 		return 1;
 	}
 	DEFINE_METHOD( LockedDifficulty,	m_bLockDifficulties )
@@ -175,12 +148,10 @@ public:
 		LuaTable ret;
 		lua_pushnumber( L, p->m_ColumnInfo[pn][iCol].track+1 );
 		ret.Set( L, "Track" );
-		lua_pushnumber( L, p->m_ColumnInfo[pn][iCol].fXOffset );
-		ret.Set( L,  "XOffset" );
-		lua_pushstring( L, p->ColToButtonName(iCol) );
+		lua_pushstring( L, p->ColToButtonName(iCol).c_str() );
 		ret.Set( L, "Name" );
-		
-		ret.PushSelf(L); 
+
+		ret.PushSelf(L);
 		return 1;
 	}
 
@@ -195,7 +166,7 @@ public:
 		lua_pushnumber( L, p->m_iColumnDrawOrder[iCol]+1 );
 		return 1;
 	}
-	
+
 	LunaStyle()
 	{
 		ADD_METHOD( GetName );
@@ -205,7 +176,6 @@ public:
 		ADD_METHOD( GetColumnDrawOrder );
 		ADD_METHOD( ColumnsPerPlayer );
 		ADD_METHOD( NeedsZoomOutWith2Players );
-		ADD_METHOD( GetWidth );
 		ADD_METHOD( LockedDifficulty );
 	}
 };
@@ -215,7 +185,7 @@ LUA_REGISTER_CLASS( Style )
 /*
  * (c) 2001-2002 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -225,7 +195,7 @@ LUA_REGISTER_CLASS( Style )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

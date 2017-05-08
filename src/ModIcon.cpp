@@ -24,7 +24,7 @@ ModIcon::ModIcon( const ModIcon &cpy ):
 	this->AddChild( &m_text );
 }
 
-void ModIcon::Load( RString sMetricsGroup )
+void ModIcon::Load( std::string sMetricsGroup )
 {
 	m_sprFilled.Load( THEME->GetPathG(sMetricsGroup,"Filled") );
 	m_sprFilled->SetName("Filled");
@@ -45,21 +45,25 @@ void ModIcon::Load( RString sMetricsGroup )
 
 	// stop words
 	STOP_WORDS.Load( sMetricsGroup, "StopWords" );
-	m_vStopWords.empty();
-	split(STOP_WORDS, ",", m_vStopWords);
+	m_vStopWords = Rage::split(STOP_WORDS.GetValue(), ",");
 
 	Set("");
 }
 
-void ModIcon::Set( const RString &_sText )
+void ModIcon::Set( const std::string &_sText )
 {
-	RString sText = _sText;
+	std::string sText = _sText;
+	Rage::ci_ascii_string stopText{ sText.c_str() };
 
-	for( unsigned i = 0; i < m_vStopWords.size(); i++ )
-		if( sText.EqualsNoCase(m_vStopWords[i]) )
+	for (auto const &word : m_vStopWords)
+	{
+		if (stopText == word)
+		{
 			sText = "";
+		}
+	}
 
-	sText.Replace( " ", "\n" );
+	Rage::replace(sText, " ", "\n" );
 
 	bool bVacant = (sText=="");
 	m_sprFilled->SetVisible( !bVacant );
@@ -72,7 +76,7 @@ void ModIcon::Set( const RString &_sText )
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -82,7 +86,7 @@ void ModIcon::Set( const RString &_sText )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

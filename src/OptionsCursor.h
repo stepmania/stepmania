@@ -16,7 +16,7 @@ public:
 	 * @param cpy the OptionsCursor we are copying. */
 	OptionsCursor( const OptionsCursor &cpy );
 
-	void Load( const RString &sMetricsGroup, bool bLoadCanGos );
+	void Load( const std::string &sMetricsGroup, bool bLoadCanGos );
 
 	void StopTweening();
 	void BeginTweening( float fSecs );

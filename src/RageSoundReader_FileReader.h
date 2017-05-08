@@ -29,20 +29,20 @@ public:
 	/* Takes ownership of pFile (even on failure). */
 	virtual OpenResult Open( RageFileBasic *pFile ) = 0;
 	virtual float GetStreamToSourceRatio() const { return 1.0f; }
-	virtual RString GetError() const { return m_sError; }
+	virtual std::string GetError() const { return m_sError; }
 
-	/* Open a file.  If pPrebuffer is non-NULL, and the file is sufficiently small,
+	/* Open a file.  If pPrebuffer is non-nullptr, and the file is sufficiently small,
 	 * the (possibly compressed) data will be loaded entirely into memory, and pPrebuffer
 	 * will be set to true. */
-	static RageSoundReader_FileReader *OpenFile( RString filename, RString &error, bool *pPrebuffer = NULL );
+	static RageSoundReader_FileReader *OpenFile( std::string filename, std::string &error, bool *pPrebuffer = nullptr );
 
 protected:
-	void SetError( RString sError ) const { m_sError = sError; }
+	void SetError( std::string sError ) const { m_sError = sError; }
 	HiddenPtr<RageFileBasic> m_pFile;
 
 private:
-	static RageSoundReader_FileReader *TryOpenFile( RageFileBasic *pFile, RString &error, RString format, bool &bKeepTrying );
-	mutable RString m_sError;
+	static RageSoundReader_FileReader *TryOpenFile( RageFileBasic *pFile, std::string &error, std::string format, bool &bKeepTrying );
+	mutable std::string m_sError;
 };
 
 #endif

@@ -51,7 +51,7 @@ static bool IsFatalSignal( int signal )
 	}
 }
 
-static bool DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
+static bool DoCleanShutdown(int signal, siginfo_t *, const ucontext_t *)
 {
 	if( IsFatalSignal(signal) )
 		return false;
@@ -73,7 +73,7 @@ static bool DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 }
 #endif
 
-static bool EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
+static bool EmergencyShutdown(int signal, siginfo_t *, const ucontext_t *)
 {
 	if( !IsFatalSignal(signal) )
 		return false;
@@ -88,7 +88,7 @@ static bool EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	/* We didn't run the crash handler.  Run the default handler, so we can dump core. */
 	return false;
 }
-	
+
 #if defined(HAVE_TLS)
 static thread_local int g_iTestTLS = 0;
 
@@ -110,7 +110,7 @@ static void TestTLS()
 
 	RageThread TestThread;
 	TestThread.SetName( "TestTLS" );
-	TestThread.Create( TestTLSThread, NULL );
+	TestThread.Create( TestTLSThread, nullptr );
 	TestThread.Wait();
 
 	if( g_iTestTLS == 1 )
@@ -124,14 +124,14 @@ static void TestTLS()
 namespace
 {
 	clockid_t g_Clock = CLOCK_REALTIME;
- 
+
 	void OpenGetTime()
 	{
 		static bool bInitialized = false;
 		if( bInitialized )
 			return;
 		bInitialized = true;
- 
+
 		/* Check whether the clock is actually supported. */
 		timespec ts;
 		if( clock_getres(CLOCK_MONOTONIC, &ts) == -1 )
@@ -140,7 +140,7 @@ namespace
 		/* If the resolution is worse than a millisecond, fall back on CLOCK_REALTIME. */
 		if( ts.tv_sec > 0 || ts.tv_nsec > 1000000 )
 			return;
-		
+
 		g_Clock = CLOCK_MONOTONIC;
 	}
 };
@@ -167,7 +167,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	struct timeval tv;
-	gettimeofday( &tv, NULL );
+	gettimeofday( &tv, nullptr );
 
 	int64_t iRet = int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
 	ret = FixupTimeIfBackwards( ret );
@@ -175,9 +175,9 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 }
 #endif
 
-RString ArchHooks::GetPreferredLanguage()
+std::string ArchHooks::GetPreferredLanguage()
 {
-	RString locale;
+	std::string locale;
 
 	if(getenv("LANG"))
 	{
@@ -206,13 +206,13 @@ void ArchHooks_Unix::Init()
 	SignalHandler::OnClose( EmergencyShutdown );
 
 	InstallExceptionHandler();
-	
+
 #if defined(HAVE_TLS) && !defined(BSD)
 	TestTLS();
 #endif
 }
 
-bool ArchHooks_Unix::GoToURL( RString sUrl )
+bool ArchHooks_Unix::GoToURL( std::string sUrl )
 {
 	int status;
 	pid_t p = fork();
@@ -224,7 +224,7 @@ bool ArchHooks_Unix::GoToURL( RString sUrl )
 	else if ( p == 0 )
 	{
 		// Child
-		const char * const argv[] = { "xdg-open", sUrl.c_str(), NULL };
+		const char * const argv[] = { "xdg-open", sUrl.c_str(), nullptr };
 		execv( "/usr/bin/xdg-open", const_cast<char * const *>( argv ));
 		// If we reach here, the call to execvp failed
 		exit( 1 );
@@ -241,8 +241,8 @@ bool ArchHooks_Unix::GoToURL( RString sUrl )
 #define _CS_GNU_LIBC_VERSION 2
 #endif
 
-static RString LibcVersion()
-{	
+static std::string LibcVersion()
+{
 	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBC_VERSION, buf, sizeof(buf) );
 	if( ret == -1 )
@@ -253,7 +253,7 @@ static RString LibcVersion()
 
 void ArchHooks_Unix::DumpDebugInfo()
 {
-	RString sys;
+	std::string sys;
 	int vers;
 	GetKernel( sys, vers );
 	LOG->Info( "OS: %s ver %06i", sys.c_str(), vers );
@@ -275,7 +275,7 @@ void ArchHooks_Unix::DumpDebugInfo()
 
 void ArchHooks_Unix::SetTime( tm newtime )
 {
-	RString sCommand = ssprintf( "date %02d%02d%02d%02d%04d.%02d",
+	auto sCommand = fmt::sprintf( "date %02d%02d%02d%02d%04d.%02d",
 		newtime.tm_mon+1,
 		newtime.tm_mday,
 		newtime.tm_hour,
@@ -283,8 +283,8 @@ void ArchHooks_Unix::SetTime( tm newtime )
 		newtime.tm_year+1900,
 		newtime.tm_sec );
 
-	LOG->Trace( "executing '%s'", sCommand.c_str() ); 
-	int ret = system( sCommand );
+	LOG->Trace( "executing '%s'", sCommand.c_str() );
+	int ret = system( sCommand.c_str() );
 	if( ret == -1 || ret == 127 || !WIFEXITED(ret) || WEXITSTATUS(ret) )
 		LOG->Trace( "'%s' failed", sCommand.c_str() );
 
@@ -293,14 +293,14 @@ void ArchHooks_Unix::SetTime( tm newtime )
 		LOG->Trace( "'hwclock --systohc' failed" );
 }
 
-RString ArchHooks_Unix::GetClipboard()
+std::string ArchHooks_Unix::GetClipboard()
 {
 #ifdef HAVE_X11
 	using namespace X11Helper;
 	// Why isn't this defined by Xlib headers?
 	Atom XA_CLIPBOARD = XInternAtom( Dpy, "CLIPBOARD", 0);
 	Atom pstType;
-	RString ret;
+	std::string ret;
 	unsigned char *paste;
 	unsigned long remainder;
 	int ck;
@@ -329,7 +329,7 @@ RString ArchHooks_Unix::GetClipboard()
 	// property on YOUR window.
 	XConvertSelection( Dpy, XA_CLIPBOARD, XA_STRING, XA_PRIMARY, Win, CurrentTime );
 	// XXX: This seems to always return 1 even when it works. (Success == 0)
-	
+
 	// Now we must wait for the clipboard owner to cough it up.
 	// HACK: What we SHOULD do is XSelectInput() for SelectionNotify before
 	// calling XConvertSelection and then block on XWindowEvent(), but that
@@ -355,7 +355,7 @@ RString ArchHooks_Unix::GetClipboard()
 		return "";
 	}
 
-	ret = RString( (char*) paste);
+	ret = std::string( (char*) paste);
 	XFree(paste);
 	return ret;
 #else
@@ -368,7 +368,7 @@ RString ArchHooks_Unix::GetClipboard()
 #include <sys/stat.h>
 
 static LocalizedString COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
-void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( const std::string &sDirOfExecutable )
 {
 #if defined(UNIX)
 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
@@ -380,13 +380,13 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", "/proc", "/proc" );
 #endif
 
-	RString Root;
+	std::string Root;
 	struct stat st;
-	if( !stat(sDirOfExecutable + "/Packages", &st) && st.st_mode&S_IFDIR )
+	if( !stat((sDirOfExecutable + "/Packages").c_str(), &st) && st.st_mode&S_IFDIR )
 		Root = sDirOfExecutable;
-	else if( !stat(sDirOfExecutable + "/Songs", &st) && st.st_mode&S_IFDIR )
+	else if( !stat((sDirOfExecutable + "/Songs").c_str(), &st) && st.st_mode&S_IFDIR )
 		Root = sDirOfExecutable;
-	else if( !stat(RageFileManagerUtil::sInitialWorkingDirectory + "/Songs", &st) && st.st_mode&S_IFDIR )
+	else if( !stat((RageFileManagerUtil::sInitialWorkingDirectory + "/Songs").c_str(), &st) && st.st_mode&S_IFDIR )
 		Root = RageFileManagerUtil::sInitialWorkingDirectory;
 	else
 		RageException::Throw( "%s", COULDNT_FIND_SONGS.GetValue().c_str() );
@@ -394,35 +394,30 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", Root, "/" );
 }
 
-void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+void ArchHooks::MountUserFilesystems(const std::string &)
 {
 	/* Path to write general mutable user data when not Portable
 	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.
 	 */
 	const char *szHome = getenv( "HOME" );
-	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", "stepmania-5.0" ); //call an ambulance!
-	FILEMAN->Mount( "dir", sUserDataPath + "/Announcers", "/Announcers" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/BGAnimations", "/BGAnimations" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/BackgroundEffects", "/BackgroundEffects" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/BackgroundTransitions", "/BackgroundTransitions" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/CDTitles", "/CDTitles" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Characters", "/Characters" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Courses", "/Courses" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/NoteSkins", "/NoteSkins" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Songs", "/Songs" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/RandomMovies", "/RandomMovies" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Themes", "/Themes" );
+	auto user_data_path = fmt::sprintf( "%s/.%s", szHome? szHome:".", "stepmania-5.0" ); //call an ambulance!
+	for(auto&& fs_dir : SpecialFiles::USER_CONTENT_DIRS)
+	{
+		FILEMAN->Mount("dir", user_data_path + fs_dir, fs_dir);
+	}
+	for(auto&& fs_dir : SpecialFiles::USER_DATA_DIRS)
+	{
+		FILEMAN->Mount("dir", user_data_path + fs_dir, fs_dir);
+	}
+	// The User Packages dir was the only one where the mount point didn't
+	// match the folder name when I changed this to use a loop. -Kyz
+	FILEMAN->Mount( "dir", user_data_path + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
 }
 
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -432,7 +427,7 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

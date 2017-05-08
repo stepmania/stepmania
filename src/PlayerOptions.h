@@ -7,7 +7,10 @@ class Steps;
 class Trail;
 struct lua_State;
 
-#define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) arr[Z]=1.0f; }
+#define ONE( arr ) { \
+for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) \
+arr[Z]=1.0f; \
+}
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
@@ -21,8 +24,8 @@ enum LifeType
 	NUM_LifeType,
 	LifeType_Invalid
 };
-const RString& LifeTypeToString( LifeType cat );
-const RString& LifeTypeToLocalizedString( LifeType cat );
+std::string const LifeTypeToString( LifeType cat );
+std::string const LifeTypeToLocalizedString( LifeType cat );
 LuaDeclareType( LifeType );
 
 enum DrainType
@@ -33,8 +36,8 @@ enum DrainType
 	NUM_DrainType,
 	DrainType_Invalid
 };
-const RString& DrainTypeToString( DrainType cat );
-const RString& DrainTypeToLocalizedString( DrainType cat );
+std::string const DrainTypeToString( DrainType cat );
+std::string const DrainTypeToLocalizedString( DrainType cat );
 LuaDeclareType( DrainType );
 
 /** @brief Per-player options that are not saved between sessions. */
@@ -58,36 +61,38 @@ public:
 		m_fRandAttack(0), m_SpeedfRandAttack(1.0f),
 		m_fNoAttack(0), m_SpeedfNoAttack(1.0f),
 		m_fPlayerAutoPlay(0), m_SpeedfPlayerAutoPlay(1.0f),
-		m_fPerspectiveTilt(0), m_SpeedfPerspectiveTilt(1.0f),
+		m_fTilt(0), m_SpeedfTilt(1.0f),
 		m_fSkew(0), m_SpeedfSkew(1.0f),
 		m_fPassmark(0), m_SpeedfPassmark(1.0f),
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
-		m_sNoteSkin = "";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
 		ZERO( m_fEffects );	ONE( m_SpeedfEffects );
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
 		ZERO( m_fScrolls );	ONE( m_SpeedfScrolls );
 		ZERO( m_bTurns );	ZERO( m_bTransforms );
+		ZERO( m_fMovesX );	ONE( m_SpeedfMovesX );
+		ZERO( m_fMovesY );	ONE( m_SpeedfMovesY );
+		ZERO( m_fMovesZ );	ONE( m_SpeedfMovesZ );
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
-	RString GetString( bool bForceNoteSkin = false ) const;
-	RString GetSavedPrefsString() const;	// only the basic options that players would want for every song
+	std::string GetString() const;
+	std::string GetSavedPrefsString() const;	// only the basic options that players would want for every song
 	enum ResetPrefsType
-	{ 
-		saved_prefs, 
+	{
+		saved_prefs,
 		saved_prefs_invalid_for_course
 	};
 	void ResetPrefs( ResetPrefsType type );
 	void ResetSavedPrefs() { ResetPrefs(saved_prefs); };
 	void ResetSavedPrefsInvalidForCourse() { ResetPrefs(saved_prefs_invalid_for_course); }
-	void GetMods( vector<RString> &AddTo, bool bForceNoteSkin = false ) const;
-	void GetLocalizedMods( vector<RString> &AddTo ) const;
-	void FromString( const RString &sMultipleMods );
-	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
+	void GetMods(std::vector<std::string> &AddTo) const;
+	void GetLocalizedMods( std::vector<std::string> &AddTo ) const;
+	void FromString( const std::string &sMultipleMods );
+	bool FromOneModString( const std::string &sOneMod, std::string &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
 	void ChooseRandomModifiers();
 	bool ContainsTransformOrTurn() const;
 
@@ -103,22 +108,41 @@ public:
 		ACCEL_BOOST, /**< The arrows start slow, then zoom towards the targets. */
 		ACCEL_BRAKE, /**< The arrows start fast, then slow down as they approach the targets. */
 		ACCEL_WAVE,
+		ACCEL_WAVE_PERIOD,
 		ACCEL_EXPAND,
+		ACCEL_EXPAND_PERIOD,
 		ACCEL_BOOMERANG, /**< The arrows start from above the targets, go down, then come back up. */
 		NUM_ACCELS
 	};
 	enum Effect	{
 		EFFECT_DRUNK,
+		EFFECT_DRUNK_SPEED,
+		EFFECT_DRUNK_OFFSET,
+		EFFECT_DRUNK_PERIOD,
 		EFFECT_DIZZY,
 		EFFECT_CONFUSION,
+		EFFECT_CONFUSION_OFFSET,
+		EFFECT_CONFUSION_X,
+		EFFECT_CONFUSION_X_OFFSET,
+		EFFECT_CONFUSION_Y,
+		EFFECT_CONFUSION_Y_OFFSET,
 		EFFECT_MINI,
 		EFFECT_TINY,
 		EFFECT_FLIP,
 		EFFECT_INVERT,
 		EFFECT_TORNADO,
+		EFFECT_TORNADO_PERIOD,
+		EFFECT_TORNADO_OFFSET,
 		EFFECT_TIPSY,
+		EFFECT_TIPSY_SPEED,
+		EFFECT_TIPSY_OFFSET,
 		EFFECT_BUMPY,
+		EFFECT_BUMPY_OFFSET,
+		EFFECT_BUMPY_PERIOD,
 		EFFECT_BEAT,
+		EFFECT_BEAT_OFFSET,
+		EFFECT_BEAT_PERIOD,
+		EFFECT_BEAT_MULT,
 		EFFECT_XMODE,
 		EFFECT_TWIRL,
 		EFFECT_ROLL,
@@ -145,7 +169,7 @@ public:
 		TURN_SHUFFLE, /**< Some of the arrow columns are changed throughout the whole song. */
 		TURN_SOFT_SHUFFLE, /**< Only shuffle arrow columns on an axis of symmetry. */
 		TURN_SUPER_SHUFFLE, /**< Every arrow is placed on a random column. */
-		NUM_TURNS 
+		NUM_TURNS
 	};
 	enum Transform {
 		TRANSFORM_NOHOLDS,
@@ -206,7 +230,7 @@ public:
 	float	m_fRandAttack,			m_SpeedfRandAttack;
 	float	m_fNoAttack,			m_SpeedfNoAttack;
 	float	m_fPlayerAutoPlay,		m_SpeedfPlayerAutoPlay;
-	float	m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
+	float	m_fTilt,		m_SpeedfTilt;		// -1 = near, 0 = overhead, +1 = space
 	float	m_fSkew,			m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
 
 	/* If this is > 0, then the player must have life above this value at the end of
@@ -214,6 +238,10 @@ public:
 	float		m_fPassmark,			m_SpeedfPassmark;
 
 	float	m_fRandomSpeed,			m_SpeedfRandomSpeed;
+	/* The maximum column number is 16.*/
+	float	m_fMovesX[16],			m_SpeedfMovesX[16];
+	float	m_fMovesY[16],			m_SpeedfMovesY[16];
+	float	m_fMovesZ[16],			m_SpeedfMovesZ[16];
 
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
@@ -222,11 +250,7 @@ public:
 	FailType m_FailType;
 	TapNoteScore m_MinTNSToHideNotes;
 
-	/**
-	 * @brief The Noteskin to use.
-	 *
-	 * If an empty string, it means to not change from the default. */
-	RString		m_sNoteSkin;
+	bool m_changed_defective_mod;
 
 	void NextAccel();
 	void NextEffect();
@@ -252,12 +276,49 @@ public:
 	bool IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) const;
 };
 
+std::string get_player_mod_string(PlayerNumber pn, bool hide_fail);
+
+#define ADD_MULTICOL_METHOD( method_name) \
+	ADD_METHOD( method_name##1 ); \
+	ADD_METHOD( method_name##2 ); \
+	ADD_METHOD( method_name##3 ); \
+	ADD_METHOD( method_name##4 ); \
+	ADD_METHOD( method_name##5 ); \
+	ADD_METHOD( method_name##6 ); \
+	ADD_METHOD( method_name##7 ); \
+	ADD_METHOD( method_name##8 ); \
+	ADD_METHOD( method_name##9 ); \
+	ADD_METHOD( method_name##10 ); \
+	ADD_METHOD( method_name##11 ); \
+	ADD_METHOD( method_name##12 ); \
+	ADD_METHOD( method_name##13 ); \
+	ADD_METHOD( method_name##14 ); \
+	ADD_METHOD( method_name##15 ); \
+	ADD_METHOD( method_name##16 );
+#define MULTICOL_FLOAT_INTERFACE(func_name, member, valid) \
+	FLOAT_INTERFACE(func_name##1, member[0], valid); \
+	FLOAT_INTERFACE(func_name##2, member[1], valid); \
+	FLOAT_INTERFACE(func_name##3, member[2], valid); \
+	FLOAT_INTERFACE(func_name##4, member[3], valid); \
+	FLOAT_INTERFACE(func_name##5, member[4], valid); \
+	FLOAT_INTERFACE(func_name##6, member[5], valid); \
+	FLOAT_INTERFACE(func_name##7, member[6], valid); \
+	FLOAT_INTERFACE(func_name##8, member[7], valid); \
+	FLOAT_INTERFACE(func_name##9, member[8], valid); \
+	FLOAT_INTERFACE(func_name##10, member[9], valid); \
+	FLOAT_INTERFACE(func_name##11, member[10], valid); \
+	FLOAT_INTERFACE(func_name##12, member[11], valid); \
+	FLOAT_INTERFACE(func_name##13, member[12], valid); \
+	FLOAT_INTERFACE(func_name##14, member[13], valid); \
+	FLOAT_INTERFACE(func_name##15, member[14], valid); \
+	FLOAT_INTERFACE(func_name##16, member[15], valid);
+
 #endif
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -267,7 +328,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

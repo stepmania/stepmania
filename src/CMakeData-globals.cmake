@@ -12,7 +12,6 @@ list(APPEND SMDATA_GLOBAL_FILES_HPP
   "global.h"
   "ProductInfo.h" # TODO: Have this be auto-generated.
   "SpecialFiles.h"
-  "StdString.h" # TODO: Remove the need for this file, transition to std::string.
   "StepMania.h" # TODO: Refactor into separate main project.
 )
 

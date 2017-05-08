@@ -2,13 +2,16 @@
 #include "RegistryAccess.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "archutils/Win32/ErrorStrings.h"
 
 #include <windows.h>
 
+using std::vector;
+
 /* Given "HKEY_LOCAL_MACHINE\hardware\foo", return "hardware\foo", and place
  * the HKEY_LOCAL_MACHINE constant in key. */
-static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
+static bool GetRegKeyType( const std::string &sIn, std::string &sOut, HKEY &key )
 {
 	size_t iBackslash = sIn.find( '\\' );
 	if( iBackslash == sIn.npos )
@@ -17,13 +20,29 @@ static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
 		return false;
 	}
 
-	RString sType = sIn.substr( 0, iBackslash );
+	Rage::ci_ascii_string type{ sIn.substr(0, iBackslash).c_str() };
+	std::string sType = sIn.substr( 0, iBackslash );
 
-	if( !sType.CompareNoCase( "HKEY_CLASSES_ROOT" ) )		key = HKEY_CLASSES_ROOT;
-	else if( !sType.CompareNoCase( "HKEY_CURRENT_CONFIG" ) )	key = HKEY_CURRENT_CONFIG;
-	else if( !sType.CompareNoCase( "HKEY_CURRENT_USER" ) )	key = HKEY_CURRENT_USER;
-	else if( !sType.CompareNoCase( "HKEY_LOCAL_MACHINE" ) )	key = HKEY_LOCAL_MACHINE;
-	else if( !sType.CompareNoCase( "HKEY_USERS" ) )			key = HKEY_USERS;
+	if (type == "HKEY_CLASSES_ROOT")
+	{
+		key = HKEY_CLASSES_ROOT;
+	}
+	else if (type == "HKEY_CURRENT_CONFIG")
+	{
+		key = HKEY_CURRENT_CONFIG;
+	}
+	else if (type == "HKEY_CURRENT_USER")
+	{
+		key = HKEY_CURRENT_USER;
+	}
+	else if (type == "HKEY_LOCAL_MACHINE")
+	{
+		key = HKEY_LOCAL_MACHINE;
+	}
+	else if (type == "HKEY_USERS")
+	{
+		key = HKEY_USERS;
+	}
 	else
 	{
 		LOG->Warn( "Invalid registry key: \"%s\" ", sIn.c_str() );
@@ -36,37 +55,40 @@ static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
 }
 
 /* Given a full key, eg. "HKEY_LOCAL_MACHINE\hardware\foo", open it and return it.
- * On error, return NULL. */
+ * On error, return nullptr. */
 enum RegKeyMode { READ, WRITE };
-static HKEY OpenRegKey( const RString &sKey, RegKeyMode mode, bool bWarnOnError = true )
+static HKEY OpenRegKey( const std::string &sKey, RegKeyMode mode, bool bWarnOnError = true )
 {
-	RString sSubkey;
+	std::string sSubkey;
 	HKEY hType;
-	if( !GetRegKeyType(sKey, sSubkey, hType) )
-		return NULL;
-
+	if (!GetRegKeyType(sKey, sSubkey, hType))
+	{
+		return nullptr;
+	}
 	HKEY hRetKey;
-	LONG retval = RegOpenKeyEx( hType, sSubkey, 0, (mode==READ) ? KEY_READ:KEY_WRITE, &hRetKey );
+	LONG retval = RegOpenKeyEx( hType, sSubkey.c_str(), 0, (mode==READ) ? KEY_READ:KEY_WRITE, &hRetKey );
 	if ( retval != ERROR_SUCCESS )
 	{
-		if( bWarnOnError )
-			LOG->Warn( werr_ssprintf(retval, "RegOpenKeyEx(%x,%s) error", hType, sSubkey.c_str()) );
-		return NULL;
+		if (bWarnOnError)
+		{
+			LOG->Warn("%s", werr_format(retval, "RegOpenKeyEx(%p,%s) error", static_cast<void *>(hType), sSubkey.c_str()));
+		}
+		return nullptr;
 	}
 
 	return hRetKey;
 }
 
-bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RString &sVal )
+bool RegistryAccess::GetRegValue( const std::string &sKey, const std::string &sName, std::string &sVal )
 {
 	HKEY hKey = OpenRegKey( sKey, READ );
-	if( hKey == NULL )
+	if( hKey == nullptr )
 		return false;
 
 	char sBuffer[MAX_PATH];
 	DWORD iSize = sizeof(sBuffer);
 	DWORD iType;
-	LONG iRet = RegQueryValueEx( hKey, sName, NULL, &iType, (LPBYTE)sBuffer, &iSize );
+	LONG iRet = RegQueryValueEx( hKey, sName.c_str(), nullptr, &iType, (LPBYTE)sBuffer, &iSize );
 	RegCloseKey( hKey );
 	if( iRet != ERROR_SUCCESS )
 		return false;
@@ -79,20 +101,20 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RSt
 	if( iSize && (iType == REG_SZ || iType == REG_MULTI_SZ || iType == REG_EXPAND_SZ) )
 		--iSize; /* remove nul terminator */
 
-	sVal = RString( sBuffer, iSize );
+	sVal = std::string( sBuffer, iSize );
 	return true;
 }
 
-bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int &iVal, bool bWarnOnError )
+bool RegistryAccess::GetRegValue( const std::string &sKey, const std::string &sName, int &iVal, bool bWarnOnError )
 {
 	HKEY hKey = OpenRegKey( sKey, READ, bWarnOnError );
-	if( hKey == NULL )
+	if( hKey == nullptr )
 		return false;
 
 	DWORD iValue;
 	DWORD iSize = sizeof(iValue);
 	DWORD iType;
-	LONG iRet = RegQueryValueEx( hKey, sName, NULL, &iType, (LPBYTE) &iValue, &iSize );
+	LONG iRet = RegQueryValueEx( hKey, sName.c_str(), nullptr, &iType, (LPBYTE) &iValue, &iSize );
 	RegCloseKey( hKey );
 	if( iRet != ERROR_SUCCESS ) 
 		return false;
@@ -104,7 +126,7 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int
 	return true;
 }
 
-bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, bool &bVal )
+bool RegistryAccess::GetRegValue( const std::string &sKey, const std::string &sName, bool &bVal )
 {
 	int iVal;
 	bool b = GetRegValue( sKey, sName, iVal );
@@ -112,12 +134,13 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, boo
 	return b;
 }
 
-bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, const RString &regex, bool bReturnPathToo )
+bool RegistryAccess::GetRegSubKeys( std::string const &sKey, std::vector<std::string> &lst, std::string const &regex, bool bReturnPathToo )
 {
 	HKEY hKey = OpenRegKey( sKey, READ );
-	if( hKey == NULL )
+	if (hKey == nullptr)
+	{
 		return false;
-
+	}
 	Regex re(regex);
 
 	bool bError = false;
@@ -126,18 +149,18 @@ bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, c
 		FILETIME ft;
 		char szBuffer[MAX_PATH];
 		DWORD iSize = sizeof(szBuffer);
-		LONG iRet = RegEnumKeyEx( hKey, index, szBuffer, &iSize, NULL, NULL, NULL, &ft);
+		LONG iRet = RegEnumKeyEx( hKey, index, szBuffer, &iSize, nullptr, nullptr, nullptr, &ft);
 		if( iRet == ERROR_NO_MORE_ITEMS )
 			break;
 
 		if( iRet != ERROR_SUCCESS )
 		{
-			LOG->Warn( werr_ssprintf(iRet, "GetRegSubKeys(%p,%i) error", hKey, index) );
+			LOG->Warn("%s", werr_format(iRet, "GetRegSubKeys(%p,%i) error", static_cast<void *>(hKey), index) );
 			bError = true;
 			break;
 		}
 
-		RString sStr( szBuffer, iSize );
+		std::string sStr( szBuffer, iSize );
 
 		if( re.Compare(sStr) )
 		{
@@ -152,10 +175,10 @@ bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, c
 	return !bError;
 }
 
-bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, const RString &sVal )
+bool RegistryAccess::SetRegValue( const std::string &sKey, const std::string &sName, const std::string &sVal )
 {
 	HKEY hKey = OpenRegKey( sKey, WRITE );
-	if( hKey == NULL )
+	if( hKey == nullptr )
 		return false;
 
 	bool bSuccess = true;
@@ -166,7 +189,7 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, con
 
 	strcpy( sz, sVal.c_str() );
 	
-	LONG lResult = ::RegSetValueEx(hKey, LPCTSTR(sName), 0, REG_SZ, (LPBYTE)sz, strlen(sz) + 1);
+	LONG lResult = ::RegSetValueEx(hKey, LPCTSTR(sName.c_str()), 0, REG_SZ, (LPBYTE)sz, strlen(sz) + 1);
 	if( lResult != ERROR_SUCCESS ) 
 		 bSuccess = false;
 
@@ -174,15 +197,15 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, con
 	return bSuccess;
 }
 
-bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, bool bVal )
+bool RegistryAccess::SetRegValue( const std::string &sKey, const std::string &sName, bool bVal )
 {
 	HKEY hKey = OpenRegKey( sKey, WRITE );
-	if( hKey == NULL )
+	if( hKey == nullptr )
 		return false;
 
 	bool bSuccess = true;
 	
-	if (::RegSetValueEx(hKey, LPCTSTR(sName), 0,
+	if (::RegSetValueEx(hKey, LPCTSTR(sName.c_str()), 0,
 		REG_BINARY, (LPBYTE)&bVal, sizeof(bVal))
 		 != ERROR_SUCCESS) 
 		 bSuccess = false;
@@ -191,23 +214,23 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, boo
 	return bSuccess;
 }
 
-bool RegistryAccess::CreateKey( const RString &sKey )
+bool RegistryAccess::CreateKey( const std::string &sKey )
 {
-	RString sSubkey;
+	std::string sSubkey;
 	HKEY hType;
 	if( !GetRegKeyType(sKey, sSubkey, hType) )
-		return NULL;
+		return nullptr;
 
 	HKEY hKey;
 	DWORD dwDisposition = 0;
 	if( ::RegCreateKeyEx(
 		hType, 
-		sSubkey, 
+		sSubkey.c_str(), 
 		0, 
-		NULL,
+		nullptr,
 		REG_OPTION_NON_VOLATILE, 
 		KEY_ALL_ACCESS, 
-		NULL, 
+		nullptr, 
 		&hKey,
 		&dwDisposition ) != ERROR_SUCCESS )
 	{

@@ -9,7 +9,9 @@
 #include "RageTypes.h"
 #include "RageUtil.h"
 #include "RageSurface.h"
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
+
+using std::vector;
 
 static RageDisplay::RagePixelFormatDesc PIXEL_FORMAT_DESC[NUM_RagePixelFormat] = {
 	{
@@ -74,18 +76,19 @@ RageDisplay_Null::RageDisplay_Null()
 	LOG->MapLog("renderer", "Current renderer: null");
 }
 
-RString RageDisplay_Null::Init( const VideoModeParams &p, bool /* bAllowUnacceleratedRenderer */ )
+std::string RageDisplay_Null::Init( const VideoModeParams &p, bool /* bAllowUnacceleratedRenderer */ )
 {
 	bool bIgnore = false;
 	SetVideoMode( p, bIgnore );
-	return RString();
+	return std::string();
 }
 
-void RageDisplay_Null::GetDisplayResolutions( DisplayResolutions &out ) const
+void RageDisplay_Null::GetDisplaySpecs(DisplaySpecs &out) const
 {
 	out.clear();
-	DisplayResolution res = { 640, 480, true };
-	out.insert( res );
+	DisplayMode nullMode = {640U, 480U, 30.0};
+	DisplaySpec nullSpec("NullDisplay", "NullDisplay", nullMode);
+	out.insert( nullSpec );
 }
 
 RageSurface* RageDisplay_Null::CreateScreenshot()
@@ -107,9 +110,9 @@ const RageDisplay::RagePixelFormatDesc *RageDisplay_Null::GetPixelFormatDesc(Rag
 }
 
 
-RageMatrix RageDisplay_Null::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
+Rage::Matrix RageDisplay_Null::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
-	RageMatrix m(
+	Rage::Matrix m(
 		2/(r-l),      0,            0,           0,
 		0,            2/(t-b),      0,           0,
 		0,            0,            -2/(zf-zn),   0,
@@ -122,12 +125,12 @@ void RageDisplay_Null::EndFrame()
 {
 	ProcessStatsOnFlip();
 }
-	
+
 
 class RageCompiledGeometryNull : public RageCompiledGeometry
 {
 public:
-	
+
 	void Allocate( const vector<msMesh> & ) {}
 	void Change( const vector<msMesh> & ) {}
 	void Draw( int iMeshIndex ) const {}

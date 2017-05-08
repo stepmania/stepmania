@@ -65,7 +65,7 @@ void RageTextureRenderTarget::BeginRenderingTo( bool bPreserveTexture )
 
 void RageTextureRenderTarget::FinishRenderingTo()
 {
-	// Restore the matrixes.
+	// Restore the matrices.
 	DISPLAY->CenteringPopMatrix();
 	DISPLAY->CameraPopMatrix();
 	DISPLAY->PopMatrix();

@@ -1,9 +1,7 @@
 #include "global.h"
 #include "JoystickDevice.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
-#include "Foreach.h"
-
-using __gnu_cxx::hash_map;
 
 Joystick::Joystick() :	id( InputDevice_Invalid ),
 			x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
@@ -46,10 +44,10 @@ void JoystickDevice::AddElement( int usagePage, int usage, IOHIDElementCookie co
 	{
 		int iMin = 0;
 		int iMax = 0;
-		
+
 		IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMinKey)), iMin );
 		IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMaxKey)), iMax );
-		
+
 		switch( usage )
 		{
 		case kHIDUsage_GD_X:
@@ -128,16 +126,17 @@ void JoystickDevice::AddElement( int usagePage, int usage, IOHIDElementCookie co
 void JoystickDevice::Open()
 {
 	// Add elements to the queue for each Joystick
-	FOREACH_CONST( Joystick, m_vSticks, i )
+	for (auto const &js: m_vSticks)
 	{
-		const Joystick& js = *i;
 #define ADD(x) if( js.x ) AddElementToQueue( js.x )
 		ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
 		ADD( hat );
 #undef ADD
-		for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
-			AddElementToQueue( j->first );
+		for (auto const &item: js.mapping)
+		{
+			AddElementToQueue( item.first );
+		}
 	}
 }
 
@@ -156,13 +155,12 @@ bool JoystickDevice::InitDevice( int vid, int pid )
 
 void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
-	FOREACH_CONST( Joystick, m_vSticks, i )
+	using std::max;
+	for (auto const &js: m_vSticks)
 	{
-		const Joystick& js = *i;
-
 		if( js.x_axis == cookie )
 		{
-			float level = SCALE( value, js.x_min, js.x_max, -1.0f, 1.0f );
+			float level = Rage::scale( value + 0.f, js.x_min + 0.f, js.x_max + 0.f, -1.0f, 1.0f );
 
 			vPresses.push_back( DeviceInput(js.id, JOY_LEFT, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_RIGHT, max(level, 0.0f), now) );
@@ -170,7 +168,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		}
 		else if( js.y_axis == cookie )
 		{
-			float level = SCALE( value, js.y_min, js.y_max, -1.0f, 1.0f );
+			float level = Rage::scale( value + 0.f, js.y_min + 0.f, js.y_max + 0.f, -1.0f, 1.0f );
 
 			vPresses.push_back( DeviceInput(js.id, JOY_UP, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_DOWN, max(level, 0.0f), now) );
@@ -178,7 +176,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		}
 		else if( js.z_axis == cookie )
 		{
-			float level = SCALE( value, js.z_min, js.z_max, -1.0f, 1.0f );
+			float level = Rage::scale( value + 0.f, js.z_min + 0.f, js.z_max + 0.f, -1.0f, 1.0f );
 
 			vPresses.push_back( DeviceInput(js.id, JOY_Z_UP, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_Z_DOWN, max(level, 0.0f), now) );
@@ -186,7 +184,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		}
 		else if( js.x_rot == cookie )
 		{
-			float level = SCALE( value, js.rx_min, js.rx_max, -1.0f, 1.0f );
+			float level = Rage::scale( value + 0.f, js.rx_min + 0.f, js.rx_max + 0.f, -1.0f, 1.0f );
 
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_LEFT, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_RIGHT, max(level, 0.0f), now) );
@@ -194,7 +192,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		}
 		else if( js.y_rot == cookie )
 		{
-			float level = SCALE( value, js.ry_min, js.ry_max, -1.0f, 1.0f );
+			float level = Rage::scale( value + 0.f, js.ry_min + 0.f, js.ry_max + 0.f, -1.0f, 1.0f );
 
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_UP, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_DOWN, max(level, 0.0f), now) );
@@ -202,7 +200,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		}
 		else if( js.z_rot == cookie )
 		{
-			float level = SCALE( value, js.rz_min, js.rz_max, -1.0f, 1.0f );
+			float level = Rage::scale( value + 0.f, js.rz_min + 0.f, js.rz_max + 0.f, -1.0f, 1.0f );
 
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_Z_UP, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_Z_DOWN, max(level, 0.0f), now) );
@@ -234,10 +232,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		}
 		else
 		{
-			// hash_map<T,U>::operator[] is not const
-			hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
-
-			iter = js.mapping.find( cookie );
+			auto iter = js.mapping.find( cookie );
 			if( iter != js.mapping.end() )
 			{
 				vPresses.push_back( DeviceInput(js.id, iter->second, value, now) );
@@ -250,8 +245,10 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 int JoystickDevice::AssignIDs( InputDevice startID )
 {
 	if( !IsJoystick(startID) )
+	{
 		return -1;
-	FOREACH( Joystick, m_vSticks, i )
+	}
+	for (auto i = m_vSticks.begin(); i != m_vSticks.end(); ++i)
 	{
 		if( !IsJoystick(startID) )
 		{
@@ -266,14 +263,16 @@ int JoystickDevice::AssignIDs( InputDevice startID )
 
 void JoystickDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
 {
-	FOREACH_CONST( Joystick, m_vSticks, i )
-		vDevices.push_back( InputDeviceInfo(i->id,GetDescription()) );
+	for (auto &i: m_vSticks)
+	{
+		vDevices.push_back( InputDeviceInfo(i.id,GetDescription()) );
+	}
 }
 
 /*
  * (c) 2005-2007 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -283,7 +282,7 @@ void JoystickDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevice
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

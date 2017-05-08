@@ -1,19 +1,38 @@
 #include "global.h"
 #include "InputQueue.h"
+#include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "InputEventPlus.h"
-#include "Foreach.h"
 #include "InputMapper.h"
 
-InputQueue*	INPUTQUEUE = NULL;	// global and accessible from anywhere in our program
+using std::vector;
+
+InputQueue*	INPUTQUEUE = nullptr;	// global and accessible from anywhere in our program
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 32;
+
+std::map<std::string, int> g_PPS;
+RageMutex g_ppsMut("PPSCounter");
+
+// Used by the InputHandlers.
+void InputQueue::SetPPS(std::string driver, int pps)
+{
+	LockMut(g_ppsMut);
+	g_PPS[driver] = pps;
+}
+
+std::map<std::string, int> InputQueue::GetPPS() const
+{
+	return g_PPS;
+}
 
 InputQueue::InputQueue()
 {
 	FOREACH_ENUM( GameController, gc )
+	{
 		m_aQueue[gc].resize( MAX_INPUT_QUEUE_LENGTH );
+	}
 }
 
 void InputQueue::RememberInput( const InputEventPlus &iep )
@@ -38,7 +57,7 @@ bool InputQueue::WasPressedRecently( GameController c, const GameButton button, 
 		if( iep.GameI.button != button )
 			continue;
 
-		if( pIEP != NULL )
+		if( pIEP != nullptr )
 			*pIEP = iep;
 
 		return true;
@@ -56,6 +75,7 @@ static const float g_fSimultaneousThreshold = 0.05f;
 
 bool InputQueueCode::EnteredCode( GameController controller ) const
 {
+	using std::min;
 	if( controller == GameController_Invalid )
 		return false;
 	if( m_aPresses.size() == 0 )
@@ -95,7 +115,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 		int iMinSearchIndexUsed = iQueueIndex;
 		for( int b=0; b<(int) Press.m_aButtonsToPress.size(); ++b )
 		{
-			const InputEventPlus *pIEP = NULL;
+			const InputEventPlus *pIEP = nullptr;
 			int iQueueSearchIndex = iQueueIndex;
 			for( ; iQueueSearchIndex>=0; --iQueueSearchIndex )	// iterate newest to oldest
 			{
@@ -112,20 +132,20 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 					break;
 				}
 			}
-			if( pIEP == NULL )
+			if( pIEP == nullptr )
 				break;	// didn't find the button
 
 			// Check that m_aButtonsToHold were being held when the buttons were pressed.
 			bool bAllHeldButtonsOK = true;
-			for( unsigned i=0; i<Press.m_aButtonsToHold.size(); i++ )
+			for (auto &button: Press.m_aButtonsToHold)
 			{
-				GameInput gi( controller, Press.m_aButtonsToHold[i] );
+				GameInput gi( controller, button );
 				if( !INPUTMAPPER->IsBeingPressed(gi, MultiPlayer_Invalid, &pIEP->InputList) )
 					bAllHeldButtonsOK = false;
 			}
-			for( unsigned i=0; i<Press.m_aButtonsToNotHold.size(); i++ )
+			for (auto &button: Press.m_aButtonsToNotHold)
 			{
-				GameInput gi( controller, Press.m_aButtonsToNotHold[i] );
+				GameInput gi( controller, button );
 				if( INPUTMAPPER->IsBeingPressed(gi, MultiPlayer_Invalid, &pIEP->InputList) )
 					bAllHeldButtonsOK = false;
 			}
@@ -161,18 +181,14 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 	return false;
 }
 
-bool InputQueueCode::Load( RString sButtonsNames )
+bool InputQueueCode::Load( std::string sButtonsNames )
 {
 	m_aPresses.clear();
 
-	vector<RString> asPresses;
-	split( sButtonsNames, ",", asPresses, false );
-	FOREACH( RString, asPresses, sPress )
+	auto asPresses = Rage::split( sButtonsNames, ",", Rage::EmptyEntries::include );
+	for (auto &sPress: asPresses)
 	{
-		vector<RString> asButtonNames;
-
-		split( *sPress, "-", asButtonNames, false );
-
+		auto asButtonNames = Rage::split(sPress, "-", Rage::EmptyEntries::include);
 		if( asButtonNames.size() < 1 )
 		{
 			if( sButtonsNames != "" )
@@ -181,31 +197,30 @@ bool InputQueueCode::Load( RString sButtonsNames )
 		}
 
 		m_aPresses.push_back( ButtonPress() );
-		for( unsigned i=0; i<asButtonNames.size(); i++ )	// for each button in this code
+		// TODO: Verify if a reference can be used.
+		for (auto sButtonName: asButtonNames)
 		{
-			RString sButtonName = asButtonNames[i];
-
 			bool bHold = false;
 			bool bNotHold = false;
 			for(;;)
 			{
-				if( sButtonName.Left(1) == "+" )
+				if (sButtonName[0] == '+')
 				{
 					m_aPresses.back().m_InputTypes[IET_REPEAT] = true;
 					sButtonName.erase(0, 1);
 				}
-				else if( sButtonName.Left(1) == "~" )
+				else if (sButtonName[0] == '~')
 				{
 					m_aPresses.back().m_InputTypes[IET_FIRST_PRESS] = false;
 					m_aPresses.back().m_InputTypes[IET_RELEASE] = true;
 					sButtonName.erase(0, 1);
 				}
-				else if( sButtonName.Left(1) == "@" )
+				else if (sButtonName[0] == '@')
 				{
 					sButtonName.erase(0, 1);
 					bHold = true;
 				}
-				else if( sButtonName.Left(1) == "!" )
+				else if (sButtonName[0] == '!')
 				{
 					sButtonName.erase(0, 1);
 					bNotHold = true;
@@ -246,7 +261,7 @@ bool InputQueueCode::Load( RString sButtonsNames )
 /*
  * (c) 2001-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -256,7 +271,7 @@ bool InputQueueCode::Load( RString sButtonsNames )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

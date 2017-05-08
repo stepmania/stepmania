@@ -10,11 +10,11 @@ public:
 	virtual void Unmount( UsbStorageDevice* pDevice );
 
 protected:
-	void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
+	void GetUSBStorageDevices( std::vector<UsbStorageDevice>& vDevicesOut );
 	bool USBStorageDevicesChanged();
 	bool TestWrite( UsbStorageDevice* pDevice );
 
-	RString m_sLastDevices;
+	std::string m_sLastDevices;
 };
 
 #ifdef ARCH_MEMORY_CARD_DRIVER
@@ -27,7 +27,7 @@ protected:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -37,7 +37,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

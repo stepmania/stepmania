@@ -17,7 +17,7 @@ void RageTextureID::Init()
 	Policy = TEXTUREMAN->GetDefaultTexturePolicy();
 }
 
-void RageTextureID::SetFilename( const RString &fn )
+void RageTextureID::SetFilename( const std::string &fn )
 {
 	filename = fn;
 	CollapsePath( filename );

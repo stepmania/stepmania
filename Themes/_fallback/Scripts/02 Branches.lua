@@ -96,12 +96,12 @@ Branch = {
 		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
 			return "ScreenHowToInstallSongs"
 		end
-		return "ScreenOptionsEdit"
+		return "ScreenEditMenu"
 	end,
 	AfterSelectStyle = function()
 		if IsNetConnected() then
 			ReportStyle()
-			GAMESTATE:ApplyGameCommand("playmode,regular")
+			GAMESTATE:SetCurrentPlayMode("PlayMode_Regular")
 		end
 		if IsNetSMOnline() then
 			return SMOnlineScreen()

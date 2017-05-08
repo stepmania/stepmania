@@ -12,7 +12,7 @@ public:
 	RageSoundReader_Pan *Copy() const { return new RageSoundReader_Pan(*this); }
 	virtual unsigned GetNumChannels() const;
 	virtual int Read( float *pBuf, int iFrames );
-	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual bool SetProperty( const std::string &sProperty, float fValue );
 
 private:
 	float m_fPan;

@@ -32,8 +32,8 @@ enum SongSort
 };
 /** @brief Loop through the various Song Sorts. */
 #define FOREACH_SongSort( i ) FOREACH_ENUM( SongSort, i )
-const RString& SongSortToString( SongSort ss );
-const RString& SongSortToLocalizedString( SongSort ss );
+std::string const SongSortToString( SongSort ss );
+std::string const SongSortToLocalizedString( SongSort ss );
 
 class CourseEntry
 {
@@ -47,9 +47,9 @@ public:
 	bool bNoDifficult;		// if true, CourseDifficulty doesn't affect this entry
 
 	SongSort songSort;		// sort by this after filtering
-	int iChooseIndex;		// 
+	int iChooseIndex;		//
 
-	RString sModifiers;		// set player and song options using these
+	std::string sModifiers;		// set player and song options using these
 	AttackArray attacks;	// timed sModifiers
 	float fGainSeconds;	// time gained back at the beginning of the song.  LifeMeterTime only.
 	int iGainLives;			// lives gained back at the beginning of the next song
@@ -57,12 +57,12 @@ public:
 	CourseEntry(): bSecret(false), songID(), songCriteria(),
 		stepsCriteria(), bNoDifficult(false),
 		songSort(SongSort_Randomize), iChooseIndex(0),
-		sModifiers(RString("")), attacks(), fGainSeconds(0),
+		sModifiers(std::string("")), attacks(), fGainSeconds(0),
 		iGainLives(-1) {}
 
 	bool IsFixedSong() const { return songID.IsValid(); }
 
-	RString GetTextDescription() const;
+	std::string GetTextDescription() const;
 	int GetNumModChanges() const;
 
 	// Lua
@@ -75,29 +75,29 @@ class Course
 public:
 	Course();
 
-	RString GetBannerPath() const;
-	RString GetBackgroundPath() const;
+	std::string GetBannerPath() const;
+	std::string GetBackgroundPath() const;
 	bool HasBanner() const;
 	bool HasBackground() const;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
 	 * Otherwise, they return the main titles. */
-	RString GetDisplayMainTitle() const;
-	RString GetDisplaySubTitle() const;
+	std::string GetDisplayMainTitle() const;
+	std::string GetDisplaySubTitle() const;
 
 	// Returns the transliterated titles, if any; otherwise returns the main titles.
-	RString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
-	RString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
+	std::string GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
+	std::string GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
 
 	// "title subtitle"
-	RString GetDisplayFullTitle() const;
-	RString GetTranslitFullTitle() const;
+	std::string GetDisplayFullTitle() const;
+	std::string GetTranslitFullTitle() const;
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	Trail* GetTrailForceRegenCache( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
-	void GetTrails( vector<Trail*> &AddTo, StepsType st ) const;
-	void GetAllTrails( vector<Trail*> &AddTo ) const;
+	void GetTrails( std::vector<Trail*> &AddTo, StepsType st ) const;
+	void GetAllTrails( std::vector<Trail*> &AddTo ) const;
 	int GetMeter( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	bool HasMods() const;
 	bool HasTimedMods() const;
@@ -107,7 +107,7 @@ public:
 	int GetEstimatedNumStages() const { return m_vEntries.size(); }
 	bool IsPlayableIn( StepsType st ) const;
 	bool CourseHasBestOrWorst() const;
-	RageColor GetColor() const;
+	Rage::Color GetColor() const;
 	bool GetTotalSeconds( StepsType st, float& fSecondsOut ) const;
 
 	bool IsNonstop() const { return GetPlayMode() == PLAY_MODE_NONSTOP; }
@@ -134,15 +134,15 @@ public:
 	// Call when a Song or its Steps are deleted/changed.
 	void Invalidate( const Song *pStaleSong );
 
-	void GetAllCachedTrails( vector<Trail *> &out );
-	RString GetCacheFilePath() const;
+	void GetAllCachedTrails( std::vector<Trail *> &out );
+	std::string GetCacheFilePath() const;
 
 	const CourseEntry *FindFixedSong( const Song *pSong ) const;
 
 	ProfileSlot GetLoadedFromProfileSlot() const { return m_LoadedFromProfile; }
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 
-	bool Matches(RString sGroup, RString sCourse) const;
+	bool Matches(std::string sGroup, std::string sCourse) const;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -150,7 +150,7 @@ public:
 	void CalculateRadarValues();
 
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
-	void GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail &trail, StepsType &st,
+	void GetTrailUnsortedEndless( const std::vector<CourseEntry> &entries, Trail &trail, StepsType &st,
 		CourseDifficulty &cd, RandomGen &rnd, bool &bCourseDifficultyIsSignificant ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
@@ -158,17 +158,17 @@ public:
 
 
 	bool	m_bIsAutogen; // was this created by AutoGen?
-	RString	m_sPath;
+	std::string	m_sPath;
 
-	RString	m_sMainTitle, m_sMainTitleTranslit;
-	RString	m_sSubTitle, m_sSubTitleTranslit;
-	RString m_sScripter;
-	RString m_sDescription;
+	std::string	m_sMainTitle, m_sMainTitleTranslit;
+	std::string	m_sSubTitle, m_sSubTitleTranslit;
+	std::string m_sScripter;
+	std::string m_sDescription;
 
-	RString	m_sBannerPath;
-	RString	m_sBackgroundPath;
-	RString	m_sCDTitlePath;
-	RString	m_sGroupName;
+	std::string	m_sBannerPath;
+	std::string	m_sBackgroundPath;
+	std::string	m_sCDTitlePath;
+	std::string	m_sGroupName;
 
 	bool	m_bRepeat; // repeat after last song?  "Endless"
 	float	m_fGoalSeconds; // if not 0, stop play after this number of seconds
@@ -179,7 +179,7 @@ public:
 
 	bool	m_bIncomplete;
 
-	vector<CourseEntry> m_vEntries;
+	std::vector<CourseEntry> m_vEntries;
 
 	// sorting values
 	int	m_SortOrder_TotalDifficulty;
@@ -187,7 +187,7 @@ public:
 
 	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
 
-	typedef pair<StepsType,Difficulty> CacheEntry;
+	typedef std::pair<StepsType,Difficulty> CacheEntry;
 	struct CacheData
 	{
 		Trail trail;
@@ -195,15 +195,15 @@ public:
 
 		CacheData(): trail(), null(false) {}
 	};
-	typedef map<CacheEntry, CacheData> TrailCache_t;
+	typedef std::map<CacheEntry, CacheData> TrailCache_t;
 	mutable TrailCache_t m_TrailCache;
 	mutable int m_iTrailCacheSeed;
 
-	typedef map<CacheEntry, RadarValues> RadarCache_t;
+	typedef std::map<CacheEntry, RadarValues> RadarCache_t;
 	RadarCache_t m_RadarCache;
 
 	// Preferred styles:
-	set<RString> m_setStyles;
+	std::set<std::string> m_setStyles;
 
 	CachedObject<Course> m_CachedObject;
 };
@@ -213,7 +213,7 @@ public:
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -223,7 +223,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

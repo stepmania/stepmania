@@ -20,11 +20,11 @@ public:
 	 * be generated.  In that case, the only way to access the texture 
 	 * is via GetTextureName.
 	 * @param sName the new name. */
-	void SetTextureName( const RString &sName ) { m_sTextureName = sName; }
+	void SetTextureName( const std::string &sName ) { m_sTextureName = sName; }
 	/**
 	 * @brief Retrieve the texture name.
 	 * @return the texture name. */
-	RString GetTextureName() const { return m_sTextureName; }
+	std::string GetTextureName() const { return m_sTextureName; }
 	RageTextureRenderTarget *GetTexture() { return m_pRenderTarget; }
 
 	void EnableDepthBuffer( bool b ) { m_bDepthBuffer = b; }
@@ -47,7 +47,7 @@ private:
 	bool m_bFloat;
 	bool m_bPreserveTexture;
 	/** @brief the name of this ActorFrameTexture. */
-	RString m_sTextureName;
+	std::string m_sTextureName;
 };
 
 class ActorFrameTextureAutoDeleteChildren : public ActorFrameTexture

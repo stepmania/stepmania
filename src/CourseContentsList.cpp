@@ -14,8 +14,10 @@ REGISTER_ACTOR_CLASS( CourseContentsList );
 
 CourseContentsList::~CourseContentsList()
 {
-	FOREACH( Actor *, m_vpDisplay, d )
-		delete *d;
+	for (auto *d: m_vpDisplay)
+	{
+		delete d;
+	}
 	m_vpDisplay.clear();
 }
 
@@ -25,7 +27,7 @@ void CourseContentsList::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue( "MaxSongs", iMaxSongs );
 
 	const XNode *pDisplayNode = pNode->GetChild( "Display" );
-	if( pDisplayNode == NULL )
+	if( pDisplayNode == nullptr )
 	{
 		LuaHelpers::ReportScriptErrorFmt("%s: CourseContentsList: missing the Display child", ActorUtil::GetWhere(pNode).c_str());
 		return;
@@ -48,10 +50,10 @@ void CourseContentsList::SetFromGameState()
 	if( GAMESTATE->GetMasterPlayerNumber() == PlayerNumber_Invalid )
 		return;
 	const Trail *pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()];
-	if( pMasterTrail == NULL )
+	if( pMasterTrail == nullptr )
 		return;
-	unsigned uNumEntriesToShow = pMasterTrail->m_vEntries.size(); 
-	CLAMP( uNumEntriesToShow, 0, m_vpDisplay.size() );
+	unsigned uNumEntriesToShow = pMasterTrail->m_vEntries.size();
+	uNumEntriesToShow = Rage::clamp( uNumEntriesToShow, static_cast<unsigned>(0), static_cast<unsigned>(m_vpDisplay.size()) );
 
 	for( int i=0; i<(int)uNumEntriesToShow; i++ )
 	{
@@ -70,7 +72,7 @@ void CourseContentsList::SetFromGameState()
 	if( bLoop )
 	{
 		SetPauseCountdownSeconds( 1.5f );
-		this->SetDestinationItem( m_vpDisplay.size()+1 );	// loop forever
+		this->SetDestinationItem( m_vpDisplay.size()+1.f );	// loop forever
 	}
 }
 
@@ -81,21 +83,21 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 	FOREACH_HumanPlayer(pn)
 	{
 		const Trail *pTrail = GAMESTATE->m_pCurTrail[pn];
-		if( pTrail == NULL
+		if( pTrail == nullptr
 			|| iCourseEntryIndex >= (int) pTrail->m_vEntries.size()
 			|| iCourseEntryIndex >= (int) pCourse->m_vEntries.size() )
 			continue;
 
 		const TrailEntry *te = &pTrail->m_vEntries[iCourseEntryIndex];
 		const CourseEntry *ce = &pCourse->m_vEntries[iCourseEntryIndex];
-		if( te == NULL )
+		if( te == nullptr )
 			continue;
 
-		RString s;
+		std::string s;
 		Difficulty dc;
 		if( te->bSecret )
 		{
-			if( ce == NULL )
+			if( ce == nullptr )
 				continue;
 
 			int iLow = ce->stepsCriteria.m_iLowMeter;
@@ -110,18 +112,18 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 			}
 			if( !bLowIsSet  &&  bHighIsSet )
 			{
-				s = ssprintf( ">=%d", iHigh );
+				s = fmt::sprintf( ">=%d", iHigh );
 			}
 			else if( bLowIsSet  &&  !bHighIsSet )
 			{
-				s = ssprintf( "<=%d", iLow );
+				s = fmt::sprintf( "<=%d", iLow );
 			}
 			else if( bLowIsSet  &&  bHighIsSet )
 			{
 				if( iLow == iHigh )
-					s = ssprintf( "%d", iLow );
+					s = fmt::sprintf( "%d", iLow );
 				else
-					s = ssprintf( "%d-%d", iLow, iHigh );
+					s = fmt::sprintf( "%d-%d", iLow, iHigh );
 			}
 
 			dc = te->dc;
@@ -130,7 +132,7 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 		}
 		else
 		{
-			s = ssprintf("%d", te->pSteps->GetMeter());
+			s = fmt::sprintf("%d", te->pSteps->GetMeter());
 			dc = te->pSteps->GetDifficulty();
 		}
 
@@ -150,7 +152,7 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the CourseContentsList. */ 
+/** @brief Allow Lua to have access to the CourseContentsList. */
 class LunaCourseContentsList: public Luna<CourseContentsList>
 {
 public:
@@ -168,7 +170,7 @@ LUA_REGISTER_DERIVED_CLASS( CourseContentsList, ActorScroller )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -178,7 +180,7 @@ LUA_REGISTER_DERIVED_CLASS( CourseContentsList, ActorScroller )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

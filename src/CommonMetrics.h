@@ -8,58 +8,56 @@
 #include "LocalizedString.h"
 
 // Types
-class ThemeMetricDifficultiesToShow : public ThemeMetric<RString>
+class ThemeMetricDifficultiesToShow : public ThemeMetric<std::string>
 {
 public:
 	ThemeMetricDifficultiesToShow(): m_v() { }
-	ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName );
+	ThemeMetricDifficultiesToShow( const std::string& sGroup, const std::string& sName );
 	void Read();
-	const vector<Difficulty> &GetValue() const;
+	const std::vector<Difficulty> &GetValue() const;
 private:
-	vector<Difficulty> m_v;
+	std::vector<Difficulty> m_v;
 };
-class ThemeMetricCourseDifficultiesToShow : public ThemeMetric<RString>
+class ThemeMetricCourseDifficultiesToShow : public ThemeMetric<std::string>
 {
 public:
 	ThemeMetricCourseDifficultiesToShow(): m_v() { }
-	ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName );
+	ThemeMetricCourseDifficultiesToShow( const std::string& sGroup, const std::string& sName );
 	void Read();
-	const vector<CourseDifficulty> &GetValue() const;
+	const std::vector<CourseDifficulty> &GetValue() const;
 private:
-	vector<CourseDifficulty> m_v;
+	std::vector<CourseDifficulty> m_v;
 };
-class ThemeMetricStepsTypesToShow : public ThemeMetric<RString>
+class ThemeMetricStepsTypesToShow : public ThemeMetric<std::string>
 {
 public:
 	ThemeMetricStepsTypesToShow(): m_v() { }
-	ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName );
+	ThemeMetricStepsTypesToShow( const std::string& sGroup, const std::string& sName );
 	void Read();
-	const vector<StepsType> &GetValue() const;
+	const std::vector<StepsType> &GetValue() const;
 private:
-	vector<StepsType> m_v;
+	std::vector<StepsType> m_v;
 };
 
 
-/** 
+/**
  * @brief Definitions of metrics that are in the "Common" group.
  *
  * These metrics are used throughout the metrics file. */
 namespace CommonMetrics
 {
 	/** @brief The first screen in the attract loop. */
-	extern ThemeMetric<RString>		FIRST_ATTRACT_SCREEN;
+	extern ThemeMetric<std::string>		FIRST_ATTRACT_SCREEN;
 	/** @brief The screen that appears when pressing the operator button. */
-	extern ThemeMetric<RString>		OPERATOR_MENU_SCREEN;
+	extern ThemeMetric<std::string>		OPERATOR_MENU_SCREEN;
 	/** @brief The default modifiers to apply. */
-	extern ThemeMetric<RString>		DEFAULT_MODIFIERS;
+	extern ThemeMetric<std::string>		DEFAULT_MODIFIERS;
 	/** @brief The caption on the title bar. */
 	extern LocalizedString				WINDOW_TITLE;
 	/** @brief How many entries should be shown before showing "Various" instead. */
 	extern ThemeMetric<int>			MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
 	/** @brief Adjusts the assist tick sound's playback time. */
 	extern ThemeMetric<float>			TICK_EARLY_SECONDS;
-	/** @brief the name of the default noteskin. */
-	extern ThemeMetric<RString>		DEFAULT_NOTESKIN_NAME;
 	/** @brief Which difficulties are to be shown? */
 	extern ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW;
 	/** @brief Which course difficulties are to be shown? */
@@ -75,7 +73,7 @@ namespace CommonMetrics
 	/** @brief How many decimal places are used? */
 	extern ThemeMetric<int>			PERCENT_SCORE_DECIMAL_PLACES;
 
-	RString LocalizeOptionItem( const RString &s, bool bOptional );
+	std::string LocalizeOptionItem( const std::string &s, bool bOptional );
 };
 
 #endif
@@ -85,7 +83,7 @@ namespace CommonMetrics
  * @author Chris Danford (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -95,7 +93,7 @@ namespace CommonMetrics
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

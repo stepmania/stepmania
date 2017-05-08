@@ -11,7 +11,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 		if( bAllowInvalid )
 			return iInvalid;
 
-		LuaHelpers::Push( L, ssprintf("Expected %s; got nil", szType) );
+		LuaHelpers::Push( L, fmt::sprintf("Expected %s; got nil", szType) );
 		lua_error( L );
 	}
 
@@ -23,7 +23,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 
 	// If not found, check case-insensitively for legacy compatibility
 	if( lua_isnil(L, -1) && lua_isstring(L, iPos) ) {
-		RString sLower;
+		std::string sLower;
 
 		// Get rid of nil value on stack
 		lua_pop( L, 1 );
@@ -31,7 +31,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 		// Get the string and lowercase it
 		lua_pushvalue( L, iPos );
 		LuaHelpers::Pop( L, sLower );
-		sLower.MakeLower();
+		sLower = Rage::make_lower(sLower);
 
 		// Try again to read the value
 		table.PushSelf( L );
@@ -44,14 +44,14 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 	// and not silently result in nil, or an out-of-bounds value.
 	if( unlikely(lua_isnil(L, -1)) )
 	{
-		RString sGot;
+		std::string sGot;
 		if( lua_isstring(L, iPos) )
 		{
 			/* We were given a string, but it wasn't a valid value for this enum.  Show
 			 * the string. */
 			lua_pushvalue( L, iPos );
 			LuaHelpers::Pop( L, sGot );
-			sGot = ssprintf( "\"%s\"", sGot.c_str() );
+			sGot = fmt::sprintf( "\"%s\"", sGot.c_str() );
 		}
 		else
 		{
@@ -59,14 +59,14 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 			luaL_pushtype( L, iPos );
 			LuaHelpers::Pop( L, sGot );
 		}
-		LuaHelpers::Push( L, ssprintf("Expected %s; got %s", szType, sGot.c_str() ) );
+		LuaHelpers::Push( L, fmt::sprintf("Expected %s; got %s", szType, sGot.c_str() ) );
 		// There are a couple places where CheckEnum is used outside of a
 		// function called from lua.  If we use lua_error from one of them,
 		// StepMania crashes out completely.  bAllowAnything allows those places
 		// to avoid crashing over theme mistakes.
 		if(bAllowAnything)
 		{
-			RString errmsg;
+			std::string errmsg;
 			LuaHelpers::Pop(L, errmsg);
 			LuaHelpers::ReportScriptError(errmsg);
 			lua_pop(L, 2);
@@ -80,31 +80,31 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 }
 
 // szNameArray is of size iMax; pNameCache is of size iMax+2.
-const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache )
+std::string const EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<std::string> *pNameCache )
 {
-	if( unlikely(pNameCache[0].get() == NULL) )
+	if( unlikely(pNameCache[0].get() == nullptr) )
 	{
 		for( int i = 0; i < iMax; ++i )
 		{
-			auto_ptr<RString> ap( new RString( szNameArray[i] ) );
-			pNameCache[i] = ap;
+			std::unique_ptr<std::string> ap( new std::string( szNameArray[i] ) );
+			pNameCache[i] = std::move(ap);
 		}
 
-		auto_ptr<RString> ap( new RString );
-		pNameCache[iMax+1] = ap;
+		std::unique_ptr<std::string> ap( new std::string );
+		pNameCache[iMax+1] = std::move(ap);
 	}
 
 	// iMax+1 is "Invalid".  iMax+0 is the NUM_ size value, which can not be converted
 	// to a string.
-	// Maybe we should assert on _Invalid?  It seems better to make 
-	// the caller check that they're supplying a valid enum value instead of 
+	// Maybe we should assert on _Invalid?  It seems better to make
+	// the caller check that they're supplying a valid enum value instead of
 	// returning an inconspicuous garbage value (empty string). -Chris
 	if (iVal < 0)
-		FAIL_M(ssprintf("Value %i cannot be negative for enums! Enum hint: %s", iVal, szNameArray[0]));
+		FAIL_M(fmt::sprintf("Value %i cannot be negative for enums! Enum hint: %s", iVal, szNameArray[0]));
 	if (iVal == iMax)
-		FAIL_M(ssprintf("Value %i cannot be a string with value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
+		FAIL_M(fmt::sprintf("Value %i cannot be a string with value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
 	if (iVal > iMax+1)
-		FAIL_M(ssprintf("Value %i is past the invalid value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
+		FAIL_M(fmt::sprintf("Value %i is past the invalid value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
 	return *pNameCache[iVal];
 }
 
@@ -123,7 +123,7 @@ namespace
 
 		return 1;
 	}
-	
+
 	int Reverse( lua_State *L )
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );
@@ -140,7 +140,7 @@ namespace
 static const luaL_Reg EnumLib[] = {
 	{ "GetName", GetName },
 	{ "Reverse", Reverse },
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 static void PushEnumMethodTable( lua_State *L )
@@ -174,7 +174,7 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
 /*
  * (c) 2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -184,7 +184,7 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

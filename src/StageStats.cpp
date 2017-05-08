@@ -1,7 +1,6 @@
 #include "global.h"
 #include "StageStats.h"
 #include "GameState.h"
-#include "Foreach.h"
 #include "Steps.h"
 #include "Song.h"
 #include "RageLog.h"
@@ -11,7 +10,11 @@
 #include "Profile.h"
 #include "ProfileManager.h"
 
-/* Arcade:	for the current stage (one song).  
+#include <numeric>
+
+using std::vector;
+
+/* Arcade:	for the current stage (one song).
  * Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
  */
 
@@ -51,11 +54,11 @@ void StageStats::AssertValid( PlayerNumber pn ) const
 		CHECKPOINT_M( m_vpPlayedSongs[0]->GetTranslitFullTitle() );
 	ASSERT( m_player[pn].m_iStepsPlayed > 0 );
 	ASSERT( m_player[pn].m_vpPossibleSteps.size() != 0 );
-	ASSERT( m_player[pn].m_vpPossibleSteps[0] != NULL );
-	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
-	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("Invalid Difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
-	ASSERT_M( (int) m_vpPlayedSongs.size() == m_player[pn].m_iStepsPlayed, ssprintf("%i Songs Played != %i Steps Played for player %i", (int)m_vpPlayedSongs.size(), (int)m_player[pn].m_iStepsPlayed, pn) );
-	ASSERT_M( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size(), ssprintf("%i Possible Songs != %i Possible Steps for player %i", (int)m_vpPossibleSongs.size(), (int)m_player[pn].m_vpPossibleSteps.size(), pn) );
+	ASSERT( m_player[pn].m_vpPossibleSteps[0] != nullptr );
+	ASSERT_M( m_playMode < NUM_PlayMode, fmt::sprintf("playmode %i", m_playMode) );
+	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, fmt::sprintf("Invalid Difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
+	ASSERT_M( (int) m_vpPlayedSongs.size() == m_player[pn].m_iStepsPlayed, fmt::sprintf("%i Songs Played != %i Steps Played for player %i", (int)m_vpPlayedSongs.size(), (int)m_player[pn].m_iStepsPlayed, pn) );
+	ASSERT_M( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size(), fmt::sprintf("%i Possible Songs != %i Possible Steps for player %i", (int)m_vpPossibleSongs.size(), (int)m_player[pn].m_vpPossibleSteps.size(), pn) );
 }
 
 void StageStats::AssertValid( MultiPlayer pn ) const
@@ -65,9 +68,9 @@ void StageStats::AssertValid( MultiPlayer pn ) const
 	if( m_vpPlayedSongs[0] )
 		CHECKPOINT_M( m_vpPlayedSongs[0]->GetTranslitFullTitle() );
 	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps.size() != 0 );
-	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps[0] != NULL );
-	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
-	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
+	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps[0] != nullptr );
+	ASSERT_M( m_playMode < NUM_PlayMode, fmt::sprintf("playmode %i", m_playMode) );
+	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, fmt::sprintf("difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
 	ASSERT( (int) m_vpPlayedSongs.size() == m_player[pn].m_iStepsPlayed );
 	ASSERT( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size() );
 }
@@ -91,10 +94,14 @@ int StageStats::GetAverageMeter( PlayerNumber pn ) const
 void StageStats::AddStats( const StageStats& other )
 {
 	ASSERT( !other.m_vpPlayedSongs.empty() );
-	FOREACH_CONST( Song*, other.m_vpPlayedSongs, s )
-		m_vpPlayedSongs.push_back( *s );
-	FOREACH_CONST( Song*, other.m_vpPossibleSongs, s )
-		m_vpPossibleSongs.push_back( *s );
+	for (auto *s: other.m_vpPlayedSongs)
+	{
+		m_vpPlayedSongs.push_back( s );
+	}
+	for (auto *s: other.m_vpPossibleSongs)
+	{
+		m_vpPossibleSongs.push_back( s );
+	}
 	m_Stage = Stage_Invalid; // meaningless
 	m_iStageIndex = -1; // meaningless
 
@@ -105,34 +112,45 @@ void StageStats::AddStats( const StageStats& other )
 	m_fStepsSeconds += other.m_fStepsSeconds;
 
 	FOREACH_EnabledPlayer( p )
+	{
 		m_player[p].AddStats( other.m_player[p] );
+	}
 }
 
 bool StageStats::OnePassed() const
 {
 	FOREACH_EnabledPlayer( p )
+	{
 		if( !m_player[p].m_bFailed )
+		{
 			return true;
+		}
+	}
 	return false;
 }
 
 bool StageStats::AllFailed() const
 {
 	FOREACH_EnabledPlayer( p )
+	{
 		if( !m_player[p].m_bFailed )
+		{
 			return false;
+		}
+	}
 	return true;
 }
 
 float StageStats::GetTotalPossibleStepsSeconds() const
 {
-	float fSecs = 0;
-	FOREACH_CONST( Song*, m_vpPossibleSongs, s )
-		fSecs += (*s)->GetStepsSeconds();
+	auto getSeconds = [](float curr, Song const *s) {
+		return curr + s->GetStepsSeconds();
+	};
+	float fSecs = std::accumulate(m_vpPossibleSongs.begin(), m_vpPossibleSongs.end(), 0.f, getSeconds);
 	return fSecs / m_fMusicRate;
 }
 
-static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState &ps, RString sRankingToFillInMarker, RString sPlayerGuid )
+static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState &ps, std::string sRankingToFillInMarker, std::string sPlayerGuid )
 {
 	HighScore hs;
 	hs.SetName( sRankingToFillInMarker );
@@ -144,16 +162,20 @@ static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState
 	hs.SetStageAward( pss.m_StageAward );
 	hs.SetPeakComboAward( pss.m_PeakComboAward );
 
-	vector<RString> asModifiers;
+	vector<std::string> asModifiers;
 	{
-		RString sPlayerOptions = ps.m_PlayerOptions.GetStage().GetString();
+		auto sPlayerOptions = get_player_mod_string(ps.m_PlayerNumber, false);
 		if( !sPlayerOptions.empty() )
+		{
 			asModifiers.push_back( sPlayerOptions );
-		RString sSongOptions = GAMESTATE->m_SongOptions.GetStage().GetString();
+		}
+		auto sSongOptions = GAMESTATE->m_SongOptions.GetStage().GetString();
 		if( !sSongOptions.empty() )
+		{
 			asModifiers.push_back( sSongOptions );
+		}
 	}
-	hs.SetModifiers( join(", ", asModifiers) );
+	hs.SetModifiers( Rage::join(", ", asModifiers) );
 
 	hs.SetDateTime( DateTime::GetNowDateTime() );
 	hs.SetPlayerGuid( sPlayerGuid );
@@ -201,12 +223,12 @@ void StageStats::FinalizeScores( bool bSummary )
 	// is a course or not... it's handled below in the switch.
 	FOREACH_HumanPlayer( p )
 	{
-		RString sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("");
+		std::string sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : std::string("");
 		m_player[p].m_HighScore = FillInHighScore( m_player[p], *GAMESTATE->m_pPlayerState[p], RANKING_TO_FILL_IN_MARKER[p], sPlayerGuid );
 	}
 	FOREACH_EnabledMultiPlayer( mp )
 	{
-		RString sPlayerGuid = "00000000-0000-0000-0000-000000000000";	// FIXME
+		std::string sPlayerGuid = "00000000-0000-0000-0000-000000000000";	// FIXME
 		m_multiPlayer[mp].m_HighScore = FillInHighScore( m_multiPlayer[mp], *GAMESTATE->m_pMultiPlayerState[mp], "", sPlayerGuid );
 	}
 
@@ -215,7 +237,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		const HighScore &hs = m_player[p].m_HighScore;
 		StepsType st = GAMESTATE->GetCurrentStyle(p)->m_StepsType;
 
-		const Song* pSong = GAMESTATE->m_pCurSong;
+		const Song* pSong = GAMESTATE->get_curr_song();
 		const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 
 		// Don't save DQ'd scores
@@ -229,7 +251,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		if( bSummary )
 		{
 			// don't save scores if any stage was failed
-			if( m_player[p].m_bFailed ) 
+			if( m_player[p].m_bFailed )
 				continue;
 
 			int iAverageMeter = GetAverageMeter(p);
@@ -244,21 +266,21 @@ void StageStats::FinalizeScores( bool bSummary )
 		{
 			// Save this stage to recent scores
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			ASSERT( pCourse != NULL );
+			ASSERT( pCourse != nullptr );
 			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
 			PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
 		}
 		else
 		{
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 
 			PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
 		}
 	}
 
 	// If both players get a machine high score in the same HighScoreList,
-	// then one player's score may have bumped the other player. Look in 
+	// then one player's score may have bumped the other player. Look in
 	// the HighScoreList and re-get the high score index.
 	FOREACH_HumanPlayer( p )
 	{
@@ -269,7 +291,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
 		StepsType st = GAMESTATE->GetCurrentStyle(p)->m_StepsType;
 
-		const HighScoreList *pHSL = NULL;
+		const HighScoreList *pHSL = nullptr;
 		if( bSummary )
 		{
 			pHSL = &pProfile->GetCategoryHighScoreList( st, m_player[p].m_rc );
@@ -277,14 +299,14 @@ void StageStats::FinalizeScores( bool bSummary )
 		else if( GAMESTATE->IsCourseMode() )
 		{
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			ASSERT( pCourse != NULL );
+			ASSERT( pCourse != nullptr );
 			Trail *pTrail = GAMESTATE->m_pCurTrail[p];
-			ASSERT( pTrail != NULL );
+			ASSERT( pTrail != nullptr );
 			pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
 		}
 		else
 		{
-			Song* pSong = GAMESTATE->m_pCurSong;
+			Song* pSong = GAMESTATE->get_curr_song();
 			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 			pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
 		}
@@ -310,18 +332,19 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 	if( pSong->IsTutorial() == Song::SHOW_NEVER )
 		return false;
 
-	const HighScoreList &hsl = 
+	const HighScoreList &hsl =
 		GAMESTATE->IsCourseMode() ?
 		PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, pTrail) :
 		PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong, pSteps);
 
 	int iScore = m_player[pn].m_iScore;
 	float fPercentDP = m_player[pn].GetPercentDancePoints();
-	for( int h=0; h<(int)hsl.vHighScores.size() && h<PREFSMAN->m_iMaxHighScoresPerListForMachine; ++h )
+
+	for( int h = 0; h < static_cast<int>(hsl.vHighScores.size()) && h < PREFSMAN->m_iMaxHighScoresPerListForMachine; ++h )
 	{
 		const HighScore &hs = hsl.vHighScores[h];
 		if( hs.GetName() == RANKING_TO_FILL_IN_MARKER[pn]  &&
-			hs.GetPercentDP() == fPercentDP  && 
+			hs.GetPercentDP() == fPercentDP  &&
 			hs.GetScore() == iScore )
 		{
 			return true;
@@ -333,7 +356,8 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 
 unsigned int StageStats::GetMinimumMissCombo() const
 {
-	unsigned int iMin = INT_MAX;
+	using std::min;
+	unsigned int iMin = std::numeric_limits<unsigned int>::max();
 	FOREACH_HumanPlayer( p )
 		iMin = min( iMin, m_player[p].m_iCurMissCombo );
 	return iMin;
@@ -342,7 +366,7 @@ unsigned int StageStats::GetMinimumMissCombo() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StageStats. */ 
+/** @brief Allow Lua to have access to the StageStats. */
 class LunaStageStats: public Luna<StageStats>
 {
 public:
@@ -406,7 +430,7 @@ LUA_REGISTER_CLASS( StageStats )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -416,7 +440,7 @@ LUA_REGISTER_CLASS( StageStats )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

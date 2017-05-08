@@ -5,18 +5,18 @@
 #include "Song.h"
 #include "Steps.h"
 #include "RageLog.h"
+#include "RageFmtWrap.h"
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "Course.h"
 #include "Style.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "XmlFile.h"
 #include "PlayerStageStats.h"
 
-#define SHIFT_X(pc)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iX", pc+1))
-#define SHIFT_Y(pc)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iY", pc+1))
+#define SHIFT_X(pc)	THEME->GetMetricF(sMetricsGroup, fmt::sprintf("ShiftP%iX", pc+1))
+#define SHIFT_Y(pc)	THEME->GetMetricF(sMetricsGroup, fmt::sprintf("ShiftP%iY", pc+1))
 
 static const char *PaneCategoryNames[] = {
 	"NumSteps",
@@ -39,7 +39,7 @@ enum { NEED_NOTES=1, NEED_PROFILE=2 };
 struct Content_t
 {
 	int req;
-	RString sFontType;
+	std::string sFontType;
 };
 
 static const Content_t g_Contents[NUM_PaneCategory] =
@@ -59,20 +59,20 @@ static const Content_t g_Contents[NUM_PaneCategory] =
 
 REGISTER_ACTOR_CLASS( PaneDisplay );
 
-void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
+void PaneDisplay::Load( const std::string &sMetricsGroup, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sMetricsGroup, "EmptyMachineHighScoreName" );
 	NOT_AVAILABLE.Load( sMetricsGroup, "NotAvailable" );
 	COUNT_FORMAT.Load( sMetricsGroup, "CountFormat" );
-	NULL_COUNT_STRING.Load( sMetricsGroup, "NullCountString" );
+	nullptr_COUNT_STRING.Load( sMetricsGroup, "NullCountString" );
 
 	FOREACH_ENUM( PaneCategory, pc )
 	{
 		LuaThreadVariable var( "PaneCategory", LuaReference::Create(pc) );
 
-		RString sFontType = g_Contents[pc].sFontType;
+		std::string sFontType = g_Contents[pc].sFontType;
 
 		m_textContents[pc].LoadFromFont( THEME->GetPathF(sMetricsGroup,sFontType) );
 		m_textContents[pc].SetName( PaneCategoryToString(pc) + "Text" );
@@ -97,7 +97,7 @@ void PaneDisplay::LoadFromNode( const XNode *pNode )
 {
 	bool b;
 
-	RString sMetricsGroup;
+	std::string sMetricsGroup;
 	b = pNode->GetAttrValue( "MetricsGroup", sMetricsGroup );
 	if(!b)
 	{
@@ -125,33 +125,33 @@ void PaneDisplay::LoadFromNode( const XNode *pNode )
 	ActorFrame::LoadFromNode( pNode );
 }
 
-void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float & fLevelOut )
+void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, std::string & sTextOut, float & fLevelOut )
 {
-	const Song *pSong = GAMESTATE->m_pCurSong;
+	const Song *pSong = GAMESTATE->get_curr_song();
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
-	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
+	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : nullptr;
 	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
 
 	// Defaults, will be filled in later
-	sTextOut = NULL_COUNT_STRING;
+	sTextOut = nullptr_COUNT_STRING;
 	fLevelOut = 0;
 
 	if(GAMESTATE->IsCourseMode() && !pTrail)
 	{
 		if( (g_Contents[c].req&NEED_PROFILE) )
-			sTextOut = NOT_AVAILABLE;
+			sTextOut = NOT_AVAILABLE.GetValue();
 
 		{
 			switch( c )
 			{
 				case PaneCategory_MachineHighName:
-					sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME;
+					sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME.GetValue();
 					break;
 				case PaneCategory_MachineHighScore:
 				case PaneCategory_ProfileHighScore:
-					sTextOut = NOT_AVAILABLE;
+					sTextOut = NOT_AVAILABLE.GetValue();
 					break;
 				default: break;
 			}
@@ -162,17 +162,17 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 	else if(!GAMESTATE->IsCourseMode() && !pSong)
 	{
 		if( (g_Contents[c].req&NEED_PROFILE) )
-			sTextOut = NOT_AVAILABLE;
+			sTextOut = NOT_AVAILABLE.GetValue();
 
 		{
 			switch( c )
 			{
 				case PaneCategory_MachineHighName:
-					sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME;
+					sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME.GetValue();
 					break;
 				case PaneCategory_MachineHighScore:
 				case PaneCategory_ProfileHighScore:
-					sTextOut = NOT_AVAILABLE;
+					sTextOut = NOT_AVAILABLE.GetValue();
 					break;
 				default: break;
 			}
@@ -185,13 +185,13 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 		return;
 	if( (g_Contents[c].req&NEED_PROFILE) && !pProfile )
 	{
-		sTextOut = NOT_AVAILABLE;
+		sTextOut = NOT_AVAILABLE.GetValue();
 		return;
 	}
 
 	{
 		RadarValues rv;
-		HighScoreList *pHSL = NULL;
+		HighScoreList *pHSL = nullptr;
 		ProfileSlot slot = ProfileSlot_Machine;
 		switch( c )
 		{
@@ -271,7 +271,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 				case PaneCategory_MachineHighName:
 					if( pHSL->vHighScores.empty() )
 					{
-						sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME;
+						sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME.GetValue();
 					}
 					else
 					{
@@ -284,7 +284,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 				case PaneCategory_ProfileHighScore:
 					// Don't show or save machine high scores for edits loaded from a player profile.
 					if( bIsPlayerEdit )
-						sTextOut = NOT_AVAILABLE;
+						sTextOut = NOT_AVAILABLE.GetValue();
 					else
 						sTextOut = PlayerStageStats::FormatPercentScore( fLevelOut );
 					break;
@@ -296,7 +296,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 				case PaneCategory_Hands:
 				case PaneCategory_Lifts:
 				case PaneCategory_Fakes:
-					sTextOut = ssprintf( COUNT_FORMAT.GetValue(), fLevelOut );
+					sTextOut = rage_fmt_wrapper(COUNT_FORMAT, fLevelOut );
 					break;
 				default: break;
 			}
@@ -307,7 +307,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 void PaneDisplay::SetContent( PaneCategory c )
 {
 	// these get filled in later:
-	RString str;
+	std::string str;
 	float val;
 
 	GetPaneTextAndLevel( c, str, val );
@@ -336,7 +336,7 @@ void PaneDisplay::SetFromGameState()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PaneDisplay. */ 
+/** @brief Allow Lua to have access to the PaneDisplay. */
 class LunaPaneDisplay: public Luna<PaneDisplay>
 {
 public:
@@ -354,7 +354,7 @@ LUA_REGISTER_DERIVED_CLASS( PaneDisplay, ActorFrame )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -364,7 +364,7 @@ LUA_REGISTER_DERIVED_CLASS( PaneDisplay, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
