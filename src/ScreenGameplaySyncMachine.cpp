@@ -11,6 +11,8 @@
 #include "InputEventPlus.h"
 #include "SongUtil.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenGameplaySyncMachine );
 
 void ScreenGameplaySyncMachine::Init()
@@ -23,19 +25,22 @@ void ScreenGameplaySyncMachine::Init()
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame), PLAYER_INVALID );
 	AdjustSync::ResetOriginalSyncData();
 
-	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
+	std::string sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
 	// Allow themers to use either a .ssc or .sm file for this. -aj
 	SSCLoader loaderSSC;
 	SMLoader loaderSM;
-	if(sFile.Right(4) == ".ssc")
-		loaderSSC.LoadFromSimfile( sFile, m_Song );
+	if (Rage::ends_with(sFile, ".ssc"))
+	{
+		loaderSSC.LoadFromSimfile(sFile, m_Song);
+	}
 	else
-		loaderSM.LoadFromSimfile( sFile, m_Song );
-
-	m_Song.SetSongDir( Dirname(sFile) );
+	{
+		loaderSM.LoadFromSimfile(sFile, m_Song);
+	}
+	m_Song.SetSongDir( Rage::dir_name(sFile) );
 	m_Song.TidyUpData();
 
-	GAMESTATE->m_pCurSong.Set( &m_Song );
+	GAMESTATE->set_curr_song(&m_Song);
 	// Needs proper StepsType -freem
 	vector<Steps*> vpSteps;
 	SongUtil::GetPlayableSteps( &m_Song, vpSteps );
@@ -98,11 +103,11 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 	{
 		FOREACH_PlayerNumber( pn )
 		{
-			GAMESTATE->m_pCurSteps[pn].Set( NULL );
+			GAMESTATE->m_pCurSteps[pn].Set( nullptr );
 		}
 		GAMESTATE->m_PlayMode.Set( PlayMode_Invalid );
-		GAMESTATE->SetCurrentStyle( NULL, PLAYER_INVALID );
-		GAMESTATE->m_pCurSong.Set( NULL );
+		GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
+		GAMESTATE->set_curr_song(nullptr);
 	}
 }
 
@@ -125,20 +130,20 @@ void ScreenGameplaySyncMachine::RefreshText()
 	float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
 	float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
 	float fStdDev = AdjustSync::s_fStandardDeviation;
-	RString s;
-	s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
-	s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
-	s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
-	s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, AdjustSync::OFFSET_SAMPLE_COUNT );
+	std::stringstream builder;
+	builder << OLD_OFFSET.GetValue() + fmt::sprintf( ": %0.3f\n", fOld );
+	builder << NEW_OFFSET.GetValue() + fmt::sprintf( ": %0.3f\n", fNew );
+	builder << STANDARD_DEVIATION.GetValue() + fmt::sprintf( ": 0.3f\n", fStdDev );
+	builder << COLLECTING_SAMPLE.GetValue() + fmt::sprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample + 1, OFFSET_SAMPLE_COUNT );
 
-	m_textSyncInfo.SetText( s );
+	m_textSyncInfo.SetText( builder.str() );
 }
 
 
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -148,7 +153,7 @@ void ScreenGameplaySyncMachine::RefreshText()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

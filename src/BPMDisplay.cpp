@@ -11,7 +11,9 @@
 #include "Song.h"
 #include "Steps.h"
 
-#include <limits.h>
+#include <limits>
+
+using std::vector;
 
 REGISTER_ACTOR_CLASS( BPMDisplay );
 
@@ -56,9 +58,9 @@ float BPMDisplay::GetActiveBPM() const
 	return m_fBPMTo + (m_fBPMFrom-m_fBPMTo)*m_fPercentInState;
 }
 
-void BPMDisplay::Update( float fDeltaTime ) 
-{ 
-	BitmapText::Update( fDeltaTime ); 
+void BPMDisplay::Update( float fDeltaTime )
+{
+	BitmapText::Update( fDeltaTime );
 
 	if( !(bool)CYCLE )
 		return;
@@ -79,9 +81,9 @@ void BPMDisplay::Update( float fDeltaTime )
 		{
 			m_fBPMFrom = -1;
 			if( (bool)SHOW_QMARKS )
-				SetText( (RandomFloat(0,1)>0.90f) ? (RString)QUESTIONMARKS_TEXT : ssprintf((RString)BPM_FORMAT_STRING,RandomFloat(0,999)) );
+				SetText( (RandomFloat(0,1)>0.90f) ? (std::string)QUESTIONMARKS_TEXT : fmt::sprintf((std::string)BPM_FORMAT_STRING,RandomFloat(0,999)) );
 			else
-				SetText( ssprintf((RString)BPM_FORMAT_STRING, RandomFloat(0,999)) );
+				SetText( fmt::sprintf((std::string)BPM_FORMAT_STRING, RandomFloat(0,999)) );
 		}
 		else if(m_fBPMFrom == -1)
 		{
@@ -92,12 +94,14 @@ void BPMDisplay::Update( float fDeltaTime )
 	if( m_fBPMTo != -1)
 	{
 		const float fActualBPM = GetActiveBPM();
-		SetText( ssprintf((RString)BPM_FORMAT_STRING, fActualBPM) );
+		SetText( fmt::sprintf((std::string)BPM_FORMAT_STRING, fActualBPM) );
 	}
 }
 
 void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 {
+	using std::min;
+	using std::max;
 	ASSERT( !bpms.vfBpms.empty() );
 
 	m_BPMS.clear();
@@ -113,23 +117,23 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 
 	if( !(bool)CYCLE )
 	{
-		int MinBPM = INT_MAX;
-		int MaxBPM = INT_MIN;
+		int MinBPM = std::numeric_limits<int>::max();
+		int MaxBPM = std::numeric_limits<int>::min();
 		for( unsigned i = 0; i < BPMS.size(); ++i )
 		{
-			MinBPM = min( MinBPM, (int)lrintf(BPMS[i]) );
-			MaxBPM = max( MaxBPM, (int)lrintf(BPMS[i]) );
+			MinBPM = min( MinBPM, static_cast<int>(std::round(BPMS[i])));
+			MaxBPM = max( MaxBPM, static_cast<int>(std::round(BPMS[i])));
 		}
 		if( MinBPM == MaxBPM )
 		{
 			if( MinBPM == -1 )
-				SetText( RANDOM_TEXT ); // random (was "...") -aj
+				SetText( RANDOM_TEXT.GetValue() ); // random (was "...") -aj
 			else
-				SetText( ssprintf("%i", MinBPM) );
+				SetText( fmt::sprintf("%i", MinBPM) );
 		}
 		else
 		{
-			SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
+			SetText( fmt::sprintf("%i%s%i", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
 		}
 	}
 	else
@@ -141,7 +145,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 				m_BPMS.push_back(BPMS[i]); // hold
 		}
 
-		m_iCurrentBPM = min(1u, m_BPMS.size()); // start on the first hold
+		m_iCurrentBPM = min(1, static_cast<int>(m_BPMS.size())); // start on the first hold
 		m_fBPMFrom = BPMS[0];
 		m_fBPMTo = BPMS[0];
 		m_fPercentInState = 1;
@@ -173,13 +177,13 @@ void BPMDisplay::CycleRandomly()
 void BPMDisplay::NoBPM()
 {
 	m_BPMS.clear();
-	SetText( NO_BPM_TEXT ); 
+	SetText( NO_BPM_TEXT.GetValue() );
 	RunCommands( SET_NO_BPM_COMMAND );
 }
 
 void BPMDisplay::SetBpmFromSong( const Song* pSong )
 {
-	ASSERT( pSong != NULL );
+	ASSERT( pSong != nullptr );
 	switch( pSong->m_DisplayBPMType )
 	{
 	case DISPLAY_BPM_ACTUAL:
@@ -195,13 +199,13 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 		CycleRandomly();
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid display BPM type: %i", pSong->m_DisplayBPMType));
+		FAIL_M(fmt::sprintf("Invalid display BPM type: %i", pSong->m_DisplayBPMType));
 	}
 }
 
 void BPMDisplay::SetBpmFromSteps( const Steps* pSteps )
 {
-	ASSERT( pSteps != NULL );
+	ASSERT( pSteps != nullptr );
 	DisplayBpms bpms;
 	float fMinBPM, fMaxBPM;
 	pSteps->GetTimingData()->GetActualBPM( fMinBPM, fMaxBPM );
@@ -212,13 +216,13 @@ void BPMDisplay::SetBpmFromSteps( const Steps* pSteps )
 
 void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 {
-	ASSERT( pCourse != NULL );
-	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != NULL );
+	ASSERT( pCourse != nullptr );
+	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != nullptr );
 
 	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
 	Trail *pTrail = pCourse->GetTrail( st );
 	// GetTranslitFullTitle because "Crashinfo.txt is garbled because of the ANSI output as usual." -f
-	ASSERT_M( pTrail != NULL, ssprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
+	ASSERT_M( pTrail != nullptr, fmt::sprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
 
 	m_fCycleTime = (float)COURSE_CYCLE_SPEED;
 
@@ -244,22 +248,22 @@ void BPMDisplay::SetVarious()
 {
 	m_BPMS.clear();
 	m_BPMS.push_back( -1 );
-	SetText( VARIOUS_TEXT );
+	SetText( VARIOUS_TEXT.GetValue() );
 }
 
 void BPMDisplay::SetFromGameState()
 {
-	if( GAMESTATE->m_pCurSong.Get() )
+	if(GAMESTATE->get_curr_song())
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			CycleRandomly();
 		else
-			SetBpmFromSong( GAMESTATE->m_pCurSong );
+			SetBpmFromSong( GAMESTATE->get_curr_song() );
 		return;
 	}
 	if( GAMESTATE->m_pCurCourse.Get() )
 	{
-		if( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == NULL )
+		if( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == nullptr )
 			; // This is true when backing out from ScreenSelectCourse to ScreenTitleMenu.  So, don't call SetBpmFromCourse where an assert will fire.
 		else
 			SetBpmFromCourse( GAMESTATE->m_pCurCourse );
@@ -276,7 +280,7 @@ class SongBPMDisplay: public BPMDisplay
 public:
 	SongBPMDisplay();
 	virtual SongBPMDisplay *Copy() const;
-	virtual void Update( float fDeltaTime ); 
+	virtual void Update( float fDeltaTime );
 
 private:
 	float m_fLastGameStateBPM;
@@ -288,7 +292,7 @@ SongBPMDisplay::SongBPMDisplay()
 	m_fLastGameStateBPM = 0;
 }
 
-void SongBPMDisplay::Update( float fDeltaTime ) 
+void SongBPMDisplay::Update( float fDeltaTime )
 {
 	float fGameStateBPM = GAMESTATE->m_Position.m_fCurBPS * 60.0f;
 	if( m_fLastGameStateBPM != fGameStateBPM )
@@ -338,7 +342,11 @@ public:
 		}
 		COMMON_RETURN_SELF;
 	}
-	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
+	static int GetText( T* p, lua_State *L )
+	{
+		lua_pushstring( L, p->GetText().c_str() );
+		return 1;
+	}
 
 	LunaBPMDisplay()
 	{
@@ -355,7 +363,7 @@ LUA_REGISTER_DERIVED_CLASS( BPMDisplay, BitmapText )
 /*
  * (c) 2001-2002 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -365,7 +373,7 @@ LUA_REGISTER_DERIVED_CLASS( BPMDisplay, BitmapText )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

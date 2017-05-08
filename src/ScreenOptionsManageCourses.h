@@ -16,9 +16,9 @@ public:
 	virtual bool MenuSelect( const InputEventPlus &input );
 
 protected:
-	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	
+	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
+
 	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
@@ -26,9 +26,9 @@ private:
 	Course *GetCourseWithFocus() const;
 
 	RageSound m_soundDifficultyChanged;
-	vector<Course*> m_vpCourses;
+	std::vector<Course*> m_vpCourses;
 	ThemeMetric<EditMode> EDIT_MODE;
-	ThemeMetric<RString> CREATE_NEW_SCREEN;
+	ThemeMetric<std::string> CREATE_NEW_SCREEN;
 };
 
 #endif
@@ -36,7 +36,7 @@ private:
 /*
  * (c) 2003-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -46,7 +46,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

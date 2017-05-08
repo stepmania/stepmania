@@ -32,10 +32,10 @@ namespace
 
 	ThemeMetric<bool> CREDITS_JOIN_ONLY( "ScreenSystemLayer", "CreditsJoinOnly" );
 
-	RString GetCreditsMessage( PlayerNumber pn )
+	std::string GetCreditsMessage( PlayerNumber pn )
 	{
 		if( (bool)CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
-			return RString();
+			return std::string();
 
 		bool bShowCreditsMessage;
 		if( SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == system_menu )
@@ -64,7 +64,7 @@ namespace
 				else if( GAMESTATE->PlayersCanJoin() )
 					return CREDITS_INSERT_CARD.GetValue();
 				else
-					return RString();
+					return std::string();
 
 			case MemoryCardState_Error: 		return THEME->GetString( "ScreenSystemLayer", "CreditsCard" + MEMCARDMAN->GetCardError(pn) );
 			case MemoryCardState_TooLate:		return CREDITS_CARD_TOO_LATE.GetValue();
@@ -79,7 +79,7 @@ namespace
 					// If there is a local profile loaded, prefer it over the name of the memory card.
 					if( PROFILEMAN->IsPersistentProfile(pn) )
 					{
-						RString s = pProfile->GetDisplayNameOrHighScoreName();
+						std::string s = pProfile->GetDisplayNameOrHighScoreName();
 						if( s.empty() )
 							s = CREDITS_CARD_NO_NAME.GetValue();
 						if( PROFILEMAN->LastLoadWasFromLastGood(pn) )
@@ -110,12 +110,12 @@ namespace
 			{
 				int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 				int iCoins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
-				RString sCredits = CREDITS_CREDITS;
+				std::string sCredits = CREDITS_CREDITS.GetValue();
 				// todo: allow themers to change these strings -aj
 				if( iCredits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
-					sCredits += ssprintf("  %d", iCredits);
+					sCredits += fmt::sprintf("  %d", iCredits);
 				if( PREFSMAN->m_iCoinsPerCredit > 1 )
-					sCredits += ssprintf("  %d/%d", iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
+					sCredits += fmt::sprintf("  %d/%d", iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
 				if( iCredits >= MAX_NUM_CREDITS )
 					sCredits += "  " + CREDITS_MAX.GetValue();
 				return sCredits;
@@ -127,7 +127,7 @@ namespace
 				// Probably something like "Please Wait" or "Cannot Join"? -freem
 			}
 		}
-		return RString();
+		return std::string();
 	}
 
 };
@@ -140,7 +140,7 @@ namespace
 	int GetCreditsMessage( lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		RString sText = GetCreditsMessage( pn );
+		std::string sText = GetCreditsMessage( pn );
 		LuaHelpers::Push( L, sText );
 		return 1;
 	}
@@ -148,7 +148,7 @@ namespace
 	const luaL_Reg ScreenSystemLayerHelpersTable[] =
 	{
 		LIST_METHOD( GetCreditsMessage ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 

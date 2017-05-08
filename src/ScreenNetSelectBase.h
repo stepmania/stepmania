@@ -13,18 +13,18 @@
 class ColorBitmapText : public BitmapText
 {
 public:
-	void SetText( const RString &sText, const RString &sAlternateText = "", int iWrapWidthPixels = -1 );
+	void SetText( const std::string &sText, const std::string &sAlternateText = "", int iWrapWidthPixels = -1 );
 	void DrawPrimitives();
 	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
-	void SimpleAddLine( const RString &sAddition, int iWidthPixels );
+	void SimpleAddLine( const std::string &sAddition, int iWidthPixels );
 	void SetMaxLines( int iNumLines, int iDirection );
 protected:
 	struct ColorChange
 	{
-		RageColor c;	// Color to change to
+		Rage::Color c;	// Color to change to
 		int l;			// Change Location
 	};
-	vector<ColorChange> m_vColors;
+	std::vector<ColorChange> m_vColors;
 };
 
 
@@ -45,10 +45,10 @@ private:
 	ColorBitmapText		m_textChatOutput;
 	AutoActor			m_sprChatInputBox;
 	AutoActor			m_sprChatOutputBox;
-	RString				m_sTextInput;
-	RString				m_actualText;
+	std::string				m_sTextInput;
+	std::string				m_actualText;
 
-	vector <BitmapText>	m_textUsers;
+	std::vector <BitmapText>	m_textUsers;
 };
 
 #endif
@@ -58,7 +58,7 @@ private:
  * All rights reserved.
  *
  *     based off of ScreenEz2SelectMusic by "Frieza"
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -68,7 +68,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

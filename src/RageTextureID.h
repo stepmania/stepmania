@@ -9,7 +9,7 @@
  * of these. */
 struct RageTextureID
 {
-	RString filename;
+	std::string filename;
 
 	// Maximum size of the texture, per dimension.
 	int iMaxSize;
@@ -46,7 +46,7 @@ struct RageTextureID
 	bool bHotPinkColorKey; // #FF00FF
 
 	// These hints will be used in addition to any in the filename.
-	RString AdditionalTextureHints;
+	std::string AdditionalTextureHints;
 
 	/* Used by RageTextureManager. Order is important; see RageTextureManager.cpp.
 	 * Note that this property is not considered for ordering/equality. Loading
@@ -56,16 +56,16 @@ struct RageTextureID
 
 	void Init();
 
-	RageTextureID(): filename(RString()), iMaxSize(0), bMipMaps(false),
+	RageTextureID(): filename(std::string()), iMaxSize(0), bMipMaps(false),
 		iAlphaBits(0), iGrayscaleBits(0), iColorDepth(0),
 		bDither(false), bStretch(false), bHotPinkColorKey(false),
-		AdditionalTextureHints(RString()), Policy(TEX_DEFAULT)  { Init(); }
-	RageTextureID( const RString &fn ): filename(RString()), iMaxSize(0),
+		AdditionalTextureHints(std::string()), Policy(TEX_DEFAULT)  { Init(); }
+	RageTextureID( const std::string &fn ): filename(std::string()), iMaxSize(0),
 		bMipMaps(false), iAlphaBits(0), iGrayscaleBits(0),
 		iColorDepth(0), bDither(false), bStretch(false),
-		bHotPinkColorKey(false), AdditionalTextureHints(RString()),
+		bHotPinkColorKey(false), AdditionalTextureHints(std::string()),
 		Policy(TEX_DEFAULT) { Init(); SetFilename(fn); }
-	void SetFilename( const RString &fn );
+	void SetFilename( const std::string &fn );
 };
 
 inline bool operator==(RageTextureID const &lhs, RageTextureID const &rhs)
@@ -120,6 +120,35 @@ inline bool operator<=(RageTextureID const &lhs, RageTextureID const &rhs)
 inline bool operator>=(RageTextureID const &lhs, RageTextureID const &rhs)
 {
   return !operator<(lhs, rhs);
+}
+
+namespace std
+{
+	template<>
+		struct hash<RageTextureID>
+	{
+		std::size_t operator()(RageTextureID const& s) const
+		{
+			vector<std::size_t> const hashes{
+				std::hash<std::string>()(s.filename),
+					std::hash<int>()(s.iMaxSize),
+					std::hash<bool>()(s.bMipMaps),
+					std::hash<int>()(s.iAlphaBits),
+					std::hash<int>()(s.iGrayscaleBits),
+					std::hash<int>()(s.iColorDepth),
+					std::hash<bool>()(s.bDither),
+					std::hash<bool>()(s.bStretch),
+					std::hash<bool>()(s.bHotPinkColorKey),
+					std::hash<std::string>()(s.AdditionalTextureHints)
+					};
+			std::size_t curr_hash= 0;
+			for(auto const& h: hashes)
+			{
+				curr_hash= curr_hash ^ (h << 1);
+			}
+			return curr_hash;
+		}
+	};
 }
 
 #endif

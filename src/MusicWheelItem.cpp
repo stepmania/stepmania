@@ -33,14 +33,14 @@ static const char *MusicWheelItemTypeNames[] = {
 };
 XToString( MusicWheelItemType );
 
-MusicWheelItemData::MusicWheelItemData( WheelItemDataType type, Song* pSong, 
-				       RString sSectionName, Course* pCourse, 
-				       RageColor color, int iSectionCount ):
+MusicWheelItemData::MusicWheelItemData( WheelItemDataType type, Song* pSong,
+				       std::string sSectionName, Course* pCourse,
+				       Rage::Color color, int iSectionCount ):
 	WheelItemBaseData(type, sSectionName, color),
 	m_pCourse(pCourse), m_pSong(pSong), m_Flags(WheelNotifyIcon::Flags()),
 	m_iSectionCount(iSectionCount), m_sLabel(""), m_pAction() {}
 
-MusicWheelItem::MusicWheelItem( RString sType ):
+MusicWheelItem::MusicWheelItem( std::string sType ):
 	WheelItemBase( sType )
 {
 	GRADES_SHOW_MACHINE.Load( sType, "GradesShowMachine" );
@@ -75,7 +75,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
-		m_pText[i] = NULL;
+		m_pText[i] = nullptr;
 
 		// Don't init text for Type_Song. It uses a TextBanner.
 		if( i == MusicWheelItemType_Song )
@@ -107,7 +107,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	FOREACH_PlayerNumber( p )
 	{
 		m_pGradeDisplay[p].Load( THEME->GetPathG(sType,"grades") );
-		m_pGradeDisplay[p]->SetName( ssprintf("GradeP%d",int(p+1)) );
+		m_pGradeDisplay[p]->SetName( fmt::sprintf("GradeP%d",int(p+1)) );
 		this->AddChild( m_pGradeDisplay[p] );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_pGradeDisplay[p] );
 	}
@@ -145,9 +145,9 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
-		if( cpy.m_pText[i] == NULL )
+		if( cpy.m_pText[i] == nullptr )
 		{
-			m_pText[i] = NULL;
+			m_pText[i] = nullptr;
 		}
 		else
 		{
@@ -172,7 +172,7 @@ MusicWheelItem::~MusicWheelItem()
 {
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
-		SAFE_DELETE(m_pText[i]);
+		Rage::safe_delete(m_pText[i]);
 	}
 	delete m_pTextSectionCount;
 }
@@ -201,7 +201,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 
 
 	// Fill these in below
-	RString sDisplayName, sTranslitName;
+	std::string sDisplayName, sTranslitName;
 	MusicWheelItemType type = MusicWheelItemType_Invalid;
 
 	switch( pWID->m_Type )
@@ -212,7 +212,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 
 		m_TextBanner.SetFromSong( pWID->m_pSong );
 		// We can do this manually if we wanted... maybe have a metric for overrides? -aj
-		m_TextBanner.SetDiffuse( pWID->m_color ); 
+		m_TextBanner.SetDiffuse( pWID->m_color );
 		m_TextBanner.SetVisible( true );
 
 		m_WheelNotifyIcon.SetFlags( pWID->m_Flags );
@@ -228,7 +228,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 			else
 				type = MusicWheelItemType_SectionCollapsed;
 
-			m_pTextSectionCount->SetText( ssprintf("%d",pWID->m_iSectionCount) );
+			m_pTextSectionCount->SetText( fmt::sprintf("%d",pWID->m_iSectionCount) );
 			m_pTextSectionCount->SetVisible( true );
 		}
 		break;
@@ -307,13 +307,13 @@ void MusicWheelItem::RefreshGrades()
 {
 	const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
 
-	if( pWID == NULL )
+	if( pWID == nullptr )
 		return; // LoadFromWheelItemData() hasn't been called yet.
 	FOREACH_HumanPlayer( p )
 	{
 		m_pGradeDisplay[p]->SetVisible( false );
 
-		if( pWID->m_pSong == NULL && pWID->m_pCourse == NULL )
+		if( pWID->m_pSong == nullptr && pWID->m_pCourse == nullptr )
 			continue;
 
 		Difficulty dc;
@@ -345,19 +345,19 @@ void MusicWheelItem::RefreshGrades()
 
 		Profile *pProfile = PROFILEMAN->GetProfile(ps);
 
-		HighScoreList *pHSL = NULL;
+		HighScoreList *pHSL = nullptr;
 		if( PROFILEMAN->IsPersistentProfile(ps) && dc != Difficulty_Invalid )
 		{
 			if( pWID->m_pSong )
 			{
 				const Steps* pSteps = SongUtil::GetStepsByDifficulty( pWID->m_pSong, st, dc );
-				if( pSteps != NULL )
+				if( pSteps != nullptr )
 					pHSL = &pProfile->GetStepsHighScoreList(pWID->m_pSong, pSteps);
 			}
 			else if( pWID->m_pCourse )
 			{
 				const Trail *pTrail = pWID->m_pCourse->GetTrail( st, dc );
-				if( pTrail != NULL )
+				if( pTrail != nullptr )
 					pHSL = &pProfile->GetCourseHighScoreList( pWID->m_pCourse, pTrail );
 			}
 		}
@@ -391,7 +391,7 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -401,7 +401,7 @@ void MusicWheelItem::HandleMessage( const Message &msg )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

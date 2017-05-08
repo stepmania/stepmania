@@ -1,6 +1,6 @@
 #import "global.h"
 #import "LowLevelWindow_MacOSX.h"
-#import "DisplayResolutions.h"
+#import "DisplaySpec.h"
 #import "RageUtil.h"
 #import "RageThreads.h"
 #import "RageDisplay_OGL_Helpers.h"
@@ -109,7 +109,7 @@ public:
 - (void) setParams:(NSValue *)params
 {
 	const VideoModeParams &p = *(const VideoModeParams *)[params pointerValue];
-	NSRect contentRect = { { 0, 0 }, { p.width, p.height } };	
+	NSRect contentRect = { { 0, 0 }, { static_cast<CGFloat>(p.width), static_cast<CGFloat>(p.height) } };	
 
 	[m_Window setContentSize:contentRect.size];
 	[m_Window setTitle:[NSString stringWithUTF8String:p.sWindowTitle.c_str()]];		
@@ -181,119 +181,7 @@ static NSOpenGLContext *CreateOGLContext( GLContextType type, int iColorSize, in
 	return context;
 }		
 
-
-class RenderTarget_MacOSX : public RenderTarget
-{
-public:
-	RenderTarget_MacOSX( id shareContext );
-	~RenderTarget_MacOSX();
-	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	unsigned GetTexture() const { return m_iTexHandle; }
-	void StartRenderingTo();
-	void FinishRenderingTo();
-	
-private:
-	NSOpenGLContext *m_ShareContext, *m_OldContext, *m_PBufferContext;
-	GLuint m_iTexHandle;
-	int m_iWidth, m_iHeight;
-};
-
-RenderTarget_MacOSX::RenderTarget_MacOSX( id shareContext )
-{
-	m_ShareContext = shareContext;
-	m_OldContext = nil;
-	m_PBufferContext = nil;
-	m_iTexHandle = 0;
-	m_iWidth = 0;
-	m_iHeight = 0;
-}
-
-RenderTarget_MacOSX::~RenderTarget_MacOSX()
-{
-	POOL;
-	[m_PBufferContext release];
-	if( m_iTexHandle )
-		glDeleteTextures( 1, &m_iTexHandle );
-}
-
-void RenderTarget_MacOSX::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
-{
-	POOL;
-	m_iWidth = param.iWidth;
-	m_iHeight = param.iHeight;
-	
-	// PBuffer needs to be a power of 2.
-	int iTextureWidth = power_of_two( param.iWidth );
-	int iTextureHeight = power_of_two( param.iHeight );
-
-	// Create the PBuffer.
-	unsigned long format = param.bWithAlpha? GL_RGBA:GL_RGB;
-	NSOpenGLPixelBuffer *PBuffer = [[NSOpenGLPixelBuffer alloc] initWithTextureTarget:GL_TEXTURE_2D
-								    textureInternalFormat:format
-								    textureMaxMipMapLevel:0 // No idea.
-									       pixelsWide:iTextureWidth
-									       pixelsHigh:iTextureHeight];
-	DEBUG_ASSERT( PBuffer );
-	
-	// Create an OGL context.
-	bool bShared = false;
-	m_PBufferContext = CreateOGLContext( PIXEL_BUFFER, 24, param.bWithAlpha? 8:0, param.bWithDepthBuffer? 16:0, m_ShareContext, bShared );
-	DEBUG_ASSERT( m_PBufferContext );
-	DEBUG_ASSERT( bShared );
-	[m_PBufferContext setPixelBuffer:PBuffer cubeMapFace:0 mipMapLevel:0
-		    currentVirtualScreen:[m_ShareContext currentVirtualScreen]];
-	[PBuffer release]; // XXX: Hopefully this is retained by the PBufferContext.
-	
-	glGenTextures( 1, &m_iTexHandle );
-	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
-	
-	while( glGetError() != GL_NO_ERROR )
-		;
-	
-	iTextureWidthOut = iTextureWidth;
-	iTextureHeightOut = iTextureHeight;
-	
-	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
-		      iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB,
-		      GL_UNSIGNED_BYTE, NULL );
-	GLenum error = glGetError();
-	ASSERT_M(error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error));
-	
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-}
-
-void RenderTarget_MacOSX::StartRenderingTo()
-{
-	DEBUG_ASSERT( !m_OldContext );
-	m_OldContext = [NSOpenGLContext currentContext];
-	[m_PBufferContext makeCurrentContext];
-	glViewport( 0, 0, m_iWidth, m_iHeight );
-}
-
-void RenderTarget_MacOSX::FinishRenderingTo()
-{
-	DEBUG_ASSERT( m_OldContext );
-	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
-	
-	while( glGetError() != GL_NO_ERROR )
-		;
-	
-	glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_iWidth, m_iHeight );
-	
-	GLenum error = glGetError();
-	ASSERT_M( error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error) );
-	
-	glBindTexture( GL_TEXTURE_2D, 0 );
-	
-	[m_OldContext makeCurrentContext];
-	m_OldContext = nil;
-}
-
-
-LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL), m_DisplayID(0)
+LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_CurrentDisplayMode(nullptr), m_DisplayID(0)
 {
 	POOL;
 	m_WindowDelegate = [[SMWindowDelegate alloc] init];
@@ -311,27 +199,25 @@ LowLevelWindow_MacOSX::~LowLevelWindow_MacOSX()
 		
 	[m_Context clearDrawable];
 	[m_Context release];
-	[m_BGContext clearDrawable];
-	[m_BGContext release];
 	[m_WindowDelegate performSelectorOnMainThread:@selector(closeWindow) withObject:nil waitUntilDone:YES];
 	[m_WindowDelegate release];
 }
 
-void *LowLevelWindow_MacOSX::GetProcAddress( RString s )
+void *LowLevelWindow_MacOSX::GetProcAddress( std::string s )
 {
 	// http://developer.apple.com/qa/qa2001/qa1188.html
 	// Both functions mentioned in there are deprecated in 10.4.
-	const RString& symbolName( '_' + s );
+  std::string const & symbolName( '_' + s );
 	const uint32_t count = _dyld_image_count();
-	NSSymbol symbol = NULL;
+	NSSymbol symbol = nullptr;
 	const uint32_t options = NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR;
 	
 	for( uint32_t i = 0; i < count && !symbol; ++i )
-		symbol = NSLookupSymbolInImage( _dyld_get_image_header(i), symbolName, options );
-	return symbol ? NSAddressOfSymbol( symbol ) : NULL;
+		symbol = NSLookupSymbolInImage( _dyld_get_image_header(i), symbolName.c_str(), options );
+	return symbol ? NSAddressOfSymbol( symbol ) : nullptr;
 }
 
-RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
+std::string LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
 {
 	// Always set these params.
 	m_CurrentParams.bSmoothLines = p.bSmoothLines;
@@ -348,7 +234,9 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 #undef X
 	
 	if( !bChangeMode && !bChangeVsync )
-		return RString();
+	{
+		return "";
+	}
 	
 	POOL;
 	newDeviceOut = false;
@@ -370,15 +258,6 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 			m_Context = newContext;
 			newDeviceOut = !bShared;
 			m_CurrentParams.bpp = p.bpp;
-			[m_BGContext release];
-			m_BGContext = nil;
-			m_BGContext = CreateOGLContext( WINDOWED, p.bpp == 16? 16:24, p.bpp == 16? 1:8, 16, m_Context, bShared );
-			
-			if( m_BGContext && !bShared )
-			{
-				[m_BGContext release];
-				m_BGContext = nil;
-			}
 		}
 		
 		[m_WindowDelegate performSelectorOnMainThread:@selector(setParams:) withObject:[NSValue valueWithPointer:&p] waitUntilDone:YES];
@@ -389,14 +268,14 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 		SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
 		m_CurrentParams.vsync = p.vsync; // hack
 
-		return RString();
+		return "";
 	}
 	if( bChangeMode )
 	{
 		int result = ChangeDisplayMode( p );
 	
 		if( result )
-			return ssprintf( "Failed to switch to full screen:%d x %d @ %d. Error %d.",
+			return fmt::sprintf( "Failed to switch to full screen:%d x %d @ %d. Error %d.",
 					 p.width, p.height, p.rate, result );
 	}
 
@@ -412,14 +291,6 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 		m_Context = newContext;
 		newDeviceOut = !bShared;
 		m_CurrentParams.bpp = p.bpp;
-		[m_BGContext release];
-		m_BGContext = CreateOGLContext( FULL_SCREEN, p.bpp == 16? 16:24, p.bpp == 16? 1:8, 16, m_Context, bShared );
-		
-		if( m_BGContext && !bShared )
-		{
-			[m_BGContext release];
-			m_BGContext = nil;
-		}
 	}
 	
 	[m_Context setFullScreen];
@@ -433,7 +304,7 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 		m_CurrentParams.vsync = p.vsync;
 	}
 	
-	return RString();
+	return "";
 }
 
 void LowLevelWindow_MacOSX::ShutDownFullScreen()
@@ -452,7 +323,6 @@ void LowLevelWindow_MacOSX::ShutDownFullScreen()
 	
 	[NSOpenGLContext clearCurrentContext];
 	[m_Context clearDrawable];
-	[m_BGContext clearDrawable];
 	
 	CGDisplayErr err = CGDisplaySwitchToMode( kCGDirectMainDisplay, m_CurrentDisplayMode );
 	
@@ -462,13 +332,13 @@ void LowLevelWindow_MacOSX::ShutDownFullScreen()
 	ASSERT( err == kCGErrorSuccess );
 	SetActualParamsFromMode( m_CurrentDisplayMode );
 	// We don't own this so we cannot release it.
-	m_CurrentDisplayMode = NULL;
+	m_CurrentDisplayMode = nullptr;
 	m_CurrentParams.windowed = true;
 }
 
 int LowLevelWindow_MacOSX::ChangeDisplayMode( const VideoModeParams& p )
 {	
-	CFDictionaryRef mode = NULL;
+	CFDictionaryRef mode = nullptr;
 	CFDictionaryRef newMode;
 	CGDisplayErr err;
 	
@@ -483,10 +353,10 @@ int LowLevelWindow_MacOSX::ChangeDisplayMode( const VideoModeParams& p )
 	}
 	
 	if( p.rate == REFRESH_DEFAULT )
-		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, NULL );
+		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, nullptr );
 	else
 		newMode = CGDisplayBestModeForParametersAndRefreshRate( kCGDirectMainDisplay, p.bpp,
-									p.width, p.height, p.rate, NULL );
+									p.width, p.height, p.rate, nullptr );
 	
 	
 	err = CGDisplaySwitchToMode( kCGDirectMainDisplay, newMode );
@@ -564,28 +434,50 @@ static bool GetBoolValue( CFTypeRef r )
 	return r && CFGetTypeID( r ) == CFBooleanGetTypeID() && CFBooleanGetValue( CFBooleanRef(r) );
 }
 
-void LowLevelWindow_MacOSX::GetDisplayResolutions( DisplayResolutions &dr ) const
+static double GetDoubleValue( CFTypeRef r )
+{
+	double ret;
+
+	if( !r || CFGetTypeID(r) != CFNumberGetTypeID() || !CFNumberGetValue(CFNumberRef(r), kCFNumberDoubleType, &ret) )
+		return 0;
+	return ret;
+}
+
+static DisplayMode ConvertDisplayMode( CFDictionaryRef dict )
+{
+	int width = GetIntValue( CFDictionaryGetValue(dict, kCGDisplayWidth) );
+	int height = GetIntValue( CFDictionaryGetValue(dict, kCGDisplayHeight) );
+	double rate = GetDoubleValue( CFDictionaryGetValue(dict, kCGDisplayRefreshRate) );
+
+	return { static_cast<unsigned int> (width), static_cast<unsigned int> (height), rate};
+}
+
+void LowLevelWindow_MacOSX::GetDisplaySpecs( DisplaySpecs &specs ) const
 {
 	CFArrayRef modes = CGDisplayAvailableModes( kCGDirectMainDisplay );
 	ASSERT( modes );
 	const CFIndex count = CFArrayGetCount( modes );
-	
+
+	std::set<DisplayMode> available;
+	CFDictionaryRef currentModeDict = CGDisplayCurrentMode( kCGDirectMainDisplay );
+	DisplayMode current = ConvertDisplayMode( currentModeDict );
+
 	for( CFIndex i = 0; i < count; ++i )
 	{
 		CFDictionaryRef dict = (CFDictionaryRef)CFArrayGetValueAtIndex( modes, i );
-		int width = GetIntValue( CFDictionaryGetValue(dict, kCGDisplayWidth) );
-		int height = GetIntValue( CFDictionaryGetValue(dict, kCGDisplayHeight) );
 		CFTypeRef safe = CFDictionaryGetValue( dict, kCGDisplayModeIsSafeForHardware );
-		bool stretched = GetBoolValue( CFDictionaryGetValue(dict, kCGDisplayModeIsStretched) );
-		
-		if( !width || !height )
+		DisplayMode mode = ConvertDisplayMode( dict );
+
+		if( !mode.width || !mode.height )
 			continue;
 		if( safe && !GetBoolValue( safe ) )
 			continue;
-		DisplayResolution res = { width, height, stretched };
-		dr.insert( res );
+		available.insert( mode );
 	}
 	// Do not release modes! We don't own them here.
+	Rage::RectI bounds( 0, 0, current.width, current.height );
+	DisplaySpec s( "", "Fullscreen", available, current, bounds );
+	specs.insert( s );
 }
 
 void LowLevelWindow_MacOSX::SwapBuffers()
@@ -609,20 +501,6 @@ void LowLevelWindow_MacOSX::Update()
 	lock.Unlock(); // Unlock before calling ResolutionChanged().
 	[m_Context update];
 	DISPLAY->ResolutionChanged();
-}
-
-RenderTarget *LowLevelWindow_MacOSX::CreateRenderTarget()
-{
-	return new RenderTarget_MacOSX( m_Context );
-}
-
-void LowLevelWindow_MacOSX::BeginConcurrentRendering()
-{
-	if( m_CurrentParams.windowed )
-		[m_BGContext setView:[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView]];
-	else
-		[m_BGContext setFullScreen];
-	[m_BGContext makeCurrentContext];
 }
 
 /*

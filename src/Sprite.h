@@ -4,7 +4,7 @@
 #include "Actor.h"
 #include "RageTextureID.h"
 
-void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect );
+void TexCoordArrayFromRect( float fImageCoords[8], const Rage::RectF &rect );
 
 class RageTexture;
 /** @brief A bitmap Actor that animates and moves around. */
@@ -14,13 +14,14 @@ public:
 	/** @brief The Sprite's present state. */
 	struct State
 	{
-		RectF rect;
+		Rage::RectF rect;
 		/** @brief The number of "seconds to show". */
 		float fDelay;
 	};
 
 	Sprite();
 	Sprite( const Sprite &cpy );
+	Sprite &operator=( Sprite other );
 	virtual ~Sprite();
 
 	// See explanation in source.
@@ -45,6 +46,9 @@ public:
 
 	virtual void Load( RageTextureID ID );
 	void SetTexture( RageTexture *pTexture );
+	void SetMask(RageTexture* mask);
+	void SetMask(RageTextureID mask_id);
+	RageTexture* GetMask() { return m_mask; }
 
 	void UnloadTexture();
 	RageTexture* GetTexture() { return m_pTexture; };
@@ -52,24 +56,24 @@ public:
 	virtual void EnableAnimation( bool bEnable );
 
 	virtual int GetNumStates() const;
-	virtual void SetState( int iNewState );
+	virtual void SetState( size_t iNewState );
 	int GetState() { return m_iCurState; }
 	virtual float GetAnimationLengthSeconds() const
 	{ return m_animation_length_seconds; }
 	virtual void RecalcAnimationLengthSeconds();
 	virtual void SetSecondsIntoAnimation( float fSeconds );
-	void SetStateProperties(const vector<State>& new_states)
+	void SetStateProperties(const std::vector<State>& new_states)
 	{ m_States= new_states; RecalcAnimationLengthSeconds(); SetState(0); }
 
-	RString	GetTexturePath() const;
+	std::string	GetTexturePath() const;
 
-	void SetCustomTextureRect( const RectF &new_texcoord_frect );
+	void SetCustomTextureRect( const Rage::RectF &new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );
-	void SetCustomImageRect( RectF rectImageCoords );	// in image pixel space
+	void SetCustomImageRect( Rage::RectF rectImageCoords );	// in image pixel space
 	void SetCustomImageCoords( float fImageCoords[8] );
 	void SetCustomPosCoords( float fPosCoords[8] );
-	const RectF *GetCurrentTextureCoordRect() const;
-	const RectF *GetTextureCoordRectForState( int iState ) const;
+	const Rage::RectF *GetCurrentTextureCoordRect() const;
+	const Rage::RectF *GetTextureCoordRectForState( int iState ) const;
 	void StopUsingCustomCoords();
 	void StopUsingCustomPosCoords();
 	void GetActiveTextureCoords(float fTexCoordsOut[8]) const;
@@ -105,8 +109,9 @@ private:
 	void DrawTexture( const TweenState *state );
 
 	RageTexture* m_pTexture;
+	RageTexture* m_mask;
 
-	vector<State> m_States;
+	std::vector<State> m_States;
 	int		m_iCurState;
 	/** @brief The number of seconds that have elapsed since we switched to this frame. */
 	float	m_fSecsIntoState;
@@ -149,7 +154,7 @@ private:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -159,7 +164,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -20,7 +20,7 @@ void ScreenUnlockCelebrate::Init()
 	UNLOCKMAN->UnlockEntryIndex( g_iUnlockEntryIndexToCelebrate );
 	Song* pSong = UNLOCKMAN->m_UnlockEntries[ g_iUnlockEntryIndexToCelebrate ].m_Song.ToSong();
 	if( pSong )
-		GAMESTATE->m_pCurSong.Set( pSong );
+		GAMESTATE->set_curr_song(pSong);
 
 	ScreenUnlockBrowse::Init();
 }

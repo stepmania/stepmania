@@ -6,6 +6,9 @@ option(WITH_NETWORKING "Build with networking support." ON)
 # This option quiets warnings that are a part of external projects.
 option(WITH_EXTERNAL_WARNINGS "Build with warnings for all components, not just StepMania." OFF)
 
+# This option enables using SDL for windows. This will eventually always be ON.
+option(WITH_SDL "Build with SDL windows." OFF)
+
 # This option is not yet working, but will likely default to ON in the future.
 option(WITH_LTO "Build with Link Time Optimization (LTO)/Whole Program Optimization." OFF)
 
@@ -41,6 +44,8 @@ option(WITH_OGG "Build with OGG/Vorbis Support." ON)
 # Turn this option on to log every segment added or removed.
 option(WITH_LOGGING_TIMING_DATA "Build with logging all Add and Erase Segment calls." OFF)
 
+option(WITH_UNIT_TESTS "Build unit tests." OFF)
+
 if(NOT MSVC)
   # Turn this option off to disable using FFMEPG.
   option(WITH_FFMPEG "Build with FFMPEG." ON)
@@ -68,4 +73,5 @@ elseif(LINUX)
     option(WITH_GTK2 "Build with GTK2 Support." ON)
     option(WITH_PARALLEL_PORT "Build with Parallel Lights I/O Support." OFF)
     option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
+    option(WITH_XINERAMA "Build using libXinerama to query for monitor numbers (if available)." ON)
 endif()

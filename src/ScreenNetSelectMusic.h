@@ -39,12 +39,12 @@ protected:
 	void TweenOffScreen();
 
 	ThemeMetric<SampleMusicPreviewMode> SAMPLE_MUSIC_PREVIEW_MODE;
-	RString m_sSectionMusicPath;
-	RString m_sRouletteMusicPath;
-	RString m_sRandomMusicPath;
+	std::string m_sSectionMusicPath;
+	std::string m_sRouletteMusicPath;
+	std::string m_sRandomMusicPath;
 
-	ThemeMetric<RString>	MUSIC_WHEEL_TYPE;
-	ThemeMetric<RString>	PLAYER_OPTIONS_SCREEN;
+	ThemeMetric<std::string>	MUSIC_WHEEL_TYPE;
+	ThemeMetric<std::string>	PLAYER_OPTIONS_SCREEN;
 
 private:
 	MusicWheel m_MusicWheel;

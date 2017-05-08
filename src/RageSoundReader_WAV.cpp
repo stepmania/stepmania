@@ -15,6 +15,8 @@
 #include "RageLog.h"
 #include "RageFileBasic.h"
 
+using std::vector;
+
 namespace
 {
 	/* pBuf contains iSamples 8-bit samples; convert to 16-bit.  pBuf must
@@ -92,12 +94,12 @@ struct WavReader
 	virtual bool Init() = 0;
 	virtual int SetPosition( int iFrame ) = 0;
 	virtual int GetNextSourceFrame() const = 0;
-	RString GetError() const { return m_sError; }
+	std::string GetError() const { return m_sError; }
 
 protected:
 	RageFileBasic &m_File;
 	const RageSoundReader_WAV::WavData &m_WavData;
-	RString m_sError;
+	std::string m_sError;
 };
 
 struct WavReaderPCM: public WavReader
@@ -110,13 +112,13 @@ struct WavReaderPCM: public WavReader
 		if( QuantizeUp(m_WavData.m_iBitsPerSample, 8) < 8 ||
 		    QuantizeUp(m_WavData.m_iBitsPerSample, 8) > 32 )
 		{
-			m_sError = ssprintf("Unsupported sample size %i", m_WavData.m_iBitsPerSample);
+			m_sError = fmt::sprintf("Unsupported sample size %i", m_WavData.m_iBitsPerSample);
 			return false;
 		}
 
 		if( m_WavData.m_iFormatTag == 3 && m_WavData.m_iBitsPerSample != 32 )
 		{
-			m_sError = ssprintf( "Unsupported float sample size %i", m_WavData.m_iBitsPerSample );
+			m_sError = fmt::sprintf( "Unsupported float sample size %i", m_WavData.m_iBitsPerSample );
 			return false;
 		}
 
@@ -134,7 +136,7 @@ struct WavReaderPCM: public WavReader
 		if( !iBytesLeftInDataChunk )
 			return RageSoundReader::END_OF_FILE;
 
-		len = min( len, iBytesLeftInDataChunk );
+		len = std::min( len, iBytesLeftInDataChunk );
 		int iGot = m_File.Read( buf, len );
 
 		int iGotSamples = iGot / iBytesPerSample;
@@ -196,11 +198,11 @@ public:
 	int16_t m_iFramesPerBlock;
 	float *m_pBuffer;
 	int m_iBufferAvail, m_iBufferUsed;
-	
+
 	WavReaderADPCM( RageFileBasic &f, const RageSoundReader_WAV::WavData &data ):
 		WavReader(f, data)
 	{
-		m_pBuffer = NULL;
+		m_pBuffer = nullptr;
 	}
 
 	virtual ~WavReaderADPCM()
@@ -212,7 +214,7 @@ public:
 	{
 		if( m_WavData.m_iBitsPerSample != 4 )
 		{
-			m_sError = ssprintf( "Unsupported ADPCM sample size %i", m_WavData.m_iBitsPerSample );
+			m_sError = fmt::sprintf( "Unsupported ADPCM sample size %i", m_WavData.m_iBitsPerSample );
 			return false;
 		}
 
@@ -247,7 +249,7 @@ public:
 	/* Return false on error, true on success (even if we hit EOF). */
 	bool DecodeADPCMBlock()
 	{
-		ASSERT_M( m_iBufferUsed == m_iBufferAvail, ssprintf("%i", m_iBufferUsed) );
+		ASSERT_M( m_iBufferUsed == m_iBufferAvail, fmt::sprintf("%i", m_iBufferUsed) );
 
 		m_iBufferUsed = m_iBufferAvail = 0;
 		m_sError = "";
@@ -286,10 +288,10 @@ public:
 		}
 
 		/* We've read the block header; read the rest.  Don't read past the end of the data chunk. */
-		int iMaxSize = min( (int) m_WavData.m_iBlockAlign - 7 * m_WavData.m_iChannels, (m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos) - m_File.Tell() );
+		int iMaxSize = std::min( (int) m_WavData.m_iBlockAlign - 7 * m_WavData.m_iChannels, (m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos) - m_File.Tell() );
 
 		char *pBuf = (char *) alloca( iMaxSize );
-		ASSERT( pBuf != NULL );
+		ASSERT( pBuf != nullptr );
 
 		int iBlockSize = m_File.Read( pBuf, iMaxSize );
 		if( iBlockSize == 0 )
@@ -335,7 +337,7 @@ public:
 				int32_t iPredSample = (iSamp1[c] * iCoef1[c] + iSamp2[c] * iCoef2[c]) / (1<<8);
 				if( iPredSample < -32768 ) iPredSample = -32768;
 				if( iPredSample > 32767 )  iPredSample = 32767;
-				
+
 				int16_t iNewSample = (int16_t)iPredSample + (iDelta[c] * iErrorDelta);
 				pBuffer[m_iBufferAvail++] = iNewSample / 32768.0f;
 
@@ -344,22 +346,22 @@ public:
 					768, 614, 512, 409, 307, 230, 230, 230
 				};
 				iDelta[c] = int16_t( (iDelta[c] * aAdaptionTable[iErrorDeltaUnsigned]) / (1<<8) );
-				iDelta[c] = max( (int16_t) 16, iDelta[c] );
-				
+				iDelta[c] = std::max( (int16_t) 16, iDelta[c] );
+
 				iSamp2[c] = iSamp1[c];
 				iSamp1[c] = iNewSample;
 			}
 		}
-		
+
 		return true;
 	}
 
 	int Read( float *buf, int iFrames )
 	{
 		int iGotFrames = 0;
-		
+
 		int iSample = 0;
-		
+
 		while( iGotFrames < (int) iFrames )
 		{
 			if( m_iBufferUsed == m_iBufferAvail )
@@ -385,9 +387,10 @@ public:
 
 	int GetLength() const
 	{
+		using std::max;
 		const int iNumWholeBlocks = m_WavData.m_iDataChunkSize / m_WavData.m_iBlockAlign;
 		const int iExtraBytes = m_WavData.m_iDataChunkSize - (iNumWholeBlocks*m_WavData.m_iBlockAlign);
-		
+
 		int iFrames = iNumWholeBlocks * m_iFramesPerBlock;
 
 		const int iBlockHeaderSize = 7 * m_WavData.m_iChannels;
@@ -395,7 +398,7 @@ public:
 		{
 			const int iExtraADPCMNibbles = max( 0, iExtraBytes-iBlockHeaderSize )*2;
 			const int iExtraADPCMFrames = iExtraADPCMNibbles/m_WavData.m_iChannels;
-			
+
 			iFrames += 2+iExtraADPCMFrames;
 		}
 
@@ -449,15 +452,15 @@ public:
 	}
 };
 
-RString ReadString( RageFileBasic &f, int iSize, RString &sError )
+std::string ReadString( RageFileBasic &f, int iSize, std::string &sError )
 {
 	if( sError.size() != 0 )
-		return RString();
+		return std::string();
 
 	char *buf = new char[iSize + 1];
 	std::fill(buf, buf + iSize + 1, '\0');
 	FileReading::ReadBytes( f, buf, iSize, sError );
-	RString ret(buf);
+	std::string ret(buf);
 	delete [] buf;
 	return ret;
 }
@@ -473,7 +476,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic 
 {
 	m_pFile = pFile;
 
-	RString sError;
+	std::string sError;
 
 	/* RIFF header: */
 	if( ReadString( *m_pFile, 4, sError ) != "RIFF" )
@@ -492,7 +495,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic 
 	bool bGotFormatChunk = false, bGotDataChunk = false;
 	while( !bGotFormatChunk || !bGotDataChunk )
 	{
-		RString ChunkID = ReadString( *m_pFile, 4, sError );
+		std::string ChunkID = ReadString( *m_pFile, 4, sError );
 		int32_t iChunkSize = FileReading::read_32_le( *m_pFile, sError );
 
 		if( sError.size() != 0 )
@@ -519,10 +522,10 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic 
 			m_WavData.m_iExtraFmtBytes = FileReading::read_16_le( *m_pFile, sError );
 
 			if( m_WavData.m_iChannels < 1 || m_WavData.m_iChannels > 2 )
-				FATAL_ERROR( ssprintf( "Unsupported channel count: %i", m_WavData.m_iChannels) );
+				FATAL_ERROR( fmt::sprintf( "Unsupported channel count: %i", m_WavData.m_iChannels) );
 
 			if( m_WavData.m_iSampleRate < 4000 || m_WavData.m_iSampleRate > 100000 ) /* unlikely */
-				FATAL_ERROR( ssprintf( "Invalid sample rate: %i", m_WavData.m_iSampleRate) );
+				FATAL_ERROR( fmt::sprintf( "Invalid sample rate: %i", m_WavData.m_iSampleRate) );
 
 			m_WavData.m_iExtraFmtPos = m_pFile->Tell();
 
@@ -568,7 +571,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic 
 		/* Return unknown, so other decoders will be tried.  MAD can read MP3s embedded in WAVs. */
 		return OPEN_UNKNOWN_FILE_FORMAT;
 	default:
-		FATAL_ERROR( ssprintf( "Unsupported data format %i", m_WavData.m_iFormatTag) );
+		FATAL_ERROR( fmt::sprintf( "Unsupported data format %i", m_WavData.m_iFormatTag) );
 	}
 
 	if( !m_pImpl->Init() )
@@ -582,31 +585,31 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic 
 
 int RageSoundReader_WAV::GetLength() const
 {
-	ASSERT( m_pImpl != NULL );
+	ASSERT( m_pImpl != nullptr );
 	return m_pImpl->GetLength();
 }
 
 int RageSoundReader_WAV::SetPosition( int iFrame )
 {
-	ASSERT( m_pImpl != NULL );
+	ASSERT( m_pImpl != nullptr );
 	return m_pImpl->SetPosition( iFrame );
 }
 
 int RageSoundReader_WAV::GetNextSourceFrame() const
 {
-	ASSERT( m_pImpl != NULL );
+	ASSERT( m_pImpl != nullptr );
 	return m_pImpl->GetNextSourceFrame();
 }
 
 int RageSoundReader_WAV::Read( float *pBuf, int iFrames )
 {
-	ASSERT( m_pImpl != NULL );
+	ASSERT( m_pImpl != nullptr );
 	return m_pImpl->Read( pBuf, iFrames );
 }
 
 RageSoundReader_WAV::RageSoundReader_WAV()
 {
-	m_pImpl = NULL;
+	m_pImpl = nullptr;
 }
 
 RageSoundReader_WAV::~RageSoundReader_WAV()
@@ -626,7 +629,7 @@ RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -636,7 +639,7 @@ RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

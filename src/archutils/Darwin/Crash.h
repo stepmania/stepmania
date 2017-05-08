@@ -3,8 +3,8 @@
 
 namespace CrashHandler
 {
-	RString GetLogsDirectory();
-	void InformUserOfCrash( const RString& sPath );
+	std::string GetLogsDirectory();
+	void InformUserOfCrash( const std::string& sPath );
 	bool IsDebuggerPresent();
 	void DebugBreak();
 }

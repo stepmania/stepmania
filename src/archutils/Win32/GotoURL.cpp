@@ -5,10 +5,10 @@
 
 /* This is called from the crash handler; don't use RegistryAccess, since it's
  * not crash-conditions safe. */
-static LONG GetRegKey( HKEY key, RString subkey, LPTSTR retdata )
+static LONG GetRegKey( HKEY key, std::string subkey, LPTSTR retdata )
 {
 	HKEY hKey;
-    LONG iRet = RegOpenKeyEx( key, subkey, 0, KEY_QUERY_VALUE, &hKey );
+    LONG iRet = RegOpenKeyEx( key, subkey.c_str(), 0, KEY_QUERY_VALUE, &hKey );
 
     if( iRet != ERROR_SUCCESS )
 		return iRet;
@@ -22,10 +22,10 @@ static LONG GetRegKey( HKEY key, RString subkey, LPTSTR retdata )
     return ERROR_SUCCESS;
 }
 
-bool GotoURL( RString sUrl )
+bool GotoURL( std::string sUrl )
 {
 	// First try ShellExecute()
-	int iRet = (int) ShellExecute( NULL, "open", sUrl, NULL, NULL, SW_SHOWDEFAULT );
+	int iRet = (int) ShellExecute( nullptr, "open", sUrl.c_str(), nullptr, nullptr, SW_SHOWDEFAULT );
 
 	// If it failed, get the .htm regkey and lookup the program
 	if( iRet > 32 )
@@ -41,11 +41,11 @@ bool GotoURL( RString sUrl )
 		return false;
 
 	char *szPos = strstr( key, "\"%1\"" );
-	if( szPos == NULL )
+	if( szPos == nullptr )
 	{
 		// No quotes found. Check for %1 without quotes
 		szPos = strstr( key, "%1" );
-		if( szPos == NULL )
+		if( szPos == nullptr )
 			szPos = key+lstrlen(key)-1;	// No parameter.
 		else
 			*szPos = '\0';	// Remove the parameter
@@ -54,7 +54,7 @@ bool GotoURL( RString sUrl )
 		*szPos = '\0';	// Remove the parameter
 
 	strcat( szPos, " " );
-	strcat( szPos, sUrl );
+	strcat( szPos, sUrl.c_str() );
 
 	return WinExec( key, SW_SHOWDEFAULT ) > 32;
 }

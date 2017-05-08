@@ -2,6 +2,7 @@
 #define RAGE_DRIVER_H
 
 #include "RageUtil.h"
+#include "RageString.hpp"
 
 class RageDriver
 {
@@ -14,14 +15,14 @@ typedef RageDriver *(*CreateRageDriverFn)();
 /* This is created and accessed during C++ static initialization; it must be a POD. */
 struct DriverList
 {
-	void Add( const istring &sName, CreateRageDriverFn pfn );
-	RageDriver *Create( const RString &sDriverName );
-	map<istring, CreateRageDriverFn> *m_pRegistrees;
+    void Add( const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn );
+	RageDriver *Create( const std::string &sDriverName );
+	std::map<Rage::ci_ascii_string, CreateRageDriverFn> *m_pRegistrees;
 };
 
 struct RegisterRageDriver
 {
-	RegisterRageDriver( DriverList *pDriverList, const istring &sName, CreateRageDriverFn pfn );
+	RegisterRageDriver( DriverList *pDriverList, const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn );
 };
 
 #endif
@@ -29,7 +30,7 @@ struct RegisterRageDriver
 /*
  * (c) 2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -39,7 +40,7 @@ struct RegisterRageDriver
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -23,11 +23,12 @@ class CreateZip
 	TZip* hz;
 public:
 	CreateZip();
+	~CreateZip();
 	bool Start(RageFile *f);
-	bool AddFile(RString fn);
-	bool AddDir(RString fn);
+	bool AddFile(std::string fn);
+	bool AddDir(std::string fn);
 	bool Finish();
-	RString GetError();
+	std::string GetError();
 };
 
 
@@ -49,7 +50,7 @@ public:
 //     char buf[1000]; for (int i=0; i<1000; i++) buf[i]=(char)(i&0x7F);
 //     ZipAdd(hz,"file.dat",  buf,1000);
 //     // adding something from a pipe...
-//     HANDLE hread,hwrite; CreatePipe(&hread,&hwrite,NULL,0);
+//     HANDLE hread,hwrite; CreatePipe(&hread,&hwrite,nullptr,0);
 //     HANDLE hthread = CreateThread(0,0,ThreadFunc,(void*)hwrite,0,0);
 //     ZipAdd(hz,"unz3.dat",  hread,1000);  // the '1000' is optional.
 //     WaitForSingleObject(hthread,INFINITE);
@@ -57,14 +58,14 @@ public:
 //     ... meanwhile DWORD WINAPI ThreadFunc(void *dat)
 //                   { HANDLE hwrite = (HANDLE)dat;
 //                     char buf[1000]={17};
-//                     DWORD writ; WriteFile(hwrite,buf,1000,&writ,NULL);
+//                     DWORD writ; WriteFile(hwrite,buf,1000,&writ,nullptr);
 //                     CloseHandle(hwrite);
 //                     return 0;
 //                   }
 //     // and now that the zip is created, let's do something with it:
 //     void *zbuf; unsigned long zlen; ZipGetMemory(hz,&zbuf,&zlen);
 //     HANDLE hfz = CreateFile("test2.zip",GENERIC_WRITE,0,0,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,0);
-//     DWORD writ; WriteFile(hfz,zbuf,zlen,&writ,NULL);
+//     DWORD writ; WriteFile(hfz,zbuf,zlen,&writ,nullptr);
 //     CloseHandle(hfz);
 //     CloseZip(hz);
 //
@@ -81,7 +82,7 @@ public:
 //                   { HANDLE hread = (HANDLE)dat;
 //                     char buf[1000];
 //                     for(;;)
-//                     { DWORD red; ReadFile(hread,buf,1000,&red,NULL);
+//                     { DWORD red; ReadFile(hread,buf,1000,&red,nullptr);
 //                       // ... and do something with this zip data we're receiving
 //                       if (red==0) break;
 //                     }

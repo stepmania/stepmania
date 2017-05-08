@@ -1,12 +1,15 @@
 #include "global.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUnicode.hpp"
 #include "LyricsLoader.h"
 #include "ThemeManager.h"
 #include "RageFile.h"
 #include "Song.h"
 
 #include <map>
+
+using std::vector;
 
 // TODO: Use a marker for default color instead of a specific color that may
 // accidentally get written back into a lyrics file.
@@ -17,7 +20,7 @@ static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &se
    return seg1.m_fStartTime < seg2.m_fStartTime;
 }
 
-bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
+bool LyricsLoader::LoadFromLRCFile(const std::string& sPath, Song& out)
 {
 	LOG->Trace( "LyricsLoader::LoadFromLRCFile(%s)", sPath.c_str() );
 
@@ -28,13 +31,13 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 		return false;
 	}
 
-	RageColor CurrentColor = LYRICS_DEFAULT_COLOR;
+	Rage::Color CurrentColor = LYRICS_DEFAULT_COLOR;
 
 	out.m_LyricSegments.clear();
 
 	for(;;)
 	{
-		RString line;
+		std::string line;
 		int ret = input.GetLine( line );
 		if( ret == 0 )
 		{
@@ -46,7 +49,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 			break;
 		}
 
-		utf8_remove_bom( line );
+		Rage::utf8_remove_bom( line );
 
 		if(!line.compare(0, 2, "//"))
 		{
@@ -56,19 +59,20 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 		// "[data1] data2".  Ignore whitespace at the beginning of the line.
 		static Regex x("^ *\\[([^]]+)\\] *(.*)$");
 
-		vector<RString> matches;
+		vector<std::string> matches;
 		if(!x.Compare(line, matches))
 		{
 			continue;
 		}
 		ASSERT( matches.size() == 2 );
 
-		RString &sValueName = matches[0];
-		RString &sValueData = matches[1];
+		auto &sValueName = matches[0];
+		auto &sValueData = matches[1];
 		StripCrnl(sValueData);
 
 		// handle the data
-		if( sValueName.EqualsNoCase("COLOUR") || sValueName.EqualsNoCase("COLOR") )
+		Rage::ci_ascii_string color{ sValueName.c_str() };
+		if (color == "COLOUR" || color == "COLOR")
 		{
 			// set color var here for this segment
 			int r, g, b;
@@ -82,7 +86,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 				continue;
 			}
 
-			CurrentColor = RageColor(r / 256.0f, g / 256.0f, b / 256.0f, 1);
+			CurrentColor = Rage::Color(r / 256.0f, g / 256.0f, b / 256.0f, 1);
 			continue;
 		}
 
@@ -99,7 +103,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 			seg.m_fStartTime = HHMMSSToSeconds(sValueName);
 			seg.m_sLyric = sValueData;
 
-			seg.m_sLyric.Replace( "|","\n" ); // Pipe symbols denote a new line in LRC files
+			Rage::replace(seg.m_sLyric, '|', '\n' ); // Pipe symbols denote a new line in LRC files
 			out.AddLyricSegment( seg );
 		}
 	}
@@ -113,7 +117,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 /*
  * (c) 2003 Kevin Slaughter, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -123,7 +127,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

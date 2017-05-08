@@ -6,18 +6,18 @@
 class SongCacheIndex
 {
 	IniFile CacheIndex;
-	static RString MangleName( const RString &Name );
+	static std::string MangleName( const std::string &Name );
 
 public:
 	SongCacheIndex();
 	~SongCacheIndex();
 	void ReadFromDisk();
-	static RString GetCacheFilePath( const RString &sGroup, const RString &sPath );
+	static std::string GetCacheFilePath( const std::string &sGroup, const std::string &sPath );
 
 	void ReadCacheIndex();
 	void SaveCacheIndex();
-	void AddCacheIndex( const RString &path, unsigned hash );
-	unsigned GetCacheHash( const RString &path ) const;
+	void AddCacheIndex( const std::string &path, unsigned hash );
+	unsigned GetCacheHash( const std::string &path ) const;
 	bool delay_save_cache;
 };
 

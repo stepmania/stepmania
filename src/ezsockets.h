@@ -5,7 +5,7 @@
 |   Modified by Charles Lohr for use with Windows-Based OSes.       |
 |   UDP/NON-TCP Support by Adam Lowman.                             |
 \*******************************************************************/
- 
+
 #ifndef EZSOCKETS_H
 #define EZSOCKETS_H
 
@@ -26,8 +26,6 @@
 #else
 #include <netinet/in.h>
 #endif
-
-using namespace std;
 
 class EzSockets
 {
@@ -51,7 +49,7 @@ public:
 	bool accept(EzSockets &socket);
 
 	//Connect
-	bool connect(const string& host, unsigned short port);
+	bool connect(const std::string& host, unsigned short port);
 
 	//Kill socket
 	void close();
@@ -71,40 +69,40 @@ public:
 
 	void update();
 
-	//Raw data system 
-	void SendData(const string& outData);
+	//Raw data system
+	void SendData(const std::string& outData);
 	void SendData(const char *data, unsigned int bytes);
 	int ReadData(char *data, unsigned int bytes);
 	int PeekData(char *data, unsigned int bytes);
 
 	//Packet system (for structures and classes)
-	void SendPack(const char *data, unsigned int bytes); 
+	void SendPack(const char *data, unsigned int bytes);
 	int ReadPack(char *data, unsigned int max);
 	int PeekPack(char *data, unsigned int max);
 
 	//String (Flash) system / Null-terminated strings
-	void SendStr(const string& data, char delim = '\0');
-	int ReadStr(string& data, char delim = '\0');
-	int PeekStr(string& data, char delim = '\0');
+	void SendStr(const std::string& data, char delim = '\0');
+	int ReadStr(std::string& data, char delim = '\0');
+	int PeekStr(std::string& data, char delim = '\0');
 
 
 	//Operators
 	char operator[] (int i); //Access buffer
-	friend istream& operator>>(istream& is, EzSockets& obj);
-	friend ostream& operator<<(ostream& os, const EzSockets& obj);
+	friend std::istream& operator>>(std::istream& is, EzSockets& obj);
+	friend std::ostream& operator<<(std::ostream& os, const EzSockets& obj);
 
 	bool blocking;
 	enum SockState
-	{ 
-		skDISCONNECTED = 0, 
+	{
+		skDISCONNECTED = 0,
 		skUNDEF1, //Not implemented
-		skLISTENING, 
+		skLISTENING,
 		skUNDEF3, //Not implemented
 		skUNDEF4, //Not implemented
 		skUNDEF5, //Not implemented
 		skUNDEF6, //Not implemented
-		skCONNECTED, 
-		skERROR 
+		skCONNECTED,
+		skERROR
 	};
 
     struct sockaddr_in fromAddr;
@@ -112,8 +110,8 @@ public:
 	static unsigned long LongFromAddrIn( const sockaddr_in & s );
 
 	// The following possibly should be private.
-	string inBuffer;
-	string outBuffer;
+	std::string inBuffer;
+	std::string outBuffer;
 
 	int pUpdateWrite();
 	int pUpdateRead();
@@ -125,7 +123,7 @@ public:
 
 	int lastCode;	// Used for debugging purposes
 
-	RString address;
+	std::string address;
 
 private:
 
@@ -146,8 +144,8 @@ private:
 	// Buffers
 };
 
-istream& operator>>(istream& is, EzSockets& obj);
-ostream& operator<<(ostream& os, EzSockets& obj);
+std::istream& operator>>(std::istream& is, EzSockets& obj);
+std::ostream& operator<<(std::ostream& os, EzSockets& obj);
 
 
 #endif
@@ -155,7 +153,7 @@ ostream& operator<<(ostream& os, EzSockets& obj);
 /*
  * (c) 2003-2004 Josh Allen, Charles Lohr, and Adam Lowman
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -165,7 +163,7 @@ ostream& operator<<(ostream& os, EzSockets& obj);
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

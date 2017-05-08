@@ -6,18 +6,18 @@
 #define ALSA_PCM_NEW_SW_PARAMS_API
 #include <alsa/asoundlib.h>
 
-static void *Handle = NULL;
+static void *Handle = nullptr;
 
 #include "RageUtil.h"
 #include "ALSA9Dynamic.h"
 
-/* foo_f dfoo = NULL */
-#define FUNC(ret, name, proto) name##_f d##name = NULL
+/* foo_f dfoo = nullptr */
+#define FUNC(ret, name, proto) name##_f d##name = nullptr
 #include "ALSA9Functions.h"
 #undef FUNC
 
-static const RString lib = "libasound.so.2";
-RString LoadALSA()
+static const std::string lib = "libasound.so.2";
+std::string LoadALSA()
 {
 	/* If /proc/asound/ doesn't exist, chances are we're on an OSS system.  We shouldn't
 	 * touch ALSA at all, since many OSS systems have old, broken versions of ALSA lying
@@ -31,13 +31,13 @@ RString LoadALSA()
 	if( !IsADirectory("/rootfs/proc/asound/") )
 		return "/proc/asound/ does not exist";
 
-	ASSERT( Handle == NULL );
+	ASSERT( Handle == nullptr );
 
-	Handle = dlopen( lib, RTLD_NOW );
-	if( Handle == NULL )
-		return ssprintf("dlopen(%s): %s", lib.c_str(), dlerror());
+	Handle = dlopen( lib.c_str(), RTLD_NOW );
+	if( Handle == nullptr )
+		return fmt::sprintf("dlopen(%s): %s", lib.c_str(), dlerror());
 
-	RString error;
+	std::string error;
 	/* Eww.  The "new" HW and SW API functions are really prefixed by __,
 	 * eg. __snd_pcm_hw_params_set_rate_near. */
 #define FUNC(ret, name, proto) \
@@ -62,8 +62,8 @@ void UnloadALSA()
 {
 	if( Handle )
 		dlclose( Handle );
-	Handle = NULL;
-#define FUNC(ret, name, proto) d##name = NULL;
+	Handle = nullptr;
+#define FUNC(ret, name, proto) d##name = nullptr;
 #include "ALSA9Functions.h"
 #undef FUNC
 }
@@ -71,7 +71,7 @@ void UnloadALSA()
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -81,7 +81,7 @@ void UnloadALSA()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

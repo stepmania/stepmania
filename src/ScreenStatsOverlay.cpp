@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenStatsOverlay.h"
+#include "RageMath.hpp"
 #include "ActorUtil.h"
 #include "PrefsManager.h"
 #include "RageDisplay.h"
@@ -31,14 +32,14 @@ void ScreenStatsOverlay::Init()
 		SKIP_SPACING_Y.Load( m_sName, "SkipSpacingY" );
 		SKIP_WIDTH.Load( m_sName, "SkipWidth" );
 
-		RectF rectSkips = RectF(
+		Rage::RectF rectSkips = Rage::RectF(
 			SKIP_X-SKIP_WIDTH/2, 
 			SKIP_Y-(SKIP_SPACING_Y*NUM_SKIPS_TO_SHOW)/2 - 10, 
 			SKIP_X+SKIP_WIDTH/2, 
 			SKIP_Y+(SKIP_SPACING_Y*NUM_SKIPS_TO_SHOW)/2 + 10
 			);
 		m_quadSkipBackground.StretchTo( rectSkips );
-		m_quadSkipBackground.SetDiffuse( RageColor(0,0,0,0.4f) );
+		m_quadSkipBackground.SetDiffuse( Rage::Color(0,0,0,0.4f) );
 		this->AddChild(&m_quadSkipBackground);
 
 		for( int i=0; i<NUM_SKIPS_TO_SHOW; i++ )
@@ -49,9 +50,9 @@ void ScreenStatsOverlay::Init()
 			m_textSkips[i].LoadFromFont( THEME->GetPathF("Common","normal") );
 			m_textSkips[i].SetX( SKIP_X );
 			m_textSkips[i].SetY( 
-				SCALE( i, 0, NUM_SKIPS_TO_SHOW-1, rectSkips.top + 10, rectSkips.bottom - 10 ) 
+				Rage::scale( i + 0.f, 0.f, NUM_SKIPS_TO_SHOW-1.f, rectSkips.top + 10, rectSkips.bottom - 10 )
 				);
-			m_textSkips[i].SetDiffuse( RageColor(1,1,1,0) );
+			m_textSkips[i].SetDiffuse( Rage::Color(1,1,1,0) );
 			m_textSkips[i].SetShadowLength( 0 );
 			this->AddChild( &m_textSkips[i] );
 		}
@@ -83,16 +84,16 @@ void ScreenStatsOverlay::Update( float fDeltaTime )
 	}
 }
 
-void ScreenStatsOverlay::AddTimestampLine( const RString &txt, const RageColor &color )
+void ScreenStatsOverlay::AddTimestampLine( const std::string &txt, const Rage::Color &color )
 {
 	m_textSkips[m_LastSkip].SetText( txt );
 	m_textSkips[m_LastSkip].StopTweening();
-	m_textSkips[m_LastSkip].SetDiffuse( RageColor(1,1,1,1) );
+	m_textSkips[m_LastSkip].SetDiffuse( Rage::Color(1,1,1,1) );
 	m_textSkips[m_LastSkip].BeginTweening( 0.2f );
 	m_textSkips[m_LastSkip].SetDiffuse( color );
 	m_textSkips[m_LastSkip].BeginTweening( 3.0f );
 	m_textSkips[m_LastSkip].BeginTweening( 0.2f );
-	m_textSkips[m_LastSkip].SetDiffuse( RageColor(1,1,1,0) );
+	m_textSkips[m_LastSkip].SetDiffuse( Rage::Color(1,1,1,0) );
 
 	m_LastSkip++;
 	m_LastSkip %= NUM_SKIPS_TO_SHOW;
@@ -125,17 +126,17 @@ void ScreenStatsOverlay::UpdateSkips()
 
 	if( skip )
 	{
-		RString sTime( SecondsToMMSSMsMs(RageTimer::GetTimeSinceStartFast()) );
+		std::string sTime( SecondsToMMSSMsMs(RageTimer::GetTimeSinceStartFast()) );
 
-		static const RageColor colors[] =
+		static const Rage::Color colors[] =
 		{
-			RageColor(0,0,0,0),			/* unused */
-			RageColor(1.0f,1.0f,1.0f,1),	/* white*/
-			RageColor(1.0f,1.0f,0.0f,1),	/* yellow */
-			RageColor(1.0f,0.4f,0.4f,1)		/* light red */
+			Rage::Color(0,0,0,0),			/* unused */
+			Rage::Color(1.0f,1.0f,1.0f,1),	/* white*/
+			Rage::Color(1.0f,1.0f,0.0f,1),	/* yellow */
+			Rage::Color(1.0f,0.4f,0.4f,1)		/* light red */
 		};
 
-		AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", sTime.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate), colors[skip] );
+		AddTimestampLine( fmt::sprintf("%s: %.0fms (%.0f)", sTime.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate), colors[skip] );
 
 		if( PREFSMAN->m_bLogSkips )
 			LOG->Trace( "Frame skip: %.0fms (%.0f)", 1000*UpdateTime, UpdateTime/ExpectedUpdate );

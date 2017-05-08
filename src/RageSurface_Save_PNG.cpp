@@ -16,13 +16,13 @@
 #include <png.h>
 #endif // _MSC_VER
 
-static void SafePngError( png_struct *pPng, const RString &sStr )
+static void SafePngError( png_struct *pPng, const std::string &sStr )
 {
 	/* png_error will call PNG_Error, which will longjmp.  If we just pass
 	 * GetError().c_str() to it, a temporary may be created; since control
 	 * never returns, it may never be destructed and leak. */
 	static char error[256];
-	strncpy( error, sStr, sizeof(error) );
+	strncpy( error, sStr.c_str(), sizeof(error) );
 	error[sizeof(error)-1] = 0;
 	png_error( pPng, error );
 }
@@ -81,16 +81,16 @@ static bool RageSurface_Save_PNG( RageFile &f, char szErrorbuf[1024], RageSurfac
 	error.szErr = szErrorbuf;
 
 	png_struct *pPng = png_create_write_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
-	if( pPng == NULL )
+	if( pPng == nullptr )
 	{
 		sprintf( szErrorbuf, "creating png_create_write_struct failed");
 		return false;
 	}
 
 	png_info *pInfo = png_create_info_struct(pPng);
-	if( pInfo == NULL )
+	if( pInfo == nullptr )
 	{
-		png_destroy_write_struct( &pPng, NULL );
+		png_destroy_write_struct( &pPng, nullptr );
 		if( bDeleteImg )
 			delete pImg;
 		sprintf( szErrorbuf, "creating png_create_info_struct failed");
@@ -126,7 +126,7 @@ static bool RageSurface_Save_PNG( RageFile &f, char szErrorbuf[1024], RageSurfac
 	return true;
 }
 
-bool RageSurfaceUtils::SavePNG( RageSurface *pImg, RageFile &f, RString &sError )
+bool RageSurfaceUtils::SavePNG( RageSurface *pImg, RageFile &f, std::string &sError )
 {
 	char szErrorBuf[1024];
 	if( !RageSurface_Save_PNG(f, szErrorBuf, pImg) )

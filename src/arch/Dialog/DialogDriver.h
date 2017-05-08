@@ -3,30 +3,31 @@
 
 #include "Dialog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 
 class DialogDriver
 {
 public:
 	static DialogDriver *Create();
 
-	virtual void Error( RString sMessage, RString sID ) { printf("Error: %s\n", sMessage.c_str()); }
-	virtual void OK( RString sMessage, RString sID ) {}
-	virtual Dialog::Result OKCancel( RString sMessage, RString sID ) { return Dialog::ok; }
-	virtual Dialog::Result AbortRetryIgnore( RString sMessage, RString sID ) { return Dialog::ignore; }
-	virtual Dialog::Result AbortRetry( RString sMessage, RString sID ) { return Dialog::abort; }
-	virtual Dialog::Result YesNo( RString sMessage, RString sID ) { return Dialog::no; }
+	virtual void Error(std::string sMessage, std::string) { printf("Error: %s\n", sMessage.c_str()); }
+	virtual void OK(std::string, std::string) {}
+	virtual Dialog::Result OKCancel(std::string, std::string) { return Dialog::ok; }
+	virtual Dialog::Result AbortRetryIgnore(std::string, std::string) { return Dialog::ignore; }
+	virtual Dialog::Result AbortRetry(std::string, std::string) { return Dialog::abort; }
+	virtual Dialog::Result YesNo(std::string, std::string) { return Dialog::no; }
 
-	virtual RString Init() { return RString(); }
+	virtual std::string Init() { return std::string(); }
 	virtual ~DialogDriver() { }
 };
 class DialogDriver_Null : public DialogDriver { };
-#define USE_DIALOG_DRIVER_NULL
+#define USE_DIALOG_DRIVER_nullptr
 
 typedef DialogDriver *(*CreateDialogDriverFn)();
 struct RegisterDialogDriver
 {
-	static map<istring, CreateDialogDriverFn> *g_pRegistrees;
-	RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn );
+	static std::map<Rage::ci_ascii_string, CreateDialogDriverFn> *g_pRegistrees;
+	RegisterDialogDriver( const Rage::ci_ascii_string &sName, CreateDialogDriverFn pfn );
 };
 #define REGISTER_DIALOG_DRIVER_CLASS( name ) \
 	static RegisterDialogDriver register_##name( #name, CreateClass<DialogDriver_##name, DialogDriver> )
@@ -36,7 +37,7 @@ struct RegisterDialogDriver
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -46,7 +47,7 @@ struct RegisterDialogDriver
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

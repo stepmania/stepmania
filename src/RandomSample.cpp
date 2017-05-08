@@ -3,7 +3,9 @@
 #include "RageSound.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 
+using std::vector;
 
 RandomSample::RandomSample()
 {
@@ -16,7 +18,7 @@ RandomSample::~RandomSample()
 	UnloadAll();
 }
 
-bool RandomSample::Load( RString sFilePath, int iMaxToLoad )
+bool RandomSample::Load( std::string sFilePath, int iMaxToLoad )
 {
 	if( GetExtension(sFilePath) == "" )
 		return LoadSoundDir( sFilePath, iMaxToLoad );
@@ -26,12 +28,14 @@ bool RandomSample::Load( RString sFilePath, int iMaxToLoad )
 
 void RandomSample::UnloadAll()
 {
-	for( unsigned i=0; i<m_pSamples.size(); i++ )
-		delete m_pSamples[i];
+	for (auto *item: m_pSamples)
+	{
+		delete item;
+	}
 	m_pSamples.clear();
 }
 
-bool RandomSample::LoadSoundDir( RString sDir, int iMaxToLoad )
+bool RandomSample::LoadSoundDir( std::string sDir, int iMaxToLoad )
 {
 	if( sDir == "" )
 		return true;
@@ -46,26 +50,29 @@ bool RandomSample::LoadSoundDir( RString sDir, int iMaxToLoad )
 		sDir += "/";
 #else
 	// make sure there's a slash at the end of this path
-	if( sDir.Right(1) != "/" )
+	if (!Rage::ends_with(sDir, "/"))
+	{
 		sDir += "/";
+	}
 #endif
 
-	vector<RString> arraySoundFiles;
+	vector<std::string> arraySoundFiles;
 	GetDirListing( sDir + "*.mp3", arraySoundFiles );
 	GetDirListing( sDir + "*.oga", arraySoundFiles );
 	GetDirListing( sDir + "*.ogg", arraySoundFiles );
 	GetDirListing( sDir + "*.wav", arraySoundFiles );
 
-	random_shuffle( arraySoundFiles.begin(), arraySoundFiles.end() );
-	arraySoundFiles.resize( min( arraySoundFiles.size(), (unsigned)iMaxToLoad ) );
+	std::shuffle(arraySoundFiles.begin(), arraySoundFiles.end(), g_RandomNumberGenerator);
+	arraySoundFiles.resize( std::min( static_cast<unsigned>(arraySoundFiles.size()), static_cast<unsigned>(iMaxToLoad) ) );
 
-	for( unsigned i=0; i<arraySoundFiles.size(); i++ )
-		LoadSound( sDir + arraySoundFiles[i] );
-
+	for (auto &sound: arraySoundFiles)
+	{
+		LoadSound( sDir + sound );
+	}
 	return true;
 }
-	
-bool RandomSample::LoadSound( RString sSoundFilePath )
+
+bool RandomSample::LoadSound( std::string sSoundFilePath )
 {
 	LOG->Trace( "RandomSample::LoadSound( %s )", sSoundFilePath.c_str() );
 
@@ -79,7 +86,7 @@ bool RandomSample::LoadSound( RString sSoundFilePath )
 
 
 	m_pSamples.push_back( pSS );
-	
+
 	return true;
 }
 
@@ -128,7 +135,7 @@ void RandomSample::Stop()
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -138,7 +145,7 @@ void RandomSample::Stop()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

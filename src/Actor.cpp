@@ -1,11 +1,12 @@
 #include "global.h"
 #include "Actor.h"
+#include "RageMath.hpp"
 #include "ActorFrame.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageMath.h"
+#include "RageMatrix.hpp"
 #include "RageLog.h"
-#include "Foreach.h"
 #include "XmlFile.h"
 #include "LuaBinding.h"
 #include "ThemeManager.h"
@@ -15,6 +16,9 @@
 #include "ActorUtil.h"
 #include "Preference.h"
 #include <typeinfo>
+#include <numeric>
+
+using std::vector;
 
 static Preference<bool> g_bShowMasks("ShowMasks", false);
 static const float default_effect_period= 1.0f;
@@ -87,13 +91,13 @@ void Actor::InitState()
 {
 	this->StopTweening();
 
-	m_pTempState = NULL;
+	m_pTempState = nullptr;
 
-	m_baseRotation = RageVector3( 0, 0, 0 );
-	m_baseScale = RageVector3( 1, 1, 1 );
+	m_baseRotation = Rage::Vector3( 0, 0, 0 );
+	m_baseScale = Rage::Vector3( 1, 1, 1 );
 	m_fBaseAlpha = 1;
-	m_internalDiffuse = RageColor( 1, 1, 1, 1 );
-	m_internalGlow = RageColor( 0, 0, 0, 0 );
+	m_internalDiffuse = Rage::Color( 1, 1, 1, 1 );
+	m_internalGlow = Rage::Color( 0, 0, 0, 0 );
 
 	m_start.Init();
 	m_current.Init();
@@ -101,8 +105,7 @@ void Actor::InitState()
 	m_fHorizAlign = 0.5f;
 	m_fVertAlign = 0.5f;
 #if defined(SSC_FUTURES)
-	for( unsigned i = 0; i < m_Effects.size(); ++i )
-		m_Effects[i] = no_effect;
+	std::fill_n(m_Effects.begin(), m_Effects.size(), no_effect);
 #else
 	m_Effect =  no_effect;
 #endif
@@ -111,21 +114,21 @@ void Actor::InitState()
 	SetEffectPeriod(default_effect_period);
 	m_fEffectOffset = 0;
 	m_EffectClock = CLOCK_TIMER;
-	m_vEffectMagnitude = RageVector3(0,0,10);
-	m_effectColor1 = RageColor(1,1,1,1);
-	m_effectColor2 = RageColor(1,1,1,1);
+	m_vEffectMagnitude = Rage::Vector3(0,0,10);
+	m_effectColor1 = Rage::Color(1,1,1,1);
+	m_effectColor2 = Rage::Color(1,1,1,1);
 
 	m_bVisible = true;
 	m_fShadowLengthX = 0;
 	m_fShadowLengthY = 0;
-	m_ShadowColor = RageColor(0,0,0,0.5f);
+	m_ShadowColor = Rage::Color(0,0,0,0.5f);
 	m_bIsAnimating = true;
 	m_fHibernateSecondsLeft = 0;
 	m_iDrawOrder = 0;
 
 	m_bTextureWrapping = false;
 	m_bTextureFiltering = true;
-	m_texTranslate = RageVector2( 0, 0 );
+	m_texTranslate = Rage::Vector2( 0, 0 );
 
 	m_BlendMode = BLEND_NORMAL;
 	m_fZBias = 0;
@@ -135,11 +138,11 @@ void Actor::InitState()
 	m_CullMode = CULL_NONE;
 }
 
-static bool GetMessageNameFromCommandName( const RString &sCommandName, RString &sMessageNameOut )
+static bool GetMessageNameFromCommandName( const std::string &sCommandName, std::string &sMessageNameOut )
 {
-	if( sCommandName.Right(7) == "Message" )
+	if (Rage::ends_with(sCommandName, "Message"))
 	{
-		sMessageNameOut = sCommandName.Left(sCommandName.size()-7);
+		sMessageNameOut = Rage::head(sCommandName, -7);
 		return true;
 	}
 	else
@@ -159,12 +162,14 @@ Actor::Actor()
 		lua_setfield( L, -2, "ctx" );
 		lua_pop( L, 1 );
 	LUA->Release( L );
-	
-	m_size = RageVector2( 1, 1 );
+
+	m_size = Rage::Vector2( 1, 1 );
 	InitState();
-	m_pParent = NULL;
-	m_FakeParent= NULL;
+	m_pParent = nullptr;
+	m_FakeParent= nullptr;
+	m_timing_source= nullptr;
 	m_bFirstUpdate = true;
+	m_being_drawn_by_proxy= false;
 	m_tween_uses_effect_delta= false;
 }
 
@@ -172,9 +177,9 @@ Actor::~Actor()
 {
 	StopTweening();
 	UnsubscribeAll();
-	for(size_t i= 0; i < m_WrapperStates.size(); ++i)
+	for (auto *wrapper: m_WrapperStates)
 	{
-		SAFE_DELETE(m_WrapperStates[i]);
+		Rage::safe_delete(wrapper);
 	}
 	m_WrapperStates.clear();
 }
@@ -183,13 +188,14 @@ Actor::Actor( const Actor &cpy ):
 	MessageSubscriber( cpy )
 {
 	/* Don't copy an Actor in the middle of rendering. */
-	ASSERT( cpy.m_pTempState == NULL );
-	m_pTempState = NULL;
+	ASSERT( cpy.m_pTempState == nullptr );
+	m_pTempState = nullptr;
 
 #define CPY(x) x = cpy.x
 	CPY( m_sName );
 	CPY( m_pParent );
 	CPY( m_FakeParent );
+	CPY(m_timing_source);
 	CPY( m_pLuaInstance );
 
 	m_WrapperStates.resize(cpy.m_WrapperStates.size());
@@ -208,17 +214,22 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_size );
 	CPY( m_current );
 	CPY( m_start );
-	for( unsigned i = 0; i < cpy.m_Tweens.size(); ++i )
-		m_Tweens.push_back( new TweenStateAndInfo(*cpy.m_Tweens[i]) );
+	for (auto *tween: cpy.m_Tweens)
+	{
+		m_Tweens.push_back(new TweenStateAndInfo(*tween));
+	}
 
 	CPY( m_bFirstUpdate );
+	m_being_drawn_by_proxy= false;
 
 	CPY( m_fHorizAlign );
 	CPY( m_fVertAlign );
 #if defined(SSC_FUTURES)
 	// I'm a bit worried about this -aj
-	for( unsigned i = 0; i < cpy.m_Effects.size(); ++i )
-		m_Effects.push_back( (*cpy.m_Effects[i]) );
+	for (auto &effect: cpy.m_Effect)
+	{
+		m_Effects.push_back( effect );
+	}
 #else
 	CPY( m_Effect );
 #endif
@@ -258,6 +269,81 @@ Actor::Actor( const Actor &cpy ):
 #undef CPY
 }
 
+Actor &Actor::operator=(Actor other)
+{
+	/* Don't copy an Actor in the middle of rendering. */
+	ASSERT( other.m_pTempState == nullptr );
+	m_pTempState = nullptr;
+
+	using std::swap;
+#define SWAP(x) swap(x, other.x)
+	SWAP( m_sName );
+	SWAP( m_pParent );
+	SWAP( m_FakeParent );
+	SWAP(m_timing_source);
+	SWAP( m_pLuaInstance );
+
+	SWAP( m_WrapperStates );
+
+	SWAP( m_baseRotation );
+	SWAP( m_baseScale );
+	SWAP( m_fBaseAlpha );
+	SWAP( m_internalDiffuse );
+	SWAP( m_internalGlow );
+
+
+	SWAP( m_size );
+	SWAP( m_current );
+	SWAP( m_start );
+	SWAP( m_Tweens );
+
+	SWAP( m_bFirstUpdate );
+	m_being_drawn_by_proxy= false;
+
+	SWAP( m_fHorizAlign );
+	SWAP( m_fVertAlign );
+#if defined(SSC_FUTURES)
+	SWAP( M_Effects );
+#else
+	SWAP( m_Effect );
+#endif
+	SWAP( m_fSecsIntoEffect );
+	SWAP( m_fEffectDelta );
+	SWAP(m_effect_ramp_to_half);
+	SWAP(m_effect_hold_at_half);
+	SWAP(m_effect_ramp_to_full);
+	SWAP(m_effect_hold_at_full);
+	SWAP(m_effect_hold_at_zero);
+	SWAP(m_effect_period);
+	SWAP( m_fEffectOffset );
+	SWAP( m_EffectClock );
+
+	SWAP( m_effectColor1 );
+	SWAP( m_effectColor2 );
+	SWAP( m_vEffectMagnitude );
+
+	SWAP( m_bVisible );
+	SWAP( m_fHibernateSecondsLeft );
+	SWAP( m_fShadowLengthX );
+	SWAP( m_fShadowLengthY );
+	SWAP( m_ShadowColor );
+	SWAP( m_bIsAnimating );
+	SWAP( m_iDrawOrder );
+
+	SWAP( m_bTextureWrapping );
+	SWAP( m_bTextureFiltering );
+	SWAP( m_BlendMode );
+	SWAP( m_bClearZBuffer );
+	SWAP( m_ZTestMode );
+	SWAP( m_bZWrite );
+	SWAP( m_fZBias );
+	SWAP( m_CullMode );
+
+	SWAP( m_mapNameToCommands );
+#undef SWAP
+	return *this;
+}
+
 /* XXX: This calls InitCommand, which must happen after all other
  * initialization (eg. ActorFrame loading children).  However, it
  * also loads input variables, which should happen first.  The
@@ -265,20 +351,20 @@ Actor::Actor( const Actor &cpy ):
 void Actor::LoadFromNode( const XNode* pNode )
 {
 	Lua *L = LUA->Get();
-	FOREACH_CONST_Attr( pNode, pAttr )
+	for (auto const &pAttr: pNode->m_attrs)
 	{
 		// Load Name, if any.
-		const RString &sKeyName = pAttr->first;
-		const XNodeValue *pValue = pAttr->second;
-		if( EndsWith(sKeyName,"Command") )
+		const std::string &sKeyName = pAttr.first;
+		const XNodeValue *pValue = pAttr.second;
+		if( Rage::ends_with(sKeyName,"Command") )
 		{
 			LuaReference *pRef = new LuaReference;
 			pValue->PushValue( L );
 			pRef->SetFromStack( L );
-			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
-			AddCommand( sCmdName, apActorCommands( pRef ) );
+			std::string cmdName = Rage::head(sKeyName, -7);
+			AddCommand( cmdName, apActorCommands( pRef ) );
 		}
-		else if( sKeyName == "Name" )			SetName( pValue->GetValue<RString>() );
+		else if( sKeyName == "Name" )			SetName( pValue->GetValue<std::string>() );
 		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( pValue->GetValue<float>() );
 		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( pValue->GetValue<float>() );
 		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( pValue->GetValue<float>() );
@@ -289,9 +375,14 @@ void Actor::LoadFromNode( const XNode* pNode )
 
 	LUA->Release( L );
 
-	// Don't recurse Init.  It gets called once for every Actor when the 
+	// Don't recurse Init.  It gets called once for every Actor when the
 	// Actor is loaded, and we don't want to call it again.
 	PlayCommandNoRecurse( Message("Init") );
+}
+
+void Actor::SetBeingDrawnByProxy()
+{
+	m_being_drawn_by_proxy= true;
 }
 
 bool Actor::PartiallyOpaque()
@@ -304,9 +395,10 @@ bool Actor::PartiallyOpaque()
 void Actor::Draw()
 {
 	if( !m_bVisible ||
-		m_fHibernateSecondsLeft > 0 || 
+		m_fHibernateSecondsLeft > 0 ||
 		this->EarlyAbortDraw() )
 	{
+		m_being_drawn_by_proxy= false;
 		return; // early abort
 	}
 	if(m_FakeParent)
@@ -314,12 +406,14 @@ void Actor::Draw()
 		if(!m_FakeParent->m_bVisible || m_FakeParent->m_fHibernateSecondsLeft > 0
 			|| m_FakeParent->EarlyAbortDraw())
 		{
+			m_being_drawn_by_proxy= false;
 			return;
 		}
 		m_FakeParent->PreDraw();
 		if(!m_FakeParent->PartiallyOpaque())
 		{
 			m_FakeParent->PostDraw();
+			m_being_drawn_by_proxy= false;
 			return;
 		}
 	}
@@ -329,8 +423,8 @@ void Actor::Draw()
 		m_FakeParent->BeginDraw();
 	}
 	size_t wrapper_states_used= 0;
-	RageColor last_diffuse;
-	RageColor last_glow;
+	Rage::Color last_diffuse;
+	Rage::Color last_glow;
 	bool use_last_diffuse= false;
 	// dont_abort_draw exists because if one of the layers is invisible,
 	// there's no point in continuing. -Kyz
@@ -384,7 +478,7 @@ void Actor::Draw()
 			this->SetInternalGlow(last_glow);
 		}
 		this->PreDraw();
-		ASSERT( m_pTempState != NULL );
+		ASSERT( m_pTempState != nullptr );
 		if(PartiallyOpaque())
 		{
 			this->BeginDraw();
@@ -393,30 +487,30 @@ void Actor::Draw()
 		}
 		this->PostDraw();
 	}
-	for(size_t i= 0; i < wrapper_states_used; ++i)
+	for (auto *state: m_WrapperStates)
 	{
-		Actor* state= m_WrapperStates[i];
 		if(abort_with_end_draw)
 		{
 			state->EndDraw();
 		}
 		abort_with_end_draw= true;
 		state->PostDraw();
-		state->m_pTempState= NULL;
+		state->m_pTempState= nullptr;
 	}
 
 	if(m_FakeParent)
 	{
 		m_FakeParent->EndDraw();
 		m_FakeParent->PostDraw();
-		m_FakeParent->m_pTempState= NULL;
+		m_FakeParent->m_pTempState= nullptr;
 	}
-	m_pTempState = NULL;
+	m_pTempState = nullptr;
+	m_being_drawn_by_proxy= false;
 }
 
 void Actor::PostDraw() // reset internal diffuse and glow
 {
-	m_internalDiffuse = RageColor(1, 1, 1, 1);
+	m_internalDiffuse = Rage::Color(1, 1, 1, 1);
 	m_internalGlow.a = 0;
 }
 
@@ -425,17 +519,14 @@ void Actor::PreDraw() // calculate actor properties
 	// Somthing below may set m_pTempState to tempState
 	m_pTempState = &m_current;
 
-	// set temporary drawing properties based on Effects
-	static TweenState tempState;
-
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect == no_effect )
 	{
 	}
 	else
 	{
-		m_pTempState = &tempState;
-		tempState = m_current;
+		m_pTempState= & m_current_with_effects;
+		m_current_with_effects= m_current;
 
 		const float fTotalPeriod = GetEffectPeriod();
 		ASSERT( fTotalPeriod > 0 );
@@ -447,8 +538,8 @@ void Actor::PreDraw() // calculate actor properties
 		const float rupathrdown_plus_atf= rupath_plus_rdown + m_effect_hold_at_full;
 		if(fTimeIntoEffect < m_effect_ramp_to_half)
 		{
-			fPercentThroughEffect = SCALE(fTimeIntoEffect,
-				0, m_effect_ramp_to_half, 0.0f, 0.5f);
+			fPercentThroughEffect = Rage::scale(fTimeIntoEffect,
+				0.f, m_effect_ramp_to_half, 0.0f, 0.5f);
 		}
 		else if(fTimeIntoEffect < rup_plus_ath)
 		{
@@ -456,7 +547,7 @@ void Actor::PreDraw() // calculate actor properties
 		}
 		else if(fTimeIntoEffect < rupath_plus_rdown)
 		{
-			fPercentThroughEffect = SCALE(fTimeIntoEffect,
+			fPercentThroughEffect = Rage::scale(fTimeIntoEffect,
 				rup_plus_ath, rupath_plus_rdown, 0.5f, 1.0f);
 		}
 		else if(fTimeIntoEffect < rupathrdown_plus_atf)
@@ -467,149 +558,141 @@ void Actor::PreDraw() // calculate actor properties
 		{
 			fPercentThroughEffect = 0;
 		}
-		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1, 
-			ssprintf("PercentThroughEffect: %f", fPercentThroughEffect) );
+		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1,
+			fmt::sprintf("PercentThroughEffect: %f", fPercentThroughEffect) );
 
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
-		float fPercentBetweenColors = RageFastSin( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
+		float fPercentBetweenColors = Rage::FastSin( (fPercentThroughEffect + 0.25f) * 2 * Rage::PI ) / 2 + 0.5f;
 		ASSERT_M( fPercentBetweenColors >= 0 && fPercentBetweenColors <= 1,
-			ssprintf("PercentBetweenColors: %f, PercentThroughEffect: %f", fPercentBetweenColors, fPercentThroughEffect) );
-		float fOriginalAlpha = tempState.diffuse[0].a;
+			fmt::sprintf("PercentBetweenColors: %f, PercentThroughEffect: %f", fPercentBetweenColors, fPercentThroughEffect) );
+		float fOriginalAlpha = m_current_with_effects.diffuse[0].a;
 
 		// todo: account for SSC_FUTURES -aj
 		switch( m_Effect )
 		{
 		case diffuse_blink:
-			/* XXX: Should diffuse_blink and diffuse_shift multiply the tempState color? 
+			/* XXX: Should diffuse_blink and diffuse_shift multiply the m_current_with_effects color?
 			 * (That would have the same effect with 1,1,1,1, and allow tweening the diffuse
 			 * while blinking and shifting.) */
 			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
-				tempState.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
-				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
+				m_current_with_effects.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
+				m_current_with_effects.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case diffuse_shift:
 			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
-				tempState.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
-				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
+				m_current_with_effects.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
+				m_current_with_effects.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case diffuse_ramp:
 			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
-				tempState.diffuse[i] = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
-				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
+				m_current_with_effects.diffuse[i] = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
+				m_current_with_effects.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case glow_blink:
-			tempState.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
-			tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+			m_current_with_effects.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
+			m_current_with_effects.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 			break;
 		case glow_shift:
-			tempState.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
-			tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+			m_current_with_effects.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
+			m_current_with_effects.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 			break;
 		case glow_ramp:
-			tempState.glow = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
-			tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+			m_current_with_effects.glow = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
+			m_current_with_effects.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 			break;
 		case rainbow:
-			tempState.diffuse[0] = RageColor(
-				RageFastCos( fPercentBetweenColors*2*PI ) * 0.5f + 0.5f,
-				RageFastCos( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
-				RageFastCos( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
+			m_current_with_effects.diffuse[0] = Rage::Color(
+				Rage::FastCos( fPercentBetweenColors * 2 * Rage::PI ) * 0.5f + 0.5f,
+				Rage::FastCos( fPercentBetweenColors * 2 * Rage::PI + Rage::PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
+				Rage::FastCos( fPercentBetweenColors * 2 * Rage::PI + Rage::PI * 4.0f / 3.0f) * 0.5f + 0.5f,
 				fOriginalAlpha );
 			for( int i=1; i<NUM_DIFFUSE_COLORS; i++ )
-				tempState.diffuse[i] = tempState.diffuse[0];
+				m_current_with_effects.diffuse[i] = m_current_with_effects.diffuse[0];
 			break;
 		case wag:
-			tempState.rotation += m_vEffectMagnitude * RageFastSin( fPercentThroughEffect * 2.0f * PI );
+			m_current_with_effects.rotation += m_vEffectMagnitude * Rage::FastSin( fPercentThroughEffect * 2.0f * Rage::PI );
 			break;
 		case spin:
 			// nothing needs to be here
 			break;
 		case vibrate:
-			tempState.pos.x += m_vEffectMagnitude.x * randomf(-1.0f, 1.0f) * GetZoom();
-			tempState.pos.y += m_vEffectMagnitude.y * randomf(-1.0f, 1.0f) * GetZoom();
-			tempState.pos.z += m_vEffectMagnitude.z * randomf(-1.0f, 1.0f) * GetZoom();
+			m_current_with_effects.pos.x += m_vEffectMagnitude.x * randomf(-1.0f, 1.0f) * GetZoom();
+			m_current_with_effects.pos.y += m_vEffectMagnitude.y * randomf(-1.0f, 1.0f) * GetZoom();
+			m_current_with_effects.pos.z += m_vEffectMagnitude.z * randomf(-1.0f, 1.0f) * GetZoom();
 			break;
 		case bounce:
 			{
-				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
-				tempState.pos += m_vEffectMagnitude * fPercentOffset;
+				float fPercentOffset = Rage::FastSin( fPercentThroughEffect * Rage::PI );
+				m_current_with_effects.pos += m_vEffectMagnitude * fPercentOffset;
 			}
 			break;
 		case bob:
 			{
-				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI*2 );
-				tempState.pos += m_vEffectMagnitude * fPercentOffset;
+				float fPercentOffset = Rage::FastSin( fPercentThroughEffect * Rage::PI * 2 );
+				m_current_with_effects.pos += m_vEffectMagnitude * fPercentOffset;
 			}
 			break;
 		case pulse:
 			{
-				float fMinZoom = m_vEffectMagnitude[0];
-				float fMaxZoom = m_vEffectMagnitude[1];
-				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
-				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
-				tempState.scale *= fZoom;
+				float fMinZoom = m_vEffectMagnitude.x;
+				float fMaxZoom = m_vEffectMagnitude.y;
+				float fPercentOffset = Rage::FastSin( fPercentThroughEffect * Rage::PI );
+				float fZoom = Rage::scale( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
+				m_current_with_effects.scale *= fZoom;
 
-				// Use the color as a Vector3 to scale the effect for added control
-				RageColor c = SCALE( fPercentOffset, 0.f, 1.f, m_effectColor1, m_effectColor2 );
-				tempState.scale.x *= c.r;
-				tempState.scale.y *= c.g;
-				tempState.scale.z *= c.b;
+				m_current_with_effects.scale.x *= Rage::scale( fPercentOffset, 0.f, 1.f, m_effectColor1.r, m_effectColor2.r );
+				m_current_with_effects.scale.y *= Rage::scale( fPercentOffset, 0.f, 1.f, m_effectColor1.g, m_effectColor2.g );
+				m_current_with_effects.scale.z *= Rage::scale( fPercentOffset, 0.f, 1.f, m_effectColor1.b, m_effectColor2.b );
 			}
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid effect: %i", m_Effect));
+			FAIL_M(fmt::sprintf("Invalid effect: %i", m_Effect));
 		}
 	}
 
 	if( m_fBaseAlpha != 1 )
 		m_internalDiffuse.a *= m_fBaseAlpha;
 
-	if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
+	if( m_internalDiffuse != Rage::Color(1, 1, 1, 1) )
 	{
-		if( m_pTempState != &tempState )
+		if( m_pTempState != &m_current_with_effects )
 		{
-			m_pTempState = &tempState;
-			tempState = m_current;
+			m_pTempState = &m_current_with_effects;
+			m_current_with_effects = m_current;
 		}
 
 		for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 		{
-			tempState.diffuse[i] *= m_internalDiffuse;
+			m_current_with_effects.diffuse[i] *= m_internalDiffuse;
 		}
 	}
 
 	if( m_internalGlow.a > 0 )
 	{
-		if( m_pTempState != &tempState )
+		if( m_pTempState != &m_current_with_effects )
 		{
-			m_pTempState = &tempState;
-			tempState = m_current;
+			m_pTempState = &m_current_with_effects;
+			m_current_with_effects = m_current;
 		}
 
 		// Blend using Screen mode
-		tempState.glow = tempState.glow + m_internalGlow - m_internalGlow * tempState.glow;
+		m_current_with_effects.glow = m_current_with_effects.glow + m_internalGlow - m_internalGlow * m_current_with_effects.glow;
 	}
 }
 
 void Actor::BeginDraw() // set the world matrix
 {
 	DISPLAY->PushMatrix();
-
-	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
+	auto const &pos = m_pTempState->pos;
+	if( pos.x != 0 || pos.y != 0 || pos.z != 0 )
 	{
-		RageMatrix m;
-		RageMatrixTranslate( 
-			&m, 
-			m_pTempState->pos.x,
-			m_pTempState->pos.y,
-			m_pTempState->pos.z
-			);
+		auto m = Rage::Matrix::GetTranslation(pos.x, pos.y, pos.z);
 		DISPLAY->PreMultMatrix( m );
 	}
 
@@ -621,9 +704,9 @@ void Actor::BeginDraw() // set the world matrix
 		const float fRotateY = m_pTempState->rotation.y + m_baseRotation.y;
 		const float fRotateZ = m_pTempState->rotation.z + m_baseRotation.z;
 
-		if( fRotateX != 0 || fRotateY != 0 || fRotateZ != 0 )	
+		if( fRotateX != 0 || fRotateY != 0 || fRotateZ != 0 )
 		{
-			RageMatrix m;
+			Rage::Matrix m;
 			RageMatrixRotationXYZ( &m, fRotateX, fRotateY, fRotateZ );
 			DISPLAY->PreMultMatrix( m );
 		}
@@ -637,12 +720,7 @@ void Actor::BeginDraw() // set the world matrix
 
 		if( fScaleX != 1 || fScaleY != 1 || fScaleZ != 1 )
 		{
-			RageMatrix m;
-			RageMatrixScale( 
-				&m,
-				fScaleX,
-				fScaleY,
-				fScaleZ );
+			auto m = Rage::Matrix::GetScaling(fScaleX, fScaleY, fScaleZ);
 			DISPLAY->PreMultMatrix( m );
 		}
 	}
@@ -650,21 +728,15 @@ void Actor::BeginDraw() // set the world matrix
 	// handle alignment; most actors have default alignment.
 	if( unlikely(m_fHorizAlign != 0.5f || m_fVertAlign != 0.5f) )
 	{
-		float fX = SCALE( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
-		float fY = SCALE( m_fVertAlign, 0.0f, 1.0f, +m_size.y/2.0f, -m_size.y/2.0f );
-		RageMatrix m;
-		RageMatrixTranslate( 
-			&m, 
-			fX,
-			fY,
-			0
-			);
+		float fX = Rage::scale( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
+		float fY = Rage::scale( m_fVertAlign, 0.0f, 1.0f, +m_size.y/2.0f, -m_size.y/2.0f );
+		auto m = Rage::Matrix::GetTranslation(fX, fY, 0);
 		DISPLAY->PreMultMatrix( m );
 	}
 
 	if( m_pTempState->quat.x != 0 ||  m_pTempState->quat.y != 0 ||  m_pTempState->quat.z != 0 || m_pTempState->quat.w != 1 )
 	{
-		RageMatrix mat;
+		Rage::Matrix mat;
 		RageMatrixFromQuat( &mat, m_pTempState->quat );
 
 		DISPLAY->MultMatrix(mat);
@@ -713,6 +785,7 @@ void Actor::SetTextureRenderStates()
 {
 	DISPLAY->SetTextureWrapping( TextureUnit_1, m_bTextureWrapping );
 	DISPLAY->SetTextureFiltering( TextureUnit_1, m_bTextureFiltering );
+	DISPLAY->SetTextureFiltering( TextureUnit_2, m_bTextureFiltering );
 }
 
 void Actor::EndDraw()
@@ -724,6 +797,14 @@ void Actor::EndDraw()
 
 }
 
+void Actor::SetDrawOrder(int order)
+{
+	m_iDrawOrder= order;
+	if(GetParent() != nullptr)
+	{
+		GetParent()->ChildChangedDrawOrder(this);
+	}
+}
 void Actor::CalcPercentThroughTween()
 {
 	TweenState &TS = m_Tweens[0]->state;
@@ -737,6 +818,7 @@ void Actor::CalcPercentThroughTween()
 
 void Actor::UpdateTweening( float fDeltaTime )
 {
+	using std::min;
 	if(fDeltaTime < 0.0 && !m_Tweens.empty())
 	{
 		m_Tweens[0]->info.m_fTimeLeftInTween-= fDeltaTime;
@@ -757,13 +839,13 @@ void Actor::UpdateTweening( float fDeltaTime )
 		TI.m_fTimeLeftInTween -= fSecsToSubtract;
 		fDeltaTime -= fSecsToSubtract;
 
-		RString sCommand = TI.m_sCommandName;
+		std::string sCommand = TI.m_sCommandName;
 		if( bBeginning )			// we are just beginning this tween
 		{
 			m_start = m_current;	// set the start position
 			SetCurrentTweenStart();
 		}
-	
+
 		if( TI.m_fTimeLeftInTween == 0 )	// Current tween is over.  Stop.
 		{
 			m_current = TS;
@@ -782,12 +864,16 @@ void Actor::UpdateTweening( float fDeltaTime )
 		{
 			// Execute the command in this tween (if any). Do this last, and don't
 			// access TI or TS after, since this may modify the tweening queue.
-			if( !sCommand.empty() )
+			if (!sCommand.empty())
 			{
-				if( sCommand.Left(1) == "!" )
-					MESSAGEMAN->Broadcast( sCommand.substr(1) );
+				if (Rage::starts_with(sCommand, "!"))
+				{
+					MESSAGEMAN->Broadcast(sCommand.substr(1));
+				}
 				else
-					this->PlayCommand( sCommand );
+				{
+					this->PlayCommand(sCommand);
+				}
 			}
 		}
 	}
@@ -801,8 +887,12 @@ bool Actor::IsFirstUpdate() const
 void Actor::Update( float fDeltaTime )
 {
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
-	ASSERT_M( fDeltaTime >= 0, ssprintf("DeltaTime: %f",fDeltaTime) );
+	fDeltaTime= std::max(0.0f, fDeltaTime);
 
+	if(m_timing_source != nullptr)
+	{
+		fDeltaTime= static_cast<float>(m_timing_source->second_delta);
+	}
 	if( m_fHibernateSecondsLeft > 0 )
 	{
 		m_fHibernateSecondsLeft -= fDeltaTime;
@@ -815,9 +905,9 @@ void Actor::Update( float fDeltaTime )
 		fDeltaTime = -m_fHibernateSecondsLeft;
 		m_fHibernateSecondsLeft = 0;
 	}
-	for(size_t i= 0; i < m_WrapperStates.size(); ++i)
+	for (auto *state: m_WrapperStates)
 	{
-		m_WrapperStates[i]->Update(fDeltaTime);
+		state->Update(fDeltaTime);
 	}
 
 	this->UpdateInternal( fDeltaTime );
@@ -832,56 +922,78 @@ static void generic_global_timer_update(float new_time, float& effect_delta_time
 void Actor::UpdateInternal(float delta_time)
 {
 	if( m_bFirstUpdate )
-		m_bFirstUpdate = false;
-
-	switch(m_EffectClock)
 	{
-		case CLOCK_TIMER:
-			m_fSecsIntoEffect+= delta_time;
-			m_fEffectDelta= delta_time;
-			// Wrap the counter, so it doesn't increase indefinitely (causing loss
-			// of precision if a screen is left to sit for a day).
-			if(m_fSecsIntoEffect > GetEffectPeriod())
-			{
-				m_fSecsIntoEffect-= GetEffectPeriod();
-			}
-			break;
-		case CLOCK_TIMER_GLOBAL:
-			generic_global_timer_update(RageTimer::GetUsecsSinceStart(),
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_BEAT:
-			generic_global_timer_update(g_fCurrentBGMBeat,
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_BEAT_PLAYER1:
-			generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_1],
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_BEAT_PLAYER2:
-			generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_2],
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_TIME:
-			generic_global_timer_update(g_fCurrentBGMTime,
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_BEAT_NO_OFFSET:
-			generic_global_timer_update(g_fCurrentBGMBeatNoOffset,
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_TIME_NO_OFFSET:
-			generic_global_timer_update(g_fCurrentBGMTimeNoOffset,
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		default:
-			if(m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST)
-			{
-				generic_global_timer_update(
-					g_fCabinetLights[m_EffectClock - CLOCK_LIGHT_1],
+		m_bFirstUpdate = false;
+	}
+
+	if(m_timing_source == nullptr)
+	{
+		switch(m_EffectClock)
+		{
+			case CLOCK_TIMER:
+				m_fSecsIntoEffect+= delta_time;
+				m_fEffectDelta= delta_time;
+				// Wrap the counter, so it doesn't increase indefinitely (causing loss
+				// of precision if a screen is left to sit for a day).
+				if(m_fSecsIntoEffect > GetEffectPeriod())
+				{
+					m_fSecsIntoEffect-= GetEffectPeriod();
+				}
+				break;
+			case CLOCK_TIMER_GLOBAL:
+				generic_global_timer_update(static_cast<float>(RageTimer::GetUsecsSinceStart()),
 					m_fEffectDelta, m_fSecsIntoEffect);
-			}
-			break;
+				break;
+			case CLOCK_BGM_BEAT:
+				generic_global_timer_update(g_fCurrentBGMBeat,
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_BEAT_PLAYER1:
+				generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_1],
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_BEAT_PLAYER2:
+				generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_2],
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_TIME:
+				generic_global_timer_update(g_fCurrentBGMTime,
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_BEAT_NO_OFFSET:
+				generic_global_timer_update(g_fCurrentBGMBeatNoOffset,
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_TIME_NO_OFFSET:
+				generic_global_timer_update(g_fCurrentBGMTimeNoOffset,
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			default:
+				if(m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST)
+				{
+					generic_global_timer_update(
+						g_fCabinetLights[m_EffectClock - CLOCK_LIGHT_1],
+						m_fEffectDelta, m_fSecsIntoEffect);
+				}
+				break;
+		}
+	}
+	else
+	{
+		switch(m_EffectClock)
+		{
+			case CLOCK_BGM_BEAT:
+			case CLOCK_BGM_BEAT_PLAYER1:
+			case CLOCK_BGM_BEAT_PLAYER2:
+			case CLOCK_BGM_BEAT_NO_OFFSET:
+				m_fEffectDelta= static_cast<float>(m_timing_source->beat_delta);
+				m_fSecsIntoEffect= static_cast<float>(m_timing_source->curr_second);
+				break;
+			default:
+				m_fEffectDelta= static_cast<float>(m_timing_source->second_delta);
+				m_fSecsIntoEffect= static_cast<float>(m_timing_source->curr_second);
+				break;
+		}
 	}
 
 	// update effect
@@ -889,7 +1001,7 @@ void Actor::UpdateInternal(float delta_time)
 	switch( m_Effect )
 	{
 		case spin:
-			m_current.rotation += m_fEffectDelta*m_vEffectMagnitude;
+			m_current.rotation += ( m_vEffectMagnitude * m_fEffectDelta );
 			wrap( m_current.rotation.x, 360 );
 			wrap( m_current.rotation.y, 360 );
 			wrap( m_current.rotation.z, 360 );
@@ -904,13 +1016,13 @@ void Actor::UpdateInternal(float delta_time)
 	this->UpdateTweening(delta_time);
 }
 
-RString Actor::GetLineage() const
+std::string Actor::GetLineage() const
 {
-	RString sPath;
-	
+	std::string sPath;
+
 	if( m_pParent )
 		sPath = m_pParent->GetLineage() + '/';
-	sPath += ssprintf( "<type %s> %s", typeid(*this).name(), m_sName.c_str() );
+	sPath += fmt::sprintf( "<type %s> %s", typeid(*this).name(), m_sName.c_str() );
 	return sPath;
 }
 
@@ -924,7 +1036,7 @@ void Actor::AddWrapperState()
 void Actor::RemoveWrapperState(size_t i)
 {
 	ASSERT(i < m_WrapperStates.size());
-	SAFE_DELETE(m_WrapperStates[i]);
+	Rage::safe_delete(m_WrapperStates[i]);
 	m_WrapperStates.erase(m_WrapperStates.begin()+i);
 }
 
@@ -934,11 +1046,22 @@ Actor* Actor::GetWrapperState(size_t i)
 	return m_WrapperStates[i];
 }
 
+void Actor::set_counter_rotation(Actor* counter)
+{
+	TweenState& dest= DestTweenState();
+	TweenState& counter_dest= counter->DestTweenState();
+	dest.rotation.x= counter_dest.rotation.x * -1.f;
+	dest.rotation.y= counter_dest.rotation.y * -1.f;
+	dest.rotation.z= counter_dest.rotation.z * -1.f;
+}
+
 void Actor::BeginTweening( float time, ITween *pTween )
 {
 	ASSERT( time >= 0 );
 
-	// If the number of tweens to ever gets this large, there's probably an infinitely 
+	time = std::max(time, 0.0f);
+
+	// If the number of tweens to ever gets this large, there's probably an infinitely
 	// recursing ActorCommand.
 	if( m_Tweens.size() > 50 )
 	{
@@ -980,8 +1103,10 @@ void Actor::BeginTweening( float time, TweenType tt )
 
 void Actor::StopTweening()
 {
-	for( unsigned i = 0; i < m_Tweens.size(); ++i )
-		delete m_Tweens[i];
+	for (auto *tween: m_Tweens)
+	{
+		delete tween;
+	}
 	m_Tweens.clear();
 }
 
@@ -994,14 +1119,14 @@ void Actor::FinishTweening()
 
 void Actor::HurryTweening( float factor )
 {
-	for( unsigned i = 0; i < m_Tweens.size(); ++i )
+	for (auto *tween: m_Tweens)
 	{
-		m_Tweens[i]->info.m_fTimeLeftInTween *= factor;
-		m_Tweens[i]->info.m_fTweenTime *= factor;
+		tween->info.m_fTimeLeftInTween *= factor;
+		tween->info.m_fTweenTime *= factor;
 	}
 }
 
-void Actor::ScaleTo( const RectF &rect, StretchType st )
+void Actor::ScaleTo( const Rage::RectF &rect, StretchType st )
 {
 	// width and height of rectangle
 	float rect_width = rect.GetWidth();
@@ -1031,15 +1156,37 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 	SetZoom( fNewZoom );
 }
 
-void Actor::SetEffectClockString( const RString &s )
+void Actor::SetEffectClockString( const std::string &s )
 {
-	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
-	else if(s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
-	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
-	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
-	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
-	else if(s.EqualsNoCase("musicnooffset"))this->SetEffectClock( CLOCK_BGM_TIME_NO_OFFSET );
-	else if(s.EqualsNoCase("beatnooffset"))	this->SetEffectClock( CLOCK_BGM_BEAT_NO_OFFSET );
+	Rage::ci_ascii_string effect{ s.c_str() };
+	if (s == "timer")
+	{
+		this->SetEffectClock(CLOCK_TIMER);
+	}
+	else if (s == "timerglobal")
+	{
+		this->SetEffectClock(CLOCK_TIMER_GLOBAL);
+	}
+	else if (s == "beat")
+	{
+		this->SetEffectClock(CLOCK_BGM_BEAT);
+	}
+	else if (s == "music")
+	{
+		this->SetEffectClock(CLOCK_BGM_TIME);
+	}
+	else if (s == "bgm")
+	{
+		this->SetEffectClock(CLOCK_BGM_BEAT); // compat, deprecated
+	}
+	else if (s == "musicnooffset")
+	{
+		this->SetEffectClock(CLOCK_BGM_TIME_NO_OFFSET);
+	}
+	else if (s == "beatnooffset")
+	{
+		this->SetEffectClock(CLOCK_BGM_BEAT_NO_OFFSET);
+	}
 	else
 	{
 		CabinetLight cl = StringToCabinetLight( s );
@@ -1054,7 +1201,7 @@ void Actor::SetEffectClockString( const RString &s )
 	}
 }
 
-void Actor::StretchTo( const RectF &r )
+void Actor::StretchTo( const Rage::RectF &r )
 {
 	// width and height of rectangle
 	float width = r.GetWidth();
@@ -1090,19 +1237,19 @@ void Actor::SetEffectPeriod(float time)
 	RecalcEffectPeriod();
 }
 
-bool Actor::SetEffectTiming(float ramp_toh, float at_half, float ramp_tof, float at_full, float at_zero, RString& err)
+bool Actor::SetEffectTiming(float ramp_toh, float at_half, float ramp_tof, float at_full, float at_zero, std::string& err)
 {
 	// No negative timings
 	if(ramp_toh < 0 || at_half < 0 || ramp_tof < 0 || at_full < 0 || at_zero < 0)
 	{
-		err= ssprintf("Effect timings (%f,%f,%f,%f,%f) must not be negative;",
+		err= fmt::sprintf("Effect timings (%f,%f,%f,%f,%f) must not be negative;",
 			ramp_toh, at_half, ramp_tof, at_zero, at_full);
 		return false;
 	}
 	// and at least one positive timing.
 	if(ramp_toh <= 0 && at_half <= 0 && ramp_tof <= 0 && at_full <= 0 && at_zero <= 0)
 	{
-		err= ssprintf("Effect timings (0,0,0,0,0) must not all be zero;");
+		err= fmt::sprintf("Effect timings (0,0,0,0,0) must not all be zero;");
 		return false;
 	}
 	m_effect_ramp_to_half= ramp_toh;
@@ -1114,7 +1261,7 @@ bool Actor::SetEffectTiming(float ramp_toh, float at_half, float ramp_tof, float
 	return true;
 }
 
-bool Actor::SetEffectHoldAtFull(float haf, RString& err)
+bool Actor::SetEffectHoldAtFull(float haf, std::string& err)
 {
 	return SetEffectTiming(m_effect_ramp_to_half, m_effect_hold_at_half,
 		m_effect_ramp_to_full, haf, m_effect_hold_at_zero, err);
@@ -1131,7 +1278,7 @@ void Actor::ResetEffectTimeIfDifferent(Effect new_effect)
 	}
 }
 
-void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1141,7 +1288,7 @@ void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, Rag
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1151,7 +1298,7 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1161,7 +1308,7 @@ void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, Rage
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1171,7 +1318,7 @@ void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageCo
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1181,7 +1328,7 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1199,7 +1346,7 @@ void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 	SetEffectPeriod( fEffectPeriodSeconds );
 }
 
-void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
+void Actor::SetEffectWag( float fPeriod, Rage::Vector3 vect )
 {
 	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1208,7 +1355,7 @@ void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 	m_vEffectMagnitude = vect;
 }
 
-void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
+void Actor::SetEffectBounce( float fPeriod, Rage::Vector3 vect )
 {
 	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1218,7 +1365,7 @@ void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 	m_fSecsIntoEffect = 0;
 }
 
-void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
+void Actor::SetEffectBob( float fPeriod, Rage::Vector3 vect )
 {
 	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1231,14 +1378,14 @@ void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
 	m_vEffectMagnitude = vect;
 }
 
-void Actor::SetEffectSpin( RageVector3 vect )
+void Actor::SetEffectSpin( Rage::Vector3 vect )
 {
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = spin;
 	m_vEffectMagnitude = vect;
 }
 
-void Actor::SetEffectVibrate( RageVector3 vect )
+void Actor::SetEffectVibrate( Rage::Vector3 vect )
 {
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = vibrate;
@@ -1251,8 +1398,8 @@ void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = pulse;
 	SetEffectPeriod( fPeriod );
-	m_vEffectMagnitude[0] = fMinZoom;
-	m_vEffectMagnitude[1] = fMaxZoom;
+	m_vEffectMagnitude.x = fMinZoom;
+	m_vEffectMagnitude.y = fMaxZoom;
 }
 
 
@@ -1294,13 +1441,13 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 	this->PushSelf( L );
 
 	// 2nd parameter
-	if( pParamTable == NULL )
+	if( pParamTable == nullptr )
 		lua_pushnil( L );
 	else
 		pParamTable->PushSelf( L );
 
 	// call function with 2 arguments and 0 results
-	RString Error= "Error playing command:";
+	std::string Error= "Error playing command:";
 	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
 
 	LUA->Release(L);
@@ -1308,14 +1455,11 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 
 float Actor::GetTweenTimeLeft() const
 {
-	float tot = 0;
+	auto addTime = [](float const total, TweenStateAndInfo *tween ) {
+		return total + tween->info.m_fTimeLeftInTween;
+	};
 
-	tot += m_fHibernateSecondsLeft;
-
-	for( unsigned i=0; i<m_Tweens.size(); ++i )
-		tot += m_Tweens[i]->info.m_fTimeLeftInTween;
-
-	return tot;
+	return std::accumulate(m_Tweens.begin(), m_Tweens.end(), m_fHibernateSecondsLeft, addTime);
 }
 
 /* This is a hack to change all tween states while leaving existing tweens alone.
@@ -1325,15 +1469,15 @@ float Actor::GetTweenTimeLeft() const
  * we can simply say eg. "for x in states(Actor) do x.SetDiffuseColor(c) end".
  * However, we'd then have to give every TweenState a userdata in Lua while it's
  * being manipulated, which would add overhead ... */
-void Actor::SetGlobalDiffuseColor( RageColor c )
+void Actor::SetGlobalDiffuseColor( Rage::Color c )
 {
 	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ ) // color, not alpha
 	{
-		for( unsigned ts = 0; ts < m_Tweens.size(); ++ts )
+		for (auto *tween: m_Tweens)
 		{
-			m_Tweens[ts]->state.diffuse[i].r = c.r; 
-			m_Tweens[ts]->state.diffuse[i].g = c.g; 
-			m_Tweens[ts]->state.diffuse[i].b = c.b; 
+			tween->state.diffuse[i].r = c.r;
+			tween->state.diffuse[i].g = c.g;
+			tween->state.diffuse[i].b = c.b;
 		}
 		m_current.diffuse[i].r = c.r;
 		m_current.diffuse[i].g = c.g;
@@ -1344,7 +1488,7 @@ void Actor::SetGlobalDiffuseColor( RageColor c )
 	}
 }
 
-void Actor::SetDiffuseColor( RageColor c )
+void Actor::SetDiffuseColor( Rage::Color c )
 {
 	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 	{
@@ -1357,17 +1501,19 @@ void Actor::SetDiffuseColor( RageColor c )
 
 void Actor::TweenState::Init()
 {
-	pos = RageVector3( 0, 0, 0 );
-	rotation = RageVector3( 0, 0, 0 );
-	quat = RageVector4( 0, 0, 0, 1 );
-	scale = RageVector3( 1, 1, 1 );
+	pos = Rage::Vector3( 0, 0, 0 );
+	rotation = Rage::Vector3( 0, 0, 0 );
+	quat = Rage::Vector4( 0, 0, 0, 1 );
+	scale = Rage::Vector3( 1, 1, 1 );
 	fSkewX = 0;
 	fSkewY = 0;
-	crop = RectF( 0,0,0,0 );
-	fade = RectF( 0,0,0,0 );
+	crop = Rage::RectF( 0,0,0,0 );
+	fade = Rage::RectF( 0,0,0,0 );
 	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
-		diffuse[i] = RageColor( 1, 1, 1, 1 );
-	glow = RageColor( 1, 1, 1, 0 );
+	{
+		diffuse[i] = Rage::Color( 1, 1, 1, 1 );
+	}
+	glow = Rage::Color( 1, 1, 1, 0 );
 	aux = 0;
 }
 
@@ -1382,9 +1528,12 @@ bool Actor::TweenState::operator==( const TweenState &other ) const
 	COMPARE( fSkewY );
 	COMPARE( crop );
 	COMPARE( fade );
-	for( unsigned i=0; i<ARRAYLEN(diffuse); i++ )
+	for( unsigned i=0; i < diffuse.size(); ++i )
+	{
 		COMPARE( diffuse[i] );
+	}
 	COMPARE( glow );
+	COMPARE(mask_color);
 	COMPARE( aux );
 #undef COMPARE
 	return true;
@@ -1392,28 +1541,30 @@ bool Actor::TweenState::operator==( const TweenState &other ) const
 
 void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )
 {
-	average_out.pos		= lerp( fPercentBetween, ts1.pos,         ts2.pos );
-	average_out.scale	= lerp( fPercentBetween, ts1.scale,       ts2.scale );
-	average_out.rotation	= lerp( fPercentBetween, ts1.rotation,    ts2.rotation );
+  average_out.pos		= Rage::lerp( fPercentBetween, ts1.pos,         ts2.pos );
+  average_out.scale	= Rage::lerp( fPercentBetween, ts1.scale,       ts2.scale );
+  average_out.rotation	= Rage::lerp( fPercentBetween, ts1.rotation,    ts2.rotation );
 	RageQuatSlerp( &average_out.quat, ts1.quat, ts2.quat, fPercentBetween );
-	average_out.fSkewX	= lerp( fPercentBetween, ts1.fSkewX,      ts2.fSkewX );
-	average_out.fSkewY	= lerp( fPercentBetween, ts1.fSkewY,      ts2.fSkewY );
+	average_out.fSkewX	= Rage::lerp( fPercentBetween, ts1.fSkewX,      ts2.fSkewX );
+	average_out.fSkewY	= Rage::lerp( fPercentBetween, ts1.fSkewY,      ts2.fSkewY );
 
-	average_out.crop.left	= lerp( fPercentBetween, ts1.crop.left,   ts2.crop.left	);
-	average_out.crop.top	= lerp( fPercentBetween, ts1.crop.top,    ts2.crop.top );
-	average_out.crop.right	= lerp( fPercentBetween, ts1.crop.right,  ts2.crop.right );
-	average_out.crop.bottom	= lerp( fPercentBetween, ts1.crop.bottom, ts2.crop.bottom );
+	average_out.crop.left	= Rage::lerp( fPercentBetween, ts1.crop.left,   ts2.crop.left	);
+	average_out.crop.top	= Rage::lerp( fPercentBetween, ts1.crop.top,    ts2.crop.top );
+	average_out.crop.right	= Rage::lerp( fPercentBetween, ts1.crop.right,  ts2.crop.right );
+	average_out.crop.bottom	= Rage::lerp( fPercentBetween, ts1.crop.bottom, ts2.crop.bottom );
 
-	average_out.fade.left	= lerp( fPercentBetween, ts1.fade.left,   ts2.fade.left );
-	average_out.fade.top	= lerp( fPercentBetween, ts1.fade.top,    ts2.fade.top );
-	average_out.fade.right	= lerp( fPercentBetween, ts1.fade.right,  ts2.fade.right );
-	average_out.fade.bottom	= lerp( fPercentBetween, ts1.fade.bottom, ts2.fade.bottom );
+	average_out.fade.left	= Rage::lerp( fPercentBetween, ts1.fade.left,   ts2.fade.left );
+	average_out.fade.top	= Rage::lerp( fPercentBetween, ts1.fade.top,    ts2.fade.top );
+	average_out.fade.right	= Rage::lerp( fPercentBetween, ts1.fade.right,  ts2.fade.right );
+	average_out.fade.bottom	= Rage::lerp( fPercentBetween, ts1.fade.bottom, ts2.fade.bottom );
 
 	for( int i=0; i<NUM_DIFFUSE_COLORS; ++i )
-		average_out.diffuse[i] = lerp( fPercentBetween, ts1.diffuse[i], ts2.diffuse[i] );
-
-	average_out.glow	= lerp( fPercentBetween, ts1.glow,        ts2.glow );
-	average_out.aux		= lerp( fPercentBetween, ts1.aux,         ts2.aux );
+	{
+		average_out.diffuse[i] = Rage::lerp( fPercentBetween, ts1.diffuse[i], ts2.diffuse[i] );
+	}
+	average_out.glow	= Rage::lerp( fPercentBetween, ts1.glow,        ts2.glow );
+	average_out.mask_color= Rage::lerp(fPercentBetween, ts1.mask_color, ts2.mask_color);
+	average_out.aux		= Rage::lerp( fPercentBetween, ts1.aux,         ts2.aux );
 }
 
 void Actor::Sleep( float time )
@@ -1421,17 +1572,17 @@ void Actor::Sleep( float time )
 	ASSERT( time >= 0 );
 
 	BeginTweening( time, TWEEN_LINEAR );
-	BeginTweening( 0, TWEEN_LINEAR ); 
+	BeginTweening( 0, TWEEN_LINEAR );
 }
 
-void Actor::QueueCommand( const RString& sCommandName )
+void Actor::QueueCommand( const std::string& sCommandName )
 {
 	BeginTweening( 0, TWEEN_LINEAR );
 	TweenInfo  &TI = m_Tweens.back()->info;
 	TI.m_sCommandName = sCommandName;
 }
 
-void Actor::QueueMessage( const RString& sMessageName )
+void Actor::QueueMessage( const std::string& sMessageName )
 {
 	// Hack: use "!" as a marker to broadcast a command, instead of playing a
 	// command, so we don't have to add yet another element to every tween
@@ -1441,36 +1592,38 @@ void Actor::QueueMessage( const RString& sMessageName )
 	TI.m_sCommandName = "!" + sMessageName;
 }
 
-void Actor::AddCommand( const RString &sCmdName, apActorCommands apac, bool warn )
+void Actor::AddCommand( const std::string &sCmdName, apActorCommands apac, bool warn )
 {
 	if( HasCommand(sCmdName) && warn)
 	{
-		RString sWarning = GetLineage()+"'s command '"+sCmdName+"' defined twice";
+		std::string sWarning = GetLineage()+"'s command '"+sCmdName+"' defined twice";
 		LuaHelpers::ReportScriptError(sWarning, "COMMAND_DEFINED_TWICE");
 	}
 
-	RString sMessage;
+	std::string sMessage;
+	std::string command_name;
 	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
 	{
 		SubscribeToMessage( sMessage );
-		m_mapNameToCommands[sMessage] = apac;	// sCmdName w/o "Message" at the end
+		command_name= sMessage;	// sCmdName w/o "Message" at the end
 	}
 	else
 	{
-		m_mapNameToCommands[sCmdName] = apac;
+		command_name= sCmdName;
 	}
+	m_mapNameToCommands[command_name] = apac;
 }
 
-bool Actor::HasCommand( const RString &sCmdName ) const
+bool Actor::HasCommand( const std::string &sCmdName ) const
 {
-	return GetCommand(sCmdName) != NULL;
+	return GetCommand(sCmdName) != nullptr;
 }
 
-const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
+const apActorCommands *Actor::GetCommand( const std::string &sCommandName ) const
 {
-	map<RString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
+	auto it = m_mapNameToCommands.find(sCommandName);
 	if( it == m_mapNameToCommands.end() )
-		return NULL;
+		return nullptr;
 	return &it->second;
 }
 
@@ -1482,7 +1635,7 @@ void Actor::HandleMessage( const Message &msg )
 void Actor::PlayCommandNoRecurse( const Message &msg )
 {
 	const apActorCommands *pCmd = GetCommand( msg.GetName() );
-	if(pCmd != NULL && (*pCmd)->IsSet() && !(*pCmd)->IsNil())
+	if(pCmd != nullptr && (*pCmd)->IsSet() && !(*pCmd)->IsNil())
 	{
 		RunCommands( *pCmd, &msg.GetParamTable() );
 	}
@@ -1514,7 +1667,7 @@ void Actor::SetParent( Actor *pParent )
 
 Actor::TweenInfo::TweenInfo()
 {
-	m_pTween = NULL;
+	m_pTween = nullptr;
 }
 
 Actor::TweenInfo::~TweenInfo()
@@ -1524,14 +1677,14 @@ Actor::TweenInfo::~TweenInfo()
 
 Actor::TweenInfo::TweenInfo( const TweenInfo &cpy )
 {
-	m_pTween = NULL;
+	m_pTween = nullptr;
 	*this = cpy;
 }
 
 Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 {
 	delete m_pTween;
-	m_pTween = (rhs.m_pTween? rhs.m_pTween->Copy():NULL);
+	m_pTween = (rhs.m_pTween? rhs.m_pTween->Copy():nullptr);
 	m_fTimeLeftInTween = rhs.m_fTimeLeftInTween;
 	m_fTweenTime = rhs.m_fTweenTime;
 	m_sCommandName = rhs.m_sCommandName;
@@ -1541,7 +1694,7 @@ Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Actor. */ 
+/** @brief Allow Lua to have access to the Actor. */
 class LunaActor : public Luna<Actor>
 {
 public:
@@ -1610,7 +1763,7 @@ public:
 			COMMON_RETURN_SELF;
 		}
 		ITween *pTween = ITween::CreateFromStack( L, 2 );
-		if(pTween != NULL)
+		if(pTween != nullptr)
 		{
 			p->BeginTweening(fTime, pTween);
 		}
@@ -1651,7 +1804,7 @@ public:
 	static int basezoomx( T* p, lua_State *L )		{ p->SetBaseZoomX(FArg(1)); COMMON_RETURN_SELF; }
 	static int basezoomy( T* p, lua_State *L )		{ p->SetBaseZoomY(FArg(1)); COMMON_RETURN_SELF; }
 	static int basezoomz( T* p, lua_State *L )		{ p->SetBaseZoomZ(FArg(1)); COMMON_RETURN_SELF; }
-	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
+	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( Rage::RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
 	static int cropleft( T* p, lua_State *L )		{ p->SetCropLeft(FArg(1)); COMMON_RETURN_SELF; }
 	static int croptop( T* p, lua_State *L )		{ p->SetCropTop(FArg(1)); COMMON_RETURN_SELF; }
 	static int cropright( T* p, lua_State *L )		{ p->SetCropRight(FArg(1)); COMMON_RETURN_SELF; }
@@ -1660,18 +1813,88 @@ public:
 	static int fadetop( T* p, lua_State *L )		{ p->SetFadeTop(FArg(1)); COMMON_RETURN_SELF; }
 	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); COMMON_RETURN_SELF; }
 	static int fadebottom( T* p, lua_State *L )		{ p->SetFadeBottom(FArg(1)); COMMON_RETURN_SELF; }
-	static int diffuse( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuse( c ); COMMON_RETURN_SELF; }
-	static int diffuseupperleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperLeft( c ); COMMON_RETURN_SELF; }
-	static int diffuseupperright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperRight( c ); COMMON_RETURN_SELF; }
-	static int diffuselowerleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerLeft( c ); COMMON_RETURN_SELF; }
-	static int diffuselowerright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerRight( c ); COMMON_RETURN_SELF; }
-	static int diffuseleftedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLeftEdge( c ); COMMON_RETURN_SELF; }
-	static int diffuserightedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseRightEdge( c ); COMMON_RETURN_SELF; }
-	static int diffusetopedge( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseTopEdge( c ); COMMON_RETURN_SELF; }
-	static int diffusebottomedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseBottomEdge( c ); COMMON_RETURN_SELF; }
-	static int diffusealpha( T* p, lua_State *L )		{ p->SetDiffuseAlpha(FArg(1)); COMMON_RETURN_SELF; }
-	static int diffusecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseColor( c ); COMMON_RETURN_SELF; }
-	static int glow( T* p, lua_State *L )			{ RageColor c; c.FromStackCompat( L, 1 ); p->SetGlow( c ); COMMON_RETURN_SELF; }
+	static int diffuse( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuse( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuseupperleft( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseUpperLeft( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuseupperright( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseUpperRight( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuselowerleft( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseLowerLeft( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuselowerright( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseLowerRight( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuseleftedge( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseLeftEdge( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuserightedge( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseRightEdge( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffusetopedge( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseTopEdge( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffusebottomedge( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseBottomEdge( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffusealpha( T* p, lua_State *L )
+	{
+		p->SetDiffuseAlpha(FArg(1));
+		COMMON_RETURN_SELF;
+	}
+	static int diffusecolor( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseColor( c );
+		COMMON_RETURN_SELF;
+	}
+	static int glow( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetGlow( c );
+		COMMON_RETURN_SELF;
+	}
 	static int aux( T* p, lua_State *L )			{ p->SetAux( FArg(1) ); COMMON_RETURN_SELF; }
 	static int getaux( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetAux() ); return 1; }
 	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); COMMON_RETURN_SELF; }
@@ -1692,27 +1915,45 @@ public:
 	static int shadowlength( T* p, lua_State *L )		{ p->SetShadowLength(FArg(1)); COMMON_RETURN_SELF; }
 	static int shadowlengthx( T* p, lua_State *L )		{ p->SetShadowLengthX(FArg(1)); COMMON_RETURN_SELF; }
 	static int shadowlengthy( T* p, lua_State *L )		{ p->SetShadowLengthY(FArg(1)); COMMON_RETURN_SELF; }
-	static int shadowcolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetShadowColor( c ); COMMON_RETURN_SELF; }
+	static int shadowcolor( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetShadowColor( c );
+		COMMON_RETURN_SELF;
+	}
 	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlign(Enum::Check<HorizAlign>(L, 1)); COMMON_RETURN_SELF; }
 	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); COMMON_RETURN_SELF; }
 	static int halign( T* p, lua_State *L )			{ p->SetHorizAlign(FArg(1)); COMMON_RETURN_SELF; }
 	static int valign( T* p, lua_State *L )			{ p->SetVertAlign(FArg(1)); COMMON_RETURN_SELF; }
-	static int diffuseblink( T* p, lua_State *L )		{ p->SetEffectDiffuseBlink(1.0f, RageColor(0.5f,0.5f,0.5f,0.5f), RageColor(1,1,1,1)); COMMON_RETURN_SELF; }
-	static int diffuseshift( T* p, lua_State *L )		{ p->SetEffectDiffuseShift(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); COMMON_RETURN_SELF; }
-	static int diffuseramp( T* p, lua_State *L )		{ p->SetEffectDiffuseRamp(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); COMMON_RETURN_SELF; }
-	static int glowblink( T* p, lua_State *L )		{ p->SetEffectGlowBlink(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
-	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
-	static int glowramp( T* p, lua_State *L )		{ p->SetEffectGlowRamp(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
+	static int diffuseblink( T* p, lua_State *L )		{ p->SetEffectDiffuseBlink(1.0f, Rage::Color(0.5f,0.5f,0.5f,0.5f), Rage::Color(1,1,1,1)); COMMON_RETURN_SELF; }
+	static int diffuseshift( T* p, lua_State *L )		{ p->SetEffectDiffuseShift(1.0f, Rage::Color(0,0,0,1), Rage::Color(1,1,1,1)); COMMON_RETURN_SELF; }
+	static int diffuseramp( T* p, lua_State *L )		{ p->SetEffectDiffuseRamp(1.0f, Rage::Color(0,0,0,1), Rage::Color(1,1,1,1)); COMMON_RETURN_SELF; }
+	static int glowblink( T* p, lua_State *L )		{ p->SetEffectGlowBlink(1.0f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f)); COMMON_RETURN_SELF; }
+	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(1.0f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f)); COMMON_RETURN_SELF; }
+	static int glowramp( T* p, lua_State *L )		{ p->SetEffectGlowRamp(1.0f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f)); COMMON_RETURN_SELF; }
 	static int rainbow( T* p, lua_State *L )			{ p->SetEffectRainbow(2.0f); COMMON_RETURN_SELF; }
-	static int wag( T* p, lua_State *L )			{ p->SetEffectWag(2.0f, RageVector3(0,0,20)); COMMON_RETURN_SELF; }
-	static int bounce( T* p, lua_State *L )			{ p->SetEffectBounce(2.0f, RageVector3(0,20,0)); COMMON_RETURN_SELF; }
-	static int bob( T* p, lua_State *L )			{ p->SetEffectBob(2.0f, RageVector3(0,20,0)); COMMON_RETURN_SELF; }
+	static int wag( T* p, lua_State *L )			{ p->SetEffectWag(2.0f, Rage::Vector3(0,0,20)); COMMON_RETURN_SELF; }
+	static int bounce( T* p, lua_State *L )			{ p->SetEffectBounce(2.0f, Rage::Vector3(0,20,0)); COMMON_RETURN_SELF; }
+	static int bob( T* p, lua_State *L )			{ p->SetEffectBob(2.0f, Rage::Vector3(0,20,0)); COMMON_RETURN_SELF; }
 	static int pulse( T* p, lua_State *L )			{ p->SetEffectPulse(2.0f, 0.5f, 1.0f); COMMON_RETURN_SELF; }
-	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(RageVector3(0,0,180)); COMMON_RETURN_SELF; }
-	static int vibrate( T* p, lua_State *L )			{ p->SetEffectVibrate(RageVector3(10,10,10)); COMMON_RETURN_SELF; }
+	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(Rage::Vector3(0,0,180)); COMMON_RETURN_SELF; }
+	static int vibrate( T* p, lua_State *L )			{ p->SetEffectVibrate(Rage::Vector3(10,10,10)); COMMON_RETURN_SELF; }
 	static int stopeffect( T* p, lua_State *L )		{ p->StopEffect(); COMMON_RETURN_SELF; }
-	static int effectcolor1( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor1( c ); COMMON_RETURN_SELF; }
-	static int effectcolor2( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor2( c ); COMMON_RETURN_SELF; }
+	static int effectcolor1( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetEffectColor1( c );
+		COMMON_RETURN_SELF;
+	}
+	static int effectcolor2( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetEffectColor2( c );
+		COMMON_RETURN_SELF;
+	}
 	static int effectperiod( T* p, lua_State *L )
 	{
 		float fPeriod = FArg(1);
@@ -1736,7 +1977,7 @@ public:
 		{
 			haf= FArg(5);
 		}
-		RString err;
+		std::string err;
 		if(!p->SetEffectTiming(rth, hah, rtf, haf, haz, err))
 		{
 			luaL_error(L, err.c_str());
@@ -1745,7 +1986,7 @@ public:
 	}
 	static int effect_hold_at_full(T* p, lua_State*L)
 	{
-		RString err;
+		std::string err;
 		if(!p->SetEffectHoldAtFull(FArg(1), err))
 		{
 			luaL_error(L, err.c_str());
@@ -1754,11 +1995,11 @@ public:
 	}
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); COMMON_RETURN_SELF; }
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); COMMON_RETURN_SELF; }
-	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); COMMON_RETURN_SELF; }
-	static int geteffectmagnitude( T* p, lua_State *L )	{ RageVector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v[0]); lua_pushnumber(L, v[1]); lua_pushnumber(L, v[2]); return 3; }
+	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( Rage::Vector3(FArg(1),FArg(2),FArg(3)) ); COMMON_RETURN_SELF; }
+	static int geteffectmagnitude( T* p, lua_State *L )	{ Rage::Vector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v.x); lua_pushnumber(L, v.y); lua_pushnumber(L, v.z); return 3; }
 	GETTER_SETTER_BOOL_METHOD(tween_uses_effect_delta);
-	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
-	static int scaletofit( T* p, lua_State *L )		{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
+	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( Rage::RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
+	static int scaletofit( T* p, lua_State *L )		{ p->ScaleToFitInside( Rage::RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
 	static int animate( T* p, lua_State *L )		{ p->EnableAnimation(BIArg(1)); COMMON_RETURN_SELF; }
 	static int play( T* p, lua_State *L )			{ p->EnableAnimation(true); COMMON_RETURN_SELF; }
 	static int pause( T* p, lua_State *L )			{ p->EnableAnimation(false); COMMON_RETURN_SELF; }
@@ -1805,7 +2046,7 @@ public:
 	static int GetCommand( T* p, lua_State *L )
 	{
 		const apActorCommands *pCommand = p->GetCommand(SArg(1));
-		if( pCommand == NULL )
+		if( pCommand == nullptr )
 			lua_pushnil( L );
 		else
 			(*pCommand)->PushSelf(L);
@@ -1859,11 +2100,24 @@ public:
 	static int GetHAlign( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetHorizAlign() ); return 1; }
 	static int GetVAlign( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetVertAlign() ); return 1; }
 
-	static int GetName( T* p, lua_State *L )		{ lua_pushstring( L, p->GetName() ); return 1; }
+	static int set_mask_color(T* p, lua_State* L)
+	{
+		Rage::Color c;
+		FromStack(c, L, 1);
+		p->SetMaskColor(c);
+		COMMON_RETURN_SELF;
+	}
+	DEFINE_METHOD(get_mask_color, GetMaskColor());
+
+	static int GetName( T* p, lua_State *L )
+	{
+		lua_pushstring( L, p->GetName().c_str() );
+		return 1;
+	}
 	static int GetParent( T* p, lua_State *L )
 	{
 		Actor *pParent = p->GetParent();
-		if( pParent == NULL )
+		if( pParent == nullptr )
 			lua_pushnil( L );
 		else
 			pParent->PushSelf(L);
@@ -1872,7 +2126,7 @@ public:
 	static int GetFakeParent(T* p, lua_State *L)
 	{
 		Actor* fake= p->GetFakeParent();
-		if(fake == NULL)
+		if(fake == nullptr)
 		{
 			lua_pushnil(L);
 		}
@@ -1886,7 +2140,7 @@ public:
 	{
 		if(lua_isnoneornil(L, 1))
 		{
-			p->SetFakeParent(NULL);
+			p->SetFakeParent(nullptr);
 		}
 		else
 		{
@@ -2100,6 +2354,8 @@ public:
 		ADD_METHOD( GetHAlign );
 		ADD_METHOD( GetVAlign );
 
+		ADD_GET_SET_METHODS(mask_color);
+
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetParent );
 		ADD_METHOD( GetFakeParent );
@@ -2120,7 +2376,7 @@ LUA_REGISTER_INSTANCED_BASE_CLASS( Actor )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -2130,7 +2386,7 @@ LUA_REGISTER_INSTANCED_BASE_CLASS( Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

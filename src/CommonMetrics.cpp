@@ -1,28 +1,28 @@
 #include "global.h"
 #include "CommonMetrics.h"
 #include "RageUtil.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameState.h"
 #include "ProductInfo.h"
 #include "LuaManager.h"
 
-ThemeMetric<RString>		CommonMetrics::OPERATOR_MENU_SCREEN		("Common","OperatorMenuScreen");
-ThemeMetric<RString>		CommonMetrics::FIRST_ATTRACT_SCREEN		("Common","FirstAttractScreen");
-ThemeMetric<RString>		CommonMetrics::DEFAULT_MODIFIERS		("Common","DefaultModifiers" );
+using std::vector;
+
+ThemeMetric<std::string>		CommonMetrics::OPERATOR_MENU_SCREEN		("Common","OperatorMenuScreen");
+ThemeMetric<std::string>		CommonMetrics::FIRST_ATTRACT_SCREEN		("Common","FirstAttractScreen");
+ThemeMetric<std::string>		CommonMetrics::DEFAULT_MODIFIERS		("Common","DefaultModifiers" );
 LocalizedString				CommonMetrics::WINDOW_TITLE				("Common","WindowTitle");
 ThemeMetric<int>			CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS("Common","MaxCourseEntriesBeforeShowVarious");
 ThemeMetric<float>			CommonMetrics::TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
-ThemeMetric<RString>		CommonMetrics::DEFAULT_NOTESKIN_NAME	("Common","DefaultNoteSkinName");
 ThemeMetricDifficultiesToShow	CommonMetrics::DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");
 ThemeMetricCourseDifficultiesToShow	CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
 ThemeMetricStepsTypesToShow	CommonMetrics::STEPS_TYPES_TO_SHOW		("Common","StepsTypesToHide");
 ThemeMetric<bool>			CommonMetrics::AUTO_SET_STYLE			("Common","AutoSetStyle");
 ThemeMetric<int>			CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES	("Common","PercentScoreDecimalPlaces");
 
-ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName ) : 
-	ThemeMetric<RString>(sGroup,sName)
+ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const std::string& sGroup, const std::string& sName ) :
+	ThemeMetric<std::string>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
@@ -30,26 +30,25 @@ ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const RString& sGr
 }
 void ThemeMetricDifficultiesToShow::Read()
 {
-	ASSERT( GetName().Right(6) == "ToShow" );
+	ASSERT(Rage::ends_with(GetName(), "ToShow"));
 
-	ThemeMetric<RString>::Read();
+	ThemeMetric<std::string>::Read();
 
 	m_v.clear();
 
-	vector<RString> v;
-	split( ThemeMetric<RString>::GetValue(), ",", v );
+	auto v = Rage::split( ThemeMetric<std::string>::GetValue(), "," );
 	if(v.empty())
 	{
 		LuaHelpers::ReportScriptError("DifficultiesToShow must have at least one entry.");
 		return;
 	}
 
-	FOREACH_CONST( RString, v, i )
+	for (auto const &i: v)
 	{
-		Difficulty d = StringToDifficulty( *i );
+		Difficulty d = StringToDifficulty( i );
 		if( d == Difficulty_Invalid )
 		{
-			LuaHelpers::ReportScriptErrorFmt("Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i->c_str());
+			LuaHelpers::ReportScriptErrorFmt("Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i.c_str());
 		}
 		else
 		{
@@ -60,8 +59,8 @@ void ThemeMetricDifficultiesToShow::Read()
 const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() const { return m_v; }
 
 
-ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName ) : 
-	ThemeMetric<RString>(sGroup,sName)
+ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const std::string& sGroup, const std::string& sName ) :
+	ThemeMetric<std::string>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
@@ -69,26 +68,25 @@ ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const 
 }
 void ThemeMetricCourseDifficultiesToShow::Read()
 {
-	ASSERT( GetName().Right(6) == "ToShow" );
+	ASSERT(Rage::ends_with(GetName(), "ToShow"));
 
-	ThemeMetric<RString>::Read();
+	ThemeMetric<std::string>::Read();
 
 	m_v.clear();
 
-	vector<RString> v;
-	split( ThemeMetric<RString>::GetValue(), ",", v );
+	auto v = Rage::split( ThemeMetric<std::string>::GetValue(), "," );
 	if(v.empty())
 	{
 		LuaHelpers::ReportScriptError("CourseDifficultiesToShow must have at least one entry.");
 		return;
 	}
 
-	FOREACH_CONST( RString, v, i )
+	for (auto const &i: v)
 	{
-		CourseDifficulty d = StringToDifficulty( *i );
+		CourseDifficulty d = StringToDifficulty( i );
 		if( d == Difficulty_Invalid )
 		{
-			LuaHelpers::ReportScriptErrorFmt("Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i->c_str());
+			LuaHelpers::ReportScriptErrorFmt("Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i.c_str());
 		}
 		else
 		{
@@ -98,19 +96,18 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 }
 const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() const { return m_v; }
 
-static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRemove )
+static void RemoveStepsTypes( vector<StepsType>& inout, std::string sStepsTypesToRemove )
 {
-	vector<RString> v;
-	split( sStepsTypesToRemove, ",", v );
+	auto v = Rage::split(sStepsTypesToRemove, ",");
 	if( v.size() == 0 ) return; // Nothing to do!
 
 	// subtract StepsTypes
-	FOREACH_CONST( RString, v, i )
+	for (auto const &i: v)
 	{
-		StepsType st = GAMEMAN->StringToStepsType(*i);
+		StepsType st = GAMEMAN->StringToStepsType(i);
 		if( st == StepsType_Invalid )
 		{
-			LuaHelpers::ReportScriptErrorFmt( "Invalid StepsType value '%s' in '%s'", i->c_str(), sStepsTypesToRemove.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "Invalid StepsType value '%s' in '%s'", i.c_str(), sStepsTypesToRemove.c_str() );
 			continue;
 		}
 
@@ -119,8 +116,8 @@ static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRem
 			inout.erase( iter );
 	}
 }
-ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName ) : 
-	ThemeMetric<RString>(sGroup,sName)
+ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const std::string& sGroup, const std::string& sName ) :
+	ThemeMetric<std::string>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
@@ -128,19 +125,19 @@ ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const RString& sGroup,
 }
 void ThemeMetricStepsTypesToShow::Read()
 {
-	ASSERT( GetName().Right(6) == "ToHide" );
+	ASSERT(Rage::ends_with(GetName(), "ToHide"));
 
-	ThemeMetric<RString>::Read();
+	ThemeMetric<std::string>::Read();
 
 	m_v.clear();
 	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_v );
 
-	RemoveStepsTypes( m_v, ThemeMetric<RString>::GetValue() );
+	RemoveStepsTypes( m_v, ThemeMetric<std::string>::GetValue() );
 }
 const vector<StepsType>& ThemeMetricStepsTypesToShow::GetValue() const { return m_v; }
 
 
-RString CommonMetrics::LocalizeOptionItem( const RString &s, bool bOptional )
+std::string CommonMetrics::LocalizeOptionItem( const std::string &s, bool bOptional )
 {
 	if( bOptional && !THEME->HasString("OptionNames",s) )
 		return s;
@@ -152,7 +149,7 @@ LuaFunction( LocalizeOptionItem, CommonMetrics::LocalizeOptionItem(SArg(1),true)
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -162,7 +159,7 @@ LuaFunction( LocalizeOptionItem, CommonMetrics::LocalizeOptionItem(SArg(1),true)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

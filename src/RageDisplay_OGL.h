@@ -4,9 +4,12 @@
 #define RAGE_DISPLAY_OGL_H
 
 #include "RageDisplay.h"
+#include "RageVector3.hpp"
+#include "RageTextureRenderTarget.h"
+#include "Sprite.h"
 
 /* Making an OpenGL call doesn't also flush the error state; if we happen
- * to have an error from a previous call, then the assert below will fail. 
+ * to have an error from a previous call, then the assert below will fail.
  * Flush it. */
 #define FlushGLErrors() do { } while( glGetError() != GL_NO_ERROR )
 #define AssertNoGLError() \
@@ -28,35 +31,30 @@ class RageDisplay_Legacy: public RageDisplay
 public:
 	RageDisplay_Legacy();
 	virtual ~RageDisplay_Legacy();
-	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
+	virtual std::string Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
 
-	virtual RString GetApiDescription() const { return "OpenGL"; }
-	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
+	virtual std::string GetApiDescription() const { return "OpenGL"; }
+	virtual void GetDisplaySpecs(DisplaySpecs &out) const;
 	void ResolutionChanged();
 	const RagePixelFormatDesc *GetPixelFormatDesc(RagePixelFormat pf) const;
 
-	bool SupportsThreadedRendering();
-	void BeginConcurrentRenderingMainThread();
-	void EndConcurrentRenderingMainThread();
-	void BeginConcurrentRendering();
-	void EndConcurrentRendering();
-
-	bool BeginFrame();	
+	bool BeginFrame();
 	void EndFrame();
-	VideoModeParams GetActualVideoModeParams() const;
+	ActualVideoModeParams GetActualVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsPerVertexMatrixScale();
-	unsigned CreateTexture( 
-		RagePixelFormat pixfmt, 
+	unsigned CreateTexture(
+		RagePixelFormat pixfmt,
 		RageSurface* img,
 		bool bGenerateMipMaps );
-	void UpdateTexture( 
-		unsigned iTexHandle, 
+	void UpdateTexture(
+		unsigned iTexHandle,
 		RageSurface* img,
-		int xoffset, int yoffset, int width, int height 
+		int xoffset, int yoffset, int width, int height
 		);
 	void DeleteTexture( unsigned iTexHandle );
+	bool UseOffscreenRenderTarget();
 	RageSurface *GetTexture( unsigned iTexture );
 	RageTextureLock *CreateTextureLock();
 
@@ -68,8 +66,10 @@ public:
 	int GetMaxTextureSize() const;
 	void SetTextureFiltering( TextureUnit tu, bool b );
 	void SetEffectMode( EffectMode effect );
+	void set_color_key_shader(Rage::Color const& color, unsigned int tex_handle);
 	bool IsEffectModeSupported( EffectMode effect );
 	bool SupportsRenderToTexture() const;
+	bool SupportsFullscreenBorderlessWindow() const;
 	unsigned CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
 	unsigned GetRenderTarget();
 	void SetRenderTarget( unsigned iHandle, bool bPreserveTexture );
@@ -81,21 +81,21 @@ public:
 	void ClearZBuffer();
 	void SetCullMode( CullMode mode );
 	void SetAlphaTest( bool b );
-	void SetMaterial( 
-		const RageColor &emissive,
-		const RageColor &ambient,
-		const RageColor &diffuse,
-		const RageColor &specular,
+	void SetMaterial(
+		const Rage::Color &emissive,
+		const Rage::Color &ambient,
+		const Rage::Color &diffuse,
+		const Rage::Color &specular,
 		float shininess
 		);
 	void SetLighting( bool b );
 	void SetLightOff( int index );
-	void SetLightDirectional( 
-		int index, 
-		const RageColor &ambient, 
-		const RageColor &diffuse, 
-		const RageColor &specular, 
-		const RageVector3 &dir );
+	void SetLightDirectional(
+		int index,
+		const Rage::Color &ambient,
+		const Rage::Color &diffuse,
+		const Rage::Color &specular,
+		const Rage::Vector3 &dir );
 
 	void SetSphereEnvironmentMapping( TextureUnit tu, bool b );
 	void SetCelShaded( int stage );
@@ -107,24 +107,27 @@ public:
 	virtual void SetPolygonMode( PolygonMode pm );
 	virtual void SetLineWidth( float fWidth );
 
-	RString GetTextureDiagnostics( unsigned id ) const;
+	std::string GetTextureDiagnostics( unsigned id ) const;
 
 protected:
-	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts );
-	void DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts );
-	void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts );
-	void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts );
-	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawQuadsInternal( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawFanInternal( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawStripInternal( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawTrianglesInternal( const Rage::SpriteVertex v[], int iNumVerts );
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
-	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
-	void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawLineStripInternal( const Rage::SpriteVertex v[], int iNumVerts, float LineWidth );
+	void DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts );
 
-	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
+	std::string TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
 	RagePixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture );
 	bool SupportsSurfaceFormat( RagePixelFormat pixfmt );
-	
+
 	void SendCurrentMatrices();
+
+private:
+	RageTextureRenderTarget *offscreenRenderTarget = nullptr;
 };
 
 #endif

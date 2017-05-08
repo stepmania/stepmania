@@ -31,7 +31,7 @@ class LightsDriver_SextetStreamToFile : public LightsDriver_SextetStream
 {
 public:
 	LightsDriver_SextetStreamToFile();
-	LightsDriver_SextetStreamToFile(const RString& filename);
+	LightsDriver_SextetStreamToFile(const std::string& filename);
 
 	// The file object passed here should already be open, and will be
 	// flushed, closed, and deleted in the destructor.

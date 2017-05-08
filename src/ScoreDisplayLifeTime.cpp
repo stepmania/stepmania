@@ -18,7 +18,7 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 {
 	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 
-	const RString sType = "ScoreDisplayLifeTime";
+	const std::string sType = "ScoreDisplayLifeTime";
 
 	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
 	m_sprFrame->SetName( "Frame" );
@@ -37,13 +37,13 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 
 	FOREACH_ENUM( TapNoteScore, tns )
 	{
-		const RString &sCommand = TapNoteScoreToString(tns);
+		const std::string &sCommand = TapNoteScoreToString(tns);
 		if( !m_textDeltaSeconds.HasCommand( sCommand ) )
 			ActorUtil::LoadCommand( m_textDeltaSeconds, sType, sCommand );
 	}
 	FOREACH_ENUM( HoldNoteScore, hns )
 	{
-		const RString &sCommand = HoldNoteScoreToString(hns);
+		const std::string &sCommand = HoldNoteScoreToString(hns);
 		if( !m_textDeltaSeconds.HasCommand( sCommand ) )
 			ActorUtil::LoadCommand( m_textDeltaSeconds, sType, sCommand );
 	}
@@ -55,7 +55,7 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 
 	float fSecs = m_pPlayerStageStats->m_fLifeRemainingSeconds;
 
-	RString s = SecondsToMSSMsMs(fSecs);
+	std::string s = SecondsToMSSMsMs(fSecs);
 	m_textTimeRemaining.SetText( s );
 }
 
@@ -63,11 +63,11 @@ void ScoreDisplayLifeTime::OnLoadSong()
 {
 }
 
-void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
+void ScoreDisplayLifeTime::OnJudgment(TapNoteScore)
 {
 }
 
-void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
+void ScoreDisplayLifeTime::OnJudgment(HoldNoteScore, TapNoteScore)
 {
 }
 

@@ -23,6 +23,7 @@ local t = Def.ActorFrame {
 	};
 	
 	InitCommand = function(self)
+		self:draworder(notefield_draw_order.over_field)
 		c = self:GetChildren();
 		c.Number:visible(false);
 		c.Label:visible(false);

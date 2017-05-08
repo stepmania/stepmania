@@ -6,6 +6,8 @@
 #include "PlayerState.h"
 #include "Course.h"
 #include "ActorUtil.h"
+#include "RageUtil.h"
+#include "RageFmtWrap.h"
 
 LifeMeterBattery::LifeMeterBattery()
 {
@@ -23,7 +25,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	m_iLivesLeft = m_pPlayerState->m_PlayerOptions.GetStage().m_BatteryLives;
 	m_iTrailingLivesLeft = m_iLivesLeft;
 
-	const RString sType = "LifeMeterBattery";
+	const std::string sType = "LifeMeterBattery";
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
 	MIN_SCORE_TO_KEEP_LIFE.Load(sType, "MinScoreToKeepLife");
@@ -44,7 +46,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	this->AddChild( m_sprFrame );
 
 	m_sprBattery.Load( THEME->GetPathG(sType,"lives") );
-	m_sprBattery->SetName( ssprintf("BatteryP%i",int(pn+1)) );
+	m_sprBattery->SetName( fmt::sprintf("BatteryP%i",int(pn+1)) );
 	if( bPlayerEnabled )
 	{
 		ActorUtil::LoadAllCommandsAndSetXY( m_sprBattery, sType );
@@ -52,7 +54,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	}
 
 	m_textNumLives.LoadFromFont( THEME->GetPathF(sType, "lives") );
-	m_textNumLives.SetName( ssprintf("NumLivesP%i",int(pn+1)) );
+	m_textNumLives.SetName( fmt::sprintf("NumLivesP%i",int(pn+1)) );
 	if( bPlayerEnabled )
 	{
 		ActorUtil::LoadAllCommandsAndSetXY( m_textNumLives, sType );
@@ -81,6 +83,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 
 void LifeMeterBattery::OnSongEnded()
 {
+	using std::min;
 	if( m_pPlayerStageStats->m_bFailed || m_iLivesLeft == 0 )
 		return;
 
@@ -98,9 +101,9 @@ void LifeMeterBattery::OnSongEnded()
 			COURSE_SONG_REWARD_LIVES.PushSelf(L);
 			PushSelf(L);
 			LuaHelpers::Push(L, pn);
-			RString error= "Error running CourseSongRewardLives callback: ";
+			std::string error= "Error running CourseSongRewardLives callback: ";
 			LuaHelpers::RunScriptOnStack(L, error, 2, 1, true);
-			m_iLivesLeft += luaL_optnumber(L, -1, 0);
+			m_iLivesLeft += static_cast<int>(luaL_optnumber(L, -1, 0));
 			lua_settop(L, 0);
 			LUA->Release(L);
 		}
@@ -246,7 +249,7 @@ int LifeMeterBattery::GetRemainingLives() const
 }
 void LifeMeterBattery::Refresh()
 {
-	m_textNumLives.SetText( ssprintf(LIVES_FORMAT.GetValue(), m_iLivesLeft) );
+    m_textNumLives.SetText(rage_fmt_wrapper(LIVES_FORMAT, m_iLivesLeft));
 	if( m_iLivesLeft < 0 )
 	{
 		// hide text to avoid showing -1
@@ -268,7 +271,7 @@ void LifeMeterBattery::Update( float fDeltaTime )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the LifeMeterBattery. */ 
+/** @brief Allow Lua to have access to the LifeMeterBattery. */
 class LunaLifeMeterBattery: public Luna<LifeMeterBattery>
 {
 public:
@@ -289,7 +292,7 @@ LUA_REGISTER_DERIVED_CLASS( LifeMeterBattery, LifeMeter )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -299,7 +302,7 @@ LUA_REGISTER_DERIVED_CLASS( LifeMeterBattery, LifeMeter )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

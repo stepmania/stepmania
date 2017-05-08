@@ -6,6 +6,8 @@
 #include "StatsManager.h"
 #include "Song.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenGameplayLesson );
 ScreenGameplayLesson::ScreenGameplayLesson()
 {
@@ -15,8 +17,8 @@ ScreenGameplayLesson::ScreenGameplayLesson()
 
 void ScreenGameplayLesson::Init()
 {
-	ASSERT( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()) != NULL );
-	ASSERT( GAMESTATE->m_pCurSong != NULL );
+	ASSERT( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()) != nullptr );
+	ASSERT( GAMESTATE->get_curr_song() != nullptr );
 
 	/* Now that we've set up, init the base class. */
 	ScreenGameplayNormal::Init();
@@ -28,12 +30,12 @@ void ScreenGameplayLesson::Init()
 	m_DancingState = STATE_DANCING;
 
 	// Load pages
-	Song *pSong = GAMESTATE->m_pCurSong;
-	RString sDir = pSong->GetSongDir();
-	vector<RString> vs;
+	Song *pSong = GAMESTATE->get_curr_song();
+	std::string sDir = pSong->GetSongDir();
+	vector<std::string> vs;
 	GetDirListing( sDir+"Page*", vs, true, true );
 	m_vPages.resize( vs.size() );
-	FOREACH( RString, vs, s )
+	for (auto s = vs.begin(); s != vs.end(); ++s)
 	{
 		int i = s - vs.begin();
 		AutoActor &aa = m_vPages[i];
@@ -46,7 +48,7 @@ void ScreenGameplayLesson::Init()
 		this->AddChild( aa );
 	}
 
-	FOREACH( AutoActor, m_vPages, aa )
+	for (auto aa = m_vPages.begin(); aa != m_vPages.end(); ++aa)
 	{
 		bool bIsFirst = aa == m_vPages.begin();
 		(*aa)->PlayCommand( bIsFirst ? "Show" : "Hide" );
@@ -126,7 +128,7 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 	ScreenGameplay::HandleScreenMessage( SM );
 }
 
-bool ScreenGameplayLesson::MenuStart( const InputEventPlus &input )
+bool ScreenGameplayLesson::MenuStart(const InputEventPlus&)
 {
 	// XXX: Allow repeats?
 	if( m_iCurrentPageIndex == -1 )
@@ -135,7 +137,7 @@ bool ScreenGameplayLesson::MenuStart( const InputEventPlus &input )
 	return true;
 }
 
-bool ScreenGameplayLesson::MenuBack( const InputEventPlus &input )
+bool ScreenGameplayLesson::MenuBack(const InputEventPlus&)
 {
 	// XXX: Allow repeats?
 	if( m_iCurrentPageIndex == 0 )
@@ -196,7 +198,7 @@ void ScreenGameplayLesson::ResetAndRestartCurrentSong()
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -206,7 +208,7 @@ void ScreenGameplayLesson::ResetAndRestartCurrentSong()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

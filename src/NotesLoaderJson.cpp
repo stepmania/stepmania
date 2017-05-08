@@ -10,9 +10,11 @@
 #include "Steps.h"
 #include "GameManager.h"
 
-void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+using std::vector;
+
+void NotesLoaderJson::GetApplicableFiles( std::string const &sPath, vector<std::string> &out )
 {
-	GetDirListing( sPath + RString("*.json"), out );
+	GetDirListing( sPath + "*.json", out );
 }
 
 static void Deserialize( TimingSegment *seg, const Json::Value &root )
@@ -21,13 +23,13 @@ static void Deserialize( TimingSegment *seg, const Json::Value &root )
 	{
 		case SEGMENT_BPM:
 		{
-			float fBPM = root["BPM"].asDouble();
+			float fBPM = static_cast<float>(root["BPM"].asDouble());
 			static_cast<BPMSegment *>(seg)->SetBPM(fBPM);
 			break;
 		}
 		case SEGMENT_STOP:
 		{
-			float fStop = root["Seconds"].asDouble();
+			float fStop = static_cast<float>(root["Seconds"].asDouble());
 			static_cast<StopSegment *>(seg)->SetPause(fStop);
 			break;
 		}
@@ -52,15 +54,15 @@ static void Deserialize(TimingData &td, const Json::Value &root)
 	JsonUtil::DeserializeVectorPointers( vBPMs, Deserialize, root["BpmSegments"] );
 	JsonUtil::DeserializeVectorPointers( vStops, Deserialize, root["StopSegments"] );
 
-	for( unsigned i = 0; i < vBPMs.size(); ++i )
+	for (auto *bpm: vBPMs)
 	{
-		td.AddSegment( *vBPMs[i] );
-		delete vBPMs[i];
+		td.AddSegment( *bpm );
+		delete bpm;
 	}
-	for( unsigned i = 0; i < vStops.size(); ++i )
+	for (auto *stop: vStops)
 	{
-		td.AddSegment( *vStops[i] );
-		delete vStops[i];
+		td.AddSegment( *stop );
+		delete stop;
 	}
 }
 
@@ -111,10 +113,9 @@ static void Deserialize( StepsType st, NoteData &nd, const Json::Value &root )
 {
 	int iTracks = nd.GetNumTracks();
 	nd.SetNumTracks( iTracks );
-	for( unsigned i=0; i<root.size(); i++ )
+	for (auto root2: root)
 	{
-		Json::Value root2 = root[i];
-		float fBeat = (float)root2[(unsigned)0].asDouble();
+		float fBeat = static_cast<float>(root2[0u].asDouble());
 		int iRow = BeatToNoteRow(fBeat);
 		int iTrack = root2[1].asInt();
 		const Json::Value &root3 = root2[2];
@@ -154,9 +155,9 @@ static void Deserialize( Steps &o, const Json::Value &root )
 	o.SetCachedRadarValues( rv );
 }
 
-static void Deserialize( Song &out, const Json::Value &root )
+static void Deserialize(Song &out, const Json::Value &root)
 {
-	out.SetSongDir( root["SongDir"].asString() );
+	out.SetSongDir(root["SongDir"].asString());
 	out.m_sGroupName = root["GroupName"].asString();
 	out.m_sMainTitle = root["Title"].asString();
 	out.m_sSubTitle = root["SubTitle"].asString();
@@ -173,18 +174,21 @@ static void Deserialize( Song &out, const Json::Value &root )
 	out.m_SongTiming.m_fBeat0OffsetInSeconds = (float)root["Offset"].asDouble();
 	out.m_fMusicSampleStartSeconds = (float)root["SampleStart"].asDouble();
 	out.m_fMusicSampleLengthSeconds = (float)root["SampleLength"].asDouble();
-	RString sSelectable = root["Selectable"].asString();
-	if( sSelectable.EqualsNoCase("YES") )
+	Rage::ci_ascii_string selectable { root["Selectable"].asString().c_str() };
+	if (selectable == "YES")
+	{
 		out.m_SelectionDisplay = out.SHOW_ALWAYS;
-	else if( sSelectable.EqualsNoCase("NO") )
+	}
+	else if (selectable == "NO")
+	{
 		out.m_SelectionDisplay = out.SHOW_NEVER;
-
+	}
 	out.m_sSongFileName = root["SongFileName"].asString();
 	out.m_bHasMusic = root["HasMusic"].asBool();
 	out.m_bHasBanner = root["HasBanner"].asBool();
 	out.m_fMusicLengthSeconds = (float)root["MusicLengthSeconds"].asDouble();
 
-	RString sDisplayBPMType = root["DisplayBpmType"].asString();
+	std::string sDisplayBPMType = root["DisplayBpmType"].asString();
 	if( sDisplayBPMType == "*" )
 		out.m_DisplayBPMType = DISPLAY_BPM_RANDOM;
 	else
@@ -219,12 +223,14 @@ static void Deserialize( Song &out, const Json::Value &root )
 	{
 		vector<Steps*> vpSteps;
 		JsonUtil::DeserializeVectorPointersParam<Steps,Song*>( vpSteps, Deserialize, root["Charts"], &out );
-		FOREACH( Steps*, vpSteps, iter )
-			out.AddSteps( *iter );
+		for (auto *iter: vpSteps)
+		{
+			out.AddSteps( iter );
+		}
 	}
 }
 
-bool NotesLoaderJson::LoadFromJsonFile( const RString &sPath, Song &out )
+bool NotesLoaderJson::LoadFromJsonFile( const std::string &sPath, Song &out )
 {
 	Json::Value root;
 	if( !JsonUtil::LoadFromFileShowErrors(root,sPath) )
@@ -235,7 +241,7 @@ bool NotesLoaderJson::LoadFromJsonFile( const RString &sPath, Song &out )
 	return true;
 }
 
-bool NotesLoaderJson::LoadFromDir( const RString &sPath, Song &out )
+bool NotesLoaderJson::LoadFromDir( const std::string &sPath, Song &out )
 {
 	return LoadFromJsonFile(sPath, out);
 }
@@ -243,7 +249,7 @@ bool NotesLoaderJson::LoadFromDir( const RString &sPath, Song &out )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -253,7 +259,7 @@ bool NotesLoaderJson::LoadFromDir( const RString &sPath, Song &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

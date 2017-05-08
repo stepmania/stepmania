@@ -21,7 +21,7 @@ uint64_t GetCurrentThreadId();
  * Valid values for the thread are from 0.0f to 1.0f.
  * 0.5f is the default.
  * @param prec the precedence to set. */
-RString SetThreadPrecedence( float prec );
+std::string SetThreadPrecedence( float prec );
 
 #endif
 

@@ -9,13 +9,13 @@
 #include "PlayerState.h"
 
 
-RString GetAttackPieceName( const RString &sAttack )
+std::string GetAttackPieceName( const std::string &sAttack )
 {
-	RString ret = ssprintf( "attack %s", sAttack.c_str() );
+	std::string ret = fmt::sprintf( "attack %s", sAttack.c_str() );
 
 	/* 1.5x -> 1_5x.  If we pass a period to THEME->GetPathTo, it'll think
 	 * we're looking for a specific file and not search. */
-	ret.Replace( ".", "_" );
+	Rage::replace(ret, ".", "_" );
 
 	return ret;
 }
@@ -36,28 +36,29 @@ void AttackDisplay::Init( const PlayerState* pPlayerState )
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	m_sprAttack.SetName( ssprintf("TextP%d",pn+1) );
+	m_sprAttack.SetName( fmt::sprintf("TextP%d",pn+1) );
 
 	if( GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
 		return;
 
-	set<RString> attacks;
+	std::set<std::string> attacks;
 	for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
 	{
 		const Character *ch = GAMESTATE->m_pCurCharacters[pn];
-		ASSERT( ch != NULL );
-		const RString* asAttacks = ch->m_sAttacks[al];
+		ASSERT( ch != nullptr );
+		const std::string* asAttacks = ch->m_sAttacks[al];
 		for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
 			attacks.insert( asAttacks[att] );
 	}
 
-	for( set<RString>::const_iterator it = attacks.begin(); it != attacks.end(); ++it )
+	for (auto const &attack: attacks)
 	{
-		const RString path = THEME->GetPathG( "AttackDisplay", GetAttackPieceName( *it ), true );
+		auto pieceName = GetAttackPieceName( attack );
+		const std::string path = THEME->GetPathG( "AttackDisplay", pieceName, true );
 		if( path == "" )
 		{
-			LOG->Trace( "Couldn't find \"%s\"", GetAttackPieceName( *it ).c_str() );
+			LOG->Trace( "Couldn't find \"%s\"", pieceName.c_str() );
 			continue;
 		}
 
@@ -78,10 +79,8 @@ void AttackDisplay::Update( float fDelta )
 		return;
 	// don't handle this again
 
-	for( unsigned s=0; s<m_pPlayerState->m_ActiveAttacks.size(); s++ )
+	for (auto const &attack: m_pPlayerState->m_ActiveAttacks)
 	{
-		const Attack& attack = m_pPlayerState->m_ActiveAttacks[s];
-
 		if( attack.fStartSecond >= 0 )
 			continue; /* hasn't started yet */
 
@@ -96,9 +95,9 @@ void AttackDisplay::Update( float fDelta )
 	}
 }
 
-void AttackDisplay::SetAttack( const RString &sText )
+void AttackDisplay::SetAttack( const std::string &sText )
 {
-	const RString path = THEME->GetPathG( "AttackDisplay", GetAttackPieceName(sText), true );
+	const std::string path = THEME->GetPathG( "AttackDisplay", GetAttackPieceName(sText), true );
 	if( path == "" )
 		return;
 
@@ -108,14 +107,14 @@ void AttackDisplay::SetAttack( const RString &sText )
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	const RString sName = ssprintf( "%sP%i", sText.c_str(), pn+1 );
+	const std::string sName = fmt::sprintf( "%sP%i", sText.c_str(), pn+1 );
 	m_sprAttack.RunCommands( THEME->GetMetricA("AttackDisplay", sName + "OnCommand") );
 }
 
 /*
  * (c) 2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -125,7 +124,7 @@ void AttackDisplay::SetAttack( const RString &sText )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

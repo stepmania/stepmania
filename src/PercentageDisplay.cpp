@@ -16,8 +16,8 @@ REGISTER_ACTOR_CLASS( PercentageDisplay );
 
 PercentageDisplay::PercentageDisplay()
 {
-	m_pPlayerState = NULL;
-	m_pPlayerStageStats = NULL;
+	m_pPlayerState = nullptr;
+	m_pPlayerStageStats = nullptr;
 
 	m_Last = -1;
 	m_LastMax = -1;
@@ -53,7 +53,7 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	}
 
 	const XNode *pChild = pNode->GetChild( "Percent" );
-	if( pChild == NULL )
+	if( pChild == nullptr )
 	{
 		LuaHelpers::ReportScriptError(ActorUtil::GetWhere(pNode) + ": PercentageDisplay: missing the node \"Percent\"");
 		// Make a BitmapText just so we don't crash.
@@ -66,7 +66,7 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	this->AddChild( &m_textPercent );
 
 	pChild = pNode->GetChild( "PercentRemainder" );
-	if( !ShowDancePointsNotPercentage()  &&  pChild != NULL )
+	if( !ShowDancePointsNotPercentage()  &&  pChild != nullptr )
 	{
 		m_bUseRemainder = true;
 		m_textPercentRemainder.LoadFromNode( pChild );
@@ -85,7 +85,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	Refresh();
 }
 
-void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const RString &sMetricsGroup, bool bAutoRefresh )
+void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const std::string &sMetricsGroup, bool bAutoRefresh )
 {
 	m_pPlayerState = pPlayerState;
 	m_pPlayerStageStats = pPlayerStageStats;
@@ -141,6 +141,7 @@ void PercentageDisplay::Update( float fDeltaTime )
 
 void PercentageDisplay::Refresh()
 {
+	using std::max;
 	const int iActualDancePoints = m_pPlayerStageStats->m_iActualDancePoints;
 	const int iCurPossibleDancePoints = m_pPlayerStageStats->m_iCurPossibleDancePoints;
 
@@ -150,25 +151,25 @@ void PercentageDisplay::Refresh()
 	m_Last = iActualDancePoints;
 	m_LastMax = iCurPossibleDancePoints;
 
-	RString sNumToDisplay;
+	std::string sNumToDisplay;
 
 	if( ShowDancePointsNotPercentage() )
 	{
-		sNumToDisplay = ssprintf( "%*d", m_iDancePointsDigits, max( 0, iActualDancePoints ) );
+		sNumToDisplay = fmt::sprintf( "%*d", m_iDancePointsDigits, max( 0, iActualDancePoints ) );
 	}
 	else
 	{
 		float fPercentDancePoints = m_pPlayerStageStats->GetPercentDancePoints();
 
 		// clamp percentage - feedback is that negative numbers look weird here.
-		CLAMP( fPercentDancePoints, 0.f, 1.f );
+		fPercentDancePoints = Rage::clamp( fPercentDancePoints, 0.f, 1.f );
 
 		if( m_bUseRemainder )
 		{
 			int iPercentWhole = int(fPercentDancePoints*100);
 			int iPercentRemainder = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
-			sNumToDisplay = ssprintf( m_sPercentFormat, iPercentWhole );
-			m_textPercentRemainder.SetText( ssprintf(m_sRemainderFormat, iPercentRemainder) );
+			sNumToDisplay = fmt::sprintf( m_sPercentFormat, iPercentWhole );
+			m_textPercentRemainder.SetText( fmt::sprintf(m_sRemainderFormat, iPercentRemainder) );
 		}
 		else
 		{
@@ -177,14 +178,14 @@ void PercentageDisplay::Refresh()
 				Lua *L = LUA->Get();
 				m_FormatPercentScore.PushSelf( L );
 				LuaHelpers::Push( L, fPercentDancePoints );
-				RString Error= "Error running FormatPercentScore: ";
+				std::string Error= "Error running FormatPercentScore: ";
 				LuaHelpers::RunScriptOnStack(L, Error, 1, 1, true); // 1 arg, 1 result
 				LuaHelpers::Pop( L, sNumToDisplay );
 				LUA->Release(L);
 			}
 
 			// HACK: Use the last frame in the numbers texture as '-'
-			sNumToDisplay.Replace('-','x');
+			Rage::replace(sNumToDisplay, '-', 'x');
 		}
 	}
 
@@ -210,7 +211,7 @@ bool PercentageDisplay::ShowDancePointsNotPercentage() const
 
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PercentageDisplay. */ 
+/** @brief Allow Lua to have access to the PercentageDisplay. */
 class LunaPercentageDisplay: public Luna<PercentageDisplay>
 {
 public:
@@ -235,7 +236,7 @@ LUA_REGISTER_DERIVED_CLASS( PercentageDisplay, ActorFrame )
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -245,7 +246,7 @@ LUA_REGISTER_DERIVED_CLASS( PercentageDisplay, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

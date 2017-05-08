@@ -28,7 +28,8 @@ class Style;
 /** @brief Holds information about a particular style of a game (e.g. "single", "double"). */
 struct Game
 {
-	const char *		m_szName;
+	std::string gameName;
+	// TODO: Turn this into a proper array/vector.
 	const Style * const*	m_apStyles;
 
 	/** @brief Do we count multiple notes in a row as separate notes, or as one note? */

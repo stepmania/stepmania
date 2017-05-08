@@ -11,6 +11,8 @@
 #include "CharacterManager.h"
 #include "OptionRowHandler.h"
 
+using std::vector;
+
 enum EditProfileRow
 {
 	ROW_CHARACTER,
@@ -30,7 +32,7 @@ void ScreenOptionsEditProfile::BeginScreen()
 	vector<OptionRowHandler*> vHands;
 
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
@@ -45,10 +47,12 @@ void ScreenOptionsEditProfile::BeginScreen()
 		def.m_vsChoices.clear();
 		vector<Character*> vpCharacters;
 		CHARMAN->GetCharacters( vpCharacters );
-		FOREACH_CONST( Character*, vpCharacters, c )
-			def.m_vsChoices.push_back( (*c)->GetDisplayName() );
+		for (auto *c: vpCharacters)
+		{
+			def.m_vsChoices.push_back( c->GetDisplayName() );
+		}
 		if( def.m_vsChoices.empty() )
-			def.m_vsChoices.push_back( RString() );
+			def.m_vsChoices.push_back( std::string() );
 	}
 
 	InitMenu( vHands );
@@ -61,10 +65,10 @@ ScreenOptionsEditProfile::~ScreenOptionsEditProfile()
 
 }
 
-void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsEditProfile::ImportOptions(int iRow, const vector<PlayerNumber>&)
 {
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	OptionRow &row = *m_pRows[iRow];
 
 	switch( iRow )
@@ -75,13 +79,13 @@ void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumbe
 	}
 }
 
-void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsEditProfile::ExportOptions(int iRow, const vector<PlayerNumber>&)
 {
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	OptionRow &row = *m_pRows[iRow];
 	int iIndex = row.GetOneSharedSelection( true );
-	RString sValue;
+	std::string sValue;
 	if( iIndex >= 0 )
 		sValue = row.GetRowDef().m_vsChoices[ iIndex ];
 
@@ -147,7 +151,7 @@ void ScreenOptionsEditProfile::ProcessMenuStart( const InputEventPlus &input )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -157,7 +161,7 @@ void ScreenOptionsEditProfile::ProcessMenuStart( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

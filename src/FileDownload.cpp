@@ -7,7 +7,9 @@
 #include "SpecialFiles.h"
 #include "RageLog.h"
 #include "Preference.h"
-#include "Foreach.h"
+
+using std::vector;
+using std::string;
 
 FileTransfer::FileTransfer()
 {
@@ -23,7 +25,7 @@ FileTransfer::FileTransfer()
 	UpdateProgress();
 
 	// Workaround: For some reason, the first download sometimes corrupts;
-	// by opening and closing the RageFile, this problem does not occur. 
+	// by opening and closing the RageFile, this problem does not occur.
 	// Go figure?
 	// XXX: This is a really dirty work around! Why does RageFile do this?
 	// It's always some strange number of bytes at the end of the file when it corrupts.
@@ -36,7 +38,7 @@ FileTransfer::~FileTransfer()
 	m_fOutputFile.Close();
 }
 
-RString FileTransfer::Update( float fDeltaTime )
+std::string FileTransfer::Update( float fDeltaTime )
 {
 	HTTPUpdate();
 
@@ -44,7 +46,7 @@ RString FileTransfer::Update( float fDeltaTime )
 	if (m_fLastUpdate >= 1.0)
 	{
 		if (m_bIsDownloading && m_bGotHeader)
-			m_sStatus = ssprintf("DL @ %d KB/s", int((m_iDownloaded-m_bytesLastUpdate)/1024));
+			m_sStatus = fmt::sprintf("DL @ %d KB/s", int((m_iDownloaded-m_bytesLastUpdate)/1024));
 
 		m_bytesLastUpdate = m_iDownloaded;
 		UpdateProgress();
@@ -71,24 +73,24 @@ void FileTransfer::Cancel()
 	FILEMAN->Remove("Packages/" + m_sEndName);
 }
 
-void FileTransfer::StartDownload( const RString &sURL, const RString &sDestFile )
+void FileTransfer::StartDownload( const std::string &sURL, const std::string &sDestFile )
 {
 	StartTransfer( download, sURL, "", sDestFile );
 }
 
-void FileTransfer::StartUpload( const RString &sURL, const RString &sSrcFile, const RString &sDestFile )
+void FileTransfer::StartUpload( const std::string &sURL, const std::string &sSrcFile, const std::string &sDestFile )
 {
 	StartTransfer( upload, sURL, sSrcFile, sDestFile );
 }
 
-extern Preference<RString> g_sCookie;
+extern Preference<std::string> g_sCookie;
 
-void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const RString &sSrcFile, const RString &sDestFile )
+void FileTransfer::StartTransfer( TransferType type, const std::string &sURL, const std::string &sSrcFile, const std::string &sDestFile )
 {
-	RString Proto;
-	RString Server;
+	std::string Proto;
+	std::string Server;
 	int Port=80;
-	RString sAddress;
+	std::string sAddress;
 
 	if( !ParseHTTPAddress( sURL, Proto, Server, Port, sAddress ) )
 	{
@@ -102,13 +104,13 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 
 	m_sBaseAddress = "http://" + Server;
 	if( Port != 80 )
-		m_sBaseAddress += ssprintf( ":%d", Port );
+		m_sBaseAddress += fmt::sprintf( ":%d", Port );
 	m_sBaseAddress += "/";
 
-	if( sAddress.Right(1) != "/" )
+	if (!Rage::ends_with( sAddress, "/"))
 	{
-		m_sEndName = Basename( sAddress );
-		m_sBaseAddress += Dirname( sAddress );
+		m_sEndName = Rage::base_name( sAddress );
+		m_sBaseAddress += Rage::dir_name( sAddress );
 	}
 	else
 	{
@@ -151,21 +153,21 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	}
 
 	// Produce HTTP header
-	RString sAction;
+	std::string sAction;
 	switch( type )
 	{
 	case upload: sAction = "POST"; break;
 	case download: sAction = "GET"; break;
 	}
 
-	vector<RString> vsHeaders;
+	vector<std::string> vsHeaders;
 	vsHeaders.push_back( sAction+" "+sAddress+" HTTP/1.0" );
 	vsHeaders.push_back( "Host: " + Server );
 	vsHeaders.push_back( "Cookie: " + g_sCookie.Get() );
 	vsHeaders.push_back( "Connection: closed" );
 	string sBoundary = "--ZzAaB03x";
 	vsHeaders.push_back( "Content-Type: multipart/form-data; boundary=" + sBoundary );
-	RString sRequestPayload;
+	std::string sRequestPayload;
 	if( type == upload )
 	{
 		RageFile f;
@@ -176,13 +178,13 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 		if( iBytesRead == -1 )
 			FAIL_M( f.GetError() );
 
-		sRequestPayload = "--" + sBoundary + "\r\n" + 
+		sRequestPayload = "--" + sBoundary + "\r\n" +
 			"Content-Disposition: form-data; name=\"name\"\r\n" +
 			"\r\n" +
 			"Chris\r\n" +
-			"--" + sBoundary + "\r\n" + 
-			"Content-Disposition: form-data; name=\"userfile\"; filename=\"" + Basename(sSrcFile) + "\"\r\n" +
-			"Content-Type: application/zip\r\n" + 
+			"--" + sBoundary + "\r\n" +
+			"Content-Disposition: form-data; name=\"userfile\"; filename=\"" + Rage::base_name(sSrcFile) + "\"\r\n" +
+			"Content-Type: application/zip\r\n" +
 			"\r\n" +
 			sRequestPayload + "\r\n" +
 			"--" + sBoundary + "--";
@@ -192,15 +194,17 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	{
 		sHeader += "Content-Type: application/octet-stream\r\n";
 		sHeader += "Content-Length: multipart/form-data; boundary=" + sBoundary + "\r\n";
-		//sHeader += "Content-Length: " + ssprintf("%d",sRequestPayload.size()) + "\r\n";
+		//sHeader += "Content-Length: " + fmt::sprintf("%d",sRequestPayload.size()) + "\r\n";
 	}
 	*/
 
-	vsHeaders.push_back( "Content-Length: " + ssprintf("%zd",sRequestPayload.size()) );
+	vsHeaders.push_back( "Content-Length: " + fmt::sprintf("%zd",sRequestPayload.size()) );
 
-	RString sHeader;
-	FOREACH_CONST( RString, vsHeaders, h )
-		sHeader += *h + "\r\n";
+	std::string sHeader;
+	for (auto const &h: vsHeaders)
+	{
+		sHeader += h + "\r\n";
+	}
 	sHeader += "\r\n";
 
 	m_wSocket.SendData( sHeader.c_str(), sHeader.length() );
@@ -216,7 +220,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	UpdateProgress();
 }
 
-static size_t FindEndOfHeaders( const RString &buf )
+static size_t FindEndOfHeaders( const std::string &buf )
 {
 	size_t iPos1 = buf.find( "\n\n" );
 	size_t iPos2 = buf.find( "\r\n\r\n" );
@@ -299,7 +303,7 @@ void FileTransfer::HTTPUpdate()
 
 	if ( ( m_iTotalBytes <= m_iDownloaded && m_iTotalBytes != -1 ) ||
 					//We have the full doc. (And we knew how big it was)
-		( m_iTotalBytes == -1 && 
+		( m_iTotalBytes == -1 &&
 			( m_wSocket.state == EzSockets::skERROR || m_wSocket.state == EzSockets::skDISCONNECTED ) ) )
 				// We didn't know how big it was, and were disconnected
 				// So that means we have it all.
@@ -307,18 +311,18 @@ void FileTransfer::HTTPUpdate()
 		m_wSocket.close();
 		m_bIsDownloading = false;
 		m_bGotHeader=false;
-		m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
+		m_sStatus = fmt::sprintf( "Done;%dB", int(m_iDownloaded) );
 		m_bFinished = true;
 
 		if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
 		{
-			m_sStatus = ssprintf( "%ld", m_iResponseCode ) + m_sResponseName;
+			m_sStatus = fmt::sprintf( "%ld", m_iResponseCode ) + m_sResponseName;
 		}
 		else
 		{
 			if( m_bSavingFile && m_iResponseCode < 300 )
 			{
-				RString sZipFile = m_fOutputFile.GetRealPath();
+				std::string sZipFile = m_fOutputFile.GetRealPath();
 				m_fOutputFile.Close();
 				FILEMAN->FlushDirCache();
 				m_iDownloaded = 0;
@@ -327,7 +331,7 @@ void FileTransfer::HTTPUpdate()
 	}
 }
 
-bool FileTransfer::ParseHTTPAddress( const RString &URL, RString &sProto, RString &sServer, int &iPort, RString &sAddress )
+bool FileTransfer::ParseHTTPAddress( const std::string &URL, std::string &sProto, std::string &sServer, int &iPort, std::string &sAddress )
 {
 	// [PROTO://]SERVER[:PORT][/URL]
 
@@ -336,7 +340,7 @@ bool FileTransfer::ParseHTTPAddress( const RString &URL, RString &sProto, RStrin
 		"([^/:]+)"     // [1]: a.b.com
 		"(:([0-9]+))?" // [2], [3]: :1234 (optional, default 80)
 		"(/(.*))?$");    // [4], [5]: /foo.html (optional)
-	vector<RString> asMatches;
+	vector<std::string> asMatches;
 	if( !re.Compare( URL, asMatches ) )
 		return false;
 	ASSERT( asMatches.size() == 6 );
@@ -375,7 +379,7 @@ void FileTransfer::Finish()
 /*
  * (c) 2004 Charles Lohr, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -385,7 +389,7 @@ void FileTransfer::Finish()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

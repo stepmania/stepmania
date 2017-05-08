@@ -1,7 +1,7 @@
 #include "global.h"
 #include "StreamDisplay.h"
+#include "RageMath.hpp"
 #include "GameState.h"
-#include <float.h>
 #include "RageDisplay.h"
 #include "ThemeManager.h"
 #include "EnumHelper.h"
@@ -25,10 +25,10 @@ StreamDisplay::StreamDisplay()
 	m_bDeleteChildren = true;
 }
 
-void StreamDisplay::Load( const RString & /* unreferenced: _sMetricsGroup  */)
+void StreamDisplay::Load( const std::string & /* unreferenced: _sMetricsGroup  */)
 {
 	// XXX: actually load from the metrics group passed in -aj
-	RString sMetricsGroup = "StreamDisplay";
+	std::string sMetricsGroup = "StreamDisplay";
 
 	m_transformPill.SetFromReference( THEME->GetMetricR(sMetricsGroup,"PillTransformFunction") );
 	VELOCITY_MULTIPLIER.Load(sMetricsGroup, "VelocityMultiplier");
@@ -54,7 +54,7 @@ void StreamDisplay::Load( const RString & /* unreferenced: _sMetricsGroup  */)
 
 			m_transformPill.TransformItemDirect( *pSpr, -1, i, iNumPills );
 			float f = 1 / fTextureCoordScaleX;
-			pSpr->SetCustomTextureRect( RectF(f*i,0,f*(i+1),1) );
+			pSpr->SetCustomTextureRect( Rage::RectF(f*i,0,f*(i+1),1) );
 
 			this->AddChild( pSpr );
 		}
@@ -90,14 +90,14 @@ void StreamDisplay::Update( float fDeltaSecs )
 				m_fVelocity += fViscousForce * fDeltaSecs;
 		}
 
-		CLAMP( m_fVelocity, VELOCITY_MIN, VELOCITY_MAX );
+		m_fVelocity = Rage::clamp( m_fVelocity, VELOCITY_MIN + 0.f, VELOCITY_MAX + 0.f );
 
 		m_fTrailingPercent += m_fVelocity * fDeltaSecs;
 	}
 
 	// Don't clamp life percentage a little outside the visible range so
 	// that the clamp doesn't dampen the "jiggle" of the meter.
-	CLAMP( m_fTrailingPercent, -0.1f, 1.1f );
+	m_fTrailingPercent = Rage::clamp( m_fTrailingPercent, -0.1f, 1.1f );
 
 
 	// set crop of pills
@@ -107,8 +107,8 @@ void StreamDisplay::Update( float fDeltaSecs )
 		for( int i=0; i<(int)m_vpSprPill[st].size(); i++ )
 		{
 			Sprite *pSpr = m_vpSprPill[st][i];
-			float fPercentFilledThisPill = SCALE( m_fTrailingPercent, fPillWidthPercent*i, fPillWidthPercent*(i+1), 0.0f, 1.0f );
-			CLAMP( fPercentFilledThisPill, 0.0f, 1.0f );
+			float fPercentFilledThisPill = Rage::scale( m_fTrailingPercent, fPillWidthPercent*i, fPillWidthPercent*(i+1), 0.0f, 1.0f );
+			fPercentFilledThisPill = Rage::clamp( fPercentFilledThisPill, 0.0f, 1.0f );
 
 			// XXX scale by current song speed
 
@@ -141,12 +141,12 @@ void StreamDisplay::SetPercent( float fPercent )
 	float fLifeMultiplier = THEME->GetMetricF("LifeMeterBar","LifeMultiplier");
 #endif
 	DEBUG_ASSERT( fPercent >= 0.0f && fPercent <= 1.0f * fLifeMultiplier );
-	if( isnan(fPercent) )
+	if( std::isnan(fPercent) )
 	{
 		DEBUG_ASSERT_M( 0, "fPercent is NaN" );
 		fPercent = 1;
 	}
-	if( !isfinite(fPercent) )
+	if( !std::isfinite(fPercent) )
 	{
 		DEBUG_ASSERT_M( 0, "fPercent is infinite" );
 		fPercent = 1;
@@ -161,7 +161,7 @@ void StreamDisplay::SetPercent( float fPercent )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -171,7 +171,7 @@ void StreamDisplay::SetPercent( float fPercent )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

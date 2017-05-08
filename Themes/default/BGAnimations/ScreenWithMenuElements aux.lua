@@ -29,9 +29,9 @@ local function Clock()
 				InitCommand=cmd(horizalign,right;shadowlength,0;diffusebottomedge,color("0.9,0.9,0.9")),
 				UpdateCommand=function(self)
 					local hour, min = Hour(), Minute()
-					if hour > 12 and GetUserPrefB("Use12HourClock") then
+					if hour > 12 and theme_config:get_data().Use12HourClock then
 						hour = hour - 12
-					elseif hour == 0 and GetUserPrefB("Use12HourClock") then
+					elseif hour == 0 and theme_config:get_data().Use12HourClock then
 						hour = 12
 					end	
 					self:settext(string.format('%02i:%02i:', hour, min))
@@ -53,7 +53,7 @@ local function Clock()
 				Text="",
 				InitCommand=cmd(x,28;y,-3;horizalign,left;shadowlength,0;diffusebottomedge,color("0.9,0.9,0.9");visible,false;zoom,0.75),
 				UpdateCommand=function(self)
-					if not GetUserPrefB("Use12HourClock") then
+					if not theme_config:get_data().Use12HourClock then
 						self:visible(false)
 						return
 					end

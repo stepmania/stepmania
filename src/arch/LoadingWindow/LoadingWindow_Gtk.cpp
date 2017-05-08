@@ -7,7 +7,7 @@
 
 #include <dlfcn.h>
 
-static void *Handle = NULL;
+static void *Handle = nullptr;
 static INIT Module_Init;
 static SHUTDOWN Module_Shutdown;
 static SETTEXT Module_SetText;
@@ -20,18 +20,18 @@ LoadingWindow_Gtk::LoadingWindow_Gtk()
 {
 }
 
-static RString ModuleError( const RString s )
+static std::string ModuleError( const std::string s )
 {
-	return ssprintf( "Couldn't load symbol Module_%s", s.c_str() );
+	return fmt::sprintf( "Couldn't load symbol Module_%s", s.c_str() );
 }
 
-RString LoadingWindow_Gtk::Init()
+std::string LoadingWindow_Gtk::Init()
 {
-	ASSERT( Handle == NULL );
+	ASSERT( Handle == nullptr );
 
-	Handle = dlopen( RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
-	if( Handle == NULL )
-		return ssprintf( "dlopen(): %s", dlerror() );
+	Handle = dlopen( (RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so").c_str(), RTLD_NOW );
+	if( Handle == nullptr )
+		return fmt::sprintf( "dlopen(): %s", dlerror() );
 
 	Module_Init = (INIT) dlsym(Handle, "Init");
 	if( !Module_Init )
@@ -62,25 +62,25 @@ RString LoadingWindow_Gtk::Init()
 		return ModuleError("SetIndeterminate");
 
 	const char *ret = Module_Init( &g_argc, &g_argv );
-	if( ret != NULL )
+	if( ret != nullptr )
 		return ret;
 	return "";
 }
 
 LoadingWindow_Gtk::~LoadingWindow_Gtk()
 {
-	if( Module_Shutdown != NULL )
+	if( Module_Shutdown != nullptr )
 		Module_Shutdown();
-	Module_Shutdown = NULL;
+	Module_Shutdown = nullptr;
 
 	if( Handle )
 		dlclose( Handle );
-	Handle = NULL;
+	Handle = nullptr;
 }
 
-void LoadingWindow_Gtk::SetText( RString s )
+void LoadingWindow_Gtk::SetText( std::string s )
 {
-	Module_SetText( s );
+	Module_SetText( s.c_str() );
 }
 
 void LoadingWindow_Gtk::SetIcon( const RageSurface *pIcon )
@@ -114,7 +114,7 @@ void LoadingWindow_Gtk::SetIndeterminate( bool indeterminate )
 /*
  * (c) 2003-2004 Glenn Maynard, Sean Burke
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -124,7 +124,7 @@ void LoadingWindow_Gtk::SetIndeterminate( bool indeterminate )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

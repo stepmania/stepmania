@@ -6,17 +6,17 @@
 
 void AutoActor::Unload()
 {
-	if(m_pActor != NULL)
+	if(m_pActor != nullptr)
 	{
 		delete m_pActor;
 	}
-	m_pActor=NULL;
+	m_pActor=nullptr;
 }
 
 AutoActor::AutoActor( const AutoActor &cpy )
 { 
-	if( cpy.m_pActor == NULL )
-		m_pActor = NULL;
+	if( cpy.m_pActor == nullptr )
+		m_pActor = nullptr;
 	else
 		m_pActor = cpy.m_pActor->Copy();
 }
@@ -25,8 +25,8 @@ AutoActor &AutoActor::operator=( const AutoActor &cpy )
 {
 	Unload();
 
-	if( cpy.m_pActor == NULL )
-		m_pActor = NULL;
+	if( cpy.m_pActor == nullptr )
+		m_pActor = nullptr;
 	else
 		m_pActor = cpy.m_pActor->Copy();
 	return *this;
@@ -38,17 +38,17 @@ void AutoActor::Load( Actor *pActor )
 	m_pActor = pActor;
 }
 
-void AutoActor::Load( const RString &sPath )
+void AutoActor::Load( const std::string &sPath )
 {
 	Unload();
 	m_pActor = ActorUtil::MakeActor( sPath );
 
-	// If a Condition is false, MakeActor will return NULL.
-	if( m_pActor == NULL )
+	// If a Condition is false, MakeActor will return nullptr.
+	if( m_pActor == nullptr )
 		m_pActor = new Actor;
 }
 
-void AutoActor::LoadB( const RString &sMetricsGroup, const RString &sElement )
+void AutoActor::LoadB( const std::string &sMetricsGroup, const std::string &sElement )
 {
 	ThemeManager::PathInfo pi;
 	bool b = THEME->GetPathInfo( pi, EC_BGANIMATIONS, sMetricsGroup, sElement );
@@ -65,7 +65,7 @@ void AutoActor::LoadActorFromNode( const XNode* pNode, Actor *pParent )
 	m_pActor = ActorUtil::LoadFromNode( pNode, pParent );
 }
 
-void AutoActor::LoadAndSetName( const RString &sScreenName, const RString &sActorName )
+void AutoActor::LoadAndSetName( const std::string &sScreenName, const std::string &sActorName )
 {
 	Load( THEME->GetPathG(sScreenName,sActorName) );
 	m_pActor->SetName( sActorName );

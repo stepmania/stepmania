@@ -4,6 +4,8 @@
 #include "GameState.h"
 #include "CommonMetrics.h"
 
+using std::vector;
+
 static const char *AutosyncTypeNames[] = {
 	"Off",
 	"Song",
@@ -23,7 +25,7 @@ XToString( SoundEffectType );
 XToLocalizedString( SoundEffectType );
 LuaXType( SoundEffectType );
 
-void SongOptions::Init() 
+void SongOptions::Init()
 {
 	m_bAssistClap = false;
 	m_bAssistMetronome = false;
@@ -60,23 +62,26 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 #undef DO_COPY
 }
 
-static void AddPart( vector<RString> &AddTo, float level, RString name )
+static void AddPart( vector<std::string> &AddTo, float level, std::string name )
 {
 	if( level == 0 )
+	{
 		return;
-
-	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", lrintf(level*100) );
+	}
+	const std::string LevelStr = (level == 1)? std::string(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
 
-void SongOptions::GetMods( vector<RString> &AddTo ) const
+void SongOptions::GetMods( vector<std::string> &AddTo ) const
 {
 	if( m_fMusicRate != 1 )
 	{
-		RString s = ssprintf( "%2.2f", m_fMusicRate );
+		std::string s = fmt::sprintf( "%2.2f", m_fMusicRate );
 		if( s[s.size()-1] == '0' )
+		{
 			s.erase( s.size()-1 );
+		}
 		AddTo.push_back( s + "xMusic" );
 	}
 
@@ -89,7 +94,7 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case AutosyncType_Machine:	AddTo.push_back("AutosyncMachine");	break;
 	case AutosyncType_Tempo:	AddTo.push_back("AutosyncTempo");	break;
 	default:
-		FAIL_M(ssprintf("Invalid autosync type: %i", m_AutosyncType));
+		FAIL_M(fmt::sprintf("Invalid autosync type: %i", m_AutosyncType));
 	}
 
 	switch( m_SoundEffectType )
@@ -98,66 +103,68 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case SoundEffectType_Speed:	AddTo.push_back("EffectSpeed");		break;
 	case SoundEffectType_Pitch:	AddTo.push_back("EffectPitch");		break;
 	default:
-		FAIL_M(ssprintf("Invalid sound effect type: %i", m_SoundEffectType));
+		FAIL_M(fmt::sprintf("Invalid sound effect type: %i", m_SoundEffectType));
 	}
 
 	if( m_bAssistClap )
-		AddTo.push_back( "Clap" );
+	{	AddTo.push_back( "Clap" );
+	}
 	if( m_bAssistMetronome )
-		AddTo.push_back( "Metronome" );
-
-	if( m_bStaticBackground )
-		AddTo.push_back( "StaticBG" );
-	if( m_bRandomBGOnly )
-		AddTo.push_back( "RandomBG" );
-}
-
-void SongOptions::GetLocalizedMods( vector<RString> &v ) const
-{
-	GetMods( v );
-	FOREACH( RString, v, s )
 	{
-		*s = CommonMetrics::LocalizeOptionItem( *s, true );
+		AddTo.push_back( "Metronome" );
+	}
+	if( m_bStaticBackground )
+	{
+		AddTo.push_back( "StaticBG" );
+	}
+	if( m_bRandomBGOnly )
+	{
+		AddTo.push_back( "RandomBG" );
 	}
 }
 
-RString SongOptions::GetString() const
+void SongOptions::GetLocalizedMods( vector<std::string> &v ) const
 {
-	vector<RString> v;
 	GetMods( v );
-	return join( ", ", v );
+	for (auto &s: v)
+	{
+		s = CommonMetrics::LocalizeOptionItem( s, true );
+	}
 }
 
-RString SongOptions::GetLocalizedString() const
+std::string SongOptions::GetString() const
 {
-	vector<RString> v;
+	vector<std::string> v;
+	GetMods( v );
+	return Rage::join( ", ", v );
+}
+
+std::string SongOptions::GetLocalizedString() const
+{
+	vector<std::string> v;
 	GetLocalizedMods( v );
-	return join( ", ", v );
+	return Rage::join( ", ", v );
 }
 
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void SongOptions::FromString( const RString &sMultipleMods )
+void SongOptions::FromString( const std::string &sMultipleMods )
 {
-	RString sTemp = sMultipleMods;
-	vector<RString> vs;
-	split( sTemp, ",", vs, true );
-	RString sThrowAway;
-	FOREACH( RString, vs, s )
+	std::string sTemp = sMultipleMods;
+	auto vs = Rage::split(sTemp, ",", Rage::EmptyEntries::skip);
+	for (auto &s: vs)
 	{
-		FromOneModString( *s, sThrowAway );
+		FromOneModString(s);
 	}
 }
 
-bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
+bool SongOptions::FromOneModString(const std::string &sOneMod)
 {
-	RString sBit = sOneMod;
-	sBit.MakeLower();
-	Trim( sBit );
+	std::string sBit = Rage::trim(Rage::make_lower(sOneMod));
 
 	Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
-	vector<RString> matches;
+	vector<std::string> matches;
 	if( mult.Compare(sBit, matches) )
 	{
 		m_fMusicRate = StringToFloat( matches[0] );
@@ -166,8 +173,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 
 	matches.clear();
 
-	vector<RString> asParts;
-	split( sBit, " ", asParts, true );
+	auto asParts = Rage::split( sBit, " ", Rage::EmptyEntries::skip );
 	bool on = true;
 	if( asParts.size() > 1 )
 	{
@@ -176,22 +182,62 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 			on = false;
 	}
 
-	if( sBit == "clap" )				m_bAssistClap = on;
-	else if( sBit == "metronome" )				m_bAssistMetronome = on;
-	else if( sBit == "autosync" || sBit == "autosyncsong" )	m_AutosyncType = on ? AutosyncType_Song : AutosyncType_Off;
-	else if( sBit == "autosyncmachine" )			m_AutosyncType = on ? AutosyncType_Machine : AutosyncType_Off; 
-	else if( sBit == "autosynctempo" )			m_AutosyncType = on ? AutosyncType_Tempo : AutosyncType_Off;
-	else if( sBit == "effect" && !on )			m_SoundEffectType = SoundEffectType_Off;
-	else if( sBit == "effectspeed" )			m_SoundEffectType = on ? SoundEffectType_Speed : SoundEffectType_Off;
-	else if( sBit == "effectpitch" )			m_SoundEffectType = on ? SoundEffectType_Pitch : SoundEffectType_Off;
-	else if( sBit == "staticbg" )				m_bStaticBackground = on;
-	else if( sBit == "randombg" )				m_bRandomBGOnly = on;
-	else if( sBit == "savescore" )				m_bSaveScore = on;
-	else if( sBit == "savereplay" )			m_bSaveReplay = on;
-	else if( sBit == "haste" )				m_fHaste = on? 1.0f:0.0f;
+	if( sBit == "clap" )
+	{
+		m_bAssistClap = on;
+	}
+	else if( sBit == "metronome" )
+	{
+		m_bAssistMetronome = on;
+	}
+	else if( sBit == "autosync" || sBit == "autosyncsong" )
+	{
+		m_AutosyncType = on ? AutosyncType_Song : AutosyncType_Off;
+	}
+	else if( sBit == "autosyncmachine" )
+	{
+		m_AutosyncType = on ? AutosyncType_Machine : AutosyncType_Off;
+	}
+	else if( sBit == "autosynctempo" )
+	{
+		m_AutosyncType = on ? AutosyncType_Tempo : AutosyncType_Off;
+	}
+	else if( sBit == "effect" && !on )
+	{
+		m_SoundEffectType = SoundEffectType_Off;
+	}
+	else if( sBit == "effectspeed" )
+	{
+		m_SoundEffectType = on ? SoundEffectType_Speed : SoundEffectType_Off;
+	}
+	else if( sBit == "effectpitch" )
+	{
+		m_SoundEffectType = on ? SoundEffectType_Pitch : SoundEffectType_Off;
+	}
+	else if( sBit == "staticbg" )
+	{
+		m_bStaticBackground = on;
+	}
+	else if( sBit == "randombg" )
+	{
+		m_bRandomBGOnly = on;
+	}
+	else if( sBit == "savescore" )
+	{
+		m_bSaveScore = on;
+	}
+	else if( sBit == "savereplay" )
+	{
+		m_bSaveReplay = on;
+	}
+	else if( sBit == "haste" )
+	{
+		m_fHaste = on? 1.0f:0.0f;
+	}
 	else
+	{
 		return false;
-
+	}
 	return true;
 }
 
@@ -254,7 +300,7 @@ LUA_REGISTER_CLASS( SongOptions )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -264,7 +310,7 @@ LUA_REGISTER_CLASS( SongOptions )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

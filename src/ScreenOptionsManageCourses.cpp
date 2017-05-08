@@ -18,6 +18,9 @@
 #include "CourseWriterCRS.h"
 #include "RageFileManager.h"
 #include "PrefsManager.h"
+#include "RageFmtWrap.h"
+
+using std::vector;
 
 REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 
@@ -42,10 +45,12 @@ static void SetNextCombination()
 {
 	vector<StepsTypeAndDifficulty> v;
 	{
-		FOREACH_CONST( StepsType, CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue(), st )
+		for (auto &st: CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue())
 		{
-			FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
-				v.push_back( StepsTypeAndDifficulty(*st, *cd) );
+			for (auto &cd: CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue())
+			{
+				v.push_back( StepsTypeAndDifficulty(st, cd) );
+			}
 		}
 	}
 
@@ -125,12 +130,12 @@ void ScreenOptionsManageCourses::BeginScreen()
 		break;
 	}
 
-	FOREACH_CONST( Course*, m_vpCourses, p )
+	for (auto *p: m_vpCourses)
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
 
-		def.m_sName = (*p)->GetDisplayFullTitle();
+		def.m_sName = p->GetDisplayFullTitle();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Select Course";
 		def.m_vsChoices.clear();
@@ -176,7 +181,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			EditCourseUtil::s_bNewCourseNeedsName = true;
 			EditCourseUtil::UpdateAndSetTrail();
 
-			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
+			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN.GetValue() );
 			return; // don't call base
 		}
 		else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
@@ -204,7 +209,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 {
 	Course *pCourse = GetCourseWithFocus();
-	Trail *pTrail = pCourse ? pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit ) : NULL;
+	Trail *pTrail = pCourse ? pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit ) : nullptr;
 
 	GAMESTATE->m_pCurCourse.Set( pCourse );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
@@ -236,7 +241,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus & )
 		EditCourseUtil::GetAllEditCourses( vpCourses );
 		if( vpCourses.size() >= (size_t)EditCourseUtil::MAX_PER_PROFILE )
 		{
-			RString s = ssprintf( YOU_HAVE_MAX.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), EditCourseUtil::MAX_PER_PROFILE );
+			std::string s = rage_fmt_wrapper(YOU_HAVE_MAX, EditCourseUtil::MAX_PER_PROFILE) + "\n\n" + YOU_MUST_DELETE.GetValue();
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}
@@ -271,9 +276,9 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	if( iCurRow == 0 )
-		return NULL;
+		return nullptr;
 	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
-		return NULL;
+		return nullptr;
 
 	// a course
 	int index = iCurRow - 1;
@@ -283,7 +288,7 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -293,7 +298,7 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

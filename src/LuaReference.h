@@ -24,6 +24,13 @@ public:
 		SetFromStack(L);
 	}
 
+	void swap(LuaReference& other)
+	{
+		LuaReference temp= *this;
+		*this= other;
+		other= temp;
+	}
+
 	/* Create a reference pointing to the item at the top of the stack, and pop
 	 * the stack. */
 	void SetFromStack( Lua *L );
@@ -32,7 +39,7 @@ public:
 	/* Evaluate an expression that returns an object; store the object in a reference.
 	 * For example, evaluating "{ 1, 2, 3 }" will result in a reference to a table.
 	 * On success, return true.  On error, set to nil and return false. */
-	bool SetFromExpression( const RString &sExpression );
+	bool SetFromExpression( const std::string &sExpression );
 
 	/** @brief Deep-copy tables, detaching this reference from any others. */
 	void DeepCopy();
@@ -55,7 +62,7 @@ public:
 	/* Return the referenced type, or LUA_TNONE if not set. */
 	int GetLuaType() const;
 
-	RString Serialize() const;
+	std::string Serialize() const;
 
 	template<typename T>
 	static LuaReference Create( const T &val )
@@ -94,11 +101,11 @@ public:
 	LuaTable();
 
 	/* Get the key with the given name, and push it on the stack. */
-	void Get( Lua *L, const RString &sKey );
+	void Get( Lua *L, const std::string &sKey );
 
 	/* Set a key by the given name to a value on the stack, and pop the value
 	 * off the stack. */
-	void Set( Lua *L, const RString &sKey );
+	void Set( Lua *L, const std::string &sKey );
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "RageLog.h"
 #include "RageThreads.h"
 
+using std::vector;
 
 /* If we're on an OS with a good caching system, writing to our own cache will only
  * waste memory.  In that case, just read the file, to force it into system cache.
@@ -23,7 +24,7 @@ BackgroundLoader::BackgroundLoader():
 	if( !g_bEnableBackgroundLoading )
 		return;
 
-	m_sCachePathPrefix = ssprintf( "@mem/%p", this );
+	m_sCachePathPrefix = fmt::sprintf( "@mem/%p", static_cast<void *>(this) );
 
 	m_bShutdownThread = false;
 	m_sThreadIsActive = m_sThreadShouldAbort = false;
@@ -31,14 +32,14 @@ BackgroundLoader::BackgroundLoader():
 	m_LoadThread.Create( LoadThread_Start, this );
 }
 
-static void DeleteEmptyDirectories( RString sDir )
+static void DeleteEmptyDirectories( std::string sDir )
 {
-	vector<RString> asNewDirs;
+	vector<std::string> asNewDirs;
 	GetDirListing( sDir + "/*", asNewDirs, false, true );
-	for( unsigned i = 0; i < asNewDirs.size(); ++i )
+	for (auto &item: asNewDirs)
 	{
-		ASSERT_M( IsADirectory(asNewDirs[i]), asNewDirs[i] );
-		DeleteEmptyDirectories( asNewDirs[i] );
+		ASSERT_M( IsADirectory(item), item );
+		DeleteEmptyDirectories( item );
 	}
 
 	FILEMAN->Remove( sDir );
@@ -56,9 +57,10 @@ BackgroundLoader::~BackgroundLoader()
 	m_LoadThread.Wait();
 
 	/* Delete all leftover cached files. */
-	map<RString,int>::iterator it;
-	for( it = m_FinishedRequests.begin(); it != m_FinishedRequests.end(); ++it )
-		FILEMAN->Remove( GetCachePath( it->first ) );
+	for (auto &it: m_FinishedRequests)
+	{
+		FILEMAN->Remove( GetCachePath( it.first ) );
+	}
 
 	/* m_sCachePathPrefix should be filled with several empty directories.  Delete
 	 * them and m_sCachePathPrefix, so we don't leak them. */
@@ -66,22 +68,22 @@ BackgroundLoader::~BackgroundLoader()
 }
 
 /* Pull a request out of m_CacheRequests. */
-RString BackgroundLoader::GetRequest()
+std::string BackgroundLoader::GetRequest()
 {
 	if( !g_bEnableBackgroundLoading )
-		return RString();
+		return std::string();
 
 	LockMut( m_Mutex );
 	if( !m_CacheRequests.size() )
-		return RString();
+		return std::string();
 
-	RString ret;
+	std::string ret;
 	ret = m_CacheRequests.front();
 	m_CacheRequests.erase( m_CacheRequests.begin(), m_CacheRequests.begin()+1 );
 	return ret;
 }
 
-RString BackgroundLoader::GetCachePath( RString sPath ) const
+std::string BackgroundLoader::GetCachePath( std::string sPath ) const
 {
 	return m_sCachePathPrefix + sPath;
 }
@@ -94,15 +96,14 @@ void BackgroundLoader::LoadThread()
 		 * fail on timeout. */
 		m_StartSem.Wait( false );
 
-		RString sFile = GetRequest();
+		std::string sFile = GetRequest();
 		if( sFile.empty() )
 			continue;
 
 		{
 			/* If the file already exists, short circuit. */
 			LockMut( m_Mutex );
-			map<RString,int>::iterator it;
-			it = m_FinishedRequests.find( sFile );
+			auto it = m_FinishedRequests.find( sFile );
 			if( it != m_FinishedRequests.end() )
 			{
 				++it->second;
@@ -115,7 +116,7 @@ void BackgroundLoader::LoadThread()
 
 		LOG->Trace("XXX: reading %s", sFile.c_str());
 
-		RString sCachePath = GetCachePath( sFile );
+		std::string sCachePath = GetCachePath( sFile );
 
 		/* Open the file and read it. */
 		RageFile src;
@@ -128,7 +129,7 @@ void BackgroundLoader::LoadThread()
 			if( bWriteToCache )
 				bWriteToCache = dst.Open( sCachePath, RageFile::WRITE );
 			LOG->Trace("XXX: go on '%s' to '%s'", sFile.c_str(), sCachePath.c_str());
-			
+
 			char buf[1024*4];
 			while( !m_sThreadShouldAbort && !src.AtEOF() )
 			{
@@ -161,7 +162,7 @@ void BackgroundLoader::LoadThread()
 	}
 }
 
-void BackgroundLoader::CacheFile( const RString &sFile )
+void BackgroundLoader::CacheFile( const std::string &sFile )
 {
 	if( !g_bEnableBackgroundLoading )
 		return;
@@ -174,7 +175,7 @@ void BackgroundLoader::CacheFile( const RString &sFile )
 	m_StartSem.Post();
 }
 
-bool BackgroundLoader::IsCacheFileFinished( const RString &sFile, RString &sActualPath )
+bool BackgroundLoader::IsCacheFileFinished( const std::string &sFile, std::string &sActualPath )
 {
 	if( !g_bEnableBackgroundLoading )
 	{
@@ -190,8 +191,7 @@ bool BackgroundLoader::IsCacheFileFinished( const RString &sFile, RString &sActu
 		return true;
 	}
 
-	map<RString,int>::iterator it;
-	it = m_FinishedRequests.find( sFile );
+	auto it = m_FinishedRequests.find( sFile );
 	if( it == m_FinishedRequests.end() )
 		return false;
 
@@ -204,7 +204,7 @@ bool BackgroundLoader::IsCacheFileFinished( const RString &sFile, RString &sActu
 	return true;
 }
 
-void BackgroundLoader::FinishedWithCachedFile( RString sFile )
+void BackgroundLoader::FinishedWithCachedFile( std::string sFile )
 {
 	if( !g_bEnableBackgroundLoading )
 		return;
@@ -212,12 +212,11 @@ void BackgroundLoader::FinishedWithCachedFile( RString sFile )
 	if( sFile == "" )
 		return;
 
-	map<RString,int>::iterator it;
-	it = m_FinishedRequests.find( sFile );
+	auto it = m_FinishedRequests.find( sFile );
 	ASSERT_M( it != m_FinishedRequests.end(), sFile );
 
 	--it->second;
-	ASSERT_M( it->second >= 0, ssprintf("%i", it->second) );
+	ASSERT_M( it->second >= 0, fmt::sprintf("%i", it->second) );
 	if( !it->second )
 	{
 		m_FinishedRequests.erase( it );
@@ -248,7 +247,7 @@ void BackgroundLoader::Abort()
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -258,7 +257,7 @@ void BackgroundLoader::Abort()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

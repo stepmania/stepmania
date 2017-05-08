@@ -3,6 +3,7 @@
 
 #define ATTACK_STARTS_NOW (-10000.f)
 
+#include <string>
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 class Song;
@@ -19,7 +20,7 @@ struct Attack
 	/** @brief How long does this attack last? */
 	float fSecsRemaining;
 	/** @brief The modifiers used for this attack. */
-	RString sModifiers;
+	std::string sModifiers;
 	bool bOn; // set and used by GAMESTATE
 	bool bGlobal; // true for song-wide course mods
 	bool bShowInAttackList;
@@ -29,26 +30,26 @@ struct Attack
 		level = ATTACK_LEVEL_1;
 		fStartSecond = ATTACK_STARTS_NOW;
 		fSecsRemaining = 0;
-		sModifiers = RString();
+		sModifiers = std::string();
 		bOn = false;
 		bGlobal = false;
 		bShowInAttackList = true;
 	}
 	Attack(): level(ATTACK_LEVEL_1), fStartSecond(ATTACK_STARTS_NOW),
-		fSecsRemaining(0), sModifiers(RString()),
+		fSecsRemaining(0), sModifiers(std::string()),
 		bOn(false), bGlobal(false), bShowInAttackList(true)
 		{} // MakeBlank() is effectively called here.
 	Attack(
 		AttackLevel	level_,
 		float fStartSecond_,
 		float fSecsRemaining_,
-		RString sModifiers_,
+		std::string sModifiers_,
 		bool bOn_,
 		bool bGlobal_,
 		bool bShowInAttackList_ = true ):
 		level(level_), fStartSecond(fStartSecond_),
 		fSecsRemaining(fSecsRemaining_), sModifiers(sModifiers_),
-		bOn(bOn_), bGlobal(bGlobal_), 
+		bOn(bOn_), bGlobal(bGlobal_),
 		bShowInAttackList(bShowInAttackList_) {}
 
 	void GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const;
@@ -63,24 +64,24 @@ struct Attack
 	 * @return true if the two Attacks are equal, or false otherwise. */
 	bool operator== ( const Attack &rhs ) const;
 	bool ContainsTransformOrTurn() const;
-	static Attack FromGlobalCourseModifier( const RString &sModifiers );
-	RString GetTextDescription() const;
-	
+	static Attack FromGlobalCourseModifier( const std::string &sModifiers );
+	std::string GetTextDescription() const;
+
 	int GetNumAttacks() const;
 };
 
-struct AttackArray : public vector<Attack>
+struct AttackArray : public std::vector<Attack>
 {
 	/**
 	 * @brief Determine if the list of attacks contains a transform or turn mod.
 	 * @return true if it does, or false otherwise. */
 	bool ContainsTransformOrTurn() const;
-	
+
 	/**
 	 * @brief Return a string representation used for simfiles.
 	 * @return the string representation. */
-	vector<RString> ToVectorString() const;
-	
+	std::vector<std::string> ToVectorString() const;
+
 	/**
 	 * @brief Adjust the starting time of all attacks.
 	 * @param delta the amount to change. */
@@ -94,7 +95,7 @@ struct AttackArray : public vector<Attack>
  * @author Chris Danford (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -104,7 +105,7 @@ struct AttackArray : public vector<Attack>
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

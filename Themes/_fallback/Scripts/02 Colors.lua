@@ -47,12 +47,14 @@ setmetatable(Color, { __call = function(self, c) return self[c] end })
 
 GameColor = {
 	PlayerColors = {
-		PLAYER_1 = color("#ed5565"),
-		PLAYER_2 = color("#5d9cec"),
+		[PLAYER_1] = color("#ed5565"),
+		[PLAYER_2] = color("#5d9cec"),
+		both= color("#a579a8"),
 	},
 	PlayerDarkColors = {
-		PLAYER_1 = color("#da4453"),
-		PLAYER_2 = color("#4a89dc"),
+		[PLAYER_1] = color("#da4453"),
+		[PLAYER_2] = color("#4a89dc"),
+		both= color("#8a5e9b"),
 	},
 	Difficulty = {
 		--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
@@ -129,14 +131,17 @@ function ColorDarkTone(c)
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end
 
-local pn_to_color_name= {[PLAYER_1]= "PLAYER_1", [PLAYER_2]= "PLAYER_2"}
+local function pn_to_color_name(pn)
+	if not pn then return "both" end
+	return pn
+end
 local default_color= color("1,1,1,1")
 
 function PlayerColor( pn )
 	if not GameColor or not GameColor.PlayerColors then
 		return default_color
 	end
-	return GameColor.PlayerColors[pn_to_color_name[pn]] or default_color
+	return GameColor.PlayerColors[pn_to_color_name(pn)] or default_color
 end
 
 function PlayerScoreColor( pn )
@@ -146,7 +151,7 @@ end
 function PlayerDarkColor( pn )
 	if not GameColor then return default_color end
 	if not GameColor.PlayerDarkColors then return PlayerColor(pn) end
-	return GameColor.PlayerDarkColors[pn_to_color_name[pn]] or default_color
+	return GameColor.PlayerDarkColors[pn_to_color_name(pn)] or PlayerColor(pn)
 end
 
 local function GameColorDifficultyWrapper(diff)

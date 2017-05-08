@@ -86,7 +86,7 @@ float NoteTypeToBeat( NoteType nt )
 	case NOTE_TYPE_192ND:	return 1.0f/48; // sixty-fourth note triplets
 	case NoteType_Invalid:	return 1.0f/48;
 	default:
-		FAIL_M(ssprintf("Unrecognized note type: %i", nt));
+		FAIL_M(fmt::sprintf("Unrecognized note type: %i", nt));
 	}
 }
 

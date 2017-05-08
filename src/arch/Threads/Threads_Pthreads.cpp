@@ -41,7 +41,7 @@ int ThreadImpl_Pthreads::Wait()
 {
 	int *val;
 	int ret = pthread_join( thread, (void **) &val );
-	ASSERT_M( ret == 0, ssprintf("pthread_join: %s", strerror(ret)) );
+	ASSERT_M( ret == 0, fmt::sprintf("pthread_join: %s", strerror(ret)) );
 
 	int iRet = *val;
 	delete val;
@@ -82,8 +82,8 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	thread->m_StartFinishedSem = new SemaImpl_Pthreads( 0 );
 
-	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
-	ASSERT_M( ret == 0, ssprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
+	int ret = pthread_create( &thread->thread, nullptr, StartThread, thread );
+	ASSERT_M( ret == 0, fmt::sprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
 
 	// Don't return until StartThread sets m_piThreadID.
 	thread->m_StartFinishedSem->Wait();
@@ -95,13 +95,13 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 MutexImpl_Pthreads::MutexImpl_Pthreads( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
-	pthread_mutex_init( &mutex, NULL );
+	pthread_mutex_init( &mutex, nullptr );
 }
 
 MutexImpl_Pthreads::~MutexImpl_Pthreads()
 {
 	int ret = pthread_mutex_destroy( &mutex ) == -1;
-	ASSERT_M( ret == 0, ssprintf("Error deleting mutex: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("Error deleting mutex: %s", strerror(errno)) );
 }
 
 #if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(HAVE_PTHREAD_COND_TIMEDWAIT)
@@ -130,7 +130,7 @@ bool MutexImpl_Pthreads::Lock()
 			/* Wait for ten seconds. If it takes longer than that, we're 
 			 * probably deadlocked. */
 			timeval tv;
-			gettimeofday( &tv, NULL );
+			gettimeofday( &tv, nullptr );
 
 			timespec ts;
 			ts.tv_sec = tv.tv_sec + len;
@@ -154,7 +154,7 @@ bool MutexImpl_Pthreads::Lock()
 				break;
 
 			default:
-				FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
+				FAIL_M( fmt::sprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
 			}
 		}
 
@@ -169,7 +169,7 @@ bool MutexImpl_Pthreads::Lock()
 	}
 	while( ret == -1 && ret == EINTR );
 
-	ASSERT_M( ret == 0, ssprintf("pthread_mutex_lock: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("pthread_mutex_lock: %s", strerror(errno)) );
 
 	return true;
 }
@@ -179,7 +179,7 @@ bool MutexImpl_Pthreads::TryLock()
 	int ret = pthread_mutex_trylock( &mutex );
 	if( ret == EBUSY )
 		return false;
-	ASSERT_M( ret == 0, ssprintf("pthread_mutex_trylock failed: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("pthread_mutex_trylock failed: %s", strerror(errno)) );
 	return true;
 }
 
@@ -208,15 +208,16 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
-#elif defined(MACOSX)
-typedef int clockid_t;
-static const clockid_t CLOCK_REALTIME = 0;
-static const clockid_t CLOCK_MONOTONIC = 1;
+// commented out to allow comilation on macOS 10.12.  -dguzek
+//#elif defined(MACOSX)
+//typedef int clockid_t;
+//static const clockid_t CLOCK_REALTIME = 0;
+//static const clockid_t CLOCK_MONOTONIC = 1;
 #endif // On MinGW clockid_t is defined in pthread.h
 namespace
 {
 	typedef int (* CONDATTR_SET_CLOCK)( pthread_condattr_t *attr, clockid_t clock_id );
-	CONDATTR_SET_CLOCK g_CondattrSetclock = NULL;
+	CONDATTR_SET_CLOCK g_CondattrSetclock = nullptr;
 	bool bInitialized = false;
 
 #if defined(UNIX)
@@ -231,17 +232,17 @@ namespace
 			return;
 		bInitialized = true;
 
-		void *pLib = NULL;
+		void *pLib = nullptr;
 
 		do {
 			{
-				pLib = dlopen( NULL, RTLD_LAZY );
-				if( pLib == NULL )
+				pLib = dlopen( nullptr, RTLD_LAZY );
+				if( pLib == nullptr )
 					break;
 
 				g_CondattrSetclock = (CONDATTR_SET_CLOCK) dlsym( pLib, "pthread_condattr_setclock" );
 
-				if( g_CondattrSetclock == NULL )
+				if( g_CondattrSetclock == nullptr )
 					break;
 			}
 
@@ -261,10 +262,10 @@ namespace
 			return;
 		} while(0);
 
-		g_CondattrSetclock = NULL;
-		if( pLib != NULL )
+		g_CondattrSetclock = nullptr;
+		if( pLib != nullptr )
 			dlclose( pLib );
-		pLib = NULL;
+		pLib = nullptr;
 	}
 #elif defined(MACOSX)
 	void InitMonotonic() { bInitialized = true; }
@@ -291,7 +292,7 @@ EventImpl_Pthreads::EventImpl_Pthreads( MutexImpl_Pthreads *pParent )
 	pthread_condattr_t condattr;
 	pthread_condattr_init( &condattr );
 
-	if( g_CondattrSetclock != NULL )
+	if( g_CondattrSetclock != nullptr )
 		g_CondattrSetclock( &condattr, GetClock() );
 
 	pthread_cond_init( &m_Cond, &condattr );
@@ -306,7 +307,7 @@ EventImpl_Pthreads::~EventImpl_Pthreads()
 #if defined(HAVE_PTHREAD_COND_TIMEDWAIT)
 bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 {
-	if( pTimeout == NULL )
+	if( pTimeout == nullptr )
 	{
 		pthread_cond_wait( &m_Cond, &m_pParent->mutex );
 		return true;
@@ -316,7 +317,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	 * (no condattr_setclock), pthread_cond_timedwait has an inherent race
 	 * condition: the system clock may change before we call it. */
 	timespec abstime;
-	if( g_CondattrSetclock != NULL || GetClock() == CLOCK_REALTIME )
+	if( g_CondattrSetclock != nullptr || GetClock() == CLOCK_REALTIME )
 	{
 		/* If we support condattr_setclock, we'll set the condition to use
 		 * the same clock as RageTimer and can use it directly. If the
@@ -328,7 +329,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	{
 		// The RageTimer clock is different than the wait clock; convert it.
 		timeval tv;
-		gettimeofday( &tv, NULL );
+		gettimeofday( &tv, nullptr );
 
 		RageTimer timeofday( tv.tv_sec, tv.tv_usec );
 
@@ -409,7 +410,7 @@ bool SemaImpl_Pthreads::Wait()
 	}
 	while( ret == -1 && errno == EINTR );
 
-	ASSERT_M( ret == 0, ssprintf("Wait: sem_wait: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("Wait: sem_wait: %s", strerror(errno)) );
 
 	return true;
 }
@@ -420,7 +421,7 @@ bool SemaImpl_Pthreads::TryWait()
 	if( ret == -1 && errno == EAGAIN )
 		return false;
 	
-	ASSERT_M( ret == 0, ssprintf("TryWait: sem_trywait failed: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("TryWait: sem_trywait failed: %s", strerror(errno)) );
 
 	return true;
 }
@@ -428,10 +429,10 @@ bool SemaImpl_Pthreads::TryWait()
 // Use conditions, to work around OS X "forgetting" to implement semaphores.
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
-	int ret = pthread_cond_init( &m_Cond, NULL );
-	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
-	ret = pthread_mutex_init( &m_Mutex, NULL );
-	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
+	int ret = pthread_cond_init( &m_Cond, nullptr );
+	ASSERT_M( ret == 0, fmt::sprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
+	ret = pthread_mutex_init( &m_Mutex, nullptr );
+	ASSERT_M( ret == 0, fmt::sprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
 		
 	m_iValue = iInitialValue;
 }
@@ -457,7 +458,7 @@ bool SemaImpl_Pthreads::Wait()
 	if( UseTimedlock() )
 	{
 		timeval tv;
-		gettimeofday( &tv, NULL );
+		gettimeofday( &tv, nullptr );
 
 		/* Wait for ten seconds.  If it takes longer than that, we're probably deadlocked. */
 		timespec ts;
@@ -486,7 +487,7 @@ bool SemaImpl_Pthreads::Wait()
 				break;
 
 			default:
-				FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
+				FAIL_M( fmt::sprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
 			}
 		}
 

@@ -949,7 +949,7 @@ int main(int argc, char* argv[])
 		DisplayUsage();
 		iRet = 1;
 	}
-	catch (CZipException e)
+	catch (CZipException& e)
 	{
 		printf ("Error while processing archive %s\n%s\n", (LPCTSTR) szArchive, (LPCTSTR)e.GetErrorDescription());
 		if (e.m_szFileName.IsEmpty())

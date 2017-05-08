@@ -4,6 +4,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include <memory>
 
 #if defined(_WINDOWS)
@@ -35,7 +36,7 @@ RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedS
 	if( err == Z_MEM_ERROR )
 		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
+		WARN( fmt::sprintf("Huh? inflateInit2() err = %i", err) );
 
 	decomp_buf_ptr = decomp_buf;
 	m_iFilePos = 0;
@@ -62,7 +63,7 @@ RageFileObjInflate *RageFileObjInflate::Copy() const
 {
 	return new RageFileObjInflate( *this );
 }
-	
+
 
 RageFileObjInflate::~RageFileObjInflate()
 {
@@ -71,17 +72,18 @@ RageFileObjInflate::~RageFileObjInflate()
 
 	int err = inflateEnd( m_pInflate );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? inflateEnd() err = %i", err) );
+		WARN( fmt::sprintf("Huh? inflateEnd() err = %i", err) );
 
 	delete m_pInflate;
 }
 
 int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 {
+	using std::min;
 	/* Don't read more than m_iUncompressedSize of data.  If we don't do this, it's
 	 * possible for a .gz to contain a header claiming 500k of data, but to actually
 	 * contain much more deflated data. */
-	ASSERT_M( m_iFilePos <= m_iUncompressedSize, ssprintf("%i, %i",m_iFilePos, m_iUncompressedSize) );
+	ASSERT_M( m_iFilePos <= m_iUncompressedSize, fmt::sprintf("%i, %i",m_iFilePos, m_iUncompressedSize) );
 	bytes = min( bytes, size_t(m_iUncompressedSize-m_iFilePos) );
 
 	bool done=false;
@@ -126,7 +128,7 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 		case Z_OK:
 			break;
 		default:
-			WARN( ssprintf("Huh? inflate err %i", err) );
+			WARN( fmt::sprintf("Huh? inflate err %i", err) );
 		}
 
 		const int used = (char *)m_pInflate->next_in - decomp_buf_ptr;
@@ -145,6 +147,7 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 
 int RageFileObjInflate::SeekInternal( int iPos )
 {
+	using std::min;
 	/* Optimization: if offset is the end of the file, it's a lseek(0,SEEK_END).  Don't
 	 * decode anything. */
 	if( iPos >= m_iUncompressedSize )
@@ -203,7 +206,7 @@ RageFileObjDeflate::RageFileObjDeflate( RageFileBasic *pFile )
 	if( err == Z_MEM_ERROR )
 		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
+		WARN( fmt::sprintf("Huh? inflateInit2() err = %i", err) );
 
 }
 
@@ -216,7 +219,7 @@ RageFileObjDeflate::~RageFileObjDeflate()
 
 	int err = deflateEnd( m_pDeflate );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? deflateEnd() err = %i", err) );
+		WARN( fmt::sprintf("Huh? deflateEnd() err = %i", err) );
 
 	delete m_pDeflate;
 }
@@ -240,7 +243,7 @@ int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 
 		if( err != Z_OK )
 		{
-			FAIL_M( ssprintf("deflate: err %i", err) );
+			FAIL_M( fmt::sprintf("deflate: err %i", err) );
 		}
 		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
@@ -282,7 +285,7 @@ int RageFileObjDeflate::FlushInternal()
 		int err = deflate( m_pDeflate, Z_FINISH );
 		if( err != Z_OK && err != Z_STREAM_END )
 		{
-			FAIL_M( ssprintf("deflate: err %i", err) );
+			FAIL_M( fmt::sprintf("deflate: err %i", err) );
 		}
 		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
@@ -311,9 +314,9 @@ int RageFileObjDeflate::FlushInternal()
  * Parse a .gz file, check the header CRC16 if present, and return the data
  * CRC32 and a decompressor.  pFile will be deleted.
  */
-RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t *iCRC32 )
+RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, std::string &sError, uint32_t *iCRC32 )
 {
-	auto_ptr<RageFileBasic> pFile(pFile_);
+	std::unique_ptr<RageFileBasic> pFile(pFile_);
 
 	sError = "";
 
@@ -324,12 +327,12 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 		char magic[2];
 		FileReading::ReadBytes( *pFile, magic, 2, sError );
 		if( sError != "" )
-			return NULL;
+			return nullptr;
 
 		if( magic[0] != '\x1f' || magic[1] != '\x8b' )
 		{
 			sError = "Not a gzipped file";
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -339,7 +342,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	FileReading::read_8( *pFile, sError ); /* xfl */
 	FileReading::read_8( *pFile, sError ); /* os */
 	if( sError != "" )
-		return NULL;
+		return nullptr;
 
 #define FTEXT    1<<0
 #define FHCRC    1<<1
@@ -349,16 +352,16 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 #define UNSUPPORTED_MASK ~((1<<5)-1)
 	if( iCompressionMethod != 8 )
 	{
-		sError = ssprintf( "Unsupported compression: %i", iCompressionMethod );
-		return NULL;
+		sError = fmt::sprintf( "Unsupported compression: %i", iCompressionMethod );
+		return nullptr;
 	}
 
 	/* Warning: flags other than FNAME are untested, since gzip doesn't
 	 * actually output them. */
 	if( iFlags & UNSUPPORTED_MASK )
 	{
-		sError = ssprintf( "Unsupported flags: %x", iFlags );
-		return NULL;
+		sError = fmt::sprintf( "Unsupported flags: %x", iFlags );
+		return nullptr;
 	}
 
 	if( iFlags & FEXTRA )
@@ -373,7 +376,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	if( iFlags & FCOMMENT )
 		while( sError == "" && FileReading::read_8( *pFile, sError ) != 0 )
 			;
-	
+
 	if( iFlags & FHCRC )
 	{
 		/* Get the CRC of the data read so far.  Be sure to do this before
@@ -381,16 +384,16 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 		uint32_t iActualCRC32;
 		bool bOK = pFile->GetCRC32( &iActualCRC32 );
 		ASSERT( bOK );
-	
+
 		uint16_t iExpectedCRC16 = FileReading::read_u16_le( *pFile, sError );
 		uint16_t iActualCRC16 = int16_t( iActualCRC32 & 0xFFFF );
 		if( sError != "" )
-			return NULL;
+			return nullptr;
 
 		if( iActualCRC16 != iExpectedCRC16 )
 		{
 			sError = "Header CRC error";
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -399,7 +402,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	pFile->EnableCRC32( false );
 
 	if( sError != "" )
-		return NULL;
+		return nullptr;
 
 	int iDataPos = pFile->Tell();
 
@@ -407,24 +410,24 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	int iFooterPos = pFile->GetFileSize() - 8;
 
 	FileReading::Seek( *pFile, iFooterPos, sError );
-	
+
 	uint32_t iExpectedCRC32 = FileReading::read_u32_le( *pFile, sError );
 	uint32_t iUncompressedSize = FileReading::read_u32_le( *pFile, sError );
-	if( iCRC32 != NULL )
+	if( iCRC32 != nullptr )
 		*iCRC32 = iExpectedCRC32;
-	
+
 	FileReading::Seek( *pFile, iDataPos, sError );
-	
+
 	if( sError != "" )
-		return NULL;
-	
+		return nullptr;
+
 	RageFileDriverSlice *pSliceFile = new RageFileDriverSlice( pFile.release(), iDataPos, iFooterPos-iDataPos );
 	pSliceFile->DeleteFileWhenFinished();
 	RageFileObjInflate *pInflateFile = new RageFileObjInflate( pSliceFile, iUncompressedSize );
 	pInflateFile->DeleteFileWhenFinished();
 
 	/* Enable CRC calculation only if the caller is interested. */
-	if( iCRC32 != NULL )
+	if( iCRC32 != nullptr )
 		pInflateFile->EnableCRC32();
 
 	return pInflateFile;
@@ -440,7 +443,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
  * gzip.Start();
  * gzip.Write( "data" );
  * gzip.Finish();
- */ 
+ */
 RageFileObjGzip::RageFileObjGzip( RageFileBasic *pFile ):
 	RageFileObjDeflate( pFile )
 {
@@ -465,7 +468,7 @@ int RageFileObjGzip::Start()
 
 	if( m_pFile->Write( header, sizeof(header) ) == -1 )
 		return -1;
-	
+
 	m_iDataStartOffset = Tell();
 
 	/* Enable and reset the CRC32 for the uncompressed data about to be
@@ -506,14 +509,14 @@ int RageFileObjGzip::Finish()
 		SetError( m_pFile->GetError() );
 		return -1;
 	}
-	
+
 	/* Flush the CRC and wize that we just wrote directly to the file. */
 	return m_pFile->Flush();
 }
 
 #include "RageFileDriverMemory.h"
 
-void GzipString( const RString &sIn, RString &sOut )
+void GzipString( const std::string &sIn, std::string &sOut )
 {
 	/* Gzip it. */
 	RageFileObjMem mem;
@@ -525,14 +528,14 @@ void GzipString( const RString &sIn, RString &sOut )
 	sOut = mem.GetString();
 }
 
-bool GunzipString( const RString &sIn, RString &sOut, RString &sError )
+bool GunzipString( const std::string &sIn, std::string &sOut, std::string &sError )
 {
 	RageFileObjMem *mem = new RageFileObjMem;
 	mem->PutString( sIn );
 
 	uint32_t iCRC32;
 	RageFileBasic *pFile = GunzipFile( mem, sError, &iCRC32 );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		return false;
 
 	pFile->Read( sOut );
@@ -540,7 +543,7 @@ bool GunzipString( const RString &sIn, RString &sOut, RString &sError )
 	/* Check the CRC. */
 	unsigned iRet;
 	ASSERT( pFile->GetCRC32( &iRet ) );
-	SAFE_DELETE( pFile );
+	Rage::safe_delete( pFile );
 
 	if( iRet != iCRC32 )
 	{

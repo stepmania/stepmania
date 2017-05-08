@@ -1,6 +1,8 @@
 #ifndef ARCH_HOOKS_H
 #define ARCH_HOOKS_H
 
+#include <ctime>
+
 struct lua_State;
 class ArchHooks
 {
@@ -12,7 +14,7 @@ public:
 	/*
 	 * Return the general name of the architecture, eg. "Windows", "OS X", "Unix".
 	 */
-	virtual RString GetArchName() const { return "generic"; }
+	virtual std::string GetArchName() const { return "generic"; }
 
 	/* This is called as soon as the loading window is shown, and we can
 	 * safely log. */
@@ -28,7 +30,7 @@ public:
 	 * Get the 2-letter RFC-639 code of the user's preferred language
 	 * for localized messages, in lowercase.
 	 */
-	static RString GetPreferredLanguage();
+	static std::string GetPreferredLanguage();
 
 	/* If this is a second instance, return true.
 	 * Optionally, give focus to the existing window. */
@@ -41,7 +43,7 @@ public:
 
 	/**
 	 * @brief Setup the rendering threads for concurrency.
-	 * 
+	 *
 	 * The priority of the concurrent rendering thread may need to be boosted
 	 * on some schedulers.
 	 */
@@ -52,7 +54,7 @@ public:
 	 * @return true if the user wants to quit, false otherwise. */
 	static bool UserQuit() { return g_bQuitting; }
 	static void SetUserQuit() { g_bQuitting = true; }
-	
+
 	/*
 	 * Returns true if the user wants to toggle windowed mode and atomically clears
 	 * the boolean.
@@ -86,15 +88,15 @@ public:
 	 */
 	static int64_t GetMicrosecondsSinceStart( bool bAccurate );
 
-	/* 
-	 * Add file search paths, higher priority first. 
+	/*
+	 * Add file search paths, higher priority first.
 	 */
-	static void MountInitialFilesystems( const RString &sDirOfExecutable );
+	static void MountInitialFilesystems( const std::string &sDirOfExecutable );
 
-	/* 
-	 * Add file search paths for user-writable directories. 
+	/*
+	 * Add file search paths for user-writable directories.
 	 */
-	static void MountUserFilesystems( const RString &sDirOfExecutable );
+	static void MountUserFilesystems( const std::string &sDirOfExecutable );
 
 	/*
 	 * Platform-specific code calls this to indicate focus changes.
@@ -114,13 +116,13 @@ public:
 	/*
 	 * Open a URL in the default web browser
 	 */
-	virtual bool GoToURL( RString sUrl );
+	virtual bool GoToURL( std::string sUrl );
 
 	virtual float GetDisplayAspectRatio() = 0;
-	
+
 	/** @brief Fetch the contents of the system clipboard. */
-	virtual RString GetClipboard();
-	
+	virtual std::string GetClipboard();
+
 	// Lua
 	void PushSelf( lua_State *L );
 	void RegisterWithLua();
@@ -146,7 +148,7 @@ extern ArchHooks *HOOKS;	// global and accessible from anywhere in our program
  * @author Glenn Maynard, Chris Danford (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -156,7 +158,7 @@ extern ArchHooks *HOOKS;	// global and accessible from anywhere in our program
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

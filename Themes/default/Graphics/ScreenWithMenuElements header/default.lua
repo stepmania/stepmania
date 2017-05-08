@@ -1,5 +1,7 @@
 local t = Def.ActorFrame {};
 
+local screen_name= Var("LoadingScreen")
+
 local function Update(self)
 	local c = self:GetChildren();
 	local bps = GAMESTATE:GetSongBPS() or 1
@@ -7,7 +9,7 @@ local function Update(self)
 end
 
 local function IsVisible()
-	local r = Screen.String("HeaderText");
+	local r = THEME:GetString(screen_name, "HeaderText")
 	return string.len(r) > 0 and true or false
 end
 
@@ -38,7 +40,7 @@ t[#t+1] = Def.Quad {
 	Name="Underline";
 	InitCommand=cmd(x,-SCREEN_CENTER_X+24-4;y,36;horizalign,left);
 	OnCommand=cmd(stoptweening;diffuse,color("#ffd400");shadowlength,2;shadowcolor,BoostColor(color("#ffd40077"),0.25);linear,0.25;zoomtowidth,192;fadeleft,8/192;faderight,0.5;
-		visible,string.len( Screen.String("HeaderText") ) > 0 );
+	visible,IsVisible());
 };
 
 t[#t+1] = LoadFont("Common Bold") .. {

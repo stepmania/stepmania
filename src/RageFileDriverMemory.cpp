@@ -1,16 +1,19 @@
 #include "global.h"
 #include "RageFileDriverMemory.h"
+#include "RageMath.hpp"
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include <errno.h>
+
+using std::vector;
 
 struct RageFileObjMemFile
 {
 	RageFileObjMemFile():
 		m_iRefs(0),
 		m_Mutex("RageFileObjMemFile") { }
-	RString m_sBuf;
+	std::string m_sBuf;
 	int m_iRefs;
 	RageMutex m_Mutex;
 
@@ -36,7 +39,7 @@ struct RageFileObjMemFile
 
 RageFileObjMem::RageFileObjMem( RageFileObjMemFile *pFile )
 {
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		pFile = new RageFileObjMemFile;
 
 	m_pFile = pFile;
@@ -51,6 +54,7 @@ RageFileObjMem::~RageFileObjMem()
 
 int RageFileObjMem::ReadInternal( void *buffer, size_t bytes )
 {
+	using std::min;
 	LockMut(m_pFile->m_Mutex);
 
 	m_iFilePos = min( m_iFilePos, GetFileSize() );
@@ -75,7 +79,7 @@ int RageFileObjMem::WriteInternal( const void *buffer, size_t bytes )
 
 int RageFileObjMem::SeekInternal( int offset )
 {
-	m_iFilePos = clamp( offset, 0, GetFileSize() );
+	m_iFilePos = Rage::clamp( offset, 0, GetFileSize() );
 	return m_iFilePos;
 }
 
@@ -99,12 +103,12 @@ RageFileObjMem *RageFileObjMem::Copy() const
 	return pRet;
 }
 
-const RString &RageFileObjMem::GetString() const
+const std::string &RageFileObjMem::GetString() const
 {
 	return m_pFile->m_sBuf;
 }
 
-void RageFileObjMem::PutString( const RString &sBuf )
+void RageFileObjMem::PutString( const std::string &sBuf )
 {
 	m_pFile->m_Mutex.Lock();
 	m_pFile->m_sBuf = sBuf;
@@ -119,14 +123,13 @@ RageFileDriverMem::RageFileDriverMem():
 
 RageFileDriverMem::~RageFileDriverMem()
 {
-	for( unsigned i = 0; i < m_Files.size(); ++i )
+	for (auto *file: m_Files)
 	{
-		RageFileObjMemFile *pFile = m_Files[i];
-		RageFileObjMemFile::ReleaseReference( pFile );
+		RageFileObjMemFile::ReleaseReference( file );
 	}
 }
 
-RageFileBasic *RageFileDriverMem::Open( const RString &sPath, int mode, int &err )
+RageFileBasic *RageFileDriverMem::Open( const std::string &sPath, int mode, int &err )
 {
 	LockMut(m_Mutex);
 
@@ -147,21 +150,21 @@ RageFileBasic *RageFileDriverMem::Open( const RString &sPath, int mode, int &err
 	}
 
 	RageFileObjMemFile *pFile = (RageFileObjMemFile *) FDB->GetFilePriv( sPath );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 	{
 		err = ENOENT;
-		return NULL;
+		return nullptr;
 	}
 
 	return new RageFileObjMem( pFile );
 }
 
-bool RageFileDriverMem::Remove( const RString &sPath )
+bool RageFileDriverMem::Remove( const std::string &sPath )
 {
 	LockMut(m_Mutex);
 
 	RageFileObjMemFile *pFile = (RageFileObjMemFile *) FDB->GetFilePriv( sPath );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		return false;
 
 	/* Unregister the file. */
@@ -178,13 +181,13 @@ bool RageFileDriverMem::Remove( const RString &sPath )
 static struct FileDriverEntry_MEM: public FileDriverEntry
 {
 	FileDriverEntry_MEM(): FileDriverEntry( "MEM" ) { }
-	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverMem(); }
+	RageFileDriver *Create( const std::string &sRoot ) const { return new RageFileDriverMem(); }
 } const g_RegisterDriver;
 
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -194,7 +197,7 @@ static struct FileDriverEntry_MEM: public FileDriverEntry
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

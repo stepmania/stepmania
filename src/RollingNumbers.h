@@ -10,13 +10,10 @@ class RollingNumbers : public BitmapText
 public:
 	RollingNumbers();
 
-	void Load( const RString &sMetricsGroup );
 	virtual RollingNumbers *Copy() const;
 
-	void DrawPart(RageColor const* diffuse, RageColor const& stroke,
-		float crop_left, float crop_right);
-	virtual void DrawPrimitives();
-	virtual void Update( float fDeltaTime );
+	void Load(const std::string& metrics_group);
+	virtual void UpdateInternal(float fDeltaTime);
 
 	/** 
 	 * @brief Set the new target number to be reached.
@@ -28,19 +25,21 @@ public:
 	// Commands
 	virtual void PushSelf( lua_State *L );
 
+	std::string m_text_format;
+	float m_approach_seconds;
+	bool m_commify;
+	std::string m_leading_glyph;
+	int m_chars_wide;
+	BitmapText::Attribute m_leading_text_attr;
+	BitmapText::Attribute m_number_text_attr;
 private:
-	ThemeMetric<RString> TEXT_FORMAT;
-	ThemeMetric<float> APPROACH_SECONDS;
-	ThemeMetric<bool> COMMIFY;
-	ThemeMetric<RageColor> LEADING_ZERO_MULTIPLY_COLOR;
 
 	/** @brief The currently showing number. */
-	float	m_fCurrentNumber;
+	float	m_current_number;
 	/** @brief The number we are trying to approach. */
-	float	m_fTargetNumber;
+	float	m_target_number;
 	/** @brief The speed we are trying to reach the target number. */
-	float	m_fScoreVelocity;
-	bool m_metrics_loaded;
+	float	m_score_velocity;
 };
 
 #endif

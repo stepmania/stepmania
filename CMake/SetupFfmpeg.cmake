@@ -1,5 +1,5 @@
 set(SM_FFMPEG_VERSION "2.1.3")
-set(SM_FFMPEG_SRC_LIST "${SM_EXTERN_DIR}" "/ffmpeg-linux-" "${SM_FFMPEG_VERSION}")
+set(SM_FFMPEG_SRC_LIST "${SM_EXTERN_DIR}" "/ffmpeg-git")
 sm_join("${SM_FFMPEG_SRC_LIST}" "" SM_FFMPEG_SRC_DIR)
 set(SM_FFMPEG_CONFIGURE_EXE "${SM_FFMPEG_SRC_DIR}/configure")
 if (MINGW)
@@ -14,6 +14,7 @@ list(APPEND FFMPEG_CONFIGURE
   "${SM_FFMPEG_CONFIGURE_EXE}"
   "--disable-programs"
   "--disable-doc"
+  "--disable-debug"
   "--disable-avdevice"
   "--disable-swresample"
   "--disable-postproc"
@@ -27,10 +28,10 @@ if(CMAKE_POSITION_INDEPENDENT_CODE)
 endif()
 
 if(MACOSX)
-  # TODO: Remove these two items when Mac OS X StepMania builds in 64-bit.
   list(APPEND FFMPEG_CONFIGURE
-    "--arch=i386"
-    "--cc=clang -m32"
+    "--arch=x86_64"
+    "--cc=clang -m64"
+    "--enable-sse"
   )
 endif()
 
@@ -53,7 +54,7 @@ endif()
 list(APPEND SM_FFMPEG_MAKE
   $(MAKE)
 )
-if (WITH_FFMPEG_JOBS GREATER 1)
+if (WITH_FFMPEG_JOBS GREATER 0)
   list(APPEND SM_FFMPEG_MAKE "-j${WITH_FFMPEG_JOBS}")
 endif()
 
@@ -67,17 +68,8 @@ if (IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
     TEST_COMMAND ""
   )
 else()
-  # --shlibdir=$our_installdir/stepmania-$VERSION
-  externalproject_add("ffmpeg"
-    DOWNLOAD_COMMAND git clone "--branch" "n${SM_FFMPEG_VERSION}" "--depth" "1" "git://source.ffmpeg.org/ffmpeg.git" "${SM_FFMPEG_SRC_DIR}"
-    CONFIGURE_COMMAND "${FFMPEG_CONFIGURE}"
-    BUILD_COMMAND "${SM_FFMPEG_MAKE}"
-    UPDATE_COMMAND ""
-    INSTALL_COMMAND ""
-    TEST_COMMAND ""
-  )
+  message(ERROR "Submodule for ffmpeg missing. Run git submodule init && git submodule update first.")
 endif()
 
 externalproject_get_property("ffmpeg" BINARY_DIR)
 set(SM_FFMPEG_ROOT ${BINARY_DIR})
-

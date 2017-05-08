@@ -9,13 +9,17 @@ class HelpDisplay : public BitmapText
 {
 public:
 	HelpDisplay();
-	void Load( const RString &sType );
+	void Load( const std::string &sType );
 
 	virtual HelpDisplay *Copy() const;
 
-	void SetTips( const vector<RString> &arrayTips ) { SetTips( arrayTips, arrayTips ); }
-	void SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt );
-	void GetTips( vector<RString> &arrayTipsOut, vector<RString> &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
+	void SetTips( std::vector<std::string> const &arrayTips ) { SetTips( arrayTips, arrayTips ); }
+	void SetTips( std::vector<std::string> const &arrayTips, std::vector<std::string> const &arrayTipsAlt );
+	void GetTips( std::vector<std::string> &arrayTipsOut, std::vector<std::string> &arrayTipsAltOut ) const
+	{
+		arrayTipsOut = m_arrayTips;
+		arrayTipsAltOut = m_arrayTipsAlt;
+	}
 	void SetSecsBetweenSwitches( float fSeconds ) { m_fSecsBetweenSwitches = m_fSecsUntilSwitch = fSeconds; }
 
 	virtual void Update( float fDeltaTime );
@@ -24,9 +28,9 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	vector<RString> m_arrayTips, m_arrayTipsAlt;
+	std::vector<std::string> m_arrayTips, m_arrayTipsAlt;
 	int m_iCurTipIndex;
-	
+
 	float m_fSecsBetweenSwitches;
 	float m_fSecsUntilSwitch;
 };
@@ -36,7 +40,7 @@ protected:
 /*
  * (c) 2001-2003 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -46,7 +50,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

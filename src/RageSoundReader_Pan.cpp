@@ -16,7 +16,7 @@ int RageSoundReader_Pan::Read( float *pBuf, int iFrames )
 		return iFrames;
 
 	int iSamples = iFrames * m_pSource->GetNumChannels();
-	
+
 	if( m_pSource->GetNumChannels() == 1 )
 	{
 		RageSoundUtil::ConvertMonoToStereoInPlace( pBuf, iSamples );
@@ -32,10 +32,11 @@ int RageSoundReader_Pan::Read( float *pBuf, int iFrames )
 
 unsigned RageSoundReader_Pan::GetNumChannels() const
 {
+	using std::max;
 	return max( 2u, RageSoundReader_Filter::GetNumChannels() );
 }
 
-bool RageSoundReader_Pan::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_Pan::SetProperty( const std::string &sProperty, float fValue )
 {
 	if( sProperty == "Pan" )
 	{

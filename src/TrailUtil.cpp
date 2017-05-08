@@ -5,7 +5,7 @@
 #include "XmlFile.h"
 #include "GameManager.h"
 #include "Song.h"
-
+#include <numeric>
 
 int TrailUtil::GetNumSongs( const Trail *pTrail )
 {
@@ -14,17 +14,17 @@ int TrailUtil::GetNumSongs( const Trail *pTrail )
 
 float TrailUtil::GetTotalSeconds( const Trail *pTrail )
 {
-	float fSecs = 0;
-	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-		fSecs += e->pSong->m_fMusicLengthSeconds;
-	return fSecs;
+	auto getSeconds = [](float curr, TrailEntry const &e) {
+		return curr + e.pSong->m_fMusicLengthSeconds;
+	};
+	return std::accumulate(pTrail->m_vEntries.begin(), pTrail->m_vEntries.end(), 0.f, getSeconds);
 }
 
 ///////////////////////////////////////////////////////////////////////
 
 void TrailID::FromTrail( const Trail *p )
 {
-	if( p == NULL )
+	if( p == nullptr )
 	{
 		st = StepsType_Invalid;
 		cd = Difficulty_Invalid;
@@ -39,9 +39,9 @@ void TrailID::FromTrail( const Trail *p )
 
 Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 {
-	ASSERT( p != NULL );
+	ASSERT( p != nullptr );
 
-	Trail *pRet = NULL;
+	Trail *pRet = nullptr;
 	if( !m_Cache.Get(&pRet) )
 	{
 		if( st != StepsType_Invalid && cd != Difficulty_Invalid )
@@ -49,8 +49,8 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 		m_Cache.Set( pRet );
 	}
 
-	if( !bAllowNull && pRet == NULL )
-		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->GetDisplayFullTitle().c_str() );	
+	if( !bAllowNull && pRet == nullptr )
+		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->GetDisplayFullTitle().c_str() );
 
 	return pRet;
 }
@@ -59,17 +59,17 @@ XNode* TrailID::CreateNode() const
 {
 	XNode* pNode = new XNode( "Trail" );
 
-	pNode->AppendAttr( "StepsType", GAMEMAN->GetStepsTypeInfo(st).szName );
+	pNode->AppendAttr( "StepsType", GAMEMAN->GetStepsTypeInfo(st).stepTypeName );
 	pNode->AppendAttr( "CourseDifficulty", DifficultyToString(cd) );
 
 	return pNode;
 }
 
-void TrailID::LoadFromNode( const XNode* pNode ) 
+void TrailID::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "Trail" );
 
-	RString sTemp;
+	std::string sTemp;
 
 	pNode->GetAttrValue( "StepsType", sTemp );
 	st = GAMEMAN->StringToStepsType( sTemp );
@@ -79,9 +79,9 @@ void TrailID::LoadFromNode( const XNode* pNode )
 	m_Cache.Unset();
 }
 
-RString TrailID::ToString() const
+std::string TrailID::ToString() const
 {
-	RString s = GAMEMAN->GetStepsTypeInfo(st).szName;
+	std::string s = GAMEMAN->GetStepsTypeInfo(st).stepTypeName;
 	s += " " + DifficultyToString( cd );
 	return s;
 }
@@ -125,7 +125,7 @@ namespace
 	{
 		LIST_METHOD( GetNumSongs ),
 		LIST_METHOD( GetTotalSeconds ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 
@@ -134,7 +134,7 @@ LUA_REGISTER_NAMESPACE( TrailUtil )
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -144,7 +144,7 @@ LUA_REGISTER_NAMESPACE( TrailUtil )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

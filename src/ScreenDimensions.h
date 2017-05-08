@@ -3,6 +3,8 @@
 #ifndef SCREEN_DIMENSIONS_H
 #define SCREEN_DIMENSIONS_H
 
+#include "RageRect.hpp"
+
 namespace ScreenDimensions
 {
 	float GetThemeAspectRatio();
@@ -25,15 +27,7 @@ namespace ScreenDimensions
 #define THEME_NATIVE_ASPECT (THEME_SCREEN_WIDTH/THEME_SCREEN_HEIGHT)
 #define ASPECT_SCALE_FACTOR ((SCREEN_WIDTH/SCREEN_HEIGHT)/THEME_NATIVE_ASPECT)
 
-#define FullScreenRectF RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
-
-/**
- * @brief The size of the arrows.
- *
- * This is referenced in ArrowEffects, GameManager, NoteField, and SnapDisplay.
- * XXX: doesn't always have to be 64. -aj
- */
-#define	ARROW_SIZE	(64)
+#define FullScreenRectF Rage::RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
 
 #endif
 

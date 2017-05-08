@@ -17,9 +17,6 @@
 
 const float PARTICLE_SPEED = 300;
 
-const float SPIRAL_MAX_ZOOM = 2;
-const float SPIRAL_MIN_ZOOM = 0.3f;
-
 #define MAX_TILES_WIDE int(SCREEN_WIDTH/32+2)
 #define MAX_TILES_HIGH int(SCREEN_HEIGHT/32+2)
 #define MAX_SPRITES (MAX_TILES_WIDE*MAX_TILES_HIGH)
@@ -70,17 +67,16 @@ BGAnimationLayer::~BGAnimationLayer()
 	ActorFrame::DeleteAllChildren();
 }
 
-void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
+void BGAnimationLayer::LoadFromAniLayerFile( const std::string& sPath )
 {
-	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete. 
+	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete.
 	 * Don't combine them. */
-	RString lcPath = sPath;
-	lcPath.MakeLower();
+	std::string lcPath = Rage::make_lower(sPath);
 
-	if( lcPath.find("usesongbg") != RString::npos )
+	if( lcPath.find("usesongbg") != std::string::npos )
 	{
-		const Song* pSong = GAMESTATE->m_pCurSong;
-		RString sSongBGPath;
+		const Song* pSong = GAMESTATE->get_curr_song();
+		std::string sSongBGPath;
 		if( pSong && pSong->HasBackground() )
 			sSongBGPath = pSong->GetBackgroundPath();
 		else
@@ -124,7 +120,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 		EFFECT_INVALID
 	};
 
-	const RString EFFECT_STRING[NUM_EFFECTS] = {
+	const std::string EFFECT_STRING[NUM_EFFECTS] = {
 		"center",
 		"stretchstill",
 		"stretchscrollleft",
@@ -155,9 +151,12 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 	Effect effect = EFFECT_CENTER;
 
 	for( int i=0; i<NUM_EFFECTS; i++ )
-		if( lcPath.find(EFFECT_STRING[i]) != string::npos )
+	{
+		if( lcPath.find(EFFECT_STRING[i]) != std::string::npos )
+		{
 			effect = (Effect)i;
-
+		}
+	}
 	switch( effect )
 	{
 	case EFFECT_CENTER:
@@ -185,7 +184,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			ID.bStretch = true;
 			pSprite->Load( Sprite::SongBGTexture(ID) );
 			pSprite->StretchTo( FullScreenRectF );
-			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
+			pSprite->SetCustomTextureRect( Rage::RectF(0,0,1,1) );
 
 			switch( effect )
 			{
@@ -203,14 +202,14 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			Sprite* pSprite = new Sprite;
 			this->AddChild( pSprite );
 			pSprite->Load( Sprite::SongBGTexture(sPath) );
-			const RectF StretchedFullScreenRectF(
+			const Rage::RectF StretchedFullScreenRectF(
 				FullScreenRectF.left-200,
 				FullScreenRectF.top-200,
 				FullScreenRectF.right+200,
 				FullScreenRectF.bottom+200 );
 
 			pSprite->ScaleToCover( StretchedFullScreenRectF );
-			pSprite->SetEffectSpin( RageVector3(0,0,60) );
+			pSprite->SetEffectSpin( Rage::Vector3(0,0,60) );
 		}
 		break;
 	case EFFECT_PARTICLES_SPIRAL_OUT:
@@ -227,7 +226,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			int iSpriteArea = int( s.GetUnzoomedWidth()*s.GetUnzoomedHeight() );
 			const int iMaxArea = int(SCREEN_WIDTH*SCREEN_HEIGHT);
 			int iNumParticles = iMaxArea / iSpriteArea;
-			iNumParticles = min( iNumParticles, MAX_SPRITES );
+			iNumParticles = std::min( iNumParticles, MAX_SPRITES );
 
 			for( int i=0; i<iNumParticles; i++ )
 			{
@@ -251,28 +250,28 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 				{
 				case EFFECT_PARTICLES_FLOAT_UP:
 				case EFFECT_PARTICLES_SPIRAL_OUT:
-					m_vParticleVelocity.push_back( RageVector3( 0, -PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
+					m_vParticleVelocity.push_back( Rage::Vector3( 0, -PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
 					break;
 				case EFFECT_PARTICLES_FLOAT_DOWN:
 				case EFFECT_PARTICLES_SPIRAL_IN:
-					m_vParticleVelocity.push_back( RageVector3( 0, PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
+					m_vParticleVelocity.push_back( Rage::Vector3( 0, PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
 					break;
 				case EFFECT_PARTICLES_FLOAT_LEFT:
-					m_vParticleVelocity.push_back( RageVector3( -PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
+					m_vParticleVelocity.push_back( Rage::Vector3( -PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
 					break;
 				case EFFECT_PARTICLES_FLOAT_RIGHT:
-					m_vParticleVelocity.push_back( RageVector3( +PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
+					m_vParticleVelocity.push_back( Rage::Vector3( +PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
 					break;
 				case EFFECT_PARTICLES_BOUNCE:
 					m_bParticlesBounce = true;
 					pSprite->SetZoom( 1 );
-					m_vParticleVelocity.push_back( RageVector3( randomf(), randomf(), 0 ) );
-					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
+					m_vParticleVelocity.push_back( Rage::Vector3( randomf(), randomf(), 0 ) );
+					m_vParticleVelocity[i] = m_vParticleVelocity[i].GetNormalized();
 					m_vParticleVelocity[i].x *= PARTICLE_SPEED;
 					m_vParticleVelocity[i].y *= PARTICLE_SPEED;
 					break;
 				default:
-					FAIL_M(ssprintf("Unrecognized layer effect: %i", effect));
+					FAIL_M(fmt::sprintf("Unrecognized layer effect: %i", effect));
 				}
 			}
 		}
@@ -292,9 +291,9 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			Sprite s;
 			s.Load( ID );
 			m_iNumTilesWide = 2+int(SCREEN_WIDTH /s.GetUnzoomedWidth());
-			m_iNumTilesWide = min( m_iNumTilesWide, MAX_TILES_WIDE );
+			m_iNumTilesWide = std::min( m_iNumTilesWide, MAX_TILES_WIDE );
 			m_iNumTilesHigh = 2+int(SCREEN_HEIGHT/s.GetUnzoomedHeight());
-			m_iNumTilesHigh = min( m_iNumTilesHigh, MAX_TILES_HIGH );
+			m_iNumTilesHigh = std::min( m_iNumTilesHigh, MAX_TILES_HIGH );
 			m_fTilesStartX = s.GetUnzoomedWidth() / 2;
 			m_fTilesStartY = s.GetUnzoomedHeight() / 2;
 			m_fTilesSpacingX = s.GetUnzoomedWidth();
@@ -325,48 +324,63 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 						m_fTileVelocityY = +PARTICLE_SPEED;
 						break;
 					case EFFECT_TILE_FLIP_X:
-						pSprite->SetEffectSpin( RageVector3(180,0,0) );
+						pSprite->SetEffectSpin( Rage::Vector3(180,0,0) );
 						break;
 					case EFFECT_TILE_FLIP_Y:
-						pSprite->SetEffectSpin( RageVector3(0,180,0) );
+						pSprite->SetEffectSpin( Rage::Vector3(0,180,0) );
 						break;
 					case EFFECT_TILE_PULSE:
 						pSprite->SetEffectPulse( 1, 0.3f, 1.f );
 						break;
 					default:
-						FAIL_M(ssprintf("Not a tile effect: %i", effect));
+						FAIL_M(fmt::sprintf("Not a tile effect: %i", effect));
 					}
 				}
 			}
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Unrecognized layer effect: %i", effect));
+		FAIL_M(fmt::sprintf("Unrecognized layer effect: %i", effect));
 	}
 
 
-	RString sHint = sPath;
-	sHint.MakeLower();
+	std::string sHint = Rage::make_lower(sPath);
 
-	if( sHint.find("cyclecolor") != RString::npos )
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->SetEffectRainbow( 5 );
-
-	if( sHint.find("cyclealpha") != RString::npos )
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->SetEffectDiffuseShift( 2, RageColor(1,1,1,1), RageColor(1,1,1,0) );
-
-	if( sHint.find("startonrandomframe") != RString::npos )
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->SetState( RandomInt(m_SubActors[i]->GetNumStates()) );
-
-	if( sHint.find("dontanimate") != RString::npos )
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->StopAnimating();
-
-	if( sHint.find("add") != RString::npos )
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->SetBlendMode( BLEND_ADD );
+	if( sHint.find("cyclecolor") != std::string::npos )
+	{
+		for (auto *actor: m_SubActors)
+		{
+			actor->SetEffectRainbow( 5 );
+		}
+	}
+	if( sHint.find("cyclealpha") != std::string::npos )
+	{
+		for (auto *actor: m_SubActors)
+		{
+			actor->SetEffectDiffuseShift( 2, Rage::Color(1,1,1,1), Rage::Color(1,1,1,0) );
+		}
+	}
+	if( sHint.find("startonrandomframe") != std::string::npos )
+	{
+		for (auto *actor: m_SubActors)
+		{
+			actor->SetState( RandomInt(actor->GetNumStates()) );
+		}
+	}
+	if( sHint.find("dontanimate") != std::string::npos )
+	{
+		for (auto *actor: m_SubActors)
+		{
+			actor->StopAnimating();
+		}
+	}
+	if( sHint.find("add") != std::string::npos )
+	{
+		for (auto *actor: m_SubActors)
+		{
+			actor->SetBlendMode( BLEND_ADD );
+		}
+	}
 }
 
 void BGAnimationLayer::LoadFromNode( const XNode* pNode )
@@ -379,9 +393,9 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 
 	bool bStretch = false;
 	{
-		RString type = "sprite";
+		std::string type = "sprite";
 		pNode->GetAttrValue( "Type", type );
-		type.MakeLower();
+		type = Rage::make_lower(type);
 
 		/* The preferred way of stretching a sprite to fit the screen is "Type=sprite"
 		 * and "stretch=1".  "type=1" is for backwards-compatibility. */
@@ -390,34 +404,38 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		// Check for string match first, then do integer match.
 		// "if(StringType(type)==0)" was matching against all string matches.
 		// -Chris
-		if( type.EqualsNoCase("sprite") )
+		Rage::ci_ascii_string matcher{ type.c_str() };
+		if( matcher == "sprite" )
 		{
 			m_Type = TYPE_SPRITE;
 		}
-		else if( type.EqualsNoCase("particles") )
+		else if( matcher == "particles" )
 		{
 			m_Type = TYPE_PARTICLES;
 		}
-		else if( type.EqualsNoCase("tiles") )
+		else if( matcher == "tiles" )
 		{
 			m_Type = TYPE_TILES;
 		}
-		else if( StringToInt(type) == 1 )
-		{
-			m_Type = TYPE_SPRITE; 
-			bStretch = true; 
-		}
-		else if( StringToInt(type) == 2 )
-		{
-			m_Type = TYPE_PARTICLES; 
-		}
-		else if( StringToInt(type) == 3 )
-		{
-			m_Type = TYPE_TILES; 
-		}
 		else
 		{
-			m_Type = TYPE_SPRITE;
+			int typo= StringToInt(type);
+			switch(typo)
+			{
+				case 1:
+					m_Type = TYPE_SPRITE;
+					bStretch = true;
+					break;
+				case 2:
+					m_Type = TYPE_PARTICLES;
+					break;
+				case 3:
+					m_Type = TYPE_TILES;
+					break;
+				default:
+					m_Type = TYPE_SPRITE;
+					break;
+			}
 		}
 	}
 
@@ -473,7 +491,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		break;
 	case TYPE_PARTICLES:
 		{
-			RString sFile;
+			std::string sFile;
 			ActorUtil::GetAttrPath( pNode, "File", sFile );
 			FixSlashesInPlace( sFile );
 
@@ -482,19 +500,19 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 			for( int i=0; i<iNumParticles; i++ )
 			{
 				Actor* pActor = ActorUtil::MakeActor( sFile, this );
-				if( pActor == NULL )
+				if( pActor == nullptr )
 					continue;
 				this->AddChild( pActor );
 				pActor->SetXY( randomf(float(FullScreenRectF.left),float(FullScreenRectF.right)),
 							   randomf(float(FullScreenRectF.top),float(FullScreenRectF.bottom)) );
 				pActor->SetZoom( randomf(fZoomMin,fZoomMax) );
-				m_vParticleVelocity.push_back( RageVector3( 
+				m_vParticleVelocity.push_back( Rage::Vector3(
 					randomf(fVelocityXMin,fVelocityXMax),
 					randomf(fVelocityYMin,fVelocityYMax),
 					randomf(fVelocityZMin,fVelocityZMax) ) );
 				if( fOverrideSpeed != 0 )
 				{
-					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
+					m_vParticleVelocity[i] = m_vParticleVelocity[i].GetNormalized();
 					m_vParticleVelocity[i] *= fOverrideSpeed;
 				}
 			}
@@ -502,7 +520,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		break;
 	case TYPE_TILES:
 		{
-			RString sFile;
+			std::string sFile;
 			ActorUtil::GetAttrPath( pNode, "File", sFile );
 			FixSlashesInPlace( sFile );
 
@@ -520,7 +538,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
 				Actor* pSprite = ActorUtil::MakeActor( sFile, this );
-				if( pSprite == NULL )
+				if( pSprite == nullptr )
 					continue;
 				this->AddChild( pSprite );
 				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"
@@ -529,15 +547,17 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Unrecognized layer type: %i", m_Type));
+		FAIL_M(fmt::sprintf("Unrecognized layer type: %i", m_Type));
 	}
 
 	bool bStartOnRandomFrame = false;
 	pNode->GetAttrValue( "StartOnRandomFrame", bStartOnRandomFrame );
 	if( bStartOnRandomFrame )
 	{
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->SetState( RandomInt(m_SubActors[i]->GetNumStates()) );
+		for (auto *actor: m_SubActors)
+		{
+			actor->SetState( RandomInt(actor->GetNumStates()) );
+		}
 	}
 }
 
@@ -552,10 +572,10 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 	case TYPE_SPRITE:
 		if( m_fTexCoordVelocityX || m_fTexCoordVelocityY )
 		{
-			for( unsigned i=0; i<m_SubActors.size(); i++ )
+			for (auto *actor: m_SubActors)
 			{
 				// XXX: there's no longer any guarantee that this is a Sprite
-				Sprite *pSprite = (Sprite*)m_SubActors[i];
+				Sprite *pSprite = (Sprite*)actor;
 				pSprite->StretchTexCoords(
 					fDeltaTime*m_fTexCoordVelocityX,
 					fDeltaTime*m_fTexCoordVelocityY );
@@ -566,35 +586,35 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 		{
 			Actor* pActor = m_SubActors[i];
-			RageVector3 &vel = m_vParticleVelocity[i];
+			Rage::Vector3 &vel = m_vParticleVelocity[i];
 
 			m_SubActors[i]->SetX( pActor->GetX() + fDeltaTime*vel.x );
 			m_SubActors[i]->SetY( pActor->GetY() + fDeltaTime*vel.y );
 			pActor->SetZ( pActor->GetZ() + fDeltaTime*vel.z  );
 			if( m_bParticlesBounce )
 			{
-				if( HitGuardRailLeft(pActor) )	
+				if( HitGuardRailLeft(pActor) )
 				{
 					vel.x *= -1;
 					pActor->SetX( GetGuardRailLeft(pActor) );
 				}
-				if( HitGuardRailRight(pActor) )	
+				if( HitGuardRailRight(pActor) )
 				{
 					vel.x *= -1;
 					pActor->SetX( GetGuardRailRight(pActor) );
 				}
-				if( HitGuardRailTop(pActor) )	
+				if( HitGuardRailTop(pActor) )
 				{
 					vel.y *= -1;
 					pActor->SetY( GetGuardRailTop(pActor) );
 				}
-				if( HitGuardRailBottom(pActor) )	
+				if( HitGuardRailBottom(pActor) )
 				{
 					vel.y *= -1;
 					pActor->SetY( GetGuardRailBottom(pActor) );
 				}
 			}
-			else // !m_bParticlesBounce 
+			else // !m_bParticlesBounce
 			{
 				if( vel.x<0  &&  IsOffScreenLeft(pActor) )
 					pActor->SetX( GetOffScreenRight(pActor) );
@@ -643,14 +663,14 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Unrecognized layer type: %i", m_Type));
+		FAIL_M(fmt::sprintf("Unrecognized layer type: %i", m_Type));
 	}
 }
 
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -660,7 +680,7 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

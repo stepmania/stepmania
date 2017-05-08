@@ -6,7 +6,7 @@
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
 #include "RageTexturePreloader.h"
 
-RString GetAttackPieceName( const RString &sAttack );
+std::string GetAttackPieceName( const std::string &sAttack );
 
 class PlayerState;
 /** @brief A graphical display for attacks. */
@@ -16,7 +16,7 @@ public:
 	AttackDisplay();
 
 	void Init( const PlayerState* pPlayerState );
-	void SetAttack( const RString &mod );
+	void SetAttack( const std::string &mod );
 
 	virtual void Update( float fDelta );
 

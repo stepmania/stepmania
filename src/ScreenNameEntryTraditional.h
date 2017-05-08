@@ -25,11 +25,11 @@ public:
 	bool AnyEntering() const;
 	bool Finish( PlayerNumber pn );
 	void UpdateSelectionText( PlayerNumber pn );
-	void SelectChar( PlayerNumber pn, const RString &sKey );
+	void SelectChar( PlayerNumber pn, const std::string &sKey );
 	/** @brief How long can the name be for ranking purposes? */
 	ThemeMetric<int>	MAX_RANKING_NAME_LENGTH;
 
-	wstring			m_sSelection[NUM_PLAYERS];
+	std::wstring			m_sSelection[NUM_PLAYERS];
 	bool			m_bEnteringName[NUM_PLAYERS];
 	bool			m_bFinalized[NUM_PLAYERS];
 };
@@ -41,7 +41,7 @@ public:
  * @author Glenn Maynard, Chris Danford (c) 2001-2007
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -51,7 +51,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

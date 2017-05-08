@@ -2,11 +2,14 @@
 #define ACTOR_H
 
 #include "PlayerNumber.h"
+#include "RageRect.hpp"
 #include "RageTypes.h"
+#include "RageVector4.hpp"
 #include "RageUtil_AutoPtr.h"
 #include "LuaReference.h"
 #include "EnumHelper.h"
-#include <map>
+#include <unordered_map>
+#include <array>
 class XNode;
 struct lua_State;
 class LuaClass;
@@ -15,6 +18,7 @@ class LuaClass;
 
 typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
+const int max_draw_order= 16777216;
 /** @brief The background layer. */
 #define DRAW_ORDER_BEFORE_EVERYTHING		-200
 /** @brief The underlay layer. */
@@ -101,6 +105,13 @@ enum EffectAction
 LuaDeclareType( EffectAction );
 */
 
+struct TimingSource
+{
+	double beat_delta;
+	double second_delta;
+	double curr_second;
+};
+
 /** @brief Base class for all objects that appear on the screen. */
 class Actor : public MessageSubscriber
 {
@@ -111,6 +122,7 @@ public:
 	 * @brief Copy a new Actor to the old one.
 	 * @param cpy the new Actor to use in place of this one. */
 	Actor( const Actor &cpy );
+	Actor &operator=( Actor other );
 	virtual ~Actor();
 	virtual Actor *Copy() const;
 	virtual void InitState();
@@ -173,18 +185,18 @@ public:
 		Effect() : m_Action(EffectAction_None), m_Type(EffectType_Invalid), m_fSecsIntoEffect(0),
 				m_fEffectDelta(0), m_fEffectRampUp(0.5f), m_fEffectHoldAtHalf(0),
 				m_fEffectRampDown(0.5f), m_fEffectHoldAtZero(0), m_fEffectOffset(0),
-				m_EffectClock(CLOCK_TIMER), m_vEffectMagnitude(RageVector3(0,0,10)),
-				m_effectColor1(RageColor(1,1,1,1)), m_effectColor2(RageColor(1,1,1,1))
+				m_EffectClock(CLOCK_TIMER), m_vEffectMagnitude(Rage::Vector3(0,0,10)),
+				m_effectColor1(Rage::Color(1,1,1,1)), m_effectColor2(Rage::Color(1,1,1,1))
 		{ }
 
-		RString			m_sName; // friendly name
+		std::string			m_sName; // friendly name
 		EffectAction	m_Action; // replaces the old Effect enum
 		EffectType		m_Type; // determined by EffectAction
 		float			m_fSecsIntoEffect;
 		float			m_fEffectDelta;
-		RageColor		m_EffectColor1;
-		RageColor		m_EffectColor2;
-		RageVector3		m_vEffectMagnitude;
+		Rage::Color		m_EffectColor1;
+		Rage::Color		m_EffectColor2;
+		Rage::Vector3		m_vEffectMagnitude;
 		EffectClock		m_EffectClock;
 		// units depend on m_EffectClock
 		float			m_fEffectRampUp;
@@ -206,32 +218,34 @@ public:
 		bool operator!=( const TweenState &other ) const { return !operator==(other); }
 
 		// start and end position for tweening
-		RageVector3	pos;
-		RageVector3	rotation;
-		RageVector4	quat;
-		RageVector3	scale;
+		Rage::Vector3	pos;
+		Rage::Vector3	rotation;
+		Rage::Vector4	quat;
+		Rage::Vector3	scale;
 		float		fSkewX, fSkewY;
 		/**
 		 * @brief The amount of cropping involved.
 		 *
 		 * If 0, there is no cropping. If 1, it's fully cropped. */
-		RectF		crop;
+		Rage::RectF		crop;
 		/**
 		 * @brief The amount of fading involved.
 		 *
 		 * If 0, there is no fade. If 1, it's fully faded. */
-		RectF		fade;
+		Rage::RectF		fade;
 		/**
 		 * @brief Four values making up the diffuse in this TweenState.
 		 *
 		 * 0 = UpperLeft, 1 = UpperRight, 2 = LowerLeft, 3 = LowerRight */
-		RageColor	diffuse[NUM_DIFFUSE_COLORS];
+		std::array<Rage::Color, NUM_DIFFUSE_COLORS> diffuse;
 		/** @brief The glow color for this TweenState. */
-		RageColor	glow;
+		Rage::Color	glow;
+		Rage::Color mask_color;
 		/** @brief A magical value that nobody really knows the use for. ;) */
 		float		aux;
 	};
 
+	void SetBeingDrawnByProxy(); // Draw will set it back to false. -Kyz
 	// PartiallyOpaque broken out of Draw for reuse and clarity.
 	bool PartiallyOpaque();
 	/**
@@ -274,8 +288,9 @@ public:
 	virtual void DrawPrimitives() {};
 	/** @brief Pop the transform from the world matrix stack. */
 	virtual void EndDraw();
-	
-	// TODO: make Update non virtual and change all classes to override UpdateInternal 
+	virtual void ChildChangedDrawOrder(Actor*) {};
+
+	// TODO: make Update non virtual and change all classes to override UpdateInternal
 	// instead.
 	bool IsFirstUpdate() const;
 	virtual void Update( float fDeltaTime );		// this can short circuit UpdateInternal
@@ -285,18 +300,22 @@ public:
 	// These next functions should all be overridden by a derived class that has its own tweening states to handle.
 	virtual void SetCurrentTweenStart() {}
 	virtual void EraseHeadTween() {}
-	virtual void UpdatePercentThroughTween( float PercentThroughTween ) {}
+	virtual void SetTimingSource(TimingSource* source)
+	{
+		m_timing_source = source;
+	}
+	virtual void UpdatePercentThroughTween(float) {}
 	bool get_tween_uses_effect_delta() { return m_tween_uses_effect_delta; }
 	void set_tween_uses_effect_delta(bool t) { m_tween_uses_effect_delta= t; }
 
 	/**
 	 * @brief Retrieve the Actor's name.
 	 * @return the Actor's name. */
-	const RString &GetName() const			{ return m_sName; }
+	const std::string &GetName() const			{ return m_sName; }
 	/**
 	 * @brief Set the Actor's name to a new one.
 	 * @param sName the new name for the Actor. */
-	virtual void SetName( const RString &sName )	{ m_sName = sName; }
+	virtual void SetName( const std::string &sName )	{ m_sName = sName; }
 	/**
 	 * @brief Give this Actor a new parent.
 	 * @param pParent the new parent Actor. */
@@ -308,7 +327,7 @@ public:
 	/**
 	 * @brief Retrieve the Actor's lineage.
 	 * @return the Actor's lineage. */
-	RString GetLineage() const;
+	std::string GetLineage() const;
 
 	void SetFakeParent(Actor* mailman) { m_FakeParent= mailman; }
 	Actor* GetFakeParent() { return m_FakeParent; }
@@ -333,6 +352,32 @@ public:
 	float GetDestX() const				{ return DestTweenState().pos.x; };
 	float GetDestY() const				{ return DestTweenState().pos.y; };
 	float GetDestZ() const				{ return DestTweenState().pos.z; };
+	void set_transform(Rage::transform const& trans)
+	{
+		TweenState& dest= DestTweenState();
+		dest.pos= trans.pos;
+		dest.rotation.x= Rage::RadiansToDegrees(trans.rot.x);
+		dest.rotation.y= Rage::RadiansToDegrees(trans.rot.y);
+		dest.rotation.z= Rage::RadiansToDegrees(trans.rot.z);
+		dest.scale= trans.zoom;
+	}
+	void set_transform_pos(Rage::transform const& trans)
+	{
+		TweenState& dest= DestTweenState();
+		dest.pos= trans.pos;
+	}
+	void set_pos(Rage::Vector3 const& pos)
+	{
+		TweenState& dest= DestTweenState();
+		dest.pos= pos;
+	}
+	void set_transform_with_glow_alpha(Rage::transform const& trans)
+	{
+		set_transform(trans);
+		SetDiffuseAlpha(trans.alpha);
+		SetGlow(Rage::Color(1, 1, 1, trans.glow));
+	}
+	virtual void set_counter_rotation(Actor* counter);
 	void  SetX( float x )				{ DestTweenState().pos.x = x; };
 	void  SetY( float y )				{ DestTweenState().pos.y = y; };
 	void  SetZ( float z )				{ DestTweenState().pos.z = z; };
@@ -365,14 +410,14 @@ public:
 	void  SetBaseZoomY( float zoom )		{ m_baseScale.y = zoom; }
 	float GetBaseZoomZ() const			{ return m_baseScale.z;	}
 	void  SetBaseZoomZ( float zoom )		{ m_baseScale.z = zoom; }
-	void  SetBaseZoom( float zoom )			{ m_baseScale = RageVector3(zoom,zoom,zoom); }
+	void  SetBaseZoom( float zoom )			{ m_baseScale = Rage::Vector3(zoom,zoom,zoom); }
 	void  SetBaseRotationX( float rot )		{ m_baseRotation.x = rot; }
 	void  SetBaseRotationY( float rot )		{ m_baseRotation.y = rot; }
 	void  SetBaseRotationZ( float rot )		{ m_baseRotation.z = rot; }
-	void  SetBaseRotation( const RageVector3 &rot )	{ m_baseRotation = rot; }
+	void  SetBaseRotation( const Rage::Vector3 &rot )	{ m_baseRotation = rot; }
 	virtual void  SetBaseAlpha( float fAlpha )	{ m_fBaseAlpha = fAlpha; }
-	void  SetInternalDiffuse( const RageColor &c )	{ m_internalDiffuse = c; }
-	void  SetInternalGlow( const RageColor &c )	{ m_internalGlow = c; }
+	void  SetInternalDiffuse( const Rage::Color &c )	{ m_internalDiffuse = c; }
+	void  SetInternalGlow( const Rage::Color &c )	{ m_internalGlow = c; }
 
 	/**
 	 * @brief Retrieve the general zoom factor, using the x coordinate of the Actor.
@@ -396,9 +441,9 @@ public:
 	 * @brief Set the zoom factor for all dimensions of the Actor.
 	 * @param zoom the zoom factor for all dimensions. */
 	void  SetZoom( float zoom )
-	{ 
-		DestTweenState().scale.x = zoom; 
-		DestTweenState().scale.y = zoom; 
+	{
+		DestTweenState().scale.x = zoom;
+		DestTweenState().scale.y = zoom;
 		DestTweenState().scale.z = zoom;
 	}
 	/**
@@ -451,26 +496,45 @@ public:
 	void  SetFadeRight( float percent )		{ DestTweenState().fade.right = percent; }
 	void  SetFadeBottom( float percent )		{ DestTweenState().fade.bottom = percent; }
 
-	void SetGlobalDiffuseColor( RageColor c );
+	void SetGlobalDiffuseColor( Rage::Color c );
 
-	virtual void SetDiffuse( RageColor c )		{ for(int i=0; i<NUM_DIFFUSE_COLORS; i++) DestTweenState().diffuse[i] = c; };
-	virtual void SetDiffuseAlpha( float f )		{ for(int i = 0; i < NUM_DIFFUSE_COLORS; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
+	virtual void SetDiffuse( Rage::Color c )
+	{
+		for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
+		{
+			DestTweenState().diffuse[i] = c;
+		}
+	}
+	virtual void SetDiffuseAlpha( float f )
+	{
+		for(int i = 0; i < NUM_DIFFUSE_COLORS; ++i)
+		{
+			Rage::Color c = GetDiffuses( i );
+			c.a = f; SetDiffuses( i, c );
+		}
+	}
 	float GetCurrentDiffuseAlpha() const		{ return m_current.diffuse[0].a; }
-	void SetDiffuseColor( RageColor c );
-	void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };
-	void SetDiffuseUpperLeft( RageColor c )		{ DestTweenState().diffuse[0] = c; };
-	void SetDiffuseUpperRight( RageColor c )	{ DestTweenState().diffuse[1] = c; };
-	void SetDiffuseLowerLeft( RageColor c )		{ DestTweenState().diffuse[2] = c; };
-	void SetDiffuseLowerRight( RageColor c )	{ DestTweenState().diffuse[3] = c; };
-	void SetDiffuseTopEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[1] = c; };
-	void SetDiffuseRightEdge( RageColor c )		{ DestTweenState().diffuse[1] = DestTweenState().diffuse[3] = c; };
-	void SetDiffuseBottomEdge( RageColor c )	{ DestTweenState().diffuse[2] = DestTweenState().diffuse[3] = c; };
-	void SetDiffuseLeftEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[2] = c; };
-	RageColor GetDiffuse() const			{ return DestTweenState().diffuse[0]; };
-	RageColor GetDiffuses( int i ) const		{ return DestTweenState().diffuse[i]; };
+	void SetDiffuseColor( Rage::Color c );
+	void SetDiffuses( int i, Rage::Color c )		{ DestTweenState().diffuse[i] = c; };
+	void SetDiffuseUpperLeft( Rage::Color c )		{ DestTweenState().diffuse[0] = c; };
+	void SetDiffuseUpperRight( Rage::Color c )	{ DestTweenState().diffuse[1] = c; };
+	void SetDiffuseLowerLeft( Rage::Color c )		{ DestTweenState().diffuse[2] = c; };
+	void SetDiffuseLowerRight( Rage::Color c )	{ DestTweenState().diffuse[3] = c; };
+	void SetDiffuseTopEdge( Rage::Color c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[1] = c; };
+	void SetDiffuseRightEdge( Rage::Color c )		{ DestTweenState().diffuse[1] = DestTweenState().diffuse[3] = c; };
+	void SetDiffuseBottomEdge( Rage::Color c )	{ DestTweenState().diffuse[2] = DestTweenState().diffuse[3] = c; };
+	void SetDiffuseLeftEdge( Rage::Color c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[2] = c; };
+	Rage::Color GetDiffuse() const			{ return DestTweenState().diffuse[0]; };
+	Rage::Color GetDiffuses( int i ) const		{ return DestTweenState().diffuse[i]; };
 	float GetDiffuseAlpha() const			{ return DestTweenState().diffuse[0].a; };
-	void SetGlow( RageColor c )			{ DestTweenState().glow = c; };
-	RageColor GetGlow() const			{ return DestTweenState().glow; };
+	void SetGlow( Rage::Color c )			{ DestTweenState().glow = c; };
+	void SetGlowAlpha(float c)			{ DestTweenState().glow.a = c; };
+	Rage::Color GetGlow() const			{ return DestTweenState().glow; };
+
+	void SetMaskColor(Rage::Color c) { DestTweenState().mask_color= c; }
+	Rage::Color GetMaskColor() const { return DestTweenState().mask_color; }
+	virtual void recursive_set_mask_color(Rage::Color c) { SetMaskColor(c); }
+	virtual void recursive_set_z_bias(float z) { SetZBias(z); }
 
 	void SetAux( float f )				{ DestTweenState().aux = f; }
 	float GetAux() const				{ return m_current.aux; }
@@ -479,8 +543,8 @@ public:
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	virtual void StopTweening();
 	void Sleep( float time );
-	void QueueCommand( const RString& sCommandName );
-	void QueueMessage( const RString& sMessageName );
+	void QueueCommand( const std::string& sCommandName );
+	void QueueMessage( const std::string& sMessageName );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override
@@ -496,16 +560,16 @@ public:
 
 	/** @brief How do we handle stretching the Actor? */
 	enum StretchType
-	{ 
+	{
 		fit_inside, /**< Have the Actor fit inside its parent, using the smaller zoom. */
 		cover /**< Have the Actor cover its parent, using the larger zoom. */
 	};
 
-	void ScaleToCover( const RectF &rect )		{ ScaleTo( rect, cover ); }
-	void ScaleToFitInside( const RectF &rect )	{ ScaleTo( rect, fit_inside); };
-	void ScaleTo( const RectF &rect, StretchType st );
+	void ScaleToCover( const Rage::RectF &rect )		{ ScaleTo( rect, cover ); }
+	void ScaleToFitInside( const Rage::RectF &rect )	{ ScaleTo( rect, fit_inside); };
+	void ScaleTo( const Rage::RectF &rect, StretchType st );
 
-	void StretchTo( const RectF &rect );
+	void StretchTo( const Rage::RectF &rect );
 
 	// Alignment settings.  These need to be virtual for BitmapText
 	virtual void SetHorizAlign( float f ) { m_fHorizAlign = f; }
@@ -527,35 +591,35 @@ public:
 	float GetEffectDelta() const			{ return m_fEffectDelta; }
 
 	// todo: account for SSC_FUTURES by adding an effect as an arg to each one -aj
-	void SetEffectColor1( RageColor c )		{ m_effectColor1 = c; }
-	void SetEffectColor2( RageColor c )		{ m_effectColor2 = c; }
+	void SetEffectColor1( Rage::Color c )		{ m_effectColor1 = c; }
+	void SetEffectColor2( Rage::Color c )		{ m_effectColor2 = c; }
 	void RecalcEffectPeriod();
 	void SetEffectPeriod( float fTime );
 	float GetEffectPeriod() const { return m_effect_period; }
 	bool SetEffectTiming(float ramp_toh, float at_half, float ramp_tof,
-		float at_zero, float at_full, RString& err);
-	bool SetEffectHoldAtFull(float haf, RString& err);
+		float at_zero, float at_full, std::string& err);
+	bool SetEffectHoldAtFull(float haf, std::string& err);
 	void SetEffectOffset( float fTime )		{ m_fEffectOffset = fTime; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
-	void SetEffectClockString( const RString &s );	// convenience
+	void SetEffectClockString( const std::string &s );	// convenience
 
-	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
-	RageVector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
+	void SetEffectMagnitude( Rage::Vector3 vec )	{ m_vEffectMagnitude = vec; }
+	Rage::Vector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
 
 	void ResetEffectTimeIfDifferent(Effect new_effect);
-	void SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
-	void SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
-	void SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
-	void SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
-	void SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
-	void SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
+	void SetEffectDiffuseBlink( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 );
+	void SetEffectDiffuseShift( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 );
+	void SetEffectDiffuseRamp( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 );
+	void SetEffectGlowBlink( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 );
+	void SetEffectGlowShift( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 );
+	void SetEffectGlowRamp( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 );
 	void SetEffectRainbow( float fEffectPeriodSeconds );
-	void SetEffectWag( float fPeriod, RageVector3 vect );
-	void SetEffectBounce( float fPeriod, RageVector3 vect );
-	void SetEffectBob( float fPeriod, RageVector3 vect );
+	void SetEffectWag( float fPeriod, Rage::Vector3 vect );
+	void SetEffectBounce( float fPeriod, Rage::Vector3 vect );
+	void SetEffectBob( float fPeriod, Rage::Vector3 vect );
 	void SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom );
-	void SetEffectSpin( RageVector3 vect );
-	void SetEffectVibrate( RageVector3 vect );
+	void SetEffectSpin( Rage::Vector3 vect );
+	void SetEffectVibrate( Rage::Vector3 vect );
 
 
 	// other properties
@@ -567,10 +631,10 @@ public:
 	void SetShadowLength( float fLength )		{ m_fShadowLengthX = fLength; m_fShadowLengthY = fLength; }
 	void SetShadowLengthX( float fLengthX )		{ m_fShadowLengthX = fLengthX; }
 	void SetShadowLengthY( float fLengthY )		{ m_fShadowLengthY = fLengthY; }
-	void SetShadowColor( RageColor c )		{ m_ShadowColor = c; }
+	void SetShadowColor( Rage::Color c )		{ m_ShadowColor = c; }
 	// TODO: Implement hibernate as a tween type?
 	void SetHibernate( float fSecs )		{ m_fHibernateSecondsLeft = fSecs; }
-	void SetDrawOrder( int iOrder )			{ m_iDrawOrder = iOrder; }
+	void SetDrawOrder(int order);
 	int GetDrawOrder() const			{ return m_iDrawOrder; }
 
 	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }	// Sprite needs to overload this
@@ -578,41 +642,41 @@ public:
 	void StopAnimating()				{ this->EnableAnimation(false); }
 
 	// render states
-	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
+	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; }
 	void SetTextureTranslate( float x, float y )	{ m_texTranslate.x = x; m_texTranslate.y = y; }
-	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
-	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; } 
-	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; } 
-	void SetUseZBuffer( bool b ) 				{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
-	virtual void SetZTestMode( ZTestMode mode )	{ m_ZTestMode = mode; } 
-	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
+	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; }
+	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; }
+	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; }
+	void SetUseZBuffer( bool b ) 				{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); }
+	virtual void SetZTestMode( ZTestMode mode )	{ m_ZTestMode = mode; }
+	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; }
 	void SetZBias( float f )					{ m_fZBias = f; }
-	virtual void SetCullMode( CullMode mode ) { m_CullMode = mode; } 
+	virtual void SetCullMode( CullMode mode ) { m_CullMode = mode; }
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
 	virtual void PushContext( lua_State *L );
 
 	// Named commands
-	void AddCommand( const RString &sCmdName, apActorCommands apac, bool warn= true );
-	bool HasCommand( const RString &sCmdName ) const;
-	const apActorCommands *GetCommand( const RString &sCommandName ) const;
-	void PlayCommand( const RString &sCommandName ) { HandleMessage( Message(sCommandName) ); } // convenience
+	void AddCommand( const std::string &sCmdName, apActorCommands apac, bool warn= true );
+	bool HasCommand( const std::string &sCmdName ) const;
+	const apActorCommands *GetCommand( const std::string &sCommandName ) const;
+	void PlayCommand( const std::string &sCommandName ) { HandleMessage( Message(sCommandName) ); } // convenience
 	void PlayCommandNoRecurse( const Message &msg );
 
 	// Commands by reference
-	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
-	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
-	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = NULL ) { RunCommands(cmds, pParamTable); }
+	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = nullptr );
+	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = nullptr ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
+	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = nullptr ) { RunCommands(cmds, pParamTable); }
 	// If we're a leaf, then execute this command.
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ) { RunCommands(cmds, pParamTable); }
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = nullptr ) { RunCommands(cmds, pParamTable); }
 
 	// Messages
 	virtual void HandleMessage( const Message &msg );
 
 	// Animation
 	virtual int GetNumStates() const { return 1; }
-	virtual void SetState( int /* iNewState */ ) {}
+	virtual void SetState( size_t /* iNewState */ ) {}
 	virtual float GetAnimationLengthSeconds() const { return 0; }
 	virtual void SetSecondsIntoAnimation( float ) {}
 	virtual void SetUpdateRate( float ) {}
@@ -622,7 +686,7 @@ public:
 
 protected:
 	/** @brief the name of the Actor. */
-	RString m_sName;
+	std::string m_sName;
 	/** @brief the current parent of this Actor if it exists. */
 	Actor *m_pParent;
 	// m_FakeParent exists to provide a way to render the actor inside another's
@@ -631,7 +695,9 @@ protected:
 	Actor* m_FakeParent;
 	// WrapperStates provides a way to wrap the actor inside ActorFrames,
 	// applicable to any actor, not just ones the theme creates.
-	vector<Actor*> m_WrapperStates;
+	std::vector<Actor*> m_WrapperStates;
+
+	TimingSource* m_timing_source;
 
 	/** @brief Some general information about the Tween. */
 	struct TweenInfo
@@ -648,29 +714,36 @@ protected:
 		/** @brief The number of seconds between Start and End positions/zooms. */
 		float		m_fTweenTime;
 		/** @brief The command to execute when this TweenState goes into effect. */
-		RString		m_sCommandName;
+		std::string		m_sCommandName;
 	};
 
-	RageVector3	m_baseRotation;
-	RageVector3	m_baseScale;
+	Rage::Vector3	m_baseRotation;
+	Rage::Vector3	m_baseScale;
 	float m_fBaseAlpha;
-	RageColor m_internalDiffuse;
-	RageColor m_internalGlow;
+	Rage::Color m_internalDiffuse;
+	Rage::Color m_internalGlow;
 
-	RageVector2	m_size;
+	Rage::Vector2	m_size;
 	TweenState	m_current;
 	TweenState	m_start;
+	TweenState m_current_with_effects;
 	struct TweenStateAndInfo
 	{
 		TweenState state;
 		TweenInfo info;
 	};
-	vector<TweenStateAndInfo *>	m_Tweens;
+	std::vector<TweenStateAndInfo *>	m_Tweens;
 
 	/** @brief Temporary variables that are filled just before drawing */
 	TweenState *m_pTempState;
 
 	bool	m_bFirstUpdate;
+	// Some actor types like Player and NoteField are designed with
+	// multiple Draw calls in mind to handle their different layers.  But when
+	// they're drawn by ActorProxy, Draw is only called once.
+	// m_being_drawn_by_proxy exists so they can check that case and handle it.
+	// -Kyz
+	bool m_being_drawn_by_proxy;
 
 	// Stuff for alignment
 	/** @brief The particular horizontal alignment.
@@ -684,7 +757,7 @@ protected:
 
 	// Stuff for effects
 #if defined(SSC_FUTURES) // be able to stack effects
-	vector<Effect> m_Effects;
+	std::vector<Effect> m_Effects;
 #else // compatibility
 	Effect m_Effect;
 #endif
@@ -710,9 +783,9 @@ protected:
 	float GetEffectDeltaTime() const		{ return m_fEffectDelta; }
 
 	// todo: account for SSC_FUTURES by having these be vectors too -aj
-	RageColor	m_effectColor1;
-	RageColor	m_effectColor2;
-	RageVector3	m_vEffectMagnitude;
+	Rage::Color	m_effectColor1;
+	Rage::Color	m_effectColor2;
+	Rage::Vector3	m_vEffectMagnitude;
 
 	// other properties
 	bool		m_bVisible;
@@ -720,7 +793,7 @@ protected:
 	float		m_fHibernateSecondsLeft;
 	float		m_fShadowLengthX;
 	float		m_fShadowLengthY;
-	RageColor	m_ShadowColor;
+	Rage::Color	m_ShadowColor;
 	/** @brief The draw order priority.
 	 *
 	 * The lower this number is, the sooner it is drawn. */
@@ -730,7 +803,7 @@ protected:
 	BlendMode	m_BlendMode;
 	ZTestMode	m_ZTestMode;
 	CullMode	m_CullMode;
-	RageVector2	m_texTranslate;
+	Rage::Vector2	m_texTranslate;
 	bool		m_bTextureWrapping;
 	bool		m_bTextureFiltering;
 	bool		m_bClearZBuffer;
@@ -744,12 +817,12 @@ protected:
 	// global state
 	static float g_fCurrentBGMTime, g_fCurrentBGMBeat;
 	static float g_fCurrentBGMTimeNoOffset, g_fCurrentBGMBeatNoOffset;
-	static vector<float> g_vfCurrentBGMBeatPlayer;
-	static vector<float> g_vfCurrentBGMBeatPlayerNoOffset;
+	static std::vector<float> g_vfCurrentBGMBeatPlayer;
+	static std::vector<float> g_vfCurrentBGMBeatPlayerNoOffset;
 
 private:
 	// commands
-	map<RString, apActorCommands> m_mapNameToCommands;
+	std::unordered_map<std::string, apActorCommands> m_mapNameToCommands;
 };
 
 #endif
@@ -759,7 +832,7 @@ private:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -769,7 +842,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

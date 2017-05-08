@@ -21,7 +21,7 @@
 
 save yourself some time, copy this for undocumented things:
 <Function name='' return='' arguments=''>
-		
+
 	</Function>
   -->
 
@@ -451,7 +451,7 @@ save yourself some time, copy this for undocumented things:
 		Returns a formatted percent with the specified <code>num</code>erator and <code>den</code>ominator.
 	</Function>
 	<Function name='print' theme='_fallback' return='void' arguments='string s'>
-		[00 init.lua] 
+		[00 init.lua]
 	</Function>
 	<Function name='PrintTable' theme='_fallback' return='void' arguments='table t'>
 		[03 ThemePrefs.lua] Prints a table's contents to the log.
@@ -568,7 +568,7 @@ save yourself some time, copy this for undocumented things:
 		[03 UserPreferences2.lua] Themer-facing function for setting a user preference.
 	</Function>
 	<Function name='ShowHoldJudgments' theme='_fallback' return='bool' arguments=''>
-		[03 Gameplay.lua] 
+		[03 Gameplay.lua]
 	</Function>
 	<Function name='ShowStandardDecoration' theme='_fallback' return='bool' arguments='string sMetricsName'>
 		[02 ActorDef.lua] Returns <code>true</code> if a decoration should be shown on the current screen or not.
@@ -586,13 +586,13 @@ save yourself some time, copy this for undocumented things:
 		[02 Colors.lua]
 	</Function>
 	<Function name='StandardDecorationFromTable' theme='_fallback' return='Actor' arguments='string sMetricsName, table t'>
-		[02 ActorDef.lua] 
+		[02 ActorDef.lua]
 	</Function>
 	<Function name='StandardDecorationFromFile' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
-		[02 ActorDef.lua] 
+		[02 ActorDef.lua]
 	</Function>
 	<Function name='StandardDecorationFromFileOptional' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
-		[02 ActorDef.lua] 
+		[02 ActorDef.lua]
 	</Function>
 	<Function name='tableshuffle' theme='_fallback' return='table' arguments='table t'>
 		[02 Utilities.lua] Returns a shuffled version of <code>t</code>.
@@ -760,7 +760,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetZoom' return='float' arguments='PlayerState ps'>
 		Returns the zoom of a note for the provided PlayerState.
 	</Function>
-	<Function name='GetFrameWidthScale' return='float' arguments='PlayerState ps, float fYOffset, fOverlappedTime'>
+	<Function name='GetFrameWidthScale' return='float' arguments='PlayerState ps, float fYOffset, float fOverlappedTime'>
 		Returns the FrameWidthScale of a hold part with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br/> <code>fOverlappedTime</code> is optional and will default to 0.
 	</Function>
 </Namespace>
@@ -776,7 +776,7 @@ save yourself some time, copy this for undocumented things:
 		of <code>Enum</code>. Instead of
 		<code><Link function='GetName'>Enum.GetName</Link>(
 		<Link class='ENUM' function='PlayerNumber' /> )</code> or
-		<code><Link function='Reverse'>Enum.Reverse</Link>( 
+		<code><Link function='Reverse'>Enum.Reverse</Link>(
 		<Link class='ENUM' function='PlayerNumber' /> )</code>, one can use
 		<code><Link class='ENUM' function='PlayerNumber' />:<!--
 		--><Link function='GetName'>GetName</Link>()</code> or
@@ -2353,6 +2353,61 @@ save yourself some time, copy this for undocumented things:
 		Blanks the DifficultyIcon.
 	</Function>
 </Class>
+<Class name='DisplayMode'>
+	<Function name='GetWidth' return='int' arguments=''>
+		Return the width of the display in this mode.
+	</Function>
+	<Function name='GetWidth' return='int' arguments=''>
+		Return the height of the display in this mode.
+	</Function>
+	<Function name='GetRefreshRate' return='float' arguments=''>
+		Return the refresh rate of the display in this mode.
+	</Function>
+</Class>
+<Class name='DisplaySpec'>
+	<Description>
+		An object describing a display: its supported and current video modes.
+	</Description>
+	<Function name='GetId' return='string' arguments=''>
+		Return the unique identifier of the display.
+	</Function>
+	<Function name='GetName' return='string' arguments=''>
+		Return the &quot;human-readable&quot; display name.
+	</Function>
+	<Function name='GetSupportedModes' return='{DisplayMode}' arguments=''>
+		Return the <Link class='DisplayMode' />s supported by this device.
+	</Function>
+	<Function name='GetCurrentMode' return='DisplayMode' arguments=''>
+		Return the currently active <Link class='DisplayMode' /> for this display,
+		or <code>nil</code> if there is no such mode.
+	</Function>
+	<Function name='IsVirtual' return='bool' arguments=''>
+		Return <code>true</code> if this <code>DisplaySpec</code> is describing the
+		&quot;logical display&quot; like an X screen or the Win32 &quot;Virtual screen&quot;, or
+		<code>false</code> otherwise (if this describes a physical display).
+	</Function>
+</Class>
+<Class name='DisplaySpecs'>
+	<Description>
+		An array-like <code>userdata</code> object which describes the displays
+		configured on the user's machine.
+
+		This object supports the <code>__len</code> operator (<code>#t</code>), and
+		integer indexing, but does not support
+		iteration via <code>pairs</code> or <code>ipairs</code>.
+
+		Each element of the array is a <Link class='DisplaySpec' />.
+	</Description>
+
+	<Function name='__len' return='int' arguments=''>
+		Return the number of <Link class='DisplaySpec' /> instances in the array.
+	</Function>
+	<Function name='__index' return='DisplaySpec' arguments='int i'>
+		Return the <Link class='DisplaySpec' /> instance at index <code>i</code>
+	</Function>
+	<Function name='__tostring' return='string' arguments=''>
+	</Function>
+</Class>
 <Class name='FadingBanner'>
 	<Function name='GetLatestIndex' return='int' arguments=''>
 		Returns the index of the last banner loaded.
@@ -2518,7 +2573,7 @@ save yourself some time, copy this for undocumented things:
  		<code>musicLength</code> seconds one time. Both <code>fadeIn</code> and
 		<code>fadeOut</code> can be customized as required.  <code>loop</code>
 		tells the sound manager to loop the music part.  <code>applyRate</code>
-		tells the sound manager to apply the current music rate. If <code>alignBeat</code> 
+		tells the sound manager to apply the current music rate. If <code>alignBeat</code>
 		is true or nil, the length is automatically adjusted to cover an integer number of beats.
 	</Function>
 	<Function name='PlayOnce' return='void' arguments='string sPath, bool is_action'>
@@ -2903,7 +2958,7 @@ save yourself some time, copy this for undocumented things:
 		Sets if the Jukebox should use modifiers.
 	</Function>
 	<Function name='SetMultiplayer' return='void' arguments='bool b'>
-		
+
 	</Function>
 	<Function name='SetNumMultiplayerNoteFields' return='void' arguments='int iFields'>
 		Sets the number of multiplayer notefields to <code>iFields</code>
@@ -3183,7 +3238,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SelectCourse' return='bool' arguments='Course cCourse'>
 		Selects a course. Returns <code>false</code> on failure.
 	</Function>
-</Class> 
+</Class>
 <Class name='NoteSkinManager'>
 	<Function name='GetMetric' return='string' arguments='string sElement, string sValue'>
 		Returns a string from the specified element and value.
@@ -3270,6 +3325,23 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='set_subtract_song_beat' return='' arguments='bool s'>
 		Sets whether the current song beat is subtracted from a note's beat when calculating the t value to use on the spline.
+	</Function>
+</Class>
+<Class base='ActorFrame' name='NewField'>
+	<Description>
+		NewField.md has detailed info on the various functions.<br />
+		To provide compatibility for themes and simfiles made for the old PlayerOptions system of modifiers, NewField has a "defective mode" that uses the old modifiers in PlayerOptions to control the notes.<br />
+		To allow those things to work without being modified to call a special function to put the field into defective mode, Stepmania attempts to automatically detect when defective mode is needed.  If anything touches the PlayerOptions for a player, the NewField for that player is automatically put into defective mode until the theme calls set_needs_defective_mode in PlayerState to turn it back.<br />
+		A NewField that is not inside a Player cannot be put into defective mode because it does not know what PlayerOptions to use.
+	</Description>
+	<Function name='get_columns' return='{NewFieldColumn}' arguments=''>
+		Returns a table of the columns in this NewField.
+	</Function>
+	<Function name='get_defective_mode' return='bool' arguments=''>
+		Returns true if this NewField is currently in defective mode.
+	</Function>
+	<Function name='set_defective_mode' return='' arguments='bool mode'>
+		If mode is true, sets this NewField into defective mode.  If mode is false, takes this NewField out of defective mode.
 	</Function>
 </Class>
 <Class base='Actor' name='NoteColumnRenderer'>
@@ -3432,6 +3504,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='BatteryLives' return='int' arguments='int num'>	</Function>
 	<Function name='Backwards' return='bool' arguments='bool value'> </Function>
 	<Function name='Beat' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatMult' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Big' return='bool' arguments='bool value'> </Function>
 	<Function name='Blink' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Blind' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3440,6 +3515,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Boost' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Brake' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Bumpy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BumpyOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BumpyPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Centered' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='CMod' return='float, float' arguments='float value, float approach_speed'>
 		If the player has a CMod set, returns the value of that CMod and its associated approach speed.  Returns nil otherwise.<br />
@@ -3447,6 +3524,11 @@ save yourself some time, copy this for undocumented things:
 		If the optional second argument is passed, sets the speed at which the transition occurs.
 	</Function>
 	<Function name='Confusion' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionX' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionXOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionY' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ConfusionYOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Cover' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Cross' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Dark' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3459,8 +3541,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='DrainSetting' return= 'DrainType' arguments='DrainType type'>	</Function>
 	<Function name='Drunk' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Echo' return='bool' arguments='bool value'> </Function>
 	<Function name='Expand' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ExpandPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='FailSetting' return='FailType' arguments='FailType'>
 		Sets the <Link class='ENUM' function='FailType' /> for the player, if the optional argument is provided.  Returns the <Link class='ENUM' function='FailType' /> that was previously set.
 	</Function>
@@ -3511,6 +3597,15 @@ save yourself some time, copy this for undocumented things:
 		If the optional first argument is passed, sets the MMod to the value and disables any CMod or XMod that is set.<br />
 		If the optional second argument is passed, sets the speed at which the transition occurs.<br />
 		MMods are not tweenable or settable on ScreenGameplay.  Use XMods if you need such an effect.
+	</Function>
+	<Function name='MoveXn' return= 'float, float' arguments='float value, float approach_speed'>
+		Use 1-16 in place of 'n' to move a specific column.
+	</Function>
+	<Function name='MoveYn' return= 'float, float' arguments='float value, float approach_speed'>
+		Use 1-16 in place of 'n' to move a specific column.
+	</Function>
+	<Function name='MoveZn' return= 'float, float' arguments='float value, float approach_speed'>
+		Use 1-16 in place of 'n' to move a specific column.
 	</Function>
 	<Function name='MuteOnError' return='bool' arguments='bool value'> </Function>
 	<Function name='NoAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3586,7 +3681,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='Tiny' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Tipsy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TipsyOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TipsySpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Tornado' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TornadoOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TornadoPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='TurnNone' return='bool' arguments='bool value'> </Function>
 	<Function name='Twirl' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Twister' return='bool' arguments='bool value'> </Function>
@@ -3594,6 +3693,7 @@ save yourself some time, copy this for undocumented things:
 		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1.0</code>)
 	</Function>
 	<Function name='Wave' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='WavePeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Wide' return='bool' arguments='bool value'> </Function>
 	<Function name='XMod' return='float, float' arguments='float value, float approach_speed'>
 		If the player has a XMod set, returns the value of that XMod and its associated approach speed.  Returns nil otherwise.<br />
@@ -3762,6 +3862,17 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetSuperMeterLevel' return='float' arguments=''>
 		Returns the current Super Meter level for this PlayerState.
+	</Function>
+	<Function name='get_player_options_no_defect' return='PlayerOptions' arguments='ModsLevel ml'>
+		This will return the PlayerOptions object similarly to GetPlayerOptions, but will not trigger the defective mode detection.
+	</Function>
+	<Function name='get_needs_defective_field' return='bool' arguments=''>
+		Returns true if the PlayerState is currently set to use defective mode.
+	</Function>
+	<Function name='set_needs_defective_field' return='' arguments='bool mode'>
+		Sets a flag in the PlayerState to <code>mode</code>.  If the flag is true, then when gameplay starts the Player using this PlayerState will set its NewField into defective mode.  The change is also broadcast so that if this function is called while in gameplay, it affects the NewField immediately.<br />
+		Calling SetPlayerOptions, GetPlayerOptions, or GetCurrentPlayerOptions will also set the flag to true and broadcast the message.<br />
+		See the note in NewField about defective mode.
 	</Function>
 	<Function name='SetPlayerOptions' return='string' arguments='ModsLevel ml, string sPlayerOptions'>
 		Sets the player options to <code>sPlayerOptions</code> for the specified ModsLevel.
@@ -4037,7 +4148,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ProfileWasLoadedFromMemoryCard' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if <code>pn</code>'s Profile was loaded from a memory card.
 	</Function>
-	
+
 	<Function name='LastLoadWasFromLastGood' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if the last load of player <code>pn</code>'s profile was a LastGood copy of the profile.
 	</Function>
@@ -4103,6 +4214,18 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetCumFPS' return='int' arguments=''>
 		Return the cumulative FPS.
+	</Function>
+	<Function name='GetDisplaySpecs' return='DisplaySpecs' arguments=''>
+		Return an array-like <code>userdata</code> of type <Link class='DisplaySpecs' />,
+		which describes the displays configured on the user's machine.
+	</Function>
+	<Function name='SupportsRenderToTexture' return='bool' arguments=''>
+		Return <code>true</code> if the current renderer supports render-to-texture,
+		<code>false</code> otherwise.
+	</Function>
+	<Function name='SupportsFullscreenBorderlessWindow' return='bool' arguments=''>
+		Return <code>true</code> if the current renderer/window implementation supports
+		a fullscreen borderless-window mode, <code>false</code> otherwise.
 	</Function>
 </Class>
 <Class name='RageFile'>
@@ -4266,10 +4389,36 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RollingNumbers'>
-	<Function name='Load' return='void' arguments='string sGroupName'>
-		Loads the metrics for this RollingNumbers from <code>sGroupName</code>.
+	<Description>
+		Starts at a value of 0 and approaches the target number in a given number of seconds.  The number is formatted by the text_format string, and commified if commify is true.  The leading glyphs added to are colored by the leading attribute.  The number is colored by the number attribute.
+	</Description>
+	<Function name='set_approach_seconds' return='' arguments='float s'>
+		The number will take <code>s</code> seconds to reach the target value.
+		<br />Default value is 1.
 	</Function>
-	<Function name='targetnumber' return='void' arguments='float f'>
+	<Function name='set_chars_wide' return='' arguments='int s'>
+		The text will be filled to width <code>s</code> by repeating the glyph set by <code>set_leading_glyph</code>.
+		<br />Default value is 9.
+	</Function>
+	<Function name='set_commify' return='' arguments='bool s'>
+		If true, the number will be commified.
+		<br />Default value is false.
+	</Function>
+	<Function name='set_leading_attribute' return='' arguments='Attribute attr'>
+		Sets the attribute used to color the leading glyphs.  The attribute is identical to an attribute of a normal BitmapText.  Read BitmapText:AddAttribute explanation.  The length given will be ignored.
+	</Function>
+	<Function name='set_number_attribute' return='' arguments='Attribute attr'>
+		Sets the attribute used to color the number.  The attribute is identical to an attribute of a normal BitmapText.  Read BitmapText:AddAttribute explanation.  The length given will be ignored.
+	</Function>
+	<Function name='set_leading_glyph' return='' arguments='string s'>
+		Sets the string that is used to fill the number to the desired width.
+		<br />Default value is "0".
+	</Function>
+	<Function name='set_text_format' return='' arguments='string s'>
+		Sets the string that is used to format the number.
+		<br />Default value is "%.0f".
+	</Function>
+	<Function name='target_number' return='void' arguments='float f'>
 		Sets the target number to <code>f</code>.
 	</Function>
 </Class>
@@ -4944,12 +5093,6 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetSongBeatVisible' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
-	<Function name='GetWarpBeginRow' return='int' arguments=''>
-		Returns the row where a warp appears.
-	</Function>
-	<Function name='GetWarpDestination' return='float' arguments=''>
-		Returns the warp destination length.
-	</Function>
 </Class>
 <Class name='Sprite'>
 	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>
@@ -5391,7 +5534,7 @@ save yourself some time, copy this for undocumented things:
 		Returns <code>true</code> if the theme has the specified metric.
 	</Function>
 	<Function name='HasString' return='bool' arguments='string section, string value'>
-		Returns <code>true</code> if the theme has the specified string. 
+		Returns <code>true</code> if the theme has the specified string.
 	</Function>
 	<Function name='IsThemeSelectable' return='bool' arguments='string theme'>
 		Returns <code>true</code> if the specified theme is selectable.
@@ -5400,7 +5543,7 @@ save yourself some time, copy this for undocumented things:
 		Reloads the current theme's metrics.
 	</Function>
 	<Function name='RunLuaScripts' return='void' arguments='string sMask'>
-		
+
 	</Function>
 	<Function name='SetTheme' return='void' arguments='string theme'>
 		Changes the current theme.<br />

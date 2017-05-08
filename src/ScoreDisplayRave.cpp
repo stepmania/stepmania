@@ -15,7 +15,7 @@ ScoreDisplayRave::ScoreDisplayRave()
 
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 	{
-		m_sprMeter[i].Load( THEME->GetPathG("ScoreDisplayRave",ssprintf("stream level%d",i+1)) );
+		m_sprMeter[i].Load( THEME->GetPathG("ScoreDisplayRave",fmt::sprintf("stream level%d",i+1)) );
 		m_sprMeter[i].SetCropRight( 1.f );
 	}
 
@@ -29,24 +29,24 @@ void ScoreDisplayRave::Init( const PlayerState* pPlayerState, const PlayerStageS
 
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
-	m_sprFrameBase.Load( THEME->GetPathG("ScoreDisplayRave",ssprintf("frame base p%d",pn+1)) );
-	m_sprFrameBase->SetName( ssprintf("FrameBaseP%d",pn+1) );
+	m_sprFrameBase.Load( THEME->GetPathG("ScoreDisplayRave",fmt::sprintf("frame base p%d",pn+1)) );
+	m_sprFrameBase->SetName( fmt::sprintf("FrameBaseP%d",pn+1) );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprFrameBase );
 	this->AddChild( m_sprFrameBase );
 
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 	{
-		m_sprMeter[i].SetName( ssprintf("MeterP%d",pn+1) );
+		m_sprMeter[i].SetName( fmt::sprintf("MeterP%d",pn+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprMeter[i] );
 		this->AddChild( &m_sprMeter[i] );
 	}
 
-	m_textLevel.SetName( ssprintf("LevelP%d",pn+1) );
+	m_textLevel.SetName( fmt::sprintf("LevelP%d",pn+1) );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textLevel );
 	this->AddChild( &m_textLevel );
 
-	m_sprFrameOverlay.Load( THEME->GetPathG("ScoreDisplayRave",ssprintf("frame overlay p%d",pn+1)) );
-	m_sprFrameOverlay->SetName( ssprintf("FrameOverP%d",pn+1) );
+	m_sprFrameOverlay.Load( THEME->GetPathG("ScoreDisplayRave",fmt::sprintf("frame overlay p%d",pn+1)) );
+	m_sprFrameOverlay->SetName( fmt::sprintf("FrameOverP%d",pn+1) );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprFrameOverlay );
 	this->AddChild( m_sprFrameOverlay );
 }
@@ -62,7 +62,7 @@ void ScoreDisplayRave::Update( float fDelta )
 	{
 		m_sprMeter[m_lastLevelSeen].SetCropRight( 1.f );
 		m_lastLevelSeen = level;
-		m_textLevel.SetText( ssprintf("%d",level+1) );
+		m_textLevel.SetText( fmt::sprintf("%d",level+1) );
 	}
 
 	float fPercent = fLevel - level;

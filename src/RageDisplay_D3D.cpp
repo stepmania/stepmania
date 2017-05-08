@@ -1,6 +1,10 @@
 #include "global.h"
 #include "RageDisplay.h"
 #include "RageDisplay_D3D.h"
+#include "RageVColor.hpp"
+#include "RageMath.hpp"
+#include "RageMatrix.hpp"
+#include "RageModelVertex.hpp"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageTimer.h"
@@ -10,7 +14,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "EnumHelper.h"
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 #include "LocalizedString.h"
 
 #include <D3dx9tex.h>
@@ -30,15 +34,18 @@
 #include <math.h>
 #include <list>
 
-RString GetErrorString( HRESULT hr )
+using std::list;
+using std::vector;
+
+std::string GetErrorString( HRESULT hr )
 {
 	return DXGetErrorString(hr);
 }
 
 // Globals
-HMODULE				g_D3D9_Module = NULL;
-LPDIRECT3D9			g_pd3d = NULL;
-LPDIRECT3DDEVICE9	g_pd3dDevice = NULL;
+HMODULE				g_D3D9_Module = nullptr;
+LPDIRECT3D9			g_pd3d = nullptr;
+LPDIRECT3DDEVICE9	g_pd3dDevice = nullptr;
 D3DCAPS9			g_DeviceCaps;
 D3DDISPLAYMODE		g_DesktopMode;
 D3DPRESENT_PARAMETERS	g_d3dpp;
@@ -52,10 +59,10 @@ const D3DFORMAT g_DefaultAdapterFormat = D3DFMT_X8R8G8B8;
 /* Direct3D doesn't associate a palette with textures. Instead, we load a
  * palette into a slot. We need to keep track of which texture's palette is
  * stored in what slot. */
-map<unsigned,int>		g_TexResourceToPaletteIndex;
-list<int>			g_PaletteIndex;
+std::map<unsigned,int>		g_TexResourceToPaletteIndex;
+std::list<int>			g_PaletteIndex;
 struct TexturePalette { PALETTEENTRY p[256]; };
-map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
+std::map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
 
 // Load the palette, if any, for the given texture into a palette slot, and make it current.
 static void SetPalette( unsigned TexResource )
@@ -71,7 +78,7 @@ static void SetPalette( unsigned TexResource )
 		int iPalIndex = g_PaletteIndex.front();
 
 		// If any other texture is currently using this slot, mark that palette unloaded.
-		for( map<unsigned,int>::iterator i = g_TexResourceToPaletteIndex.begin(); i != g_TexResourceToPaletteIndex.end(); ++i )
+		for( auto i = g_TexResourceToPaletteIndex.begin(); i != g_TexResourceToPaletteIndex.end(); ++i )
 		{
 			if( i->second != iPalIndex )
 				continue;
@@ -159,7 +166,7 @@ static const RageDisplay::RagePixelFormatDesc PIXEL_FORMAT_DESC[NUM_RagePixelFor
 	}
 };
 
-static D3DFORMAT D3DFORMATS[NUM_RagePixelFormat] = 
+static D3DFORMAT D3DFORMATS[NUM_RagePixelFormat] =
 {
 	D3DFMT_A8R8G8B8,
 	D3DFMT_UNKNOWN,
@@ -186,10 +193,10 @@ RageDisplay_D3D::RageDisplay_D3D()
 }
 
 static LocalizedString D3D_NOT_INSTALLED ( "RageDisplay_D3D", "DirectX 9.0c or greater is not installed.  You can download it from:" );
-const RString D3D_URL = "http://www.microsoft.com/en-us/download/details.aspx?id=8109";
-static LocalizedString HARDWARE_ACCELERATION_NOT_AVAILABLE ( "RageDisplay_D3D", 
+const std::string D3D_URL = "http://www.microsoft.com/en-us/download/details.aspx?id=8109";
+static LocalizedString HARDWARE_ACCELERATION_NOT_AVAILABLE ( "RageDisplay_D3D",
 	"Your system is reporting that Direct3D hardware acceleration is not available.  Please obtain an updated driver from your video card manufacturer." );
-RString RageDisplay_D3D::Init( const VideoModeParams &p, bool /* bAllowUnacceleratedRenderer */ )
+std::string RageDisplay_D3D::Init( const VideoModeParams &p, bool /* bAllowUnacceleratedRenderer */ )
 {
 	GraphicsWindow::Initialize( true );
 
@@ -205,30 +212,31 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool /* bAllowUnacceler
 
 	if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
 		return HARDWARE_ACCELERATION_NOT_AVAILABLE.GetValue();
-			
+
 
 	D3DADAPTER_IDENTIFIER9	identifier;
 	g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier );
-
-	LOG->Trace( 
+	
+	LOG->Trace(
 		"Driver: %s\n"
 		"Description: %s\n"
 		"Max texture size: %d\n"
 		"Alpha in palette: %s\n",
-		identifier.Driver, 
+		identifier.Driver,
 		identifier.Description,
 		g_DeviceCaps.MaxTextureWidth,
 		(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) ? "yes" : "no" );
-
+	
 	LOG->Trace( "This display adaptor supports the following modes:" );
 	D3DDISPLAYMODE mode;
 
 	UINT modeCount = g_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, g_DefaultAdapterFormat);
 
 	for( UINT u=0; u < modeCount; u++ )
-		if( SUCCEEDED( g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, u, &mode ) ) )
-			LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
-
+		if (SUCCEEDED(g_pd3d->EnumAdapterModes(D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, u, &mode)))
+		{
+			LOG->Trace("  %ux%u %uHz, format %u", mode.Width, mode.Height, mode.RefreshRate, static_cast<unsigned int>(mode.Format));
+		}
 	g_PaletteIndex.clear();
 	for( int i = 0; i < 256; ++i )
 		g_PaletteIndex.push_back(i);
@@ -252,13 +260,13 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	if( g_pd3dDevice )
 	{
 		g_pd3dDevice->Release();
-		g_pd3dDevice = NULL;
+		g_pd3dDevice = nullptr;
 	}
 
 	if( g_pd3d )
 	{
 		g_pd3d->Release();
-		g_pd3d = NULL;
+		g_pd3d = nullptr;
 	}
 
 	/* Even after we call Release(), D3D may still affect our window. It seems
@@ -267,23 +275,43 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	if( g_D3D9_Module )
 	{
 		FreeLibrary( g_D3D9_Module );
-		g_D3D9_Module = NULL;
+		g_D3D9_Module = nullptr;
 	}
 }
 
-void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
+void RageDisplay_D3D::GetDisplaySpecs( DisplaySpecs &out ) const
 {
 	out.clear();
 	int iCnt = g_pd3d->GetAdapterModeCount( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat );
 
-	for( int i = 0; i < iCnt; ++i )
+	std::set<DisplayMode> modes;
+	D3DDISPLAYMODE mode;
+	for ( int i = 0; i < iCnt; ++i )
 	{
-		D3DDISPLAYMODE mode;
 		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, i, &mode );
-
-		DisplayResolution res = { mode.Width, mode.Height };
-		out.insert( res );
+		modes.insert( { mode.Width, mode.Height, static_cast<double> (mode.RefreshRate) } );
 	}
+
+	// Get the current display mode
+	if ( g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &mode ) == D3D_OK )
+	{
+		D3DADAPTER_IDENTIFIER9 ID;
+		g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &ID );
+		DisplayMode active = { mode.Width, mode.Height, static_cast<double> (mode.RefreshRate) };
+		Rage::RectI bounds( 0, 0, active.width, active.height );
+		out.insert( DisplaySpec( "", "Fullscreen", modes, active, bounds ) );
+	}
+	else
+	{
+		LOG->Warn( "Could not find active mode for default D3D adapter" );
+		if ( !modes.empty() )
+		{
+			const DisplayMode &m = *modes.begin();
+			Rage::RectI bounds( 0, 0, m.width, m.height );
+			out.insert( DisplaySpec( "", "Fullscreen", modes, m, bounds ) );
+		}
+	}
+
 }
 
 D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
@@ -306,7 +334,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 		vBackBufferFormats.push_back( D3DFMT_X1R5G5B5 );
 		vBackBufferFormats.push_back( D3DFMT_A1R5G5B5 );
 	}
-	
+
 
 	if( !bWindowed && iBPP != 16 && iBPP != 32 )
 	{
@@ -324,11 +352,11 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 			fmtDisplay = g_DesktopMode.Format;
 		else	// Fullscreen
 			fmtDisplay = vBackBufferFormats[i];
-
-		LOG->Trace( "Testing format: display %d, back buffer %d, windowed %d...",
-					fmtDisplay, fmtBackBuffer, bWindowed );
-
-		hr = g_pd3d->CheckDeviceType( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
+		
+		LOG->Trace( "Testing format: display %u, back buffer %u, windowed %d...",
+					static_cast<unsigned int>(fmtDisplay), static_cast<unsigned int>(fmtBackBuffer), bWindowed );
+					
+		hr = g_pd3d->CheckDeviceType( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
 			fmtDisplay, fmtBackBuffer, bWindowed );
 
 		if( FAILED(hr) )
@@ -343,22 +371,22 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	return D3DFMT_UNKNOWN;
 }
 
-RString SetD3DParams( bool &bNewDeviceOut )
+std::string SetD3DParams( bool &bNewDeviceOut )
 {
-	if( g_pd3dDevice == NULL ) // device is not yet created. We need to create it
+	if( g_pd3dDevice == nullptr ) // device is not yet created. We need to create it
 	{
 		bNewDeviceOut = true;
 		HRESULT hr = g_pd3d->CreateDevice(
-			D3DADAPTER_DEFAULT, 
-			D3DDEVTYPE_HAL, 
+			D3DADAPTER_DEFAULT,
+			D3DDEVTYPE_HAL,
 			GraphicsWindow::GetHwnd(),
-			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
-			&g_d3dpp, 
+			D3DCREATE_HARDWARE_VERTEXPROCESSING,
+			&g_d3dpp,
 			&g_pd3dDevice );
 		if( FAILED(hr) )
 		{
 			// Likely D3D_ERR_INVALIDCALL.  The driver probably doesn't support this video mode.
-			return ssprintf( "CreateDevice failed: '%s'", GetErrorString(hr).c_str() );
+			return fmt::sprintf( "CreateDevice failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
 	else
@@ -369,16 +397,16 @@ RString SetD3DParams( bool &bNewDeviceOut )
 		if( FAILED(hr) )
 		{
 			// Likely D3D_ERR_INVALIDCALL.  The driver probably doesn't support this video mode.
-			return ssprintf("g_pd3dDevice->Reset failed: '%s'", GetErrorString(hr).c_str() );
+			return fmt::sprintf("g_pd3dDevice->Reset failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
 
-	g_pd3dDevice->SetRenderState( D3DRS_NORMALIZENORMALS, TRUE );	
+	g_pd3dDevice->SetRenderState( D3DRS_NORMALIZENORMALS, TRUE );
 
 	// Palettes were lost by Reset(), so mark them unloaded.
 	g_TexResourceToPaletteIndex.clear();
 
-	return RString();
+	return std::string();
 }
 
 // If the given parameters have failed, try to lower them.
@@ -484,25 +512,39 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 		pD3Dpp->FullScreen_RefreshRateInHz = p.rate;
 
 	pD3Dpp->Flags = 0;
-
-	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
-		pD3Dpp->BackBufferWidth, pD3Dpp->BackBufferHeight, pD3Dpp->BackBufferFormat,
-		pD3Dpp->BackBufferCount,
-		pD3Dpp->MultiSampleType, pD3Dpp->SwapEffect, pD3Dpp->hDeviceWindow,
-		pD3Dpp->Windowed, pD3Dpp->EnableAutoDepthStencil, pD3Dpp->AutoDepthStencilFormat,
-		pD3Dpp->Flags, pD3Dpp->FullScreen_RefreshRateInHz,
+	
+	LOG->Trace("Back Buffer: %d x %d with format %u and count %d",
+		pD3Dpp->BackBufferWidth, pD3Dpp->BackBufferHeight,
+		static_cast<unsigned int>(pD3Dpp->BackBufferFormat), pD3Dpp->BackBufferCount
+	);
+	LOG->Trace("Multi Sample is %u, Swap Effect is %u",
+		static_cast<unsigned int>(pD3Dpp->MultiSampleType),
+		static_cast<unsigned int>(pD3Dpp->SwapEffect)
+	);
+	LOG->Trace("Windowed state is %d",
+		pD3Dpp->Windowed
+	);
+	LOG->Trace("Auto Depth: Enabled is %d, Format is %u",
+		pD3Dpp->EnableAutoDepthStencil,
+		static_cast<unsigned int>(pD3Dpp->AutoDepthStencilFormat)
+	);
+	LOG->Trace("Refresh rate is %d, Presentation internval is %d",
+		pD3Dpp->FullScreen_RefreshRateInHz,
 		pD3Dpp->PresentationInterval
+	);
+	LOG->Trace( "Remaining Flags: %d",
+		pD3Dpp->Flags 
 	);
 }
 
 // Set the video mode.
-RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
+std::string RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
 {
 	VideoModeParams p = _p;
-	LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
+	LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", int(p.windowed), p.width, p.height, p.bpp, p.rate, p.vsync );
 
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
-		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
+		return fmt::sprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
 
 	/* Set up and display the window before setting up D3D. If we don't do this,
 	 * then setting up a fullscreen window (when we're not coming from windowed)
@@ -515,7 +557,7 @@ RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	while( 1 )
 	{
 		// Try the video mode.
-		RString sErr = SetD3DParams( bNewDeviceOut );
+		std::string sErr = SetD3DParams( bNewDeviceOut );
 		if( sErr.empty() )
 			break;
 
@@ -540,7 +582,7 @@ RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 
 	ResolutionChanged();
 
-	return RString(); // mode change successful
+	return std::string(); // mode change successful
 }
 
 void RageDisplay_D3D::ResolutionChanged()
@@ -566,7 +608,7 @@ bool RageDisplay_D3D::BeginFrame()
 	case D3DERR_DEVICENOTRESET:
 		{
 			bool bIgnore = false;
-			RString sError = SetD3DParams( bIgnore );
+			std::string sError = SetD3DParams( bIgnore );
 			if( sError != "" )
 				RageException::Throw( sError );
 
@@ -574,7 +616,7 @@ bool RageDisplay_D3D::BeginFrame()
 		}
 	}
 
-	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
+	g_pd3dDevice->Clear( 0, nullptr, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 	g_pd3dDevice->BeginScene();
 
@@ -604,7 +646,7 @@ bool RageDisplay_D3D::SupportsTextureFormat( RagePixelFormat pixfmt, bool realti
 		return false;
 
 	D3DFORMAT d3dfmt = D3DFORMATS[pixfmt];
-	HRESULT hr = g_pd3d->CheckDeviceFormat( 
+	HRESULT hr = g_pd3d->CheckDeviceFormat(
 		D3DADAPTER_DEFAULT,
 		D3DDEVTYPE_HAL,
 		g_d3dpp.BackBufferFormat,
@@ -622,7 +664,7 @@ bool RageDisplay_D3D::SupportsThreadedRendering()
 
 RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
-	RageSurface * result = NULL;
+	RageSurface * result = nullptr;
 
 	// Get the back buffer.
 	IDirect3DSurface9* pSurface;
@@ -634,9 +676,9 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 
 		// Copy the back buffer into a surface of a type we support.
 		IDirect3DSurface9* pCopy;
-		if( SUCCEEDED( g_pd3dDevice->CreateOffscreenPlainSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &pCopy, NULL ) ) )
+		if( SUCCEEDED( g_pd3dDevice->CreateOffscreenPlainSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &pCopy, nullptr ) ) )
 		{
-			if( SUCCEEDED( D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_FILTER_NONE, 0) ) )
+			if( SUCCEEDED( D3DXLoadSurfaceFromSurface( pCopy, nullptr, nullptr, pSurface, nullptr, nullptr, D3DX_FILTER_NONE, 0) ) )
 			{
 				// Update desc from the copy.
 				pCopy->GetDesc( &desc );
@@ -654,10 +696,10 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 				}
 
 				RageSurface *surface = CreateSurfaceFromPixfmt( RagePixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
-				ASSERT( surface != NULL );
+				ASSERT( surface != nullptr );
 
 				// We need to make a copy, since lr.pBits will go away when we call UnlockRect().
-				result = 
+				result =
 					CreateSurface( surface->w, surface->h,
 						surface->format->BitsPerPixel,
 						surface->format->Rmask, surface->format->Gmask,
@@ -677,20 +719,19 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 	return result;
 }
 
-VideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const 
+ActualVideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const
 {
-	VideoModeParams p = GraphicsWindow::GetParams(); 
-	return p; 
+	return GraphicsWindow::GetParams();
 }
 
 void RageDisplay_D3D::SendCurrentMatrices()
 {
-	RageMatrix m;
+	Rage::Matrix m;
 	RageMatrixMultiply( &m, GetCentering(), GetProjectionTop() );
 
 	// Convert to OpenGL-style "pixel-centered" coords
-	RageMatrix m2 = GetCenteringMatrix( -0.5f, -0.5f, 0, 0 );
-	RageMatrix projection;
+	Rage::Matrix m2 = GetCenteringMatrix( -0.5f, -0.5f, 0, 0 );
+	Rage::Matrix projection;
 	RageMatrixMultiply( &projection, &m2, &m );
 	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&projection );
 
@@ -703,15 +744,15 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
 
 		// If no texture is set for this texture unit, don't bother setting it up.
-		IDirect3DBaseTexture9* pTexture = NULL;
+		IDirect3DBaseTexture9* pTexture = nullptr;
 		g_pd3dDevice->GetTexture( tu, &pTexture );
-		if( pTexture == NULL )
+		if( pTexture == nullptr )
 			 continue;
 		pTexture->Release();
 
 		if( g_bSphereMapping[tu] )
 		{
-			static const RageMatrix tex = RageMatrix
+			static const Rage::Matrix tex = Rage::Matrix
 			(
 				0.5f,   0.0f,  0.0f, 0.0f,
 				0.0f,  -0.5f,  0.0f, 0.0f,
@@ -731,8 +772,8 @@ void RageDisplay_D3D::SendCurrentMatrices()
 			 * only use translate and scale, and ignore the z component entirely,
 			 * so convert the texture matrix from 4x4 to 3x3 by dropping z. */
 
-			const RageMatrix &tex1 = *GetTextureTop();
-			const RageMatrix tex2 = RageMatrix
+			const Rage::Matrix &tex1 = *GetTextureTop();
+			const Rage::Matrix tex2 = Rage::Matrix
 			(
 				tex1.m[0][0], tex1.m[0][1],  tex1.m[0][3],	0,
 				tex1.m[1][0], tex1.m[1][1],  tex1.m[1][3],	0,
@@ -751,6 +792,7 @@ class RageCompiledGeometrySWD3D : public RageCompiledGeometry
 public:
 	void Allocate( const vector<msMesh> &vMeshes )
 	{
+		using std::max;
 		m_vVertex.resize( max(1u, GetTotalVertices()) );
 		m_vTriangles.resize( max(1u, GetTotalTriangles()) );
 	}
@@ -760,7 +802,7 @@ public:
 		{
 			const MeshInfo& meshInfo = m_vMeshInfo[i];
 			const msMesh& mesh = vMeshes[i];
-			const vector<RageModelVertex> &Vertices = mesh.Vertices;
+			const vector<Rage::ModelVertex> &Vertices = mesh.Vertices;
 			const vector<msTriangle> &Triangles = mesh.Triangles;
 
 			for( unsigned j=0; j<Vertices.size(); j++ )
@@ -779,7 +821,7 @@ public:
 		{
 			// Kill the texture translation.
 			// XXX: Change me to scale the translation by the TextureTranslationScale of the first vertex.
-			RageMatrix m;
+			Rage::Matrix m;
 			g_pd3dDevice->GetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)&m );
 
 			m.m[2][0] = 0;
@@ -802,7 +844,7 @@ public:
 	}
 
 protected:
-	vector<RageModelVertex> m_vVertex;
+	vector<Rage::ModelVertex> m_vVertex;
 	vector<msTriangle>		m_vTriangles;
 };
 
@@ -816,8 +858,9 @@ void RageDisplay_D3D::DeleteCompiledGeometry( RageCompiledGeometry* p )
 	delete p;
 }
 
-void RageDisplay_D3D::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawQuadsInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
+	using std::max;
 	// there isn't a quad primitive in D3D, so we have to fake it with indexed triangles
 	int iNumQuads = iNumVerts/4;
 	int iNumTriangles = iNumQuads*2;
@@ -848,12 +891,13 @@ void RageDisplay_D3D::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVer
 		&vIndices[0], // pIndexData,
 		D3DFMT_INDEX16, // IndexDataFormat,
 		v, // pVertexStreamZeroData,
-		sizeof(RageSpriteVertex) // VertexStreamZeroStride
+		sizeof(Rage::SpriteVertex) // VertexStreamZeroStride
 	);
 }
 
-void RageDisplay_D3D::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
+	using std::max;
 	// there isn't a quad strip primitive in D3D, so we have to fake it with indexed triangles
 	int iNumQuads = (iNumVerts-2)/2;
 	int iNumTriangles = iNumQuads*2;
@@ -884,12 +928,13 @@ void RageDisplay_D3D::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 		&vIndices[0], // pIndexData,
 		D3DFMT_INDEX16, // IndexDataFormat,
 		v, // pVertexStreamZeroData,
-		sizeof(RageSpriteVertex) // VertexStreamZeroStride
+		sizeof(Rage::SpriteVertex) // VertexStreamZeroStride
 	);
 }
 
-void RageDisplay_D3D::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
+	using std::max;
 	int iNumPieces = (iNumVerts-3)/3;
 	int iNumTriangles = iNumPieces*4;
 	int iNumIndices = iNumTriangles*3;
@@ -926,11 +971,11 @@ void RageDisplay_D3D::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[]
 		&vIndices[0], // pIndexData,
 		D3DFMT_INDEX16, // IndexDataFormat,
 		v, // pVertexStreamZeroData,
-		sizeof(RageSpriteVertex) // VertexStreamZeroStride
+		sizeof(Rage::SpriteVertex) // VertexStreamZeroStride
 	);
 }
 
-void RageDisplay_D3D::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawFanInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	g_pd3dDevice->SetFVF( D3DFVF_RageSpriteVertex );
 	SendCurrentMatrices();
@@ -938,11 +983,11 @@ void RageDisplay_D3D::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts
 		D3DPT_TRIANGLEFAN, // PrimitiveType
 		iNumVerts-2, // PrimitiveCount,
 		v, // pVertexStreamZeroData,
-		sizeof(RageSpriteVertex)
+		sizeof(Rage::SpriteVertex)
 	);
 }
 
-void RageDisplay_D3D::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	g_pd3dDevice->SetFVF( D3DFVF_RageSpriteVertex );
 	SendCurrentMatrices();
@@ -950,11 +995,11 @@ void RageDisplay_D3D::DrawStripInternal( const RageSpriteVertex v[], int iNumVer
 		D3DPT_TRIANGLESTRIP, // PrimitiveType
 		iNumVerts-2, // PrimitiveCount,
 		v, // pVertexStreamZeroData,
-		sizeof(RageSpriteVertex)
+		sizeof(Rage::SpriteVertex)
 	);
 }
 
-void RageDisplay_D3D::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawTrianglesInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	g_pd3dDevice->SetFVF( D3DFVF_RageSpriteVertex );
 	SendCurrentMatrices();
@@ -962,7 +1007,7 @@ void RageDisplay_D3D::DrawTrianglesInternal( const RageSpriteVertex v[], int iNu
 		D3DPT_TRIANGLELIST, // PrimitiveType
 		iNumVerts/3, // PrimitiveCount,
 		v, // pVertexStreamZeroData,
-		sizeof(RageSpriteVertex)
+		sizeof(Rage::SpriteVertex)
 	);
 }
 
@@ -995,7 +1040,7 @@ void RageDisplay_D3D::DrawCompiledGeometryInternal( const RageCompiledGeometry *
 /* Use the default poly-based implementation.  D3D lines apparently don't support
  * AA with greater-than-one widths. */
 /*
-void RageDisplay_D3D::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay_D3D::DrawLineStrip( const Rage::SpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
 	g_pd3dDevice->SetRenderState( D3DRS_POINTSIZE, *((DWORD*)&LineWidth) );	// funky cast.  See D3DRENDERSTATETYPE doc
@@ -1005,7 +1050,7 @@ void RageDisplay_D3D::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 		D3DPT_LINESTRIP, // PrimitiveType
 		iNumVerts-1, // PrimitiveCount,
 		v, // pVertexStreamZeroData,
-		sizeof(RageSpriteVertex)
+		sizeof(Rage::SpriteVertex)
 	);
 	StatsAddVerts( iNumVerts );
 }
@@ -1030,7 +1075,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
 
 	if( iTexture == 0 )
 	{
-		g_pd3dDevice->SetTexture( tu, NULL );
+		g_pd3dDevice->SetTexture( tu, nullptr );
 
 		/* Intentionally commented out. Don't mess with texture stage state
 		 * when just setting the texture. Model sets its texture modes before
@@ -1060,7 +1105,7 @@ void RageDisplay_D3D::SetTextureMode( TextureUnit tu, TextureMode tm )
 	switch( tm )
 	{
 	case TextureMode_Modulate:
-		// Use D3DTA_CURRENT instead of diffuse so that multitexturing works 
+		// Use D3DTA_CURRENT instead of diffuse so that multitexturing works
 		// properly.  For stage 0, D3DTA_CURRENT is the diffuse color.
 
 		g_pd3dDevice->SetTextureStageState( tu, D3DTSS_COLORARG1, D3DTA_TEXTURE );
@@ -1171,7 +1216,7 @@ void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid BlendMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid BlendMode: %i", mode));
 	}
 }
 
@@ -1186,8 +1231,8 @@ void RageDisplay_D3D::SetZBias( float f )
 {
 	D3DVIEWPORT9 viewData;
 	g_pd3dDevice->GetViewport( &viewData );
-	viewData.MinZ = SCALE( f, 0.0f, 1.0f, 0.05f, 0.0f );
-	viewData.MaxZ = SCALE( f, 0.0f, 1.0f, 1.0f, 0.95f );
+	viewData.MinZ = Rage::scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
+	viewData.MaxZ = Rage::scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
 	g_pd3dDevice->SetViewport( &viewData );
 }
 
@@ -1215,14 +1260,14 @@ void RageDisplay_D3D::SetZTestMode( ZTestMode mode )
 	case ZTEST_WRITE_ON_FAIL:	dw = D3DCMP_GREATER;	break;
 	default:
 		dw = D3DCMP_NEVER;
-		FAIL_M(ssprintf("Invalid ZTestMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid ZTestMode: %i", mode));
 	}
 	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC, dw );
 }
 
 void RageDisplay_D3D::ClearZBuffer()
 {
-	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
+	g_pd3dDevice->Clear( 0, nullptr, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 }
 
 void RageDisplay_D3D::SetTextureWrapping( TextureUnit tu, bool b )
@@ -1235,11 +1280,11 @@ void RageDisplay_D3D::SetTextureWrapping( TextureUnit tu, bool b )
 	g_pd3dDevice->SetSamplerState( tu, D3DSAMP_ADDRESSV, mode );
 }
 
-void RageDisplay_D3D::SetMaterial( 
-	const RageColor &emissive,
-	const RageColor &ambient,
-	const RageColor &diffuse,
-	const RageColor &specular,
+void RageDisplay_D3D::SetMaterial(
+	const Rage::Color &emissive,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
 	float shininess
 	)
 {
@@ -1253,20 +1298,20 @@ void RageDisplay_D3D::SetMaterial(
 	if( bLighting )
 	{
 		D3DMATERIAL9 mat;
-		memcpy( &mat.Diffuse, diffuse, sizeof(float)*4 );
-		memcpy( &mat.Ambient, ambient, sizeof(float)*4 );
-		memcpy( &mat.Specular, specular, sizeof(float)*4 );
-		memcpy( &mat.Emissive, emissive, sizeof(float)*4 );
+		memcpy( &mat.Diffuse, &diffuse, sizeof(float)*4 );
+		memcpy( &mat.Ambient, &ambient, sizeof(float)*4 );
+		memcpy( &mat.Specular, &specular, sizeof(float)*4 );
+		memcpy( &mat.Emissive, &emissive, sizeof(float)*4 );
 		mat.Power = shininess;
 		g_pd3dDevice->SetMaterial( &mat );
 	}
 	else
 	{
-		RageColor c = diffuse;
+		Rage::Color c = diffuse;
 		c.r += emissive.r + ambient.r;
 		c.g += emissive.g + ambient.g;
 		c.b += emissive.b + ambient.b;
-		RageVColor c2 = c;
+		Rage::VColor c2 = c;
 		DWORD c3 = *(DWORD*)&c2;
 		g_pd3dDevice->SetRenderState( D3DRS_TEXTUREFACTOR, c3 );
 	}
@@ -1281,12 +1326,12 @@ void RageDisplay_D3D::SetLightOff( int index )
 {
 	g_pd3dDevice->LightEnable( index, false );
 }
-void RageDisplay_D3D::SetLightDirectional( 
-	int index, 
-	const RageColor &ambient, 
-	const RageColor &diffuse, 
-	const RageColor &specular, 
-	const RageVector3 &dir )
+void RageDisplay_D3D::SetLightDirectional(
+	int index,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
+	const Rage::Vector3 &dir )
 {
 	g_pd3dDevice->LightEnable( index, true );
 
@@ -1300,9 +1345,9 @@ void RageDisplay_D3D::SetLightDirectional(
 	 * why we don't see other weirdness. -Chris */
 	float position[] = { dir.x, dir.y, -dir.z };
 	memcpy( &light.Direction, position, sizeof(position) );
-	memcpy( &light.Diffuse, diffuse, sizeof(diffuse) );
-	memcpy( &light.Ambient, ambient, sizeof(ambient) );
-	memcpy( &light.Specular, specular, sizeof(specular) );
+	memcpy( &light.Diffuse, &diffuse, sizeof(diffuse) );
+	memcpy( &light.Ambient, &ambient, sizeof(ambient) );
+	memcpy( &light.Specular, &specular, sizeof(specular) );
 
 	// Same as OpenGL defaults.  Not used in directional lights.
 //	light.Attenuation0 = 1;
@@ -1326,7 +1371,7 @@ void RageDisplay_D3D::SetCullMode( CullMode mode )
 		g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid CullMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid CullMode: %i", mode));
 	}
 }
 
@@ -1346,17 +1391,17 @@ void RageDisplay_D3D::DeleteTexture( unsigned iTexHandle )
 }
 
 
-unsigned RageDisplay_D3D::CreateTexture( 
+unsigned RageDisplay_D3D::CreateTexture(
 	RagePixelFormat pixfmt,
 	RageSurface* img,
 	bool bGenerateMipMaps )
 {
 	HRESULT hr;
 	IDirect3DTexture9* pTex;
-	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex, NULL );
+	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex, nullptr );
 
 	if( FAILED(hr) )
-		RageException::Throw( "CreateTexture(%i,%i,%s) failed: %s", 
+		RageException::Throw( "CreateTexture(%i,%i,%s) failed: %s",
 		img->w, img->h, RagePixelFormatToString(pixfmt).c_str(), GetErrorString(hr).c_str() );
 
 	unsigned uTexHandle = (unsigned)pTex;
@@ -1384,15 +1429,15 @@ unsigned RageDisplay_D3D::CreateTexture(
 	return uTexHandle;
 }
 
-void RageDisplay_D3D::UpdateTexture( 
-	unsigned uTexHandle, 
+void RageDisplay_D3D::UpdateTexture(
+	unsigned uTexHandle,
 	RageSurface* img,
 	int xoffset, int yoffset, int width, int height )
 {
 	IDirect3DTexture9* pTex = (IDirect3DTexture9*)uTexHandle;
-	ASSERT( pTex != NULL );
+	ASSERT( pTex != nullptr );
 
-	RECT rect; 
+	RECT rect;
 	rect.left = xoffset;
 	rect.top = yoffset;
 	rect.right = width - xoffset;
@@ -1413,7 +1458,7 @@ void RageDisplay_D3D::UpdateTexture(
 	ASSERT( texpixfmt != NUM_RagePixelFormat );
 
 	RageSurface *Texture = CreateSurfaceFromPixfmt(RagePixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
-	ASSERT( Texture != NULL );
+	ASSERT( Texture != nullptr );
 	RageSurfaceUtils::Blit( img, Texture, width, height );
 
 	delete Texture;
@@ -1428,16 +1473,15 @@ void RageDisplay_D3D::SetAlphaTest( bool b )
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATER );
 }
 
-RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
+Rage::Matrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
-	RageMatrix m = RageDisplay::GetOrthoMatrix( l, r, b, t, zn, zf );
+	Rage::Matrix m = RageDisplay::GetOrthoMatrix( l, r, b, t, zn, zf );
 
 	// Convert from OpenGL's [-1,+1] Z values to D3D's [0,+1].
-	RageMatrix tmp;
-	RageMatrixScaling( &tmp, 1, 1, 0.5f );
+	auto tmp = Rage::Matrix::GetScaling(1, 1, 0.5f);
 	RageMatrixMultiply( &m, &tmp, &m );
 
-	RageMatrixTranslation( &tmp, 0, 0, 0.5f );
+	tmp = Rage::Matrix::GetTranslation(0, 0, 0.5f);
 	RageMatrixMultiply( &m, &tmp, &m );
 
 	return m;

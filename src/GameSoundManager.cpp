@@ -17,10 +17,11 @@
 #include "LightsManager.h"
 #include "SongUtil.h"
 #include "LuaManager.h"
-
 #include "arch/Sound/RageSoundDriver.h"
 
-GameSoundManager *SOUND = NULL;
+using std::vector;
+
+GameSoundManager *SOUND = nullptr;
 
 /*
  * When playing music, automatically search for an SM file for timing data.  If one is
@@ -80,13 +81,13 @@ static MusicPlaying *g_Playing;
 
 static RageThread MusicThread;
 
-vector<RString> g_SoundsToPlayOnce;
-vector<RString> g_SoundsToPlayOnceFromDir;
-vector<RString> g_SoundsToPlayOnceFromAnnouncer;
+vector<std::string> g_SoundsToPlayOnce;
+vector<std::string> g_SoundsToPlayOnceFromDir;
+vector<std::string> g_SoundsToPlayOnceFromAnnouncer;
 
 struct MusicToPlay
 {
-	RString m_sFile, m_sTimingFile;
+	std::string m_sFile, m_sTimingFile;
 	bool HasTiming;
 	TimingData m_TimingData;
 	NoteData m_LightsData;
@@ -104,7 +105,8 @@ static GameSoundManager::PlayMusicParams g_FallbackMusicParams;
 static void StartMusic( MusicToPlay &ToPlay )
 {
 	LockMutex L( *g_Mutex );
-	if( g_Playing->m_Music->IsPlaying() && g_Playing->m_Music->GetLoadedFilePath().EqualsNoCase(ToPlay.m_sFile) )
+	Rage::ci_ascii_string fileToPlay{ ToPlay.m_sFile.c_str() };
+	if( g_Playing->m_Music->IsPlaying() && fileToPlay == g_Playing->m_Music->GetLoadedFilePath() )
 		return;
 
 	/* We're changing or stopping the music.  If we were dimming, reset. */
@@ -182,7 +184,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.fStartSecond );
 		float fEndSec = ToPlay.fStartSecond + ToPlay.fLengthSeconds;
 		float fEndBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( fEndSec );
-		
+
 		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
 		const float fEndBeatFraction = fmodfp( fEndBeat, 1 );
 
@@ -234,13 +236,13 @@ static void StartMusic( MusicToPlay &ToPlay )
 		const float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.fStartSecond );
 		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
 
-		float fCurBeatToStartOn = truncf(fCurBeat) + fStartBeatFraction;
+    float fCurBeatToStartOn = std::trunc(fCurBeat) + fStartBeatFraction;
 		if( fCurBeatToStartOn < fCurBeat )
 			fCurBeatToStartOn += 1.0f;
 
 		const float fSecondToStartOn = g_Playing->m_Timing.GetElapsedTimeFromBeatNoOffset( fCurBeatToStartOn );
 		const float fMaximumDistance = 2;
-		const float fDistance = min( fSecondToStartOn - GAMESTATE->m_Position.m_fMusicSeconds, fMaximumDistance );
+		const float fDistance = std::min( fSecondToStartOn - GAMESTATE->m_Position.m_fMusicSeconds, fMaximumDistance );
 
 		when = GAMESTATE->m_Position.m_LastBeatUpdate + fDistance;
 	}
@@ -272,7 +274,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 	g_Playing = NewMusic;
 }
 
-static void DoPlayOnce( RString sPath )
+static void DoPlayOnce( std::string sPath )
 {
 	/* We want this to start quickly, so don't try to prebuffer it. */
 	RageSound *pSound = new RageSound;
@@ -282,24 +284,27 @@ static void DoPlayOnce( RString sPath )
 	pSound->DeleteSelfWhenFinishedPlaying();
 }
 
-static void DoPlayOnceFromDir( RString sPath )
+static void DoPlayOnceFromDir( std::string sPath )
 {
 	if( sPath == "" )
+	{
 		return;
-
+	}
 	// make sure there's a slash at the end of this path
-	if( sPath.Right(1) != "/" )
+	if (!Rage::ends_with(sPath, "/"))
+	{
 		sPath += "/";
-
-	vector<RString> arraySoundFiles;
+	}
+	vector<std::string> arraySoundFiles;
 	GetDirListing( sPath + "*.mp3", arraySoundFiles );
 	GetDirListing( sPath + "*.wav", arraySoundFiles );
 	GetDirListing( sPath + "*.ogg", arraySoundFiles );
 	GetDirListing( sPath + "*.oga", arraySoundFiles );
 
 	if( arraySoundFiles.empty() )
+	{
 		return;
-
+	}
 	int index = RandomInt( arraySoundFiles.size( ));
 	DoPlayOnce(  sPath + arraySoundFiles[index]  );
 }
@@ -316,26 +321,30 @@ static bool SoundWaiting()
 static void StartQueuedSounds()
 {
 	g_Mutex->Lock();
-	vector<RString> aSoundsToPlayOnce = g_SoundsToPlayOnce;
+	vector<std::string> aSoundsToPlayOnce = g_SoundsToPlayOnce;
 	g_SoundsToPlayOnce.clear();
-	vector<RString> aSoundsToPlayOnceFromDir = g_SoundsToPlayOnceFromDir;
+	vector<std::string> aSoundsToPlayOnceFromDir = g_SoundsToPlayOnceFromDir;
 	g_SoundsToPlayOnceFromDir.clear();
-	vector<RString> aSoundsToPlayOnceFromAnnouncer = g_SoundsToPlayOnceFromAnnouncer;
+	vector<std::string> aSoundsToPlayOnceFromAnnouncer = g_SoundsToPlayOnceFromAnnouncer;
 	g_SoundsToPlayOnceFromAnnouncer.clear();
 	vector<MusicToPlay> aMusicsToPlay = g_MusicsToPlay;
 	g_MusicsToPlay.clear();
 	g_Mutex->Unlock();
 
-	for( unsigned i = 0; i < aSoundsToPlayOnce.size(); ++i )
-		if( aSoundsToPlayOnce[i] != "" )
-			DoPlayOnce( aSoundsToPlayOnce[i] );
-
-	for( unsigned i = 0; i < aSoundsToPlayOnceFromDir.size(); ++i )
-		DoPlayOnceFromDir( aSoundsToPlayOnceFromDir[i] );
-
-	for( unsigned i = 0; i < aSoundsToPlayOnceFromAnnouncer.size(); ++i )
+	for (auto &sound: aSoundsToPlayOnce)
 	{
-		RString sPath = aSoundsToPlayOnceFromAnnouncer[i];
+		if (sound != "")
+		{
+			DoPlayOnce(sound);
+		}
+	}
+	for (auto &sound: aSoundsToPlayOnceFromDir)
+	{
+		DoPlayOnceFromDir(sound);
+	}
+	// Explicitly copy: the path gets overridden.
+	for (auto sPath : aSoundsToPlayOnceFromAnnouncer)
+	{
 		if( sPath != "" )
 		{
 			sPath = ANNOUNCER->GetPathTo( sPath );
@@ -355,7 +364,7 @@ static void StartQueuedSounds()
 			StartMusic( aMusicsToPlay[i] );
 		else
 		{
-			CHECKPOINT_M( ssprintf("Removing old sound at index %d", i));
+			CHECKPOINT_M( fmt::sprintf("Removing old sound at index %d", i));
 			/* StopPlaying() can take a while, so don't hold the lock while we stop the sound. */
 			g_Mutex->Lock();
 			RageSound *pOldSound = g_Playing->m_Music;
@@ -379,7 +388,7 @@ void GameSoundManager::Flush()
 	g_Mutex->Unlock();
 }
 
-int MusicThread_start( void *p )
+int MusicThread_start( void * )
 {
 	while( !g_Shutdown )
 	{
@@ -412,7 +421,7 @@ int MusicThread_start( void *p )
 GameSoundManager::GameSoundManager()
 {
 	/* Init RageSoundMan first: */
-	ASSERT( SOUNDMAN != NULL );
+	ASSERT( SOUNDMAN != nullptr );
 
 	g_Mutex = new RageEvent("GameSoundManager");
 	g_Playing = new MusicPlaying( new RageSound );
@@ -447,12 +456,13 @@ GameSoundManager::~GameSoundManager()
 	MusicThread.Wait();
 	LOG->Trace("Music start thread shut down.");
 
-	SAFE_DELETE( g_Playing );
-	SAFE_DELETE( g_Mutex );
+	Rage::safe_delete( g_Playing );
+	Rage::safe_delete( g_Mutex );
 }
 
 float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 {
+	using std::min;
 	/*
 	 * We get one update per frame, and we're updated early, almost immediately after vsync,
 	 * near the beginning of the game loop.  However, it's very likely that we'll lose the
@@ -483,11 +493,12 @@ float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 		return 0;
 
 	/* Subtract the extra delay. */
-	return min( -fExtraDelay, 0 );
+	return min( -fExtraDelay, 0.f );
 }
 
 void GameSoundManager::Update( float fDeltaTime )
 {
+	using std::max;
 	{
 		g_Mutex->Lock();
 		if( g_Playing->m_bApplyMusicRate )
@@ -540,7 +551,7 @@ void GameSoundManager::Update( float fDeltaTime )
 				g_FadeState = FADE_NONE;
 			break;
 		}
-		
+
 		RageSoundParams p = g_Playing->m_Music->GetParams();
 		if( p.m_Volume != fVolume )
 		{
@@ -556,7 +567,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	if( !g_Playing->m_Music->IsPlaying() )
 	{
 		/* There's no song playing.  Fake it. */
-		CHECKPOINT_M( ssprintf("%f, delta %f", GAMESTATE->m_Position.m_fMusicSeconds, fDeltaTime) );
+		CHECKPOINT_M( fmt::sprintf("%f, delta %f", GAMESTATE->m_Position.m_fMusicSeconds, fDeltaTime) );
 		GAMESTATE->UpdateSongPosition( GAMESTATE->m_Position.m_fMusicSeconds + fDeltaTime * g_Playing->m_Music->GetPlaybackRate() , g_Playing->m_Timing );
 		return;
 	}
@@ -576,13 +587,13 @@ void GameSoundManager::Update( float fDeltaTime )
 		const float fSoundTimePassed = fSeconds - GAMESTATE->m_Position.m_fMusicSeconds;
 		const float fDiff = fExpectedTimePassed - fSoundTimePassed;
 
-		static RString sLastFile = "";
-		const RString ThisFile = g_Playing->m_Music->GetLoadedFilePath();
+		static std::string sLastFile = "";
+		const std::string ThisFile = g_Playing->m_Music->GetLoadedFilePath();
 
 		/* If fSoundTimePassed < 0, the sound has probably looped. */
 		if( sLastFile == ThisFile && fSoundTimePassed >= 0 && fabsf(fDiff) > 0.003f )
 			LOG->Trace("Song position skip in %s: expected %.3f, got %.3f (cur %f, prev %f) (%.3f difference)",
-				Basename(ThisFile).c_str(), fExpectedTimePassed, fSoundTimePassed, fSeconds, GAMESTATE->m_Position.m_fMusicSeconds, fDiff );
+				Rage::base_name(ThisFile).c_str(), fExpectedTimePassed, fSoundTimePassed, fSeconds, GAMESTATE->m_Position.m_fMusicSeconds, fDiff );
 		sLastFile = ThisFile;
 	}
 
@@ -607,7 +618,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	}
 
 	// Send crossed messages
-	if( GAMESTATE->m_pCurSong )
+	if( GAMESTATE->get_curr_song() )
 	{
 		static int iBeatLastCrossed = 0;
 
@@ -638,7 +649,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		static int iRowLastCrossed = 0;
 
 		FOREACH_CabinetLight( cl )
-		{	
+		{
 			// Are we "holding" the light?
 			if( lights.IsHoldNoteAtRow( cl, iSongRow ) )
 			{
@@ -662,20 +673,20 @@ void GameSoundManager::Update( float fDeltaTime )
 }
 
 
-RString GameSoundManager::GetMusicPath() const
+std::string GameSoundManager::GetMusicPath() const
 {
 	LockMut( *g_Mutex );
 	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
-void GameSoundManager::PlayMusic( 
-	RString sFile, 
-	const TimingData *pTiming, 
+void GameSoundManager::PlayMusic(
+	std::string sFile,
+	const TimingData *pTiming,
 	bool bForceLoop,
-	float fStartSecond, 
-	float fLengthSeconds, 
-	float fFadeInLengthSeconds, 
-	float fFadeOutLengthSeconds, 
+	float fStartSecond,
+	float fLengthSeconds,
+	float fFadeInLengthSeconds,
+	float fFadeOutLengthSeconds,
 	bool bAlignBeat,
 	bool bApplyMusicRate
 	)
@@ -749,7 +760,7 @@ void GameSoundManager::HandleSongTimer( bool on )
 	g_UpdatingTimer = on;
 }
 
-void GameSoundManager::PlayOnce( RString sPath )
+void GameSoundManager::PlayOnce( std::string sPath )
 {
 	/* Add the sound to the g_SoundsToPlayOnce queue. */
 	g_Mutex->Lock();
@@ -758,7 +769,7 @@ void GameSoundManager::PlayOnce( RString sPath )
 	g_Mutex->Unlock();
 }
 
-void GameSoundManager::PlayOnceFromDir( RString sPath )
+void GameSoundManager::PlayOnceFromDir( std::string sPath )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
 	g_Mutex->Lock();
@@ -767,7 +778,7 @@ void GameSoundManager::PlayOnceFromDir( RString sPath )
 	g_Mutex->Unlock();
 }
 
-void GameSoundManager::PlayOnceFromAnnouncer( RString sPath )
+void GameSoundManager::PlayOnceFromAnnouncer( std::string sPath )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromAnnouncer queue. */
 	g_Mutex->Lock();
@@ -788,7 +799,7 @@ float GameSoundManager::GetPlayerBalance( PlayerNumber pn )
 
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the GameSoundManager. */ 
+/** @brief Allow Lua to have access to the GameSoundManager. */
 class LunaGameSoundManager: public Luna<GameSoundManager>
 {
 public:
@@ -801,7 +812,7 @@ public:
 	}
 	static int PlayOnce( T* p, lua_State *L )
 	{
-		RString sPath = SArg(1);
+		std::string sPath = SArg(1);
 		if(lua_toboolean(L, 2) && PREFSMAN->m_MuteActions)
 		{
 			COMMON_RETURN_SELF;
@@ -811,7 +822,7 @@ public:
 	}
 	static int PlayAnnouncer( T* p, lua_State *L )
 	{
-		RString sPath = SArg(1);
+		std::string sPath = SArg(1);
 		p->PlayOnceFromAnnouncer( sPath );
 		COMMON_RETURN_SELF;
 	}
@@ -823,7 +834,7 @@ public:
 	}
 	static int PlayMusicPart( T* p, lua_State *L )
 	{
-		RString musicPath = SArg(1);
+		std::string musicPath = SArg(1);
 		float musicStart = FArg(2);
 		float musicLength = FArg(3);
 		float fadeIn = 0;
@@ -851,14 +862,14 @@ public:
 		{
 			alignBeat = BArg(8);
 		}
-		p->PlayMusic(musicPath, NULL, loop, musicStart, musicLength,
+		p->PlayMusic(musicPath, nullptr, loop, musicStart, musicLength,
 			fadeIn, fadeOut, alignBeat, applyRate);
 		COMMON_RETURN_SELF;
 	}
 
 	static int StopMusic( T* p, lua_State *L )			{ p->StopMusic(); COMMON_RETURN_SELF; }
-	static int IsTimingDelayed( T* p, lua_State *L )	{ lua_pushboolean( L, g_Playing->m_bTimingDelayed ); return 1; }
-	
+	static int IsTimingDelayed( T*, lua_State *L )	{ lua_pushboolean( L, g_Playing->m_bTimingDelayed ); return 1; }
+
 	LunaGameSoundManager()
 	{
 		ADD_METHOD( DimMusic );
@@ -876,8 +887,7 @@ LUA_REGISTER_CLASS(GameSoundManager);
 int LuaFunc_get_sound_driver_list(lua_State* L);
 int LuaFunc_get_sound_driver_list(lua_State* L)
 {
-	vector<RString> driver_names;
-	split(RageSoundDriver::GetDefaultSoundDriverList(), ",", driver_names, true);
+	auto driver_names = Rage::split(RageSoundDriver::GetDefaultSoundDriverList(), ",", Rage::EmptyEntries::include);
 	lua_createtable(L, driver_names.size(), 0);
 	for(size_t n= 0; n < driver_names.size(); ++n)
 	{

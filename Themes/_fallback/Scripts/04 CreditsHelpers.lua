@@ -85,6 +85,7 @@ local stepmania_credits= {
 		"Kaox", -- pump/default noteskin
 		-- Add Graphics/CreditsLogo name.png and change your entry to a table like this to look super pro.
 		{logo= "kyzentun", name= "Kyzentun"}, -- new lua bindings, theme documentation
+		"latot", -- minor cleanup
 		"Mad Matt", -- new lua bindings
 		"Matt McCutchen", -- minor fix for some dance pads on linux
 		"NitroX72", -- pump/frame noteskin

@@ -19,10 +19,12 @@ class Song;
 #include "StepMania.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 struct PlayAfterLaunchInfo
 {
-	RString sSongDir;
-	RString sTheme;
+	std::string sSongDir;
+	std::string sTheme;
 	bool bAnySongChanged;
 	bool bAnyThemeChanged;
 
@@ -41,53 +43,65 @@ struct PlayAfterLaunchInfo
 	}
 };
 
-void InstallSmzipOsArg( const RString &sOsZipFile, PlayAfterLaunchInfo &out );
+void InstallSmzipOsArg( const std::string &sOsZipFile, PlayAfterLaunchInfo &out );
 PlayAfterLaunchInfo DoInstalls( CommandLineActions::CommandLineArgs args );
 
-static void Parse( const RString &sDir, PlayAfterLaunchInfo &out )
+static void Parse(const std::string &sDir, PlayAfterLaunchInfo &out)
 {
-	vector<RString> vsDirParts;
-	split( sDir, "/", vsDirParts, true );
-	if( vsDirParts.size() == 3 && vsDirParts[0].EqualsNoCase("Songs") )
+	auto vsDirParts = Rage::split(sDir, ",", Rage::EmptyEntries::skip);
+	// sanity check
+	if (vsDirParts.size() < 1)
+	{
+		return;
+	}
+	Rage::ci_ascii_string initialPart{ vsDirParts[0].c_str() };
+	if (vsDirParts.size() == 3 && initialPart == "Songs")
+	{
 		out.sSongDir = "/" + sDir;
-	else if( vsDirParts.size() == 2 && vsDirParts[0].EqualsNoCase("Themes") )
+	}
+	else if (vsDirParts.size() == 2 && initialPart == "Themes")
+	{
 		out.sTheme = vsDirParts[1];
+	}
 }
 
-static const RString TEMP_ZIP_MOUNT_POINT = "/@temp-zip/";
-const RString TEMP_OS_MOUNT_POINT = "/@temp-os/";
+static const std::string TEMP_ZIP_MOUNT_POINT = "/@temp-zip/";
+const std::string TEMP_OS_MOUNT_POINT = "/@temp-os/";
 
-static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
+static void InstallSmzip( const std::string &sZipFile, PlayAfterLaunchInfo &out )
 {
 	if( !FILEMAN->Mount( "zip", sZipFile, TEMP_ZIP_MOUNT_POINT ) )
-		FAIL_M("Failed to mount " + sZipFile );
-
-	vector<RString> vsFiles;
 	{
-		vector<RString> vsRawFiles;
+		FAIL_M("Failed to mount " + sZipFile );
+	}
+	vector<std::string> vsFiles;
+	{
+		vector<std::string> vsRawFiles;
 		GetDirListingRecursive( TEMP_ZIP_MOUNT_POINT, "*", vsRawFiles);
 
-		vector<RString> vsPrettyFiles;
-		FOREACH_CONST( RString, vsRawFiles, s )
+		vector<std::string> vsPrettyFiles;
+		Rage::ci_ascii_string ctl{ "ctl" };
+		for (auto const &s: vsRawFiles)
 		{
-			if( GetExtension(*s).EqualsNoCase("ctl") )
+			if (ctl == GetExtension(s))
+			{
 				continue;
+			}
+			vsFiles.push_back(s);
 
-			vsFiles.push_back( *s);
-
-			RString s2 = s->Right( s->length() - TEMP_ZIP_MOUNT_POINT.length() );
+			std::string s2{ Rage::tail(s, s.size() - TEMP_ZIP_MOUNT_POINT.size()) };
 			vsPrettyFiles.push_back( s2 );
 		}
 		sort( vsPrettyFiles.begin(), vsPrettyFiles.end() );
 	}
 
-	RString sResult = "Success installing " + sZipFile;
-	FOREACH_CONST( RString, vsFiles, sSrcFile )
+	std::string sResult = "Success installing " + sZipFile;
+	for (auto sSrcFile: vsFiles)
 	{
-		RString sDestFile = *sSrcFile;
-		sDestFile = sDestFile.Right( sDestFile.length() - TEMP_ZIP_MOUNT_POINT.length() );
-
-		RString sDir, sThrowAway;
+		std::string sDestFile = sSrcFile;
+		sDestFile = Rage::tail(sDestFile, sDestFile.size() - TEMP_ZIP_MOUNT_POINT.size());
+		
+		std::string sDir, sThrowAway;
 		splitpath( sDestFile, sDir, sThrowAway, sThrowAway );
 
 		Parse( sDir, out );
@@ -95,7 +109,7 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 
 		FILEMAN->CreateDir( sDir );
 
-		if( !FileCopy( *sSrcFile, sDestFile ) )
+		if( !FileCopy( sSrcFile, sDestFile ) )
 		{
 			sResult = "Error extracting " + sDestFile;
 			break;
@@ -106,11 +120,11 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 	SCREENMAN->SystemMessage( sResult );
 }
 
-void InstallSmzipOsArg( const RString &sOsZipFile, PlayAfterLaunchInfo &out )
+void InstallSmzipOsArg( const std::string &sOsZipFile, PlayAfterLaunchInfo &out )
 {
 	SCREENMAN->SystemMessage("Installing " + sOsZipFile );
 
-	RString sOsDir, sFilename, sExt;
+	std::string sOsDir, sFilename, sExt;
 	splitpath( sOsZipFile, sOsDir, sFilename, sExt );
 
 	if( !FILEMAN->Mount( "dir", sOsDir, TEMP_OS_MOUNT_POINT ) )
@@ -122,18 +136,18 @@ void InstallSmzipOsArg( const RString &sOsZipFile, PlayAfterLaunchInfo &out )
 
 struct FileCopyResult
 {
-	FileCopyResult( RString _sFile, RString _sComment ) : sFile(_sFile), sComment(_sComment) {}
-	RString sFile, sComment;
+	FileCopyResult( std::string _sFile, std::string _sComment ) : sFile(_sFile), sComment(_sComment) {}
+	std::string sFile, sComment;
 };
 
 #if !defined(WITHOUT_NETWORKING)
-Preference<RString> g_sCookie( "Cookie", "" );
+Preference<std::string> g_sCookie( "Cookie", "" );
 
 class DownloadTask
 {
 	FileTransfer *m_pTransfer;
-	vector<RString> m_vsQueuedPackageUrls;
-	RString m_sCurrentPackageTempFile;
+	vector<std::string> m_vsQueuedPackageUrls;
+	std::string m_sCurrentPackageTempFile;
 	enum
 	{
 		control,
@@ -141,7 +155,7 @@ class DownloadTask
 	} m_DownloadState;
 	PlayAfterLaunchInfo m_playAfterLaunchInfo;
 public:
-	DownloadTask(const RString &sControlFileUri)
+	DownloadTask(const std::string &sControlFileUri)
 	{
 		//SCREENMAN->SystemMessage( "Downloading control file." );
 		m_pTransfer = new FileTransfer();
@@ -150,11 +164,11 @@ public:
 	}
 	~DownloadTask()
 	{
-		SAFE_DELETE(m_pTransfer);
+		Rage::safe_delete(m_pTransfer);
 	}
-	RString GetStatus()
+	std::string GetStatus()
 	{
-		if( m_pTransfer == NULL )
+		if( m_pTransfer == nullptr )
 			return "";
 		else
 			return m_pTransfer->GetStatus();
@@ -169,11 +183,11 @@ public:
 			{
 				SCREENMAN->SystemMessage( "Downloading required .smzip" );
 
-				RString sResponse = m_pTransfer->GetResponse();
-				SAFE_DELETE( m_pTransfer );
+				std::string sResponse = m_pTransfer->GetResponse();
+				Rage::safe_delete( m_pTransfer );
 
 				Json::Value root;
-				RString sError;
+				std::string sError;
 				if( !JsonUtil::LoadFromString(root, sResponse, sError) )
 				{
 					SCREENMAN->SystemMessage( sError );
@@ -187,18 +201,17 @@ public:
 					Json::Value require = root["Require"];
 					if( require.isArray() )
 					{
-						for( unsigned i=0; i<require.size(); i++)
+						for (auto iter: require)
 						{
-							Json::Value iter = require[i];
 							if( iter["Dir"].isString() )
 							{
-								RString sDir = iter["Dir"].asString();
+								std::string sDir = iter["Dir"].asString();
 								Parse( sDir, m_playAfterLaunchInfo );
 								if( DoesFileExist( sDir ) )
 									continue;
 							}
 
-							RString sUri;
+							std::string sUri;
 							if( iter["Uri"].isString() )
 							{
 								sUri = iter["Uri"].asString();
@@ -216,17 +229,17 @@ public:
 					if( FileCopy( TEMP_MOUNT_POINT + sFilename + sExt, SpecialFiles::PACKAGES_DIR + sFilename + sExt ) )
 						vSucceeded.push_back( FileCopyResult(*s,bFileExists ? "overwrote existing file" : "") );
 					else
-						vFailed.push_back( FileCopyResult(*s,ssprintf("error copying file to '%s'",sOsDir.c_str())) );
+						vFailed.push_back( FileCopyResult(*s,fmt::sprintf("error copying file to '%s'",sOsDir.c_str())) );
 
 				}
 				*/
 				m_DownloadState = packages;
 				if( !m_vsQueuedPackageUrls.empty() )
 				{
-					RString sUrl = m_vsQueuedPackageUrls.back();
+					std::string sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
-					ASSERT(m_pTransfer == NULL);
+					ASSERT(m_pTransfer == nullptr);
 					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
@@ -236,25 +249,25 @@ public:
 			{
 				if( m_pTransfer->IsFinished() )
 				{
-					SAFE_DELETE( m_pTransfer );
+					Rage::safe_delete( m_pTransfer );
 					InstallSmzip( m_sCurrentPackageTempFile, m_playAfterLaunchInfo );
 					FILEMAN->Remove( m_sCurrentPackageTempFile );	// Harmless if this fails because download didn't finish
 				}
 				if( !m_vsQueuedPackageUrls.empty() )
 				{
-					RString sUrl = m_vsQueuedPackageUrls.back();
+					std::string sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
-					ASSERT(m_pTransfer == NULL);
+					ASSERT(m_pTransfer == nullptr);
 					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
 			}
 			break;
 		}
-		bool bFinished = m_DownloadState == packages  &&  
-			m_vsQueuedPackageUrls.empty() && 
-			m_pTransfer == NULL;
+		bool bFinished = m_DownloadState == packages  &&
+			m_vsQueuedPackageUrls.empty() &&
+			m_pTransfer == nullptr;
 		if( bFinished )
 		{
 			Message msg( "DownloadFinished" );
@@ -268,43 +281,44 @@ public:
 			return false;
 		}
 	}
-	static RString MakeTempFileName( RString s )
+	static std::string MakeTempFileName( std::string s )
 	{
-		return SpecialFiles::CACHE_DIR + "Downloads/" + Basename(s);
+		return SpecialFiles::CACHE_DIR + "Downloads/" + Rage::base_name(s);
 	}
 };
 static vector<DownloadTask*> g_pDownloadTasks;
 #endif
 
-static bool IsStepManiaProtocol(const RString &arg)
+static bool IsStepManiaProtocol(const std::string &arg)
 {
 	// for now, only load from the StepMania domain until the security implications of this feature are better understood.
-	//return BeginsWith(arg,"stepmania://beta.stepmania.com/");
-	return BeginsWith(arg,"stepmania://");
+	//return Rage::starts_with(arg,"stepmania://beta.stepmania.com/");
+	return Rage::starts_with(arg,"stepmania://");
 }
 
-static bool IsPackageFile(const RString &arg)
+static bool IsPackageFile(const std::string &arg)
 {
-	RString ext = GetExtension(arg);
-	return ext.EqualsNoCase("smzip") || ext.EqualsNoCase("zip");
+	Rage::ci_ascii_string ext{ GetExtension(arg).c_str() };
+	return ext == "smzip" || ext == "zip";
 }
 
 PlayAfterLaunchInfo DoInstalls( CommandLineActions::CommandLineArgs args )
 {
 	PlayAfterLaunchInfo ret;
-	for( int i = 0; i<(int)args.argv.size(); i++ )
+	for (auto &s: args.argv)
 	{
-		RString s = args.argv[i];
 		if( IsStepManiaProtocol(s) )
-    {
+		{
 #if !defined(WITHOUT_NETWORKING)
 			g_pDownloadTasks.push_back( new DownloadTask(s) );
 #else
-      // TODO: Figure out a meaningful log message.
+			// TODO: Figure out a meaningful log message.
 #endif
-    }
+		}
 		else if( IsPackageFile(s) )
+		{
 			InstallSmzipOsArg(s, ret);
+		}
 	}
 	return ret;
 }
@@ -356,28 +370,28 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 		if( p->UpdateAndIsFinished( fDeltaTime, pali) )
 		{
 			playAfterLaunchInfo.OverlayWith(pali);
-			SAFE_DELETE(p);
+			Rage::safe_delete(p);
 			g_pDownloadTasks.erase( g_pDownloadTasks.begin()+i );
 		}
 	}
 
 	{
-		vector<RString> vsMessages;
-		FOREACH_CONST( DownloadTask*, g_pDownloadTasks, pDT )
+		vector<std::string> vsMessages;
+		for (auto *pDT: g_pDownloadTasks)
 		{
-			vsMessages.push_back( (*pDT)->GetStatus() );
+			vsMessages.push_back( pDT->GetStatus() );
 		}
-		m_textStatus.SetText( join("\n", vsMessages) );
+		m_textStatus.SetText( Rage::join("\n", vsMessages) );
 	}
 #endif
 	if( playAfterLaunchInfo.bAnySongChanged )
-		SONGMAN->Reload( false, NULL );
+		SONGMAN->Reload( false, nullptr );
 
 	if( !playAfterLaunchInfo.sSongDir.empty() )
 	{
-		Song* pSong = NULL;
+		Song* pSong = nullptr;
 		GAMESTATE->Reset();
-		RString sInitialScreen;
+		std::string sInitialScreen;
 		if( playAfterLaunchInfo.sSongDir.length() > 0 )
 			pSong = SONGMAN->GetSongFromDir( playAfterLaunchInfo.sSongDir );
 		if( pSong )
@@ -388,7 +402,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 			GAMESTATE->m_bSideIsJoined[0] = true;
 			GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 			GAMESTATE->SetCurrentStyle( vpStyle[0], PLAYER_1 );
-			GAMESTATE->m_pCurSong.Set( pSong );
+			GAMESTATE->set_curr_song(pSong);
 			GAMESTATE->m_pPreferredSong = pSong;
 			sInitialScreen = StepMania::GetSelectMusicScreen();
 		}
@@ -406,7 +420,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -416,7 +430,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -14,6 +14,11 @@ endif()
 # Keep the module path local for easier grabbing.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
+include(CMakeProject-rage.cmake)
+if (CAN_COMPILE_TESTS)
+  include(CMakeProject-rage-test.cmake)
+endif()
+
 # Main project is below.
 
 include(CMakeData-arch.cmake)
@@ -100,6 +105,9 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
   RELWITHDEBINFO_OUTPUT_NAME "${SM_NAME_RELWITHDEBINFO}"
 )
 
+# Required for usage of tomcrypt and tommath.
+sm_add_compile_definition("${SM_EXE_NAME}" LTM_DESC)
+
 if (WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
 elseif (WITH_NO_ROLC_TOMCRYPT OR APPLE)
@@ -165,7 +173,7 @@ if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" _CRT_SECURE_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" _WINSOCK_DEPRECATED_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" GLEW_STATIC)
-  
+
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_PROGRAM_DIR}"
@@ -173,14 +181,27 @@ if(WIN32)
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_PROGRAM_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_PROGRAM_DIR}"
   )
-  
+
   if(MSVC)
-    # Allow for getting a virtualdub stack trace.
-    add_custom_command(TARGET "${SM_EXE_NAME}"
-      POST_BUILD
-      COMMAND "mapconv" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.map" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.vdi"
-      COMMENT "Generating file to allow for easier stack traces."
+    # TODO: Look into a better way for custom commands to reduce duplication.
+    if (SDL2_FOUND)
+      get_filename_component(SDL2_DLL_DIR ${SDL2_LIBRARY} DIRECTORY)
+      add_custom_command(TARGET "${SM_EXE_NAME}"
+        POST_BUILD
+        # Attempt to allow generating a stack trace.
+        COMMAND "mapconv" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.map" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.vdi"
+        # Copy the SDL2.dll
+        COMMAND ${CMAKE_COMMAND} -E copy "${SDL2_DLL_DIR}/SDL2.dll" "${SM_PROGRAM_DIR}/SDL2.dll"
+        COMMENT "Post-build stuff for Windows."
     )
+    else()
+      # Allow for getting a virtualdub stack trace.
+      add_custom_command(TARGET "${SM_EXE_NAME}"
+        POST_BUILD
+        COMMAND "mapconv" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.map" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.vdi"
+        COMMENT "Generating file to allow for easier stack traces."
+      )
+    endif()
   endif()
 elseif(APPLE)
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
@@ -190,6 +211,8 @@ elseif(APPLE)
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
     MACOSX_BUNDLE_INFO_PLIST "${SM_XCODE_DIR}/Info.StepMania.plist"
+    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${SM_CPP_STANDARD}"
+    XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
     XCODE_ATTRIBUTE_INFOPLIST_FILE "${SM_XCODE_DIR}/Info.StepMania.plist"
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "YES"
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=Release] "RELEASE"
@@ -198,7 +221,6 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=RelWithDebInfo] "RELWITHDEBINFO"
     XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${SM_XCODE_DIR}/plistHelper.hpp"
     XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
-    XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO"
     XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "${SM_XCODE_DIR}/Libraries"
   )
 
@@ -305,6 +327,13 @@ else() # Linux
   if (${HAS_FFMPEG})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
   endif()
+  if (${HAS_XRANDR})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XRANDR)
+  endif()
+  if (${HAS_XINERAMA} AND WITH_XINERAMA)
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XINERAMA)
+  endif()
+
   if (BSD)
     sm_add_compile_definition("${SM_EXE_NAME}" BSD)
   endif()
@@ -317,6 +346,12 @@ else() # Linux
   if("${CMAKE_SYSTEM}" MATCHES "Linux")
     sm_add_compile_definition("${SM_EXE_NAME}" LINUX)
   endif()
+
+  sm_add_compile_flag("${SM_EXE_NAME}" "-std=${SM_CPP_STANDARD}")
+  if (CMAKE_CXX_COMPILER MATCHES "clang")
+    sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
+    set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS "-stdlib=libc++")
+  endif()
 endif()
 
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
@@ -326,10 +361,12 @@ list(APPEND SMDATA_LINK_LIB
   "tomcrypt"
   "tommath"
   "zlib"
+  "cppformat"
   "jsoncpp"
   "png"
   "glew"
   "jpeg"
+  "rage"
 )
 include(../extern/CMakeProject-mmmagic.cmake)
 
@@ -347,7 +384,7 @@ if (NOT SYSTEM_PCRE_FOUND)
 endif()
 
 if (WIN32)
-  
+
   list(APPEND SMDATA_LINK_LIB
     # The misc libraries are here.
     "${LIB_SWSCALE}"
@@ -355,7 +392,7 @@ if (WIN32)
     "${LIB_AVFORMAT}"
     "${LIB_AVUTIL}"
   )
-  
+
   if (WITH_OGG)
     list(APPEND SMDATA_LINK_LIB
       "ogg"
@@ -363,15 +400,23 @@ if (WIN32)
       "vorbisfile"
     )
   endif()
-  
+
+  if(SDL2_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${SDL2_LIBRARY})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_SDL)
+  endif()
+
   list(APPEND SMDATA_LINK_LIB
     "dbghelp.lib"
     "setupapi.lib"
     "hid.lib"
   )
-  
+
   get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
-  
+
+  if (SDL2_FOUND)
+    sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SDL2_LIBRARY}\"")
+  endif()
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
@@ -386,7 +431,7 @@ if (WIN32)
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
-  
+
 elseif(APPLE)
   # The following were removed from SMDATA_LINK_LIB to "match" StepMania's pbxproj.
 #    ${MAC_FRAME_APPKIT}
@@ -398,22 +443,26 @@ elseif(APPLE)
     ${MAC_FRAME_CARBON}
     ${MAC_FRAME_COCOA}
     ${MAC_FRAME_IOKIT}
-    ${MAC_FRAME_QUICKTIME}
     ${MAC_FRAME_OPENGL}
     ${MAC_FRAME_COREFOUNDATION}
     ${MAC_FRAME_AUDIOTOOLBOX}
     ${MAC_FRAME_AUDIOUNIT}
     ${MAC_FRAME_COREAUDIO}
     ${MAC_FRAME_CORESERVICES}
-    "ogg"
-    "theora"
-    "vorbis"
   )
   list(APPEND SMDATA_LINK_LIB
     "${BZIP2_LIBRARY_RELEASE}"
     "${ICONV_LIBRARIES}"
     "pcre"
   )
+
+  if (HAS_OGG)
+    list(APPEND SMDATA_LINK_LIB
+      "${SM_OGG_ROOT}/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libogg.a"
+      "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbis.a"
+      "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbisfile.a"
+    )
+  endif()
 
   if(HAS_FFMPEG)
     list(APPEND SMDATA_LINK_LIB
@@ -422,6 +471,11 @@ elseif(APPLE)
       "${SM_FFMPEG_ROOT}/libswscale/libswscale.a"
       "${SM_FFMPEG_ROOT}/libavutil/libavutil.a"
     )
+  endif()
+
+  if(SDL2_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${SDL2_LIBRARY})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_SDL)
   endif()
 else() # Unix / Linux
   # TODO: Remember to find and locate the zip archive files.
@@ -502,6 +556,11 @@ else() # Unix / Linux
   if(X11_FOUND)
     list(APPEND SMDATA_LINK_LIB ${X11_LIBRARIES})
   endif()
+  
+  if(SDL2_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${SDL2_LIBRARY})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_SDL)
+  endif()
 
   if(PCRE_FOUND)
     list(APPEND SMDATA_LINK_LIB ${PCRE_LIBRARY})
@@ -509,6 +568,7 @@ else() # Unix / Linux
 
   list(APPEND SMDATA_LINK_LIB
     ${XRANDR_LIBRARIES}
+    ${XINERAMA_LIBRARIES}
   )
 
   list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
@@ -519,6 +579,12 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   "${SM_SRC_DIR}/generated"
+  "${SM_SRC_DIR}/rage"
+  "${SM_EXTERN_DIR}/vorbis"
+  "${SM_EXTERN_DIR}/tommath"
+  "${SM_EXTERN_DIR}/tomcrypt/src/headers"
+  "${SM_EXTERN_DIR}/cppformat"
+  "${SM_EXTERN_DIR}/enum-flags/"
 )
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
@@ -572,9 +638,10 @@ if(NOT APPLE)
   endif()
 else()
   if(WITH_OGG)
+    add_dependencies("${SM_EXE_NAME}" "vorbis")
     list(APPEND SM_INCLUDE_DIRS
-      "${SM_EXTERN_DIR}/newogg/include"
-      "${SM_EXTERN_DIR}/newvorbis/include"
+      "${SM_OGG_INCLUDE_DIR}"
+      "${SM_VORBIS_INCLUDE_DIR}"
     )
   endif()
   list(APPEND SM_INCLUDE_DIRS
@@ -587,6 +654,12 @@ else()
       "${SM_FFMPEG_ROOT}"
     )
   endif()
+endif()
+
+if (WITH_SDL)
+  list(APPEND SM_INCLUDE_DIRS
+    ${SDL2_INCLUDE_DIR}
+  )
 endif()
 
 if(WIN32)
@@ -604,7 +677,7 @@ target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 if(WIN32)
   set(SM_INSTALL_DESTINATION ".")
 else()
-  set(SM_INSTALL_DESTINATION "stepmania-5.0")
+  set(SM_INSTALL_DESTINATION "stepmania-${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}")
 endif()
 
 if(NOT APPLE)
@@ -651,4 +724,3 @@ if(NOT APPLE)
     install(FILES "${SM_ROOT_DIR}/Songs/instructions.txt" DESTINATION "${SM_INSTALL_DESTINATION}/Songs")
   endif()
 endif()
-

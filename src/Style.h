@@ -33,28 +33,27 @@ public:
 	 * @brief The name of the style.
 	 *
 	 * Used by GameManager::GameAndStringToStyle to determine whether this is the style that matches the string. */
-	const char *		m_szName;
+	std::string m_szName;
 
 	/**
 	 * @brief Steps format used for each player.
-	 * 
+	 *
 	 * For example, "dance versus" reads the Steps with the tag "dance-single". */
-	StepsType		m_StepsType;
+	StepsType m_StepsType;
 
 	/** @brief Style format used for each player. */
-	StyleType		m_StyleType;
+	StyleType m_StyleType;
 
 	/**
 	 * @brief The number of total tracks/columns this style expects.
 	 *
 	 * As an example, 4 is expected for ITG style versus, but 8 for ITG style double. */
-	int			m_iColsPerPlayer;
+	int m_iColsPerPlayer;
 	/** @brief Some general column infromation */
-	struct ColumnInfo 
-	{ 
-		int   track;		/**< Take note data from this track. */
-		float fXOffset;		/**< This is the x position of the column relative to the player's center. */
-		const char *pzName;	/**< The name of the column, or NULL to use the button name mapped to it. */
+	struct ColumnInfo
+	{
+		int track;		/**< Take note data from this track. */
+		const char *pzName;	/**< The name of the column, or nullptr to use the button name mapped to it. */
 	};
 
 	/** @brief Map each players' colun to a track in the NoteData. */
@@ -74,25 +73,23 @@ public:
 	//bool		m_bNeedsZoomOutWith2Players;
 	/** @brief Can this style use the BeginnerHelper for assisting new people to the game? */
 	bool		m_bCanUseBeginnerHelper;
-	/** 
+	/**
 	 * @brief Should difficulty selection be locked when using this style?
 	 *
 	 * This is primarily for Couple and Routine styles. */
 	bool		m_bLockDifficulties;
 
-	void StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>& ret ) const;
+	void StyleInputToGameInput( int iCol, PlayerNumber pn, std::vector<GameInput>& ret ) const;
 	/**
 	 * @brief Retrieve the column based on the game input.
 	 * @param GameI the game input.
 	 * @return the Column number of the style, or Column_Invalid if it's an invalid column.
 	 * Examples of this include getting the upper left hand corner in a traditional four panel mode. */
 	int GameInputToColumn( const GameInput &GameI ) const;
-	RString ColToButtonName( int iCol ) const;
+	std::string ColToButtonName( int iCol ) const;
 
 	bool GetUsesCenteredArrows() const;
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const;
-	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
-	float GetWidth(PlayerNumber pn) const;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -106,7 +103,7 @@ public:
  * @author Chris Danford (c) 2001-2002
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -116,7 +113,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

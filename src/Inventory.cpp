@@ -11,13 +11,15 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 
+using std::vector;
+
 void ReloadItems();
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
 #define ITEM_DURATION_SECONDS	THEME->GetMetricF("Inventory","ItemDurationSeconds")
-#define ITEM_COMBO( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dCombo",i+1))
-#define ITEM_EFFECT( i )		THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
-#define ITEM_LEVEL( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dLevel",i+1))
+#define ITEM_COMBO( i )			THEME->GetMetricI("Inventory",fmt::sprintf("Item%dCombo",i+1))
+#define ITEM_EFFECT( i )		THEME->GetMetric ("Inventory",fmt::sprintf("Item%dEffect",i+1))
+#define ITEM_LEVEL( i )			THEME->GetMetricI("Inventory",fmt::sprintf("Item%dLevel",i+1))
 ThemeMetric<float> ITEM_USE_RATE_SECONDS("Inventory","ItemUseRateSeconds");
 
 #define ITEM_USE_PROBABILITY (1.f/ITEM_USE_RATE_SECONDS)
@@ -26,7 +28,7 @@ struct Item
 {
 	AttackLevel level;
 	unsigned int iCombo;
-	RString sModifier;
+	std::string sModifier;
 };
 static vector<Item>	g_Items;
 
@@ -52,14 +54,16 @@ Inventory::Inventory()
 	case PLAY_MODE_BATTLE:
 		break;
 	default:
-		FAIL_M(ssprintf("Inventory not valid for PlayMode %i", mode));
+		FAIL_M(fmt::sprintf("Inventory not valid for PlayMode %i", mode));
 	}
 }
 
 Inventory::~Inventory()
 {
-	for( unsigned i=0; i<m_vpSoundUseItem.size(); i++ )
-		delete m_vpSoundUseItem[i];
+	for (auto *item: m_vpSoundUseItem)
+	{
+		delete item;
+	}
 	m_vpSoundUseItem.clear();
 }
 
@@ -79,7 +83,7 @@ void Inventory::Load( PlayerState* pPlayerState )
 			for( unsigned i=0; i<g_Items.size(); i++ )
 			{
 				RageSound* pSound = new RageSound;
-				pSound->Load( THEME->GetPathS("Inventory",ssprintf("use item %u",i+1)) );
+				pSound->Load( THEME->GetPathS("Inventory",fmt::sprintf("use item %u",i+1)) );
 				m_vpSoundUseItem.push_back( pSound );
 			}
 			m_soundItemEnding.Load( THEME->GetPathS("Inventory","item ending") );
@@ -123,7 +127,7 @@ void Inventory::Update( float fDelta )
 		}
 	}
 
-	Song &song = *GAMESTATE->m_pCurSong;
+	Song &song = *GAMESTATE->get_curr_song();
 	// use items if this player is CPU-controlled
 	if( m_pPlayerState->m_PlayerController != PC_HUMAN &&
 		GAMESTATE->m_Position.m_fSongBeat < song.GetLastBeat() )
@@ -209,16 +213,16 @@ void Inventory::UseItem( int iSlot )
 	float fPercentHealthToDrain = (a.level+1) / 10.f;
 	ASSERT( fPercentHealthToDrain > 0 );
 	GAMESTATE->m_fOpponentHealthPercent -= fPercentHealthToDrain;
-	CLAMP( GAMESTATE->m_fOpponentHealthPercent, 0.f, 1.f );
+	GAMESTATE->m_fOpponentHealthPercent = Rage::clamp( GAMESTATE->m_fOpponentHealthPercent, 0.f, 1.f );
 
 	// play announcer sound
-	SCREENMAN->SendMessageToTopScreen( ssprintf("SM_BattleDamageLevel%d",a.level+1) );
+	SCREENMAN->SendMessageToTopScreen( fmt::sprintf("SM_BattleDamageLevel%d",a.level+1) );
 }
 
 /*
  * (c) 2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -228,7 +232,7 @@ void Inventory::UseItem( int iSlot )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

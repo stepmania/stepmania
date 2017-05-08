@@ -1,5 +1,6 @@
 #include "global.h"
 #include "SoundEffectControl.h"
+#include "RageMath.hpp"
 #include "RageSoundReader.h"
 #include "InputMapper.h"
 #include "GameState.h"
@@ -12,11 +13,11 @@ SoundEffectControl::SoundEffectControl()
 	m_bLocked = false;
 	m_fSample = 0.0f;
 	m_fLastLevel = 0.0f;
-	m_pPlayerState = NULL;
-	m_pNoteData = NULL;
+	m_pPlayerState = nullptr;
+	m_pNoteData = nullptr;
 }
 
-void SoundEffectControl::Load( const RString &sType, PlayerState *pPlayerState, const NoteData *pNoteData )
+void SoundEffectControl::Load( const std::string &sType, PlayerState *pPlayerState, const NoteData *pNoteData )
 {
 	SOUND_PROPERTY.Load( sType, "SoundProperty" );
 	LOCK_TO_HOLD.Load( sType, "LockToHold" );
@@ -40,7 +41,7 @@ void SoundEffectControl::Update( float fDeltaTime )
 
 	float fLevel = INPUTMAPPER->GetLevel( GAME_BUTTON_EFFECT_UP, m_pPlayerState->m_PlayerNumber );
 	fLevel -= INPUTMAPPER->GetLevel( GAME_BUTTON_EFFECT_DOWN, m_pPlayerState->m_PlayerNumber );
-	CLAMP( fLevel, -1.0f, +1.0f );
+	fLevel = Rage::clamp( fLevel, -1.0f, +1.0f );
 
 	if( LOCK_TO_HOLD )
 	{
@@ -76,12 +77,12 @@ void SoundEffectControl::Update( float fDeltaTime )
 
 	float fCurrent;
 	if( m_fSample < 0 )
-		fCurrent = SCALE( m_fSample, 0.0f, -1.0f, fPropertyCenter, fPropertyMin );
+		fCurrent = Rage::scale( m_fSample, 0.0f, -1.0f, fPropertyCenter, fPropertyMin );
 	else
-		fCurrent = SCALE( m_fSample, 0.0f, +1.0f, fPropertyCenter, fPropertyMax );
+		fCurrent = Rage::scale( m_fSample, 0.0f, +1.0f, fPropertyCenter, fPropertyMax );
 
 	if( m_pSoundReader )
-		m_pSoundReader->SetProperty( SOUND_PROPERTY, fCurrent );
+		m_pSoundReader->SetProperty( SOUND_PROPERTY.GetValue(), fCurrent );
 }
 
 /* Return false if any holds have been LetGo.  Otherwise, return true if at least

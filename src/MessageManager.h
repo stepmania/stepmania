@@ -85,17 +85,18 @@ enum MessageID
 	NUM_MessageID,	// leave this at the end
 	MessageID_Invalid
 };
-const RString& MessageIDToString( MessageID m );
+std::string const MessageIDToString( MessageID m );
 
 struct Message
 {
-	explicit Message( const RString &s );
+	explicit Message( const std::string &s );
 	explicit Message(const MessageID id);
-	Message( const RString &s, const LuaReference &params );
+	Message( const std::string &s, const LuaReference &params );
+	Message(Message&& other);
 	~Message();
 
-	void SetName( const RString &sName ) { m_sName = sName; }
-	RString GetName() const { return m_sName; }
+	void SetName( const std::string &sName ) { m_sName = sName; }
+	std::string GetName() const { return m_sName; }
 
 	bool IsBroadcast() const { return m_bBroadcast; }
 	void SetBroadcast( bool b ) { m_bBroadcast = b; }
@@ -104,11 +105,11 @@ struct Message
 	const LuaReference &GetParamTable() const;
 	void SetParamTable( const LuaReference &params );
 
-	void GetParamFromStack( lua_State *L, const RString &sName ) const;
-	void SetParamFromStack( lua_State *L, const RString &sName );
+	void GetParamFromStack( lua_State *L, const std::string &sName ) const;
+	void SetParamFromStack( lua_State *L, const std::string &sName );
 
 	template<typename T>
-	bool GetParam( const RString &sName, T &val ) const
+	bool GetParam( const std::string &sName, T &val ) const
 	{
 		Lua *L = LUA->Get();
 		GetParamFromStack( L, sName );
@@ -118,7 +119,7 @@ struct Message
 	}
 
 	template<typename T>
-	void SetParam( const RString &sName, const T &val )
+	void SetParam( const std::string &sName, const T &val )
 	{
 		Lua *L = LUA->Get();
 		LuaHelpers::Push( L, val );
@@ -127,7 +128,7 @@ struct Message
 	}
 
 	template<typename T>
-	void SetParam( const RString &sName, const vector<T> &val )
+	void SetParam( const std::string &sName, const std::vector<T> &val )
 	{
 		Lua *L = LUA->Get();
 		LuaHelpers::CreateTableFromArray( val, L );
@@ -135,11 +136,11 @@ struct Message
 		LUA->Release( L );
 	}
 
-	bool operator==( const RString &s ) const { return m_sName == s; }
+	bool operator==( const std::string &s ) const { return m_sName == s; }
 	bool operator==( MessageID id ) const { return MessageIDToString(id) == m_sName; }
 
 private:
-	RString m_sName;
+	std::string m_sName;
 	LuaTable *m_pParams;
 	bool m_bBroadcast;
 
@@ -157,7 +158,7 @@ class IMessageSubscriber
 public:
 	virtual ~IMessageSubscriber() { }
 	virtual void HandleMessage( const Message &msg ) = 0;
-	void ClearMessages( const RString sMessage = "" );
+	void ClearMessages( const std::string sMessage = "" );
 
 private:
 	friend class MessageManager;
@@ -174,12 +175,12 @@ public:
 	// Messages
 	//
 	void SubscribeToMessage( MessageID message ); // will automatically unsubscribe
-	void SubscribeToMessage( const RString &sMessageName ); // will automatically unsubscribe
+	void SubscribeToMessage( const std::string &sMessageName ); // will automatically unsubscribe
 
 	void UnsubscribeAll();
 
 private:
-	vector<RString> m_vsSubscribedTo;
+	std::vector<std::string> m_vsSubscribedTo;
 };
 
 /** @brief Deliver messages to any part of the program as needed. */
@@ -189,14 +190,14 @@ public:
 	MessageManager();
 	~MessageManager();
 
-	void Subscribe( IMessageSubscriber* pSubscriber, const RString& sMessage );
+	void Subscribe( IMessageSubscriber* pSubscriber, const std::string& sMessage );
 	void Subscribe( IMessageSubscriber* pSubscriber, MessageID m );
-	void Unsubscribe( IMessageSubscriber* pSubscriber, const RString& sMessage );
+	void Unsubscribe( IMessageSubscriber* pSubscriber, const std::string& sMessage );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m );
 	void Broadcast( Message &msg ) const;
-	void Broadcast( const RString& sMessage ) const;
+	void Broadcast( const std::string& sMessage ) const;
 	void Broadcast( MessageID m ) const;
-	bool IsSubscribedToMessage( IMessageSubscriber* pSubscriber, const RString &sMessage ) const;
+	bool IsSubscribedToMessage( IMessageSubscriber* pSubscriber, const std::string &sMessage ) const;
 	inline bool IsSubscribedToMessage( IMessageSubscriber* pSubscriber, MessageID message ) const { return IsSubscribedToMessage( pSubscriber, MessageIDToString(message) ); }
 
 	void SetLogging(bool set) { m_Logging= set; }
@@ -218,7 +219,14 @@ private:
 public:
 	explicit BroadcastOnChange( MessageID m ) { mSendWhenChanged = m; }
 	const T Get() const { return val; }
-	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) ); }
+	void Set( T t )
+	{
+		val = t;
+		if (MESSAGEMAN != nullptr)
+		{
+		MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) );
+		}
+	}
 	operator T () const { return val; }
 	bool operator == ( const T &other ) const { return val == other; }
 	bool operator != ( const T &other ) const { return val != other; }
@@ -227,10 +235,10 @@ public:
 /** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
-	template<class T> void Push( lua_State *L, const BroadcastOnChange<T> &Object ) 
-	{ 
+	template<class T> void Push( lua_State *L, const BroadcastOnChange<T> &Object )
+	{
 		LuaHelpers::Push<T>( L, Object.Get() );
-	} 
+	}
 }
 
 template<class T, int N>
@@ -238,7 +246,7 @@ class BroadcastOnChange1D
 {
 private:
 	typedef BroadcastOnChange<T> MyType;
-	vector<MyType> val;
+	std::vector<MyType> val;
 public:
 	explicit BroadcastOnChange1D( MessageID m )
 	{
@@ -256,7 +264,7 @@ private:
 	MessageID mSendWhenChanged;
 	T *val;
 public:
-	explicit BroadcastOnChangePtr( MessageID m ) { mSendWhenChanged = m; val = NULL; }
+	explicit BroadcastOnChangePtr( MessageID m ) { mSendWhenChanged = m; val = nullptr; }
 	T* Get() const { return val; }
 	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) ); }
 	/* This is only intended to be used for setting temporary values; always
@@ -272,7 +280,7 @@ class BroadcastOnChangePtr1D
 {
 private:
 	typedef BroadcastOnChangePtr<T> MyType;
-	vector<MyType> val;
+	std::vector<MyType> val;
 public:
 	explicit BroadcastOnChangePtr1D( MessageID m )
 	{
@@ -288,7 +296,7 @@ public:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -298,7 +306,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

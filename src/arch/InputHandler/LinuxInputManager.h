@@ -2,13 +2,12 @@
 #define LINUX_INPUT_MANAGER 1
 
 #include <vector>
-using namespace std;
 
 #include "global.h"
 class InputHandler_Linux_Joystick;
 class InputHandler_Linux_Event;
 
-// Enumerates the input devices on the system and dispatches them to 
+// Enumerates the input devices on the system and dispatches them to
 // IH_Linux_Event and IH_Linux_Joystick as appropriate.
 
 class LinuxInputManager
@@ -21,11 +20,11 @@ public:
 private:
 	bool m_bEventEnabled;
 	InputHandler_Linux_Event* m_EventDriver;
-	vector<RString> m_vsPendingEventDevices;
-	
+	std::vector<std::string> m_vsPendingEventDevices;
+
 	bool m_bJoystickEnabled;
 	InputHandler_Linux_Joystick* m_JoystickDriver;
-	vector<RString> m_vsPendingJoystickDevices;
+	std::vector<std::string> m_vsPendingJoystickDevices;
 };
 
 extern LinuxInputManager* LINUXINPUT; // global and accessible from anywhere in our program
@@ -35,7 +34,7 @@ extern LinuxInputManager* LINUXINPUT; // global and accessible from anywhere in 
 /*
  * (c) 2013 Ben "root" Anderson
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -45,7 +44,7 @@ extern LinuxInputManager* LINUXINPUT; // global and accessible from anywhere in 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

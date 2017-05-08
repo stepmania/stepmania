@@ -2,24 +2,26 @@
 #include "RageSoundDriver_JACK.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "PrefsManager.h"
 #include "ProductInfo.h"
-#include "Foreach.h"
+
+using std::vector;
 
 REGISTER_SOUND_DRIVER_CLASS( JACK );
 
 RageSoundDriver_JACK::RageSoundDriver_JACK() :
 	RageSoundDriver()
 {
-	client = NULL;
-	port_l = NULL;
-	port_r = NULL;
+	client = nullptr;
+	port_l = nullptr;
+	port_r = nullptr;
 }
 
 RageSoundDriver_JACK::~RageSoundDriver_JACK()
 {
-	// If Init failed, it cleaned up already and set client to NULL
-	if (client == NULL)
+	// If Init failed, it cleaned up already and set client to nullptr
+	if (client == nullptr)
 		return;
 
 	// Clean up and shut down client
@@ -29,14 +31,14 @@ RageSoundDriver_JACK::~RageSoundDriver_JACK()
 	jack_client_close(client);
 }
 
-RString RageSoundDriver_JACK::Init()
+std::string RageSoundDriver_JACK::Init()
 {
 	jack_status_t status;
-	RString error;
+	std::string error;
 
 	// Open JACK client and call it "StepMania" or whatever
 	client = jack_client_open(PRODUCT_FAMILY, JackNoStartServer, &status);
-	if (client == NULL)
+	if (client == nullptr)
 		return "Couldn't connect to JACK server";
 
 	sample_rate = jack_get_sample_rate(client);
@@ -64,7 +66,7 @@ RString RageSoundDriver_JACK::Init()
 	// Create output ports
 	port_l = jack_port_register(client, "out_l", JACK_DEFAULT_AUDIO_TYPE,
 			JackPortIsOutput, 0);
-	if (port_l == NULL)
+	if (port_l == nullptr)
 	{
 		error = "Couldn't create JACK port out_l";
 		goto out_close;
@@ -72,7 +74,7 @@ RString RageSoundDriver_JACK::Init()
 
 	port_r = jack_port_register(client, "out_r", JACK_DEFAULT_AUDIO_TYPE,
 			JackPortIsOutput, 0);
-	if (port_r == NULL)
+	if (port_r == nullptr)
 	{
 		error = "Couldn't create JACK port out_r";
 		goto out_unreg_l;
@@ -94,7 +96,7 @@ RString RageSoundDriver_JACK::Init()
 
 	// Success!
 	LOG->Trace("JACK sound driver started successfully");
-	return RString();
+	return std::string();
 
 
 	// Not success!
@@ -104,32 +106,31 @@ out_unreg_l:
 	jack_port_unregister(client, port_l);
 out_close:
 	jack_client_close(client);
-	client = NULL;
+	client = nullptr;
 	return error;
 }
 
-RString RageSoundDriver_JACK::ConnectPorts()
+std::string RageSoundDriver_JACK::ConnectPorts()
 {
-	vector<RString> portNames;
-	split(PREFSMAN->m_iSoundDevice.Get(), ",", portNames, true);
+	auto portNames = Rage::split(PREFSMAN->m_iSoundDevice.Get(), ",", Rage::EmptyEntries::skip);
 
-	const char *port_out_l = NULL, *port_out_r = NULL;
-	const char **ports = NULL;
+	const char *port_out_l = nullptr, *port_out_r = nullptr;
+	const char **ports = nullptr;
 	if( portNames.size() == 0 )
 	{
-		// The user has NOT specified any ports to connect to. Search 
+		// The user has NOT specified any ports to connect to. Search
 		// for all physical sinks and use the first two.
-		ports = jack_get_ports( client, NULL, NULL, JackPortIsInput | JackPortIsPhysical );
-		if( ports == NULL )
+		ports = jack_get_ports( client, nullptr, nullptr, JackPortIsInput | JackPortIsPhysical );
+		if( ports == nullptr )
 			return "Couldn't get JACK ports";
-		if( ports[0] == NULL )
+		if( ports[0] == nullptr )
 		{
 			jack_free( ports );
 			return "No physical sinks!";
 		}
 		port_out_l = ports[0];
 
-		if( ports[1] == NULL )
+		if( ports[1] == nullptr )
 			// Only one physical sink. We're going mono!
 			port_out_r = ports[0];
 		else
@@ -138,22 +139,22 @@ RString RageSoundDriver_JACK::ConnectPorts()
 	else
 	{
 		// The user has specified ports to connect to. Loop through
-		// them to find two that are valid, then use them. If we find 
+		// them to find two that are valid, then use them. If we find
 		// only one that is valid, connect both channels to it.
 		// Use jack_port_by_name to ensure ports exist, then
-		// jack_port_name to use their canonical name.  (I'm not sure 
-		// if that second step is necessary, I've seen something about 
+		// jack_port_name to use their canonical name.  (I'm not sure
+		// if that second step is necessary, I've seen something about
 		// "aliases" in the docs.)
-		FOREACH( RString, portNames, portName )
+		for (auto &portName: portNames)
 		{
-			jack_port_t *out = jack_port_by_name( client, *portName );
+			jack_port_t *out = jack_port_by_name( client, portName.c_str() );
 			// Make sure the port is a sink.
 			if( ! ( jack_port_flags( out ) & JackPortIsInput ) )
 				continue;
 
-			if( out != NULL )
+			if( out != nullptr )
 			{
-				if( port_out_l == NULL )
+				if( port_out_l == nullptr )
 					port_out_l = jack_port_name( out );
 				else
 				{
@@ -162,22 +163,22 @@ RString RageSoundDriver_JACK::ConnectPorts()
 				}
 			}
 		}
-		if( port_out_l == NULL )
+		if( port_out_l == nullptr )
 			return "All specified sinks are invalid.";
-		
-		if( port_out_r == NULL )
+
+		if( port_out_r == nullptr )
 			// Only found one valid sink. Going mono!
 			port_out_r = port_out_l;
 	}
-	
-	RString ret = RString();
+
+	std::string ret = std::string();
 
 	if( jack_connect( client, jack_port_name(port_l), port_out_l ) != 0 )
 		ret = "Couldn't connect left JACK port";
 	else if( jack_connect( client, jack_port_name(port_r), port_out_r ) != 0 )
 		ret = "Couldn't connect right JACK port";
 
-	if( ports != NULL )
+	if( ports != nullptr )
 		jack_free( ports );
 
 	return ret;
@@ -231,7 +232,7 @@ int RageSoundDriver_JACK::SampleRateTrampoline(jack_nframes_t nframes, void *arg
 /*
  * (c) 2013 Devin J. Pohly
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -241,7 +242,7 @@ int RageSoundDriver_JACK::SampleRateTrampoline(jack_nframes_t nframes, void *arg
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

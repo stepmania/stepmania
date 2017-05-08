@@ -13,7 +13,7 @@ enum GameController
 	NUM_GameController,	/**< The number of controllers allowed. */
 	GameController_Invalid,
 };
-const RString& GameControllerToString( GameController mp );
+std::string const GameControllerToString( GameController mp );
 LuaDeclareType( GameController );
 
 /** @brief the list of buttons StepMania recognizes. */
@@ -28,6 +28,7 @@ enum GameButton
 	GAME_BUTTON_BACK,
 	GAME_BUTTON_COIN, /**< Insert a coin to play. */
 	GAME_BUTTON_OPERATOR, /**< Access the operator menu. */
+	GAME_BUTTON_SCREENSHOT,
 	GAME_BUTTON_EFFECT_UP,
 	GAME_BUTTON_EFFECT_DOWN,
 	GAME_BUTTON_CUSTOM_01,
@@ -54,9 +55,9 @@ enum GameButton
 	GameButton_Invalid
 };
 
-RString GameButtonToString( const InputScheme* pInputs, GameButton i );
-RString GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i );
-GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
+std::string GameButtonToString( const InputScheme* pInputs, GameButton i );
+std::string GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i );
+GameButton StringToGameButton( const InputScheme* pInputs, const std::string& s );
 
 /** @brief A special way to loop through each game button. */
 #define FOREACH_GameButton_Custom( gb ) for( GameButton gb=GAME_BUTTON_CUSTOM_01; gb<NUM_GameButton; enum_add(gb, +1) )
@@ -213,8 +214,8 @@ struct GameInput
 	inline bool IsValid() const { return controller != GameController_Invalid && button != GameButton_Invalid; };
 	inline void MakeInvalid() { controller = GameController_Invalid; button = GameButton_Invalid; };
 
-	RString ToString( const InputScheme* pInputs ) const;
-	bool FromString( const InputScheme* pInputs, const RString &s );
+	std::string ToString( const InputScheme* pInputs ) const;
+	bool FromString( const InputScheme* pInputs, const std::string &s );
 };
 
 #endif

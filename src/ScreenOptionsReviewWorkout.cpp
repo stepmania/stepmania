@@ -29,10 +29,10 @@ enum ReviewWorkoutRow
 
 static const MenuRowDef g_MenuRows[] = 
 {
-	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Edit Workout",	true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Edit Workout",	true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, nullptr ),
 };
 
 REGISTER_SCREEN_CLASS( ScreenOptionsCourseOverview );
@@ -66,7 +66,7 @@ void ScreenOptionsCourseOverview::BeginScreen()
 	ScreenOptions::BeginScreen();
 
 	// clear the current song in case it's set when we back out from gameplay
-	GAMESTATE->m_pCurSong.Set( NULL );
+	GAMESTATE->set_curr_song(nullptr);
 }
 
 ScreenOptionsCourseOverview::~ScreenOptionsCourseOverview()
@@ -83,7 +83,7 @@ void ScreenOptionsCourseOverview::ExportOptions( int iRow, const vector<PlayerNu
 {
 	OptionRow &row = *m_pRows[iRow];
 	int iIndex = row.GetOneSharedSelection( true );
-	RString sValue;
+	std::string sValue;
 	if( iIndex >= 0 )
 		sValue = row.GetRowDef().m_vsChoices[ iIndex ];
 }
@@ -99,10 +99,10 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 		{
 		case ReviewWorkoutRow_Play:
 			EditCourseUtil::PrepareForPlay();
-			SCREENMAN->SetNewScreen( PLAY_SCREEN );
+			SCREENMAN->SetNewScreen( PLAY_SCREEN.GetValue() );
 			return;	// handled
 		case ReviewWorkoutRow_Edit:
-			SCREENMAN->SetNewScreen( EDIT_SCREEN );
+			SCREENMAN->SetNewScreen( EDIT_SCREEN.GetValue() );
 			return;	// handled
 		}
 	}
@@ -146,7 +146,7 @@ void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input 
 	case ReviewWorkoutRow_Shuffle:
 		{
 			Course *pCourse = GAMESTATE->m_pCurCourse;
-			random_shuffle( pCourse->m_vEntries.begin(), pCourse->m_vEntries.end() );
+			std::shuffle( pCourse->m_vEntries.begin(), pCourse->m_vEntries.end() );
 			Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_pCurStyle->m_StepsType );
 			GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 			SCREENMAN->PlayStartSound();

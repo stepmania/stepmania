@@ -11,13 +11,14 @@
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
 #include "LuaExpressionTransform.h"
+#include <limits>
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
 enum WheelState {
 	STATE_SELECTING,
-	STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
-	STATE_FLYING_ON_AFTER_NEXT_SORT, 
+	STATE_FLYING_OFF_BEFORE_NEXT_SORT,
+	STATE_FLYING_ON_AFTER_NEXT_SORT,
 	STATE_ROULETTE_SPINNING,
 	STATE_ROULETTE_SLOWING_DOWN,
 	STATE_RANDOM_SPINNING,
@@ -25,8 +26,8 @@ enum WheelState {
 	NUM_WheelState,
 	WheelState_Invalid,
 };
-const RString& WheelStateToString( WheelState ws );
-WheelState StringToWheelState( const RString& sDC );
+std::string const WheelStateToString( WheelState ws );
+WheelState StringToWheelState( const std::string& sDC );
 LuaDeclareType( WheelState );
 
 /** @brief A wheel with data elements. */
@@ -34,7 +35,7 @@ class WheelBase : public ActorFrame
 {
 public:
 	virtual ~WheelBase();
-	virtual void Load( RString sType );
+	virtual void Load( std::string sType );
 	void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
@@ -42,7 +43,7 @@ public:
 	virtual void Move(int n);
 	void ChangeMusicUnlessLocked( int n ); /* +1 or -1 */
 	virtual void ChangeMusic(int dist); /* +1 or -1 */
-	virtual void SetOpenSection( RString group ) { }
+	virtual void SetOpenSection( std::string ) { }
 
 	// Return true if we're moving fast automatically.
 	int IsMoving() const;
@@ -55,7 +56,7 @@ public:
 
 	WheelState GetWheelState() { return m_WheelState; }
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
-	void RebuildWheelItems( int dist = INT_MAX );	// INT_MAX = refresh all
+	void RebuildWheelItems( int dist = std::numeric_limits<int>::max() );	// std::numeric_limits<int>::max() = refresh all
 	// Update the list of songs to match whatever songs are indexed by the song manager (SONGMAN)
 	virtual void ReloadSongList() {}
 
@@ -63,8 +64,8 @@ public:
 	bool IsEmpty() { return m_bEmpty; }
 	WheelItemBaseData* GetItem(unsigned int index);
 	WheelItemBaseData* LastSelected();
-	WheelItemBase *GetWheelItem( int i ) { if( i < 0 || i >= (int) m_WheelBaseItems.size() ) return NULL; return m_WheelBaseItems[i]; }
-	RString GetExpandedSectionName() { return m_sExpandedSectionName; }
+	WheelItemBase *GetWheelItem( int i ) { if( i < 0 || i >= (int) m_WheelBaseItems.size() ) return nullptr; return m_WheelBaseItems[i]; }
+	std::string GetExpandedSectionName() { return m_sExpandedSectionName; }
 	int GetCurrentIndex() { return m_iSelection; }
 
 	WheelItemDataType GetSelectedType() { return m_CurWheelItemData[m_iSelection]->m_Type; }
@@ -86,13 +87,13 @@ protected:
 	ScrollBar	m_ScrollBar;
 	AutoActor	m_sprHighlight;
 
-	vector<WheelItemBaseData *> m_CurWheelItemData;
-	vector<WheelItemBase *> m_WheelBaseItems;
+	std::vector<WheelItemBaseData *> m_CurWheelItemData;
+	std::vector<WheelItemBase *> m_WheelBaseItems;
 	WheelItemBaseData* m_LastSelection;
-	
+
 	bool		m_bEmpty;
 	int		m_iSelection;		// index into m_CurWheelItemBaseData
-	RString		m_sExpandedSectionName;
+	std::string		m_sExpandedSectionName;
 
 	int			m_iSwitchesLeftInSpinDown;
 	float		m_fLockedWheelVelocity;
@@ -119,7 +120,7 @@ protected:
 	ThemeMetric<int>	SCROLL_BAR_HEIGHT;
 	LuaExpressionTransform	m_exprItemTransformFunction;
 	ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW;
-	ThemeMetric<RageColor>	WHEEL_ITEM_LOCKED_COLOR;
+	ThemeMetric<Rage::Color>	WHEEL_ITEM_LOCKED_COLOR;
 };
 
 #endif
@@ -127,7 +128,7 @@ protected:
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -137,7 +138,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

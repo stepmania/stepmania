@@ -8,35 +8,35 @@ notifications:
 
 matrix:
     include:
-        -
-            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
-            compiler: clang
-            addons: &clang36
-                apt:
-                    sources:
-                        - ubuntu-toolchain-r-test
-                        - llvm-toolchain-precise-3.6
-                    packages:
-                        - nasm
-                        - libudev-dev
-                        - clang-3.6
-                        - libmad0-dev
-                        - libgtk2.0-dev
-                        - binutils-dev
-                        - libasound-dev
-                        - libpulse-dev
-                        - libjack-dev
-                        - libc6-dev
-                        - libogg-dev
-                        - libvorbis-dev
-                        - libxtst-dev
-                        - libxrandr-dev
-                        - libglew-dev
+        #-
+        #    env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
+        #    compiler: clang
+        #    addons: &clang36
+        #        apt:
+        #            sources:
+        #                - ubuntu-toolchain-r-test
+        #                - llvm-toolchain-precise-3.6
+        #            packages:
+        #                - nasm
+        #                - libudev-dev
+        #                - clang-3.6
+        #                - libmad0-dev
+        #                - libgtk2.0-dev
+        #                - binutils-dev
+        #                - libasound-dev
+        #                - libpulse-dev
+        #                - libjack-dev
+        #                - libc6-dev
+        #                - libogg-dev
+        #                - libvorbis-dev
+        #                - libxtst-dev
+        #                - libxrandr-dev
+        #                - libglew-dev
 
-        -
-            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=ON WITH_FFMPEG_JOBS=1
-            compiler: clang
-            addons: *clang36
+        #-
+        #    env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=ON WITH_FFMPEG_JOBS=1
+        #    compiler: clang
+        #    addons: *clang36
 
         -
             env: CXX_COMPILER=g++-5 CC_COMPILER=gcc-5 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
@@ -63,6 +63,40 @@ matrix:
                         - libxrandr-dev
                         - libglew-dev
 
+        -
+            env: CXX_COMPILER=g++-4.9 CC_COMPILER=gcc-4.9 BUILD_TYPE=Release WITH_FFMPEG=OFF
+            compiler: gcc
+            addons: &gcc49
+                apt:
+                    sources:
+                        - ubuntu-toolchain-r-test
+                    packages:
+                        - nasm
+                        - libudev-dev
+                        - gcc-4.9
+                        - g++-4.9
+                        - libmad0-dev
+                        - libgtk2.0-dev
+                        - binutils-dev
+                        - libasound-dev
+                        - libpulse-dev
+                        - libjack-dev
+                        - libc6-dev
+                        - libogg-dev
+                        - libvorbis-dev
+                        - libxtst-dev
+                        - libxrandr-dev
+                        - libglew-dev
+
+before_install:
+    # Set up valid submodules.
+    - git submodule init
+    - git submodule update extern/cppformat
+    - git submodule update extern/tommath
+    - git submodule update extern/tomcrypt
+    - if [[ "${CXX_COMPILER}" != "g++-4.9" ]]; then git submodule update extern/googletest; fi
+    - if [[ "${WITH_FFMPEG}" == "ON" ]]; then git submodule update extern/ffmpeg-git; fi
+
 install:
     # Setup a directory for necessary dependencies.
     - cd ~
@@ -74,9 +108,25 @@ install:
     - mkdir cmake
     - wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
     - export PATH=${PWD}/cmake/bin:${PATH}
+    # If using clang, set up libc++ and libc++abi.
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LLVM_URL="http://llvm.org/releases/3.6.1/llvm-3.6.1.src.tar.xz"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LIBCXX_URL="http://llvm.org/releases/3.6.1/libcxx-3.6.1.src.tar.xz"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LIBCXXABI_URL="http://llvm.org/releases/3.6.1/libcxxabi-3.6.1.src.tar.xz"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export TAR_FMT="-xJ"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then mkdir -p llvm llvm/build llvm/projects/libcxx llvm/projects/libcxxabi; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then wget --quiet -O - ${LLVM_URL} | tar --strip-components=1 ${TAR_FMT} -C llvm; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then wget --quiet -O - ${LIBCXX_URL} | tar --strip-components=1 ${TAR_FMT} -C llvm/projects/libcxx; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then wget --quiet -O - ${LIBCXXABI_URL} | tar --strip-components=1 ${TAR_FMT} -C llvm/projects/libcxxabi; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then cd llvm/build; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then make cxx -j2; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then cd ../..; fi
 
 before_script:
     - cd ${TRAVIS_BUILD_DIR}
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export CXXFLAGS="-I${DEPS_DIR}/llvm/build/include/c++/v1 -I${DEPS_DIR}/llvm/projects/libcxx/include -I${DEPS_DIR}/llvm/projects/libcxxabi/include"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LDFLAGS="-L ${DEPS_DIR}/llvm/build/lib -l c++ -l c++abi"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm/build/lib"; fi
     - cd Build
     - cmake .. -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_C_COMPILER=${CC_COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DWITH_FFMPEG=${WITH_FFMPEG} -DWITH_FFMPEG_JOBS=${WITH_FFMPEG_JOBS}
 

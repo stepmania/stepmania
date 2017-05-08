@@ -2,8 +2,7 @@
 #define ScreenSyncOverlay_H
 
 #include "Screen.h"
-#include "BitmapText.h"
-#include "Quad.h"
+#include "AutoActor.h"
 /** @brief Credits and statistics drawn on top of everything else. */
 class ScreenSyncOverlay : public Screen
 {
@@ -20,10 +19,7 @@ private:
 	void ShowHelp();
 	void HideHelp();
 
-	Quad		m_quad;
-	BitmapText	m_textHelp;
-	BitmapText	m_textStatus;
-	BitmapText	m_textAdjustments;
+	AutoActor m_overlay;
 };
 
 

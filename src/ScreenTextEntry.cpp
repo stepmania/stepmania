@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenTextEntry.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "Preference.h"
 #include "ScreenManager.h"
@@ -14,6 +15,9 @@
 #include "RageLog.h"
 #include "LuaBinding.h"
 #include "arch/ArchHooks/ArchHooks.h" // HOOKS->GetClipboard()
+#include "RageFmtWrap.h"
+
+using std::wstring;
 
 static const char* g_szKeys[NUM_KeyboardRow][KEYS_PER_ROW] =
 {
@@ -27,20 +31,20 @@ static const char* g_szKeys[NUM_KeyboardRow][KEYS_PER_ROW] =
 	{"","","Space","","","Backspace","","","Cancel","","","Done",""},
 };
 
-RString ScreenTextEntry::s_sLastAnswer = "";
+std::string ScreenTextEntry::s_sLastAnswer = "";
 
 // Settings:
 namespace
 {
-	RString g_sQuestion;
-	RString g_sInitialAnswer;
+	std::string g_sQuestion;
+	std::string g_sInitialAnswer;
 	int g_iMaxInputLength;
-	bool(*g_pValidate)(const RString &sAnswer,RString &sErrorOut);
-	void(*g_pOnOK)(const RString &sAnswer);
+	bool(*g_pValidate)(const std::string &sAnswer,std::string &sErrorOut);
+	void(*g_pOnOK)(const std::string &sAnswer);
 	void(*g_pOnCancel)();
 	bool g_bPassword;
-	bool (*g_pValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend);
-	RString (*g_pFormatAnswerForDisplay)(const RString &sAnswer);
+	bool (*g_pValidateAppend)(const std::string &sAnswerBeforeChar, std::string &sAppend);
+	std::string (*g_pFormatAnswerForDisplay)(const std::string &sAnswer);
 
 	// Lua bridge
 	LuaReference g_ValidateFunc;
@@ -50,18 +54,18 @@ namespace
 	LuaReference g_FormatAnswerForDisplayFunc;
 };
 
-void ScreenTextEntry::SetTextEntrySettings( 
-	RString sQuestion, 
-	RString sInitialAnswer, 
+void ScreenTextEntry::SetTextEntrySettings(
+	std::string sQuestion,
+	std::string sInitialAnswer,
 	int iMaxInputLength,
-	bool(*Validate)(const RString &sAnswer,RString &sErrorOut), 
-	void(*OnOK)(const RString &sAnswer), 
+	bool(*Validate)(const std::string &sAnswer,std::string &sErrorOut),
+	void(*OnOK)(const std::string &sAnswer),
 	void(*OnCancel)(),
 	bool bPassword,
-	bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend),
-	RString (*FormatAnswerForDisplay)(const RString &sAnswer)
+	bool (*ValidateAppend)(const std::string &sAnswerBeforeChar, std::string &sAppend),
+	std::string (*FormatAnswerForDisplay)(const std::string &sAnswer)
 	)
-{	
+{
 	g_sQuestion = sQuestion;
 	g_sInitialAnswer = sInitialAnswer;
 	g_iMaxInputLength = iMaxInputLength;
@@ -72,17 +76,17 @@ void ScreenTextEntry::SetTextEntrySettings(
 	g_pFormatAnswerForDisplay = FormatAnswerForDisplay;
 }
 
-void ScreenTextEntry::TextEntry( 
-	ScreenMessage smSendOnPop, 
-	RString sQuestion, 
-	RString sInitialAnswer, 
+void ScreenTextEntry::TextEntry(
+	ScreenMessage smSendOnPop,
+	std::string sQuestion,
+	std::string sInitialAnswer,
 	int iMaxInputLength,
-	bool(*Validate)(const RString &sAnswer,RString &sErrorOut), 
-	void(*OnOK)(const RString &sAnswer), 
+	bool(*Validate)(const std::string &sAnswer,std::string &sErrorOut),
+	void(*OnOK)(const std::string &sAnswer),
 	void(*OnCancel)(),
 	bool bPassword,
-	bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend),
-	RString (*FormatAnswerForDisplay)(const RString &sAnswer)
+	bool (*ValidateAppend)(const std::string &sAnswerBeforeChar, std::string &sAppend),
+	std::string (*FormatAnswerForDisplay)(const std::string &sAnswer)
 	)
 {
 	g_sQuestion = sQuestion;
@@ -99,22 +103,22 @@ void ScreenTextEntry::TextEntry(
 }
 
 static LocalizedString INVALID_FLOAT( "ScreenTextEntry", "\"%s\" is an invalid floating point value." );
-bool ScreenTextEntry::FloatValidate( const RString &sAnswer, RString &sErrorOut )
+bool ScreenTextEntry::FloatValidate( const std::string &sAnswer, std::string &sErrorOut )
 {
 	float f;
 	if( StringToFloat(sAnswer, f) )
 		return true;
-	sErrorOut = ssprintf( INVALID_FLOAT.GetValue(), sAnswer.c_str() );
+	sErrorOut = rage_fmt_wrapper(INVALID_FLOAT, sAnswer.c_str());
 	return false;
 }
 
 static LocalizedString INVALID_INT( "ScreenTextEntry", "\"%s\" is an invalid integer value." );
-bool ScreenTextEntry::IntValidate( const RString &sAnswer, RString &sErrorOut )
+bool ScreenTextEntry::IntValidate( const std::string &sAnswer, std::string &sErrorOut )
 {
 	int f;
 	if(sAnswer >> f)
 		return true;
-	sErrorOut = ssprintf( INVALID_INT.GetValue(), sAnswer.c_str() );
+	sErrorOut = rage_fmt_wrapper(INVALID_INT, sAnswer.c_str());
 	return false;
 }
 
@@ -151,7 +155,7 @@ void ScreenTextEntry::Init()
 
 void ScreenTextEntry::BeginScreen()
 {
-	m_sAnswer = RStringToWstring( g_sInitialAnswer );
+	m_sAnswer = StringToWstring( g_sInitialAnswer );
 
 	ScreenWithMenuElements::BeginScreen();
 
@@ -166,11 +170,11 @@ static LocalizedString ANSWER_CARET	( "ScreenTextEntry", "AnswerCaret" );
 static LocalizedString ANSWER_BLANK	( "ScreenTextEntry", "AnswerBlank" );
 void ScreenTextEntry::UpdateAnswerText()
 {
-	RString s;
+	std::string s;
 	if( g_bPassword )
-		s = RString( m_sAnswer.size(), '*' );
+		s = std::string( m_sAnswer.size(), '*' );
 	else
-		s = WStringToRString(m_sAnswer);
+		s = WStringToString(m_sAnswer);
 
 	bool bAnswerFull = (int) s.length() >= g_iMaxInputLength;
 
@@ -224,14 +228,14 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 				break;
 		}
 	}
-	
+
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL) )
 	{
 		switch( input.type )
 		{
 			case IET_FIRST_PRESS:
 				bRCtrl = true;
-					break;
+				break;
 			case IET_RELEASE:
 				bRCtrl = false;
 				break;
@@ -239,7 +243,7 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 				break;
 		}
 	}
-	
+
 	bool bHandled = false;
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
 	{
@@ -260,27 +264,30 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 		if( ( c == L'v' || c == L'V' ) && ( bLCtrl || bRCtrl ) )
 		{
 			TryAppendToAnswer( HOOKS->GetClipboard() );
-			
+
 			TextEnteredDirectly(); // XXX: This doesn't seem appropriate but there's no TextPasted()
 			bHandled = true;
 		}
-		else if( c >= L' ' ) 
+		else if( c >= L' ' )
 		{
 			// todo: handle caps lock -aj
-			TryAppendToAnswer( WStringToRString(wstring()+c) );
+			TryAppendToAnswer( WStringToString(wstring()+c) );
 
 			TextEnteredDirectly();
 			bHandled = true;
 		}
 	}
-
-	return ScreenWithMenuElements::Input( input ) || bHandled;
+	if(bHandled)
+	{
+		return true;
+	}
+	return ScreenWithMenuElements::Input(input);
 }
 
-void ScreenTextEntry::TryAppendToAnswer( RString s )
+void ScreenTextEntry::TryAppendToAnswer( std::string s )
 {
 	{
-		wstring sNewAnswer = m_sAnswer+RStringToWstring(s);
+		wstring sNewAnswer = m_sAnswer+StringToWstring(s);
 		if( (int)sNewAnswer.length() > g_iMaxInputLength )
 		{
 			SCREENMAN->PlayInvalidSound();
@@ -288,13 +295,13 @@ void ScreenTextEntry::TryAppendToAnswer( RString s )
 		}
 	}
 
-	if( g_pValidateAppend  &&  !g_pValidateAppend( WStringToRString(m_sAnswer), s ) )
+	if( g_pValidateAppend  &&  !g_pValidateAppend( WStringToString(m_sAnswer), s ) )
 	{
 		SCREENMAN->PlayInvalidSound();
 		return;
 	}
 
-	wstring sNewAnswer = m_sAnswer+RStringToWstring(s);
+	wstring sNewAnswer = m_sAnswer+StringToWstring(s);
 	m_sAnswer = sNewAnswer;
 	m_sndType.Play(true);
 	UpdateAnswerText();
@@ -327,7 +334,7 @@ void ScreenTextEntry::End( bool bCancelled )
 {
 	if( bCancelled )
 	{
-		if( g_pOnCancel ) 
+		if( g_pOnCancel )
 			g_pOnCancel();
 
 		Cancel( SM_GoToNextScreen );
@@ -335,9 +342,9 @@ void ScreenTextEntry::End( bool bCancelled )
 	}
 	else
 	{
-		RString sAnswer = WStringToRString(m_sAnswer);
-		RString sError;
-		if( g_pValidate != NULL )
+		std::string sAnswer = WStringToString(m_sAnswer);
+		std::string sError;
+		if( g_pValidate != nullptr )
 		{
 			bool bValidAnswer = g_pValidate( sAnswer, sError );
 			if( !bValidAnswer )
@@ -349,7 +356,7 @@ void ScreenTextEntry::End( bool bCancelled )
 
 		if( g_pOnOK )
 		{
-			RString ret = WStringToRString(m_sAnswer);
+			std::string ret = WStringToString(m_sAnswer);
 			FontCharAliases::ReplaceMarkers(ret);
 			g_pOnOK( ret );
 		}
@@ -359,7 +366,7 @@ void ScreenTextEntry::End( bool bCancelled )
 	}
 
 	s_bCancelledLast = bCancelled;
-	s_sLastAnswer = bCancelled ? RString("") : WStringToRString(m_sAnswer);
+	s_sLastAnswer = bCancelled ? "" : WStringToString(m_sAnswer);
 }
 
 bool ScreenTextEntry::MenuBack( const InputEventPlus &input )
@@ -384,7 +391,7 @@ void ScreenTextEntry::TextEntrySettings::FromStack( lua_State *L )
 	// Get ScreenMessage
 	lua_getfield( L, iTab, "SendOnPop" );
 	const char *pStr = lua_tostring( L, -1 );
-	if( pStr == NULL )
+	if( pStr == nullptr )
 		smSendOnPop = SM_None;
 	else
 		smSendOnPop = ScreenMessageHelpers::ToScreenMessage( pStr );
@@ -393,7 +400,7 @@ void ScreenTextEntry::TextEntrySettings::FromStack( lua_State *L )
 	// Get Question
 	lua_getfield( L, iTab, "Question" );
 	pStr = lua_tostring( L, -1 );
-	if( pStr == NULL )
+	if( pStr == nullptr )
 	{
 		LuaHelpers::ReportScriptError("ScreenTextEntry \"Question\" entry is not a string.");
 		pStr= "";
@@ -404,7 +411,7 @@ void ScreenTextEntry::TextEntrySettings::FromStack( lua_State *L )
 	// Get Initial Answer
 	lua_getfield( L, iTab, "InitialAnswer" );
 	pStr = lua_tostring( L, -1 );
-	if( pStr == NULL )
+	if( pStr == nullptr )
 		pStr = "";
 	sInitialAnswer = pStr;
 	lua_settop( L, iTab );
@@ -440,7 +447,7 @@ void ScreenTextEntry::TextEntrySettings::FromStack( lua_State *L )
 }
 
 // Lua bridges
-static bool ValidateFromLua( const RString &sAnswer, RString &sErrorOut )
+static bool ValidateFromLua( const std::string &sAnswer, std::string &sErrorOut )
 {
 	if(g_ValidateFunc.IsNil() || !g_ValidateFunc.IsSet())
 	{
@@ -451,14 +458,14 @@ static bool ValidateFromLua( const RString &sAnswer, RString &sErrorOut )
 	g_ValidateFunc.PushSelf( L );
 
 	// Argument 1 (answer):
-	lua_pushstring( L, sAnswer );
+	lua_pushstring( L, sAnswer.c_str() );
 
 	// Argument 2 (error out):
-	lua_pushstring( L, sErrorOut );
+	lua_pushstring( L, sErrorOut.c_str() );
 
 	bool valid= false;
 
-	RString error= "Lua error in ScreenTextEntry Validate: ";
+	std::string error= "Lua error in ScreenTextEntry Validate: ";
 	if(LuaHelpers::RunScriptOnStack(L, error, 2, 2, true))
 	{
 		if(!lua_isstring(L, -1) || !lua_isboolean(L, -2))
@@ -467,7 +474,7 @@ static bool ValidateFromLua( const RString &sAnswer, RString &sErrorOut )
 		}
 		else
 		{
-			RString ErrorFromLua;
+			std::string ErrorFromLua;
 			LuaHelpers::Pop( L, ErrorFromLua );
 			if( !ErrorFromLua.empty() )
 			{
@@ -481,7 +488,7 @@ static bool ValidateFromLua( const RString &sAnswer, RString &sErrorOut )
 	return valid;
 }
 
-static void OnOKFromLua( const RString &sAnswer )
+static void OnOKFromLua( const std::string &sAnswer )
 {
 	if(g_OnOKFunc.IsNil() || !g_OnOKFunc.IsSet())
 	{
@@ -491,8 +498,8 @@ static void OnOKFromLua( const RString &sAnswer )
 
 	g_OnOKFunc.PushSelf( L );
 	// Argument 1 (answer):
-	lua_pushstring( L, sAnswer );
-	RString error= "Lua error in ScreenTextEntry OnOK: ";
+	lua_pushstring( L, sAnswer.c_str() );
+	std::string error= "Lua error in ScreenTextEntry OnOK: ";
 	LuaHelpers::RunScriptOnStack(L, error, 1, 0, true);
 
 	LUA->Release(L);
@@ -507,13 +514,13 @@ static void OnCancelFromLua()
 	Lua *L = LUA->Get();
 
 	g_OnCancelFunc.PushSelf( L );
-	RString error= "Lua error in ScreenTextEntry OnCancel: ";
+	std::string error= "Lua error in ScreenTextEntry OnCancel: ";
 	LuaHelpers::RunScriptOnStack(L, error, 0, 0, true);
 
 	LUA->Release(L);
 }
 
-static bool ValidateAppendFromLua( const RString &sAnswerBeforeChar, RString &sAppend )
+static bool ValidateAppendFromLua( const std::string &sAnswerBeforeChar, std::string &sAppend )
 {
 	if(g_ValidateAppendFunc.IsNil() || !g_ValidateAppendFunc.IsSet())
 	{
@@ -524,14 +531,14 @@ static bool ValidateAppendFromLua( const RString &sAnswerBeforeChar, RString &sA
 	g_ValidateAppendFunc.PushSelf( L );
 
 	// Argument 1 (AnswerBeforeChar):
-	lua_pushstring( L, sAnswerBeforeChar );
+	lua_pushstring( L, sAnswerBeforeChar.c_str() );
 
 	// Argument 2 (Append):
-	lua_pushstring( L, sAppend );
+	lua_pushstring( L, sAppend.c_str() );
 
 	bool append= false;
 
-	RString error= "Lua error in ScreenTextEntry ValidateAppend: ";
+	std::string error= "Lua error in ScreenTextEntry ValidateAppend: ";
 	if(LuaHelpers::RunScriptOnStack(L, error, 2, 1, true))
 	{
 		if( !lua_isboolean(L, -1) )
@@ -548,7 +555,7 @@ static bool ValidateAppendFromLua( const RString &sAnswerBeforeChar, RString &sA
 	return append;
 }
 
-static RString FormatAnswerForDisplayFromLua( const RString &sAnswer )
+static std::string FormatAnswerForDisplayFromLua( const std::string &sAnswer )
 {
 	if(g_FormatAnswerForDisplayFunc.IsNil() || !g_FormatAnswerForDisplayFunc.IsSet())
 	{
@@ -558,10 +565,10 @@ static RString FormatAnswerForDisplayFromLua( const RString &sAnswer )
 
 	g_FormatAnswerForDisplayFunc.PushSelf( L );
 	// Argument 1 (Answer):
-	lua_pushstring( L, sAnswer );
+	lua_pushstring( L, sAnswer.c_str() );
 
-	RString answer;
-	RString error= "Lua error in ScreenTextEntry FormatAnswerForDisplay: ";
+	std::string answer;
+	std::string error= "Lua error in ScreenTextEntry FormatAnswerForDisplay: ";
 	if(LuaHelpers::RunScriptOnStack(L, error, 1, 1, true))
 	{
 		if( !lua_isstring(L, -1) )
@@ -654,7 +661,7 @@ void ScreenTextEntryVisual::Init()
 				pbt = text.Copy();
 				this->AddChild( pbt );
 
-				RString s = g_szKeys[r][x];
+				std::string s = g_szKeys[r][x];
 				if( !s.empty()  &&  r == KEYBOARD_ROW_SPECIAL )
 					s = THEME->GetString( m_sName, s );
 				pbt->SetText( s );
@@ -669,7 +676,7 @@ ScreenTextEntryVisual::~ScreenTextEntryVisual()
 {
 	FOREACH_KeyboardRow( r )
 		for( int x=0; x<KEYS_PER_ROW; ++x )
-			SAFE_DELETE( m_ptextKeys[r][x] );
+			Rage::safe_delete( m_ptextKeys[r][x] );
 }
 
 void ScreenTextEntryVisual::BeginScreen()
@@ -684,8 +691,8 @@ void ScreenTextEntryVisual::BeginScreen()
 		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
 			BitmapText &bt = *m_ptextKeys[r][x];
-			float fX = roundf( SCALE( x, 0, KEYS_PER_ROW-1, ROW_START_X, ROW_END_X ) );
-			float fY = roundf( SCALE( r, 0, NUM_KeyboardRow-1, ROW_START_Y, ROW_END_Y ) );
+			float fX = std::roundf( Rage::scale( x + 0.f, 0.f, KEYS_PER_ROW-1.f, ROW_START_X.GetValue(), ROW_END_X.GetValue() ) );
+			float fY = std::roundf( Rage::scale( r + 0.f, 0.f, NUM_KeyboardRow-1.f, ROW_START_Y.GetValue(), ROW_END_Y.GetValue() ) );
 			bt.SetXY( fX, fY );
 		}
 	}
@@ -711,13 +718,13 @@ void ScreenTextEntryVisual::TextEnteredDirectly()
 
 void ScreenTextEntryVisual::MoveX( int iDir )
 {
-	RString sKey;
+	std::string sKey;
 	do
 	{
 		m_iFocusX += iDir;
 		wrap( m_iFocusX, KEYS_PER_ROW );
 
-		sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
+		sKey = g_szKeys[m_iFocusY][m_iFocusX];
 	}
 	while( sKey == "" );
 
@@ -727,19 +734,19 @@ void ScreenTextEntryVisual::MoveX( int iDir )
 
 void ScreenTextEntryVisual::MoveY( int iDir )
 {
-	RString sKey;
+	std::string sKey;
 	do
 	{
 		m_iFocusY = enum_add2( m_iFocusY,  +iDir );
 		wrap( *ConvertValue<int>(&m_iFocusY), NUM_KeyboardRow );
 
-		// HACK: Round to nearest option so that we always stop 
+		// HACK: Round to nearest option so that we always stop
 		// on KEYBOARD_ROW_SPECIAL.
 		if( m_iFocusY == KEYBOARD_ROW_SPECIAL )
 		{
 			for( int i=0; true; i++ )
 			{
-				sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
+				sKey = g_szKeys[m_iFocusY][m_iFocusX];
 				if( sKey != "" )
 					break;
 
@@ -749,7 +756,7 @@ void ScreenTextEntryVisual::MoveY( int iDir )
 			}
 		}
 
-		sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
+		sKey = g_szKeys[m_iFocusY][m_iFocusX];
 	}
 	while( sKey == "" );
 
@@ -820,7 +827,7 @@ bool ScreenTextEntryVisual::MenuStart( const InputEventPlus &input )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -830,7 +837,7 @@ bool ScreenTextEntryVisual::MenuStart( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

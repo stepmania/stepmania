@@ -58,7 +58,7 @@ void RageSoundDriver_OSS::MixerThread()
 		usleep( 10000 );
 
 		struct timeval tv = { 0, 10000 };
-		select(fd+1, NULL, &f, NULL, &tv);
+		select(fd+1, nullptr, &f, nullptr, &tv);
 	}
 }
 
@@ -74,14 +74,14 @@ bool RageSoundDriver_OSS::GetData()
 	/* Look for a free buffer. */
 	audio_buf_info ab;
 	if( ioctl(fd, SNDCTL_DSP_GETOSPACE, &ab) == -1 )
-		FAIL_M( ssprintf("ioctl(SNDCTL_DSP_GETOSPACE): %s", strerror(errno)) );
+		FAIL_M( fmt::sprintf("ioctl(SNDCTL_DSP_GETOSPACE): %s", strerror(errno)) );
 
 	if( !ab.fragments )
 		return false;
-		
+
 	const int chunksize = ab.fragsize;
-	
-	static int16_t *buf = NULL;
+
+	static int16_t *buf = nullptr;
 	if(!buf)
 		buf = new int16_t[chunksize / sizeof(int16_t)];
 
@@ -89,7 +89,7 @@ bool RageSoundDriver_OSS::GetData()
 
 	int wrote = write( fd, buf, chunksize );
   	if( wrote != chunksize )
-		FAIL_M( ssprintf("write didn't: %i (%s)", wrote, wrote == -1? strerror(errno): "") );
+		FAIL_M( fmt::sprintf("write didn't: %i (%s)", wrote, wrote == -1? strerror(errno): "") );
 
 	/* Increment last_cursor_pos. */
 	last_cursor_pos += chunksize / bytes_per_frame;
@@ -102,15 +102,15 @@ bool RageSoundDriver_OSS::GetData()
 int64_t RageSoundDriver_OSS::GetPosition() const
 {
 	ASSERT( fd != -1 );
-	
+
 	int delay;
 	if(ioctl(fd, SNDCTL_DSP_GETODELAY, &delay) == -1)
-		FAIL_M( ssprintf("RageSoundDriver_OSS: ioctl(SNDCTL_DSP_GETODELAY): %s", strerror(errno)) );
+		FAIL_M( fmt::sprintf("RageSoundDriver_OSS: ioctl(SNDCTL_DSP_GETODELAY): %s", strerror(errno)) );
 
 	return last_cursor_pos - (delay / bytes_per_frame);
 }
 
-RString RageSoundDriver_OSS::CheckOSSVersion( int fd )
+std::string RageSoundDriver_OSS::CheckOSSVersion( int fd )
 {
 	int version = 0;
 
@@ -168,38 +168,38 @@ RageSoundDriver_OSS::RageSoundDriver_OSS()
 	last_cursor_pos = 0;
 }
 
-RString RageSoundDriver_OSS::Init()
+std::string RageSoundDriver_OSS::Init()
 {
 	fd = open("/dev/dsp", O_WRONLY|O_NONBLOCK);
 	if( fd == -1 )
-		return ssprintf( "RageSoundDriver_OSS: Couldn't open /dev/dsp: %s", strerror(errno) );
+		return fmt::sprintf( "RageSoundDriver_OSS: Couldn't open /dev/dsp: %s", strerror(errno) );
 
-	RString sError = CheckOSSVersion( fd );
+	std::string sError = CheckOSSVersion( fd );
 	if( sError != "" )
 		return sError;
 
 	int i = AFMT_S16_LE;
 	if(ioctl(fd, SNDCTL_DSP_SETFMT, &i) == -1)
-		return ssprintf( "RageSoundDriver_OSS: ioctl(SNDCTL_DSP_SETFMT, %i): %s", i, strerror(errno) );
+		return fmt::sprintf( "RageSoundDriver_OSS: ioctl(SNDCTL_DSP_SETFMT, %i): %s", i, strerror(errno) );
 	if(i != AFMT_S16_LE)
-		return ssprintf( "RageSoundDriver_OSS: Wanted format %i, got %i instead", AFMT_S16_LE, i );
+		return fmt::sprintf( "RageSoundDriver_OSS: Wanted format %i, got %i instead", AFMT_S16_LE, i );
 
 	i = channels;
 	if(ioctl(fd, SNDCTL_DSP_CHANNELS, &i) == -1)
-		return ssprintf( "RageSoundDriver_OSS: ioctl(SNDCTL_DSP_CHANNELS, %i): %s", i, strerror(errno) );
+		return fmt::sprintf( "RageSoundDriver_OSS: ioctl(SNDCTL_DSP_CHANNELS, %i): %s", i, strerror(errno) );
 	if(i != channels)
-		return ssprintf( "RageSoundDriver_OSS: Wanted %i channels, got %i instead", channels, i );
-		
+		return fmt::sprintf( "RageSoundDriver_OSS: Wanted %i channels, got %i instead", channels, i );
+
 	i = 44100;
 	if(ioctl(fd, SNDCTL_DSP_SPEED, &i) == -1 )
-		return ssprintf( "RageSoundDriver_OSS: ioctl(SNDCTL_DSP_SPEED, %i): %s", i, strerror(errno) );
+		return fmt::sprintf( "RageSoundDriver_OSS: ioctl(SNDCTL_DSP_SPEED, %i): %s", i, strerror(errno) );
 	samplerate = i;
 	LOG->Trace("RageSoundDriver_OSS: sample rate %i", samplerate);
 	i = (num_chunks << 16) + chunk_order;
 	if(ioctl(fd, SNDCTL_DSP_SETFRAGMENT, &i) == -1)
-		return ssprintf( "RageSoundDriver_OSS: ioctl(SNDCTL_DSP_SETFRAGMENT, %i): %s", i, strerror(errno) );
+		return fmt::sprintf( "RageSoundDriver_OSS: ioctl(SNDCTL_DSP_SETFRAGMENT, %i): %s", i, strerror(errno) );
 	StartDecodeThread();
-	
+
 	MixingThread.SetName( "RageSoundDriver_OSS" );
 	MixingThread.Create( MixerThread_start, this );
 
@@ -229,7 +229,7 @@ float RageSoundDriver_OSS::GetPlayLatency() const
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -239,7 +239,7 @@ float RageSoundDriver_OSS::GetPlayLatency() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

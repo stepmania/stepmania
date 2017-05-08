@@ -14,6 +14,8 @@
 #include "RageFile.h"
 #include "archutils/SpecialDirs.h"
 
+using std::vector;
+
 // main page (type list)
 REGISTER_SCREEN_CLASS( ScreenOptionsExportPackage );
 
@@ -35,12 +37,12 @@ void ScreenOptionsExportPackage::BeginScreen()
 	// announcers, characters, others?
 
 	vector<OptionRowHandler*> OptionRowHandlers;
-	FOREACH_CONST( RString, m_vsPackageTypes, s )
+	for (auto &s: m_vsPackageTypes)
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 		OptionRowDefinition &def = pHand->m_Def;
 
-		def.m_sName = *s;
+		def.m_sName = s;
 		def.m_bAllowExplanation = false;
 		//def.m_sExplanationName = "# files, # MB, # subdirs";
 		def.m_bAllowThemeTitle = false;
@@ -106,7 +108,7 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 
 	// Check type and fill m_vsPossibleDirsToExport
-	const RString *s_packageType = &ExportPackages::m_sPackageType;
+	const std::string *s_packageType = &ExportPackages::m_sPackageType;
 	if( *s_packageType == "Themes" )
 	{
 		// add themes
@@ -115,51 +117,53 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	else if( *s_packageType == "NoteSkins" )
 	{
 		// add noteskins
-		vector<RString> vs;
+		vector<std::string> vs;
 		GetDirListing( SpecialFiles::NOTESKINS_DIR + "*", vs, true, true );
-		FOREACH_CONST( RString, vs, s )
-			GetDirListing( *s + "*", m_vsPossibleDirsToExport, true, true );
+		for (auto &s: vs)
+		{
+			GetDirListing( s + "*", m_vsPossibleDirsToExport, true, true );
+		}
 	}
 	else if( *s_packageType == "Courses" )
 	{
 		// Add courses. Only support courses that are in a group folder.
 		// Support for courses not in a group folder should be phased out.
-		vector<RString> vs;
+		vector<std::string> vs;
 		GetDirListing( SpecialFiles::COURSES_DIR + "*", vs, true, true );
 		StripCvsAndSvn( vs );
 		StripMacResourceForks( vs );
-		FOREACH_CONST( RString, vs, s )
+		for (auto &s: vs)
 		{
-			m_vsPossibleDirsToExport.push_back( *s );
-			GetDirListing( *s + "/*", m_vsPossibleDirsToExport, true, true );
+			m_vsPossibleDirsToExport.push_back( s );
+			GetDirListing( s + "/*", m_vsPossibleDirsToExport, true, true );
 		}
 	}
 	else if( *s_packageType == "Songs" )
 	{
 		// Add song groups
-		vector<RString> asAllGroups;
+		vector<std::string> asAllGroups;
 		SONGMAN->GetSongGroupNames(asAllGroups);
-		FOREACH_CONST( RString, asAllGroups , s )
+		for (auto &s: asAllGroups)
 		{
-			m_vsPossibleDirsToExport.push_back(*s);
+			m_vsPossibleDirsToExport.push_back(s);
 		}
 	}
 	else if( *s_packageType == "SubGroup" )
 	{
 		//ExportPackages::m_sFolder
-		vector<RString> vs;
+		vector<std::string> vs;
 		GetDirListing( SpecialFiles::SONGS_DIR + "/" + ExportPackages::m_sFolder + "/*", vs, true, true );
-		FOREACH_CONST( RString, vs, s )
+		for (auto &s: vs)
 		{
-			m_vsPossibleDirsToExport.push_back( *s );
-			GetDirListing( *s + "/*", m_vsPossibleDirsToExport, true, true );
+			m_vsPossibleDirsToExport.push_back( s );
+			GetDirListing( s + "/*", m_vsPossibleDirsToExport, true, true );
 		}
 	}
 	StripCvsAndSvn( m_vsPossibleDirsToExport );
 	StripMacResourceForks( m_vsPossibleDirsToExport );
 
 	vector<OptionRowHandler*> OptionRowHandlers;
-	FOREACH_CONST( RString, m_vsPossibleDirsToExport, s )
+	for (auto &s: m_vsPossibleDirsToExport)
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 		OptionRowDefinition &def = pHand->m_Def;
@@ -167,7 +171,7 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 		def.m_bAllowThemeTitle = false;
 		def.m_bAllowThemeItems = false;
 		def.m_bAllowExplanation = false;
-		def.m_sName = *s;
+		def.m_sName = s;
 		def.m_sExplanationName = "# files, # MB, # subdirs";
 
 		def.m_vsChoices.push_back( "" );
@@ -178,28 +182,30 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	ScreenOptions::BeginScreen();
 }
 
-static RString ReplaceInvalidFileNameChars( RString sOldFileName )
+static std::string ReplaceInvalidFileNameChars( std::string sOldFileName )
 {
-	RString sNewFileName = sOldFileName;
-	const char charsToReplace[] = { 
-		' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', 
+	std::string sNewFileName = sOldFileName;
+	const char charsToReplace[] = {
+		' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
 		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
-		'<', '>', ',', '?', '/' 
+		'<', '>', ',', '?', '/'
 	};
-	for( unsigned i=0; i<sizeof(charsToReplace); i++ )
-		sNewFileName.Replace( charsToReplace[i], '_' );
+	for (unsigned i = 0; i < sizeof(charsToReplace); i++)
+	{
+		Rage::replace(sNewFileName, charsToReplace[i], '_');
+	}
 	return sNewFileName;
 }
 
-static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &sErrorOut )
+static bool ExportPackage( std::string sPackageName, std::string sDirToExport, std::string &sErrorOut )
 {
 	// Mount Desktop/ for each OS.
-	RString sDesktopDir = SpecialDirs::GetDesktopDir();
-	RString fn = sDesktopDir+sPackageName;
+	std::string sDesktopDir = SpecialDirs::GetDesktopDir();
+	std::string fn = sDesktopDir+sPackageName;
 	RageFile f;
 	if( !f.Open(fn, RageFile::WRITE) )
 	{
-		sErrorOut = ssprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
+		sErrorOut = fmt::sprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
 		return false;
 	}
 
@@ -209,15 +215,15 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	zip.Start();
 	zip.SetGlobalComment( sComment );
 
-	vector<RString> vs;
+	vector<std::string> vs;
 	GetDirListingRecursive( sDirToExport, "*", vs );
 	SMPackageUtil::StripIgnoredSmzipFiles( vs );
 	LOG->Trace("Adding files...");
-	FOREACH( RString, vs, s )
+	for (auto &s: vs)
 	{
-		if( !zip.AddFile( *s ) )
+		if( !zip.AddFile( s ) )
 		{
-			sErrorOut = ssprintf( "Couldn't add file: %s", s->c_str() );
+			sErrorOut = fmt::sprintf( "Couldn't add file: %s", s.c_str() );
 			return false;
 		}
 	}
@@ -225,7 +231,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	LOG->Trace("Writing zip...");
 	if( zip.Finish() == -1 )
 	{
-		sErrorOut = ssprintf( "Couldn't write to file %s", fn.c_str(), f.GetError().c_str() );
+		sErrorOut = fmt::sprintf( "Couldn't write to file %s", fn.c_str(), f.GetError().c_str() );
 		return false;
 	}
 
@@ -257,14 +263,14 @@ void ScreenOptionsExportPackageSubPage::ProcessMenuStart( const InputEventPlus &
 		return;
 	}
 
-	RString sDirToExport = m_vsPossibleDirsToExport[ iCurRow ];
-	RString sPackageName = ReplaceInvalidFileNameChars( sDirToExport + ".smzip" );
+	std::string sDirToExport = m_vsPossibleDirsToExport[ iCurRow ];
+	std::string sPackageName = ReplaceInvalidFileNameChars( sDirToExport + ".smzip" );
 
-	RString sError;
+	std::string sError;
 	if( ExportPackage(sPackageName, sDirToExport, sError) )
-		ScreenPrompt::Prompt( SM_None, ssprintf("Exported '%s' to the desktop", sDirToExport.c_str()) );
+		ScreenPrompt::Prompt( SM_None, fmt::sprintf("Exported '%s' to the desktop", sDirToExport.c_str()) );
 	else
-		ScreenPrompt::Prompt( SM_None, ssprintf("Failed to export package: %s",sError.c_str()) );
+		ScreenPrompt::Prompt( SM_None, fmt::sprintf("Failed to export package: %s",sError.c_str()) );
 }
 
 void ScreenOptionsExportPackageSubPage::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
@@ -280,7 +286,7 @@ void ScreenOptionsExportPackageSubPage::ExportOptions( int iRow, const vector<Pl
 /*
  * (c) 2002-2014 Chris Danford, AJ Kelly, Renaud Lepage
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -290,7 +296,7 @@ void ScreenOptionsExportPackageSubPage::ExportOptions( int iRow, const vector<Pl
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

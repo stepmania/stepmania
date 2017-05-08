@@ -4,7 +4,7 @@
 #define RAGE_SOUND_MANAGER_H
 
 #include <set>
-#include <map>
+#include <unordered_map>
 #include "RageUtil_CircularBuffer.h"
 
 class RageSound;
@@ -42,11 +42,13 @@ public:
 	float GetPlayLatency() const;
 	int GetDriverSampleRate() const;
 
-	RageSoundReader *GetLoadedSound( const RString &sPath );
-	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
+	RageSoundReader *GetLoadedSound( const std::string &sPath );
+	void AddLoadedSound( const std::string &sPath, RageSoundReader_Preload *pSound );
+	
+	void fix_bogus_sound_driver_pref( const std::string &valid_setting);
 
 private:
-	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
+	std::unordered_map<std::string, RageSoundReader_Preload *> m_mapPreloadedSounds;
 
 	RageSoundDriver *m_pDriver;
 

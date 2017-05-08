@@ -3,7 +3,7 @@
 
 namespace SpecialDirs
 {
-	RString GetDesktopDir();
+	std::string GetDesktopDir();
 }
 
 #endif

@@ -17,7 +17,7 @@ public:
 
 	DSound();
 	~DSound();
-	RString Init();
+	std::string Init();
 
 private:
 	IDirectSound *m_pDS;
@@ -36,7 +36,7 @@ public:
 	enum { DYNAMIC_SAMPLERATE = -1 };
 
 	DSoundBuf();
-	RString Init( DSound &ds, hw hardware, 
+	std::string Init( DSound &ds, hw hardware, 
 		int iChannels, int iSampleRate, int iSampleBits, int iWriteAhead );
 
 	bool get_output_buf( char **pBuffer, unsigned *iBuffersize, int iChunksize );

@@ -13,7 +13,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 {
 	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );
 
-	RString sType = "ScoreDisplayNormal";
+	std::string sType = "ScoreDisplayNormal";
 
 	m_sprFrame.Load( THEME->GetPathG(sType,"Frame") );
 	m_sprFrame->SetName( "Frame" );

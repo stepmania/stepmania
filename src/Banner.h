@@ -21,17 +21,17 @@ public:
 
 	void Load( RageTextureID ID, bool bIsBanner );
 	virtual void Load( RageTextureID ID ) { Load( ID, true ); }
-	void LoadFromCachedBanner( const RString &sPath );
+	void LoadFromCachedBanner( const std::string &sPath );
 
 	virtual void Update( float fDeltaTime );
 
 	/**
 	 * @brief Attempt to load the banner from a song.
-	 * @param pSong the song in question. If NULL, there is no song.
+	 * @param pSong the song in question. If nullptr, there is no song.
 	 */
 	void LoadFromSong( Song* pSong );
 	void LoadMode();
-	void LoadFromSongGroup( RString sSongGroup );
+	void LoadFromSongGroup( std::string sSongGroup );
 	void LoadFromCourse( const Course *pCourse );
 	void LoadCardFromCharacter( const Character *pCharacter );
 	void LoadIconFromCharacter( const Character *pCharacter );

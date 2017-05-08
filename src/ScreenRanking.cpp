@@ -7,6 +7,7 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 
+using std::vector;
 
 static const char *RankingTypeNames[] = {
 	"Category",
@@ -31,7 +32,7 @@ REGISTER_SCREEN_CLASS( ScreenRanking );
 #define TIME_X(row)	(TIME_START_X+ROW_SPACING_X*row)
 #define TIME_Y(row)	(TIME_START_Y+ROW_SPACING_Y*row)
 
-static RString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
+static std::string STEPS_TYPE_COLOR_NAME( size_t i ) { return fmt::sprintf("StepsTypeColor%d",int(i+1)); }
 
 void ScreenRanking::Init()
 {
@@ -82,7 +83,7 @@ void ScreenRanking::Init()
 				pts.colorIndex = i;
 				pts.category = (RankingCategory)c;
 				StepsType st = STEPS_TYPES_TO_SHOW.GetValue()[i];
-				pts.aTypes.push_back( make_pair(Difficulty_Invalid, st) );
+				pts.aTypes.push_back( std::make_pair(Difficulty_Invalid, st) );
 				m_vPagesToShow.push_back( pts );
 			}
 		}
@@ -100,8 +101,7 @@ void ScreenRanking::Init()
 		this->AddChild( &m_textCourseTitle );
 		LOAD_ALL_COMMANDS( m_textCourseTitle );
 
-		vector<RString> asCoursePaths;
-		split( COURSES_TO_SHOW, ",", asCoursePaths, true );
+		auto asCoursePaths = Rage::split(COURSES_TO_SHOW.GetValue(), ",", Rage::EmptyEntries::skip);
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 		{
 			for( unsigned c=0; c<asCoursePaths.size(); c++ )
@@ -109,13 +109,13 @@ void ScreenRanking::Init()
 				PageToShow pts;
 				pts.colorIndex = i;
 				StepsType st = STEPS_TYPES_TO_SHOW.GetValue()[i];
-				pts.aTypes.push_back( make_pair(Difficulty_Invalid, st) );
+				pts.aTypes.push_back( std::make_pair(Difficulty_Invalid, st) );
 				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
-				if( pts.pCourse == NULL )
+				if( pts.pCourse == nullptr )
 					continue;
 
 				pts.pTrail = pts.pCourse->GetTrail( st );
-				if( pts.pTrail == NULL )
+				if( pts.pTrail == nullptr )
 					continue;
 
 				m_vPagesToShow.push_back( pts );
@@ -125,34 +125,34 @@ void ScreenRanking::Init()
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
 	{
-		m_sprBullets[l].Load( THEME->GetPathG( m_sName, ssprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
-		m_sprBullets[l]->SetName( ssprintf("Bullet%d",l+1) );
+		m_sprBullets[l].Load( THEME->GetPathG( m_sName, fmt::sprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
+		m_sprBullets[l]->SetName( fmt::sprintf("Bullet%d",l+1) );
 		m_sprBullets[l]->StopAnimating();
 		m_sprBullets[l]->SetState( l );
 		m_sprBullets[l]->SetXY( BULLET_X(l), BULLET_Y(l) );
 		ActorUtil::LoadAllCommands( *m_sprBullets[l], m_sName );
 		this->AddChild( m_sprBullets[l] );
 
-		m_textNames[l].SetName( ssprintf("Name%d",l+1) );
+		m_textNames[l].SetName( fmt::sprintf("Name%d",l+1) );
 		m_textNames[l].LoadFromFont( THEME->GetPathF(m_sName,"name") );
 		m_textNames[l].SetXY( NAME_X(l), NAME_Y(l) );
 		ActorUtil::LoadAllCommands( m_textNames[l], m_sName );
 		this->AddChild( &m_textNames[l] );
 
-		m_textScores[l].SetName( ssprintf("Score%d",l+1) );
+		m_textScores[l].SetName( fmt::sprintf("Score%d",l+1) );
 		m_textScores[l].LoadFromFont( THEME->GetPathF(m_sName,"score") );
 		m_textScores[l].SetXY( SCORE_X(l), SCORE_Y(l) );
 		ActorUtil::LoadAllCommands( m_textScores[l], m_sName );
 		this->AddChild( &m_textScores[l] );
 
-		m_textPoints[l].SetName( ssprintf("Points%d",l+1) );
+		m_textPoints[l].SetName( fmt::sprintf("Points%d",l+1) );
 		m_textPoints[l].LoadFromFont( THEME->GetPathF(m_sName,"points") );
 		m_textPoints[l].SetVisible( false );
 		m_textPoints[l].SetXY( POINTS_X(l), POINTS_Y(l) );
 		ActorUtil::LoadAllCommands( m_textPoints[l], m_sName );
 		this->AddChild( &m_textPoints[l] );
-		
-		m_textTime[l].SetName( ssprintf("Time%d",l+1) );
+
+		m_textTime[l].SetName( fmt::sprintf("Time%d",l+1) );
 		m_textTime[l].LoadFromFont( THEME->GetPathF(m_sName,"time") );
 		m_textTime[l].SetVisible( false );
 		m_textTime[l].SetXY( TIME_X(l), TIME_Y(l) );
@@ -230,10 +230,10 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 
 		m_textScores[l].SetVisible( bShowScores );
 		m_textScores[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-		
+
 		m_textPoints[l].SetVisible( bShowPoints );
 		m_textPoints[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-		
+
 		m_textTime[l].SetVisible( bShowTime );
 		m_textTime[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 	}
@@ -243,7 +243,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 	{
 	case RankingType_Category:
 		{
-			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
+			m_textCategory.SetText( fmt::sprintf("Type %c", 'A'+pts.category) );
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
@@ -255,23 +255,23 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 				if( l < (int)hsl.vHighScores.size() )
 				{
 					hs = hsl.vHighScores[l];
-					RString *psName = hsl.vHighScores[l].GetNameMutable();
+					std::string *psName = hsl.vHighScores[l].GetNameMutable();
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
 				{
-					hs.SetName( NO_SCORE_NAME );
+					hs.SetName( NO_SCORE_NAME.GetValue() );
 				}
 
 				m_textNames[l].SetText( hs.GetDisplayName() );
-				m_textScores[l].SetText( ssprintf("%09i",hs.GetScore()) );
+				m_textScores[l].SetText( fmt::sprintf("%09i",hs.GetScore()) );
 				m_textNames[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				m_textScores[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 
 				if( bRecentHighScore )
 				{
-					m_textNames[l].SetEffectGlowBlink(0.1f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
-					m_textScores[l].SetEffectGlowBlink(0.1f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
+					m_textNames[l].SetEffectGlowBlink(0.1f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f));
+					m_textScores[l].SetEffectGlowBlink(0.1f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f));
 				}
 				else
 				{
@@ -295,24 +295,24 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 				if( l < (int)hsl.vHighScores.size() )
 				{
 					hs = hsl.vHighScores[l];
-					const RString *psName = hsl.vHighScores[l].GetNameMutable();
+					const std::string *psName = hsl.vHighScores[l].GetNameMutable();
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
 				{
-					hs.SetName( NO_SCORE_NAME );
+					hs.SetName( NO_SCORE_NAME.GetValue() );
 				}
 
 				m_textNames[l].SetText( hs.GetDisplayName() );
 				if( pts.pCourse->IsOni() )
 				{
-					m_textPoints[l].SetText( ssprintf("%04d",hs.GetScore()) );
+					m_textPoints[l].SetText( fmt::sprintf("%04d",hs.GetScore()) );
 					m_textTime[l].SetText( SecondsToMMSSMsMs(hs.GetSurviveSeconds()) );
 					m_textScores[l].SetText( "" );
 				} else {
 					m_textPoints[l].SetText( "" );
 					m_textTime[l].SetText( "" );
-					m_textScores[l].SetText( ssprintf("%09d",hs.GetScore()) );
+					m_textScores[l].SetText( fmt::sprintf("%09d",hs.GetScore()) );
 				}
 				m_textNames[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				m_textPoints[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
@@ -321,8 +321,8 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 
 				if( bRecentHighScore )
 				{
-					m_textNames[l].SetEffectGlowBlink(0.1f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
-					m_textScores[l].SetEffectGlowBlink(0.1f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
+					m_textNames[l].SetEffectGlowBlink(0.1f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f));
+					m_textScores[l].SetEffectGlowBlink(0.1f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f));
 				}
 				else
 				{
@@ -333,14 +333,14 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 		}
 		return SECONDS_PER_PAGE;
 	default:
-		FAIL_M(ssprintf("Invalid RankingType: %i", rtype));
+		FAIL_M(fmt::sprintf("Invalid RankingType: %i", rtype));
 	}
 }
 
 /*
  * (c) 2001-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -350,7 +350,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
