@@ -117,9 +117,7 @@ namespace
 		float m_fInvertDistance[MAX_COLS_PER_PLAYER];
 		float m_tipsy_result[MAX_COLS_PER_PLAYER];
 		float m_tipsy_offset_result[MAX_COLS_PER_PLAYER];
-		float m_fBeatFactor;
-		float m_fBeatYFactor;
-		float m_fBeatZFactor;
+		float m_fBeatFactor[3];
 		float m_fExpandSeconds;
 
 		// m_prev_style is for checking whether ArrowEffects::Init needs to be
@@ -161,6 +159,40 @@ static float CalculateTornadoOffsetFromMagnitude(int dimension, int col_id,
 		data.m_MaxTornado[dimension][col_id] * field_zoom);
 	return (adjusted_pixel_offset - real_pixel_offset) * magnitude;
 }
+
+static void UpdateBeat(int dimension, PerPlayerData &data, const SongPosition &position, float beat_offset, float beat_mult)
+{
+	float fAccelTime = 0.2f, fTotalTime = 0.5f;
+	float fBeat = ((position.m_fSongBeatVisible + fAccelTime + beat_offset) * (beat_mult+1));
+
+	const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
+
+	data.m_fBeatFactor[dimension] = 0;
+	if( fBeat < 0 )
+		return;
+
+	// -100.2 -> -0.2 -> 0.2
+	fBeat -= truncf( fBeat );
+	fBeat += 1;
+	fBeat -= truncf( fBeat );
+
+	if( fBeat >= fTotalTime )
+		return;
+
+	if( fBeat < fAccelTime )
+	{
+		data.m_fBeatFactor[dimension] = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
+		data.m_fBeatFactor[dimension] *= data.m_fBeatFactor[dimension];
+	} else /* fBeat < fTotalTime */ {
+		data.m_fBeatFactor[dimension] = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
+		data.m_fBeatFactor[dimension] = 1 - (1-data.m_fBeatFactor[dimension]) * (1-data.m_fBeatFactor[dimension]);
+	}
+
+	if( bEvenBeat )
+		data.m_fBeatFactor[dimension] *= -1;
+	data.m_fBeatFactor[dimension] *= 20.0f;
+}
+
 
 void ArrowEffects::Init(PlayerNumber pn)
 {
@@ -239,13 +271,13 @@ void ArrowEffects::Update()
 			Init(pn);
 			data.m_prev_style= pStyle;
 		}
-
+		
 		if( !position.m_bFreeze || !position.m_bDelay )
 		{
 			data.m_fExpandSeconds += fTime - fLastTime;
 			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, (PI*2)/(accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1) );
 		}
-		
+
 		// Update Invert
 		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
@@ -319,103 +351,13 @@ void ArrowEffects::Update()
 		}
 
 		// Update Beat
-		do {
-			float fAccelTime = 0.2f, fTotalTime = 0.5f;
-			float fBeat = ((position.m_fSongBeatVisible + fAccelTime + effects[PlayerOptions::EFFECT_BEAT_OFFSET]) * (effects[PlayerOptions::EFFECT_BEAT_MULT]+1));
-
-			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
-
-			data.m_fBeatFactor = 0;
-			if( fBeat < 0 )
-				break;
-
-			// -100.2 -> -0.2 -> 0.2
-			fBeat -= truncf( fBeat );
-			fBeat += 1;
-			fBeat -= truncf( fBeat );
-
-			if( fBeat >= fTotalTime )
-				break;
-
-			if( fBeat < fAccelTime )
-			{
-				data.m_fBeatFactor = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
-				data.m_fBeatFactor *= data.m_fBeatFactor;
-			} else /* fBeat < fTotalTime */ {
-				data.m_fBeatFactor = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
-				data.m_fBeatFactor = 1 - (1-data.m_fBeatFactor) * (1-data.m_fBeatFactor);
-			}
-
-			if( bEvenBeat )
-				data.m_fBeatFactor *= -1;
-			data.m_fBeatFactor *= 20.0f;
-		} while( false );
+		UpdateBeat(dim_x, data, position, effects[PlayerOptions::EFFECT_BEAT_OFFSET], effects[PlayerOptions::EFFECT_BEAT_MULT]);
 
 		// Update BeatY
-		do {
-			float fAccelTime = 0.2f, fTotalTime = 0.5f;
-			float fBeat = ((position.m_fSongBeatVisible + fAccelTime + effects[PlayerOptions::EFFECT_BEAT_Y_OFFSET]) * (effects[PlayerOptions::EFFECT_BEAT_Y_MULT]+1));
-
-			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
-
-			data.m_fBeatYFactor = 0;
-			if( fBeat < 0 )
-				break;
-
-			// -100.2 -> -0.2 -> 0.2
-			fBeat -= truncf( fBeat );
-			fBeat += 1;
-			fBeat -= truncf( fBeat );
-
-			if( fBeat >= fTotalTime )
-				break;
-
-			if( fBeat < fAccelTime )
-			{
-				data.m_fBeatYFactor = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
-				data.m_fBeatYFactor *= data.m_fBeatYFactor;
-			} else /* fBeat < fTotalTime */ {
-				data.m_fBeatYFactor = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
-				data.m_fBeatYFactor = 1 - (1-data.m_fBeatYFactor) * (1-data.m_fBeatYFactor);
-			}
-
-			if( bEvenBeat )
-				data.m_fBeatYFactor *= -1;
-			data.m_fBeatYFactor *= 20.0f;
-		} while( false );
+		UpdateBeat(dim_y, data, position, effects[PlayerOptions::EFFECT_BEAT_Y_OFFSET], effects[PlayerOptions::EFFECT_BEAT_Y_MULT]);
 
 		// Update BeatZ
-		do {
-			float fAccelTime = 0.2f, fTotalTime = 0.5f;
-			float fBeat = ((position.m_fSongBeatVisible + fAccelTime + effects[PlayerOptions::EFFECT_BEAT_Z_OFFSET]) * (effects[PlayerOptions::EFFECT_BEAT_Z_MULT]+1));
-
-			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
-
-			data.m_fBeatZFactor = 0;
-			if( fBeat < 0 )
-				break;
-
-			// -100.2 -> -0.2 -> 0.2
-			fBeat -= truncf( fBeat );
-			fBeat += 1;
-			fBeat -= truncf( fBeat );
-
-			if( fBeat >= fTotalTime )
-				break;
-
-			if( fBeat < fAccelTime )
-			{
-				data.m_fBeatZFactor = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
-				data.m_fBeatZFactor *= data.m_fBeatZFactor;
-			} else /* fBeat < fTotalTime */ {
-				data.m_fBeatZFactor = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
-				data.m_fBeatZFactor = 1 - (1-data.m_fBeatZFactor) * (1-data.m_fBeatZFactor);
-			}
-
-			if( bEvenBeat )
-				data.m_fBeatZFactor *= -1;
-			data.m_fBeatZFactor *= 20.0f;
-		} while( false );
+		UpdateBeat(dim_z, data, position, effects[PlayerOptions::EFFECT_BEAT_Z_OFFSET], effects[PlayerOptions::EFFECT_BEAT_Z_MULT]);
 	}
 	fLastTime = fTime;
 }
@@ -628,7 +570,7 @@ float ArrowEffects::GetYPos(int iCol, float fYOffset, float fYReverseOffsetPixel
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Y] != 0 )
 	{
-		const float fShift = data.m_fBeatYFactor*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_Y_PERIOD]*BEAT_Y_OFFSET_HEIGHT)+BEAT_Y_OFFSET_HEIGHT) + PI/BEAT_Y_PI_HEIGHT );
+		const float fShift = data.m_fBeatFactor[dim_y]*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_Y_PERIOD]*BEAT_Y_OFFSET_HEIGHT)+BEAT_Y_OFFSET_HEIGHT) + PI/BEAT_Y_PI_HEIGHT );
 		f += fEffects[PlayerOptions::EFFECT_BEAT_Y] * fShift;
 	}
 
@@ -705,7 +647,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	{
-		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_PERIOD]*BEAT_OFFSET_HEIGHT)+BEAT_OFFSET_HEIGHT) + PI/BEAT_PI_HEIGHT );
+		const float fShift = data.m_fBeatFactor[dim_x]*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_PERIOD]*BEAT_OFFSET_HEIGHT)+BEAT_OFFSET_HEIGHT) + PI/BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 	
@@ -1112,7 +1054,7 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 )
 	{
-		const float fShift = data.m_fBeatZFactor*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_Z_PERIOD]*BEAT_Z_OFFSET_HEIGHT)+BEAT_Z_OFFSET_HEIGHT) + PI/BEAT_Z_PI_HEIGHT );
+		const float fShift = data.m_fBeatFactor[dim_z]*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_Z_PERIOD]*BEAT_Z_OFFSET_HEIGHT)+BEAT_Z_OFFSET_HEIGHT) + PI/BEAT_Z_PI_HEIGHT );
 		fZPos += fEffects[PlayerOptions::EFFECT_BEAT_Z] * fShift;
 	}
 	
