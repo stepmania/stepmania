@@ -5,7 +5,7 @@
 
 #include <queue>
 
-typedef RString::value_type RChr;
+typedef std::string::value_type Chr;
 
 namespace
 {
@@ -29,16 +29,16 @@ namespace
 
 	using namespace Sextets;
 
-	inline bool EraseTo(RString& str, size_t index, size_t additional = 0)
+	inline bool EraseTo(std::string& str, size_t index, size_t additional = 0)
 	{
-		if(index == RString::npos) {
+		if(index == std::string::npos) {
 			return false;
 		}
 		str.erase(0, index + additional);
 		return true;
 	}
 
-	inline bool EraseToFirstOf(RString& str, const RChr * chars, size_t additional = 0)
+	inline bool EraseToFirstOf(std::string& str, const Chr * chars, size_t additional = 0)
 	{
 		size_t i = str.find_first_of(chars);
 		return EraseTo(str, i, additional);
@@ -47,8 +47,8 @@ namespace
 	class ActualPacketBuffer : public PacketBuffer
 	{
 	private:
-		std::queue<RString> lines;
-		RString buffer;
+		std::queue<std::string> lines;
+		std::string buffer;
 
 		// If true, all data through the next newline will be discarded.
 		// This is set where continuing a line after a mid-line error would
@@ -80,7 +80,7 @@ namespace
 			return true;
 		}
 
-		void PushLine(const RString& line)
+		void PushLine(const std::string& line)
 		{
 			if(!line.empty()) {
 				lines.push(line);
@@ -97,11 +97,11 @@ namespace
 				// First invalid char
 				size_t invalidIndex = buffer.find_first_not_of(SIMPLE_CHARS);
 
-				size_t len = (newlineIndex != RString::npos) ? newlineIndex : buffer.length();
+				size_t len = (newlineIndex != std::string::npos) ? newlineIndex : buffer.length();
 
 				// An invalid character is seen within the current line's
 				// portion of the buffer.
-				if(invalidIndex != RString::npos && (invalidIndex < len))
+				if(invalidIndex != std::string::npos && (invalidIndex < len))
 				{
 					// Discard line in progress up to next newline
 					RequestResync();
@@ -127,7 +127,7 @@ namespace
 				}
 
 				// The buffer contains a newline and otherwise looks OK.
-				if(newlineIndex != RString::npos) {
+				if(newlineIndex != std::string::npos) {
 					PushLine(buffer.substr(0, newlineIndex));
 					EraseTo(buffer, newlineIndex, 1);
 					continue;
@@ -147,13 +147,13 @@ namespace
 		{
 		}
 
-		void Add(const RChr * data, size_t length)
+		void Add(const Chr * data, size_t length)
 		{
 			buffer.append(data, length);
 			BreakBuffer();
 		}
 
-		void Add(const RString& data)
+		void Add(const std::string& data)
 		{
 			buffer.append(data);
 			BreakBuffer();
@@ -164,7 +164,7 @@ namespace
 			size_t start = buffer.length();
 			buffer.resize(start + length);
 			for(size_t i = 0; i < length; ++i) {
-				buffer[start + i] = (RChr)(data[i]);
+				buffer[start + i] = (Chr)(data[i]);
 			}
 			BreakBuffer();
 		}
@@ -204,7 +204,7 @@ namespace Sextets
 }
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

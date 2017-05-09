@@ -15,7 +15,7 @@ namespace Sextets
 		{
 			public:
 				virtual ~EzSocketsPacketReader();
-				static EzSocketsPacketReader* Create(const RString& host, unsigned short port);
+				static EzSocketsPacketReader* Create(const std::string& host, unsigned short port);
 		};
 	}
 }
@@ -25,7 +25,7 @@ namespace Sextets
 #endif
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

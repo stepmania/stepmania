@@ -15,8 +15,8 @@ namespace Sextets
 
 		// Adds data to this buffer. Returns true iff the buffer, after
 		// adding the new data, contains at least one newline.
-		virtual void Add(const RString& data) = 0;
-		virtual void Add(const RString::value_type * data, size_t length) = 0;
+		virtual void Add(const std::string& data) = 0;
+		virtual void Add(const std::string::value_type * data, size_t length) = 0;
 		virtual void Add(const uint8_t * data, size_t length) = 0;
 
 		// If the input buffer contains an unfinished packet, clear it and
@@ -41,7 +41,7 @@ namespace Sextets
 #endif
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

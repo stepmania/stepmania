@@ -2,6 +2,7 @@
 #include "Sextets/IO/StdCFilePacketReader.h"
 #include "RageLog.h"
 #include <cerrno>
+#include <cstring>
 
 namespace
 {
@@ -11,7 +12,7 @@ namespace
 	class Impl: public StdCFilePacketReader
 	{
 		private:
-			// The buffer size isn't critical; the RString will simply be
+			// The buffer size isn't critical; the std::string will simply be
 			// extended until the packet is done.
 			static const size_t BUFFER_SIZE = 64;
 			char buffer[BUFFER_SIZE];
@@ -25,7 +26,7 @@ namespace
 				this->file = file;
 			}
 
-			Impl(const RString& filename)
+			Impl(const std::string& filename)
 			{
 				LOG->Info("Starting Sextets packet reader from std::FILE with filename '%s'",
 					filename.c_str());
@@ -59,7 +60,7 @@ namespace
 				bool afterFirst = false;
 
 				if(file != NULL) {
-					RString line;
+					std::string line;
 
 					while(fgets(buffer, BUFFER_SIZE, file) != NULL) {
 						afterFirst = true;
@@ -90,7 +91,7 @@ namespace Sextets
 			return new Impl(file);
 		}
 
-		StdCFilePacketReader* StdCFilePacketReader::Create(const RString& filename)
+		StdCFilePacketReader* StdCFilePacketReader::Create(const std::string& filename)
 		{
 			return new Impl(filename);
 		}
@@ -101,7 +102,7 @@ namespace Sextets
 
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

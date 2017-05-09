@@ -15,7 +15,7 @@ namespace Sextets
 
 			// Note: If there is a problem opening the file, returns
 			// NULL.
-			static RageFilePacketWriter * Create(const RString& filename);
+			static RageFilePacketWriter * Create(const std::string& filename);
 
 			// Note: If `stream` is `NULL`, returns `NULL`.
 			// When using this method, the RageFile should have been
@@ -32,7 +32,7 @@ namespace Sextets
 #endif
 
 /*
- * Copyright © 2014-2016 Peter S. May
+ * Copyright © 2014-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

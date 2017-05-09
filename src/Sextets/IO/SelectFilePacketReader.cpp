@@ -8,6 +8,7 @@
 #include <cerrno>
 #include <cstdlib>
 #include <cstdio>
+#include <cstring>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -16,7 +17,7 @@
 
 namespace
 {
-	int OpenFd(const RString& filename)
+	int OpenFd(const std::string& filename)
 	{
 		int fd = open(filename.c_str(), O_RDONLY | O_NONBLOCK);
 
@@ -71,7 +72,7 @@ namespace
 		}
 
 	public:
-		Impl(const RString& filename)
+		Impl(const std::string& filename)
 			: pb(PacketBuffer::Create())
 		{
 			LOG->Info(
@@ -219,7 +220,7 @@ namespace Sextets
 {
 	namespace IO
 	{
-		SelectFilePacketReader* SelectFilePacketReader::Create(const RString& filename)
+		SelectFilePacketReader* SelectFilePacketReader::Create(const std::string& filename)
 		{
 			return new Impl(filename);
 		}
@@ -229,7 +230,7 @@ namespace Sextets
 }
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

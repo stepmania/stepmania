@@ -2,6 +2,7 @@
 #include "Sextets/IO/RageFilePacketWriter.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 
 namespace
 {
@@ -24,7 +25,7 @@ namespace
 			if(out != NULL) {
 				out->Flush();
 				out->Close();
-				SAFE_DELETE(out);
+				Rage::safe_delete(out);
 			}
 		}
 
@@ -36,7 +37,7 @@ namespace
 		bool WritePacket(const Packet& packet)
 		{
 			if(out != NULL) {
-				RString line = packet.GetLine();
+				std::string line = packet.GetLine();
 				out->PutLine(line);
 				out->Flush();
 
@@ -51,13 +52,13 @@ namespace Sextets
 {
 	namespace IO
 	{
-		RageFilePacketWriter* RageFilePacketWriter::Create(const RString& filename)
+		RageFilePacketWriter* RageFilePacketWriter::Create(const std::string& filename)
 		{
 			RageFile * file = new RageFile;
 
 			if(!file->Open(filename, RageFile::WRITE|RageFile::STREAMED)) {
 				LOG->Warn("Error opening file '%s' for output: %s", filename.c_str(), file->GetError().c_str());
-				SAFE_DELETE(file);
+				Rage::safe_delete(file);
 				return NULL;
 			}
 
@@ -77,7 +78,7 @@ namespace Sextets
 }
 
 /*
- * Copyright © 2014-2016 Peter S. May
+ * Copyright © 2014-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

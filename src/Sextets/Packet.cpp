@@ -9,13 +9,13 @@
 #define PUSH(i) bits.push_back(bitArray[i])
 #define PUSH0() bits.push_back(false)
 
-typedef RString::value_type RChr;
-typedef std::vector<RChr> RVector;
+typedef std::string::value_type Chr;
+typedef std::vector<Chr> ChrVector;
 typedef Sextets::Packet::ProcessEventCallback ProcessEventCallback;
 
 namespace
 {
-	void RStringFromRVector(RString& result, size_t resultLeft, const RVector& source, size_t sourceLeft, size_t length);
+	void StdStringFromChrVector(std::string& result, size_t resultLeft, const ChrVector& source, size_t sourceLeft, size_t length);
 
 	inline size_t smax(size_t a, size_t b)
 	{
@@ -32,19 +32,19 @@ namespace
 		return smin(smin(a, b), c);
 	}
 
-	inline RChr Armored(RChr x)
+	inline Chr Armored(Chr x)
 	{
 		return ((x + 0x10) & 0x3F) + 0x30;
 	}
 
-	const RChr ARMORED_0 = Armored(0);
+	const Chr ARMORED_0 = Armored(0);
 
-	inline bool IsArmored(RChr x)
+	inline bool IsArmored(Chr x)
 	{
 		return (x >= 0x30) && (x <= 0x6F);
 	}
 
-	inline size_t FindCleanPacketLeft(const RString& line)
+	inline size_t FindCleanPacketLeft(const std::string& line)
 	{
 		size_t left = 0;
 		size_t end = line.length();
@@ -59,7 +59,7 @@ namespace
 		return left;
 	}
 
-	inline size_t FindCleanPacketRight(const RString& line, size_t left)
+	inline size_t FindCleanPacketRight(const std::string& line, size_t left)
 	{
 		size_t right = left;
 		size_t end = line.length();
@@ -74,8 +74,8 @@ namespace
 		return right;
 	}
 
-	// Does a = a ^ b for entire RVectors.
-	inline void XorVectors(RVector& a, const RVector& b)
+	// Does a = a ^ b for entire ChrVectors.
+	inline void XorVectors(ChrVector& a, const ChrVector& b)
 	{
 		size_t alen = a.size();
 		size_t blen = b.size();
@@ -101,7 +101,7 @@ namespace
 		// Since this is the result, no copying is necessary.
 	}
 
-	inline void XorVectors(RVector& result, const RVector& a, const RVector& b)
+	inline void XorVectors(ChrVector& result, const ChrVector& a, const ChrVector& b)
 	{
 		// result will start as a copy of a or b, whichever is not shorter
 		// than the other, since a shorter destination involves more work.
@@ -114,7 +114,7 @@ namespace
 		}
 	}
 
-	inline bool VectorRangeAllArmored0(RVector::const_iterator& it, RVector::const_iterator& end)
+	inline bool VectorRangeAllArmored0(ChrVector::const_iterator& it, ChrVector::const_iterator& end)
 	{
 		while(it != end) {
 			if(*it != ARMORED_0) {
@@ -125,12 +125,12 @@ namespace
 		return true;
 	}
 
-	inline bool VectorsEqual(const RVector& a, const RVector& b)
+	inline bool VectorsEqual(const ChrVector& a, const ChrVector& b)
 	{
-		RVector::const_iterator ait = a.begin();
-		RVector::const_iterator aend = a.end();
-		RVector::const_iterator bit = b.begin();
-		RVector::const_iterator bend = b.end();
+		ChrVector::const_iterator ait = a.begin();
+		ChrVector::const_iterator aend = a.end();
+		ChrVector::const_iterator bit = b.begin();
+		ChrVector::const_iterator bend = b.end();
 
 		while((ait != aend) && (bit != bend)) {
 			if(*ait != *bit) {
@@ -150,8 +150,8 @@ namespace
 	class ProcessEventCallbackDispatcher
 	{
 	private:
-		const RVector& eventSextets;
-		const RVector& valueSextets;
+		const ChrVector& eventSextets;
+		const ChrVector& valueSextets;
 		const size_t bitCount;
 		void * const context;
 		ProcessEventCallback const callback;
@@ -161,10 +161,10 @@ namespace
 			callback(context, bitIndex, value);
 		}
 
-		inline void ProcessOneSextet(RChr eventSextet, RChr valueSextet, size_t bitStartIndex, size_t turns)
+		inline void ProcessOneSextet(Chr eventSextet, Chr valueSextet, size_t bitStartIndex, size_t turns)
 		{
 			for(size_t subIndex = 0; subIndex < turns; ++subIndex) {
-				RChr mask = 1 << subIndex;
+				Chr mask = 1 << subIndex;
 				if(eventSextet & mask) {
 					size_t bitIndex = bitStartIndex + subIndex;
 					int maskedValue = valueSextet & mask;
@@ -180,7 +180,7 @@ namespace
 			size_t valueSextetCount = valueSextets.size();
 
 			for(size_t sextetIndex = 0, bitStartIndex = 0; sextetIndex < eventSextetCount; ++sextetIndex, bitStartIndex += 6) {
-				RChr eventSextet = eventSextets[sextetIndex];
+				Chr eventSextet = eventSextets[sextetIndex];
 
 				if(eventSextet == 0) {
 					// No 1 bits this sextet.
@@ -189,7 +189,7 @@ namespace
 
 				size_t turns = smin(6, bitCount - bitStartIndex);
 
-				RChr valueSextet = (sextetIndex < valueSextetCount) ? valueSextets[sextetIndex] : 0;
+				Chr valueSextet = (sextetIndex < valueSextetCount) ? valueSextets[sextetIndex] : 0;
 
 				if(turns > 0) {
 					ProcessOneSextet(eventSextet, valueSextet, bitStartIndex, turns);
@@ -205,8 +205,8 @@ namespace
 
 	public:
 		ProcessEventCallbackDispatcher(
-			const RVector& eventSextets,
-			const RVector& valueSextets,
+			const ChrVector& eventSextets,
+			const ChrVector& valueSextets,
 			const size_t bitCount,
 			void * const context,
 			ProcessEventCallback const callback
@@ -227,10 +227,10 @@ namespace
 
 	// sourceLeft + length must be less than source.length().
 	// result is automatically expanded.
-	void RVectorFromRString(RVector& result, size_t resultLeft, const RString& source, size_t sourceLeft, size_t length)
+	void ChrVectorFromStdString(ChrVector& result, size_t resultLeft, const std::string& source, size_t sourceLeft, size_t length)
 	{
-		RString::const_iterator sourceIt, sourceEnd;
-		RVector::iterator resultIt;
+		std::string::const_iterator sourceIt, sourceEnd;
+		ChrVector::iterator resultIt;
 
 		// Expand result if needed
 		size_t resultRight = resultLeft + length;
@@ -253,10 +253,10 @@ namespace
 
 	// sourceLeft + length must be less than source.size().
 	// result is automatically expanded.
-	void RStringFromRVector(RString& result, size_t resultLeft, const RVector& source, size_t sourceLeft, size_t length)
+	void StdStringFromChrVector(std::string& result, size_t resultLeft, const ChrVector& source, size_t sourceLeft, size_t length)
 	{
-		RVector::const_iterator sourceIt, sourceEnd;
-		RString::iterator resultIt;
+		ChrVector::const_iterator sourceIt, sourceEnd;
+		std::string::iterator resultIt;
 
 		// Expand result if needed
 		size_t resultRight = resultLeft + length;
@@ -277,7 +277,7 @@ namespace
 		}
 	}
 
-	inline void ProcessEventDataVectors(const RVector& eventSextets, const RVector& valueSextets, size_t bitCount, void * context, ProcessEventCallback callback)
+	inline void ProcessEventDataVectors(const ChrVector& eventSextets, const ChrVector& valueSextets, size_t bitCount, void * context, ProcessEventCallback callback)
 	{
 		ProcessEventCallbackDispatcher d(eventSextets, valueSextets, bitCount, context, callback);
 		d.RunEvents();
@@ -289,12 +289,12 @@ namespace Sextets
 	class Packet::Impl
 	{
 	private:
-		RVector sextets;
+		ChrVector sextets;
 
-		void SetToSextetDataLine(const RString& line, size_t left, size_t right)
+		void SetToSextetDataLine(const std::string& line, size_t left, size_t right)
 		{
 			size_t length = right - left;
-			RVectorFromRString(sextets, 0, line, left, length);
+			ChrVectorFromStdString(sextets, 0, line, left, length);
 		}
 
 	public:
@@ -319,7 +319,7 @@ namespace Sextets
 			sextets = packet._impl->sextets;
 		}
 
-		void SetToLine(const RString& line)
+		void SetToLine(const std::string& line)
 		{
 			size_t left = FindCleanPacketLeft(line);
 			size_t right = FindCleanPacketRight(line, left);
@@ -336,7 +336,7 @@ namespace Sextets
 			size_t sextetIndex = 0;
 			size_t bitIndex = 0;
 			while(bitIndex < bitCount) {
-				RChr s = 0;
+				Chr s = 0;
 				size_t bitsUsed = smin(bitCount - bitIndex, 6);
 
 				
@@ -439,7 +439,7 @@ namespace Sextets
 				PUSH0();
 			}
 
-			RString bs;
+			std::string bs;
 			for(size_t bi = 0; bi < bits.size(); ++bi) {
 				bs += (bits[bi] ? "1" : "0");
 			}
@@ -487,19 +487,19 @@ namespace Sextets
 			return VectorsEqual(sextets, b._impl->sextets);
 		}
 
-		void GetUntrimmedLine(RString& line)
+		void GetUntrimmedLine(std::string& line)
 		{
-			RStringFromRVector(line, 0, sextets, 0, sextets.size());
+			StdStringFromChrVector(line, 0, sextets, 0, sextets.size());
 		}
 
-		RString GetUntrimmedLine()
+		std::string GetUntrimmedLine()
 		{
-			RString line;
+			std::string line;
 			GetUntrimmedLine(line);
 			return line;
 		}
 
-		void GetLine(RString& line)
+		void GetLine(std::string& line)
 		{
 			GetUntrimmedLine(line);
 
@@ -510,10 +510,10 @@ namespace Sextets
 
 			// Find the last non-trimmable character.
 			size_t i = line.find_last_not_of(ARMORED_0);
-			if(i == RString::npos) {
+			if(i == std::string::npos) {
 				// There are no non-trimmable characters.
 				// The canonical form of this is a single armored 0.
-				line.replace(0, RString::npos, 1, ARMORED_0);
+				line.replace(0, std::string::npos, 1, ARMORED_0);
 			}
 			else {
 				// The first trailing zero character to erase, if any, is at
@@ -522,16 +522,16 @@ namespace Sextets
 			}
 		}
 
-		RString GetLine()
+		std::string GetLine()
 		{
-			RString line;
+			std::string line;
 			GetLine(line);
 			return line;
 		}
 
 		void Trim()
 		{
-			RString line;
+			std::string line;
 			GetLine(line);
 			SetToSextetDataLine(line, 0, line.length());
 		}
@@ -543,8 +543,8 @@ namespace Sextets
 
 		bool IsZeroed() const
 		{
-			RVector::const_iterator it = sextets.begin();
-			RVector::const_iterator end = sextets.end();
+			ChrVector::const_iterator it = sextets.begin();
+			ChrVector::const_iterator end = sextets.end();
 
 			for(; it != end; ++it) {
 				if(*it != ARMORED_0) {
@@ -592,7 +592,7 @@ namespace Sextets
 		return *this;
 	}
 
-	void Packet::SetToLine(const RString& line)
+	void Packet::SetToLine(const std::string& line)
 	{
 		_impl->SetToLine(line);
 	}
@@ -646,22 +646,22 @@ namespace Sextets
 		return Equals(other);
 	}
 
-	RString Packet::GetUntrimmedLine() const
+	std::string Packet::GetUntrimmedLine() const
 	{
 		return _impl->GetUntrimmedLine();
 	}
 
-	void Packet::GetUntrimmedLine(RString& line) const
+	void Packet::GetUntrimmedLine(std::string& line) const
 	{
 		_impl->GetUntrimmedLine(line);
 	}
 
-	RString Packet::GetLine() const
+	std::string Packet::GetLine() const
 	{
 		return _impl->GetLine();
 	}
 
-	void Packet::GetLine(RString& line) const
+	void Packet::GetLine(std::string& line) const
 	{
 		_impl->GetLine(line);
 	}
@@ -678,7 +678,7 @@ namespace Sextets
 }
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

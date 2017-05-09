@@ -15,35 +15,35 @@ namespace Sextets
 		// the first valid character, and all characters starting with the
 		// first invalid character after the first valid character, are
 		// discarded.
-		RString CleanPacketCopy(const RString& str);
+		std::string CleanPacketCopy(const std::string& str);
 
-		// Performs XOR on a pair of packets in RString form, re-armoring
+		// Performs XOR on a pair of packets in std::string form, re-armoring
 		// the result.
 		// If either packet is shorter than the other, the shorter packet is
-		// extended 
-		RString XorPacketsCopy(const RString& a, const RString& b);
+		// extended.
+		std::string XorPacketsCopy(const std::string& a, const std::string& b);
 
 		// Examines the bits that have changed in a state and calls a
 		// callback for each change.
-		void ProcessPacketChanges(const RString& statePacket, const RString& changedPacket, size_t numberOfStateBits, void * context, void updateButton(void * context, size_t index, bool value));
+		void ProcessPacketChanges(const std::string& statePacket, const std::string& changedPacket, size_t numberOfStateBits, void * context, void updateButton(void * context, size_t index, bool value));
 
-		// Compares two RStrings and determines whether their contents would
+		// Compares two strings and determines whether their contents would
 		// be equal as sextet packets. The top two bits of each character
 		// are discarded before comparing, but no excess characters are
 		// trimmed. If one string is longer than the other, they are
 		// compared as if both had infinite trailing zeros.
-		bool RStringSextetsEqual(const RString& a, const RString& b);
+		bool StdStringSextetsEqual(const std::string& a, const std::string& b);
 
 		// Retrieves a sextet packet containing the information from a
 		// LightsState.
-		RString GetLightsStateAsPacket(const LightsState* ls);
+		std::string GetLightsStateAsPacket(const LightsState* ls);
 	}
 }
 
 #endif
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

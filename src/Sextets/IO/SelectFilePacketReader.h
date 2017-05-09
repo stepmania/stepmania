@@ -16,7 +16,7 @@ namespace Sextets
 		{
 			public:
 				virtual ~SelectFilePacketReader();
-				static SelectFilePacketReader* Create(const RString& filename);
+				static SelectFilePacketReader* Create(const std::string& filename);
 		};
 	}
 }
@@ -26,7 +26,7 @@ namespace Sextets
 #endif
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

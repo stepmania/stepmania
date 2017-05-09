@@ -12,7 +12,7 @@ public:
 	InputHandler_SextetStream();
 	virtual ~InputHandler_SextetStream();
 	virtual void Update();
-	virtual void GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut);
+	virtual void GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut);
 
 public:
 	class Impl;
@@ -73,7 +73,7 @@ public:
 #endif
 
 /*
- * Copyright © 2014-2016 Peter S. May
+ * Copyright © 2014-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

@@ -28,7 +28,7 @@ namespace Sextets
 		// within the string. All characters before the first valid
 		// character, and all characters starting with the first invalid
 		// character after the first valid character, are discarded.
-		void SetToLine(const RString& line);
+		void SetToLine(const std::string& line);
 
 		// Sets this packet to the values corresponding to the given lights
 		// state.
@@ -63,8 +63,8 @@ namespace Sextets
 
 		// Retrieves a line reflecting the state of the current buffer
 		// as-is.
-		RString GetUntrimmedLine() const;
-		void GetUntrimmedLine(RString& line) const;
+		std::string GetUntrimmedLine() const;
+		void GetUntrimmedLine(std::string& line) const;
 
 		// Retrieves a line reflecting the state of the current buffer:
 		//
@@ -75,8 +75,8 @@ namespace Sextets
 		//
 		// Otherwise, the result is the state of the current buffer with all
 		// trailing zeroes removed.
-		RString GetLine() const;
-		void GetLine(RString& line) const;
+		std::string GetLine() const;
+		void GetLine(std::string& line) const;
 
 		// Replace the buffer with the trimmed form returned by GetLine().
 		void Trim();
@@ -98,7 +98,7 @@ namespace Sextets
 #endif
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

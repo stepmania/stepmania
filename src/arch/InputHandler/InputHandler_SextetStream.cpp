@@ -182,7 +182,7 @@ REGISTER_INPUT_HANDLER_CLASS(SextetStreamFromFile);
 #else
 	#define DEFAULT_INPUT_FILENAME "Data/StepMania-Input-SextetStream.in"
 #endif
-static Preference<RString> g_sSextetStreamInputFilename("SextetStreamInputFilename", DEFAULT_INPUT_FILENAME);
+static Preference<std::string> g_sSextetStreamInputFilename("SextetStreamInputFilename", DEFAULT_INPUT_FILENAME);
 
 InputHandler_SextetStreamFromFile::InputHandler_SextetStreamFromFile()
 {
@@ -223,12 +223,12 @@ REGISTER_INPUT_HANDLER_CLASS(SextetStreamFromSocket);
 #define DEFAULT_SOCKET_HOST "localhost"
 #define DEFAULT_SOCKET_PORT 6761
 
-static Preference<RString> g_sSextetStreamInputSocketHost("SextetStreamInputSocketHost", DEFAULT_SOCKET_HOST);
+static Preference<std::string> g_sSextetStreamInputSocketHost("SextetStreamInputSocketHost", DEFAULT_SOCKET_HOST);
 static Preference<int> g_iSextetStreamInputSocketPort("SextetStreamInputSocketPort", DEFAULT_SOCKET_PORT);
 
 InputHandler_SextetStreamFromSocket::InputHandler_SextetStreamFromSocket()
 {
-	RString host = g_sSextetStreamInputSocketHost;
+	std::string host = g_sSextetStreamInputSocketHost;
 	unsigned short port = (unsigned short) g_iSextetStreamInputSocketPort;
 
 	_impl = new InputHandler_SextetStream::Impl(this, EzSocketsPacketReader::Create(host, port));
@@ -241,7 +241,7 @@ InputHandler_SextetStreamFromSocket::~InputHandler_SextetStreamFromSocket()
 #endif // ndef WITHOUT_NETWORKING
 
 /*
- * Copyright © 2014-2016 Peter S. May
+ * Copyright © 2014-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

@@ -14,7 +14,7 @@ namespace Sextets
 			public:
 				virtual ~StdCFilePacketReader();
 				static StdCFilePacketReader* Create(std::FILE * file);
-				static StdCFilePacketReader* Create(const RString& filename);
+				static StdCFilePacketReader* Create(const std::string& filename);
 		};
 	}
 }
@@ -22,7 +22,7 @@ namespace Sextets
 #endif
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

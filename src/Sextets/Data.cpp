@@ -52,22 +52,22 @@ namespace
 			return ((data + (uint8_t)0x10) & (uint8_t)0x3F) + (uint8_t)0x30;
 		}
 
-		void TrimTrailingNewlines(RString& str)
+		void TrimTrailingNewlines(std::string& str)
 		{
 			size_t found = str.find_last_not_of("\x0A\x0D");
-			if(found != RString::npos) {
+			if(found != std::string::npos) {
 				str.erase(found + 1);
 			} else {
 				str.clear();
 			}
 		}
 
-		size_t IndexOfTrimmableNewlines(const RString& str)
+		size_t IndexOfTrimmableNewlines(const std::string& str)
 		{
 			// Find index of last non-newline char.
 			size_t found = str.find_last_not_of("\x0A\x0D");
 
-			if(found == RString::npos) {
+			if(found == std::string::npos) {
 				// No non-newline character was found
 				return 0;
 			} else {
@@ -76,7 +76,7 @@ namespace
 			}
 		}
 
-		inline void XorPacketsSameLength(RString& dest, const RString& other)
+		inline void XorPacketsSameLength(std::string& dest, const std::string& other)
 		{
 			size_t size = dest.length();
 			for(size_t i = 0; i < size; ++i) {
@@ -84,10 +84,10 @@ namespace
 			}
 		}
 
-		void XorPackets(RString& dest, const RString& a, const RString& b)
+		void XorPackets(std::string& dest, const std::string& a, const std::string& b)
 		{
-			const RString * longSource;
-			const RString * shortSource;
+			const std::string * longSource;
+			const std::string * shortSource;
 
 			if(a.length() > b.length()) {
 				longSource = &a;
@@ -202,16 +202,16 @@ namespace
 			return index;
 		}
 
-		RString BytesToPacket(const void * buffer, size_t sizeInBytes)
+		std::string BytesToPacket(const void * buffer, size_t sizeInBytes)
 		{
 			const char * charBuffer = (const char *) buffer;
-			RString dest = RString(sizeInBytes, ApplyArmor(0));
+			std::string dest = std::string(sizeInBytes, ApplyArmor(0));
 
 			for(size_t i = 0; i < sizeInBytes; ++i) {
 				dest[i] = ApplyArmor(charBuffer[i]);
 			}
 			
-			return RString(charBuffer, sizeInBytes);
+			return std::string(charBuffer, sizeInBytes);
 		}
 
 		inline bool BuffersEqualAsSextets(const char * a, size_t aLength, const char * b, size_t bLength)
@@ -259,7 +259,7 @@ namespace Sextets
 {
 	namespace Data
 	{
-		RString CleanPacketCopy(const RString& str)
+		std::string CleanPacketCopy(const std::string& str)
 		{
 			size_t left = 0;
 			size_t right;
@@ -293,18 +293,18 @@ namespace Sextets
 			return str.substr(left, right - left);
 		}
 
-		RString XorPacketsCopy(const RString& a, const RString& b)
+		std::string XorPacketsCopy(const std::string& a, const std::string& b)
 		{
-			RString dest;
+			std::string dest;
 			XorPackets(dest, a, b);
 			return dest;
 		}
 
 #define BIT_IN_BYTE_BUFFER(buffer, byteIndex, subBitIndex) (buffer[byteIndex] & (1 << subBitIndex))
 
-		void ProcessPacketChanges(const RString& statePacket, const RString& changedPacket, size_t numberOfStateBits, void * context, void updateButton(void * context, size_t index, bool value))
+		void ProcessPacketChanges(const std::string& statePacket, const std::string& changedPacket, size_t numberOfStateBits, void * context, void updateButton(void * context, size_t index, bool value))
 		{
-			RString fallbackStatePacket;
+			std::string fallbackStatePacket;
 
 			// The max number of bytes numberOfStateBits covers or the size
 			// of the changes packet, whichever is smaller
@@ -314,7 +314,7 @@ namespace Sextets
 
 			// If the state packet is smaller than the range we wish to
 			// scan, pad out the state with zeroed sextets.
-			const RString * sp;
+			const std::string * sp;
 			if(statePacket.length() < bufferSize) {
 				fallbackStatePacket = statePacket;
 				fallbackStatePacket.resize(bufferSize, ApplyArmor(0));
@@ -340,14 +340,14 @@ namespace Sextets
 			}
 		}
 
-		RString GetLightsStateAsPacket(const LightsState* ls)
+		std::string GetLightsStateAsPacket(const LightsState* ls)
 		{
 			uint8_t buffer[FULL_SEXTET_COUNT];
 			size_t len = AppendAllLights(buffer, ls);
 			return BytesToPacket(buffer, len);
 		}
 
-		bool RStringSextetsEqual(const RString& a, const RString& b)
+		bool StdStringSextetsEqual(const std::string& a, const std::string& b)
 		{
 			return BuffersEqualAsSextets(a.data(), a.length(), b.data(), b.length());
 		}
@@ -355,7 +355,7 @@ namespace Sextets
 }
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

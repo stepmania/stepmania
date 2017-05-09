@@ -9,7 +9,7 @@
 
 namespace
 {
-	EzSockets * OpenSocket(const RString& host, unsigned short port)
+	EzSockets * OpenSocket(const std::string& host, unsigned short port)
 	{
 		EzSockets * sock = new EzSockets;
 		sock->close();
@@ -63,7 +63,7 @@ namespace
 		}
 
 	public:
-		Impl(const RString& host, unsigned short port)
+		Impl(const std::string& host, unsigned short port)
 			: pb(PacketBuffer::Create())
 		{
 			LOG->Info(
@@ -180,7 +180,7 @@ namespace Sextets
 {
 	namespace IO
 	{
-		EzSocketsPacketReader* EzSocketsPacketReader::Create(const RString& host, unsigned short port)
+		EzSocketsPacketReader* EzSocketsPacketReader::Create(const std::string& host, unsigned short port)
 		{
 			Impl * obj = new Impl(host, port);
 			if(!obj->HasSocket()) {
@@ -197,7 +197,7 @@ namespace Sextets
 #endif // !defined(WITHOUT_NETWORKING)
 
 /*
- * Copyright © 2016 Peter S. May
+ * Copyright © 2016-2017 Peter S. May
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
