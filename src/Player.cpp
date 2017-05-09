@@ -2501,6 +2501,12 @@ void Player::UpdateJudgedRows()
 				{
 					SetJudgment( iRow, m_NoteData.GetFirstTrackWithTapOrHoldHead(iRow), NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ) );
 				}
+				for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+				{
+					const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
+					if(tn.type == TapNote::hold_head)
+						HandleHoldScore( tn );
+				}
 				HandleTapRowScore( iRow );
 			}
 		}
@@ -3002,8 +3008,8 @@ void Player::HandleHoldScore( const TapNote &tn )
 			m_pSecondaryScoreDisplay->SetScore( m_pPlayerStageStats->m_iScore );
 		m_pSecondaryScoreDisplay->OnJudgment( holdScore, tapScore );
 	}
-
-	ChangeLife( holdScore, tapScore );
+	if( holdScore != HNS_None )
+		ChangeLife( holdScore, tapScore );
 }
 
 float Player::GetMaxStepDistanceSeconds()
