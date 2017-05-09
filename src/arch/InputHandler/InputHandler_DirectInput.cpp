@@ -21,8 +21,6 @@
 #include <WbemIdl.h>
 #include <OleAuto.h>
 
-using std::vector;
-
 REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
 
 static vector<DIDevice> Devices;
