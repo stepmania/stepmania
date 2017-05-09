@@ -1023,8 +1023,12 @@ void Player::Update( float fDeltaTime )
 					vHoldNotesToGradeTogether.clear();
 				}
 			}
-			iRowOfLastHoldNote = iRow;
-			vHoldNotesToGradeTogether.push_back( trtn );
+
+			if( iSongRow <= iRow + trtn->pTN.iDuration )
+			{
+				iRowOfLastHoldNote = iRow;
+				vHoldNotesToGradeTogether.push_back( trtn );
+			}
 		}
 
 		if( !vHoldNotesToGradeTogether.empty() )
