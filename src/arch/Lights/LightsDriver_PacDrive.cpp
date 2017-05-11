@@ -18,9 +18,10 @@ typedef void (WINAPI PacShutdown)(void);
 PacShutdown* m_pacdone = NULL;
 typedef bool (WINAPI PacSetLEDStates)(int, short int);
 PacSetLEDStates* m_pacset = NULL;
+int iLightingOrder = 0;
 
 //Adds new preference to allow for different light wiring setups
-static Preference<RString> g_sPacDriveLightOrdering("PacDriveLightOrdering", "");
+static Preference<RString> g_sPacDriveLightOrdering("PacDriveLightOrdering", "minimaid");
 
 
 LightsDriver_PacDrive::LightsDriver_PacDrive()
@@ -50,6 +51,10 @@ LightsDriver_PacDrive::LightsDriver_PacDrive()
 	{
 		PacDriveConnected = true; // set connected 
 		m_pacset(0, 0x0);  // clear all lights for device i
+		RString lightOrder = g_sPacDriveLightOrdering.Get();
+		if (lightOrder.CompareNoCase("lumenar") == 0 || lightOrder.CompareNoCase("openitg") == 0) {
+			iLightingOrder = 1;
+		}
 	}
 }
 
@@ -63,9 +68,9 @@ LightsDriver_PacDrive::~LightsDriver_PacDrive()
 
 void LightsDriver_PacDrive::Set(const LightsState *ls)
 {
-	RString lightOrder = g_sPacDriveLightOrdering.Get();
 	short int outb = 0;
-	if (lightOrder.CompareNoCase("lumenar") == 0 || lightOrder.CompareNoCase("openitg") == 0) {
+	switch (iLightingOrder) {
+	case 1:
 		//Sets the cabinet light values to follow LumenAR/OpenITG wiring standards
 
 		if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_LEFT]) outb |= BIT(0);
@@ -83,8 +88,9 @@ void LightsDriver_PacDrive::Set(const LightsState *ls)
 		if (ls->m_bGameButtonLights[GameController_1][GAME_BUTTON_START]) outb |= BIT(12);
 		if (ls->m_bGameButtonLights[GameController_2][GAME_BUTTON_START]) outb |= BIT(13);
 		if (ls->m_bCabinetLights[LIGHT_BASS_LEFT] || ls->m_bCabinetLights[LIGHT_BASS_RIGHT]) outb |= BIT(14);
-	}
-	else {
+		break;
+	case 0:
+	default:
 		//If all else fails, falls back to Minimaid order
 
 		if (ls->m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]) outb |= BIT(0);
@@ -102,6 +108,7 @@ void LightsDriver_PacDrive::Set(const LightsState *ls)
 		if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_UP]) outb |= BIT(12);
 		if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_DOWN]) outb |= BIT(13);
 		if (ls->m_bGameButtonLights[GameController_2][GAME_BUTTON_START]) outb |= BIT(14);
+		break;
 	}
 	m_pacset(0, outb);
 }
