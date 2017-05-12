@@ -13,8 +13,7 @@
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
 #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "WaveOut,DirectSound-sw,WDMKS,Null"
-
+#define DEFAULT_SOUND_DRIVER_LIST "DirectSound-sw,WDMKS,Null"
 
 #elif defined(MACOSX)
 #include "ArchHooks/ArchHooks_MacOSX.h"
@@ -72,7 +71,7 @@
 /*
  * (c) 2002-2006 Glenn Maynard, Ben Anderson, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -82,7 +81,7 @@
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

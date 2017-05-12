@@ -73,6 +73,9 @@ public:
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
 		ZERO( m_fScrolls );	ONE( m_SpeedfScrolls );
 		ZERO( m_bTurns );	ZERO( m_bTransforms );
+		ZERO( m_fMovesX );	ONE( m_SpeedfMovesX );
+		ZERO( m_fMovesY );	ONE( m_SpeedfMovesY );
+		ZERO( m_fMovesZ );	ONE( m_SpeedfMovesZ );
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
@@ -105,22 +108,41 @@ public:
 		ACCEL_BOOST, /**< The arrows start slow, then zoom towards the targets. */
 		ACCEL_BRAKE, /**< The arrows start fast, then slow down as they approach the targets. */
 		ACCEL_WAVE,
+		ACCEL_WAVE_PERIOD,
 		ACCEL_EXPAND,
+		ACCEL_EXPAND_PERIOD,
 		ACCEL_BOOMERANG, /**< The arrows start from above the targets, go down, then come back up. */
 		NUM_ACCELS
 	};
 	enum Effect	{
 		EFFECT_DRUNK,
+		EFFECT_DRUNK_SPEED,
+		EFFECT_DRUNK_OFFSET,
+		EFFECT_DRUNK_PERIOD,
 		EFFECT_DIZZY,
 		EFFECT_CONFUSION,
+		EFFECT_CONFUSION_OFFSET,
+		EFFECT_CONFUSION_X,
+		EFFECT_CONFUSION_X_OFFSET,
+		EFFECT_CONFUSION_Y,
+		EFFECT_CONFUSION_Y_OFFSET,
 		EFFECT_MINI,
 		EFFECT_TINY,
 		EFFECT_FLIP,
 		EFFECT_INVERT,
 		EFFECT_TORNADO,
+		EFFECT_TORNADO_PERIOD,
+		EFFECT_TORNADO_OFFSET,
 		EFFECT_TIPSY,
+		EFFECT_TIPSY_SPEED,
+		EFFECT_TIPSY_OFFSET,
 		EFFECT_BUMPY,
+		EFFECT_BUMPY_OFFSET,
+		EFFECT_BUMPY_PERIOD,
 		EFFECT_BEAT,
+		EFFECT_BEAT_OFFSET,
+		EFFECT_BEAT_PERIOD,
+		EFFECT_BEAT_MULT,
 		EFFECT_XMODE,
 		EFFECT_TWIRL,
 		EFFECT_ROLL,
@@ -216,6 +238,10 @@ public:
 	float		m_fPassmark,			m_SpeedfPassmark;
 
 	float	m_fRandomSpeed,			m_SpeedfRandomSpeed;
+	/* The maximum column number is 16.*/
+	float	m_fMovesX[16],			m_SpeedfMovesX[16];
+	float	m_fMovesY[16],			m_SpeedfMovesY[16];
+	float	m_fMovesZ[16],			m_SpeedfMovesZ[16];
 
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
@@ -251,6 +277,41 @@ public:
 };
 
 std::string get_player_mod_string(PlayerNumber pn, bool hide_fail);
+
+#define ADD_MULTICOL_METHOD( method_name) \
+	ADD_METHOD( method_name##1 ); \
+	ADD_METHOD( method_name##2 ); \
+	ADD_METHOD( method_name##3 ); \
+	ADD_METHOD( method_name##4 ); \
+	ADD_METHOD( method_name##5 ); \
+	ADD_METHOD( method_name##6 ); \
+	ADD_METHOD( method_name##7 ); \
+	ADD_METHOD( method_name##8 ); \
+	ADD_METHOD( method_name##9 ); \
+	ADD_METHOD( method_name##10 ); \
+	ADD_METHOD( method_name##11 ); \
+	ADD_METHOD( method_name##12 ); \
+	ADD_METHOD( method_name##13 ); \
+	ADD_METHOD( method_name##14 ); \
+	ADD_METHOD( method_name##15 ); \
+	ADD_METHOD( method_name##16 );
+#define MULTICOL_FLOAT_INTERFACE(func_name, member, valid) \
+	FLOAT_INTERFACE(func_name##1, member[0], valid); \
+	FLOAT_INTERFACE(func_name##2, member[1], valid); \
+	FLOAT_INTERFACE(func_name##3, member[2], valid); \
+	FLOAT_INTERFACE(func_name##4, member[3], valid); \
+	FLOAT_INTERFACE(func_name##5, member[4], valid); \
+	FLOAT_INTERFACE(func_name##6, member[5], valid); \
+	FLOAT_INTERFACE(func_name##7, member[6], valid); \
+	FLOAT_INTERFACE(func_name##8, member[7], valid); \
+	FLOAT_INTERFACE(func_name##9, member[8], valid); \
+	FLOAT_INTERFACE(func_name##10, member[9], valid); \
+	FLOAT_INTERFACE(func_name##11, member[10], valid); \
+	FLOAT_INTERFACE(func_name##12, member[11], valid); \
+	FLOAT_INTERFACE(func_name##13, member[12], valid); \
+	FLOAT_INTERFACE(func_name##14, member[13], valid); \
+	FLOAT_INTERFACE(func_name##15, member[14], valid); \
+	FLOAT_INTERFACE(func_name##16, member[15], valid);
 
 #endif
 

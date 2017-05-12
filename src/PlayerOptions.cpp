@@ -76,6 +76,9 @@ void PlayerOptions::Init()
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
+	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
+	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
+	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
 }
 
 void PlayerOptions::Approach(PlayerOptions const& other, float delta)
@@ -111,6 +114,12 @@ void PlayerOptions::Approach(PlayerOptions const& other, float delta)
 	APPROACH( fSkew );
 	APPROACH( fPassmark );
 	APPROACH( fRandomSpeed );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesX[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesY[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fMovesZ[i] );
 
 	DO_COPY( m_bSetScrollSpeed );
 	for( int i=0; i<NUM_TURNS; i++ )
@@ -203,23 +212,53 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fAccels[ACCEL_BOOST],		"Boost" );
 	AddPart( AddTo, m_fAccels[ACCEL_BRAKE],		"Brake" );
 	AddPart( AddTo, m_fAccels[ACCEL_WAVE],			"Wave" );
+	AddPart( AddTo, m_fAccels[ACCEL_WAVE_PERIOD],		"WavePeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_EXPAND],		"Expand" );
+	AddPart( AddTo, m_fAccels[ACCEL_EXPAND_PERIOD],		"ExpandPeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
 
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],		"Drunk" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_SPEED],		"DrunkSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_OFFSET],	"DrunkOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_PERIOD],	"DrunkPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],		"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION],	"Confusion" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_OFFSET],	"ConfusionOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_X],	"ConfusionX" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_X_OFFSET],	"ConfusionXOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y],	"ConfusionY" );
+	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y_OFFSET],	"ConfusionYOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_MINI],		"Mini" );
 	AddPart( AddTo, m_fEffects[EFFECT_TINY],		"Tiny" );
 	AddPart( AddTo, m_fEffects[EFFECT_FLIP],		"Flip" );
 	AddPart( AddTo, m_fEffects[EFFECT_INVERT],		"Invert" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_PERIOD],	"TornadoPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_OFFSET],	"TornadoOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],	"BumpyOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],	"BumpyPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_MULT],		"BeatMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
 	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
+	
+	for( int i=0; i<16; i++)
+	{
+		std::string s = fmt::sprintf( "MoveX%d", i+1 );
+		
+		AddPart( AddTo, m_fMovesX[i],				s );
+		s = fmt::sprintf( "MoveY%d", i+1 );
+		AddPart( AddTo, m_fMovesY[i],				s );
+		s = fmt::sprintf( "MoveZ%d", i+1 );
+		AddPart( AddTo, m_fMovesZ[i],				s );
+	}
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN_OFFSET],	"HiddenOffset" );
@@ -468,6 +507,18 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 		m_fTimeSpacing = 0;
 		m_changed_defective_mod= true;
 	}
+	else if( sBit.find("move") != sBit.npos)
+	{
+	    for (int i=0; i<16; i++)
+	    {
+		std::string s = fmt::sprintf( "movex%d", i+1 );
+		    if( sBit == s)				SET_FLOAT( fMovesX[i] )
+		s = fmt::sprintf( "movey%d", i+1 );
+		    if( sBit == s)				SET_FLOAT( fMovesY[i] )
+		s = fmt::sprintf( "movez%d", i+1 );
+		    if( sBit == s)				SET_FLOAT( fMovesZ[i] )
+	    }
+	}
 	else
 	{
 		static std::unordered_map<std::string, special_option_func_t> special_options= {
@@ -504,22 +555,41 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"brake", ACCEL_BRAKE},
 			{"land", ACCEL_BRAKE},
 			{"wave", ACCEL_WAVE},
+			{"waveperiod", ACCEL_WAVE_PERIOD},
 			{"expand", ACCEL_EXPAND},
+			{"expandperiod", ACCEL_EXPAND_PERIOD},
 			{"dwiwave", ACCEL_EXPAND},
 			{"boomerang", ACCEL_BOOMERANG},
 		};
 		static std::unordered_map<std::string, Effect> effect_options= {
 			{"drunk", EFFECT_DRUNK},
+			{"drunkspeed", EFFECT_DRUNK_SPEED},
+			{"drunkoffset", EFFECT_DRUNK_OFFSET},
+			{"drunkperiod", EFFECT_DRUNK_PERIOD},
 			{"dizzy", EFFECT_DIZZY},
 			{"confusion", EFFECT_CONFUSION},
+			{"confusionoffset", EFFECT_CONFUSION_OFFSET},
+			{"confusionx", EFFECT_CONFUSION_X},
+			{"confusionxoffset", EFFECT_CONFUSION_X_OFFSET},
+			{"confusiony", EFFECT_CONFUSION_Y},
+			{"confusionyoffset", EFFECT_CONFUSION_Y_OFFSET},
 			{"mini", EFFECT_MINI},
 			{"tiny", EFFECT_TINY},
 			{"flip", EFFECT_FLIP},
 			{"invert", EFFECT_INVERT},
 			{"tornado", EFFECT_TORNADO},
+			{"tornadoperiod", EFFECT_TORNADO_PERIOD},
+			{"tornadooffset", EFFECT_TORNADO_OFFSET},
 			{"tipsy", EFFECT_TIPSY},
+			{"tipsyspeed", EFFECT_TIPSY_SPEED},
+			{"tipsyoffset", EFFECT_TIPSY_OFFSET},
 			{"bumpy", EFFECT_BUMPY},
+			{"bumpyoffset", EFFECT_BUMPY_OFFSET},
+			{"bumpyperiod", EFFECT_BUMPY_PERIOD},
 			{"beat", EFFECT_BEAT},
+			{"beatoffset", EFFECT_BEAT_OFFSET},
+			{"beatperiod", EFFECT_BEAT_PERIOD},
+			{"beatmult", EFFECT_BEAT_MULT},
 			{"xmode", EFFECT_XMODE},
 			{"twirl", EFFECT_TWIRL},
 			{"roll", EFFECT_ROLL},
@@ -883,6 +953,12 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 		COMPARE(m_bTurns[i]);
 	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 		COMPARE(m_bTransforms[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesX[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesY[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fMovesZ[i]);
 #undef COMPARE
 	return true;
 }
@@ -935,6 +1011,18 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 	{
 		CPY(m_bTransforms[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesX[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesY[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY(m_fMovesZ[i]);
 	}
 #undef CPY
 #undef CPY_SPEED
@@ -1186,19 +1274,38 @@ public:
 	FLOAT_INTERFACE(Boost, Accels[PlayerOptions::ACCEL_BOOST], true);
 	FLOAT_INTERFACE(Brake, Accels[PlayerOptions::ACCEL_BRAKE], true);
 	FLOAT_INTERFACE(Wave, Accels[PlayerOptions::ACCEL_WAVE], true);
+	FLOAT_INTERFACE(WavePeriod, Accels[PlayerOptions::ACCEL_WAVE_PERIOD], true);
 	FLOAT_INTERFACE(Expand, Accels[PlayerOptions::ACCEL_EXPAND], true);
+	FLOAT_INTERFACE(ExpandPeriod, Accels[PlayerOptions::ACCEL_EXPAND_PERIOD], true);
 	FLOAT_INTERFACE(Boomerang, Accels[PlayerOptions::ACCEL_BOOMERANG], true);
 	FLOAT_INTERFACE(Drunk, Effects[PlayerOptions::EFFECT_DRUNK], true);
+	FLOAT_INTERFACE(DrunkSpeed, Effects[PlayerOptions::EFFECT_DRUNK_SPEED], true);
+	FLOAT_INTERFACE(DrunkOffset, Effects[PlayerOptions::EFFECT_DRUNK_OFFSET], true);
+	FLOAT_INTERFACE(DrunkPeriod, Effects[PlayerOptions::EFFECT_DRUNK_PERIOD], true);
 	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
 	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION], true);
+	FLOAT_INTERFACE(ConfusionOffset, Effects[PlayerOptions::EFFECT_CONFUSION_OFFSET], true);
+	FLOAT_INTERFACE(ConfusionX, Effects[PlayerOptions::EFFECT_CONFUSION_X], true);
+	FLOAT_INTERFACE(ConfusionXOffset, Effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET], true);
+	FLOAT_INTERFACE(ConfusionY, Effects[PlayerOptions::EFFECT_CONFUSION_Y], true);
+	FLOAT_INTERFACE(ConfusionYOffset, Effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET], true);
 	FLOAT_INTERFACE(Mini, Effects[PlayerOptions::EFFECT_MINI], true);
 	FLOAT_INTERFACE(Tiny, Effects[PlayerOptions::EFFECT_TINY], true);
 	FLOAT_INTERFACE(Flip, Effects[PlayerOptions::EFFECT_FLIP], true);
 	FLOAT_INTERFACE(Invert, Effects[PlayerOptions::EFFECT_INVERT], true);
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
+	FLOAT_INTERFACE(TornadoPeriod, Effects[PlayerOptions::EFFECT_TORNADO_PERIOD], true);
+	FLOAT_INTERFACE(TornadoOffset, Effects[PlayerOptions::EFFECT_TORNADO_OFFSET], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
+	FLOAT_INTERFACE(TipsySpeed, Effects[PlayerOptions::EFFECT_TIPSY_SPEED], true);
+	FLOAT_INTERFACE(TipsyOffset, Effects[PlayerOptions::EFFECT_TIPSY_OFFSET], true);
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
+	FLOAT_INTERFACE(BumpyOffset, Effects[PlayerOptions::EFFECT_BUMPY_OFFSET], true);
+	FLOAT_INTERFACE(BumpyPeriod, Effects[PlayerOptions::EFFECT_BUMPY_PERIOD], true);
 	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT], true);
+	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
+	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
+	FLOAT_INTERFACE(BeatMult, Effects[PlayerOptions::EFFECT_BEAT_MULT], true);
 	FLOAT_INTERFACE(Xmode, Effects[PlayerOptions::EFFECT_XMODE], true);
 	FLOAT_INTERFACE(Twirl, Effects[PlayerOptions::EFFECT_TWIRL], true);
 	FLOAT_INTERFACE(Roll, Effects[PlayerOptions::EFFECT_ROLL], true);
@@ -1224,6 +1331,9 @@ public:
 	FLOAT_INTERFACE(Tilt, Tilt, true);
 	FLOAT_INTERFACE(Passmark, Passmark, true); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
 	FLOAT_INTERFACE(RandomSpeed, RandomSpeed, true);
+	MULTICOL_FLOAT_INTERFACE(MoveX, MovesX, true);
+	MULTICOL_FLOAT_INTERFACE(MoveY, MovesY, true);
+	MULTICOL_FLOAT_INTERFACE(MoveZ, MovesZ, true);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -1539,19 +1649,38 @@ public:
 		ADD_METHOD(Boost);
 		ADD_METHOD(Brake);
 		ADD_METHOD(Wave);
+		ADD_METHOD(WavePeriod);
 		ADD_METHOD(Expand);
+		ADD_METHOD(ExpandPeriod);
 		ADD_METHOD(Boomerang);
 		ADD_METHOD(Drunk);
+		ADD_METHOD(DrunkSpeed);
+		ADD_METHOD(DrunkOffset);
+		ADD_METHOD(DrunkPeriod);
 		ADD_METHOD(Dizzy);
 		ADD_METHOD(Confusion);
+		ADD_METHOD(ConfusionOffset);
+		ADD_METHOD(ConfusionX);
+		ADD_METHOD(ConfusionXOffset);
+		ADD_METHOD(ConfusionY);
+		ADD_METHOD(ConfusionYOffset);
 		ADD_METHOD(Mini);
 		ADD_METHOD(Tiny);
 		ADD_METHOD(Flip);
 		ADD_METHOD(Invert);
 		ADD_METHOD(Tornado);
+		ADD_METHOD(TornadoPeriod);
+		ADD_METHOD(TornadoOffset);
 		ADD_METHOD(Tipsy);
+		ADD_METHOD(TipsySpeed);
+		ADD_METHOD(TipsyOffset);
 		ADD_METHOD(Bumpy);
+		ADD_METHOD(BumpyOffset);
+		ADD_METHOD(BumpyPeriod);
 		ADD_METHOD(Beat);
+		ADD_METHOD(BeatOffset);
+		ADD_METHOD(BeatPeriod);
+		ADD_METHOD(BeatMult);
 		ADD_METHOD(Xmode);
 		ADD_METHOD(Twirl);
 		ADD_METHOD(Roll);
@@ -1609,6 +1738,10 @@ public:
 		ADD_METHOD(NoQuads);
 		ADD_METHOD(NoStretch);
 		ADD_METHOD(MuteOnError);
+		
+		ADD_MULTICOL_METHOD(MoveX);
+		ADD_MULTICOL_METHOD(MoveY);
+		ADD_MULTICOL_METHOD(MoveZ);
 
 		ADD_METHOD(FailSetting);
 		ADD_METHOD(MinTNSToHideNotes);

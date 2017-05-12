@@ -42,6 +42,9 @@ private:
 	float get_x_pos(size_t col, float y_offset);
 	float get_y_pos(size_t col, float y_offset);
 	float get_z_pos(float y_offset);
+	float get_move_x(size_t col);
+	float get_move_y(size_t col);
+	float get_move_z(size_t col);
 	float get_rotation_y(float y_offset);
 	float get_zoom();
 	float get_percent_visible(float y_offset);

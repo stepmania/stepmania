@@ -210,7 +210,7 @@ std::string DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 	DSBUFFERDESC format;
 	memset( &format, 0, sizeof(format) );
 	format.dwSize = sizeof(format);
-	format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME;
+	format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_TRUEPLAYPOSITION;
 
 	/* Don't use DSBCAPS_STATIC.  It's meant for static buffers, and we
 	 * only use streaming buffers. */
