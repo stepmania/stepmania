@@ -2,6 +2,7 @@
 #define ARROWEFFECTS_H
 
 #include "RageTypes.h"
+#include "PlayerNumber.h"
 
 class PlayerState;
 class PlayerOptions;
@@ -9,6 +10,8 @@ class PlayerOptions;
 class ArrowEffects
 {
 public:
+	static void Init(PlayerNumber pn);
+	static float GetTime();
 	static void Update();
 	// SetCurrentOptions and the hidden static variable it set exists so that
 	// ArrowEffects doesn't have to reach through the PlayerState to check
@@ -31,7 +34,7 @@ public:
 	{
 		ret.x= GetMoveX(col) + GetXPos(player_state, col, y_offset);
 		ret.y= GetMoveY(col) + GetYPos(col, y_offset, y_reverse_offset, with_reverse);
-		ret.z= GetMoveZ(col) + GetZPos(col, y_offset);
+		ret.z= GetMoveZ(col) + GetZPos(player_state, col, y_offset);
 	}
 
 	/**
@@ -80,7 +83,7 @@ public:
 	 * @param iCol the specific arrow column.
 	 * @param fYPos the Y position of the arrow.
 	 * @return the Z position. */
-	static float GetZPos(int iCol, float fYPos);
+	static float GetZPos( const PlayerState* pPlayerState, int iCol, float fYPos);
 
 	// Enable this if any ZPos effects are enabled.
 	static bool NeedZBuffer();

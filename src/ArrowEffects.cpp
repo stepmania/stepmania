@@ -14,6 +14,8 @@
 #include "ThemeMetric.h"
 #include <float.h>
 
+static char const dimension_names[4]= "XYZ";
+
 static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
 static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
 static ThemeMetric<bool>	HIDDEN_SUDDEN_PAST_RECEPTOR( "ArrowEffects", "DrawHiddenNotesAfterReceptor");
@@ -46,16 +48,34 @@ static ThemeMetric<float>	TIPSY_ARROW_MAGNITUDE( "ArrowEffects", "TipsyArrowMagn
 static ThemeMetric<float>	TIPSY_OFFSET_TIMER_FREQUENCY( "ArrowEffects", "TipsyOffsetTimerFrequency" );
 static ThemeMetric<float>	TIPSY_OFFSET_COLUMN_FREQUENCY( "ArrowEffects", "TipsyOffsetColumnFrequency" );
 static ThemeMetric<float>	TIPSY_OFFSET_ARROW_MAGNITUDE( "ArrowEffects", "TipsyOffsetArrowMagnitude" );
-static ThemeMetric<float>	TORNADO_POSITION_SCALE_TO_LOW( "ArrowEffects", "TornadoPositionScaleToLow" );
-static ThemeMetric<float>	TORNADO_POSITION_SCALE_TO_HIGH( "ArrowEffects", "TornadoPositionScaleToHigh" );
-static ThemeMetric<float>	TORNADO_OFFSET_FREQUENCY( "ArrowEffects", "TornadoOffsetFrequency" );
-static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_LOW( "ArrowEffects", "TornadoOffsetScaleFromLow" );
-static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_HIGH( "ArrowEffects", "TornadoOffsetScaleFromHigh" );
+
+static RString TPSTL_NAME(size_t i) { return ssprintf("Tornado%cPositionScaleToLow", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_POSITION_SCALE_TO_LOW("ArrowEffects", TPSTL_NAME, 3);
+static RString TPSTH_NAME(size_t i) { return ssprintf("Tornado%cPositionScaleToHigh", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_POSITION_SCALE_TO_HIGH("ArrowEffects", TPSTH_NAME, 3);
+static RString TOF_NAME(size_t i) { return ssprintf("Tornado%cOffsetFrequency", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_OFFSET_FREQUENCY("ArrowEffects", TOF_NAME, 3);
+static RString TOSFL_NAME(size_t i) { return ssprintf("Tornado%cOffsetScaleFromLow", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_OFFSET_SCALE_FROM_LOW("ArrowEffects", TOSFL_NAME, 3);
+static RString TOSFH_NAME(size_t i) { return ssprintf("Tornado%cOffsetScaleFromHigh", dimension_names[i]); }
+static ThemeMetric1D<float> TORNADO_OFFSET_SCALE_FROM_HIGH("ArrowEffects", TOSFH_NAME, 3);
+
 static ThemeMetric<float>	DRUNK_COLUMN_FREQUENCY( "ArrowEffects", "DrunkColumnFrequency" );
 static ThemeMetric<float>	DRUNK_OFFSET_FREQUENCY( "ArrowEffects", "DrunkOffsetFrequency" );
 static ThemeMetric<float>	DRUNK_ARROW_MAGNITUDE( "ArrowEffects", "DrunkArrowMagnitude" );
+
+static ThemeMetric<float>	DRUNK_Z_COLUMN_FREQUENCY( "ArrowEffects", "DrunkZColumnFrequency" );
+static ThemeMetric<float>	DRUNK_Z_OFFSET_FREQUENCY( "ArrowEffects", "DrunkZOffsetFrequency" );
+static ThemeMetric<float>	DRUNK_Z_ARROW_MAGNITUDE( "ArrowEffects", "DrunkZArrowMagnitude" );
+
 static ThemeMetric<float>	BEAT_OFFSET_HEIGHT( "ArrowEffects", "BeatOffsetHeight" );
 static ThemeMetric<float>	BEAT_PI_HEIGHT( "ArrowEffects", "BeatPIHeight" );
+
+static ThemeMetric<float>	BEAT_Y_OFFSET_HEIGHT( "ArrowEffects", "BeatYOffsetHeight" );
+static ThemeMetric<float>	BEAT_Y_PI_HEIGHT( "ArrowEffects", "BeatYPIHeight" );
+static ThemeMetric<float>	BEAT_Z_OFFSET_HEIGHT( "ArrowEffects", "BeatZOffsetHeight" );
+static ThemeMetric<float>	BEAT_Z_PI_HEIGHT( "ArrowEffects", "BeatZPIHeight" );
+
 static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" );
 static ThemeMetric<float>	TINY_PERCENT_GATE( "ArrowEffects", "TinyPercentGate" );
 static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
@@ -69,20 +89,165 @@ static float GetNoteFieldHeight()
 	return SCREEN_HEIGHT + fabsf(curr_options->m_fPerspectiveTilt)*200;
 }
 
+float ArrowEffects::GetTime()
+{
+	float mult = 1.f + curr_options->m_fModTimerMult;
+	float offset = curr_options->m_fModTimerOffset;
+	ModTimerType modtimer = curr_options->m_ModTimerType;
+	switch(modtimer)
+	{
+	    case ModTimerType_Default:
+	    case ModTimerType_Game:
+		return (RageTimer::GetTimeSinceStartFast()+offset)*mult;
+	    case ModTimerType_Beat:
+		return (GAMESTATE->m_Position.m_fSongBeatVisible+offset)*mult;
+	    case ModTimerType_Song:
+		return (GAMESTATE->m_Position.m_fMusicSeconds+offset)*mult;
+	    default:
+		return RageTimer::GetTimeSinceStartFast()+offset;
+	}
+}
+
 namespace
 {
 	struct PerPlayerData
 	{
-		float m_fMinTornadoX[MAX_COLS_PER_PLAYER];
-		float m_fMaxTornadoX[MAX_COLS_PER_PLAYER];
+		float m_MinTornado[3][MAX_COLS_PER_PLAYER];
+		float m_MaxTornado[3][MAX_COLS_PER_PLAYER];
 		float m_fInvertDistance[MAX_COLS_PER_PLAYER];
 		float m_tipsy_result[MAX_COLS_PER_PLAYER];
 		float m_tipsy_offset_result[MAX_COLS_PER_PLAYER];
-		float m_fBeatFactor;
+		float m_fBeatFactor[3];
 		float m_fExpandSeconds;
+
+		// m_prev_style is for checking whether ArrowEffects::Init needs to be
+		// called.  Finding all the placed ArrowEffects is used and making sure
+		// they all call Init after changing style is non-trivial and more likely
+		// to cause bugs. -Kyz
+		Style const* m_prev_style;
 	};
 	PerPlayerData g_EffectData[NUM_PLAYERS];
+	int const dim_x= 0;
+	int const dim_y= 1;
+	int const dim_z= 2;
+
+	float tornado_position_scale_to_low[3];
+	float tornado_position_scale_to_high[3];
+	float tornado_offset_frequency[3];
+	float tornado_offset_scale_from_low[3];
+	float tornado_offset_scale_from_high[3];
 };
+
+static float CalculateTornadoOffsetFromMagnitude(int dimension, int col_id,
+	float magnitude, float effect_offset, float period,
+	const Style::ColumnInfo* pCols, float field_zoom,
+	PerPlayerData& data, float y_offset)
+{
+	float const real_pixel_offset= pCols[col_id].fXOffset * field_zoom;
+	float const position_between= SCALE(real_pixel_offset,
+		data.m_MinTornado[dimension][col_id] * field_zoom,
+		data.m_MaxTornado[dimension][col_id] * field_zoom,
+		tornado_position_scale_to_low[dimension],
+		tornado_position_scale_to_high[dimension]);
+	float rads= acosf(position_between);
+	float frequency= tornado_offset_frequency[dimension];
+	rads+= (y_offset + effect_offset) * ((period * frequency) + frequency) / SCREEN_HEIGHT;
+	float const adjusted_pixel_offset= SCALE(RageFastCos(rads),
+		tornado_offset_scale_from_low[dimension],
+		tornado_offset_scale_from_high[dimension],
+		data.m_MinTornado[dimension][col_id] * field_zoom,
+		data.m_MaxTornado[dimension][col_id] * field_zoom);
+	return (adjusted_pixel_offset - real_pixel_offset) * magnitude;
+}
+
+static void UpdateBeat(int dimension, PerPlayerData &data, const SongPosition &position, float beat_offset, float beat_mult)
+{
+	float fAccelTime = 0.2f, fTotalTime = 0.5f;
+	float fBeat = ((position.m_fSongBeatVisible + fAccelTime + beat_offset) * (beat_mult+1));
+
+	const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
+
+	data.m_fBeatFactor[dimension] = 0;
+	if( fBeat < 0 )
+		return;
+
+	// -100.2 -> -0.2 -> 0.2
+	fBeat -= truncf( fBeat );
+	fBeat += 1;
+	fBeat -= truncf( fBeat );
+
+	if( fBeat >= fTotalTime )
+		return;
+
+	if( fBeat < fAccelTime )
+	{
+		data.m_fBeatFactor[dimension] = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
+		data.m_fBeatFactor[dimension] *= data.m_fBeatFactor[dimension];
+	} else /* fBeat < fTotalTime */ {
+		data.m_fBeatFactor[dimension] = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
+		data.m_fBeatFactor[dimension] = 1 - (1-data.m_fBeatFactor[dimension]) * (1-data.m_fBeatFactor[dimension]);
+	}
+
+	if( bEvenBeat )
+		data.m_fBeatFactor[dimension] *= -1;
+	data.m_fBeatFactor[dimension] *= 20.0f;
+}
+
+
+void ArrowEffects::Init(PlayerNumber pn)
+{
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pn);
+	const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
+	PerPlayerData &data = g_EffectData[pn];
+	// Init tornado limits.
+	// This used to run every frame, but it doesn't actually depend on anything
+	// that changes every frame.  In openitg, it runs for every note. -Kyz
+
+	// TRICKY: Tornado is very unplayable in doubles, so use a smaller
+	// tornado width if there are many columns
+
+	/* the wide_field check makes an assumption for dance mode.
+	 * perhaps check if we are actually playing on singles without,
+	 * say more than 6 columns. That would exclude IIDX, pop'n, and
+	 * techno-8, all of which would be very hectic.
+	 * certain non-singles modes (like halfdoubles 6cols)
+	 * could possibly have tornado enabled.
+	 * let's also take default resolution (640x480) into mind. -aj */
+	bool wide_field= pStyle->m_iColsPerPlayer > 4;
+	int max_player_col= pStyle->m_iColsPerPlayer-1;
+	for(int dimension= 0; dimension < 3; ++dimension)
+	{
+		int width= 3;
+		// wide_field only matters for x, which is dimension 0. -Kyz
+		if(dimension == 0 && wide_field)
+		{
+			width= 2;
+		}
+		for(int col_id= 0; col_id <= max_player_col; ++col_id)
+		{
+			int start_col= col_id - width;
+			int end_col= col_id + width;
+			CLAMP(start_col, 0, max_player_col);
+			CLAMP(end_col, 0, max_player_col);
+			data.m_MinTornado[dimension][col_id]= FLT_MAX;
+			data.m_MaxTornado[dimension][col_id]= FLT_MIN;
+			for(int i= start_col; i <= end_col; ++i)
+			{
+				// Using the x offset when the dimension might be y or z feels so
+				// wrong, but it provides min and max values when otherwise the
+				// limits would just be zero, which would make it do nothing. -Kyz
+				data.m_MinTornado[dimension][col_id] = min(pCols[i].fXOffset, data.m_MinTornado[dimension][col_id]);
+				data.m_MaxTornado[dimension][col_id] = max(pCols[i].fXOffset, data.m_MaxTornado[dimension][col_id]);
+			}
+		}
+
+		tornado_position_scale_to_low[dimension]= TORNADO_POSITION_SCALE_TO_LOW.GetValue(dimension);
+		tornado_position_scale_to_high[dimension]= TORNADO_POSITION_SCALE_TO_HIGH.GetValue(dimension);
+		tornado_offset_frequency[dimension]= TORNADO_OFFSET_FREQUENCY.GetValue(dimension);
+		tornado_offset_scale_from_low[dimension]= TORNADO_OFFSET_SCALE_FROM_LOW.GetValue(dimension);
+		tornado_offset_scale_from_high[dimension]= TORNADO_OFFSET_SCALE_FROM_HIGH.GetValue(dimension);
+	}
+}
 
 void ArrowEffects::Update()
 {
@@ -101,41 +266,16 @@ void ArrowEffects::Update()
 
 		PerPlayerData &data = g_EffectData[pn];
 		
+		if(pStyle != data.m_prev_style)
+		{
+			Init(pn);
+			data.m_prev_style= pStyle;
+		}
+		
 		if( !position.m_bFreeze || !position.m_bDelay )
 		{
 			data.m_fExpandSeconds += fTime - fLastTime;
 			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, (PI*2)/(accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1) );
-		}
-		
-		// Update Tornado
-		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
-		{
-			// TRICKY: Tornado is very unplayable in doubles, so use a smaller
-			// tornado width if there are many columns
-
-			/* the below makes an assumption for dance mode.
-			 * perhaps check if we are actually playing on singles without,
-			 * say more than 6 columns. That would exclude IIDX, pop'n, and
-			 * techno-8, all of which would be very hectic.
-			 * certain non-singles modes (like halfdoubles 6cols)
-			 * could possibly have tornado enabled.
-			 * let's also take default resolution (640x480) into mind. -aj */
-			bool bWideField = pStyle->m_iColsPerPlayer > 4;
-			int iTornadoWidth = bWideField ? 2 : 3;
-
-			int iStartCol = iColNum - iTornadoWidth;
-			int iEndCol = iColNum + iTornadoWidth;
-			CLAMP( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
-			CLAMP( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
-
-			data.m_fMinTornadoX[iColNum] = FLT_MAX;
-			data.m_fMaxTornadoX[iColNum] = FLT_MIN;
-
-			for( int i=iStartCol; i<=iEndCol; i++ )
-			{
-				data.m_fMinTornadoX[iColNum] = min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset * field_zoom );
-				data.m_fMaxTornadoX[iColNum] = max( data.m_fMaxTornadoX[iColNum], pCols[i].fXOffset * field_zoom);
-			}
 		}
 
 		// Update Invert
@@ -185,7 +325,7 @@ void ArrowEffects::Update()
 		// Update Tipsy
 		if(effects[PlayerOptions::EFFECT_TIPSY] != 0)
 		{
-			const float time= RageTimer::GetTimeSinceStartFast();
+			const float time= ArrowEffects::GetTime();
 			const float time_times_timer= time * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * TIPSY_TIMER_FREQUENCY) + TIPSY_TIMER_FREQUENCY);
 			const float arrow_times_mag= ARROW_SIZE * TIPSY_ARROW_MAGNITUDE;
 			const float time_times_offset_timer= time *
@@ -211,37 +351,13 @@ void ArrowEffects::Update()
 		}
 
 		// Update Beat
-		do {
-			float fAccelTime = 0.2f, fTotalTime = 0.5f;
-			float fBeat = ((position.m_fSongBeatVisible + fAccelTime + effects[PlayerOptions::EFFECT_BEAT_OFFSET]) * (effects[PlayerOptions::EFFECT_BEAT_MULT]+1));
+		UpdateBeat(dim_x, data, position, effects[PlayerOptions::EFFECT_BEAT_OFFSET], effects[PlayerOptions::EFFECT_BEAT_MULT]);
 
-			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
+		// Update BeatY
+		UpdateBeat(dim_y, data, position, effects[PlayerOptions::EFFECT_BEAT_Y_OFFSET], effects[PlayerOptions::EFFECT_BEAT_Y_MULT]);
 
-			data.m_fBeatFactor = 0;
-			if( fBeat < 0 )
-				break;
-
-			// -100.2 -> -0.2 -> 0.2
-			fBeat -= truncf( fBeat );
-			fBeat += 1;
-			fBeat -= truncf( fBeat );
-
-			if( fBeat >= fTotalTime )
-				break;
-
-			if( fBeat < fAccelTime )
-			{
-				data.m_fBeatFactor = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
-				data.m_fBeatFactor *= data.m_fBeatFactor;
-			} else /* fBeat < fTotalTime */ {
-				data.m_fBeatFactor = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
-				data.m_fBeatFactor = 1 - (1-data.m_fBeatFactor) * (1-data.m_fBeatFactor);
-			}
-
-			if( bEvenBeat )
-				data.m_fBeatFactor *= -1;
-			data.m_fBeatFactor *= 20.0f;
-		} while( false );
+		// Update BeatZ
+		UpdateBeat(dim_z, data, position, effects[PlayerOptions::EFFECT_BEAT_Z_OFFSET], effects[PlayerOptions::EFFECT_BEAT_Z_MULT]);
 	}
 	fLastTime = fTime;
 }
@@ -337,7 +453,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	}
 
 	const float* fAccels = curr_options->m_fAccels;
-	//const float* fEffects = curr_options->m_fEffects;
+	const float* fEffects = curr_options->m_fEffects;
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
 
@@ -362,6 +478,9 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
 		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/((fAccels[PlayerOptions::ACCEL_WAVE_PERIOD]*WAVE_MOD_HEIGHT)+WAVE_MOD_HEIGHT) );
+	
+	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Y] != 0 )
+		fYAdjust += fEffects[PlayerOptions::EFFECT_PARABOLA_Y] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
 
 	fYOffset += fYAdjust;
 
@@ -449,6 +568,12 @@ float ArrowEffects::GetYPos(int iCol, float fYOffset, float fYReverseOffsetPixel
 	PerPlayerData& data= g_EffectData[curr_options->m_pn];
 	f+= fEffects[PlayerOptions::EFFECT_TIPSY] * data.m_tipsy_result[iCol];
 
+	if( fEffects[PlayerOptions::EFFECT_BEAT_Y] != 0 )
+	{
+		const float fShift = data.m_fBeatFactor[dim_y]*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_Y_PERIOD]*BEAT_Y_OFFSET_HEIGHT)+BEAT_Y_OFFSET_HEIGHT) + PI/BEAT_Y_PI_HEIGHT );
+		f += fEffects[PlayerOptions::EFFECT_BEAT_Y] * fShift;
+	}
+
 	// In beware's DDR Extreme-focused fork of StepMania 3.9, this value is
 	// floored, making arrows show on integer Y coordinates. Supposedly it makes
 	// the arrows look better, but testing needs to be done.
@@ -466,6 +591,8 @@ float ArrowEffects::GetYOffsetFromYPos(int iCol, float YPos, float fYReverseOffs
 	// TODO: Don't index by PlayerNumber.
 	PerPlayerData& data= g_EffectData[curr_options->m_pn];
 	f+= fEffects[PlayerOptions::EFFECT_TIPSY] * data.m_tipsy_offset_result[iCol];
+	
+	f+= fEffects[PlayerOptions::EFFECT_PARABOLA_Y] * (YPos/ARROW_SIZE) * (YPos/ARROW_SIZE);
 
 	float fShift, fScale;
 	ArrowGetReverseShiftAndScale(iCol, fYReverseOffsetPixels, fShift, fScale);
@@ -490,22 +617,21 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
 	{
-		const float fRealPixelOffset = pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
-		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], 
-						     TORNADO_POSITION_SCALE_TO_LOW, TORNADO_POSITION_SCALE_TO_HIGH );
-		float fRads = acosf( fPositionBetween );
-		fRads += (fYOffset + fEffects[PlayerOptions::EFFECT_TORNADO_OFFSET]) * ((fEffects[PlayerOptions::EFFECT_TORNADO_PERIOD] * TORNADO_OFFSET_FREQUENCY) +  TORNADO_OFFSET_FREQUENCY) / SCREEN_HEIGHT;
-
-		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH,
-							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
-
-		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
+		fPixelOffsetFromCenter += CalculateTornadoOffsetFromMagnitude(dim_x,
+			iColNum, fEffects[PlayerOptions::EFFECT_TORNADO],
+			fEffects[PlayerOptions::EFFECT_TORNADO_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TORNADO_PERIOD],
+			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset);
 	}
+	
+	if( fEffects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 40*RageFastSin( (fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
-			( RageFastCos( RageTimer::GetTimeSinceStartFast()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_SPEED]) + iColNum*((fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET]*DRUNK_COLUMN_FREQUENCY)+DRUNK_COLUMN_FREQUENCY)
+			( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_SPEED]) + iColNum*((fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET]*DRUNK_COLUMN_FREQUENCY)+DRUNK_COLUMN_FREQUENCY)
 				      + fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_PERIOD]*DRUNK_OFFSET_FREQUENCY)+DRUNK_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
+
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
 		const int iFirstCol = 0;
@@ -521,8 +647,38 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	{
-		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_PERIOD]*BEAT_OFFSET_HEIGHT)+BEAT_OFFSET_HEIGHT) + PI/BEAT_PI_HEIGHT );
+		const float fShift = data.m_fBeatFactor[dim_x]*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_PERIOD]*BEAT_OFFSET_HEIGHT)+BEAT_OFFSET_HEIGHT) + PI/BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
+	}
+	
+	if( fEffects[PlayerOptions::EFFECT_ZIGZAG] != 0 )
+	{
+		float fResult = RageTriangle( (PI * (1/(fEffects[PlayerOptions::EFFECT_ZIGZAG_PERIOD]+1)) * 
+		((fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_ZIGZAG_OFFSET])))/ARROW_SIZE) ) );
+	    
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_ZIGZAG]*ARROW_SIZE/2) * fResult;
+	}
+	
+	if( fEffects[PlayerOptions::EFFECT_SAWTOOTH] != 0 )
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_SAWTOOTH]*ARROW_SIZE) * 
+			((0.5f / (fEffects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1) * fYOffset) / ARROW_SIZE - 
+			floor((0.5f / (fEffects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1) * fYOffset) / ARROW_SIZE) );
+	
+	if( fEffects[PlayerOptions::EFFECT_PARABOLA_X] != 0 )
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_PARABOLA_X] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
+
+	if( fEffects[PlayerOptions::EFFECT_DIGITAL] != 0 )
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_DIGITAL] * ARROW_SIZE * 0.5f) *
+			round((fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * RageFastSin(
+				(PI * (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET]) ) ) / 
+					(ARROW_SIZE + (fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD] * ARROW_SIZE)) ) ) )/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+	
+	if( fEffects[PlayerOptions::EFFECT_SQUARE] != 0 )
+	{
+		float fResult = RageSquare( (PI * (fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_OFFSET]))) / 
+			(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_SQUARE_PERIOD]*ARROW_SIZE))) );
+		
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_SQUARE] * ARROW_SIZE * 0.5f) * fResult;
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_XMODE] != 0 )
@@ -791,7 +947,7 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse)
 		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] != 0 )
 	{
-		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
+		float f = RageFastSin(ArrowEffects::GetTime()*10);
 		f = Quantize( f, BLINK_MOD_FREQUENCY );
 		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
 	}
@@ -853,13 +1009,67 @@ float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteB
 }
 
 
-float ArrowEffects::GetZPos(int iCol, float fYOffset)
+float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fYOffset)
 {
 	float fZPos=0;
 	const float* fEffects = curr_options->m_fEffects;
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber);
+	
+	// TODO: Don't index by PlayerNumber.
+	const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pPlayerState->m_PlayerNumber];
+	PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
 
+	if( fEffects[PlayerOptions::EFFECT_TORNADO_Z] != 0 )
+	{
+		fZPos += CalculateTornadoOffsetFromMagnitude(dim_z, iCol,
+			fEffects[PlayerOptions::EFFECT_TORNADO_Z],
+			fEffects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD],
+			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset);
+	}
+	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
+		
+	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 )
+	{
+		float fResult = RageTriangle( (PI * (1/(fEffects[PlayerOptions::EFFECT_ZIGZAG_Z_PERIOD]+1)) * 
+			((fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_ZIGZAG_Z_OFFSET])))/ARROW_SIZE) ) );
+	    
+		fZPos += (fEffects[PlayerOptions::EFFECT_ZIGZAG_Z]*ARROW_SIZE/2) * fResult;
+	}
+	
+	if( fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
+		fZPos += (fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z]*ARROW_SIZE) * 
+			((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*fYOffset)/ARROW_SIZE - 
+				floor((0.5f/(fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*fYOffset)/ARROW_SIZE));
+
+	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
+		fZPos += fEffects[PlayerOptions::EFFECT_PARABOLA_Z] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
+
+	if( fEffects[PlayerOptions::EFFECT_DRUNK_Z] != 0 )
+		fZPos += fEffects[PlayerOptions::EFFECT_DRUNK_Z] * 
+			( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + iCol*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*DRUNK_Z_COLUMN_FREQUENCY)+DRUNK_Z_COLUMN_FREQUENCY)
+				+ fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*DRUNK_Z_OFFSET_FREQUENCY)+DRUNK_Z_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
+
+	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 )
+	{
+		const float fShift = data.m_fBeatFactor[dim_z]*RageFastSin( fYOffset / ((fEffects[PlayerOptions::EFFECT_BEAT_Z_PERIOD]*BEAT_Z_OFFSET_HEIGHT)+BEAT_Z_OFFSET_HEIGHT) + PI/BEAT_Z_PI_HEIGHT );
+		fZPos += fEffects[PlayerOptions::EFFECT_BEAT_Z] * fShift;
+	}
+	
+	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
+		fZPos += (fEffects[PlayerOptions::EFFECT_DIGITAL_Z] * ARROW_SIZE * 0.5f) *
+			round((fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1) * RageFastSin(
+				(PI * (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET]) ) ) / 
+					(ARROW_SIZE + (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD] * ARROW_SIZE)) )))/(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+	
+	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
+	{
+		float fResult = RageSquare( (PI * (fYOffset+(1.0f*(fEffects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET]))) / 
+			(ARROW_SIZE+(fEffects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD]*ARROW_SIZE))) );
+		fZPos += (fEffects[PlayerOptions::EFFECT_SQUARE_Z] * ARROW_SIZE * 0.5f) * fResult;
+	}
 
 	return fZPos;
 }
@@ -874,6 +1084,18 @@ bool ArrowEffects::NeedZBuffer()
 	{
 		return true;
 	}
+	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 ||
+		fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
+		return true;
+	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 ||
+		fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
+	{
+		return true;
+	}
+	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
+		return true;
+	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
+		return true;
 	return false;
 }
 
@@ -1000,7 +1222,7 @@ namespace
 	{
 		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 		ArrowEffects::SetCurrentOptions(&ps->m_PlayerOptions.GetCurrent());
-		lua_pushnumber(L, ArrowEffects::GetZPos(IArg(2)-1, FArg(3)));
+		lua_pushnumber(L, ArrowEffects::GetZPos( ps, IArg(2)-1, FArg(3)));
 		return 1;
 	}
 

@@ -3432,9 +3432,17 @@ save yourself some time, copy this for undocumented things:
 	<Function name='BatteryLives' return='int' arguments='int num'>	</Function>
 	<Function name='Backwards' return='bool' arguments='bool value'> </Function>
 	<Function name='Beat' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='BeatOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='BeatMult' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='BeatPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatY' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatYMult' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatYOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatYPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatZ' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatZMult' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BeatZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Big' return='bool' arguments='bool value'> </Function>
 	<Function name='Blink' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Blind' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3445,6 +3453,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Bumpy' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='BumpyOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='BumpyPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BumpyX' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BumpyXOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BumpyXPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Centered' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='CMod' return='float, float' arguments='float value, float approach_speed'>
 		If the player has a CMod set, returns the value of that CMod and its associated approach speed.  Returns nil otherwise.<br />
@@ -3460,6 +3471,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Cover' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Cross' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Dark' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Digital' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DigitalOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DigitalPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DigitalSteps' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DigitalZ' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DigitalZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DigitalZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DigitalZSteps' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Dizzy' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Distant' return='float, float' arguments='float value, float approach_speed'>
 		If the player is using Distant (zero skew and positive tilt), returns the value of tilt and its approach_speed.<br />
@@ -3472,6 +3491,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='DrunkOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='DrunkPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='DrunkSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkZ' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='DrunkZSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Echo' return='bool' arguments='bool value'> </Function>
 	<Function name='Expand' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='ExpandPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3510,6 +3533,13 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Left' return='bool' arguments='bool value'> </Function>
 	<Function name='LifeSetting' return='LifeType' arguments='LifeType type'>	</Function>
 	<Function name='Little' return='bool' arguments='bool value'> </Function>
+	<Function name='ModTimerSetting' return= 'ModTimerType' arguments='ModTimerType type'>
+		Sets the effect clock of certain modifiers for the player, if the optional argument is provided.  Returns the <Link class='ENUM' function='ModTimerType' /> that was previously set.<br />
+		Can also be set through strings in PlayerOptions::FromString().<br />
+		String Examples: 'ModTimerSong', 'modtimerbeat', etc.
+	</Function>
+	<Function name='ModTimerMult' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ModTimerOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='MaxScrollBPM' return='float, float' arguments='float value, float approach_speed'>
 		MaxScrollBPM is one of the variables for controlling the speed mod.<br />
 		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
@@ -3557,6 +3587,9 @@ save yourself some time, copy this for undocumented things:
 		If the player is using Overhead (0 tilt, 0 skew), returns true.<br />
 		If true is passed, sets the tilt and skew to 0.
 	</Function>
+	<Function name='ParabolaX' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ParabolaY' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ParabolaZ' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Passmark' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Planted' return='bool' arguments='bool value'> </Function>
 	<Function name='PlayerAutoPlay' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3567,6 +3600,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Reverse' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Right' return='bool' arguments='bool value'> </Function>
 	<Function name='Roll' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Sawtooth' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SawtoothPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SawtoothZ' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SawtoothZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='ScrollBPM' return='float, float' arguments='float value, float approach_speed'>
 		ScrollBPM is one of the variables for controlling the speed mod.<br />
 		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
@@ -3593,6 +3630,12 @@ save yourself some time, copy this for undocumented things:
 		If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
 	</Function>
 	<Function name='Split' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Square' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SquareOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SquarePeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SquareZ' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SquareZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SquareZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Stealth' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Stomp' return='bool' arguments='bool value'> </Function>
 	<Function name='Sudden' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3614,6 +3657,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Tornado' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='TornadoOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='TornadoPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TornadoZ' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TornadoZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TornadoZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='TurnNone' return='bool' arguments='bool value'> </Function>
 	<Function name='Twirl' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Twister' return='bool' arguments='bool value'> </Function>
@@ -3629,6 +3675,12 @@ save yourself some time, copy this for undocumented things:
 		If the optional second argument is passed, sets the speed at which the transition occurs.
 	</Function>
 	<Function name='Xmode' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Zigzag' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ZigzagOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ZigzagPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ZigzagZ' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ZigzagZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ZigzagZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 </Class>
 <Class name='PlayerStageStats'>
 	<Function name='FailPlayer' return='bool' arguments=''>
