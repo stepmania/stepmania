@@ -656,7 +656,7 @@ float RageSquare( float angle )
 
 float RageTriangle( float angle )
 {
-	float fAngle= fmod(angle, PI * 2.0);
+	float fAngle= fmod(angle, PI * 2.0f);
 	if(fAngle < 0.0)
 	{
 		fAngle+= PI * 2.0;
