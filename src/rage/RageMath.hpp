@@ -30,6 +30,9 @@ namespace Rage
 	
 	/** @brief Calculate the cosine of a number quickly. */
 	float FastCos( float x );
+	
+	float TriangleWave( float x );
+	float SquareWave( float x );
 
 	/** @brief Bring a value within range. */
 	template<typename T>

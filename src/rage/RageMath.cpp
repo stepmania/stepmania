@@ -69,3 +69,36 @@ float Rage::FastCos(float x)
 {
 	return Rage::FastSin( x + (Rage::PI * .5f) );
 }
+
+float Rage::TriangleWave(float x)
+{
+	float fAngle= fmod(x, PI * 2.0f);
+	if(fAngle < 0.0f)
+	{
+		fAngle+= PI * 2.0;
+	}
+	double result= fAngle * (1 / PI);
+	if(result < .5)
+	{
+		return result * 2.0;
+	}
+	else if(result < 1.5)
+	{
+		return 1.0 - ((result - .5) * 2.0);
+	}
+	else
+	{
+		return -4.0 + (result * 2.0);
+	}
+}
+
+float Rage::SquareWave(float x)
+{
+	float fAngle = fmod( x , (PI * 2.0f) );
+		//Hack: This ensures the hold notes don't flicker right before they're hit.
+		if(fAngle < 0.01)
+		{
+		    fAngle+= PI * 2.0;
+		}
+	return fAngle >= PI ? -1.0 : 1.0;
+}
