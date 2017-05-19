@@ -39,9 +39,10 @@ struct ArrowDefects
 	float get_column_x(size_t col);
 
 private:
+	float get_time();
 	float get_x_pos(size_t col, float y_offset);
 	float get_y_pos(size_t col, float y_offset);
-	float get_z_pos(float y_offset);
+	float get_z_pos(size_t col, float y_offset);
 	float get_move_x(size_t col);
 	float get_move_y(size_t col);
 	float get_move_z(size_t col);

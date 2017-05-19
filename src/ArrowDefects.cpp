@@ -37,11 +37,15 @@ static float const	expand_speed_scale_to_low= 1.0f;
 static float const	tipsy_timer_frequency= 1.2f;
 static float const	tipsy_column_frequency= 1.8f;
 static float const	tipsy_arrow_magnitude= .4f;
+
+
 static float const	tornado_position_scale_to_low= -1.0f;
 static float const	tornado_position_scale_to_high= 1.0f;
 static float const	tornado_offset_frequency= 6.0f;
 static float const	tornado_offset_scale_from_low= -1.0f;
 static float const	tornado_offset_scale_from_high= 1.0f;
+
+
 static float const	drunk_column_frequency= .2f;
 static float const	drunk_offset_frequency= 10.0f;
 static float const	drunk_arrow_magnitude= .5f;
@@ -65,6 +69,25 @@ ArrowDefects::ArrowDefects()
 float ArrowDefects::get_notefield_height()
 {
 	return SCREEN_HEIGHT + fabsf(m_options->m_fTilt)*200;
+}
+
+float ArrowDefects::get_time()
+{
+	float mult = 1.f + m_options->m_fModTimerMult;
+	float offset = m_options->m_fModTimerOffset;
+	ModTimerType modtimer = m_options->m_ModTimerType;
+	switch(modtimer)
+	{
+	    case ModTimerType_Game:
+		return (RageTimer::GetTimeSinceStartFast()+offset)*mult;
+	    case ModTimerType_Beat:
+		return (GAMESTATE->m_Position.m_fSongBeatVisible+offset)*mult;
+	    case ModTimerType_Default:
+	    case ModTimerType_Song:
+		return (GAMESTATE->m_Position.m_fMusicSeconds+offset)*mult;
+	    default:
+		return RageTimer::GetTimeSinceStartFast()+offset;
+	}
 }
 
 void ArrowDefects::set_player_options(PlayerOptions const* options)
@@ -200,7 +223,8 @@ void ArrowDefects::update(float music_beat, float music_second)
 	}
 	if(effects[PlayerOptions::EFFECT_TIPSY] != 0.f)
 	{
-		float const time_times_timer= m_music_second * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * tipsy_timer_frequency) + tipsy_timer_frequency);
+		float const time= ArrowDefects::get_time();
+		float const time_times_timer= time * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * tipsy_timer_frequency) + tipsy_timer_frequency);
 		float const arrow_times_mag= arrow_spacing * tipsy_arrow_magnitude;
 		for(size_t col= 0; col < m_num_columns; ++col)
 		{
@@ -401,7 +425,7 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	if(effects[PlayerOptions::EFFECT_DRUNK] != 0.f)
 	{
 		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_DRUNK] *
-			(Rage::FastCos((m_music_second * (1+effects[PlayerOptions::EFFECT_DRUNK_SPEED])) + (col * ((effects[PlayerOptions::EFFECT_DRUNK_OFFSET] * drunk_column_frequency) + drunk_column_frequency)) +
+			(Rage::FastCos(( get_time() * (1+effects[PlayerOptions::EFFECT_DRUNK_SPEED])) + (col * ((effects[PlayerOptions::EFFECT_DRUNK_OFFSET] * drunk_column_frequency) + drunk_column_frequency)) +
 				((y_offset * ((effects[PlayerOptions::EFFECT_DRUNK_PERIOD]*drunk_offset_frequency)+drunk_offset_frequency)) / SCREEN_HEIGHT)) *
 				arrow_spacing * drunk_arrow_magnitude);
 	}
@@ -423,6 +447,13 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 		float const shift= m_beat_factor * Rage::FastSin(y_offset /
 			((effects[PlayerOptions::EFFECT_BEAT_PERIOD] * beat_offset_height) + beat_offset_height) + Rage::PI / beat_pi_height);
 		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_BEAT] * shift;
+	}
+	
+	if( effects[PlayerOptions::EFFECT_SAWTOOTH] != 0 )
+	{
+		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_SAWTOOTH]*arrow_spacing) * 
+			((0.5f / (effects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1) * y_offset) / arrow_spacing - 
+			floor((0.5f / (effects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1) * y_offset) / arrow_spacing) );
 	}
 	if(effects[PlayerOptions::EFFECT_XMODE] != 0.f)
 	{
@@ -480,15 +511,30 @@ float ArrowDefects::get_y_pos(size_t col, float y_offset)
 	return y_offset;
 }
 
-float ArrowDefects::get_z_pos(float y_offset)
+float ArrowDefects::get_z_pos(size_t col, float y_offset)
 {
+	float zpos=0;
 	float const* effects= m_options->m_fEffects;
 	if(effects[PlayerOptions::EFFECT_BUMPY] != 0.f)
 	{
-		return effects[PlayerOptions::EFFECT_BUMPY] *
+		zpos += effects[PlayerOptions::EFFECT_BUMPY] *
 			40 * Rage::FastSin((y_offset + (100.f * effects[PlayerOptions::EFFECT_BUMPY_OFFSET])) / ((effects[PlayerOptions::EFFECT_BUMPY_PERIOD] * 16.f) + 16.f));
 	}
-	return 0.f;
+	
+	if( effects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
+	{
+		zpos += (effects[PlayerOptions::EFFECT_SAWTOOTH_Z]*arrow_spacing) * 
+			((0.5f/(effects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*y_offset)/arrow_spacing - 
+				floor((0.5f/(effects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*y_offset)/arrow_spacing));
+	}
+
+	if( effects[PlayerOptions::EFFECT_DRUNK_Z] != 0 )
+	{
+		zpos += effects[PlayerOptions::EFFECT_DRUNK_Z] * 
+			( Rage::FastCos( get_time()*(1+effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + col*((effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*drunk_column_frequency)+drunk_column_frequency)
+				+ y_offset*((effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*drunk_offset_frequency)+drunk_offset_frequency)/SCREEN_HEIGHT) * arrow_spacing*drunk_arrow_magnitude );
+	}
+	return zpos;
 }
 
 
@@ -560,7 +606,7 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 	// get_y_pos is passed the reverse shifted y offset to avoid applying the
 	// shift wrong. -Kyz
 	trans.pos.y= get_move_y(col) + get_y_pos(col, shifted_offset);
-	trans.pos.z= get_move_z(col) + get_z_pos(y_offset);
+	trans.pos.z= get_move_z(col) + get_z_pos(col, y_offset);
 	trans.rot.x= 0.f;
 	trans.rot.y= get_rotation_y(y_offset);
 	trans.rot.z= 0.f;
@@ -618,7 +664,7 @@ void ArrowDefects::hold_render_transform(float y_offset, size_t col,
 	// get_y_pos is passed a y offset of 0 because the hold rendering logic
 	// applies the reverse shift. -Kyz
 	trans.pos.y= get_move_y(col) + get_y_pos(col, 0.f);
-	trans.pos.z= get_move_z(col) + get_z_pos(y_offset);
+	trans.pos.z= get_move_z(col) + get_z_pos(col, y_offset);
 	trans.rot.x= 0.f;
 	trans.rot.y= get_rotation_y(y_offset);
 	trans.rot.z= 0.f;
@@ -668,7 +714,7 @@ float ArrowDefects::get_percent_visible(float y_offset)
 	visible_adjust-= appearances[PlayerOptions::APPEARANCE_STEALTH];
 	if(appearances[PlayerOptions::APPEARANCE_BLINK] != 0.f)
 	{
-		float blink= Rage::FastSin(m_music_second * 10);
+		float blink= Rage::FastSin(ArrowDefects::get_time() * 10);
 		blink= Quantize(blink, blink_mod_frequency);
 		visible_adjust+= Rage::scale(blink, 0.f, 1.f, -1.f, 0.f);
 	}

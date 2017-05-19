@@ -40,6 +40,19 @@ std::string const DrainTypeToString( DrainType cat );
 std::string const DrainTypeToLocalizedString( DrainType cat );
 LuaDeclareType( DrainType );
 
+enum ModTimerType
+{
+	ModTimerType_Game,
+	ModTimerType_Beat,
+	ModTimerType_Song,
+	ModTimerType_Default,
+	NUM_ModTimerType,
+	ModTimerType_Invalid
+};
+std::string const ModTimerTypeToString( ModTimerType cat );
+std::string const ModTimerTypeToLocalizedString( ModTimerType cat );
+LuaDeclareType( ModTimerType );
+
 /** @brief Per-player options that are not saved between sessions. */
 class PlayerOptions
 {
@@ -49,6 +62,7 @@ public:
 	 *
 	 * This code was taken from Init() to use proper initialization. */
 	PlayerOptions(): m_LifeType(LifeType_Bar), m_DrainType(DrainType_Normal),
+		m_ModTimerType(ModTimerType_Default),
 		m_BatteryLives(4),
 		m_bSetScrollSpeed(false),
 		m_fTimeSpacing(0), m_SpeedfTimeSpacing(1.0f),
@@ -65,6 +79,8 @@ public:
 		m_fSkew(0), m_SpeedfSkew(1.0f),
 		m_fPassmark(0), m_SpeedfPassmark(1.0f),
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
+		m_fModTimerMult(0), m_SpeedfModTimerMult(1.0f),
+		m_fModTimerOffset(0), m_SpeedfModTimerOffset(1.0f),
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
@@ -119,6 +135,10 @@ public:
 		EFFECT_DRUNK_SPEED,
 		EFFECT_DRUNK_OFFSET,
 		EFFECT_DRUNK_PERIOD,
+		EFFECT_DRUNK_Z,
+		EFFECT_DRUNK_Z_SPEED,
+		EFFECT_DRUNK_Z_OFFSET,
+		EFFECT_DRUNK_Z_PERIOD,
 		EFFECT_DIZZY,
 		EFFECT_CONFUSION,
 		EFFECT_CONFUSION_OFFSET,
@@ -143,6 +163,10 @@ public:
 		EFFECT_BEAT_OFFSET,
 		EFFECT_BEAT_PERIOD,
 		EFFECT_BEAT_MULT,
+		EFFECT_SAWTOOTH,
+		EFFECT_SAWTOOTH_PERIOD,
+		EFFECT_SAWTOOTH_Z,
+		EFFECT_SAWTOOTH_Z_PERIOD,
 		EFFECT_XMODE,
 		EFFECT_TWIRL,
 		EFFECT_ROLL,
@@ -212,6 +236,7 @@ public:
 
 	LifeType m_LifeType;
 	DrainType m_DrainType;	// only used with LifeBar
+	ModTimerType m_ModTimerType;
 	int m_BatteryLives;
 	/* All floats have a corresponding speed setting, which determines how fast
 	 * PlayerOptions::Approach approaches. */
@@ -238,6 +263,8 @@ public:
 	float		m_fPassmark,			m_SpeedfPassmark;
 
 	float	m_fRandomSpeed,			m_SpeedfRandomSpeed;
+	float	m_fModTimerMult,		m_SpeedfModTimerMult;
+	float	m_fModTimerOffset,		m_SpeedfModTimerOffset;
 	/* The maximum column number is 16.*/
 	float	m_fMovesX[16],			m_SpeedfMovesX[16];
 	float	m_fMovesY[16],			m_SpeedfMovesY[16];
