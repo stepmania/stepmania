@@ -278,10 +278,19 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],	"BumpyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],	"BumpyPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X],		"BumpyX" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X_OFFSET],	"BumpyXOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X_PERIOD],	"BumpyXPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_MULT],		"BeatMult" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG],		"Zigzag" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_PERIOD],	"ZigzagPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_OFFSET],	"ZigzagOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_Z],		"ZigzagZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_Z_PERIOD],	"ZigzagZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_Z_OFFSET],	"ZigzagZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH],		"Sawtooth" );
 	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_PERIOD],	"SawtoothPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_Z],		"SawtoothZ" );
@@ -640,10 +649,19 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"bumpy", EFFECT_BUMPY},
 			{"bumpyoffset", EFFECT_BUMPY_OFFSET},
 			{"bumpyperiod", EFFECT_BUMPY_PERIOD},
+			{"bumpyx", EFFECT_BUMPY_X},
+			{"bumpyxoffset", EFFECT_BUMPY_X_OFFSET},
+			{"bumpyxperiod", EFFECT_BUMPY_X_PERIOD},
 			{"beat", EFFECT_BEAT},
 			{"beatoffset", EFFECT_BEAT_OFFSET},
 			{"beatperiod", EFFECT_BEAT_PERIOD},
 			{"beatmult", EFFECT_BEAT_MULT},
+			{"zigzag", EFFECT_ZIGZAG},
+			{"zigzagoffset", EFFECT_ZIGZAG_OFFSET},
+			{"zigzagperiod", EFFECT_ZIGZAG_PERIOD},
+			{"zigzagz", EFFECT_ZIGZAG_Z},
+			{"zigzagzoffset", EFFECT_ZIGZAG_Z_OFFSET},
+			{"zigzagzperiod", EFFECT_ZIGZAG_Z_PERIOD},
 			{"sawtooth", EFFECT_SAWTOOTH},
 			{"sawtoothperiod", EFFECT_SAWTOOTH_PERIOD},
 			{"sawtoothz", EFFECT_SAWTOOTH_Z},
@@ -1379,10 +1397,19 @@ public:
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
 	FLOAT_INTERFACE(BumpyOffset, Effects[PlayerOptions::EFFECT_BUMPY_OFFSET], true);
 	FLOAT_INTERFACE(BumpyPeriod, Effects[PlayerOptions::EFFECT_BUMPY_PERIOD], true);
+	FLOAT_INTERFACE(BumpyX, Effects[PlayerOptions::EFFECT_BUMPY_X], true);
+	FLOAT_INTERFACE(BumpyXOffset, Effects[PlayerOptions::EFFECT_BUMPY_X_OFFSET], true);
+	FLOAT_INTERFACE(BumpyXPeriod, Effects[PlayerOptions::EFFECT_BUMPY_X_PERIOD], true);
 	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT], true);
 	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
 	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
 	FLOAT_INTERFACE(BeatMult, Effects[PlayerOptions::EFFECT_BEAT_MULT], true);
+	FLOAT_INTERFACE(Zigzag, Effects[PlayerOptions::EFFECT_ZIGZAG], true);
+	FLOAT_INTERFACE(ZigzagPeriod, Effects[PlayerOptions::EFFECT_ZIGZAG_PERIOD], true);
+	FLOAT_INTERFACE(ZigzagOffset, Effects[PlayerOptions::EFFECT_ZIGZAG_OFFSET], true);
+	FLOAT_INTERFACE(ZigzagZ, Effects[PlayerOptions::EFFECT_ZIGZAG_Z], true);
+	FLOAT_INTERFACE(ZigzagZPeriod, Effects[PlayerOptions::EFFECT_ZIGZAG_Z_PERIOD], true);
+	FLOAT_INTERFACE(ZigzagZOffset, Effects[PlayerOptions::EFFECT_ZIGZAG_Z_OFFSET], true);
 	FLOAT_INTERFACE(Sawtooth, Effects[PlayerOptions::EFFECT_SAWTOOTH], true);
 	FLOAT_INTERFACE(SawtoothPeriod, Effects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD], true);
 	FLOAT_INTERFACE(SawtoothZ, Effects[PlayerOptions::EFFECT_SAWTOOTH_Z], true);
@@ -1765,10 +1792,19 @@ public:
 		ADD_METHOD(Bumpy);
 		ADD_METHOD(BumpyOffset);
 		ADD_METHOD(BumpyPeriod);
+		ADD_METHOD(BumpyX);
+		ADD_METHOD(BumpyXOffset);
+		ADD_METHOD(BumpyXPeriod);
 		ADD_METHOD(Beat);
 		ADD_METHOD(BeatOffset);
 		ADD_METHOD(BeatPeriod);
 		ADD_METHOD(BeatMult);
+		ADD_METHOD(Zigzag);
+		ADD_METHOD(ZigzagPeriod);
+		ADD_METHOD(ZigzagOffset);
+		ADD_METHOD(ZigzagZ);
+		ADD_METHOD(ZigzagZPeriod);
+		ADD_METHOD(ZigzagZOffset);
 		ADD_METHOD(Sawtooth);
 		ADD_METHOD(SawtoothPeriod);
 		ADD_METHOD(SawtoothZ);

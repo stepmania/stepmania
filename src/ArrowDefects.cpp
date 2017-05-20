@@ -37,15 +37,11 @@ static float const	expand_speed_scale_to_low= 1.0f;
 static float const	tipsy_timer_frequency= 1.2f;
 static float const	tipsy_column_frequency= 1.8f;
 static float const	tipsy_arrow_magnitude= .4f;
-
-
 static float const	tornado_position_scale_to_low= -1.0f;
 static float const	tornado_position_scale_to_high= 1.0f;
 static float const	tornado_offset_frequency= 6.0f;
 static float const	tornado_offset_scale_from_low= -1.0f;
 static float const	tornado_offset_scale_from_high= 1.0f;
-
-
 static float const	drunk_column_frequency= .2f;
 static float const	drunk_offset_frequency= 10.0f;
 static float const	drunk_arrow_magnitude= .5f;
@@ -422,6 +418,12 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 		pixel_offset_from_center+= (adjusted_pixel_offset - m_column_x[col]) *
 			effects[PlayerOptions::EFFECT_TORNADO];
 	}
+	if( effects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
+	{
+		pixel_offset_from_center += effects[PlayerOptions::EFFECT_BUMPY_X] * 
+			40*Rage::FastSin( (y_offset+(100.0f*(effects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/
+			((effects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
+	}
 	if(effects[PlayerOptions::EFFECT_DRUNK] != 0.f)
 	{
 		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_DRUNK] *
@@ -448,8 +450,14 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 			((effects[PlayerOptions::EFFECT_BEAT_PERIOD] * beat_offset_height) + beat_offset_height) + Rage::PI / beat_pi_height);
 		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_BEAT] * shift;
 	}
-	
-	if( effects[PlayerOptions::EFFECT_SAWTOOTH] != 0 )
+	if(effects[PlayerOptions::EFFECT_ZIGZAG] != 0.f)
+	{
+		float result = Rage::TriangleWave( (Rage::PI * (1/(effects[PlayerOptions::EFFECT_ZIGZAG_PERIOD]+1)) * 
+		((y_offset+(100.0f*(effects[PlayerOptions::EFFECT_ZIGZAG_OFFSET])))/arrow_spacing) ) );
+	    
+		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_ZIGZAG]*arrow_spacing/2) * result;
+	}
+	if(effects[PlayerOptions::EFFECT_SAWTOOTH] != 0.f)
 	{
 		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_SAWTOOTH]*arrow_spacing) * 
 			((0.5f / (effects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1) * y_offset) / arrow_spacing - 
@@ -520,7 +528,13 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 		zpos += effects[PlayerOptions::EFFECT_BUMPY] *
 			40 * Rage::FastSin((y_offset + (100.f * effects[PlayerOptions::EFFECT_BUMPY_OFFSET])) / ((effects[PlayerOptions::EFFECT_BUMPY_PERIOD] * 16.f) + 16.f));
 	}
-	
+	if( effects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 )
+	{
+		float result = Rage::TriangleWave( (Rage::PI * (1/(effects[PlayerOptions::EFFECT_ZIGZAG_Z_PERIOD]+1)) * 
+			((y_offset+(100.0f*(effects[PlayerOptions::EFFECT_ZIGZAG_Z_OFFSET])))/arrow_spacing) ) );
+	    
+		zpos += (effects[PlayerOptions::EFFECT_ZIGZAG_Z]*arrow_spacing/2) * result;
+	}
 	if( effects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
 	{
 		zpos += (effects[PlayerOptions::EFFECT_SAWTOOTH_Z]*arrow_spacing) * 
