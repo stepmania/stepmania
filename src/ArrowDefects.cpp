@@ -338,6 +338,7 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 		return y_offset * scroll_speed;
 	}
 	float const* accels= m_options->m_fAccels;
+	const float* effects= m_options->m_fEffects;
 	float y_adjust= 0.f;
 	if(accels[PlayerOptions::ACCEL_BOOST] != 0.f)
 	{
@@ -367,6 +368,10 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 	{
 		y_adjust+= accels[PlayerOptions::ACCEL_WAVE] * wave_mod_magnitude *
 			Rage::FastSin(y_offset / ((accels[PlayerOptions::ACCEL_WAVE_PERIOD]*wave_mod_height)+wave_mod_height));
+	}
+	if(effects[PlayerOptions::EFFECT_PARABOLA_Y] != 0.f)
+	{
+		y_adjust += effects[PlayerOptions::EFFECT_PARABOLA_Y] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing);
 	}
 	y_offset+= y_adjust;
 	if(accels[PlayerOptions::ACCEL_BOOMERANG] != 0.f)
@@ -463,6 +468,24 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 			((0.5f / (effects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1) * y_offset) / arrow_spacing - 
 			floor((0.5f / (effects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD]+1) * y_offset) / arrow_spacing) );
 	}
+	if(effects[PlayerOptions::EFFECT_PARABOLA_X] != 0.f)
+	{
+		pixel_offset_from_center += effects[PlayerOptions::EFFECT_PARABOLA_X] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing);
+	}
+	if(effects[PlayerOptions::EFFECT_DIGITAL] != 0.f)
+	{
+		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_DIGITAL] * arrow_spacing * 0.5f) *
+			round((effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * Rage::FastSin(
+				(Rage::PI * (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_DIGITAL_OFFSET]) ) ) / 
+					(arrow_spacing + (effects[PlayerOptions::EFFECT_DIGITAL_PERIOD] * arrow_spacing)) ) ) )/(effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+	}
+	if(effects[PlayerOptions::EFFECT_SQUARE] != 0.f)
+	{
+		float result = Rage::SquareWave( (Rage::PI * (y_offset+(1.0f*(effects[PlayerOptions::EFFECT_SQUARE_OFFSET]))) / 
+			(arrow_spacing+(effects[PlayerOptions::EFFECT_SQUARE_PERIOD]*arrow_spacing))) );
+		
+		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_SQUARE] * arrow_spacing * 0.5f) * result;
+	}
 	if(effects[PlayerOptions::EFFECT_XMODE] != 0.f)
 	{
 		// based off of code by v1toko for StepNXA, except it should work on
@@ -528,25 +551,41 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 		zpos += effects[PlayerOptions::EFFECT_BUMPY] *
 			40 * Rage::FastSin((y_offset + (100.f * effects[PlayerOptions::EFFECT_BUMPY_OFFSET])) / ((effects[PlayerOptions::EFFECT_BUMPY_PERIOD] * 16.f) + 16.f));
 	}
-	if( effects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 )
+	if(effects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0.f)
 	{
 		float result = Rage::TriangleWave( (Rage::PI * (1/(effects[PlayerOptions::EFFECT_ZIGZAG_Z_PERIOD]+1)) * 
 			((y_offset+(100.0f*(effects[PlayerOptions::EFFECT_ZIGZAG_Z_OFFSET])))/arrow_spacing) ) );
 	    
 		zpos += (effects[PlayerOptions::EFFECT_ZIGZAG_Z]*arrow_spacing/2) * result;
 	}
-	if( effects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
+	if(effects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0.f)
 	{
 		zpos += (effects[PlayerOptions::EFFECT_SAWTOOTH_Z]*arrow_spacing) * 
 			((0.5f/(effects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*y_offset)/arrow_spacing - 
 				floor((0.5f/(effects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD]+1)*y_offset)/arrow_spacing));
 	}
-
-	if( effects[PlayerOptions::EFFECT_DRUNK_Z] != 0 )
+	if(effects[PlayerOptions::EFFECT_PARABOLA_Z] != 0.f)
+	{
+		zpos += effects[PlayerOptions::EFFECT_PARABOLA_Z] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing);
+	}
+	if(effects[PlayerOptions::EFFECT_DRUNK_Z] != 0.f)
 	{
 		zpos += effects[PlayerOptions::EFFECT_DRUNK_Z] * 
 			( Rage::FastCos( get_time()*(1+effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + col*((effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*drunk_column_frequency)+drunk_column_frequency)
 				+ y_offset*((effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*drunk_offset_frequency)+drunk_offset_frequency)/SCREEN_HEIGHT) * arrow_spacing*drunk_arrow_magnitude );
+	}
+	if(effects[PlayerOptions::EFFECT_DIGITAL_Z] != 0.f)
+	{
+		zpos += (effects[PlayerOptions::EFFECT_DIGITAL_Z] * arrow_spacing * 0.5f) *
+			round((effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1) * Rage::FastSin(
+				(Rage::PI * (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET]) ) ) / 
+					(arrow_spacing + (effects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD] * arrow_spacing)) )))/(effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+	}
+	if(effects[PlayerOptions::EFFECT_SQUARE_Z] != 0.f)
+	{
+		float result = Rage::SquareWave( (Rage::PI * (y_offset+(1.0f*(effects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET]))) / 
+			(arrow_spacing+(effects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD]*arrow_spacing))) );
+		zpos += (effects[PlayerOptions::EFFECT_SQUARE_Z] * arrow_spacing * 0.5f) * result;
 	}
 	return zpos;
 }

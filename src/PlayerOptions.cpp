@@ -295,6 +295,23 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_PERIOD],	"SawtoothPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_Z],		"SawtoothZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_SAWTOOTH_Z_PERIOD],	"SawtoothZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE],		"Square" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_OFFSET],	"SquareOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_PERIOD],	"SquarePeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z],		"SquareZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z_OFFSET],	"SquareZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_SQUARE_Z_PERIOD],	"SquareZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL],		"Digital" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_STEPS],	"DigitalSteps" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_PERIOD],	"DigitalPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_OFFSET],	"DigitalOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z],		"DigitalZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_STEPS],	"DigitalZSteps" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_PERIOD],	"DigitalZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_OFFSET],	"DigitalZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_X],		"ParabolaX" );
+	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Y],		"ParabolaY" );
+	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Z],		"ParabolaZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
 	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
@@ -656,6 +673,14 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"beatoffset", EFFECT_BEAT_OFFSET},
 			{"beatperiod", EFFECT_BEAT_PERIOD},
 			{"beatmult", EFFECT_BEAT_MULT},
+			{"digital", EFFECT_DIGITAL},
+			{"digitalsteps", EFFECT_DIGITAL_STEPS},
+			{"digitalperiod", EFFECT_DIGITAL_PERIOD},
+			{"digitaloffset", EFFECT_DIGITAL_OFFSET},
+			{"digitalz", EFFECT_DIGITAL_Z},
+			{"digitalzsteps", EFFECT_DIGITAL_Z_STEPS},
+			{"digitalzperiod", EFFECT_DIGITAL_Z_PERIOD},
+			{"digitalzoffset", EFFECT_DIGITAL_Z_OFFSET},
 			{"zigzag", EFFECT_ZIGZAG},
 			{"zigzagoffset", EFFECT_ZIGZAG_OFFSET},
 			{"zigzagperiod", EFFECT_ZIGZAG_PERIOD},
@@ -666,6 +691,15 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"sawtoothperiod", EFFECT_SAWTOOTH_PERIOD},
 			{"sawtoothz", EFFECT_SAWTOOTH_Z},
 			{"sawtoothzperiod", EFFECT_SAWTOOTH_Z_PERIOD},
+			{"square",EFFECT_SQUARE},
+			{"squareoffset",EFFECT_SQUARE_OFFSET},
+			{"squareperiod",EFFECT_SQUARE_PERIOD},
+			{"squarez",EFFECT_SQUARE_Z},
+			{"squarezoffset",EFFECT_SQUARE_Z_OFFSET},
+			{"squarezperiod",EFFECT_SQUARE_Z_PERIOD},
+			{"parabolax", EFFECT_PARABOLA_X},
+			{"parabolay", EFFECT_PARABOLA_Y},
+			{"parabolaz", EFFECT_PARABOLA_Z},
 			{"xmode", EFFECT_XMODE},
 			{"twirl", EFFECT_TWIRL},
 			{"roll", EFFECT_ROLL},
@@ -1414,6 +1448,23 @@ public:
 	FLOAT_INTERFACE(SawtoothPeriod, Effects[PlayerOptions::EFFECT_SAWTOOTH_PERIOD], true);
 	FLOAT_INTERFACE(SawtoothZ, Effects[PlayerOptions::EFFECT_SAWTOOTH_Z], true);
 	FLOAT_INTERFACE(SawtoothZPeriod, Effects[PlayerOptions::EFFECT_SAWTOOTH_Z_PERIOD], true);
+	FLOAT_INTERFACE(Square, Effects[PlayerOptions::EFFECT_SQUARE], true);
+	FLOAT_INTERFACE(SquareOffset, Effects[PlayerOptions::EFFECT_SQUARE_OFFSET], true);
+	FLOAT_INTERFACE(SquarePeriod, Effects[PlayerOptions::EFFECT_SQUARE_PERIOD], true);
+	FLOAT_INTERFACE(SquareZ, Effects[PlayerOptions::EFFECT_SQUARE_Z], true);
+	FLOAT_INTERFACE(SquareZOffset, Effects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET], true);
+	FLOAT_INTERFACE(SquareZPeriod, Effects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD], true);
+	FLOAT_INTERFACE(Digital, Effects[PlayerOptions::EFFECT_DIGITAL], true);
+	FLOAT_INTERFACE(DigitalSteps, Effects[PlayerOptions::EFFECT_DIGITAL_STEPS], true);
+	FLOAT_INTERFACE(DigitalPeriod, Effects[PlayerOptions::EFFECT_DIGITAL_PERIOD], true);
+	FLOAT_INTERFACE(DigitalOffset, Effects[PlayerOptions::EFFECT_DIGITAL_OFFSET], true);
+	FLOAT_INTERFACE(DigitalZ, Effects[PlayerOptions::EFFECT_DIGITAL_Z], true);
+	FLOAT_INTERFACE(DigitalZSteps, Effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS], true);
+	FLOAT_INTERFACE(DigitalZPeriod, Effects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD], true);
+	FLOAT_INTERFACE(DigitalZOffset, Effects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET], true);
+	FLOAT_INTERFACE(ParabolaX, Effects[PlayerOptions::EFFECT_PARABOLA_X], true);
+	FLOAT_INTERFACE(ParabolaY, Effects[PlayerOptions::EFFECT_PARABOLA_Y], true);
+	FLOAT_INTERFACE(ParabolaZ, Effects[PlayerOptions::EFFECT_PARABOLA_Z], true);
 	FLOAT_INTERFACE(Xmode, Effects[PlayerOptions::EFFECT_XMODE], true);
 	FLOAT_INTERFACE(Twirl, Effects[PlayerOptions::EFFECT_TWIRL], true);
 	FLOAT_INTERFACE(Roll, Effects[PlayerOptions::EFFECT_ROLL], true);
@@ -1809,6 +1860,23 @@ public:
 		ADD_METHOD(SawtoothPeriod);
 		ADD_METHOD(SawtoothZ);
 		ADD_METHOD(SawtoothZPeriod);
+		ADD_METHOD(Square);
+		ADD_METHOD(SquareOffset);
+		ADD_METHOD(SquarePeriod);
+		ADD_METHOD(SquareZ);
+		ADD_METHOD(SquareZOffset);
+		ADD_METHOD(SquareZPeriod);
+		ADD_METHOD(Digital);
+		ADD_METHOD(DigitalSteps);
+		ADD_METHOD(DigitalPeriod);
+		ADD_METHOD(DigitalOffset);
+		ADD_METHOD(DigitalZ);
+		ADD_METHOD(DigitalZSteps);
+		ADD_METHOD(DigitalZPeriod);
+		ADD_METHOD(DigitalZOffset);
+		ADD_METHOD(ParabolaX);
+		ADD_METHOD(ParabolaY);
+		ADD_METHOD(ParabolaZ);
 		ADD_METHOD(Xmode);
 		ADD_METHOD(Twirl);
 		ADD_METHOD(Roll);
