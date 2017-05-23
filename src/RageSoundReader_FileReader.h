@@ -29,7 +29,7 @@ public:
 	/* Takes ownership of pFile (even on failure). */
 	virtual OpenResult Open( RageFileBasic *pFile ) = 0;
 	virtual float GetStreamToSourceRatio() const { return 1.0f; }
-	virtual RString GetError() const { return m_sError; }
+	virtual RString GetRSRError() const { return m_sError; }
 
 	/* Open a file.  If pPrebuffer is non-NULL, and the file is sufficiently small,
 	 * the (possibly compressed) data will be loaded entirely into memory, and pPrebuffer

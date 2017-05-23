@@ -643,7 +643,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( RageFileBasic 
 		SetError( "Failed to read any data at all" );
 		return OPEN_UNKNOWN_FILE_FORMAT;
 	case -1:
-		SetError( GetError() + " (not an MP3 stream?)" );
+		SetError( GetRSRError() + " (not an MP3 stream?)" );
 		return OPEN_UNKNOWN_FILE_FORMAT;
 	}
 
@@ -719,7 +719,7 @@ int RageSoundReader_MP3::Read( float *buf, int iFrames )
 		if( ret == 0 )
 			return END_OF_FILE;
 		if( ret == -1 )
-			return ERROR;
+			return ERROR_;
 
 		synth_output();
 	}

@@ -23,7 +23,7 @@ public:
 	virtual bool SetProperty( const RString &sProperty, float fValue );
 	virtual int GetNextSourceFrame() const;
 	virtual float GetStreamToSourceRatio() const;
-	virtual RString GetError() const;
+	virtual RString GetRSRError() const;
 
 	void AddSourceChannelToSound( int iFromChannel, int iToChannel );
 

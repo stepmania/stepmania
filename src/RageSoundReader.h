@@ -20,7 +20,7 @@ public:
 	/* Return values for Read(). */
 	enum {
 		/* An error occurred; GetError() will return a description of the error. */
-		ERROR = -1,
+		ERROR_ = -1,
 		END_OF_FILE = -2,
 
 		/* A nonblocking buffer in the filter chain has underrun, and no data is
@@ -39,7 +39,7 @@ public:
 	virtual int GetNextSourceFrame() const = 0;
 	virtual float GetStreamToSourceRatio() const = 0;
 
-	virtual RString GetError() const = 0;
+	virtual RString GetRSRError() const = 0;
 	int RetriedRead( float *pBuffer, int iFrames, int *iSourceFrame = NULL, float *fRate = NULL );
 };
 

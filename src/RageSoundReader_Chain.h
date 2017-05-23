@@ -40,7 +40,7 @@ public:
 	bool SetProperty( const RString &sProperty, float fValue );
 	int GetNextSourceFrame() const;
 	float GetStreamToSourceRatio() const;
-	RString GetError() const { return ""; }
+	RString GetRSRError() const { return ""; }
 
 private:
 	int GetSampleRateInternal() const;
