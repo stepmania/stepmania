@@ -272,6 +272,9 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_PERIOD],	"TornadoPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_OFFSET],	"TornadoOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_Z],	"TornadoZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_Z_PERIOD],	"TornadoZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_Z_OFFSET],	"TornadoZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
@@ -285,6 +288,14 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_MULT],		"BeatMult" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Y],		"BeatY" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Y_OFFSET],	"BeatYOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Y_PERIOD],	"BeatYPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Y_MULT],		"BeatYMult" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Z],		"BeatZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Z_OFFSET],	"BeatZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Z_PERIOD],	"BeatZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT_Z_MULT],		"BeatZMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG],		"Zigzag" );
 	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_PERIOD],	"ZigzagPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_ZIGZAG_OFFSET],	"ZigzagOffset" );
@@ -660,6 +671,9 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"tornado", EFFECT_TORNADO},
 			{"tornadoperiod", EFFECT_TORNADO_PERIOD},
 			{"tornadooffset", EFFECT_TORNADO_OFFSET},
+			{"tornadoz", EFFECT_TORNADO_Z},
+			{"tornadozperiod", EFFECT_TORNADO_Z_PERIOD},
+			{"tornadozoffset", EFFECT_TORNADO_Z_OFFSET},
 			{"tipsy", EFFECT_TIPSY},
 			{"tipsyspeed", EFFECT_TIPSY_SPEED},
 			{"tipsyoffset", EFFECT_TIPSY_OFFSET},
@@ -673,6 +687,14 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"beatoffset", EFFECT_BEAT_OFFSET},
 			{"beatperiod", EFFECT_BEAT_PERIOD},
 			{"beatmult", EFFECT_BEAT_MULT},
+			{"beaty", EFFECT_BEAT_Y},
+			{"beatyoffset", EFFECT_BEAT_Y_OFFSET},
+			{"beatyperiod", EFFECT_BEAT_Y_PERIOD},
+			{"beatymult", EFFECT_BEAT_Y_MULT},
+			{"beatz", EFFECT_BEAT_Z},
+			{"beatzoffset", EFFECT_BEAT_Z_OFFSET},
+			{"beatzperiod", EFFECT_BEAT_Z_PERIOD},
+			{"beatzmult", EFFECT_BEAT_Z_MULT},
 			{"digital", EFFECT_DIGITAL},
 			{"digitalsteps", EFFECT_DIGITAL_STEPS},
 			{"digitalperiod", EFFECT_DIGITAL_PERIOD},
@@ -1425,6 +1447,9 @@ public:
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
 	FLOAT_INTERFACE(TornadoPeriod, Effects[PlayerOptions::EFFECT_TORNADO_PERIOD], true);
 	FLOAT_INTERFACE(TornadoOffset, Effects[PlayerOptions::EFFECT_TORNADO_OFFSET], true);
+	FLOAT_INTERFACE(TornadoZ, Effects[PlayerOptions::EFFECT_TORNADO_Z], true);
+	FLOAT_INTERFACE(TornadoZPeriod, Effects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD], true);
+	FLOAT_INTERFACE(TornadoZOffset, Effects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
 	FLOAT_INTERFACE(TipsySpeed, Effects[PlayerOptions::EFFECT_TIPSY_SPEED], true);
 	FLOAT_INTERFACE(TipsyOffset, Effects[PlayerOptions::EFFECT_TIPSY_OFFSET], true);
@@ -1438,6 +1463,14 @@ public:
 	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
 	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
 	FLOAT_INTERFACE(BeatMult, Effects[PlayerOptions::EFFECT_BEAT_MULT], true);
+	FLOAT_INTERFACE(BeatY, Effects[PlayerOptions::EFFECT_BEAT_Y], true);
+	FLOAT_INTERFACE(BeatYOffset, Effects[PlayerOptions::EFFECT_BEAT_Y_OFFSET], true);
+	FLOAT_INTERFACE(BeatYPeriod, Effects[PlayerOptions::EFFECT_BEAT_Y_PERIOD], true);
+	FLOAT_INTERFACE(BeatYMult, Effects[PlayerOptions::EFFECT_BEAT_Y_MULT], true);
+	FLOAT_INTERFACE(BeatZ, Effects[PlayerOptions::EFFECT_BEAT_Z], true);
+	FLOAT_INTERFACE(BeatZOffset, Effects[PlayerOptions::EFFECT_BEAT_Z_OFFSET], true);
+	FLOAT_INTERFACE(BeatZPeriod, Effects[PlayerOptions::EFFECT_BEAT_Z_PERIOD], true);
+	FLOAT_INTERFACE(BeatZMult, Effects[PlayerOptions::EFFECT_BEAT_Z_MULT], true);
 	FLOAT_INTERFACE(Zigzag, Effects[PlayerOptions::EFFECT_ZIGZAG], true);
 	FLOAT_INTERFACE(ZigzagPeriod, Effects[PlayerOptions::EFFECT_ZIGZAG_PERIOD], true);
 	FLOAT_INTERFACE(ZigzagOffset, Effects[PlayerOptions::EFFECT_ZIGZAG_OFFSET], true);
@@ -1837,6 +1870,9 @@ public:
 		ADD_METHOD(Tornado);
 		ADD_METHOD(TornadoPeriod);
 		ADD_METHOD(TornadoOffset);
+		ADD_METHOD(TornadoZ);
+		ADD_METHOD(TornadoZPeriod);
+		ADD_METHOD(TornadoZOffset);
 		ADD_METHOD(Tipsy);
 		ADD_METHOD(TipsySpeed);
 		ADD_METHOD(TipsyOffset);
@@ -1850,6 +1886,14 @@ public:
 		ADD_METHOD(BeatOffset);
 		ADD_METHOD(BeatPeriod);
 		ADD_METHOD(BeatMult);
+		ADD_METHOD(BeatY);
+		ADD_METHOD(BeatYOffset);
+		ADD_METHOD(BeatYPeriod);
+		ADD_METHOD(BeatYMult);
+		ADD_METHOD(BeatZ);
+		ADD_METHOD(BeatZOffset);
+		ADD_METHOD(BeatZPeriod);
+		ADD_METHOD(BeatZMult);
 		ADD_METHOD(Zigzag);
 		ADD_METHOD(ZigzagPeriod);
 		ADD_METHOD(ZigzagOffset);

@@ -5,6 +5,7 @@
 #include "RageMath.hpp"
 #include "RageTimer.h"
 #include "ScreenDimensions.h"
+#include "Style.h"
 #include "TimingData.h"
 
 // Many comments copied from ArrowEffects to explain some mods.  Any comment
@@ -51,6 +52,11 @@ static float const	tiny_percent_base= .5f;
 static float const	tiny_percent_gate= 1.0f;
 static bool const	dizzy_hold_heads= false;
 
+
+static int const dim_x= 0;
+static int const dim_y= 1;
+static int const dim_z= 2;
+
 float const center_line_y= 160.f; // from y_offset == 0
 float const fade_dist_y= 40.f;
 
@@ -86,6 +92,105 @@ float ArrowDefects::get_time()
 	}
 }
 
+float ArrowDefects::calculate_tornado_offset_from_magnitude(int dimension, int col_id,
+	float magnitude, float effect_offset, float period, float y_offset)
+{
+	float const real_pixel_offset = m_column_x[col_id];
+	float const position_between= Rage::scale(real_pixel_offset,
+		m_min_tornado_x[dimension][col_id],
+		m_max_tornado_x[dimension][col_id],
+		tornado_position_scale_to_low,
+		tornado_position_scale_to_high);
+	float rads= std::acos(position_between);
+	float frequency= tornado_offset_frequency;
+	rads+= (y_offset + effect_offset) * ((period * frequency) +  frequency) / SCREEN_HEIGHT;
+	float const adjusted_pixel_offset= Rage::scale(Rage::FastCos(rads),
+		tornado_offset_scale_from_low,
+		tornado_offset_scale_from_high,
+		m_min_tornado_x[dimension][col_id],
+		m_max_tornado_x[dimension][col_id]);
+	return (adjusted_pixel_offset - real_pixel_offset) * magnitude;
+}
+
+void ArrowDefects::update_beat(int dimension, float beat_offset, float beat_mult)
+{
+	float const accel_time= .2f;
+	float const total_time= .5f;
+	float beat= (m_music_beat + accel_time + beat_offset) * (beat_mult+1);
+	bool const even_beat= (int(beat) % 2) != 0;
+	m_beat_factor[dimension]= 0;
+	if(beat >= 0.f)
+	{
+		// beat can't be negative because of the preceding condition. -Kyz
+		// 100.2 -> 0.2
+		beat-= std::trunc(beat);
+		if(beat < total_time)
+		{
+			if(beat < accel_time)
+			{
+				m_beat_factor[dimension]= Rage::scale(beat, 0.f, accel_time, 0.f, 1.f);
+				m_beat_factor[dimension]*= m_beat_factor[dimension];
+			}
+			else
+			{
+				m_beat_factor[dimension]= Rage::scale(beat, accel_time, total_time, 1.f, 0.f);
+				m_beat_factor[dimension]= 1 - ((1-m_beat_factor[dimension]) * (1-m_beat_factor[dimension]));
+			}
+			if(even_beat)
+			{
+				m_beat_factor[dimension]*= -1;
+			}
+			m_beat_factor[dimension]*= 20.f;
+		}
+	}
+}
+
+void ArrowDefects::Init()
+{
+	// Init tornado limits.
+	// This used to run every frame, but it doesn't actually depend on anything
+	// that changes every frame.  In openitg, it runs for every note. -Kyz
+
+	// TRICKY: Tornado is very unplayable in doubles, so use a smaller
+	// tornado width if there are many columns
+
+	/* the wide_field check makes an assumption for dance mode.
+	 * perhaps check if we are actually playing on singles without,
+	 * say more than 6 columns. That would exclude IIDX, pop'n, and
+	 * techno-8, all of which would be very hectic.
+	 * certain non-singles modes (like halfdoubles 6cols)
+	 * could possibly have tornado enabled.
+	 * let's also take default resolution (640x480) into mind. -aj */
+	bool wide_field= m_num_columns > 4;
+	int max_player_col= m_num_columns-1;
+	for(int dimension= 0; dimension < 3; ++dimension)
+	{
+		int width= 3;
+		// wide_field only matters for x, which is dimension 0. -Kyz
+		if(dimension == 0 && wide_field)
+		{
+			width= 2;
+		}
+		for(int col_id= 0; col_id <= max_player_col; ++col_id)
+		{
+			int start_col= col_id - width;
+			int end_col= col_id + width;
+			Rage::clamp(start_col, 0, max_player_col);
+			Rage::clamp(end_col, 0, max_player_col);
+			m_min_tornado_x[dimension][col_id]= std::numeric_limits<float>::max();
+			m_max_tornado_x[dimension][col_id]= std::numeric_limits<float>::min();
+			for(int i= start_col; i <= end_col; ++i)
+			{
+				// Using the x offset when the dimension might be y or z feels so
+				// wrong, but it provides min and max values when otherwise the
+				// limits would just be zero, which would make it do nothing. -Kyz
+				m_min_tornado_x[dimension][col_id] = std::min(m_column_x[i], m_min_tornado_x[dimension][col_id]);
+				m_max_tornado_x[dimension][col_id] = std::max(m_column_x[i], m_max_tornado_x[dimension][col_id]);
+			}
+		}
+	}
+}
+
 void ArrowDefects::set_player_options(PlayerOptions const* options)
 {
 	m_options= options;
@@ -105,8 +210,9 @@ void ArrowDefects::set_player_options(PlayerOptions const* options)
 void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 {
 	m_num_columns= column_x.size();
-	for(auto&& member : {&m_min_tornado_x, &m_max_tornado_x, &m_invert_dist,
-				&m_tipsy_result})
+	for(auto&& member : {&m_min_tornado_x[0], &m_max_tornado_x[0], &m_min_tornado_x[1], 
+				&m_max_tornado_x[1], &m_min_tornado_x[2], &m_max_tornado_x[2],
+				&m_invert_dist, &m_tipsy_result})
 	{
 		member->resize(m_num_columns);
 	}
@@ -173,7 +279,7 @@ void ArrowDefects::set_read_bpm(float read_bpm)
 	m_read_bpm= read_bpm;
 }
 
-void ArrowDefects::update(float music_beat, float music_second)
+void ArrowDefects::update(PlayerNumber pn, float music_beat, float music_second)
 {
 	m_music_beat= music_beat;
 	m_music_second= music_second;
@@ -182,40 +288,17 @@ void ArrowDefects::update(float music_beat, float music_second)
 
 	float const* effects= m_options->m_fEffects;
 	float const* accels= m_options->m_fAccels;
+	
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pn);
+	if(pStyle != m_prev_style)
+	{
+		Init();
+		m_prev_style= pStyle;
+	}
+	
 	if(accels[PlayerOptions::ACCEL_EXPAND] != 0.f)
 	{
 		m_expand_seconds= fmodf(m_timing_data->GetExpandSeconds(m_music_second), (Rage::PI * 2.0) / ((accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1)));
-	}
-	if(effects[PlayerOptions::EFFECT_TORNADO] != 0.f)
-	{
-		for(size_t col= 0; col < m_num_columns; ++col)
-		{
-			// TRICKY: Tornado is very unplayable in doubles, so use a smaller
-			// tornado width if there are many columns
-
-			/* the below makes an assumption for dance mode.
-			 * perhaps check if we are actually playing on singles without,
-			 * say more than 6 columns. That would exclude IIDX, pop'n, and
-			 * techno-8, all of which would be very hectic.
-			 * certain non-singles modes (like halfdoubles 6cols)
-			 * could possibly have tornado enabled.
-			 * let's also take default resolution (640x480) into mind. -aj */
-			bool wide_field= m_num_columns > 4;
-			int tornado_width= wide_field ? 2 : 3;
-			int start_col= col - tornado_width;
-			int end_col= col + tornado_width;
-			start_col= Rage::clamp(start_col, 0, static_cast<int>(m_num_columns)-1);
-			end_col= Rage::clamp(end_col, 0, static_cast<int>(m_num_columns)-1);
-
-			m_min_tornado_x[col]= std::numeric_limits<float>::max();
-			m_max_tornado_x[col]= std::numeric_limits<float>::min();
-
-			for(int i= start_col; i <= end_col; ++i)
-			{
-				m_min_tornado_x[col]= std::min(m_min_tornado_x[col], m_column_x[i]);
-				m_max_tornado_x[col]= std::max(m_max_tornado_x[col], m_column_x[i]);
-			}
-		}
 	}
 	if(effects[PlayerOptions::EFFECT_TIPSY] != 0.f)
 	{
@@ -237,39 +320,27 @@ void ArrowDefects::update(float music_beat, float music_second)
 	}
 	if(effects[PlayerOptions::EFFECT_BEAT] != 0.f)
 	{
-		float const accel_time= .2f;
-		float const total_time= .5f;
-		float beat= (m_music_beat + accel_time + effects[PlayerOptions::EFFECT_BEAT_OFFSET]) * (effects[PlayerOptions::EFFECT_BEAT_MULT]+1);
-		bool const even_beat= (int(beat) % 2) != 0;
-		m_beat_factor= 0;
-		if(beat >= 0.f)
-		{
-			// beat can't be negative because of the preceding condition. -Kyz
-			// 100.2 -> 0.2
-			beat-= std::trunc(beat);
-			if(beat < total_time)
-			{
-				if(beat < accel_time)
-				{
-					m_beat_factor= Rage::scale(beat, 0.f, accel_time, 0.f, 1.f);
-					m_beat_factor*= m_beat_factor;
-				}
-				else
-				{
-					m_beat_factor= Rage::scale(beat, accel_time, total_time, 1.f, 0.f);
-					m_beat_factor= 1 - ((1-m_beat_factor) * (1-m_beat_factor));
-				}
-				if(even_beat)
-				{
-					m_beat_factor*= -1;
-				}
-				m_beat_factor*= 20.f;
-			}
-		}
+		update_beat(dim_x, effects[PlayerOptions::EFFECT_BEAT_OFFSET], effects[PlayerOptions::EFFECT_BEAT_MULT]);
 	}
 	else
 	{
-		m_beat_factor= 0;
+		m_beat_factor[dim_x]= 0;
+	}
+	if(effects[PlayerOptions::EFFECT_BEAT_Y] != 0.f)
+	{
+		update_beat(dim_y, effects[PlayerOptions::EFFECT_BEAT_Y_OFFSET], effects[PlayerOptions::EFFECT_BEAT_Y_MULT]);
+	}
+	else
+	{
+		m_beat_factor[dim_y]= 0;
+	}
+	if(effects[PlayerOptions::EFFECT_BEAT_Z] != 0.f)
+	{
+		update_beat(dim_z, effects[PlayerOptions::EFFECT_BEAT_Z_OFFSET], effects[PlayerOptions::EFFECT_BEAT_Z_MULT]);
+	}
+	else
+	{
+		m_beat_factor[dim_z]= 0;
 	}
 
 	//
@@ -403,6 +474,13 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 			expand_speed_scale_to_low, expand_multiplier);
 	}
 	y_offset*= scroll_speed;
+	
+	if(effects[PlayerOptions::EFFECT_BEAT_Y] != 0.f)
+	{
+		const float shift = m_beat_factor[dim_y]*Rage::FastSin( y_offset /
+			((effects[PlayerOptions::EFFECT_BEAT_Y_PERIOD]*beat_offset_height)+beat_offset_height) + Rage::PI/beat_pi_height );
+		y_offset += effects[PlayerOptions::EFFECT_BEAT_Y] * shift;
+	}
 	return y_offset;
 }
 
@@ -412,16 +490,11 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	float const* effects= m_options->m_fEffects;
 	if(effects[PlayerOptions::EFFECT_TORNADO] != 0.f)
 	{
-		float const position_between= Rage::scale(m_column_x[col],
-			m_min_tornado_x[col], m_max_tornado_x[col],
-			tornado_position_scale_to_low, tornado_position_scale_to_high);
-		float rads= std::acos(position_between);
-		rads+= (y_offset + effects[PlayerOptions::EFFECT_TORNADO_OFFSET]) * ((effects[PlayerOptions::EFFECT_TORNADO_PERIOD] * tornado_offset_frequency) +  tornado_offset_frequency) / SCREEN_HEIGHT;
-		float const adjusted_pixel_offset= Rage::scale(Rage::FastCos(rads),
-			tornado_offset_scale_from_low, tornado_offset_scale_from_high,
-			m_min_tornado_x[col], m_max_tornado_x[col]);
-		pixel_offset_from_center+= (adjusted_pixel_offset - m_column_x[col]) *
-			effects[PlayerOptions::EFFECT_TORNADO];
+		pixel_offset_from_center+= calculate_tornado_offset_from_magnitude(dim_x, col,
+			effects[PlayerOptions::EFFECT_TORNADO],
+			effects[PlayerOptions::EFFECT_TORNADO_OFFSET],
+			effects[PlayerOptions::EFFECT_TORNADO_PERIOD],
+			y_offset);
 	}
 	if( effects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
 	{
@@ -451,7 +524,7 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	}
 	if(effects[PlayerOptions::EFFECT_BEAT] != 0.f)
 	{
-		float const shift= m_beat_factor * Rage::FastSin(y_offset /
+		float const shift= m_beat_factor[dim_x] * Rage::FastSin(y_offset /
 			((effects[PlayerOptions::EFFECT_BEAT_PERIOD] * beat_offset_height) + beat_offset_height) + Rage::PI / beat_pi_height);
 		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_BEAT] * shift;
 	}
@@ -529,8 +602,10 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 
 float ArrowDefects::get_y_pos(size_t col, float y_offset)
 {
+	float f = y_offset;
 	float const* effects= m_options->m_fEffects;
-	y_offset+= effects[PlayerOptions::EFFECT_TIPSY] * m_tipsy_result[col];
+	f+= effects[PlayerOptions::EFFECT_TIPSY] * m_tipsy_result[col];
+	
 	// In beware's DDR Extreme-focused fork of StepMania 3.9, this value is
 	// floored, making arrows show on integer Y coordinates. Supposedly it makes
 	// the arrows look better, but testing needs to be done.
@@ -539,13 +614,21 @@ float ArrowDefects::get_y_pos(size_t col, float y_offset)
 	// theme size variations, an integer y offset from the mods doesn't mean
 	// the note will be on an integer pixel position when it's rendered on the
 	// screen.  So I'm not supporting quantizing the position. -Kyz
-	return y_offset;
+	return f;
 }
 
 float ArrowDefects::get_z_pos(size_t col, float y_offset)
 {
 	float zpos=0;
 	float const* effects= m_options->m_fEffects;
+	if(effects[PlayerOptions::EFFECT_TORNADO_Z] != 0.f)
+	{
+		zpos += calculate_tornado_offset_from_magnitude(dim_z, col,
+			effects[PlayerOptions::EFFECT_TORNADO_Z],
+			effects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET],
+			effects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD],
+			y_offset);
+	}
 	if(effects[PlayerOptions::EFFECT_BUMPY] != 0.f)
 	{
 		zpos += effects[PlayerOptions::EFFECT_BUMPY] *
@@ -573,6 +656,12 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 		zpos += effects[PlayerOptions::EFFECT_DRUNK_Z] * 
 			( Rage::FastCos( get_time()*(1+effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + col*((effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*drunk_column_frequency)+drunk_column_frequency)
 				+ y_offset*((effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*drunk_offset_frequency)+drunk_offset_frequency)/SCREEN_HEIGHT) * arrow_spacing*drunk_arrow_magnitude );
+	}
+	if(effects[PlayerOptions::EFFECT_BEAT_Z] != 0.f)
+	{
+		const float shift = m_beat_factor[dim_z]*Rage::FastSin( y_offset /
+			((effects[PlayerOptions::EFFECT_BEAT_Z_PERIOD]*beat_offset_height)+beat_offset_height) + Rage::PI/beat_pi_height );
+		zpos += effects[PlayerOptions::EFFECT_BEAT_Z] * shift;
 	}
 	if(effects[PlayerOptions::EFFECT_DIGITAL_Z] != 0.f)
 	{
