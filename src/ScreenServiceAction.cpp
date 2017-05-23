@@ -233,7 +233,7 @@ static LocalizedString COPIED			( "ScreenServiceAction", "%d copied" );
 static LocalizedString OVERWRITTEN		( "ScreenServiceAction", "%d overwritten" );
 static LocalizedString ADDED			( "ScreenServiceAction", "%d added" );
 static LocalizedString IGNORED			( "ScreenServiceAction", "%d ignored" );
-static LocalizedString FAILED			( "ScreenServiceAction", "%d failed" );
+static LocalizedString FAILED_			( "ScreenServiceAction", "%d failed" );
 static LocalizedString DELETED			( "ScreenServiceAction", "%d deleted" );
 
 static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProfileDir, const RString &sDisplayDir )
@@ -251,7 +251,7 @@ static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProf
 	if( iNumIgnored )
 		vs.push_back( ssprintf( IGNORED.GetValue(), iNumIgnored ) );
 	if( iNumErrored )
-		vs.push_back( ssprintf( FAILED.GetValue(), iNumErrored ) );
+		vs.push_back( ssprintf( FAILED_.GetValue(), iNumErrored ) );
 	return join( "\n", vs );
 }
 
@@ -355,7 +355,7 @@ static RString SyncEditsMachineToMemoryCard()
 	if( iNumDeleted )
 		sRet += RString(" ") + ssprintf( DELETED.GetValue(), iNumDeleted );
 	if( iNumFailed )
-		sRet += RString("; ") + ssprintf( FAILED.GetValue(), iNumFailed );
+		sRet += RString("; ") + ssprintf( FAILED_.GetValue(), iNumFailed );
 	return sRet;
 }
 

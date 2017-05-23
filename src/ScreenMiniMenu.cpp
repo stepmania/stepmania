@@ -61,7 +61,7 @@ void ScreenMiniMenu::BeginScreen()
 {
 	ASSERT( g_pMenuDef != NULL );
 
-	LoadMenu( g_pMenuDef );
+	LoadAMenu( g_pMenuDef );
 	m_SMSendOnOK = g_SendOnOK;
 	m_SMSendOnCancel = g_SendOnCancel;
 	g_pMenuDef = NULL;
@@ -74,7 +74,7 @@ void ScreenMiniMenu::BeginScreen()
 	m_sNextScreen = "xxx";
 }
 
-void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
+void ScreenMiniMenu::LoadAMenu( const MenuDef* pDef )
 {
 	m_vMenuRows = pDef->rows;
 
