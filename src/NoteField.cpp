@@ -2996,7 +2996,7 @@ void NoteField::update_displayed_time(double beat, double second)
 	m_mod_manager.update(beat, second);
 	if(m_in_defective_mode)
 	{
-		m_defective_mods.update(m_curr_beat, m_curr_second);
+		m_defective_mods.update(m_pn, m_curr_beat, m_curr_second);
 	}
 	for(auto&& col : m_columns)
 	{
