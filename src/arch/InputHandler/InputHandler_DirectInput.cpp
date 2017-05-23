@@ -15,12 +15,127 @@
 
 #include "InputHandler_DirectInputHelper.h"
 
+#pragma comment(lib, "xinput.lib")
+
+#include <XInput.h>
+#include <WbemIdl.h>
+#include <OleAuto.h>
+
 REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
 
 static vector<DIDevice> Devices;
+static vector<XIDevice> XDevices;
 
 // Number of joysticks found:
 static int g_iNumJoysticks;
+
+#define SAFE_RELEASE(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
+static BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
+{
+	IWbemLocator*           pIWbemLocator = NULL;
+	IEnumWbemClassObject*   pEnumDevices = NULL;
+	IWbemClassObject*       pDevices[20] = { 0 };
+	IWbemServices*          pIWbemServices = NULL;
+	BSTR                    bstrNamespace = NULL;
+	BSTR                    bstrDeviceID = NULL;
+	BSTR                    bstrClassName = NULL;
+	DWORD                   uReturned = 0;
+	bool                    bIsXinputDevice = false;
+	UINT                    iDevice = 0;
+	VARIANT                 var;
+	HRESULT                 hr;
+
+	// CoInit if needed
+	hr = CoInitialize(NULL);
+	bool bCleanupCOM = SUCCEEDED(hr);
+
+	// Create WMI
+	hr = CoCreateInstance(__uuidof(WbemLocator),
+		NULL,
+		CLSCTX_INPROC_SERVER,
+		__uuidof(IWbemLocator),
+		(LPVOID*)&pIWbemLocator);
+	if (FAILED(hr) || pIWbemLocator == NULL)
+		goto LCleanup;
+
+	bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2"); if (bstrNamespace == NULL) goto LCleanup;
+	bstrClassName = SysAllocString(L"Win32_PNPEntity");   if (bstrClassName == NULL) goto LCleanup;
+	bstrDeviceID = SysAllocString(L"DeviceID");          if (bstrDeviceID == NULL)  goto LCleanup;
+
+	// Connect to WMI 
+	hr = pIWbemLocator->ConnectServer(bstrNamespace, NULL, NULL, 0L,
+		0L, NULL, NULL, &pIWbemServices);
+	if (FAILED(hr) || pIWbemServices == NULL)
+		goto LCleanup;
+
+	// Switch security level to IMPERSONATE. 
+	CoSetProxyBlanket(pIWbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
+		RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE);
+
+	hr = pIWbemServices->CreateInstanceEnum(bstrClassName, 0, NULL, &pEnumDevices);
+	if (FAILED(hr) || pEnumDevices == NULL)
+		goto LCleanup;
+
+	// Loop over all devices
+	for (;; )
+	{
+		// Get 20 at a time
+		hr = pEnumDevices->Next(10000, 20, pDevices, &uReturned);
+		if (FAILED(hr))
+			goto LCleanup;
+		if (uReturned == 0)
+			break;
+
+		for (iDevice = 0; iDevice<uReturned; iDevice++)
+		{
+			// For each device, get its device ID
+			hr = pDevices[iDevice]->Get(bstrDeviceID, 0L, &var, NULL, NULL);
+			if (SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != NULL)
+			{
+				// Check if the device ID contains "IG_".  If it does, then it's an XInput device
+				// This information can not be found from DirectInput 
+				if (wcsstr(var.bstrVal, L"IG_"))
+				{
+					// If it does, then get the VID/PID from var.bstrVal
+					DWORD dwPid = 0, dwVid = 0;
+					WCHAR* strVid = wcsstr(var.bstrVal, L"VID_");
+					if (strVid && swscanf(strVid, L"VID_%4X", &dwVid) != 1)
+						dwVid = 0;
+					WCHAR* strPid = wcsstr(var.bstrVal, L"PID_");
+					if (strPid && swscanf(strPid, L"PID_%4X", &dwPid) != 1)
+						dwPid = 0;
+
+					// Compare the VID/PID to the DInput device
+					DWORD dwVidPid = MAKELONG(dwVid, dwPid);
+					if (dwVidPid == pGuidProductFromDirectInput->Data1)
+					{
+						bIsXinputDevice = true;
+						goto LCleanup;
+					}
+				}
+			}
+			SAFE_RELEASE(pDevices[iDevice]);
+		}
+	}
+
+LCleanup:
+	if (bstrNamespace)
+		SysFreeString(bstrNamespace);
+	if (bstrDeviceID)
+		SysFreeString(bstrDeviceID);
+	if (bstrClassName)
+		SysFreeString(bstrClassName);
+	for (iDevice = 0; iDevice<20; iDevice++)
+		SAFE_RELEASE(pDevices[iDevice]);
+	SAFE_RELEASE(pEnumDevices);
+	SAFE_RELEASE(pIWbemLocator);
+	SAFE_RELEASE(pIWbemServices);
+
+	if (bCleanupCOM)
+		CoUninitialize();
+
+	return bIsXinputDevice;
+}
 
 static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, void *pContext )
 {
@@ -55,6 +170,9 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 	{
 	case DIDevice::JOYSTICK:
 		if( g_iNumJoysticks == NUM_JOYSTICKS )
+			return DIENUM_CONTINUE;
+
+		if( IsXInputDevice( &pdidInstance->guidProduct ) )
 			return DIENUM_CONTINUE;
 
 		device.dev = enum_add2( DEVICE_JOY1, g_iNumJoysticks );
@@ -118,6 +236,25 @@ InputHandler_DInput::InputHandler_DInput()
 
 	m_bShutdown = false;
 	g_iNumJoysticks = 0;
+
+	// find xinput joysticks first
+	for( DWORD i = 0; i < XUSER_MAX_COUNT; i++ )
+	{
+		XINPUT_STATE state;
+		ZeroMemory( &state, sizeof(XINPUT_STATE) );
+
+		if (XInputGetState(i, &state) == ERROR_SUCCESS)
+		{
+			XIDevice xdevice;
+			xdevice.m_sName = ssprintf("XInput Device %u", i + 1);
+			xdevice.dev = enum_add2( InputDevice::DEVICE_JOY1, g_iNumJoysticks );
+			xdevice.m_dwXInputSlot = i;
+			g_iNumJoysticks++;
+
+			XDevices.push_back(xdevice);
+		}
+	}
+	LOG->Info( "Found %u XInput devices.", XDevices.size() );
 
 	AppInstance inst;
 	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, NULL);
@@ -193,6 +330,8 @@ void InputHandler_DInput::ShutdownThread()
 
 InputHandler_DInput::~InputHandler_DInput()
 {
+	XDevices.clear();
+
 	ShutdownThread();
 
 	for( unsigned i = 0; i < Devices.size(); ++i )
@@ -624,6 +763,71 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 	}
 }
 
+const short XINPUT_GAMEPAD_THUMB_MIN = MINSHORT;
+const short XINPUT_GAMEPAD_THUMB_MAX = MAXSHORT;
+
+void InputHandler_DInput::UpdateXInput( XIDevice &device, const RageTimer &tm )
+{
+	using std::max;
+
+	XINPUT_STATE state;
+	ZeroMemory(&state, sizeof(XINPUT_STATE));
+	if (XInputGetState(device.m_dwXInputSlot, &state) == ERROR_SUCCESS)
+	{
+		// map joysticks
+		float lx = 0.f;
+		float ly = 0.f;
+		if (sqrt(pow(state.Gamepad.sThumbLX, 2) + pow(state.Gamepad.sThumbLY, 2)) > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+		{
+			lx = SCALE(state.Gamepad.sThumbLX + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
+			ly = SCALE(state.Gamepad.sThumbLY + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
+		}
+		ButtonPressed(DeviceInput(device.dev, JOY_LEFT, max(-lx, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_RIGHT, max(+lx, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_UP, max(+ly, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_DOWN, max(-ly, 0.f), tm));
+
+		float rx = 0.f;
+		float ry = 0.f;
+		if (sqrt(pow(state.Gamepad.sThumbRX, 2) + pow(state.Gamepad.sThumbRY, 2)) > XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
+		{
+			rx = SCALE(state.Gamepad.sThumbRX + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
+			ry = SCALE(state.Gamepad.sThumbRY + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
+		}
+		ButtonPressed(DeviceInput(device.dev, JOY_LEFT_2, max(-rx, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_RIGHT_2, max(+rx, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_UP_2, max(+ry, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_DOWN_2, max(-ry, 0.f), tm));
+
+		// map buttons
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_1, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_A), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_2, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_B), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_3, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_X), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_4, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_Y), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_5, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_START), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_6, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_BACK), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_7, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_8, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_9, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_10, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER), tm));
+		
+		// map triggers to buttons
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_11, !!(state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_12, !!(state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD), tm));
+
+		// map hat buttons
+		ButtonPressed(DeviceInput(device.dev, JOY_HAT_UP, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_HAT_DOWN, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_HAT_LEFT, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_HAT_RIGHT, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT), tm));
+	}
+	else
+	{
+		INPUTFILTER->ResetDevice(device.dev);
+		return;
+	}
+}
+
 
 void InputHandler_DInput::PollAndAcquireDevices( bool bBuffered )
 {
@@ -654,6 +858,9 @@ void InputHandler_DInput::Update()
 	PollAndAcquireDevices( false );
 	if( !m_InputThread.IsCreated() )
 		PollAndAcquireDevices( true );
+
+	for( unsigned i = 0; i < XDevices.size(); ++i )
+		UpdateXInput( XDevices[i], RageZeroTimer );
 
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
@@ -788,6 +995,9 @@ void InputHandler_DInput::InputThreadMain()
 
 void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
+	for( unsigned i=0; i < XDevices.size(); ++i )
+		vDevicesOut.push_back( InputDeviceInfo(XDevices[i].dev, XDevices[i].m_sName ) );
+
 	for( unsigned i=0; i < Devices.size(); ++i )
 		vDevicesOut.push_back( InputDeviceInfo(Devices[i].dev, Devices[i].m_sName) );
 }
