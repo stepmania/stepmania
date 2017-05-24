@@ -12,6 +12,8 @@
 #include "archutils/Win32/WindowIcon.h"
 #include "archutils/Win32/GetFileInformation.h"
 #include "CommandLineActions.h"
+#include <dwmapi.h>
+#pragma comment(lib, "dwmapi.lib")
 
 #include <set>
 
@@ -494,6 +496,11 @@ void GraphicsWindow::Update()
 	}
 
 	HOOKS->SetHasFocus( g_bHasFocus );
+
+	if (g_CurrentParams.vsync)
+	{
+		DwmFlush();
+	}
 
 	if( g_bResolutionChanged && DISPLAY != NULL )
 	{
