@@ -927,11 +927,6 @@ void RageDisplay::FrameLimitBeforeVsync( int iFPS )
 	if( !HOOKS->AppHasFocus() )
 		iDelayMicroseconds = max( iDelayMicroseconds, 10000 ); // give some time to other processes and threads
 
-#if defined(_WINDOWS)
-	/* In Windows, always explicitly give up a minimum amount of CPU for other threads. */
-	iDelayMicroseconds = max( iDelayMicroseconds, 1000 );
-#endif
-
 	if( iDelayMicroseconds > 0 )
 		usleep( iDelayMicroseconds );
 }
