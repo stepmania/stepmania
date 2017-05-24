@@ -210,7 +210,15 @@ RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 	DSBUFFERDESC format;
 	memset( &format, 0, sizeof(format) );
 	format.dwSize = sizeof(format);
-	format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME;
+
+	if (at_least_vista())
+	{
+		format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_TRUEPLAYPOSITION;
+	}
+	else
+	{
+		format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME;
+	}
 
 	/* Don't use DSBCAPS_STATIC.  It's meant for static buffers, and we
 	 * only use streaming buffers. */
