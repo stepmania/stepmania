@@ -21,13 +21,14 @@
 #endif
 #include <ctype.h>
 
-#if defined(_WINDOWS)
-#include <winsock2.h>
-#else
-#include <netinet/in.h>
-#endif
-
 using namespace std;
+
+enum EzSockets_Proto
+{
+	EZS_NONE,
+	EZS_TCP,
+	EZS_UDP
+};
 
 class EzSockets
 {
@@ -38,8 +39,8 @@ public:
 
 	//Crate the socket
 	bool create();
-	bool create(int Protocol);
-	bool create(int Protocol, int Type);
+	bool create(EzSockets_Proto Protocol);
+	bool create(EzSockets_Proto Protocol, int Type);
 
 	//Bind Socket to local port
 	bool bind(unsigned short port);
@@ -107,9 +108,7 @@ public:
 		skERROR 
 	};
 
-    struct sockaddr_in fromAddr;
-	unsigned long fromAddr_len;
-	static unsigned long LongFromAddrIn( const sockaddr_in & s );
+	uint32_t getAddress();
 
 	// The following possibly should be private.
 	string inBuffer;
@@ -127,23 +126,15 @@ public:
 
 	RString address;
 
+	// Wrapped here so we don't have to leak winapi everywhere...
+	static uint32_t ntohl(uint32_t);
+	static uint16_t ntohs(uint16_t);
+	static uint32_t htonl(uint32_t);
+	static uint16_t htons(uint16_t);
+
 private:
 
-	// Only necessary for Windows
-#if defined(_WINDOWS)
-	WSADATA wsda;
-#endif
-
-	int MAXCON;
-	int sock;
-	struct sockaddr_in addr;
-
-
-	// Used for Select() command
-	fd_set  *scks;
-	timeval *times;
-
-	// Buffers
+	void *opaque;
 };
 
 istream& operator>>(istream& is, EzSockets& obj);

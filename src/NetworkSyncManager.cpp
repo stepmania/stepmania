@@ -212,7 +212,7 @@ void NetworkSyncManager::StartUp()
 		PostStartUp( ServerIP );
 
 	BroadcastReception = new EzSockets;
-	BroadcastReception->create( IPPROTO_UDP );
+	BroadcastReception->create( EZS_UDP );
 	BroadcastReception->bind( 8765 );
 	BroadcastReception->blocking = false;
 }
@@ -537,7 +537,7 @@ void NetworkSyncManager::Update(float fDeltaTime)
 			ThisServer.Name = BroadIn.ReadNT();
 			int port = BroadIn.Read2();
 			BroadIn.Read2();	//Num players connected.
-			uint32_t addy = EzSockets::LongFromAddrIn(BroadcastReception->fromAddr);
+			uint32_t addy = BroadcastReception->getAddress();
 			ThisServer.Address = ssprintf( "%u.%u.%u.%u:%d",
 				(addy<<0)>>24, (addy<<8)>>24, (addy<<16)>>24, (addy<<24)>>24, port );
 
@@ -867,7 +867,7 @@ uint16_t PacketFunctions::Read2()
 	uint16_t Temp;
 	memcpy( &Temp, Data + Position,2 );
 	Position+=2;
-	return ntohs(Temp);
+	return EzSockets::ntohs(Temp);
 }
 
 uint32_t PacketFunctions::Read4()
@@ -878,7 +878,7 @@ uint32_t PacketFunctions::Read4()
 	uint32_t Temp;
 	memcpy( &Temp, Data + Position,4 );
 	Position+=4;
-	return ntohl(Temp);
+	return EzSockets::ntohl(Temp);
 }
 
 RString PacketFunctions::ReadNT()
@@ -905,7 +905,7 @@ void PacketFunctions::Write2(uint16_t data)
 {
 	if (Position>=NETMAXBUFFERSIZE-1)
 		return;
-	data = htons(data);
+	data = EzSockets::htons(data);
 	memcpy( &Data[Position], &data, 2 );
 	Position+=2;
 }
@@ -915,7 +915,7 @@ void PacketFunctions::Write4(uint32_t data)
 	if (Position>=NETMAXBUFFERSIZE-3)
 		return ;
 
-	data = htonl(data);
+	data = EzSockets::htonl(data);
 	memcpy( &Data[Position], &data, 4 );
 	Position+=4;
 }
