@@ -12,8 +12,7 @@
 #include "archutils/Win32/WindowIcon.h"
 #include "archutils/Win32/GetFileInformation.h"
 #include "CommandLineActions.h"
-#include <dwmapi.h>
-#pragma comment(lib, "dwmapi.lib")
+#include "DirectXHelpers.h"
 
 #include <set>
 
@@ -417,6 +416,19 @@ void GraphicsWindow::Initialize( bool bD3D )
 	// A few things need to be handled differently for D3D.
 	g_bD3D = bD3D;
 
+	//keeping xp on life support -- check for vista+ for dwm
+	if (at_least_vista())
+	{
+		hInstanceDwmapi = LoadLibraryA("dwmapi.dll");
+	}
+
+	//if we have dwm, get function pointers to the dll functions
+	if( hInstanceDwmapi != NULL )
+	{
+		PFN_DwmFlush =					(HRESULT (WINAPI *)(VOID))GetProcAddress( hInstanceDwmapi, "DwmFlush" );
+		PFN_DwmIsCompositionEnabled =	(HRESULT (WINAPI *)(BOOL*))GetProcAddress( hInstanceDwmapi, "DwmIsCompositionEnabled" );
+	}
+
 	AppInstance inst;
 	do
 	{
@@ -499,7 +511,16 @@ void GraphicsWindow::Update()
 
 	if (g_CurrentParams.vsync)
 	{
-		DwmFlush();
+		//if we can use DWM
+		if( hInstanceDwmapi != NULL )
+		{
+			BOOL compositeEnabled = true;
+			PFN_DwmIsCompositionEnabled(&compositeEnabled);
+			if (compositeEnabled)
+			{
+				PFN_DwmFlush();
+			}
+		}
 	}
 
 	if( g_bResolutionChanged && DISPLAY != NULL )
