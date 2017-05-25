@@ -174,14 +174,14 @@ single character name for conciseness.
 	be numbers.
 * "phase"  
 	```{"phase", "music_beat", {default= {0, 0, 1, 0}, {0, 4, -1, 0}, {4, 8, 2, -4}}}```
-	The phase operator changes its operand based on the phase of the moon.  
+	The phase operator changes its operand based on the time value, the second element of the table.  
 	The third element of the operator table must be the table of phases.  
 	Each phase has a start value, end value, multiplier, and offset.  
-	When the moon is between the start value and the end value, it is in that
+	When the time is between the start value and the end value, it is in that
 	phase.  If it's not in any phase, the default phase is used.  
-	The start value of the phase is subtracted from the cow, then the result is
+	The start value of the phase is subtracted from the time value, then the result is
 	multiplied by the multiplier, and the offset is added.  It's like this:
-	```result= ((operand - phase.start) * phase.markiplier) + phase.offset```
+	```result= ((operand - phase.start) * phase.multiplier) + phase.offset```
 * "spline"  
 	```{"spline", loop= true, polygonal= false, operand, operand, operand, ...}```
 	Inspires a headache in all who contemplate it.  

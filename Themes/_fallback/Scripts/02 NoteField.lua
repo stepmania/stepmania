@@ -128,6 +128,18 @@ function NoteField:clear_column_mod(mod_field_name, mod_name)
 	end
 end
 
+function NoteField:clear_mod_all_columns(mod_field_name)
+	for col in ivalues(self:get_columns()) do
+		col[mod_field_name](col):clear_mods()
+	end
+end
+
+function NoteField:clear_mod_all_columns_managed(mod_field_name)
+	for col in ivalues(self:get_columns()) do
+		col[mod_field_name](col):clear_managed_mods()
+	end
+end
+
 local function set_alpha_glow_mods(self, alpha_mod, glow_mod)
 	for col in ivalues(self:get_columns()) do
 		col:get_note_alpha():add_mod(alpha_mod)
@@ -208,6 +220,94 @@ function NoteField:all_columns_mod(mod_name, mod_function)
 	assert(NoteFieldColumn[mod_name], mod_name .. " is not a modifiable value.")
 	for i, col in ipairs(self:get_columns()) do
 		col[mod_name](col):add_mod(mod_function)
+	end
+end
+
+function NoteField:all_columns_managed_mod(name,...)
+	-- takes multiple tables so it's like using a managed mod set
+	-- if mod_name is defined then all of the mods use that name
+	-- syntax for table: {name=[mod name], start_beat/second=[time], end_beat/second=[time], func=[mod function]}
+	
+	assert( type(name)=='string' or type(name)=='nil','The defined global modifiable value (mod name) must be a string or nil. (all_columns_managed_mod)')
+	
+	
+	local all_mod_name
+	if name and name ~= '' then all_mod_name = name end
+	
+	for _, t in ipairs(arg) do
+		assert(type(t)=='table','The mod functions for all_columns_managed_mod must be in tables.')
+		local mod_name = all_mod_name or t.name
+			assert(NoteFieldColumn[mod_name], mod_name .. " is not a modifiable value.")
+		local mod_start = t.start_beat or t.start_second 
+		local mod_end = t.end_beat or t.end_second 
+		local mod_func = t.func 
+		local beat_or_sec
+			if t.start_beat then beat_or_sec = 'beat' elseif t.start_second then beat_or_sec = 'second' end
+		assert( beat_or_sec, 'Missing proper labels for start and stop times. Please be sure you are using "start_beat" & "end_beat" or "start_second" & end_second".')
+	
+		for i, col in ipairs(self:get_columns()) do
+			col[mod_name](col):add_managed_mod{
+				["start_"..beat_or_sec]=mod_start, ["end_"..beat_or_sec]=mod_end, mod_func}
+		end
+	end
+end
+
+function NoteField:mod_tween(name,...)
+	-- takes multiple tables so it's like using a managed mod set
+	-- if mod_name is defined then all of the mods use that name
+	-- syntax for table: {name=[mod name], start_beat/second=[time], end_beat/second=[time], tween_in=[time], tween_out=[time] func=[mod function]}
+	
+	assert( (type(name)=='string' or type(name)=='nil') and name ~= '','The defined global modifiable value (mod name) must be a (non empty) string or nil. (mod_tween)')
+	
+	
+	local all_mod_name
+	if name then all_mod_name = name end
+	
+	for _, t in ipairs(arg) do
+		assert(type(t)=='table','The arguments for mod_tween must be in tables. (mod_tween)')
+		local mod_name = all_mod_name or t.name
+		local mod_start = t.start_beat or t.start_second 
+		local mod_end = t.end_beat or t.end_second 
+		local mod_func = t.func
+		local mod_in = t.tween_in or 0		assert(mod_in, 'No tween in time. (mod_tween)')
+		local mod_out = t.tween_out  or 0	assert(mod_out, 'No tween out time. (mod_tween)')
+		
+		local beat_or_sec
+			if t.start_beat then beat_or_sec = 'beat' elseif t.start_second then beat_or_sec = 'second' end
+			assert( beat_or_sec, 'Missing proper labels for start and stop times. Please be sure you are using "start_beat" & "end_beat" or "start_second" & end_second". (mod_tween)')
+		
+		local col_or_field_mod
+			if NoteFieldColumn[mod_name] then col_or_field_mod = 'col' elseif NoteField[mod_name] then col_or_field_mod = 'field' end
+			assert(col_or_field_mod,'Invalid modifiable value.')
+		
+		local start_time, end_time = "start_"..beat_or_sec, "end_"..beat_or_sec
+		
+		if col_or_field_mod == 'field' then
+			field[mod_name](field):add_managed_mod_set{
+				{[start_time]=mod_start-mod_in,[end_time]=mod_start,
+					{"*",  {"/",{"repeat","music_beat",0,mod_in},mod_in},  mod_func}},
+					
+				{[start_time]=mod_start, [end_time]=mod_end-mod_out, mod_func},
+				
+				{[start_time]=mod_end-mod_out,[end_time]=mod_end,
+					{"*",  {"/",{"-",mod_out,{"repeat","music_beat",0,mod_out}},mod_out}  ,mod_func}}
+			}
+		
+		elseif col_or_field_mod == 'col' then
+		
+			for i, col in ipairs(self:get_columns()) do
+				col[mod_name](col):add_managed_mod_set{
+				{[start_time]=mod_start-mod_in,[end_time]=mod_start,
+					{"*",  {"/",{"repeat","music_beat",0,mod_in},mod_in},  mod_func}},
+					
+				{[start_time]=mod_start, [end_time]=mod_end-mod_out, mod_func},
+				
+				{[start_time]=mod_end-mod_out,[end_time]=mod_end,
+					{"*",  {"/",{"-",mod_out,{"repeat","music_beat",0,mod_out}},mod_out}  ,mod_func}}
+			}
+			end
+			
+		end
 	end
 end
 
