@@ -390,26 +390,34 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 			DEFAULT_FAIL( pWID->m_Type );
 			case WheelItemDataType_Song:
 				type = MusicWheelItemType_Song;
+				break;
 			case WheelItemDataType_Section:
 				if( GAMESTATE->sExpandedSectionName == pWID->m_sText )
 					type = MusicWheelItemType_SectionExpanded;
 				else
 					type = MusicWheelItemType_SectionCollapsed;
+				break;
 			case WheelItemDataType_Course:
 				type = MusicWheelItemType_Course;
+				break;
 			case WheelItemDataType_Sort:
 				if( pWID->m_pAction->m_pm != PlayMode_Invalid )
 					type = MusicWheelItemType_Mode;
 				else
 					type = MusicWheelItemType_Sort;
+				break;
 			case WheelItemDataType_Roulette:
 				type = MusicWheelItemType_Roulette;
+				break;
 			case WheelItemDataType_Random:
 				type = MusicWheelItemType_Random;
+				break;
 			case WheelItemDataType_Portal:
 				type = MusicWheelItemType_Portal;
+				break;
 			case WheelItemDataType_Custom:
 				type = MusicWheelItemType_Custom;
+				break;
 		}
 
 		Message msg( "Set" );
