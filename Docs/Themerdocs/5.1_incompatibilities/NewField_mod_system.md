@@ -53,6 +53,24 @@ or song.  Holds require more calculation than taps because they are stretched
 and shaped by mods.  A hold is roughly equivalent to having a tap every 4
 pixels along its length.
 
+# Accessing the NewField
+The NewField is a child of the player actors on screen gameplay, by the name of `NoteField`.
+So, an easy way of getting field for player 1 would be:
+
+    Def.Actor{
+        OnCommand = function(self) 
+            -- Anytime you plan on grabbing the notefield you should do so in an Actor's OnCommand.
+            -- The actors for the notefields are created during OnCommands.
+
+            local screen = SCREENMAN:GetTopScreen() -- grabs the current screen, which is probably ScreenGameplay
+            local field = screen:GetChild('PlayerP1'):GetChild('NoteField') -- grabs player 1's notefield, allowing you to (ab)use it
+            local column = field:get_columns() -- returns the columns in a table. column[1] would grab the left arrow, column[2] the right, etc etc
+
+            -- put your super amazing functions here
+        end
+    }
+
+Fun fact: you can grab the notefield in edit mode by using `screen:GetChild('Player'):GetChild('NoteField')`, allowing you to go through and easily create mods for certain sections. However you will need to use `clear_mods()` (or `clear_managed_mods()`) on every ModifiableValue you changed, otherwise your functions will just keep adding up! Both are explained later.
 
 # Mod structure
 ```
