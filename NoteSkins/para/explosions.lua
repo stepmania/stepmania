@@ -19,7 +19,7 @@ return function(button_list)
 			InitCommand= function(self)
 				self:draworder(notefield_draw_order.explosion)
 					:rotationz(rots[button])
-			end
+			end,
 			WidthSetCommand= function(self, param)
 				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
 			end,

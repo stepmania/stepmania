@@ -1,4 +1,5 @@
 return function(button_list)
+	local ret = {}
 	for i, button in ipairs(button_list) do
 		ret[i]= Def.Sprite{
 			Texture= "Down KeypressBlock", InitCommand= function(self)
@@ -21,7 +22,7 @@ return function(button_list)
 					self:finishtweening():zoomx(0):linear(.02):zoomx(1)
 				elseif param.lifted then
 					self:finishtweening():zoomx(1):linear(.14):zoomx(0)
-				end,
+				end
 			end,
 		}
 	end
