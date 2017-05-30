@@ -65,7 +65,7 @@ int main(void)
 			"unsigned long const version_num = %ld;\n"
 			"extern char const * const version_date = \"%s\";\n"
 			"extern char const * const version_time = \"%s\";\n",
-			build, strdate, strtime);
+			(long)build, strdate, strtime);
 		fclose(f);
 	}
 

@@ -160,8 +160,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 
 		// Load the buffering filter before the effects filters, so effects aren't delayed.
 		pSongReader = new RageSoundReader_Extend( pSongReader );
-		pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
-		pShared = pSongReader;
+		pShared = new RageSoundReader_ThreadedBuffer( pSongReader );
 	}
 	else if( !vpSounds.empty() )
 	{
@@ -177,8 +176,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 
 		// Load the buffering filter before the effects filters, so effects aren't delayed.
 		pSongReader = new RageSoundReader_Extend( pSongReader );
-		pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
-		pShared = pSongReader;
+		pShared = new RageSoundReader_ThreadedBuffer( pSongReader );
 	}
 
 
@@ -188,8 +186,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 		RageSoundReader *pGuitarTrackReader = RageSoundReader_FileReader::OpenFile( pSong->GetInstrumentTrackPath(InstrumentTrack_Guitar), sError );
 		// Load the buffering filter before the effects filters, so effects aren't delayed.
 		pGuitarTrackReader = new RageSoundReader_Extend( pGuitarTrackReader );
-		pGuitarTrackReader = new RageSoundReader_ThreadedBuffer( pGuitarTrackReader );
-		pPlayer1 = pGuitarTrackReader;
+		pPlayer1 = new RageSoundReader_ThreadedBuffer( pGuitarTrackReader );
 	}
 
 	return;

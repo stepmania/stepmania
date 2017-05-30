@@ -673,6 +673,7 @@ int LuaFunc_create_bezier(lua_State* L)
 {
 	RageBezier2D* bezier= new RageBezier2D;
 	bezier->PushSelf(L);
+	delete bezier;
 	return 1;
 }
 LUAFUNC_REGISTER_COMMON(create_bezier);

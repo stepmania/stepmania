@@ -142,6 +142,7 @@ public:
 			int nLen = sizeof(TCHAR) * 1024;
 			pBuf = (TCHAR*)realloc((void*)pBuf, nLen);
 			if (!pBuf)
+				va_end (arguments);
 				return;
 			uTotal = _vsntprintf(pBuf, nLen - 1, lpszFormat, arguments);
 			if (uTotal == -1 || (uTotal == nLen - 1) ) // for some implementations
