@@ -365,15 +365,15 @@ void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* player_state,
 	}
 }
 void NoteColumnRenderArgs::spae_zoom_for_beat(const PlayerState* state, float beat,
-	RageVector3& sp_zoom, RageVector3& ae_zoom) const
+	RageVector3& sp_zoom, RageVector3& ae_zoom, int col_num, float y_offset) const
 {
 	switch(zoom_handler->m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(state);
+			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(state, y_offset, col_num);
 			break;
 		case NCSM_Offset:
-			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(state);
+			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(state, y_offset, col_num);
 			zoom_handler->EvalForBeat(song_beat, beat, sp_zoom);
 			break;
 		case NCSM_Position:
@@ -743,7 +743,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 {
 	ASSERT(!vpSpr.empty());
 
-	float ae_zoom= ArrowEffects::GetZoom(m_pPlayerState);
+	float ae_zoom= ArrowEffects::GetZoom(m_pPlayerState, 0, column_args.column);
 	Sprite *pSprite = vpSpr.front();
 
 	// draw manually in small segments
@@ -838,6 +838,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 
 		const float fYOffset= ArrowEffects::GetYOffsetFromYPos(column_args.column, fY, m_fYReverseOffsetPixels);
 
+		ae_zoom = ArrowEffects::GetZoom(m_pPlayerState, fYOffset, column_args.column);
+		
 		float cur_beat= part_args.top_beat;
 		if(part_args.top_beat != part_args.bottom_beat)
 		{
@@ -984,8 +986,9 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		const RageVector3 right_vert(center_vert.x - render_left.x,
 			center_vert.y - render_left.y, center_vert.z - render_left.z);
 
+		const float fVariableZoom	= ArrowEffects::GetZoomVariable(fYOffset, column_args.column, 1);
 		const float fDistFromTop	= (fY - y_start_pos) / ae_zoom;
-		float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
+		float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom * fVariableZoom);
 		fTexCoordTop += add_to_tex_coord;
 
 		const float fAlpha		= ArrowGetAlphaOrGlow(glow, m_pPlayerState, column_args.column, fYOffset, part_args.percent_fade_to_fail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
@@ -1116,7 +1119,7 @@ void NoteDisplay::DrawHoldBody(const TapNote& tn,
 		y_tail += cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	}
 
-	float ae_zoom= ArrowEffects::GetZoom(m_pPlayerState);
+	float ae_zoom= ArrowEffects::GetZoom(m_pPlayerState, 0, column_args.column);
 	const float frame_height_top= pSpriteTop->GetUnzoomedHeight() * ae_zoom;
 	const float frame_height_bottom= pSpriteBottom->GetUnzoomedHeight() * ae_zoom;
 
@@ -1307,7 +1310,7 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 		default:
 			break;
 	}
-	column_args.spae_zoom_for_beat(m_pPlayerState, spline_beat, sp_zoom, ae_zoom);
+	column_args.spae_zoom_for_beat(m_pPlayerState, spline_beat, sp_zoom, ae_zoom, column_args.column, fYOffset);
 	column_args.SetPRZForActor(pActor, sp_pos, ae_pos, sp_rot, ae_rot, sp_zoom, ae_zoom);
 	// [AJ] this two lines (and how they're handled) piss off many people:
 	pActor->SetDiffuse( diffuse );
@@ -1478,10 +1481,10 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	switch(NCR_current.m_zoom_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(player_state);
+			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(player_state, 0, m_column);
 			break;
 		case NCSM_Offset:
-			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(player_state);
+			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(player_state, 0, m_column);
 			NCR_current.m_zoom_handler.EvalForReceptor(song_beat, sp_zoom);
 			break;
 		case NCSM_Position:

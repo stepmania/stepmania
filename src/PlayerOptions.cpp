@@ -268,6 +268,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_SPEED],		"DrunkZSpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_OFFSET],	"DrunkZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_PERIOD],	"DrunkZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_LINEAR],	"ShrinkLinear" );
+	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_MULT],	"ShrinkMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],		"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION],	"Confusion" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_OFFSET],	"ConfusionOffset" );
@@ -621,6 +623,11 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "drunkzspeed" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_SPEED] )
 	    else if( sBit == "drunkzoffset" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_OFFSET] )
 	    else if( sBit == "drunkzperiod" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_PERIOD] )
+	}
+	else if( sBit.find("shrink") != sBit.npos)
+	{
+	    if( sBit == "shrinklinear" )			SET_FLOAT( fEffects[EFFECT_SHRINK_TO_LINEAR] )
+	    else if( sBit == "shrinkmult" )			SET_FLOAT( fEffects[EFFECT_SHRINK_TO_MULT] )
 	}
 	else if( sBit.find("dizzy") != sBit.npos)
 	{
@@ -1414,6 +1421,8 @@ public:
 	FLOAT_INTERFACE(DrunkZOffset, Effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET], true);
 	FLOAT_INTERFACE(DrunkZPeriod, Effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD], true);
 	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
+	FLOAT_INTERFACE(ShrinkLinear, Effects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR], true);
+	FLOAT_INTERFACE(ShrinkMult, Effects[PlayerOptions::EFFECT_SHRINK_TO_MULT], true);
 	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION], true);
 	FLOAT_INTERFACE(ConfusionOffset, Effects[PlayerOptions::EFFECT_CONFUSION_OFFSET], true);
 	FLOAT_INTERFACE(ConfusionX, Effects[PlayerOptions::EFFECT_CONFUSION_X], true);
@@ -1876,6 +1885,8 @@ public:
 		ADD_METHOD(DrunkZOffset);
 		ADD_METHOD(DrunkZPeriod);
 		ADD_METHOD(Dizzy);
+		ADD_METHOD(ShrinkLinear);
+		ADD_METHOD(ShrinkMult);
 		ADD_METHOD(Confusion);
 		ADD_METHOD(ConfusionOffset);
 		ADD_METHOD(ConfusionX);

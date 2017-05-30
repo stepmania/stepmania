@@ -1109,7 +1109,7 @@ bool ArrowEffects::NeedZBuffer()
 	return false;
 }
 
-float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
+float ArrowEffects::GetZoom( const PlayerState* pPlayerState, float fYOffset, int iCol )
 {
 	float fZoom = 1.0f;
 	// Design change:  Instead of having a flag in the style that toggles a
@@ -1117,6 +1117,8 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 	// calculates a zoom factor to apply to the notefield and puts it in the
 	// PlayerState. -Kyz
 	fZoom*= pPlayerState->m_NotefieldZoom;
+	
+	fZoom = GetZoomVariable( fYOffset, iCol, fZoom);
 
 	float fTinyPercent = curr_options->m_fEffects[PlayerOptions::EFFECT_TINY];
 	if( fTinyPercent != 0 )
@@ -1124,6 +1126,17 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 		fTinyPercent = powf( 0.5f, fTinyPercent );
 		fZoom *= fTinyPercent;
 	}
+	return fZoom;
+}
+
+float ArrowEffects::GetZoomVariable( float fYOffset, int iCol, float fCurZoom )
+{
+	float fZoom = fCurZoom;
+	if( curr_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT] !=0 && fYOffset >= 0 )
+		fZoom *= 1/(1+(fYOffset*(curr_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT]/100.0f)));
+		
+	if( curr_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR] !=0 && fYOffset >= 0 )
+		fZoom += fYOffset*(0.5f*curr_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR]/ARROW_SIZE);
 	return fZoom;
 }
 
@@ -1350,12 +1363,12 @@ namespace
 		return 1;
 	}
 	
-	// ( PlayerState ps )
+	// ( PlayerState ps, float fYOffset, int iCol )
 	int GetZoom( lua_State *L )
 	{
 		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 		ArrowEffects::SetCurrentOptions(&ps->m_PlayerOptions.GetCurrent());
-		lua_pushnumber( L, ArrowEffects::GetZoom( ps ) );
+		lua_pushnumber( L, ArrowEffects::GetZoom( ps, FArg(2), IArg(3)-1 ) );
 		return 1;
 	}
 	

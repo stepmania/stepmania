@@ -106,7 +106,8 @@ public:
 	static float GetBrightness( const PlayerState* pPlayerState, float fNoteBeat );
 
 	// This is the zoom of the individual tracks, not of the whole Player.
-	static float GetZoom( const PlayerState* pPlayerState );
+	static float GetZoom( const PlayerState* pPlayerState, float fYOffset, int iCol );
+	static float GetZoomVariable( float fYOffset, int iCol, float fCurZoom );
 
 	static float GetFrameWidthScale( const PlayerState* pPlayerState, float fYOffset, float fOverlappedTime );
 };
