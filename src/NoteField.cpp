@@ -963,7 +963,7 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper,
 		tex_handler, next_phase, is_lift, note);
 	bool need_glow_pass= false;
-	for(double curr_y= start_y; !last_vert_set; curr_y+= y_step)
+	for(double curr_y= end_y - ceil((end_y - start_y) / y_step) * y_step; !last_vert_set; curr_y+= y_step)
 	{
 		hold_vert_step_state curr_step= next_step;
 		if(curr_step.trans.glow > .01)
