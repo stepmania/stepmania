@@ -1836,13 +1836,13 @@ void Player::DoTapScoreNone(bool bStepped)
 	SendComboMessages( iOldCombo, iOldMissCombo );
 
 	if( m_pLifeMeter )
-		m_pLifeMeter->HandleTapScoreNone();
+		m_pLifeMeter->HandleTapScoreNone(bStepped);
 	// TODO: Remove use of PlayerNumber
 	PlayerNumber pn = PLAYER_INVALID;
 	if( m_pCombinedLifeMeter )
-		m_pCombinedLifeMeter->HandleTapScoreNone( pn );
+		m_pCombinedLifeMeter->HandleTapScoreNone( pn, bStepped );
 
-	if( PENALIZE_TAP_SCORE_NONE )
+	if( PENALIZE_TAP_SCORE_NONE && bStepped )
 	{
 		SetJudgment( BeatToNoteRow( m_pPlayerState->m_Position.m_fSongBeat ), -1, TAP_EMPTY, TNS_Miss, 0 );
 		// the ScoreKeeper will subtract points later.

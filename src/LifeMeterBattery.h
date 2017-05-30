@@ -24,7 +24,7 @@ public:
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore );
 	virtual void ChangeLife( float fDeltaLifePercent );
 	virtual void SetLife(float value);
-	virtual void HandleTapScoreNone();
+	virtual void HandleTapScoreNone(bool bStepped);
 	virtual bool IsInDanger() const;
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;
