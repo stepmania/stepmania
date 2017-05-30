@@ -88,6 +88,10 @@ void PlayerOptions::Init()
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
+	m_bStealthType = false;
+	m_bStealthPastReceptors = false;
+	m_bDizzyHolds = false;
+	m_bZBuffer = false;
 	m_sNoteSkin = "";
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
@@ -143,6 +147,10 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	for( int i=0; i<NUM_TRANSFORMS; i++ )
 		DO_COPY( m_bTransforms[i] );
 	DO_COPY( m_bMuteOnError );
+	DO_COPY( m_bStealthType );
+	DO_COPY( m_bStealthPastReceptors );
+	DO_COPY( m_bDizzyHolds );
+	DO_COPY( m_bZBuffer );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
@@ -328,6 +336,10 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
 	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
+	AddPart( AddTo, m_bStealthType,				"StealthType" );
+	AddPart( AddTo, m_bStealthPastReceptors,		"StealthPastReceptors");
+	AddPart( AddTo, m_bDizzyHolds,				"DizzyHolds");
+	AddPart( AddTo, m_bZBuffer,				"ZBuffer");
 	
 	for( int i=0; i<16; i++)
 	{
@@ -610,7 +622,11 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "drunkzoffset" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_OFFSET] )
 	    else if( sBit == "drunkzperiod" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_PERIOD] )
 	}
-	else if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
+	else if( sBit.find("dizzy") != sBit.npos)
+	{
+	    if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
+	    else if( sBit == "dizzyholds" )			m_bDizzyHolds = on;
+	}
 	else if( sBit.find("confusion") != sBit.npos)
 	{
 	    if( sBit == "confusion" )				SET_FLOAT( fEffects[EFFECT_CONFUSION] )
@@ -712,7 +728,12 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "hiddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_HIDDEN_OFFSET] )
 	else if( sBit == "sudden" )				SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )
 	else if( sBit == "suddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_SUDDEN_OFFSET] )
-	else if( sBit == "stealth" )				SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
+	else if ( sBit.find("stealth") != sBit.npos)
+	{
+	    if( sBit == "stealth" )				SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
+	    else if( sBit == "stealthtype" )			m_bStealthType = on;
+	    else if( sBit == "stealthpastreceptors" )		m_bStealthPastReceptors = on;
+	}
 	else if( sBit == "blink" )				SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
 	else if( sBit == "randomvanish" )			SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
 	else if( sBit == "turn" && !on )			ZERO( m_bTurns ); /* "no turn" */
@@ -801,7 +822,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		    if( sBit == s)				SET_FLOAT( fMovesZ[i] )
 	    }
 	}
-	
+	else if( sBit == "zbuffer" )				m_bZBuffer = on;
 	// deprecated mods/left in for compatibility
 	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 	// end of the list
@@ -1023,6 +1044,10 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_FailType);
 	COMPARE(m_MinTNSToHideNotes);
 	COMPARE(m_bMuteOnError);
+	COMPARE(m_bStealthType);
+	COMPARE(m_bStealthPastReceptors);
+	COMPARE(m_bDizzyHolds);
+	COMPARE(m_bZBuffer);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
@@ -1081,6 +1106,10 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_FailType);
 	CPY(m_MinTNSToHideNotes);
 	CPY(m_bMuteOnError);
+	CPY(m_bStealthType);
+	CPY(m_bStealthPastReceptors);
+	CPY(m_bDizzyHolds);
+	CPY(m_bZBuffer);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1311,6 +1340,10 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_ModTimerType);
 	CPY(m_fModTimerMult);
 	CPY(m_fModTimerOffset);
+	CPY(m_bStealthType);
+	CPY(m_bStealthPastReceptors);
+	CPY(m_bDizzyHolds);
+	CPY(m_bZBuffer);
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
@@ -1475,6 +1508,10 @@ public:
 	MULTICOL_FLOAT_INTERFACE(MoveY, MovesY, true);
 	MULTICOL_FLOAT_INTERFACE(MoveZ, MovesZ, true);
 	
+	BOOL_INTERFACE(StealthType, StealthType);
+	BOOL_INTERFACE(StealthPastReceptors, StealthPastReceptors);
+	BOOL_INTERFACE(DizzyHolds, DizzyHolds);
+	BOOL_INTERFACE(ZBuffer, ZBuffer);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -1921,6 +1958,10 @@ public:
 		ADD_METHOD(Dark);
 		ADD_METHOD(Blind);
 		ADD_METHOD(Cover);
+		ADD_METHOD(StealthType);
+		ADD_METHOD(StealthPastReceptors);
+		ADD_METHOD(DizzyHolds);
+		ADD_METHOD(ZBuffer);
 		ADD_METHOD(RandAttack);
 		ADD_METHOD(NoAttack);
 		ADD_METHOD(PlayerAutoPlay);

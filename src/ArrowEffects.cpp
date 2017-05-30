@@ -18,7 +18,6 @@ static char const dimension_names[4]= "XYZ";
 
 static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
 static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
-static ThemeMetric<bool>	HIDDEN_SUDDEN_PAST_RECEPTOR( "ArrowEffects", "DrawHiddenNotesAfterReceptor");
 
 /* For better or for worse, allow the themes to modify the various mod
  * effects for the different mods. In general, it is recommended to not
@@ -78,11 +77,10 @@ static ThemeMetric<float>	BEAT_Z_PI_HEIGHT( "ArrowEffects", "BeatZPIHeight" );
 
 static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" );
 static ThemeMetric<float>	TINY_PERCENT_GATE( "ArrowEffects", "TinyPercentGate" );
-static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
 
 static const PlayerOptions* curr_options= NULL;
 
-float ArrowGetPercentVisible(float fYPosWithoutReverse);
+float ArrowGetPercentVisible(float fYPosWithoutReverse, int iCol, float fYOffset);
 
 static float GetNoteFieldHeight()
 {
@@ -760,7 +758,7 @@ float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBe
 		fRotation += ReceptorGetRotationZ( pPlayerState );
 
 	// As usual, enable dizzy hold heads at your own risk. -Wolfman2000
-	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && ( DIZZY_HOLD_HEADS || !bIsHoldHead ) )
+	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && ( curr_options->m_bDizzyHolds || !bIsHoldHead ) )
 	{
 		const float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
@@ -919,11 +917,18 @@ static float GetSuddenStartLine()
 }
 
 // used by ArrowGetAlpha and ArrowGetGlow below
-float ArrowGetPercentVisible(float fYPosWithoutReverse)
+float ArrowGetPercentVisible(float fYPosWithoutReverse, int iCol, float fYOffset)
 {
 	const float fDistFromCenterLine = fYPosWithoutReverse - GetCenterLine();
 
-	if( fYPosWithoutReverse < 0 && HIDDEN_SUDDEN_PAST_RECEPTOR)	// past Gray Arrows
+	float fYPos;
+	if( curr_options->m_bStealthType )
+		fYPos = fYOffset;
+	else
+		fYPos = fYPosWithoutReverse;
+	
+	
+	if( fYPos < 0 && curr_options->m_bStealthPastReceptors == false)	// past Gray Arrows
 		return 1;	// totally visible
 
 	const float* fAppearances = curr_options->m_fAppearances;
@@ -932,13 +937,13 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse)
 
 	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] != 0 )
 	{
-		float fHiddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetHiddenStartLine(), GetHiddenEndLine(), 0, -1 );
+		float fHiddenVisibleAdjust = SCALE( fYPos, GetHiddenStartLine(), GetHiddenEndLine(), 0, -1 );
 		CLAMP( fHiddenVisibleAdjust, -1, 0 );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * fHiddenVisibleAdjust;
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] != 0 )
 	{
-		float fSuddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetSuddenStartLine(), GetSuddenEndLine(), -1, 0 );
+		float fSuddenVisibleAdjust = SCALE( fYPos, GetSuddenStartLine(), GetSuddenEndLine(), -1, 0 );
 		CLAMP( fSuddenVisibleAdjust, -1, 0 );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * fSuddenVisibleAdjust;
 	}
@@ -966,7 +971,7 @@ float ArrowEffects::GetAlpha(int iCol, float fYOffset, float fPercentFadeToFail,
 	// Get the YPos without reverse (that is, factor in EFFECT_TIPSY).
 	float fYPosWithoutReverse = ArrowEffects::GetYPos(iCol, fYOffset, fYReverseOffsetPixels, false );
 
-	float fPercentVisible = ArrowGetPercentVisible(fYPosWithoutReverse);
+	float fPercentVisible = ArrowGetPercentVisible(fYPosWithoutReverse, iCol, fYOffset);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -986,7 +991,7 @@ float ArrowEffects::GetGlow(int iCol, float fYOffset, float fPercentFadeToFail, 
 	// Get the YPos without reverse (that is, factor in EFFECT_TIPSY).
 	float fYPosWithoutReverse = ArrowEffects::GetYPos(iCol, fYOffset, fYReverseOffsetPixels, false );
 
-	float fPercentVisible = ArrowGetPercentVisible(fYPosWithoutReverse );
+	float fPercentVisible = ArrowGetPercentVisible(fYPosWithoutReverse, iCol, fYOffset);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -1086,15 +1091,20 @@ bool ArrowEffects::NeedZBuffer()
 	}
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
+	{
 		return true;
+	}
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 ||
 		fEffects[PlayerOptions::EFFECT_SAWTOOTH_Z] != 0 )
 	{
 		return true;
 	}
-	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 ||
+		fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
+	{
 		return true;
-	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
+	}
+	if( curr_options->m_bZBuffer )
 		return true;
 	return false;
 }

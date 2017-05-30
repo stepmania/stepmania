@@ -79,6 +79,8 @@ public:
 		m_fModTimerMult(0), m_SpeedfModTimerMult(1.0f),
 		m_fModTimerOffset(0), m_SpeedfModTimerOffset(1.0f),
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
+		m_bStealthType(false), m_bStealthPastReceptors(false),
+		m_bDizzyHolds(false), m_bZBuffer(false),
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
 		m_sNoteSkin = "";
@@ -308,6 +310,10 @@ public:
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bMuteOnError;
+	bool		m_bStealthType;
+	bool		m_bStealthPastReceptors;
+	bool		m_bDizzyHolds;
+	bool		m_bZBuffer;
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
 	TapNoteScore m_MinTNSToHideNotes;
