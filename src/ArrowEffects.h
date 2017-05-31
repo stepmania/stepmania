@@ -33,7 +33,7 @@ public:
 	static void GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, RageVector3& ret, bool with_reverse= true)
 	{
 		ret.x= GetMoveX(col) + GetXPos(player_state, col, y_offset);
-		ret.y= GetMoveY(col) + GetYPos(col, y_offset, y_reverse_offset, with_reverse);
+		ret.y= GetMoveY(col) + GetYPos(player_state, col, y_offset, y_reverse_offset, with_reverse);
 		ret.z= GetMoveZ(col) + GetZPos(player_state, col, y_offset);
 	}
 
@@ -47,7 +47,7 @@ public:
 	 * @param fYReverseOffsetPixels the amount offset due to reverse.
 	 * @param WithReverse a flag to see if the Reverse mod is on.
 	 * @return the actual display position. */
-	static float GetYPos(int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
+	static float GetYPos(const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
 
 	// Inverse of ArrowGetYPos (YPos -> fYOffset).
 	static float GetYOffsetFromYPos(int iCol, float YPos, float fYReverseOffsetPixels);
@@ -90,11 +90,11 @@ public:
 
 	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	// AppearanceType.
-	static float GetAlpha(int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar);
+	static float GetAlpha(const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar);
 
 	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	// AppearanceType.
-	static float GetGlow(int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
+	static float GetGlow(const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
 	/**
 	 * @brief Retrieve the current brightness.

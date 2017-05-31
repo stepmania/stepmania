@@ -546,7 +546,7 @@ static void ArrowGetReverseShiftAndScale(int iCol, float fYReverseOffsetPixels, 
 	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f );
 }
 
-float ArrowEffects::GetYPos(int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse)
+float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse)
 {
 	float f = fYOffset;
 
@@ -559,12 +559,23 @@ float ArrowEffects::GetYPos(int iCol, float fYOffset, float fYReverseOffsetPixel
 		f += fShift;
 	}
 
+	// TODO: Don't index by PlayerNumber.
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber);
+	const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pPlayerState->m_PlayerNumber];
 	const float* fEffects = curr_options->m_fEffects;
+	
 	// Doing the math with a precalculated result of 0 should be faster than
 	// checking whether tipsy is on. -Kyz
 	// TODO: Don't index by PlayerNumber.
 	PerPlayerData& data= g_EffectData[curr_options->m_pn];
 	f+= fEffects[PlayerOptions::EFFECT_TIPSY] * data.m_tipsy_result[iCol];
+		
+	if( fEffects[PlayerOptions::EFFECT_ATTENUATE_Y] != 0 )
+	{
+		const float fXOffset = pCols[iCol].fXOffset;
+		f += fEffects[PlayerOptions::EFFECT_ATTENUATE_Y] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE) * (fXOffset/ARROW_SIZE);
+	}
+	
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Y] != 0 )
 	{
@@ -664,6 +675,12 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	
 	if( fEffects[PlayerOptions::EFFECT_PARABOLA_X] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_PARABOLA_X] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
+	
+	if( fEffects[PlayerOptions::EFFECT_ATTENUATE_X] != 0 )
+	{
+		const float fXOffset = pCols[iColNum].fXOffset;
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_ATTENUATE_X] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE) * (fXOffset/ARROW_SIZE);
+	}
 
 	if( fEffects[PlayerOptions::EFFECT_DIGITAL] != 0 )
 		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_DIGITAL] * ARROW_SIZE * 0.5f) *
@@ -966,10 +983,10 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse, int iCol, float fYOffset
 	return clamp( 1+fVisibleAdjust, 0, 1 );
 }
 
-float ArrowEffects::GetAlpha(int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar)
+float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar)
 {
 	// Get the YPos without reverse (that is, factor in EFFECT_TIPSY).
-	float fYPosWithoutReverse = ArrowEffects::GetYPos(iCol, fYOffset, fYReverseOffsetPixels, false );
+	float fYPosWithoutReverse = ArrowEffects::GetYPos(pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
 	float fPercentVisible = ArrowGetPercentVisible(fYPosWithoutReverse, iCol, fYOffset);
 
@@ -986,10 +1003,10 @@ float ArrowEffects::GetAlpha(int iCol, float fYOffset, float fPercentFadeToFail,
 	return (fPercentVisible>0.5f) ? 1.0f : 0.0f;
 }
 
-float ArrowEffects::GetGlow(int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar)
+float ArrowEffects::GetGlow( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar)
 {
 	// Get the YPos without reverse (that is, factor in EFFECT_TIPSY).
-	float fYPosWithoutReverse = ArrowEffects::GetYPos(iCol, fYOffset, fYReverseOffsetPixels, false );
+	float fYPosWithoutReverse = ArrowEffects::GetYPos(pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
 	float fPercentVisible = ArrowGetPercentVisible(fYPosWithoutReverse, iCol, fYOffset);
 
@@ -1051,6 +1068,12 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 
 	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Z] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_PARABOLA_Z] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);
+	
+	if( fEffects[PlayerOptions::EFFECT_ATTENUATE_Z] != 0 )
+	{
+		const float fXOffset = pCols[iCol].fXOffset;
+		fZPos += fEffects[PlayerOptions::EFFECT_ATTENUATE_Z] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE) * (fXOffset/ARROW_SIZE);
+	}
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK_Z] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_DRUNK_Z] * 
@@ -1104,7 +1127,8 @@ bool ArrowEffects::NeedZBuffer()
 	{
 		return true;
 	}
-	if( curr_options->m_bZBuffer )
+	if( curr_options->m_bZBuffer ||
+		fEffects[PlayerOptions::EFFECT_ATTENUATE_Z] != 0 )
 		return true;
 	return false;
 }
@@ -1217,7 +1241,7 @@ namespace
 		PlayerState *ps = Luna<PlayerState>::check( L, 1 );
 		float fYReverseOffsetPixels = YReverseOffset( L, 4 );
 		ArrowEffects::SetCurrentOptions(&ps->m_PlayerOptions.GetCurrent());
-		lua_pushnumber(L, ArrowEffects::GetYPos(IArg(2)-1, FArg(3), fYReverseOffsetPixels));
+		lua_pushnumber(L, ArrowEffects::GetYPos(ps, IArg(2)-1, FArg(3), fYReverseOffsetPixels));
 		return 1;
 	}
 
@@ -1314,7 +1338,7 @@ namespace
 		{
 			fFadeInPercentOfDrawFar = FArg(7);
 		}
-		lua_pushnumber(L, ArrowEffects::GetAlpha(IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar));
+		lua_pushnumber(L, ArrowEffects::GetAlpha(ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar));
 		return 1;
 	}
 
@@ -1341,7 +1365,7 @@ namespace
 		{
 			fFadeInPercentOfDrawFar = FArg(7);
 		}
-		lua_pushnumber( L, ArrowEffects::GetGlow(IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
+		lua_pushnumber( L, ArrowEffects::GetGlow(ps, IArg(2)-1, FArg(3), fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar ) );
 		return 1;
 	}
 	
