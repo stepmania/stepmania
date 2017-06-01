@@ -76,18 +76,25 @@ function apply_notefield_prefs_nopn(read_bpm, field, prefs)
 			field:set_speed_mod(false, prefs.speed_mod)
 		end
 	end
-	field:get_fov_mod():set_value(prefs.fov)
-	field:get_vanish_x_mod():set_value(prefs.vanish_x)
-	field:get_vanish_y_mod():set_value(prefs.vanish_y)
-	field:get_trans_rot_x():set_value(prefs.rotation_x*torad)
-	field:get_trans_rot_y():set_value(prefs.rotation_y*torad)
-	field:get_trans_rot_z():set_value(prefs.rotation_z*torad)
+	field:set_base_values{
+		fov_x= prefs.vanish_x,
+		fov_y= prefs.vanish_y,
+		fov_z= prefs.fov,
+		transform_rot_x= prefs.rotation_x*torad,
+		transform_rot_y= prefs.rotation_y*torad,
+		transform_rot_z= prefs.rotation_z*torad,
+		transform_zoom_x= prefs.zoom*prefs.zoom_x,
+		transform_zoom_y= prefs.zoom*prefs.zoom_y,
+		transform_zoom_z= prefs.zoom*prefs.zoom_z,
+	}
 	-- Use the y zoom to adjust the y offset to put the receptors in the same
 	-- place.
 	local adjusted_offset= prefs.yoffset / (prefs.zoom * prefs.zoom_y)
 	for i, col in ipairs(field:get_columns()) do
-		col:get_reverse_scale():set_value(prefs.reverse)
-		col:get_reverse_offset_pixels():set_value(adjusted_offset)
+		col:set_base_values{
+			reverse= prefs.reverse,
+			reverse_offset= adjusted_offset,
+		}
 	end
 	if prefs.hidden then
 		field:set_hidden_mod(prefs.hidden_offset, prefs.fade_dist, prefs.glow_during_fade)
@@ -99,9 +106,6 @@ function apply_notefield_prefs_nopn(read_bpm, field, prefs)
 	else
 		field:clear_sudden_mod()
 	end
-	field:get_trans_zoom_x():set_value(prefs.zoom * prefs.zoom_x)
-	field:get_trans_zoom_y():set_value(prefs.zoom * prefs.zoom_y)
-	field:get_trans_zoom_z():set_value(prefs.zoom * prefs.zoom_z)
 end
 
 function apply_notefield_prefs(pn, field, prefs)

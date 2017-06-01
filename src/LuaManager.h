@@ -327,6 +327,20 @@ inline bool get_optional_bool(lua_State* L, int index, char const* field)
 	return ret;
 }
 
+inline void get_optional_string(lua_State* L, int index, char const* field, std::string& ret)
+{
+	lua_getfield(L, index, field);
+	if(lua_isstring(L, -1))
+	{
+		ret= lua_tostring(L, -1);
+	}
+	else
+	{
+		ret.clear();
+	}
+	lua_pop(L, 1);
+}
+
 inline bool value_is_in_table(lua_State* L, int value_index, int table_index)
 {
 	lua_pushnil(L);

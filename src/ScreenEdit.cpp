@@ -1410,9 +1410,9 @@ static void set_edit_mode_stuff_on_field(NoteField& field)
 {
 	field.m_being_drawn_by_player= false;
 	field.m_vanish_type= FVT_RelativeToSelf;
-	field.m_trans_mod.pos_mod.x_mod.add_simple_mod("base_value", "number", EDIT_X);
-	field.m_trans_mod.pos_mod.y_mod.add_simple_mod("base_value", "number", EDIT_Y);
-	field.set_speed(0.f, 0.f, 1.f, 0.f, 0.f, 1.f);
+	field.m_trans_mod.set_base_value(
+		{{EDIT_X, EDIT_Y, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}, 1.f, 0.f});
+	field.set_speed(1.f);
 	field.disable_speed_scroll_segments();
 	field.turn_on_edit_mode();
 }
@@ -1590,7 +1590,10 @@ void ScreenEdit::Init()
 
 ScreenEdit::~ScreenEdit()
 {
-	m_pSteps->GetTimingData()->ReleaseLookup();
+	if(m_pSteps != nullptr)
+	{
+		m_pSteps->GetTimingData()->ReleaseLookup();
+	}
 	// UGLY: Don't delete the Song's steps.
 	m_SongLastSave.DetachSteps();
 
@@ -1715,7 +1718,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		{
 			// TODO: Configurable approach speed. -Kyz
 			fapproach(m_curr_speed, m_goal_speed, fDeltaTime*4);
-			m_NoteFieldEdit.set_speed(0.f, 0.f, m_curr_speed, 0.f, 0.f, 1.f);
+			m_NoteFieldEdit.set_speed(m_curr_speed);
 		}
 	}
 

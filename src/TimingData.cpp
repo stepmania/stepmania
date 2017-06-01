@@ -188,7 +188,7 @@ static void FindEvent(int& event_row, int& event_type,
 }
 
 void TimingData::PrepareLineLookup(int search_mode, float search_time,
-	LineSegment* search_ret)
+	LineSegment* search_ret) const
 {
 	auto bpms= GetTimingSegments(SEGMENT_BPM);
 	auto stops= GetTimingSegments(SEGMENT_STOP);
@@ -441,7 +441,7 @@ void TimingData::PrepareLineLookup(int search_mode, float search_time,
 	}
 }
 
-void TimingData::ReleaseLineLookup()
+void TimingData::ReleaseLineLookup() const
 {
 	if(!m_line_segments.empty())
 	{
@@ -538,7 +538,7 @@ float TimingData::GetExpandSeconds(float from) const
 		segment.start_expand_second, segment.end_expand_second);
 }
 
-void TimingData::RequestLookup()
+void TimingData::RequestLookup() const
 {
 	++m_lookup_requester_count;
 	if(m_lookup_requester_count > 1)
@@ -548,7 +548,7 @@ void TimingData::RequestLookup()
 	PrepareLookup();
 }
 
-void TimingData::PrepareLookup()
+void TimingData::PrepareLookup() const
 {
 	// If by some mistake the old lookup table is still hanging around, adding
 	// more entries would probably cause problems.  Release the lookups. -Kyz
@@ -574,7 +574,7 @@ void TimingData::PrepareLookup()
 	// DumpLookupTables();
 }
 
-void TimingData::ReleaseLookup()
+void TimingData::ReleaseLookup() const
 {
 	--m_lookup_requester_count;
 	if(m_lookup_requester_count > 0)
@@ -584,7 +584,7 @@ void TimingData::ReleaseLookup()
 	ReleaseLookupInternal();
 }
 
-void TimingData::ReleaseDisplayedBeatLookup()
+void TimingData::ReleaseDisplayedBeatLookup() const
 {
 	if(!m_displayed_beat_lookup.empty())
 	{
@@ -592,7 +592,7 @@ void TimingData::ReleaseDisplayedBeatLookup()
 	}
 }
 
-void TimingData::ReleaseLookupInternal()
+void TimingData::ReleaseLookupInternal() const
 {
 	ReleaseDisplayedBeatLookup();
 	ReleaseLineLookup();
@@ -607,7 +607,7 @@ std::string SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, c
 	return fmt::sprintf("%s: %d at end", name.c_str(), index);
 }
 
-void TimingData::DumpLookupTables()
+void TimingData::DumpLookupTables() const
 {
 	LOG->Trace("Dumping timing data lookup tables for %s:", m_sFile.c_str());
 	// TODO: Write debugging dump code for line segment system.

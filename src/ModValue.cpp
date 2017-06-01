@@ -3,516 +3,22 @@
 #include "EnumHelper.h"
 #include "GameState.h"
 #include "ModValue.h"
+#include "ModValueInternal.h"
 #include "RageLog.h"
 #include "RageMath.h"
 #include "LuaBinding.h"
 
-enum mut
+ModManager::~ModManager()
 {
-	mut_never,
-	mut_frame,
-	mut_note
-};
-
-struct mod_operand
-{
-	virtual ~mod_operand() {}
-	virtual mut get_update_type()= 0;
-	virtual double evaluate(mod_val_inputs& input)= 0;
-	virtual bool needs_beat()= 0;
-	virtual bool needs_second()= 0;
-	virtual bool needs_y_offset()= 0;
-};
-
-struct mod_input_number : mod_operand
-{
-	double m_value;
-	virtual double evaluate(mod_val_inputs&)
-	{ return m_value; }
-	virtual mut get_update_type()
-	{ return mut_never; }
-	virtual bool needs_beat()
-	{ return false; }
-	virtual bool needs_second()
-	{ return false; }
-	virtual bool needs_y_offset()
-	{ return false; }
-};
-
-struct mod_input_music_rate : mod_operand
-{
-	virtual double evaluate(mod_val_inputs&)
-	{ return GAMESTATE->get_hasted_music_rate(); }
-	virtual mut get_update_type()
-	{ return mut_frame; }
-	virtual bool needs_beat()
-	{ return false; }
-	virtual bool needs_second()
-	{ return false; }
-	virtual bool needs_y_offset()
-	{ return false; }
-};
-
-#define SIMPLE_MOD_INPUT_TYPE(field_name, update, beat, second, yoff)	\
-struct mod_input_##field_name : mod_operand \
-{ \
-	virtual double evaluate(mod_val_inputs& input) \
-	{ return input.field_name; } \
-	virtual mut get_update_type() \
-	{ return update; } \
-	virtual bool needs_beat() \
-	{ return beat; } \
-	virtual bool needs_second() \
-	{ return second; } \
-	virtual bool needs_y_offset() \
-	{ return yoff; } \
-};
-
-SIMPLE_MOD_INPUT_TYPE(column, mut_never, false, false, false);
-SIMPLE_MOD_INPUT_TYPE(y_offset, mut_note, false, false, true);
-SIMPLE_MOD_INPUT_TYPE(note_id_in_chart, mut_note, false, false, false);
-SIMPLE_MOD_INPUT_TYPE(note_id_in_column, mut_note, false, false, false);
-SIMPLE_MOD_INPUT_TYPE(row_id, mut_note, false, false, false);
-SIMPLE_MOD_INPUT_TYPE(eval_beat, mut_note, true, false, false);
-SIMPLE_MOD_INPUT_TYPE(eval_second, mut_note, false, true, false);
-SIMPLE_MOD_INPUT_TYPE(music_beat, mut_frame, true, false, false);
-SIMPLE_MOD_INPUT_TYPE(music_second, mut_frame, false, true, false);
-SIMPLE_MOD_INPUT_TYPE(dist_beat, mut_note, true, false, false);
-SIMPLE_MOD_INPUT_TYPE(dist_second, mut_note, false, true, false);
-// start dist and end dist can be done with:
-// {"subtract", "music_beat" "start_beat"}
-SIMPLE_MOD_INPUT_TYPE(start_beat, mut_never, true, false, false);
-SIMPLE_MOD_INPUT_TYPE(start_second, mut_never, false, true, false);
-SIMPLE_MOD_INPUT_TYPE(end_beat, mut_never, true, false, false);
-SIMPLE_MOD_INPUT_TYPE(end_second, mut_never, false, true, false);
-SIMPLE_MOD_INPUT_TYPE(prefunres, mut_note, false, false, false);
-
-#undef SIMPLE_MOD_INPUT_TYPE
-
-enum mit
-{
-	mit_number,
-	mit_music_rate,
-	mit_column,
-	mit_y_offset,
-	mit_note_id_in_chart,
-	mit_note_id_in_column,
-	mit_row_id,
-	mit_eval_beat,
-	mit_eval_second,
-	mit_music_beat,
-	mit_music_second,
-	mit_dist_beat,
-	mit_dist_second,
-	mit_start_beat,
-	mit_start_second,
-	mit_end_beat,
-	mit_end_second,
-	mit_prefunres
-};
-
-struct mod_operator : mod_operand
-{
-	virtual ~mod_operator()
+	for(auto&& container : {&m_past_funcs, &m_present_funcs, &m_past_funcs})
 	{
-		for(auto&& op : m_operands)
+		for(auto&& fap : *container)
 		{
-			delete op;
-			op= nullptr;
+			delete fap.func;
 		}
-	}
-	virtual double evaluate(mod_val_inputs& input)= 0;
-	virtual void load_from_lua(mod_function* parent, lua_State* L, int index);
-	mut get_update_type() { return m_update_type; }
-	virtual void per_frame_update(mod_val_inputs& input);
-	virtual void per_note_update(mod_val_inputs& input);
-	virtual bool needs_beat();
-	virtual bool needs_second();
-	virtual bool needs_y_offset();
-
-	mut m_update_type;
-	vector<mod_operand*> m_operands;
-	vector<double> m_operand_results;
-	vector<size_t> m_per_note_operands;
-	vector<size_t> m_per_frame_operands;
-};
-
-static mod_operand* load_single_operand(mod_function* parent, lua_State* L, int operator_index,
-	size_t operand_index);
-static void load_operands_into_container(mod_function* parent, lua_State* L, int index,
-	vector<mod_operand*>& container);
-static void organize_simple_operands(mod_function* parent, mod_operator* self);
-static mod_operand* create_simple_input(std::string const& input_type, double value);
-
-#define PER_NOTE_UPDATE_IF if(!m_per_note_operands.empty()) { per_note_update(input); }
-#define EVAL_RESULT_EVAL \
-virtual double evaluate(mod_val_inputs& input) \
-{ \
-	PER_NOTE_UPDATE_IF; \
-	return m_eval_result; \
-}
-
-struct mod_operator_replace : mod_operator
-{
-	virtual void load_from_lua(mod_function*, lua_State*, int)
-	{
-		throw std::string("mod operator replace really just exists to be used as a sum type.");
-	}
-};
-
-#define plus_wrap(left, right) (left + right)
-#define subtract_wrap(left, right) (left - right)
-#define multiply_wrap(left, right) (left * right)
-
-static double divide_wrap(double left, double right)
-{
-	if(right == 0.0)
-	{
-		return 0.0;
-	}
-	return left / right;
-}
-
-#define SIMPLE_OPERATOR(op_name, eval) \
-struct mod_operator_##op_name : mod_operator \
-{ \
-	virtual double evaluate(mod_val_inputs& input) \
-	{ \
-		PER_NOTE_UPDATE_IF; \
-		double ret= m_operand_results[0]; \
-		for(size_t cur= 1; cur < m_operand_results.size(); ++cur) \
-		{ \
-			ret= eval(ret, m_operand_results[cur]); \
-		} \
-		return ret; \
-	} \
-	void add_simple_operand(std::string const& input_type, double value) \
-	{ m_operands.push_back(create_simple_input(input_type, value)); } \
-};
-
-static double log_wrapper(double left, double right)
-{
-	return log(left) / log(right);
-}
-
-SIMPLE_OPERATOR(add, plus_wrap);
-SIMPLE_OPERATOR(subtract, subtract_wrap);
-SIMPLE_OPERATOR(multiply, multiply_wrap);
-SIMPLE_OPERATOR(divide, divide_wrap);
-SIMPLE_OPERATOR(exp, pow);
-SIMPLE_OPERATOR(log, log_wrapper);
-SIMPLE_OPERATOR(min, std::min);
-SIMPLE_OPERATOR(max, std::max);
-
-#undef plus_wrap
-#undef subtract_wrap
-#undef multiply_wrap
-#undef SIMPLE_OPERATOR
-
-#define PAIR_OPERATOR(op_name, eval) \
-struct mod_operator_##op_name : mod_operator \
-{ \
-	virtual double evaluate(mod_val_inputs& input) \
-	{ \
-		PER_NOTE_UPDATE_IF; \
-		return eval(m_operand_results[0], m_operand_results[1]); \
-	} \
-	virtual void load_from_lua(mod_function* parent, lua_State* L, int index) \
-	{ \
-		mod_operator::load_from_lua(parent, L, index); \
-		if(m_operands.size() != 2) \
-		{ \
-			throw std::string(#op_name " operator must have exactly 2 operands."); \
-		} \
-	} \
-};
-
-static double fmod_wrapper(double left, double right)
-{
-	if(right == 0.0)
-	{
-		return 0.0;
-	}
-	return fmod(left, right);
-}
-
-// Pretty sure checking for 1.0 is slower than the divide and multiply.
-#define OBLONG_WRAPPER(name) \
-static double name##_wrapper(double left, double right) \
-{ \
-	if(right == 0.0) { return left; } \
-	return std::name(left / right) * right; \
-}
-
-OBLONG_WRAPPER(floor);
-OBLONG_WRAPPER(ceil);
-OBLONG_WRAPPER(round);
-
-#undef OBLONG_WRAPPER
-
-PAIR_OPERATOR(mod, fmod_wrapper);
-PAIR_OPERATOR(floor, floor_wrapper);
-PAIR_OPERATOR(ceil, ceil_wrapper);
-PAIR_OPERATOR(round, round_wrapper);
-
-#undef PAIR_OPERATOR
-
-#define WAVE_OPERATOR(op_name, wave_eval) \
-struct mod_operator_##op_name : mod_operator \
-{ \
-	EVAL_RESULT_EVAL; \
-	virtual void load_from_lua(mod_function* parent, lua_State* L, int index) \
-	{ \
-		mod_operator::load_from_lua(parent, L, index); \
-		if(m_operands.size() != 1) \
-		{ \
-			throw std::string("Wave functions only take one operand."); \
-		} \
-		if(m_update_type == mut_never) \
-		{ \
-			double angle= m_operand_results[0]; \
-			m_eval_result= (wave_eval); \
-		} \
-	} \
-	virtual void per_frame_update(mod_val_inputs& input) \
-	{ \
-		mod_operator::per_frame_update(input); \
-		double angle= m_operand_results[0]; \
-		m_eval_result= (wave_eval); \
-	} \
-	virtual void per_note_update(mod_val_inputs& input) \
-	{ \
-		mod_operator::per_note_update(input); \
-		double angle= m_operand_results[0]; \
-		m_eval_result= (wave_eval); \
-	} \
-	double m_eval_result; \
-};
-
-static double square_wave(double angle)
-{
-	angle= fmod(angle, Rage::D_PI * 2.0);
-	if(angle < 0.0)
-	{
-		angle+= Rage::D_PI * 2.0;
-	}
-	return angle >= Rage::D_PI ? -1.0 : 1.0;
-}
-
-static double triangle_wave(double angle)
-{
-	angle= fmod(angle, Rage::D_PI * 2.0);
-	if(angle < 0.0)
-	{
-		angle+= Rage::D_PI * 2.0;
-	}
-	double result= angle * Rage::D_PI_REC;
-	if(result < .5)
-	{
-		return result * 2.0;
-	}
-	else if(result < 1.5)
-	{
-		return 1.0 - ((result - .5) * 2.0);
-	}
-	else
-	{
-		return -4.0 + (result * 2.0);
+		container->clear();
 	}
 }
-
-WAVE_OPERATOR(sin, (Rage::FastSin(angle)));
-WAVE_OPERATOR(cos, (Rage::FastCos(angle)));
-WAVE_OPERATOR(tan, (tan(angle)));
-WAVE_OPERATOR(square, (square_wave(angle)));
-WAVE_OPERATOR(triangle, (triangle_wave(angle)));
-
-#undef WAVE_OPERATOR
-
-struct mod_operator_random : mod_operator
-{
-	virtual void load_from_lua(mod_function* parent, lua_State* L, int index)
-	{
-		mod_operator::load_from_lua(parent, L, index);
-		if(m_operands.size() != 1)
-		{
-			throw std::string("Random operator only takes one operand.");
-		}
-		if(m_update_type == mut_never)
-		{
-			m_eval_result= GAMESTATE->simple_stage_frandom(m_operand_results[0]);
-		}
-	}
-	EVAL_RESULT_EVAL;
-	void per_frame_update(mod_val_inputs& input);
-	void per_note_update(mod_val_inputs& input);
-	double m_eval_result;
-};
-
-struct mod_operator_phase : mod_operator
-{
-	EVAL_RESULT_EVAL;
-	virtual void load_from_lua(mod_function* parent, lua_State* L, int index);
-	struct phase
-	{
-		phase()
-			:start(0.0), finish(0.0), mult(1.0), offset(0.0)
-		{}
-		double start;
-		double finish;
-		double mult;
-		double offset;
-	};
-	phase const* find_phase(double input);
-	void phase_eval();
-	void per_frame_update(mod_val_inputs& input);
-	void per_note_update(mod_val_inputs& input);
-	double m_eval_result;
-	vector<phase> m_phases;
-	phase m_default_phase;
-};
-
-struct mod_operator_repeat : mod_operator
-{
-	mod_operator_repeat()
-		:m_rep_begin(0.0), m_rep_end(0.0)
-	{}
-	EVAL_RESULT_EVAL;
-	void repeat_eval();
-	virtual void load_from_lua(mod_function* parent, lua_State* L, int index);
-	void per_frame_update(mod_val_inputs& input);
-	void per_note_update(mod_val_inputs& input);
-	double m_eval_result;
-	double m_rep_begin;
-	double m_rep_end;
-};
-
-struct mod_operator_spline : mod_operator
-{
-	mod_operator_spline()
-		:m_loop(false), m_polygonal(false), m_has_per_frame_points(false),
-		 m_has_per_note_points(false)
-	{}
-	EVAL_RESULT_EVAL;
-	void spline_eval();
-	virtual void load_from_lua(mod_function* parent, lua_State* L, int index);
-	void per_frame_update(mod_val_inputs& input);
-	void per_note_update(mod_val_inputs& input);
-
-	double m_eval_result;
-	CubicSpline m_spline;
-	bool m_loop;
-	bool m_polygonal;
-	bool m_has_per_frame_points;
-	bool m_has_per_note_points;
-};
-
-struct mod_operator_lua : mod_operator
-{
-	EVAL_RESULT_EVAL;
-	void lua_eval();
-	virtual void load_from_lua(mod_function* parent, lua_State* L, int index);
-	void per_frame_update(mod_val_inputs& input);
-	void per_note_update(mod_val_inputs& input);
-
-	double m_eval_result;
-	LuaReference m_func;
-};
-
-#undef EVAL_RESULT_EVAL
-
-enum mot
-{
-	mot_replace,
-	mot_add,
-	mot_subtract,
-	mot_multiply,
-	mot_divide,
-	mot_exp,
-	mot_log,
-	mot_min,
-	mot_max,
-	mot_sin,
-	mot_cos,
-	mot_tan,
-	mot_square,
-	mot_triangle,
-	mot_random,
-	mot_phase,
-	mot_repeat,
-	mot_mod,
-	mot_floor,
-	mot_ceil,
-	mot_round,
-	mot_spline,
-	mot_lua
-};
-
-static mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int index);
-static mod_operand* create_mod_input(lua_State* L, int index);
-static mod_operand* load_operand_on_stack(mod_function* parent, lua_State* L);
-
-struct mod_function
-{
-	mod_function(ModifiableValue* parent, double col)
-		:m_priority(0), m_sum_type(mot_add),
-		 m_start_beat(invalid_modfunction_time),
-		 m_start_second(invalid_modfunction_time),
-		 m_end_beat(invalid_modfunction_time),
-		 m_end_second(invalid_modfunction_time),
-		 m_base_operand(nullptr), m_column(col),
-		 m_parent(parent)
-	{}
-	~mod_function();
-	void change_parent(ModifiableValue* new_parent)
-	{
-		m_parent= new_parent;
-	}
-
-
-	double evaluate(mod_val_inputs& input);
-	double evaluate_with_time(mod_val_inputs& input);
-	void load_from_lua(lua_State* L, int index, uint32_t col);
-	void simple_load(std::string const& name, std::string const& input_type,
-		double value);
-	void add_per_frame_operator(mod_operator* op);
-
-	void calc_unprovided_times(TimingData const* timing);
-	bool needs_beat();
-	bool needs_second();
-	bool needs_y_offset();
-	std::string const& get_name() { return m_name; }
-	void set_input_fields(mod_val_inputs& input)
-	{
-		input.column= m_column;
-		input.set_time(m_start_beat, m_start_second, m_end_beat, m_end_second);
-	}
-
-	// needs_per_frame_update exists so that ModifiableValue can check after
-	// creating a mod_function to see if it needs to be added to the manager for
-	// solving every frame.
-	bool needs_per_frame_update();
-	void per_frame_update(mod_val_inputs& input);
-
-	int m_priority;
-	mot m_sum_type;
-	double m_start_beat;
-	double m_start_second;
-	double m_end_beat;
-	double m_end_second;
-
-private:
-	// do not use mod_function::operator=, too much pointer handling.
-	mod_function& operator=(mod_function&)
-	{return *this;}
-	mod_operand* m_base_operand;
-	vector<mod_operator*> m_per_frame_operators;
-	double m_column;
-
-	std::string m_name;
-	ModifiableValue* m_parent;
-};
-
 
 void ModManager::update(double curr_beat, double curr_second)
 {
@@ -621,6 +127,306 @@ void ModManager::add_mod(mod_function* func, ModifiableValue* parent)
 		insert_into_present(func, parent);
 	}
 }
+
+void ModManager::register_moddable(std::string const& name, ModifiableValue* thing)
+{
+	m_registered_targets.insert(std::make_pair(name, thing));
+}
+
+void ModManager::set_base_values(lua_State* L, int value_set)
+{
+	lua_pushnil(L);
+	while(lua_next(L, value_set) != 0)
+	{
+		if(lua_type(L, -2) == LUA_TSTRING && lua_type(L, -1) == LUA_TNUMBER)
+		{
+			std::string target= lua_tostring(L, -2);
+			auto target_registry_entry= m_registered_targets.find(target);
+			if(target_registry_entry != m_registered_targets.end())
+			{
+				double value= lua_tonumber(L, -1);
+				target_registry_entry->second->set_base_value(value);
+			}
+			else
+			{
+				LuaHelpers::ReportScriptErrorFmt("Mod target %s not found.", target.c_str());
+			}
+		}
+		lua_pop(L, 1);
+	}
+}
+
+void ModManager::add_permanent_mods(lua_State* L, int mod_set)
+{
+	size_t num_entries= lua_objlen(L, mod_set);
+	std::vector<std::pair<size_t, std::string> > failure_backlog;
+	for(size_t mod_id= 1; mod_id <= num_entries; ++mod_id)
+	{
+		lua_rawgeti(L, mod_set, mod_id);
+		if(lua_type(L, -1) == LUA_TTABLE)
+		{
+			int entry_table= lua_gettop(L);
+			std::string target_name;
+			get_optional_string(L, entry_table, "target", target_name);
+			if(!target_name.empty())
+			{
+				auto target_registry_entry= m_registered_targets.find(target_name);
+				if(target_registry_entry != m_registered_targets.end())
+				{
+					auto target= target_registry_entry->second;
+					std::string failure;
+					mod_function* temp_func= new mod_function(target, target->get_column());
+					try
+					{
+						temp_func->load_from_lua(L, entry_table, nullptr);
+						target->add_mod(temp_func, *this);
+					}
+					catch(std::string& err)
+					{
+						failure_backlog.push_back(std::make_pair(mod_id, err));
+						delete temp_func;
+					}
+				}
+			}
+		}
+		lua_pop(L, 1);
+	}
+	if(!failure_backlog.empty())
+	{
+		LOG->Trace("Malformed permanent mods:");
+		for(auto&& failblog : failure_backlog)
+		{
+			LOG->Trace("%i: %s", failblog.first, failblog.second.c_str());
+		}
+		LuaHelpers::ReportScriptError("Check log for list of mods that could not be loaded.");
+	}
+}
+
+void ModManager::add_timed_mods(lua_State* L, int mod_set)
+{
+	size_t num_entries= lua_objlen(L, mod_set);
+	std::vector<std::pair<size_t, std::string> > failure_backlog;
+	for(size_t mod_id= 1; mod_id <= num_entries; ++mod_id)
+	{
+		lua_rawgeti(L, mod_set, mod_id);
+		if(lua_type(L, -1) == LUA_TTABLE)
+		{
+			int entry_table= lua_gettop(L);
+			std::string target_name;
+			get_optional_string(L, entry_table, "target", target_name);
+			if(!target_name.empty())
+			{
+				auto target_registry_entry= m_registered_targets.find(target_name);
+				if(target_registry_entry != m_registered_targets.end())
+				{
+					auto target= target_registry_entry->second;
+					mod_function* temp_func= new mod_function(target, target->get_column());
+					try
+					{
+						temp_func->load_from_lua(L, entry_table, m_timing_data);
+						add_mod(temp_func, target);
+					}
+					catch(std::string& err)
+					{
+						delete temp_func;
+						failure_backlog.push_back(std::make_pair(mod_id, err));
+					}
+				}
+			}
+		}
+		lua_pop(L, 1);
+	}
+	if(!failure_backlog.empty())
+	{
+		LOG->Trace("Malformed timed mods:");
+		for(auto&& failblog : failure_backlog)
+		{
+			LOG->Trace("%i: %s", failblog.first, failblog.second.c_str());
+		}
+		LuaHelpers::ReportScriptError("Check log for list of mods that could not be loaded.");
+	}
+}
+
+void ModManager::push_target_info(lua_State* L)
+{
+	// Creates a table like this:
+	// { name= true, [1]= name, ... }
+	// So lua that needs the target info can use 'if info.name then' to test
+	// whether a target exists, or iterate through the table to show a list.
+	lua_createtable(L, m_registered_targets.size(), m_registered_targets.size());
+	int info_table= lua_gettop(L);
+	int next_id= 1;
+	for(auto&& target_entry : m_registered_targets)
+	{
+		lua_pushboolean(L, true);
+		lua_setfield(L, info_table, target_entry.first.c_str());
+		++next_id;
+	}
+}
+
+
+void ModManager::remove_permanent_mods(lua_State* L, int mod_set)
+{
+	// mod_set is a table of target, name pair tables.
+	// {{target= "speed", name= "speed"}, {target= "note_transform", name= "hat"}}
+	size_t num_entries= lua_objlen(L, mod_set);
+	for(size_t mod_id= 1; mod_id <= num_entries; ++mod_id)
+	{
+		lua_rawgeti(L, mod_set, mod_id);
+		int mod_entry= lua_gettop(L);
+		if(lua_type(L, mod_entry) == LUA_TTABLE)
+		{
+			std::string target;
+			get_optional_string(L, mod_entry, "target", target);
+			std::string name;
+			get_optional_string(L, mod_entry, "name", name);
+			if(!target.empty() && !name.empty())
+			{
+				if(target == "all")
+				{
+					for(auto&& entry : m_registered_targets)
+					{
+						entry.second->remove_mod(name, *this);
+					}
+				}
+				else
+				{
+					auto target_registry_entry= m_registered_targets.find(target);
+					if(target_registry_entry != m_registered_targets.end())
+					{
+						target_registry_entry->second->remove_mod(name, *this);
+					}
+				}
+			}
+		}
+		lua_pop(L, 1);
+	}
+}
+
+void ModManager::clear_permanent_mods(lua_State* L, int mod_set)
+{
+	// mod_set is a table of targets to clear all mods from.
+	// {"reverse", "note_transform", "note_visibility"}
+	size_t num_entries= lua_objlen(L, mod_set);
+	for(size_t mod_id= 1; mod_id <= num_entries; ++mod_id)
+	{
+		lua_rawgeti(L, mod_set, mod_id);
+		int mod_entry= lua_gettop(L);
+		if(lua_type(L, mod_entry) == LUA_TSTRING)
+		{
+			std::string target= lua_tostring(L, mod_entry);
+			if(target == "all")
+			{
+				for(auto&& entry : m_registered_targets)
+				{
+					entry.second->clear_mods(*this);
+				}
+			}
+			else
+			{
+				auto target_registry_entry= m_registered_targets.find(target);
+				if(target_registry_entry != m_registered_targets.end())
+				{
+					target_registry_entry->second->clear_mods(*this);
+				}
+			}
+		}
+		lua_pop(L, 1);
+	}
+}
+
+void ModManager::clear_timed_mods()
+{
+	for(auto&& target : m_registered_targets)
+	{
+		target.second->clear_active_list();
+	}
+	for(auto&& container : {&m_past_funcs, &m_present_funcs, &m_future_funcs})
+	{
+		for(auto&& entry : *container)
+		{
+			auto per_frame_entry= m_per_frame_update_funcs.find(entry.func);
+			if(per_frame_entry != m_per_frame_update_funcs.end())
+			{
+				m_per_frame_update_funcs.erase(per_frame_entry);
+			}
+			delete entry.func;
+		}
+		container->clear();
+	}
+}
+
+
+void ModManager::load_time_pair(lua_State* L, int table,
+	char const* beat_name, char const* second_name,
+	double& beat_result, double& second_result)
+{
+	beat_result= get_optional_double(L, table, beat_name, invalid_modfunction_time);
+	second_result= get_optional_double(L, table, second_name, invalid_modfunction_time);
+	if(beat_result == invalid_modfunction_time)
+	{
+		if(second_result == invalid_modfunction_time)
+		{
+			return;
+		}
+		beat_result= m_timing_data->GetBeatFromElapsedTime(static_cast<float>(second_result));
+	}
+	else
+	{
+		if(second_result == invalid_modfunction_time)
+		{
+			second_result= m_timing_data->GetElapsedTimeFromBeat(static_cast<float>(beat_result));
+		}
+	}
+}
+
+
+void ModManager::load_target_list(lua_State* L, int table,
+	std::unordered_set<ModifiableValue*>& target_list)
+{
+	lua_getfield(L, table, "target");
+	if(lua_isstring(L, -1))
+	{
+		std::string target= lua_tostring(L, -1);
+		if(target == "all")
+		{
+			for(auto iter= m_registered_targets.begin(); iter != m_registered_targets.end(); ++iter)
+			{
+				target_list.insert(iter->second);
+			}
+		}
+		else
+		{
+			auto entry= m_registered_targets.find(target);
+			if(entry != m_registered_targets.end())
+			{
+				target_list.insert(entry->second);
+			}
+		}
+	}
+	else if(lua_istable(L, -1))
+	{
+		int list_index= lua_gettop(L);
+		size_t entries= lua_objlen(L, list_index);
+		for(size_t e= 1; e <= entries; ++e)
+		{
+			lua_rawgeti(L, list_index, e);
+			if(lua_isstring(L, -1))
+			{
+				std::string target;
+				target= lua_tostring(L, -1);
+				auto entry= m_registered_targets.find(target);
+				if(entry != m_registered_targets.end())
+				{
+					target_list.insert(entry->second);
+				}
+			}
+			lua_pop(L, 1);
+		}
+	}
+	lua_pop(L, 1);
+}
+
 
 void ModManager::remove_mod(mod_function* func)
 {
@@ -734,11 +540,11 @@ void ModManager::insert_into_future(mod_function* func, ModifiableValue* parent)
 	m_future_funcs.push_back(func_and_parent(func, parent));
 }
 
-void ModManager::remove_from_present(std::list<func_and_parent>::iterator fapi)
+std::list<ModManager::func_and_parent>::iterator ModManager::remove_from_present(std::list<func_and_parent>::iterator fapi)
 {
 	remove_from_per_frame_update(fapi->func);
 	fapi->parent->remove_mod_from_active_list(fapi->func);
-	m_present_funcs.erase(fapi);
+	return m_present_funcs.erase(fapi);
 }
 
 
@@ -779,7 +585,7 @@ static std::unordered_map<std::string, mot> mot_conversion= {
 };
 #undef CONVENT
 
-static mot str_to_mot(std::string const& str)
+mot str_to_mot(std::string const& str)
 {
 	auto entry= mot_conversion.find(str);
 	if(entry == mot_conversion.end())
@@ -789,7 +595,7 @@ static mot str_to_mot(std::string const& str)
 	return entry->second;
 }
 
-static mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int index)
+mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int index)
 {
 	lua_rawgeti(L, index, 1);
 	int op_field_type= lua_type(L, -1);
@@ -870,13 +676,15 @@ static std::unordered_map<std::string, mit> mit_conversion= {
 	CONVENT(dist_second),
 	CONVENT(start_beat),
 	CONVENT(start_second),
+	CONVENT(length_beats),
+	CONVENT(length_seconds),
 	CONVENT(end_beat),
 	CONVENT(end_second),
 	CONVENT(prefunres)
 };
 #undef CONVENT
 
-static mit str_to_mit(std::string const& str)
+mit str_to_mit(std::string const& str)
 {
 	auto entry= mit_conversion.find(str);
 	if(entry == mit_conversion.end())
@@ -886,7 +694,7 @@ static mit str_to_mit(std::string const& str)
 	return entry->second;
 }
 
-static mod_operand* create_mod_input(std::string const& str_type)
+mod_operand* create_mod_input(std::string const& str_type)
 {
 	mit type= str_to_mit(str_type);
 #define RET_ENTRY(field_name) \
@@ -904,6 +712,8 @@ static mod_operand* create_mod_input(std::string const& str_type)
 		ENTRY_BS_PAIR(music);
 		ENTRY_BS_PAIR(dist);
 		ENTRY_BS_PAIR(start);
+		RET_ENTRY(length_beats);
+		RET_ENTRY(length_seconds);
 		ENTRY_BS_PAIR(end);
 		RET_ENTRY(prefunres);
 		default: break;
@@ -913,7 +723,7 @@ static mod_operand* create_mod_input(std::string const& str_type)
 	throw std::string(fmt::sprintf("Unknown mod input type: %s", str_type.c_str()));
 }
 
-static mod_operand* create_mod_input(lua_State* L, int index)
+mod_operand* create_mod_input(lua_State* L, int index)
 {
 	if(lua_type(L, index) == LUA_TNUMBER)
 	{
@@ -925,33 +735,7 @@ static mod_operand* create_mod_input(lua_State* L, int index)
 	return create_mod_input(str);
 }
 
-static mod_operand* create_simple_input(std::string const& input_type, double value)
-{
-	if(input_type == "number")
-	{
-		mod_input_number* op= new mod_input_number;
-		op->m_value= value;
-		return op;
-	}
-	else
-	{
-		try
-		{
-			mod_operand* op= create_mod_input(input_type);
-			return op;
-		}
-		catch(std::string& err)
-		{
-			LuaHelpers::ReportScriptError("lol kyz messed up");
-			LuaHelpers::ReportScriptError(err);
-			mod_input_number* op= new mod_input_number;
-			op->m_value= value;
-			return op;
-		}
-	}
-}
-
-static mod_operand* load_operand_on_stack(mod_function* parent, lua_State* L)
+mod_operand* load_operand_on_stack(mod_function* parent, lua_State* L)
 {
 	int op_index= lua_gettop(L);
 	mod_operand* new_oper= nullptr;
@@ -984,15 +768,15 @@ static mod_operand* load_operand_on_stack(mod_function* parent, lua_State* L)
 	return new_oper;
 }
 
-static mod_operand* load_single_operand(mod_function* parent, lua_State* L, int operator_index,
-	size_t operand_index)
+mod_operand* load_single_operand(mod_function* parent, lua_State* L,
+	int operator_index, size_t operand_index)
 {
 	lua_rawgeti(L, operator_index, operand_index);
 	return load_operand_on_stack(parent, L);
 }
 
-static void load_operands_into_container(mod_function* parent, lua_State* L, int index,
-	vector<mod_operand*>& container)
+void load_operands_into_container(mod_function* parent, lua_State* L,
+	int index, vector<mod_operand*>& container)
 {
 	// index points to operator table.
 	// first entry in the table is the type of the operator.
@@ -1014,7 +798,7 @@ static void load_operands_into_container(mod_function* parent, lua_State* L, int
 	}
 }
 
-static void organize_simple_operands(mod_function* parent, mod_operator* self)
+void organize_simple_operands(mod_function* parent, mod_operator* self)
 {
 	self->m_operand_results.resize(self->m_operands.size());
 	mut most_frequent_update_type= mut_never;
@@ -1233,22 +1017,11 @@ void mod_operator_phase::per_note_update(mod_val_inputs& input)
 
 void mod_operator_repeat::load_from_lua(mod_function* parent, lua_State* L, int index)
 {
-	m_operands.push_back(load_single_operand(parent, L, index, 2));
-	organize_simple_operands(parent, this);
-	m_rep_begin= 0.0;
-	m_rep_end= 0.0;
-	lua_rawgeti(L, index, 3);
-	if(lua_isnumber(L, -1))
+	mod_operator::load_from_lua(parent, L, index);
+	if(m_operands.size() != 3)
 	{
-		m_rep_begin= lua_tonumber(L, -1);
+		throw std::string("Repeat operator must have exactly 3 operands: input, range begin, range end.");
 	}
-	lua_pop(L, 1);
-	lua_rawgeti(L, index, 4);
-	if(lua_isnumber(L, -1))
-	{
-		m_rep_end= lua_tonumber(L, -1);
-	}
-	lua_pop(L, 1);
 
 	if(m_update_type == mut_never)
 	{
@@ -1271,15 +1044,15 @@ void mod_operator_repeat::per_note_update(mod_val_inputs& input)
 void mod_operator_repeat::repeat_eval()
 {
 	double op_result= m_operand_results[0];
-	double const dist= m_rep_end - m_rep_begin;
+	double const dist= m_operand_results[2] - m_operand_results[1];
 	double const mod_res= fmod(op_result, dist);
 	if(mod_res < 0.0)
 	{
-		m_eval_result= mod_res + dist + m_rep_begin;
+		m_eval_result= mod_res + dist + m_operand_results[1];
 	}
 	else
 	{
-		m_eval_result= mod_res + m_rep_begin;
+		m_eval_result= mod_res + m_operand_results[1];
 	}
 }
 
@@ -1414,97 +1187,128 @@ void mod_operator_lua::per_note_update(mod_val_inputs& input)
 
 mod_function::~mod_function()
 {
-	delete m_base_operand;
+	Rage::safe_delete(m_base_operand);
 }
 
-void mod_function::load_from_lua(lua_State* L, int index, uint32_t col)
+void mod_function::load_from_lua(lua_State* L, int index,
+	TimingData const* timing_data)
 {
 	// {start_beat= 4, end_beat= 8, name= "frogger", priority= 0,
 	//   sum_type= "add", {"add", 5, "music_beat"}}
-	lua_getfield(L, index, "name");
-	if(lua_type(L, -1) == LUA_TSTRING)
-	{
-		m_name= lua_tostring(L, -1);
-	}
-	else
+	get_optional_string(L, index, "name", m_name);
+	if(m_name.empty() && timing_data != nullptr)
 	{
 		m_name= unique_name("mod");
 	}
-	lua_pop(L, 1);
-	lua_getfield(L, index, "sum_type");
-	if(lua_type(L, -1) == LUA_TSTRING)
+	std::string sum_type;
+	get_optional_string(L, index, "sum_type", sum_type);
+	if(sum_type.empty())
 	{
-		std::string str_type= lua_tostring(L, -1);
-		lua_pop(L, 1);
-		m_sum_type= str_to_mot(str_type);
-		switch(m_sum_type)
-		{
-			case mot_replace:
-			case mot_add:
-			case mot_subtract:
-			case mot_multiply:
-			case mot_divide:
-				break;
-			default:
-				throw std::string("sum_type not supported for mod function.");
-		}
+		m_sum_type= mot_add;
 	}
 	else
 	{
-		lua_pop(L, 1);
+		m_sum_type= str_to_mot(sum_type);
+	}
+	switch(m_sum_type)
+	{
+		case mot_replace:
+		case mot_add:
+		case mot_subtract:
+		case mot_multiply:
+		case mot_divide:
+			break;
+		default:
+			throw std::string(fmt::sprintf("sum_type %s not supported for mod equation.", sum_type.c_str()));
 	}
 	m_priority= get_optional_int(L, index, "priority", 0);
-	m_start_beat= get_optional_double(L, index, "start_beat", invalid_modfunction_time);
-	m_start_second= get_optional_double(L, index, "start_second", invalid_modfunction_time);
-	m_end_beat= get_optional_double(L, index, "end_beat", invalid_modfunction_time);
-	m_end_second= get_optional_double(L, index, "end_second", invalid_modfunction_time);
-	m_column= get_optional_double(L, index, "column", col);
+	if(timing_data != nullptr)
+	{
+		m_start_beat= get_optional_double(L, index, "start_beat", invalid_modfunction_time);
+		m_start_second= get_optional_double(L, index, "start_second", invalid_modfunction_time);
+		if(m_start_beat == invalid_modfunction_time)
+		{
+			if(m_start_second == invalid_modfunction_time)
+			{
+				throw std::string("lacks start time.");
+			}
+			m_start_beat= timing_data->GetBeatFromElapsedTime(static_cast<float>(m_start_second));
+			double length= get_optional_double(L, index, "length", invalid_modfunction_time);
+			if(length == invalid_modfunction_time)
+			{
+				length= get_optional_double(L, index, "length_seconds", invalid_modfunction_time);
+			}
+			if(length == invalid_modfunction_time)
+			{
+				throw std::string("lacks length or lacks girth.");
+			}
+			m_length_seconds= length;
+			m_end_second= m_start_second + length;
+			m_end_beat= timing_data->GetBeatFromElapsedTime(static_cast<float>(m_end_second));
+			m_length_beats= m_end_beat - m_start_beat;
+		}
+		else
+		{
+			if(m_start_second == invalid_modfunction_time)
+			{
+				m_start_second= timing_data->GetElapsedTimeFromBeat(static_cast<float>(m_start_beat));
+				double length= get_optional_double(L, index, "length", invalid_modfunction_time);
+				if(length == invalid_modfunction_time)
+				{
+					length= get_optional_double(L, index, "length_beats", invalid_modfunction_time);
+				}
+				if(length == invalid_modfunction_time)
+				{
+					throw std::string("lacks length or lacks girth.");
+				}
+				m_length_beats= length;
+				m_end_beat= m_start_beat + length;
+				m_end_second= timing_data->GetElapsedTimeFromBeat(static_cast<float>(m_end_beat));
+				m_length_seconds= m_end_second - m_start_second;
+			}
+			else
+			{
+				double length= get_optional_double(L, index, "length", invalid_modfunction_time);
+				if(length != invalid_modfunction_time)
+				{
+					throw std::string("length field is ambiguous when start_beat and start_second are both supplied.  Use length_beats and/or length_seconds.");
+				}
+				m_length_beats= get_optional_double(L, index, "length_beats", invalid_modfunction_time);
+				m_length_seconds= get_optional_double(L, index, "length_seconds", invalid_modfunction_time);
+				if(m_length_beats == invalid_modfunction_time)
+				{
+					if(m_length_seconds == invalid_modfunction_time)
+					{
+						throw std::string("lacks length or lacks girth.");
+					}
+					m_end_second= m_start_second + m_length_seconds;
+					m_end_beat= timing_data->GetBeatFromElapsedTime(static_cast<float>(m_end_second));
+					m_length_beats= m_end_beat - m_start_beat;
+				}
+				else
+				{
+					m_end_beat= m_start_beat + m_length_beats;
+					if(m_length_seconds == invalid_modfunction_time)
+					{
+						m_end_second= timing_data->GetElapsedTimeFromBeat(static_cast<float>(m_end_beat));
+						m_length_seconds= m_end_second - m_start_second;
+					}
+					else
+					{
+						m_end_second= m_start_second + m_length_seconds;
+					}
+				}
+			}
+		}
+	}
+	m_column= get_optional_double(L, index, "column", m_column);
 	lua_rawgeti(L, index, 1);
 	m_base_operand= load_operand_on_stack(this, L);
-}
-
-void mod_function::simple_load(std::string const& name, std::string const& input_type, double value)
-{
-	m_name= name;
-	if(input_type == "number")
-	{
-		mod_input_number* op= new mod_input_number;
-		op->m_value= value;
-		m_base_operand= op;
-	}
-	else
-	{
-		mod_operator_multiply* op= new mod_operator_multiply;
-		op->add_simple_operand(input_type, 0.0);
-		op->add_simple_operand("number", value);
-		organize_simple_operands(this, op);
-		m_base_operand= op;
-	}
 }
 
 void mod_function::add_per_frame_operator(mod_operator* op)
 {
 	m_per_frame_operators.push_back(op);
-}
-
-static void calc_timing_pair(TimingData const* timing, double& beat, double& second)
-{
-	bool beat_needed= (beat == invalid_modfunction_time);
-	bool second_needed= (second == invalid_modfunction_time);
-	if(beat_needed && !second_needed)
-	{
-		beat= timing->GetBeatFromElapsedTime(static_cast<float>(second));
-	}
-	else if(!beat_needed && second_needed)
-	{
-		second= timing->GetElapsedTimeFromBeat(static_cast<float>(beat));
-	}
-}
-
-void mod_function::calc_unprovided_times(TimingData const* timing)
-{
-	calc_timing_pair(timing, m_start_beat, m_start_second);
-	calc_timing_pair(timing, m_end_beat, m_end_second);
 }
 
 #define MOD_FUNC_NEEDS_THING(thing) \
@@ -1541,48 +1345,24 @@ double mod_function::evaluate_with_time(mod_val_inputs& input)
 	return m_base_operand->evaluate(input);
 }
 
-static mod_function* create_mod_function(ModifiableValue* parent,
-	lua_State* L, int index, double col)
+ModifiableValue::ModifiableValue(ModManager& man, std::string const& name,
+	double value)
+	:m_base_value(value)
 {
-	mod_function* ret= new mod_function(parent, col);
-	try
-	{
-		ret->load_from_lua(L, index, col);
-	}
-	catch(std::string& err)
-	{
-		delete ret;
-		throw;
-	}
-	return ret;
-}
-
-static mod_function* create_simple_mod_function(ModifiableValue* parent,
-	std::string const& name, std::string const& input_type, double value)
-{
-	mod_function* ret= new mod_function(parent, 0.0);
-	ret->simple_load(name, input_type, value);
-	return ret;
-}
-
-ModifiableValue::ModifiableValue(ModManager* man, double value)
-	:m_manager(man)
-{
-	if(value != 0.0)
-	{
-		add_simple_mod("base_value", "number", value);
-	}
+	man.register_moddable(name, this);
 }
 
 ModifiableValue::~ModifiableValue()
 {
-	clear_mods();
-	clear_managed_mods();
+	for(auto&& mod : m_mods)
+	{
+		delete mod;
+	}
 }
 
 double ModifiableValue::evaluate(mod_val_inputs& input)
 {
-	input.prefunres= 0.0;
+	input.prefunres= m_base_value;
 	if(!m_mods.empty())
 	{
 		for(auto&& mod : m_mods)
@@ -1618,7 +1398,7 @@ double ModifiableValue::evaluate(mod_val_inputs& input)
 			switch(mod.second->m_sum_type)
 			{
 				case mot_replace:
-					input.prefunres= mod.second->evaluate(input);
+					input.prefunres= mod.second->evaluate_with_time(input);
 					break;
 				case mot_add:
 					input.prefunres+= mod.second->evaluate_with_time(input);
@@ -1653,92 +1433,47 @@ std::list<mod_function*>::iterator ModifiableValue::find_mod(
 	return m_mods.end();
 }
 
-void ModifiableValue::insert_mod_internal(mod_function* new_mod)
+void ModifiableValue::add_mod(mod_function* func, ModManager& manager)
 {
-	auto insert_point= find_mod(new_mod->get_name());
+	auto insert_point= find_mod(func->get_name());
 	if(insert_point == m_mods.end())
 	{
-		m_mods.push_back(new_mod);
+		m_mods.push_back(func);
 	}
 	else
 	{
-		m_manager->remove_from_per_frame_update(*insert_point);
+		manager.remove_from_per_frame_update(*insert_point);
 		delete *insert_point;
-		*insert_point= new_mod;
+		*insert_point= func;
 	}
-	m_manager->add_to_per_frame_update(new_mod);
+	manager.add_to_per_frame_update(func);
 #define MF_SET_NEEDS(thing) \
-	if(new_mod->needs_##thing()) { m_needs_##thing= true; }
+	if(func->needs_##thing()) { m_needs_##thing= true; }
 	MF_SET_NEEDS(beat);
 	MF_SET_NEEDS(second);
 	MF_SET_NEEDS(y_offset);
 #undef MF_SET_NEEDS
 }
 
-void ModifiableValue::add_mod(lua_State* L, int index)
-{
-	insert_mod_internal(create_mod_function(this, L, index, m_column));
-}
-
-void ModifiableValue::remove_mod(std::string const& name)
+void ModifiableValue::remove_mod(std::string const& name, ModManager& manager)
 {
 	auto mod= find_mod(name);
 	if(mod != m_mods.end())
 	{
+		manager.remove_from_per_frame_update(*mod);
 		delete *mod;
 		m_mods.erase(mod);
 	}
 }
 
-void ModifiableValue::clear_mods()
+void ModifiableValue::clear_mods(ModManager& manager)
 {
 	for(auto&& mod : m_mods)
 	{
+		manager.remove_from_per_frame_update(mod);
 		delete mod;
 	}
 	m_mods.clear();
-}
-
-void ModifiableValue::add_managed_mod(lua_State* L, int index)
-{
-	mod_function* new_mod= create_mod_function(this, L, index, m_column);
-	new_mod->calc_unprovided_times(m_timing);
-	auto mod= m_managed_mods.find(new_mod->get_name());
-	if(mod == m_managed_mods.end())
-	{
-		m_managed_mods.insert(make_pair(new_mod->get_name(), new_mod));
-	}
-	else
-	{
-		m_manager->remove_mod(mod->second);
-		delete mod->second;
-		mod->second= new_mod;
-	}
-	m_manager->add_mod(new_mod, this);
-	//m_manager->dump_list_status();
-}
-
-void ModifiableValue::remove_managed_mod(std::string const& name)
-{
-	auto mod= m_managed_mods.find(name);
-	if(mod != m_managed_mods.end())
-	{
-		m_manager->remove_mod(mod->second);
-		remove_mod_from_active_list(mod->second);
-		delete mod->second;
-		m_managed_mods.erase(mod);
-	}
-}
-
-void ModifiableValue::clear_managed_mods()
-{
-	m_manager->remove_all_mods(this);
-	for(auto&& mod : m_managed_mods)
-	{
-		delete mod.second;
-	}
-	m_active_managed_mods.clear();
-	m_managed_mods.clear();
 }
 
 void ModifiableValue::add_mod_to_active_list(mod_function* mod)
@@ -1748,7 +1483,7 @@ void ModifiableValue::add_mod_to_active_list(mod_function* mod)
 
 void ModifiableValue::remove_mod_from_active_list(mod_function* mod)
 {
-	auto iter= m_active_managed_mods.find(mod->m_priority);
+	auto iter= m_active_managed_mods.begin();
 	for(; iter != m_active_managed_mods.end(); ++iter)
 	{
 		if(iter->second == mod)
@@ -1759,28 +1494,9 @@ void ModifiableValue::remove_mod_from_active_list(mod_function* mod)
 	}
 }
 
-void ModifiableValue::add_simple_mod(std::string const& name,
-	std::string const& input_type, double value)
+void ModifiableValue::clear_active_list()
 {
-	insert_mod_internal(create_simple_mod_function(this, name, input_type, value));
-}
-
-void ModifiableValue::take_over_mods(ModifiableValue& other)
-{
-	m_mods.swap(other.m_mods);
-	for(auto&& mod : m_mods)
-	{
-		mod->change_parent(this);
-		m_manager->add_to_per_frame_update(mod);
-	}
-	m_managed_mods.swap(other.m_managed_mods);
-	for(auto&& mod : m_managed_mods)
-	{
-		mod.second->change_parent(this);
-		m_manager->add_mod(mod.second, this);
-	}
-	m_active_managed_mods.swap(other.m_active_managed_mods);
-	other.clear_managed_mods();
+	m_active_managed_mods.clear();
 }
 
 #define MV_NEEDS_THING(thing) \
@@ -1814,95 +1530,6 @@ MT_NEEDS_THING(second);
 MT_NEEDS_THING(y_offset);
 #undef MT_NEEDS_THING
 
-
-struct LunaModifiableValue : Luna<ModifiableValue>
-{
-	static int add_mod(T* p, lua_State* L)
-	{
-		try
-		{
-			p->add_mod(L, lua_gettop(L));
-		}
-		catch(std::string& err)
-		{
-			luaL_error(L, err.c_str());
-		}
-		COMMON_RETURN_SELF;
-	}
-	static int remove_mod(T* p, lua_State* L)
-	{
-		p->remove_mod(SArg(1));
-		COMMON_RETURN_SELF;
-	}
-	static int clear_mods(T* p, lua_State* L)
-	{
-		p->clear_mods();
-		COMMON_RETURN_SELF;
-	}
-	static int add_managed_mod(T* p, lua_State* L)
-	{
-		try
-		{
-			p->add_managed_mod(L, lua_gettop(L));
-		}
-		catch(std::string& err)
-		{
-			luaL_error(L, err.c_str());
-		}
-		COMMON_RETURN_SELF;
-	}
-	static int add_managed_mod_set(T* p, lua_State* L)
-	{
-		if(!lua_istable(L, 1))
-		{
-			luaL_error(L, "Arg for add_managed_mod_set must be a table of ModFunctins.");
-		}
-		size_t num_mods= lua_objlen(L, 1);
-		for(size_t m= 1; m <= num_mods; ++m)
-		{
-			lua_rawgeti(L, 1, m);
-			try
-			{
-				p->add_managed_mod(L, lua_gettop(L));
-			}
-			catch(std::string& err)
-			{
-				lua_pop(L, 1);
-				luaL_error(L, err.c_str());
-			}
-			lua_pop(L, 1);
-		}
-		COMMON_RETURN_SELF;
-	}
-	static int remove_managed_mod(T* p, lua_State* L)
-	{
-		p->remove_managed_mod(SArg(1));
-		COMMON_RETURN_SELF;
-	}
-	static int clear_managed_mods(T* p, lua_State* L)
-	{
-		p->clear_managed_mods();
-		COMMON_RETURN_SELF;
-	}
-	static int evaluate(T* p, lua_State* L)
-	{
-		mod_val_inputs input(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5));
-		lua_pushnumber(L, p->evaluate(input));
-		return 1;
-	}
-	LunaModifiableValue()
-	{
-		ADD_METHOD(add_mod);
-		ADD_METHOD(remove_mod);
-		ADD_METHOD(clear_mods);
-		ADD_METHOD(add_managed_mod);
-		ADD_METHOD(add_managed_mod_set);
-		ADD_METHOD(remove_managed_mod);
-		ADD_METHOD(clear_managed_mods);
-		ADD_METHOD(evaluate);
-	}
-};
-LUA_REGISTER_CLASS(ModifiableValue);
 
 namespace
 {

@@ -50,11 +50,6 @@ notefield_draw_order= {
 	over_field= 450,
 }
 
-function ModifiableValue:set_value(value)
-	if not self then return end
-	self:add_mod{name= "base_value", value}
-end
-
 -- The read_bpm arg to set_speed_mod is optional.  If it is exists,
 -- the speed is treated as an m-mod.  The read bpm for a chart can be fetched
 -- with PlayerState:get_read_bpm() or calculated by the theme.
@@ -99,116 +94,123 @@ function NoteField:set_speed_mod(constant, speed, read_bpm)
 	end
 	-- Each column has independent modifier state, so the speed mod needs to be
 	-- set in each column.
+	local speed_mod= {target= "speed", name= "speed", {"*", mod_input, mod_mult}}
 	for col in ivalues(self:get_columns()) do
 		-- The speed modifier is named so that repeated calls to
 		-- set_speed_mod do not add stacking speed mods.
-		col:get_speed_mod():add_mod{name= "speed", {"*", mod_input, mod_mult}}
+		col:set_permanent_mods{speed_mod}
 		col:set_show_unjudgable_notes(show_unjudgable)
 		col:set_speed_segments_enabled(speed_segments_enabled)
 		col:set_scroll_segments_enabled(scroll_segments_enabled)
 	end
+	return self
 end
 
 function NoteField:set_rev_offset_base(revoff)
 	if not revoff then return end
 	for col in ivalues(self:get_columns()) do
-		col:get_reverse_offset_pixels():set_value(revoff)
+		col:set_base_values{{target= "revserse_offset", value= revoff}}
 	end
+	return self
 end
 
 function NoteField:set_reverse_base(rev)
 	for col in ivalues(self:get_columns()) do
-		col:get_reverse_scale():set_value(rev)
+		col:set_base_values{{target= "revserse", value= rev}}
 	end
-end
-
-function NoteField:clear_column_mod(mod_field_name, mod_name)
-	for col in ivalues(self:get_columns()) do
-		col[mod_field_name](col):remove_mod(mod_name)
-	end
-end
-
-local function set_alpha_glow_mods(self, alpha_mod, glow_mod)
-	for col in ivalues(self:get_columns()) do
-		col:get_note_alpha():add_mod(alpha_mod)
-		if glow_mod then
-			col:get_note_glow():add_mod(glow_mod)
-		elseif alpha_mod.name then
-			col:get_note_glow():remove_mod(alpha_mod.name)
-		end
-	end
+	return self
 end
 
 function NoteField:set_hidden_mod(line, dist, add_glow)
 	local half_dist= dist / 2
-	local alpha_mod
-	local glow_mod
 	if add_glow then
-		alpha_mod= {
-			name= "hidden", {"phase", "y_offset", {
-				default= {0, 0, 0, 0},
-				{-32, line, 0, -1},
-		}}}
-		glow_mod= {
-			name= "hidden", {"phase", "y_offset", {
-				default= {0, 0, 0, 0},
-				 {line - half_dist, line, 1/half_dist, 0},
-				 {line, line + half_dist, -1/half_dist, 1},
-		}}}
+		local mods= {
+			{
+				target= "note_alpha", name= "hidden", {
+					"phase", "y_offset", {default= {0, 0, 0, 0}, {-32, line, 0, -1},
+			}}},
+			{
+				target= "note_glow", name= "hidden", {
+					"phase", "y_offset", {default= {0, 0, 0, 0},
+						{line - half_dist, line, 1/half_dist, 0},
+						{line, line + half_dist, -1/half_dist, 1},
+			}}},
+		}
+		for col in ivalues(self:get_columns()) do
+			col:set_permanent_mods(mods)
+		end
 	else
-		alpha_mod= {
-			name= "hidden", {"phase", "y_offset", {
+		local mods= {
+			{
+			target= "note_alpha", name= "hidden", {"phase", "y_offset", {
 				default= {0, 0, 0, 0},
 				 {-32, 0, 0, -1},
 				 {0, line - half_dist, 0, -1},
 				 {line - half_dist, line + half_dist, 1/dist, -1},
-		}}}
+			}}},
+		}
+		for col in ivalues(self:get_columns()) do
+			col:set_permanent_mods(mods)
+			col:remove_permanent_mods{{target= "note_glow", name= "hidden"}}
+		end
 	end
-	set_alpha_glow_mods(self, alpha_mod, glow_mod)
+	return self
 end
 
 function NoteField:set_sudden_mod(line, dist, add_glow)
 	local half_dist= dist / 2
-	local alpha_mod
-	local glow_mod
 	if add_glow then
-		alpha_mod= {
-			name= "sudden", {"phase", "y_offset", {
+		local mods= {
+		{
+			target= "note_alpha", name= "sudden", {"phase", "y_offset", {
 				 default= {0, 0, 0, 0},
 				 {line, math.huge, 0, -1},
-		}}}
-		glow_mod= {
-			name= "sudden", {"phase", "y_offset", {
+		}}},
+		{
+			target= "note_glow", name= "sudden", {"phase", "y_offset", {
 				 default= {0, 0, 0, 0},
 				 {line - half_dist, line, 1/half_dist, 0},
 				 {line, line + half_dist, -1/half_dist, 1},
-		}}}
+		}}},
+		}
+		for col in ivalues(self:get_columns()) do
+			col:set_permanent_mods(mods)
+		end
 	else
-		alpha_mod= {
-			name= "sudden", {"phase", "y_offset", {
+		local mods= {
+		{
+			target= "note_alpha", name= "sudden", {"phase", "y_offset", {
 				 default= {0, 0, 0, 0},
 				 {line - half_dist, line + half_dist, -1/dist, 0},
 				 {line + half_dist, math.huge, 0, -1},
-		}}}
+		}}},
+		}
+		for col in ivalues(self:get_columns()) do
+			col:set_permanent_mods(mods)
+			col:remove_permanent_mods{{target= "note_glow", name= "sudden"}}
+		end
 	end
-	set_alpha_glow_mods(self, alpha_mod, glow_mod)
+	return self
 end
 
 function NoteField:clear_hidden_mod()
-	self:clear_column_mod("get_note_alpha", "hidden")
-	self:clear_column_mod("get_note_glow", "hidden")
+	for col in ivalues(self:get_columns()) do
+		col:remove_permanent_mods{
+			{target= "note_glow", name= "hidden"},
+			{target= "note_alpha", name= "hidden"},
+		}
+	end
+	return self
 end
 
 function NoteField:clear_sudden_mod()
-	self:clear_column_mod("get_note_alpha", "sudden")
-	self:clear_column_mod("get_note_glow", "sudden")
-end
-
-function NoteField:all_columns_mod(mod_name, mod_function)
-	assert(NoteFieldColumn[mod_name], mod_name .. " is not a modifiable value.")
-	for i, col in ipairs(self:get_columns()) do
-		col[mod_name](col):add_mod(mod_function)
+	for col in ivalues(self:get_columns()) do
+		col:remove_permanent_mods{
+			{target= "note_glow", name= "sudden"},
+			{target= "note_alpha", name= "sudden"},
+		}
 	end
+	return self
 end
 
 function find_pactor_in_gameplay(screen_gameplay, pn)
@@ -239,4 +241,104 @@ function oitg_zoom_mode_actor()
 			end
 		end,
 	}
+end
+
+function organize_notefield_mods_by_target(mods_table)
+	local num_fields= mods_table.fields
+	if type(num_fields) ~= "number" or num_fields < 1 then
+		num_fields= 1
+	end
+	local num_columns= mods_table.columns
+	if type(num_columns) ~= "number" or num_columns < 1 then
+		lua.ReportScriptError("organize_notefield_mods_by_target cannot correctly handle mods that target all columns when the mods table does not specify the number of columns.")
+		return {}
+	end
+	local result= {}
+	for fid= 1, num_fields do
+		local field_result= {field= {}}
+		for cid= 1, num_columns do
+			field_result[cid]= {}
+		end
+		result[fid]= field_result
+	end
+	for mid= 1, #mods_table do
+		local entry= mods_table[mid]
+		if type(entry) ~= "table" then
+			lua.ReportScriptError("mods table entry " .. mid .. " is not a table.")
+			return {}
+		end
+		local target_fields= {}
+		-- Support these kinds of field entries:
+		--   field= "all",
+		--   field= 1,
+		--   field= {2, 3},
+		if entry.field == "all" then
+			for fid= 1, num_fields do
+				target_fields[#target_fields+1]= result[fid]
+			end
+		elseif type(entry.field) == "number" then
+			if entry.field < 1 or entry.field > num_fields then
+				lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+				return {}
+			end
+			target_fields[#target_fields+1]= result[fid]
+		elseif type(entry.field) == "table" then
+			for eid, fid in ipairs(entry.field) do
+				if type(fid) ~= "number" or fid < 1 or fid > num_fields then
+					lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+					return {}
+				end
+				target_fields[#target_fields+1]= result[fid]
+			end
+		elseif type(entry.field) ~= "nil" then
+			lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+			return {}
+		else
+			target_fields[#target_fields+1]= result[1]
+		end
+		if entry.column then
+			local target_columns= {}
+			-- Support these kinds of column entries:
+			--   column= "all",
+			--   column= 1,
+			--   column= {2, 3},
+			if entry.column == "all" then
+				for cid= 1, num_columns do
+					target_columns[#target_columns+1]= cid
+				end
+			elseif type(entry.column) == "number" then
+				if entry.column < 1 or entry.column > num_columns then
+					lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
+					return {}
+				end
+				target_columns[#target_columns+1]= entry.column
+			elseif type(entry.column) == "table" then
+				for eid, cid in ipairs(entry.column) do
+					if type(cid) ~= "number" or cid < 1 or cid > num_columns then
+						lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
+						return {}
+					end
+					target_columns[#target_columns+1]= cid
+				end
+			else
+				lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
+				return {}
+			end
+			for i, targ_field in ipairs(target_fields) do
+				for i, cid in ipairs(target_columns) do
+					local targ_column= targ_field[cid]
+					targ_column[#targ_column+1]= entry
+				end
+			end
+		else
+			for i, targ_field in ipairs(target_fields) do
+				targ_field.field[#targ_field.field+1]= entry
+			end
+		end
+	end
+	if num_fields == 1 then
+		return result[1]
+	else
+		return result
+	end
 end

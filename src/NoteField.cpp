@@ -117,20 +117,23 @@ NoteFieldColumn::NoteFieldColumn()
 	 m_speed_segments_enabled(true), m_scroll_segments_enabled(true),
 	 m_holds_skewed_by_mods(true),
 	 m_twirl_holds(true), m_use_moddable_hold_normal(false),
-	 m_time_offset(&m_mod_manager, 0.0),
-	 m_quantization_multiplier(&m_mod_manager, 1.0),
-	 m_quantization_offset(&m_mod_manager, 0.0),
-	 m_speed_mod(&m_mod_manager, 0.0),
-	 m_lift_pretrail_length(&m_mod_manager, 0.25),
-	 m_y_offset_vec_mod(&m_mod_manager, 0.0, 1.0, 0.0),
-	 m_reverse_offset_pixels(&m_mod_manager, 240.0 - note_size),
-	 m_reverse_scale(&m_mod_manager, 1.0),
-	 m_center_percent(&m_mod_manager, 0.0),
-	 m_note_mod(&m_mod_manager), m_column_mod(&m_mod_manager),
-	 m_hold_normal_mod(&m_mod_manager, 0.0),
-	 m_note_alpha(&m_mod_manager, 1.0), m_note_glow(&m_mod_manager, 0.0),
-	 m_receptor_alpha(&m_mod_manager, 1.0), m_receptor_glow(&m_mod_manager, 0.0),
-	 m_explosion_alpha(&m_mod_manager, 1.0), m_explosion_glow(&m_mod_manager, 0.0),
+	 m_time_offset(m_mod_manager, "time_offset", 0.0),
+	 m_quantization_multiplier(m_mod_manager, "quantization_multiplier", 1.0),
+	 m_quantization_offset(m_mod_manager, "quantization_offset", 0.0),
+	 m_speed_mod(m_mod_manager, "speed", 0.0),
+	 m_lift_pretrail_length(m_mod_manager, "lift_pretrail", 0.25),
+	 m_y_offset_vec_mod(m_mod_manager, "y_offset_vec", 0.0, 1.0, 0.0),
+	 m_reverse_offset_pixels(m_mod_manager, "reverse_offset", 240.0 - note_size),
+	 m_reverse_scale(m_mod_manager, "reverse", 1.0),
+	 m_center_percent(m_mod_manager, "center", 0.0),
+	 m_note_mod(m_mod_manager, "note"), m_column_mod(m_mod_manager, "column"),
+	 m_hold_normal_mod(m_mod_manager, "hold_normal", 0.0),
+	 m_note_alpha(m_mod_manager, "note_alpha", 1.0),
+	 m_note_glow(m_mod_manager, "note_glow", 0.0),
+	 m_receptor_alpha(m_mod_manager, "receptor_alpha", 1.0),
+	 m_receptor_glow(m_mod_manager, "receptor_glow", 0.0),
+	 m_explosion_alpha(m_mod_manager, "explosion_alpha", 1.0),
+	 m_explosion_glow(m_mod_manager, "explosion_glow", 0.0),
 	 m_selection_start(-1.0), m_selection_end(-1.0),
 	 m_curr_beat(0.0f), m_curr_second(0.0), m_prev_curr_second(-1000.0),
 	 m_pixels_visible_before_beat(128.0f),
@@ -163,17 +166,12 @@ void NoteFieldColumn::AddChild(Actor* act)
 	m_layer_render_info.push_back({FLFT_None, FLTT_Full});
 	act->PlayCommand("On");
 	m_field->add_draw_entry(static_cast<int>(m_column), GetNumChildren()-1, act->GetDrawOrder());
-	if(act->HasCommand("WidthSet"))
+	if(m_newskin != nullptr)
 	{
-		Message width_msg("WidthSet");
-		lua_State* L= LUA->Get();
-		PushSelf(L);
-		width_msg.SetParamFromStack(L, "column");
-		LUA->Release(L);
-		width_msg.SetParam("column_id", get_mod_col());
-		width_msg.SetParam("width", m_newskin->get_width());
-		width_msg.SetParam("padding", m_newskin->get_padding());
-		act->HandleMessage(width_msg);
+		if(act->HasCommand("WidthSet"))
+		{
+			act->HandleMessage(create_width_message());
+		}
 	}
 }
 
@@ -208,93 +206,88 @@ void NoteFieldColumn::add_children_from_layers(size_t column,
 	}
 }
 
-void NoteFieldColumn::set_note_data(size_t column, const NoteData* note_data,
-	const TimingData* timing_data)
+Message NoteFieldColumn::create_width_message()
 {
-	m_note_data= note_data;
-	m_timing_data= timing_data;
-	note_row_closest_to_current_time= -1;
-	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
-				&m_quantization_offset, &m_speed_mod, &m_lift_pretrail_length,
-				&m_reverse_offset_pixels, &m_reverse_scale,
-				&m_center_percent, &m_note_alpha, &m_note_glow, &m_receptor_alpha,
-				&m_receptor_glow, &m_explosion_alpha, &m_explosion_glow})
-	{
-		moddable->set_timing(timing_data);
-		moddable->set_column(column);
-	}
-	for(auto&& moddable : {&m_note_mod, &m_column_mod})
-	{
-		moddable->set_timing(timing_data);
-		moddable->set_column(column);
-	}
-	for(auto&& moddable : {&m_y_offset_vec_mod, &m_hold_normal_mod})
-	{
-		moddable->set_timing(timing_data);
-		moddable->set_column(column);
-	}
+	Message width_msg("WidthSet");
+	lua_State* L= LUA->Get();
+	PushSelf(L);
+	width_msg.SetParamFromStack(L, "column");
+	LUA->Release(L);
+	width_msg.SetParam("column_id", get_mod_col());
+	width_msg.SetParam("width", m_newskin->get_width());
+	width_msg.SetParam("padding", m_newskin->get_padding());
+	return width_msg;
 }
 
-void NoteFieldColumn::set_column_info(NoteField* field, size_t column,
-	NoteSkinColumn* newskin, ArrowDefects* defects,
-	NoteSkinData& skin_data, std::vector<Rage::Color>* player_colors,
-	const NoteData* note_data, const TimingData* timing_data, double x)
+void NoteFieldColumn::set_parent_info(NoteField* field, size_t column,
+		ArrowDefects* defects)
 {
 	m_field= field;
 	m_column= column;
-	m_newskin= newskin;
 	m_defective_mods= defects;
-	m_newskin->set_timing_source(&m_timing_source);
-	set_note_data(column, note_data, timing_data);
-	m_column_mod.pos_mod.x_mod.add_simple_mod("base_value", "number", x);
 	m_use_game_music_beat= true;
-	m_player_colors= player_colors;
-
 	m_mod_manager.column= column;
-
 	std::vector<Actor*> layers;
 	ActorUtil::MakeActorSet(THEME->GetPathG("NoteColumn", "layers", true), layers);
 	for(auto&& act : layers)
 	{
 		AddChild(act);
 	}
-	add_children_from_layers(column, skin_data.m_layers);
 }
 
-void NoteFieldColumn::take_over_mods(NoteFieldColumn& other)
+void NoteFieldColumn::set_note_data(const NoteData* note_data,
+	const TimingData* timing_data)
 {
-#define CPY(name) name= other.name;
-	CPY(m_use_game_music_beat);
-	CPY(m_show_unjudgable_notes);
-	CPY(m_speed_segments_enabled);
-	CPY(m_scroll_segments_enabled);
-	CPY(m_holds_skewed_by_mods);
-	CPY(m_twirl_holds);
-	CPY(m_use_moddable_hold_normal);
-	CPY(m_pixels_visible_before_beat);
-	CPY(m_pixels_visible_after_beat);
-	CPY(m_upcoming_time);
-#define CPY_MODS(name) name.take_over_mods(other.name);
-	CPY_MODS(m_time_offset);
-	CPY_MODS(m_quantization_multiplier);
-	CPY_MODS(m_quantization_offset);
-	CPY_MODS(m_speed_mod);
-	CPY_MODS(m_lift_pretrail_length);
-	CPY_MODS(m_y_offset_vec_mod);
-	CPY_MODS(m_reverse_offset_pixels);
-	CPY_MODS(m_reverse_scale);
-	CPY_MODS(m_center_percent);
-	CPY_MODS(m_note_mod);
-	CPY_MODS(m_column_mod);
-	CPY_MODS(m_hold_normal_mod);
-	CPY_MODS(m_note_alpha);
-	CPY_MODS(m_note_glow);
-	CPY_MODS(m_receptor_alpha);
-	CPY_MODS(m_receptor_glow);
-	CPY_MODS(m_explosion_alpha);
-	CPY_MODS(m_explosion_glow);
-#undef CPY_MODS
-#undef CPY
+	m_note_data= note_data;
+	m_timing_data= timing_data;
+	note_row_closest_to_current_time= -1;
+	m_mod_manager.set_timing(timing_data);
+	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
+				&m_quantization_offset, &m_speed_mod, &m_lift_pretrail_length,
+				&m_reverse_offset_pixels, &m_reverse_scale,
+				&m_center_percent, &m_note_alpha, &m_note_glow, &m_receptor_alpha,
+				&m_receptor_glow, &m_explosion_alpha, &m_explosion_glow})
+	{
+		moddable->set_column(m_column);
+	}
+	for(auto&& moddable : {&m_note_mod, &m_column_mod})
+	{
+		moddable->set_column(m_column);
+	}
+	for(auto&& moddable : {&m_y_offset_vec_mod, &m_hold_normal_mod})
+	{
+		moddable->set_column(m_column);
+	}
+}
+
+void NoteFieldColumn::reskin(NoteSkinColumn* newskin, NoteSkinData& skin_data,
+		std::vector<Rage::Color>* player_colors, double x)
+{
+	// Clear actors added by previous noteskin.
+	for(auto&& act : m_actors_added_by_noteskin)
+	{
+		RemoveChild(act);
+	}
+	m_actors_added_by_noteskin.clear();
+
+	// set new info.
+	m_newskin= newskin;
+	m_newskin->set_timing_source(&m_timing_source);
+	m_column_mod.set_base_value(
+		{{x, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}, 1.f, 0.f});
+	m_player_colors= player_colors;
+
+	// Send width to already existing children.
+	Message width_msg= create_width_message();
+	pass_message_to_heads(width_msg);
+
+	// Add new actors.
+	for(auto&& layer : skin_data.m_layers)
+	{
+		Actor* act= layer.m_actors[m_column];
+		m_actors_added_by_noteskin.insert(act);
+		AddChild(act);
+	}
 }
 
 void NoteFieldColumn::set_defective_mode(bool mode)
@@ -319,30 +312,6 @@ void NoteFieldColumn::set_defective_mode(bool mode)
 bool NoteFieldColumn::get_defective_mode()
 {
 	return m_in_defective_mode;
-}
-
-void NoteFieldColumn::set_speed(float time_spacing,
-	float max_scroll_bpm, float scroll_speed, float scroll_bpm, float read_bpm,
-	float music_rate)
-{
-	if(time_spacing == 0.f)
-	{
-		if(max_scroll_bpm != 0.f)
-		{
-			m_speed_mod.add_simple_mod("speed", "dist_beat",
-				max_scroll_bpm / read_bpm / music_rate);
-		}
-		else
-		{
-			m_speed_mod.add_simple_mod("speed", "dist_beat",
-				scroll_speed);
-		}
-	}
-	else
-	{
-		m_speed_mod.add_simple_mod("speed", "dist_second",
-			scroll_bpm / 60.f / music_rate);
-	}
 }
 
 double NoteFieldColumn::get_beat_from_second(double second)
@@ -2063,15 +2032,17 @@ static ThemeMetric<float> SCROLL_OFFSETX ("NoteField", "ScrollOffsetX");
 static ThemeMetric<float> FAKE_OFFSETX ("NoteField", "FakeOffsetX");
 
 NoteField::NoteField()
-	:m_trans_mod(&m_mod_manager),
-	 m_receptor_alpha(&m_mod_manager, 1.0), m_receptor_glow(&m_mod_manager, 0.0),
-	 m_explosion_alpha(&m_mod_manager, 1.0), m_explosion_glow(&m_mod_manager, 0.0),
-	 m_fov_mod(&m_mod_manager, 45.0),
-	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
+	:m_trans_mod(m_mod_manager, "transform"),
+	 m_receptor_alpha(m_mod_manager, "receptor_alpha", 1.0),
+	 m_receptor_glow(m_mod_manager, "receptor_glow", 0.0),
+	 m_explosion_alpha(m_mod_manager, "explosion_alpha", 1.0),
+	 m_explosion_glow(m_mod_manager, "explosion_glow", 0.0),
+	 m_fov_mod(m_mod_manager, "fov", 0.0, 0.0, 45.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
-	 m_draw_beat_bars(false), m_in_edit_mode(false), m_oitg_zoom_mode(false),
+	 m_in_edit_mode(false), m_oitg_zoom_mode(false),
 	 m_visible_bg_change_layer(BACKGROUND_LAYER_1),
-	 m_pn(NUM_PLAYERS), m_in_defective_mode(false),
+	 m_share_steps_parent(nullptr),
+	 m_pn(NUM_PLAYERS), m_in_defective_mode(false), m_needs_reskin(true),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
 	 m_steps_type(StepsType_Invalid), m_gameplay_zoom(1.0),
 	 defective_render_y(0.0), original_y(0.0)
@@ -2085,14 +2056,20 @@ NoteField::NoteField()
 	}
 	m_beat_bars.Load(THEME->GetPathG("NoteField","bars"));
 	m_field_text.LoadFromFont(THEME->GetPathF("NoteField","MeasureNumber"));
-	add_draw_entry(beat_bars_column_index, beat_bars_child_index, beat_bars_draw_order);
 	MESSAGEMAN->Subscribe(this, "defective_field");
 }
 
 NoteField::~NoteField()
 {
+	if(!m_share_steps_children.empty())
+	{
+		for(auto&& child : m_share_steps_children)
+		{
+			child->share_steps_parent_being_destroyed();
+		}
+	}
 	MESSAGEMAN->Unsubscribe(this, "defective_field");
-	if(m_own_note_data && m_note_data != nullptr)
+	if(m_own_note_data)
 	{
 		Rage::safe_delete(m_note_data);
 	}
@@ -2167,6 +2144,7 @@ bool NoteField::EarlyAbortDraw() const
 {
 	return m_note_data == nullptr || m_timing_data == nullptr ||
 		m_columns.empty() || !m_newskin.loaded_successfully() ||
+		m_needs_reskin ||
 		ActorFrame::EarlyAbortDraw();
 }
 
@@ -2286,11 +2264,22 @@ void NoteField::clear_steps()
 {
 	if(m_own_note_data)
 	{
-		m_note_data->ClearAll();
+		Rage::safe_delete(m_note_data);
 	}
 	m_note_data= nullptr;
+	if(m_timing_data != nullptr)
+	{
+		m_timing_data->ReleaseLookup();
+	}
 	m_timing_data= nullptr;
 	m_columns.clear();
+	if(!m_share_steps_children.empty())
+	{
+		for(auto&& child : m_share_steps_children)
+		{
+			child->clear_steps();
+		}
+	}
 }
 
 void NoteField::set_skin(std::string const& skin_name, LuaReference& skin_params)
@@ -2301,12 +2290,14 @@ void NoteField::set_skin(std::string const& skin_name, LuaReference& skin_params
 		LuaHelpers::ReportScriptErrorFmt("Could not find loader for newskin '%s'.", skin_name.c_str());
 		return;
 	}
-	if(m_note_data != nullptr)
+	if(m_note_data != nullptr &&
+		NOTESKIN->skin_supports_stepstype(skin_name, m_steps_type))
 	{
-		reload_columns(loader, skin_params);
+		reskin_columns(loader, skin_params);
 	}
 	else
 	{
+		m_needs_reskin= true;
 		m_skin_walker= *loader;
 		m_skin_parameters= skin_params;
 	}
@@ -2324,44 +2315,104 @@ void NoteField::set_steps(Steps* data)
 		clear_steps();
 		return;
 	}
+	if(m_share_steps_parent != nullptr)
+	{
+		m_share_steps_parent->remove_share_steps_child(this);
+	}
 	NoteData* note_data= new NoteData;
 	data->GetNoteData(*note_data);
 	set_note_data(note_data, data->GetTimingData(), data->m_StepsType);
 	m_own_note_data= true;
 }
 
-void NoteField::set_note_data(NoteData* note_data, TimingData* timing, StepsType stype)
+void NoteField::set_note_data(NoteData* note_data, TimingData const* timing, StepsType stype)
 {
+	timing->RequestLookup();
+	if(m_timing_data != nullptr)
+	{
+		m_timing_data->ReleaseLookup();
+	}
+	if(m_own_note_data)
+	{
+		Rage::safe_delete(m_note_data);
+	}
 	m_note_data= note_data;
+	// TODO: When multiple notefields share the note data, SetOccuranceTimeForAllTaps doesn't need to be called by every one of them.
 	note_data->SetOccuranceTimeForAllTaps(timing);
 	m_own_note_data= false;
 	m_timing_data= timing;
 	m_defective_mods.set_timing(m_timing_data);
 	m_defective_mods.set_num_pads(GAMEMAN->get_num_pads_for_stepstype(stype));
-	m_trans_mod.set_timing(m_timing_data);
+	m_mod_manager.set_timing(m_timing_data);
 	m_trans_mod.set_column(0);
+	m_fov_mod.set_column(0);
 	for(auto&& moddable : {&m_receptor_alpha, &m_receptor_glow,
-				&m_explosion_alpha, &m_explosion_glow,
-				&m_fov_mod, &m_vanish_x_mod, &m_vanish_y_mod})
+				&m_explosion_alpha, &m_explosion_glow})
 	{
-		moddable->set_timing(m_timing_data);
 		moddable->set_column(0);
 	}
 	if(stype != m_steps_type)
 	{
 		m_steps_type= stype;
-		if(NOTESKIN->skin_supports_stepstype(m_skin_walker.get_name(), stype))
-		{
-			reload_columns(&m_skin_walker, m_skin_parameters);
-		}
+		recreate_columns();
+		m_needs_reskin= true;
 	}
-	else
+	if(m_needs_reskin &&
+		NOTESKIN->skin_supports_stepstype(m_skin_walker.get_name(), stype))
 	{
-		for(size_t i= 0; i < m_columns.size(); ++i)
+		reskin_columns(&m_skin_walker, m_skin_parameters);
+	}
+	for(size_t i= 0; i < m_columns.size(); ++i)
+	{
+		m_columns[i].set_note_data(m_note_data, m_timing_data);
+	}
+	if(!m_share_steps_children.empty())
+	{
+		for(auto&& child : m_share_steps_children)
 		{
-			m_columns[i].set_note_data(i, m_note_data, m_timing_data);
+			child->set_note_data(note_data, timing, stype);
 		}
 	}
+}
+
+void NoteField::share_steps(NoteField* share_to)
+{
+	share_to->become_share_steps_child(this, m_note_data, m_timing_data, m_steps_type);
+	m_share_steps_children.push_back(share_to);
+}
+
+void NoteField::become_share_steps_child(NoteField* parent,
+	NoteData* note_data, TimingData const* timing, StepsType stype) // this is child
+{
+	if(m_share_steps_parent == parent)
+	{
+		return;
+	}
+	if(m_share_steps_parent != nullptr)
+	{
+		m_share_steps_parent->remove_share_steps_child(this);
+	}
+	m_share_steps_parent= parent;
+	set_note_data(note_data, timing, stype);
+}
+
+void NoteField::remove_share_steps_child(NoteField* child) // this is parent
+{
+	auto entry= m_share_steps_children.begin();
+	for(; entry != m_share_steps_children.end(); ++entry)
+	{
+		if(*entry == child)
+		{
+			m_share_steps_children.erase(entry);
+			return;
+		}
+	}
+}
+
+void NoteField::share_steps_parent_being_destroyed() // this is child
+{
+	clear_steps();
+	m_share_steps_parent= nullptr;
 }
 
 void NoteField::add_draw_entry(int column, int child, int draw_order)
@@ -2369,6 +2420,13 @@ void NoteField::add_draw_entry(int column, int child, int draw_order)
 	auto insert_pos= m_draw_entries.begin();
 	for(; insert_pos != m_draw_entries.end(); ++insert_pos)
 	{
+		// Ignore an attempt to add a duplicate entry.  NoteFieldColumn::reskin
+		// needs this.
+		if(insert_pos->draw_order == draw_order && insert_pos->column == column
+			&& insert_pos->child == child)
+		{
+			return;
+		}
 		if(insert_pos->draw_order > draw_order)
 		{
 			break;
@@ -2379,12 +2437,23 @@ void NoteField::add_draw_entry(int column, int child, int draw_order)
 
 void NoteField::remove_draw_entry(int column, int child)
 {
-	for(auto entry= m_draw_entries.begin(); entry != m_draw_entries.end(); ++entry)
+	auto entry= m_draw_entries.begin();
+	while(entry != m_draw_entries.end())
 	{
 		if(entry->column == column && entry->child == child)
 		{
-			m_draw_entries.erase(entry);
-			return;
+			entry= m_draw_entries.erase(entry);
+		}
+		else
+		{
+			// child >= 0 means it's not a special index for drawing notes.
+			if(child >= 0 && entry->column == column && entry->child > child)
+			{
+				// RemoveChild was called on something, so the indices pointing to
+				// children after it in the list need to be updated.
+				--entry->child;
+			}
+			++entry;
 		}
 	}
 }
@@ -2471,10 +2540,7 @@ void NoteField::draw_entry(field_draw_entry& entry)
 			}
 			break;
 		case beat_bars_column_index:
-			if(m_draw_beat_bars)
-			{
-				draw_beat_bars_internal();
-			}
+			draw_beat_bars_internal();
 			break;
 		default:
 			if(entry.column >= 0 && static_cast<size_t>(entry.column) < m_columns.size())
@@ -2744,12 +2810,33 @@ double NoteField::update_z_bias()
 	return curr_z_bias;
 }
 
-void NoteField::reload_columns(NoteSkinLoader const* new_loader, LuaReference& new_params)
+void NoteField::recreate_columns()
 {
+	clear_column_draw_entries();
+	// resize alone won't lower vector capacity back down, but swapping will.
+	{
+		std::vector<NoteFieldColumn> old_columns;
+		m_columns.swap(old_columns);
+		m_columns.resize(m_note_data->GetNumTracks());
+	}
+	for(size_t i= 0; i < m_columns.size(); ++i)
+	{
+		m_columns[i].set_parent_info(this, i, &m_defective_mods);
+		if(m_in_defective_mode)
+		{
+			m_columns[i].set_defective_mode(m_in_defective_mode);
+		}
+	}
+}
+
+void NoteField::reskin_columns(NoteSkinLoader const* new_loader, LuaReference& new_params)
+{
+	ASSERT_M(m_note_data != nullptr, "m_note_data is not supposed to be null when reskin_columns is called.");
 	NoteSkinLoader new_skin_walker= *new_loader;
 	if(!new_skin_walker.supports_needed_buttons(m_steps_type))
 	{
-		LuaHelpers::ReportScriptError("The noteskin does not support the required buttons.");
+		// Silently do nothing because the theme might be planning to change the
+		// steps to match next.
 		return;
 	}
 	// Load the noteskin into a temporary to protect against errors.
@@ -2758,6 +2845,11 @@ void NoteField::reload_columns(NoteSkinLoader const* new_loader, LuaReference& n
 	if(!new_skin_walker.load_into_data(m_steps_type, new_params, new_skin, insanity))
 	{
 		LuaHelpers::ReportScriptError("Error loading noteskin: " + insanity);
+		return;
+	}
+	if(new_skin.num_columns() < m_note_data->GetNumTracks())
+	{
+		LuaHelpers::ReportScriptErrorFmt("Error loading noteskin %s: Noteskin returned %zu columns, note data has %i columns", new_loader->get_name().c_str(), new_skin.num_columns(), m_note_data->GetNumTracks());
 		return;
 	}
 	// Load successful, copy it into members.
@@ -2771,10 +2863,7 @@ void NoteField::reload_columns(NoteSkinLoader const* new_loader, LuaReference& n
 	double rightmost= 0.0;
 	double auto_place_width= 0.0;
 	size_t max_column= m_newskin.num_columns();
-	if(m_note_data != nullptr)
-	{
-		max_column= std::min(max_column, size_t(m_note_data->GetNumTracks()));
-	}
+	max_column= std::min(max_column, size_t(m_note_data->GetNumTracks()));
 	for(size_t i= 0; i < max_column; ++i)
 	{
 		double width= m_newskin.get_column(i)->get_width();
@@ -2795,16 +2884,13 @@ void NoteField::reload_columns(NoteSkinLoader const* new_loader, LuaReference& n
 	double custom_width= rightmost - leftmost;
 	m_field_width= std::max(custom_width, auto_place_width);
 
-	clear_column_draw_entries();
 	double curr_x= (auto_place_width * -.5);
-	std::vector<NoteFieldColumn> old_columns;
-	m_columns.swap(old_columns);
-	m_columns.resize(m_note_data->GetNumTracks());
 	// The column needs all of this info.
 	Message pn_msg("PlayerStateSet");
 	pn_msg.SetParam("PlayerNumber", m_pn);
 	Lua* L= LUA->Get();
 	lua_createtable(L, m_newskin.num_columns(), 0);
+	int column_info_table= lua_gettop(L);
 	vector<float> column_x;
 	column_x.reserve(m_columns.size());
 	for(size_t i= 0; i < m_columns.size(); ++i)
@@ -2827,34 +2913,35 @@ void NoteField::reload_columns(NoteSkinLoader const* new_loader, LuaReference& n
 			col_x= curr_x + wid_pad * .5;
 		}
 		lua_createtable(L, 0, 2);
+		int this_col_info_table= lua_gettop(L);
 		lua_pushnumber(L, width);
-		lua_setfield(L, -2, "width");
+		lua_setfield(L, this_col_info_table, "width");
 		lua_pushnumber(L, padding);
-		lua_setfield(L, -2, "padding");
+		lua_setfield(L, this_col_info_table, "padding");
 		lua_pushnumber(L, col_x);
-		lua_setfield(L, -2, "x");
-		lua_rawseti(L, -2, i+1);
+		lua_setfield(L, this_col_info_table, "x");
+		lua_rawseti(L, column_info_table, i+1);
 
-		m_columns[i].set_column_info(this, i, col, &m_defective_mods, m_newskin,
-			&m_player_colors, m_note_data, m_timing_data, col_x);
-		column_x.push_back(col_x);
-		if(i < old_columns.size())
-		{
-			m_columns[i].take_over_mods(old_columns[i]);
-		}
-		if(!col->get_use_custom_x())
-		{
-			curr_x+= wid_pad;
-		}
+		m_columns[i].reskin(col, m_newskin, &m_player_colors, col_x);
+
+		// The draw entries for a column can only be safely set when the noteskin
+		// is set, but the note data might change to a type that is invalid for
+		// the noteskin, causing the columns to be remade without a noteskin.
+		// Adding the draw entries during reskinning ensures the noteskin is
+		// valid.
+		// add_draw_entry filters out duplicate entries, so this piece of code
+		// doesn't need to.
 		add_draw_entry(static_cast<int>(i), holds_child_index, holds_draw_order);
 		add_draw_entry(static_cast<int>(i), lifts_child_index, lifts_draw_order);
 		add_draw_entry(static_cast<int>(i), taps_child_index, taps_draw_order);
 		add_draw_entry(static_cast<int>(i), selection_child_index, selection_draw_order);
-		m_columns[i].HandleMessage(pn_msg);
-		if(m_in_defective_mode)
+
+		column_x.push_back(col_x);
+		if(!col->get_use_custom_x())
 		{
-			m_columns[i].set_defective_mode(m_in_defective_mode);
+			curr_x+= wid_pad;
 		}
+		m_columns[i].HandleMessage(pn_msg);
 	}
 	Message width_msg("WidthSet");
 	width_msg.SetParamFromStack(L, "columns");
@@ -2866,6 +2953,7 @@ void NoteField::reload_columns(NoteSkinLoader const* new_loader, LuaReference& n
 	// Handle the width message after the columns have been created so that the
 	// board can fetch the columns.
 	HandleMessage(width_msg);
+	m_needs_reskin= false;
 }
 
 void NoteField::set_player_number(PlayerNumber pn)
@@ -2922,14 +3010,25 @@ void NoteField::disable_defective_mode()
 	m_defective_mods.set_player_options(nullptr);
 }
 
-void NoteField::set_speed(float time_spacing, float max_scroll_bpm,
-	float scroll_speed, float scroll_bpm, float read_bpm, float music_rate)
+void NoteField::set_speed(float scroll_speed)
 {
-	for(auto&& col : m_columns)
-	{
-		col.set_speed(time_spacing, max_scroll_bpm, scroll_speed,
-			scroll_bpm, read_bpm, music_rate);
-	}
+	// Instead of writing a C++ interface for setting the speed mod directly,
+	// call the lua function for doing it.  Less work and ensures similar
+	// behavior.
+	lua_State* L= LUA->Get();
+	// Push self to be able to get the set_speed_mod function.
+	PushSelf(L);
+	lua_getfield(L, lua_gettop(L), "set_speed_mod");
+	// Push self to be able to pass self to the function.
+	PushSelf(L);
+	lua_pushboolean(L, false);
+	lua_pushnumber(L, scroll_speed);
+	lua_pushnil(L);
+	std::string err;
+	LuaHelpers::RunScriptOnStack(L, err, 4, 1);
+	// The function returns self, but we don't care.
+	lua_settop(L, 0);
+	LUA->Release(L);
 }
 
 void NoteField::disable_speed_scroll_segments()
@@ -2943,8 +3042,8 @@ void NoteField::disable_speed_scroll_segments()
 
 void NoteField::turn_on_edit_mode()
 {
-	m_draw_beat_bars= true;
 	m_in_edit_mode= true;
+	add_draw_entry(beat_bars_column_index, beat_bars_child_index, beat_bars_draw_order);
 }
 
 double NoteField::get_selection_start()
@@ -3030,9 +3129,11 @@ void NoteField::update_displayed_time(double beat, double second)
 		trans.zoom.y*= m_gameplay_zoom;
 		trans.zoom.z*= m_gameplay_zoom;
 		set_transform(trans);
-		SetFOV(m_fov_mod.evaluate(input));
-		double vanish_x= m_vanish_x_mod.evaluate(input);
-		double vanish_y= m_vanish_y_mod.evaluate(input);
+		Rage::Vector3 fov_result;
+		m_fov_mod.evaluate(input, fov_result);
+		SetFOV(fov_result.z);
+		float vanish_x= fov_result.x;
+		float vanish_y= fov_result.y;
 		Actor* parent= GetParent();
 		switch(m_vanish_type)
 		{
@@ -3123,75 +3224,110 @@ void NoteField::set_pressed(size_t column, bool on)
 	m_columns[column].set_pressed(on);
 }
 
+void NoteField::assign_permanent_mods_to_columns(lua_State* L, int mod_set)
+{
+	lua_getfield(L, mod_set, "field");
+	if(lua_type(L, -1) == LUA_TTABLE)
+	{
+		m_mod_manager.add_permanent_mods(L, lua_gettop(L));
+	}
+	lua_pop(L, 1);
+	for(size_t c= 0; c < m_columns.size(); ++c)
+	{
+		lua_rawgeti(L, mod_set, c+1);
+		if(lua_type(L, -1) == LUA_TTABLE)
+		{
+			m_columns[c].m_mod_manager.add_permanent_mods(L, lua_gettop(L));
+		}
+		lua_pop(L, 1);
+	}
+}
+
+void NoteField::assign_timed_mods_to_columns(lua_State* L, int mod_set)
+{
+	lua_getfield(L, mod_set, "field");
+	if(lua_type(L, -1) == LUA_TTABLE)
+	{
+		m_mod_manager.add_timed_mods(L, lua_gettop(L));
+	}
+	lua_pop(L, 1);
+	for(size_t c= 0; c < m_columns.size(); ++c)
+	{
+		lua_rawgeti(L, mod_set, c+1);
+		if(lua_type(L, -1) == LUA_TTABLE)
+		{
+			m_columns[c].m_mod_manager.add_timed_mods(L, lua_gettop(L));
+		}
+		lua_pop(L, 1);
+	}
+}
+
+void NoteField::clear_timed_mods()
+{
+	m_mod_manager.clear_timed_mods();
+	for(auto&& col : m_columns)
+	{
+		col.m_mod_manager.clear_timed_mods();
+	}
+}
 
 // lua start
-#define GET_MEMBER(member) \
-static int get_##member(T* p, lua_State* L) \
-{ \
-	p->m_##member.PushSelf(L); \
-	return 1; \
-}
-#define GET_TRANS_DIM(trans, part, dim) \
-static int get_##trans##_##part##_##dim(T* p, lua_State* L) \
-{ \
-	p->m_##trans##_mod.part##_mod.dim##_mod.PushSelf(L); \
-	return 1; \
-}
-#define GET_VEC_DIM(vec, dim) \
-static int get_##vec##_##dim(T* p, lua_State* L) \
-{ \
-	p->m_##vec##_mod.dim##_mod.PushSelf(L); \
-	return 1; \
-}
-#define GET_VEC(vec) \
-GET_VEC_DIM(vec, x); \
-GET_VEC_DIM(vec, y); \
-GET_VEC_DIM(vec, z);
-#define GET_TRANS_PART(trans, part) \
-GET_TRANS_DIM(trans, part, x); \
-GET_TRANS_DIM(trans, part, y); \
-GET_TRANS_DIM(trans, part, z);
-#define GET_TRANS(trans) \
-GET_TRANS_PART(trans, pos); \
-GET_TRANS_PART(trans, rot); \
-GET_TRANS_PART(trans, zoom);
-#define ADD_VEC(vec) \
-ADD_METHOD(get_##vec##_x); \
-ADD_METHOD(get_##vec##_y); \
-ADD_METHOD(get_##vec##_z);
-#define ADD_TRANS_PART(trans, part) \
-ADD_METHOD(get_##trans##_##part##_##x); \
-ADD_METHOD(get_##trans##_##part##_##y); \
-ADD_METHOD(get_##trans##_##part##_##z);
-#define ADD_TRANS(trans) \
-ADD_TRANS_PART(trans, pos); \
-ADD_TRANS_PART(trans, rot); \
-ADD_TRANS_PART(trans, zoom);
-
 #define SAFE_TIMING_CHECK(p, L, func_name) \
 if(!p->timing_is_safe()) \
 { luaL_error(L, "Timing data is not set, " #func_name " is not safe."); }
 
 struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 {
-	GET_MEMBER(time_offset);
-	GET_MEMBER(quantization_multiplier);
-	GET_MEMBER(quantization_offset);
-	GET_MEMBER(speed_mod);
-	GET_MEMBER(lift_pretrail_length);
-	GET_VEC(y_offset_vec);
-	GET_MEMBER(reverse_offset_pixels);
-	GET_MEMBER(reverse_scale);
-	GET_MEMBER(center_percent);
-	GET_TRANS(note);
-	GET_TRANS(column);
-	GET_VEC(hold_normal);
-	GET_MEMBER(note_alpha);
-	GET_MEMBER(note_glow);
-	GET_MEMBER(receptor_alpha);
-	GET_MEMBER(receptor_glow);
-	GET_MEMBER(explosion_alpha);
-	GET_MEMBER(explosion_glow);
+	static int set_base_values(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Base values for set_base_values must be in a table.");
+		}
+		p->m_mod_manager.set_base_values(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int set_permanent_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for set_permanent_mods must be in a table.");
+		}
+		p->m_mod_manager.add_permanent_mods(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int set_timed_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for set_timed_mods must be in a table.");
+		}
+		p->m_mod_manager.add_timed_mods(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int remove_permanent_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for remove_permanent_mods must be in an unmarked secure envelope.");
+		}
+		p->m_mod_manager.remove_permanent_mods(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int clear_permanent_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for clear_permanent_mods must be in a table.");
+		}
+		p->m_mod_manager.clear_permanent_mods(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int get_mod_target_info(T* p, lua_State* L)
+	{
+		p->m_mod_manager.push_target_info(L);
+		return 1;
+	}
 	GET_SET_BOOL_METHOD(use_game_music_beat, m_use_game_music_beat);
 	GET_SET_BOOL_METHOD(show_unjudgable_notes, m_show_unjudgable_notes);
 	GET_SET_BOOL_METHOD(speed_segments_enabled, m_speed_segments_enabled);
@@ -3325,23 +3461,12 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 	}
 	LunaNoteFieldColumn()
 	{
-		ADD_METHOD(get_time_offset);
-		ADD_METHOD(get_quantization_multiplier);
-		ADD_METHOD(get_quantization_offset);
-		ADD_METHOD(get_speed_mod);
-		ADD_VEC(y_offset_vec);
-		ADD_METHOD(get_reverse_offset_pixels);
-		ADD_METHOD(get_reverse_scale);
-		ADD_METHOD(get_center_percent);
-		ADD_TRANS(note);
-		ADD_TRANS(column);
-		ADD_VEC(hold_normal);
-		ADD_METHOD(get_note_alpha);
-		ADD_METHOD(get_note_glow);
-		ADD_METHOD(get_receptor_alpha);
-		ADD_METHOD(get_receptor_glow);
-		ADD_METHOD(get_explosion_alpha);
-		ADD_METHOD(get_explosion_glow);
+		ADD_METHOD(set_base_values);
+		ADD_METHOD(set_permanent_mods);
+		ADD_METHOD(set_timed_mods);
+		ADD_METHOD(remove_permanent_mods);
+		ADD_METHOD(clear_permanent_mods);
+		ADD_METHOD(get_mod_target_info);
 		ADD_GET_SET_METHODS(use_game_music_beat);
 		ADD_GET_SET_METHODS(show_unjudgable_notes);
 		ADD_GET_SET_METHODS(speed_segments_enabled);
@@ -3369,6 +3494,79 @@ LUA_REGISTER_DERIVED_CLASS(NoteFieldColumn, ActorFrame);
 
 struct LunaNoteField : Luna<NoteField>
 {
+	static int set_base_values(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Base values for set_base_values must be in a table.");
+		}
+		p->m_mod_manager.set_base_values(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int set_permanent_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for set_permanent_mods must be in a table.");
+		}
+		p->m_mod_manager.add_permanent_mods(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int set_timed_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for set_timed_mods must be in a table.");
+		}
+		p->m_mod_manager.add_timed_mods(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int remove_permanent_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for remove_permanent_mods must be in an unmarked secure envelope.");
+		}
+		p->m_mod_manager.remove_permanent_mods(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int clear_permanent_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for clear_permanent_mods must be in a table.");
+		}
+		p->m_mod_manager.clear_permanent_mods(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int clear_timed_mods(T* p, lua_State* L)
+	{
+		p->clear_timed_mods();
+		COMMON_RETURN_SELF;
+	}
+	static int get_mod_target_info(T* p, lua_State* L)
+	{
+		p->m_mod_manager.push_target_info(L);
+		return 1;
+	}
+	static int set_per_column_permanent_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for set_per_column_permanent_mods must be in a table.");
+		}
+		p->assign_permanent_mods_to_columns(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int set_per_column_timed_mods(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Mods for set_per_column_permanent_mods must be in a table.");
+		}
+		p->assign_timed_mods_to_columns(L, 1);
+		COMMON_RETURN_SELF;
+	}
 	static int set_skin(T* p, lua_State* L)
 	{
 		std::string skin_name= SArg(1);
@@ -3395,6 +3593,12 @@ struct LunaNoteField : Luna<NoteField>
 			data= Luna<Steps>::check(L, 1);
 		}
 		p->set_steps(data);
+		COMMON_RETURN_SELF;
+	}
+	static int share_steps(T* p, lua_State* L)
+	{
+		NoteField* share_to= Luna<NoteField>::check(L, 1);
+		p->share_steps(share_to);
 		COMMON_RETURN_SELF;
 	}
 	static int get_columns(T* p, lua_State* L)
@@ -3429,14 +3633,6 @@ struct LunaNoteField : Luna<NoteField>
 		p->set_displayed_second(FArg(1));
 		COMMON_RETURN_SELF;
 	}
-	GET_TRANS(trans);
-	GET_MEMBER(receptor_alpha);
-	GET_MEMBER(receptor_glow);
-	GET_MEMBER(explosion_alpha);
-	GET_MEMBER(explosion_glow);
-	GET_MEMBER(fov_mod);
-	GET_MEMBER(vanish_x_mod);
-	GET_MEMBER(vanish_y_mod);
 	GET_SET_ENUM_METHOD(vanish_type, FieldVanishType, m_vanish_type);
 	static int set_player_color(T* p, lua_State* L)
 	{
@@ -3467,20 +3663,22 @@ struct LunaNoteField : Luna<NoteField>
 	GET_SET_BOOL_METHOD(oitg_zoom_mode, m_oitg_zoom_mode);
 	LunaNoteField()
 	{
+		ADD_METHOD(set_base_values);
+		ADD_METHOD(set_permanent_mods);
+		ADD_METHOD(set_timed_mods);
+		ADD_METHOD(remove_permanent_mods);
+		ADD_METHOD(clear_permanent_mods);
+		ADD_METHOD(clear_timed_mods);
+		ADD_METHOD(get_mod_target_info);
+		ADD_METHOD(set_per_column_permanent_mods);
+		ADD_METHOD(set_per_column_timed_mods);
 		ADD_GET_SET_METHODS(skin);
 		ADD_METHOD(set_steps);
+		ADD_METHOD(share_steps);
 		ADD_METHOD(get_columns);
 		ADD_METHOD(get_width);
 		ADD_GET_SET_METHODS(curr_beat);
 		ADD_GET_SET_METHODS(curr_second);
-		ADD_TRANS(trans);
-		ADD_METHOD(get_receptor_alpha);
-		ADD_METHOD(get_receptor_glow);
-		ADD_METHOD(get_explosion_alpha);
-		ADD_METHOD(get_explosion_glow);
-		ADD_METHOD(get_fov_mod);
-		ADD_METHOD(get_vanish_x_mod);
-		ADD_METHOD(get_vanish_y_mod);
 		ADD_GET_SET_METHODS(vanish_type);
 		ADD_METHOD(set_player_color);
 		ADD_METHOD(get_layer_fade_type);

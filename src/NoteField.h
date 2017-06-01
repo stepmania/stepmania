@@ -68,17 +68,21 @@ struct NoteFieldColumn : ActorFrame
 		mod_val_inputs input;
 	};
 	void add_children_from_layers(size_t column, std::vector<NoteSkinLayer>& layers);
-	void set_note_data(size_t column, const NoteData* note_data,
+
+	Message create_width_message();
+
+	// set_parent_info must be called once, when the column is created.
+	// set_parent_info must be called before reskin or set_note_data so the
+	// column knows its column id.
+	void set_parent_info(NoteField* field, size_t column,
+		ArrowDefects* defects);
+	void reskin(NoteSkinColumn* newskin, NoteSkinData& skin_data,
+		std::vector<Rage::Color>* player_colors, double x);
+	void set_note_data(const NoteData* note_data,
 		const TimingData* timing_data);
-	void set_column_info(NoteField* field, size_t column, NoteSkinColumn* newskin,
-		ArrowDefects* defects,
-		NoteSkinData& skin_data, std::vector<Rage::Color>* player_colors,
-		const NoteData* note_data, const TimingData* timing_data, double x);
-	void take_over_mods(NoteFieldColumn& old_column);
+
 	void set_defective_mode(bool mode);
 	bool get_defective_mode();
-	void set_speed(float time_spacing, float max_scroll_bpm,
-		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
 	size_t get_mod_col() { return m_column+1; }
 
 	void set_gameplay_zoom(double zoom);
@@ -212,7 +216,6 @@ struct NoteFieldColumn : ActorFrame
 	// If you add another ModifiableValue member, be sure to add it to the
 	// loop in set_note_data.  They need to have the timing data passed to
 	// them so mods can have start and end times.
-	// Also add new ModifiableValue members to the take_over_mods function.
 	ModifiableValue m_time_offset;
 	ModifiableValue m_quantization_multiplier;
 	ModifiableValue m_quantization_offset;
@@ -261,6 +264,10 @@ private:
 	std::vector<Rage::Color>* m_player_colors;
 	NoteField* m_field;
 	std::vector<FieldLayerRenderInfo> m_layer_render_info;
+
+	// Child actors added by the noteskin need to be tracked so they can be
+	// removed when the noteskin changes.
+	std::unordered_set<Actor*> m_actors_added_by_noteskin;
 
 	ArrowDefects* m_defective_mods;
 	bool m_in_defective_mode;
@@ -349,7 +356,20 @@ struct NoteField : ActorFrame
 	void set_skin(std::string const& skin_name, LuaReference& skin_params);
 	std::string const& get_skin();
 	void set_steps(Steps* data);
-	void set_note_data(NoteData* note_data, TimingData* timing, StepsType stype);
+	void set_note_data(NoteData* note_data, TimingData const* timing, StepsType stype);
+
+	// share_steps is a way for multiple notefields to use the same note data
+	// without duplicating it.  This also means that when edit mode edits the
+	// note data, the change immediately appears on all sharing notefields.
+	// The timing data is also shared.
+	// share_to is added to m_share_steps_children list.
+	// share_to->m_share_steps_parent will be this.
+	void share_steps(NoteField* share_to);
+	void become_share_steps_child(NoteField* parent, NoteData* note_data,
+		TimingData const* timing, StepsType stype); // this is child
+	void remove_share_steps_child(NoteField* child); // this is parent
+	void share_steps_parent_being_destroyed(); // this is child
+
 	// set_player_number exists only so that the notefield layers can have
 	// per-player configuration on gameplay.  Using it for any other purpose
 	// is forbidden.
@@ -361,9 +381,12 @@ struct NoteField : ActorFrame
 	void set_defective_mode(bool mode);
 	bool get_defective_mode();
 	void disable_defective_mode();
-	void set_speed(float time_spacing, float max_scroll_bpm,
-		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
+	void set_speed(float scroll_speed);
 	void disable_speed_scroll_segments();
+
+	void assign_permanent_mods_to_columns(lua_State* L, int mod_set);
+	void assign_timed_mods_to_columns(lua_State* L, int mod_set);
+	void clear_timed_mods();
 
 	void turn_on_edit_mode();
 	double get_selection_start();
@@ -393,9 +416,8 @@ struct NoteField : ActorFrame
 	ModifiableValue m_receptor_glow;
 	ModifiableValue m_explosion_alpha;
 	ModifiableValue m_explosion_glow;
-	ModifiableValue m_fov_mod;
-	ModifiableValue m_vanish_x_mod;
-	ModifiableValue m_vanish_y_mod;
+	ModifiableVector3 m_fov_mod;
+
 	// To allow the Player actor the field is inside to be moved around without
 	// causing skew problems, the field adds the vanish position to the actor
 	// position.  m_vanish_type tells the field whether to look at its parent,
@@ -444,16 +466,22 @@ private:
 		float const first_beat, float const last_beat,
 		vector<BackgroundChange>& changes, Rage::Color const& color,
 		Rage::Color const& text_glow);
-	void reload_columns(NoteSkinLoader const* new_loader, LuaReference& new_params);
+	void recreate_columns();
+	void reskin_columns(NoteSkinLoader const* new_loader, LuaReference& new_params);
 	double m_curr_beat;
 	double m_curr_second;
 	double m_field_width;
+
+	NoteField* m_share_steps_parent;
+	std::vector<NoteField*> m_share_steps_children;
 
 	// The player number has to be stored so that it can be passed to the
 	// column layers when they're loaded.
 	PlayerNumber m_pn;
 	ArrowDefects m_defective_mods;
 	bool m_in_defective_mode;
+
+	bool m_needs_reskin;
 
 	bool m_own_note_data;
 	NoteData* m_note_data;
