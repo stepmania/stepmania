@@ -696,6 +696,14 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_SQUARE] * ARROW_SIZE * 0.5f) * fResult;
 	}
 
+	if( fEffects[PlayerOptions::EFFECT_BOUNCE] != 0 )
+	{
+		float fBounceAmt = fabsf( RageFastSin( ( (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_BOUNCE_OFFSET]) ) ) / 
+			( 60 + (fEffects[PlayerOptions::EFFECT_BOUNCE_PERIOD]*60) ) ) ) );
+		
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BOUNCE] * ARROW_SIZE * 0.5f * fBounceAmt;
+	}
+
 	if( fEffects[PlayerOptions::EFFECT_XMODE] != 0 )
 	{
 		// based off of code by v1toko for StepNXA, except it should work on
@@ -1099,6 +1107,14 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 		fZPos += (fEffects[PlayerOptions::EFFECT_SQUARE_Z] * ARROW_SIZE * 0.5f) * fResult;
 	}
 
+	if( fEffects[PlayerOptions::EFFECT_BOUNCE_Z] != 0 )
+	{
+		float fBounceAmt = fabsf( RageFastSin( ( (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_BOUNCE_Z_OFFSET]) ) ) / 
+			( 60 + (fEffects[PlayerOptions::EFFECT_BOUNCE_Z_PERIOD]*60) ) ) ) );
+		
+		fZPos += fEffects[PlayerOptions::EFFECT_BOUNCE_Z] * ARROW_SIZE * 0.5f * fBounceAmt;
+	}
+
 	return fZPos;
 }
 
@@ -1129,7 +1145,13 @@ bool ArrowEffects::NeedZBuffer()
 	}
 	if( curr_options->m_bZBuffer ||
 		fEffects[PlayerOptions::EFFECT_ATTENUATE_Z] != 0 )
+	{
 		return true;
+	}
+	if( fEffects[PlayerOptions::EFFECT_BOUNCE_Z] != 0 )
+	{
+		return true;
+	}
 	return false;
 }
 
@@ -1156,12 +1178,32 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState, float fYOffset, in
 float ArrowEffects::GetZoomVariable( float fYOffset, int iCol, float fCurZoom )
 {
 	float fZoom = fCurZoom;
+	if( curr_options->m_fEffects[PlayerOptions::EFFECT_PULSE_INNER] != 0 || curr_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OUTER] != 0 )
+	{
+		float sine = RageFastSin(((fYOffset+(100.0f*(curr_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OFFSET])))/(0.4f*(ARROW_SIZE+(curr_options->m_fEffects[PlayerOptions::EFFECT_PULSE_PERIOD]*ARROW_SIZE)))));
+		
+		fZoom *= (sine*(curr_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OUTER]*0.5f))+GetPulseInner();
+	}
 	if( curr_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT] !=0 && fYOffset >= 0 )
 		fZoom *= 1/(1+(fYOffset*(curr_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT]/100.0f)));
 		
 	if( curr_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR] !=0 && fYOffset >= 0 )
 		fZoom += fYOffset*(0.5f*curr_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR]/ARROW_SIZE);
 	return fZoom;
+}
+
+float ArrowEffects::GetPulseInner()
+{
+	float fPulseInner = 1.0f;
+	if( curr_options->m_fEffects[PlayerOptions::EFFECT_PULSE_INNER] != 0 || curr_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OUTER] != 0 )
+	{
+		fPulseInner = ((curr_options->m_fEffects[PlayerOptions::EFFECT_PULSE_INNER]*0.5f)+1);
+		if (fPulseInner == 0)
+		{
+			fPulseInner = 0.01f;
+		}
+	}
+	return fPulseInner;
 }
 
 static ThemeMetric<float>	FRAME_WIDTH_EFFECTS_PIXELS_PER_SECOND( "ArrowEffects", "FrameWidthEffectsPixelsPerSecond" );

@@ -270,6 +270,10 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_PERIOD],	"DrunkZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_LINEAR],	"ShrinkLinear" );
 	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_MULT],	"ShrinkMult" );
+	AddPart( AddTo, m_fEffects[EFFECT_PULSE_INNER],		"PulseInner" );
+	AddPart( AddTo, m_fEffects[EFFECT_PULSE_OUTER],		"PulseOuter" );
+	AddPart( AddTo, m_fEffects[EFFECT_PULSE_PERIOD],	"PulsePeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_PULSE_OFFSET],	"PulseOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_ATTENUATE_X],		"AttenuateX" );
 	AddPart( AddTo, m_fEffects[EFFECT_ATTENUATE_Y],		"AttenuateY" );
 	AddPart( AddTo, m_fEffects[EFFECT_ATTENUATE_Z],		"AttenuateZ" );
@@ -280,6 +284,12 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_X_OFFSET],	"ConfusionXOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y],	"ConfusionY" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y_OFFSET],	"ConfusionYOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE],		"Bounce" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_PERIOD],	"BouncePeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_OFFSET],	"BounceOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_Z],		"BounceZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_Z_PERIOD],	"BounceZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_Z_OFFSET],	"BounceZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_MINI],		"Mini" );
 	AddPart( AddTo, m_fEffects[EFFECT_TINY],		"Tiny" );
 	AddPart( AddTo, m_fEffects[EFFECT_FLIP],		"Flip" );
@@ -632,6 +642,13 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    if( sBit == "shrinklinear" )			SET_FLOAT( fEffects[EFFECT_SHRINK_TO_LINEAR] )
 	    else if( sBit == "shrinkmult" )			SET_FLOAT( fEffects[EFFECT_SHRINK_TO_MULT] )
 	}
+	else if( sBit.find("pulse") != sBit.npos)
+	{
+	    if( sBit == "pulseinner" )				SET_FLOAT( fEffects[EFFECT_PULSE_INNER] )
+	    else if( sBit == "pulseouter" )			SET_FLOAT( fEffects[EFFECT_PULSE_OUTER] )
+	    else if( sBit == "pulseoffset" )			SET_FLOAT( fEffects[EFFECT_PULSE_OFFSET] )
+	    else if( sBit == "pulseperiod" )			SET_FLOAT( fEffects[EFFECT_PULSE_PERIOD] )
+	}
 	else if( sBit.find("dizzy") != sBit.npos)
 	{
 	    if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
@@ -645,6 +662,15 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "confusionxoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_X_OFFSET] )
 	    else if( sBit == "confusiony" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_Y] )
 	    else if( sBit == "confusionyoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_Y_OFFSET] )
+	}
+	else if( sBit.find("bounce") != sBit.npos)
+	{
+	    if( sBit == "bounce" )				SET_FLOAT( fEffects[EFFECT_BOUNCE] )
+	    else if( sBit == "bounceperiod" )			SET_FLOAT( fEffects[EFFECT_BOUNCE_PERIOD] )
+	    else if( sBit == "bounceoffset" )			SET_FLOAT( fEffects[EFFECT_BOUNCE_OFFSET] )
+	    else if( sBit == "bouncez" )			SET_FLOAT( fEffects[EFFECT_BOUNCE_Z] )
+	    else if( sBit == "bouncezperiod" )			SET_FLOAT( fEffects[EFFECT_BOUNCE_Z_PERIOD] )
+	    else if( sBit == "bouncezoffset" )			SET_FLOAT( fEffects[EFFECT_BOUNCE_Z_OFFSET] )
 	}
 	else if( sBit == "mini" )				SET_FLOAT( fEffects[EFFECT_MINI] )
 	else if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
@@ -1435,12 +1461,22 @@ public:
 	FLOAT_INTERFACE(AttenuateZ, Effects[PlayerOptions::EFFECT_ATTENUATE_Z], true);
 	FLOAT_INTERFACE(ShrinkLinear, Effects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR], true);
 	FLOAT_INTERFACE(ShrinkMult, Effects[PlayerOptions::EFFECT_SHRINK_TO_MULT], true);
+	FLOAT_INTERFACE(PulseInner, Effects[PlayerOptions::EFFECT_PULSE_INNER], true);
+	FLOAT_INTERFACE(PulseOuter, Effects[PlayerOptions::EFFECT_PULSE_OUTER], true);
+	FLOAT_INTERFACE(PulsePeriod, Effects[PlayerOptions::EFFECT_PULSE_PERIOD], true);
+	FLOAT_INTERFACE(PulseOffset, Effects[PlayerOptions::EFFECT_PULSE_OFFSET], true);
 	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION], true);
 	FLOAT_INTERFACE(ConfusionOffset, Effects[PlayerOptions::EFFECT_CONFUSION_OFFSET], true);
 	FLOAT_INTERFACE(ConfusionX, Effects[PlayerOptions::EFFECT_CONFUSION_X], true);
 	FLOAT_INTERFACE(ConfusionXOffset, Effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET], true);
 	FLOAT_INTERFACE(ConfusionY, Effects[PlayerOptions::EFFECT_CONFUSION_Y], true);
 	FLOAT_INTERFACE(ConfusionYOffset, Effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET], true);
+	FLOAT_INTERFACE(Bounce, Effects[PlayerOptions::EFFECT_BOUNCE], true);
+	FLOAT_INTERFACE(BouncePeriod, Effects[PlayerOptions::EFFECT_BOUNCE_PERIOD], true);
+	FLOAT_INTERFACE(BounceOffset, Effects[PlayerOptions::EFFECT_BOUNCE_OFFSET], true);
+	FLOAT_INTERFACE(BounceZ, Effects[PlayerOptions::EFFECT_BOUNCE_Z], true);
+	FLOAT_INTERFACE(BounceZPeriod, Effects[PlayerOptions::EFFECT_BOUNCE_Z_PERIOD], true);
+	FLOAT_INTERFACE(BounceZOffset, Effects[PlayerOptions::EFFECT_BOUNCE_Z_OFFSET], true);
 	FLOAT_INTERFACE(Mini, Effects[PlayerOptions::EFFECT_MINI], true);
 	FLOAT_INTERFACE(Tiny, Effects[PlayerOptions::EFFECT_TINY], true);
 	FLOAT_INTERFACE(Flip, Effects[PlayerOptions::EFFECT_FLIP], true);
@@ -1899,6 +1935,10 @@ public:
 		ADD_METHOD(Dizzy);
 		ADD_METHOD(ShrinkLinear);
 		ADD_METHOD(ShrinkMult);
+		ADD_METHOD(PulseInner);
+		ADD_METHOD(PulseOuter);
+		ADD_METHOD(PulseOffset);
+		ADD_METHOD(PulsePeriod);
 		ADD_METHOD(AttenuateX);
 		ADD_METHOD(AttenuateY);
 		ADD_METHOD(AttenuateZ);
@@ -1908,6 +1948,12 @@ public:
 		ADD_METHOD(ConfusionXOffset);
 		ADD_METHOD(ConfusionY);
 		ADD_METHOD(ConfusionYOffset);
+		ADD_METHOD(Bounce);
+		ADD_METHOD(BouncePeriod);
+		ADD_METHOD(BounceOffset);
+		ADD_METHOD(BounceZ);
+		ADD_METHOD(BounceZPeriod);
+		ADD_METHOD(BounceZOffset);
 		ADD_METHOD(Mini);
 		ADD_METHOD(Tiny);
 		ADD_METHOD(Flip);

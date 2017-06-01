@@ -986,7 +986,11 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		const RageVector3 right_vert(center_vert.x - render_left.x,
 			center_vert.y - render_left.y, center_vert.z - render_left.z);
 
-		const float fVariableZoom	= ArrowEffects::GetZoomVariable(fYOffset, column_args.column, 1);
+		// Hack: because some mods mess with the zoom, we need to compensate accordingly,
+		// or else hold tails don't look right.
+		const float fPulseInnerAdj	= ArrowEffects::GetPulseInner();
+		const float fVariableZoom	= ArrowEffects::GetZoomVariable(fYOffset, column_args.column, 1) / fPulseInnerAdj;
+		
 		const float fDistFromTop	= (fY - y_start_pos) / ae_zoom;
 		float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom * fVariableZoom);
 		fTexCoordTop += add_to_tex_coord;
