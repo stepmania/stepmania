@@ -78,6 +78,8 @@ public:
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
 		m_fModTimerMult(0), m_SpeedfModTimerMult(1.0f),
 		m_fModTimerOffset(0), m_SpeedfModTimerOffset(1.0f),
+		m_fDrawSize(0), m_SpeedfDrawSize(1.0f),
+		m_fDrawSizeBack(0), m_SpeedfDrawSizeBack(1.0f),
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
 		m_bStealthType(false), m_bStealthPastReceptors(false),
 		m_bDizzyHolds(false), m_bZBuffer(false),
@@ -317,6 +319,8 @@ public:
 	float	m_fRandomSpeed,			m_SpeedfRandomSpeed;
 	float	m_fModTimerMult,		m_SpeedfModTimerMult;
 	float	m_fModTimerOffset,		m_SpeedfModTimerOffset;
+	float	m_fDrawSize,			m_SpeedfDrawSize;
+	float	m_fDrawSizeBack,		m_SpeedfDrawSizeBack;
 	/* The maximum column number is 16.*/
 	float	m_fMovesX[16],			m_SpeedfMovesX[16];
 	float	m_fMovesY[16],			m_SpeedfMovesY[16];

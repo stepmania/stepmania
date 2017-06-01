@@ -85,6 +85,8 @@ void PlayerOptions::Init()
 	m_fRandomSpeed = 0;		m_SpeedfRandomSpeed = 1.0f;
 	m_fModTimerMult = 0;		m_SpeedfModTimerMult = 1.0f;
 	m_fModTimerOffset = 0;		m_SpeedfModTimerOffset = 1.0f;
+	m_fDrawSize = 0;		m_SpeedfDrawSize = 1.0f;
+	m_fDrawSizeBack = 0;		m_SpeedfDrawSizeBack = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
@@ -112,6 +114,8 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_BatteryLives );
 	APPROACH( fModTimerMult );
 	APPROACH( fModTimerOffset );
+	APPROACH( fDrawSize );
+	APPROACH( fDrawSizeBack );
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
 	APPROACH( fMaxScrollBPM );
@@ -383,6 +387,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 
 	AddPart( AddTo, m_fModTimerMult,	"ModTimerMult" );
 	AddPart( AddTo, m_fModTimerOffset,	"ModTimerOffset" );
+	AddPart( AddTo, m_fDrawSize,		"DrawSize" );
+	AddPart( AddTo, m_fDrawSizeBack,	"DrawSizeBack" );
 	
 	AddPart( AddTo, m_fDark,	"Dark" );
 
@@ -606,6 +612,11 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "modtimergame" )			{ m_ModTimerType= ModTimerType_Game; }
 	    else if( sBit == "modtimermult" )			SET_FLOAT( fModTimerMult )
 	    else if( sBit == "modtimeroffset" )			SET_FLOAT( fModTimerOffset )
+	}
+	else if( sBit.find("drawsize") != sBit.npos)
+	{
+	    if( sBit == "drawsize" )				SET_FLOAT( fDrawSize )
+	    else if( sBit == "drawsizeback" )			SET_FLOAT( fDrawSizeBack )
 	}
 	else if( sBit == "bar" ) { m_LifeType= LifeType_Bar; }
 	else if( sBit == "battery" ) { m_LifeType= LifeType_Battery; }
@@ -1077,6 +1088,8 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_ModTimerType);
 	COMPARE(m_fModTimerMult);
 	COMPARE(m_fModTimerOffset);
+	COMPARE(m_fDrawSize);
+	COMPARE(m_fDrawSizeBack);
 	COMPARE(m_BatteryLives);
 	COMPARE(m_fTimeSpacing);
 	COMPARE(m_fScrollSpeed);
@@ -1139,6 +1152,8 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_ModTimerType);
 	CPY_SPEED(fModTimerMult);
 	CPY_SPEED(fModTimerOffset);
+	CPY_SPEED(fDrawSize);
+	CPY_SPEED(fDrawSizeBack);
 	CPY(m_BatteryLives);
 	CPY_SPEED(fTimeSpacing);
 	CPY_SPEED(fScrollSpeed);
@@ -1382,6 +1397,8 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_ModTimerType);
 	CPY(m_fModTimerMult);
 	CPY(m_fModTimerOffset);
+	CPY(m_fDrawSize);
+	CPY(m_fDrawSizeBack);
 	CPY(m_bStealthType);
 	CPY(m_bStealthPastReceptors);
 	CPY(m_bDizzyHolds);
@@ -1436,6 +1453,8 @@ public:
 	INT_INTERFACE(BatteryLives, BatteryLives);
 	FLOAT_INTERFACE(ModTimerMult, ModTimerMult, true);
 	FLOAT_INTERFACE(ModTimerOffset, ModTimerOffset, true);
+	FLOAT_INTERFACE(DrawSize, DrawSize, true);
+	FLOAT_INTERFACE(DrawSizeBack, DrawSizeBack, true);
 	FLOAT_INTERFACE(TimeSpacing, TimeSpacing, true);
 	FLOAT_INTERFACE(MaxScrollBPM, MaxScrollBPM, true);
 	FLOAT_INTERFACE(ScrollSpeed, ScrollSpeed, true);
@@ -1912,6 +1931,8 @@ public:
 		ADD_METHOD(ModTimerSetting);
 		ADD_METHOD(ModTimerMult);
 		ADD_METHOD(ModTimerOffset);
+		ADD_METHOD(DrawSize);
+		ADD_METHOD(DrawSizeBack);
 		ADD_METHOD(BatteryLives);
 		ADD_METHOD(TimeSpacing);
 		ADD_METHOD(MaxScrollBPM);

@@ -723,7 +723,7 @@ void NoteField::CalcPixelsBeforeAndAfterTargets()
 {
 	const PlayerOptions& curr_options= m_pPlayerState->m_PlayerOptions.GetCurrent();
 	// Adjust draw range depending on some effects
-	m_FieldRenderArgs.draw_pixels_after_targets= m_iDrawDistanceAfterTargetsPixels;
+	m_FieldRenderArgs.draw_pixels_after_targets= m_iDrawDistanceAfterTargetsPixels * (1.f + curr_options.m_fDrawSizeBack);
 	// HACK: If boomerang and centered are on, then we want to draw much 
 	// earlier so that the notes don't pop on screen.
 	float centered_times_boomerang=
@@ -732,7 +732,7 @@ void NoteField::CalcPixelsBeforeAndAfterTargets()
 	m_FieldRenderArgs.draw_pixels_after_targets +=
 		int(SCALE(centered_times_boomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2));
 	m_FieldRenderArgs.draw_pixels_before_targets =
-		m_iDrawDistanceBeforeTargetsPixels;
+		m_iDrawDistanceBeforeTargetsPixels * (1.f + curr_options.m_fDrawSize);
 
 	float draw_scale= 1;
 	draw_scale*= 1 + 0.5f * fabsf(curr_options.m_fPerspectiveTilt);
