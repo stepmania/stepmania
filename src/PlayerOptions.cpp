@@ -98,6 +98,8 @@ void PlayerOptions::Init()
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
 	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
+	ZERO( m_fDarks );		ONE( m_SpeedfDarks );
+	ZERO( m_fStealth );		ONE( m_SpeedfStealth );
 	
 }
 
@@ -144,6 +146,10 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	    APPROACH( fMovesY[i] );
 	for( int i=0; i<16; i++)
 	    APPROACH( fMovesZ[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fDarks[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fStealth[i] );
 
 	DO_COPY( m_bSetScrollSpeed );
 	for( int i=0; i<NUM_TURNS; i++ )
@@ -369,6 +375,10 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 		AddPart( AddTo, m_fMovesY[i],				s );
 		s = ssprintf( "MoveZ%d", i+1 );
 		AddPart( AddTo, m_fMovesZ[i],				s );
+		s = ssprintf( "Dark%d", i+1 );
+		AddPart( AddTo, m_fDarks[i],				s );
+		s = ssprintf( "Stealth%d", i+1 );
+		AddPart( AddTo, m_fStealth[i],				s );
 	}
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
@@ -502,6 +512,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	ASSERT_M( NOTESKIN != NULL, "The Noteskin Manager must be loaded in order to process mods." );
 
 	RString sBit = sOneMod;
+	RString sMod = "";
 	sBit.MakeLower();
 	Trim( sBit );
 
@@ -786,6 +797,18 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    if( sBit == "stealth" )				SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
 	    else if( sBit == "stealthtype" )			m_bStealthType = on;
 	    else if( sBit == "stealthpastreceptors" )		m_bStealthPastReceptors = on;
+	    else
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = ssprintf( "stealth%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fStealth[i] )
+			break;
+		    }
+		}
+	    }
 	}
 	else if( sBit == "blink" )				SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
 	else if( sBit == "randomvanish" )			SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
@@ -825,7 +848,22 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "nostretch" )				m_bTransforms[TRANSFORM_NOSTRETCH] = on;
 	else if( sBit == "nolifts" )				m_bTransforms[TRANSFORM_NOLIFTS] = on;
 	else if( sBit == "nofakes" )				m_bTransforms[TRANSFORM_NOFAKES] = on;
-	else if( sBit == "dark" )				SET_FLOAT( fDark )
+	else if( sBit.find("dark") != sBit.npos )
+	{
+	    if( sBit == "dark" )				SET_FLOAT( fDark )
+	    else
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = ssprintf( "dark%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fDarks[i] )
+			break;
+		    }
+		}
+	    }
+	}
 	else if( sBit == "blind" )				SET_FLOAT( fBlind )
 	else if( sBit == "cover" )				SET_FLOAT( fCover )
 	else if( sBit == "randomattacks" )			SET_FLOAT( fRandAttack )
@@ -865,14 +903,41 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	
 	else if( sBit.find("move") != sBit.npos)
 	{
-	    for (int i=0; i<16; i++)
+	    if (sBit.find("x") != sBit.npos)
 	    {
-		RString s = ssprintf( "movex%d", i+1 );
-		    if( sBit == s)				SET_FLOAT( fMovesX[i] )
-		s = ssprintf( "movey%d", i+1 );
-		    if( sBit == s)				SET_FLOAT( fMovesY[i] )
-		s = ssprintf( "movez%d", i+1 );
-		    if( sBit == s)				SET_FLOAT( fMovesZ[i] )
+		for (int i=0; i<16; i++)
+		{
+		    sMod = ssprintf( "movex%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fMovesX[i] )
+			break;
+		    }
+		}
+	    }
+	    else if (sBit.find("y") != sBit.npos)
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = ssprintf( "movey%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fMovesY[i] )
+			break;
+		    }
+		}
+	    }
+	    else if (sBit.find("z") != sBit.npos)
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = ssprintf( "movez%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fMovesZ[i] )
+			break;
+		    }
+		}
 	    }
 	}
 	else if( sBit == "zbuffer" )				m_bZBuffer = on;
@@ -1137,6 +1202,10 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 		COMPARE(m_fMovesY[i]);
 	for( int i = 0; i < 16; ++i )
 		COMPARE(m_fMovesZ[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fDarks[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fStealth[i]);
 #undef COMPARE
 	return true;
 }
@@ -1206,15 +1275,23 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	}
 	for( int i = 0; i < 16; ++i )
 	{
-		CPY(m_fMovesX[i]);
+		CPY_SPEED(fMovesX[i]);
 	}
 	for( int i = 0; i < 16; ++i )
 	{
-		CPY(m_fMovesY[i]);
+		CPY_SPEED(fMovesY[i]);
 	}
 	for( int i = 0; i < 16; ++i )
 	{
-		CPY(m_fMovesZ[i]);
+		CPY_SPEED(fMovesZ[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fDarks[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fStealth[i]);
 	}
 #undef CPY
 #undef CPY_SPEED
@@ -1583,6 +1660,8 @@ public:
 	MULTICOL_FLOAT_INTERFACE(MoveX, MovesX, true);
 	MULTICOL_FLOAT_INTERFACE(MoveY, MovesY, true);
 	MULTICOL_FLOAT_INTERFACE(MoveZ, MovesZ, true);
+	MULTICOL_FLOAT_INTERFACE(Dark, Darks, true);
+	MULTICOL_FLOAT_INTERFACE(Stealth, Stealth, true);
 	
 	BOOL_INTERFACE(StealthType, StealthType);
 	BOOL_INTERFACE(StealthPastReceptors, StealthPastReceptors);
@@ -2098,6 +2177,8 @@ public:
 		ADD_MULTICOL_METHOD(MoveX);
 		ADD_MULTICOL_METHOD(MoveY);
 		ADD_MULTICOL_METHOD(MoveZ);
+		ADD_MULTICOL_METHOD(Dark);
+		ADD_MULTICOL_METHOD(Stealth);
 		
 
 		ADD_METHOD(NoteSkin);

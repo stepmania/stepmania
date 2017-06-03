@@ -62,7 +62,9 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ )
 	{
 		// m_fDark==1 or m_fFadeToFailPercent==1 should make fBaseAlpha==0
-		float fBaseAlpha = (1 - m_pPlayerState->m_PlayerOptions.GetCurrent().m_fDark);
+		float fBaseAlpha = (1 - m_pPlayerState->m_PlayerOptions.GetCurrent().m_fDark
+			- m_pPlayerState->m_PlayerOptions.GetCurrent().m_fDarks[c]
+		);
 		if( m_fFadeToFailPercent != -1 )
 		{
 			fBaseAlpha *= (1 - m_fFadeToFailPercent);

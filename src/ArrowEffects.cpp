@@ -975,6 +975,9 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse, int iCol, float fYOffset
 
 	if( fAppearances[PlayerOptions::APPEARANCE_STEALTH] != 0 )
 		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
+	if( curr_options->m_fStealth[iCol] != 0 ){
+		fVisibleAdjust -= curr_options->m_fStealth[iCol];
+	}
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] != 0 )
 	{
 		float f = RageFastSin(ArrowEffects::GetTime()*10);

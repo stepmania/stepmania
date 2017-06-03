@@ -94,6 +94,8 @@ public:
 		ZERO( m_fMovesX );	ONE( m_SpeedfMovesX );
 		ZERO( m_fMovesY );	ONE( m_SpeedfMovesY );
 		ZERO( m_fMovesZ );	ONE( m_SpeedfMovesZ );
+		ZERO( m_fDarks );	ONE( m_SpeedfDarks );
+		ZERO( m_fStealth );	ONE( m_SpeedfStealth );
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
@@ -325,6 +327,8 @@ public:
 	float	m_fMovesX[16],			m_SpeedfMovesX[16];
 	float	m_fMovesY[16],			m_SpeedfMovesY[16];
 	float	m_fMovesZ[16],			m_SpeedfMovesZ[16];
+	float	m_fDarks[16],			m_SpeedfDarks[16];
+	float	m_fStealth[16],			m_SpeedfStealth[16];
 
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];

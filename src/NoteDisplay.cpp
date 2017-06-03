@@ -987,7 +987,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			center_vert.y - render_left.y, center_vert.z - render_left.z);
 
 		// Hack: because some mods mess with the zoom, we need to compensate accordingly,
-		// or else hold tails don't look right.
+		// or else hold ends don't look right.
 		const float fPulseInnerAdj	= ArrowEffects::GetPulseInner();
 		const float fVariableZoom	= ArrowEffects::GetZoomVariable(fYOffset, column_args.column, 1) / fPulseInnerAdj;
 		
