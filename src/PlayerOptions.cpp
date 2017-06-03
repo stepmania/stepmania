@@ -98,8 +98,14 @@ void PlayerOptions::Init()
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
 	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
+	ZERO( m_fConfusionX );		ONE( m_SpeedfConfusionX );
+	ZERO( m_fConfusionY );		ONE( m_SpeedfConfusionY );
+	ZERO( m_fConfusionZ );		ONE( m_SpeedfConfusionZ );
 	ZERO( m_fDarks );		ONE( m_SpeedfDarks );
 	ZERO( m_fStealth );		ONE( m_SpeedfStealth );
+	ZERO( m_fTiny );		ONE( m_SpeedfTiny );
+	ZERO( m_fBumpy );		ONE( m_SpeedfBumpy );
+	ZERO( m_fReverse );		ONE( m_SpeedfReverse );
 	
 }
 
@@ -147,9 +153,21 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	for( int i=0; i<16; i++)
 	    APPROACH( fMovesZ[i] );
 	for( int i=0; i<16; i++)
+	    APPROACH( fConfusionX[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fConfusionY[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fConfusionZ[i] );
+	for( int i=0; i<16; i++)
 	    APPROACH( fDarks[i] );
 	for( int i=0; i<16; i++)
 	    APPROACH( fStealth[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fTiny[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fBumpy[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fReverse[i] );
 
 	DO_COPY( m_bSetScrollSpeed );
 	for( int i=0; i<NUM_TURNS; i++ )
@@ -375,10 +393,22 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 		AddPart( AddTo, m_fMovesY[i],				s );
 		s = ssprintf( "MoveZ%d", i+1 );
 		AddPart( AddTo, m_fMovesZ[i],				s );
+		s = ssprintf( "ConfusionOffset%d", i+1);
+		AddPart( AddTo, m_fConfusionX[i],				s );
+		s = ssprintf( "ConfusionYOffset%d", i+1 );
+		AddPart( AddTo, m_fConfusionY[i],				s );
+		s = ssprintf( "ConfusionZOffset%d", i+1 );
+		AddPart( AddTo, m_fConfusionZ[i],				s );
 		s = ssprintf( "Dark%d", i+1 );
 		AddPart( AddTo, m_fDarks[i],				s );
 		s = ssprintf( "Stealth%d", i+1 );
 		AddPart( AddTo, m_fStealth[i],				s );
+		s = ssprintf( "Tiny%d", i+1 );
+		AddPart( AddTo, m_fTiny[i],				s );
+		s = ssprintf( "Bumpy%d", i+1 );
+		AddPart( AddTo, m_fBumpy[i],				s );
+		s = ssprintf( "Reverse%d", i+1 );
+		AddPart( AddTo, m_fReverse[i],				s );
 	}
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
@@ -678,12 +708,54 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sBit.find("confusion") != sBit.npos)
 	{
+	    if( sBit.find("x") != sBit.npos)
+	    {
+		if( sBit == "confusionx" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_X] )
+		else if( sBit == "confusionxoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_X_OFFSET] )
+		else
+		{
+		    for (int i=0; i<16; i++)
+		    {
+			sMod = ssprintf( "confusionxoffset%d", i+1 );
+			if( sBit == sMod)
+			{
+			    SET_FLOAT( fConfusionX[i] )
+			    break;
+			}
+		    }
+		}
+	    }
+	    else if( sBit.find("y") != sBit.npos)
+	    {
+		if( sBit == "confusiony" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_Y] )
+		else if( sBit == "confusionyoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_Y_OFFSET] )
+		else
+		{
+		    for (int i=0; i<16; i++)
+		    {
+			sMod = ssprintf( "confusionyoffset%d", i+1 );
+			if( sBit == sMod)
+			{
+			    SET_FLOAT( fConfusionY[i] )
+			    break;
+			}
+		    }
+		}
+	    }
 	    if( sBit == "confusion" )				SET_FLOAT( fEffects[EFFECT_CONFUSION] )
 	    else if( sBit == "confusionoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_OFFSET] )
-	    else if( sBit == "confusionx" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_X] )
-	    else if( sBit == "confusionxoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_X_OFFSET] )
-	    else if( sBit == "confusiony" )			SET_FLOAT( fEffects[EFFECT_CONFUSION_Y] )
-	    else if( sBit == "confusionyoffset" )		SET_FLOAT( fEffects[EFFECT_CONFUSION_Y_OFFSET] )
+	    else
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = ssprintf( "confusionoffset%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fConfusionZ[i] )
+			break;
+		    }
+		}
+	    }
 	}
 	else if( sBit.find("bounce") != sBit.npos)
 	{
@@ -695,7 +767,22 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "bouncezoffset" )			SET_FLOAT( fEffects[EFFECT_BOUNCE_Z_OFFSET] )
 	}
 	else if( sBit == "mini" )				SET_FLOAT( fEffects[EFFECT_MINI] )
-	else if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
+	else if ( sBit.find("tiny") != sBit.npos)
+	{
+	    if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
+	    else
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = ssprintf( "tiny%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fTiny[i] )
+			break;
+		    }
+		}
+	    }
+	}
 	else if( sBit == "flip" )				SET_FLOAT( fEffects[EFFECT_FLIP] )
 	else if( sBit == "invert" )				SET_FLOAT( fEffects[EFFECT_INVERT] )
 	else if( sBit.find("tornado") != sBit.npos)
@@ -721,6 +808,18 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "bumpyx" )				SET_FLOAT( fEffects[EFFECT_BUMPY_X] )
 	    else if( sBit == "bumpyxoffset" )			SET_FLOAT( fEffects[EFFECT_BUMPY_X_OFFSET] )
 	    else if( sBit == "bumpyxperiod" )			SET_FLOAT( fEffects[EFFECT_BUMPY_X_PERIOD] )
+	    else
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = ssprintf( "bumpy%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fBumpy[i] )
+			break;
+		    }
+		}
+	    }
 	}
 	else if( sBit.find("beat") != sBit.npos)
 	{
@@ -837,7 +936,22 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "nojumps" )				m_bTransforms[TRANSFORM_NOJUMPS] = on;
 	else if( sBit == "nohands" )				m_bTransforms[TRANSFORM_NOHANDS] = on;
 	else if( sBit == "noquads" )				m_bTransforms[TRANSFORM_NOQUADS] = on;
-	else if( sBit == "reverse" )				SET_FLOAT( fScrolls[SCROLL_REVERSE] )
+	else if ( sBit.find("reverse") != sBit.npos)
+	{
+	    if( sBit == "reverse" )				SET_FLOAT( fScrolls[SCROLL_REVERSE] )
+	    else
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = ssprintf( "reverse%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fReverse[i] )
+			break;
+		    }
+		}
+	    }
+	}
 	else if( sBit == "split" )				SET_FLOAT( fScrolls[SCROLL_SPLIT] )
 	else if( sBit == "alternate" )				SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
 	else if( sBit == "cross" )				SET_FLOAT( fScrolls[SCROLL_CROSS] )
@@ -1126,6 +1240,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 	int iNumCols = GAMESTATE->GetCurrentStyle(m_pn)->m_iColsPerPlayer;
 
 	f += m_fScrolls[SCROLL_REVERSE];
+	f += m_fReverse[iCol];
 
 	if( iCol >= iNumCols/2 )
 		f += m_fScrolls[SCROLL_SPLIT];
@@ -1203,9 +1318,21 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	for( int i = 0; i < 16; ++i )
 		COMPARE(m_fMovesZ[i]);
 	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fConfusionX[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fConfusionY[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fConfusionZ[i]);
+	for( int i = 0; i < 16; ++i )
 		COMPARE(m_fDarks[i]);
 	for( int i = 0; i < 16; ++i )
 		COMPARE(m_fStealth[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fTiny[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fBumpy[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fReverse[i]);
 #undef COMPARE
 	return true;
 }
@@ -1287,11 +1414,35 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	}
 	for( int i = 0; i < 16; ++i )
 	{
+		CPY_SPEED(fConfusionX[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fConfusionY[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fConfusionZ[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
 		CPY_SPEED(fDarks[i]);
 	}
 	for( int i = 0; i < 16; ++i )
 	{
 		CPY_SPEED(fStealth[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fTiny[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fBumpy[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fReverse[i]);
 	}
 #undef CPY
 #undef CPY_SPEED
@@ -1660,8 +1811,14 @@ public:
 	MULTICOL_FLOAT_INTERFACE(MoveX, MovesX, true);
 	MULTICOL_FLOAT_INTERFACE(MoveY, MovesY, true);
 	MULTICOL_FLOAT_INTERFACE(MoveZ, MovesZ, true);
+	MULTICOL_FLOAT_INTERFACE(ConfusionXOffset, ConfusionX, true);
+	MULTICOL_FLOAT_INTERFACE(ConfusionYOffset, ConfusionY, true);
+	MULTICOL_FLOAT_INTERFACE(ConfusionOffset, ConfusionZ, true);
 	MULTICOL_FLOAT_INTERFACE(Dark, Darks, true);
 	MULTICOL_FLOAT_INTERFACE(Stealth, Stealth, true);
+	MULTICOL_FLOAT_INTERFACE(Tiny, Tiny, true);
+	MULTICOL_FLOAT_INTERFACE(Bumpy, Bumpy, true);
+	MULTICOL_FLOAT_INTERFACE(Reverse, Reverse, true);
 	
 	BOOL_INTERFACE(StealthType, StealthType);
 	BOOL_INTERFACE(StealthPastReceptors, StealthPastReceptors);
@@ -2177,8 +2334,14 @@ public:
 		ADD_MULTICOL_METHOD(MoveX);
 		ADD_MULTICOL_METHOD(MoveY);
 		ADD_MULTICOL_METHOD(MoveZ);
+		ADD_MULTICOL_METHOD(ConfusionOffset);
+		ADD_MULTICOL_METHOD(ConfusionXOffset);
+		ADD_MULTICOL_METHOD(ConfusionYOffset);
 		ADD_MULTICOL_METHOD(Dark);
 		ADD_MULTICOL_METHOD(Stealth);
+		ADD_MULTICOL_METHOD(Tiny);
+		ADD_MULTICOL_METHOD(Bumpy);
+		ADD_MULTICOL_METHOD(Reverse);
 		
 
 		ADD_METHOD(NoteSkin);

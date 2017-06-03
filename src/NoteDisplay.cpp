@@ -939,10 +939,10 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		{
 			case NCSM_Disabled:
 				// XXX: Actor rotations use degrees, Math uses radians. Convert here.
-				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset) * PI_180;
+				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset, column_args.column) * PI_180;
 				break;
 			case NCSM_Offset:
-				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset) * PI_180;
+				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset, column_args.column) * PI_180;
 				column_args.rot_handler->EvalForBeat(column_args.song_beat, cur_beat, sp_rot);
 				break;
 			case NCSM_Position:
@@ -1298,14 +1298,14 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 	switch(column_args.rot_handler->m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset, bIsHoldCap);
-			ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset);
-			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
+			ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset, bIsHoldCap, column_args.column);
+			ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset, column_args.column);
+			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead, column_args.column);
 			break;
 		case NCSM_Offset:
-			ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset, bIsHoldCap);
-			ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset);
-			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
+			ae_rot.x= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset, bIsHoldCap, column_args.column);
+			ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset, column_args.column);
+			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead, column_args.column);
 			column_args.rot_handler->EvalForBeat(column_args.song_beat, spline_beat, sp_rot);
 			break;
 		case NCSM_Position:
@@ -1466,14 +1466,14 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	switch(NCR_current.m_rot_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ae_rot.z= ArrowEffects::ReceptorGetRotationZ(player_state);
-			ae_rot.x= ArrowEffects::ReceptorGetRotationX(player_state);
-			ae_rot.y= ArrowEffects::ReceptorGetRotationY(player_state);
+			ae_rot.z= ArrowEffects::ReceptorGetRotationZ(player_state, m_column);
+			ae_rot.x= ArrowEffects::ReceptorGetRotationX(player_state, m_column);
+			ae_rot.y= ArrowEffects::ReceptorGetRotationY(player_state, m_column);
 			break;
 		case NCSM_Offset:
-			ae_rot.z= ArrowEffects::ReceptorGetRotationZ(player_state);
-			ae_rot.x= ArrowEffects::ReceptorGetRotationX(player_state);
-			ae_rot.y= ArrowEffects::ReceptorGetRotationY(player_state);
+			ae_rot.z= ArrowEffects::ReceptorGetRotationZ(player_state, m_column);
+			ae_rot.x= ArrowEffects::ReceptorGetRotationX(player_state, m_column);
+			ae_rot.y= ArrowEffects::ReceptorGetRotationY(player_state, m_column);
 			NCR_current.m_rot_handler.EvalForReceptor(song_beat, sp_rot);
 			break;
 		case NCSM_Position:
