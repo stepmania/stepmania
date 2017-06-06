@@ -5,6 +5,7 @@
 #include "XmlFile.h"
 #include "IniFile.h"
 #include "GameManager.h"
+#include "GameState.h"
 #include "RageLog.h"
 #include "Song.h"
 #include "SongManager.h"
@@ -71,6 +72,31 @@ XToString(ProfileType);
 StringToX(ProfileType);
 LuaXType(ProfileType);
 
+
+
+Profile::~Profile()
+{
+	ClearSongs();
+}
+
+void Profile::ClearSongs()
+{
+	if(m_songs.empty())
+	{
+		return;
+	}
+	Song* gamestate_curr_song= GAMESTATE->m_pCurSong;
+	for(size_t i= 0; i < m_songs.size(); ++i)
+	{
+		Song* curr_song= m_songs[i];
+		if(curr_song == gamestate_curr_song)
+		{
+			GAMESTATE->m_pCurSong.Set(NULL);
+		}
+		delete curr_song;
+	}
+	m_songs.clear();
+}
 
 int Profile::HighScoresForASong::GetNumTimesPlayed() const
 {
@@ -1044,7 +1070,7 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
 	else Load##X##FromNode(X); }
 
-void Profile::LoadCustomFunction( RString sDir )
+void Profile::LoadCustomFunction(RString sDir, PlayerNumber pn)
 {
 	/* Get the theme's custom load function:
 	 *   [Profile]
@@ -1058,10 +1084,18 @@ void Profile::LoadCustomFunction( RString sDir )
 	// Pass profile and profile directory as arguments
 	this->PushSelf(L);
 	LuaHelpers::Push(L, sDir);
+	if(pn == PlayerNumber_Invalid)
+	{
+		lua_pushnil(L);
+	}
+	else
+	{
+		Enum::Push(L, pn);
+	}
 
 	// Run it
 	RString Error= "Error running CustomLoadFunction: ";
-	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
+	LuaHelpers::RunScriptOnStack(L, Error, 3, 0, true);
 
 	LUA->Release(L);
 }
@@ -1148,9 +1182,63 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 	if (ret != ProfileLoadResult_Success)
 		return ret;
 
-	LoadCustomFunction( sDir );
+	LoadCustomFunction(sDir, PlayerNumber_Invalid);
 
 	return ProfileLoadResult_Success;
+}
+
+
+// Custom songs are not stored with all the normal songs because walking the
+// entire song list to remove custom songs when unloading the profile is
+// wasteful. -Kyz
+
+void Profile::LoadSongsFromDir(RString const& dir, ProfileSlot prof_slot)
+{
+	if(!PREFSMAN->m_custom_songs_enable)
+	{
+		return;
+	}
+	RString songs_folder= dir + "Songs";
+	if(FILEMAN->DoesFileExist(songs_folder))
+	{
+		LOG->Trace("Found songs folder in profile.");
+		vector<RString> song_folders;
+		RageTimer song_load_start_time;
+		song_load_start_time.Touch();
+		FILEMAN->GetDirListing(songs_folder + "/*", song_folders, true, true);
+		StripCvsAndSvn(song_folders);
+		StripMacResourceForks(song_folders);
+		LOG->Trace("Found %i songs in profile.", int(song_folders.size()));
+		// Only songs that are successfully loaded count towards the limit. -Kyz
+		for(size_t song_index= 0; song_index < song_folders.size()
+					&& m_songs.size() < PREFSMAN->m_custom_songs_max_count;
+				++song_index)
+		{
+			RString& song_dir_name= song_folders[song_index];
+			Song* new_song= new Song;
+			if(!new_song->LoadFromSongDir(song_dir_name, false, prof_slot))
+			{
+				// The song failed to load.
+				LOG->Trace("Song %s failed to load.", song_dir_name.c_str());
+				delete new_song;
+			}
+			else
+			{
+				new_song->SetEnabled(true);
+				m_songs.push_back(new_song);
+			}
+			if(song_load_start_time.Ago() > PREFSMAN->m_custom_songs_load_timeout)
+			{
+				break;
+			}
+		}
+		float load_time= song_load_start_time.Ago();
+		LOG->Trace("Successfully loaded %zu songs in %.6f from profile.", m_songs.size(), load_time);
+	}
+	else
+	{
+		LOG->Trace("No songs folder in profile.");
+	}
 }
 
 ProfileLoadResult Profile::LoadStatsFromDir(RString dir, bool require_signature)
@@ -2699,7 +2787,17 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD( GetGUID,		m_sGuid );
-
+	static int get_songs(T* p, lua_State* L)
+	{
+		lua_createtable(L, p->m_songs.size(), 0);
+		int song_tab= lua_gettop(L);
+		for(size_t i= 0; i < p->m_songs.size(); ++i)
+		{
+			p->m_songs[i]->PushSelf(L);
+			lua_rawseti(L, song_tab, i+1);
+		}
+		return 1;
+	}
 	LunaProfile()
 	{
 		ADD_METHOD( AddScreenshot );
@@ -2769,6 +2867,7 @@ public:
 		ADD_METHOD( GetLastPlayedSong );
 		ADD_METHOD( GetLastPlayedCourse );
 		ADD_METHOD( GetGUID );
+		ADD_METHOD(get_songs);
 	}
 };
 

@@ -309,6 +309,12 @@ public:
 	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;
 
+	Preference<bool> m_custom_songs_enable;
+	Preference<unsigned int> m_custom_songs_max_count;
+	Preference<float> m_custom_songs_load_timeout;
+	Preference<float> m_custom_songs_max_seconds;
+	Preference<float> m_custom_songs_max_megabytes;
+
 	// Debug:
 	Preference<bool>	m_bLogToDisk;
 	Preference<bool>	m_bForceLogFlush;

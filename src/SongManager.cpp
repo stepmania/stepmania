@@ -60,6 +60,7 @@ static Preference<bool> g_bHideIncompleteCourses( "HideIncompleteCourses", false
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor%i", (int) i+1 ); }
+RString profile_song_group_color_name(size_t i) { return ssprintf("ProfileSongGroupColor%i", (int)i+1); }
 
 static const float next_loading_window_update= 0.02f;
 
@@ -78,6 +79,8 @@ SongManager::SongManager()
 	SONG_GROUP_COLOR		.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
 	NUM_COURSE_GROUP_COLORS	.Load( "SongManager", "NumCourseGroupColors" );
 	COURSE_GROUP_COLOR		.Load( "SongManager", COURSE_GROUP_COLOR_NAME, NUM_COURSE_GROUP_COLORS );
+	num_profile_song_group_colors.Load("SongManager", "NumProfileSongGroupColors");
+	profile_song_group_colors.Load("SongManager", profile_song_group_color_name, num_profile_song_group_colors);
 }
 
 SongManager::~SongManager()
@@ -545,8 +548,19 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 			return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
 		}
 	}
+	FOREACH_EnabledPlayer(pn)
+	{
+		Profile* prof= PROFILEMAN->GetProfile(pn);
+		if(prof != NULL)
+		{
+			if(prof->GetDisplayNameOrHighScoreName() == sSongGroup)
+			{
+				return profile_song_group_colors.GetValue(pn % num_profile_song_group_colors);
+			}
+		}
+	}
 
-	ASSERT_M( 0, ssprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
+	LuaHelpers::ReportScriptErrorFmt("requested color for song group '%s' that doesn't exist",sSongGroup.c_str());
 	return RageColor(1,1,1,1);
 }
 
@@ -711,6 +725,17 @@ const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 	map<RString, SongPointerVector, Comp>::const_iterator iter = m_mapSongGroupIndex.find( sGroupName );
 	if ( iter != m_mapSongGroupIndex.end() )
 		return iter->second;
+	FOREACH_EnabledPlayer(pn)
+	{
+		Profile* prof= PROFILEMAN->GetProfile(pn);
+		if(prof != NULL)
+		{
+			if(prof->GetDisplayNameOrHighScoreName() == sGroupName)
+			{
+				return prof->m_songs;
+			}
+		}
+	}
 	return vEmpty;
 }
 
