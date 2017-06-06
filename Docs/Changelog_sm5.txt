@@ -74,7 +74,7 @@ ________________________________________________________________________________
 
 2016/11/29
 ----------
-* [Actor] Backport commit cd5df01 from master branch [mrthatkid]
+* [Actor] Backport 'Don't use static temp state for actor effects' from master branch [mrthatkid]
 
 2016/11/24
 ----------
