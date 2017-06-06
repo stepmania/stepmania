@@ -3,6 +3,78 @@ ________________________________________________________________________________
 The StepMania 5.1 Changelog covers all post-5.0.12 changes.
 ________________________________________________________________________________
 
+2017/06/06
+----------
+* [General] Backport custom song support. [kyzentun]
+* [ScreenDebugOverlay] Entry in the debug menu that reloads preferences. [kyzentun]
+
+2017/05/27
+----------
+* [RageTypes] Backport FTOC optimization from 5.1 [shakesoda]
+
+2017/05/26
+----------
+* [MusicWheelItem] Add missing breaks to case statement, fix #1445 [drewbarbs]
+
+2017/05/25
+----------
+* [Win32] keep xp on life support a bit longer, check for vista+ stuff [chrispable]
+
+2017/05/24
+----------
+* [EzSockets] EzSockets: Don't leak WinAPI everywhere this gets included. Fixes #1455 [shakesoda]
+* [RageDisplay] Removed explicitly giving up CPU time for other threds under Windows (STOP ARGUING ABOUT THIS) [shakesoda]
+* [GraphicsWindow] Call DwmFlush on VSync (might help with stuttering). [shakesoda]
+
+2017/05/23
+----------
+* [InputHandler] XInput support for the DirectInput driver [cvpcs]
+
+2017/05/13
+----------
+* [Modifiers] Add nITG's various path shape & other modifiers - V2 [mrthatkid]
+* [ScreenEdit] Fixed Player NoteField bug when SCREEN_HEIGHT != 480 [sillybear]
+
+2017/05/06
+----------
+* [MusicWheelItem] Call SetMessage during CurrentSteps / Difficulty Changed [sillybear]
+
+2017/04/04
+----------
+* [Sprite] Sprite:Load lua function can set additional texture hints [kyzentun]
+* [Utilities] Also, rec_count_children slipped in Utilities somehow. [kyzentun]
+
+2017/03/14
+----------
+* [Modifiers] Added nITG's various sub-modifiers [mrthatkid]
+
+2017/02/25
+----------
+* [Modifiers] Add nITG's new Move modifiers [mrthatkid]
+
+2017/02/17
+----------
+* [Bookkeeper] Persistent Coins [concubidated]
+
+2017/02/10
+----------
+* [Online] Online protocol improvements [nickito12]
+* [Online] NetRoom/SelectBase/Music lua objects [nickito12]
+* [MessageManager] Instantiate MESSAGEMAN first. [mattmccutchen]
+
+2017/02/08
+----------
+* [Modifiers] Add nITG's new Confusion modifiers [mrthatkid]
+* [Player] Fix oitg_zoom_mode [mrthatkid]
+
+2016/12/01
+----------
+* [CMake] Allow WITH_FFMPEG to work when disabled for Mac. [dguzek]
+
+2016/11/29
+----------
+* [Actor] Backport commit cd5df01 from master branch [mrthatkid]
+
 2016/11/24
 ----------
 * [NoteSkinManager] Fixed NOTESKIN:GetMetric() [shakesoda]
