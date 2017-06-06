@@ -567,6 +567,7 @@ static LocalizedString TOGGLE_ERRORS( "ScreenDebugOverlay", "Toggle Errors" );
 static LocalizedString SHOW_RECENT_ERRORS("ScreenDebugOverlay", "Show Recent Errors");
 static LocalizedString CLEAR_ERRORS( "ScreenDebugOverlay", "Clear Errors" );
 static LocalizedString CONVERT_XML( "ScreenDebugOverlay", "Convert XML" );
+static LocalizedString RELOAD_PREFS( "ScreenDebugOverlay", "Reload Prefs" );
 static LocalizedString RELOAD_THEME_AND_TEXTURES( "ScreenDebugOverlay", "Reload Theme and Textures" );
 static LocalizedString WRITE_PROFILES	( "ScreenDebugOverlay", "Write Profiles" );
 static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferences" );
@@ -1182,6 +1183,19 @@ class DebugLineWritePreferences : public IDebugLine
 	}
 };
 
+class DebugLineReloadPreferences : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return RELOAD_PREFS.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Profiles"; }
+	virtual void DoAndLog( RString &sMessageOut )
+	{
+		PREFSMAN->ReadPrefsFromDisk();
+		IDebugLine::DoAndLog(sMessageOut);
+	}
+};
+
 class DebugLineMenuTimer : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return MENU_TIMER.GetValue(); }
@@ -1337,6 +1351,7 @@ DECLARE_ONE( DebugLineClearErrors );
 DECLARE_ONE( DebugLineConvertXML );
 DECLARE_ONE( DebugLineWriteProfiles );
 DECLARE_ONE( DebugLineWritePreferences );
+DECLARE_ONE(DebugLineReloadPreferences);
 DECLARE_ONE( DebugLineMenuTimer );
 DECLARE_ONE( DebugLineFlushLog );
 DECLARE_ONE( DebugLinePullBackCamera );
