@@ -236,7 +236,6 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 	m_drawing_notefield_board= false;
 	m_bLoaded = false;
 	m_inside_lua_set_life= false;
-	m_oitg_zoom_mode= false;
 
 	m_pPlayerState = NULL;
 	m_pPlayerStageStats = NULL;
@@ -926,15 +925,7 @@ void Player::Update( float fDeltaTime )
 		float field_zoom = 1 - fMiniPercent*0.5f;
 		if(m_pNoteField)
 		{
-			if(m_oitg_zoom_mode)
-			{
-				m_pNoteField->SetZoomX(field_zoom);
-				m_pNoteField->SetZoomY(field_zoom);
-			}
-			else
-			{
-				m_pNoteField->SetZoom(field_zoom);
-			}
+			m_pNoteField->SetZoom(field_zoom);
 		}
 		if( m_pActorWithJudgmentPosition != NULL )
 			m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
@@ -1631,15 +1622,7 @@ Player::PlayerNoteFieldPositioner::PlayerNoteFieldPositioner(
 		y_offset= SCALE(tilt, 0.f, -1.f, 0.f, -20.f) * reverse_mult;
 	}
 	player->m_pNoteField->SetY(original_y + y_offset);
-	if(player->m_oitg_zoom_mode)
-	{
-		player->m_pNoteField->SetZoomX(zoom);
-		player->m_pNoteField->SetZoomY(zoom);
-	}
-	else
-	{
-		player->m_pNoteField->SetZoom(zoom);
-	}
+	player->m_pNoteField->SetZoom(zoom);
 	player->m_pNoteField->SetRotationX(tilt_degrees);
 }
 
@@ -3343,7 +3326,6 @@ public:
 		p->GetPlayerTimingData().PushSelf(L);
 		return 1;
 	}
-	GET_SET_BOOL_METHOD(oitg_zoom_mode, m_oitg_zoom_mode);
 	
 	LunaPlayer()
 	{
@@ -3352,7 +3334,6 @@ public:
 		ADD_METHOD( SetActorWithJudgmentPosition );
 		ADD_METHOD( SetActorWithComboPosition );
 		ADD_METHOD( GetPlayerTimingData );
-		ADD_GET_SET_METHODS(oitg_zoom_mode);
 	}
 };
 
