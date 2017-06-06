@@ -20,6 +20,8 @@ class RageFileDriver;
 /** @brief Get the length of the array. */
 #define ARRAYLEN(a) (sizeof(a) / sizeof((a)[0]))
 
+extern const RString CUSTOM_SONG_PATH;
+
 /* Common harmless mismatches.  All min(T,T) and max(T,T) cases are handled
  * by the generic template we get from <algorithm>. */
 inline float min( float a, int b ) { return a < b? a:b; }
@@ -377,6 +379,7 @@ RString ConvertI64FormatString( const RString &sStr );
  * element will end up in Dir, not FName: "c:\games\stepmania\".
  * */
 void splitpath( const RString &Path, RString &Dir, RString &Filename, RString &Ext );
+RString custom_songify_path(RString const& path);
 
 RString SetExtension( const RString &path, const RString &ext );
 RString GetExtension( const RString &sPath );

@@ -704,6 +704,29 @@ static void EditClearPromptThreshold(int& sel, bool to_sel, const ConfOption* co
 	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
 }
 
+static void CustomSongsCount(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void CustomSongsLoadTimeout(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 1000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void CustomSongsMaxSeconds(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {60, 90, 120, 150, 180, 210, 240, 10000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void CustomSongsMaxMegabytes(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 1000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
 static vector<ConfOption> g_ConfOptions;
 static void InitializeConfOptions()
 {
@@ -808,6 +831,11 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "PickExtraStage",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "UseUnlockSystem",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "AllowSongDeletion",   MovePref<bool>,     "Off","On" ) );
+	ADD(ConfOption("CustomSongsEnable", MovePref<bool>, "Off", "On"));
+	ADD(ConfOption("CustomSongsMaxCount", CustomSongsCount, "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "1000"));
+	ADD(ConfOption("CustomSongsLoadTimeout", CustomSongsLoadTimeout, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "20", "30", "1000"));
+	ADD(ConfOption("CustomSongsMaxSeconds", CustomSongsMaxSeconds, "60", "90", "120", "150", "180", "210", "240", "10000"));
+	ADD(ConfOption("CustomSongsMaxMegabytes", CustomSongsLoadTimeout, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "20", "30", "1000"));
 
 	// Machine options
 	ADD( ConfOption( "MenuTimer",			MovePref<bool>,		"Off","On" ) );

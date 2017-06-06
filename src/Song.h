@@ -66,9 +66,11 @@ struct LyricSegment
 class Song
 {
 	RString m_sSongDir;
+	RString m_pre_customify_song_dir;
 public:
 	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
 	RString GetSongDir() { return m_sSongDir; }
+	RString GetPreCustomifyDir() { return m_pre_customify_song_dir; }
 
 	/** @brief When should this song be displayed in the music wheel? */
 	enum SelectionDisplay
@@ -87,7 +89,8 @@ public:
 	 *
 	 * This assumes that there is no song present right now.
 	 * @param sDir the song directory from which to load. */
-	bool LoadFromSongDir( RString sDir, bool load_autosave= false );
+	bool LoadFromSongDir(RString sDir, bool load_autosave= false,
+		ProfileSlot from_profile= ProfileSlot_Invalid);
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
 	bool ReloadFromSongDir() { return ReloadFromSongDir(GetSongDir()); }

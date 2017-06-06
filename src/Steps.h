@@ -132,6 +132,8 @@ public:
 	RString GetChartKey();
 	void SetChartKey(const RString &k) { ChartKey = k; }
 
+	void ChangeFilenamesForCustomSong();
+
 	void SetLoadedFromProfile( ProfileSlot slot )	{ m_LoadedFromProfile = slot; }
 	void SetMeter( int meter );
 	void SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] );

@@ -18,6 +18,8 @@
 #include <sys/stat.h>
 #include <math.h>
 
+const RString CUSTOM_SONG_PATH= "/@mem/";
+
 bool HexToBinary(const RString&, RString&);
 void utf8_sanitize(RString &);
 void UnicodeUpperLower(wchar_t *, size_t, const unsigned char *);
@@ -977,6 +979,17 @@ void splitpath( const RString &sPath, RString &sDir, RString &sFilename, RString
 	{
 		sFilename = sBase;
 	}
+}
+
+RString custom_songify_path(RString const& path)
+{
+	vector<RString> parts;
+	split(path, "/", parts, false);
+	if(parts.size() < 2)
+	{
+		return CUSTOM_SONG_PATH + path;
+	}
+	return CUSTOM_SONG_PATH + parts[parts.size()-2] + "/" + parts[parts.size()-1];
 }
 
 /* "foo.bar", "baz" -> "foo.baz"
