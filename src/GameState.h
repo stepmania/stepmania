@@ -242,6 +242,8 @@ public:
 	bool		m_bLoadingNextSong;
 	int		GetLoadingCourseSongIndex() const;
 
+	int prepare_song_for_gameplay();
+
 	// State Info used during gameplay
 
 	// NULL on ScreenSelectMusic if the currently selected wheel item isn't a Song.

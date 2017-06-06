@@ -14,6 +14,7 @@
 #include "TrailUtil.h"	// for TrailID
 #include "StyleUtil.h"	// for StyleID
 #include "LuaReference.h"
+#include "PlayerNumber.h"
 
 class XNode;
 struct lua_State;
@@ -134,6 +135,10 @@ public:
 				m_CategoryHighScores[st][rc].Init();
 	}
 
+
+	~Profile();
+	void ClearSongs();
+
 	// smart accessors
 	RString GetDisplayNameOrHighScoreName() const;
 	Character *GetCharacter() const;
@@ -196,6 +201,7 @@ public:
 	RString m_sGuid;
 	map<RString,RString> m_sDefaultModifiers;
 	SortOrder m_SortOrder;
+	std::vector<Song*> m_songs;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
 	StepsType m_LastStepsType;
@@ -376,7 +382,8 @@ public:
 		InitCourseScores(); 
 		InitCategoryScores(); 
 		InitScreenshotData(); 
-		InitCalorieData(); 
+		InitCalorieData();
+		ClearSongs();
 	}
 	void InitEditableData(); 
 	void InitGeneralData(); 
@@ -393,8 +400,9 @@ public:
 	void HandleStatsPrefixChange(RString dir, bool require_signature);
 	ProfileLoadResult LoadAllFromDir( RString sDir, bool bRequireSignature );
 	ProfileLoadResult LoadStatsFromDir(RString dir, bool require_signature);
+	void LoadSongsFromDir(RString const& dir, ProfileSlot prof_slot);
 	void LoadTypeFromDir(RString dir);
-	void LoadCustomFunction( RString sDir );
+	void LoadCustomFunction(RString sDir, PlayerNumber pn);
 	bool SaveAllToDir( RString sDir, bool bSignData ) const;
 
 	ProfileLoadResult LoadEditableDataFromDir( RString sDir );

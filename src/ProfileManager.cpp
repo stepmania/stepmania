@@ -187,6 +187,17 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, RString sProfile
 		}
 	}
 
+	if(lr == ProfileLoadResult_Success)
+	{
+		Profile* prof= GetProfile(pn);
+		if(prof->m_sDisplayName.empty())
+		{
+			prof->m_sDisplayName= PlayerNumberToLocalizedString(pn);
+		}
+		prof->LoadCustomFunction(sProfileDir, pn);
+		prof->LoadSongsFromDir(sProfileDir, ProfileSlot(pn));
+	}
+
 	LOG->Trace( "Done loading profile - result %d", lr );
 
 	return lr;
@@ -211,7 +222,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 		return false;
 	}
 
-	GetProfile(pn)->LoadCustomFunction( m_sProfileDir[pn] );
+	GetProfile(pn)->LoadCustomFunction(m_sProfileDir[pn], pn);
 	
 	return true;
 }
