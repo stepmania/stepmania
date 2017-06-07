@@ -226,7 +226,6 @@ public:
 	Preference<bool>	m_AllowMultipleToasties;
 	Preference<TapNoteScore> m_MinTNSToHideNotes;
 	Preference<Maybe>	m_ShowSongOptions;
-	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
 	Preference<float>	m_fMinPercentageForMachineSongHighScore;
 	Preference<float>	m_fMinPercentageForMachineCourseHighScore;

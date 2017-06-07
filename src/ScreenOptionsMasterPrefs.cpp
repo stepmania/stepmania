@@ -745,7 +745,6 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "Announcer",			Announcer,		AnnouncerChoices ) );
 	ADD( ConfOption( "ShowInstructions",		MovePref<bool>,		"Skip","Show") );
 	ADD( ConfOption( "ShowCaution",			MovePref<bool>,		"Skip","Show") );
-	ADD( ConfOption( "DancePointsForOni",		MovePref<bool>,		"Percent","Dance Points") );
 	ADD( ConfOption( "MusicWheelUsesSections",	MovePref<MusicWheelUsesSections>, "Never","Always","Title Only") );
 	ADD( ConfOption( "CourseSortOrder",		MovePref<CourseSortOrders>, "Num Songs","Average Feet","Total Feet","Ranking") );
 	ADD( ConfOption( "MoveRandomToEnd",		MovePref<bool>,		"No","Yes") );
