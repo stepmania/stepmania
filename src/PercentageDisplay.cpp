@@ -201,9 +201,6 @@ bool PercentageDisplay::ShowDancePointsNotPercentage() const
 			return true;
 	}
 
-	if( PREFSMAN->m_bDancePointsForOni )
-		return true;
-
 	return false;
 }
 
