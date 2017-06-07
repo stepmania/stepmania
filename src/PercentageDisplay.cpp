@@ -199,10 +199,10 @@ bool PercentageDisplay::ShowDancePointsNotPercentage() const
 	{
 		if( GAMESTATE->m_pCurCourse->m_fGoalSeconds > 0 )
 			return true;
-	}
 
-	if( PREFSMAN->m_bDancePointsForOni )
-		return true;
+		if( PREFSMAN->m_bDancePointsForOni )
+			return true;
+	}
 
 	return false;
 }
