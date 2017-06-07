@@ -3497,6 +3497,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_RECORDING:
 	{
 		m_NoteDataEdit.RevalidateATIs(vector<int>(), false);
+		// Clear timed mods on the notefield, so gimmick charts don't have to do
+		// it manually.  We can't clear permanent mods because that's where speed
+		// and other stuff that should be persistent is.  -Kyz
+		m_Player->get_note_field_because_i_really_need_it_for_edit_mode()->clear_timed_mods();
 		if( bStateChanging )
 			AdjustSync::ResetOriginalSyncData();
 

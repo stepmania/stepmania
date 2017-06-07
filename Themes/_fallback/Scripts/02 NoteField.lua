@@ -342,3 +342,35 @@ function organize_notefield_mods_by_target(mods_table)
 		return result
 	end
 end
+
+function organize_and_apply_notefield_mods(notefields, mods)
+	local organized_mods= organize_notefield_mods_by_target(mods)
+	local pn_to_field_index= PlayerNumber:Reverse()
+	if mods.field and mods.field ~= 1 then
+		for pn, field in pairs(notefields) do
+			-- stepmania enums are 0 indexed
+			local field_index= pn_to_field_index[pn] + 1
+			field:set_per_column_timed_mods(organized_mods[field_index])
+		end
+	else
+		for pn, field in pairs(notefields) do
+			field:set_per_column_timed_mods(organized_mods)
+		end
+	end
+end
+
+function handle_notefield_mods(mods)
+	local notefields= {}
+	local screen= SCREENMAN:GetTopScreen()
+	if screen.GetEditState then
+		-- edit mode
+		notefields[PLAYER_1]= screen:GetChild("Player"):GetChild("NoteField")
+	else
+		-- gameplay
+		for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+			notefields[pn]= find_notefield_in_gameplay(screen, pn)
+		end
+	end
+	organize_and_apply_notefield_mods(notefields, mods)
+	return notefields
+end

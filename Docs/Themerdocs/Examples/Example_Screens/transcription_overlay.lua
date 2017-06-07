@@ -15,6 +15,9 @@
 -- the main edit mode menu.
 -- Press 'c' (change_chart_key) after a song has been picked to put it back
 -- in menu mode to pick another song.  Ignored when menu does not have focus.
+-- Because the lower left chart display is meant for transcribing from one
+-- chart to another, the chart shown in it will be shown at the current time
+-- of the main edit notefield.
 
 -- Press 'z' (mods_reload_key) when the menu does not have focus to reload
 -- the mods file so changes are shown in the preview window.
