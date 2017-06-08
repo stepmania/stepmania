@@ -83,9 +83,10 @@ function apply_notefield_prefs_nopn(read_bpm, field, prefs)
 		transform_rot_x= prefs.rotation_x*torad,
 		transform_rot_y= prefs.rotation_y*torad,
 		transform_rot_z= prefs.rotation_z*torad,
-		transform_zoom_x= prefs.zoom*prefs.zoom_x,
-		transform_zoom_y= prefs.zoom*prefs.zoom_y,
-		transform_zoom_z= prefs.zoom*prefs.zoom_z,
+		transform_zoom= prefs.zoom,
+		transform_zoom_x= prefs.zoom_x,
+		transform_zoom_y= prefs.zoom_y,
+		transform_zoom_z= prefs.zoom_z,
 	}
 	-- Use the y zoom to adjust the y offset to put the receptors in the same
 	-- place.

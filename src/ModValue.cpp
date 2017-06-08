@@ -1522,7 +1522,7 @@ MV3_NEEDS_THING(y_offset);
 #define MT_NEEDS_THING(thing) \
 bool ModifiableTransform::needs_##thing() \
 { \
-	return pos_mod.needs_##thing() || rot_mod.needs_##thing() || zoom_mod.needs_##thing(); \
+	return pos_mod.needs_##thing() || rot_mod.needs_##thing() || zoom_vmod.needs_##thing() || zoom_mod.needs_##thing(); \
 }
 
 MT_NEEDS_THING(beat);

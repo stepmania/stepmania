@@ -1,70 +1,186 @@
+-- The mod system's sin/cos functions multiply by pi internally, but these
+-- mods ported from ITG weren't made with pi in mind.
+-- So they divide by pi before sin or cos.
 local notefield_mods= {
 	effect= {
 		beat= function(mag, field)
-			field:all_columns_mod("get_note_pos_x", {name= "beat", {"*", 20 * mag, {"sin", {"+", math.pi/2, {"*", "y_offset", 1/15}}}, {"phase", {"repeat", "music_beat", 0, 2}, {default= {0, 0, 0, 0}, {0, .2, 5, -1}, {.8, 1, 5, 0}, {1, 1.2, -5, 1}, {1.8, 2, -5, 0}}}}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "beat", target= "note_pos_x",
+					 {"*", 20 * mag,
+						{"cos", {"*", "y_offset", 1/15, 1/math.pi}},
+						{"phase", {"repeat", "music_beat", 0, 2},
+						 {default= {0, 0, 0, 0},
+							{0, .2, 5, -1},
+							{.8, 1, 5, 0},
+							{1, 1.2, -5, 1},
+							{1.8, 2, -5, 0}
+						 }
+						}
+					 }
+					}
+				}
+			end
 		end,
 		blink= function(mag, field)
-			field:all_columns_mod("get_note_alpha", {name= "blink", {"sin", {"*", "music_second", 10 * mag}}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "blink", target= "note_alpha",
+					 {'-', {'round', {'sin', {'*', 'music_second', 10 * mag, 1/math.pi}}, 1/3}, 1}
+					}
+				}
+			end
 		end,
 		bumpy= function(mag, field)
-			field:all_columns_mod("get_note_pos_y", {name= "bumpy", {"*", 40 * mag, {"sin", {"*", "y_offset", 1/16}}}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "bumpy", target= "note_pos_z",
+					 {'*', 40 * mag, {'sin', {'*', 'y_offset', 1/16, 1/math.pi}}}
+					}
+				}
+			end
 		end,
 		confusion= function(mag, field)
-			field:all_columns_mod("get_note_rot_z", {name= "confusion", {"*", "music_beat", mag * 2 * math.pi}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "confusion", target= "note_rot_z",
+					 {'*', 'music_beat', mag * 2 * math.pi}
+					}
+				}
+			end
 		end,
 		dizzy= function(mag, field)
-			field:all_columns_mod("get_note_rot_z", {name= "dizzy", {"*", "dist_beat", mag * 2 * math.pi}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "dizzy", target= "note_rot_z",
+					 {'*', 'dist_beat', mag * 2 * math.pi}
+					}
+				}
+			end
 		end,
 		drunk= function(mag, field)
-			field:all_columns_mod("get_note_pos_x", {name= "drunk", {"*", mag * 32, {"cos", {"+", "music_second", {"*", "column", .2}, {"*", "y_offset", 10, 1/480}}}}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "drunk", target= "note_pos_x",
+					 {"*", mag * 32,
+						{"cos",
+						 {'*', 1/math.pi,
+							{"+", "music_second",
+							 {"*", "column", .2},
+							 {"*", "y_offset", 10, 1/480}
+							}
+						 }
+						}
+					 }
+					}
+				}
+			end
 		end,
 		flip= function(mag, field)
-			field:all_columns_mod("get_column_pos_x", {name= "flip", sum_type= "*", -1 * mag})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "flip", target= "column_pos_x", sum_type= '*', -1*mag}
+				}
+			end
 		end,
 		roll= function(mag, field)
-			field:all_columns_mod("get_note_rot_x", {name= "roll", {"*", "y_offset", .5 * (math.pi / 180)}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "roll", target= "note_rot_x",
+					 {"*", "y_offset", .5 * (math.pi / 180)}
+					}
+				}
+			end
 		end,
 		tiny= function(mag, field)
-			local mod= {name= "tiny", sum_type= "*", {"exp", .5, mag}}
-			field:all_columns_mod("get_note_zoom_x", mod)
-			field:all_columns_mod("get_note_zoom_y", mod)
-			field:all_columns_mod("get_note_zoom_z", mod)
-			field:all_columns_mod("get_column_pos_x", {name= "tiny", sum_type= "*", {"min", 1, {"exp", .5, mag}}})
+			local zoom= {"exp", .5, mag}
+			local mods= {
+				{name= "tiny", target= "note_zoom", sum_type= "*", zoom},
+				-- min makes it so tiny can move columns together, but not apart.
+				{name= "tiny", target= "column_pos_x", sum_type= "*", {'min', 1, zoom}},
+			}
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods(mods)
+			end
 		end,
 		tipsy= function(mag, field)
-			field:all_columns_mod("get_column_pos_y", {name= "tipsy", {"*", mag, {"cos", {"+", {"*", "music_second", 1.2}, {"*", "column", 1.8}}}, 64 * .4}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "tipsy", target= "column_pos_y",
+					 {"*", mag,
+						{"cos",
+						 {'*', 1/math.pi,
+							{"+",
+							 {"*", "music_second", 1.2},
+							 {"*", "column", 1.8}
+							},
+						 }
+						},
+						64 * .4,
+					 }
+					}
+				}
+			end
 		end,
 		twirl= function(mag, field)
-			field:all_columns_mod("get_note_rot_y", {name= "twirl", {"*", "y_offset", .5 * mag * (math.pi / 180)}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "twirl", target= "note_rot_y",
+					 {"*", "y_offset", .5 * mag * (math.pi / 180)}
+					}
+				}
+			end
 		end,
 	},
 	appearance= {
 		flat= function(mag, field)
-			field:all_columns_mod("get_quantization_multiplier", {name= "base_value", 1-mag})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "flat", target= "quantization_multiplier",
+					 sum_type= 'replace', 1-mag}
+				}
+			end
 		end,
 		rainbow= function(mag, field)
-			field:all_columns_mod("get_quantization_multiplier", {name= "base_value", 0})
 			local phases= {}
 			local quants= {0, 1/4, 1/3, 1/8, 1/16, 1/2, 1/6, 1/12}
 			for i= 1, #quants do
 				phases[i]= {i-1, i, 0, quants[i]}
 			end
-			field:all_columns_mod("get_quantization_offset", {name= "rainbow", {"phase", {"repeat", "row_id", 0, #quants}, phases}})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "rainbow", target= "quantization_multiplier",
+					 sum_type= 'replace', 0},
+					{name= "rainbow", target= "quantization_offset",
+					 {"phase", {"repeat", "row_id", 0, #quants}, phases}
+					}
+				}
+			end
 		end,
 		stealth= function(mag, field)
-			field:all_columns_mod("get_note_alpha", {name= "base_value", 1-mag})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "stealth", target= "note_alpha", sum_type= '*', 1-mag}
+				}
+			end
 		end,
 	},
 	scrolls= {
 		alternate= function(mag, field)
 			for i, col in ipairs(field:get_columns()) do
 				if i % 2 == 1 then
-					col:get_reverse_scale():add_mod{name= "alternate", sum_type= "*", -1 * mag}
+					col:set_permanent_mods{
+						{name= "alternate", target= "reverse", sum_type= '*', -1*mag}
+					}
 				end
 			end
 		end,
 		centered= function(mag, field)
-			field:all_columns_mod("get_center_percent", {name= "base_value", mag})
+			for i, col in ipairs(field:get_columns()) do
+				col:set_permanent_mods{
+					{name= "center", target= "center", mag}
+				}
+			end
 		end,
 		cross= function(mag, field)
 			local columns= field:get_columns()
@@ -72,7 +188,9 @@ local notefield_mods= {
 			local last_cross= #columns - 1 - first_cross
 			for i, col in ipairs(columns) do
 				if (i-1) >= first_cross and (i-1) <= last_cross then
-					col:get_reverse_scale():add_mod{name= "cross", sum_type= "*", -1 * mag}
+					col:set_permanent_mods{
+						{name= "cross", target= "reverse", sum_type= '*', -1 * mag}
+					}
 				end
 			end
 		end,
@@ -80,7 +198,9 @@ local notefield_mods= {
 			local columns= field:get_columns()
 			for i, col in ipairs(columns) do
 				if i > #columns / 2 then
-					col:get_reverse_scale():add_mod{name= "split", sum_type= "*", -1 * mag}
+					col:set_permanent_mods{
+						{name= "split", target= "reverse", sum_type= '*', -1 * mag}
+					}
 				end
 			end
 		end,

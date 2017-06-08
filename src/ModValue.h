@@ -263,25 +263,32 @@ struct ModifiableVector3
 struct ModifiableTransform
 {
 	ModifiableTransform(ModManager& man, std::string const& name)
-		:pos_mod(man, name + "_pos", 0.0), rot_mod(man, name + "_rot", 0.0), zoom_mod(man, name + "_zoom", 1.0)
+		:pos_mod(man, name + "_pos", 0.0), rot_mod(man, name + "_rot", 0.0),
+		zoom_vmod(man, name + "_zoom", 1.0), zoom_mod(man, name + "_zoom", 1.0)
 	{}
 	void set_column(uint32_t col)
 	{
 		pos_mod.set_column(col);
 		rot_mod.set_column(col);
+		zoom_vmod.set_column(col);
 		zoom_mod.set_column(col);
 	}
 	void set_base_value(Rage::transform const& value)
 	{
 		pos_mod.set_base_value(value.pos);
 		rot_mod.set_base_value(value.rot);
-		zoom_mod.set_base_value(value.zoom);
+		zoom_vmod.set_base_value(value.zoom);
+		zoom_mod.set_base_value(1.0);
 	}
 	void evaluate(mod_val_inputs& input, Rage::transform& out)
 	{
 		pos_mod.evaluate(input, out.pos);
 		rot_mod.evaluate(input, out.rot);
-		zoom_mod.evaluate(input, out.zoom);
+		zoom_vmod.evaluate(input, out.zoom);
+		double zoom= zoom_mod.evaluate(input);
+		out.zoom.x*= zoom;
+		out.zoom.y*= zoom;
+		out.zoom.z*= zoom;
 	}
 	void hold_render_eval(mod_val_inputs& input, Rage::transform& out, bool do_rot)
 	{
@@ -290,7 +297,7 @@ struct ModifiableTransform
 		{
 			out.rot.y = static_cast<float>(rot_mod.y_mod.evaluate(input));
 		}
-		out.zoom.x = static_cast<float>(zoom_mod.x_mod.evaluate(input));
+		out.zoom.x = static_cast<float>(zoom_vmod.x_mod.evaluate(input) * zoom_mod.evaluate(input));
 	}
 	bool needs_beat();
 	bool needs_second();
@@ -298,7 +305,9 @@ struct ModifiableTransform
 
 	ModifiableVector3 pos_mod;
 	ModifiableVector3 rot_mod;
-	ModifiableVector3 zoom_mod;
+	ModifiableVector3 zoom_vmod;
+	// Often all three elements of zoom need to change together.
+	ModifiableValue zoom_mod;
 };
 
 #endif
