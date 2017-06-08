@@ -39,6 +39,37 @@ const int ROW_INVALID = -1;
 #define COMPARE(x) if( this->x!=other.x ) return false
 #define COMPARE_FLOAT(x) if( fabsf(this->x - other.x) > EPSILON ) return false
 
+static RString FormatDouble( const RString &precision, double d )
+{
+	int size = snprintf( NULL, 0, precision.c_str(), d );
+	char *str = (char*)malloc(size + 1);
+	snprintf( str, size + 1, precision.c_str(), d );
+
+	for( int i = size - 1, end = size; i >= 0; i-- )
+	{
+		if( str[i] == '0' )
+		{
+			if( end == i + 1 )
+				end = i;
+		}
+		else if( str[i] == '.' )
+		{
+			if( end == i + 1 )
+				end = i;
+
+			str[end] = '\0';
+			break;
+		}
+	}
+
+	return str;
+}
+
+static RString FormatDouble( double d )
+{
+	return FormatDouble( "%.5f", d );
+}
+
 /**
  * @brief The base timing segment for make glorious benefit wolfman
  * XXX: this should be an abstract class.
