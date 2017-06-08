@@ -13,6 +13,9 @@ NetworkSyncManager *NSMAN;
 
 #include "ver.h"
 
+//Song file hashing --Nick12
+#include "CryptManager.h"
+
 
 using std::string;
 using std::vector;
@@ -60,6 +63,7 @@ AutoScreenMessage( SM_AddToChat );
 AutoScreenMessage( SM_ChangeSong );
 AutoScreenMessage( SM_GotEval );
 AutoScreenMessage( SM_UsersUpdate );
+AutoScreenMessage( SM_FriendsUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
 int NetworkSyncManager::GetSMOnlineSalt()
@@ -399,6 +403,29 @@ void NetworkSyncManager::StartRequest( short position )
 	for (int i=0; i<2-players; ++i)
 		m_packet.WriteNT("");	//Write a nullptr if no player
 
+	//Send song hash/chartkey and rate
+	if (m_ServerVersion >= 129) {
+		tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+		if (tSteps != NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1)) {
+			tSteps->Decompress();
+			m_packet.WriteNT(tSteps->GenerateChartKey());
+			tSteps->Compress();
+		}
+		else
+			m_packet.WriteNT("");
+
+		tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
+		if (tSteps != NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2)) {
+			tSteps->Decompress();
+			m_packet.WriteNT(tSteps->GenerateChartKey());
+			tSteps->Compress();
+		} else
+			m_packet.WriteNT("");
+		float rate = GAMESTATE->m_SongOptions.GetPreferred().m_fMusicRate;
+		std::ostringstream buff;
+		buff << rate;
+		m_packet.WriteNT(buff.str());
+	}
 	//This needs to be reset before ScreenEvaluation could possibly be called
 	m_EvalPlayerData.clear();
 
@@ -615,7 +642,23 @@ void NetworkSyncManager::ProcessInput()
 				m_iSelectMode = m_packet.Read1();
 				m_sMainTitle = m_packet.ReadNT();
 				m_sArtist = m_packet.ReadNT();
-				m_sSubTitle = m_packet.ReadNT();
+					m_sSubTitle = m_packet.ReadNT();
+				//Send songhash
+				if (m_ServerVersion >= 129) {
+					Song * song = GAMESTATE->get_curr_song();
+					vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
+					/* We work with a .sm filehash now
+					(this made a hash of the concatenation of a song's charthashs)
+					std::string str;
+					str = "";
+					for (unsigned int i = 0; i < steps.size(); ++i)
+						str.append(steps[i]->GetChartKey());
+					m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForString( str ) ) ); 
+					*/
+					std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
+					m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+				}
+
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}
 			break;
@@ -677,6 +720,21 @@ void NetworkSyncManager::ProcessInput()
 				m_packet.ClearPacket();
 			}
 			break;
+		case FLU:
+			{
+				int PlayersInThisPacket = m_packet.Read1();
+				fl_PlayerNames.clear();
+				fl_PlayerStates.clear();
+				for (int i = 0; i<PlayersInThisPacket; ++i)
+				{
+					int PStatus = m_packet.Read1();
+					fl_PlayerStates.push_back(PStatus);
+					fl_PlayerNames.push_back(m_packet.ReadNT());
+					LOG->Trace("FLU: %d %s", PStatus, fl_PlayerNames[i]);
+				}
+				SCREENMAN->SendMessageToTopScreen(SM_FriendsUpdate);
+			}
+			break;
 		}
 		m_packet.ClearPacket();
 	}
@@ -715,6 +773,21 @@ void NetworkSyncManager::SelectUserSong()
 	m_packet.WriteNT( m_sMainTitle );
 	m_packet.WriteNT( m_sArtist );
 	m_packet.WriteNT( m_sSubTitle );
+	//Send songhash
+	if (m_ServerVersion >= 129) {
+		Song * song = GAMESTATE->get_curr_song();
+		vector<Steps*> steps = GAMESTATE->get_curr_song()->GetAllSteps();
+		/* We work with a .sm filehash now (this makes a hash of the concatenation of a song's charthashs)
+		std::string str;
+		str = "";
+		for (unsigned int i = 0; i < steps.size(); ++i)
+			str.append(steps[i]->GetChartKey());
+		m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForString( str ) ) ); 
+		*/
+		std::string sPath = SetExtension(song->GetSongFilePath(), "sm");
+		m_packet.WriteNT(BinaryToHex(CRYPTMAN->GetSHA1ForFile(sPath)));
+	}
+
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 

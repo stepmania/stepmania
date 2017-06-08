@@ -159,9 +159,16 @@ private:
 	void RemoveATIFromList(all_tracks_iterator* iter) const;
 	void RemoveATIFromList(all_tracks_const_iterator* iter) const;
 
+	// Mina stuf (Used for chartkey hashing)
+	std::vector<int> NonEmptyRowVector;
+	
 public:
 	void Init();
 
+	// Mina stuf (Used for chartkey hashing)
+	void LogNonEmptyRows();
+	std::vector<int>& GetNonEmptyRowVector() { return NonEmptyRowVector; };
+	
 	void SetOccuranceTimeForAllTaps(TimingData* timing_data);
 	void count_notes_in_columns(TimingData* timing_data,
 		std::vector<std::map<TapNoteType, int> > note_counts,
