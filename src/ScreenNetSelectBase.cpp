@@ -31,6 +31,7 @@ using std::wstring;
 
 AutoScreenMessage( SM_AddToChat );
 AutoScreenMessage( SM_UsersUpdate );
+AutoScreenMessage( SM_FriendsUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
 REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
@@ -134,9 +135,13 @@ void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 		m_textChatOutput.SetText( NSMAN->m_sChatText );
 		m_textChatOutput.SetMaxLines( SHOW_CHAT_LINES, 1 );
 	}
-	else if( SM == SM_UsersUpdate )
+	else if (SM == SM_UsersUpdate)
 	{
 		UpdateUsers();
+	}
+	else if (SM == SM_FriendsUpdate)
+	{
+		MESSAGEMAN->Broadcast("FriendsUpdate");
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
