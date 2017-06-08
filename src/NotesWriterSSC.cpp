@@ -44,16 +44,16 @@ struct TimingTagWriter {
 
 	void Write( const int row, const char *value )
 	{
-		m_pvsLines->push_back( m_sNext + ssprintf( "%.6f=%s", NoteRowToBeat(row), value ) );
+		m_pvsLines->push_back( m_sNext + ssprintf( "%s=%s", FormatDouble(NoteRowToBeat(row)).c_str(), value ) );
 		m_sNext = ",";
 	}
 
-	void Write( const int row, const float value )        { Write( row, ssprintf( "%.6f",  value ) ); }
+	void Write( const int row, const float value )        { Write( row, ssprintf( "%s", FormatDouble(value).c_str() ) ); }
 	void Write( const int row, const int value )          { Write( row, ssprintf( "%d",    value ) ); }
 	void Write( const int row, const int a, const int b ) { Write( row, ssprintf( "%d=%d", a, b ) );  }
-	void Write( const int row, const float a, const float b ) { Write( row, ssprintf( "%.6f=%.6f", a, b) ); }
+	void Write( const int row, const float a, const float b ) { Write( row, ssprintf( "%s=%s", FormatDouble(a).c_str(), FormatDouble(b).c_str()) ); }
 	void Write( const int row, const float a, const float b, const unsigned short c )
-		{ Write( row, ssprintf( "%.6f=%.6f=%hd", a, b, c) ); }
+		{ Write( row, ssprintf( "%s=%s=%hd", FormatDouble(a).c_str(), FormatDouble(b).c_str(), c) ); }
 
 	void Init( const RString sTag ) { m_sNext = "#" + sTag + ":"; }
 	void Finish( ) { m_pvsLines->push_back( ( m_sNext != "," ? m_sNext : "" ) + ";" ); }
@@ -62,147 +62,171 @@ struct TimingTagWriter {
 
 static void GetTimingTags( vector<RString> &lines, const TimingData &timing, bool bIsSong = false )
 {
-	TimingTagWriter w ( &lines );
+	TimingTagWriter writer(&lines);
 
 	// timing.TidyUpData(); // UGLY: done via const_cast. do we really -need- this here?
-	unsigned i = 0;
 
-	w.Init( "BPMS" );
-	const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
-	for (; i < bpms.size(); i++)
+	#define WRITE_SEG_LOOP_OPEN(enum_type, seg_type, seg_name, to_func) \
+		{ \
+			vector<TimingSegment*> const& segs= timing.GetTimingSegments(enum_type); \
+			if(!segs.empty()) \
+			{ \
+				writer.Init(seg_name); \
+				for(auto&& seg : segs) \
+				{ \
+					const seg_type* segment= to_func(seg);
+
+	#define WRITE_SEG_LOOP_CLOSE } writer.Finish(); } }
+
+	WRITE_SEG_LOOP_OPEN(SEGMENT_BPM, BPMSegment, "BPMS", ToBPM);
+	writer.Write(segment->GetRow(), segment->GetBPM());
+	WRITE_SEG_LOOP_CLOSE;
+
+	WRITE_SEG_LOOP_OPEN(SEGMENT_STOP, StopSegment, "STOPS", ToStop);
+	writer.Write(segment->GetRow(), segment->GetPause());
+	WRITE_SEG_LOOP_CLOSE;
+
+	WRITE_SEG_LOOP_OPEN(SEGMENT_DELAY, DelaySegment, "DELAYS", ToDelay);
+	writer.Write(segment->GetRow(), segment->GetPause());
+	WRITE_SEG_LOOP_CLOSE;
+
+	WRITE_SEG_LOOP_OPEN(SEGMENT_WARP, WarpSegment, "WARPS", ToWarp);
+	writer.Write(segment->GetRow(), segment->GetLength());
+	WRITE_SEG_LOOP_CLOSE;
+
+	WRITE_SEG_LOOP_OPEN(SEGMENT_TIME_SIG, TimeSignatureSegment, "TIMESIGNATURESEGMENT", ToTimeSignature);
+	writer.Write(segment->GetRow(), segment->GetNum(), segment->GetDen());
+	WRITE_SEG_LOOP_CLOSE;
+
+	WRITE_SEG_LOOP_OPEN(SEGMENT_TICKCOUNT, TickcountSegment, "TICKCOUNTS", ToTickcount);
+	writer.Write(segment->GetRow(), segment->GetTicks());
+	WRITE_SEG_LOOP_CLOSE;
+
+	WRITE_SEG_LOOP_OPEN(SEGMENT_COMBO, ComboSegment, "COMBOS", ToCombo);
+	if(segment->GetCombo() == segment->GetMissCombo())
 	{
-		const BPMSegment *bs = ToBPM( bpms[i] );
-		w.Write( bs->GetRow(), bs->GetBPM() );
+		writer.Write(segment->GetRow(), segment->GetCombo());
 	}
-	w.Finish();
-
-	w.Init( "STOPS" );
-	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
-	for (i = 0; i < stops.size(); i++)
+	else
 	{
-		const StopSegment *ss = ToStop( stops[i] );
-		w.Write( ss->GetRow(), ss->GetPause() );
+		writer.Write(segment->GetRow(), segment->GetCombo(), segment->GetMissCombo());
 	}
-	w.Finish();
+	WRITE_SEG_LOOP_CLOSE;
 
-	w.Init( "DELAYS" );
-	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
-	for (i = 0; i < delays.size(); i++)
-	{
-		const DelaySegment *ss = ToDelay( delays[i] );
-		w.Write( ss->GetRow(), ss->GetPause() );
-	}
-	w.Finish();
+	WRITE_SEG_LOOP_OPEN(SEGMENT_SPEED, SpeedSegment, "SPEEDS", ToSpeed);
+	writer.Write(segment->GetRow(), segment->GetRatio(), segment->GetDelay(), segment->GetUnit());
+	WRITE_SEG_LOOP_CLOSE;
 
-	w.Init( "WARPS" );
-	const vector<TimingSegment *> &warps = timing.GetTimingSegments(SEGMENT_WARP);
-	for (i = 0; i < warps.size(); i++)
-	{
-		const WarpSegment *ws = ToWarp( warps[i] );
-		w.Write( ws->GetRow(), ws->GetLength() );
-	}
-	w.Finish();
+	WRITE_SEG_LOOP_OPEN(SEGMENT_SCROLL, ScrollSegment, "SCROLLS", ToScroll);
+	writer.Write(segment->GetRow(), segment->GetRatio());
+	WRITE_SEG_LOOP_CLOSE;
 
-	const vector<TimingSegment *> &tSigs = timing.GetTimingSegments(SEGMENT_TIME_SIG);
-	ASSERT( !tSigs.empty() );
-	w.Init( "TIMESIGNATURES" );
-	for (i = 0; i < tSigs.size(); i++)
+	// TODO: Investigate why someone wrote a condition for leaving fakes out of
+	// the song timing tags, and put it in a function that is only used when
+	// writing the steps timing tags. -Kyz
+	if(!bIsSong)
 	{
-		const TimeSignatureSegment *ts = ToTimeSignature( tSigs[i] );
-		w.Write( ts->GetRow(), ts->GetNum(), ts->GetDen() );
-	}
-	w.Finish();
-
-	const vector<TimingSegment *> &ticks = timing.GetTimingSegments(SEGMENT_TICKCOUNT);
-	ASSERT( !ticks.empty() );
-	w.Init( "TICKCOUNTS" );
-	for (i = 0; i < ticks.size(); i++)
-	{
-		const TickcountSegment *ts = ToTickcount( ticks[i] );
-		w.Write( ts->GetRow(), ts->GetTicks() );
-	}
-	w.Finish();
-
-	const vector<TimingSegment *> &combos = timing.GetTimingSegments(SEGMENT_COMBO);
-	ASSERT( !combos.empty() );
-	w.Init( "COMBOS" );
-	for (i = 0; i < combos.size(); i++)
-	{
-		const ComboSegment *cs = ToCombo( combos[i] );
-		if (cs->GetCombo() == cs->GetMissCombo())
-			w.Write( cs->GetRow(), cs->GetCombo() );
-		else
-			w.Write( cs->GetRow(), cs->GetCombo(), cs->GetMissCombo() );
-	}
-	w.Finish();
-
-	// Song Timing should only have the initial value.
-	const vector<TimingSegment *> &speeds = timing.GetTimingSegments(SEGMENT_SPEED);
-	w.Init( "SPEEDS" );
-	for (i = 0; i < speeds.size(); i++)
-	{
-		SpeedSegment *ss = ToSpeed( speeds[i] );
-		w.Write( ss->GetRow(), ss->GetRatio(), ss->GetDelay(), ss->GetUnit() );
-	}
-	w.Finish();
-
-	w.Init( "SCROLLS" );
-	const vector<TimingSegment *> &scrolls = timing.GetTimingSegments(SEGMENT_SCROLL);
-	for (i = 0; i < scrolls.size(); i++)
-	{
-		ScrollSegment *ss = ToScroll( scrolls[i] );
-		w.Write( ss->GetRow(), ss->GetRatio() );
-	}
-	w.Finish();
-
-	if( !bIsSong )
-	{
-		const vector<TimingSegment *> &fakes = timing.GetTimingSegments(SEGMENT_FAKE);
-		w.Init( "FAKES" );
-		for (i = 0; i < fakes.size(); i++)
-		{
-			FakeSegment *fs = ToFake( fakes[i] );
-			w.Write( fs->GetRow(), fs->GetLength() );
-		}
-		w.Finish();
+		WRITE_SEG_LOOP_OPEN(SEGMENT_FAKE, FakeSegment, "FAKES", ToFake);
+		writer.Write(segment->GetRow(), segment->GetLength());
+		WRITE_SEG_LOOP_CLOSE;
 	}
 
-	w.Init( "LABELS" );
-	const vector<TimingSegment *> &labels = timing.GetTimingSegments(SEGMENT_LABEL);
-	for (i = 0; i < labels.size(); i++)
+	WRITE_SEG_LOOP_OPEN(SEGMENT_LABEL, LabelSegment, "LABELS", ToLabel);
+	if(!segment->GetLabel().empty())
 	{
-		LabelSegment *ls = static_cast<LabelSegment *>(labels[i]);
-		if (!ls->GetLabel().empty())
-			w.Write( ls->GetRow(), ls->GetLabel().c_str() );
+		writer.Write(segment->GetRow(), segment->GetLabel());
 	}
-	w.Finish();
+	WRITE_SEG_LOOP_CLOSE;
+
+#undef WRITE_SEG_LOOP_OPEN
+#undef WRITE_SEG_LOOP_CLOSE
+}
+
+static void write_tag(RageFile& f, RString const& format,
+	RString const& value)
+{
+	if( !value.empty() )
+	{
+		f.PutLine( ssprintf(format, SmEscape(value).c_str()) );
+	}
 }
 
 static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong = false )
 {
-	f.PutLine(ssprintf("#BPMS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_BPM, 3)).c_str()));
-	f.PutLine(ssprintf("#STOPS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_STOP, 3)).c_str()));
-	f.PutLine(ssprintf("#DELAYS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_DELAY, 3)).c_str()));
-	f.PutLine(ssprintf("#WARPS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_WARP, 3)).c_str()));
-	f.PutLine(ssprintf("#TIMESIGNATURES:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_TIME_SIG, 3)).c_str()));
-	f.PutLine(ssprintf("#TICKCOUNTS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_TICKCOUNT, 3)).c_str()));
-	f.PutLine(ssprintf("#COMBOS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_COMBO, 3)).c_str()));
-	f.PutLine(ssprintf("#SPEEDS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_SPEED, 3)).c_str()));
-	f.PutLine(ssprintf("#SCROLLS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_SCROLL, 3)).c_str()));
-	f.PutLine(ssprintf("#FAKES:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_FAKE, 3)).c_str()));
-	f.PutLine(ssprintf("#LABELS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_LABEL, 3)).c_str()));
+	static RString value;
 
+	write_tag(f, "#BPMS:%s;",
+				join(",", timing.ToVectorString(SEGMENT_BPM, 3)));
+	write_tag(f, "#STOPS:%s;",
+				join(",", timing.ToVectorString(SEGMENT_STOP, 3)));
+	write_tag(f, "#DELAYS:%s;",
+				join(",", timing.ToVectorString(SEGMENT_DELAY, 3)));
+	write_tag(f, "#WARPS:%s;",
+				join(",", timing.ToVectorString(SEGMENT_WARP, 3)));
+
+	const vector<TimingSegment *> &timesigs = timing.GetTimingSegments(SEGMENT_TIME_SIG);
+	for( unsigned i=0; i<timesigs.size(); i++ )
+	{
+		const TimeSignatureSegment *ts = ToTimeSignature(timesigs[i]);
+		value = ssprintf( "%s=%i=%i", FormatDouble("%.3f", ts->GetBeat()).c_str(), ts->GetNum(), ts->GetDen() );
+
+		if( timesigs.size()==1 && value == "0=4=4" ) break;
+		write_tag(f, "#TIMESIGNATURES:%s;", join(",", timing.ToVectorString(SEGMENT_TIME_SIG, 3)));	break;
+	}
+		
+	const vector<TimingSegment *> &ticks = timing.GetTimingSegments(SEGMENT_TICKCOUNT);
+	for( unsigned i=0; i<ticks.size(); i++ )
+	{
+		const TickcountSegment *tc = ToTickcount(ticks[i]);
+		value = ssprintf( "%s=%i", FormatDouble("%.3f", tc->GetBeat()).c_str(), tc->GetTicks() );
+
+		if( ticks.size()==1 && value == "0=4" ) break;
+		write_tag(f, "#TICKCOUNTS:%s;", join(",", timing.ToVectorString(SEGMENT_TICKCOUNT, 3))); break;
+	}
+
+	const vector<TimingSegment *> &combos = timing.GetTimingSegments(SEGMENT_COMBO);
+	for( unsigned i=0; i<combos.size(); i++ )
+	{
+		const ComboSegment *cb = ToCombo(combos[i]);
+		value = ssprintf( "%s=%i", FormatDouble("%.3f", cb->GetBeat()).c_str(), cb->GetCombo() );
+
+		if( combos.size()==1 && value == "0=1" ) break;
+		write_tag(f, "#COMBOS:%s;", join(",", timing.ToVectorString(SEGMENT_COMBO, 3))); break;
+	}
+
+	const vector<TimingSegment *> &speeds = timing.GetTimingSegments(SEGMENT_SPEED);
+	for( unsigned i=0; i<speeds.size(); i++ )
+	{
+		const SpeedSegment *sp = ToSpeed(speeds[i]);
+		value = ssprintf( "%s=%s=%s=%u", FormatDouble("%.3f", sp->GetBeat()).c_str(), FormatDouble("%.3f", sp->GetRatio()).c_str(), 
+				FormatDouble("%.3f", sp->GetDelay()).c_str(), sp->GetUnit() );
+
+		if( speeds.size()==1 && value == "0=1=0=0" ) break;
+		write_tag(f, "#SPEEDS:%s;", join(",", timing.ToVectorString(SEGMENT_SPEED, 3))); break;
+	}
+
+	const vector<TimingSegment *> &scrolls = timing.GetTimingSegments(SEGMENT_SCROLL);
+	for( unsigned i=0; i<scrolls.size(); i++ )
+	{
+		const ScrollSegment *sc = ToScroll(scrolls[i]);
+		value = ssprintf( "%s=%s", FormatDouble(sc->GetBeat()).c_str(), FormatDouble(sc->GetRatio()).c_str());
+
+		if( scrolls.size()==1 && value=="0=1" ) break;
+		write_tag(f, "#SCROLLS:%s;", join(",", timing.ToVectorString(SEGMENT_SCROLL, 3))); break;
+	}
+
+	write_tag( f, "#FAKES:%s;",
+				join(",", timing.ToVectorString(SEGMENT_FAKE, 3)) );
+
+	const vector<TimingSegment *> &labels = timing.GetTimingSegments(SEGMENT_LABEL);
+	for( unsigned i=0; i<labels.size(); i++ )
+	{
+		const LabelSegment *lb = ToLabel(labels[i]);
+		value = ssprintf( "%s=%s", FormatDouble(lb->GetBeat()).c_str(), lb->GetLabel().c_str() );
+
+		if( labels.size()==1 && value=="0=Song Start" ) break;
+		write_tag(f, "#LABELS:%s;", join(",", timing.ToVectorString(SEGMENT_LABEL, 3))); break;
+	}
 }
 
 /**
@@ -211,29 +235,26 @@ static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong
  * @param out the Song in question. */
 static void WriteGlobalTags( RageFile &f, const Song &out )
 {
-	f.PutLine( ssprintf( "#VERSION:%.2f;", STEPFILE_VERSION_NUMBER ) );
-	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
-	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
-	f.PutLine( ssprintf( "#TITLETRANSLIT:%s;", SmEscape(out.m_sMainTitleTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLETRANSLIT:%s;", SmEscape(out.m_sSubTitleTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#ARTISTTRANSLIT:%s;", SmEscape(out.m_sArtistTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#GENRE:%s;", SmEscape(out.m_sGenre).c_str() ) );
-	f.PutLine( ssprintf( "#ORIGIN:%s;", SmEscape(out.m_sOrigin).c_str() ) );
-	f.PutLine( ssprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
-	f.PutLine( ssprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
-	f.PutLine( ssprintf( "#BACKGROUND:%s;", SmEscape(out.m_sBackgroundFile).c_str() ) );
-	f.PutLine( ssprintf( "#PREVIEWVID:%s;", SmEscape(out.m_sPreviewVidFile).c_str() ) );
-	f.PutLine( ssprintf( "#JACKET:%s;", SmEscape(out.m_sJacketFile).c_str() ) );
-	f.PutLine( ssprintf( "#CDIMAGE:%s;", SmEscape(out.m_sCDFile).c_str() ) );
-	f.PutLine( ssprintf( "#DISCIMAGE:%s;", SmEscape(out.m_sDiscFile).c_str() ) );
-	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
-	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
-	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
-	if(!out.m_PreviewFile.empty())
-	{
-		f.PutLine(ssprintf("#PREVIEW:%s;", SmEscape(out.m_PreviewFile).c_str()));
-	}
+	//f.PutLine( ssprintf( "#VERSION:%.2f;", STEPFILE_VERSION_NUMBER ) );
+	write_tag(f, "#TITLE:%s;", out.m_sMainTitle);
+	write_tag(f, "#SUBTITLE:%s;", out.m_sSubTitle);
+	write_tag(f, "#ARTIST:%s;", out.m_sArtist);
+	write_tag(f, "#TITLETRANSLIT:%s;", out.m_sMainTitleTranslit);
+	write_tag(f, "#SUBTITLETRANSLIT:%s;", out.m_sSubTitleTranslit);
+	write_tag(f, "#ARTISTTRANSLIT:%s;", out.m_sArtistTranslit);
+	write_tag(f, "#GENRE:%s;", out.m_sGenre);
+	write_tag(f, "#ORIGIN:%s;", out.m_sOrigin);
+	write_tag(f, "#CREDIT:%s;", out.m_sCredit);
+	write_tag(f, "#BANNER:%s;", out.m_sBannerFile);
+	write_tag(f, "#BACKGROUND:%s;", out.m_sBackgroundFile);
+	write_tag(f, "#PREVIEWVID:%s;", out.m_sPreviewVidFile);
+	write_tag(f, "#JACKET:%s;", out.m_sJacketFile);
+	write_tag(f, "#CDIMAGE:%s;", out.m_sCDFile);
+	write_tag(f, "#DISCIMAGE:%s;", out.m_sDiscFile);
+	write_tag(f, "#LYRICSPATH:%s;", out.m_sLyricsFile);
+	write_tag(f, "#CDTITLE:%s;", out.m_sCDTitleFile);
+	write_tag(f, "#MUSIC:%s;", out.m_sMusicFile);
+	write_tag(f, "#PREVIEW:%s;", out.m_PreviewFile);
 
 	{
 		vector<RString> vs = out.GetInstrumentTracksToVectorString();
@@ -243,19 +264,22 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
 		}
 	}
-	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
 
-	f.Write( "#SELECTABLE:" );
+	if( out.m_SongTiming.m_fBeat0OffsetInSeconds != 0 )
+	{
+		write_tag(f, "#OFFSET:%s;", FormatDouble("%.3f", out.m_SongTiming.m_fBeat0OffsetInSeconds));
+	}
+	
+	write_tag(f, "#SAMPLESTART:%s;", FormatDouble("%.3f", out.m_fMusicSampleStartSeconds));
+	write_tag(f, "#SAMPLELENGTH:%s;", FormatDouble("%.3f", out.m_fMusicSampleLengthSeconds));
+
 	switch(out.m_SelectionDisplay)
 	{
 		default: ASSERT_M(0, "An invalid selectable value was found for this song!"); // fall through
-		case Song::SHOW_ALWAYS:	f.Write( "YES" );		break;
-		//case Song::SHOW_NONSTOP:	f.Write( "NONSTOP" );	break;
-		case Song::SHOW_NEVER:		f.Write( "NO" );		break;
+		case Song::SHOW_ALWAYS:		break;
+		//case Song::SHOW_NONSTOP:	f.PutLine( "#SELECTABLE:NONSTOP;" );	break;
+		case Song::SHOW_NEVER:		f.PutLine( "#SELECTABLE:NO;" );		break;
 	}
-	f.PutLine( ";" );
 
 	switch( out.m_DisplayBPMType )
 	{
@@ -264,9 +288,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			break;
 		case DISPLAY_BPM_SPECIFIED:
 			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
+				f.PutLine( ssprintf( "#DISPLAYBPM:%s;", FormatDouble("%.3f", out.m_fSpecifiedBPMMin).c_str() ) );
 			else
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
+				f.PutLine( ssprintf( "#DISPLAYBPM:%s:%s;", FormatDouble("%.3f", out.m_fSpecifiedBPMMin).c_str(), FormatDouble("%.3f", out.m_fSpecifiedBPMMax).c_str() ) );
 			break;
 		case DISPLAY_BPM_RANDOM:
 			f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
@@ -278,12 +302,15 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	WriteTimingTags( f, out.m_SongTiming, true );
 
 	if( out.GetSpecifiedLastSecond() > 0 )
-		f.PutLine( ssprintf("#LASTSECONDHINT:%.6f;", out.GetSpecifiedLastSecond()) );
+		f.PutLine( ssprintf("#LASTSECONDHINT:%s;", FormatDouble("%.3f", out.GetSpecifiedLastSecond()).c_str()) );
 
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
+		{
+			if( out.GetBackgroundChanges(b).empty() ) break;
 			f.Write( "#BGCHANGES:" );
+		}
 		else if( out.GetBackgroundChanges(b).empty() )
 			continue;	// skip
 		else
@@ -297,7 +324,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		 * See SSCLoader::TidyUpData. This tag will be removed on load. Add it
 		 * at a very high beat, so it won't cause problems if loaded in older versions. */
 		if( b==0 && !out.GetBackgroundChanges(b).empty() )
-			f.PutLine( "99999=-nosongbg-=1.000=0=0=0 // don't automatically add -songbackground-" );
+			f.PutLine( "99999=-nosongbg-=1=0=0=0 // don't automatically add -songbackground-" );
 		f.PutLine( ";" );
 	}
 
@@ -311,35 +338,49 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		f.PutLine( ";" );
 	}
 
-	f.Write( "#KEYSOUNDS:" );
-	for( unsigned i=0; i<out.m_vsKeysoundFile.size(); i++ )
+	if( !out.m_vsKeysoundFile.empty() )
 	{
-		// some keysound files has the first sound that starts with #,
-		// which makes MsdFile fail parsing the whole declaration.
-		// in this case, add a backslash at the front
-		// (#KEYSOUNDS:\#bgm.wav,01.wav,02.wav,..) and handle that on load.
-		if( i == 0 && out.m_vsKeysoundFile[i].size() > 0 && out.m_vsKeysoundFile[i][0] == '#' )
-			f.Write("\\");
-		f.Write( out.m_vsKeysoundFile[i] );
-		if( i != out.m_vsKeysoundFile.size()-1 )
-			f.Write( "," );
+		f.Write( "#KEYSOUNDS:" );
+		for( unsigned i=0; i<out.m_vsKeysoundFile.size(); i++ )
+		{
+			// some keysound files has the first sound that starts with #,
+			// which makes MsdFile fail parsing the whole declaration.
+			// in this case, add a backslash at the front
+			// (#KEYSOUNDS:\#bgm.wav,01.wav,02.wav,..) and handle that on load.
+			if( i == 0 && out.m_vsKeysoundFile[i].size() > 0 && out.m_vsKeysoundFile[i][0] == '#' )
+				f.Write("\\");
+			f.Write( out.m_vsKeysoundFile[i] );
+			if( i != out.m_vsKeysoundFile.size()-1 )
+				f.Write( "," );
+		}
+		f.PutLine( ";" );
 	}
-	f.PutLine( ";" );
 
-	// attacks section
-	//f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
-	f.PutLine( "#ATTACKS:" );
-	for(unsigned j = 0; j < out.m_Attacks.size(); j++)
+	if( !out.m_Attacks.empty() )
 	{
-		const Attack &a = out.m_Attacks[j];
-		f.Write( ssprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
-			a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
-
-		if( j+1 < out.m_Attacks.size() )
-			f.Write( ":" );
+		// attacks section
+		//f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
+		f.PutLine( "#ATTACKS:" );
+		for(unsigned j = 0; j < out.m_Attacks.size(); j++)
+		{
+			const Attack &a = out.m_Attacks[j];
+			f.Write( ssprintf( "  TIME=%s:LEN=%s:MODS=%s",
+				FormatDouble("%.3f", a.fStartSecond).c_str(), FormatDouble("%.3f", a.fSecsRemaining).c_str(), a.sModifiers.c_str() ) );
+			
+			if( j+1 < out.m_Attacks.size() )
+				f.Write( ":" );
+		}
+		f.Write( ";" );
 	}
-	f.Write( ";" );
-	f.PutLine("");
+}
+
+static void push_back_tag(vector<RString>& lines,
+	RString const& format, RString const& value)
+{
+	if(!value.empty())
+	{
+		lines.push_back(ssprintf(format, SmEscape(value).c_str()));
+	}
 }
 
 /**
@@ -357,12 +398,12 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf("//---------------%s - %s----------------",
 		in.m_StepsTypeStr.c_str(), SmEscape(in.GetDescription()).c_str()) );
 	lines.push_back( "#NOTEDATA:;" ); // our new separator.
-	lines.push_back( ssprintf( "#CHARTNAME:%s;", SmEscape(in.GetChartName()).c_str()));
-	lines.push_back( ssprintf( "#STEPSTYPE:%s;", in.m_StepsTypeStr.c_str() ) );
-	lines.push_back( ssprintf( "#DESCRIPTION:%s;", SmEscape(in.GetDescription()).c_str() ) );
-	lines.push_back( ssprintf( "#CHARTSTYLE:%s;", SmEscape(in.GetChartStyle()).c_str() ) );
-	lines.push_back( ssprintf( "#DIFFICULTY:%s;", DifficultyToString(in.GetDifficulty()).c_str() ) );
-	lines.push_back( ssprintf( "#METER:%d;", in.GetMeter() ) );
+	push_back_tag(lines, "#CHARTNAME:%s;", in.GetChartName());
+	push_back_tag(lines, "#STEPSTYPE:%s;", in.m_StepsTypeStr);
+	push_back_tag(lines, "#DESCRIPTION:%s;", in.GetDescription());
+	push_back_tag(lines, "#CHARTSTYLE:%s;", in.GetChartStyle());
+	push_back_tag(lines, "#DIFFICULTY:%s;", DifficultyToString(in.GetDifficulty()));
+	lines.push_back( ssprintf( "#METER:%s;", FormatDouble("%.2f", in.GetMeter()).c_str()) );
 
 	const RString& music= in.GetMusicFile();
 	if(!music.empty())
@@ -375,45 +416,46 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	{
 		const RadarValues &rv = in.GetRadarValues( pn );
 		FOREACH_ENUM( RadarCategory, rc )
-			asRadarValues.push_back( ssprintf("%.6f", rv[rc]) );
+			asRadarValues.push_back( ssprintf("%s", FormatDouble("%.3f", rv[rc]).c_str()) );
 	}
 	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
-	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
+	push_back_tag(lines, "#CREDIT:%s;", in.GetCredit());
 
 	// If the Steps TimingData is not empty, then they have their own
 	// timing.  Write out the corresponding tags.
 	if( !in.m_Timing.empty() )
 	{
-		lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+		lines.push_back( ssprintf( "#OFFSET:%s;", FormatDouble("%.3f", in.m_Timing.m_fBeat0OffsetInSeconds).c_str() ) );
 		GetTimingTags( lines, in.m_Timing );
+
+		switch( in.GetDisplayBPM() )
+		{
+			case DISPLAY_BPM_ACTUAL:
+				// write nothing
+				break;
+			case DISPLAY_BPM_SPECIFIED:
+			{
+				float small = in.GetMinBPM();
+				float big = in.GetMaxBPM();
+				if (small == big)
+					lines.push_back( ssprintf( "#DISPLAYBPM:%s;", FormatDouble("%.3f", small).c_str() ) );
+				else
+					lines.push_back( ssprintf( "#DISPLAYBPM:%s:%s;", FormatDouble("%.3f", small).c_str(), FormatDouble("%.3f", big).c_str() ) );
+				break;
+			}
+			case DISPLAY_BPM_RANDOM:
+				lines.push_back( ssprintf( "#DISPLAYBPM:*;" ) );
+				break;
+			default:
+				break;
+		}
 	}
 
 	// todo: get this to output similar to course mods -aj
 	if (song.GetAttackString() != in.GetAttackString())
 		lines.push_back( ssprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
 
-	switch( in.GetDisplayBPM() )
-	{
-		case DISPLAY_BPM_ACTUAL:
-			// write nothing
-			break;
-		case DISPLAY_BPM_SPECIFIED:
-		{
-			float small = in.GetMinBPM();
-			float big = in.GetMaxBPM();
-			if (small == big)
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f;", small ) );
-			else
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", small, big ) );
-			break;
-		}
-		case DISPLAY_BPM_RANDOM:
-			lines.push_back( ssprintf( "#DISPLAYBPM:*;" ) );
-			break;
-		default:
-			break;
-	}
 	if (bSavingCache)
 	{
 		lines.push_back(ssprintf("#STEPFILENAME:%s;", in.GetFilename().c_str()));
@@ -453,13 +495,14 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	
 	if( bSavingCache )
 	{
+		f.PutLine( ssprintf( "" ) );
 		f.PutLine( ssprintf( "// cache tags:" ) );
-		f.PutLine( ssprintf( "#FIRSTSECOND:%.6f;", out.GetFirstSecond() ) );
-		f.PutLine( ssprintf( "#LASTSECOND:%.6f;", out.GetLastSecond() ) );
+		f.PutLine( ssprintf( "#FIRSTSECOND:%s;", FormatDouble("%.3f", out.GetFirstSecond()).c_str() ) );
+		f.PutLine( ssprintf( "#LASTSECOND:%s;", FormatDouble("%.3f", out.GetLastSecond()).c_str() ) );
 		f.PutLine( ssprintf( "#SONGFILENAME:%s;", out.m_sSongFileName.c_str() ) );
 		f.PutLine( ssprintf( "#HASMUSIC:%i;", out.m_bHasMusic ) );
 		f.PutLine( ssprintf( "#HASBANNER:%i;", out.m_bHasBanner ) );
-		f.PutLine( ssprintf( "#MUSICLENGTH:%.6f;", out.m_fMusicLengthSeconds ) );
+		f.PutLine( ssprintf( "#MUSICLENGTH:%s;", FormatDouble("%.3f", out.m_fMusicLengthSeconds).c_str() ) );
 		f.PutLine( ssprintf( "// end cache tags" ) );
 	}
 

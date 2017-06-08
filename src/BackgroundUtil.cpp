@@ -75,10 +75,10 @@ RString BackgroundChange::ToString() const
 	/* TODO:  Technically we need to double-escape the filename
 	 * (because it might contain '=') and then unescape the value
 	 * returned by the MsdFile. */
-	return ssprintf("%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s",
-			this->m_fStartBeat,
+	return ssprintf("%s=%s=%s=%d=%d=%d=%s=%s=%s=%s=%s",
+			FormatDouble("%.3f", this->m_fStartBeat).c_str(),
 			SmEscape(this->m_def.m_sFile1).c_str(),
-			this->m_fRate,
+			FormatDouble("%.3f", this->m_fRate).c_str(),
 			this->m_sTransition == SBT_CrossFade,		// backward compat
 			this->m_def.m_sEffect == SBE_StretchRewind, 	// backward compat
 			this->m_def.m_sEffect != SBE_StretchNoLoop, 	// backward compat
