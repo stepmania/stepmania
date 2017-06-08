@@ -151,7 +151,7 @@ public:
 	unsigned GetNumChannels() const { return 1; }
 	int GetNextSourceFrame() const { return 0; }
 	float GetStreamToSourceRatio() const { return 1.0f; }
-	RString GetError() const { return ""; }
+	RString GetRSRError() const { return ""; }
 };
 
 
@@ -285,9 +285,9 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 		/* Read data from our source. */
 		int iGotFrames = m_pSource->RetriedRead( pBuffer + (iFramesStored * m_pSource->GetNumChannels()), iFrames, &iSourceFrame, &fRate );
 
-		if( iGotFrames == RageSoundReader::ERROR )
+		if( iGotFrames == RageSoundReader::ERROR_ )
 		{
-			m_sError = m_pSource->GetError();
+			m_sError = m_pSource->GetRSRError();
 			LOG->Warn( "Decoding %s failed: %s", GetLoadedFilePath().c_str(), m_sError.c_str() );
 		}
 
@@ -465,7 +465,7 @@ float RageSound::GetLengthSeconds()
 
 	if( iLength < 0 )
 	{
-		LOG->Warn( "GetLengthSeconds failed on %s: %s", GetLoadedFilePath().c_str(), m_pSource->GetError().c_str() );
+		LOG->Warn( "GetLengthSeconds failed on %s: %s", GetLoadedFilePath().c_str(), m_pSource->GetRSRError().c_str() );
 		return -1;
 	}
 
@@ -538,7 +538,7 @@ bool RageSound::SetPositionFrames( int iFrames )
 	int iRet = m_pSource->SetPosition( iFrames );
 	if( iRet == -1 )
 	{
-		m_sError = m_pSource->GetError();
+		m_sError = m_pSource->GetRSRError();
 		LOG->Warn( "SetPositionFrames: seek %s failed: %s", GetLoadedFilePath().c_str(), m_sError.c_str() );
 	}
 	else if( iRet == 0 )

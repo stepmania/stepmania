@@ -174,7 +174,7 @@ protected:
 
 	virtual bool FocusedItemEndsScreen( PlayerNumber pn ) const;
 
-	void LoadMenu( const MenuDef* pDef );
+	void LoadAMenu( const MenuDef* pDef );
 
 	ScreenMessage		m_SMSendOnOK;
 	ScreenMessage		m_SMSendOnCancel;

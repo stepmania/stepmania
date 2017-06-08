@@ -45,7 +45,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 	if( ret == OPEN_OK )
 		return Sample;
 
-	RString err = Sample->GetError();
+	RString err = Sample->GetRSRError();
 	delete Sample;
 
 	LOG->Trace( "Format %s failed: %s", format.c_str(), err.c_str() );

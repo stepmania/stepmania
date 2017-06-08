@@ -303,7 +303,7 @@ static LocalizedString GLOBAL_OFFSET_FROM	( "AdjustSync", "Global Offset from %+
 static LocalizedString SONG_OFFSET_FROM		( "AdjustSync", "Song offset from %+.3f to %+.3f (notes %s)" );
 static LocalizedString TEMPO_SEGMENT_FROM	( "AdjustSync", "%s BPM from %.3f BPM to %.3f BPM." );
 static LocalizedString CHANGED_STOP		("AdjustSync","The stop segment #%d changed from %+.3fs to %+.3fs (change of %+.3f).");
-static LocalizedString ERROR			("AdjustSync", "Average Error %.5fs");
+static LocalizedString ERROR_			("AdjustSync", "Average Error %.5fs");
 static LocalizedString ETC              ("AdjustSync", "Etc.");
 static LocalizedString TAPS_IGNORED	("AdjustSync", "%d taps ignored.");
 
@@ -429,7 +429,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 
 		if( vsAddTo.size() > iOriginalSize && s_fAverageError > 0.0f )
 		{
-			vsAddTo.push_back( ssprintf(ERROR.GetValue(), s_fAverageError) );
+			vsAddTo.push_back( ssprintf(ERROR_.GetValue(), s_fAverageError) );
 		}
 		if( vsAddTo.size() > iOriginalSize && s_iStepsFiltered > 0 )
 		{

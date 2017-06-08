@@ -21,7 +21,7 @@ public:
 	unsigned GetNumChannels() const { return m_iChannels; }
 	int GetNextSourceFrame() const;
 	float GetStreamToSourceRatio() const { return m_fRate; }
-	RString GetError() const { return ""; }
+	RString GetRSRError() const { return ""; }
 
 	/* Return the total number of copies of this sound.  (If 1 is returned,
 	 * this is the last copy.) */

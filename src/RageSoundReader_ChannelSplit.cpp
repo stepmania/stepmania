@@ -88,7 +88,7 @@ int RageSoundReader_Split::GetSampleRate() const { return m_pImpl->m_pSource->Ge
 unsigned RageSoundReader_Split::GetNumChannels() const { return m_iNumOutputChannels; }
 int RageSoundReader_Split::GetNextSourceFrame() const { return m_iPositionFrame; }
 float RageSoundReader_Split::GetStreamToSourceRatio() const { return 1.0f; }
-RString RageSoundReader_Split::GetError() const { return m_pImpl->m_pSource->GetError(); }
+RString RageSoundReader_Split::GetRSRError() const { return m_pImpl->m_pSource->GetRSRError(); }
 
 RageSoundReader_Split::RageSoundReader_Split( RageSoundSplitterImpl *pImpl )
 {
