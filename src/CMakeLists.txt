@@ -31,6 +31,7 @@ include(CMakeData-gtk.cmake)
 include(CMakeData-file-types.cmake)
 include(CMakeData-globals.cmake)
 include(CMakeData-singletons.cmake)
+include(CMakeData-sextets.cmake)
 
 list(APPEND SMDATA_ALL_FILES_SRC
   ${SMDATA_GLOBAL_FILES_SRC}
@@ -42,6 +43,7 @@ list(APPEND SMDATA_ALL_FILES_SRC
   ${SMDATA_ALL_SCREENS_SRC}
   ${SMDATA_OS_SRC}
   ${SMDATA_FILE_TYPES_SRC}
+  ${SMDATA_SEXTETS_SRC}
 )
 list(APPEND SMDATA_ALL_FILES_HPP
   ${SMDATA_GLOBAL_FILES_HPP}
@@ -53,6 +55,7 @@ list(APPEND SMDATA_ALL_FILES_HPP
   ${SMDATA_ALL_SCREENS_HPP}
   ${SMDATA_OS_HPP}
   ${SMDATA_FILE_TYPES_HPP}
+  ${SMDATA_SEXTETS_HPP}
 )
 
 if(NOT APPLE)
