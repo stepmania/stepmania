@@ -454,6 +454,11 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 	{
 		y_adjust += effects[PlayerOptions::EFFECT_PARABOLA_Y] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing);
 	}
+	if(effects[PlayerOptions::EFFECT_ATTENUATE_Y] != 0.f )
+	{
+		const float x_offset = m_column_x[col];
+		y_offset += effects[PlayerOptions::EFFECT_ATTENUATE_Y] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing) * (x_offset/arrow_spacing);
+	}
 	y_offset+= y_adjust;
 	if(accels[PlayerOptions::ACCEL_BOOMERANG] != 0.f)
 	{
@@ -554,6 +559,11 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	if(effects[PlayerOptions::EFFECT_PARABOLA_X] != 0.f)
 	{
 		pixel_offset_from_center += effects[PlayerOptions::EFFECT_PARABOLA_X] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing);
+	}
+	if(effects[PlayerOptions::EFFECT_ATTENUATE_X] != 0.f )
+	{
+		const float x_offset = m_column_x[col];
+		pixel_offset_from_center += effects[PlayerOptions::EFFECT_ATTENUATE_X] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing) * (x_offset/arrow_spacing);
 	}
 	if(effects[PlayerOptions::EFFECT_DIGITAL] != 0.f)
 	{
@@ -661,6 +671,11 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 	{
 		zpos += effects[PlayerOptions::EFFECT_PARABOLA_Z] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing);
 	}
+	if(effects[PlayerOptions::EFFECT_ATTENUATE_Z] != 0.f)
+	{
+		const float x_offset = m_column_x[col];
+		zpos += effects[PlayerOptions::EFFECT_ATTENUATE_Z] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing) * (x_offset/arrow_spacing);
+	}
 	if(effects[PlayerOptions::EFFECT_DRUNK_Z] != 0.f)
 	{
 		zpos += effects[PlayerOptions::EFFECT_DRUNK_Z] * 
@@ -730,13 +745,21 @@ float ArrowDefects::get_rotation_y(float y_offset)
 float ArrowDefects::get_zoom(size_t col, float y_offset)
 {
 	float zoom = 1.f;
-	
-	if(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT] !=0 && y_offset >= 0 )
-		zoom *= 1/(1+(y_offset*(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT]/100.0f)));
+	if( m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_INNER] != 0 || m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OUTER] != 0 )
+	{
+		float sine = Rage::FastSin(((y_offset+(100.0f*(m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OFFSET])))/
+			(0.4f*(arrow_spacing+(m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_PERIOD]*arrow_spacing)))));
 		
-	if(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR] !=0 && y_offset >= 0 )
+		zoom *= (sine*(m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OUTER]*0.5f))+get_pulse_inner();
+	}
+	if(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT] != 0.f && y_offset >= 0.f )
+	{
+		zoom *= 1/(1+(y_offset*(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT]/100.0f)));
+	}
+	if(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR] != 0.f && y_offset >= 0.f )
+	{
 		zoom += y_offset*(0.5f*m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR]/arrow_spacing);
-	
+	}
 	float tiny_percent= m_options->m_fEffects[PlayerOptions::EFFECT_TINY];
 	if(tiny_percent != 0.f)
 	{
@@ -744,6 +767,20 @@ float ArrowDefects::get_zoom(size_t col, float y_offset)
 		zoom *= tiny_percent;
 	}
 	return zoom;
+}
+
+float ArrowDefects::get_pulse_inner()
+{
+	float pulse_inner = 1.0f;
+	if( m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_INNER] != 0 || m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OUTER] != 0 )
+	{
+		pulse_inner = ((m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_INNER]*0.5f)+1);
+		if (pulse_inner == 0.f)
+		{
+			pulse_inner = 0.01f;
+		}
+	}
+	return pulse_inner;
 }
 
 void ArrowDefects::get_glow_alpha(size_t col, float y_offset,

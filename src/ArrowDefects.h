@@ -62,6 +62,7 @@ private:
 	float get_center_line();
 	float get_hidden_sudden();
 	float get_notefield_height();
+	float get_pulse_inner();
 
 	PlayerOptions const* m_options;
 	TimingData const* m_timing_data; // For speed and scroll segments.
