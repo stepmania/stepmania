@@ -7,6 +7,7 @@ ________________________________________________________________________________
 ----------
 * [General] Backport custom song support. [kyzentun]
 * [ScreenDebugOverlay] Entry in the debug menu that reloads preferences. [kyzentun]
+* [Modifiers] Added nITG's various column specific & other misc modifiers [mrthatkid]
 
 2017/05/27
 ----------
@@ -23,7 +24,7 @@ ________________________________________________________________________________
 2017/05/24
 ----------
 * [EzSockets] EzSockets: Don't leak WinAPI everywhere this gets included. Fixes #1455 [shakesoda]
-* [RageDisplay] Removed explicitly giving up CPU time for other threds under Windows (STOP ARGUING ABOUT THIS) [shakesoda]
+* [RageDisplay] Removed explicitly giving up CPU time for other threads under Windows (STOP ARGUING ABOUT THIS) [shakesoda]
 * [GraphicsWindow] Call DwmFlush on VSync (might help with stuttering). [shakesoda]
 
 2017/05/23
@@ -73,7 +74,7 @@ ________________________________________________________________________________
 
 2016/11/29
 ----------
-* [Actor] Backport commit cd5df01 from master branch [mrthatkid]
+* [Actor] Backport 'Don't use static temp state for actor effects' from master branch [mrthatkid]
 
 2016/11/24
 ----------

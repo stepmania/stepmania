@@ -78,7 +78,11 @@ public:
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
 		m_fModTimerMult(0), m_SpeedfModTimerMult(1.0f),
 		m_fModTimerOffset(0), m_SpeedfModTimerOffset(1.0f),
+		m_fDrawSize(0), m_SpeedfDrawSize(1.0f),
+		m_fDrawSizeBack(0), m_SpeedfDrawSizeBack(1.0f),
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
+		m_bStealthType(false), m_bStealthPastReceptors(false),
+		m_bDizzyHolds(false), m_bZBuffer(false),
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
 		m_sNoteSkin = "";
@@ -90,6 +94,14 @@ public:
 		ZERO( m_fMovesX );	ONE( m_SpeedfMovesX );
 		ZERO( m_fMovesY );	ONE( m_SpeedfMovesY );
 		ZERO( m_fMovesZ );	ONE( m_SpeedfMovesZ );
+		ZERO( m_fConfusionX );	ONE( m_SpeedfConfusionX );
+		ZERO( m_fConfusionY );	ONE( m_SpeedfConfusionY );
+		ZERO( m_fConfusionZ );	ONE( m_SpeedfConfusionZ );
+		ZERO( m_fDarks );	ONE( m_SpeedfDarks );
+		ZERO( m_fStealth );	ONE( m_SpeedfStealth );
+		ZERO( m_fTiny );	ONE( m_SpeedfTiny );
+		ZERO( m_fBumpy );	ONE( m_SpeedfBumpy );
+		ZERO( m_fReverse );	ONE( m_SpeedfReverse );
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
@@ -138,12 +150,27 @@ public:
 		EFFECT_DRUNK_Z_OFFSET,
 		EFFECT_DRUNK_Z_PERIOD,
 		EFFECT_DIZZY,
+		EFFECT_ATTENUATE_X,
+		EFFECT_ATTENUATE_Y,
+		EFFECT_ATTENUATE_Z,
+		EFFECT_SHRINK_TO_MULT,
+		EFFECT_SHRINK_TO_LINEAR,
+		EFFECT_PULSE_INNER,
+		EFFECT_PULSE_OUTER,
+		EFFECT_PULSE_OFFSET,
+		EFFECT_PULSE_PERIOD,
 		EFFECT_CONFUSION,
 		EFFECT_CONFUSION_OFFSET,
 		EFFECT_CONFUSION_X,
 		EFFECT_CONFUSION_X_OFFSET,
 		EFFECT_CONFUSION_Y,
 		EFFECT_CONFUSION_Y_OFFSET,
+		EFFECT_BOUNCE,
+		EFFECT_BOUNCE_PERIOD,
+		EFFECT_BOUNCE_OFFSET,
+		EFFECT_BOUNCE_Z,
+		EFFECT_BOUNCE_Z_PERIOD,
+		EFFECT_BOUNCE_Z_OFFSET,
 		EFFECT_MINI,
 		EFFECT_TINY,
 		EFFECT_FLIP,
@@ -300,14 +327,28 @@ public:
 	float	m_fRandomSpeed,			m_SpeedfRandomSpeed;
 	float	m_fModTimerMult,		m_SpeedfModTimerMult;
 	float	m_fModTimerOffset,		m_SpeedfModTimerOffset;
+	float	m_fDrawSize,			m_SpeedfDrawSize;
+	float	m_fDrawSizeBack,		m_SpeedfDrawSizeBack;
 	/* The maximum column number is 16.*/
 	float	m_fMovesX[16],			m_SpeedfMovesX[16];
 	float	m_fMovesY[16],			m_SpeedfMovesY[16];
 	float	m_fMovesZ[16],			m_SpeedfMovesZ[16];
+	float	m_fConfusionX[16],		m_SpeedfConfusionX[16];
+	float	m_fConfusionY[16],		m_SpeedfConfusionY[16];
+	float	m_fConfusionZ[16],		m_SpeedfConfusionZ[16];
+	float	m_fDarks[16],			m_SpeedfDarks[16];
+	float	m_fStealth[16],			m_SpeedfStealth[16];
+	float	m_fTiny[16],			m_SpeedfTiny[16];
+	float	m_fBumpy[16],			m_SpeedfBumpy[16];
+	float	m_fReverse[16],			m_SpeedfReverse[16];
 
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bMuteOnError;
+	bool		m_bStealthType;
+	bool		m_bStealthPastReceptors;
+	bool		m_bDizzyHolds;
+	bool		m_bZBuffer;
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
 	TapNoteScore m_MinTNSToHideNotes;
