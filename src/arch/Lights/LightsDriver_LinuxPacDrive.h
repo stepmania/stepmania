@@ -2,7 +2,6 @@
 #define LIGHTSDRIVER_LINUXPACDRIVE_H
 
 #include "LightsDriver.h"
-//#include "LightsMapper.h"
 #include "io/PacDrive.h"
 
 #define BIT(i) (1<<(i))
@@ -15,8 +14,7 @@ public:
 
 	void Set( const LightsState *ls );
 private:
-/*	LightsMapping m_LightsMappings;
-	void SetLightsMappings();*/
+
 
 	PacDrive Board;
 	bool m_bHasDevice;
