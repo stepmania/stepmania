@@ -535,8 +535,8 @@ void NoteFieldColumn::calc_reverse_shift()
 	{
 		visible_scale= min_visible_scale;
 	}
-	first_y_offset_visible= -m_pixels_visible_before_beat / visible_scale;
-	last_y_offset_visible= m_pixels_visible_after_beat / visible_scale;
+	first_y_offset_visible= -(m_pixels_visible_before_beat * m_defective_mods->get_drawsizeback()) / visible_scale;
+	last_y_offset_visible= (m_pixels_visible_after_beat * m_defective_mods->get_drawsize()) / visible_scale;
 }
 
 double NoteFieldColumn::apply_reverse_shift(double y_offset)

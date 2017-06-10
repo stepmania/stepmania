@@ -38,6 +38,8 @@ struct ArrowDefects
 	float get_tilt();
 	float get_mini();
 	float get_skew();
+	float get_drawsize();
+	float get_drawsizeback();
 
 	float get_column_x(size_t col);
 
@@ -50,8 +52,8 @@ private:
 	float get_move_y(size_t col);
 	float get_move_z(size_t col);
 	float get_rotation_y(float y_offset);
-	float get_zoom();
-	float get_percent_visible(float y_offset);
+	float get_zoom(size_t col, float y_offset);
+	float get_percent_visible(float y_pos_without_reverse, size_t col, float y_offset);
 	void get_glow_alpha(size_t col, float y_offset, Rage::transform& trans);
 	float calculate_tornado_offset_from_magnitude(int dimension, int col_id,
 		float magnitude, float effect_offset, float period, float y_offset);

@@ -73,6 +73,16 @@ float ArrowDefects::get_notefield_height()
 	return SCREEN_HEIGHT + fabsf(m_options->m_fTilt)*200;
 }
 
+float ArrowDefects::get_drawsize()
+{
+	return (1.0 + m_options->m_fDrawSize);
+}
+
+float ArrowDefects::get_drawsizeback()
+{
+	return (1.0 + m_options->m_fDrawSizeBack);
+}
+
 float ArrowDefects::get_time()
 {
 	float mult = 1.f + m_options->m_fModTimerMult;
@@ -717,22 +727,30 @@ float ArrowDefects::get_rotation_y(float y_offset)
 	return 0.f;
 }
 
-float ArrowDefects::get_zoom()
+float ArrowDefects::get_zoom(size_t col, float y_offset)
 {
+	float zoom = 1.f;
+	
+	if(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT] !=0 && y_offset >= 0 )
+		zoom *= 1/(1+(y_offset*(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT]/100.0f)));
+		
+	if(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR] !=0 && y_offset >= 0 )
+		zoom += y_offset*(0.5f*m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR]/arrow_spacing);
+	
 	float tiny_percent= m_options->m_fEffects[PlayerOptions::EFFECT_TINY];
 	if(tiny_percent != 0.f)
 	{
 		tiny_percent= std::pow(.5f, tiny_percent);
-		return tiny_percent;
+		zoom *= tiny_percent;
 	}
-	return 1.f;
+	return zoom;
 }
 
 void ArrowDefects::get_glow_alpha(size_t col, float y_offset,
 	Rage::transform& trans)
 {
 	float offset_with_tipsy= get_y_pos(col, y_offset);
-	float percent_visible= get_percent_visible(offset_with_tipsy);
+	float percent_visible= get_percent_visible(offset_with_tipsy, col, y_offset);
 	float const dist_from_half= fabsf(percent_visible - .5f);
 	// Logic that looked at fDrawDistanceBeforeTargetsPixels removed because
 	// when I put a break point in, it never triggered. -Kyz
@@ -752,7 +770,7 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 	trans.rot.x= 0.f;
 	trans.rot.y= get_rotation_y(y_offset);
 	trans.rot.z= 0.f;
-	trans.zoom.x= trans.zoom.y= trans.zoom.z= get_zoom();
+	trans.zoom.x= trans.zoom.y= trans.zoom.z= get_zoom(col, y_offset);
 	if(effects[PlayerOptions::EFFECT_ROLL] != 0.f)
 	{
 		trans.rot.x= Rage::DegreesToRadians(
@@ -810,7 +828,7 @@ void ArrowDefects::hold_render_transform(float y_offset, size_t col,
 	trans.rot.x= 0.f;
 	trans.rot.y= get_rotation_y(y_offset);
 	trans.rot.z= 0.f;
-	trans.zoom.x= trans.zoom.y= trans.zoom.z= get_zoom();
+	trans.zoom.x= trans.zoom.y= trans.zoom.z= get_zoom(col, y_offset);
 	get_glow_alpha(col, y_offset, trans);
 }
 
@@ -828,10 +846,17 @@ float ArrowDefects:: get_hidden_sudden()
 		m_options->m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN];
 }
 
-float ArrowDefects::get_percent_visible(float y_offset)
+float ArrowDefects::get_percent_visible(float y_pos_without_reverse, size_t col, float y_offset)
 {
-	float dist_from_center_line= y_offset - get_center_line();
-	if(y_offset < 0)
+	float dist_from_center_line= y_pos_without_reverse - get_center_line();
+	
+	float y_pos;
+	if( m_options->m_bStealthType == true )
+		y_pos = y_offset;
+	else
+		y_pos = y_pos_without_reverse;
+	
+	if(y_pos < 0 && m_options->m_bStealthPastReceptors == false)
 	{
 		return 1.f;
 	}
@@ -839,7 +864,7 @@ float ArrowDefects::get_percent_visible(float y_offset)
 	float visible_adjust= 0;
 	if(appearances[PlayerOptions::APPEARANCE_HIDDEN] != 0.f)
 	{
-		float hidden_visible_adjust= Rage::scale(y_offset, m_hidden_start_line,
+		float hidden_visible_adjust= Rage::scale(y_pos, m_hidden_start_line,
 			m_hidden_end_line, 0.f, -1.f);
 		hidden_visible_adjust= Rage::clamp(hidden_visible_adjust, -1.f, 0.f);
 		visible_adjust+= appearances[PlayerOptions::APPEARANCE_HIDDEN] *
@@ -847,7 +872,7 @@ float ArrowDefects::get_percent_visible(float y_offset)
 	}
 	if(appearances[PlayerOptions::APPEARANCE_SUDDEN] != 0.f)
 	{
-		float sudden_visible_adjust= Rage::scale(y_offset, m_sudden_start_line,
+		float sudden_visible_adjust= Rage::scale(y_pos, m_sudden_start_line,
 			m_sudden_end_line, -1.f, 0.f);
 		sudden_visible_adjust= Rage::clamp(sudden_visible_adjust, -1.f, 0.f);
 		visible_adjust+= appearances[PlayerOptions::APPEARANCE_SUDDEN] *
