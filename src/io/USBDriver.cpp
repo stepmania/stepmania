@@ -17,14 +17,12 @@ USBDriver::~USBDriver()
 bool USBDriver::OpenInternal( uint16_t iVendorID, uint16_t iProductID )
 {
 	Close();
-
 	/* see if this device actually exists before trying to open it */
 	if( !USBDriver_Impl::DeviceExists(iVendorID, iProductID) )
 	{
 		LOG->Warn( "USBDriver::OpenInternal(0x%04x, 0x%04x): device does not exist\n", iVendorID, iProductID );
 		return false;
 	}
-
 	m_pDriver = USBDriver_Impl::Create();
 
 	/* if !m_pDriver, this build cannot support USB drivers. */
