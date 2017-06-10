@@ -1,26 +1,28 @@
-#ifndef LIGHTSDRIVER_PACDRIVE_H
-#define LIGHTSDRIVER_PACDRIVE_H
+#ifndef LIGHTSDRIVER_LINUXPACDRIVE_H
+#define LIGHTSDRIVER_LINUXPACDRIVE_H
 
 #include "LightsDriver.h"
-#include "LightsMapper.h"
+//#include "LightsMapper.h"
 #include "io/PacDrive.h"
 
-class LightsDriver_PacDrive: public LightsDriver
+#define BIT(i) (1<<(i))
+
+class LightsDriver_LinuxPacDrive: public LightsDriver
 {
 public:
-	LightsDriver_PacDrive();
-	~LightsDriver_PacDrive();
+	LightsDriver_LinuxPacDrive();
+	~LightsDriver_LinuxPacDrive();
 
 	void Set( const LightsState *ls );
 private:
-	LightsMapping m_LightsMappings;
-	void SetLightsMappings();
+/*	LightsMapping m_LightsMappings;
+	void SetLightsMappings();*/
 
 	PacDrive Board;
 	bool m_bHasDevice;
 };
 
-#endif // LIGHTSDRIVER_PACDRIVE_H
+#endif // LIGHTSDRIVER_LINUXPACDRIVE_H
 
 /*
  * Copyright (c) 2008 BoXoRRoXoRs

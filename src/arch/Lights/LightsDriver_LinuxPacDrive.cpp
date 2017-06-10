@@ -3,13 +3,13 @@
 
 #include "global.h"
 #include "RageLog.h"
-#include "LightsMapper.h"
+//#include "LightsMapper.h"
 #include "io/PacDrive.h"
 #include "LightsDriver_LinuxPacDrive.h"
 
-REGISTER_LIGHTS_DRIVER( PacDrive );
+REGISTER_LIGHTS_DRIVER_CLASS( LinuxPacDrive );
 
-LightsDriver_PacDrive::LightsDriver_PacDrive()
+LightsDriver_LinuxPacDrive::LightsDriver_LinuxPacDrive()
 {
 	m_bHasDevice = Board.Open();
 
@@ -20,13 +20,13 @@ LightsDriver_PacDrive::LightsDriver_PacDrive()
 	}
 
 	// load any alternate lights mappings
-	SetLightsMappings();
+	//SetLightsMappings();
 
 	// clear all lights
 	Board.Write( 0 );
 }
 
-void LightsDriver_PacDrive::SetLightsMappings()
+/*void LightsDriver_PacDrive::SetLightsMappings()
 {
 	uint32_t iCabinetLights[NUM_CABINET_LIGHTS] =
 	{
@@ -48,9 +48,9 @@ void LightsDriver_PacDrive::SetLightsMappings()
 	m_LightsMappings.SetCustomGameLights( iGameLights );
 
 	LightsMapper::LoadMappings( "PacDrive", m_LightsMappings );
-}
+}*/
 
-LightsDriver_PacDrive::~LightsDriver_PacDrive()
+LightsDriver_LinuxPacDrive::~LightsDriver_LinuxPacDrive()
 {
 	if( !m_bHasDevice )
 		return;
@@ -60,14 +60,15 @@ LightsDriver_PacDrive::~LightsDriver_PacDrive()
 	Board.Close();
 }
 
-void LightsDriver_PacDrive::Set( const LightsState *ls )
+void LightsDriver_LinuxPacDrive::Set( const LightsState *ls )
 {
 	if( !m_bHasDevice )
 		return;
 
-	uint16_t iWriteData = 0;
+	//uint16_t iWriteData = 0;
+	uint16_t outb = 0;
 
-	// Lights 1 - 8 are used for the cabinet lights
+/*	// Lights 1 - 8 are used for the cabinet lights
 	FOREACH_CabinetLight( cl )
 		if( ls->m_bCabinetLights[cl] )
 			iWriteData |= m_LightsMappings.m_iCabinetLights[cl];
@@ -77,11 +78,28 @@ void LightsDriver_PacDrive::Set( const LightsState *ls )
 	FOREACH_GameController( gc )
 		FOREACH_GameButton( gb )
 			if( ls->m_bGameButtonLights[gc][gb] )
-				iWriteData |= m_LightsMappings.m_iGameLights[gc][gb];
+				iWriteData |= m_LightsMappings.m_iGameLights[gc][gb]; */
+				
+	if (ls->m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]) outb|=BIT(0);
+	if (ls->m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT]) outb|=BIT(1);
+	if (ls->m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]) outb|=BIT(2);
+	if (ls->m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT]) outb|=BIT(3);
+	if (ls->m_bCabinetLights[LIGHT_BASS_LEFT] || ls->m_bCabinetLights[LIGHT_BASS_RIGHT]) outb|=BIT(4);
+	if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_LEFT]) outb|=BIT(5);
+	if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_RIGHT]) outb|=BIT(6);
+	if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_UP]) outb|=BIT(7);
+	if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_DOWN]) outb|=BIT(8);
+	if (ls->m_bGameButtonLights[GameController_1][GAME_BUTTON_START]) outb|=BIT(9);
+	if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_LEFT]) outb|=BIT(10);
+	if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_RIGHT]) outb|=BIT(11);
+	if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_UP]) outb|=BIT(12);
+	if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_DOWN]) outb|=BIT(13);
+	if (ls->m_bGameButtonLights[GameController_2][GAME_BUTTON_START]) outb|=BIT(14);
 
 
 	// write the data - if it fails, stop updating
-	if( !Board.Write(iWriteData) )
+	//if( !Board.Write(iWriteData) )
+	if( !Board.Write(outb) )
 	{
 		LOG->Warn( "Lost connection with PacDrive." );
 		m_bHasDevice = false;

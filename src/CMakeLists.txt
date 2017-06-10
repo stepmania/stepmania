@@ -367,6 +367,7 @@ list(APPEND SMDATA_LINK_LIB
   "glew"
   "jpeg"
   "rage"
+  "usb"
 )
 include(../extern/CMakeProject-mmmagic.cmake)
 
