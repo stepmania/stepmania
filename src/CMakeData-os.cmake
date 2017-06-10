@@ -97,6 +97,9 @@ else()
       "archutils/Unix/SignalHandler.cpp"
       "archutils/Unix/SpecialDirs.cpp"
       "archutils/Unix/StackCheck.cpp"
+      "io/USBDriver.cpp"
+      "arch/USB/USBDriver_Impl.cpp"
+      "arch/USB/USBDriver_Impl_Libusb.cpp"
       )
     list(APPEND SMDATA_OS_HPP
       "archutils/Unix/arch_setup.h"
@@ -107,6 +110,10 @@ else()
       "archutils/Unix/SignalHandler.h"
       "archutils/Unix/SpecialDirs.h"
       "archutils/Common/gcc_byte_swaps.h"
+      "io/USBDriver.h"
+      "arch/USB/USBDriver_Impl.h"
+      "arch/USB/USBDriver_Impl_Libusb.h"
+      "arch/USB/USBDriver_Macros.h"
     )
     if(X11_FOUND)
       list(APPEND SMDATA_OS_SRC

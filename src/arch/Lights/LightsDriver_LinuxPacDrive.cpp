@@ -5,7 +5,7 @@
 #include "RageLog.h"
 #include "LightsMapper.h"
 #include "io/PacDrive.h"
-#include "LightsDriver_PacDrive.h"
+#include "LightsDriver_LinuxPacDrive.h"
 
 REGISTER_LIGHTS_DRIVER( PacDrive );
 
