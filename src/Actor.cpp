@@ -33,6 +33,8 @@ public:
 };
 REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor );
 
+bool Actor::g_oitg_zoom_mode= false;
+
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 float Actor::g_fCurrentBGMTimeNoOffset = 0, Actor::g_fCurrentBGMBeatNoOffset = 0;
 vector<float> Actor::g_vfCurrentBGMBeatPlayer(NUM_PlayerNumber, 0);
@@ -2110,7 +2112,24 @@ public:
 	}
 };
 
-LUA_REGISTER_INSTANCED_BASE_CLASS( Actor )
+LUA_REGISTER_INSTANCED_BASE_CLASS( Actor );
+
+int LuaFunc_get_oitg_zoom_mode(lua_State* L);
+int LuaFunc_get_oitg_zoom_mode(lua_State* L)
+{
+	lua_pushboolean(L, Actor::GetOITGZoomMode());
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(get_oitg_zoom_mode);
+
+int LuaFunc_set_oitg_zoom_mode(lua_State* L);
+int LuaFunc_set_oitg_zoom_mode(lua_State* L)
+{
+	Actor::SetOITGZoomMode(BArg(1));
+	return 0;
+}
+LUAFUNC_REGISTER_COMMON(set_oitg_zoom_mode);
+
 // lua end
 
 

@@ -1022,6 +1022,9 @@ void ScreenGameplay::InitSongQueues()
 
 ScreenGameplay::~ScreenGameplay()
 {
+	// Turn off oitg zoom mode because the side effect should not persist after
+	// the gimmick simfile that turned it on is over. -Kyz
+	Actor::SetOITGZoomMode(false);
 	GAMESTATE->m_AdjustTokensBySongCostForFinalStageCheck= true;
 	if( this->IsFirstUpdate() )
 	{

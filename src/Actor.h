@@ -392,14 +392,40 @@ public:
 	 * @brief Retrieve the zoom factor for the z coordinate of the Actor.
 	 * @return the zoom factor for the z coordinate of the Actor. */
 	float GetZoomZ() const				{ return DestTweenState().scale.z; }
+
+	// OITG bug:  Actor::SetZoom only sets X and Y.  When mini is applied to
+	// the notefield with SetZoom, it does not affect the range of bumpy.
+	// m_oitg_zoom_mode provides compatibility with that bug.  Only used in
+	// defective mode. -Kyz
+	// I tried having it be a member of Player and only affect the way Player
+	// applies zoom to the notefield, but that doesn't work when the gimmick
+	// simfile uses zoom on the screen.  So making it a global flag that
+	// affects all actors seems to be the only option. -Kyz
+	// This explanation and variable are intentionally here next to SetZoom to
+	// make them easy to find when reading SetZoom.
+	private:
+	static bool g_oitg_zoom_mode;
+	public:
+	static void SetOITGZoomMode(bool mode)
+	{
+		g_oitg_zoom_mode= mode;
+	}
+	static bool GetOITGZoomMode()
+	{
+		return g_oitg_zoom_mode;
+	}
+
 	/**
 	 * @brief Set the zoom factor for all dimensions of the Actor.
 	 * @param zoom the zoom factor for all dimensions. */
 	void  SetZoom( float zoom )
 	{ 
-		DestTweenState().scale.x = zoom; 
-		DestTweenState().scale.y = zoom; 
-		DestTweenState().scale.z = zoom;
+		DestTweenState().scale.x = zoom;
+		DestTweenState().scale.y = zoom;
+		if(!g_oitg_zoom_mode)
+		{
+			DestTweenState().scale.z = zoom;
+		}
 	}
 	/**
 	 * @brief Set the zoom factor for the x dimension of the Actor.
