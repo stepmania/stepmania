@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageLog.h"
 #include "USBDriver_Impl_Libusb.h"
+#include <cstring>
 #include <cerrno>
 
 extern "C" {
