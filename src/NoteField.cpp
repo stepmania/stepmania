@@ -2280,6 +2280,7 @@ void NoteField::clear_steps()
 			child->clear_steps();
 		}
 	}
+	m_steps_type= StepsType_Invalid;
 }
 
 void NoteField::set_skin(std::string const& skin_name, LuaReference& skin_params)
