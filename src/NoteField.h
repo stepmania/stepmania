@@ -43,10 +43,37 @@ enum FieldLayerTransformType
 std::string const FieldLayerTransformTypeToString(FieldLayerTransformType fmt);
 LuaDeclareType(FieldLayerTransformType);
 
-struct FieldLayerRenderInfo
+struct FieldChild : ActorFrame
 {
-	FieldLayerFadeType fade_type;
-	FieldLayerTransformType transform_type;
+	FieldChild(Actor* act, FieldLayerFadeType ftype,
+		FieldLayerTransformType ttype, bool from_noteskin);
+	void apply_render_info(Rage::transform const& trans,
+		double receptor_alpha, double receptor_glow,
+		double explosion_alpha, double explosion_glow,
+		double beat, double second,
+		ModifiableValue& note_alpha, ModifiableValue& note_glow);
+	Actor* m_child;
+	FieldLayerFadeType m_fade_type;
+	FieldLayerTransformType m_transform_type;
+	bool m_added_by_noteskin;
+};
+
+enum field_draw_entry_meaning
+{
+	fdem_holds,
+	fdem_lifts,
+	fdem_taps,
+	fdem_beat_bars,
+	fdem_selection,
+	fdem_layer
+};
+
+struct field_draw_entry
+{
+	Actor* child;
+	int column;
+	int draw_order;
+	field_draw_entry_meaning meaning;
 };
 
 struct NoteFieldColumn : ActorFrame
@@ -157,7 +184,7 @@ struct NoteFieldColumn : ActorFrame
 	float get_selection_glow();
 
 	void build_render_lists();
-	void draw_child(int child);
+	void draw_thing(field_draw_entry* entry);
 	Rage::transform const& get_head_trans() { return head_transform; }
 
 	void pass_message_to_heads(Message& msg);
@@ -172,7 +199,6 @@ struct NoteFieldColumn : ActorFrame
 	void update_upcoming(double beat, double second);
 	void update_active_hold(TapNote const& tap);
 	virtual void DrawPrimitives();
-	void position_actor_at_column_head(Actor* act, FieldLayerRenderInfo& info);
 
 	virtual void AddChild(Actor* act);
 	virtual void RemoveChild(Actor* act);
@@ -248,8 +274,10 @@ struct NoteFieldColumn : ActorFrame
 private:
 	void did_tap_note_internal(TapNoteScore tns, bool bright);
 	void did_hold_note_internal(HoldNoteScore hns, bool bright);
-	void draw_child_internal();
+	void draw_thing_internal();
 	void add_renderable_to_lists(render_note& renderable);
+
+	void AddChildInternal(Actor* act, bool from_noteskin);
 
 	double m_curr_beat;
 	double m_curr_displayed_beat;
@@ -263,11 +291,10 @@ private:
 	NoteSkinColumn* m_newskin;
 	std::vector<Rage::Color>* m_player_colors;
 	NoteField* m_field;
-	std::vector<FieldLayerRenderInfo> m_layer_render_info;
-
-	// Child actors added by the noteskin need to be tracked so they can be
-	// removed when the noteskin changes.
-	std::unordered_set<Actor*> m_actors_added_by_noteskin;
+	// Bypass ActorFrame's normal subactors structure because the children
+	// of a column need to be wrapped and have render info attached, and be
+	// marked if they came from the noteskin.
+	std::list<FieldChild> m_layers;
 
 	ArrowDefects* m_defective_mods;
 	bool m_in_defective_mode;
@@ -292,7 +319,7 @@ private:
 	std::list<render_note> render_holds;
 	std::list<render_note> render_lifts;
 	std::list<render_note> render_taps;
-	int curr_render_child;
+	field_draw_entry* curr_draw_entry;
 	// Calculating the effects of reverse and center for every note is costly.
 	// Only do it once per frame and store the result.
 	double reverse_shift;
@@ -331,8 +358,6 @@ struct NoteField : ActorFrame
 	void draw_board();
 	void draw_up_to_draw_order(int order);
 	virtual void DrawPrimitives();
-	void position_actor_at_column_head(Actor* act, FieldLayerRenderInfo& info,
-		size_t col);
 	double get_receptor_y();
 	bool is_in_reverse();
 
@@ -437,15 +462,9 @@ struct NoteField : ActorFrame
 	// Only draw the text from one bg change layer. -Kyz
 	BackgroundLayer m_visible_bg_change_layer;
 
-	struct field_draw_entry
-	{
-		int column;
-		int child;
-		int draw_order;
-	};
-	void add_draw_entry(int column, int child, int draw_order);
-	void remove_draw_entry(int column, int child);
-	void change_draw_entry(int column, int child, int new_draw_order);
+	void add_draw_entry(field_draw_entry const& entry);
+	void remove_draw_entry(int column, Actor* child);
+	void change_draw_entry(int column, Actor* child, int new_draw_order);
 	void clear_column_draw_entries();
 	double update_z_bias();
 
@@ -492,7 +511,10 @@ private:
 	NoteSkinLoader m_skin_walker;
 	LuaReference m_skin_parameters;
 	std::vector<Rage::Color> m_player_colors;
-	std::vector<FieldLayerRenderInfo> m_layer_render_info;
+	// Bypass ActorFrame's normal subactors structure because the children
+	// of a column need to be wrapped and have render info attached, and be
+	// marked if they came from the noteskin.
+	std::list<FieldChild> m_layers;
 
 	Sprite m_beat_bars;
 	BitmapText m_field_text;

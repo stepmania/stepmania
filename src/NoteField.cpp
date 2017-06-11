@@ -30,11 +30,6 @@ static const double z_bias_per_thing= .01;
 static const double lift_fade_dist_recip= 1.0 / 64.0;
 static const int field_layer_column_index= -1;
 static const int beat_bars_column_index= -2;
-static const int holds_child_index= -1;
-static const int lifts_child_index= -2;
-static const int taps_child_index= -3;
-static const int beat_bars_child_index= -4;
-static const int selection_child_index= -5;
 static const int draw_order_types= 4;
 static const int non_board_draw_order= 0;
 static const int beat_bars_draw_order= 0;
@@ -66,48 +61,57 @@ REGISTER_ACTOR_CLASS(NoteFieldColumn);
 
 #define HOLD_COUNTS_AS_ACTIVE(tn) (tn.HoldResult.bActive && tn.HoldResult.fLife > 0.0f)
 
-static void apply_render_info_to_layer(Actor* layer,
-	FieldLayerRenderInfo& info, Rage::transform const& trans,
+FieldChild::FieldChild(Actor* act, FieldLayerFadeType ftype,
+	FieldLayerTransformType ttype, bool from_noteskin)
+	:m_child(act), m_fade_type(ftype), m_transform_type(ttype),
+	 m_added_by_noteskin(from_noteskin)
+{
+	WrapAroundChild(act);
+	act->PlayCommand("On");
+}
+
+void FieldChild::apply_render_info(Rage::transform const& trans,
 	double receptor_alpha, double receptor_glow,
-	double explosion_alpha, double explosion_glow, double beat, double second,
+	double explosion_alpha, double explosion_glow,
+	double beat, double second,
 	ModifiableValue& note_alpha, ModifiableValue& note_glow)
 {
-	switch(info.fade_type)
+	switch(m_fade_type)
 	{
 		case FLFT_Receptor:
-			layer->SetDiffuseAlpha(receptor_alpha);
-			layer->SetGlowAlpha(receptor_glow);
+			SetDiffuseAlpha(receptor_alpha);
+			SetGlowAlpha(receptor_glow);
 			break;
 		case FLFT_Explosion:
-			layer->SetDiffuseAlpha(explosion_alpha);
-			layer->SetGlowAlpha(explosion_glow);
+			SetDiffuseAlpha(explosion_alpha);
+			SetGlowAlpha(explosion_glow);
 			break;
 		case FLFT_Note:
 			{
 				mod_val_inputs input(beat, second);
 				double alpha= note_alpha.evaluate(input);
 				double glow= note_glow.evaluate(input);
-				layer->SetDiffuseAlpha(alpha);
-				layer->SetGlowAlpha(glow);
+				SetDiffuseAlpha(alpha);
+				SetGlowAlpha(glow);
 			}
 			break;
 		default:
 			break;
 	}
-	switch(info.transform_type)
+	switch(m_transform_type)
 	{
 		case FLTT_Full:
-			layer->set_transform(trans);
+			set_transform(trans);
 			break;
 		case FLTT_PosOnly:
-			layer->set_transform_pos(trans);
+			set_transform_pos(trans);
 			break;
 		default:
 			break;
 	}
 }
 
-bool operator<(NoteField::field_draw_entry const& rhs, NoteField::field_draw_entry const& lhs)
+bool operator<(field_draw_entry const& rhs, field_draw_entry const& lhs)
 {
 	return rhs.draw_order < lhs.draw_order;
 }
@@ -158,14 +162,16 @@ NoteFieldColumn::~NoteFieldColumn()
 
 void NoteFieldColumn::AddChild(Actor* act)
 {
-	// The actors have to be wrapped inside of frames so that mod transforms
-	// can be applied without stomping the rotation the noteskin supplies.
-	ActorFrame* frame= new ActorFrame;
-	frame->WrapAroundChild(act);
-	ActorFrame::AddChild(frame);
-	m_layer_render_info.push_back({FLFT_None, FLTT_Full});
-	act->PlayCommand("On");
-	m_field->add_draw_entry(static_cast<int>(m_column), GetNumChildren()-1, act->GetDrawOrder());
+	AddChildInternal(act, false);
+}
+
+void NoteFieldColumn::AddChildInternal(Actor* act, bool from_noteskin)
+{
+	// The actors have to be wrapped inside of frames so that modifiers
+	// can be applied without stomping what the layer actor does.
+	m_layers.emplace_back(act, FLFT_None, FLTT_Full, from_noteskin);
+	FieldChild* new_child= &m_layers.back();
+	m_field->add_draw_entry({new_child, static_cast<int>(m_column), act->GetDrawOrder(), fdem_layer});
 	if(m_newskin != nullptr)
 	{
 		if(act->HasCommand("WidthSet"))
@@ -173,28 +179,32 @@ void NoteFieldColumn::AddChild(Actor* act)
 			act->HandleMessage(create_width_message());
 		}
 	}
+	new_child->SetParent(this);
 }
 
 void NoteFieldColumn::RemoveChild(Actor* act)
 {
-	size_t index= FindChildID(act);
-	if(index < m_SubActors.size())
+	for(auto iter= m_layers.begin(); iter != m_layers.end(); ++iter)
 	{
-		m_field->remove_draw_entry(m_column, index);
-		m_layer_render_info.erase(m_layer_render_info.begin() + index);
+		if(iter->m_child == act)
+		{
+			m_field->remove_draw_entry(static_cast<int>(m_column), &*iter);
+			m_layers.erase(iter);
+			return;
+		}
 	}
-	ActorFrame::RemoveChild(act);
 }
 
 void NoteFieldColumn::ChildChangedDrawOrder(Actor* child)
 {
-	size_t index= FindChildID(child);
-	if(index < m_SubActors.size())
+	for(auto iter= m_layers.begin(); iter != m_layers.end(); ++iter)
 	{
-		m_field->change_draw_entry(static_cast<int>(m_column),
-			static_cast<int>(index), child->GetDrawOrder());
+		if(iter->m_child == child)
+		{
+			m_field->change_draw_entry(static_cast<int>(m_column), &*iter,
+				child->GetDrawOrder());
+		}
 	}
-	ActorFrame::ChildChangedDrawOrder(child);
 }
 
 void NoteFieldColumn::add_children_from_layers(size_t column,
@@ -264,17 +274,28 @@ void NoteFieldColumn::reskin(NoteSkinColumn* newskin, NoteSkinData& skin_data,
 		std::vector<Rage::Color>* player_colors, double x)
 {
 	// Clear actors added by previous noteskin.
-	for(auto&& act : m_actors_added_by_noteskin)
+	if(!m_layers.empty())
 	{
-		RemoveChild(act);
+		auto iter= m_layers.begin();
+		while(iter != m_layers.end())
+		{
+			if(iter->m_added_by_noteskin)
+			{
+				m_field->remove_draw_entry(static_cast<int>(m_column), &*iter);
+				iter= m_layers.erase(iter);
+			}
+			else
+			{
+				++iter;
+			}
+		}
 	}
-	m_actors_added_by_noteskin.clear();
 
 	// set new info.
 	m_newskin= newskin;
 	m_newskin->set_timing_source(&m_timing_source);
-	m_column_mod.set_base_value(
-		{{x, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}, 1.f, 0.f});
+	Rage::transform tmp= {{static_cast<float>(x), 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}, 1.f, 0.f};
+	m_column_mod.set_base_value(tmp);
 	m_player_colors= player_colors;
 
 	// Send width to already existing children.
@@ -284,9 +305,7 @@ void NoteFieldColumn::reskin(NoteSkinColumn* newskin, NoteSkinData& skin_data,
 	// Add new actors.
 	for(auto&& layer : skin_data.m_layers)
 	{
-		Actor* act= layer.m_actors[m_column];
-		m_actors_added_by_noteskin.insert(act);
-		AddChild(act);
+		AddChildInternal(layer.m_actors[m_column], true);
 	}
 }
 
@@ -575,6 +594,10 @@ void NoteFieldColumn::UpdateInternal(float delta)
 	if(m_selection_start != -1.0)
 	{
 		m_area_highlight.Update(delta);
+	}
+	for(auto&& layer : m_layers)
+	{
+		layer.Update(delta);
 	}
 	ActorFrame::UpdateInternal(delta);
 }
@@ -1513,24 +1536,28 @@ void NoteFieldColumn::build_render_lists()
 	}
 }
 
-void NoteFieldColumn::draw_child(int child)
+void NoteFieldColumn::draw_thing(field_draw_entry* entry)
 {
-#define RETURN_IF_EMPTY(empty_check) if(empty_check) { return; } break;
-	switch(child)
+#define RETURN_IF_EMPTY(empty_check) if(empty_check) { return; }
+	switch(entry->meaning)
 	{
-		case holds_child_index:
+		case fdem_holds:
 			RETURN_IF_EMPTY(render_holds.empty());
-		case lifts_child_index:
+			break;
+		case fdem_lifts:
 			RETURN_IF_EMPTY(render_lifts.empty());
-		case taps_child_index:
+			break;
+		case fdem_taps:
 			RETURN_IF_EMPTY(render_taps.empty());
-		case selection_child_index:
+			break;
+		case fdem_selection:
 			RETURN_IF_EMPTY(m_field == nullptr || !m_field->m_in_edit_mode);
+			break;
 		default:
-			RETURN_IF_EMPTY(child < 0 || static_cast<size_t>(child) >= m_SubActors.size());
+			break;
 	}
 #undef RETURN_IF_EMPTY
-	curr_render_child= child;
+	curr_draw_entry= entry;
 	Draw();
 }
 
@@ -1813,7 +1840,10 @@ static Message create_did_message(bool bright)
 
 void NoteFieldColumn::pass_message_to_heads(Message& msg)
 {
-	HandleMessage(msg);
+	for(auto&& layer : m_layers)
+	{
+		layer.HandleMessage(msg);
+	}
 }
 
 void NoteFieldColumn::did_tap_note_internal(TapNoteScore tns, bool bright)
@@ -1869,66 +1899,62 @@ void NoteFieldColumn::DrawPrimitives()
 {
 	if(!m_being_drawn_by_proxy)
 	{
-		draw_child_internal();
+		draw_thing_internal();
 	}
 	else
 	{
-		std::vector<NoteField::field_draw_entry> draw_entries;
-		draw_entries.reserve(m_SubActors.size() + 3);
-#define ADD_IF_HAVE_SOME(some) if(!render_##some.empty()) { \
-		draw_entries.push_back({-1, some##_child_index, some##_draw_order}); }
-		ADD_IF_HAVE_SOME(holds);
-		ADD_IF_HAVE_SOME(lifts);
-		ADD_IF_HAVE_SOME(taps);
-#undef ADD_IF_HAVE_SOME
-		for(int sub= 0; sub < static_cast<int>(m_SubActors.size()); ++sub)
+		size_t after_layers= m_layers.size();
+		std::vector<field_draw_entry> draw_entries(after_layers + 3);
+		size_t eid= 0;
+		for(auto&& lay : m_layers)
 		{
-			draw_entries.push_back({-1, sub, m_SubActors[sub]->GetDrawOrder()});
+			draw_entries[eid].meaning= fdem_layer;
+			draw_entries[eid].child= &lay;
+			draw_entries[eid].draw_order= lay.m_child->GetDrawOrder();
+			++eid;
 		}
+		draw_entries[after_layers+0].meaning= fdem_holds;
+		draw_entries[after_layers+0].draw_order= holds_draw_order;
+		draw_entries[after_layers+1].meaning= fdem_lifts;
+		draw_entries[after_layers+1].draw_order= lifts_draw_order;
+		draw_entries[after_layers+2].meaning= fdem_taps;
+		draw_entries[after_layers+2].draw_order= taps_draw_order;
+
 		std::sort(draw_entries.begin(), draw_entries.end());
 		for(auto&& entry : draw_entries)
 		{
-			curr_render_child= entry.child;
-			draw_child_internal();
+			curr_draw_entry= &entry;
+			draw_thing_internal();
 		}
 	}
 }
 
-void NoteFieldColumn::draw_child_internal()
+void NoteFieldColumn::draw_thing_internal()
 {
-	switch(curr_render_child)
+	switch(curr_draw_entry->meaning)
 	{
-		case holds_child_index:
+		case fdem_holds:
 			draw_holds_internal();
 			break;
-		case lifts_child_index:
+		case fdem_lifts:
 			draw_lifts_internal();
 			break;
-		case taps_child_index:
+		case fdem_taps:
 			draw_taps_internal();
 			break;
-		case selection_child_index:
+		case fdem_selection:
 			draw_selection_internal();
 			break;
+		case fdem_layer:
+			static_cast<FieldChild*>(curr_draw_entry->child)->apply_render_info(
+				head_transform, receptor_alpha, receptor_glow,
+				explosion_alpha, explosion_glow,
+				m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
+			curr_draw_entry->child->Draw();
+			break;
 		default:
-			if(curr_render_child >= 0 && static_cast<size_t>(curr_render_child) < m_SubActors.size())
-			{
-				apply_render_info_to_layer(m_SubActors[curr_render_child],
-					m_layer_render_info[curr_render_child], head_transform,
-					receptor_alpha, receptor_glow, explosion_alpha, explosion_glow,
-					m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
-				m_SubActors[curr_render_child]->Draw();
-			}
 			break;
 	}
-}
-
-void NoteFieldColumn::position_actor_at_column_head(Actor* act,
-	FieldLayerRenderInfo& info)
-{
-	apply_render_info_to_layer(act, info, head_transform, receptor_alpha,
-		receptor_glow, explosion_alpha, explosion_glow,
-		m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
 }
 
 void NoteFieldColumn::set_playerize_mode(NotePlayerizeMode mode)
@@ -1945,38 +1971,46 @@ void NoteFieldColumn::set_playerize_mode(NotePlayerizeMode mode)
 
 void NoteFieldColumn::set_layer_fade_type(Actor* child, FieldLayerFadeType type)
 {
-	size_t index= FindIDBySubChild(child);
-	if(index < m_layer_render_info.size())
+	for(auto&& entry : m_layers)
 	{
-		m_layer_render_info[index].fade_type= type;
+		if(entry.m_child == child)
+		{
+			entry.m_fade_type= type;
+		}
 	}
 }
 
 FieldLayerFadeType NoteFieldColumn::get_layer_fade_type(Actor* child)
 {
-	size_t index= FindIDBySubChild(child);
-	if(index < m_layer_render_info.size())
+	for(auto&& entry : m_layers)
 	{
-		return m_layer_render_info[index].fade_type;
+		if(entry.m_child == child)
+		{
+			return entry.m_fade_type;
+		}
 	}
 	return FieldLayerFadeType_Invalid;
 }
 
 void NoteFieldColumn::set_layer_transform_type(Actor* child, FieldLayerTransformType type)
 {
-	size_t index= FindIDBySubChild(child);
-	if(index < m_layer_render_info.size())
+	for(auto&& entry : m_layers)
 	{
-		m_layer_render_info[index].transform_type= type;
+		if(entry.m_child == child)
+		{
+			entry.m_transform_type= type;
+		}
 	}
 }
 
 FieldLayerTransformType NoteFieldColumn::get_layer_transform_type(Actor* child)
 {
-	size_t index= FindIDBySubChild(child);
-	if(index < m_layer_render_info.size())
+	for(auto&& entry : m_layers)
 	{
-		return m_layer_render_info[index].transform_type;
+		if(entry.m_child == child)
+		{
+			return entry.m_transform_type;
+		}
 	}
 	return FieldLayerTransformType_Invalid;
 }
@@ -2095,35 +2129,35 @@ void NoteField::HandleMessage(Message const& msg)
 
 void NoteField::AddChild(Actor* act)
 {
-	// The actors have to be wrapped inside of frames so that mod alpha/glow
+	// The actors have to be wrapped inside of frames so that modifiers
 	// can be applied without stomping what the layer actor does.
-	ActorFrame* frame= new ActorFrame;
-	frame->WrapAroundChild(act);
-	ActorFrame::AddChild(frame);
-	m_layer_render_info.push_back({FLFT_None, FLTT_None});
-	add_draw_entry(field_layer_column_index, GetNumChildren()-1, act->GetDrawOrder());
+	m_layers.emplace_back(act, FLFT_None, FLTT_None, false);
+	FieldChild* new_child= &m_layers.back();
+	add_draw_entry({new_child, field_layer_column_index, act->GetDrawOrder(), fdem_layer});
 }
 
 void NoteField::RemoveChild(Actor* act)
 {
-	size_t index= FindChildID(act);
-	if(index < m_SubActors.size())
+	for(auto iter= m_layers.begin(); iter != m_layers.end(); ++iter)
 	{
-		remove_draw_entry(field_layer_column_index, index);
-		m_layer_render_info.erase(m_layer_render_info.begin() + index);
+		if(iter->m_child == act)
+		{
+			remove_draw_entry(field_layer_column_index, &*iter);
+			m_layers.erase(iter);
+		}
 	}
-	ActorFrame::RemoveChild(act);
 }
 
 void NoteField::ChildChangedDrawOrder(Actor* child)
 {
-	size_t index= FindChildID(child);
-	if(index < m_SubActors.size())
+	for(auto iter= m_layers.begin(); iter != m_layers.end(); ++iter)
 	{
-		change_draw_entry(field_layer_column_index, static_cast<int>(index),
-			child->GetDrawOrder());
+		if(iter->m_child == child)
+		{
+			change_draw_entry(field_layer_column_index, &*iter,
+				child->GetDrawOrder());
+		}
 	}
-	ActorFrame::ChildChangedDrawOrder(child);
 }
 
 void NoteField::UpdateInternal(float delta)
@@ -2136,6 +2170,10 @@ void NoteField::UpdateInternal(float delta)
 	{
 		selection_glow= Rage::scale(Rage::FastCos(
 				RageTimer::GetTimeSinceStartFast()*2), -1.f, 1.f, 0.1f, 0.3f);
+	}
+	for(auto&& layer : m_layers)
+	{
+		layer.Update(delta);
 	}
 	ActorFrame::UpdateInternal(delta);
 }
@@ -2202,16 +2240,6 @@ void NoteField::DrawPrimitives()
 		draw_entry(m_draw_entries[m_first_undrawn_entry]);
 		++m_first_undrawn_entry;
 	}
-}
-
-void NoteField::position_actor_at_column_head(Actor* act,
-	FieldLayerRenderInfo& info, size_t col)
-{
-	if(col >= m_columns.size())
-	{
-		return;
-	}
-	m_columns[col].position_actor_at_column_head(act, info);
 }
 
 double NoteField::get_receptor_y()
@@ -2416,27 +2444,29 @@ void NoteField::share_steps_parent_being_destroyed() // this is child
 	m_share_steps_parent= nullptr;
 }
 
-void NoteField::add_draw_entry(int column, int child, int draw_order)
+void NoteField::add_draw_entry(field_draw_entry const& entry)
 {
 	auto insert_pos= m_draw_entries.begin();
 	for(; insert_pos != m_draw_entries.end(); ++insert_pos)
 	{
 		// Ignore an attempt to add a duplicate entry.  NoteFieldColumn::reskin
 		// needs this.
-		if(insert_pos->draw_order == draw_order && insert_pos->column == column
-			&& insert_pos->child == child)
+		if(insert_pos->draw_order == entry.draw_order &&
+			insert_pos->column == entry.column &&
+			insert_pos->meaning == entry.meaning &&
+			insert_pos->child == entry.child)
 		{
 			return;
 		}
-		if(insert_pos->draw_order > draw_order)
+		if(insert_pos->draw_order > entry.draw_order)
 		{
 			break;
 		}
 	}
-	m_draw_entries.insert(insert_pos, {column, child, draw_order});
+	m_draw_entries.insert(insert_pos, entry);
 }
 
-void NoteField::remove_draw_entry(int column, int child)
+void NoteField::remove_draw_entry(int column, Actor* child)
 {
 	auto entry= m_draw_entries.begin();
 	while(entry != m_draw_entries.end())
@@ -2444,22 +2474,16 @@ void NoteField::remove_draw_entry(int column, int child)
 		if(entry->column == column && entry->child == child)
 		{
 			entry= m_draw_entries.erase(entry);
+			return;
 		}
 		else
 		{
-			// child >= 0 means it's not a special index for drawing notes.
-			if(child >= 0 && entry->column == column && entry->child > child)
-			{
-				// RemoveChild was called on something, so the indices pointing to
-				// children after it in the list need to be updated.
-				--entry->child;
-			}
 			++entry;
 		}
 	}
 }
 
-void NoteField::change_draw_entry(int column, int child, int new_draw_order)
+void NoteField::change_draw_entry(int column, Actor* child, int new_draw_order)
 {
 	size_t found_index= 0;
 	for(; found_index < m_draw_entries.size(); ++found_index)
@@ -2530,15 +2554,12 @@ void NoteField::draw_entry(field_draw_entry& entry)
 	switch(entry.column)
 	{
 		case field_layer_column_index:
-			if(entry.child >= 0 && static_cast<size_t>(entry.child) < m_SubActors.size())
-			{
-				apply_render_info_to_layer(m_SubActors[entry.child],
-					m_layer_render_info[entry.child], m_columns[0].get_head_trans(),
-					evaluated_receptor_alpha, evaluated_receptor_glow,
-					evaluated_explosion_alpha, evaluated_explosion_glow,
-					m_curr_beat, m_curr_second, m_receptor_alpha, m_receptor_glow);
-				m_SubActors[entry.child]->Draw();
-			}
+			static_cast<FieldChild*>(entry.child)->apply_render_info(
+				m_columns[0].get_head_trans(),
+				evaluated_receptor_alpha, evaluated_receptor_glow,
+				evaluated_explosion_alpha, evaluated_explosion_glow,
+				m_curr_beat, m_curr_second, m_receptor_alpha, m_receptor_glow);
+			entry.child->Draw();
 			break;
 		case beat_bars_column_index:
 			draw_beat_bars_internal();
@@ -2546,7 +2567,7 @@ void NoteField::draw_entry(field_draw_entry& entry)
 		default:
 			if(entry.column >= 0 && static_cast<size_t>(entry.column) < m_columns.size())
 			{
-				m_columns[entry.column].draw_child(entry.child);
+				m_columns[entry.column].draw_thing(&entry);
 			}
 			break;
 	}
@@ -2932,10 +2953,10 @@ void NoteField::reskin_columns(NoteSkinLoader const* new_loader, LuaReference& n
 		// valid.
 		// add_draw_entry filters out duplicate entries, so this piece of code
 		// doesn't need to.
-		add_draw_entry(static_cast<int>(i), holds_child_index, holds_draw_order);
-		add_draw_entry(static_cast<int>(i), lifts_child_index, lifts_draw_order);
-		add_draw_entry(static_cast<int>(i), taps_child_index, taps_draw_order);
-		add_draw_entry(static_cast<int>(i), selection_child_index, selection_draw_order);
+		add_draw_entry({nullptr, static_cast<int>(i), holds_draw_order, fdem_holds});
+		add_draw_entry({nullptr, static_cast<int>(i), lifts_draw_order, fdem_lifts});
+		add_draw_entry({nullptr, static_cast<int>(i), taps_draw_order, fdem_taps});
+		add_draw_entry({nullptr, static_cast<int>(i), selection_draw_order, fdem_selection});
 
 		column_x.push_back(col_x);
 		if(!col->get_use_custom_x())
@@ -3044,7 +3065,7 @@ void NoteField::disable_speed_scroll_segments()
 void NoteField::turn_on_edit_mode()
 {
 	m_in_edit_mode= true;
-	add_draw_entry(beat_bars_column_index, beat_bars_child_index, beat_bars_draw_order);
+	add_draw_entry({nullptr, field_layer_column_index, beat_bars_draw_order, fdem_beat_bars});
 }
 
 double NoteField::get_selection_start()
@@ -3089,19 +3110,23 @@ void NoteField::set_selection_end(double value)
 
 void NoteField::set_layer_fade_type(Actor* child, FieldLayerFadeType type)
 {
-	size_t index= FindIDBySubChild(child);
-	if(index < m_layer_render_info.size())
+	for(auto&& entry : m_layers)
 	{
-		m_layer_render_info[index].fade_type= type;
+		if(entry.m_child == child)
+		{
+			entry.m_fade_type= type;
+		}
 	}
 }
 
 FieldLayerFadeType NoteField::get_layer_fade_type(Actor* child)
 {
-	size_t index= FindIDBySubChild(child);
-	if(index < m_layer_render_info.size())
+	for(auto&& entry : m_layers)
 	{
-		return m_layer_render_info[index].fade_type;
+		if(entry.m_child == child)
+		{
+			return entry.m_fade_type;
+		}
 	}
 	return FieldLayerFadeType_Invalid;
 }
