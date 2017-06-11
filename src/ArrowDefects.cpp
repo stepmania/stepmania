@@ -661,6 +661,11 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 		zpos += effects[PlayerOptions::EFFECT_BUMPY] *
 			40 * Rage::FastSin((y_offset + (100.f * effects[PlayerOptions::EFFECT_BUMPY_OFFSET])) / ((effects[PlayerOptions::EFFECT_BUMPY_PERIOD] * 16.f) + 16.f));
 	}
+	if(m_options->m_fBumpy[col] != 0.f)
+	{
+		zpos += m_options->m_fBumpy[col] * 40 * Rage::FastSin( (y_offset + (100.f * 
+			(effects[PlayerOptions::EFFECT_BUMPY_OFFSET]) ) ) / ( (effects[PlayerOptions::EFFECT_BUMPY_PERIOD] * 16.f) + 16.f) );
+	}
 	if(effects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0.f)
 	{
 		float result = Rage::TriangleWave( (Rage::PI * (1/(effects[PlayerOptions::EFFECT_ZIGZAG_Z_PERIOD]+1)) * 
@@ -780,6 +785,11 @@ float ArrowDefects::get_zoom(size_t col, float y_offset)
 		tiny_percent= std::pow(.5f, tiny_percent);
 		zoom *= tiny_percent;
 	}
+	if( m_options->m_fTiny[col] != 0 )
+	{
+		tiny_percent = powf( 0.5f, m_options->m_fTiny[col] );
+		zoom *= tiny_percent;
+	}
 	return zoom;
 }
 
@@ -827,6 +837,10 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 		trans.rot.x= Rage::DegreesToRadians(
 			effects[PlayerOptions::EFFECT_ROLL] * y_offset * .5f);
 	}
+	if(m_options->m_fConfusionZ[col] != 0.f)
+	{
+		trans.rot.z+= m_options->m_fConfusionZ[col];
+	}
 	if(effects[PlayerOptions::EFFECT_CONFUSION_OFFSET] != 0.f)
 	{
 		trans.rot.z+= effects[PlayerOptions::EFFECT_CONFUSION_OFFSET];
@@ -836,6 +850,10 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 		trans.rot.z-= fmodf(m_music_beat *
 			effects[PlayerOptions::EFFECT_CONFUSION], 2.0 * Rage::PI);
 	}
+	if(m_options->m_fConfusionX[col] != 0.f)
+	{
+		trans.rot.x+= m_options->m_fConfusionX[col];
+	}
 	if(effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET] != 0.f)
 	{
 		trans.rot.x+= effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET];
@@ -844,6 +862,10 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 	{
 		trans.rot.x-= fmodf(m_music_beat *
 			effects[PlayerOptions::EFFECT_CONFUSION_X], 2.0 * Rage::PI);
+	}
+	if(m_options->m_fConfusionY[col] != 0.f)
+	{
+		trans.rot.y+= m_options->m_fConfusionY[col];
 	}
 	if(effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET] != 0.f)
 	{
@@ -871,6 +893,7 @@ void ArrowDefects::get_transform_with_glow_alpha(float note_beat,
 void ArrowDefects::hold_render_transform(float y_offset, size_t col,
 	Rage::transform& trans)
 {
+	float const* effects= m_options->m_fEffects;
 	trans.pos.x= get_move_x(col) + get_x_pos(col, y_offset);
 	// get_y_pos is passed a y offset of 0 because the hold rendering logic
 	// applies the reverse shift. -Kyz
@@ -881,6 +904,20 @@ void ArrowDefects::hold_render_transform(float y_offset, size_t col,
 	trans.rot.z= 0.f;
 	trans.zoom.x= trans.zoom.y= trans.zoom.z= get_zoom(col, y_offset);
 	get_glow_alpha(col, y_offset, trans);
+	
+	if(m_options->m_fConfusionY[col] != 0.f)
+	{
+		trans.rot.y+= m_options->m_fConfusionY[col];
+	}
+	if(effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET] != 0.f)
+	{
+		trans.rot.y+= effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET];
+	}
+	if(effects[PlayerOptions::EFFECT_CONFUSION_Y] != 0.f)
+	{
+		trans.rot.y-= fmodf(m_music_beat *
+			effects[PlayerOptions::EFFECT_CONFUSION_Y], 2.0 * Rage::PI);
+	}
 }
 
 float ArrowDefects::get_center_line()
@@ -930,6 +967,7 @@ float ArrowDefects::get_percent_visible(float y_pos_without_reverse, size_t col,
 			sudden_visible_adjust;
 	}
 	visible_adjust-= appearances[PlayerOptions::APPEARANCE_STEALTH];
+	visible_adjust-= m_options->m_fStealth[col];
 	if(appearances[PlayerOptions::APPEARANCE_BLINK] != 0.f)
 	{
 		float blink= Rage::FastSin(ArrowDefects::get_time() * 10);

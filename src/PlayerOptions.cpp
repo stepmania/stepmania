@@ -96,7 +96,14 @@ void PlayerOptions::Init()
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
 	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
+	ZERO( m_fConfusionX );		ONE( m_SpeedfConfusionX );
+	ZERO( m_fConfusionY );		ONE( m_SpeedfConfusionY );
+	ZERO( m_fConfusionZ );		ONE( m_SpeedfConfusionZ );
 	ZERO( m_fDarks );		ONE( m_SpeedfDarks );
+	ZERO( m_fStealth );		ONE( m_SpeedfStealth );
+	ZERO( m_fTiny );		ONE( m_SpeedfTiny );
+	ZERO( m_fBumpy );		ONE( m_SpeedfBumpy );
+	ZERO( m_fReverse );		ONE( m_SpeedfReverse );
 }
 
 void PlayerOptions::Approach(PlayerOptions const& other, float delta)
@@ -144,7 +151,21 @@ void PlayerOptions::Approach(PlayerOptions const& other, float delta)
 	for( int i=0; i<16; i++)
 	    APPROACH( fMovesZ[i] );
 	for( int i=0; i<16; i++)
+	    APPROACH( fConfusionX[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fConfusionY[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fConfusionZ[i] );
+	for( int i=0; i<16; i++)
 	    APPROACH( fDarks[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fStealth[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fTiny[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fBumpy[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fReverse[i] );
 
 	DO_COPY( m_bSetScrollSpeed );
 	for( int i=0; i<NUM_TURNS; i++ )
@@ -364,8 +385,22 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 		AddPart( AddTo, m_fMovesY[i],				s );
 		s = fmt::sprintf( "MoveZ%d", i+1 );
 		AddPart( AddTo, m_fMovesZ[i],				s );
+		s = fmt::sprintf( "ConfusionOffset%d", i+1);
+		AddPart( AddTo, m_fConfusionX[i],				s );
+		s = fmt::sprintf( "ConfusionYOffset%d", i+1 );
+		AddPart( AddTo, m_fConfusionY[i],				s );
+		s = fmt::sprintf( "ConfusionZOffset%d", i+1 );
+		AddPart( AddTo, m_fConfusionZ[i],				s );
 		s = fmt::sprintf( "Dark%d", i+1 );
 		AddPart( AddTo, m_fDarks[i],				s );
+		s = fmt::sprintf( "Stealth%d", i+1 );
+		AddPart( AddTo, m_fStealth[i],				s );
+		s = fmt::sprintf( "Tiny%d", i+1 );
+		AddPart( AddTo, m_fTiny[i],				s );
+		s = fmt::sprintf( "Bumpy%d", i+1 );
+		AddPart( AddTo, m_fBumpy[i],				s );
+		s = fmt::sprintf( "Reverse%d", i+1 );
+		AddPart( AddTo, m_fReverse[i],				s );
 	}
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
@@ -938,7 +973,7 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 #undef FIND_ENTRY_DEFECT_ARRAY
 #undef FIND_ENTRY_BOOL_ARRAY
 
-		if(sBit.find("dark") != sBit.npos && sBit.size() >= 5)
+		if(sBit.find("dark") != sBit.npos)
 		{
 			for (int i=0; i<16; i++)
 			{
@@ -951,7 +986,101 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 				}
 			}
 		}
-		if(sBit == "muteonerror")
+		else if(sBit.find("reverse") != sBit.npos)
+		{
+			for (int i=0; i<16; i++)
+			{
+				sMod = fmt::sprintf( "reverse%d", i+1 );
+				if( sBit == sMod)
+				{
+					SET_FLOAT( fReverse[i] )
+					m_changed_defective_mod= true;
+					break;
+				}
+			}
+		}
+		else if(sBit.find("tiny") != sBit.npos)
+		{
+			for (int i=0; i<16; i++)
+			{
+				sMod = fmt::sprintf( "tiny%d", i+1 );
+				if( sBit == sMod)
+				{
+					SET_FLOAT( fTiny[i] )
+					m_changed_defective_mod= true;
+					break;
+				}
+			}
+		}
+		else if(sBit.find("bumpy") != sBit.npos)
+		{
+			for (int i=0; i<16; i++)
+			{
+				sMod = fmt::sprintf( "bumpy%d", i+1 );
+				if( sBit == sMod)
+				{
+					SET_FLOAT( fBumpy[i] )
+					m_changed_defective_mod= true;
+					break;
+				}
+			}
+		}
+		else if(sBit.find("stealth") != sBit.npos)
+		{
+			for (int i=0; i<16; i++)
+			{
+				sMod = fmt::sprintf( "stealth%d", i+1 );
+				if( sBit == sMod)
+				{
+					SET_FLOAT( fStealth[i] )
+					m_changed_defective_mod= true;
+					break;
+				}
+			}
+		}
+		else if( sBit.find("confusion") != sBit.npos)
+		{
+			if( sBit.find("x") != sBit.npos)
+			{
+				for (int i=0; i<16; i++)
+				{
+					sMod = fmt::sprintf( "confusionxoffset%d", i+1 );
+					if( sBit == sMod)
+					{
+						SET_FLOAT( fConfusionX[i] )
+						m_changed_defective_mod= true;
+						break;
+					}
+				}
+			}
+			if( sBit.find("y") != sBit.npos)
+			{
+				for (int i=0; i<16; i++)
+				{
+					sMod = fmt::sprintf( "confusionyoffset%d", i+1 );
+					if( sBit == sMod)
+					{
+						SET_FLOAT( fConfusionY[i] )
+						m_changed_defective_mod= true;
+						break;
+					}
+				}
+			}
+			else
+			{
+				for (int i=0; i<16; i++)
+				{
+					sMod = fmt::sprintf( "confusionoffset%d", i+1 );
+					if( sBit == sMod)
+					{
+						SET_FLOAT( fConfusionZ[i] )
+						m_changed_defective_mod= true;
+						break;
+					}
+				}
+			}
+		}
+		else if(sBit == "muteonerror")
 		{
 			m_bMuteOnError = on;
 			return true;
@@ -1136,6 +1265,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 	int iNumCols = GAMESTATE->GetCurrentStyle(m_pn)->m_iColsPerPlayer;
 
 	f += m_fScrolls[SCROLL_REVERSE];
+	f += m_fReverse[iCol];
 
 	if( iCol >= iNumCols/2 )
 		f += m_fScrolls[SCROLL_SPLIT];
@@ -1203,7 +1333,21 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	for( int i = 0; i < 16; ++i )
 		COMPARE(m_fMovesZ[i]);
 	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fConfusionX[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fConfusionY[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fConfusionZ[i]);
+	for( int i = 0; i < 16; ++i )
 		COMPARE(m_fDarks[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fStealth[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fTiny[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fBumpy[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fReverse[i]);
 #undef COMPARE
 	return true;
 }
@@ -1278,7 +1422,35 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	}
 	for( int i = 0; i < 16; ++i )
 	{
+		CPY_SPEED(fConfusionX[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fConfusionY[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fConfusionZ[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
 		CPY_SPEED(fDarks[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fStealth[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fTiny[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fBumpy[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fReverse[i]);
 	}
 #undef CPY
 #undef CPY_SPEED
@@ -1662,7 +1834,14 @@ public:
 	MULTICOL_FLOAT_INTERFACE(MoveX, MovesX, true);
 	MULTICOL_FLOAT_INTERFACE(MoveY, MovesY, true);
 	MULTICOL_FLOAT_INTERFACE(MoveZ, MovesZ, true);
+	MULTICOL_FLOAT_INTERFACE(ConfusionXOffset, ConfusionX, true);
+	MULTICOL_FLOAT_INTERFACE(ConfusionYOffset, ConfusionY, true);
+	MULTICOL_FLOAT_INTERFACE(ConfusionOffset, ConfusionZ, true);
 	MULTICOL_FLOAT_INTERFACE(Dark, Darks, true);
+	MULTICOL_FLOAT_INTERFACE(Stealth, Stealth, true);
+	MULTICOL_FLOAT_INTERFACE(Tiny, Tiny, true);
+	MULTICOL_FLOAT_INTERFACE(Bumpy, Bumpy, true);
+	MULTICOL_FLOAT_INTERFACE(Reverse, Reverse, true);
 	BOOL_INTERFACE(StealthType, StealthType);
 	BOOL_INTERFACE(StealthPastReceptors, StealthPastReceptors);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
@@ -2140,7 +2319,14 @@ public:
 		ADD_MULTICOL_METHOD(MoveX);
 		ADD_MULTICOL_METHOD(MoveY);
 		ADD_MULTICOL_METHOD(MoveZ);
+		ADD_MULTICOL_METHOD(ConfusionOffset);
+		ADD_MULTICOL_METHOD(ConfusionXOffset);
+		ADD_MULTICOL_METHOD(ConfusionYOffset);
 		ADD_MULTICOL_METHOD(Dark);
+		ADD_MULTICOL_METHOD(Stealth);
+		ADD_MULTICOL_METHOD(Tiny);
+		ADD_MULTICOL_METHOD(Bumpy);
+		ADD_MULTICOL_METHOD(Reverse);
 
 		ADD_METHOD(FailSetting);
 		ADD_METHOD(MinTNSToHideNotes);
