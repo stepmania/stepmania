@@ -95,6 +95,7 @@ public:
 		ZERO( m_fMovesX );	ONE( m_SpeedfMovesX );
 		ZERO( m_fMovesY );	ONE( m_SpeedfMovesY );
 		ZERO( m_fMovesZ );	ONE( m_SpeedfMovesZ );
+		ZERO( m_fDarks );	ONE( m_SpeedfDarks );
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
@@ -158,6 +159,12 @@ public:
 		EFFECT_CONFUSION_X_OFFSET,
 		EFFECT_CONFUSION_Y,
 		EFFECT_CONFUSION_Y_OFFSET,
+		EFFECT_BOUNCE,
+		EFFECT_BOUNCE_PERIOD,
+		EFFECT_BOUNCE_OFFSET,
+		EFFECT_BOUNCE_Z,
+		EFFECT_BOUNCE_Z_PERIOD,
+		EFFECT_BOUNCE_Z_OFFSET,
 		EFFECT_MINI,
 		EFFECT_TINY,
 		EFFECT_FLIP,
@@ -320,6 +327,7 @@ public:
 	float	m_fMovesX[16],			m_SpeedfMovesX[16];
 	float	m_fMovesY[16],			m_SpeedfMovesY[16];
 	float	m_fMovesZ[16],			m_SpeedfMovesZ[16];
+	float	m_fDarks[16],			m_SpeedfDarks[16];
 
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];

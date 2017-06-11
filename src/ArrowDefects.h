@@ -31,7 +31,7 @@ struct ArrowDefects
 		Rage::transform& trans);
 
 	float get_field_y();
-	float get_receptor_alpha();
+	float get_receptor_alpha(size_t col);
 	float get_reverse_offset();
 	float get_center_percent();
 	float get_reverse_scale(size_t col);

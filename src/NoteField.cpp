@@ -1337,7 +1337,7 @@ void NoteFieldColumn::build_render_lists()
 		double head_yoff= head_y_offset();
 		m_defective_mods->get_transform(m_curr_beat, head_yoff,
 			apply_reverse_shift(head_yoff), m_column, head_transform);
-		receptor_alpha= m_defective_mods->get_receptor_alpha();
+		receptor_alpha= m_defective_mods->get_receptor_alpha(m_column);
 		receptor_glow= 0.0;
 		explosion_alpha= 1.0;
 		explosion_glow= 0.0;

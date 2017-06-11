@@ -457,7 +457,7 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 	if(effects[PlayerOptions::EFFECT_ATTENUATE_Y] != 0.f )
 	{
 		const float x_offset = m_column_x[col];
-		y_offset += effects[PlayerOptions::EFFECT_ATTENUATE_Y] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing) * (x_offset/arrow_spacing);
+		y_adjust += effects[PlayerOptions::EFFECT_ATTENUATE_Y] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing) * (x_offset/arrow_spacing);
 	}
 	y_offset+= y_adjust;
 	if(accels[PlayerOptions::ACCEL_BOOMERANG] != 0.f)
@@ -578,6 +578,13 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 			(arrow_spacing+(effects[PlayerOptions::EFFECT_SQUARE_PERIOD]*arrow_spacing))) );
 		
 		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_SQUARE] * arrow_spacing * 0.5f) * result;
+	}
+	if(effects[PlayerOptions::EFFECT_BOUNCE] != 0.f)
+	{
+		float bounce_amt = fabsf( Rage::FastSin( ( (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_BOUNCE_OFFSET]) ) ) / 
+			( 60 + (effects[PlayerOptions::EFFECT_BOUNCE_PERIOD]*60) ) ) ) );
+		
+		pixel_offset_from_center += effects[PlayerOptions::EFFECT_BOUNCE] * arrow_spacing * 0.5f * bounce_amt;
 	}
 	if(effects[PlayerOptions::EFFECT_XMODE] != 0.f)
 	{
@@ -700,6 +707,13 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 		float result = Rage::SquareWave( (Rage::PI * (y_offset+(1.0f*(effects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET]))) / 
 			(arrow_spacing+(effects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD]*arrow_spacing))) );
 		zpos += (effects[PlayerOptions::EFFECT_SQUARE_Z] * arrow_spacing * 0.5f) * result;
+	}
+	if(effects[PlayerOptions::EFFECT_BOUNCE_Z] != 0.f)
+	{
+		float bounce_amt = fabsf( Rage::FastSin( ( (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_BOUNCE_Z_OFFSET]) ) ) / 
+			( 60 + (effects[PlayerOptions::EFFECT_BOUNCE_Z_PERIOD]*60) ) ) ) );
+		
+		zpos += effects[PlayerOptions::EFFECT_BOUNCE_Z] * arrow_spacing * 0.5f * bounce_amt;
 	}
 	return zpos;
 }
@@ -937,9 +951,9 @@ float ArrowDefects::get_field_y()
 	return (m_receptor_pos_normal + m_receptor_pos_reverse) * .5f;
 }
 
-float ArrowDefects::get_receptor_alpha()
+float ArrowDefects::get_receptor_alpha(size_t col)
 {
-	return Rage::clamp(1.f - m_options->m_fDark, 0.f, 1.f);
+	return Rage::clamp(1.f - m_options->m_fDark - m_options->m_fDarks[col], 0.f, 1.f);
 }
 
 float ArrowDefects::get_reverse_offset()
