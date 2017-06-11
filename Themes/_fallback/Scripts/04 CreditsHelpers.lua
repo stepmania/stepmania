@@ -88,6 +88,7 @@ local stepmania_credits= {
 		"latot", -- minor cleanup
 		"Mad Matt", -- new lua bindings
 		"Matt McCutchen", -- minor fix for some dance pads on linux
+		"MrThatKid", -- nitg modifiers
 		"NitroX72", -- pump/frame noteskin
 		"nixtrix", -- various BMS features and other fixes
 		"Petriform", -- default theme music
