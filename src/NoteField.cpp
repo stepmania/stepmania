@@ -2134,6 +2134,19 @@ void NoteField::AddChild(Actor* act)
 	m_layers.emplace_back(act, FLFT_None, FLTT_None, false);
 	FieldChild* new_child= &m_layers.back();
 	add_draw_entry({new_child, field_layer_column_index, act->GetDrawOrder(), fdem_layer});
+	if(!m_needs_reskin)
+	{
+		if(act->HasCommand("WidthSet"))
+		{
+			act->HandleMessage(create_width_message());
+		}
+	}
+	if(act->HasCommand("PlayerStateSet"))
+	{
+		Message msg("PlayerStateSet");
+		msg.SetParam("PlayerNumber", m_pn);
+		act->HandleMessage(msg);
+	}
 }
 
 void NoteField::RemoveChild(Actor* act)
@@ -2934,7 +2947,7 @@ void NoteField::reskin_columns(NoteSkinLoader const* new_loader, LuaReference& n
 		{
 			col_x= curr_x + wid_pad * .5;
 		}
-		lua_createtable(L, 0, 2);
+		lua_createtable(L, 0, 3);
 		int this_col_info_table= lua_gettop(L);
 		lua_pushnumber(L, width);
 		lua_setfield(L, this_col_info_table, "width");
@@ -2976,6 +2989,33 @@ void NoteField::reskin_columns(NoteSkinLoader const* new_loader, LuaReference& n
 	// board can fetch the columns.
 	HandleMessage(width_msg);
 	m_needs_reskin= false;
+}
+
+Message NoteField::create_width_message()
+{
+	Message width_msg("WidthSet");
+	Lua* L= LUA->Get();
+	lua_createtable(L, m_columns.size(), 0);
+	int column_info_table= lua_gettop(L);
+	for(size_t i= 0; i < m_columns.size(); ++i)
+	{
+		NoteSkinColumn* col= m_newskin.get_column(i);
+		lua_createtable(L, 0, 3);
+		int this_col_info_table= lua_gettop(L);
+		lua_pushnumber(L, col->get_width());
+		lua_setfield(L, this_col_info_table, "width");
+		lua_pushnumber(L, col->get_padding());
+		lua_setfield(L, this_col_info_table, "padding");
+		lua_pushnumber(L, m_columns[i].m_column_mod.pos_mod.x_mod.get_base_value());
+		lua_setfield(L, this_col_info_table, "x");
+		lua_rawseti(L, column_info_table, i+1);
+	}
+	width_msg.SetParamFromStack(L, "columns");
+	width_msg.SetParam("width", get_field_width());
+	PushSelf(L);
+	width_msg.SetParamFromStack(L, "field");
+	LUA->Release(L);
+	return width_msg;
 }
 
 void NoteField::set_player_number(PlayerNumber pn)

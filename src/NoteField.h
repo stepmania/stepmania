@@ -395,6 +395,8 @@ struct NoteField : ActorFrame
 	void remove_share_steps_child(NoteField* child); // this is parent
 	void share_steps_parent_being_destroyed(); // this is child
 
+	Message create_width_message();
+
 	// set_player_number exists only so that the notefield layers can have
 	// per-player configuration on gameplay.  Using it for any other purpose
 	// is forbidden.

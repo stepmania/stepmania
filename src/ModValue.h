@@ -193,6 +193,7 @@ struct ModifiableValue
 	double get_column() { return m_column; }
 	void set_column(uint32_t col) { m_column= col; }
 	void set_base_value(double value) { m_base_value= value; }
+	double get_base_value() { return m_base_value; }
 	double evaluate(mod_val_inputs& input);
 	std::list<mod_function*>::iterator find_mod(std::string const& name);
 
