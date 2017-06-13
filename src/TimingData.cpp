@@ -26,6 +26,28 @@ template<typename T>
 	container.swap(tmp);
 }
 
+struct lookup_updater_for_segment_add
+{
+	lookup_updater_for_segment_add(TimingData* para)
+		:parent(para)
+	{}
+	~lookup_updater_for_segment_add()
+	{
+		// Updating the lookup in place seems complicated and bug prone.  So just
+		// destroy it and rebuild it entirely.  Rebuilding doesn't take
+		// substantial time, and AddSegment when the lookup exists should only
+		// happen in edit mode, when the user changes a timing element.
+		// TODO:  Create a multi-AddSegment that edit mode can use when pasting
+		// chunks of timing data.
+		// -Kyz
+		if(parent->get_lookup_requester_count() > 0)
+		{
+			parent->PrepareLookup();
+		}
+	}
+	TimingData* parent;
+};
+
 TimingData::TimingData(float fOffset)
 	:m_lookup_requester_count(0), m_fBeat0OffsetInSeconds(fOffset)
 {
@@ -549,13 +571,6 @@ void TimingData::PrepareLookup()
 		last_ratio= scroll_ratio;
 	}
 
-	// If there are less than two entries, then FindEntryInLookup in lookup
-	// will always decide there's no appropriate entry.  So clear the table.
-	// -Kyz
-	if(m_displayed_beat_lookup.size() < 2)
-	{
-		ReleaseDisplayedBeatLookup();
-	}
 	// DumpLookupTables();
 }
 
@@ -637,6 +652,7 @@ void TimingData::CopyRange(int start_row, int end_row,
 void TimingData::ShiftRange(int start_row, int end_row,
 	TimingSegmentType shift_type, int shift_amount)
 {
+	lookup_updater_for_segment_add lookup_me_senpai(this);
 	FOREACH_TimingSegmentType(seg_type)
 	{
 		if(seg_type == shift_type || shift_type == TimingSegmentType_Invalid)
@@ -702,6 +718,7 @@ void TimingData::ShiftRange(int start_row, int end_row,
 
 void TimingData::ClearRange(int start_row, int end_row, TimingSegmentType clear_type)
 {
+	lookup_updater_for_segment_add lookup_me_senpai(this);
 	FOREACH_TimingSegmentType(seg_type)
 	{
 		if(seg_type == clear_type || clear_type == TimingSegmentType_Invalid)
@@ -968,28 +985,6 @@ static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegmen
 	vSegs.erase( vSegs.begin() + index );
 	Rage::safe_delete( cur );
 }
-
-struct lookup_updater_for_segment_add
-{
-	lookup_updater_for_segment_add(TimingData* para)
-		:parent(para)
-	{}
-	~lookup_updater_for_segment_add()
-	{
-		// Updating the lookup in place seems complicated and bug prone.  So just
-		// destroy it and rebuild it entirely.  Rebuilding doesn't take
-		// substantial time, and AddSegment when the lookup exists should only
-		// happen in edit mode, when the user changes a timing element.
-		// TODO:  Create a multi-AddSegment that edit mode can use when pasting
-		// chunks of timing data.
-		// -Kyz
-		if(parent->get_lookup_requester_count() > 0)
-		{
-			parent->PrepareLookup();
-		}
-	}
-	TimingData* parent;
-};
 
 // NOTE: the pointer we're passed is a reference to a temporary,
 // so we must deep-copy it (with ::Copy) for new allocations.
@@ -1300,6 +1295,7 @@ float TimingData::GetDisplayedBeat(float beat) const
 
 void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool bAdjustBPM )
 {
+	lookup_updater_for_segment_add lookup_me_senpai(this);
 	ASSERT( fScale > 0 );
 	ASSERT( iStartIndex >= 0 );
 	ASSERT( iStartIndex < iEndIndex );
@@ -1340,6 +1336,7 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 
 void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 {
+	lookup_updater_for_segment_add lookup_me_senpai(this);
 	FOREACH_TimingSegmentType( tst )
 	{
 		vector<TimingSegment *> &segs = m_avpTimingSegments[tst];
@@ -1365,6 +1362,7 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 // Delete timing changes in [iStartRow, iStartRow + iRowsToDelete) and shift up.
 void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 {
+	lookup_updater_for_segment_add lookup_me_senpai(this);
 	FOREACH_TimingSegmentType( tst )
 	{
 		// Don't delete the indefinite segments that are still in effect
