@@ -717,20 +717,33 @@ void SetupExtensions()
 
 bool RageDisplay_Legacy::UseOffscreenRenderTarget()
 {
-	if ( !GetActualVideoModeParams().renderOffscreen || !TEXTUREMAN ) {
+	if ( !GetActualVideoModeParams().renderOffscreen || !TEXTUREMAN )
+	{
 		return false;
 	}
 
-	if (!offscreenRenderTarget) {
+	if ( !offscreenRenderTarget )
+	{
 		RenderTargetParam param;
 		param.bWithDepthBuffer = true;
 		param.bWithAlpha = true;
 		param.bFloat = false;
 		param.iWidth = GetActualVideoModeParams().width;
 		param.iHeight = GetActualVideoModeParams().height;
-		RageTextureID id("FullscreenTexture");
-		offscreenRenderTarget = new RageTextureRenderTarget(id, param);
-		TEXTUREMAN->RegisterTexture(id, offscreenRenderTarget);
+		RageTextureID id( ssprintf( "FullscreenTexture%dx%d", param.iWidth,
+					    param.iHeight ) );
+		// See if we have this texture loaded already
+		// (not GC'd yet). If it exists and we try to recreate
+		// it, we'll get an error
+		if ( TEXTUREMAN->IsTextureRegistered( id ) )
+		{
+			offscreenRenderTarget = static_cast<RageTextureRenderTarget*>( TEXTUREMAN->LoadTexture( id ) );
+		}
+		else
+		{
+			offscreenRenderTarget = new RageTextureRenderTarget( id, param );
+			TEXTUREMAN->RegisterTexture( id, offscreenRenderTarget );
+		}
 	}
 	return true;
 }
