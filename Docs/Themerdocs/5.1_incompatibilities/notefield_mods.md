@@ -27,8 +27,9 @@ The mods table for a simfile should be like this:
 	{
 		column= 1, -- This mod entry only affects column 1.
 		target= 'column_pos_x', -- The column's x position will change.
-		start_beat= 8, -- Starting on beat 8.
-		length_beats= 4, -- Lasting for 4 beats.
+		start= 8, -- Starting on beat 8.
+		length= 4, -- Lasting for 4 beats.
+		time= 'beat', -- start and length are beats.
 		{'*',
 		 {'-', 'music_beat', 'start_beat'} -- Subtract the start beat of this mod entry from the current music beat.
 		 64 -- And multiply by 64.
@@ -38,15 +39,17 @@ The mods table for a simfile should be like this:
 	{
 		column= "all", -- This mod entry affects all columns.
 		target= 'column_zoom_y', -- The column's x position will change.
-		start_beat= 4, -- Starting on beat 4.
-		length_beats= 4, -- Lasting for 4 beats.
+		start= 4, -- Starting on second 4.
+		length= 4, -- Lasting for 4 seconds.
+		time= 'second', -- start and length are seconds.
 			.5, -- The simple value .5 instead of an equation.
 		sum_type= '*', -- Multiply the existing zoom value by the value or equation result.
 	},
 	{
 		field= 1, -- This affects the notefield instead of a single column.
 		target= 'transform_rot_z', -- Rotate the notefield around z.
-		start_beat= 12, length_beats= 4,
+		start= 12, length= 4,
+		-- If there is no time field, it defaults to beats.
 		{'*', math.pi, {'-', 'music_beat', 'start_beat'}}, -- Rotations are in radians.  Multiply by pi to rotate a half circle every beat.
 	}
 }
@@ -81,17 +84,18 @@ function of that actor will return a list of target names.
 
 The target info table is index by target name.  Each valid target has a true value.  This way you can check for the existence of a target with ```if target_info.quantization_offset then```.
 
-### start_beat and length_beats
-The mod's equation is applied when time >= start_beat and time < start_beat+length_beats.
+### start, length, and time
+The mod's equation is applied when time >= start and time < start+length.
 
-The equation does *not* apply when time == start_beat+length_beats because
-a mod that starts at beat 1 and lasts for 1 beat is not expected to briefly
-overlap with a mod that starts at beat 2.
+The equation does *not* apply when time == start+length because a mod that
+starts at beat 1 and lasts for 1 beat is not expected to briefly overlap with
+a mod that starts at beat 2.
 
-```start_second``` can be used instead of ```start_beat``` to use seconds
-instead of beats.  This matters if you need a mod that starts during a stop.
+If time is ```'second'```, then start and length are seconds instead of
+beats.  This matters if you need a mod that starts during a stop.
 
-```length_seconds``` is the seconds form of ```length_beats```.
+time defaults to ```'beat'```, or you can explicitly put ```time= 'beat'```
+in the mod entry.
 
 ### sum_type
 Each target has a base value and multiple equations.  sum_type controls how

@@ -1224,81 +1224,35 @@ void mod_function::load_from_lua(lua_State* L, int index,
 	m_priority= get_optional_int(L, index, "priority", 0);
 	if(timing_data != nullptr)
 	{
-		m_start_beat= get_optional_double(L, index, "start_beat", invalid_modfunction_time);
-		m_start_second= get_optional_double(L, index, "start_second", invalid_modfunction_time);
-		if(m_start_beat == invalid_modfunction_time)
+		double start= get_optional_double(L, index, "start", invalid_modfunction_time);
+		if(start == invalid_modfunction_time)
 		{
-			if(m_start_second == invalid_modfunction_time)
-			{
-				throw std::string("lacks start time.");
-			}
-			m_start_beat= timing_data->GetBeatFromElapsedTime(static_cast<float>(m_start_second));
-			double length= get_optional_double(L, index, "length", invalid_modfunction_time);
-			if(length == invalid_modfunction_time)
-			{
-				length= get_optional_double(L, index, "length_seconds", invalid_modfunction_time);
-			}
-			if(length == invalid_modfunction_time)
-			{
-				throw std::string("lacks length or lacks girth.");
-			}
-			m_length_seconds= length;
-			m_end_second= m_start_second + length;
-			m_end_beat= timing_data->GetBeatFromElapsedTime(static_cast<float>(m_end_second));
-			m_length_beats= m_end_beat - m_start_beat;
+			throw std::string("lacks start time.");
+		}
+		double length= get_optional_double(L, index, "length", invalid_modfunction_time);
+		if(length == invalid_modfunction_time)
+		{
+			throw std::string("lacks length.");
+		}
+		std::string time_name;
+		get_optional_string(L, index, "time", time_name);
+		if(time_name.empty() || time_name == "beat")
+		{
+			m_start_beat= start;
+			m_start_second= timing_data->GetElapsedTimeFromBeat(static_cast<float>(m_start_beat));
+			m_end_beat= m_start_beat + length;
+			m_end_second= timing_data->GetElapsedTimeFromBeat(static_cast<float>(m_end_beat));
+			m_length_beats= length;
+			m_length_seconds= m_end_second - m_start_second;
 		}
 		else
 		{
-			if(m_start_second == invalid_modfunction_time)
-			{
-				m_start_second= timing_data->GetElapsedTimeFromBeat(static_cast<float>(m_start_beat));
-				double length= get_optional_double(L, index, "length", invalid_modfunction_time);
-				if(length == invalid_modfunction_time)
-				{
-					length= get_optional_double(L, index, "length_beats", invalid_modfunction_time);
-				}
-				if(length == invalid_modfunction_time)
-				{
-					throw std::string("lacks length or lacks girth.");
-				}
-				m_length_beats= length;
-				m_end_beat= m_start_beat + length;
-				m_end_second= timing_data->GetElapsedTimeFromBeat(static_cast<float>(m_end_beat));
-				m_length_seconds= m_end_second - m_start_second;
-			}
-			else
-			{
-				double length= get_optional_double(L, index, "length", invalid_modfunction_time);
-				if(length != invalid_modfunction_time)
-				{
-					throw std::string("length field is ambiguous when start_beat and start_second are both supplied.  Use length_beats and/or length_seconds.");
-				}
-				m_length_beats= get_optional_double(L, index, "length_beats", invalid_modfunction_time);
-				m_length_seconds= get_optional_double(L, index, "length_seconds", invalid_modfunction_time);
-				if(m_length_beats == invalid_modfunction_time)
-				{
-					if(m_length_seconds == invalid_modfunction_time)
-					{
-						throw std::string("lacks length or lacks girth.");
-					}
-					m_end_second= m_start_second + m_length_seconds;
-					m_end_beat= timing_data->GetBeatFromElapsedTime(static_cast<float>(m_end_second));
-					m_length_beats= m_end_beat - m_start_beat;
-				}
-				else
-				{
-					m_end_beat= m_start_beat + m_length_beats;
-					if(m_length_seconds == invalid_modfunction_time)
-					{
-						m_end_second= timing_data->GetElapsedTimeFromBeat(static_cast<float>(m_end_beat));
-						m_length_seconds= m_end_second - m_start_second;
-					}
-					else
-					{
-						m_end_second= m_start_second + m_length_seconds;
-					}
-				}
-			}
+			m_start_second= start;
+			m_start_beat= timing_data->GetBeatFromElapsedTime(static_cast<float>(m_start_second));
+			m_end_second= m_start_second + length;
+			m_end_beat= timing_data->GetBeatFromElapsedTime(static_cast<float>(m_end_second));
+			m_length_seconds= length;
+			m_length_beats= m_end_beat - m_start_beat;
 		}
 	}
 	m_column= get_optional_double(L, index, "column", m_column);

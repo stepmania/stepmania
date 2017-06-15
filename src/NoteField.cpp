@@ -3105,7 +3105,7 @@ void NoteField::disable_speed_scroll_segments()
 void NoteField::turn_on_edit_mode()
 {
 	m_in_edit_mode= true;
-	add_draw_entry({nullptr, field_layer_column_index, beat_bars_draw_order, fdem_beat_bars});
+	add_draw_entry({nullptr, beat_bars_column_index, beat_bars_draw_order, fdem_beat_bars});
 }
 
 double NoteField::get_selection_start()

@@ -1,534 +1,454 @@
+local function pi_div(equation)
+	return {'*', 1/math.pi, equation}
+end
+
+local function offset(time, offset)
+	if offset == 0 then return time
+	else return {'+', time, offset}
+	end
+end
+
+-- operators are considered interchangeable if they have the same number of
+-- operands.
+local arg_counts= {
+	['%']= 2,
+	['mod']= 2,
+	['o']= 2,
+	['round']= 2,
+	['_']= 2,
+	['floor']= 2,
+	['ceil']= 2,
+	['sin']= 1,
+	['cos']= 1,
+	['tan']= 1,
+	['square']= 1,
+	['triangle']= 1,
+	['random']= 1,
+	['repeat']= 3,
+}
+
+local wave_ops= {
+	sin= true, cos= true, tan= true, square= true, triangle= true,
+}
+
+local function check_op(eq)
+	local op= eq[1]
+	local count= arg_counts[op]
+	if not count or count+1 == #eq then
 -- The mod system's sin/cos functions multiply by pi internally, but these
 -- mods ported from ITG weren't made with pi in mind.
--- So they divide by pi before sin or cos.
-local notefield_mods= {
-	effect= {
-		beat= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "beat", target= "note_pos_x",
-					 {"*", 20 * mag,
-						{"cos", {"*", "y_offset", 1/15, 1/math.pi}},
-						{"phase", {"repeat", "music_beat", 0, 2},
-						 {default= {0, 0, 0, 0},
-							{0, .2, 5, -1},
-							{.8, 1, 5, 0},
-							{1, 1.2, -5, 1},
-							{1.8, 2, -5, 0}
-						 }
-						}
-					 }
-					}
+-- So divide by pi before sin or cos.
+		if wave_ops[op] then
+			return pi_div(eq)
+		else
+			return eq
+		end
+	end
+	assert(false, "Wrong number of operands.  "..op.." requires exactly "..count.." but there are "..(#eq-1))
+end
+
+local engine_custom_mods= {
+	-- Each entry is a base mod equation and a set of parameters.
+	beat= {
+		target= 'note_pos_x',
+		equation= function(params, ops)
+			assert(type(params.width) == "number", "width must be a number.")
+			assert(type(params.period) == "number", "period must be a number.")
+			local width= params.width
+			local width_recip= 1/width
+			local period= params.period
+			local half_period= period/2
+			return check_op{
+				ops.level, 20, params.level,
+				check_op{
+					ops.wave, check_op{
+						ops.input, offset(params.input, params.offset), 1/15}},
+				{'phase', {'repeat', offset(params.time, params.time_offset), 0, params.period},
+				 default= {0, 0, 0, 0},
+				 {0, width, width_recip, -1},
+				 {half_period-width, half_period, width_recip, 0},
+				 {half_period, half_period+width, -width_recip, 1},
+				 {period-width, period, -width_recip, 0}
 				}
-			end
-		end,
-		blink= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "blink", target= "note_alpha",
-					 {'-', {'round', {'sin', {'*', 'music_second', 10 * mag, 1/math.pi}}, 1/3}, 1}
-					}
-				}
-			end
-		end,
-		bumpy= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "bumpy", target= "note_pos_z",
-					 {'*', 40 * mag, {'sin', {'*', 'y_offset', 1/16, 1/math.pi}}}
-					}
-				}
-			end
-		end,
-		confusion= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "confusion", target= "note_rot_z",
-					 {'*', 'music_beat', mag * 2 * math.pi}
-					}
-				}
-			end
-		end,
-		dizzy= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "dizzy", target= "note_rot_z",
-					 {'*', 'dist_beat', mag * 2 * math.pi}
-					}
-				}
-			end
-		end,
-		drunk= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "drunk", target= "note_pos_x",
-					 {"*", mag * 32,
-						{"cos",
-						 {'*', 1/math.pi,
-							{"+", "music_second",
-							 {"*", "column", .2},
-							 {"*", "y_offset", 10, 1/480}
-							}
-						 }
-						}
-					 }
-					}
-				}
-			end
-		end,
-		flip= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "flip", target= "column_pos_x", sum_type= '*', -1*mag}
-				}
-			end
-		end,
-		roll= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "roll", target= "note_rot_x",
-					 {"*", "y_offset", .5 * (math.pi / 180)}
-					}
-				}
-			end
-		end,
-		tiny= function(mag, field)
-			local zoom= {"exp", .5, mag}
-			local mods= {
-				{name= "tiny", target= "note_zoom", sum_type= "*", zoom},
-				-- min makes it so tiny can move columns together, but not apart.
-				{name= "tiny", target= "column_pos_x", sum_type= "*", {'min', 1, zoom}},
 			}
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods(mods)
-			end
 		end,
-		tipsy= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "tipsy", target= "column_pos_y",
-					 {"*", mag,
-						{"cos",
-						 {'*', 1/math.pi,
-							{"+",
-							 {"*", "music_second", 1.2},
-							 {"*", "column", 1.8}
-							},
-						 }
-						},
-						64 * .4,
-					 }
-					}
-				}
-			end
-		end,
-		twirl= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "twirl", target= "note_rot_y",
-					 {"*", "y_offset", .5 * mag * (math.pi / 180)}
-					}
-				}
-			end
-		end,
+		params= {
+			level= 1, input= 'y_offset', time= 'music_beat', period= 2, width= .2,
+			offset= 0, time_offset= 0,
+		},
+		ops= {
+			level= '*', wave= 'cos', input= '*',
+		},
+		examples= {
+			{"beat twice as often", "'beat', {period= 1}"},
+			{"beat with longer ramp width", "'beat', {width= 1}"},
+		}
 	},
-	appearance= {
-		flat= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "flat", target= "quantization_multiplier",
-					 sum_type= 'replace', 1-mag}
-				}
-			end
+	blink= {
+		target= 'note_alpha',
+		equation= function(params, ops)
+			return check_op{
+				ops.level,
+				check_op{
+					ops.round,
+					check_op{
+						ops.wave,
+						check_op{ops.input, offset(params.input, params.offset), 10, params.level}
+					},
+					params.round,
+				},
+				1,
+			}
 		end,
-		rainbow= function(mag, field)
-			local phases= {}
-			local quants= {0, 1/4, 1/3, 1/8, 1/16, 1/2, 1/6, 1/12}
-			for i= 1, #quants do
-				phases[i]= {i-1, i, 0, quants[i]}
-			end
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "rainbow", target= "quantization_multiplier",
-					 sum_type= 'replace', 0},
-					{name= "rainbow", target= "quantization_offset",
-					 {"phase", {"repeat", "row_id", 0, #quants}, phases}
-					}
-				}
-			end
-		end,
-		stealth= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "stealth", target= "note_alpha", sum_type= '*', 1-mag}
-				}
-			end
-		end,
+		params= {
+			input= 'music_second', level= 1, offset= 0,
+		},
+		ops= {
+			level= '-', round= 'round', wave= 'sin', input= '*',
+		},
 	},
-	scrolls= {
-		alternate= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				if i % 2 == 1 then
-					col:set_permanent_mods{
-						{name= "alternate", target= "reverse", sum_type= '*', -1*mag}
-					}
-				end
-			end
+	bumpy= {
+		target= 'note_pos_z',
+		equation= function(params, ops)
+			return check_op{
+				ops.level, 40, params.level,
+				check_op{
+					ops.wave,
+					check_op{ops.input, offset(params.input, params.offset), 1/16},
+				},
+			}
 		end,
-		centered= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "center", target= "center", mag}
-				}
-			end
-		end,
-		cross= function(mag, field)
-			local columns= field:get_columns()
-			local first_cross= math.floor(#columns / 4)
-			local last_cross= #columns - 1 - first_cross
-			for i, col in ipairs(columns) do
-				if (i-1) >= first_cross and (i-1) <= last_cross then
-					col:set_permanent_mods{
-						{name= "cross", target= "reverse", sum_type= '*', -1 * mag}
-					}
-				end
-			end
-		end,
-		split= function(mag, field)
-			local columns= field:get_columns()
-			for i, col in ipairs(columns) do
-				if i > #columns / 2 then
-					col:set_permanent_mods{
-						{name= "split", target= "reverse", sum_type= '*', -1 * mag}
-					}
-				end
-			end
-		end,
+		params= {
+			level= 1, input= 'y_offset', offset= 0,
+		},
+		ops= {
+			level= '*', wave= 'sin', input= '*',
+		},
 	},
-}
-
--- todo:
--- boost, boomerang, brake, expand, wave
--- invert, tornado, xmode
-
-local notefield_menu_choices= {
-	appearance= {
-		halved= {{"appearance.flat", .5}},
-		doubled= {{"appearance.flat", -1}},
+	confusion= {
+		target= 'note_rot_z',
+		equation= function(params, ops)
+			return check_op{ops.level, offset(params.input, params.offset), params.level, 2*math.pi}
+		end,
+		params= {
+			input= 'music_beat', level= 1, offset= 0,
+		},
+		ops= {
+			level= '*',
+		},
+	},
+	dizzy= {
+		target= 'note_rot_z',
+		equation= function(params, ops)
+			return check_op{ops.level, offset(params.input, params.offset), params.level, 2*math.pi}
+		end,
+		params= {
+			input= 'dist_beat', level= 1, offset= 0,
+		},
+		ops= {
+			level= '*',
+		},
+	},
+	stealth= {
+		target= 'note_alpha',
+		equation= function(params, ops)
+			return {ops.level, params.offset, params.level}
+		end,
+		params= {
+			level= 1, offset= 1,
+		},
+		ops= {
+			level= '-',
+		},
+	},
+	drunk= {
+		target= 'note_pos_x',
+		equation= function(params, ops)
+			return check_op{
+				ops.level, params.level, 32,
+				check_op{
+					ops.wave,
+					pi_div{
+						ops.time, params.time,
+						{ops.column, params.column_input, .2},
+						{ops.input, params.input, 10, 1/480},
+					},
+				},
+			}
+		end,
+		params= {
+			level= 1, time= 'music_second', column= 'column', input= 'y_offset',
+		},
+		ops= {
+			level= '*', wave= 'cos', time= '+', column= '*', input= '*',
+		},
 	},
 }
 
-local function choice_is_valid(choice)
-	if type(choice) ~= "table" then return false end
-	if #choice < 0 then return false end
-	return true
-end
+-- 200% confusion, 100% confusionoffset
+-- tuned_mod('confusion', {level= 2, offset= 1})
 
-function add_notefield_menu_choice(section, name, choice)
-	assert(type(section) == "string" and #section > 0,
-				 "First arg to add_notefield_menu_choice must be a section name.")
-	assert(type(name) == "string" and #name > 0,
-				 "Second arg to add_notefield_menu_choice must be a choice name.")
-	assert(choice_is_valid(choice),
-				 "Third arg to add_notefield_menu_choice must be a valid choice.")
-	if not notefield_menu_choices[section] then
-		notefield_menu_choices[section]= {}
+-- dizzy using music_beat for input instead of dist_beat, aka confusion
+-- tuned_mod('dizzy', {input= 'music_beat'})
+
+-- Intended use:
+-- 200% beat
+-- {start= 1, length= 4, target= 'note_pos_x', tuned_mod('beat', {level= 2})}
+-- 200% beat, half a beat sooner
+-- {start= 1, length= 4, target= 'note_pos_x', tuned_mod('beat', {level= 2, time_offset= -.5})}
+local function tune_params(params, defaults)
+	if type(params) == "table" then
+		add_defaults_to_params(params, defaults)
+		return params
+	else
+		return defaults
 	end
-	notefield_menu_choices[section][name]= choice
 end
 
-foreach_ordered(
-	notefield_mods, function(section_name, section)
+local theme_custom_mods= {}
+
+function set_theme_custom_mods(mods)
+	if type(mods) ~= "table" then mods= {} end
+	theme_custom_mods= mods
+end
+
+local simfile_custom_mods= {}
+
+function set_simfile_custom_mods(mods)
+	if type(mods) ~= "table" then mods= {} end
+	simfile_custom_mods= mods
+end
+
+local function print_params_info(params)
+	if #params == 0 then
+		Trace("      None.")
+	else
 		foreach_ordered(
-			section, function(mod_name, func)
-				add_notefield_menu_choice(section_name, mod_name, {{section_name.."."..mod_name, 1}})
+			params, function(name, value)
+				Trace("      "..name .. ", default " .. value)
 		end)
-end)
+	end
+end
 
-local player_mods= {
-	[PLAYER_1]= {},
-	[PLAYER_2]= {},
-}
-
-local profile_mods_config= create_lua_config{
-	name= "notefield_mods", file= "notefield_mods.lua", default= {},
-	match_depth= 0, use_alternate_config_prefix= "",
-}
-add_profile_load_callback(
-	function(profile, dir, pn)
-		if pn then
-			profile_mods_config:load(pn)
-			player_mods[pn]= DeepCopy(profile_mods_config:get_data(pn))
+local function print_examples(examples)
+	if not examples or #examples == 0 then
+		Trace("      None.")
+	else
+		for exid= 1, #examples do
+			local entry= examples[exid]
+			Trace("      " .. entry[1])
+			Trace("        " .. entry[2])
 		end
 	end
-)
-add_profile_save_callback(standard_lua_config_profile_save(profile_mods_config))
-
-function save_notefield_mods_to_profile(pn)
-	profile_mods_config:set_data(pn, DeepCopy(player_mods[pn]))
-	profile_mods_config:set_dirty(pn)
-	profile_mods_config:save(pn)
 end
 
-function clear_notefield_mods_from_profile(pn)
-	profile_mods_config:set_data(pn, {})
-	profile_mods_config:set_dirty(pn)
-	profile_mods_config:save(pn)
+local function print_info_from_custom_mods(mods)
+	foreach_ordered(
+		mods, function(name, entry)
+			Trace("  "..name .. ", " .. entry.target)
+			Trace("    Params:")
+			print_params_info(entry.params)
+			Trace("    Ops:")
+			print_params_info(entry.ops)
+			Trace("    Examples:")
+			print_examples(entry.examples)
+	end)
 end
 
-function clear_notefield_mods(pn)
-	player_mods[pn]= {}
+function print_custom_mods_info()
+	Trace("Engine custom mods:")
+	print_info_from_custom_mods(engine_custom_mods)
+	Trace("Theme custom mods:")
+	print_info_from_custom_mods(theme_custom_mods)
+	Trace("Simfile custom mods:")
+	print_info_from_custom_mods(simfile_custom_mods)
+	assert(false, "CUPS is not correctly configured for HP LaserJet 2700")
 end
 
-function add_notefield_mod(section, name, func)
-	if not notefield_mods[section] then
-		notefield_mods[section]= {}
-	end
-	notefield_mods[section][name]= func
-end
-
-local function get_multipart_mod_level(pn_mods, multi_mod)
-	local level= false
-	for i, part in ipairs(multi_mod) do
-		if not pn_mods[part[1]] then
-			return 0
+local function handle_custom_mod(mod_entry)
+	local name= mod_entry[1]
+	local params= mod_entry[2]
+	local ops= mod_entry[3]
+	if type(name) == "string" then
+		-- Convert this
+		-- {start_beat= 0, length_beats= 1, 'beat', {level= 2}, {wave= 'tan'}}
+		-- into an equation, using the custom_mods tables.
+		local custom_entry= simfile_custom_mods[name] or
+			theme_custom_mods[name] or engine_custom_mods[name]
+		assert(custom_entry, name .. " was not found in the custom mods list.")
+		if type(mod_entry.target) ~= "string" then
+			mod_entry.target= custom_entry.target
 		end
-		local part_level= pn_mods[part[1]] / part[2]
-		if not level then
-			level= part_level
+		if type(mod_entry.sum_type) ~= "string" then
+			mod_entry.sum_type= custom_entry.sum_type
+		end
+		local eq= custom_entry.equation(
+			tune_params(params, custom_entry.params),
+			tune_params(ops, custom_entry.ops))
+		if type(eq) ~= "number" and type(eq) ~= "table" then
+			assert(false, "Custom mod " .. name .. " did not return a valid equation.")
+		end
+		mod_entry[1]= eq
+	else
+		-- Assume it's already a valid equation, don't change it.
+	end
+end
+
+local function add_tween_phases(entry)
+	if not (entry.on or entry.off) then
+		return
+	end
+	local time= entry.time or 'beat'
+	local full_level= 1
+	if entry[2] then
+		full_level= entry[2].level or full_level
+	end
+	local phases= {default= {0, 0, 0, 1}}
+	if entry.on then
+		phases[#phases+1]= {0, entry.on, 1/entry.on, 0}
+	end
+	if entry.off then
+		-- If entry.length is the end of the phase, there is a single frame at
+		-- the end of the mod that uses the default phase instead.
+		-- I hate floating point math.
+		phases[#phases+1]= {entry.length - entry.off, entry.length+.001, -1/entry.off, 1}
+	end
+	if not entry[2] then
+		entry[2]= {}
+	end
+	entry[2].level= {'*', full_level, {'phase', {'-', 'music_'..time, 'start_'..time}, phases}}
+end
+
+function organize_notefield_mods_by_target(mods_table)
+	local num_fields= mods_table.fields
+	if type(num_fields) ~= "number" or num_fields < 1 then
+		num_fields= 1
+	end
+	local num_columns= mods_table.columns
+	if type(num_columns) ~= "number" or num_columns < 1 then
+		lua.ReportScriptError("organize_notefield_mods_by_target cannot correctly handle mods that target all columns when the mods table does not specify the number of columns.")
+		return {}
+	end
+	local result= {}
+	for fid= 1, num_fields do
+		local field_result= {field= {}}
+		for cid= 1, num_columns do
+			field_result[cid]= {}
+		end
+		result[fid]= field_result
+	end
+	for mid= 1, #mods_table do
+		local entry= mods_table[mid]
+		if type(entry) ~= "table" then
+			lua.ReportScriptError("mods table entry " .. mid .. " is not a table.")
+			return {}
+		end
+		local target_fields= {}
+		-- Support these kinds of field entries:
+		--   field= "all",
+		--   field= 1,
+		--   field= {2, 3},
+		if entry.field == "all" then
+			for fid= 1, num_fields do
+				target_fields[#target_fields+1]= result[fid]
+			end
+		elseif type(entry.field) == "number" then
+			if entry.field < 1 or entry.field > num_fields then
+				lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+				return {}
+			end
+			target_fields[#target_fields+1]= result[fid]
+		elseif type(entry.field) == "table" then
+			for eid, fid in ipairs(entry.field) do
+				if type(fid) ~= "number" or fid < 1 or fid > num_fields then
+					lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+					return {}
+				end
+				target_fields[#target_fields+1]= result[fid]
+			end
+		elseif type(entry.field) ~= "nil" then
+			lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+			return {}
 		else
-			if math.abs(level - part_level) > 0.05 then
-				return 0
+			target_fields[#target_fields+1]= result[1]
+		end
+		handle_custom_mod(entry)
+		add_tween_phases(entry)
+		if entry.column then
+			local target_columns= {}
+			-- Support these kinds of column entries:
+			--   column= "all",
+			--   column= 1,
+			--   column= {2, 3},
+			if entry.column == "all" then
+				for cid= 1, num_columns do
+					target_columns[#target_columns+1]= cid
+				end
+			elseif type(entry.column) == "number" then
+				if entry.column < 1 or entry.column > num_columns then
+					lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
+					return {}
+				end
+				target_columns[#target_columns+1]= entry.column
+			elseif type(entry.column) == "table" then
+				for eid, cid in ipairs(entry.column) do
+					if type(cid) ~= "number" or cid < 1 or cid > num_columns then
+						lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
+						return {}
+					end
+					target_columns[#target_columns+1]= cid
+				end
+			else
+				lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
+				return {}
+			end
+			for i, targ_field in ipairs(target_fields) do
+				for i, cid in ipairs(target_columns) do
+					local targ_column= targ_field[cid]
+					targ_column[#targ_column+1]= entry
+				end
+			end
+		else
+			for i, targ_field in ipairs(target_fields) do
+				targ_field.field[#targ_field.field+1]= entry
 			end
 		end
 	end
-	return level
+	if num_fields == 1 then
+		return result[1]
+	else
+		return result
+	end
 end
 
-local function set_multipart_mod_level(pn, multi_mod, level)
-	local pn_mods= player_mods[pn]
-	if level == 0 then
-		for i, part in ipairs(multi_mod) do
-			pn_mods[part[1]]= nil
+function organize_and_apply_notefield_mods(notefields, mods)
+	local organized_mods= organize_notefield_mods_by_target(mods)
+	local pn_to_field_index= PlayerNumber:Reverse()
+	if mods.field and mods.field ~= 1 then
+		for pn, field in pairs(notefields) do
+			-- stepmania enums are 0 indexed
+			local field_index= pn_to_field_index[pn] + 1
+			field:set_per_column_timed_mods(organized_mods[field_index])
 		end
 	else
-		for i, part in ipairs(multi_mod) do
-			pn_mods[part[1]]= level * part[2]
+		for pn, field in pairs(notefields) do
+			field:set_per_column_timed_mods(organized_mods)
 		end
 	end
 end
 
-local function notefield_mods_menu(with_save, no_sections, name, per_mod_func)
-	local choices= {}
-	choices[#choices+1]= {
-		name= "notefield_mods_clear", translatable= true, execute= function(pn)
-			clear_notefield_mods(pn)
-		end,
-	}
-	if with_save then
-		choices[#choices+1]= {
-			name= "notefield_mods_profile_save", translatable= true,
-			req_func= function(pn)
-				return PROFILEMAN:IsPersistentProfile(pn)
-			end,
-			execute= function(pn)
-				save_notefield_mods_to_profile(pn)
-			end,
-		}
-		choices[#choices+1]= {
-			name= "notefield_mods_profile_clear", translatable= true,
-			req_func= function(pn)
-				return PROFILEMAN:IsPersistentProfile(pn)
-			end,
-			execute= function(pn)
-				clear_notefield_mods_from_profile(pn)
-			end,
-		}
-	end
-	local function add_section(name, section)
-		local sub_choices= {}
-		foreach_ordered(section, per_mod_func(name, sub_choices))
-		if #sub_choices == 0 then return end
-		if no_sections then
-			for i, sub in ipairs(sub_choices) do
-				choices[#choices+1]= sub
-			end
-		else
-			choices[#choices+1]= nesty_options.submenu(name, sub_choices)
-		end
-	end
-	foreach_ordered(notefield_menu_choices, add_section)
-	return nesty_options.submenu(name, choices)
-end
-
-local function toggle_menu_per_mod(section_name, sub_choices)
-	return function(name, mod)
-		local full_name= section_name.."."..name
-		sub_choices[#sub_choices+1]= {
-			type= "bool", name= full_name, translatable= true, execute= function(pn)
-				local pn_mods= player_mods[pn]
-				local level= get_multipart_mod_level(pn_mods, mod)
-				local new_val= 0
-				if level ~= 1 then
-					new_val= 1
-				end
-				set_multipart_mod_level(pn, mod, new_val)
-				MESSAGEMAN:Broadcast("NotefieldModChanged", {name= full_name, value= new_val, pn= pn})
-			end,
-			value= function(pn)
-				local pn_mods= player_mods[pn]
-				local level= get_multipart_mod_level(pn_mods, mod)
-				if level ~= 1 then
-					return false
-				else
-					return true
-				end
-			end,
-		}
-	end
-end
-
-function get_notefield_mods_toggle_menu(with_save, no_sections)
-	return notefield_mods_menu(with_save, no_sections, "notefield_toggle_mods", toggle_menu_per_mod)
-end
-
-local function value_menu_per_mod(section_name, sub_choices)
-	return function(name, mod)
-		local full_name= section_name.."."..name
-		sub_choices[#sub_choices+1]= {
-			name= full_name, translatable= true,
-			menu= nesty_option_menus.adjustable_float, args= {
-				name= full_name, min_scale= -2, scale= 0, max_scale= 0,
-				initial_value= function(pn)
-					return get_multipart_mod_level(player_mods[pn], mod)
-				end,
-				set= function(pn, value)
-					set_multipart_mod_level(pn, mod, value)
-					MESSAGEMAN:Broadcast("NotefieldModChanged", {name= full_name, value= value, pn= pn})
-				end,
-			},
-			value= function(pn)
-				return get_multipart_mod_level(player_mods[pn], mod)
-			end,
-		}
-	end
-end
-
-function get_notefield_mods_value_menu(with_save, no_sections)
-	return notefield_mods_menu(with_save, no_sections, "notefield_value_mods", value_menu_per_mod)
-end
-
--- 1. Translating mod names has always been optional in stepmania.
--- 2. Seeing "foo.bar" in the menu and stuff will probably motivate themers
---    that make custom mods to translate them.
-local function optional_trans(section, str)
-	if THEME:HasString(section, str) then
-		return THEME:GetString(section, str)
-	end
-	return str
-end
-
-function get_notefield_mods_as_string(pn)
-	local ret= {}
-	local function per_mod(name, value)
-		if value == 1 then
-			ret[#ret+1]= ("%s"):format(optional_trans("notefield_options", name))
-		elseif value ~= 0 then
-			ret[#ret+1]= ("%d%% %s"):format(value*100, optional_trans("notefield_options", name))
-		end
-	end
-	foreach_ordered(player_mods[pn], per_mod)
-	return table.concat(ret, ", ")
-end
-
-function get_player_options_as_string(pn, hide_fail)
-	local ret= {}
-	local ops= GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred")
-	local life_type= ops:LifeSetting()
-	if life_type == "LifeType_Bar" then
-		local drain_type= ops:DrainSetting()
-		if drain_type ~= "DrainType_Normal" then
-			ret[#ret+1]= optional_trans("OptionNames", ToEnumShortString(drain_type))
-		end
-	elseif life_type == "LifeType_Battery" then
-		local lives= ops:BatteryLives()
-		if lives == 1 then
-			ret[#ret+1]= ("%d %s"):format(lives, optional_trans("OptionNames", "Life"))
-		else
-			ret[#ret+1]= ("%d %s"):format(lives, optional_trans("OptionNames", "Lives"))
-		end
+function handle_notefield_mods(mods)
+	local notefields= {}
+	local screen= SCREENMAN:GetTopScreen()
+	if screen.GetEditState then
+		-- edit mode
+		notefields[PLAYER_1]= screen:GetChild("Player"):GetChild("NoteField")
 	else
-		ret[#ret+1]= optional_trans("OptionNames", "LifeTime")
-	end
-	if ops:Blind() ~= 0 then
-		ret[#ret+1]= optional_trans("OptionNames", "Blind")
-	end
-	local cover= ops:Cover()
-	if cover == 1 then
-		ret[#ret+1]= optional_trans("OptionNames", "Cover")
-	elseif cover ~= 0 then
-		ret[#ret+1]= ("%d%% %s"):format(cover*100, optional_trans("OptionNames", "Cover"))
-	end
-	local bool_mods= {
-		"Mirror", "Backwards", "Left", "Right", "Shuffle",
-		"SoftShuffle", "SuperShuffle", "NoHolds", "NoRolls", "NoMines",
-		"Little", "Wide", "Big", "Quick", "BMRize", "Skippy", "Mines",
-		"AttackMines", "Echo", "Stomp", "Planted", "Floored", "Twister",
-		"HoldRolls", "NoJumps", "NoHands", "NoLifts", "NoFakes", "NoQuads",
-		"NoStretch", "MuteOnError",
-	}
-	for i, name in ipairs(bool_mods) do
-		if ops[name](ops) then
-			ret[#ret+1]= optional_trans("OptionNames", name)
+		-- gameplay
+		for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+			notefields[pn]= find_notefield_in_gameplay(screen, pn)
 		end
 	end
-	local fail= ops:FailSetting()
-	if fail ~= "FailType_Immediate" and not hide_fail then
-		ret[#ret+1]= optional_trans("OptionNames", fail)
-	end
-	return table.concat(ret, ", ")
-end
-
-function get_notefield_mods_with_player_options(pn, hide_fail)
-	local nf_mods= get_notefield_mods_as_string(pn)
-	local po_mods= get_player_options_as_string(pn, hide_fail)
-	if #nf_mods > 0 then
-		if #po_mods > 0 then
-			return nf_mods .. ", " .. po_mods
-		else
-			return po_mods
-		end
-	else
-		return po_mods
-	end
-end
-
-function apply_notefield_mods(pn)
-	local field= find_notefield_in_gameplay(SCREENMAN:GetTopScreen(), pn)
-	if field then
-		local function apply_mod(name, value)
-			local func= get_element_by_path(notefield_mods, name)
-			func(value, field)
-		end
-		foreach_ordered(player_mods[pn], apply_mod)
-	end
-end
-
-function notefield_mods_actor()
-	return Def.Actor{
-		CurrentStepsP1ChangedMessageCommand= function(self, param)
-			if not GAMESTATE:GetCurrentSteps(PLAYER_1) then return end
-			self:queuecommand("delayed_p1_steps_change")
-		end,
-		CurrentStepsP2ChangedMessageCommand= function(self, param)
-			if not GAMESTATE:GetCurrentSteps(PLAYER_2) then return end
-			self:queuecommand("delayed_p2_steps_change")
-		end,
-		delayed_p1_steps_changeCommand= function(self)
-			apply_notefield_mods(PLAYER_1)
-		end,
-		delayed_p2_steps_changeCommand= function(self)
-			apply_notefield_mods(PLAYER_2)
-		end,
-	}
+	organize_and_apply_notefield_mods(notefields, mods)
+	return notefields
 end
