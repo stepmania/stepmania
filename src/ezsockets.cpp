@@ -92,21 +92,21 @@ namespace
 
 uint32_t EzSockets::sm_ntohl(uint32_t in)
 {
-	return ::ntohl(in);
+	return ntohl(in);
 }
 
 uint16_t EzSockets::sm_ntohs(uint16_t in)
 {
-	return ::ntohs(in);
+	return ntohs(in);
 }
 
 uint32_t EzSockets::sm_htonl(uint32_t in)
 {
-	return ::htonl(in);
+	return htonl(in);
 }
 
 uint16_t EzSockets::sm_htons(uint16_t in) {
-	return ::htons(in);
+	return htons(in);
 }
 
 EzSockets::EzSockets()
