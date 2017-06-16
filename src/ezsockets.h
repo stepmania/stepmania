@@ -127,10 +127,10 @@ public:
 	RString address;
 
 	// Wrapped here so we don't have to leak winapi everywhere...
-	static uint32_t ntohl(uint32_t);
-	static uint16_t ntohs(uint16_t);
-	static uint32_t htonl(uint32_t);
-	static uint16_t htons(uint16_t);
+	static uint32_t sm_ntohl(uint32_t);
+	static uint16_t sm_ntohs(uint16_t);
+	static uint32_t sm_htonl(uint32_t);
+	static uint16_t sm_htons(uint16_t);
 
 private:
 

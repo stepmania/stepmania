@@ -867,7 +867,7 @@ uint16_t PacketFunctions::Read2()
 	uint16_t Temp;
 	memcpy( &Temp, Data + Position,2 );
 	Position+=2;
-	return EzSockets::ntohs(Temp);
+	return EzSockets::sm_ntohs(Temp);
 }
 
 uint32_t PacketFunctions::Read4()
@@ -878,7 +878,7 @@ uint32_t PacketFunctions::Read4()
 	uint32_t Temp;
 	memcpy( &Temp, Data + Position,4 );
 	Position+=4;
-	return EzSockets::ntohl(Temp);
+	return EzSockets::sm_ntohl(Temp);
 }
 
 RString PacketFunctions::ReadNT()
@@ -905,7 +905,7 @@ void PacketFunctions::Write2(uint16_t data)
 {
 	if (Position>=NETMAXBUFFERSIZE-1)
 		return;
-	data = EzSockets::htons(data);
+	data = EzSockets::sm_htons(data);
 	memcpy( &Data[Position], &data, 2 );
 	Position+=2;
 }
@@ -915,7 +915,7 @@ void PacketFunctions::Write4(uint32_t data)
 	if (Position>=NETMAXBUFFERSIZE-3)
 		return ;
 
-	data = EzSockets::htonl(data);
+	data = EzSockets::sm_htonl(data);
 	memcpy( &Data[Position], &data, 4 );
 	Position+=4;
 }
