@@ -3,6 +3,11 @@ ________________________________________________________________________________
 The StepMania 5.1 Changelog covers all post-5.0.12 changes.
 ________________________________________________________________________________
 
+2017/06/18
+----------
+* [RageDisplay, LLW_X11] Backport fullscreen borderless window, per-monitor
+  fullscreen options to X11 backend
+
 2017/06/06
 ----------
 * [General] Backport custom song support. [kyzentun]
