@@ -535,8 +535,8 @@ void NoteFieldColumn::calc_reverse_shift()
 	{
 		visible_scale= min_visible_scale;
 	}
-	first_y_offset_visible= -m_pixels_visible_before_beat / visible_scale;
-	last_y_offset_visible= m_pixels_visible_after_beat / visible_scale;
+	first_y_offset_visible= -(m_pixels_visible_before_beat * m_defective_mods->get_drawsizeback()) / visible_scale;
+	last_y_offset_visible= (m_pixels_visible_after_beat * m_defective_mods->get_drawsize()) / visible_scale;
 }
 
 double NoteFieldColumn::apply_reverse_shift(double y_offset)
@@ -1337,7 +1337,7 @@ void NoteFieldColumn::build_render_lists()
 		double head_yoff= head_y_offset();
 		m_defective_mods->get_transform(m_curr_beat, head_yoff,
 			apply_reverse_shift(head_yoff), m_column, head_transform);
-		receptor_alpha= m_defective_mods->get_receptor_alpha();
+		receptor_alpha= m_defective_mods->get_receptor_alpha(m_column);
 		receptor_glow= 0.0;
 		explosion_alpha= 1.0;
 		explosion_glow= 0.0;

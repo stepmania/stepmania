@@ -86,12 +86,24 @@ void PlayerOptions::Init()
 	m_fRandomSpeed = 0;		m_SpeedfRandomSpeed = 1.0f;
 	m_fModTimerMult = 0;		m_SpeedfModTimerMult = 1.0f;
 	m_fModTimerOffset = 0;		m_SpeedfModTimerOffset = 1.0f;
+	m_fDrawSize = 0;		m_SpeedfDrawSize = 1.0f;
+	m_fDrawSizeBack = 0;		m_SpeedfDrawSizeBack = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
+	m_bStealthType = false;
+	m_bStealthPastReceptors = false;
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
 	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
+	ZERO( m_fConfusionX );		ONE( m_SpeedfConfusionX );
+	ZERO( m_fConfusionY );		ONE( m_SpeedfConfusionY );
+	ZERO( m_fConfusionZ );		ONE( m_SpeedfConfusionZ );
+	ZERO( m_fDarks );		ONE( m_SpeedfDarks );
+	ZERO( m_fStealth );		ONE( m_SpeedfStealth );
+	ZERO( m_fTiny );		ONE( m_SpeedfTiny );
+	ZERO( m_fBumpy );		ONE( m_SpeedfBumpy );
+	ZERO( m_fReverse );		ONE( m_SpeedfReverse );
 }
 
 void PlayerOptions::Approach(PlayerOptions const& other, float delta)
@@ -108,6 +120,8 @@ void PlayerOptions::Approach(PlayerOptions const& other, float delta)
 	DO_COPY( m_ModTimerType );
 	APPROACH( fModTimerMult );
 	APPROACH( fModTimerOffset );
+	APPROACH( fDrawSize );
+	APPROACH( fDrawSizeBack );
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
 	APPROACH( fMaxScrollBPM );
@@ -136,6 +150,22 @@ void PlayerOptions::Approach(PlayerOptions const& other, float delta)
 	    APPROACH( fMovesY[i] );
 	for( int i=0; i<16; i++)
 	    APPROACH( fMovesZ[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fConfusionX[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fConfusionY[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fConfusionZ[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fDarks[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fStealth[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fTiny[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fBumpy[i] );
+	for( int i=0; i<16; i++)
+	    APPROACH( fReverse[i] );
 
 	DO_COPY( m_bSetScrollSpeed );
 	for( int i=0; i<NUM_TURNS; i++ )
@@ -143,6 +173,8 @@ void PlayerOptions::Approach(PlayerOptions const& other, float delta)
 	for( int i=0; i<NUM_TRANSFORMS; i++ )
 		DO_COPY( m_bTransforms[i] );
 	DO_COPY( m_bMuteOnError );
+	DO_COPY( m_bStealthType );
+	DO_COPY( m_bStealthPastReceptors );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 #undef APPROACH
@@ -258,6 +290,15 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_SPEED],		"DrunkZSpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_OFFSET],	"DrunkZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_PERIOD],	"DrunkZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_LINEAR],	"ShrinkLinear" );
+	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_MULT],	"ShrinkMult" );
+	AddPart( AddTo, m_fEffects[EFFECT_PULSE_INNER],		"PulseInner" );
+	AddPart( AddTo, m_fEffects[EFFECT_PULSE_OUTER],		"PulseOuter" );
+	AddPart( AddTo, m_fEffects[EFFECT_PULSE_PERIOD],	"PulsePeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_PULSE_OFFSET],	"PulseOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_ATTENUATE_X],		"AttenuateX" );
+	AddPart( AddTo, m_fEffects[EFFECT_ATTENUATE_Y],		"AttenuateY" );
+	AddPart( AddTo, m_fEffects[EFFECT_ATTENUATE_Z],		"AttenuateZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],		"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION],	"Confusion" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_OFFSET],	"ConfusionOffset" );
@@ -265,6 +306,12 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_X_OFFSET],	"ConfusionXOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y],	"ConfusionY" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION_Y_OFFSET],	"ConfusionYOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE],		"Bounce" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_PERIOD],	"BouncePeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_OFFSET],	"BounceOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_Z],		"BounceZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_Z_PERIOD],	"BounceZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_BOUNCE_Z_OFFSET],	"BounceZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_MINI],		"Mini" );
 	AddPart( AddTo, m_fEffects[EFFECT_TINY],		"Tiny" );
 	AddPart( AddTo, m_fEffects[EFFECT_FLIP],		"Flip" );
@@ -326,6 +373,8 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
 	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
 	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
+	AddPart( AddTo, m_bStealthType,				"StealthType" );
+	AddPart( AddTo, m_bStealthPastReceptors,		"StealthPastReceptors");
 	
 	for( int i=0; i<16; i++)
 	{
@@ -336,6 +385,22 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 		AddPart( AddTo, m_fMovesY[i],				s );
 		s = fmt::sprintf( "MoveZ%d", i+1 );
 		AddPart( AddTo, m_fMovesZ[i],				s );
+		s = fmt::sprintf( "ConfusionOffset%d", i+1);
+		AddPart( AddTo, m_fConfusionX[i],				s );
+		s = fmt::sprintf( "ConfusionYOffset%d", i+1 );
+		AddPart( AddTo, m_fConfusionY[i],				s );
+		s = fmt::sprintf( "ConfusionZOffset%d", i+1 );
+		AddPart( AddTo, m_fConfusionZ[i],				s );
+		s = fmt::sprintf( "Dark%d", i+1 );
+		AddPart( AddTo, m_fDarks[i],				s );
+		s = fmt::sprintf( "Stealth%d", i+1 );
+		AddPart( AddTo, m_fStealth[i],				s );
+		s = fmt::sprintf( "Tiny%d", i+1 );
+		AddPart( AddTo, m_fTiny[i],				s );
+		s = fmt::sprintf( "Bumpy%d", i+1 );
+		AddPart( AddTo, m_fBumpy[i],				s );
+		s = fmt::sprintf( "Reverse%d", i+1 );
+		AddPart( AddTo, m_fReverse[i],				s );
 	}
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
@@ -354,6 +419,8 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 
 	AddPart( AddTo, m_fModTimerMult,	"ModTimerMult" );
 	AddPart( AddTo, m_fModTimerOffset,	"ModTimerOffset" );
+	AddPart( AddTo, m_fDrawSize,		"DrawSize" );
+	AddPart( AddTo, m_fDrawSizeBack,	"DrawSizeBack" );
 
 	AddPart( AddTo, m_fDark,	"Dark" );
 
@@ -508,6 +575,7 @@ static void choose_random(PlayerOptions& options, float, float)
 bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &sErrorOut )
 {
 	std::string sBit = Rage::trim(Rage::make_lower(sOneMod));
+	std::string sMod = "";
 
 	/* "drunk"
 	 * "no drunk"
@@ -590,14 +658,44 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 	}
 	else if( sBit.find("move") != sBit.npos)
 	{
-	    for (int i=0; i<16; i++)
+	    if (sBit.find("x") != sBit.npos)
 	    {
-		std::string s = fmt::sprintf( "movex%d", i+1 );
-		    if( sBit == s)				SET_FLOAT( fMovesX[i] )
-		s = fmt::sprintf( "movey%d", i+1 );
-		    if( sBit == s)				SET_FLOAT( fMovesY[i] )
-		s = fmt::sprintf( "movez%d", i+1 );
-		    if( sBit == s)				SET_FLOAT( fMovesZ[i] )
+		for (int i=0; i<16; i++)
+		{
+		    sMod = fmt::sprintf( "movex%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fMovesX[i] )
+			m_changed_defective_mod= true;
+			break;
+		    }
+		}
+	    }
+	    else if (sBit.find("y") != sBit.npos)
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = fmt::sprintf( "movey%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fMovesY[i] )
+			m_changed_defective_mod= true;
+			break;
+		    }
+		}
+	    }
+	    else if (sBit.find("z") != sBit.npos)
+	    {
+		for (int i=0; i<16; i++)
+		{
+		    sMod = fmt::sprintf( "movez%d", i+1 );
+		    if( sBit == sMod)
+		    {
+			SET_FLOAT( fMovesZ[i] )
+			m_changed_defective_mod= true;
+			break;
+		    }
+		}
 	    }
 	}
 	else
@@ -657,6 +755,12 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"drunkzspeed", EFFECT_DRUNK_Z_SPEED},
 			{"drunkzoffset", EFFECT_DRUNK_Z_OFFSET},
 			{"drunkzperiod", EFFECT_DRUNK_Z_PERIOD},
+			{"shrinklinear", EFFECT_SHRINK_TO_LINEAR},
+			{"shrinkmult", EFFECT_SHRINK_TO_MULT},
+			{"pulseinner", EFFECT_PULSE_INNER},
+			{"pulseouter", EFFECT_PULSE_OUTER},
+			{"pulseoffset", EFFECT_PULSE_OFFSET},
+			{"pulseperiod", EFFECT_PULSE_PERIOD},
 			{"dizzy", EFFECT_DIZZY},
 			{"confusion", EFFECT_CONFUSION},
 			{"confusionoffset", EFFECT_CONFUSION_OFFSET},
@@ -664,6 +768,12 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"confusionxoffset", EFFECT_CONFUSION_X_OFFSET},
 			{"confusiony", EFFECT_CONFUSION_Y},
 			{"confusionyoffset", EFFECT_CONFUSION_Y_OFFSET},
+			{"bounce", EFFECT_BOUNCE},
+			{"bounceperiod", EFFECT_BOUNCE_PERIOD},
+			{"bounceoffset", EFFECT_BOUNCE_OFFSET},
+			{"bouncez", EFFECT_BOUNCE_Z},
+			{"bouncezperiod", EFFECT_BOUNCE_Z_PERIOD},
+			{"bouncezoffset", EFFECT_BOUNCE_Z_OFFSET},
 			{"mini", EFFECT_MINI},
 			{"tiny", EFFECT_TINY},
 			{"flip", EFFECT_FLIP},
@@ -722,6 +832,9 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"parabolax", EFFECT_PARABOLA_X},
 			{"parabolay", EFFECT_PARABOLA_Y},
 			{"parabolaz", EFFECT_PARABOLA_Z},
+			{"attenuatex", EFFECT_ATTENUATE_X},
+			{"attenuatey", EFFECT_ATTENUATE_Y},
+			{"attenuatez", EFFECT_ATTENUATE_Z},
 			{"xmode", EFFECT_XMODE},
 			{"twirl", EFFECT_TWIRL},
 			{"roll", EFFECT_ROLL},
@@ -790,6 +903,8 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"randomspeed", {&PlayerOptions::m_fRandomSpeed, &PlayerOptions::m_SpeedfRandomSpeed}},
 			{"modtimermult", {&PlayerOptions::m_fModTimerMult, &PlayerOptions::m_SpeedfModTimerMult}},
 			{"modtimeroffset", {&PlayerOptions::m_fModTimerOffset, &PlayerOptions::m_SpeedfModTimerOffset}},
+			{"drawsize", {&PlayerOptions::m_fDrawSize, &PlayerOptions::m_SpeedfDrawSize}},
+			{"drawsizeback", {&PlayerOptions::m_fDrawSizeBack, &PlayerOptions::m_SpeedfDrawSizeBack}},
 		};
 		static std::unordered_map<std::string, std::pair<float, float> > perspective_options= {
 			{"overhead", {0.f, 0.f}},
@@ -797,6 +912,10 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"space", {1.f, 1.f}},
 			{"hallway", {0.f, -1.f}},
 			{"distant", {0.f, 1.f}},
+		};
+		static std::unordered_map<std::string, bool PlayerOptions::* > bool_options= {
+			{"stealthtype", &PlayerOptions::m_bStealthType},
+			{"stealthpastreceptors", &PlayerOptions::m_bStealthPastReceptors},
 		};
 #define FIND_ENTRY_COMMON_START(option_set) \
 		{ auto entry= option_set.find(sBit); if(entry != option_set.end()) {
@@ -831,6 +950,10 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			(this->*(entry->second.second)) = speed;
 			m_changed_defective_mod= true;
 		FIND_ENTRY_CLOSE;
+		FIND_ENTRY_COMMON_START(bool_options)
+			(this->*(entry->second)) = on;
+			m_changed_defective_mod= true;
+		FIND_ENTRY_CLOSE;
 		FIND_ENTRY_COMMON_START(perspective_options)
 			m_fSkew= level * entry->second.first;
 			m_fTilt= level * entry->second.second;
@@ -850,7 +973,114 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 #undef FIND_ENTRY_DEFECT_ARRAY
 #undef FIND_ENTRY_BOOL_ARRAY
 
-		if(sBit == "muteonerror")
+		if(sBit.find("dark") != sBit.npos)
+		{
+			for (int i=0; i<16; i++)
+			{
+				sMod = fmt::sprintf( "dark%d", i+1 );
+				if( sBit == sMod)
+				{
+					SET_FLOAT( fDarks[i] )
+					m_changed_defective_mod= true;
+					break;
+				}
+			}
+		}
+		else if(sBit.find("reverse") != sBit.npos)
+		{
+			for (int i=0; i<16; i++)
+			{
+				sMod = fmt::sprintf( "reverse%d", i+1 );
+				if( sBit == sMod)
+				{
+					SET_FLOAT( fReverse[i] )
+					m_changed_defective_mod= true;
+					break;
+				}
+			}
+		}
+		else if(sBit.find("tiny") != sBit.npos)
+		{
+			for (int i=0; i<16; i++)
+			{
+				sMod = fmt::sprintf( "tiny%d", i+1 );
+				if( sBit == sMod)
+				{
+					SET_FLOAT( fTiny[i] )
+					m_changed_defective_mod= true;
+					break;
+				}
+			}
+		}
+		else if(sBit.find("bumpy") != sBit.npos)
+		{
+			for (int i=0; i<16; i++)
+			{
+				sMod = fmt::sprintf( "bumpy%d", i+1 );
+				if( sBit == sMod)
+				{
+					SET_FLOAT( fBumpy[i] )
+					m_changed_defective_mod= true;
+					break;
+				}
+			}
+		}
+		else if(sBit.find("stealth") != sBit.npos)
+		{
+			for (int i=0; i<16; i++)
+			{
+				sMod = fmt::sprintf( "stealth%d", i+1 );
+				if( sBit == sMod)
+				{
+					SET_FLOAT( fStealth[i] )
+					m_changed_defective_mod= true;
+					break;
+				}
+			}
+		}
+		else if( sBit.find("confusion") != sBit.npos)
+		{
+			if( sBit.find("x") != sBit.npos)
+			{
+				for (int i=0; i<16; i++)
+				{
+					sMod = fmt::sprintf( "confusionxoffset%d", i+1 );
+					if( sBit == sMod)
+					{
+						SET_FLOAT( fConfusionX[i] )
+						m_changed_defective_mod= true;
+						break;
+					}
+				}
+			}
+			if( sBit.find("y") != sBit.npos)
+			{
+				for (int i=0; i<16; i++)
+				{
+					sMod = fmt::sprintf( "confusionyoffset%d", i+1 );
+					if( sBit == sMod)
+					{
+						SET_FLOAT( fConfusionY[i] )
+						m_changed_defective_mod= true;
+						break;
+					}
+				}
+			}
+			else
+			{
+				for (int i=0; i<16; i++)
+				{
+					sMod = fmt::sprintf( "confusionoffset%d", i+1 );
+					if( sBit == sMod)
+					{
+						SET_FLOAT( fConfusionZ[i] )
+						m_changed_defective_mod= true;
+						break;
+					}
+				}
+			}
+		}
+		else if(sBit == "muteonerror")
 		{
 			m_bMuteOnError = on;
 			return true;
@@ -1035,6 +1265,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 	int iNumCols = GAMESTATE->GetCurrentStyle(m_pn)->m_iColsPerPlayer;
 
 	f += m_fScrolls[SCROLL_REVERSE];
+	f += m_fReverse[iCol];
 
 	if( iCol >= iNumCols/2 )
 		f += m_fScrolls[SCROLL_SPLIT];
@@ -1062,6 +1293,8 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_ModTimerType);
 	COMPARE(m_fModTimerMult);
 	COMPARE(m_fModTimerOffset);
+	COMPARE(m_fDrawSize);
+	COMPARE(m_fDrawSizeBack);
 	COMPARE(m_BatteryLives);
 	COMPARE(m_fTimeSpacing);
 	COMPARE(m_fScrollSpeed);
@@ -1071,6 +1304,8 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_FailType);
 	COMPARE(m_MinTNSToHideNotes);
 	COMPARE(m_bMuteOnError);
+	COMPARE(m_bStealthType);
+	COMPARE(m_bStealthPastReceptors);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
@@ -1097,6 +1332,22 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 		COMPARE(m_fMovesY[i]);
 	for( int i = 0; i < 16; ++i )
 		COMPARE(m_fMovesZ[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fConfusionX[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fConfusionY[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fConfusionZ[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fDarks[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fStealth[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fTiny[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fBumpy[i]);
+	for( int i = 0; i < 16; ++i )
+		COMPARE(m_fReverse[i]);
 #undef COMPARE
 	return true;
 }
@@ -1112,6 +1363,8 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_ModTimerType);
 	CPY_SPEED(fModTimerMult);
 	CPY_SPEED(fModTimerOffset);
+	CPY_SPEED(fDrawSize);
+	CPY_SPEED(fDrawSizeBack);
 	CPY(m_BatteryLives);
 	CPY_SPEED(fTimeSpacing);
 	CPY_SPEED(fScrollSpeed);
@@ -1121,6 +1374,8 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_FailType);
 	CPY(m_MinTNSToHideNotes);
 	CPY(m_bMuteOnError);
+	CPY(m_bStealthType);
+	CPY(m_bStealthPastReceptors);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1155,15 +1410,47 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	}
 	for( int i = 0; i < 16; ++i )
 	{
-		CPY(m_fMovesX[i]);
+		CPY_SPEED(fMovesX[i]);
 	}
 	for( int i = 0; i < 16; ++i )
 	{
-		CPY(m_fMovesY[i]);
+		CPY_SPEED(fMovesY[i]);
 	}
 	for( int i = 0; i < 16; ++i )
 	{
-		CPY(m_fMovesZ[i]);
+		CPY_SPEED(fMovesZ[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fConfusionX[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fConfusionY[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fConfusionZ[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fDarks[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fStealth[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fTiny[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fBumpy[i]);
+	}
+	for( int i = 0; i < 16; ++i )
+	{
+		CPY_SPEED(fReverse[i]);
 	}
 #undef CPY
 #undef CPY_SPEED
@@ -1342,6 +1629,10 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_ModTimerType);
 	CPY(m_fModTimerMult);
 	CPY(m_fModTimerOffset);
+	CPY(m_fDrawSize);
+	CPY(m_fDrawSizeBack);
+	CPY(m_bStealthType);
+	CPY(m_bStealthPastReceptors);
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fTilt );
@@ -1414,6 +1705,8 @@ public:
 	INT_INTERFACE(BatteryLives, BatteryLives);
 	FLOAT_INTERFACE(ModTimerMult, ModTimerMult, true);
 	FLOAT_INTERFACE(ModTimerOffset, ModTimerOffset, true);
+	FLOAT_INTERFACE(DrawSize, DrawSize, true);
+	FLOAT_INTERFACE(DrawSizeBack, DrawSizeBack, true);
 	FLOAT_INTERFACE(TimeSpacing, TimeSpacing, true);
 	FLOAT_INTERFACE(MaxScrollBPM, MaxScrollBPM, true);
 	FLOAT_INTERFACE(ScrollSpeed, ScrollSpeed, true);
@@ -1434,12 +1727,27 @@ public:
 	FLOAT_INTERFACE(DrunkZOffset, Effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET], true);
 	FLOAT_INTERFACE(DrunkZPeriod, Effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD], true);
 	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
+	FLOAT_INTERFACE(AttenuateX, Effects[PlayerOptions::EFFECT_ATTENUATE_X], true);
+	FLOAT_INTERFACE(AttenuateY, Effects[PlayerOptions::EFFECT_ATTENUATE_Y], true);
+	FLOAT_INTERFACE(AttenuateZ, Effects[PlayerOptions::EFFECT_ATTENUATE_Z], true);
+	FLOAT_INTERFACE(ShrinkLinear, Effects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR], true);
+	FLOAT_INTERFACE(ShrinkMult, Effects[PlayerOptions::EFFECT_SHRINK_TO_MULT], true);
+	FLOAT_INTERFACE(PulseInner, Effects[PlayerOptions::EFFECT_PULSE_INNER], true);
+	FLOAT_INTERFACE(PulseOuter, Effects[PlayerOptions::EFFECT_PULSE_OUTER], true);
+	FLOAT_INTERFACE(PulsePeriod, Effects[PlayerOptions::EFFECT_PULSE_PERIOD], true);
+	FLOAT_INTERFACE(PulseOffset, Effects[PlayerOptions::EFFECT_PULSE_OFFSET], true);
 	FLOAT_INTERFACE(Confusion, Effects[PlayerOptions::EFFECT_CONFUSION], true);
 	FLOAT_INTERFACE(ConfusionOffset, Effects[PlayerOptions::EFFECT_CONFUSION_OFFSET], true);
 	FLOAT_INTERFACE(ConfusionX, Effects[PlayerOptions::EFFECT_CONFUSION_X], true);
 	FLOAT_INTERFACE(ConfusionXOffset, Effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET], true);
 	FLOAT_INTERFACE(ConfusionY, Effects[PlayerOptions::EFFECT_CONFUSION_Y], true);
 	FLOAT_INTERFACE(ConfusionYOffset, Effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET], true);
+	FLOAT_INTERFACE(Bounce, Effects[PlayerOptions::EFFECT_BOUNCE], true);
+	FLOAT_INTERFACE(BouncePeriod, Effects[PlayerOptions::EFFECT_BOUNCE_PERIOD], true);
+	FLOAT_INTERFACE(BounceOffset, Effects[PlayerOptions::EFFECT_BOUNCE_OFFSET], true);
+	FLOAT_INTERFACE(BounceZ, Effects[PlayerOptions::EFFECT_BOUNCE_Z], true);
+	FLOAT_INTERFACE(BounceZPeriod, Effects[PlayerOptions::EFFECT_BOUNCE_Z_PERIOD], true);
+	FLOAT_INTERFACE(BounceZOffset, Effects[PlayerOptions::EFFECT_BOUNCE_Z_OFFSET], true);
 	FLOAT_INTERFACE(Mini, Effects[PlayerOptions::EFFECT_MINI], true);
 	FLOAT_INTERFACE(Tiny, Effects[PlayerOptions::EFFECT_TINY], true);
 	FLOAT_INTERFACE(Flip, Effects[PlayerOptions::EFFECT_FLIP], true);
@@ -1526,6 +1834,16 @@ public:
 	MULTICOL_FLOAT_INTERFACE(MoveX, MovesX, true);
 	MULTICOL_FLOAT_INTERFACE(MoveY, MovesY, true);
 	MULTICOL_FLOAT_INTERFACE(MoveZ, MovesZ, true);
+	MULTICOL_FLOAT_INTERFACE(ConfusionXOffset, ConfusionX, true);
+	MULTICOL_FLOAT_INTERFACE(ConfusionYOffset, ConfusionY, true);
+	MULTICOL_FLOAT_INTERFACE(ConfusionOffset, ConfusionZ, true);
+	MULTICOL_FLOAT_INTERFACE(Dark, Darks, true);
+	MULTICOL_FLOAT_INTERFACE(Stealth, Stealth, true);
+	MULTICOL_FLOAT_INTERFACE(Tiny, Tiny, true);
+	MULTICOL_FLOAT_INTERFACE(Bumpy, Bumpy, true);
+	MULTICOL_FLOAT_INTERFACE(Reverse, Reverse, true);
+	BOOL_INTERFACE(StealthType, StealthType);
+	BOOL_INTERFACE(StealthPastReceptors, StealthPastReceptors);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -1836,6 +2154,8 @@ public:
 		ADD_METHOD(ModTimerSetting);
 		ADD_METHOD(ModTimerMult);
 		ADD_METHOD(ModTimerOffset);
+		ADD_METHOD(DrawSize);
+		ADD_METHOD(DrawSizeBack);
 		ADD_METHOD(BatteryLives);
 		ADD_METHOD(TimeSpacing);
 		ADD_METHOD(MaxScrollBPM);
@@ -1857,12 +2177,27 @@ public:
 		ADD_METHOD(DrunkZOffset);
 		ADD_METHOD(DrunkZPeriod);
 		ADD_METHOD(Dizzy);
+		ADD_METHOD(ShrinkLinear);
+		ADD_METHOD(ShrinkMult);
+		ADD_METHOD(PulseInner);
+		ADD_METHOD(PulseOuter);
+		ADD_METHOD(PulseOffset);
+		ADD_METHOD(PulsePeriod);
+		ADD_METHOD(AttenuateX);
+		ADD_METHOD(AttenuateY);
+		ADD_METHOD(AttenuateZ);
 		ADD_METHOD(Confusion);
 		ADD_METHOD(ConfusionOffset);
 		ADD_METHOD(ConfusionX);
 		ADD_METHOD(ConfusionXOffset);
 		ADD_METHOD(ConfusionY);
 		ADD_METHOD(ConfusionYOffset);
+		ADD_METHOD(Bounce);
+		ADD_METHOD(BouncePeriod);
+		ADD_METHOD(BounceOffset);
+		ADD_METHOD(BounceZ);
+		ADD_METHOD(BounceZPeriod);
+		ADD_METHOD(BounceZOffset);
 		ADD_METHOD(Mini);
 		ADD_METHOD(Tiny);
 		ADD_METHOD(Flip);
@@ -1939,6 +2274,8 @@ public:
 		ADD_METHOD(Dark);
 		ADD_METHOD(Blind);
 		ADD_METHOD(Cover);
+		ADD_METHOD(StealthType);
+		ADD_METHOD(StealthPastReceptors);
 		ADD_METHOD(RandAttack);
 		ADD_METHOD(NoAttack);
 		ADD_METHOD(PlayerAutoPlay);
@@ -1982,6 +2319,14 @@ public:
 		ADD_MULTICOL_METHOD(MoveX);
 		ADD_MULTICOL_METHOD(MoveY);
 		ADD_MULTICOL_METHOD(MoveZ);
+		ADD_MULTICOL_METHOD(ConfusionOffset);
+		ADD_MULTICOL_METHOD(ConfusionXOffset);
+		ADD_MULTICOL_METHOD(ConfusionYOffset);
+		ADD_MULTICOL_METHOD(Dark);
+		ADD_MULTICOL_METHOD(Stealth);
+		ADD_MULTICOL_METHOD(Tiny);
+		ADD_MULTICOL_METHOD(Bumpy);
+		ADD_MULTICOL_METHOD(Reverse);
 
 		ADD_METHOD(FailSetting);
 		ADD_METHOD(MinTNSToHideNotes);
