@@ -845,10 +845,10 @@ void OptionRow::Reload()
 
 	switch( m_pHand->Reload() )
 	{
-	case OptionRowHandler::RELOAD_CHANGED_NONE:
+	case RELOAD_CHANGED_NONE:
 		break;
 
-	case OptionRowHandler::RELOAD_CHANGED_ALL:
+	case RELOAD_CHANGED_ALL:
 	{
 		ChoicesChanged( m_RowType );
 
@@ -861,7 +861,7 @@ void OptionRow::Reload()
 		// fall through
 	}
 
-	case OptionRowHandler::RELOAD_CHANGED_ENABLED:
+	case RELOAD_CHANGED_ENABLED:
 		UpdateEnabledDisabled();
 		FOREACH_HumanPlayer( pn )
 			PositionUnderlines( pn );

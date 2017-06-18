@@ -165,7 +165,7 @@ if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" _CRT_SECURE_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" _WINSOCK_DEPRECATED_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" GLEW_STATIC)
-  
+
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_PROGRAM_DIR}"
@@ -173,7 +173,7 @@ if(WIN32)
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_PROGRAM_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_PROGRAM_DIR}"
   )
-  
+
   if(MSVC)
     # Allow for getting a virtualdub stack trace.
     add_custom_command(TARGET "${SM_EXE_NAME}"
@@ -190,6 +190,8 @@ elseif(APPLE)
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
     MACOSX_BUNDLE_INFO_PLIST "${SM_XCODE_DIR}/Info.StepMania.plist"
+    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${SM_CPP_STANDARD}"
+    XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
     XCODE_ATTRIBUTE_INFOPLIST_FILE "${SM_XCODE_DIR}/Info.StepMania.plist"
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "YES"
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=Release] "RELEASE"
@@ -198,6 +200,7 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=RelWithDebInfo] "RELWITHDEBINFO"
     XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${SM_XCODE_DIR}/plistHelper.hpp"
     XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
+    XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO"
     XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "${SM_XCODE_DIR}/Libraries"
   )
 
@@ -304,6 +307,13 @@ else() # Linux
   if (${HAS_FFMPEG})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
   endif()
+  if (${HAS_XRANDR})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XRANDR)
+  endif()
+  if (${HAS_XINERAMA} AND WITH_XINERAMA)
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XINERAMA)
+  endif()
+
   if (BSD)
     sm_add_compile_definition("${SM_EXE_NAME}" BSD)
   endif()
@@ -315,6 +325,12 @@ else() # Linux
   sm_add_compile_definition("${SM_EXE_NAME}" UNIX)
   if("${CMAKE_SYSTEM}" MATCHES "Linux")
     sm_add_compile_definition("${SM_EXE_NAME}" LINUX)
+  endif()
+
+  sm_add_compile_flag("${SM_EXE_NAME}" "-std=${SM_CPP_STANDARD}")
+  if (CMAKE_CXX_COMPILER MATCHES "clang")
+    sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
+    set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS "-stdlib=libc++")
   endif()
 endif()
 
@@ -346,7 +362,7 @@ if (NOT SYSTEM_PCRE_FOUND)
 endif()
 
 if (WIN32)
-  
+
   list(APPEND SMDATA_LINK_LIB
     # The misc libraries are here.
     "${LIB_SWSCALE}"
@@ -354,7 +370,7 @@ if (WIN32)
     "${LIB_AVFORMAT}"
     "${LIB_AVUTIL}"
   )
-  
+
   if (WITH_OGG)
     list(APPEND SMDATA_LINK_LIB
       "ogg"
@@ -362,15 +378,15 @@ if (WIN32)
       "vorbisfile"
     )
   endif()
-  
+
   list(APPEND SMDATA_LINK_LIB
     "dbghelp.lib"
     "setupapi.lib"
     "hid.lib"
   )
-  
+
   get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
-  
+
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
@@ -385,7 +401,7 @@ if (WIN32)
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
-  
+
 elseif(APPLE)
   # The following were removed from SMDATA_LINK_LIB to "match" StepMania's pbxproj.
 #    ${MAC_FRAME_APPKIT}
@@ -508,6 +524,7 @@ else() # Unix / Linux
 
   list(APPEND SMDATA_LINK_LIB
     ${XRANDR_LIBRARIES}
+    ${XINERAMA_LIBRARIES}
   )
 
   list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")

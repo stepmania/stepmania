@@ -2,7 +2,7 @@
 #define GRAPHICS_WINDOW_H
 
 #include <windows.h>
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 class VideoModeParams;
 class DisplayResolution;
 
@@ -28,7 +28,7 @@ namespace GraphicsWindow
 	void CreateGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow = false );
 	void DestroyGraphicsWindow();
 
-	void GetDisplayResolutions( DisplayResolutions &out );
+	void GetDisplaySpecs( DisplaySpecs &out );
 
 	const VideoModeParams &GetParams();
 	HDC GetHDC();

@@ -20,11 +20,21 @@ add_library("jsoncpp" STATIC ${JSON_SRC} ${JSON_HPP})
 
 set_property(TARGET "jsoncpp" PROPERTY FOLDER "External Libraries")
 
-if(MSVC)
-  sm_add_compile_definition("jsoncpp" _CRT_SECURE_NO_WARNINGS)
-endif()
-
 disable_project_warnings("jsoncpp")
 
 target_include_directories("jsoncpp" PUBLIC "jsoncpp/include")
+
+if(MSVC)
+  sm_add_compile_definition("jsoncpp" _CRT_SECURE_NO_WARNINGS)
+elseif(APPLE)
+  set_target_properties("jsoncpp" PROPERTIES
+    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "gnu++14"
+    XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
+  )
+else() # Unix/Linux
+  sm_add_compile_flag("jsoncpp" "-std=gnu++11")
+  if (CMAKE_CXX_COMPILER MATCHES "clang")
+    sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
+  endif()
+endif()
 

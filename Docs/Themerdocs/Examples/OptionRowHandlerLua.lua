@@ -59,13 +59,23 @@ function FooMods()
 			return {PLAYER_2}
 		end,
 
+		-- Optional function. If non-nil, this function must return the string representation
+		-- of a member of the ReloadChanged enum. This function is called in response to a message
+		-- listed in the optional ReloadRowMessages table below. For example,
+		-- to completely change the Choices presented by this OptionRow, modify
+		-- self.Choices in the body of this function and return "ReloadChanged_All"
+		Reload= function(self)
+			Trace("FooMods:Reload() called.")
+			return "ReloadChanged_None"
+		end,
+
 		-- A table of strings that are the names of choices.  Choice names are not
 		-- localized.
 		Choices= {"a", "b", "c", "d"},
 
 		-- Optional table.  If non-nil, this table must contain a list of messages
 		-- this row should listen for.  If one of the messages is recieved, the
-		-- row is reloaded (and the EnabledForPlayers function is called if it is
+		-- row is reloaded (and each of the EnabledForPlayers/Reload functions is called if it is
 		-- non-nil).
 		ReloadRowMessages= {"ReloadFooMods"},
 
@@ -90,6 +100,12 @@ function FooMods()
 		-- SaveSelections should examine the list of what the player has selected
 		-- and apply the appropriate modifiers to the player.
 		-- Same args as LoadSelections.
+		--
+		-- May optionally return an "effects" bit mask (constructed by combination of
+		-- the bit masks from the OptEffect enum), which dictates actions the
+		-- game should take in response to the selected option. For example,
+		-- OPT_SAVE_PREFERENCES directs the game to save Preferences.ini,
+		-- OPT_APPLY_ASPECT_RATIO directs the game to recompute the projection matrix, etc.
 		SaveSelections= function(self, list, pn)
 			Trace("FooMods:SaveSelections(" .. pn .. ")")
 			for i, choice in ipairs(self.Choices) do

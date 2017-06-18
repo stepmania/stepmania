@@ -19,18 +19,21 @@ set(SM_EXE_NAME "StepMania")
 # Some OS specific helpers.
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(LINUX TRUE)
+  set(SM_CPP_STANDARD "gnu++11")
 else()
   set(LINUX FALSE)
 endif()
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
   set(MACOSX TRUE)
+  set(SM_CPP_STANDARD "gnu++14")
 else()
   set(MACOSX FALSE)
 endif()
 
 if (CMAKE_SYSTEM_NAME MATCHES "BSD")
   set(BSD TRUE)
+  set(SM_CPP_STANDARD "gnu++11")
 else()
   set(BSD FALSE)
 endif()
@@ -279,8 +282,8 @@ elseif(MACOSX)
   # Apple Archs needs to be 32-bit for now.
   # When SDL2 is introduced, this may change.
   set(CMAKE_OSX_ARCHITECTURES "i386")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.6.8")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.7.1")
 
   find_library(MAC_FRAME_ACCELERATE Accelerate ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   find_library(MAC_FRAME_APPKIT AppKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
@@ -346,11 +349,18 @@ elseif(LINUX)
 
   find_package(Dl)
 
-  find_package(Xrandr)
+  find_package(Xrandr REQUIRED)
   if (${XRANDR_FOUND})
     set(HAS_XRANDR TRUE)
   else()
-    set(HAX_XRANDR FALSE)
+    set(HAS_XRANDR FALSE)
+  endif()
+
+  find_package(Xinerama)
+  if (${XINERAMA_FOUND})
+    set(HAS_XINERAMA TRUE)
+  else()
+    set(HAS_XINERAMA FALSE)
   endif()
 
   find_package(PulseAudio)

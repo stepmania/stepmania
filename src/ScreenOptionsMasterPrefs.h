@@ -1,14 +1,24 @@
 #ifndef SCREEN_OPTIONS_MASTER_PREFS_H
 #define SCREEN_OPTIONS_MASTER_PREFS_H
 
+#include "EnumHelper.h"
+
 static const int MAX_OPTIONS=16;
-#define OPT_SAVE_PREFERENCES			(1<<0)
-#define OPT_APPLY_GRAPHICS				(1<<1)
-#define OPT_APPLY_THEME					(1<<2)
-#define OPT_CHANGE_GAME					(1<<3)
-#define OPT_APPLY_SOUND					(1<<4)
-#define OPT_APPLY_SONG					(1<<5)
-#define OPT_APPLY_ASPECT_RATIO			(1<<6)
+enum OptEffect
+{
+	OPT_SAVE_PREFERENCES		=	(1<<0),
+	OPT_APPLY_GRAPHICS			=	(1<<1),
+	OPT_APPLY_THEME				=	(1<<2),
+	OPT_CHANGE_GAME				=	(1<<3),
+	OPT_APPLY_SOUND				=	(1<<4),
+	OPT_APPLY_SONG				=	(1<<5),
+	OPT_APPLY_ASPECT_RATIO		=	(1<<6),
+	NUM_OptEffect				=	7,
+	OptEffect_Invalid			=	MAX_OPTIONS+1
+};
+const RString& OptEffectToString( OptEffect e );
+OptEffect StringToOptEffect( const std::string &e );
+LuaDeclareType( OptEffect );
 
 struct ConfOption
 {

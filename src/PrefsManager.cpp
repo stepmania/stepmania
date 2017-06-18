@@ -166,6 +166,7 @@ PrefsManager::PrefsManager() :
 	m_sDefaultModifiers		( "DefaultModifiers",		"" ),
 
 	m_bWindowed			( "Windowed",			true ),
+	m_sDisplayId			( "DisplayId", "" ),
 	m_iDisplayWidth			( "DisplayWidth",		854 ),
 	m_iDisplayHeight		( "DisplayHeight",		480 ),
 	m_fDisplayAspectRatio		( "DisplayAspectRatio",		16/9.f, ValidateDisplayAspectRatio ),
@@ -178,6 +179,7 @@ PrefsManager::PrefsManager() :
 	m_iMaxTextureResolution		( "MaxTextureResolution",	2048 ),
 	m_iRefreshRate			( "RefreshRate",		REFRESH_DEFAULT ),
 	m_bAllowMultitexture		( "AllowMultitexture",		true ),
+	m_bFullscreenIsBorderlessWindow( "FullscreenIsBorderlessWindow", false ),
 	m_bShowStats			( "ShowStats",			TRUE_IF_DEBUG),
 	m_bShowBanners			( "ShowBanners",		true ),
 	m_bShowMouseCursor		( "ShowMouseCursor",		true ),
@@ -379,7 +381,7 @@ void PrefsManager::StoreGamePrefs()
 	ASSERT( !m_sCurrentGame.Get().empty() );
 
 	// save off old values
-	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame];
+	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame.Get()];
 	gp.m_sAnnouncer = m_sAnnouncer;
 	gp.m_sTheme = m_sTheme;
 	gp.m_sDefaultModifiers = m_sDefaultModifiers;

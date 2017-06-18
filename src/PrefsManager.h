@@ -158,6 +158,7 @@ protected:
 
 public:
 	Preference<bool>	m_bWindowed;
+	Preference<RString>	m_sDisplayId;
 	Preference<int>	m_iDisplayWidth;
 	Preference<int>	m_iDisplayHeight;
 	Preference<float>	m_fDisplayAspectRatio;
@@ -170,6 +171,7 @@ public:
 	Preference<int>	m_iMaxTextureResolution;
 	Preference<int>	m_iRefreshRate;
 	Preference<bool>	m_bAllowMultitexture;
+	Preference<bool> m_bFullscreenIsBorderlessWindow;
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
 	Preference<bool>	m_bShowMouseCursor;

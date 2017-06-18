@@ -11,13 +11,13 @@ public:
 	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
 
 	virtual RString GetApiDescription() const { return "D3D"; }
-	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
+	virtual void GetDisplaySpecs( DisplaySpecs &out ) const;
 	void ResolutionChanged();
 	const RagePixelFormatDesc *GetPixelFormatDesc(RagePixelFormat pf) const;
 
 	bool BeginFrame();	
 	void EndFrame();
-	VideoModeParams GetActualVideoModeParams() const;
+	ActualVideoModeParams GetActualVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsThreadedRendering();

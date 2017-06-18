@@ -96,7 +96,8 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	}
 
 	paramsOut = VideoModeParams(
-		PREFSMAN->m_bWindowed,
+		PREFSMAN->m_bWindowed || PREFSMAN->m_bFullscreenIsBorderlessWindow,
+		PREFSMAN->m_sDisplayId,
 		iWidth,
 		PREFSMAN->m_iDisplayHeight,
 		PREFSMAN->m_iDisplayColorDepth,
@@ -106,6 +107,7 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 		PREFSMAN->m_bSmoothLines,
 		PREFSMAN->m_bTrilinearFiltering,
 		PREFSMAN->m_bAnisotropicFiltering,
+		!PREFSMAN->m_bWindowed && PREFSMAN->m_bFullscreenIsBorderlessWindow,
 		CommonMetrics::WINDOW_TITLE,
 		THEME->GetPathG("Common","window icon"),
 		PREFSMAN->m_bPAL,
@@ -146,7 +148,13 @@ static void StoreActualGraphicOptions()
 	 * we don't go through the process of auto-detecting a usable video mode
 	 * every time. */
 	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
-	PREFSMAN->m_bWindowed.Set( params.windowed );
+	PREFSMAN->m_bWindowed.Set( params.windowed && !params.bWindowIsFullscreenBorderless );
+	if (!params.windowed && !params.bWindowIsFullscreenBorderless) {
+		// In all other cases, want to preserve the value of this preference,
+		// but if DISPLAY decides to go fullscreen exclusive, we'll persist that decision
+		PREFSMAN->m_bFullscreenIsBorderlessWindow.Set( false );
+	}
+
 
 	/* If we're windowed, we may have tweaked the width based on the aspect ratio.
 	 * Don't save this new value over the preferred value. */
