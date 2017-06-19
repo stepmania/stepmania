@@ -1489,19 +1489,6 @@ namespace
 {
 	static int get_operator_list(lua_State* L)
 	{
-		lua_createtable(L, mot_conversion.size(), 0);
-		int table_index= lua_gettop(L);
-		int curr_entry= 1;
-		for(auto&& entry : mot_conversion)
-		{
-			lua_pushstring(L, entry.first.c_str());
-			lua_rawseti(L, table_index, curr_entry);
-			++curr_entry;
-		}
-		return 1;
-	}
-	static int get_has_operator_list(lua_State* L)
-	{
 		lua_createtable(L, 0, mot_conversion.size());
 		int table_index= lua_gettop(L);
 		for(auto&& entry : mot_conversion)
@@ -1513,19 +1500,6 @@ namespace
 		return 1;
 	}
 	static int get_input_list(lua_State* L)
-	{
-		lua_createtable(L, mit_conversion.size(), 0);
-		int table_index= lua_gettop(L);
-		int curr_entry= 1;
-		for(auto&& entry : mit_conversion)
-		{
-			lua_pushstring(L, entry.first.c_str());
-			lua_rawseti(L, table_index, curr_entry);
-			++curr_entry;
-		}
-		return 1;
-	}
-	static int get_has_input_list(lua_State* L)
 	{
 		lua_createtable(L, 0, mit_conversion.size());
 		int table_index= lua_gettop(L);
@@ -1541,9 +1515,7 @@ namespace
 	const luaL_Reg ModValueTable[] =
 	{
 		LIST_METHOD(get_operator_list),
-		LIST_METHOD(get_has_operator_list),
 		LIST_METHOD(get_input_list),
-		LIST_METHOD(get_has_input_list),
 		{nullptr, nullptr}
 	};
 }

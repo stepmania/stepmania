@@ -140,7 +140,7 @@ local engine_custom_mods= {
 	dizzy= {
 		target= 'note_rot_z',
 		equation= function(params, ops)
-			return check_op{ops.level, offset(params.input, params.offset), params.level, 2*math.pi}
+			return check_op{ops.level, offset(params.input, params.offset), params.level}
 		end,
 		params= {
 			input= 'dist_beat', level= 1, offset= 0,
@@ -182,20 +182,14 @@ local engine_custom_mods= {
 		ops= {
 			level= '*', wave= 'cos', time= '+', column= '*', input= '*',
 		},
+		examples= {
+			{"normal drunk", "'drunk'"},
+			{"beat based drunk instead second based drunk", "'drunk', {time= 'music_beat'}"},
+			{"tan drunk", "'drunk', {}, {wave= 'tan'}"},
+		},
 	},
 }
 
--- 200% confusion, 100% confusionoffset
--- tuned_mod('confusion', {level= 2, offset= 1})
-
--- dizzy using music_beat for input instead of dist_beat, aka confusion
--- tuned_mod('dizzy', {input= 'music_beat'})
-
--- Intended use:
--- 200% beat
--- {start= 1, length= 4, target= 'note_pos_x', tuned_mod('beat', {level= 2})}
--- 200% beat, half a beat sooner
--- {start= 1, length= 4, target= 'note_pos_x', tuned_mod('beat', {level= 2, time_offset= -.5})}
 local function tune_params(params, defaults)
 	if type(params) == "table" then
 		add_defaults_to_params(params, defaults)
@@ -265,6 +259,22 @@ function print_custom_mods_info()
 	assert(false, "CUPS is not correctly configured for HP LaserJet 2700")
 end
 
+local function custom_mods_has_list(mods)
+	local list= {}
+	for name, enter in pairs(mods) do
+		list[name]= true
+	end
+	return list
+end
+
+function get_custom_mods_list()
+	return {
+		engine= custom_mods_has_list(engine_custom_mods),
+		theme= custom_mods_has_list(theme_custom_mods),
+		simfile= custom_mods_has_list(simfile_custom_mods),
+	}
+end
+
 local function handle_custom_mod(mod_entry)
 	local name= mod_entry[1]
 	local params= mod_entry[2]
@@ -295,7 +305,7 @@ local function handle_custom_mod(mod_entry)
 end
 
 local function add_tween_phases(entry)
-	if not (entry.on or entry.off) then
+	if type(entry.on) ~= "number" and type(entry.off) ~= "number" then
 		return
 	end
 	local time= entry.time or 'beat'
@@ -317,6 +327,7 @@ local function add_tween_phases(entry)
 		entry[2]= {}
 	end
 	entry[2].level= {'*', full_level, {'phase', {'-', 'music_'..time, 'start_'..time}, phases}}
+	return true
 end
 
 function organize_notefield_mods_by_target(mods_table)
@@ -372,8 +383,8 @@ function organize_notefield_mods_by_target(mods_table)
 		else
 			target_fields[#target_fields+1]= result[1]
 		end
-		handle_custom_mod(entry)
 		add_tween_phases(entry)
+		handle_custom_mod(entry)
 		if entry.column then
 			local target_columns= {}
 			-- Support these kinds of column entries:
@@ -451,4 +462,11 @@ function handle_notefield_mods(mods)
 	end
 	organize_and_apply_notefield_mods(notefields, mods)
 	return notefields
+end
+
+function load_notefield_mods_file(path)
+	assert(FILEMAN:DoesFileExist(path))
+	local mods, custom_mods= dofile(mods_path)
+	set_simfile_custom_mods(custom_mods)
+	return handle_notefield_mods(mods)
 end
