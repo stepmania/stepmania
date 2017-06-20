@@ -275,26 +275,86 @@ function get_custom_mods_list()
 	}
 end
 
+local function is_an_equation(eq)
+	local equation_op= eq[1]
+	if equation_op and ModValue.get_operator_list(equation_op) then
+		local might_be_spline= equation_op == "spline"
+		for key, value in pairs(params) do
+			if type(key) == "string" then
+				if might_be_spline and (key == "loop" or key == "polygonal") then
+					return true
+				else
+					return false
+				end
+			end
+		end
+	else
+		return false
+	end
+end
+
+local function tween_mod_param(full, on, off, length, time)
+	if time ~= "second" and time ~= "beat" then
+		time= "beat"
+	end
+	local phases= {default= {0, 0, 0, 1}}
+	if type(on) == "number" and on ~= 0 then
+		phases[#phases+1]= {0, on, 1/on, 0}
+	end
+	if type(off) == "number" and off ~= 0 then
+		-- If entry.length is the end of the phase, there is a single frame at
+		-- the end of the mod that uses the default phase instead.
+		-- I hate floating point math.
+		phases[#phases+1]= {length - off, length+.001, -1/off, 1}
+	end
+	return {'*', full, {'phase', {'-', 'music_'..time, 'start_'..time}, phases}}
+end
+
 local function handle_custom_mod(mod_entry)
 	local name= mod_entry[1]
 	local params= mod_entry[2]
 	local ops= mod_entry[3]
 	if type(name) == "string" then
+		mod_entry.time= mod_entry.time or 'beat'
 		-- Convert this
 		-- {start_beat= 0, length_beats= 1, 'beat', {level= 2}, {wave= 'tan'}}
 		-- into an equation, using the custom_mods tables.
 		local custom_entry= simfile_custom_mods[name] or
 			theme_custom_mods[name] or engine_custom_mods[name]
 		assert(custom_entry, name .. " was not found in the custom mods list.")
+		if type(params) == "number" then
+			params= {level= params}
+		elseif type(params) == "table" then
+			if is_an_equation(params) then
+				params= {level= params}
+			end
+		else
+			params= {}
+		end
+		if not params.level then
+			params.level= custom_entry.params.level
+		end
 		if type(mod_entry.target) ~= "string" then
 			mod_entry.target= custom_entry.target
 		end
 		if type(mod_entry.sum_type) ~= "string" then
 			mod_entry.sum_type= custom_entry.sum_type
 		end
+		if mod_entry.on or mod_entry.off then
+			params.level= tween_mod_param(params.level, mod_entry.on, mod_entry.off, mod_entry.length, mod_entry.time)
+		end
+		if type(custom_entry.params) == "table" then
+			for param_name, param in pairs(params) do
+				if param_name ~= "level" and type(param) == "table" then
+					if param.on or param.off then
+						params[param_name]= tween_mod_param(param[1], param.on, param.off, mod_entry.length, param.time or mod_entry.time)
+					end
+				end
+			end
+		end
 		local eq= custom_entry.equation(
-			tune_params(params, custom_entry.params),
-			tune_params(ops, custom_entry.ops))
+			add_defaults_to_params(params, custom_entry.params),
+			add_defaults_to_params(ops, custom_entry.ops))
 		if type(eq) ~= "number" and type(eq) ~= "table" then
 			assert(false, "Custom mod " .. name .. " did not return a valid equation.")
 		end
@@ -302,32 +362,6 @@ local function handle_custom_mod(mod_entry)
 	else
 		-- Assume it's already a valid equation, don't change it.
 	end
-end
-
-local function add_tween_phases(entry)
-	if type(entry.on) ~= "number" and type(entry.off) ~= "number" then
-		return
-	end
-	local time= entry.time or 'beat'
-	local full_level= 1
-	if entry[2] then
-		full_level= entry[2].level or full_level
-	end
-	local phases= {default= {0, 0, 0, 1}}
-	if entry.on then
-		phases[#phases+1]= {0, entry.on, 1/entry.on, 0}
-	end
-	if entry.off then
-		-- If entry.length is the end of the phase, there is a single frame at
-		-- the end of the mod that uses the default phase instead.
-		-- I hate floating point math.
-		phases[#phases+1]= {entry.length - entry.off, entry.length+.001, -1/entry.off, 1}
-	end
-	if not entry[2] then
-		entry[2]= {}
-	end
-	entry[2].level= {'*', full_level, {'phase', {'-', 'music_'..time, 'start_'..time}, phases}}
-	return true
 end
 
 function organize_notefield_mods_by_target(mods_table)
@@ -383,7 +417,6 @@ function organize_notefield_mods_by_target(mods_table)
 		else
 			target_fields[#target_fields+1]= result[1]
 		end
-		add_tween_phases(entry)
 		handle_custom_mod(entry)
 		if entry.column then
 			local target_columns= {}

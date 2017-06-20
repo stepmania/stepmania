@@ -146,3 +146,10 @@ The parameter named "level" is special.  The on and off tween fields will
 modify it to go from 0 to full when tweening on, and from full to 0 when
 tweening off.
 
+
+Tweenable mod params
+
+```lua
+	{column= "all", start= 4, length= 4, 'three', {level= 4, l2= {4, on= 1, off= 1, time= 'second'}, l3= 4}},
+```
+l2 will be tweened using the on and off times in its table.  If l2.time were blank, it would default to 'beat'.
