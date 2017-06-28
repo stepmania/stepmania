@@ -94,6 +94,7 @@ void PlayerOptions::Init()
 	m_bStealthPastReceptors = false;
 	m_bDizzyHolds = false;
 	m_bZBuffer = false;
+	m_bGlitchyTan = false;
 	m_sNoteSkin = "";
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
@@ -179,6 +180,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_bStealthPastReceptors );
 	DO_COPY( m_bDizzyHolds );
 	DO_COPY( m_bZBuffer );
+	DO_COPY( m_bGlitchyTan );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
@@ -292,10 +294,18 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_SPEED],		"DrunkSpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_OFFSET],	"DrunkOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_PERIOD],	"DrunkPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK],		"TanDrunk" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_SPEED],	"TanDrunkSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_OFFSET],	"TanDrunkOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_PERIOD],	"TanDrunkPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z],		"DrunkZ" );
-	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_SPEED],		"DrunkZSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_SPEED],	"DrunkZSpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_OFFSET],	"DrunkZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_PERIOD],	"DrunkZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_Z],		"TanDrunkZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_Z_SPEED],	"TanDrunkZSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_Z_OFFSET],	"TanDrunkZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_Z_PERIOD],	"TanDrunkZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_LINEAR],	"ShrinkLinear" );
 	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_MULT],	"ShrinkMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_PULSE_INNER],		"PulseInner" );
@@ -383,6 +393,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_bStealthPastReceptors,		"StealthPastReceptors");
 	AddPart( AddTo, m_bDizzyHolds,				"DizzyHolds");
 	AddPart( AddTo, m_bZBuffer,				"ZBuffer");
+	AddPart( AddTo, m_bGlitchyTan,				"GlitchyTan");
 	
 	for( int i=0; i<16; i++)
 	{
@@ -684,10 +695,18 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "drunkspeed" )			SET_FLOAT( fEffects[EFFECT_DRUNK_SPEED] )
 	    else if( sBit == "drunkoffset" )			SET_FLOAT( fEffects[EFFECT_DRUNK_OFFSET] )
 	    else if( sBit == "drunkperiod" )			SET_FLOAT( fEffects[EFFECT_DRUNK_PERIOD] )
+	    else if( sBit == "tandrunk" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK] )
+	    else if( sBit == "tandrunkspeed" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_SPEED] )
+	    else if( sBit == "tandrunkoffset" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_OFFSET] )
+	    else if( sBit == "tandrunkperiod" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_PERIOD] )
 	    else if( sBit == "drunkz" )				SET_FLOAT( fEffects[EFFECT_DRUNK_Z] )
 	    else if( sBit == "drunkzspeed" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_SPEED] )
 	    else if( sBit == "drunkzoffset" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_OFFSET] )
 	    else if( sBit == "drunkzperiod" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_PERIOD] )
+	    else if( sBit == "tandrunkz" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_Z] )
+	    else if( sBit == "tandrunkzspeed" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_Z_SPEED] )
+	    else if( sBit == "tandrunkzoffset" )		SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_Z_OFFSET] )
+	    else if( sBit == "tandrunkzperiod" )		SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_Z_PERIOD] )
 	}
 	else if( sBit.find("shrink") != sBit.npos)
 	{
@@ -1055,6 +1074,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    }
 	}
 	else if( sBit == "zbuffer" )				m_bZBuffer = on;
+	else if( sBit == "glitchytan" )				m_bGlitchyTan = on;
 	// deprecated mods/left in for compatibility
 	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 	// end of the list
@@ -1283,6 +1303,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_bStealthPastReceptors);
 	COMPARE(m_bDizzyHolds);
 	COMPARE(m_bZBuffer);
+	COMPARE(m_bGlitchyTan);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
@@ -1363,6 +1384,7 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_bStealthPastReceptors);
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
+	CPY(m_bGlitchyTan);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1631,6 +1653,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_bStealthPastReceptors);
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
+	CPY(m_bGlitchyTan);
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
@@ -1698,10 +1721,18 @@ public:
 	FLOAT_INTERFACE(DrunkSpeed, Effects[PlayerOptions::EFFECT_DRUNK_SPEED], true);
 	FLOAT_INTERFACE(DrunkOffset, Effects[PlayerOptions::EFFECT_DRUNK_OFFSET], true);
 	FLOAT_INTERFACE(DrunkPeriod, Effects[PlayerOptions::EFFECT_DRUNK_PERIOD], true);
+	FLOAT_INTERFACE(TanDrunk, Effects[PlayerOptions::EFFECT_TAN_DRUNK], true);
+	FLOAT_INTERFACE(TanDrunkSpeed, Effects[PlayerOptions::EFFECT_TAN_DRUNK_SPEED], true);
+	FLOAT_INTERFACE(TanDrunkOffset, Effects[PlayerOptions::EFFECT_TAN_DRUNK_OFFSET], true);
+	FLOAT_INTERFACE(TanDrunkPeriod, Effects[PlayerOptions::EFFECT_TAN_DRUNK_PERIOD], true);
 	FLOAT_INTERFACE(DrunkZ, Effects[PlayerOptions::EFFECT_DRUNK_Z], true);
 	FLOAT_INTERFACE(DrunkZSpeed, Effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED], true);
 	FLOAT_INTERFACE(DrunkZOffset, Effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET], true);
 	FLOAT_INTERFACE(DrunkZPeriod, Effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD], true);
+	FLOAT_INTERFACE(TanDrunkZ, Effects[PlayerOptions::EFFECT_TAN_DRUNK_Z], true);
+	FLOAT_INTERFACE(TanDrunkZSpeed, Effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_SPEED], true);
+	FLOAT_INTERFACE(TanDrunkZOffset, Effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_OFFSET], true);
+	FLOAT_INTERFACE(TanDrunkZPeriod, Effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_PERIOD], true);
 	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
 	FLOAT_INTERFACE(AttenuateX, Effects[PlayerOptions::EFFECT_ATTENUATE_X], true);
 	FLOAT_INTERFACE(AttenuateY, Effects[PlayerOptions::EFFECT_ATTENUATE_Y], true);
@@ -1824,6 +1855,7 @@ public:
 	BOOL_INTERFACE(StealthPastReceptors, StealthPastReceptors);
 	BOOL_INTERFACE(DizzyHolds, DizzyHolds);
 	BOOL_INTERFACE(ZBuffer, ZBuffer);
+	BOOL_INTERFACE(GlitchyTan, GlitchyTan);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -2185,10 +2217,18 @@ public:
 		ADD_METHOD(DrunkSpeed);
 		ADD_METHOD(DrunkOffset);
 		ADD_METHOD(DrunkPeriod);
+		ADD_METHOD(TanDrunk);
+		ADD_METHOD(TanDrunkSpeed);
+		ADD_METHOD(TanDrunkOffset);
+		ADD_METHOD(TanDrunkPeriod);
 		ADD_METHOD(DrunkZ);
 		ADD_METHOD(DrunkZSpeed);
 		ADD_METHOD(DrunkZOffset);
 		ADD_METHOD(DrunkZPeriod);
+		ADD_METHOD(TanDrunkZ);
+		ADD_METHOD(TanDrunkZSpeed);
+		ADD_METHOD(TanDrunkZOffset);
+		ADD_METHOD(TanDrunkZPeriod);
 		ADD_METHOD(Dizzy);
 		ADD_METHOD(ShrinkLinear);
 		ADD_METHOD(ShrinkMult);
@@ -2291,6 +2331,7 @@ public:
 		ADD_METHOD(StealthPastReceptors);
 		ADD_METHOD(DizzyHolds);
 		ADD_METHOD(ZBuffer);
+		ADD_METHOD(GlitchyTan);
 		ADD_METHOD(RandAttack);
 		ADD_METHOD(NoAttack);
 		ADD_METHOD(PlayerAutoPlay);

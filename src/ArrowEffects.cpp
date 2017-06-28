@@ -158,6 +158,22 @@ static float CalculateTornadoOffsetFromMagnitude(int dimension, int col_id,
 	return (adjusted_pixel_offset - real_pixel_offset) * magnitude;
 }
 
+static float CalculateDrunkAngle(float speed, int col, float offset, 
+	float col_frequency, float y_offset, float period, float offset_frequency)
+{
+	float time = ArrowEffects::GetTime();
+	return time * (1+speed) + col*( (offset*col_frequency) + col_frequency)
+		+ y_offset * ( (period*offset_frequency) + offset_frequency) / SCREEN_HEIGHT;
+}
+
+static float SelectTanType(float angle, bool is_cosec)
+{
+	if (is_cosec)
+	    return RageFastCsc(angle);
+	else
+	    return RageFastTan(angle);
+}
+
 static void UpdateBeat(int dimension, PerPlayerData &data, const SongPosition &position, float beat_offset, float beat_mult)
 {
 	float fAccelTime = 0.2f, fTotalTime = 0.5f;
@@ -638,8 +654,18 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
-			( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_SPEED]) + iColNum*((fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET]*DRUNK_COLUMN_FREQUENCY)+DRUNK_COLUMN_FREQUENCY)
-				      + fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_PERIOD]*DRUNK_OFFSET_FREQUENCY)+DRUNK_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
+			( RageFastCos( CalculateDrunkAngle(fEffects[PlayerOptions::EFFECT_DRUNK_SPEED], iColNum, 
+					fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET], DRUNK_COLUMN_FREQUENCY,
+					fYOffset, fEffects[PlayerOptions::EFFECT_DRUNK_PERIOD],
+					DRUNK_OFFSET_FREQUENCY) ) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
+
+	if( fEffects[PlayerOptions::EFFECT_TAN_DRUNK] != 0 )
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_TAN_DRUNK] * 
+			( SelectTanType( CalculateDrunkAngle(fEffects[PlayerOptions::EFFECT_TAN_DRUNK_SPEED],
+					iColNum, fEffects[PlayerOptions::EFFECT_TAN_DRUNK_OFFSET],
+					DRUNK_COLUMN_FREQUENCY, fYOffset,
+					fEffects[PlayerOptions::EFFECT_TAN_DRUNK_PERIOD], DRUNK_OFFSET_FREQUENCY)
+					, curr_options->m_bGlitchyTan) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
 
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
@@ -1106,8 +1132,19 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK_Z] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_DRUNK_Z] * 
-			( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + iCol*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*DRUNK_Z_COLUMN_FREQUENCY)+DRUNK_Z_COLUMN_FREQUENCY)
-				+ fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*DRUNK_Z_OFFSET_FREQUENCY)+DRUNK_Z_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
+			( RageFastCos( CalculateDrunkAngle(fEffects[PlayerOptions::EFFECT_DRUNK_Z_SPEED], iCol, 
+					fEffects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET], DRUNK_Z_COLUMN_FREQUENCY,
+					fYOffset, fEffects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD],
+					DRUNK_Z_OFFSET_FREQUENCY) ) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
+
+	if( fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z] != 0 )
+		fZPos += fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z] * 
+			( SelectTanType( CalculateDrunkAngle(fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z_SPEED],
+					iCol, fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z_OFFSET],
+					DRUNK_Z_COLUMN_FREQUENCY, fYOffset,
+					fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z_PERIOD],
+					DRUNK_Z_OFFSET_FREQUENCY)
+					, curr_options->m_bGlitchyTan) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 )
 	{

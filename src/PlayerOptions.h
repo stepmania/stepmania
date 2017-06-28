@@ -83,6 +83,7 @@ public:
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
 		m_bStealthType(false), m_bStealthPastReceptors(false),
 		m_bDizzyHolds(false), m_bZBuffer(false),
+		m_bGlitchyTan(false),
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
 		m_sNoteSkin = "";
@@ -145,10 +146,18 @@ public:
 		EFFECT_DRUNK_SPEED,
 		EFFECT_DRUNK_OFFSET,
 		EFFECT_DRUNK_PERIOD,
+		EFFECT_TAN_DRUNK,
+		EFFECT_TAN_DRUNK_SPEED,
+		EFFECT_TAN_DRUNK_OFFSET,
+		EFFECT_TAN_DRUNK_PERIOD,
 		EFFECT_DRUNK_Z,
 		EFFECT_DRUNK_Z_SPEED,
 		EFFECT_DRUNK_Z_OFFSET,
 		EFFECT_DRUNK_Z_PERIOD,
+		EFFECT_TAN_DRUNK_Z,
+		EFFECT_TAN_DRUNK_Z_SPEED,
+		EFFECT_TAN_DRUNK_Z_OFFSET,
+		EFFECT_TAN_DRUNK_Z_PERIOD,
 		EFFECT_DIZZY,
 		EFFECT_ATTENUATE_X,
 		EFFECT_ATTENUATE_Y,
@@ -349,6 +358,7 @@ public:
 	bool		m_bStealthPastReceptors;
 	bool		m_bDizzyHolds;
 	bool		m_bZBuffer;
+	bool		m_bGlitchyTan;
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
 	TapNoteScore m_MinTNSToHideNotes;
