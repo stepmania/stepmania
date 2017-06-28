@@ -44,11 +44,10 @@ local engine_custom_mods= {
 	beat= {
 		target= 'note_pos_x',
 		equation= function(params, ops)
-			local time_wave_input= offset(params.time, params.time_offset)
 			-- triangle wave - n results in the section above zero having width 1-n
 			-- so triangle - (1-w) will give us width w
-			-- time_wave_input is doubled and offset to put a peak on every beat.
-			local triangle= {'triangle', {'+', .5, {'*', 2, time_wave_input}}}
+			-- params.time is doubled and offset to put a peak on every beat.
+			local triangle= {'triangle', {'+', .5, {'*', 2, params.time}}}
 			local above_zero_is_width= {'-', triangle, {'-', 1, params.width}}
 			-- height above zero needs to be 1, but is currently w.
 			-- <result> / w will make the height 1
@@ -59,7 +58,7 @@ local engine_custom_mods= {
 			local curved_wave= {'^', beat_wave, 2}
 			-- inverter has peaks on even beats, and troughs on odd beats, to make
 			-- the motion alternate directions.
-			local inverter= {'square', {'+', .5, time_wave_input}}
+			local inverter= {'square', {'+', .5, params.time}}
 			local time_beat_factor= {'*', curved_wave, 20, inverter}
 			local note_beat_factor= {
 				ops.wave,
@@ -357,8 +356,9 @@ end
 
 local mod_input_names= ModValue.get_input_list()
 
-local function maybe_tween_thing(mod_entry, thing, from)
-	if mod_entry.on or mod_entry.off and type(thing) == "number" then
+local function maybe_tween_thing(mod_entry, thing, from, is_level)
+	if mod_entry.on or mod_entry.off and
+	(is_level or type(thing) == "number") then
 		return tween_mod_param(thing, mod_entry.on, mod_entry.off, mod_entry.length, mod_entry.time, from)
 	else
 		return thing
@@ -374,9 +374,9 @@ local function process_param(mod_entry, param, default, is_level)
 	if is_level then
 		tween_from= 0
 	end
-	local value_eq= maybe_tween_thing(mod_entry, value or default, tween_from)
-	local mult_eq= maybe_tween_thing(mod_entry, mult, 1)
-	local add_eq= maybe_tween_thing(mod_entry, add, 0)
+	local value_eq= maybe_tween_thing(mod_entry, value or default, tween_from, is_level)
+	local mult_eq= maybe_tween_thing(mod_entry, mult, 1, is_level)
+	local add_eq= maybe_tween_thing(mod_entry, add, 0, is_level)
 	local partial_eq= value_eq
 	if mult then
 		partial_eq= {'*', partial_eq, mult_eq}
@@ -445,7 +445,8 @@ function handle_custom_mod(mod_entry)
 				params, mod_entry.on, mod_entry.off, mod_entry.length, mod_entry.time)
 		elseif params_type == "table" then
 			if is_an_equation(params) then
-				processed_params.level= params
+				processed_params.level= tween_mod_param(
+					params, mod_entry.on, mod_entry.off, mod_entry.length, mod_entry.time)
 			else
 				for name, param in pairs(params) do
 					local ptype= type(param)

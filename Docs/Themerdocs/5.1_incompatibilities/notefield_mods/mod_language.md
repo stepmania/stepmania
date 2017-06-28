@@ -20,10 +20,11 @@ previously would need to be added to the engine.
 
 # Mods table
 
-The mods table for a simfile should be like this:
+This is a mods table that uses equations instead of the named mods described
+in simfile_mods.md.  The fields in each mod entry are the same.
+
 ```lua
 {
-	columns= 4, -- Each notefield has this many columns.
 	{
 		column= 1, -- This mod entry only affects column 1.
 		target= 'column_pos_x', -- The column's x position will change.
@@ -56,8 +57,6 @@ The mods table for a simfile should be like this:
 ```
 
 The table tells the system how many columns and fields it effects.
-
-The columns count is used to make sure mods affecting all columns work right.
 
 Each entry specifies what column or field it is for, the attribute to change,
 start time and length, an equation, and how the equation is combined with the
@@ -124,174 +123,7 @@ other mods act on top of that base value.
 
 ## Target specifics
 
-The target info table has this structure (and these are the names of all
-targets, unless this document is outdated):
-```lua
--- NoteField target info
-{
-	transform_pos_x= true,
-	transform_pos_y= true,
-	transform_pos_z= true,
-	transform_rot_x= true,
-	transform_rot_y= true,
-	transform_rot_z= true,
-	transform_zoom= true,
-	transform_zoom_x= true,
-	transform_zoom_y= true,
-	transform_zoom_z= true,
-	receptor_alpha= true,
-	receptor_glow= true,
-	explosion_alpha= true,
-	explosion_glow= true,
-	fov_x= true,
-	fov_y= true,
-	fov_z= true,
-}
-```
-transform values move, rotate, or zoom the field as a whole.
-
-zoom_x, zoom_y, and zoom_z are multiplied by zoom to get the final zoom.
-
-receptor_alpha and receptor_glow affect layers in the theme's
-```Graphics/NoteField layers.lua``` that are marked as receptor layers.
-
-explosion_alpha and explosion_glow affect layers in the theme's
-```Graphics/NoteField layers.lua``` that are marked as explosion layers.
-
-fov_x and fov_y change the position of the vanish point, identical to
-ActorFrame's vanishpoint function.
-
-fov_z changes the field of view angle.
-
-```lua
--- NoteFieldColumn target info
-{
-	column_pos_x= true,
-	column_pos_y= true,
-	column_pos_z= true,
-	column_rot_x= true,
-	column_rot_y= true,
-	column_rot_z= true,
-	column_zoom= true,
-	column_zoom_x= true,
-	column_zoom_y= true,
-	column_zoom_z= true,
-	note_pos_x= true,
-	note_pos_y= true,
-	note_pos_z= true,
-	note_rot_x= true,
-	note_rot_y= true,
-	note_rot_z= true,
-	note_zoom= true,
-	note_zoom_x= true,
-	note_zoom_y= true,
-	note_zoom_z= true,
-	speed= true,
-	y_offset_vec_x= true,
-	y_offset_vec_y= true,
-	y_offset_vec_z= true,
-	reverse_offset= true,
-	reverse= true,
-	center= true,
-	hold_normal_x= true,
-	hold_normal_y= true,
-	hold_normal_z= true,
-	explosion_alpha= true,
-	explosion_glow= true,
-	note_alpha= true,
-	note_glow= true,
-	receptor_alpha= true,
-	receptor_glow= true,
-	time_offset= true,
-	-- deprecated
-	lift_pretrail= true,
-	quantization_multiplier= true,
-	quantization_offset= true,
-}
-```
-
-column values move the column as a whole.  The column is an ActorFrame, and
-notes are rendered as children, so moving the column also moves all notes in
-it.  The theme also has layers in ```Graphics/NoteFieldColumn layers.lua```
-that are also tied to the column position.  Receptors and explosions from the
-noteskin are also layers, identical in behavior to the theme's layers.
-
-note values move individual notes.
-
-zoom_x, zoom_y, and zoom_z are multiplied by zoom to get the final zoom.
-
-speed is used to calculate the y_offset of each note.  Typically it just uses
-the eval_beat and music_beat multiplied by some constant.
-
-y_offset_vec is used to apply the y_offset of a note to the note's final
-position.  This defaults to {0, 1, 0} (point towards positive y).
-```(y_offset_vec * y_offset) + note_pos``` is the note's final position,
-relative to the receptors, ignoring reverse and center effects.
-
-reverse_offset is the distance in pixels from the center of the notefield to
-the receptors, before reverse and center are applied.  Zero puts the
-receptors in the center.
-
-reverse both scales the note positions vertically, and reverses the direction
-notes travel.  reverse defaults to 1 (scrolling down), and -1 makes notes
-scroll up.
-
-Noteskin and theme column layers are informed when reverse changes from
-negative to positive or back.
-
-center shifts the receptors closer to the notefield.  0 puts the receptors
-reverse_offset pixels from the center, 1 puts the receptors in the center,
-2, puts the receptors reverse_offset pixels below the center.
-
-hold_normal is for when the hold body needs to twist in its own way instead
-of using the note rotation.  This is a normal vector, it points perpendicular
-to the surface of the hold.  Use set_use_moddable_hold_normal when using
-hold_normal mods.
-
-explosion and receptor alpha and glow affect the layers the noteskin and
-theme mark as being explosions or receptors.  note alpha and glow apply alpha
-and glow to notes.
-
-time_offset makes the column display a different time from the rest of the
-notefield.  Someone wanted per-player time offset for their beatmania mode
-and it somehow ended up per-column.
-
-#### Deprecated
-
-lift_pretrail affects how many beats or seconds ahead of the lift its
-attached hold body will start to show up.  This should not be a modifier, it
-should be part of the note data.
-
-quantization_multiplier and quantization_offset affect the value that is used
-to quantize the note and decide whether it is a 4th, an 8th, or some other
-quantization.  The quantization system isn't satisfactory and should be
-overhauled for better quantization and time signature support.
-
-
-# Using a mods table
-
-Create your mods table with the entries that do what you want.
-
-Fetching the notefield(s) and applying mods are wrapped up in the
-handle_notefield_mods function provided by _fallback/Scripts/02 NoteField.lua.
-Because actors do not exist in a grabbable form until OnCommands run,
-handle_notefield_mods must be called from an OnCommand (or later, if you
-want to delay applying mods until later).
-```lua
-OnCommand= function(self)
-	local notefields= handle_notefield_mods(mods)
-end
-```
-
-handle_notefield_mods returns the notefield actors in a table indexed by
-player number in case you need them for something.  ```notefields[PLAYER_1]```
-is player 1's notefield.
-
-This does not mean that the mods table must be created inside that OnCommand.
-You can put it in some global variable or build it up the way you would any
-other table in lua.  Only the call to handle_notefield_mods must be inside an
-OnCommand.
-
+The list of current targets and what they do is in mod_targets.md.
 
 
 # Mod equation language specifics
@@ -356,83 +188,7 @@ These are all valid operands:
 
 ## Input field names
 
-#### Fetching the input field list list
-This document might be outdated, or you may want to check whether a recently
-added input field exists before using it.  The engine provides functions for
-seeing what input fields are available.
-
-```ModValue.get_input_list()``` returns a name indexed list of
-operators.  ```ModValue.get_input_list()['music_rate']``` will only be
-true if the music_rate input exists.
-
-Put the table returned by get_input_list in a variable if you need to
-use it more than once.
-
-
-```'music_rate'```
-The current music rate, adjusted for any haste effect.  The M and C speed
-mods provided by _fallback use this to adjust for rate mods.
-
-```'column'```
-The 1-indexed id of the column the equation is evaluated for.  This is zero
-for the notefield.
-
-```'y_offset'```
-The result of the speed modifier.  This is zero when the speed modifier is
-evaluated, so don't use it in speed mods and expect a useful result.
-
-```'note_id_in_chart'```
-note_id_in_chart starts at zero and counts all notes in the chart up to the
-current note.
-
-```'note_id_in_column'```
-note_id_in_column starts at zero and counts all notes in the column up to the
-current note.
-
-```'row_id'```
-row_id starts at zero and counts up for every row that has notes.  row_id is
-not the beat number, row_id is not calculated from the beat number.
-
-Picture explanation:
-http://i.imgur.com/x0RqDbZ.png
-
-Note and row ids are meaningless for mods that are not evaluated for every
-note.  Per-note mods (targets) are: speed, y_offset_vec, note_* (pos, rot,
-zoom, alpha, glow), hold_normal_*, quantization_*.
-
-For hold notes, note and row ids are the id for the note that started the
-hold, not the note or row id for the current time.
-
-```'eval_beat'```
-```'eval_second'```
-The time of the current note, in beats or seconds.  This will be equal to the
-music time if it is not a per-note mod.
-
-```'music_beat'```
-```'music_second'```
-The current time for the receptors, in beats or seconds.
-
-```'dist_beat'```
-```'dist_second'```
-eval time minus music time.
-
-```'start_beat'```
-```'start_second'```
-The start time for the modifier this equation is inside.  Thus, you do not
-have to change the start beat everywhere inside the equation when adjusting
-modifier.
-
-```'length_beats'```
-```'length_seconds'```
-Length as a an input field, similar to start.
-
-```'end_beat'```
-```'end_second'```
-end as a an input field, similar to start.
-
-```'prefunres'```
-The result of previous equations as an input field.
-
+Input field names are described in mod_inputs.md.
 
 ## Operator specifics
 
@@ -815,27 +571,43 @@ Because each operand in an equation is a table, you can make a function that
 creates the table for part of an equation and call that function in place of
 an operand.
 
+This is the code that implements the beat modifier.
 ```lua
--- Linearly tween from start_mag to end_mag.  When the current beat is
--- start_beat, the result is start_mag.  At the end, reach end_mag.
--- Because start_mag and end_mag are set the same way operands are, this
--- function still works if start_mag and end_mag are equations in their own
--- right.
-local function linear_beats_tween(start_mag, end_mag)
-	return
-		{'+', start_mag,
-		 {'*', {'-', end_mag, start_mag},
-			{'/',
-			 {'-', 'music_beat', 'start_beat'},
-			 'length_beats',
-			},
+equation= function(params, ops)
+	-- triangle wave - n results in the section above zero having width 1-n
+	-- so triangle - (1-w) will give us width w
+	-- params.time is doubled and offset to put a peak on every beat.
+	local triangle= {'triangle', {'+', .5, {'*', 2, params.time}}}
+	local above_zero_is_width= {'-', triangle, {'-', 1, params.width}}
+	-- height above zero needs to be 1, but is currently w.
+	-- <result> / w will make the height 1
+	local height_is_one= {'/', above_zero_is_width, params.width}
+	-- then max is used to clip off the parts of the wave that are below
+	-- zero, and we have a wave that is flat between peaks.
+	local beat_wave= {'max', 0, height_is_one}
+	local curved_wave= {'^', beat_wave, 2}
+	-- inverter has peaks on even beats, and troughs on odd beats, to make
+	-- the motion alternate directions.
+	local inverter= {'square', {'+', .5, params.time}}
+	local time_beat_factor= {'*', curved_wave, 20, inverter}
+	local note_beat_factor= {
+		ops.wave,
+		{'+', params.wave_offset,
+		 {'/',
+			params.note_input,
+			params.period,
 		 },
-		}
+		},
+	}
+	local time_and_beat= {ops.factor, time_beat_factor, note_beat_factor}
+	return {ops.level, params.level, time_and_beat}
 end
 
 -- in the mods table.
 	{column= 1, target= 'column_pos_y', start_beat= 8.25, length_beats= 2/16,
-	 linear_beats_tween(0, 192)},
+	 equation({level= 1, note_input= 'y_offset', wave_offset= .5, period= 6,
+			time= 'music_beat', width= .5}, {level= '*', factor= '*', wave= 'sin'})
+			},
 ```
 
 Thus, once you have a concept or name for an action, you can put that in a
