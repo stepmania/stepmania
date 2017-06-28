@@ -232,13 +232,23 @@ double log_single_op(double left)
 	return log(left);
 }
 
+double pow_wrapper(double left, double right)
+{
+	double result= std::pow(left, right);
+	if(std::isnan(result) || !std::isfinite(result))
+	{
+		return 0.0;
+	}
+	return result;
+}
+
 #define same_thing_single_op(thing) thing
 
 SIMPLE_OPERATOR(add, plus_wrap, same_thing_single_op);
 SIMPLE_OPERATOR(subtract, subtract_wrap, same_thing_single_op);
 SIMPLE_OPERATOR(multiply, multiply_wrap, same_thing_single_op);
 SIMPLE_OPERATOR(divide, divide_wrap, same_thing_single_op);
-SIMPLE_OPERATOR(exp, pow, same_thing_single_op);
+SIMPLE_OPERATOR(exp, pow_wrapper, same_thing_single_op);
 SIMPLE_OPERATOR(log, log_wrapper, log_single_op);
 SIMPLE_OPERATOR(min, std::min, same_thing_single_op);
 SIMPLE_OPERATOR(max, std::max, same_thing_single_op);

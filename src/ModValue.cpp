@@ -8,6 +8,9 @@
 #include "RageMath.h"
 #include "LuaBinding.h"
 
+#include "Actor.h"
+#include "ActorUtil.h"
+
 ModManager::~ModManager()
 {
 	for(auto&& container : {&m_past_funcs, &m_present_funcs, &m_past_funcs})
@@ -555,6 +558,7 @@ static std::unordered_map<std::string, mot> mot_conversion= {
 	{"*", mot_multiply},
 	{"/", mot_divide},
 	{"^", mot_exp},
+	{"pow", mot_exp},
 	{"v", mot_log},
 	{"%", mot_mod},
 	{"o", mot_round},
@@ -1193,6 +1197,10 @@ mod_function::~mod_function()
 void mod_function::load_from_lua(lua_State* L, int index,
 	TimingData const* timing_data)
 {
+	if(m_base_operand != nullptr)
+	{
+		Rage::safe_delete(m_base_operand);
+	}
 	// {start_beat= 4, end_beat= 8, name= "frogger", priority= 0,
 	//   sum_type= "add", {"add", 5, "music_beat"}}
 	get_optional_string(L, index, "name", m_name);
@@ -1483,6 +1491,147 @@ MT_NEEDS_THING(beat);
 MT_NEEDS_THING(second);
 MT_NEEDS_THING(y_offset);
 #undef MT_NEEDS_THING
+
+// ModEquation is an object for setting an equation and evaluating it with
+// arbitrary input.  Making it an Actor is the only practical way to allow
+// the theme to make one and ensure that it is destroyed when it isn't needed
+// anymore.
+struct ModEquation : Actor
+{
+	ModEquation();
+	~ModEquation() {}
+	virtual void PushSelf(lua_State *L);
+	virtual ModEquation* Copy() const;
+	void set_equation(lua_State* L, int eq_index);
+	void set_input_map(lua_State* L, int map_index);
+	double evaluate(lua_State* L, int input_index);
+	std::unordered_map<size_t, mit> m_input_map;
+	mod_val_inputs m_input;
+	ModManager m_manager;
+	ModifiableValue m_eq_parent;
+	mod_function m_equation;
+};
+
+ModEquation::ModEquation()
+	:m_eq_parent(m_manager, "do_not_use", 1.0),
+	m_equation(&m_eq_parent, 0.0)
+{
+}
+
+REGISTER_ACTOR_CLASS(ModEquation);
+
+void ModEquation::set_equation(lua_State* L, int eq_index)
+{
+	try
+	{
+		m_equation.load_from_lua(L, eq_index, nullptr);
+	}
+	catch(std::string& err)
+	{
+		luaL_error(L, err.c_str());
+	}
+}
+
+void ModEquation::set_input_map(lua_State* L, int map_index)
+{
+	lua_pushnil(L);
+	while(lua_next(L, map_index) != 0)
+	{
+		try
+		{
+			if(lua_type(L, -2) == LUA_TSTRING && lua_type(L, -1) == LUA_TNUMBER)
+			{
+				std::string mit_name= lua_tostring(L, -2);
+				mit to= str_to_mit(mit_name);
+				size_t from= lua_tointeger(L, -1);
+				m_input_map.insert(std::make_pair(from, to));
+			}
+		}
+		catch(...)
+		{
+			// don't actually care
+		}
+		lua_pop(L, 1);
+	}
+}
+
+double ModEquation::evaluate(lua_State* L, int input_index)
+{
+	size_t num_inputs= lua_objlen(L, input_index);
+	for(size_t id= 1; id <= num_inputs; ++id)
+	{
+		lua_rawgeti(L, input_index, id);
+		double value= lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		mit type= m_input_map[id];
+#define THING_CASE(thing) case mit_##thing: m_input.thing = value; break;
+		switch(type)
+		{
+			THING_CASE(column);
+			THING_CASE(y_offset);
+			THING_CASE(note_id_in_chart);
+			THING_CASE(note_id_in_column);
+			THING_CASE(row_id);
+			THING_CASE(eval_beat);
+			THING_CASE(eval_second);
+			THING_CASE(music_beat);
+			THING_CASE(music_second);
+			THING_CASE(dist_beat);
+			THING_CASE(dist_second);
+			THING_CASE(start_beat);
+			THING_CASE(start_second);
+			THING_CASE(length_beats);
+			THING_CASE(length_seconds);
+			THING_CASE(end_beat);
+			THING_CASE(end_second);
+			THING_CASE(prefunres);
+			default:
+				break;
+		}
+#undef THING_CASE
+	}
+	m_equation.per_frame_update(m_input);
+	return m_equation.evaluate(m_input);
+}
+
+struct LunaModEquation : Luna<ModEquation>
+{
+	static int set_equation(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Must be an equation table.");
+		}
+		p->set_equation(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int set_input_map(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Must be an input map table.");
+		}
+		p->set_input_map(L, 1);
+		COMMON_RETURN_SELF;
+	}
+	static int evaluate(T* p, lua_State* L)
+	{
+		if(lua_type(L, 1) != LUA_TTABLE)
+		{
+			luaL_error(L, "Must be an input table.");
+		}
+		lua_pushnumber(L, p->evaluate(L, 1));
+		return 1;
+	}
+	LunaModEquation()
+	{
+		ADD_METHOD(set_equation);
+		ADD_METHOD(set_input_map);
+		ADD_METHOD(evaluate);
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS(ModEquation, Actor);
 
 
 namespace

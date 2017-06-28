@@ -1,3 +1,6 @@
+-- The mod system's sin/cos functions multiply by pi internally, but these
+-- mods ported from ITG weren't made with pi in mind.
+-- So divide by pi before sin or cos.
 local function pi_div(equation)
 	return {'*', 1/math.pi, equation}
 end
@@ -27,22 +30,11 @@ local arg_counts= {
 	['repeat']= 3,
 }
 
-local wave_ops= {
-	sin= true, cos= true, tan= true, square= true, triangle= true,
-}
-
 local function check_op(eq)
 	local op= eq[1]
 	local count= arg_counts[op]
 	if not count or count+1 == #eq then
--- The mod system's sin/cos functions multiply by pi internally, but these
--- mods ported from ITG weren't made with pi in mind.
--- So divide by pi before sin or cos.
-		if wave_ops[op] then
-			return pi_div(eq)
-		else
-			return eq
-		end
+		return eq
 	end
 	assert(false, "Wrong number of operands.  "..op.." requires exactly "..count.." but there are "..(#eq-1))
 end
@@ -52,36 +44,46 @@ local engine_custom_mods= {
 	beat= {
 		target= 'note_pos_x',
 		equation= function(params, ops)
-			assert(type(params.width) == "number", "width must be a number.")
-			assert(type(params.period) == "number", "period must be a number.")
-			local width= params.width
-			local width_recip= 1/width
-			local period= params.period
-			local half_period= period/2
-			return check_op{
-				ops.level, 20, params.level,
-				check_op{
-					ops.wave, check_op{
-						ops.input, offset(params.input, params.offset), 1/15}},
-				{'phase', {'repeat', offset(params.time, params.time_offset), 0, params.period},
-				 default= {0, 0, 0, 0},
-				 {0, width, width_recip, -1},
-				 {half_period-width, half_period, width_recip, 0},
-				 {half_period, half_period+width, -width_recip, 1},
-				 {period-width, period, -width_recip, 0}
-				}
+			local time_wave_input= offset(params.time, params.time_offset)
+			-- triangle wave - n results in the section above zero having width 1-n
+			-- so triangle - (1-w) will give us width w
+			-- time_wave_input is doubled and offset to put a peak on every beat.
+			local triangle= {'triangle', {'+', .5, {'*', 2, time_wave_input}}}
+			local above_zero_is_width= {'-', triangle, {'-', 1, params.width}}
+			-- height above zero needs to be 1, but is currently w.
+			-- <result> / w will make the height 1
+			local height_is_one= {'/', above_zero_is_width, params.width}
+			-- then max is used to clip off the parts of the wave that are below
+			-- zero, and we have a wave that is flat between peaks.
+			local beat_wave= {'max', 0, height_is_one}
+			local curved_wave= {'^', beat_wave, 2}
+			-- inverter has peaks on even beats, and troughs on odd beats, to make
+			-- the motion alternate directions.
+			local inverter= {'square', {'+', .5, time_wave_input}}
+			local time_beat_factor= {'*', curved_wave, 20, inverter}
+			local note_beat_factor= {
+				ops.wave,
+				{'+', params.wave_offset,
+				 {'/',
+					params.note_input,
+					params.period,
+				 },
+				},
 			}
+			local time_and_beat= check_op{ops.factor, time_beat_factor, note_beat_factor}
+			return check_op{ops.level, params.level, time_and_beat}
 		end,
 		params= {
-			level= 1, input= 'y_offset', time= 'music_beat', period= 2, width= .2,
-			offset= 0, time_offset= 0,
+			level= 1, note_input= 'y_offset', wave_offset= .5, period= 6,
+			time= 'music_beat', width= .5,
 		},
 		ops= {
-			level= '*', wave= 'cos', input= '*',
+			level= '*', factor= '*', wave= 'sin',
 		},
 		examples= {
-			{"beat twice as often", "'beat', {period= 1}"},
-			{"beat with longer ramp width", "'beat', {width= 1}"},
+			{"beat twice as hard", "'beat', {level= {mult= 2}}"},
+			{"beat twice as often", "'beat', {time= {mult= 2}}"},
+			{"beat with longer ramp time", "'beat', {width= {mult= 2}}"},
 		}
 	},
 	blink= {
@@ -199,6 +201,12 @@ local function tune_params(params, defaults)
 	end
 end
 
+local function sanity_check_custom_mods(mods)
+	for name, mod in pairs(mods) do
+		add_blank_tables_to_params(mod, {"params", "ops", "examples"})
+	end
+end
+
 local theme_custom_mods= {}
 
 function set_theme_custom_mods(mods)
@@ -213,10 +221,16 @@ function set_simfile_custom_mods(mods)
 	simfile_custom_mods= mods
 end
 
-local function print_params_info(params)
-	if #params == 0 then
-		Trace("      None.")
+local function print_params_info(name, params)
+	local has_none= true
+	for name, meh in pairs(params) do
+		has_none= false
+		break
+	end
+	if has_none then
+		Trace("    "..name..":  None.")
 	else
+		Trace("    "..name..":")
 		foreach_ordered(
 			params, function(name, value)
 				Trace("      "..name .. ", default " .. value)
@@ -226,8 +240,9 @@ end
 
 local function print_examples(examples)
 	if not examples or #examples == 0 then
-		Trace("      None.")
+		Trace("    Examples:  None.")
 	else
+		Trace("    Examples:")
 		for exid= 1, #examples do
 			local entry= examples[exid]
 			Trace("      " .. entry[1])
@@ -240,11 +255,8 @@ local function print_info_from_custom_mods(mods)
 	foreach_ordered(
 		mods, function(name, entry)
 			Trace("  "..name .. ", " .. entry.target)
-			Trace("    Params:")
-			print_params_info(entry.params)
-			Trace("    Ops:")
-			print_params_info(entry.ops)
-			Trace("    Examples:")
+			print_params_info("Params", entry.params)
+			print_params_info("Ops", entry.ops)
 			print_examples(entry.examples)
 	end)
 end
@@ -279,10 +291,10 @@ local function is_an_equation(eq)
 	local equation_op= eq[1]
 	if equation_op and ModValue.get_operator_list(equation_op) then
 		local might_be_spline= equation_op == "spline"
-		for key, value in pairs(params) do
+		for key, value in pairs(eq) do
 			if type(key) == "string" then
 				if might_be_spline and (key == "loop" or key == "polygonal") then
-					return true
+					-- do nothing
 				else
 					return false
 				end
@@ -291,9 +303,10 @@ local function is_an_equation(eq)
 	else
 		return false
 	end
+	return true
 end
 
-local function tween_mod_param(full, on, off, length, time)
+local function tween_mod_param(full, on, off, length, time, start)
 	if time ~= "second" and time ~= "beat" then
 		time= "beat"
 	end
@@ -307,10 +320,74 @@ local function tween_mod_param(full, on, off, length, time)
 		-- I hate floating point math.
 		phases[#phases+1]= {length - off, length+.001, -1/off, 1}
 	end
-	return {'*', full, {'phase', {'-', 'music_'..time, 'start_'..time}, phases}}
+	if #phases == 0 then
+		return full
+	end
+	local phase_eq= {'phase', {'-', 'music_'..time, 'start_'..time}, phases}
+	if start then
+		return {'+', start, {'*', {'-', full, start}, phase_eq}}
+	else
+		return {'*', full, phase_eq}
+	end
 end
 
-local function handle_custom_mod(mod_entry)
+local function parse_param_string(str)
+	-- "v1 +2 *3"
+	-- "1 +2 *3"
+	-- to
+	-- {base= 1, add= 2, mult= 3}
+	local parts= split(str, " ")
+	local first_to_field= {
+		v= "value",
+		['+']= "add",
+		['*']= "mult",
+	}
+	local ret= {}
+	for i= 1, #parts do
+		local part= parts[i]
+		local field_name= first_to_field[part[1]]
+		if field_name then
+			ret[field_name]= tonumber(part:sub(2, -1))
+		else
+			ret.value= tonumber(part)
+		end
+	end
+	return ret
+end
+
+local mod_input_names= ModValue.get_input_list()
+
+local function maybe_tween_thing(mod_entry, thing, from)
+	if mod_entry.on or mod_entry.off and type(thing) == "number" then
+		return tween_mod_param(thing, mod_entry.on, mod_entry.off, mod_entry.length, mod_entry.time, from)
+	else
+		return thing
+	end
+end
+
+local function process_param(mod_entry, param, default, is_level)
+	local value= param.value or param.v
+	local mult= param.mult or param.m
+	local add= param.add or param.a
+
+	local tween_from= default
+	if is_level then
+		tween_from= 0
+	end
+	local value_eq= maybe_tween_thing(mod_entry, value or default, tween_from)
+	local mult_eq= maybe_tween_thing(mod_entry, mult, 1)
+	local add_eq= maybe_tween_thing(mod_entry, add, 0)
+	local partial_eq= value_eq
+	if mult then
+		partial_eq= {'*', partial_eq, mult_eq}
+	end
+	if add then
+		partial_eq= {'+', partial_eq, add_eq}
+	end
+	return partial_eq
+end
+
+function handle_custom_mod(mod_entry)
 	local name= mod_entry[1]
 	local params= mod_entry[2]
 	local ops= mod_entry[3]
@@ -340,27 +417,76 @@ local function handle_custom_mod(mod_entry)
 		if type(mod_entry.sum_type) ~= "string" then
 			mod_entry.sum_type= custom_entry.sum_type
 		end
-		if mod_entry.on or mod_entry.off then
-			params.level= tween_mod_param(params.level, mod_entry.on, mod_entry.off, mod_entry.length, mod_entry.time)
-		end
-		if type(custom_entry.params) == "table" then
-			for param_name, param in pairs(params) do
-				if param_name ~= "level" and type(param) == "table" then
-					if param.on or param.off then
-						params[param_name]= tween_mod_param(param[1], param.on, param.off, mod_entry.length, param.time or mod_entry.time)
+		local processed_params= {}
+		-- forms one param can take:
+		-- {base= 1, add= 2, mult= 3, on= 1, off= 1, base= 0}
+		-- {v= 1, a= 2, m= 3, n= 1, f= 1, b= 0}
+		-- {equation}
+		-- param_result = (base * mult) + add
+		-- on, off, and start are for tweening.  time on, time off, base to tween away from.
+		-- Tweening affects all given parts of the param.
+		-- mult will tween from 1 instead of 0, unless base and add are absent and a start is given.
+		local params_type= type(params)
+		if params_type == "nil" then
+			processed_params.level= 1
+		elseif params_type == "boolean" then
+			processed_params.level= params
+		elseif params_type == "string" then
+			if mod_input_names[params] then
+				processed_params.level= params
+			else
+				processed_params.level=
+					process_param(
+						mod_entry, parse_param_string(params),
+						custom_entry.params.level, true)
+			end
+		elseif params_type == "number" then
+			processed_params.level= tween_mod_param(
+				params, mod_entry.on, mod_entry.off, mod_entry.length, mod_entry.time)
+		elseif params_type == "table" then
+			if is_an_equation(params) then
+				processed_params.level= params
+			else
+				for name, param in pairs(params) do
+					local ptype= type(param)
+					if ptype == "boolean" then
+						processed_params[name]= param
+					elseif ptype == "string" then
+						if mod_input_names[param] then
+							processed_params[name]= param
+						else
+							processed_params[name]= process_param(
+								mod_entry, parse_param_string(params),
+								custom_entry.params[name], name == "level")
+						end
+					elseif ptype == "number" then
+						local from= custom_entry.params[name]
+						if name == "level" then
+							from= 0
+						end
+						processed_params[name]= maybe_tween_thing(mod_entry, param, from)
+					elseif ptype == "table" then
+						if is_an_equation(param) then
+							processed_params[name]= param
+						else
+							processed_params[name]= process_param(
+								mod_entry, param, custom_entry.params[name], name == "level")
+						end
 					end
 				end
 			end
 		end
 		local eq= custom_entry.equation(
-			add_defaults_to_params(params, custom_entry.params),
+			add_defaults_to_params(processed_params, custom_entry.params),
 			add_defaults_to_params(ops, custom_entry.ops))
 		if type(eq) ~= "number" and type(eq) ~= "table" then
 			assert(false, "Custom mod " .. name .. " did not return a valid equation.")
 		end
 		mod_entry[1]= eq
 	else
-		-- Assume it's already a valid equation, don't change it.
+		if mod_entry.on or mod_entry.off then
+			mod_entry[1]= tween_mod_param(mod_entry[1], mod_entry.on, mod_entry.off, mod_entry.length, mod_entry.time)
+		end
 	end
 end
 
@@ -466,6 +592,12 @@ function organize_notefield_mods_by_target(mods_table)
 end
 
 function organize_and_apply_notefield_mods(notefields, mods)
+	local first_pn, first_field= next(notefields, nil)
+	if NoteField.get_num_columns then
+		mods.columns= first_field:get_num_columns()
+	else
+		mods.columns= #first_field:get_columns()
+	end
 	local organized_mods= organize_notefield_mods_by_target(mods)
 	local pn_to_field_index= PlayerNumber:Reverse()
 	if mods.field and mods.field ~= 1 then
@@ -499,7 +631,7 @@ end
 
 function load_notefield_mods_file(path)
 	assert(FILEMAN:DoesFileExist(path))
-	local mods, custom_mods= dofile(mods_path)
+	local mods, custom_mods= dofile(path)
 	set_simfile_custom_mods(custom_mods)
 	return handle_notefield_mods(mods)
 end

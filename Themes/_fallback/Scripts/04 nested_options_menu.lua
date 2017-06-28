@@ -11,15 +11,19 @@ function get_nested_options_menu_line_height(h)
 end
 
 function add_defaults_to_params(params, defaults)
+	if type(params) ~= "table" then params= {} end
 	for key, value in pairs(defaults) do
 		if params[key] == nil then params[key]= value end
 	end
+	return params
 end
 
 function add_blank_tables_to_params(params, table_names)
+	if type(params) ~= "table" then params= {} end
 	for i, name in ipairs(table_names) do
 		if not params[name] then params[name]= {} end
 	end
+	return params
 end
 
 local function play_gain_focus(self)

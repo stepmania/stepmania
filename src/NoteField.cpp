@@ -3672,6 +3672,11 @@ struct LunaNoteField : Luna<NoteField>
 		p->push_columns_to_lua(L);
 		return 1;
 	}
+	static int get_num_columns(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->get_num_columns());
+		return 1;
+	}
 	static int get_width(T* p, lua_State* L)
 	{
 		lua_pushnumber(L, p->get_field_width());
@@ -3742,6 +3747,7 @@ struct LunaNoteField : Luna<NoteField>
 		ADD_METHOD(set_steps);
 		ADD_METHOD(share_steps);
 		ADD_METHOD(get_columns);
+		ADD_METHOD(get_num_columns);
 		ADD_METHOD(get_width);
 		ADD_GET_SET_METHODS(curr_beat);
 		ADD_GET_SET_METHODS(curr_second);

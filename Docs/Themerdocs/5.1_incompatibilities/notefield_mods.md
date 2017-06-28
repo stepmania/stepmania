@@ -1,155 +1,179 @@
-This is mostly a half-organized list of things that need to be covered.
+# Overview
 
+Simfiles can control the motion of notes through modifiers.
+
+Typically this is done through a list that tells the game what time to
+activate each mod, how long it should run for, and sometimes how to tween it
+on and off.
+
+## Mods file
+
+This is an example of the simplest possible mods file.  One mod that lasts
+for four beats.
 
 ```lua
 local mods= {
-	columns= 4,
-	{column= 1, start= 4, length= 4, on= 1, off= 2, 'drunk', {level= 2}, {wave= 'tan'}},
+	{column= "all", start= 0, length= 4, 'some_mod_name'},
 }
 
 return mods
 ```
 
-```on= 1``` sets this mod to spend one beat tweening on.  level will start at 0 and grow to 2.
+## Loading the mods file
 
-```off= 2``` means this mod will tween off in two beats.  level goes from 2 to 0.
+Assuming the mods file is named "notefield_mods.lua" and placed in the song
+folder, it can be loaded by having an actor like this among the other actors
+in the simfile.
 
-```'drunk'``` is the name of a custom mod.
+```lua
+Def.Actor{
+	OnCommand= function(self)
+		local mods_filename= "notefield_mods.lua"
+		local notefields= load_notefield_mods_file(GAMESTATE:GetCurrentSong():GetSongDir()..mods_filename)
+	end,
+}
+```
 
-The table after it is parameters for that mod.
+load_notefield_mods_file will execute the file, find the notefield(s), and
+apply the mods to the notefield(s).
 
-Second table is operators for the mod to use instead of its normal ones.
+load_notefield_mods_file returns a table containing the notefields it found.
+Having handles for the notefields may be useful later.
 
+
+# Mods table details
+
+## Querying the system
+
+### Targets list
+The functions for getting a list of targets must be called on a NoteField or
+NoteFieldColumn actor.
+
+load_notefield_mods_file returned a table containing the notefields, so that
+is used in this example.
+
+```lua
+local notefield_targets= notefields[PLAYER_1]:get_mod_target_info()
+local column_targets= notefields[PLAYER_1]:get_columns()[1]:get_mod_target_info()
+-- Check whether transform_rot_z exists
+if notefield_targets.transform_rot_z then
+	...
+end
+-- Print the list to the log file for reading.
+foreach_ordered(notefield_targets, function(name, exists) do Trace(name) end)
+```
+
+### Custom mods list
 ```print_custom_mods_info()``` will print a list of all available custom mods
 to Logs/log.txt.  The list will have all parameters, operators, and examples
 for each mod.
 
-Custom mods in _fallback are under "Engine custom mods:".
-Custom mods added by the theme are under "Theme custom mods:".  Custom mods
-added by the simfile are under "Simfile custom mods:".
 
-```set_theme_custom_mods(mods)``` can be used by the theme to add more in
-addition to the ones in _fallback.
+## Some simple examples
 
-```set_simfile_custom_mods(mods)``` can be used by the simfile to add more.
-
-If a custom mod added by the theme has the same name as one in _fallback, it
-overrides the one in _fallback.
-
-A custom mod from the simfile with the same name overrides the others.
-
-```get_custom_mods_list()``` returns a table for checking whether a mod
-exists.
+Only affect column 1:
 ```lua
-local all_customs= get_custom_mods_list()
-if all_customs.engine.drunk then
-...
-end
-if all_customs.theme["( ͡° ͜ʖ ͡°)"] then
-...
-end
-if all_customs.simfile["(╯°□°)╯︵ ┻━┻"] then
-...
-end
+{column= 1, start= 0, length= 4, 'some_mod_name'},
 ```
 
-Mods and custom mods can be put in a separate file from actors.
-
+Only affect columns 1 and 2:
 ```lua
-local custom_mods= {
-	one= {
-		target= 'note_pos_x',
-		equation= function(params, ops)
-			return {ops.level, params.level}
-		end,
-		params= {
-			level= 1,
-		},
-		ops= {
-			level= '*',
-		},
-		examples= {
-			{"normal", "'one'"},
-			{"double", "'one', {level= 2}"},
-			{"log", "'one', {level= 10}, {level= 'log'}"},
-		},
-	},
-	two= {
-		target= 'note_pos_x',
-		equation= function(params, ops)
-			return {ops.level, params.level, params.l2}
-		end,
-		params= {
-			level= 1, l2= 1,
-		},
-		ops= {
-			level= '*',
-		},
-		examples= {
-			{"normal", "'two'"},
-			{"quadruple", "'two', {level= 2, l2= 2}"},
-			{"powerful", "'two', {level= 2, l2= 10}, {level= '^'}"},
-		},
-	},
-	three= {
-		target= 'note_pos_x',
-		equation= function(params, ops)
-			return {ops.level, params.level, params.l2, params.l3}
-		end,
-		params= {
-			level= 1, l2= 1, l3= 1,
-		},
-		ops= {
-			level= '*',
-		},
-	},
-}
-
-local mods= {
-	columns= 4,
-	{column= 1, start= 4, length= 4, 'drunk', {level= 2}, {wave= 'tan'}},
-}
-
-return mods, custom_mods
+{column= {1, 2}, start= 0, length= 4, 'some_mod_name'},
 ```
 
-```load_notefield_mods_file(path)``` will load a file like that, add the
-custom mods to the environment, and apply the mods to the player notefields.
-
-
-Parts of a custom mod entry:
-
-target controls the attribute that the mod sets by default.
-
-equation is the mod language equation, which takes parameters and operators
-to fill in equation parts that can change.
-
-params is a table of parameters with default values.
-
-ops is a table of operators with default values.
-
-examples is a list of examples of using the custom mod.  Each entry in the
-list is a short description and example code.  print_custom_mods_info puts
-the description and the example code on separate lines.
-
-Parameters should not be used directly, they should just be put into the
-equation table.  That allows them to be equations.
+Use seconds instead of beats for all time fields in this mod entry:
 ```lua
-		equation= function(params, ops)
-			return {ops.level, params.level + params.l2, params.l3}
-		end,
+{column= "all", time= 'second', start= 0, length= 4, 'some_mod_name'},
 ```
-Adding level and l2 like that will break on and off tweening, because
-tweening replaces level with an equation.
 
-The parameter named "level" is special.  The on and off tween fields will
-modify it to go from 0 to full when tweening on, and from full to 0 when
-tweening off.
+Intensify mod:
+```lua
+{column= "all", start= 0, length= 4, 'some_mod_name', 2},
+```
 
+Affect a different note attribute than the one the mod is normally for:
+```lua
+{column= "all", start= 0, length= 4, target= 'note_pos_y', 'some_mod_name'},
+```
 
-Tweenable mod params
+## Detailed description
+
+Each modifier is actually an equation.
+
+The ```2``` in the "Intensify mod" example is actually a parameter to change
+one number in the equation.
+
+Some equations can have more than one parameter.  To set more than one
+parameter, you must use a table.
 
 ```lua
-	{column= "all", start= 4, length= 4, 'three', {level= 4, l2= {4, on= 1, off= 1, time= 'second'}, l3= 4}},
+{column= "all", start= 0, length= 4, 'beat', {level= 2, time= 'music_second'}},
 ```
-l2 will be tweened using the on and off times in its table.  If l2.time were blank, it would default to 'beat'.
+
+Normally, 'beat' takes effect on every beat.  Changing the time to use the
+music second makes it take effect on every second.
+
+The preceding example set the raw values for the parameters, replacing the
+default values the equation would normally use.
+
+Sometimes you want to just add to or multiply the default value by something.
+
+```lua
+{column= "all", start= 0, length= 4, 'beat', {level= {add= 2}, time= {mult= 2}}},
+```
+
+The param is set by a table describing how to add to or multiply the base
+value.  The result is ```(default * mult) + add```.
+
+Since the default of time is 'music_beat', ```time= {mult= 2}``` multiplies
+the music beat by 2.
+
+```lua
+{column= "all", start= 0, length= 4, 'beat', {period= {value= 3, mult= 2, add= 4}}},
+```
+
+The result is ```(value * mult) + add```.
+
+
+### Tweening parameters
+
+```lua
+{column= "all", start= 0, length= 4, on= 1, off= 1, 'beat', {level= 2}},
+```
+
+level will start at 0 and tween up to 2 in one beat.  During the last beat of
+the mod, level will tween back to 0.
+
+```lua
+{column= "all", start= 0, length= 4, on= 1, off= 1, 'beat', {level= 2, period= 12}},
+```
+
+level and period will both tween.
+
+period will tween from 6 (the default value in the mod info) to 12, then back
+to 6.
+
+```lua
+{column= "all", start= 0, length= 4, on= 1, off= 1, 'beat', {level= 2, period= {value= 8, mult= 4, add= 2}}},
+```
+
+period.value will tween from 6 to 8, then back to 6.
+
+period.mult will tween from 1 to 4, then back to 1.
+
+period.add will tween from 0 to 2, then back to 0.
+
+
+Only things that are set to raw numbers will tween.
+
+```lua
+{column= "all", start= 0, length= 4, on= 1, off= 1, 'beat', {level= 4, time= 'music_second'}},
+```
+
+level will tween, but time will not.
+
+```lua
+{column= "all", start= 0, length= 4, on= 1, off= 1, 'beat', {level= 4, time= {value= 'music_second', mult= 2}}},
+```
+
+level will tween.  time.mult will tween.  time.value will not.
