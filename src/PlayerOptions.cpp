@@ -335,12 +335,21 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_PERIOD],	"TornadoPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_OFFSET],	"TornadoOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO],	"TanTornado" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_PERIOD],	"TanTornadoPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_OFFSET],	"TanTornadoOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_Z],	"TornadoZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_Z_PERIOD],	"TornadoZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_Z_OFFSET],	"TornadoZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_Z],	"TanTornadoZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_Z_PERIOD],"TanTornadoZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_Z_OFFSET],"TanTornadoZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TIPSY],		"TanTipsy" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TIPSY_SPEED],	"TanTipsySpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TIPSY_OFFSET],	"TanTipsyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],	"BumpyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],	"BumpyPeriod" );
@@ -809,15 +818,24 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
 	    else if( sBit == "tornadoperiod" )			SET_FLOAT( fEffects[EFFECT_TORNADO_PERIOD] )
 	    else if( sBit == "tornadooffset" )			SET_FLOAT( fEffects[EFFECT_TORNADO_OFFSET] )
+	    else if( sBit == "tantornado" )			SET_FLOAT( fEffects[EFFECT_TAN_TORNADO] )
+	    else if( sBit == "tantornadoperiod" )		SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_PERIOD] )
+	    else if( sBit == "tantornadooffset" )		SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_OFFSET] )
 	    else if( sBit == "tornadoz" )			SET_FLOAT( fEffects[EFFECT_TORNADO_Z] )
 	    else if( sBit == "tornadozperiod" )			SET_FLOAT( fEffects[EFFECT_TORNADO_Z_PERIOD] )
 	    else if( sBit == "tornadozoffset" )			SET_FLOAT( fEffects[EFFECT_TORNADO_Z_OFFSET] )
+	    else if( sBit == "tantornadoz" )			SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_Z] )
+	    else if( sBit == "tantornadozperiod" )		SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_Z_PERIOD] )
+	    else if( sBit == "tantornadozoffset" )		SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_Z_OFFSET] )
 	}
 	else if( sBit.find("tipsy") != sBit.npos)
 	{
 	    if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
 	    else if( sBit == "tipsyspeed" )			SET_FLOAT( fEffects[EFFECT_TIPSY_SPEED] )
 	    else if( sBit == "tipsyoffset" )			SET_FLOAT( fEffects[EFFECT_TIPSY_OFFSET] )
+	    else if( sBit == "tantipsy" )			SET_FLOAT( fEffects[EFFECT_TAN_TIPSY] )
+	    else if( sBit == "tantipsyspeed" )			SET_FLOAT( fEffects[EFFECT_TAN_TIPSY_SPEED] )
+	    else if( sBit == "tantipsyoffset" )			SET_FLOAT( fEffects[EFFECT_TAN_TIPSY_OFFSET] )
 	}
 	else if( sBit.find("bumpy") != sBit.npos)
 	{
@@ -1762,12 +1780,21 @@ public:
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
 	FLOAT_INTERFACE(TornadoPeriod, Effects[PlayerOptions::EFFECT_TORNADO_PERIOD], true);
 	FLOAT_INTERFACE(TornadoOffset, Effects[PlayerOptions::EFFECT_TORNADO_OFFSET], true);
+	FLOAT_INTERFACE(TanTornado, Effects[PlayerOptions::EFFECT_TAN_TORNADO], true);
+	FLOAT_INTERFACE(TanTornadoPeriod, Effects[PlayerOptions::EFFECT_TAN_TORNADO_PERIOD], true);
+	FLOAT_INTERFACE(TanTornadoOffset, Effects[PlayerOptions::EFFECT_TAN_TORNADO_OFFSET], true);
 	FLOAT_INTERFACE(TornadoZ, Effects[PlayerOptions::EFFECT_TORNADO_Z], true);
 	FLOAT_INTERFACE(TornadoZPeriod, Effects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD], true);
 	FLOAT_INTERFACE(TornadoZOffset, Effects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET], true);
+	FLOAT_INTERFACE(TanTornadoZ, Effects[PlayerOptions::EFFECT_TAN_TORNADO_Z], true);
+	FLOAT_INTERFACE(TanTornadoZPeriod, Effects[PlayerOptions::EFFECT_TAN_TORNADO_Z_PERIOD], true);
+	FLOAT_INTERFACE(TanTornadoZOffset, Effects[PlayerOptions::EFFECT_TAN_TORNADO_Z_OFFSET], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
 	FLOAT_INTERFACE(TipsySpeed, Effects[PlayerOptions::EFFECT_TIPSY_SPEED], true);
 	FLOAT_INTERFACE(TipsyOffset, Effects[PlayerOptions::EFFECT_TIPSY_OFFSET], true);
+	FLOAT_INTERFACE(TanTipsy, Effects[PlayerOptions::EFFECT_TAN_TIPSY], true);
+	FLOAT_INTERFACE(TanTipsySpeed, Effects[PlayerOptions::EFFECT_TAN_TIPSY_SPEED], true);
+	FLOAT_INTERFACE(TanTipsyOffset, Effects[PlayerOptions::EFFECT_TAN_TIPSY_OFFSET], true);
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
 	FLOAT_INTERFACE(BumpyOffset, Effects[PlayerOptions::EFFECT_BUMPY_OFFSET], true);
 	FLOAT_INTERFACE(BumpyPeriod, Effects[PlayerOptions::EFFECT_BUMPY_PERIOD], true);
@@ -2258,12 +2285,21 @@ public:
 		ADD_METHOD(Tornado);
 		ADD_METHOD(TornadoPeriod);
 		ADD_METHOD(TornadoOffset);
+		ADD_METHOD(TanTornado);
+		ADD_METHOD(TanTornadoPeriod);
+		ADD_METHOD(TanTornadoOffset);
 		ADD_METHOD(TornadoZ);
 		ADD_METHOD(TornadoZPeriod);
 		ADD_METHOD(TornadoZOffset);
+		ADD_METHOD(TanTornadoZ);
+		ADD_METHOD(TanTornadoZPeriod);
+		ADD_METHOD(TanTornadoZOffset);
 		ADD_METHOD(Tipsy);
 		ADD_METHOD(TipsySpeed);
 		ADD_METHOD(TipsyOffset);
+		ADD_METHOD(TanTipsy);
+		ADD_METHOD(TanTipsySpeed);
+		ADD_METHOD(TanTipsyOffset);
 		ADD_METHOD(Bumpy);
 		ADD_METHOD(BumpyOffset);
 		ADD_METHOD(BumpyPeriod);
