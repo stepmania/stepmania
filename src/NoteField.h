@@ -327,6 +327,7 @@ struct NoteField : ActorFrame
 	void position_actor_at_column_head(Actor* act, FieldLayerRenderInfo& info,
 		size_t col);
 	double get_receptor_y();
+	bool is_in_reverse();
 
 	virtual void PushSelf(lua_State *L);
 	virtual NoteField* Copy() const;

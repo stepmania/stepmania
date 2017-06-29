@@ -2360,6 +2360,11 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				break;
 			}
 
+			if(m_NoteFieldEdit.is_in_reverse())
+			{
+				fBeatsToMove *= -1;
+			}
+
 			float fDestinationBeat = GetBeat() + fBeatsToMove;
 			fDestinationBeat = Quantize( fDestinationBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
@@ -2370,6 +2375,11 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			float fDestinationBeat = GetBeat() + beatsPerMeasure;
 			fDestinationBeat = ftruncf( fDestinationBeat, (float)beatsPerMeasure );
+			if(m_NoteFieldEdit.is_in_reverse())
+			{
+				fDestinationBeat= QuantizeUp( GetBeat(), (float)beatsPerMeasure );
+				fDestinationBeat -= (float)beatsPerMeasure;
+			}
 			ScrollTo( fDestinationBeat );
 			return true;
 		}
@@ -2377,6 +2387,11 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			float fDestinationBeat = QuantizeUp( GetBeat(), (float)beatsPerMeasure );
 			fDestinationBeat -= (float)beatsPerMeasure;
+			if(m_NoteFieldEdit.is_in_reverse())
+			{
+				fDestinationBeat= GetBeat() + beatsPerMeasure;
+				fDestinationBeat = ftruncf( fDestinationBeat, (float)beatsPerMeasure );
+			}
 			ScrollTo( fDestinationBeat );
 			return true;
 		}
