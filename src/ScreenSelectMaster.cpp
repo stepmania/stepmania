@@ -684,7 +684,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 
 	FOREACH( PlayerNumber, vpns, p )
 	{
-		if( GAMESTATE->IsHumanPlayer(*p) )
+		if( GAMESTATE->IsHumanPlayer(*p) || SHARED_SELECTION )
 		{
 			if( SHOW_CURSOR )
 			{
@@ -787,8 +787,11 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 		{
 			if( GAMESTATE->IsHumanPlayer(*p) )
 			{
-				m_sprCursor[*p]->PlayCommand( "Change" );
-				m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
+				PlayerNumber ep = *p;
+				if( SHARED_SELECTION )
+					ep = PLAYER_1;
+				m_sprCursor[ep]->PlayCommand( "Change" );
+				m_sprCursor[ep]->SetXY( GetCursorX(*p), GetCursorY(*p) );
 			}
 		}
 
@@ -1039,7 +1042,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	{
 		FOREACH( PlayerNumber, vpns, p )
 		{
-			if( GAMESTATE->IsHumanPlayer(*p) )
+			if( GAMESTATE->IsHumanPlayer(*p) || SHARED_SELECTION )
 				m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
 		}
 	}
