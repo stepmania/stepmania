@@ -54,6 +54,7 @@ enum mot
 	mot_random,
 	mot_phase,
 	mot_repeat,
+	mot_abs,
 	mot_mod,
 	mot_floor,
 	mot_ceil,
@@ -257,6 +258,28 @@ SIMPLE_OPERATOR(max, std::max, same_thing_single_op);
 #undef subtract_wrap
 #undef multiply_wrap
 #undef SIMPLE_OPERATOR
+
+#define SINGLE_OPERATOR(op_name, eval) \
+struct mod_operator_##op_name : mod_operator \
+{ \
+	virtual double evaluate(mod_val_inputs& input) \
+	{ \
+		PER_NOTE_UPDATE_IF; \
+		return eval(m_operand_results[0]); \
+	} \
+	virtual void load_from_lua(mod_function* parent, lua_State* L, int index) \
+	{ \
+		mod_operator::load_from_lua(parent, L, index); \
+		if(m_operands.size() != 1) \
+		{ \
+			throw std::string(#op_name " operator must have exactly 1 operand."); \
+		} \
+	} \
+};
+
+SINGLE_OPERATOR(abs, fabs);
+
+#undef SINGLE_OPERATOR
 
 #define PAIR_OPERATOR(op_name, eval) \
 struct mod_operator_##op_name : mod_operator \

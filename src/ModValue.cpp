@@ -563,6 +563,7 @@ static std::unordered_map<std::string, mot> mot_conversion= {
 	{"%", mot_mod},
 	{"o", mot_round},
 	{"_", mot_floor},
+	{"|", mot_abs},
 	CONVENT(replace),
 	CONVENT(add),
 	CONVENT(subtract),
@@ -580,6 +581,7 @@ static std::unordered_map<std::string, mot> mot_conversion= {
 	CONVENT(random),
 	CONVENT(phase),
 	CONVENT(repeat),
+	CONVENT(abs),
 	CONVENT(mod),
 	CONVENT(floor),
 	CONVENT(ceil),
@@ -634,6 +636,7 @@ mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int index)
 			SET_NEW(random);
 			SET_NEW(phase);
 			SET_NEW(repeat);
+			SET_NEW(abs);
 			SET_NEW(mod);
 			SET_NEW(floor);
 			SET_NEW(ceil);
