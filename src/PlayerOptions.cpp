@@ -1060,6 +1060,13 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	// end of the list
 	else
 	{
+		// Maybe the original string is a noteskin name with a space. -Kyz
+		RString name= sOneMod;
+		name.MakeLower();
+		if(NOTESKIN && NOTESKIN->DoesNoteSkinExist(name))
+		{
+			m_sNoteSkin = name;
+		}
 		return false;
 	}
 
