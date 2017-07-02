@@ -119,6 +119,7 @@ namespace
 		float m_tan_tipsy_offset_result[MAX_COLS_PER_PLAYER];
 		float m_fBeatFactor[3];
 		float m_fExpandSeconds;
+		float m_fTanExpandSeconds;
 
 		// m_prev_style is for checking whether ArrowEffects::Init needs to be
 		// called.  Finding all the placed ArrowEffects is used and making sure
@@ -176,6 +177,16 @@ static float CalculateDrunkAngle(float speed, int col, float offset,
 	float time = ArrowEffects::GetTime();
 	return time * (1+speed) + col*( (offset*col_frequency) + col_frequency)
 		+ y_offset * ( (period*offset_frequency) + offset_frequency) / SCREEN_HEIGHT;
+}
+
+static float CalculateBumpyAngle(float y_offset, float offset, float period)
+{
+	return (y_offset+(100.0f*offset))/((period*16.0f)+16.0f);
+}
+
+static float CalculateDigitalAngle(float y_offset, float offset, float period)
+{
+	return PI * (y_offset + (1.0f * offset ) ) / (ARROW_SIZE + (period * ARROW_SIZE) );
 }
 
 static void UpdateBeat(int dimension, PerPlayerData &data, const SongPosition &position, float beat_offset, float beat_mult)
@@ -324,6 +335,8 @@ void ArrowEffects::Update()
 		{
 			data.m_fExpandSeconds += fTime - fLastTime;
 			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, (PI*2)/(accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1) );
+			data.m_fTanExpandSeconds += fTime - fLastTime;
+			data.m_fTanExpandSeconds = fmodf( data.m_fTanExpandSeconds, (PI*2)/(accels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD]+1) );
 		}
 
 		// Update Invert
@@ -504,6 +517,9 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	const float* fAccels = curr_options->m_fAccels;
 	const float* fEffects = curr_options->m_fEffects;
+	
+	// TODO: Don't index by PlayerNumber.
+	PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
 
@@ -563,15 +579,22 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
-		// TODO: Don't index by PlayerNumber.
-		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
-	
 		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY*(fAccels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1)),
 						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
 						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 
 				      EXPAND_SPEED_SCALE_FROM_LOW, EXPAND_SPEED_SCALE_FROM_HIGH,
 				      EXPAND_SPEED_SCALE_TO_LOW, fExpandMultiplier );
+	}
+
+	if( fAccels[PlayerOptions::ACCEL_TAN_EXPAND] != 0 )
+	{
+		float fTanExpandMultiplier = SCALE( SelectTanType(data.m_fTanExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY*(fAccels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD]+1), curr_options->m_bGlitchyTan),
+						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
+						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
+		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_TAN_EXPAND], 
+				      EXPAND_SPEED_SCALE_FROM_LOW, EXPAND_SPEED_SCALE_FROM_HIGH,
+				      EXPAND_SPEED_SCALE_TO_LOW, fTanExpandMultiplier );
 	}
 
 	fYOffset *= fScrollSpeed;
@@ -697,7 +720,16 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 40*RageFastSin( (fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 
+			40*RageFastSin( CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET],
+			fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]) );
+	
+	if( fEffects[PlayerOptions::EFFECT_TAN_BUMPY_X] != 0 )
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_TAN_BUMPY_X] * 
+			40*SelectTanType( CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_TAN_BUMPY_X_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TAN_BUMPY_X_PERIOD]), curr_options->m_bGlitchyTan );
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
@@ -758,8 +790,17 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	if( fEffects[PlayerOptions::EFFECT_DIGITAL] != 0 )
 		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_DIGITAL] * ARROW_SIZE * 0.5f) *
 			round((fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * RageFastSin(
-				(PI * (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET]) ) ) / 
-					(ARROW_SIZE + (fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD] * ARROW_SIZE)) ) ) )/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+				CalculateDigitalAngle(fYOffset, 
+				fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET], 
+				fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD]) ) )/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+
+	if( fEffects[PlayerOptions::EFFECT_TAN_DIGITAL] != 0 )
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_TAN_DIGITAL] * ARROW_SIZE * 0.5f) *
+			round((fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS]+1) * SelectTanType(
+				CalculateDigitalAngle(fYOffset, 
+				fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_OFFSET], 
+				fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_PERIOD]), curr_options->m_bGlitchyTan ) )/(fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS]+1);
+				
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE] != 0 )
 	{
@@ -1159,10 +1200,22 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
+		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin(
+			CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET],
+			fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]) );
 
 	if( curr_options->m_fBumpy[iCol] != 0 )
-		fZPos += curr_options->m_fBumpy[iCol] * 40*RageFastSin( (fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
+		fZPos += curr_options->m_fBumpy[iCol] * 40*RageFastSin(
+			CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET],
+			fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]) );
+	
+	if( fEffects[PlayerOptions::EFFECT_TAN_BUMPY] != 0 )
+		fZPos += fEffects[PlayerOptions::EFFECT_TAN_BUMPY] * 40*SelectTanType(
+			CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_TAN_BUMPY_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TAN_BUMPY_PERIOD]), curr_options->m_bGlitchyTan );
 		
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 )
 	{
@@ -1211,8 +1264,17 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
 		fZPos += (fEffects[PlayerOptions::EFFECT_DIGITAL_Z] * ARROW_SIZE * 0.5f) *
 			round((fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1) * RageFastSin(
-				(PI * (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET]) ) ) / 
-					(ARROW_SIZE + (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD] * ARROW_SIZE)) )))/(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+				CalculateDigitalAngle(fYOffset, 
+				fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET], 
+				fEffects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD]) ) ) /(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+	
+	if( fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z] != 0 )
+		fZPos += (fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z] * ARROW_SIZE * 0.5f) *
+			round((fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS]+1) * SelectTanType(
+				CalculateDigitalAngle(fYOffset, 
+				fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_OFFSET], 
+				fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_PERIOD]), curr_options->m_bGlitchyTan ) ) /(fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS]+1);
+				
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
 	{
