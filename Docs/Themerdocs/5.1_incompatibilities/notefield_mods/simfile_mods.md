@@ -334,6 +334,29 @@ Examples of using the operators.  The two strings of each example will be
 printed on different lines when print_custom_mods_info is called.
 
 
+## Custom mod redirs
+
+```lua
+local custom_mods= {
+	three= {
+		redir= 'two',
+		params= {
+			other= {mult= 2},
+		},
+	},
+}
+```
+```lua
+{column= "all", start= 0, length= 4, 'three'}
+```
+is equivalent to
+```lua
+{column= "all", start= 0, length= 4, 'two', {other= {mult= 2}}}
+```
+
+Except params set inside the redir will not be tweened.
+
+
 ## Notes
 
 ### Naming

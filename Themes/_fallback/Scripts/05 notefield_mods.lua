@@ -1,9 +1,7 @@
--- The mod system's sin/cos functions multiply by pi internally, but these
--- mods ported from ITG weren't made with pi in mind.
--- So divide by pi before sin or cos.
-local function pi_div(equation)
-	return {'*', 1/math.pi, equation}
-end
+-- These mods are not identical to ITG's.
+-- Any mods that repeat something repeat either every 2 beats or every 2
+-- arrow heights.
+-- Wave motions range from -32 to +32, or from 0 to +64.
 
 local operator_list= ModValue.get_operator_list()
 local mod_input_names= ModValue.get_input_list()
@@ -25,6 +23,11 @@ local arg_counts= {
 	['tan']= 1,
 	['square']= 1,
 	['triangle']= 1,
+	['asin']= 1,
+	['acos']= 1,
+	['atan']= 1,
+	['asquare']= 1,
+	['atriangle']= 1,
 	['random']= 1,
 	['repeat']= 3,
 }
@@ -38,12 +41,50 @@ local function check_op(eq)
 	assert(false, "Wrong number of operands.  "..op.." requires exactly "..count.." but there are "..(#eq-1))
 end
 
+local function scale_equation(thing, from_low, from_high, to_low, to_high)
+	local from_size= {'-', from_high, from_low}
+	local to_size= {'-', to_high, to_low}
+	local scale= {'/', to_size, from_size}
+	return {'+', to_low, {'*', scale, {'-', thing, from_low}}}
+end
+
 local engine_custom_mods= {
 	-- Each entry is a base mod equation and a set of parameters.
+	time_based_wave= {
+		target= 'note_pos_x',
+		equation= function(params, ops)
+			local wave= check_op{ops.wave, params.input}
+			return {'*', 32, params.level, wave}
+		end,
+		params= {
+			level= 1, input= 'music_beat',
+		},
+		ops= {
+			wave= 'sin',
+		},
+		examples= {
+		},
+	},
+	height_based_wave= {
+		target= 'note_pos_x',
+		equation= function(params, ops)
+			local note_input= {'*', params.input, 1/64}
+			local wave= check_op{ops.wave, note_input}
+			return {'*', 32, params.level, wave}
+		end,
+		params= {
+			level= 1, input= 'y_offset',
+		},
+		ops= {
+			wave= 'sin',
+		},
+		examples= {
+		},
+	},
 	attenuate= {
 		target= 'note_pos_x',
 		equation= function(params, ops)
-			local col_x= {'*', {'-', params.column, {'*', params.num_columns, .5}, .5}, params.column_spacing}
+			local col_x= {'*', {'-', params.column, {'*', params.num_columns, .5}, -.5}, params.column_spacing}
 			local adj_xoff= {'*', col_x, 1/64}
 			local adj_yoff= {'*', params.input, 1/64}
 			return {ops.level, params.level, adj_yoff, adj_yoff, adj_xoff}
@@ -59,8 +100,7 @@ local engine_custom_mods= {
 			{"attenuate y", "target= 'note_pos_y', 'attenuate'"},
 			{"attenuate z", "target= 'note_pos_z', 'attenuate'"},
 			{"attenuate in double", "'attenuate', {num_columns= 8}"},
-			{"random attenuation", "'attenuate', {input= {'o', {'*', 300, {'random', 'y_offset'}}}}"},
-			{"attenuate as if in a different column", "'attenuate', {column= {'o', 'dist_beat'}}"},
+			{"attenuate as if in a different column", "'attenuate', {column= {'+', 'column', {'sin', 'music_beat'}}}"},
 		},
 	},
 	beat= {
@@ -81,21 +121,18 @@ local engine_custom_mods= {
 			-- inverter has peaks on even beats, and troughs on odd beats, to make
 			-- the motion alternate directions.
 			local inverter= {'square', {'+', .5, params.time}}
-			local time_beat_factor= {'*', curved_wave, 20, inverter}
+			local time_beat_factor= {'*', curved_wave, 32, inverter}
 			local note_beat_factor= {
 				ops.wave,
 				{'+', params.wave_offset,
-				 {'/',
-					params.note_input,
-					params.period,
-				 },
+				 {'*', params.input, 1/64},
 				},
 			}
 			local time_and_beat= check_op{ops.factor, time_beat_factor, note_beat_factor}
 			return check_op{ops.level, params.level, time_and_beat}
 		end,
 		params= {
-			level= 1, note_input= 'y_offset', wave_offset= .5, period= 6,
+			level= 1, input= 'y_offset', wave_offset= .5, period= 1,
 			time= 'music_beat', width= .5,
 		},
 		ops= {
@@ -111,33 +148,33 @@ local engine_custom_mods= {
 		target= 'note_alpha',
 		equation= function(params, ops)
 			return check_op{
-				ops.level,
+				ops.offset,
 				check_op{
 					ops.round,
 					check_op{
 						ops.wave,
-						check_op{ops.input, params.input, 10, params.level}
+						check_op{ops.input, params.input, params.level}
 					},
 					params.round,
 				},
-				1,
+				params.offset,
 			}
 		end,
 		params= {
-			input= 'music_second', level= 1, round= 3,
+			input= 'music_second', level= 1, round= 1/3, offset= 0,
 		},
 		ops= {
-			level= '-', round= 'round', wave= 'sin', input= '*',
+			offset= '-', round= 'round', wave= 'sin', input= '*',
 		},
 		examples= {
-			{"blink on beat instead of second", "'blink', {input= 'music_beat'}"},
+			{"blink on beat of instead second", "'blink', {input= 'music_beat'}"},
+			{"only go half-transparent", "'blink', {offset= -.5}"},
 		},
 	},
 	bounce= {
 		target= 'note_pos_x',
 		equation= function(params, ops)
-			local period= {'+', 60, {'*', 60, params.period}}
-			local wave_input= {'/', params.input, period}
+			local wave_input= {'*', params.input, 1/64}
 			local wave= check_op{ops.wave, wave_input}
 			local amount= {'|', wave}
 			if not operator_list['|'] then
@@ -146,7 +183,7 @@ local engine_custom_mods= {
 			return {'*', params.level, 64, .5, amount}
 		end,
 		params= {
-			level= 1, input= 'y_offset', offset= 0,
+			level= 1, input= 'y_offset',
 		},
 		ops= {
 			wave= 'sin',
@@ -156,29 +193,12 @@ local engine_custom_mods= {
 	},
 	bumpy= {
 		target= 'note_pos_z',
-		equation= function(params, ops)
-			return check_op{
-				ops.level, 40, params.level,
-				check_op{
-					ops.wave,
-					check_op{ops.input, params.input, 1/16},
-				},
-			}
-		end,
-		params= {
-			level= 1, input= 'y_offset',
-		},
-		ops= {
-			level= '*', wave= 'sin', input= '*',
-		},
-		examples= {
-			{"tangential bumpiness", "'bumpy', {}, {wave= 'tan'}"},
-		},
+		redir= 'height_based_wave',
 	},
 	confusion= {
 		target= 'note_rot_z',
 		equation= function(params, ops)
-			return check_op{ops.level, params.input, params.level, 2*math.pi}
+			return check_op{ops.level, params.input, params.level}
 		end,
 		params= {
 			input= 'music_beat', level= 1, offset= 0,
@@ -193,14 +213,13 @@ local engine_custom_mods= {
 	digital= {
 		target= 'note_pos_x',
 		equation= function(params, ops)
-			local note_input= {'/', params.input, {'*', period, params.spacing}}
+			local note_input= {'*', params.input, 1/64}
 			local note_wave= check_op{ops.wave, note_input}
-			local stepped_wave= check_op{ops.round, {'*', params.steps, note_wave}}
-			local effect= {'*', params.level, params.spacing, .5}
-			return {'*', effect, {'/', stepped_wave, params.steps}}
+			local stepped_wave= check_op{ops.round, note_wave, {'/', 1, params.steps}}
+			return {'*', params.level, 32, stepped_wave}
 		end,
 		params= {
-			level= 1, spacing= 64, steps= 1, input= 'y_offset', period= 1,
+			level= 1, steps= 1, input= 'y_offset',
 		},
 		ops= {
 			wave= 'sin', round= 'o',
@@ -210,39 +229,34 @@ local engine_custom_mods= {
 	},
 	dizzy= {
 		target= 'note_rot_z',
-		equation= function(params, ops)
-			return check_op{ops.level, params.input, params.level}
-		end,
+		redir= 'confusion',
 		params= {
-			input= 'dist_beat', level= 1, offset= 0,
-		},
-		ops= {
-			level= '*',
+			input= 'dist_beat'
 		},
 		examples= {
 			{"music beat dizzy instead of dist beat", "'dizzy', {input= 'music_beat'}"},
 		},
 	},
+	dizzyh= {
+		target= 'note_rot_z',
+		redir= 'roll',
+		examples= {
+		},
+	},
 	drunk= {
 		target= 'note_pos_x',
 		equation= function(params, ops)
-			return check_op{
-				ops.level, params.level, 32,
-				check_op{
-					ops.wave,
-					pi_div{
-						ops.time, params.time,
-						{ops.column, params.column, .2},
-						{ops.input, params.input, 10, 1/480},
-					},
-				},
-			}
+			local note_input= {'*', params.input, 1/64}
+			local column_input= {'*', params.column, 1/8}
+			local wave_input= {'+', params.time, note_input, column_input}
+			local wave= check_op{ops.wave, wave_input}
+			return {'*', params.level, 32, wave}
 		end,
 		params= {
 			level= 1, time= 'music_second', column= 'column', input= 'y_offset',
 		},
 		ops= {
-			level= '*', wave= 'cos', time= '+', column= '*', input= '*',
+			wave= 'cos',
 		},
 		examples= {
 			{"normal drunk", "'drunk'"},
@@ -315,20 +329,18 @@ local engine_custom_mods= {
 		target= 'note_zoom',
 		sum_type= '*',
 		equation= function(params, ops)
-			local scaled_period= {
-				'*', .4, {'+', params.spacing, {'*', params.period, params.spacing}}}
-			local note__input= {'+', 'y_offset', {'*', 100, params.offset}}
-			local wave_input= {'/', note__input, scaled_period}
-			local wave= check_op{ops.wave, wave_input}
-			local pulse_inner= {'+', {'*', params.inner, .5}, 1}
-			local pulse_outer= {'*', wave, params.level, .5}
-			return {'+', pulse_outer, pulse_inner}
+			local note_input= {'*', params.input, 1/64}
+			local wave= check_op{ops.wave, note_input}
+			local amplitude= {'-', params.outer, params.inner}
+			local scaled_wave= {'*', wave, amplitude, params.level}
+			local shifted_wave= {'+', scaled_wave, params.inner, {'*', amplitude, 1/2}}
+			return shifted_wave
 		end,
 		params= {
-			level= 1, spacing= 64, offset= 0,
+			level= 1, input= 'y_offset', outer= 1.5, inner= .5,
 		},
 		ops= {
-			wave= 'sine',
+			wave= 'sin',
 		},
 		examples= {
 		},
@@ -336,7 +348,7 @@ local engine_custom_mods= {
 	roll= {
 		target= 'note_rot_x',
 		equation= function(params, ops)
-			return {'*', math.pi/180, params.level, params.input, .5}
+			return {'*', params.level, params.input, 1/64}
 		end,
 		params= {
 			level= 1, input= 'y_offset',
@@ -349,12 +361,19 @@ local engine_custom_mods= {
 	sawtooth= {
 		target= 'note_pos_x',
 		equation= function(params, ops)
-			local input= {'repeat', {'/', params.input, params.spacing}, 0, 1}
-			local wave= check_op{ops.wave, input}
-			return {'*', params.level, params.spacing, .5, wave}
+			-- changing the low and high marks of the wave shouldn't move the peaks
+			-- normal wave input has the range 0-2, default low and high is .5-1
+			-- so dividing by 4 would put the peaks as far apart as a normal wave
+			-- If the operands in input_scale look backwards, remember this:
+			--   a / (b/c) = a * (c/b)
+			local input_scale= {'/', {'-', params.high, params.low}, 2}
+			local note_input= {'*', params.input, 1/64, input_scale}
+			local sawed_input= {'repeat', note_input, params.low, params.high}
+			local wave= check_op{ops.wave, sawed_input}
+			return {'*', 32, params.level, wave}
 		end,
 		params= {
-			level= 1, input= 'y_offset', spacing= 64,
+			level= 1, input= 'y_offset', low= .5, high= 1,
 		},
 		ops= {
 			wave= 'triangle',
@@ -362,12 +381,12 @@ local engine_custom_mods= {
 		examples= {
 		},
 	},
-	shrink_to_linear= {
+	shrinklinear= {
 		target= 'note_zoom',
 		equation= function(params, ops)
 			-- assuming sum_type is add, multiplying the main result by 0
 			-- when input is less than 0 will disable it.
-			local disable_past_receptors_phases= {default= {0, 0, 1, 0}, {-1000000, 0, 0, 0}}
+			local disable_past_receptors_phases= {default= {0, 0, 0, 1}, {-1000000, 0, 0, 0}}
 			local main_equation= {'*', params.input, {'*', .5, params.level, 1/64}}
 			return {'*', main_equation, {'phase', params.input, disable_past_receptors_phases}}
 		end,
@@ -383,12 +402,12 @@ local engine_custom_mods= {
 			{"beat shrinkage", "'shrink_to_linear', {input= 'dist_beat'}"},
 		},
 	},
-	shrink_to_mult= {
+	shrinkmult= {
 		target= 'note_zoom',
 		sum_type= '*',
 		equation= function(params, ops)
 			-- Cap input at 0 to disable the effect after the receptors.
-			return {'/', 1, {'+', 1, {'*', {'max', 0, params.input}, params.level}}}
+			return {'/', 1, {'+', 1, {'*', {'max', 0, params.input}, params.level, 1/100}}}
 		end,
 		params= {
 			level= 1, input= 'y_offset',
@@ -404,13 +423,7 @@ local engine_custom_mods= {
 	},
 	square= {
 		target= 'note_pos_x',
-		equation= function(params, ops)
-			local wave= check_op{ops.wave, {'/', params.input, params.spacing}}
-			return {'*', params.level, params.spacing, .5, wave}
-		end,
-		params= {
-			level= 1, input= 'y_offset', spacing= 64,
-		},
+		redir= 'height_based_wave',
 		ops= {
 			wave= 'square',
 		},
@@ -446,15 +459,13 @@ local engine_custom_mods= {
 	tipsy= {
 		target= 'column_pos_y',
 		equation= function(params, ops)
-			local timer= {'*', params.time, 1.2}
-			local arrow_mag= {'*', params.spacing, .4}
-			local column= {'*', params.column, 1.8}
-			local wave_input= {'+', timer, column}
+			local column= {'*', params.column, .5}
+			local wave_input= {'+', params.time, column}
 			local wave= check_op{ops.wave, wave_input}
-			return {'*', params.level, wave, arrow_mag}
+			return {'*', params.level, wave, 32}
 		end,
 		params= {
-			level= 1, spacing= 64, time= 'music_second',
+			level= 1, time= 'music_second', column= 'column',
 		},
 		ops= {
 			wave= 'cos',
@@ -465,51 +476,55 @@ local engine_custom_mods= {
 	tornado= {
 		target= 'note_pos_x',
 		equation= function(params, ops)
-			assert(false, "todo")
+			local left= {'max', 0, {'-', params.column, params.width}}
+			local right= {'min', {'-', params.num_columns, 1}, {'+', params.column, params.width}}
+			local amplitude= {'-', right, left}
+			local arc_wave_input= scale_equation(params.column, left, right, -1, 1)
+			local arc_wave= check_op{ops.arc_wave, arc_wave_input}
+			local note_input= {'*', params.input, 1/64}
+			local wave_input= {'+', arc_wave, note_input}
+			local wave= check_op{ops.wave, wave_input}
+			local shifted_wave= scale_equation(wave, -1, 1, left, right)
+			local shift_amount= {'-', shifted_wave, params.column}
+			return {'*', shift_amount, params.level, 64}
 		end,
 		params= {
-			level= 1,
+			level= 1, width= 3, num_columns= 4, column= 'column', input= 'y_offset',
 		},
 		ops= {
+			arc_wave= 'acos', wave= 'cos',
 		},
 		examples= {
 		},
 	},
 	twirl= {
 		target= 'note_rot_y',
-		equation= function(params, ops)
-			return {'*', math.pi/180, params.level, params.input, .5}
-		end,
-		params= {
-			level= 1, input= 'y_offset',
-		},
-		ops= {
-		},
+		redir= 'roll',
 		examples= {
 		},
 	},
 	xmode= {
 		target= 'note_pos_x',
 		equation= function(params, ops)
-			assert(false, "todo")
+			-- use a square wave that repeats every (num_columns / num_pads) to
+			-- set the direction.
+			local cols_per_wave= {'/', params.num_columns, params.num_pads}
+			local wave_input= {'/', params.column, cols_per_wave, .5}
+			local offset_dir= check_op{ops.wave, wave_input}
+			return {'*', params.level, offset_dir, params.y_offset}
 		end,
 		params= {
-			level= 1,
+			level= 1, num_columns= 4, num_pads= 1, column= 'column', y_offset= 'y_offset',
 		},
 		ops= {
+			wave= 'square',
 		},
 		examples= {
 		},
 	},
 	zigzag= {
 		target= 'note_pos_x',
-		equation= function(params, ops)
-			local wave= check_op{ops.wave, {'/', params.input, params.spacing}}
-			return {'*', params.level, params.spacing, .5, wave}
-		end,
-		params= {
-			level= 1, input= 'y_offset', spacing= 64,
-		},
+		redir= 'height_based_wave',
 		ops= {
 			wave= 'triangle',
 		},
@@ -581,6 +596,9 @@ local function print_info_from_custom_mods(mods)
 	foreach_ordered(
 		mods, function(name, entry)
 			Trace("  "..name .. ", " .. entry.target)
+			if entry.redir then
+				Trace("    This is a redir to " .. entry.redir)
+			end
 			print_params_info("Params", entry.params)
 			print_params_info("Ops", entry.ops)
 			print_examples(entry.examples)
@@ -661,7 +679,7 @@ local function parse_param_string(str)
 	-- "v1 +2 *3"
 	-- "1 +2 *3"
 	-- to
-	-- {base= 1, add= 2, mult= 3}
+	-- {value= 1, add= 2, mult= 3}
 	local parts= split(" ", str)
 	local first_to_field= {
 		v= "value",
@@ -712,6 +730,84 @@ local function process_param(mod_entry, param, default, is_level)
 	return partial_eq
 end
 
+local function combine_params(redir, base)
+	if type(redir) ~= "table" then
+		return base
+	end
+	local ret= {}
+	for name, base_param in pairs(base) do
+		local redir_param= redir[name]
+		if redir_param then
+			local redir_type= type(redir_param)
+			if redir_type == "string" then
+				if mod_input_names[redir_param] then
+					redir_param= {value= redir_param}
+				else
+					redir_param= parse_param_string(redir_param)
+				end
+			elseif redir_type == "number" then
+				redir_param= {value= redir_param}
+			end
+			local partial_eq= redir_param.value or redir_param.v or base_param
+			local mult_eq= redir_param.mult or redir_param.m
+			local add_eq= redir_param.add or redir_param.a
+			if mult_eq then
+				partial_eq= {'*', partial_eq, mult_eq}
+			end
+			if add_eq then
+				partial_eq= {'+', partial_eq, add_eq}
+			end
+			ret[name]= partial_eq
+		else
+			ret[name]= base_param
+		end
+	end
+	return ret
+end
+
+local function combine_ops(dom, sub)
+	if type(dom) ~= "table" then
+		return sub
+	end
+	local ret= {}
+	for name, sub_op in pairs(sub) do
+		ret[name]= dom[name] or sub_op
+	end
+	return ret
+end
+
+local function lookup_mod(name)
+	return simfile_custom_mods[name] or theme_custom_mods[name] or
+		engine_custom_mods[name]
+end
+
+local function resolve_redir(name, redir_stack)
+	local entry= lookup_mod(name)
+	assert(entry, name .. " was not found in the custom mods list.")
+	assert(entry.equation or entry.redir, name .. " is not a valid entry in the custom mods list.")
+	if entry.equation then
+		return entry
+	end
+	if entry.redir then
+		if #redir_stack > 64 then
+			Trace("custom mod redir stack:")
+			for i= 1, #redir_stack do
+				Trace("  " .. redir_stack[i])
+			end
+			assert(false, "Too many custom mod redirs in chain, or redir loop.")
+		end
+		redir_stack[#redir_stack+1]= name
+		local sub= resolve_redir(entry.redir, redir_stack)
+		return {
+			target= entry.target or sub.target,
+			sum_type= entry.sum_type or sub.sum_type,
+			equation= sub.equation,
+			params= combine_params(entry.params, sub.params),
+			ops= combine_ops(entry.ops, sub.ops),
+		}
+	end
+end
+
 function handle_custom_mod(mod_entry)
 	local name= mod_entry[1]
 	local params= mod_entry[2]
@@ -721,8 +817,7 @@ function handle_custom_mod(mod_entry)
 		-- Convert this
 		-- {start_beat= 0, length_beats= 1, 'beat', {level= 2}, {wave= 'tan'}}
 		-- into an equation, using the custom_mods tables.
-		local custom_entry= simfile_custom_mods[name] or
-			theme_custom_mods[name] or engine_custom_mods[name]
+		local custom_entry= resolve_redir(name, {})
 		assert(custom_entry, name .. " was not found in the custom mods list.")
 		if type(params) == "number" then
 			params= {level= params}
@@ -743,17 +838,9 @@ function handle_custom_mod(mod_entry)
 			mod_entry.sum_type= custom_entry.sum_type
 		end
 		local processed_params= {}
-		-- forms one param can take:
-		-- {base= 1, add= 2, mult= 3, on= 1, off= 1, base= 0}
-		-- {v= 1, a= 2, m= 3, n= 1, f= 1, b= 0}
-		-- {equation}
-		-- param_result = (base * mult) + add
-		-- on, off, and start are for tweening.  time on, time off, base to tween away from.
-		-- Tweening affects all given parts of the param.
-		-- mult will tween from 1 instead of 0, unless base and add are absent and a start is given.
 		local params_type= type(params)
 		if params_type == "nil" then
-			processed_params.level= 1
+			processed_params.level= mod_entry.params.level
 		elseif params_type == "boolean" then
 			processed_params.level= params
 		elseif params_type == "string" then
@@ -949,6 +1036,9 @@ function handle_notefield_mods(mods)
 		-- gameplay
 		for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 			notefields[pn]= find_notefield_in_gameplay(screen, pn)
+			if notefields[pn] then
+				notefields[pn]:clear_timed_mods()
+			end
 		end
 	end
 	organize_and_apply_notefield_mods(notefields, mods)

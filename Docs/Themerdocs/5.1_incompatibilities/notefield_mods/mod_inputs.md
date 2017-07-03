@@ -16,7 +16,7 @@ The current music rate, adjusted for any haste effect.  The M and C speed
 mods provided by _fallback use this to adjust for rate mods.
 
 ```'column'```
-The 1-indexed id of the column the equation is evaluated for.  This is zero
+The 0-indexed id of the column the equation is evaluated for.  This is zero
 for the notefield.
 
 ```'y_offset'```

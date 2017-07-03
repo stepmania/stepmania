@@ -47,6 +47,9 @@ targets, unless this document is outdated):
 ```
 transform values move, rotate, or zoom the field as a whole.
 
+rotation results are multiplied by pi internally, so setting transform_rot_z
+to 1 rotates halfway around the z axis.
+
 zoom_x, zoom_y, and zoom_z are multiplied by zoom to get the final zoom.
 
 receptor_alpha and receptor_glow affect layers in the theme's

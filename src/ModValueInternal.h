@@ -51,6 +51,11 @@ enum mot
 	mot_tan,
 	mot_square,
 	mot_triangle,
+	mot_asin,
+	mot_acos,
+	mot_atan,
+	mot_asquare,
+	mot_atriangle,
 	mot_random,
 	mot_phase,
 	mot_repeat,
@@ -392,6 +397,8 @@ double triangle_wave(double angle)
 	}
 }
 
+// Angle is multiplied by pi for trig functions so that the lua side doesn't
+// have to multiply by pi.
 double sine_wave(double angle)
 {
 	return Rage::FastSin(angle * Rage::D_PI);
@@ -407,11 +414,69 @@ double tan_wave(double angle)
 	return tan(angle * Rage::D_PI);
 }
 
+double atriangle(double pos)
+{
+	if(pos > 1.0)
+	{
+		return .5;
+	}
+	if(pos < -1.0)
+	{
+		return -.5;
+	}
+	return pos * .5;
+}
+
+double asquare(double pos)
+{
+	if(pos > 0.0)
+	{
+		return .5;
+	}
+	return -.5;
+}
+
+double asin_wave(double pos)
+{
+	if(pos > 1.0)
+	{
+		return .5;
+	}
+	if(pos < -1.0)
+	{
+		return -.5;
+	}
+	return std::asin(pos) / Rage::D_PI;
+}
+
+double acos_wave(double pos)
+{
+	if(pos > 1.0)
+	{
+		return 0.0;
+	}
+	if(pos < -1.0)
+	{
+		return 1.0;
+	}
+	return std::acos(pos) / Rage::D_PI;
+}
+
+double atan_wave(double pos)
+{
+	return std::atan(pos) / Rage::D_PI;
+}
+
 WAVE_OPERATOR(sin, (sine_wave(angle)));
 WAVE_OPERATOR(cos, (cosine_wave(angle)));
 WAVE_OPERATOR(tan, (tan_wave(angle)));
 WAVE_OPERATOR(square, (square_wave(angle)));
 WAVE_OPERATOR(triangle, (triangle_wave(angle)));
+WAVE_OPERATOR(asin, (asin_wave(angle)));
+WAVE_OPERATOR(acos, (acos_wave(angle)));
+WAVE_OPERATOR(atan, (atan_wave(angle)));
+WAVE_OPERATOR(asquare, (asquare(angle)));
+WAVE_OPERATOR(atriangle, (atriangle(angle)));
 
 #undef WAVE_OPERATOR
 

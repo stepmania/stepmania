@@ -285,6 +285,10 @@ struct ModifiableTransform
 	{
 		pos_mod.evaluate(input, out.pos);
 		rot_mod.evaluate(input, out.rot);
+		// Multiply by pi so that the lua side doesn't need to.
+		out.rot.x*= Rage::D_PI;
+		out.rot.y*= Rage::D_PI;
+		out.rot.z*= Rage::D_PI;
 		zoom_vmod.evaluate(input, out.zoom);
 		double zoom= zoom_mod.evaluate(input);
 		out.zoom.x*= zoom;

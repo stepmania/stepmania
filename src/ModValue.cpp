@@ -578,6 +578,11 @@ static std::unordered_map<std::string, mot> mot_conversion= {
 	CONVENT(tan),
 	CONVENT(square),
 	CONVENT(triangle),
+	CONVENT(asin),
+	CONVENT(acos),
+	CONVENT(atan),
+	CONVENT(asquare),
+	CONVENT(atriangle),
 	CONVENT(random),
 	CONVENT(phase),
 	CONVENT(repeat),
@@ -633,6 +638,11 @@ mod_operand* create_mod_operator(mod_function* parent, lua_State* L, int index)
 			SET_NEW(tan);
 			SET_NEW(square);
 			SET_NEW(triangle);
+			SET_NEW(asin);
+			SET_NEW(acos);
+			SET_NEW(atan);
+			SET_NEW(asquare);
+			SET_NEW(atriangle);
 			SET_NEW(random);
 			SET_NEW(phase);
 			SET_NEW(repeat);

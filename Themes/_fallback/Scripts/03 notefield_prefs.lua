@@ -66,7 +66,7 @@ function set_notefield_default_yoffset(yoff)
 end
 
 function apply_notefield_prefs_nopn(read_bpm, field, prefs)
-	local torad= math.pi / 180
+	local torad= 1 / 180
 	if prefs.speed_type then
 		if prefs.speed_type == "maximum" then
 			field:set_speed_mod(false, prefs.speed_mod, read_bpm)
