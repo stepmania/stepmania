@@ -627,7 +627,7 @@ void Player::Load()
 			if(prof != nullptr)
 			{
 				prof->get_preferred_noteskin(stype, skin_name);
-				skin_params= prof->get_noteskin_params(skin_name, stype);
+				skin_params= prof->get_noteskin_params(skin_name);
 			}
 			else
 			{

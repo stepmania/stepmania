@@ -114,7 +114,7 @@ nesty_option_menus.noteskins= {
 					end
 				end
 				self.player_skin= self.ops[ops_pos]
-				PROFILEMAN:GetProfile(self.pn):set_preferred_noteskin(self.stepstype, self.player_skin)
+				PROFILEMAN:GetProfile(self.pn):set_preferred_noteskin(self.player_skin)
 				self:update_el_value(self.cursor_pos, true)
 				self:set_status()
 				MESSAGEMAN:Broadcast("NoteskinChanged", {pn= self.pn})
@@ -266,10 +266,10 @@ function gen_noteskin_param_menu(pn)
 	local player_skin= profile:get_preferred_noteskin(stepstype)
 	local skin_info= NOTESKIN:get_skin_parameter_info(player_skin)
 	local skin_defaults= NOTESKIN:get_skin_parameter_defaults(player_skin)
-	local player_params= profile:get_noteskin_params(player_skin, stepstype)
+	local player_params= profile:get_noteskin_params(player_skin)
 	if not player_params then
 		player_params= {}
-		profile:set_noteskin_params(player_skin, stepstype, player_params)
+		profile:set_noteskin_params(player_skin, player_params)
 	end
 	local ret= {
 		recall_init_on_pop= true,
@@ -348,7 +348,7 @@ function noteskin_option_row()
 			for i, choice in ipairs(self.Choices) do
 				if list[i] then
 					local profile= PROFILEMAN:GetProfile(pn)
-					local player_skin= profile:set_preferred_noteskin(stype, choice)
+					local player_skin= profile:set_preferred_noteskin(choice)
 					return
 				end
 			end
