@@ -1210,6 +1210,7 @@
 			<Function name='Floored'/>
 			<Function name='GetReversePercentForColumn'/>
 			<Function name='GetStepAttacks'/>
+			<Function name='GlitchyTan'/>
 			<Function name='IsEasierForSongAndSteps'/>
 			<Function name='IsEasierForCourseAndTrail'/>
 			<Function name='Incoming'/>
