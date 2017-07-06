@@ -94,7 +94,7 @@ void PlayerOptions::Init()
 	m_bStealthPastReceptors = false;
 	m_bDizzyHolds = false;
 	m_bZBuffer = false;
-	m_bGlitchyTan = false;
+	m_bCosecant = false;
 	m_sNoteSkin = "";
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
@@ -180,7 +180,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_bStealthPastReceptors );
 	DO_COPY( m_bDizzyHolds );
 	DO_COPY( m_bZBuffer );
-	DO_COPY( m_bGlitchyTan );
+	DO_COPY( m_bCosecant );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
@@ -418,7 +418,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_bStealthPastReceptors,		"StealthPastReceptors");
 	AddPart( AddTo, m_bDizzyHolds,				"DizzyHolds");
 	AddPart( AddTo, m_bZBuffer,				"ZBuffer");
-	AddPart( AddTo, m_bGlitchyTan,				"GlitchyTan");
+	AddPart( AddTo, m_bCosecant,				"Cosecant");
 	
 	for( int i=0; i<16; i++)
 	{
@@ -1124,7 +1124,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    }
 	}
 	else if( sBit == "zbuffer" )				m_bZBuffer = on;
-	else if( sBit == "glitchytan" )				m_bGlitchyTan = on;
+	else if( sBit == "cosecant" )				m_bCosecant = on;
 	// deprecated mods/left in for compatibility
 	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 	// end of the list
@@ -1353,7 +1353,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_bStealthPastReceptors);
 	COMPARE(m_bDizzyHolds);
 	COMPARE(m_bZBuffer);
-	COMPARE(m_bGlitchyTan);
+	COMPARE(m_bCosecant);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
@@ -1434,7 +1434,7 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_bStealthPastReceptors);
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
-	CPY(m_bGlitchyTan);
+	CPY(m_bCosecant);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1703,7 +1703,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_bStealthPastReceptors);
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
-	CPY(m_bGlitchyTan);
+	CPY(m_bCosecant);
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
@@ -1930,7 +1930,7 @@ public:
 	BOOL_INTERFACE(StealthPastReceptors, StealthPastReceptors);
 	BOOL_INTERFACE(DizzyHolds, DizzyHolds);
 	BOOL_INTERFACE(ZBuffer, ZBuffer);
-	BOOL_INTERFACE(GlitchyTan, GlitchyTan);
+	BOOL_INTERFACE(Cosecant, Cosecant);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -2431,7 +2431,7 @@ public:
 		ADD_METHOD(StealthPastReceptors);
 		ADD_METHOD(DizzyHolds);
 		ADD_METHOD(ZBuffer);
-		ADD_METHOD(GlitchyTan);
+		ADD_METHOD(Cosecant);
 		ADD_METHOD(RandAttack);
 		ADD_METHOD(NoAttack);
 		ADD_METHOD(PlayerAutoPlay);

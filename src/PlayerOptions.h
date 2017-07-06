@@ -83,7 +83,7 @@ public:
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
 		m_bStealthType(false), m_bStealthPastReceptors(false),
 		m_bDizzyHolds(false), m_bZBuffer(false),
-		m_bGlitchyTan(false),
+		m_bCosecant(false),
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
 		m_sNoteSkin = "";
@@ -383,7 +383,7 @@ public:
 	bool		m_bStealthPastReceptors;
 	bool		m_bDizzyHolds;
 	bool		m_bZBuffer;
-	bool		m_bGlitchyTan;
+	bool		m_bCosecant;
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
 	TapNoteScore m_MinTNSToHideNotes;

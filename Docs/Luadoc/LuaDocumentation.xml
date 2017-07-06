@@ -3556,6 +3556,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ConfusionYOffsetn' return= 'float, float' arguments='float value, float approach_speed'>
 		Use 1-16 in place of 'n' to apply ConfusionYOffset on a specific column.
 	</Function>
+	<Function name='Cosecant' return='bool' arguments='bool value'> </Function>
 	<Function name='Cover' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Cross' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Dark' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3636,7 +3637,6 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetStepAttacks' return='bool' argument=''>
 		Returns true if step attacks or random attacks are enabled.
 	</Function>
-	<Function name='GlitchyTan' return='bool' arguments='bool value'> </Function>
 	<Function name='IsEasierForCourseAndTrail' return='bool' arguments='Course c, Trail t'>
 		Returns <code>true</code> if the current PlayerOptions makes the current Course/Trail easier.
 	</Function>
