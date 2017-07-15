@@ -19,7 +19,7 @@ function get_element_by_path(container, path)
 	local current= container
 	for i= 1, #parts do
 		current= current[parts[i]]
-		if not current then return end
+		if type(current) ~= "table" then return current end
 	end
 	return current
 end

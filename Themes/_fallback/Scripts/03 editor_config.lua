@@ -349,6 +349,7 @@ function editor_notefield_menu(menu_params)
 			local skin_params= get_skin_params(noteskin)
 			edit_field= params.fields.NoteFieldEdit
 			test_field= params.fields.NoteFieldTest
+			current_read_bpm= params.read_bpm
 			for field_name, field in pairs(params.fields) do
 				field:set_skin(noteskin, skin_params)
 				apply_notefield_prefs_nopn(params.read_bpm, field, conf_data[field_name])

@@ -73,7 +73,7 @@ function apply_notefield_prefs_nopn(read_bpm, field, prefs)
 		elseif prefs.speed_type == "constant" then
 			field:set_speed_mod(true, prefs.speed_mod)
 		else
-			field:set_speed_mod(false, prefs.speed_mod)
+			field:set_speed_mod(false, prefs.speed_mod/100)
 		end
 	end
 	field:set_base_values{
@@ -118,7 +118,7 @@ function apply_notefield_prefs(pn, field, prefs)
 	elseif prefs.speed_type == "constant" then
 		poptions:CMod(prefs.speed_mod, 1000)
 	else
-		poptions:XMod(prefs.speed_mod, 1000)
+		poptions:XMod(prefs.speed_mod/100, 1000)
 	end
 	local reverse= scale(prefs.reverse, 1, -1, 0, 1)
 	poptions:Reverse(reverse, 1000)
@@ -261,11 +261,6 @@ function notefield_prefs_speed_type_menu()
 		 obj_get= function(pn) return notefield_prefs_config:get_data(pn) end,
 		 get= function(pn, obj) return obj.speed_type end,
 		 set= function(pn, obj, value)
-			 if obj.speed_type == "multiple" and value ~= "multiple" then
-				 obj.speed_mod= math.round(obj.speed_mod * 100)
-			 elseif obj.speed_type ~= "multiple" and value == "multiple" then
-				 obj.speed_mod= obj.speed_mod / 100
-			 end
 			 obj.speed_type= value
 			 notefield_prefs_config:set_dirty(pn)
 			 MESSAGEMAN:Broadcast("ConfigValueChanged", {

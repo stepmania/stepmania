@@ -1136,6 +1136,10 @@ bool LuaHelpers::run_script_file_in_state(lua_State* L,
 	std::string script;
 	if(!GetFileContents(filename, script))
 	{
+		if(return_values == LUA_MULTRET)
+		{
+			return false;
+		}
 		for(int i= 0; i < return_values; ++i)
 		{
 			lua_pushnil(L);
