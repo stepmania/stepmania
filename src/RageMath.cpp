@@ -643,6 +643,16 @@ float RageFastCos( float x )
 	return RageFastSin( x + 0.5f*PI );
 }
 
+float RageFastTan( float x )
+{
+	return RageFastSin( x ) / RageFastCos( x );
+}
+
+float RageFastCsc( float x )
+{
+	return 1 / RageFastSin( x );
+}
+
 float RageSquare( float angle )
 {
 	float fAngle = fmod( angle , (PI * 2) );

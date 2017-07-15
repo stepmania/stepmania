@@ -3514,15 +3514,27 @@ save yourself some time, copy this for undocumented things:
 	<Function name='BounceZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='BounceZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Brake' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Bumpy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Bumpy' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
 	<Function name='Bumpyn' return= 'float, float' arguments='float value, float approach_speed'>
 		Use 1-16 in place of 'n' to apply Bumpy on a specific column.
 	</Function>
-	<Function name='BumpyOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='BumpyPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='BumpyX' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='BumpyXOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='BumpyXPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BumpyOffset' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='BumpyPeriod' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='BumpyX' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='BumpyXOffset' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='BumpyXPeriod' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
 	<Function name='Centered' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='CMod' return='float, float' arguments='float value, float approach_speed'>
 		If the player has a CMod set, returns the value of that CMod and its associated approach speed.  Returns nil otherwise.<br />
@@ -3544,20 +3556,37 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ConfusionYOffsetn' return= 'float, float' arguments='float value, float approach_speed'>
 		Use 1-16 in place of 'n' to apply ConfusionYOffset on a specific column.
 	</Function>
+	<Function name='Cosecant' return='bool' arguments='bool value'> </Function>
 	<Function name='Cover' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Cross' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Dark' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Darkn' return= 'float, float' arguments='float value, float approach_speed'>
 		Use 1-16 in place of 'n' to apply Dark on a specific column.
 	</Function>
-	<Function name='Digital' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DigitalOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DigitalPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DigitalSteps' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DigitalZ' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DigitalZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DigitalZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DigitalZSteps' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Digital' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DigitalOffset' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DigitalPeriod' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DigitalSteps' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DigitalZ' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DigitalZOffset' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DigitalZPeriod' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DigitalZSteps' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
 	<Function name='Dizzy' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='DizzyHolds' return='bool' arguments='bool value'> </Function>
 	<Function name='Distant' return='float, float' arguments='float value, float approach_speed'>
@@ -3569,17 +3598,37 @@ save yourself some time, copy this for undocumented things:
 	<Function name='DrainSetting' return= 'DrainType' arguments='DrainType type'>	</Function>
 	<Function name='DrawSize' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='DrawSizeBack' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Drunk' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DrunkOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DrunkPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DrunkSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DrunkZ' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DrunkZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DrunkZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='DrunkZSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Drunk' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DrunkOffset' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DrunkPeriod' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DrunkSpeed' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DrunkZ' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DrunkZOffset' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DrunkZPeriod' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='DrunkZSpeed' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
 	<Function name='Echo' return='bool' arguments='bool value'> </Function>
-	<Function name='Expand' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='ExpandPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Expand' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='ExpandPeriod' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
 	<Function name='FailSetting' return='FailType' arguments='FailType'>
 		Sets the <Link class='ENUM' function='FailType' /> for the player, if the optional argument is provided.  Returns the <Link class='ENUM' function='FailType' /> that was previously set.
 	</Function>
@@ -3750,15 +3799,33 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Tinyn' return= 'float, float' arguments='float value, float approach_speed'>
 		Use 1-16 in place of 'n' to apply Tiny on a specific column.
 	</Function>
-	<Function name='Tipsy' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='TipsyOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='TipsySpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Tornado' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='TornadoOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='TornadoPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='TornadoZ' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='TornadoZOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='TornadoZPeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Tipsy' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='TipsyOffset' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='TipsySpeed' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='Tornado' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='TornadoOffset' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='TornadoPeriod' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='TornadoZ' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='TornadoZOffset' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
+	<Function name='TornadoZPeriod' return='float, float' arguments='float value, float approach_speed'>
+		Has a tangent variant that can be accessed by prepending 'Tan' to the function name.
+	</Function>
 	<Function name='TurnNone' return='bool' arguments='bool value'> </Function>
 	<Function name='Twirl' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Twister' return='bool' arguments='bool value'> </Function>

@@ -94,6 +94,7 @@ void PlayerOptions::Init()
 	m_bStealthPastReceptors = false;
 	m_bDizzyHolds = false;
 	m_bZBuffer = false;
+	m_bCosecant = false;
 	m_sNoteSkin = "";
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
@@ -179,6 +180,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_bStealthPastReceptors );
 	DO_COPY( m_bDizzyHolds );
 	DO_COPY( m_bZBuffer );
+	DO_COPY( m_bCosecant );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
@@ -286,16 +288,26 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fAccels[ACCEL_WAVE_PERIOD],		"WavePeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_EXPAND],		"Expand" );
 	AddPart( AddTo, m_fAccels[ACCEL_EXPAND_PERIOD],		"ExpandPeriod" );
+	AddPart( AddTo, m_fAccels[ACCEL_TAN_EXPAND],		"TanExpand" );
+	AddPart( AddTo, m_fAccels[ACCEL_TAN_EXPAND_PERIOD],	"TanExpandPeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
 
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],		"Drunk" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_SPEED],		"DrunkSpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_OFFSET],	"DrunkOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_PERIOD],	"DrunkPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK],		"TanDrunk" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_SPEED],	"TanDrunkSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_OFFSET],	"TanDrunkOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_PERIOD],	"TanDrunkPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z],		"DrunkZ" );
-	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_SPEED],		"DrunkZSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_SPEED],	"DrunkZSpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_OFFSET],	"DrunkZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK_Z_PERIOD],	"DrunkZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_Z],		"TanDrunkZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_Z_SPEED],	"TanDrunkZSpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_Z_OFFSET],	"TanDrunkZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DRUNK_Z_PERIOD],	"TanDrunkZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_LINEAR],	"ShrinkLinear" );
 	AddPart( AddTo, m_fEffects[EFFECT_SHRINK_TO_MULT],	"ShrinkMult" );
 	AddPart( AddTo, m_fEffects[EFFECT_PULSE_INNER],		"PulseInner" );
@@ -325,18 +337,33 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_PERIOD],	"TornadoPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_OFFSET],	"TornadoOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO],	"TanTornado" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_PERIOD],	"TanTornadoPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_OFFSET],	"TanTornadoOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_Z],	"TornadoZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_Z_PERIOD],	"TornadoZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO_Z_OFFSET],	"TornadoZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_Z],	"TanTornadoZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_Z_PERIOD],"TanTornadoZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TORNADO_Z_OFFSET],"TanTornadoZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_SPEED],		"TipsySpeed" );
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY_OFFSET],	"TipsyOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TIPSY],		"TanTipsy" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TIPSY_SPEED],	"TanTipsySpeed" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_TIPSY_OFFSET],	"TanTipsyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],	"BumpyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],	"BumpyPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY],		"TanBumpy" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_OFFSET],	"TanBumpyOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_PERIOD],	"TanBumpyPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X],		"BumpyX" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X_OFFSET],	"BumpyXOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X_PERIOD],	"BumpyXPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_X],		"TanBumpyX" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_X_OFFSET],	"TanBumpyXOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_X_PERIOD],	"TanBumpyXPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
@@ -369,10 +396,18 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_STEPS],	"DigitalSteps" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_PERIOD],	"DigitalPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_OFFSET],	"DigitalOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL],		"TanDigital" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_STEPS],	"TanDigitalSteps" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_PERIOD],	"TanDigitalPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_OFFSET],	"TanDigitalOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z],		"DigitalZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_STEPS],	"DigitalZSteps" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_PERIOD],	"DigitalZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_OFFSET],	"DigitalZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_Z],	"TanDigitalZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_Z_STEPS],	"TanDigitalZSteps" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_Z_PERIOD],"TanDigitalZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_Z_OFFSET],"TanDigitalZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_X],		"ParabolaX" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Y],		"ParabolaY" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Z],		"ParabolaZ" );
@@ -383,6 +418,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_bStealthPastReceptors,		"StealthPastReceptors");
 	AddPart( AddTo, m_bDizzyHolds,				"DizzyHolds");
 	AddPart( AddTo, m_bZBuffer,				"ZBuffer");
+	AddPart( AddTo, m_bCosecant,				"Cosecant");
 	
 	for( int i=0; i<16; i++)
 	{
@@ -676,6 +712,8 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	{
 	    if( sBit == "expand" || sBit == "dwiwave" )		SET_FLOAT( fAccels[ACCEL_EXPAND] )
 	    else if( sBit == "expandperiod" )			SET_FLOAT( fAccels[ACCEL_EXPAND_PERIOD] )
+	    else if( sBit == "tanexpand" )			SET_FLOAT( fAccels[ACCEL_TAN_EXPAND] )
+	    else if( sBit == "tanexpandperiod" )		SET_FLOAT( fAccels[ACCEL_TAN_EXPAND_PERIOD] )
 	}
 	else if( sBit == "boomerang" )				SET_FLOAT( fAccels[ACCEL_BOOMERANG] )
 	else if( sBit.find("drunk") != sBit.npos)
@@ -684,10 +722,18 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "drunkspeed" )			SET_FLOAT( fEffects[EFFECT_DRUNK_SPEED] )
 	    else if( sBit == "drunkoffset" )			SET_FLOAT( fEffects[EFFECT_DRUNK_OFFSET] )
 	    else if( sBit == "drunkperiod" )			SET_FLOAT( fEffects[EFFECT_DRUNK_PERIOD] )
+	    else if( sBit == "tandrunk" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK] )
+	    else if( sBit == "tandrunkspeed" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_SPEED] )
+	    else if( sBit == "tandrunkoffset" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_OFFSET] )
+	    else if( sBit == "tandrunkperiod" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_PERIOD] )
 	    else if( sBit == "drunkz" )				SET_FLOAT( fEffects[EFFECT_DRUNK_Z] )
 	    else if( sBit == "drunkzspeed" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_SPEED] )
 	    else if( sBit == "drunkzoffset" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_OFFSET] )
 	    else if( sBit == "drunkzperiod" )			SET_FLOAT( fEffects[EFFECT_DRUNK_Z_PERIOD] )
+	    else if( sBit == "tandrunkz" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_Z] )
+	    else if( sBit == "tandrunkzspeed" )			SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_Z_SPEED] )
+	    else if( sBit == "tandrunkzoffset" )		SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_Z_OFFSET] )
+	    else if( sBit == "tandrunkzperiod" )		SET_FLOAT( fEffects[EFFECT_TAN_DRUNK_Z_PERIOD] )
 	}
 	else if( sBit.find("shrink") != sBit.npos)
 	{
@@ -790,24 +836,39 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
 	    else if( sBit == "tornadoperiod" )			SET_FLOAT( fEffects[EFFECT_TORNADO_PERIOD] )
 	    else if( sBit == "tornadooffset" )			SET_FLOAT( fEffects[EFFECT_TORNADO_OFFSET] )
+	    else if( sBit == "tantornado" )			SET_FLOAT( fEffects[EFFECT_TAN_TORNADO] )
+	    else if( sBit == "tantornadoperiod" )		SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_PERIOD] )
+	    else if( sBit == "tantornadooffset" )		SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_OFFSET] )
 	    else if( sBit == "tornadoz" )			SET_FLOAT( fEffects[EFFECT_TORNADO_Z] )
 	    else if( sBit == "tornadozperiod" )			SET_FLOAT( fEffects[EFFECT_TORNADO_Z_PERIOD] )
 	    else if( sBit == "tornadozoffset" )			SET_FLOAT( fEffects[EFFECT_TORNADO_Z_OFFSET] )
+	    else if( sBit == "tantornadoz" )			SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_Z] )
+	    else if( sBit == "tantornadozperiod" )		SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_Z_PERIOD] )
+	    else if( sBit == "tantornadozoffset" )		SET_FLOAT( fEffects[EFFECT_TAN_TORNADO_Z_OFFSET] )
 	}
 	else if( sBit.find("tipsy") != sBit.npos)
 	{
 	    if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
 	    else if( sBit == "tipsyspeed" )			SET_FLOAT( fEffects[EFFECT_TIPSY_SPEED] )
 	    else if( sBit == "tipsyoffset" )			SET_FLOAT( fEffects[EFFECT_TIPSY_OFFSET] )
+	    else if( sBit == "tantipsy" )			SET_FLOAT( fEffects[EFFECT_TAN_TIPSY] )
+	    else if( sBit == "tantipsyspeed" )			SET_FLOAT( fEffects[EFFECT_TAN_TIPSY_SPEED] )
+	    else if( sBit == "tantipsyoffset" )			SET_FLOAT( fEffects[EFFECT_TAN_TIPSY_OFFSET] )
 	}
 	else if( sBit.find("bumpy") != sBit.npos)
 	{
 	    if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
 	    else if( sBit == "bumpyoffset" )			SET_FLOAT( fEffects[EFFECT_BUMPY_OFFSET] )
 	    else if( sBit == "bumpyperiod" )			SET_FLOAT( fEffects[EFFECT_BUMPY_PERIOD] )
+	    else if( sBit == "tanbumpy" )			SET_FLOAT( fEffects[EFFECT_TAN_BUMPY] )
+	    else if( sBit == "tanbumpyoffset" )			SET_FLOAT( fEffects[EFFECT_TAN_BUMPY_OFFSET] )
+	    else if( sBit == "tanbumpyperiod" )			SET_FLOAT( fEffects[EFFECT_TAN_BUMPY_PERIOD] )
 	    else if( sBit == "bumpyx" )				SET_FLOAT( fEffects[EFFECT_BUMPY_X] )
 	    else if( sBit == "bumpyxoffset" )			SET_FLOAT( fEffects[EFFECT_BUMPY_X_OFFSET] )
 	    else if( sBit == "bumpyxperiod" )			SET_FLOAT( fEffects[EFFECT_BUMPY_X_PERIOD] )
+	    else if( sBit == "tanbumpyx" )			SET_FLOAT( fEffects[EFFECT_TAN_BUMPY_X] )
+	    else if( sBit == "tanbumpyxoffset" )		SET_FLOAT( fEffects[EFFECT_TAN_BUMPY_X_OFFSET] )
+	    else if( sBit == "tanbumpyxperiod" )		SET_FLOAT( fEffects[EFFECT_TAN_BUMPY_X_PERIOD] )
 	    else
 	    {
 		for (int i=0; i<16; i++)
@@ -842,10 +903,18 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    else if( sBit == "digitalsteps" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_STEPS] )
 	    else if( sBit == "digitalperiod" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_PERIOD] )
 	    else if( sBit == "digitaloffset" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_OFFSET] )
+	    else if( sBit == "tandigital" )			SET_FLOAT( fEffects[EFFECT_TAN_DIGITAL] )
+	    else if( sBit == "tandigitalsteps" )		SET_FLOAT( fEffects[EFFECT_TAN_DIGITAL_STEPS] )
+	    else if( sBit == "tandigitalperiod" )		SET_FLOAT( fEffects[EFFECT_TAN_DIGITAL_PERIOD] )
+	    else if( sBit == "tandigitaloffset" )		SET_FLOAT( fEffects[EFFECT_TAN_DIGITAL_OFFSET] )
 	    else if( sBit == "digitalz" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_Z] )
 	    else if( sBit == "digitalzsteps" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_Z_STEPS] )
 	    else if( sBit == "digitalzperiod" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_Z_PERIOD] )
 	    else if( sBit == "digitalzoffset" )			SET_FLOAT( fEffects[EFFECT_DIGITAL_Z_OFFSET] )
+	    else if( sBit == "tandigitalz" )			SET_FLOAT( fEffects[EFFECT_TAN_DIGITAL_Z] )
+	    else if( sBit == "tandigitalzsteps" )		SET_FLOAT( fEffects[EFFECT_TAN_DIGITAL_Z_STEPS] )
+	    else if( sBit == "tandigitalzperiod" )		SET_FLOAT( fEffects[EFFECT_TAN_DIGITAL_Z_PERIOD] )
+	    else if( sBit == "tandigitalzoffset" )		SET_FLOAT( fEffects[EFFECT_TAN_DIGITAL_Z_OFFSET] )
 	}
 	else if( sBit.find("zigzag") != sBit.npos)
 	{
@@ -1055,6 +1124,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    }
 	}
 	else if( sBit == "zbuffer" )				m_bZBuffer = on;
+	else if( sBit == "cosecant" )				m_bCosecant = on;
 	// deprecated mods/left in for compatibility
 	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 	// end of the list
@@ -1290,6 +1360,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_bStealthPastReceptors);
 	COMPARE(m_bDizzyHolds);
 	COMPARE(m_bZBuffer);
+	COMPARE(m_bCosecant);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
@@ -1370,6 +1441,7 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_bStealthPastReceptors);
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
+	CPY(m_bCosecant);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1638,6 +1710,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_bStealthPastReceptors);
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
+	CPY(m_bCosecant);
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
@@ -1700,15 +1773,25 @@ public:
 	FLOAT_INTERFACE(WavePeriod, Accels[PlayerOptions::ACCEL_WAVE_PERIOD], true);
 	FLOAT_INTERFACE(Expand, Accels[PlayerOptions::ACCEL_EXPAND], true);
 	FLOAT_INTERFACE(ExpandPeriod, Accels[PlayerOptions::ACCEL_EXPAND_PERIOD], true);
+	FLOAT_INTERFACE(TanExpand, Accels[PlayerOptions::ACCEL_TAN_EXPAND], true);
+	FLOAT_INTERFACE(TanExpandPeriod, Accels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD], true);
 	FLOAT_INTERFACE(Boomerang, Accels[PlayerOptions::ACCEL_BOOMERANG], true);
 	FLOAT_INTERFACE(Drunk, Effects[PlayerOptions::EFFECT_DRUNK], true);
 	FLOAT_INTERFACE(DrunkSpeed, Effects[PlayerOptions::EFFECT_DRUNK_SPEED], true);
 	FLOAT_INTERFACE(DrunkOffset, Effects[PlayerOptions::EFFECT_DRUNK_OFFSET], true);
 	FLOAT_INTERFACE(DrunkPeriod, Effects[PlayerOptions::EFFECT_DRUNK_PERIOD], true);
+	FLOAT_INTERFACE(TanDrunk, Effects[PlayerOptions::EFFECT_TAN_DRUNK], true);
+	FLOAT_INTERFACE(TanDrunkSpeed, Effects[PlayerOptions::EFFECT_TAN_DRUNK_SPEED], true);
+	FLOAT_INTERFACE(TanDrunkOffset, Effects[PlayerOptions::EFFECT_TAN_DRUNK_OFFSET], true);
+	FLOAT_INTERFACE(TanDrunkPeriod, Effects[PlayerOptions::EFFECT_TAN_DRUNK_PERIOD], true);
 	FLOAT_INTERFACE(DrunkZ, Effects[PlayerOptions::EFFECT_DRUNK_Z], true);
 	FLOAT_INTERFACE(DrunkZSpeed, Effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED], true);
 	FLOAT_INTERFACE(DrunkZOffset, Effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET], true);
 	FLOAT_INTERFACE(DrunkZPeriod, Effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD], true);
+	FLOAT_INTERFACE(TanDrunkZ, Effects[PlayerOptions::EFFECT_TAN_DRUNK_Z], true);
+	FLOAT_INTERFACE(TanDrunkZSpeed, Effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_SPEED], true);
+	FLOAT_INTERFACE(TanDrunkZOffset, Effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_OFFSET], true);
+	FLOAT_INTERFACE(TanDrunkZPeriod, Effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_PERIOD], true);
 	FLOAT_INTERFACE(Dizzy, Effects[PlayerOptions::EFFECT_DIZZY], true);
 	FLOAT_INTERFACE(AttenuateX, Effects[PlayerOptions::EFFECT_ATTENUATE_X], true);
 	FLOAT_INTERFACE(AttenuateY, Effects[PlayerOptions::EFFECT_ATTENUATE_Y], true);
@@ -1738,18 +1821,33 @@ public:
 	FLOAT_INTERFACE(Tornado, Effects[PlayerOptions::EFFECT_TORNADO], true);
 	FLOAT_INTERFACE(TornadoPeriod, Effects[PlayerOptions::EFFECT_TORNADO_PERIOD], true);
 	FLOAT_INTERFACE(TornadoOffset, Effects[PlayerOptions::EFFECT_TORNADO_OFFSET], true);
+	FLOAT_INTERFACE(TanTornado, Effects[PlayerOptions::EFFECT_TAN_TORNADO], true);
+	FLOAT_INTERFACE(TanTornadoPeriod, Effects[PlayerOptions::EFFECT_TAN_TORNADO_PERIOD], true);
+	FLOAT_INTERFACE(TanTornadoOffset, Effects[PlayerOptions::EFFECT_TAN_TORNADO_OFFSET], true);
 	FLOAT_INTERFACE(TornadoZ, Effects[PlayerOptions::EFFECT_TORNADO_Z], true);
 	FLOAT_INTERFACE(TornadoZPeriod, Effects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD], true);
 	FLOAT_INTERFACE(TornadoZOffset, Effects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET], true);
+	FLOAT_INTERFACE(TanTornadoZ, Effects[PlayerOptions::EFFECT_TAN_TORNADO_Z], true);
+	FLOAT_INTERFACE(TanTornadoZPeriod, Effects[PlayerOptions::EFFECT_TAN_TORNADO_Z_PERIOD], true);
+	FLOAT_INTERFACE(TanTornadoZOffset, Effects[PlayerOptions::EFFECT_TAN_TORNADO_Z_OFFSET], true);
 	FLOAT_INTERFACE(Tipsy, Effects[PlayerOptions::EFFECT_TIPSY], true);
 	FLOAT_INTERFACE(TipsySpeed, Effects[PlayerOptions::EFFECT_TIPSY_SPEED], true);
 	FLOAT_INTERFACE(TipsyOffset, Effects[PlayerOptions::EFFECT_TIPSY_OFFSET], true);
+	FLOAT_INTERFACE(TanTipsy, Effects[PlayerOptions::EFFECT_TAN_TIPSY], true);
+	FLOAT_INTERFACE(TanTipsySpeed, Effects[PlayerOptions::EFFECT_TAN_TIPSY_SPEED], true);
+	FLOAT_INTERFACE(TanTipsyOffset, Effects[PlayerOptions::EFFECT_TAN_TIPSY_OFFSET], true);
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
 	FLOAT_INTERFACE(BumpyOffset, Effects[PlayerOptions::EFFECT_BUMPY_OFFSET], true);
 	FLOAT_INTERFACE(BumpyPeriod, Effects[PlayerOptions::EFFECT_BUMPY_PERIOD], true);
+	FLOAT_INTERFACE(TanBumpy, Effects[PlayerOptions::EFFECT_TAN_BUMPY], true);
+	FLOAT_INTERFACE(TanBumpyOffset, Effects[PlayerOptions::EFFECT_TAN_BUMPY_OFFSET], true);
+	FLOAT_INTERFACE(TanBumpyPeriod, Effects[PlayerOptions::EFFECT_TAN_BUMPY_PERIOD], true);
 	FLOAT_INTERFACE(BumpyX, Effects[PlayerOptions::EFFECT_BUMPY_X], true);
 	FLOAT_INTERFACE(BumpyXOffset, Effects[PlayerOptions::EFFECT_BUMPY_X_OFFSET], true);
 	FLOAT_INTERFACE(BumpyXPeriod, Effects[PlayerOptions::EFFECT_BUMPY_X_PERIOD], true);
+	FLOAT_INTERFACE(TanBumpyX, Effects[PlayerOptions::EFFECT_TAN_BUMPY_X], true);
+	FLOAT_INTERFACE(TanBumpyXOffset, Effects[PlayerOptions::EFFECT_TAN_BUMPY_X_OFFSET], true);
+	FLOAT_INTERFACE(TanBumpyXPeriod, Effects[PlayerOptions::EFFECT_TAN_BUMPY_X_PERIOD], true);
 	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT], true);
 	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
 	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
@@ -1782,10 +1880,18 @@ public:
 	FLOAT_INTERFACE(DigitalSteps, Effects[PlayerOptions::EFFECT_DIGITAL_STEPS], true);
 	FLOAT_INTERFACE(DigitalPeriod, Effects[PlayerOptions::EFFECT_DIGITAL_PERIOD], true);
 	FLOAT_INTERFACE(DigitalOffset, Effects[PlayerOptions::EFFECT_DIGITAL_OFFSET], true);
+	FLOAT_INTERFACE(TanDigital, Effects[PlayerOptions::EFFECT_TAN_DIGITAL], true);
+	FLOAT_INTERFACE(TanDigitalSteps, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS], true);
+	FLOAT_INTERFACE(TanDigitalPeriod, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_PERIOD], true);
+	FLOAT_INTERFACE(TanDigitalOffset, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_OFFSET], true);
 	FLOAT_INTERFACE(DigitalZ, Effects[PlayerOptions::EFFECT_DIGITAL_Z], true);
 	FLOAT_INTERFACE(DigitalZSteps, Effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS], true);
 	FLOAT_INTERFACE(DigitalZPeriod, Effects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD], true);
 	FLOAT_INTERFACE(DigitalZOffset, Effects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET], true);
+	FLOAT_INTERFACE(TanDigitalZ, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z], true);
+	FLOAT_INTERFACE(TanDigitalZSteps, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS], true);
+	FLOAT_INTERFACE(TanDigitalZPeriod, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_PERIOD], true);
+	FLOAT_INTERFACE(TanDigitalZOffset, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_OFFSET], true);
 	FLOAT_INTERFACE(ParabolaX, Effects[PlayerOptions::EFFECT_PARABOLA_X], true);
 	FLOAT_INTERFACE(ParabolaY, Effects[PlayerOptions::EFFECT_PARABOLA_Y], true);
 	FLOAT_INTERFACE(ParabolaZ, Effects[PlayerOptions::EFFECT_PARABOLA_Z], true);
@@ -1831,6 +1937,7 @@ public:
 	BOOL_INTERFACE(StealthPastReceptors, StealthPastReceptors);
 	BOOL_INTERFACE(DizzyHolds, DizzyHolds);
 	BOOL_INTERFACE(ZBuffer, ZBuffer);
+	BOOL_INTERFACE(Cosecant, Cosecant);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
@@ -2187,15 +2294,25 @@ public:
 		ADD_METHOD(WavePeriod);
 		ADD_METHOD(Expand);
 		ADD_METHOD(ExpandPeriod);
+		ADD_METHOD(TanExpand);
+		ADD_METHOD(TanExpandPeriod);
 		ADD_METHOD(Boomerang);
 		ADD_METHOD(Drunk);
 		ADD_METHOD(DrunkSpeed);
 		ADD_METHOD(DrunkOffset);
 		ADD_METHOD(DrunkPeriod);
+		ADD_METHOD(TanDrunk);
+		ADD_METHOD(TanDrunkSpeed);
+		ADD_METHOD(TanDrunkOffset);
+		ADD_METHOD(TanDrunkPeriod);
 		ADD_METHOD(DrunkZ);
 		ADD_METHOD(DrunkZSpeed);
 		ADD_METHOD(DrunkZOffset);
 		ADD_METHOD(DrunkZPeriod);
+		ADD_METHOD(TanDrunkZ);
+		ADD_METHOD(TanDrunkZSpeed);
+		ADD_METHOD(TanDrunkZOffset);
+		ADD_METHOD(TanDrunkZPeriod);
 		ADD_METHOD(Dizzy);
 		ADD_METHOD(ShrinkLinear);
 		ADD_METHOD(ShrinkMult);
@@ -2225,18 +2342,33 @@ public:
 		ADD_METHOD(Tornado);
 		ADD_METHOD(TornadoPeriod);
 		ADD_METHOD(TornadoOffset);
+		ADD_METHOD(TanTornado);
+		ADD_METHOD(TanTornadoPeriod);
+		ADD_METHOD(TanTornadoOffset);
 		ADD_METHOD(TornadoZ);
 		ADD_METHOD(TornadoZPeriod);
 		ADD_METHOD(TornadoZOffset);
+		ADD_METHOD(TanTornadoZ);
+		ADD_METHOD(TanTornadoZPeriod);
+		ADD_METHOD(TanTornadoZOffset);
 		ADD_METHOD(Tipsy);
 		ADD_METHOD(TipsySpeed);
 		ADD_METHOD(TipsyOffset);
+		ADD_METHOD(TanTipsy);
+		ADD_METHOD(TanTipsySpeed);
+		ADD_METHOD(TanTipsyOffset);
 		ADD_METHOD(Bumpy);
 		ADD_METHOD(BumpyOffset);
 		ADD_METHOD(BumpyPeriod);
+		ADD_METHOD(TanBumpy);
+		ADD_METHOD(TanBumpyOffset);
+		ADD_METHOD(TanBumpyPeriod);
 		ADD_METHOD(BumpyX);
 		ADD_METHOD(BumpyXOffset);
 		ADD_METHOD(BumpyXPeriod);
+		ADD_METHOD(TanBumpyX);
+		ADD_METHOD(TanBumpyXOffset);
+		ADD_METHOD(TanBumpyXPeriod);
 		ADD_METHOD(Beat);
 		ADD_METHOD(BeatOffset);
 		ADD_METHOD(BeatPeriod);
@@ -2269,10 +2401,18 @@ public:
 		ADD_METHOD(DigitalSteps);
 		ADD_METHOD(DigitalPeriod);
 		ADD_METHOD(DigitalOffset);
+		ADD_METHOD(TanDigital);
+		ADD_METHOD(TanDigitalSteps);
+		ADD_METHOD(TanDigitalPeriod);
+		ADD_METHOD(TanDigitalOffset);
 		ADD_METHOD(DigitalZ);
 		ADD_METHOD(DigitalZSteps);
 		ADD_METHOD(DigitalZPeriod);
 		ADD_METHOD(DigitalZOffset);
+		ADD_METHOD(TanDigitalZ);
+		ADD_METHOD(TanDigitalZSteps);
+		ADD_METHOD(TanDigitalZPeriod);
+		ADD_METHOD(TanDigitalZOffset);
 		ADD_METHOD(ParabolaX);
 		ADD_METHOD(ParabolaY);
 		ADD_METHOD(ParabolaZ);
@@ -2298,6 +2438,7 @@ public:
 		ADD_METHOD(StealthPastReceptors);
 		ADD_METHOD(DizzyHolds);
 		ADD_METHOD(ZBuffer);
+		ADD_METHOD(Cosecant);
 		ADD_METHOD(RandAttack);
 		ADD_METHOD(NoAttack);
 		ADD_METHOD(PlayerAutoPlay);

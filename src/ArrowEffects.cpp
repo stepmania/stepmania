@@ -115,8 +115,11 @@ namespace
 		float m_fInvertDistance[MAX_COLS_PER_PLAYER];
 		float m_tipsy_result[MAX_COLS_PER_PLAYER];
 		float m_tipsy_offset_result[MAX_COLS_PER_PLAYER];
+		float m_tan_tipsy_result[MAX_COLS_PER_PLAYER];
+		float m_tan_tipsy_offset_result[MAX_COLS_PER_PLAYER];
 		float m_fBeatFactor[3];
 		float m_fExpandSeconds;
+		float m_fTanExpandSeconds;
 
 		// m_prev_style is for checking whether ArrowEffects::Init needs to be
 		// called.  Finding all the placed ArrowEffects is used and making sure
@@ -136,10 +139,18 @@ namespace
 	float tornado_offset_scale_from_high[3];
 };
 
+static float SelectTanType(float angle, bool is_cosec)
+{
+	if (is_cosec)
+	    return RageFastCsc(angle);
+	else
+	    return RageFastTan(angle);
+}
+
 static float CalculateTornadoOffsetFromMagnitude(int dimension, int col_id,
 	float magnitude, float effect_offset, float period,
 	const Style::ColumnInfo* pCols, float field_zoom,
-	PerPlayerData& data, float y_offset)
+	PerPlayerData& data, float y_offset, bool is_tan)
 {
 	float const real_pixel_offset= pCols[col_id].fXOffset * field_zoom;
 	float const position_between= SCALE(real_pixel_offset,
@@ -150,12 +161,32 @@ static float CalculateTornadoOffsetFromMagnitude(int dimension, int col_id,
 	float rads= acosf(position_between);
 	float frequency= tornado_offset_frequency[dimension];
 	rads+= (y_offset + effect_offset) * ((period * frequency) + frequency) / SCREEN_HEIGHT;
-	float const adjusted_pixel_offset= SCALE(RageFastCos(rads),
+	float processed_rads = is_tan ? SelectTanType(rads, curr_options->m_bCosecant) : RageFastCos(rads); 
+		
+	float const adjusted_pixel_offset= SCALE(processed_rads,
 		tornado_offset_scale_from_low[dimension],
 		tornado_offset_scale_from_high[dimension],
 		data.m_MinTornado[dimension][col_id] * field_zoom,
 		data.m_MaxTornado[dimension][col_id] * field_zoom);
 	return (adjusted_pixel_offset - real_pixel_offset) * magnitude;
+}
+
+static float CalculateDrunkAngle(float speed, int col, float offset, 
+	float col_frequency, float y_offset, float period, float offset_frequency)
+{
+	float time = ArrowEffects::GetTime();
+	return time * (1+speed) + col*( (offset*col_frequency) + col_frequency)
+		+ y_offset * ( (period*offset_frequency) + offset_frequency) / SCREEN_HEIGHT;
+}
+
+static float CalculateBumpyAngle(float y_offset, float offset, float period)
+{
+	return (y_offset+(100.0f*offset))/((period*16.0f)+16.0f);
+}
+
+static float CalculateDigitalAngle(float y_offset, float offset, float period)
+{
+	return PI * (y_offset + (1.0f * offset ) ) / (ARROW_SIZE + (period * ARROW_SIZE) );
 }
 
 static void UpdateBeat(int dimension, PerPlayerData &data, const SongPosition &position, float beat_offset, float beat_mult)
@@ -189,6 +220,36 @@ static void UpdateBeat(int dimension, PerPlayerData &data, const SongPosition &p
 	if( bEvenBeat )
 		data.m_fBeatFactor[dimension] *= -1;
 	data.m_fBeatFactor[dimension] *= 20.0f;
+}
+
+static void UpdateTipsy(float * tipsy_result, float * tipsy_offset_result, float offset, float speed, bool is_tan)
+{
+	const float time= ArrowEffects::GetTime();
+	const float time_times_timer= time * ((speed * TIPSY_TIMER_FREQUENCY) + TIPSY_TIMER_FREQUENCY);
+	const float arrow_times_mag= ARROW_SIZE * TIPSY_ARROW_MAGNITUDE;
+	const float time_times_offset_timer= time *
+		TIPSY_OFFSET_TIMER_FREQUENCY;
+	const float arrow_times_offset_mag= ARROW_SIZE *
+		TIPSY_OFFSET_ARROW_MAGNITUDE;
+	for(int col= 0; col < MAX_COLS_PER_PLAYER; ++col)
+	{
+		if (is_tan)
+		{
+			tipsy_result[col]= SelectTanType(time_times_timer + (col * ((offset * 
+				TIPSY_COLUMN_FREQUENCY) + TIPSY_COLUMN_FREQUENCY)), curr_options->m_bCosecant)
+				* arrow_times_mag;
+			tipsy_offset_result[col]= SelectTanType(time_times_offset_timer + (col * 
+				TIPSY_OFFSET_COLUMN_FREQUENCY), curr_options->m_bCosecant)
+				* arrow_times_offset_mag;
+		}
+		else
+		{
+			tipsy_result[col]= RageFastCos(time_times_timer + (col * ((offset * 
+				TIPSY_COLUMN_FREQUENCY) + TIPSY_COLUMN_FREQUENCY))) * arrow_times_mag;
+			tipsy_offset_result[col]= RageFastCos(time_times_offset_timer + (col * 
+				TIPSY_OFFSET_COLUMN_FREQUENCY)) * arrow_times_offset_mag;
+		}
+	}
 }
 
 
@@ -274,6 +335,8 @@ void ArrowEffects::Update()
 		{
 			data.m_fExpandSeconds += fTime - fLastTime;
 			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, (PI*2)/(accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1) );
+			data.m_fTanExpandSeconds += fTime - fLastTime;
+			data.m_fTanExpandSeconds = fmodf( data.m_fTanExpandSeconds, (PI*2)/(accels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD]+1) );
 		}
 
 		// Update Invert
@@ -323,28 +386,30 @@ void ArrowEffects::Update()
 		// Update Tipsy
 		if(effects[PlayerOptions::EFFECT_TIPSY] != 0)
 		{
-			const float time= ArrowEffects::GetTime();
-			const float time_times_timer= time * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * TIPSY_TIMER_FREQUENCY) + TIPSY_TIMER_FREQUENCY);
-			const float arrow_times_mag= ARROW_SIZE * TIPSY_ARROW_MAGNITUDE;
-			const float time_times_offset_timer= time *
-				TIPSY_OFFSET_TIMER_FREQUENCY;
-			const float arrow_times_offset_mag= ARROW_SIZE *
-				TIPSY_OFFSET_ARROW_MAGNITUDE;
-			for(int col= 0; col < MAX_COLS_PER_PLAYER; ++col)
-			{
-				data.m_tipsy_result[col]= RageFastCos(
-					time_times_timer + (col * ((effects[PlayerOptions::EFFECT_TIPSY_OFFSET] * TIPSY_COLUMN_FREQUENCY) + TIPSY_COLUMN_FREQUENCY))) *
-					arrow_times_mag;
-				data.m_tipsy_offset_result[col]= RageFastCos(
-					time_times_offset_timer + (col * TIPSY_OFFSET_COLUMN_FREQUENCY)) *
-					arrow_times_offset_mag;
-			}
+			UpdateTipsy(data.m_tipsy_result, data.m_tipsy_offset_result, 
+				    effects[PlayerOptions::EFFECT_TIPSY_OFFSET], 
+				    effects[PlayerOptions::EFFECT_TIPSY_SPEED], false);
 		}
 		else
 		{
 			for(int col= 0; col < MAX_COLS_PER_PLAYER; ++col)
 			{
 				data.m_tipsy_result[col]= 0;
+			}
+		}
+		
+		// Update TanTipsy
+		if(effects[PlayerOptions::EFFECT_TAN_TIPSY] != 0)
+		{
+			UpdateTipsy(data.m_tan_tipsy_result, data.m_tan_tipsy_offset_result, 
+				    effects[PlayerOptions::EFFECT_TAN_TIPSY_OFFSET], 
+				    effects[PlayerOptions::EFFECT_TAN_TIPSY_SPEED], true);
+		}
+		else
+		{
+			for(int col= 0; col < MAX_COLS_PER_PLAYER; ++col)
+			{
+				data.m_tan_tipsy_result[col]= 0;
 			}
 		}
 
@@ -452,6 +517,9 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	const float* fAccels = curr_options->m_fAccels;
 	const float* fEffects = curr_options->m_fEffects;
+	
+	// TODO: Don't index by PlayerNumber.
+	PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
 
@@ -511,15 +579,22 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
-		// TODO: Don't index by PlayerNumber.
-		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
-	
 		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY*(fAccels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1)),
 						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
 						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 
 				      EXPAND_SPEED_SCALE_FROM_LOW, EXPAND_SPEED_SCALE_FROM_HIGH,
 				      EXPAND_SPEED_SCALE_TO_LOW, fExpandMultiplier );
+	}
+
+	if( fAccels[PlayerOptions::ACCEL_TAN_EXPAND] != 0 )
+	{
+		float fTanExpandMultiplier = SCALE( SelectTanType(data.m_fTanExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY*(fAccels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD]+1), curr_options->m_bCosecant),
+						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
+						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
+		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_TAN_EXPAND], 
+				      EXPAND_SPEED_SCALE_FROM_LOW, EXPAND_SPEED_SCALE_FROM_HIGH,
+				      EXPAND_SPEED_SCALE_TO_LOW, fTanExpandMultiplier );
 	}
 
 	fYOffset *= fScrollSpeed;
@@ -569,6 +644,7 @@ float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fY
 	// TODO: Don't index by PlayerNumber.
 	PerPlayerData& data= g_EffectData[curr_options->m_pn];
 	f+= fEffects[PlayerOptions::EFFECT_TIPSY] * data.m_tipsy_result[iCol];
+	f+= fEffects[PlayerOptions::EFFECT_TAN_TIPSY] * data.m_tan_tipsy_result[iCol];
 		
 	if( fEffects[PlayerOptions::EFFECT_ATTENUATE_Y] != 0 )
 	{
@@ -600,6 +676,7 @@ float ArrowEffects::GetYOffsetFromYPos(int iCol, float YPos, float fYReverseOffs
 	// TODO: Don't index by PlayerNumber.
 	PerPlayerData& data= g_EffectData[curr_options->m_pn];
 	f+= fEffects[PlayerOptions::EFFECT_TIPSY] * data.m_tipsy_offset_result[iCol];
+	f+= fEffects[PlayerOptions::EFFECT_TAN_TIPSY] * data.m_tan_tipsy_offset_result[iCol];
 	
 	f+= fEffects[PlayerOptions::EFFECT_PARABOLA_Y] * (YPos/ARROW_SIZE) * (YPos/ARROW_SIZE);
 
@@ -630,16 +707,44 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 			iColNum, fEffects[PlayerOptions::EFFECT_TORNADO],
 			fEffects[PlayerOptions::EFFECT_TORNADO_OFFSET],
 			fEffects[PlayerOptions::EFFECT_TORNADO_PERIOD],
-			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset);
+			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset, false);
+	}
+
+	if( fEffects[PlayerOptions::EFFECT_TAN_TORNADO] != 0 )
+	{
+		fPixelOffsetFromCenter += CalculateTornadoOffsetFromMagnitude(dim_x,
+			iColNum, fEffects[PlayerOptions::EFFECT_TAN_TORNADO],
+			fEffects[PlayerOptions::EFFECT_TAN_TORNADO_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TAN_TORNADO_PERIOD],
+			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset, true);
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 40*RageFastSin( (fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BUMPY_X] * 
+			40*RageFastSin( CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_BUMPY_X_OFFSET],
+			fEffects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]) );
+	
+	if( fEffects[PlayerOptions::EFFECT_TAN_BUMPY_X] != 0 )
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_TAN_BUMPY_X] * 
+			40*SelectTanType( CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_TAN_BUMPY_X_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TAN_BUMPY_X_PERIOD]), curr_options->m_bCosecant );
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
-			( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_SPEED]) + iColNum*((fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET]*DRUNK_COLUMN_FREQUENCY)+DRUNK_COLUMN_FREQUENCY)
-				      + fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_PERIOD]*DRUNK_OFFSET_FREQUENCY)+DRUNK_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
+			( RageFastCos( CalculateDrunkAngle(fEffects[PlayerOptions::EFFECT_DRUNK_SPEED], iColNum, 
+					fEffects[PlayerOptions::EFFECT_DRUNK_OFFSET], DRUNK_COLUMN_FREQUENCY,
+					fYOffset, fEffects[PlayerOptions::EFFECT_DRUNK_PERIOD],
+					DRUNK_OFFSET_FREQUENCY) ) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
+
+	if( fEffects[PlayerOptions::EFFECT_TAN_DRUNK] != 0 )
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_TAN_DRUNK] * 
+			( SelectTanType( CalculateDrunkAngle(fEffects[PlayerOptions::EFFECT_TAN_DRUNK_SPEED],
+					iColNum, fEffects[PlayerOptions::EFFECT_TAN_DRUNK_OFFSET],
+					DRUNK_COLUMN_FREQUENCY, fYOffset,
+					fEffects[PlayerOptions::EFFECT_TAN_DRUNK_PERIOD], DRUNK_OFFSET_FREQUENCY)
+					, curr_options->m_bCosecant) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
 
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
@@ -685,8 +790,17 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	if( fEffects[PlayerOptions::EFFECT_DIGITAL] != 0 )
 		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_DIGITAL] * ARROW_SIZE * 0.5f) *
 			round((fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * RageFastSin(
-				(PI * (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET]) ) ) / 
-					(ARROW_SIZE + (fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD] * ARROW_SIZE)) ) ) )/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+				CalculateDigitalAngle(fYOffset, 
+				fEffects[PlayerOptions::EFFECT_DIGITAL_OFFSET], 
+				fEffects[PlayerOptions::EFFECT_DIGITAL_PERIOD]) ) )/(fEffects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+
+	if( fEffects[PlayerOptions::EFFECT_TAN_DIGITAL] != 0 )
+		fPixelOffsetFromCenter += (fEffects[PlayerOptions::EFFECT_TAN_DIGITAL] * ARROW_SIZE * 0.5f) *
+			round((fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS]+1) * SelectTanType(
+				CalculateDigitalAngle(fYOffset, 
+				fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_OFFSET], 
+				fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_PERIOD]), curr_options->m_bCosecant ) )/(fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS]+1);
+				
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE] != 0 )
 	{
@@ -1073,14 +1187,35 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 			fEffects[PlayerOptions::EFFECT_TORNADO_Z],
 			fEffects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET],
 			fEffects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD],
-			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset);
+			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset, false);
+	}
+
+	if( fEffects[PlayerOptions::EFFECT_TAN_TORNADO_Z] != 0 )
+	{
+		fZPos += CalculateTornadoOffsetFromMagnitude(dim_z, iCol,
+			fEffects[PlayerOptions::EFFECT_TAN_TORNADO_Z],
+			fEffects[PlayerOptions::EFFECT_TAN_TORNADO_Z_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TAN_TORNADO_Z_PERIOD],
+			pCols, pPlayerState->m_NotefieldZoom, data, fYOffset, true);
 	}
 	
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( (fYOffset+(100.0f*fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET]) )/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
+		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin(
+			CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET],
+			fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]) );
 
 	if( curr_options->m_fBumpy[iCol] != 0 )
-		fZPos += curr_options->m_fBumpy[iCol] * 40*RageFastSin( (fYOffset+(100.0f*(fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET])))/((fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]*16.0f)+16.0f) );
+		fZPos += curr_options->m_fBumpy[iCol] * 40*RageFastSin(
+			CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_BUMPY_OFFSET],
+			fEffects[PlayerOptions::EFFECT_BUMPY_PERIOD]) );
+	
+	if( fEffects[PlayerOptions::EFFECT_TAN_BUMPY] != 0 )
+		fZPos += fEffects[PlayerOptions::EFFECT_TAN_BUMPY] * 40*SelectTanType(
+			CalculateBumpyAngle(fYOffset,
+			fEffects[PlayerOptions::EFFECT_TAN_BUMPY_OFFSET],
+			fEffects[PlayerOptions::EFFECT_TAN_BUMPY_PERIOD]), curr_options->m_bCosecant );
 		
 	if( fEffects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0 )
 	{
@@ -1106,8 +1241,19 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK_Z] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_DRUNK_Z] * 
-			( RageFastCos( GetTime()*(1+fEffects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + iCol*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*DRUNK_Z_COLUMN_FREQUENCY)+DRUNK_Z_COLUMN_FREQUENCY)
-				+ fYOffset*((fEffects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*DRUNK_Z_OFFSET_FREQUENCY)+DRUNK_Z_OFFSET_FREQUENCY)/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
+			( RageFastCos( CalculateDrunkAngle(fEffects[PlayerOptions::EFFECT_DRUNK_Z_SPEED], iCol, 
+					fEffects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET], DRUNK_Z_COLUMN_FREQUENCY,
+					fYOffset, fEffects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD],
+					DRUNK_Z_OFFSET_FREQUENCY) ) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
+
+	if( fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z] != 0 )
+		fZPos += fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z] * 
+			( SelectTanType( CalculateDrunkAngle(fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z_SPEED],
+					iCol, fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z_OFFSET],
+					DRUNK_Z_COLUMN_FREQUENCY, fYOffset,
+					fEffects[PlayerOptions::EFFECT_TAN_DRUNK_Z_PERIOD],
+					DRUNK_Z_OFFSET_FREQUENCY)
+					, curr_options->m_bCosecant) * ARROW_SIZE*DRUNK_Z_ARROW_MAGNITUDE );
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT_Z] != 0 )
 	{
@@ -1118,8 +1264,17 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	if( fEffects[PlayerOptions::EFFECT_DIGITAL_Z] != 0 )
 		fZPos += (fEffects[PlayerOptions::EFFECT_DIGITAL_Z] * ARROW_SIZE * 0.5f) *
 			round((fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1) * RageFastSin(
-				(PI * (fYOffset + (1.0f * (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET]) ) ) / 
-					(ARROW_SIZE + (fEffects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD] * ARROW_SIZE)) )))/(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+				CalculateDigitalAngle(fYOffset, 
+				fEffects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET], 
+				fEffects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD]) ) ) /(fEffects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+	
+	if( fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z] != 0 )
+		fZPos += (fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z] * ARROW_SIZE * 0.5f) *
+			round((fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS]+1) * SelectTanType(
+				CalculateDigitalAngle(fYOffset, 
+				fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_OFFSET], 
+				fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_PERIOD]), curr_options->m_bCosecant ) ) /(fEffects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS]+1);
+				
 	
 	if( fEffects[PlayerOptions::EFFECT_SQUARE_Z] != 0 )
 	{
