@@ -3091,6 +3091,8 @@ void NoteField::set_speed(float scroll_speed)
 	// The function returns self, but we don't care.
 	lua_settop(L, 0);
 	LUA->Release(L);
+	// Disable speed and scroll segments because this is for edit mode.
+	disable_speed_scroll_segments();
 }
 
 void NoteField::disable_speed_scroll_segments()
