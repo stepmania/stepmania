@@ -155,6 +155,22 @@ void ArrowDefects::update_beat(int dimension, float beat_offset, float beat_mult
 	}
 }
 
+float ArrowDefects::select_tan_calc(float angle, bool is_cosec)
+{
+	if (is_cosec)
+	    return Rage::FastCsc(angle);
+	else
+	    return Rage::FastTan(angle);
+}
+
+float ArrowDefects::calculate_drunk_angle(float speed, int col, float offset, 
+	float col_frequency, float y_offset, float period, float offset_frequency)
+{
+	float time = ArrowDefects::get_time();
+	return time * (1+speed) + col*( (offset*col_frequency) + col_frequency)
+		+ y_offset * ( (period*offset_frequency) + offset_frequency) / SCREEN_HEIGHT;
+}
+
 void ArrowDefects::Init()
 {
 	// Init tornado limits.
@@ -520,8 +536,20 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	if(effects[PlayerOptions::EFFECT_DRUNK] != 0.f)
 	{
 		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_DRUNK] *
-			(Rage::FastCos(( get_time() * (1+effects[PlayerOptions::EFFECT_DRUNK_SPEED])) + (col * ((effects[PlayerOptions::EFFECT_DRUNK_OFFSET] * drunk_column_frequency) + drunk_column_frequency)) +
-				((y_offset * ((effects[PlayerOptions::EFFECT_DRUNK_PERIOD]*drunk_offset_frequency)+drunk_offset_frequency)) / SCREEN_HEIGHT)) *
+			(Rage::FastCos( calculate_drunk_angle(effects[PlayerOptions::EFFECT_DRUNK_SPEED], col, 
+					effects[PlayerOptions::EFFECT_DRUNK_OFFSET], drunk_column_frequency,
+					y_offset, effects[PlayerOptions::EFFECT_DRUNK_PERIOD],
+					drunk_offset_frequency) ) *
+					arrow_spacing * drunk_arrow_magnitude);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_DRUNK] != 0.f)
+	{
+		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_TAN_DRUNK] *
+			(select_tan_calc( calculate_drunk_angle(effects[PlayerOptions::EFFECT_TAN_DRUNK_SPEED], col, 
+					effects[PlayerOptions::EFFECT_TAN_DRUNK_OFFSET],
+					drunk_column_frequency, y_offset,
+					effects[PlayerOptions::EFFECT_TAN_DRUNK_PERIOD], drunk_offset_frequency)
+					, m_options->m_bCosecant) *
 				arrow_spacing * drunk_arrow_magnitude);
 	}
 	if(effects[PlayerOptions::EFFECT_FLIP] != 0.f)
@@ -691,8 +719,20 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 	if(effects[PlayerOptions::EFFECT_DRUNK_Z] != 0.f)
 	{
 		zpos += effects[PlayerOptions::EFFECT_DRUNK_Z] * 
-			( Rage::FastCos( get_time()*(1+effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + col*((effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*drunk_column_frequency)+drunk_column_frequency)
-				+ y_offset*((effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*drunk_offset_frequency)+drunk_offset_frequency)/SCREEN_HEIGHT) * arrow_spacing*drunk_arrow_magnitude );
+			( Rage::FastCos( calculate_drunk_angle(effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED], col, 
+					effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET], drunk_column_frequency,
+					y_offset, effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD],
+					drunk_offset_frequency) ) * arrow_spacing*drunk_arrow_magnitude );
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_DRUNK_Z] != 0.f)
+	{
+		zpos += effects[PlayerOptions::EFFECT_TAN_DRUNK_Z] * 
+			( select_tan_calc( calculate_drunk_angle(effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_SPEED], col, 
+					effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_OFFSET],
+					drunk_column_frequency, y_offset,
+					effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_PERIOD],
+					drunk_offset_frequency)
+				        , m_options->m_bCosecant) * arrow_spacing*drunk_arrow_magnitude );
 	}
 	if(effects[PlayerOptions::EFFECT_BEAT_Z] != 0.f)
 	{

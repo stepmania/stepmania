@@ -58,6 +58,9 @@ private:
 	float calculate_tornado_offset_from_magnitude(int dimension, int col_id,
 		float magnitude, float effect_offset, float period, float y_offset);
 	void update_beat(int dimension, float beat_offset, float beat_mult);
+	float select_tan_calc(float angle, bool is_cosec);
+	float calculate_drunk_angle(float speed, int col, float offset, 
+		float col_frequency, float y_offset, float period, float offset_frequency);
 	
 	float get_center_line();
 	float get_hidden_sudden();
