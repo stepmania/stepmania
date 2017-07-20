@@ -62,6 +62,7 @@ private:
 	float select_tan_calc(float angle, bool is_cosec);
 	float calculate_drunk_angle(float speed, int col, float offset, 
 		float col_frequency, float y_offset, float period, float offset_frequency);
+	float calculate_bumpy_angle(float y_offset, float offset, float period);
 	
 	float get_center_line();
 	float get_hidden_sudden();
@@ -86,6 +87,7 @@ private:
 	std::vector<float> m_tan_tipsy_result;
 	float m_beat_factor[3];
 	float m_expand_seconds;
+	float m_tan_expand_seconds;
 
 	float m_hidden_end_line;
 	float m_hidden_start_line;

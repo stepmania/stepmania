@@ -282,6 +282,8 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fAccels[ACCEL_WAVE_PERIOD],		"WavePeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_EXPAND],		"Expand" );
 	AddPart( AddTo, m_fAccels[ACCEL_EXPAND_PERIOD],		"ExpandPeriod" );
+	AddPart( AddTo, m_fAccels[ACCEL_TAN_EXPAND],		"TanExpand" );
+	AddPart( AddTo, m_fAccels[ACCEL_TAN_EXPAND_PERIOD],	"TanExpandPeriod" );
 	AddPart( AddTo, m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
 
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],		"Drunk" );
@@ -341,9 +343,15 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_OFFSET],	"BumpyOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_PERIOD],	"BumpyPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY],		"TanBumpy" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_OFFSET],	"TanBumpyOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_PERIOD],	"TanBumpyPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X],		"BumpyX" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X_OFFSET],	"BumpyXOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY_X_PERIOD],	"BumpyXPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_X],		"TanBumpyX" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_X_OFFSET],	"TanBumpyXOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_BUMPY_X_PERIOD],	"TanBumpyXPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_OFFSET],		"BeatOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT_PERIOD],		"BeatPeriod" );
@@ -757,6 +765,8 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"waveperiod", ACCEL_WAVE_PERIOD},
 			{"expand", ACCEL_EXPAND},
 			{"expandperiod", ACCEL_EXPAND_PERIOD},
+			{"tanexpand", ACCEL_TAN_EXPAND},
+			{"tanexpandperiod", ACCEL_TAN_EXPAND_PERIOD},
 			{"dwiwave", ACCEL_EXPAND},
 			{"boomerang", ACCEL_BOOMERANG},
 		};
@@ -815,9 +825,15 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"bumpy", EFFECT_BUMPY},
 			{"bumpyoffset", EFFECT_BUMPY_OFFSET},
 			{"bumpyperiod", EFFECT_BUMPY_PERIOD},
+			{"tanbumpy", EFFECT_TAN_BUMPY},
+			{"tanbumpyoffset", EFFECT_TAN_BUMPY_OFFSET},
+			{"tanbumpyperiod", EFFECT_TAN_BUMPY_PERIOD},
 			{"bumpyx", EFFECT_BUMPY_X},
 			{"bumpyxoffset", EFFECT_BUMPY_X_OFFSET},
 			{"bumpyxperiod", EFFECT_BUMPY_X_PERIOD},
+			{"tanbumpyx", EFFECT_TAN_BUMPY_X},
+			{"tanbumpyxoffset", EFFECT_TAN_BUMPY_X_OFFSET},
+			{"tanbumpyxperiod", EFFECT_TAN_BUMPY_X_PERIOD},
 			{"beat", EFFECT_BEAT},
 			{"beatoffset", EFFECT_BEAT_OFFSET},
 			{"beatperiod", EFFECT_BEAT_PERIOD},
@@ -1746,6 +1762,8 @@ public:
 	FLOAT_INTERFACE(WavePeriod, Accels[PlayerOptions::ACCEL_WAVE_PERIOD], true);
 	FLOAT_INTERFACE(Expand, Accels[PlayerOptions::ACCEL_EXPAND], true);
 	FLOAT_INTERFACE(ExpandPeriod, Accels[PlayerOptions::ACCEL_EXPAND_PERIOD], true);
+	FLOAT_INTERFACE(TanExpand, Accels[PlayerOptions::ACCEL_TAN_EXPAND], true);
+	FLOAT_INTERFACE(TanExpandPeriod, Accels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD], true);
 	FLOAT_INTERFACE(Boomerang, Accels[PlayerOptions::ACCEL_BOOMERANG], true);
 	FLOAT_INTERFACE(Drunk, Effects[PlayerOptions::EFFECT_DRUNK], true);
 	FLOAT_INTERFACE(DrunkSpeed, Effects[PlayerOptions::EFFECT_DRUNK_SPEED], true);
@@ -1804,9 +1822,15 @@ public:
 	FLOAT_INTERFACE(Bumpy, Effects[PlayerOptions::EFFECT_BUMPY], true);
 	FLOAT_INTERFACE(BumpyOffset, Effects[PlayerOptions::EFFECT_BUMPY_OFFSET], true);
 	FLOAT_INTERFACE(BumpyPeriod, Effects[PlayerOptions::EFFECT_BUMPY_PERIOD], true);
+	FLOAT_INTERFACE(TanBumpy, Effects[PlayerOptions::EFFECT_TAN_BUMPY], true);
+	FLOAT_INTERFACE(TanBumpyOffset, Effects[PlayerOptions::EFFECT_TAN_BUMPY_OFFSET], true);
+	FLOAT_INTERFACE(TanBumpyPeriod, Effects[PlayerOptions::EFFECT_TAN_BUMPY_PERIOD], true);
 	FLOAT_INTERFACE(BumpyX, Effects[PlayerOptions::EFFECT_BUMPY_X], true);
 	FLOAT_INTERFACE(BumpyXOffset, Effects[PlayerOptions::EFFECT_BUMPY_X_OFFSET], true);
 	FLOAT_INTERFACE(BumpyXPeriod, Effects[PlayerOptions::EFFECT_BUMPY_X_PERIOD], true);
+	FLOAT_INTERFACE(TanBumpyX, Effects[PlayerOptions::EFFECT_TAN_BUMPY_X], true);
+	FLOAT_INTERFACE(TanBumpyXOffset, Effects[PlayerOptions::EFFECT_TAN_BUMPY_X_OFFSET], true);
+	FLOAT_INTERFACE(TanBumpyXPeriod, Effects[PlayerOptions::EFFECT_TAN_BUMPY_X_PERIOD], true);
 	FLOAT_INTERFACE(Beat, Effects[PlayerOptions::EFFECT_BEAT], true);
 	FLOAT_INTERFACE(BeatOffset, Effects[PlayerOptions::EFFECT_BEAT_OFFSET], true);
 	FLOAT_INTERFACE(BeatPeriod, Effects[PlayerOptions::EFFECT_BEAT_PERIOD], true);
@@ -2208,6 +2232,8 @@ public:
 		ADD_METHOD(WavePeriod);
 		ADD_METHOD(Expand);
 		ADD_METHOD(ExpandPeriod);
+		ADD_METHOD(TanExpand);
+		ADD_METHOD(TanExpandPeriod);
 		ADD_METHOD(Boomerang);
 		ADD_METHOD(Drunk);
 		ADD_METHOD(DrunkSpeed);
@@ -2266,9 +2292,15 @@ public:
 		ADD_METHOD(Bumpy);
 		ADD_METHOD(BumpyOffset);
 		ADD_METHOD(BumpyPeriod);
+		ADD_METHOD(TanBumpy);
+		ADD_METHOD(TanBumpyOffset);
+		ADD_METHOD(TanBumpyPeriod);
 		ADD_METHOD(BumpyX);
 		ADD_METHOD(BumpyXOffset);
 		ADD_METHOD(BumpyXPeriod);
+		ADD_METHOD(TanBumpyX);
+		ADD_METHOD(TanBumpyXOffset);
+		ADD_METHOD(TanBumpyXPeriod);
 		ADD_METHOD(Beat);
 		ADD_METHOD(BeatOffset);
 		ADD_METHOD(BeatPeriod);

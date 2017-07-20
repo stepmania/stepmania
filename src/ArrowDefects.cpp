@@ -192,6 +192,11 @@ float ArrowDefects::calculate_drunk_angle(float speed, int col, float offset,
 		+ y_offset * ( (period*offset_frequency) + offset_frequency) / SCREEN_HEIGHT;
 }
 
+float ArrowDefects::calculate_bumpy_angle(float y_offset, float offset, float period)
+{
+	return (y_offset+(100.0f*offset))/((period*16.0f)+16.0f);
+}
+
 void ArrowDefects::Init()
 {
 	// Init tornado limits.
@@ -346,6 +351,10 @@ void ArrowDefects::update(PlayerNumber pn, float music_beat, float music_second)
 	if(accels[PlayerOptions::ACCEL_EXPAND] != 0.f)
 	{
 		m_expand_seconds= fmodf(m_timing_data->GetExpandSeconds(m_music_second), (Rage::PI * 2.0) / ((accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1)));
+	}
+	if(accels[PlayerOptions::ACCEL_TAN_EXPAND] != 0.f)
+	{
+		m_tan_expand_seconds= fmodf(m_timing_data->GetExpandSeconds(m_music_second), (Rage::PI * 2.0) / ((accels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD]+1)));
 	}
 	if(effects[PlayerOptions::EFFECT_TIPSY] != 0.f)
 	{
@@ -531,6 +540,16 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 			expand_speed_scale_from_low, expand_speed_scale_from_high,
 			expand_speed_scale_to_low, expand_multiplier);
 	}
+	if(accels[PlayerOptions::ACCEL_TAN_EXPAND] != 0.f)
+	{
+		float expand_multiplier= Rage::scale(
+			select_tan_calc(m_tan_expand_seconds * expand_multiplier_frequency * (accels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD]+1), m_options->m_bCosecant),
+			expand_multiplier_scale_from_low, expand_multiplier_scale_from_high,
+			expand_multiplier_scale_to_low, expand_multiplier_scale_to_high);
+		scroll_speed*= Rage::scale(accels[PlayerOptions::ACCEL_TAN_EXPAND],
+			expand_speed_scale_from_low, expand_speed_scale_from_high,
+			expand_speed_scale_to_low, expand_multiplier);
+	}
 	y_offset*= scroll_speed;
 	
 	if(effects[PlayerOptions::EFFECT_BEAT_Y] != 0.f)
@@ -557,8 +576,18 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	if( effects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
 	{
 		pixel_offset_from_center += effects[PlayerOptions::EFFECT_BUMPY_X] * 
-			40*Rage::FastSin( (y_offset+(100.0f*(effects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/
-			((effects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
+			40*Rage::FastSin( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_BUMPY_X_OFFSET],
+			effects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]) );
+			
+	}
+	if( effects[PlayerOptions::EFFECT_TAN_BUMPY_X] != 0 )
+	{
+		pixel_offset_from_center += effects[PlayerOptions::EFFECT_TAN_BUMPY_X] * 
+			40*select_tan_calc( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_TAN_BUMPY_X_OFFSET],
+			effects[PlayerOptions::EFFECT_TAN_BUMPY_X_PERIOD]), m_options->m_bCosecant );
+			
 	}
 	if(effects[PlayerOptions::EFFECT_DRUNK] != 0.f)
 	{
@@ -715,12 +744,23 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 	if(effects[PlayerOptions::EFFECT_BUMPY] != 0.f)
 	{
 		zpos += effects[PlayerOptions::EFFECT_BUMPY] *
-			40 * Rage::FastSin((y_offset + (100.f * effects[PlayerOptions::EFFECT_BUMPY_OFFSET])) / ((effects[PlayerOptions::EFFECT_BUMPY_PERIOD] * 16.f) + 16.f));
+			40 * Rage::FastSin( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_BUMPY_OFFSET],
+			effects[PlayerOptions::EFFECT_BUMPY_PERIOD]) );
 	}
 	if(m_options->m_fBumpy[col] != 0.f)
 	{
-		zpos += m_options->m_fBumpy[col] * 40 * Rage::FastSin( (y_offset + (100.f * 
-			(effects[PlayerOptions::EFFECT_BUMPY_OFFSET]) ) ) / ( (effects[PlayerOptions::EFFECT_BUMPY_PERIOD] * 16.f) + 16.f) );
+		zpos += m_options->m_fBumpy[col] * 
+			40 * Rage::FastSin( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_BUMPY_OFFSET],
+			effects[PlayerOptions::EFFECT_BUMPY_PERIOD]) );
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_BUMPY] != 0.f)
+	{
+		zpos += effects[PlayerOptions::EFFECT_TAN_BUMPY] *
+			40 * select_tan_calc( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_TAN_BUMPY_OFFSET],
+			effects[PlayerOptions::EFFECT_TAN_BUMPY_PERIOD]), m_options->m_bCosecant );
 	}
 	if(effects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0.f)
 	{
