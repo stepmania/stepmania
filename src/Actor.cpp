@@ -171,6 +171,7 @@ Actor::Actor()
 	m_bFirstUpdate = true;
 	m_being_drawn_by_proxy= false;
 	m_tween_uses_effect_delta= false;
+	m_clickable= false;
 }
 
 Actor::~Actor()
@@ -753,12 +754,79 @@ void Actor::BeginDraw() // set the world matrix
 		DISPLAY->SkewY( m_pTempState->fSkewY );
 	}
 
+	if(m_clickable)
+	{
+		Rage::Matrix conversion;
+		// This feels wrong because it's not using the projection matrix, but it
+		// works.  Maybe it won't work on an Actor that is inside an ActorFrame
+		// with a non-default FOV set. -Kyz
+		// Using the projection matrix seemed to put all 4 resulting screen
+		// corners at nearly the same point. -Kyz
+		RageMatrixMultiply(&conversion, DISPLAY->GetViewTop(), DISPLAY->GetWorldTop());
+		Rage::Vector3 corners[4]= {
+			{m_clickable_area.left, m_clickable_area.top, 0},
+			{m_clickable_area.right, m_clickable_area.top, 0},
+			{m_clickable_area.right, m_clickable_area.bottom, 0},
+			{m_clickable_area.left, m_clickable_area.bottom, 0},
+		};
+		Rage::Vector3 screen_corners[4]= {
+			corners[0].TransformCoords(conversion),
+			corners[1].TransformCoords(conversion),
+			corners[2].TransformCoords(conversion),
+			corners[3].TransformCoords(conversion),
+		};
+		m_screen_clickable_area.left= screen_corners[0].x;
+		m_screen_clickable_area.right= screen_corners[0].x;
+		m_screen_clickable_area.top= screen_corners[0].y;
+		m_screen_clickable_area.bottom= screen_corners[0].y;
+		for(int i= 1; i < 4; ++i)
+		{
+			m_screen_clickable_area.left= std::min(m_screen_clickable_area.left, screen_corners[i].x);
+			m_screen_clickable_area.right= std::max(m_screen_clickable_area.right, screen_corners[i].x);
+			m_screen_clickable_area.top= std::min(m_screen_clickable_area.top, screen_corners[i].y);
+			m_screen_clickable_area.bottom= std::max(m_screen_clickable_area.bottom, screen_corners[i].y);
+		}
+	}
+
 	if( m_texTranslate.x != 0 || m_texTranslate.y != 0 )
 	{
 		DISPLAY->TexturePushMatrix();
 		DISPLAY->TextureTranslate( m_texTranslate.x, m_texTranslate.y );
 	}
 
+}
+
+void Actor::set_clickable_area(float left, float right, float top, float bottom)
+{
+	m_clickable_area.left= left;
+	m_clickable_area.right= right;
+	m_clickable_area.top= top;
+	m_clickable_area.bottom= bottom;
+	m_clickable= true;
+	if(right - left < 1 || bottom - top < 1)
+	{
+		m_clickable= false;
+	}
+}
+
+void Actor::get_screen_clickable_area(float& left, float& right, float& top, float& bottom)
+{
+	left= m_screen_clickable_area.left;
+	right= m_screen_clickable_area.right;
+	top= m_screen_clickable_area.top;
+	bottom= m_screen_clickable_area.bottom;
+}
+
+bool Actor::pos_in_clickable_area(float x, float y)
+{
+	if(m_clickable)
+	{
+		return x >= m_screen_clickable_area.left &&
+			x <= m_screen_clickable_area.right &&
+			y >= m_screen_clickable_area.top &&
+			y <= m_screen_clickable_area.bottom;
+	}
+	return false;
 }
 
 void Actor::SetGlobalRenderStates()
@@ -2190,6 +2258,33 @@ public:
 		LUA->UnyieldLua();
 		COMMON_RETURN_SELF;
 	}
+	static int set_clickable_area(T* p, lua_State* L)
+	{
+		if(lua_isnoneornil(L, 1))
+		{
+			p->set_clickable_area(0.f, 0.f, 0.f, 0.f);
+		}
+		else
+		{
+			p->set_clickable_area(FArg(1), FArg(2), FArg(3), FArg(4));
+		}
+		COMMON_RETURN_SELF;
+	}
+	static int get_screen_clickable_area(T* p, lua_State* L)
+	{
+		float l,r,t,b;
+		p->get_screen_clickable_area(l, r, t, b);
+		lua_pushnumber(L, l);
+		lua_pushnumber(L, r);
+		lua_pushnumber(L, t);
+		lua_pushnumber(L, b);
+		return 4;
+	}
+	static int pos_in_clickable_area(T* p, lua_State* L)
+	{
+		lua_pushboolean(L, p->pos_in_clickable_area(FArg(1), FArg(2)));
+		return 1;
+	}
 
 	LunaActor()
 	{
@@ -2366,6 +2461,10 @@ public:
 		ADD_METHOD( GetWrapperState );
 
 		ADD_METHOD( Draw );
+
+		ADD_METHOD(set_clickable_area);
+		ADD_METHOD(get_screen_clickable_area);
+		ADD_METHOD(pos_in_clickable_area);
 	}
 };
 

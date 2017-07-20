@@ -450,12 +450,16 @@ protected:
 	Rage::Matrix GetCenteringMatrix( float fTranslateX, float fTranslateY, float fAddWidth, float fAddHeight ) const;
 	void UpdateCentering();
 
+	public:
+	// Matrix fetching functions made public so Actor can use them to calculate
+	// its screen coordinates for clicking. -Kyz
 	// Called by the RageDisplay derivitives
 	const Rage::Matrix* GetCentering() const;
 	const Rage::Matrix* GetProjectionTop() const;
 	const Rage::Matrix* GetViewTop() const;
 	const Rage::Matrix* GetWorldTop() const;
 	const Rage::Matrix* GetTextureTop() const;
+	protected:
 
 	// To limit the framerate, call FrameLimitBeforeVsync before waiting
 	// for vsync and FrameLimitAfterVsync after.

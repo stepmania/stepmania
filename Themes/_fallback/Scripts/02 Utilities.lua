@@ -451,6 +451,33 @@ function rec_print_table(t, indent, depth_remaining)
 	Trace(indent .. "end")
 end
 
+-- Finds the first child with the exact name given, descending into child
+-- frames as needed.
+function rec_find_child(frame, search_name)
+	if frame.GetChildren then
+		local children= frame:GetChildren()
+		for child_name, set in pairs(children) do
+			if child_name == search_name then
+				return set
+			end
+			if #set > 0 then
+				for id, child in ipairs(set) do
+					if child.GetChildren then
+						local sub_found= rec_find_child(child, search_name)
+						if sub_found then return sub_found end
+					end
+				end
+			else
+				if set.GetChildren then
+					local sub_found= rec_find_child(set, search_name)
+					if sub_found then return sub_found end
+				end
+			end
+		end
+	end
+	return nil
+end
+
 -- Because somebody decided stepmania's scaletofit should change the position
 -- of the actor. -kyz
 function scale_to_fit(actor, width, height)

@@ -32,6 +32,10 @@ extern "C"
 }
 #endif
 
+// FIXME: The build system should check for using X11.  Only the clipboard
+// and showcursor stuff use this. -Kyz
+#define HAVE_X11
+
 #if defined(HAVE_X11)
 #include "archutils/Unix/X11Helper.h"
 #include <X11/Xlib.h>
@@ -361,6 +365,13 @@ std::string ArchHooks_Unix::GetClipboard()
 #else
 	LOG->Warn("ArchHooks_Unix: GetClipboard(): Compiled without any supported clipboard source!");
 	return "";
+#endif
+}
+
+void ArchHooks_Unix::UpdateShowMouseCursor()
+{
+#ifdef HAVE_X11
+	X11Helper::UpdateShowCursor(X11Helper::Win);
 #endif
 }
 

@@ -20,6 +20,8 @@ public:
 	static clockid_t GetClock();
 
 	std::string GetClipboard();
+
+	virtual void UpdateShowMouseCursor();
 };
 
 #ifdef ARCH_HOOKS

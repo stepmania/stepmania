@@ -46,6 +46,22 @@ local default_config= {
 		zoom_y= 1,
 		zoom_z= 1,
 	},
+	preview= {
+		show_preview= false,
+		min_offset= -1,
+		max_offset= 1,
+		playback_speed= 1,
+		paused= false,
+		mods_reload_key= 'KP 0',
+		pause_key= 'KP 2',
+		hide_key= 'KP 1',
+		full_size_key= 'KP 3',
+		move_key= 'KP 6',
+		smaller_key= 'KP 4',
+		larger_key= 'KP 5',
+		zoom= .25,
+		corner= 3,
+	},
 }
 
 editor_config= create_lua_config{

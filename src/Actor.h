@@ -682,6 +682,10 @@ public:
 	virtual void SetUpdateRate( float ) {}
 	virtual float GetUpdateRate() { return 1.0f; }
 
+	void set_clickable_area(float left, float right, float top, float bottom);
+	void get_screen_clickable_area(float& left, float& right, float& top, float& bottom);
+	bool pos_in_clickable_area(float x, float y);
+
 	HiddenPtr<LuaClass> m_pLuaInstance;
 
 protected:
@@ -722,6 +726,12 @@ protected:
 	float m_fBaseAlpha;
 	Rage::Color m_internalDiffuse;
 	Rage::Color m_internalGlow;
+
+	// For making it possible to click on sprites. -Kyz
+	// TODO: Clicking on rotated things.
+	Rage::RectF m_clickable_area;
+	Rage::RectF m_screen_clickable_area;
+	bool m_clickable;
 
 	Rage::Vector2	m_size;
 	TweenState	m_current;

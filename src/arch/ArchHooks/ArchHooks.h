@@ -123,6 +123,9 @@ public:
 	/** @brief Fetch the contents of the system clipboard. */
 	virtual std::string GetClipboard();
 
+	// Apparently only Linux uses the ShowMouseCursor preference? -Kyz
+	virtual void UpdateShowMouseCursor() {}
+
 	// Lua
 	void PushSelf( lua_State *L );
 	void RegisterWithLua();

@@ -563,6 +563,10 @@ function set_simfile_custom_mods(mods)
 end
 
 local function print_params_info(name, params)
+	if not params then
+		Trace("    "..name..":  None.")
+		return
+	end
 	local has_none= true
 	for name, meh in pairs(params) do
 		has_none= false

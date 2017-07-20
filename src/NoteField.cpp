@@ -2435,7 +2435,14 @@ void NoteField::become_share_steps_child(NoteField* parent,
 		m_share_steps_parent->remove_share_steps_child(this);
 	}
 	m_share_steps_parent= parent;
-	set_note_data(note_data, timing, stype);
+	if(note_data)
+	{
+		set_note_data(note_data, timing, stype);
+	}
+	else
+	{
+		clear_steps();
+	}
 }
 
 void NoteField::remove_share_steps_child(NoteField* child) // this is parent

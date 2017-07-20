@@ -18,6 +18,8 @@ static Preference<std::string>		g_XWMName( "XWMName", PRODUCT_ID );
 static bool display_supports_dpms_extension= false;
 static bool dpms_state_at_startup= false;
 
+static bool define_cursor_used= false;
+
 bool X11Helper::OpenXConnection()
 {
 	DEBUG_ASSERT( Dpy == nullptr && Win == None );
@@ -112,8 +114,15 @@ bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visua
 		XFree(hint);
 	}
 
+	UpdateShowCursor(win);
+
+	return true;
+}
+
+void X11Helper::UpdateShowCursor(Window &win)
+{
 	// Hide the mouse cursor in certain situations.
-    if( !PREFSMAN->m_bShowMouseCursor )
+  if( !PREFSMAN->m_bShowMouseCursor )
 	{
 		const char pBlank[] = { 0,0,0,0,0,0,0,0 };
 		Pixmap BlankBitmap = XCreateBitmapFromData( Dpy, win, pBlank, 8, 8 );
@@ -124,9 +133,16 @@ bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visua
 
 		XDefineCursor( Dpy, win, pBlankPointer );
 		XFreeCursor( Dpy, pBlankPointer );
+		define_cursor_used= true;
 	}
-
-	return true;
+	else
+	{
+		if(define_cursor_used)
+		{
+			define_cursor_used= false;
+			XUndefineCursor(Dpy, win);
+		}
+	}
 }
 
 void X11Helper::SetWMState( const Window &root, const Window &win, const long action, const Atom atom )

@@ -2125,7 +2125,13 @@ bool ScreenEdit::Input( const InputEventPlus &input )
 
 	EditButton EditB = DeviceToEdit( input.DeviceI );
 	if( EditB == EditButton_Invalid )
-		EditB = MenuButtonToEditButton( input.MenuI );
+	{
+		// I don't believe there's an actual good reason to be controlling edit
+		// mode with the menu/gameplay buttons when there are already keys mapped
+		// for everything.  Doing so just makes it harder to assign keys for new
+		// things. -Kyz
+		//EditB = MenuButtonToEditButton( input.MenuI );
+	}
 
 	if( EditB == EDIT_BUTTON_REMOVE_NOTE )
 	{
