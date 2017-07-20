@@ -58,6 +58,7 @@ private:
 	float calculate_tornado_offset_from_magnitude(int dimension, int col_id,
 		float magnitude, float effect_offset, float period, float y_offset);
 	void update_beat(int dimension, float beat_offset, float beat_mult);
+	void update_tipsy(float offset, float speed, bool is_tan);
 	float select_tan_calc(float angle, bool is_cosec);
 	float calculate_drunk_angle(float speed, int col, float offset, 
 		float col_frequency, float y_offset, float period, float offset_frequency);
@@ -82,6 +83,7 @@ private:
 	std::vector<float> m_max_tornado_x[3];
 	std::vector<float> m_invert_dist;
 	std::vector<float> m_tipsy_result;
+	std::vector<float> m_tan_tipsy_result;
 	float m_beat_factor[3];
 	float m_expand_seconds;
 

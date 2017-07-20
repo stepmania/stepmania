@@ -155,6 +155,27 @@ void ArrowDefects::update_beat(int dimension, float beat_offset, float beat_mult
 	}
 }
 
+void ArrowDefects::update_tipsy(float offset, float speed, bool is_tan)
+{
+	float const time= get_time();
+	float const time_times_timer= time * ((speed * tipsy_timer_frequency) + tipsy_timer_frequency);
+	float const arrow_times_mag= arrow_spacing * tipsy_arrow_magnitude;
+	for(size_t col= 0; col < m_num_columns; ++col)
+	{
+		if (is_tan)
+		{
+			m_tan_tipsy_result[col]= select_tan_calc(time_times_timer + (col * ((offset * 
+				tipsy_column_frequency) + tipsy_column_frequency)), m_options->m_bCosecant)
+				* arrow_times_mag;
+		}
+		else
+		{
+			m_tipsy_result[col]= Rage::FastCos(time_times_timer + (col * ((offset * 
+				tipsy_column_frequency) + tipsy_column_frequency))) * arrow_times_mag;
+		}
+	}
+}
+
 float ArrowDefects::select_tan_calc(float angle, bool is_cosec)
 {
 	if (is_cosec)
@@ -166,7 +187,7 @@ float ArrowDefects::select_tan_calc(float angle, bool is_cosec)
 float ArrowDefects::calculate_drunk_angle(float speed, int col, float offset, 
 	float col_frequency, float y_offset, float period, float offset_frequency)
 {
-	float time = ArrowDefects::get_time();
+	float time = get_time();
 	return time * (1+speed) + col*( (offset*col_frequency) + col_frequency)
 		+ y_offset * ( (period*offset_frequency) + offset_frequency) / SCREEN_HEIGHT;
 }
@@ -238,7 +259,7 @@ void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 	m_num_columns= column_x.size();
 	for(auto&& member : {&m_min_tornado_x[0], &m_max_tornado_x[0], &m_min_tornado_x[1], 
 				&m_max_tornado_x[1], &m_min_tornado_x[2], &m_max_tornado_x[2],
-				&m_invert_dist, &m_tipsy_result})
+				&m_invert_dist, &m_tipsy_result, &m_tan_tipsy_result})
 	{
 		member->resize(m_num_columns);
 	}
@@ -328,20 +349,26 @@ void ArrowDefects::update(PlayerNumber pn, float music_beat, float music_second)
 	}
 	if(effects[PlayerOptions::EFFECT_TIPSY] != 0.f)
 	{
-		float const time= ArrowDefects::get_time();
-		float const time_times_timer= time * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * tipsy_timer_frequency) + tipsy_timer_frequency);
-		float const arrow_times_mag= arrow_spacing * tipsy_arrow_magnitude;
-		for(size_t col= 0; col < m_num_columns; ++col)
-		{
-			m_tipsy_result[col]= Rage::FastCos(time_times_timer +
-				(col * ((effects[PlayerOptions::EFFECT_TIPSY_OFFSET] * tipsy_column_frequency) + tipsy_column_frequency))) * arrow_times_mag;
-		}
+		update_tipsy(effects[PlayerOptions::EFFECT_TIPSY_OFFSET], 
+				effects[PlayerOptions::EFFECT_TIPSY_SPEED], false);
 	}
 	else
 	{
 		for(size_t col= 0; col < m_num_columns; ++col)
 		{
 			m_tipsy_result[col]= 0;
+		}
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_TIPSY] != 0.f)
+	{
+		update_tipsy(effects[PlayerOptions::EFFECT_TAN_TIPSY_OFFSET], 
+				effects[PlayerOptions::EFFECT_TAN_TIPSY_SPEED], true);
+	}
+	else
+	{
+		for(size_t col= 0; col < m_num_columns; ++col)
+		{
+			m_tan_tipsy_result[col]= 0;
 		}
 	}
 	if(effects[PlayerOptions::EFFECT_BEAT] != 0.f)
@@ -660,6 +687,7 @@ float ArrowDefects::get_y_pos(size_t col, float y_offset)
 	float f = y_offset;
 	float const* effects= m_options->m_fEffects;
 	f+= effects[PlayerOptions::EFFECT_TIPSY] * m_tipsy_result[col];
+	f+= effects[PlayerOptions::EFFECT_TAN_TIPSY] * m_tan_tipsy_result[col];
 	
 	// In beware's DDR Extreme-focused fork of StepMania 3.9, this value is
 	// floored, making arrows show on integer Y coordinates. Supposedly it makes
