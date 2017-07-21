@@ -390,10 +390,18 @@ void PlayerOptions::GetMods(vector<std::string> &AddTo) const
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_STEPS],	"DigitalSteps" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_PERIOD],	"DigitalPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_OFFSET],	"DigitalOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL],		"TanDigital" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_STEPS],	"TanDigitalSteps" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_PERIOD],	"TanDigitalPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_OFFSET],	"TanDigitalOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z],		"DigitalZ" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_STEPS],	"DigitalZSteps" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_PERIOD],	"DigitalZPeriod" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIGITAL_Z_OFFSET],	"DigitalZOffset" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_Z],	"TanDigitalZ" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_Z_STEPS],	"TanDigitalZSteps" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_Z_PERIOD],"TanDigitalZPeriod" );
+	AddPart( AddTo, m_fEffects[EFFECT_TAN_DIGITAL_Z_OFFSET],"TanDigitalZOffset" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_X],		"ParabolaX" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Y],		"ParabolaY" );
 	AddPart( AddTo, m_fEffects[EFFECT_PARABOLA_Z],		"ParabolaZ" );
@@ -862,10 +870,18 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{"digitalsteps", EFFECT_DIGITAL_STEPS},
 			{"digitalperiod", EFFECT_DIGITAL_PERIOD},
 			{"digitaloffset", EFFECT_DIGITAL_OFFSET},
+			{"tandigital", EFFECT_TAN_DIGITAL},
+			{"tandigitalsteps", EFFECT_TAN_DIGITAL_STEPS},
+			{"tandigitalperiod", EFFECT_TAN_DIGITAL_PERIOD},
+			{"tandigitaloffset", EFFECT_TAN_DIGITAL_OFFSET},
 			{"digitalz", EFFECT_DIGITAL_Z},
 			{"digitalzsteps", EFFECT_DIGITAL_Z_STEPS},
 			{"digitalzperiod", EFFECT_DIGITAL_Z_PERIOD},
 			{"digitalzoffset", EFFECT_DIGITAL_Z_OFFSET},
+			{"tandigitalz", EFFECT_TAN_DIGITAL_Z},
+			{"tandigitalzsteps", EFFECT_TAN_DIGITAL_Z_STEPS},
+			{"tandigitalzperiod", EFFECT_TAN_DIGITAL_Z_PERIOD},
+			{"tandigitalzoffset", EFFECT_TAN_DIGITAL_Z_OFFSET},
 			{"zigzag", EFFECT_ZIGZAG},
 			{"zigzagoffset", EFFECT_ZIGZAG_OFFSET},
 			{"zigzagperiod", EFFECT_ZIGZAG_PERIOD},
@@ -1881,10 +1897,18 @@ public:
 	FLOAT_INTERFACE(DigitalSteps, Effects[PlayerOptions::EFFECT_DIGITAL_STEPS], true);
 	FLOAT_INTERFACE(DigitalPeriod, Effects[PlayerOptions::EFFECT_DIGITAL_PERIOD], true);
 	FLOAT_INTERFACE(DigitalOffset, Effects[PlayerOptions::EFFECT_DIGITAL_OFFSET], true);
+	FLOAT_INTERFACE(TanDigital, Effects[PlayerOptions::EFFECT_TAN_DIGITAL], true);
+	FLOAT_INTERFACE(TanDigitalSteps, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS], true);
+	FLOAT_INTERFACE(TanDigitalPeriod, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_PERIOD], true);
+	FLOAT_INTERFACE(TanDigitalOffset, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_OFFSET], true);
 	FLOAT_INTERFACE(DigitalZ, Effects[PlayerOptions::EFFECT_DIGITAL_Z], true);
 	FLOAT_INTERFACE(DigitalZSteps, Effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS], true);
 	FLOAT_INTERFACE(DigitalZPeriod, Effects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD], true);
 	FLOAT_INTERFACE(DigitalZOffset, Effects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET], true);
+	FLOAT_INTERFACE(TanDigitalZ, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z], true);
+	FLOAT_INTERFACE(TanDigitalZSteps, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS], true);
+	FLOAT_INTERFACE(TanDigitalZPeriod, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_PERIOD], true);
+	FLOAT_INTERFACE(TanDigitalZOffset, Effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_OFFSET], true);
 	FLOAT_INTERFACE(ParabolaX, Effects[PlayerOptions::EFFECT_PARABOLA_X], true);
 	FLOAT_INTERFACE(ParabolaY, Effects[PlayerOptions::EFFECT_PARABOLA_Y], true);
 	FLOAT_INTERFACE(ParabolaZ, Effects[PlayerOptions::EFFECT_PARABOLA_Z], true);
@@ -2357,10 +2381,18 @@ public:
 		ADD_METHOD(DigitalSteps);
 		ADD_METHOD(DigitalPeriod);
 		ADD_METHOD(DigitalOffset);
+		ADD_METHOD(TanDigital);
+		ADD_METHOD(TanDigitalSteps);
+		ADD_METHOD(TanDigitalPeriod);
+		ADD_METHOD(TanDigitalOffset);
 		ADD_METHOD(DigitalZ);
 		ADD_METHOD(DigitalZSteps);
 		ADD_METHOD(DigitalZPeriod);
 		ADD_METHOD(DigitalZOffset);
+		ADD_METHOD(TanDigitalZ);
+		ADD_METHOD(TanDigitalZSteps);
+		ADD_METHOD(TanDigitalZPeriod);
+		ADD_METHOD(TanDigitalZOffset);
 		ADD_METHOD(ParabolaX);
 		ADD_METHOD(ParabolaY);
 		ADD_METHOD(ParabolaZ);

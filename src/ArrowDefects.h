@@ -63,6 +63,7 @@ private:
 	float calculate_drunk_angle(float speed, int col, float offset, 
 		float col_frequency, float y_offset, float period, float offset_frequency);
 	float calculate_bumpy_angle(float y_offset, float offset, float period);
+	float calculate_digital_angle(float y_offset, float offset, float period);
 	
 	float get_center_line();
 	float get_hidden_sudden();

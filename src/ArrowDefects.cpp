@@ -198,6 +198,11 @@ float ArrowDefects::calculate_bumpy_angle(float y_offset, float offset, float pe
 	return (y_offset+(100.0f*offset))/((period*16.0f)+16.0f);
 }
 
+float ArrowDefects::calculate_digital_angle(float y_offset, float offset, float period)
+{
+	return Rage::PI * (y_offset + (1.0f * offset ) ) / (arrow_spacing + (period * arrow_spacing) );
+}
+
 void ArrowDefects::Init()
 {
 	// Init tornado limits.
@@ -661,9 +666,18 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	if(effects[PlayerOptions::EFFECT_DIGITAL] != 0.f)
 	{
 		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_DIGITAL] * arrow_spacing * 0.5f) *
-			round((effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * Rage::FastSin(
-				(Rage::PI * (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_DIGITAL_OFFSET]) ) ) / 
-					(arrow_spacing + (effects[PlayerOptions::EFFECT_DIGITAL_PERIOD] * arrow_spacing)) ) ) )/(effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+			round((effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * Rage::FastSin( 
+			calculate_digital_angle(y_offset, 
+				effects[PlayerOptions::EFFECT_DIGITAL_OFFSET], 
+				effects[PlayerOptions::EFFECT_DIGITAL_PERIOD]) ) )/(effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_DIGITAL] != 0.f)
+	{
+		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_TAN_DIGITAL] * arrow_spacing * 0.5f) *
+			round((effects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS]+1) * select_tan_calc( 
+			calculate_digital_angle(y_offset, 
+				effects[PlayerOptions::EFFECT_TAN_DIGITAL_OFFSET], 
+				effects[PlayerOptions::EFFECT_TAN_DIGITAL_PERIOD]), m_options->m_bCosecant ) )/(effects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS]+1);
 	}
 	if(effects[PlayerOptions::EFFECT_SQUARE] != 0.f)
 	{
@@ -829,8 +843,17 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 	{
 		zpos += (effects[PlayerOptions::EFFECT_DIGITAL_Z] * arrow_spacing * 0.5f) *
 			round((effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1) * Rage::FastSin(
-				(Rage::PI * (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET]) ) ) / 
-					(arrow_spacing + (effects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD] * arrow_spacing)) )))/(effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+				calculate_digital_angle(y_offset, 
+				effects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET], 
+				effects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD]) ) ) /(effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z] != 0.f)
+	{
+		zpos += (effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z] * arrow_spacing * 0.5f) *
+			round((effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS]+1) * select_tan_calc(
+				calculate_digital_angle(y_offset, 
+				effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_OFFSET], 
+				effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_PERIOD]), m_options->m_bCosecant ) ) /(effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS]+1);
 	}
 	if(effects[PlayerOptions::EFFECT_SQUARE_Z] != 0.f)
 	{
