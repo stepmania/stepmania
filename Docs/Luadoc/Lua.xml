@@ -1181,6 +1181,7 @@
 			<Function name='ConfusionY'/>
 			<Function name='ConfusionYOffset'/>
 			<Function name='ConfusionYOffsetn'/>
+			<Function name='Cosecant'/>
 			<Function name='Cover'/>
 			<Function name='Cross'/>
 			<Function name='Dark'/>
