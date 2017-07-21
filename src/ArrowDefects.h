@@ -56,7 +56,7 @@ private:
 	float get_percent_visible(float y_pos_without_reverse, size_t col, float y_offset);
 	void get_glow_alpha(size_t col, float y_offset, Rage::transform& trans);
 	float calculate_tornado_offset_from_magnitude(int dimension, int col_id,
-		float magnitude, float effect_offset, float period, float y_offset);
+		float magnitude, float effect_offset, float period, float y_offset, bool is_tan);
 	void update_beat(int dimension, float beat_offset, float beat_mult);
 	void update_tipsy(float offset, float speed, bool is_tan);
 	float select_tan_calc(float angle, bool is_cosec);

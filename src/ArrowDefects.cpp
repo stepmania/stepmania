@@ -103,7 +103,7 @@ float ArrowDefects::get_time()
 }
 
 float ArrowDefects::calculate_tornado_offset_from_magnitude(int dimension, int col_id,
-	float magnitude, float effect_offset, float period, float y_offset)
+	float magnitude, float effect_offset, float period, float y_offset, bool is_tan)
 {
 	float const real_pixel_offset = m_column_x[col_id];
 	float const position_between= Rage::scale(real_pixel_offset,
@@ -114,7 +114,8 @@ float ArrowDefects::calculate_tornado_offset_from_magnitude(int dimension, int c
 	float rads= std::acos(position_between);
 	float frequency= tornado_offset_frequency;
 	rads+= (y_offset + effect_offset) * ((period * frequency) +  frequency) / SCREEN_HEIGHT;
-	float const adjusted_pixel_offset= Rage::scale(Rage::FastCos(rads),
+	float processed_rads = is_tan ? select_tan_calc(rads, m_options->m_bCosecant) : Rage::FastCos(rads); 
+	float const adjusted_pixel_offset= Rage::scale(processed_rads,
 		tornado_offset_scale_from_low,
 		tornado_offset_scale_from_high,
 		m_min_tornado_x[dimension][col_id],
@@ -571,7 +572,15 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 			effects[PlayerOptions::EFFECT_TORNADO],
 			effects[PlayerOptions::EFFECT_TORNADO_OFFSET],
 			effects[PlayerOptions::EFFECT_TORNADO_PERIOD],
-			y_offset);
+			y_offset, false);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_TORNADO] != 0.f)
+	{
+		pixel_offset_from_center+= calculate_tornado_offset_from_magnitude(dim_x, col,
+			effects[PlayerOptions::EFFECT_TAN_TORNADO],
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_OFFSET],
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_PERIOD],
+			y_offset, true);
 	}
 	if( effects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
 	{
@@ -739,7 +748,15 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 			effects[PlayerOptions::EFFECT_TORNADO_Z],
 			effects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET],
 			effects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD],
-			y_offset);
+			y_offset, false);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_TORNADO_Z] != 0.f)
+	{
+		zpos += calculate_tornado_offset_from_magnitude(dim_z, col,
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_Z],
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_Z_OFFSET],
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_Z_PERIOD],
+			y_offset, true);
 	}
 	if(effects[PlayerOptions::EFFECT_BUMPY] != 0.f)
 	{
