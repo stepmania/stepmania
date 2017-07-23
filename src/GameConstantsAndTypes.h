@@ -112,6 +112,8 @@ enum StepsType
 	StepsType_kickbox_quadarm,
 	StepsType_kickbox_insect,
 	StepsType_kickbox_arachnid,
+	StepsType_horizon_single,
+	StepsType_horizon_double,
 	NUM_StepsType,		// leave this at the end
 	StepsType_Invalid,
 };
