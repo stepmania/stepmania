@@ -171,7 +171,6 @@ Actor::Actor()
 	m_bFirstUpdate = true;
 	m_being_drawn_by_proxy= false;
 	m_tween_uses_effect_delta= false;
-	m_clickable= false;
 }
 
 Actor::~Actor()
@@ -754,7 +753,7 @@ void Actor::BeginDraw() // set the world matrix
 		DISPLAY->SkewY( m_pTempState->fSkewY );
 	}
 
-	if(m_clickable)
+	if(!m_clickable_area.empty())
 	{
 		Rage::Matrix conversion;
 		// This feels wrong because it's not using the projection matrix, but it
@@ -763,28 +762,9 @@ void Actor::BeginDraw() // set the world matrix
 		// Using the projection matrix seemed to put all 4 resulting screen
 		// corners at nearly the same point. -Kyz
 		RageMatrixMultiply(&conversion, DISPLAY->GetViewTop(), DISPLAY->GetWorldTop());
-		Rage::Vector3 corners[4]= {
-			{m_clickable_area.left, m_clickable_area.top, 0},
-			{m_clickable_area.right, m_clickable_area.top, 0},
-			{m_clickable_area.right, m_clickable_area.bottom, 0},
-			{m_clickable_area.left, m_clickable_area.bottom, 0},
-		};
-		Rage::Vector3 screen_corners[4]= {
-			corners[0].TransformCoords(conversion),
-			corners[1].TransformCoords(conversion),
-			corners[2].TransformCoords(conversion),
-			corners[3].TransformCoords(conversion),
-		};
-		m_screen_clickable_area.left= screen_corners[0].x;
-		m_screen_clickable_area.right= screen_corners[0].x;
-		m_screen_clickable_area.top= screen_corners[0].y;
-		m_screen_clickable_area.bottom= screen_corners[0].y;
-		for(int i= 1; i < 4; ++i)
+		for(size_t corner= 0; corner < m_clickable_area.size(); ++corner)
 		{
-			m_screen_clickable_area.left= std::min(m_screen_clickable_area.left, screen_corners[i].x);
-			m_screen_clickable_area.right= std::max(m_screen_clickable_area.right, screen_corners[i].x);
-			m_screen_clickable_area.top= std::min(m_screen_clickable_area.top, screen_corners[i].y);
-			m_screen_clickable_area.bottom= std::max(m_screen_clickable_area.bottom, screen_corners[i].y);
+			m_screen_clickable_area[corner]= m_clickable_area[corner].TransformCoords(conversion);
 		}
 	}
 
@@ -796,37 +776,24 @@ void Actor::BeginDraw() // set the world matrix
 
 }
 
-void Actor::set_clickable_area(float left, float right, float top, float bottom)
+void Actor::set_clickable_area(vector<Rage::Vector2> const& points)
 {
-	m_clickable_area.left= left;
-	m_clickable_area.right= right;
-	m_clickable_area.top= top;
-	m_clickable_area.bottom= bottom;
-	m_clickable= true;
-	if(right - left < 1 || bottom - top < 1)
-	{
-		m_clickable= false;
-	}
+	m_clickable_area= points;
+	m_screen_clickable_area.resize(m_clickable_area.size());
 }
 
-void Actor::get_screen_clickable_area(float& left, float& right, float& top, float& bottom)
+vector<Rage::Vector2> const& Actor::get_screen_clickable_area()
 {
-	left= m_screen_clickable_area.left;
-	right= m_screen_clickable_area.right;
-	top= m_screen_clickable_area.top;
-	bottom= m_screen_clickable_area.bottom;
+	return m_screen_clickable_area;
 }
 
 bool Actor::pos_in_clickable_area(float x, float y)
 {
-	if(m_clickable)
+	if(m_screen_clickable_area.empty())
 	{
-		return x >= m_screen_clickable_area.left &&
-			x <= m_screen_clickable_area.right &&
-			y >= m_screen_clickable_area.top &&
-			y <= m_screen_clickable_area.bottom;
+		return false;
 	}
-	return false;
+	return point_inside_poly(x, y, m_screen_clickable_area);
 }
 
 void Actor::SetGlobalRenderStates()
@@ -2260,25 +2227,43 @@ public:
 	}
 	static int set_clickable_area(T* p, lua_State* L)
 	{
-		if(lua_isnoneornil(L, 1))
+		vector<Rage::Vector2> points;
+		if(lua_type(L, 1) == LUA_TTABLE)
 		{
-			p->set_clickable_area(0.f, 0.f, 0.f, 0.f);
+			size_t num_points= lua_objlen(L, 1);
+			points.resize(num_points);
+			for(size_t p= 0; p < num_points; ++p)
+			{
+				lua_rawgeti(L, 1, p+1);
+				int point_table= lua_gettop(L);
+				if(lua_type(L, point_table) == LUA_TTABLE)
+				{
+					lua_rawgeti(L, point_table, 1);
+					points[p].x= lua_tonumber(L, -1);
+					lua_rawgeti(L, point_table, 2);
+					points[p].y= lua_tonumber(L, -1);
+					lua_pop(L, 2);
+				}
+				lua_pop(L, 1);
+			}
 		}
-		else
-		{
-			p->set_clickable_area(FArg(1), FArg(2), FArg(3), FArg(4));
-		}
+		p->set_clickable_area(points);
 		COMMON_RETURN_SELF;
 	}
 	static int get_screen_clickable_area(T* p, lua_State* L)
 	{
-		float l,r,t,b;
-		p->get_screen_clickable_area(l, r, t, b);
-		lua_pushnumber(L, l);
-		lua_pushnumber(L, r);
-		lua_pushnumber(L, t);
-		lua_pushnumber(L, b);
-		return 4;
+		vector<Rage::Vector2> const& points= p->get_screen_clickable_area();
+		lua_createtable(L, points.size(), 0);
+		for(size_t p= 0; p < points.size(); ++p)
+		{
+			lua_createtable(L, 2, 0);
+			lua_pushnumber(L, points[p].x);
+			lua_rawseti(L, -2, 1);
+			lua_pushnumber(L, points[p].y);
+			lua_rawseti(L, -2, 2);
+			lua_rawseti(L, -2, p+1);
+		}
+		return 1;
 	}
 	static int pos_in_clickable_area(T* p, lua_State* L)
 	{
