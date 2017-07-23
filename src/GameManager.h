@@ -18,7 +18,7 @@ struct StepsTypeInfo
 	int iNumTracks;
 	/** @brief A flag to determine if we allow this type to be autogen'ed to other types. */
 	bool bAllowAutogen;
-	/** @brief The most basic StyleType that this StpesTypeInfo is used with. */
+	/** @brief The most basic StyleType that this StepsTypeInfo is used with. */
 	StepsTypeCategory m_StepsTypeCategory;
 	std::string GetLocalizedString() const;
 };

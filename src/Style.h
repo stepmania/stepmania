@@ -56,7 +56,7 @@ public:
 		const char *pzName;	/**< The name of the column, or nullptr to use the button name mapped to it. */
 	};
 
-	/** @brief Map each players' colun to a track in the NoteData. */
+	/** @brief Map each players' column to a track in the NoteData. */
 	ColumnInfo		m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 
 	/* This maps from game inputs to columns. More than one button may map to a

@@ -248,7 +248,7 @@ extern TapNote TAP_ADDITION_MINE;
  *
  * TODO: Don't have a hard-coded track limit.
  */
-const int MAX_NOTE_TRACKS = 16;
+const int MAX_NOTE_TRACKS = 18;
 
 /**
  * @brief The number of rows per beat.

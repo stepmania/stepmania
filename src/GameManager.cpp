@@ -35,7 +35,8 @@ enum
 	TRACK_14,
 	TRACK_15,
 	TRACK_16,
-	// 16 tracks needed for beat-double7 and techno-double8
+	TRACK_17,
+	TRACK_18,
 };
 
 std::string StepsTypeInfo::GetLocalizedString() const
@@ -100,6 +101,9 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "kickbox-quadarm", 4, true, StepsTypeCategory_Single },
 	{ "kickbox-insect", 6, true, StepsTypeCategory_Single },
 	{ "kickbox-arachnid", 8, true, StepsTypeCategory_Single },
+	// horizon
+	{ "horizon-single", 9, true, StepsTypeCategory_Single },
+	{ "horizon-double", 18, true, StepsTypeCategory_Double },
 };
 
 
@@ -3128,6 +3132,232 @@ static const Game g_Game_Kickbox =
 	TNS_W5,	// m_mapW5To
 };
 
+static const Style g_Style_Horizon_Single =
+{
+	true,				// m_bUsedForGameplay
+	true,				// m_bUsedForEdit
+	true,				// m_bUsedForDemonstration
+	true,				// m_bUsedForHowToPlay
+	"single",			// m_szName
+	StepsType_horizon_single,	// m_StepsType
+	StyleType_OnePlayerOneSide,		// m_StyleType
+	9,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1, nullptr },
+			{ TRACK_2, nullptr },
+			{ TRACK_3, nullptr },
+			{ TRACK_4, nullptr },
+			{ TRACK_5, nullptr },
+			{ TRACK_6, nullptr },
+			{ TRACK_7, nullptr },
+			{ TRACK_8, nullptr },
+			{ TRACK_9, nullptr },
+		},
+		{	// PLAYER_2
+			{ TRACK_1, nullptr },
+			{ TRACK_2, nullptr },
+			{ TRACK_3, nullptr },
+			{ TRACK_4, nullptr },
+			{ TRACK_5, nullptr },
+			{ TRACK_6, nullptr },
+			{ TRACK_7, nullptr },
+			{ TRACK_8, nullptr },
+			{ TRACK_9, nullptr },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 1, 7, 5, 3, 2, 6, 4, 0, 8, Style::END_MAPPING },
+		{ 1, 7, 5, 3, 2, 6, 4, 0, 8, Style::END_MAPPING },
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0, 1, 2, 3, 4, 5, 6, 7, 8
+	},
+	true, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
+static const Style g_Style_Horizon_Versus =
+{
+	true,				// m_bUsedForGameplay
+	false,				// m_bUsedForEdit
+	true,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"versus",			// m_szName
+	StepsType_horizon_single,	// m_StepsType
+	StyleType_TwoPlayersTwoSides,		// m_StyleType
+	9,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1, nullptr },
+			{ TRACK_2, nullptr },
+			{ TRACK_3, nullptr },
+			{ TRACK_4, nullptr },
+			{ TRACK_5, nullptr },
+			{ TRACK_6, nullptr },
+			{ TRACK_7, nullptr },
+			{ TRACK_8, nullptr },
+			{ TRACK_9, nullptr },
+		},
+		{	// PLAYER_2
+			{ TRACK_1, nullptr },
+			{ TRACK_2, nullptr },
+			{ TRACK_3, nullptr },
+			{ TRACK_4, nullptr },
+			{ TRACK_5, nullptr },
+			{ TRACK_6, nullptr },
+			{ TRACK_7, nullptr },
+			{ TRACK_8, nullptr },
+			{ TRACK_9, nullptr },
+		},
+	},
+	{
+		{ 1, 7, 5, 3, 2, 6, 4, 0, 8, Style::END_MAPPING },
+		{ 1, 7, 5, 3, 2, 6, 4, 0, 8, Style::END_MAPPING },
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0, 1, 2, 3, 4, 5, 6, 7, 8
+	},
+	true, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
+static const Style g_Style_Horizon_Double =
+{
+	true,				// m_bUsedForGameplay
+	true,				// m_bUsedForEdit
+	true,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"double",			// m_szName
+	StepsType_horizon_double,	// m_StepsType
+	StyleType_OnePlayerTwoSides,		// m_StyleType
+	18,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1, nullptr },
+			{ TRACK_2, nullptr },
+			{ TRACK_3, nullptr },
+			{ TRACK_4, nullptr },
+			{ TRACK_5, nullptr },
+			{ TRACK_6, nullptr },
+			{ TRACK_7, nullptr },
+			{ TRACK_8, nullptr },
+			{ TRACK_9, nullptr },
+			{ TRACK_10, nullptr },
+			{ TRACK_11, nullptr },
+			{ TRACK_12, nullptr },
+			{ TRACK_13, nullptr },
+			{ TRACK_14, nullptr },
+			{ TRACK_15, nullptr },
+			{ TRACK_16, nullptr },
+			{ TRACK_17, nullptr },
+			{ TRACK_18, nullptr },
+		},
+		{	// PLAYER_2
+			{ TRACK_1, nullptr },
+			{ TRACK_2, nullptr },
+			{ TRACK_3, nullptr },
+			{ TRACK_4, nullptr },
+			{ TRACK_5, nullptr },
+			{ TRACK_6, nullptr },
+			{ TRACK_7, nullptr },
+			{ TRACK_8, nullptr },
+			{ TRACK_9, nullptr },
+			{ TRACK_10, nullptr },
+			{ TRACK_11, nullptr },
+			{ TRACK_12, nullptr },
+			{ TRACK_13, nullptr },
+			{ TRACK_14, nullptr },
+			{ TRACK_15, nullptr },
+			{ TRACK_16, nullptr },
+			{ TRACK_17, nullptr },
+			{ TRACK_18, nullptr },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 1, 7, 5, 3, 2, 6, 4, 0, 8, Style::END_MAPPING },
+		{ 10, 16, 14, 12, 11, 15, 13, 9, 17, Style::END_MAPPING },
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
+	},
+	false, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
+static const Style *g_apGame_Horizon_Styles[] =
+{
+	&g_Style_Horizon_Single,
+	&g_Style_Horizon_Versus,
+	&g_Style_Horizon_Double,
+	nullptr
+};
+
+static const AutoMappings g_AutoKeyMappings_Horizon = AutoMappings (
+	"",
+	"",
+	"",
+	AutoMappingEntry( 0, KEY_Ca,		HORIZON_BUTTON_LEFT,	false ),
+	AutoMappingEntry( 0, KEY_Cd,		HORIZON_BUTTON_RIGHT,	false ),
+	AutoMappingEntry( 0, KEY_Cw,		HORIZON_BUTTON_UP,	false ),
+	AutoMappingEntry( 0, KEY_Cx,		HORIZON_BUTTON_DOWN,	false ),
+	AutoMappingEntry( 0, KEY_Cq,		HORIZON_BUTTON_UPLEFT,	false ),
+	AutoMappingEntry( 0, KEY_Ce,		HORIZON_BUTTON_UPRIGHT,	false ),
+	AutoMappingEntry( 0, KEY_Cs,		HORIZON_BUTTON_CENTER,	false ),
+	AutoMappingEntry( 0, KEY_Cz,		HORIZON_BUTTON_DOWNLEFT,	false ),
+	AutoMappingEntry( 0, KEY_Cc,		HORIZON_BUTTON_DOWNRIGHT,false ),
+	AutoMappingEntry( 0, KEY_KP_C4,		HORIZON_BUTTON_LEFT,	true ),
+	AutoMappingEntry( 0, KEY_KP_C6,		HORIZON_BUTTON_RIGHT,	true ),
+	AutoMappingEntry( 0, KEY_KP_C8,		HORIZON_BUTTON_UP,	true ),
+	AutoMappingEntry( 0, KEY_KP_C2,		HORIZON_BUTTON_DOWN,	true ),
+	AutoMappingEntry( 0, KEY_KP_C7,		HORIZON_BUTTON_UPLEFT,	true ),
+	AutoMappingEntry( 0, KEY_KP_C9,		HORIZON_BUTTON_UPRIGHT,	true ),
+	AutoMappingEntry( 0, KEY_KP_C5,		HORIZON_BUTTON_CENTER,	true ),
+	AutoMappingEntry( 0, KEY_KP_C1,		HORIZON_BUTTON_DOWNLEFT,	true ),
+	AutoMappingEntry( 0, KEY_KP_C3,		HORIZON_BUTTON_DOWNRIGHT,true )
+);
+
+static const Game g_Game_Horizon =
+{
+	"horizon",					// m_szName
+	g_apGame_Horizon_Styles,				// m_apStyles
+	true,						// m_bCountNotesSeparately
+	false, // m_bTickHolds
+	false, // m_PlayersHaveSeparateStyles
+	{						// m_InputScheme
+		"horizon",				// m_szName
+		NUM_HORIZON_BUTTONS,			// m_iButtonsPerController
+		{	// m_szButtonNames
+			{ "Left",		GAME_BUTTON_LEFT },
+			{ "Right",		GAME_BUTTON_RIGHT },
+			{ "Up",			GAME_BUTTON_UP },
+			{ "Down",		GAME_BUTTON_DOWN },
+			{ "UpLeft",		GameButton_Invalid },
+			{ "UpRight",		GameButton_Invalid },
+			{ "Center",		GameButton_Invalid },
+			{ "DownLeft",		GameButton_Invalid },
+			{ "DownRight",		GameButton_Invalid },
+		},
+		&g_AutoKeyMappings_Horizon
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+	},
+	TNS_W1,	// m_mapW1To
+	TNS_W2,	// m_mapW2To
+	TNS_W3,	// m_mapW3To
+	TNS_W4,	// m_mapW4To
+	TNS_W5,	// m_mapW5To
+};
+
 static const Game *g_Games[] =
 {
 	&g_Game_Dance,
@@ -3142,6 +3372,7 @@ static const Game *g_Games[] =
 	&g_Game_Popn,
 	&g_Game_Lights,
 	&g_Game_Kickbox,
+	&g_Game_Horizon,
 };
 
 GameManager::GameManager()
