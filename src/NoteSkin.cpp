@@ -1183,7 +1183,11 @@ static vector<vector<string> > button_lists = {
 // StepsType_kickbox_insect,
 	{"LeftFoot", "UpLeftFist", "DownLeftFist", "DownRightFist", "UpRightFist", "RightFoot"},
 // StepsType_kickbox_arachnid,
-	{"DownLeftFoot", "UpLeftFoot", "UpLeftFist", "DownLeftFist", "DownRightFist", "UpRightFist", "UpRightFoot", "DownRightFoot"}
+	{"DownLeftFoot", "UpLeftFoot", "UpLeftFist", "DownLeftFist", "DownRightFist", "UpRightFist", "UpRightFoot", "DownRightFoot"},
+// StepsType_horizon_single,
+	{"DownLeft", "Left", "UpLeft", "Down", "Center", "Up", "UpRight", "Right", "DownRight"},
+// StepsType_horizon_double,
+	{"DownLeft", "Left", "UpLeft", "Down", "Center", "Up", "UpRight", "Right", "DownRight", "DownLeft", "Left", "UpLeft", "Down", "Center", "Up", "UpRight", "Right", "DownRight"},
 };
 
 bool NoteSkinLoader::supports_needed_buttons(StepsType stype) const
