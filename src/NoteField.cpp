@@ -535,8 +535,16 @@ void NoteFieldColumn::calc_reverse_shift()
 	{
 		visible_scale= min_visible_scale;
 	}
-	first_y_offset_visible= -(m_pixels_visible_before_beat * m_defective_mods->get_drawsizeback()) / visible_scale;
-	last_y_offset_visible= (m_pixels_visible_after_beat * m_defective_mods->get_drawsize()) / visible_scale;
+	if(!m_in_defective_mode)
+	{
+		first_y_offset_visible= -m_pixels_visible_before_beat / visible_scale;
+		last_y_offset_visible= m_pixels_visible_after_beat / visible_scale;
+	}
+	else
+	{
+		first_y_offset_visible= -(m_pixels_visible_before_beat * m_defective_mods->get_drawsizeback()) / visible_scale;
+		last_y_offset_visible= (m_pixels_visible_after_beat * m_defective_mods->get_drawsize()) / visible_scale;
+	}
 }
 
 double NoteFieldColumn::apply_reverse_shift(double y_offset)
@@ -2235,6 +2243,15 @@ double NoteField::get_receptor_y()
 		return 0.0;
 	}
 	return m_columns[0].apply_reverse_shift(m_columns[0].head_y_offset());
+}
+
+bool NoteField::is_in_reverse()
+{
+	if(m_columns.empty())
+	{
+		return false;
+	}
+	return m_columns[0].m_status.in_reverse;
 }
 
 void NoteField::push_columns_to_lua(lua_State* L)
