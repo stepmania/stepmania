@@ -1590,7 +1590,10 @@ void ScreenEdit::Init()
 
 ScreenEdit::~ScreenEdit()
 {
-	m_pSteps->GetTimingData()->ReleaseLookup();
+	if (m_pSteps) {
+		m_pSteps->GetTimingData()->ReleaseLookup();
+	}
+
 	// UGLY: Don't delete the Song's steps.
 	m_SongLastSave.DetachSteps();
 
