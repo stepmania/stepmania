@@ -1,9 +1,9 @@
 local default_config= {
 	recently_edited= {},
 	recent_groups= {},
-	noteskin_choices= {},
+	edit_noteskin= {},
+	test_noteskin= {},
 	noteskin_params= {},
-	preferred_noteskin= "default",
 	NoteFieldEdit= {
 		hidden= false,
 		hidden_offset= 120,
@@ -67,22 +67,51 @@ local default_config= {
 editor_config= create_lua_config{
 	name= "editor_config", file= "editor_config.lua",
 	default= default_config, use_alternate_config_prefix= "",
-	exceptions= {"recently_edited", "recent_groups", "noteskin_choices", "noteskin_params"},
+	exceptions= {"recently_edited", "recent_groups", "edit_noteskin",
+		"test_noteskin", "noteskin_params"},
 }
 
 editor_config:load()
-local function sanity_check_editor_config()
-	local config_data= editor_config:get_data()
-	for stepstype, skin in pairs(config_data.noteskin_choices) do
-		if type(stepstype) ~= "string" or not stepstype:match("^StepsType_.*")
-		or type(skin) ~= "string" then
-			config_data.noteskin_choices[stepstype]= nil
+
+local function get_skin_choice(list, stepstype)
+	local valid_skin_names= NOTESKIN:get_skin_names_for_stepstype(stepstype)
+	for i= 1, #list do
+		local match= list[i]
+		for v= 1, #valid_skin_names do
+			if match == valid_skin_names[v] then
+				return match
+			end
 		end
 	end
-	for stepstype, params in pairs(config_data.noteskin_params) do
-		if type(stepstype) ~= "string" or not stepstype:match("^StepsType_.*")
-		or type(params) ~= "table" then
-			config_data.noteskin_params[stepstype]= nil
+	return valid_skin_names[1]
+end
+
+local function set_skin_choice(list, choice)
+	local found= false
+	for i= 1, #list do
+		if list[i] == choice then
+			found= i
+			break
+		end
+	end
+	if found then
+		table.remove(list, found)
+	end
+	table.insert(list, 1, choice)
+end
+
+local function sanity_check_editor_config()
+	local config_data= editor_config:get_data()
+	for s, skin_list in pairs{config_data.edit_noteskin, config_data.test_noteskin} do
+		for i, name in pairs(skin_list) do
+			if type(i) ~= "number" then
+				skin_list[i]= nil
+			end
+		end
+	end
+	for skin_name, params in pairs(config_data.noteskin_params) do
+		if type(params) ~= "table" or type(skin_name) ~= "string" then
+			config_data.noteskin_params[skin_name]= nil
 		end
 	end
 	local entry_id= #config_data.recently_edited
@@ -104,6 +133,25 @@ local function sanity_check_editor_config()
 			table.remove(config_data.recent_groups, entry_id)
 		end
 		entry_id= entry_id - 1
+	end
+
+	config_data.get_edit_skin_choice= function(self, stepstype)
+		return get_skin_choice(self.edit_noteskin, stepstype)
+	end
+	config_data.get_test_skin_choice= function(self, stepstype)
+		return get_skin_choice(self.test_noteskin, stepstype)
+	end
+	config_data.set_edit_skin_choice= function(self, choice)
+		set_skin_choice(self.edit_noteskin, choice)
+	end
+	config_data.set_test_skin_choice= function(self, choice)
+		set_skin_choice(self.test_noteskin, choice)
+	end
+	config_data.get_skin_params= function(self, skin_name)
+		if not self.noteskin_params[skin_name] then
+			self.noteskin_params[skin_name]= {}
+		end
+		return self.noteskin_params[skin_name]
 	end
 end
 
@@ -158,33 +206,15 @@ function add_to_recently_edited(song, steps)
 	editor_config:save()
 end
 
-local function get_skin_params(skin_name)
-	local param_set= editor_config:get_data().noteskin_params
-	if not param_set[skin_name] then
-		param_set[skin_name]= {}
-	end
-	return param_set[skin_name]
-end
-
-local function get_skin_choice(stepstype)
+local function set_skin_for_field(field, field_name, stepstype)
 	local config_data= editor_config:get_data()
-	if config_data.noteskin_choices[stepstype] then
-		return config_data.noteskin_choices[stepstype]
+	local list= config_data.edit_noteskin
+	if field_name == "NoteFieldTest" then
+		list= config_data.test_noteskin
 	end
-	local skin_names= NOTESKIN:get_skin_names_for_stepstype(stepstype)
-	for i, name in ipairs(skin_names) do
-		if name == config_data.preferred_noteskin then
-			return config_data.preferred_noteskin
-		end
-	end
-	return skin_names[1]
-end
-
-local function set_skin_for_field(field, stepstype)
-	local skin_name= get_skin_choice(stepstype)
-	local skin_params= get_skin_params(skin_name)
+	local skin_name= get_skin_choice(list, stepstype)
+	local skin_params= config_data:get_skin_params(skin_name)
 	field:set_skin(skin_name, skin_params)
-	MESSAGEMAN:Broadcast("NoteskinChanged")
 end
 
 
@@ -223,58 +253,55 @@ local function speed_type_menu(tab)
 											}}, mergable_table_mt)
 end
 
-local function noteskin_choice(field, stepstype, choice_name)
-	return {
-		type= "choice", name= choice_name, execute= function()
-			editor_config:get_data().noteskin_choices[stepstype]= choice_name
-			set_skin_for_field(field, stepstype)
-		end,
-		value= function()
-			return choice_name == get_skin_choice(stepstype)
-		end,
-	}
-end
-
-local function editor_noteskin_menu(field, stepstype)
+local function editor_noteskin_menu(field, field_name, stepstype)
 	local skin_names= NOTESKIN:get_skin_names_for_stepstype(stepstype)
-	local choices= {}
-	for i, name in ipairs(skin_names) do
-		choices[#choices+1]= noteskin_choice(field, stepstype, name)
+	local config= editor_config:get_data()
+	local get_func= config.get_edit_skin_choice
+	local set_func= config.set_edit_skin_choice
+	if field_name == "NoteFieldTest" then
+		get_func= config.get_test_skin_choice
+		set_func= config.set_test_skin_choice
 	end
-	return nesty_options.submenu("noteskin", choices)
-end
-
-local function editor_preferred_noteskin_menu()
-	local skin_names= NOTESKIN:get_all_skin_names()
 	local choices= {}
 	for i, name in ipairs(skin_names) do
 		choices[#choices+1]= {
 			type= "choice", name= name, execute= function()
-				editor_config:get_data().preferred_noteskin= name
+				set_func(config, name)
+				set_skin_for_field(field, field_name, stepstype)
+				MESSAGEMAN:Broadcast("NoteskinChanged", {field_name})
 			end,
 			value= function()
-				return editor_config:get_data().preferred_noteskin == name
+				return name == get_func(config, stepstype)
 			end,
 		}
 	end
-	return nesty_options.submenu("preferred_noteskin", choices)
+	return nesty_options.submenu("noteskin", choices)
 end
 
 local function editor_noteskin_param_menu(field, stepstype)
-	return function()
-		local skin_name= get_skin_choice(stepstype)
-		local skin_info= NOTESKIN:get_skin_parameter_info(skin_name)
-		local skin_defaults= NOTESKIN:get_skin_parameter_defaults(skin_name)
-		local chosen_params= get_skin_params(skin_name)
-		local ret= {
-			recall_init_on_pop= true, name= "noteskin_params",
-			destructor= function(self)
-				set_skin_for_field(field, stepstype)
-			end,
-		}
-		gen_noteskin_param_submenu(chosen_params, skin_info, skin_defaults, ret)
-		return ret
+	local choices= {}
+	local config_data= editor_config:get_data()
+	local skin_names= NOTESKIN:get_skin_names_for_stepstype(stepstype)
+	for i, skin_name in ipairs(skin_names) do
+		choices[#choices+1]= {
+			name= skin_name, menu= nesty_option_menus.menu, args= function()
+				local skin_info= NOTESKIN:get_skin_parameter_info(skin_name)
+				local skin_defaults= NOTESKIN:get_skin_parameter_defaults(skin_name)
+				local chosen_params= config_data:get_skin_params(skin_name)
+				ret= {
+					recall_init_on_pop= true, name= "noteskin_params",
+					destructor= function(self)
+						if field:get_skin() == skin_name then
+							set_skin_for_field(field, stepstype)
+							MESSAGEMAN:Broadcast("NoteskinChanged", {field:GetName()})
+						end
+					end,
+				}
+				gen_noteskin_param_submenu(chosen_params, skin_info, skin_defaults, ret)
+				return ret
+		end}
 	end
+	return nesty_options.submenu("noteskin_params", choices)
 end
 
 local function editor_menu_options(field, field_name, stepstype)
@@ -285,9 +312,8 @@ local function editor_menu_options(field, field_name, stepstype)
 	end
 	local ret= {
 		nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2, 1),
-		editor_noteskin_menu(field, stepstype),
-		editor_preferred_noteskin_menu(),
-		{name= "noteskin_params", translatable= true, menu= nesty_option_menus.menu, args= editor_noteskin_param_menu(field, stepstype)},
+		editor_noteskin_menu(field, field_name, stepstype),
+		editor_noteskin_param_menu(field, stepstype),
 		nesty_options.bool_table_val(field_name, config, "hidden"),
 		nesty_options.float_table_val(field_name, config, "hidden_offset", -1, 1, 2),
 		nesty_options.bool_table_val(field_name, config, "sudden"),
@@ -340,11 +366,6 @@ function editor_notefield_menu(menu_params)
 			editor_config:set_dirty()
 			editor_config:save()
 			in_option_menu= false
-			if edit_field:get_skin() ~= test_field:get_skin() then
-				if field_name == "NoteFieldTest" then
-					set_skin_for_field(edit_field, current_stepstype)
-				end
-			end
 			editor_screen:PostScreenMessage("SM_BackFromNoteFieldOptions", 0)
 			if container:GetParent() ~= editor_screen then
 				container:GetParent():playcommand("HideMenu")
@@ -361,13 +382,19 @@ function editor_notefield_menu(menu_params)
 		end,
 		InitNoteFieldConfigCommand= function(self, params)
 			local conf_data= editor_config:get_data()
-			local noteskin= get_skin_choice(params.stepstype)
-			local skin_params= get_skin_params(noteskin)
 			edit_field= params.fields.NoteFieldEdit
 			test_field= params.fields.NoteFieldTest
+
+			for i, info in ipairs{
+				{edit_field, conf_data.edit_noteskin},
+				{test_field, conf_data.test_noteskin}} do
+				local skin= get_skin_choice(info[2], params.stepstype)
+				local params= conf_data:get_skin_params(skin)
+				info[1]:set_skin(skin, params)
+			end
+
 			current_read_bpm= params.read_bpm
 			for field_name, field in pairs(params.fields) do
-				field:set_skin(noteskin, skin_params)
 				apply_notefield_prefs_nopn(params.read_bpm, field, conf_data[field_name])
 				local vispix= 1024 / conf_data[field_name].zoom
 				for i, col in ipairs(field:get_columns()) do
@@ -382,17 +409,21 @@ function editor_notefield_menu(menu_params)
 			MESSAGEMAN:Broadcast("NoteskinChanged")
 		end,
 		SetTestNoteFieldSkinCommand= function(self, params)
-			set_skin_for_field(params.field, params.stepstype)
+			set_skin_for_field(params.field, "NoteFieldTest", params.stepstype)
 		end,
 		ShowMenuCommand= function(self, params)
 			current_field= params.field
 			field_name= params.field_name
 			current_stepstype= params.stepstype
 			local conf_data= editor_config:get_data()
-			local noteskin= get_skin_choice(params.stepstype)
-			if current_field:get_skin() ~= noteskin then
-				local skin_params= get_skin_params(noteskin)
-				params.field:set_skin(noteskin, skin_params)
+			local list= conf_data.edit_noteskin
+			if field_name == "NoteFieldTest" then
+				list= conf_data.test_noteskin
+			end
+			local skin= get_skin_choice(list, params.stepstype)
+			if current_field:get_skin() ~= skin then
+				local skin_params= conf_data:get_skin_params(skin)
+				params.field:set_skin(skin, skin_params)
 			end
 			local menu_options= editor_menu_options(current_field, field_name, params.stepstype)
 			if not menu_options then

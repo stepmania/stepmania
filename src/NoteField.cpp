@@ -348,7 +348,10 @@ void NoteFieldColumn::set_displayed_time(double beat, double second)
 	m_timing_source.beat_delta= beat - m_curr_beat;
 	m_timing_source.second_delta= second - m_curr_second;
 	m_timing_source.curr_second= second;
-	m_newskin->update_taps();
+	if(m_newskin)
+	{
+		m_newskin->update_taps();
+	}
 	m_curr_beat= beat;
 	m_curr_second= second;
 	m_mod_manager.update(beat, second);
@@ -1314,6 +1317,10 @@ void NoteFieldColumn::add_renderable_to_lists(render_note& renderable)
 
 void NoteFieldColumn::build_render_lists()
 {
+	if(!m_newskin)
+	{
+		return;
+	}
 	m_curr_displayed_beat= m_curr_beat;
 	if(m_scroll_segments_enabled)
 	{

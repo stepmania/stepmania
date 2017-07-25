@@ -13,6 +13,8 @@ local clickable_path= THEME:GetPathG("", "mod_preview_config_handler")
 local container= false
 local button_container= false
 local editor_notefield= false
+local play_notefield= false
+local edit_screen= false
 local notefields= {}
 local preview_sprite= false
 local clickables= {}
@@ -26,8 +28,26 @@ local show_button_area_right= 0
 local show_button_area_top= 0
 local show_button_area_bottom= 0
 
+local curr_edit_state= "Edit"
+
 local function get_config()
 	return editor_config:get_data().preview
+end
+
+local function update_should_be_hidden()
+	if curr_edit_state == "Edit" and get_config().show_preview then
+		container:hibernate(0)
+	else
+		container:hibernate(math.huge)
+	end
+end
+
+local function get_current_stepstype()
+	local steps= GAMESTATE:GetCurrentSteps(PLAYER_1)
+	if steps then return steps:GetStepsType() end
+	steps= GAMESTATE:GetCurrentSteps(PLAYER_2)
+	if steps then return steps:GetStepsType() end
+	return "StepsType_Invalid"
 end
 
 local function reload_mods()
@@ -126,6 +146,11 @@ local function update(self, delta)
 		end
 	end
 
+	local new_edit_state= ToEnumShortString(edit_screen:GetEditState())
+	if new_edit_state ~= curr_edit_state then
+		curr_edit_state= new_edit_state
+		update_should_be_hidden()
+	end
 	--update_debug_frames()
 
 	local config= get_config()
@@ -150,11 +175,7 @@ end
 local function toggle_hide()
 	local config= get_config()
 	config.show_preview= not config.show_preview
-	if config.show_preview then
-		container:hibernate(0)
-	else
-		container:hibernate(math.huge)
-	end
+	update_should_be_hidden()
 	return config.show_preview
 end
 
@@ -380,7 +401,6 @@ local function make_field()
 			notefields[#notefields+1]= self
 			self:hibernate(math.huge)
 				:set_vanish_type("FieldVanishType_RelativeToSelf")
-				:set_skin("default", {})
 				:set_base_values{
 					transform_pos_x= _screen.cx, 
 					transform_pos_y= _screen.cy,
@@ -391,12 +411,14 @@ end
 
 local frame= Def.ActorFrame{
 	OnCommand= function(self)
-		container= self
-		local screen= SCREENMAN:GetTopScreen()
-		screen:AddInputCallback(input)
-		editor_notefield= screen:GetChild("NoteFieldEdit")
+		edit_screen= SCREENMAN:GetTopScreen()
+		edit_screen:AddInputCallback(input)
+		editor_notefield= edit_screen:GetChild("NoteFieldEdit")
+		local skin_name= editor_config:get_data():get_test_skin_choice(get_current_stepstype(stepstype))
+		local skin_params= editor_config:get_data():get_skin_params(skin_name)
 		for id, field in ipairs(notefields) do
 			editor_notefield:share_steps(field)
+			field:set_skin(skin_name, skin_params)
 			field:set_speed_mod(false, 1)
 		end
 		self:SetUpdateFunction(update)
@@ -408,30 +430,44 @@ local frame= Def.ActorFrame{
 		update_size()
 		update_position()
 	end,
+	NoteskinChangedMessageCommand= function(self)
+		local skin_name= editor_config:get_data():get_test_skin_choice(get_current_stepstype(stepstype))
+		local skin_params= editor_config:get_data():get_skin_params(skin_name)
+		for id, field in ipairs(notefields) do
+			if field:get_skin() ~= skin_name then
+				field:set_skin(skin_name, skin_params)
+			end
+		end
+	end,
 	OffCommand= function(self)
 		editor_config:save()
 	end,
-	Def.ActorFrameTexture{
+	Def.ActorFrame{
 		InitCommand= function(self)
-			self:setsize(_screen.w, _screen.h)
-				:SetTextureName("mod_preview_overlay")
-				:EnablePreserveTexture(false)
-				:Create()
+			container= self
 		end,
-		make_field(),
-		make_field(),
-	},
-	Def.Sprite{
-		Texture= "mod_preview_overlay", InitCommand= function(self)
-			preview_sprite= self
-		end,
-	},
-	buttons_frame,
-	Def.ActorMultiVertex{
-		InitCommand= function(self)
-			debug_frames= self
-			self:SetDrawState{Mode= "DrawMode_Quads"}
-		end,
+		Def.ActorFrameTexture{
+			InitCommand= function(self)
+				self:setsize(_screen.w, _screen.h)
+					:SetTextureName("mod_preview_overlay")
+					:EnablePreserveTexture(false)
+					:Create()
+			end,
+			make_field(),
+			make_field(),
+		},
+		Def.Sprite{
+			Texture= "mod_preview_overlay", InitCommand= function(self)
+				preview_sprite= self
+			end,
+		},
+		buttons_frame,
+		Def.ActorMultiVertex{
+			InitCommand= function(self)
+				debug_frames= self
+				self:SetDrawState{Mode= "DrawMode_Quads"}
+			end,
+		},
 	},
 }
 
