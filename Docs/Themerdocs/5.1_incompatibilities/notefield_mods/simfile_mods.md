@@ -19,6 +19,17 @@ local mods= {
 return mods
 ```
 
+For those unfamiliar with documentation, the above text is known as an
+example.  An example is code that can be put into a file and run, either
+as-is, or with some minor change.  A minor change would be changing
+'some_mod_name' to the name of an actual mod.
+
+Any time you see an example, you should add it to a mods file and try it out.
+
+Use the mods preview described in mods_preview.md to see mods while editing
+steps without needing to use gameplay or the editor's play mode.
+
+
 ## Loading the mods file
 
 Assuming the mods file is named "notefield_mods.lua" and placed in the song

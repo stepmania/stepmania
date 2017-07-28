@@ -270,12 +270,6 @@ local function init_keymap()
 			update= toggle_paused, click= find_clickable("paused")},
 		[config.full_screen_key]= {
 			update= toggle_full_screen, click= find_clickable("full_screen")},
-		[config.smaller_key]= {
-			update= update_size, click= find_clickable("zoom"), name= "zoom", amount= -.01},
-		[config.larger_key]= {
-			update= update_size, click= find_clickable("zoom"), name= "zoom", amount= .01},
-		[config.move_key]= {
-			update= update_position, click= find_clickable("corner"), name= "corner", amount= 1},
 	}
 end
 
@@ -409,8 +403,10 @@ local function make_field()
 	}
 end
 
+local old_show_mouse= PREFSMAN:GetPreference("ShowMouseCursor")
 local frame= Def.ActorFrame{
 	OnCommand= function(self)
+		PREFSMAN:SetPreference("ShowMouseCursor", true)
 		edit_screen= SCREENMAN:GetTopScreen()
 		edit_screen:AddInputCallback(input)
 		editor_notefield= edit_screen:GetChild("NoteFieldEdit")
@@ -440,6 +436,7 @@ local frame= Def.ActorFrame{
 		end
 	end,
 	OffCommand= function(self)
+		PREFSMAN:SetPreference("ShowMouseCursor", old_show_mouse)
 		editor_config:save()
 	end,
 	Def.ActorFrame{
