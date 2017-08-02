@@ -939,10 +939,10 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		{
 			case NCSM_Disabled:
 				// XXX: Actor rotations use degrees, Math uses radians. Convert here.
-				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset, column_args.column) * PI_180;
+				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset, column_args.column) * -PI_180;
 				break;
 			case NCSM_Offset:
-				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset, column_args.column) * PI_180;
+				ae_rot.y= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset, column_args.column) * -PI_180;
 				column_args.rot_handler->EvalForBeat(column_args.song_beat, cur_beat, sp_rot);
 				break;
 			case NCSM_Position:
