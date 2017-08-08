@@ -4,12 +4,12 @@ local t = Def.ActorFrame {
 };
 
 t[#t+1] = LoadActor("frame") .. {
-	InitCommand=cmd(diffusealpha,0.25);
+	InitCommand=cmd(diffusealpha,0.8);
 };
 
 
 t[#t+1] = Def.TextBanner {
-	InitCommand=cmd(x,-292;Load,"TextBannerHighScores");
+	InitCommand=cmd(x,-230;Load,"TextBannerHighScores");
 	SetCommand=function(self, params)
 		if params.Song then
 			self:SetFromSong( params.Song );
@@ -32,7 +32,7 @@ local Scores = Def.ActorFrame {
 t[#t+1] = Scores;
 
 for idx=1,NumColumns do
-	local x_pos = -60 + 80 * (idx-1);
+	local x_pos = 35 + 83 * (idx-1);
 	Scores[#Scores+1] = LoadFont(Var "LoadingScreen","Name") .. {
 		Name = idx .. "Name";
 		InitCommand=cmd(x,x_pos;y,8;shadowlength,1;maxwidth,68);
@@ -42,10 +42,6 @@ for idx=1,NumColumns do
 		Name = idx .. "Score";
 		InitCommand=cmd(x,x_pos;y,-9;shadowlength,1;maxwidth,68);
 		OnCommand=cmd(zoom,0.75);
-	};
-	Scores[#Scores+1] = LoadActor("filled") .. {
-		Name = idx .. "Filled";
-		InitCommand=cmd(x,x_pos;);
 	};
 	Scores[#Scores+1] = LoadActor("empty") .. {
 		Name = idx .. "Empty";
@@ -76,12 +72,10 @@ Scores.SetCommand=function(self, params)
 
 				local name = c[idx .. "Name"];
 				local score = c[idx .. "Score"];
-				local filled = c[idx .. "Filled"];
 				local empty = c[idx .. "Empty"];
 				
 				name:visible( true );
 				score:visible( true );
-				filled:visible( true );
 				empty:visible( false );
 				
 				if hs and #hs > 0 then

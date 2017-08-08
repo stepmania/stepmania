@@ -24,9 +24,9 @@ if GAMESTATE:IsCourseMode() then
 	}
 end
 local menu_spacing= 32
-local menu_bg_width= _screen.w * .4
+local menu_bg_width= _screen.w * .2
 local menu_text_width= _screen.w * .35
-local menu_x= {[PLAYER_1]= _screen.w*.25, [PLAYER_2]= _screen.w*.75}
+local menu_x= {[PLAYER_1]= THEME:GetMetric(Var "LoadingScreen","PlayerP1MiscX"), [PLAYER_2]= THEME:GetMetric(Var "LoadingScreen","PlayerP2MiscX")}
 local menu_y= _screen.cy - (#menu_choices * .5 * menu_spacing)
 local current_menu_choice= {}
 local menu_is_showing= {}
@@ -34,17 +34,17 @@ local enabled_players= {}
 
 local function create_menu_item(pn, x, y, item_name)
 	return Def.BitmapText{
-		Font= "Common Normal", Text= THEME:GetString("PauseMenu", item_name),
+		Font= "Common Condensed", Text= THEME:GetString("PauseMenu", item_name),
 		InitCommand= function(self)
 			self:xy(x, y)
 			table.insert(menu_items[pn], self)
 			self:playcommand("LoseFocus")
 		end,
 		LoseFocusCommand= function(self)
-			self:stopeffect():rotationz(0)
+			self:diffusealpha(0.5)
 		end,
 		GainFocusCommand= function(self)
-			self:wag():effectperiod(2):effectmagnitude(0, 0, 5)
+			self:diffusealpha(1)
 		end,
 	}
 end
@@ -65,7 +65,7 @@ local function create_menu_frame(pn, x, y)
 			InitCommand= function(self)
 				self:setsize(menu_bg_width, menu_spacing * (#menu_choices + 1))
 					:y(-menu_spacing):vertalign(top)
-					:diffuse{0, 0, 0, .25}
+					:diffuse{0, 0, 0, .75}
 					:playcommand("Hide")
 			end,
 		},

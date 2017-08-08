@@ -1,8 +1,7 @@
-local curGameName = GAMESTATE:GetCurrentGame():GetName();
+local icon_params = {
+	base_color = color("#CC2E3C"),
+	label_text = Screen.String("CurrentGametype"),
+	value_text = GAMESTATE:GetCurrentGame():GetName()
+}
 
-local t = LoadFont("Common Normal") .. {
-	BeginCommand=function(self)
-		self:settextf( Screen.String("CurrentGametype"), curGameName );
-	end;
-};
-return t;
+return LoadActor(THEME:GetPathG("", "_title_info_icon"), icon_params)
