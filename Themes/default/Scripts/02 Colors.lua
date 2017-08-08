@@ -42,8 +42,8 @@ ModeIconColors = {
     Normal      = color("#339FF2"),
     Rave        = color("#6BFF90"), 
     Nonstop     = color("#FF66AB"),
-    Oni         = color("#6C58C1"),
-    Endless     = color("#6040A7"),
+    Oni         = color("#FF714D"),
+    Endless     = color("#6A62CA"),
 }
 
 GameColor = {

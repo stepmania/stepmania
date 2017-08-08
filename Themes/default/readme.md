@@ -4,14 +4,14 @@ Lambda (formerly FiftyOne) is a modern, high-definition theme for StepMania 5.x.
 
 Progress
 -----------
-I'd say it's about 96% done now; just needs a bit more fit and finish if needed. Feel free to contribute and make pull requests. 
+As of August 8, 2017, Lambda has been declared feature complete, and has been added to the StepMania source tree in its 5_1-new branch. Our priority right now is finding any possible bugs, performing final fit and finish tweaks, and possibly adding new sounds and music. This repository will continue to be updated with changes made to the "official" version in the StepMania source tree, and vice versa, so feel free to contribute on either repository.
 
 
 Source code
 -----------
-Inkscape SVG source code is available for the majority of graphics created in the _src folder on the repository used to develop it, located at https://github.com/ListenerJubatus/smtheme-fiftyOne. Some of the original mockups are also included for reference, although they are meant primarily for reference purposes due to changes in the theme's style since these mockups (such as the removal of rounded corners and increased use of chamfered edges and diamond motifs).
+Inkscape SVG source code is available for the majority of graphics created in the _src folder on the repository used to develop it, located at <https://github.com/ListenerJubatus/smtheme-fiftyOne> Some of the original mockups are also included for reference, although they are meant primarily for reference purposes due to changes in the theme's style since these mockups (such as the removal of rounded corners and increased use of chamfered edges and diamond motifs).
 
-The main fonts are the current version of Roboto and Noto Sans <https://www.google.com/design/spec/resources/roboto-noto-fonts.html>, and Open Sans (although, preferably, Noto Sans should eventually be used in any location Open Sans is currently used). Certain accents make use of the font Overpass. <http://overpassfont.org/>
+The main fonts are the current version of Roboto and Noto Sans <https://www.google.com/design/spec/resources/roboto-noto-fonts.html>, and Open Sans (although, preferably, Noto Sans should eventually be used in any location Open Sans is currently used). Certain accents make use of the fonts Overpass <http://overpassfont.org/> and Zeroes <http://www.dafont.com/zero-threes.font>
 
 
 License
