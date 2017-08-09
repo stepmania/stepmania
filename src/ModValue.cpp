@@ -1096,8 +1096,8 @@ void mod_operator_spline::load_from_lua(mod_function* parent, lua_State* L, int 
 				break;
 		}
 	}
-	m_loop= get_optional_bool(L, index, "loop");
-	m_polygonal= get_optional_bool(L, index, "polygonal");
+	m_loop= get_optional_bool(L, index, "loop", false);
+	m_polygonal= get_optional_bool(L, index, "polygonal", false);
 	if(!m_has_per_frame_points && !m_has_per_note_points)
 	{
 		m_spline.solve(m_loop, m_polygonal);

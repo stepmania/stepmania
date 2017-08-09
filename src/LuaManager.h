@@ -319,9 +319,14 @@ inline int get_optional_int(lua_State* L, int index, char const* field, int def)
 	return ret;
 }
 
-inline bool get_optional_bool(lua_State* L, int index, char const* field)
+inline bool get_optional_bool(lua_State* L, int index, char const* field, bool def)
 {
 	lua_getfield(L, index, field);
+	if(lua_isnoneornil(L, -1))
+	{
+		lua_pop(L, 1);
+		return def;
+	}
 	bool ret = lua_toboolean(L, -1) == 1;
 	lua_pop(L, 1);
 	return ret;

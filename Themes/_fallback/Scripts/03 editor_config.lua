@@ -275,7 +275,7 @@ local function editor_noteskin_menu(field, field_name, stepstype)
 	return nesty_options.submenu("noteskin", choices)
 end
 
-local function editor_noteskin_param_menu(field, stepstype)
+local function editor_noteskin_param_menu(field, field_name, stepstype)
 	local choices= {}
 	local config_data= editor_config:get_data()
 	local skin_names= NOTESKIN:get_skin_names_for_stepstype(stepstype)
@@ -289,7 +289,7 @@ local function editor_noteskin_param_menu(field, stepstype)
 					recall_init_on_pop= true, name= "noteskin_params",
 					destructor= function(self)
 						if field:get_skin() == skin_name then
-							set_skin_for_field(field, stepstype)
+							set_skin_for_field(field, field_name, stepstype)
 							MESSAGEMAN:Broadcast("NoteskinChanged", {field:GetName()})
 						end
 					end,
@@ -310,7 +310,7 @@ local function editor_menu_options(field, field_name, stepstype)
 	local ret= {
 		nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2, 1),
 		editor_noteskin_menu(field, field_name, stepstype),
-		editor_noteskin_param_menu(field, stepstype),
+		editor_noteskin_param_menu(field, field_name, stepstype),
 		nesty_options.bool_table_val(field_name, config, "hidden"),
 		nesty_options.float_table_val(field_name, config, "hidden_offset", -1, 1, 2),
 		nesty_options.bool_table_val(field_name, config, "sudden"),
@@ -399,6 +399,7 @@ function editor_notefield_menu(menu_params)
 					col:set_pixels_visible_after(vispix)
 				end
 			end
+
 			for i, col in ipairs(edit_field:get_columns()) do
 				col:set_speed_segments_enabled(false)
 				col:set_scroll_segments_enabled(false)

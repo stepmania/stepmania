@@ -21,6 +21,7 @@ static const double default_anim_time= 1.0;
 static const double min_anim_time= 0.01;
 static const double default_quantum_time= 1.0;
 static const double min_quantum_time= 0.01;
+static const double invalid_length= -1000.0;
 
 static const char* NoteSkinTapPartNames[] = {
 	"Tap",
@@ -452,23 +453,69 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NoteSkinLoader const*
 	if(lua_istable(L, -1))
 	{
 		int length_data_index= lua_gettop(L);
-		m_part_lengths.start_note_offset= get_optional_double(L, length_data_index, "start_note_offset", -.5);
-		m_part_lengths.end_note_offset= get_optional_double(L, length_data_index, "end_note_offset", .5);
-		m_part_lengths.head_pixs= get_optional_double(L, length_data_index, "head_pixs", 32.0);
-		m_part_lengths.body_pixs= get_optional_double(L, length_data_index, "body_pixs", 64.0);
-		m_part_lengths.tail_pixs= get_optional_double(L, length_data_index, "tail_pixs", 32.0);
+		m_part_lengths.topcap_pixels= get_optional_double(L, length_data_index, "topcap_pixels", invalid_length);
+		if(m_part_lengths.topcap_pixels == invalid_length)
+		{
+			m_part_lengths.topcap_pixels= get_optional_double(L, length_data_index, "head_pixs", invalid_length);
+			if(m_part_lengths.topcap_pixels == invalid_length)
+			{
+				m_part_lengths.topcap_pixels= 32.0;
+			}
+		}
+		m_part_lengths.pixels_before_note= get_optional_double(L, length_data_index, "pixels_before_note", invalid_length);
+		if(m_part_lengths.pixels_before_note == invalid_length)
+		{
+			double note_offset= get_optional_double(L, length_data_index, "start_note_offset", invalid_length);
+			if(note_offset == invalid_length)
+			{
+				m_part_lengths.pixels_before_note= 32.0;
+			}
+			else
+			{
+				m_part_lengths.pixels_before_note= note_offset * -1.0 * 64.0;
+			}
+		}
+		m_part_lengths.body_pixels= get_optional_double(L, length_data_index, "head_pixels", invalid_length);
+		if(m_part_lengths.body_pixels == invalid_length)
+		{
+			m_part_lengths.body_pixels= get_optional_double(L, length_data_index, "body_pixs", 64.0);
+		}
+		m_part_lengths.pixels_after_note= get_optional_double(L, length_data_index, "pixels_after_note", invalid_length);
+		if(m_part_lengths.pixels_after_note == invalid_length)
+		{
+			double note_offset= get_optional_double(L, length_data_index, "end_note_offset", invalid_length);
+			if(note_offset == invalid_length)
+			{
+				m_part_lengths.pixels_after_note= 32.0;
+			}
+			else
+			{
+				m_part_lengths.pixels_after_note= note_offset * 64.0;
+			}
+		}
+		m_part_lengths.bottomcap_pixels= get_optional_double(L, length_data_index, "bottomcap_pixels", invalid_length);
+		if(m_part_lengths.bottomcap_pixels == invalid_length)
+		{
+			m_part_lengths.bottomcap_pixels= get_optional_double(L, length_data_index, "tail_pixs", invalid_length);
+			if(m_part_lengths.bottomcap_pixels == invalid_length)
+			{
+				m_part_lengths.bottomcap_pixels= 32.0;
+			}
+		}
+		m_part_lengths.needs_jumpback= get_optional_bool(L, length_data_index, "needs_jumpback", true);
 	}
 	else
 	{
-		m_part_lengths.start_note_offset= -.5;
-		m_part_lengths.end_note_offset= .5;
-		m_part_lengths.head_pixs= 32.0;
-		m_part_lengths.body_pixs= 64.0;
-		m_part_lengths.tail_pixs= 32.0;
+		m_part_lengths.topcap_pixels= 32.0;
+		m_part_lengths.bottomcap_pixels= 32.0;
+		m_part_lengths.pixels_before_note= 32.0;
+		m_part_lengths.pixels_after_note= 32.0;
+		m_part_lengths.body_pixels= 64.0;
+		m_part_lengths.needs_jumpback= true;
 	}
 	lua_getfield(L, index, "vivid");
 	m_vivid= lua_toboolean(L, -1);
-	m_texture_filtering= !get_optional_bool(L, index, "disable_filtering");
+	m_texture_filtering= !get_optional_bool(L, index, "disable_filtering", false);
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
 	m_state_map.swap(temp_map);
@@ -839,8 +886,8 @@ bool NoteSkinColumn::load_from_lua(lua_State* L, int index, NoteSkinLoader const
 		m_quantum_mult= 1.0;
 	}
 	m_quantum_mult= 1.0 / m_quantum_mult;
-	m_anim_uses_beats= get_optional_bool(L, index, "anim_uses_beats");
-	m_use_hold_heads_for_taps_on_row= get_optional_bool(L, index, "use_hold_heads_for_taps_on_row");
+	m_anim_uses_beats= get_optional_bool(L, index, "anim_uses_beats", false);
+	m_use_hold_heads_for_taps_on_row= get_optional_bool(L, index, "use_hold_heads_for_taps_on_row", false);
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
 	m_taps.swap(temp_taps);

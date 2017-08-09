@@ -466,11 +466,11 @@ void NoteFieldColumn::calc_pos_only(mod_val_inputs& input, Rage::Vector3& out)
 }
 
 void NoteFieldColumn::hold_render_transform(mod_val_inputs& input,
-	Rage::transform& trans, bool do_rot)
+	Rage::transform& trans, bool do_rot, bool do_y_zoom)
 {
 	if(!m_in_defective_mode)
 	{
-		m_note_mod.hold_render_eval(input, trans, do_rot);
+		m_note_mod.hold_render_eval(input, trans, do_rot, do_y_zoom);
 		trans.alpha= m_note_alpha.evaluate(input);
 		trans.glow= m_note_glow.evaluate(input);
 	}
@@ -629,6 +629,7 @@ struct strip_buffer
 	// expensive, so the glow color for each vert is stored in glow_buf.
 	Rage::VColor* glow_buf;
 	Rage::VColor* glow_v;
+	bool need_glow_pass;
 	strip_buffer()
 	{
 		buf= (Rage::SpriteVertex*) malloc(size * sizeof(Rage::SpriteVertex));
@@ -643,6 +644,7 @@ struct strip_buffer
 	{
 		v= buf;
 		glow_v= glow_buf;
+		need_glow_pass= false;
 	}
 	void rollback()
 	{
@@ -659,10 +661,16 @@ struct strip_buffer
 			glow_buf[1]= glow_v[-1];
 			glow_v= glow_buf + 2;
 		}
+		need_glow_pass= false;
 	}
-	void draw()
+	void internal_draw(std::vector<RageTexture*>& textures)
 	{
-		DISPLAY->DrawQuadStrip(buf, v-buf);
+		for(size_t t= 0; t < textures.size(); ++t)
+		{
+			DISPLAY->SetTexture(TextureUnit_1, textures[t]->GetTexHandle());
+			DISPLAY->SetBlendMode(t == 0 ? BLEND_NORMAL : BLEND_ADD);
+			DISPLAY->DrawQuadStrip(buf, v-buf);
+		}
 	}
 	void swap_glow()
 	{
@@ -674,146 +682,50 @@ struct strip_buffer
 			glow_buf[i]= temp;
 		}
 	}
+	void draw(std::vector<RageTexture*>& textures)
+	{
+		DISPLAY->SetTextureMode(TextureUnit_1, TextureMode_Modulate);
+		DISPLAY->SetCullMode(CULL_NONE);
+		DISPLAY->SetTextureWrapping(TextureUnit_1, false);
+		internal_draw(textures);
+		if(need_glow_pass)
+		{
+			swap_glow();
+			DISPLAY->SetTextureMode(TextureUnit_1, TextureMode_Glow);
+			internal_draw(textures);
+		}
+	}
 	int used() const { return v - buf; }
 	int avail() const { return size - used(); }
-	void add_vert(Rage::Vector3 const& pos, Rage::Color const& color, Rage::Color const& glow, Rage::Vector2 const& texcoord)
+	void internal_add_vert(Rage::Vector3 const& pos, Rage::Color const& color, Rage::Color const& glow, Rage::Vector2 const& texcoord)
 	{
 		v->p= pos;  v->c= color;  v->t= texcoord;
 		v+= 1;
 		(*glow_v)= glow;
 		glow_v+= 1;
 	}
-};
-
-enum hold_tex_phase
-{
-	HTP_Top,
-	HTP_Body,
-	HTP_Bottom,
-	HTP_Done
-};
-
-struct hold_texture_handler
-{
-	// Things that would be const if the calculations didn't force them to be
-	// non-const.
-	double tex_top;
-	double tex_bottom;
-	double tex_rect_h;
-	double tex_body_height;
-	double tex_top_end;
-	double tex_body_end;
-	double tex_per_y;
-	double start_y;
-	double body_start_y;
-	double body_end_y;
-	double end_y;
-	// Things that will be changed/updated each time.
-	double prev_bodies_left;
-	int prev_phase;
-	bool started_bottom;
-	hold_texture_handler(double const note_size, double const head_y,
-		double const tail_y, double const tex_t, double const tex_b,
-		QuantizedHoldRenderData const& data)
+	void add_verts(float const tex_y, Rage::Vector3 const& left,
+		Rage::Vector3 const& right, Rage::Color const& color,
+		Rage::Color const& glow, float const tex_left, float const tex_right,
+		std::vector<RageTexture*>& textures)
 	{
-		double pix_h_recip= 1.0 / (data.part_lengths.head_pixs +
-			data.part_lengths.body_pixs + data.part_lengths.body_pixs +
-			data.part_lengths.tail_pixs);
-		double head_pct= data.part_lengths.head_pixs * pix_h_recip;
-		double body_pct= data.part_lengths.body_pixs * pix_h_recip;
-		double tail_pct= data.part_lengths.tail_pixs * pix_h_recip;
-		tex_top= tex_t;
-		tex_bottom= tex_b;
-		tex_rect_h= tex_bottom - tex_top;
-		tex_per_y= tex_rect_h * pix_h_recip;
-		double tex_top_height= tex_rect_h * head_pct;
-		tex_body_height= tex_rect_h * body_pct;
-		double tex_bottom_height= tex_rect_h * tail_pct;
-		tex_top_end= tex_top + tex_top_height;
-		tex_body_end= tex_bottom - tex_bottom_height;
-		start_y= head_y + (note_size * data.part_lengths.start_note_offset);
-		body_start_y= head_y;
-		end_y= tail_y + (note_size * data.part_lengths.end_note_offset);
-		body_end_y= end_y - data.part_lengths.tail_pixs;
-		// constants go above this line.
-		prev_bodies_left= 1.0;
-		prev_phase= HTP_Top;
-		started_bottom= false;
-	}
-	// curr_y will be modified on the transition to HTP_Bottom to make sure the
-	// entire bottom is drawn.
-	// The hold is drawn in several phases.  Each phase must be drawn in full,
-	// so when transitioning from one phase to the next, two texture coords are
-	// calculated, one with the previous phase and one with the current.  This
-	// compresses the seam between phases to zero, making it invisible.
-	// The texture coords are bottom aligned so that the end of the last body
-	// lines up with the start of the bottom cap.
-	int calc_tex_y(double& curr_y, vector<double>& ret_texc)
-	{
-		int phase= HTP_Top;
-		if(curr_y >= end_y)
+		internal_add_vert(left, color, glow, Rage::Vector2(tex_left, tex_y));
+		internal_add_vert(right, color, glow, Rage::Vector2(tex_right, tex_y));
+		if(glow.a > .01)
 		{
-			curr_y= end_y;
-			ret_texc.push_back(tex_bottom);
-			phase= HTP_Done;
+			need_glow_pass= true;
 		}
-		else if(curr_y >= body_end_y)
+		if(avail() < 4)
 		{
-			if(started_bottom)
+			draw(textures);
+			// Intentionally swap the glow back after calling rollback so that
+			// only the set of verts that will remain are swapped.
+			rollback();
+			if(need_glow_pass)
 			{
-				phase= HTP_Bottom;
+				swap_glow();
 			}
-			else
-			{
-				curr_y= body_end_y;
-				phase= HTP_Bottom;
-				started_bottom= true;
-			}
-		}
-		else if(curr_y >= body_start_y)
-		{
-			phase= HTP_Body;
-		}
-		if(phase != HTP_Done)
-		{
-			if(phase != prev_phase)
-			{
-				internal_calc_tex_y(prev_phase, curr_y, ret_texc);
-			}
-			internal_calc_tex_y(phase, curr_y, ret_texc);
-			prev_phase= phase;
-		}
-		return phase;
-	}
-private:
-	void internal_calc_tex_y(int phase, double& curr_y, vector<double>& ret_texc)
-	{
-		switch(phase)
-		{
-			case HTP_Top:
-				ret_texc.push_back(tex_top + ((curr_y - start_y) * tex_per_y));
-				break;
-			case HTP_Body:
-				// In the body phase, the first half of the body section of the
-				// texture is repeated over the length of the hold.
-				{
-					double const tex_distance= (body_end_y - curr_y) * tex_per_y;
-					// bodies_left decreases as more of the hold is drawn.
-					double bodies_left= tex_distance / tex_body_height;
-					double const floor_left= floor(bodies_left);
-					bodies_left= (bodies_left - floor_left) + 1.0;
-					double curr_tex_y= tex_body_end - (bodies_left * tex_body_height);
-					if(bodies_left > prev_bodies_left)
-					{
-						ret_texc.push_back(curr_tex_y + tex_body_height);
-					}
-					ret_texc.push_back(curr_tex_y);
-					prev_bodies_left= bodies_left;
-				}
-				break;
-			case HTP_Bottom:
-				ret_texc.push_back(((curr_y-body_end_y) * tex_per_y) + tex_body_end);
-				break;
+			need_glow_pass= false;
 		}
 	}
 };
@@ -821,64 +733,58 @@ private:
 struct hold_time_lerper
 {
 	double start_y_off;
-	double y_off_len;
-	double start_time;
-	double time_len;
-	hold_time_lerper(double sy, double yl, double st, double tl)
-		:start_y_off(sy), y_off_len(yl), start_time(st), time_len(tl)
+	double y_off_len_recip;
+	double start_beat;
+	double beat_len;
+	double start_second;
+	double second_len;
+	hold_time_lerper(double sy, double yl, double sb, double bl, double ss,
+		double sl)
+		:start_y_off(sy), y_off_len_recip(1.0/yl), start_beat(sb), beat_len(bl),
+		 start_second(ss), second_len(sl)
 	{}
-	double lerp(double y_off)
+	void lerp(double y_off, double& beat, double& second)
 	{
-		return (((y_off - start_y_off) * time_len) / y_off_len) + start_time;
+		double y_dist= (y_off - start_y_off) * y_off_len_recip;
+		beat= (y_dist * beat_len) + start_beat;
+		second= (y_dist * second_len) + start_second;
 	}
 };
 
-static void add_vert_strip(float const tex_y, strip_buffer& verts_to_draw,
-	Rage::Vector3 const& left,
-	Rage::Vector3 const& right, Rage::Color const& color, Rage::Color const& glow_color,
-	float const tex_left, float const tex_right)
-{
-	verts_to_draw.add_vert(left, color, glow_color, Rage::Vector2(tex_left, tex_y));
-	verts_to_draw.add_vert(right, color, glow_color, Rage::Vector2(tex_right, tex_y));
-}
-
 struct hold_vert_step_state
 {
+	double start_y;
 	double y;
 	double beat;
 	double second;
 	Rage::transform trans;
-	vector<double> tex_coords;
-	bool calc(NoteFieldColumn& col, double curr_y, double end_y,
-		hold_time_lerper& beat_lerp, hold_time_lerper& second_lerp,
-		hold_texture_handler& tex_handler,
-		int& phase, bool is_lift, NoteFieldColumn::render_note& renderable)
+	NoteFieldColumn& col;
+	hold_time_lerper& time_lerp;
+	NoteFieldColumn::render_note& renderable;
+	bool is_lift;
+	bool uninitialized;
+	hold_vert_step_state(NoteFieldColumn& c, hold_time_lerper& tl,
+		NoteFieldColumn::render_note& note, double sy, bool lift)
+		:start_y(sy), col(c), time_lerp(tl), renderable(note), is_lift(lift),
+		 uninitialized(true)
+	{}
+	hold_vert_step_state& operator=(hold_vert_step_state const& rhs)
 	{
-		tex_coords.clear();
-		bool last_vert_set= false;
+		y= rhs.y;
+		beat= rhs.beat;
+		second= rhs.second;
+		trans= rhs.trans;
+		return *this;
+	}
+
+	void calc(double curr_y, bool do_y_zoom= false)
+	{
+		uninitialized= false;
 		y= curr_y;
-		if(curr_y >= end_y)
-		{
-			// Different from the end check in hold_texture_handler because this
-			// clips the hold off at the end of the notefield.  That clips the hold
-			// at the end of the hold.
-			y= end_y;
-			last_vert_set= true;
-		}
-		// It's important to call the tex_handler before the lerpers because the
-		// tex_handler changes y in certain conditions.
-		phase= tex_handler.calc_tex_y(y, tex_coords);
-		if(phase == HTP_Done)
-		{
-			last_vert_set= true;
-		}
-		beat= beat_lerp.lerp(y);
-		second= second_lerp.lerp(y);
+		time_lerp.lerp(y, beat, second);
 		renderable.input.change_eval_time(beat, second);
 		renderable.input.y_offset= y;
-		col.hold_render_transform(renderable.input, trans, col.m_twirl_holds);
-		// FIXME: Hold caps need to not be squished by the reverse_scale.
-		// And they need to be affected by the y zoom.
+		col.hold_render_transform(renderable.input, trans, col.m_twirl_holds, do_y_zoom);
 		col.apply_yoffset_to_pos(renderable.input, trans.pos);
 		if(beat <= col.m_selection_end && beat >= col.m_selection_start)
 		{
@@ -886,16 +792,72 @@ struct hold_vert_step_state
 		}
 		if(is_lift)
 		{
-			double along= (y - tex_handler.start_y) * lift_fade_dist_recip;
+			double along= (y - start_y) * lift_fade_dist_recip;
 			if(along < 1.0)
 			{
 				trans.alpha*= along;
 				trans.glow*= along;
 			}
 		}
-		return last_vert_set;
 	}
 };
+
+void NoteFieldColumn::calc_forward_and_left_for_hold(
+	Rage::transform& curr_trans, Rage::transform& next_trans,
+	Rage::Vector3& forward, Rage::Vector3& left,
+	NoteFieldColumn::render_note& note)
+{
+	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
+	static const Rage::Vector3 pos_z_vec(0.0f, 0.0f, 1.0f);
+	static const Rage::Vector3 neg_y_vec(0.0f, -1.0f, 0.0f);
+	if(m_holds_skewed_by_mods)
+	{
+		forward.x= 0.f;
+		forward.y= 1.f;
+		forward.z= 0.f;
+	}
+	else
+	{
+		forward.x= next_trans.pos.x - curr_trans.pos.x;
+		forward.y= next_trans.pos.y - curr_trans.pos.y;
+		forward.z= next_trans.pos.z - curr_trans.pos.z;
+		forward= forward.GetNormalized();
+	}
+	if(m_use_moddable_hold_normal)
+	{
+		Rage::Vector3 normal;
+		m_hold_normal_mod.evaluate(note.input, normal);
+		left= Rage::CrossProduct(normal, forward);
+	}
+	else
+	{
+		if(std::abs(forward.z) > 0.9f) // 0.9 arbitrariliy picked.
+		{
+			left= Rage::CrossProduct(neg_y_vec, forward);
+		}
+		else
+		{
+			left= Rage::CrossProduct(pos_z_vec, forward);
+		}
+	}
+	if(m_twirl_holds && curr_trans.rot.y != 0.0)
+	{
+		RageAARotate(&left, &forward, -curr_trans.rot.y);
+	}
+	left*= (.5 * m_newskin->get_width()) * curr_trans.zoom.x;
+}
+
+static void calc_left_and_right_verts(
+	Rage::Vector3& render_left, Rage::Vector3& curr_pos,
+	Rage::Vector3& left_vert, Rage::Vector3& right_vert)
+{
+	left_vert.x= curr_pos.x + render_left.x;
+	left_vert.y= curr_pos.y + render_left.y;
+	left_vert.z= curr_pos.z + render_left.z;
+	right_vert.x= curr_pos.x - render_left.x;
+	right_vert.y= curr_pos.y - render_left.y;
+	right_vert.z= curr_pos.z - render_left.z;
+}
 
 void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	render_note& note, double head_beat, double head_second,
@@ -903,9 +865,6 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 {
 	double const original_beat= note.input.eval_beat;
 	double const original_second= note.input.eval_second;
-	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
-	static const Rage::Vector3 pos_z_vec(0.0f, 0.0f, 1.0f);
-	static const Rage::Vector3 neg_y_vec(0.0f, -1.0f, 0.0f);
 	static strip_buffer verts_to_draw;
 	verts_to_draw.init();
 	static const double y_step= 4.0;
@@ -928,6 +887,13 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		default:
 			break;
 	}
+	double num_tex_pixels= data.part_lengths.topcap_pixels +
+			data.part_lengths.body_pixels + data.part_lengths.bottomcap_pixels;
+	if(data.part_lengths.needs_jumpback)
+	{
+		num_tex_pixels+= data.part_lengths.body_pixels;
+	}
+	double tex_per_y= (tex_bottom - tex_top) / num_tex_pixels;
 	double head_y_offset= note.y_offset;
 	double tail_y_offset= note.tail_y_offset;
 	if(tail_y_offset < head_y_offset)
@@ -936,10 +902,10 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		std::swap(head_y_offset, tail_y_offset);
 	}
 	double y_off_len= tail_y_offset - head_y_offset;
-	hold_time_lerper beat_lerper(head_y_offset, y_off_len, head_beat, tail_beat - head_beat);
-	hold_time_lerper second_lerper(head_y_offset, y_off_len, head_second, tail_second - head_second);
-	hold_texture_handler tex_handler(note_size, head_y_offset, tail_y_offset, tex_top, tex_bottom, data);
+	hold_time_lerper time_lerper(head_y_offset, y_off_len, head_beat, tail_beat - head_beat, head_second, tail_second - head_second);
 	float const color_scale= Rage::scale(note.note_iter->second.HoldResult.fLife, 0.f, 1.f, m_newskin->get_hold_gray_percent(), 1.f);
+	Rage::Color color(color_scale, color_scale, color_scale, 1.f);
+	Rage::Color glow_color(1.f, 1.f, 1.f, 0.f);
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetZTestMode(ZTEST_WRITE_ON_PASS);
 	DISPLAY->SetZWrite(true);
@@ -950,116 +916,212 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		Rage::Color player_color= get_player_color(note.note_iter->second.pn);
 		DISPLAY->set_color_key_shader(player_color, data.mask->GetTexHandle());
 	}
-	bool last_vert_set= false;
-	bool next_last_vert_set= false;
-	// Set a start and end y so that the hold can be clipped to the start and
-	// end of the field.
-	double start_y= max(tex_handler.start_y, first_y_offset_visible);
-	double end_y= std::min(tex_handler.end_y, last_y_offset_visible);
+	// These Vector3s will be reused by each phase.
+	Rage::Vector3 forward, left, left_vert, right_vert;
+	double start_y= max(head_y_offset, first_y_offset_visible);
 	// next_step exists so that the forward vector of a hold can be calculated
 	// and used to make the hold turn and maintain constant width, instead of
 	// being skewed.  Toggle the holds_skewed_by_mods flag with lua to see the
 	// difference.
-	int phase= HTP_Top;
-	int next_phase= HTP_Top;
-	hold_vert_step_state next_step; // The OS of the future.
-	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper,
-		tex_handler, next_phase, is_lift, note);
-	bool need_glow_pass= false;
-	for(double curr_y= start_y; !last_vert_set; curr_y+= y_step)
+	hold_vert_step_state curr_step(*this, time_lerper, note, start_y, is_lift);
+	// The OS of the future.
+	hold_vert_step_state next_step(*this, time_lerper, note, start_y, is_lift);
+	if(head_y_offset > first_y_offset_visible &&
+		data.part_lengths.pixels_before_note > 0.)
 	{
-		hold_vert_step_state curr_step= next_step;
-		if(curr_step.trans.glow > .01)
+		curr_step.calc(start_y, true);
+		next_step.calc(start_y + y_step);
+		// Draw the cap before the note.
+		calc_forward_and_left_for_hold(curr_step.trans, next_step.trans,
+			forward, left, note);
+		// Reverse the direction of forward because it's positioning the verts
+		// before the head.
+		// Scale it by the y zoom so it matches the note.
+		// Don't clip to first_y_offset_visible because the note isn't clipped to
+		// that either.
+		forward*= -1.f * data.part_lengths.pixels_before_note *
+			curr_step.trans.zoom.y;
+		color.a= curr_step.trans.alpha;
+		glow_color.a= curr_step.trans.glow;
 		{
-			need_glow_pass= true;
+			// Does not use calc_left_and_right_verts because forward needs
+			// to be added in.
+			Rage::Vector3 lv(
+				forward.x + left.x + curr_step.trans.pos.x,
+				forward.y + left.y + curr_step.trans.pos.y,
+				forward.z + left.z + curr_step.trans.pos.z);
+			Rage::Vector3 rv(
+				forward.x - left.x + curr_step.trans.pos.x,
+				forward.y - left.y + curr_step.trans.pos.y,
+				forward.z - left.z + curr_step.trans.pos.z);
+			verts_to_draw.add_verts(tex_top, lv, rv, color, glow_color, tex_left,
+				tex_right, data.parts);
 		}
-		phase= next_phase;
-		last_vert_set= next_last_vert_set;
-		next_last_vert_set= next_step.calc(*this, curr_y + y_step, end_y,
-			beat_lerper, second_lerper, tex_handler,
-			phase, is_lift, note);
-		Rage::Vector3 render_forward(0.0, 1.0, 0.0);
-		if(!m_holds_skewed_by_mods)
 		{
-			render_forward.x= next_step.trans.pos.x - curr_step.trans.pos.x;
-			render_forward.y= next_step.trans.pos.y - curr_step.trans.pos.y;
-			render_forward.z= next_step.trans.pos.z - curr_step.trans.pos.z;
-			render_forward= render_forward.GetNormalized();
+			double head_tex_y= tex_top + (tex_per_y * data.part_lengths.pixels_before_note);
+			calc_left_and_right_verts(left,
+				curr_step.trans.pos, left_vert, right_vert);
+			verts_to_draw.add_verts(head_tex_y, left_vert, right_vert, color,
+				glow_color, tex_left, tex_right, data.parts);
 		}
-		Rage::Vector3 render_left;
-		if(m_use_moddable_hold_normal)
+	}
+	double topcap_end_y= head_y_offset + (data.part_lengths.topcap_pixels -
+		data.part_lengths.pixels_before_note);
+	double body_end_y= tail_y_offset - (data.part_lengths.bottomcap_pixels -
+		data.part_lengths.pixels_after_note);
+	if(topcap_end_y > body_end_y)
+	{
+		topcap_end_y= body_end_y;
+	}
+#define SINGLE_STEP(calc_tex_y, next_y) \
+		next_step.calc(next_y); \
+		calc_forward_and_left_for_hold(curr_step.trans, next_step.trans, \
+			forward, left, note); \
+		calc_left_and_right_verts(left, curr_step.trans.pos, left_vert, \
+			right_vert); \
+		color.a= curr_step.trans.alpha; \
+		glow_color.a= curr_step.trans.glow; \
+		calc_tex_y; \
+		verts_to_draw.add_verts(tex_y, left_vert, right_vert, color, \
+			glow_color, tex_left, tex_right, data.parts); \
+		curr_step= next_step;
+#define STEPPING_LOOP(limit, calc_tex_y) \
+	for(double curr_y= start_y; curr_y < limit && \
+				curr_y <= last_y_offset_visible; curr_y+= y_step) \
+	{ \
+		SINGLE_STEP(calc_tex_y, curr_y + y_step); \
+	} \
+	start_y= limit;
+	// Each phase will advance start_y to the start point of the next phase.
+
+	if(start_y < body_end_y)
+	{
+		if(start_y < topcap_end_y)
 		{
-			Rage::Vector3 normal;
-			m_hold_normal_mod.evaluate(note.input, normal);
-			render_left= Rage::CrossProduct(normal, render_forward);
+			curr_step.calc(start_y);
+			// Topcap section after the note.
+			double head_tex_y= tex_top + (tex_per_y * data.part_lengths.pixels_before_note);
+			STEPPING_LOOP(topcap_end_y, float tex_y= (tex_per_y * (curr_y - start_y)) + head_tex_y);
 		}
-		else
+		// There might not be a body between the topcap and the bottomcap if
+		// the topcap after the note and the bottomcap before the note are longer
+		// than the hold height.
+		if(start_y < body_end_y)
 		{
-			if(std::abs(render_forward.z) > 0.9f) // 0.9 arbitrariliy picked.
+			// Repeating body section.
+			// The body is aligned to have a seam at the top (because the length is
+			//   not multiple of body_pixels), and not have a seam at the bottom.
+			// Thus, texture coords are calculated by distance from the bottom.
+			// The first step has to be shorter than the others because
+			// body_end_y - topcap_end_y is not a multiple of y_step.
+			double body_len= body_end_y - topcap_end_y;
+			// body_mid_tex_y is between the two body sections.
+			// body_end_tex_y is where the bottomcap starts.
+			double body_mid_tex_y= tex_bottom;
+			double body_end_tex_y= tex_bottom;
+			if(data.part_lengths.needs_jumpback)
 			{
-				render_left= Rage::CrossProduct(neg_y_vec, render_forward);
+				body_mid_tex_y-= tex_per_y * (data.part_lengths.bottomcap_pixels +
+					data.part_lengths.body_pixels);
+				body_end_tex_y-= tex_per_y * data.part_lengths.bottomcap_pixels;
 			}
 			else
 			{
-				render_left= Rage::CrossProduct(pos_z_vec, render_forward);
+				body_mid_tex_y-= tex_per_y * data.part_lengths.bottomcap_pixels;
+				body_end_tex_y= body_mid_tex_y;
 			}
-		}
-		if(m_twirl_holds && curr_step.trans.rot.y != 0.0)
-		{
-			RageAARotate(&render_left, &render_forward, -curr_step.trans.rot.y);
-		}
-		render_left*= (.5 * m_newskin->get_width()) * curr_step.trans.zoom.x;
-		const Rage::Vector3 left_vert(
-			render_left.x + curr_step.trans.pos.x,
-			render_left.y + curr_step.trans.pos.y,
-			render_left.z + curr_step.trans.pos.z);
-		const Rage::Vector3 right_vert(
-			-render_left.x + curr_step.trans.pos.x,
-			-render_left.y + curr_step.trans.pos.y,
-			-render_left.z + curr_step.trans.pos.z);
-		const Rage::Color color(color_scale, color_scale, color_scale, curr_step.trans.alpha);
-		const Rage::Color glow_color(1.0, 1.0, 1.0, curr_step.trans.glow);
-#define add_vert_strip_args verts_to_draw, left_vert, right_vert, color, glow_color, tex_left, tex_right
-		for(size_t i= 0; i < curr_step.tex_coords.size(); ++i)
-		{
-			add_vert_strip(curr_step.tex_coords[i], add_vert_strip_args);
-		}
-#undef add_vert_strip_args
-		if(verts_to_draw.avail() < 6 || last_vert_set)
-		{
-			DISPLAY->SetTextureMode(TextureUnit_1, TextureMode_Modulate);
-			DISPLAY->SetCullMode(CULL_NONE);
-			DISPLAY->SetTextureWrapping(TextureUnit_1, false);
-			for(size_t t= 0; t < data.parts.size(); ++t)
+			double first_step= fmod(body_end_y - topcap_end_y, y_step);
+			float prev_tex_y= 0.f;
+			if(curr_step.uninitialized)
 			{
-				DISPLAY->SetTexture(TextureUnit_1, data.parts[t]->GetTexHandle());
-				DISPLAY->SetBlendMode(t == 0 ? BLEND_NORMAL : BLEND_ADD);
-				verts_to_draw.draw();
+				curr_step.calc(start_y);
 			}
-			if(need_glow_pass)
+			if(first_step > 0.001)
 			{
-				verts_to_draw.swap_glow();
-				DISPLAY->SetTextureMode(TextureUnit_1, TextureMode_Glow);
-				for(size_t t= 0; t < data.parts.size(); ++t)
-				{
-					DISPLAY->SetTexture(TextureUnit_1, data.parts[t]->GetTexHandle());
-					DISPLAY->SetBlendMode(t == 0 ? BLEND_NORMAL : BLEND_ADD);
-					verts_to_draw.draw();
-				}
+				start_y+= first_step;
+				SINGLE_STEP(float tex_y= body_mid_tex_y - (fmod(body_len, data.part_lengths.body_pixels) * tex_per_y), start_y);
+				prev_tex_y= tex_y;
 			}
-			if(!last_vert_set)
+			// Cover the jump back to beginning the first body section with
+			// verts in the identical second body section.
+#define BODY_CALC_TEX_Y \
+			float tex_offset= (fmod(body_end_y - curr_y, data.part_lengths.body_pixels) * tex_per_y); \
+			float tex_y= body_mid_tex_y - tex_offset; \
+			if(data.part_lengths.needs_jumpback && tex_y < prev_tex_y) \
+			{ \
+				verts_to_draw.add_verts(body_end_tex_y - tex_offset, left_vert, \
+					right_vert, color, glow_color, tex_left, tex_right, data.parts); \
+			} \
+			prev_tex_y= tex_y;
+
+			STEPPING_LOOP(body_end_y, BODY_CALC_TEX_Y);
+#undef BODY_CALC_TEX_Y
+			if(data.part_lengths.needs_jumpback)
 			{
-				// Intentionally swap the glow back after calling rollback so that
-				// only the set of verts that will remain are swapped.
-				verts_to_draw.rollback();
-				if(need_glow_pass)
-				{
-					verts_to_draw.swap_glow();
-				}
-				need_glow_pass= false;
+				// The bottomcap starts from the end of the second body section, but
+				// the last verts were from the end of the first body section.
+				verts_to_draw.add_verts(body_end_tex_y - (tex_per_y * y_step), left_vert, right_vert, color,
+					glow_color, tex_left, tex_right, data.parts);
 			}
 		}
 	}
+	if(body_end_y < tail_y_offset && start_y < tail_y_offset)
+	{
+		// Bottomcap before the note.
+		if(curr_step.uninitialized)
+		{
+			curr_step.calc(start_y);
+		}
+		// body_end_tex_y is where the bottomcap starts.
+		double body_end_tex_y= tex_bottom -
+			(tex_per_y * data.part_lengths.bottomcap_pixels);
+		STEPPING_LOOP(tail_y_offset, float tex_y= (tex_per_y * (curr_y - start_y)) + body_end_tex_y);
+	}
+	if(start_y < last_y_offset_visible &&
+		tail_y_offset < last_y_offset_visible &&
+		data.part_lengths.pixels_after_note > 0.)
+	{
+		// Bottomcap after the note.
+		// Even if curr_step was last evaluated for start_y, the y zoom is needed
+		// now.
+		curr_step.calc(start_y, true);
+		next_step.calc(start_y + y_step);
+		calc_forward_and_left_for_hold(curr_step.trans, next_step.trans,
+			forward, left, note);
+		forward*= data.part_lengths.pixels_after_note *
+			curr_step.trans.zoom.y;
+		color.a= curr_step.trans.alpha;
+		glow_color.a= curr_step.trans.glow;
+		{
+			double tail_tex_y= tex_bottom - (tex_per_y * data.part_lengths.pixels_after_note);
+			calc_left_and_right_verts(left,
+				curr_step.trans.pos, left_vert, right_vert);
+			verts_to_draw.add_verts(tail_tex_y, left_vert, right_vert, color,
+				glow_color, tex_left, tex_right, data.parts);
+		}
+		{
+			// Does not use calc_left_and_right_verts because forward needs
+			// to be added in.
+			Rage::Vector3 lv(
+				forward.x + left.x + curr_step.trans.pos.x,
+				forward.y + left.y + curr_step.trans.pos.y,
+				forward.z + left.z + curr_step.trans.pos.z);
+			Rage::Vector3 rv(
+				forward.x - left.x + curr_step.trans.pos.x,
+				forward.y - left.y + curr_step.trans.pos.y,
+				forward.z - left.z + curr_step.trans.pos.z);
+			verts_to_draw.add_verts(tex_bottom, lv, rv, color, glow_color, tex_left,
+				tex_right, data.parts);
+		}
+	}
+#undef STEPPING_LOOP
+#undef SINGLE_STEP
+	if(verts_to_draw.used() > 0)
+	{
+		verts_to_draw.draw(data.parts);
+	}
+	// Return the original eval time because it was changed during hold
+	// rendering.
 	note.input.change_eval_time(original_beat, original_second);
 }
 

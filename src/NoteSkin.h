@@ -316,11 +316,12 @@ LuaDeclareType(TexCoordFlipMode);
 
 struct hold_part_lengths
 {
-	double start_note_offset;
-	double end_note_offset;
-	double head_pixs;
-	double body_pixs;
-	double tail_pixs;
+	double topcap_pixels;
+	double pixels_before_note;
+	double body_pixels;
+	double pixels_after_note;
+	double bottomcap_pixels;
+	bool needs_jumpback;
 };
 
 struct QuantizedHoldRenderData

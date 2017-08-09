@@ -174,7 +174,7 @@ struct NoteFieldColumn : ActorFrame
 		Rage::transform& trans);
 	void calc_pos_only(mod_val_inputs& input, Rage::Vector3& out);
 	void hold_render_transform(mod_val_inputs& input, Rage::transform& trans,
-		bool do_rot);
+		bool do_rot, bool do_y_zoom);
 	void calc_reverse_shift();
 	double apply_reverse_shift(double y_offset);
 	void apply_yoffset_to_pos(mod_val_inputs& input, Rage::Vector3& pos);
@@ -272,6 +272,11 @@ struct NoteFieldColumn : ActorFrame
 	double m_selection_end;
 
 private:
+	void calc_forward_and_left_for_hold(
+		Rage::transform& curr_trans, Rage::transform& next_trans,
+		Rage::Vector3& forward, Rage::Vector3& left,
+		NoteFieldColumn::render_note& note);
+
 	void did_tap_note_internal(TapNoteScore tns, bool bright);
 	void did_hold_note_internal(HoldNoteScore hns, bool bright);
 	void draw_thing_internal();

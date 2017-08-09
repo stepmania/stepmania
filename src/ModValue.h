@@ -295,14 +295,19 @@ struct ModifiableTransform
 		out.zoom.y*= zoom;
 		out.zoom.z*= zoom;
 	}
-	void hold_render_eval(mod_val_inputs& input, Rage::transform& out, bool do_rot)
+	void hold_render_eval(mod_val_inputs& input, Rage::transform& out, bool do_rot, bool do_y_zoom)
 	{
 		pos_mod.evaluate(input, out.pos);
 		if(do_rot)
 		{
 			out.rot.y = static_cast<float>(rot_mod.y_mod.evaluate(input));
 		}
-		out.zoom.x = static_cast<float>(zoom_vmod.x_mod.evaluate(input) * zoom_mod.evaluate(input));
+		double zoom= zoom_mod.evaluate(input);
+		out.zoom.x = static_cast<float>(zoom_vmod.x_mod.evaluate(input) * zoom);
+		if(do_y_zoom)
+		{
+			out.zoom.y = static_cast<float>(zoom_vmod.y_mod.evaluate(input) * zoom);
+		}
 	}
 	bool needs_beat();
 	bool needs_second();
