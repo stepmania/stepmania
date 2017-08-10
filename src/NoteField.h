@@ -98,6 +98,11 @@ struct NoteFieldColumn : ActorFrame
 
 	Message create_width_message();
 
+	// To be used only by NoteField::set_player_number, which will also make
+	// and send a message.
+	void set_player_number(PlayerNumber pn)
+	{ m_pn= pn; }
+
 	// set_parent_info must be called once, when the column is created.
 	// set_parent_info must be called before reskin or set_note_data so the
 	// column knows its column id.
@@ -200,6 +205,8 @@ struct NoteFieldColumn : ActorFrame
 	void update_active_hold(TapNote const& tap);
 	virtual void DrawPrimitives();
 
+	virtual void HandleMessage(Message const& msg);
+
 	virtual void AddChild(Actor* act);
 	virtual void RemoveChild(Actor* act);
 	virtual void ChildChangedDrawOrder(Actor* child);
@@ -301,6 +308,8 @@ private:
 	// marked if they came from the noteskin.
 	std::list<FieldChild> m_layers;
 
+	// m_pn is so it can be passed to layers that are added.
+	PlayerNumber m_pn;
 	ArrowDefects* m_defective_mods;
 	bool m_in_defective_mode;
 

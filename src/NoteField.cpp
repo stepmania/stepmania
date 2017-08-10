@@ -145,7 +145,7 @@ NoteFieldColumn::NoteFieldColumn()
 	 m_upcoming_time(2.0),
 	 m_playerize_mode(NPM_Off),
 	 m_newskin(nullptr), m_player_colors(nullptr), m_field(nullptr),
-	 m_defective_mods(nullptr), m_in_defective_mode(false),
+	 m_pn(NUM_PLAYERS), m_defective_mods(nullptr), m_in_defective_mode(false),
 	 m_note_data(nullptr),
 	 m_timing_data(nullptr),
 	 m_gameplay_zoom(1.0),
@@ -159,6 +159,15 @@ NoteFieldColumn::NoteFieldColumn()
 
 NoteFieldColumn::~NoteFieldColumn()
 {}
+
+void NoteFieldColumn::HandleMessage(Message const& msg)
+{
+	ActorFrame::HandleMessage(msg);
+	for(auto&& lay : m_layers)
+	{
+		lay.m_child->HandleMessage(msg);
+	}
+}
 
 void NoteFieldColumn::AddChild(Actor* act)
 {
@@ -174,11 +183,11 @@ void NoteFieldColumn::AddChildInternal(Actor* act, bool from_noteskin)
 	m_field->add_draw_entry({new_child, static_cast<int>(m_column), act->GetDrawOrder(), fdem_layer});
 	if(m_newskin != nullptr)
 	{
-		if(act->HasCommand("WidthSet"))
-		{
-			act->HandleMessage(create_width_message());
-		}
+		act->HandleMessage(create_width_message());
 	}
+	Message msg("PlayerStateSet");
+	msg.SetParam("PlayerNumber", m_pn);
+	act->HandleMessage(msg);
 	new_child->SetParent(this);
 }
 
@@ -2186,13 +2195,18 @@ void NoteField::HandleMessage(Message const& msg)
 		msg.GetParam("pn", pn);
 		if(m_pn == pn)
 		{
-			bool mode= msg.GetParam("mode", mode);
+			bool mode;
+			msg.GetParam("mode", mode);
 			set_defective_mode(mode);
 		}
 	}
 	else
 	{
 		ActorFrame::HandleMessage(msg);
+		for(auto&& lay : m_layers)
+		{
+			lay.m_child->HandleMessage(msg);
+		}
 	}
 }
 
@@ -2205,17 +2219,11 @@ void NoteField::AddChild(Actor* act)
 	add_draw_entry({new_child, field_layer_column_index, act->GetDrawOrder(), fdem_layer});
 	if(!m_needs_reskin)
 	{
-		if(act->HasCommand("WidthSet"))
-		{
-			act->HandleMessage(create_width_message());
-		}
+		act->HandleMessage(create_width_message());
 	}
-	if(act->HasCommand("PlayerStateSet"))
-	{
-		Message msg("PlayerStateSet");
-		msg.SetParam("PlayerNumber", m_pn);
-		act->HandleMessage(msg);
-	}
+	Message msg("PlayerStateSet");
+	msg.SetParam("PlayerNumber", m_pn);
+	act->HandleMessage(msg);
 }
 
 void NoteField::RemoveChild(Actor* act)
@@ -3100,6 +3108,11 @@ void NoteField::set_player_number(PlayerNumber pn)
 	Message msg("PlayerStateSet");
 	msg.SetParam("PlayerNumber", pn);
 	HandleMessage(msg);
+	for(auto&& col : m_columns)
+	{
+		col.set_player_number(pn);
+		col.HandleMessage(msg);
+	}
 }
 
 void NoteField::set_player_options(PlayerOptions* options)
