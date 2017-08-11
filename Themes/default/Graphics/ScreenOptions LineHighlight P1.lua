@@ -1,2 +1,2 @@
-return LoadActor(THEME:GetPathG("OptionRowExit","frame")) .. {
+return LoadActor(THEME:GetPathG("ScreenOptions", "line highlight")) .. {
 };
