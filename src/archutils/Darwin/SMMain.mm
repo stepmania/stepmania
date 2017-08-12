@@ -23,7 +23,7 @@
 @implementation SMApplication
 - (void)fullscreen:(id)sender
 {
-//	ArchHooks::SetToggleWindowed();
+	// don't use ArchHooks::SetToggleWindowed(), it makes the screen black
 	[[self mainWindow] toggleFullScreen:nil];
 }
 
