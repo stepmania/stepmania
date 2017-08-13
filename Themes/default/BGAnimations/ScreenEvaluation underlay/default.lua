@@ -126,7 +126,7 @@ local eval_parts = Def.ActorFrame {}
 
 for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	-- Some things to help positioning
-	local step_count_offs = string.find(p, "P1") and -150 or 150
+	local step_count_offs = string.find(p, "P1") and -140 or 140
 	local grade_parts_offs = string.find(p, "P1") and -320 or 320
 	local p_grade = STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetGrade()
 	
@@ -201,7 +201,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	-- Primary score.
 	eval_parts[#eval_parts+1] = Def.BitmapText {
 		Font = "_overpass 36px",
-		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65);diffuse,ColorMidTone(PlayerColor(p));zoom,1;shadowlength,1),
+		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65);diffuse,ColorMidTone(PlayerColor(p));zoom,1;shadowlength,1;maxwidth,180),
 		OnCommand=function(self)
 			self:settext(GetPlScore(p, "primary")):diffusealpha(0):sleep(0.5):decelerate(0.3):diffusealpha(1)
 		end;

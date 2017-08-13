@@ -49,13 +49,13 @@ ModeIconColors = {
 
 GameColor = {
     PlayerColors = {
-        PLAYER_1 = color("#437CE7"),
-        PLAYER_2 = color("#EB3F8C"),
+        PLAYER_1 = color("#3982FF"),
+        PLAYER_2 = color("#FF4596"),
 		both = color("#FFFFFF"),
     },
     PlayerDarkColors = {
         PLAYER_1 = color("#EB3F8C"),
-        PLAYER_2 = color("#89385A"),
+        PLAYER_2 = color("#7F083C"),
 		both = color("#F5E1E1"),
     },
     Difficulty = {
@@ -105,7 +105,7 @@ GameColor = {
         JudgmentLine_W4     = color("#86ACD6"),
         JudgmentLine_W5     = color("#958CD6"),
         JudgmentLine_Held   = color("#FFFFFF"),
-        JudgmentLine_Miss   = color("#ff3c3c"),
+        JudgmentLine_Miss   = color("#F97E7E"),
         JudgmentLine_MaxCombo   = color("#ffc600")
     },
 }
