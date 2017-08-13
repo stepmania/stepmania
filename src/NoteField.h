@@ -94,7 +94,6 @@ struct NoteFieldColumn : ActorFrame
 		NoteData::TrackMap::const_iterator note_iter;
 		mod_val_inputs input;
 	};
-	void add_children_from_layers(size_t column, std::vector<NoteSkinLayer>& layers);
 
 	Message create_width_message();
 
@@ -415,6 +414,7 @@ struct NoteField : ActorFrame
 	// per-player configuration on gameplay.  Using it for any other purpose
 	// is forbidden.
 	void set_player_number(PlayerNumber pn);
+	PlayerNumber get_player_number();
 	// set_player_options is for supporting the old ArrowEffects mods in
 	// defective mode.
 	void set_player_options(PlayerOptions* options);

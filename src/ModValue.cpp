@@ -903,25 +903,6 @@ void mod_operator_random::per_note_update(mod_val_inputs& input)
 	m_eval_result= GAMESTATE->simple_stage_frandom(m_operand_results[0]);
 }
 
-static void get_numbers(lua_State* L, int index, vector<double*> const& ret)
-{
-	for(size_t i= 0; i < ret.size(); ++i)
-	{
-		lua_rawgeti(L, index, i+1);
-		(*ret[i]) = lua_tonumber(L, -1);
-		lua_pop(L, 1);
-	}
-}
-
-static void load_one_phase(lua_State* L, int index,
-	mod_operator_phase::phase& dest)
-{
-	if(lua_istable(L, index))
-	{
-		get_numbers(L, index, {&dest.start, &dest.finish, &dest.mult, &dest.offset});
-	}
-}
-
 static bool compare_phases(mod_operator_phase::phase const& left, mod_operator_phase::phase const& right)
 {
 	return left.start < right.start;
@@ -939,17 +920,32 @@ void mod_operator_phase::load_from_lua(mod_function* parent, lua_State* L, int i
 		lua_pop(L, 1);
 		throw std::string("Cannot create phase operator without phase table.");
 	}
-	lua_getfield(L, phase_index, "default");
-	load_one_phase(L, lua_gettop(L), m_default_phase);
+#define SET_PART(part, id) \
+	lua_rawgeti(L, source, id); \
+	part= lua_tonumber(L, -1); \
 	lua_pop(L, 1);
+#define LOAD_PHASE(dest) \
+	int source= lua_gettop(L); \
+	if(lua_istable(L, source)) \
+	{ \
+		SET_PART(dest.start, 1); \
+		SET_PART(dest.finish, 2); \
+		SET_PART(dest.mult, 3); \
+		SET_PART(dest.offset, 4); \
+	} \
+	lua_pop(L, 1);
+	lua_getfield(L, phase_index, "default");
+	LOAD_PHASE(m_default_phase);
 	size_t num_phases= lua_objlen(L, phase_index);
 	m_phases.resize(num_phases);
 	for(size_t i= 0; i < num_phases; ++i)
 	{
 		lua_rawgeti(L, phase_index, i+1);
-		load_one_phase(L, lua_gettop(L), m_phases[i]);
-		lua_pop(L, 1);
+		LOAD_PHASE(m_phases[i]);
 	}
+#undef LOAD_PHASE
+#undef SET_PART
+	lua_pop(L, 1);
 	stable_sort(m_phases.begin(), m_phases.end(), compare_phases);
 
 	if(m_update_type == mut_never)

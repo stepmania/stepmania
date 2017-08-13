@@ -216,15 +216,6 @@ void NoteFieldColumn::ChildChangedDrawOrder(Actor* child)
 	}
 }
 
-void NoteFieldColumn::add_children_from_layers(size_t column,
-	vector<NoteSkinLayer>& layers)
-{
-	for(size_t i= 0; i < layers.size(); ++i)
-	{
-		AddChild(layers[i].m_actors[column]);
-	}
-}
-
 Message NoteFieldColumn::create_width_message()
 {
 	Message width_msg("WidthSet");
@@ -819,18 +810,24 @@ void NoteFieldColumn::calc_forward_and_left_for_hold(
 	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
 	static const Rage::Vector3 pos_z_vec(0.0f, 0.0f, 1.0f);
 	static const Rage::Vector3 neg_y_vec(0.0f, -1.0f, 0.0f);
+	forward.x= next_trans.pos.x - curr_trans.pos.x;
+	forward.y= next_trans.pos.y - curr_trans.pos.y;
+	forward.z= next_trans.pos.z - curr_trans.pos.z;
+	forward= forward.GetNormalized();
 	if(m_holds_skewed_by_mods)
 	{
-		forward.x= 0.f;
-		forward.y= 1.f;
-		forward.z= 0.f;
-	}
-	else
-	{
-		forward.x= next_trans.pos.x - curr_trans.pos.x;
-		forward.y= next_trans.pos.y - curr_trans.pos.y;
-		forward.z= next_trans.pos.z - curr_trans.pos.z;
-		forward= forward.GetNormalized();
+		if(forward.y > 0.f)
+		{
+			forward.x= 0.f;
+			forward.y= 1.f;
+			forward.z= 0.f;
+		}
+		else
+		{
+			forward.x= 0.f;
+			forward.y= -1.f;
+			forward.z= 0.f;
+		}
 	}
 	if(m_use_moddable_hold_normal)
 	{
@@ -3115,6 +3112,12 @@ void NoteField::set_player_number(PlayerNumber pn)
 	}
 }
 
+PlayerNumber NoteField::get_player_number()
+{
+	return m_pn;
+}
+
+
 void NoteField::set_player_options(PlayerOptions* options)
 {
 	m_defective_mods.set_player_options(options);
@@ -3808,6 +3811,21 @@ struct LunaNoteField : Luna<NoteField>
 		p->set_player_color(pn, temp);
 		COMMON_RETURN_SELF;
 	}
+	static int get_player_number(T* p, lua_State* L)
+	{
+		Enum::Push(L, p->get_player_number());
+		return 1;
+	}
+	static int set_player_number(T* p, lua_State* L)
+	{
+		PlayerNumber pn= PlayerNumber_Invalid;
+		if(!lua_isnil(L, 1))
+		{
+			pn= Enum::Check<PlayerNumber>(L, 1);
+		}
+		p->set_player_number(pn);
+		COMMON_RETURN_SELF;
+	}
 	static int get_layer_fade_type(T* p, lua_State* L)
 	{
 		Actor* layer= Luna<Actor>::check(L, 1);
@@ -3844,6 +3862,7 @@ struct LunaNoteField : Luna<NoteField>
 		ADD_GET_SET_METHODS(curr_second);
 		ADD_GET_SET_METHODS(vanish_type);
 		ADD_METHOD(set_player_color);
+		ADD_GET_SET_METHODS(player_number);
 		ADD_METHOD(get_layer_fade_type);
 		ADD_METHOD(set_layer_fade_type);
 		ADD_GET_SET_METHODS(defective_mode);
