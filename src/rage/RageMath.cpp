@@ -70,6 +70,16 @@ float Rage::FastCos(float x)
 	return Rage::FastSin( x + (Rage::PI * .5f) );
 }
 
+float Rage::FastTan(float x)
+{
+	return Rage::FastSin( x ) / Rage::FastCos( x );
+}
+
+float Rage::FastCsc(float x)
+{
+	return 1 / Rage::FastSin( x );
+}
+
 float Rage::TriangleWave(float x)
 {
 	float fAngle= fmod(x, PI * 2.0f);
