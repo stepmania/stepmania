@@ -2478,9 +2478,15 @@ void NoteField::set_note_data(NoteData* note_data, TimingData const* timing, Ste
 	{
 		reskin_columns(&m_skin_walker, m_skin_parameters);
 	}
+	NotePlayerizeMode player_mode= NPM_Off;
+	if(GAMEMAN->stepstype_is_multiplayer(stype))
+	{
+		player_mode= NPM_Quanta;
+	}
 	for(size_t i= 0; i < m_columns.size(); ++i)
 	{
 		m_columns[i].set_note_data(m_note_data, m_timing_data);
+		m_columns[i].set_playerize_mode(player_mode);
 	}
 	if(!m_share_steps_children.empty())
 	{

@@ -453,24 +453,29 @@ end
 
 -- Finds the first child with the exact name given, descending into child
 -- frames as needed.
+-- Uses breadth-first search so that if multiple layers need to use the same
+-- actor name they won't interfere.
 function rec_find_child(frame, search_name)
 	if frame.GetChildren then
-		local children= frame:GetChildren()
-		for child_name, set in pairs(children) do
-			if child_name == search_name then
-				return set
+		local next_layers= {frame.GetChildren()}
+		while #next_layers > 0 do
+			local curr_layer= next_layers[1]
+			if curr_layer[search_name] then
+				return curr_layer[search_name]
 			end
-			if #set > 0 then
-				for id, child in ipairs(set) do
-					if child.GetChildren then
-						local sub_found= rec_find_child(child, search_name)
-						if sub_found then return sub_found end
+			table.remove(next_layers, 1)
+			for child_name, set in pairs(curr_layer) do
+				if #set > 0 then
+					for id= 1, #set do
+						local child= set[id]
+						if child.GetChildren then
+							next_layers[#next_layers+1]= child.GetChildren()
+						end
 					end
-				end
-			else
-				if set.GetChildren then
-					local sub_found= rec_find_child(set, search_name)
-					if sub_found then return sub_found end
+				else
+					if set.GetChildren then
+						next_layers[#next_layers+1]= set.GetChildren()
+					end
 				end
 			end
 		end
