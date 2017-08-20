@@ -157,7 +157,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		
 		--Containers. todo: replace with, erm... not quads
 		Def.Quad {
-			InitCommand=cmd(zoomto,190,115;diffuse,ColorMidTone(PlayerColor(p))),
+			InitCommand=cmd(zoomto,190,115;diffuse,ColorLightTone(PlayerColor(p));diffusebottomedge,color("#FEEFCA");),
 			OnCommand=function(self)
 			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.5)
 			end,
@@ -166,7 +166,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		Def.Quad {
 			InitCommand=cmd(y,120;zoomto,190,120;diffuse,color("#fce1a1");),
 			OnCommand=function(self)
-			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.3)
+			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.4)
 			end,
 			OffCommand=cmd(decelerate,0.3;diffusealpha,0)
 		},
@@ -186,7 +186,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		
 		Def.BitmapText {
 			Font = "_roboto condensed 24px",
-			InitCommand=cmd(diffuse,Color.White;zoom,1;addy,38;maxwidth,160;uppercase,true;diffuse,ColorLightTone(PlayerColor(p));strokecolor,ColorDarkTone(PlayerColor(p));diffusetopedge,Color.White;),
+			InitCommand=cmd(diffuse,Color.White;zoom,1;addy,38;maxwidth,160;uppercase,true;diffuse,ColorDarkTone(PlayerDarkColor(p));diffusetopedge,ColorMidTone(PlayerColor(p));shadowlength,1;),
 			OnCommand=function(self)
 				if STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetStageAward() then
 					self:settext(THEME:GetString( "StageAward", ToEnumShortString(STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetStageAward()) ))

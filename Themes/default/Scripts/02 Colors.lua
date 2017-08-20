@@ -54,7 +54,7 @@ GameColor = {
 		both = color("#FFFFFF"),
     },
     PlayerDarkColors = {
-        PLAYER_1 = color("#EB3F8C"),
+        PLAYER_1 = color("#023C9F"),
         PLAYER_2 = color("#7F083C"),
 		both = color("#F5E1E1"),
     },
@@ -62,21 +62,21 @@ GameColor = {
         --[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
         in some cases, especially to apply new colors for stuff you
         couldn't before. (huh? -aj) ]]
-        Beginner    = color("#8541B9"),         --  purple
-        Easy        = color("#5EBA42"),         -- green
-        Medium      = color("#D1C340"),         -- yellow
-        Hard        = color("#CB4833"),         -- orange
-        Challenge   = color("#1cd8ff"),         -- light blue
+        Beginner    = color("#A165CE"),         --  purple
+        Easy        = color("#50DA1A"),         -- green
+        Medium      = color("#FFE53E"),         -- yellow
+        Hard        = color("#FE4F49"),         -- orange
+        Challenge   = color("#2DDBFF"),         -- light blue
         Edit        = color("0.8,0.8,0.8,1"),   -- gray
         Couple      = color("#ed0972"),         -- hot pink
         Routine     = color("#ff9a00"),         -- orange
         --[[ These are for courses, so let's slap them here in case someone
         wanted to use Difficulty in Course and Step regions. ]]
-        Difficulty_Beginner = color("#8541B9"),     -- purple
-        Difficulty_Easy     = color("#5EBA42"),     -- green
-        Difficulty_Medium   = color("#D1C340"),     -- yellow
-        Difficulty_Hard     = color("#CB4833"),     -- orange
-        Difficulty_Challenge    = color("#1cd8ff"), -- light blue
+        Difficulty_Beginner = color("#A165CE"),     -- purple
+        Difficulty_Easy     = color("#50DA1A"),     -- green
+        Difficulty_Medium   = color("#FFE53E"),     -- yellow
+        Difficulty_Hard     = color("#FE4F49"),     -- orange
+        Difficulty_Challenge    = color("#2DDBFF"), -- light blue
         Difficulty_Edit     = color("0.8,0.8,0.8,1"),       -- gray
         Difficulty_Couple   = color("#ed0972"),             -- hot pink
         Difficulty_Routine  = color("#ff9a00")              -- orange

@@ -111,7 +111,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		
 		--Containers. todo: replace with, erm... not quads
 		Def.Quad {
-			InitCommand=cmd(zoomto,190,115;diffuse,ColorMidTone(PlayerColor(p))),
+			InitCommand=cmd(zoomto,190,115;diffuse,ColorLightTone(PlayerColor(p));diffusebottomedge,color("#FEEFCA");),
 			OnCommand=function(self)
 			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.5)
 			end,
@@ -120,7 +120,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		Def.Quad {
 			InitCommand=cmd(y,120;zoomto,190,120;diffuse,color("#fce1a1");),
 			OnCommand=function(self)
-			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.3)
+			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.4)
 			end,
 			OffCommand=cmd(decelerate,0.3;diffusealpha,0)
 		},
