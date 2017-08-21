@@ -2057,8 +2057,8 @@ public:
 	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); COMMON_RETURN_SELF; }
 	static int playcommand( T* p, lua_State *L )
 	{
-		if( !lua_istable(L, 2) && !lua_isnoneornil(L, 2) )
-			luaL_typerror( L, 2, "table or nil" );
+		// Things other than tables are useful. Forcing the themer to use a table
+		// wrapper just makes params more awkward. -Kyz
 
 		LuaReference ParamTable;
 		lua_pushvalue( L, 2 );

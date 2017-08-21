@@ -457,7 +457,7 @@ end
 -- actor name they won't interfere.
 function rec_find_child(frame, search_name)
 	if frame.GetChildren then
-		local next_layers= {frame.GetChildren()}
+		local next_layers= {frame:GetChildren()}
 		while #next_layers > 0 do
 			local curr_layer= next_layers[1]
 			if curr_layer[search_name] then
@@ -469,12 +469,12 @@ function rec_find_child(frame, search_name)
 					for id= 1, #set do
 						local child= set[id]
 						if child.GetChildren then
-							next_layers[#next_layers+1]= child.GetChildren()
+							next_layers[#next_layers+1]= child:GetChildren()
 						end
 					end
 				else
 					if set.GetChildren then
-						next_layers[#next_layers+1]= set.GetChildren()
+						next_layers[#next_layers+1]= set:GetChildren()
 					end
 				end
 			end
