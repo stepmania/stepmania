@@ -876,7 +876,7 @@ public:
 	}
 	static int SetPossibleDancePoints( T* p, lua_State *L )
 	{
-		if( IArg(1) >= 0 )
+		if( IArg(1) > 0 )
 		{
 			p->m_iPossibleDancePoints = IArg(1);
 			return 1;
