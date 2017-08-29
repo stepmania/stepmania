@@ -1365,9 +1365,8 @@
 			<Function name='GetTapNoteScores'/>
 			<Function name='IsDisqualified'/>
 			<Function name='MaxCombo'/>
-			<Function name='SetActualDancePoints'/>
 			<Function name='SetCurMaxScore'/>
-			<Function name='SetPossibleDancePoints'/>
+			<Function name='SetDancePointLimits'/>
 			<Function name='SetScore'/>
 		</Class>
 		<Class name='PlayerState'>
