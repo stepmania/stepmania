@@ -1366,6 +1366,7 @@
 			<Function name='IsDisqualified'/>
 			<Function name='MaxCombo'/>
 			<Function name='SetCurMaxScore'/>
+			<Function name='SetDancePointLimits'/>
 			<Function name='SetScore'/>
 		</Class>
 		<Class name='PlayerState'>

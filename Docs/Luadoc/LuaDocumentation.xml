@@ -3975,6 +3975,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='IsDisqualified' return='bool' arguments=''>
 		Returns <code>true</code> if the player was disqualified from ranking.
 	</Function>
+	<Function name='SetDancePointLimits' return='void' arguments='int actual, int possible'>
+		Sets the Dance Point limits of the stage.
+	</Function>
 </Class>
 <Class name='PlayerState'>
 	<Function name='ApplyPreferredOptionsToOtherLevels' return='void' arguments=''>

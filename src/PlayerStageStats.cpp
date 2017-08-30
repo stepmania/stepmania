@@ -865,6 +865,25 @@ public:
 		}
 		COMMON_RETURN_SELF;
 	}
+	static int SetDancePointLimits( T* p, lua_State *L )
+	{
+		int actual = IArg(1);
+		int possible = IArg(2);
+		if( actual >= 0 && possible > 0 )
+		{
+			p->m_iPossibleDancePoints = possible;
+			if( actual <= possible )
+			{
+				p->m_iActualDancePoints = actual;
+			}
+			else
+			{
+				p->m_iActualDancePoints = possible;
+			}
+			return 1;
+		}
+		COMMON_RETURN_SELF;
+	}
   
 	static int FailPlayer( T* p, lua_State *L )
 	{
@@ -915,6 +934,7 @@ public:
 		ADD_METHOD( SetScore );
 		ADD_METHOD( GetCurMaxScore );
 		ADD_METHOD( SetCurMaxScore );
+		ADD_METHOD( SetDancePointLimits );
 		ADD_METHOD( FailPlayer );
 		ADD_METHOD( GetSongsPassed );
 		ADD_METHOD( GetSongsPlayed );
