@@ -1,4 +1,5 @@
-return Def.ActorFrame {
+if ThemePrefs.Get("FancyUIBG") then
+	return Def.ActorFrame {
 	LoadActor(THEME:GetPathG("common bg", "base")) .. {
 		InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT)
 	};
@@ -29,4 +30,10 @@ return Def.ActorFrame {
 				OnCommand=cmd(zoom,0.2;diffusealpha,0.03;spin;effectmagnitude,0,0,-2.2)
 			};
 	};
-}
+	
+	}
+else
+	return LoadActor(THEME:GetPathG("common bg", "base")) .. {
+		InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT)
+	}
+end
