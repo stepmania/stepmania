@@ -1,7 +1,7 @@
 local t = Def.ActorFrame{};
 
 local Params = { 
-	NumParticles = 20,
+	NumParticles = 13,
 	VelocityXMin = 70,
 	VelocityXMax = 90,
 	VelocityYMin = 70,
