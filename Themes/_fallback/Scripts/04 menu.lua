@@ -364,7 +364,7 @@ local menu_scroller_mt= {
 				-- Before the visible area, just shift the menu offset.
 				self.menu_offset= self.menu_offset - ((finish - start) + 1)
 			else
-				if self.menu_offset > #self.info then
+				if self.menu_offset >= #self.info then
 					self.menu_offset= math.max(0, #self.info - self.num_main)
 					self:shift_all_items(1)
 					if self.menu_offset + self.menu_pos >= #self.info then
@@ -658,6 +658,12 @@ local menu_scroller_mt= {
 				return self.menu_offset + id + 1
 			end
 		end,
+		hide= function(self)
+			self.container:play_command_no_recurse("Hide")
+		end,
+		show= function(self)
+			self.container:play_command_no_recurse("Show")
+		end,
 }}
 
 local display_controller_mt= {
@@ -802,7 +808,6 @@ menu_controller_mt= {
 			local displays= rec_find_child(container, "display")
 			assert(displays, "Menu must have display actor.")
 			self.cursor= rec_find_child(container, "cursor")
-			self.debug_text= rec_find_child(container, "debug_text")
 			local display_controllers= {}
 			for id= 1, #displays do
 				local curr_display= displays[id]
@@ -829,8 +834,12 @@ menu_controller_mt= {
 			self.select_goes_to_top= select_goes_to_top
 			self.repeat_counts= {}
 		end,
-		set_info= function(self, info)
-			self.info= info
+		set_info= function(self, info, custom)
+			if custom then
+				self.info= info
+			else
+				self.info= nesty_menus.make_menu(info)
+			end
 			self.menu_stack= {}
 			self.scroller:set_info(self.menu_stack, 1)
 		end,
@@ -872,7 +881,6 @@ menu_controller_mt= {
 					button= event.GameButton
 				end
 				button= page_convert[low_level_button] or menu_convert[button]
-				--self.debug_text:settext("llb: " .. low_level_button .. " button: " .. tostring(button) .. " pc: " .. tostring(page_convert[low_level_button]) .. " mc: " .. tostring(menu_convert[button]))
 				if button then
 					return self:menu_button(button, pressie)
 				end
@@ -1049,7 +1057,7 @@ menu_controller_mt= {
 					active_display:set_info(extra)
 					active_display:refresh_submenu_anim()
 				else
-					if info < 0 then
+					if info < 0 or info >= #self.menu_stack then
 						self:close_menu()
 					else
 						for i= 1, info do
@@ -1077,7 +1085,7 @@ menu_controller_mt= {
 			local being_popped= self.menu_stack[#self.menu_stack]
 			local remembered_pos= being_popped.remembered_pos
 			if being_popped.on_close then
-				being_popped.on_close(being_popped.on_close_arg, remembered_menu_pos, remembered_cursor_pos, self.pn)
+				being_popped.on_close(being_popped.on_close_arg, remembered_pos, self.pn)
 			end
 			self.scroller:remove_info(#self.menu_stack)
 			self:update_cursor()
@@ -1132,6 +1140,12 @@ menu_controller_mt= {
 		lose_focus= function(self)
 			if not self.info then return end
 			self.scroller:get_cursor_item():lose_focus()
+		end,
+		hide= function(self)
+			self.container:play_command_no_recurse("Hide")
+		end,
+		show= function(self)
+			self.container:play_command_no_recurse("Show")
 		end,
 }}
 
@@ -1319,6 +1333,18 @@ local function combine_menu_params(specific, generic)
 	return combined
 end
 
+local function add_broad_params(params, broad)
+	if type(params) ~= "table" then params= {} end
+	if not broad then return params end
+	for name, par in pairs(broad) do
+		if name ~= "main_type" and name ~= "broad_type" and
+		params[name] == nil then
+			params[name]= par
+		end
+	end
+	return params
+end
+
 local function one_index_is_a_mistake(i, n)
 	return ((i-1)%n)+1
 end
@@ -1331,6 +1357,28 @@ end
 local function sops_get()
 	return GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
 end
+
+local broad_types= {
+	number= {main_type= "number", small_step= 1, big_step= 10, reset= 0},
+	bool= {main_type= "bool"},
+	choice= {main_type= "choice"},
+	toggle_number= {main_type= "toggle_number", on= 1, off= 0},
+	name_value_pairs= {main_type= "name_value_pairs"},
+	mistake= {main_type= "mistake"},
+
+	millisecond= {main_type= "number", small_step= .001, big_step= .01, reset= 0, value_type= "ms"},
+	percent= {main_type= "number", small_step= .01, big_step= .1, reset= 0, value_type= "percent"},
+	time= {main_type= "number", small_step= 10, big_step= 30, min= 0, value_type= "time"},
+	small_number= {main_type= "number", small_step= .1, big_step= 1, reset= 0},
+	large_number= {main_type= "number", small_step= 10, big_step= 100, reset= 0},
+}
+
+local fallback_option_data= {
+	preference= dofile("Themes/_fallback/Other/preference_menu_data.lua"),
+	profile= dofile("Themes/_fallback/Other/profile_menu_data.lua"),
+	player_option= dofile("Themes/_fallback/Other/player_menu_data.lua"),
+	song_option= dofile("Themes/_fallback/Other/song_menu_data.lua"),
+}
 
 local submenu_puts_closure_at_top= true
 local default_close_item= {
@@ -1392,7 +1440,7 @@ local menu_generics= {
 				return vtype_ret(params.get(arg, pn), params.value_type)
 			end,
 			reset= make_generic_reset(params),
-			type_hint= {main= "bool", sub= params.sub_type},
+			type_hint= {main= "choice", sub= params.sub_type},
 		}
 	end,
 	toggle_number= function(params)
@@ -1469,7 +1517,7 @@ local menu_specifics= {
 	},
 	config= {
 		arg= function(params)
-			return {config= params.config, path= params.path}
+			return {config= params.config, path= params.path, value_type= params.value_type}
 		end,
 		get= function(arg, pn)
 			return get_element_by_path(arg.config:get_data(pn), arg.path)
@@ -1481,6 +1529,18 @@ local menu_specifics= {
 				config_name= arg.config.name, field_name= arg.path,
 				value= value, pn= pn})
 		end,
+		reset= function(name, value)
+			if value ~= nil then return value end
+			return function(arg, pn)
+				local new_value= get_element_by_path(arg.config:get_default(), arg.path)
+				set_element_by_path(arg.config:get_data(pn), arg.path, new_value)
+				arg.config:set_dirty(pn)
+				MESSAGEMAN:Broadcast("ConfigValueChanged", {
+					config_name= arg.config.name, field_name= arg.path,
+					value= new_value, pn= pn})
+				return vtype_ret(new_value, arg.value_type)
+			end
+		end
 	},
 	profile= {
 		arg= function(params)
@@ -1514,11 +1574,11 @@ local menu_specifics= {
 			return params.name
 		end,
 		get= function(name, pn)
-			local ops= ops_get(pn)
+			local ops= pops_get(pn)
 			return ops[name](ops)
 		end,
 		set= function(name, value, pn)
-			local ops= ops_get(pn)
+			local ops= pops_get(pn)
 			-- We need to inform GameState if we set the fail type so it doesn't
 			-- override it with the beginner/easy preferences.
 			if name == "FailSetting" then
@@ -1553,6 +1613,9 @@ local menu_specifics= {
 }
 
 nesty_menus= {
+	add_broad_type= function(name, params)
+		broad_types[name]= params
+	end,
 	set_close_default_to_top= function(val)
 		submenu_puts_closure_at_top= val
 	end,
@@ -1562,8 +1625,37 @@ nesty_menus= {
 	clear_submenu_close_item= function(item)
 		submenu_close_item= default_close_item
 	end,
-	item= function(main_type, sub_type, params)
+	item= function(sub, name, broad, params)
+		-- old: name, main_type, sub_type, params)
+		local sub_type= sub
+		if type(sub) == "table" then
+			if sub.is_lua_config then
+				sub_type= "config"
+				params= add_broad_params(params, {config= sub, path= name})
+			else
+				sub_type= "data"
+				params= add_broad_params(params, {data= sub, path= name})
+			end
+		end
+		local broad_params= broad_types[broad]
+		if not broad_params then
+			local option_data_lookup= fallback_option_data[sub_type]
+			if option_data_lookup then
+				local data_entry= option_data_lookup[name]
+				if data_entry then
+					broad_params= broad_types[data_entry.broad_type]
+					params= add_broad_params(params, data_entry)
+				end
+			end
+		end
+		assert(broad_params, "No clue what you're trying to pull.")
+		params= add_broad_params(params, broad_params)
+		params.name= name
+		local main_type= params.main_type or broad_params.main_type
 		local generic_entry= menu_generics[main_type]
+		if sub_type == "generic" then
+			return generic_entry(params)
+		end
 		local specific_entry= menu_specifics[sub_type]
 		if not generic_entry or not specific_entry then
 			return menu_generics.mistake()
@@ -1572,11 +1664,12 @@ nesty_menus= {
 		if specific_entry.reset then
 			reset= specific_entry.reset(params.name, params.reset)
 		end
-		return generic_entry(
+		local ret= generic_entry(
 			combine_menu_params(
 				params, {
 					get= specific_entry.get, set= specific_entry.set, reset= reset,
 					arg= specific_entry.arg(params), sub_type= sub_type}))
+		return setmetatable(ret, mergable_table_mt)
 	end,
 	submenu= function(name, items, sub_type, no_close)
 		if not no_close and submenu_close_item then
@@ -1601,9 +1694,71 @@ nesty_menus= {
 				end
 			end
 		end
-		return {
+		local ret= {
 			name= name, func= function() return "submenu", items end,
 			type_hint= {main= "submenu", sub= sub_type},
 		}
+		return setmetatable(ret, mergable_table_mt)
+	end,
+	make_menu= function(info)
+		local ret= {}
+		for eid= 1, #info do
+			local entry= info[eid]
+			assert(type(entry) == "table", "Menu entry " .. eid .. " cannot hold drinks or food.")
+			local entype= entry[1]
+			local type_handlers= {
+				close= function()
+					return default_close_item
+				end,
+				item= function()
+					return nesty_menus.item(entry[2], entry[3], entry[4], entry[5])
+				end,
+				submenu= function()
+					local name= entry[2]
+					local items= nesty_menus.make_menu(entry[3])
+					local sub_type= entry[4]
+					local no_close= entry.no_close
+					if not no_close and submenu_close_item then
+						local found_closure= false
+						for i= 1, #items do
+							local it= items[i]
+							if it.type_hint == "close" then
+								found_closure= true
+								break
+							elseif type(it.type_hint) == "table" then
+								if it.type_hint.main == "close" then
+									found_closure= true
+									break
+								end
+							end
+						end
+						if not found_closure then
+							if submenu_puts_closure_at_top then
+								table.insert(items, 1, default_close_item)
+							else
+								items[#items+1]= default_close_item
+							end
+						end
+					end
+					return {
+						name= name, func= function() return "submenu", items end,
+						on_open= entry.on_open, on_close= entry.on_close,
+						type_hint= {main= "submenu", sub= sub_type},
+					}
+				end,
+				action= function()
+					return {name= entry[2], func= entry[3], arg= entry[4]}
+				end,
+				custom= function()
+					return entry[2]
+				end,
+			}
+			local handler= type_handlers[entype]
+			assert(handler, "Menu entry " .. eid .. " is of unknown type.")
+			local success, item= pcall(handler)
+			assert(success, "Menu entry " .. eid .. " had problem..."..tostring(item))
+			ret[#ret+1]= item
+		end
+		return ret
 	end,
 }

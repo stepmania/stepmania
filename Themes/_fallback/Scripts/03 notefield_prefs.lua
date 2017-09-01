@@ -215,6 +215,49 @@ function advanced_notefield_prefs_menu()
 	})
 end
 
+function adv_notefield_prefs_menu()
+	local items= {}
+	local info= {
+		{"hidden_offset", "number"},
+		{"sudden_offset", "number"},
+		{"hidden"},
+		{"sudden"},
+		{"fade_dist", "number"},
+		{"glow_during_fade"},
+		{"reverse", "percent"},
+		{"zoom", "percent"},
+		{"rotation_x", "number"},
+		{"rotation_y", "number"},
+		{"rotation_z", "number"},
+		{"vanish_x", "number"},
+		{"vanish_y", "number"},
+		{"fov", "number", min= 1, max= 179},
+		{"yoffset", "number"},
+		{"zoom_x", "percent"},
+		{"zoom_y", "percent"},
+		{"zoom_z", "percent"},
+	}
+	for i, entry in ipairs(info) do
+		if #entry == 1 then
+			items[#items+1]= {"item", notefield_prefs_config, entry[1], "bool"}
+		else
+			items[#items+1]= {"item", notefield_prefs_config, entry[1], entry[2], {min= entry.min, max= entry.max}}
+		end
+	end
+	return {"submenu", "advanced_notefield_config", items}
+end
+
+function notefield_prefs_speed_mod_item()
+	return {"item", notefield_prefs_config, "speed_mod", "large_number"}
+	--return {"item", "config", "speed_mod", "number", {config= notefield_prefs_config, path= "speed_mod", small_step= 10, big_step= 100}}
+	--return nesty_menus.item("number", "config", {name= "speed_mod", config= notefield_prefs_config, path= "speed_mod", small_step= 10, big_step= 100})
+end
+
+function notefield_prefs_speed_type_item()
+	return {"item", notefield_prefs_config, "speed_type", "choice", {choices= notefield_speed_types}}
+	--return nesty_menus.item("choice", "config", {name= "speed_type", config= notefield_prefs_config, path= "speed_type", choices= notefield_speed_types})
+end
+
 local function gen_speed_menu(pn)
 	local prefs= notefield_prefs_config:get_data(pn)
 	local float_args= {

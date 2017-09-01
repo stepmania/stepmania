@@ -85,6 +85,7 @@ local lua_config_mt= {
 			self.use_global_as_default= params.use_global_as_default
 			self.use_alternate_config_prefix= params.use_alternate_config_prefix
 			self.no_per_player= params.no_per_player
+			self.is_lua_config= true
 			return self
 		end,
 		sanitize_profile_slot= function(self, slot)
