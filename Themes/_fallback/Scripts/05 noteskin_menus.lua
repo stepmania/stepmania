@@ -44,6 +44,99 @@ function find_current_stepstype(pn)
 	return "StepsType_Dance_Single"
 end
 
+function shown_noteskins_menu()
+	return {
+		"custom", {
+			name= "shown_noteskins", type_hint= {main= "submenu", sub= "noteskin"},
+			translation_section= "notefield_options",
+			func= function(big, arg, pn)
+				local items= {}
+				local all_noteskin_names= NOTESKIN:get_all_skin_names()
+				local config= shown_noteskins:get_data(pn)
+				for i, skin_name in ipairs(all_noteskin_names) do
+					items[#items+1]= {
+						name= skin_name, func_changes_value= true,
+						dont_translate_name= true,
+						func= function()
+							config[skin_name]= not config[skin_name]
+							return {"boolean", not config[skin_name]}
+						end,
+						value= function()
+							return {"boolean", not config[skin_name]}
+						end,
+					}
+				end
+				nesty_menus.add_close_item(items)
+				return "submenu", items
+	end}}
+end
+
+local function generate_noteskin_menu_items(pn)
+	local items= {}
+	local stepstype= find_current_stepstype(pn)
+	local skins= filter_noteskin_list_with_shown_config(
+		pn, NOTESKIN:get_skin_names_for_stepstype(stepstype))
+	local player_skin= PROFILEMAN:GetProfile(pn)
+		:get_preferred_noteskin(stepstype)
+	for i, skin_name in ipairs(skins) do
+		items[#items+1]= {
+			name= skin_name, dont_translate_name= true,
+			translation_section= "notefield_options",
+			func= function()
+				PROFILEMAN:GetProfile(pn):set_preferred_noteskin(skin_name)
+				MESSAGEMAN:Broadcast("NoteskinChanged", {pn= pn})
+				return "refresh", generate_noteskin_menu_items(pn)
+			end,
+			value= function()
+				if skin_name == player_skin then
+					return {"boolean", true}
+				end
+				return nil
+			end,
+		}
+	end
+	nesty_menus.add_close_item(items)
+	return items
+end
+
+function noteskin_menu()
+	return {
+		"custom", {
+			name= "noteskin", type_hint= {main= "submenu", sub= "noteskin"},
+			translation_section= "notefield_options",
+			func= function(big, arg, pn)
+				return "submenu", generate_noteskin_menu_items(pn)
+	end}}
+end
+
+function noteskin_menu_item()
+	return {
+		"custom", {
+			name= "noteskin", type_hint= {main= "choice", sub= "noteskin"},
+			translation_section= "notefield_options",
+			dont_translate_value= true,
+			value= function(arg, pn)
+				return {"string", PROFILEMAN:GetProfile(pn):get_preferred_noteskin(find_current_stepstype(pn))}
+			end,
+			adjust= function(dir, big, arg, pn)
+				local stype= find_current_stepstype(pn)
+				local skins= filter_noteskin_list_with_shown_config(
+					pn, NOTESKIN:get_skin_names_for_stepstype(stype))
+				local player_skin= PROFILEMAN:GetProfile(pn)
+					:get_preferred_noteskin(stype)
+				local id= 0
+				for i, entry in ipairs(skins) do
+					if entry == player_skin then id= i break end
+				end
+				id= (((id + dir) - 1) % #skins) + 1
+				player_skin= skins[id]
+				PROFILEMAN:GetProfile(pn):set_preferred_noteskin(player_skin)
+				MESSAGEMAN:Broadcast("NoteskinChanged", {pn= pn})
+				return {"string", player_skin}
+			end,
+	}}
+end
+
 nesty_option_menus.shown_noteskins= {
 	type= "menu",
 	__index= {

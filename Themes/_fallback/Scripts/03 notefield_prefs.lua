@@ -239,23 +239,20 @@ function adv_notefield_prefs_menu()
 	}
 	for i, entry in ipairs(info) do
 		if #entry == 1 then
-			items[#items+1]= {"item", notefield_prefs_config, entry[1], "bool"}
+			items[#items+1]= {"item", notefield_prefs_config, entry[1], "bool", {translation_section= "notefield_options"}}
 		else
-			items[#items+1]= {"item", notefield_prefs_config, entry[1], entry[2], {min= entry.min, max= entry.max}}
+			items[#items+1]= {"item", notefield_prefs_config, entry[1], entry[2], {min= entry.min, max= entry.max, translation_section= "notefield_options"}}
 		end
 	end
-	return {"submenu", "advanced_notefield_config", items}
+	return {"submenu", "advanced_notefield_config", items, translation_section= "notefield_options"}
 end
 
 function notefield_prefs_speed_mod_item()
-	return {"item", notefield_prefs_config, "speed_mod", "large_number"}
-	--return {"item", "config", "speed_mod", "number", {config= notefield_prefs_config, path= "speed_mod", small_step= 10, big_step= 100}}
-	--return nesty_menus.item("number", "config", {name= "speed_mod", config= notefield_prefs_config, path= "speed_mod", small_step= 10, big_step= 100})
+	return {"item", notefield_prefs_config, "speed_mod", "large_number", {translation_section= "notefield_options"}}
 end
 
 function notefield_prefs_speed_type_item()
-	return {"item", notefield_prefs_config, "speed_type", "choice", {choices= notefield_speed_types}}
-	--return nesty_menus.item("choice", "config", {name= "speed_type", config= notefield_prefs_config, path= "speed_type", choices= notefield_speed_types})
+	return {"item", notefield_prefs_config, "speed_type", "choice", {choices= notefield_speed_types, translation_section= "notefield_options"}}
 end
 
 local function gen_speed_menu(pn)

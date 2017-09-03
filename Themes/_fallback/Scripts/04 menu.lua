@@ -37,6 +37,14 @@ function rec_calc_actor_pos(actor)
 	return x+px+wx, y+py+wy
 end
 
+local function want_string(section, name)
+	if THEME:HasString(section, name) then
+		return THEME:GetString(section, name)
+	end
+	lua.ReportScriptError('String "'..section.."::"..name..'" is missing.')
+	return name
+end
+
 local function add_part(self, part_name, clickables, handler, required_message, is_name, func_name)
 	local actor_name= part_name .. "_actor"
 	self[actor_name]= rec_find_child(self.container, part_name)
@@ -115,11 +123,16 @@ local item_controller_mt= {
 			self.info= info
 			if info then
 				self.container:play_command_no_recurse(set_command, info)
-				self.name_actor:playcommand("SetName", info.name)
+				local trans_name= info.name
+				if not info.dont_translate_name then
+					local section= info.translation_section or "OptionNames"
+					trans_name= want_string(section, info.name)
+				end
+				self.name_actor:playcommand("SetName", trans_name)
 				local value_type= type(info.value)
 				if value_type == "nil" then
-					self.container:play_command_no_recurse("SetTypeHint", info.type_hint)
 					self:set_value(nil)
+					self.container:play_command_no_recurse("SetTypeHint", info.type_hint)
 				elseif value_type == "function" then
 					local display_value= info.value(info.arg, self.pn)
 					self:set_value(display_value)
@@ -173,6 +186,15 @@ local item_controller_mt= {
 			return true
 		end,
 		set_value= function(self, v)
+			if type(v) == "table" then
+				local value= v[2]
+				v[3]= value
+				if type(value) == "string"
+				and not self.info.dont_translate_value then
+					local section= self.info.translation_section or "OptionNames"
+					v[2]= want_string(section, value)
+				end
+			end
 			self.value_actor:playcommand("SetValue", v)
 		end,
 		interact= function(self, big)
@@ -257,6 +279,9 @@ local menu_scroller_mt= {
 				self.focus_pos= math.floor(self.focus_pos)
 			end
 		end,
+		clamp_offset= function(self, offset)
+			return clamp(offset, 0, #self.info - self.num_main)
+		end,
 		set_info= function(self, info, pos)
 			self.info= info
 			for id= 0, self.num_spare-1 do
@@ -283,11 +308,11 @@ local menu_scroller_mt= {
 					self.menu_offset= (info_start-1) % #info
 					self.menu_pos= self.focus_pos
 				else
-					local info_start= math.max(1, pos - self.focus_pos)
+					self.menu_offset= self:clamp_offset(pos - self.focus_pos - 1)
 					local num_to_set= math.min(self.num_main, #info)
 					for id= 0, num_to_set-1 do
 						local item= self.main_items[id]
-						item:set_info(info[id+info_start])
+						item:set_info(info[id+self.menu_offset+1])
 						item:scroll(self.num_main, "first", id+1, id+1)
 						item:set_active()
 					end
@@ -297,8 +322,7 @@ local menu_scroller_mt= {
 						item:scroll(self.num_main, "first", id+1, id+1)
 						item:set_inactive()
 					end
-					self.menu_offset= info_start-1
-					self.menu_pos= pos - info_start
+					self.menu_pos= pos - self.menu_offset - 1
 				end
 			end
 		end,
@@ -584,7 +608,7 @@ local menu_scroller_mt= {
 				self.menu_offset= new_offset % #self.info
 				self:shift_all_items(dir)
 			else
-				new_offset= clamp(new_offset, 0, #self.info - self.num_main)
+				new_offset= self:clamp_offset(new_offset)
 				local shift= new_offset - self.menu_offset
 				if shift ~= 0 then
 					self.menu_offset= new_offset
@@ -621,7 +645,7 @@ local menu_scroller_mt= {
 					new_offset= (pos - self.focus_pos - 1) % #self.info
 					new_pos= self.focus_pos
 				else
-					new_offset= clamp(pos - self.focus_pos - 1, 0, #self.info - self.num_main)
+					new_offset= self:clamp_offset(pos - self.focus_pos - 1)
 					new_pos= pos - 1 - new_offset
 				end
 				self.menu_pos= new_pos
@@ -713,6 +737,10 @@ local display_controller_mt= {
 				self.scroller:set_info({}, 1)
 			end
 		end,
+		refresh_info= function(self, info)
+			info.remembered_pos= info.remembered_pos or self.scroller:get_cursor_info_pos()
+			self:set_info(info)
+		end,
 		check_click= function(self, press_info)
 			if not self.info or #self.info < 1 then return end
 			for id= 0, self.scroller.num_main-1 do
@@ -764,15 +792,6 @@ local display_controller_mt= {
 		end,
 		get_cursor_info_pos= function(self)
 			return self.scroller:get_cursor_info_pos()
-		end,
-		open_submenu_anim= function(self)
-			self.container:play_command_no_recurse("OpenSubmenu")
-		end,
-		refresh_submenu_anim= function(self)
-			self.container:play_command_no_recurse("RefreshSubmenu")
-		end,
-		close_submenu_anim= function(self)
-			self.container:play_command_no_recurse("CloseSubmenu")
 		end,
 }}
 
@@ -854,7 +873,7 @@ menu_controller_mt= {
 			for id= 0, self.scroller.num_main-1 do
 				local disp= self.scroller.main_items[id]
 				if disp.info then
-					disp:close_submenu_anim()
+					disp:set_info(nil)
 				end
 			end
 			for id= #self.menu_stack, 1, -1 do
@@ -1036,8 +1055,8 @@ menu_controller_mt= {
 			local active_display= self.scroller:get_cursor_item()
 			if action == "refresh" then
 				if type(info) == "table" then
-					active_display:set_info(info)
-					active_display:refresh_submenu_anim()
+					active_display:refresh_info(info)
+					self:update_cursor()
 				end
 			elseif action == "submenu" then
 				if type(info) == "table" then
@@ -1054,8 +1073,8 @@ menu_controller_mt= {
 					for i= 1, info do
 						self:pop_menu()
 					end
-					active_display:set_info(extra)
-					active_display:refresh_submenu_anim()
+					active_display:refresh_info(extra)
+					self:update_cursor()
 				else
 					if info < 0 or info >= #self.menu_stack then
 						self:close_menu()
@@ -1302,7 +1321,7 @@ end
 
 local function vtype_ret(val, vtype)
 	if vtype then return {vtype, val} end
-	return val
+	return {type(val), val}
 end
 
 local function make_generic_reset(params)
@@ -1345,6 +1364,13 @@ local function add_broad_params(params, broad)
 	return params
 end
 
+local function add_translation_params(entry, params)
+	for i, name in ipairs{"translation_section", "dont_translate_name", "dont_translate_value"} do
+		entry[name]= params[name]
+	end
+	return entry
+end
+
 local function one_index_is_a_mistake(i, n)
 	return ((i-1)%n)+1
 end
@@ -1382,7 +1408,7 @@ local fallback_option_data= {
 
 local submenu_puts_closure_at_top= true
 local default_close_item= {
-	name= "<-", type_hint= {main= "close"},
+	name= "<-", dont_translate_name= true, type_hint= {main= "close"},
 	func= function() return "close", 1 end,
 }
 local submenu_close_item= default_close_item
@@ -1434,6 +1460,7 @@ local menu_generics= {
 				choice_id= advance_choice(choice_id, direction, big, params.big_step, #params.choices)
 				local new_choice= params.choices[choice_id]
 				params.set(arg, new_choice, pn)
+				local trans_choice= new_choice
 				return vtype_ret(new_choice, params.value_type)
 			end,
 			value= function(arg, pn)
@@ -1625,8 +1652,30 @@ nesty_menus= {
 	clear_submenu_close_item= function(item)
 		submenu_close_item= default_close_item
 	end,
+	add_close_item= function(items)
+		if not submenu_close_item then return end
+		local found_closure= false
+		for i= 1, #items do
+			local it= items[i]
+			if it.type_hint == "close" then
+				found_closure= true
+				break
+			elseif type(it.type_hint) == "table" then
+				if it.type_hint.main == "close" then
+					found_closure= true
+					break
+				end
+			end
+		end
+		if not found_closure then
+			if submenu_puts_closure_at_top then
+				table.insert(items, 1, default_close_item)
+			else
+				items[#items+1]= default_close_item
+			end
+		end
+	end,
 	item= function(sub, name, broad, params)
-		-- old: name, main_type, sub_type, params)
 		local sub_type= sub
 		if type(sub) == "table" then
 			if sub.is_lua_config then
@@ -1650,11 +1699,13 @@ nesty_menus= {
 		end
 		assert(broad_params, "No clue what you're trying to pull.")
 		params= add_broad_params(params, broad_params)
+		-- name will be translated in item_controller:set_info because the theme
+		-- needs to be able to search for items by name if that feature is added.
 		params.name= name
 		local main_type= params.main_type or broad_params.main_type
 		local generic_entry= menu_generics[main_type]
 		if sub_type == "generic" then
-			return generic_entry(params)
+			return add_translation_params(generic_entry(params), params)
 		end
 		local specific_entry= menu_specifics[sub_type]
 		if not generic_entry or not specific_entry then
@@ -1669,35 +1720,18 @@ nesty_menus= {
 				params, {
 					get= specific_entry.get, set= specific_entry.set, reset= reset,
 					arg= specific_entry.arg(params), sub_type= sub_type}))
+		add_translation_params(ret, params)
 		return setmetatable(ret, mergable_table_mt)
 	end,
-	submenu= function(name, items, sub_type, no_close)
-		if not no_close and submenu_close_item then
-			local found_closure= false
-			for i= 1, #items do
-				local it= items[i]
-				if it.type_hint == "close" then
-					found_closure= true
-					break
-				elseif type(it.type_hint) == "table" then
-					if it.type_hint.main == "close" then
-						found_closure= true
-						break
-					end
-				end
-			end
-			if not found_closure then
-				if submenu_puts_closure_at_top then
-					table.insert(items, 1, default_close_item)
-				else
-					items[#items+1]= default_close_item
-				end
-			end
+	submenu= function(name, items, params)
+		if not params.no_close then
+			nesty_menus.add_close_item(items)
 		end
 		local ret= {
 			name= name, func= function() return "submenu", items end,
-			type_hint= {main= "submenu", sub= sub_type},
+			type_hint= {main= "submenu", sub= params.sub_type},
 		}
+		add_translation_params(ret, params)
 		return setmetatable(ret, mergable_table_mt)
 	end,
 	make_menu= function(info)
@@ -1717,34 +1751,15 @@ nesty_menus= {
 					local name= entry[2]
 					local items= nesty_menus.make_menu(entry[3])
 					local sub_type= entry[4]
-					local no_close= entry.no_close
-					if not no_close and submenu_close_item then
-						local found_closure= false
-						for i= 1, #items do
-							local it= items[i]
-							if it.type_hint == "close" then
-								found_closure= true
-								break
-							elseif type(it.type_hint) == "table" then
-								if it.type_hint.main == "close" then
-									found_closure= true
-									break
-								end
-							end
-						end
-						if not found_closure then
-							if submenu_puts_closure_at_top then
-								table.insert(items, 1, default_close_item)
-							else
-								items[#items+1]= default_close_item
-							end
-						end
+					if not entry.no_close then
+						nesty_menus.add_close_item(items)
 					end
-					return {
+					local ret= {
 						name= name, func= function() return "submenu", items end,
 						on_open= entry.on_open, on_close= entry.on_close,
 						type_hint= {main= "submenu", sub= sub_type},
 					}
+					return add_translation_params(ret, entry)
 				end,
 				action= function()
 					return {name= entry[2], func= entry[3], arg= entry[4]}
