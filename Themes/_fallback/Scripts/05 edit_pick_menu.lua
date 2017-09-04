@@ -1,5 +1,7 @@
-local song_menu_stack= setmetatable({}, nesty_menu_stack_mt)
+local song_menu_controller= setmetatable({}, menu_controller_mt)
 local song_menu_choices
+
+local translation_section= "ScreenEditMenu"
 
 local delayer= false
 local delayed_command= {}
@@ -128,32 +130,6 @@ local function handle_edit_description_prompt(info)
 	SCREENMAN:GetTopScreen():Load(text_settings)
 end
 
-local function generate_steps_action(info)
-	return {
-		name= name_for_steps(info.steps),
-		up_text= "&leftarrow; " .. THEME:GetString("ScreenEditMenu", "steps_action_back"),
-		{
-			name= "edit_chart", translatable= true,
-			execute= function()
-				handle_edit_setup(info.song, info.steps)
-			end,
-		},
-		{
-			name= "delete_chart", translatable= true,
-			execute= function()
-				prompt_screen(
-					THEME:GetString("ScreenEditMenu", "delete_chart_prompt"), 1,
-					function(answer)
-						if answer == "yes" then
-							info.song:delete_steps(info.steps)
-						end
-						song_menu_stack:pop_menu_stack()
-				end)
-			end,
-		},
-	}
-end
-
 local function get_open_slots(song)
 	local open_slots= {}
 	for stype, enabled in pairs(editable_stepstypes) do
@@ -176,177 +152,6 @@ local function get_open_slots(song)
 	return open_slots
 end
 
-local function generate_copy_dest_slot_menu(info)
-	local choices= {
-		name= "copy_dest_slot_menu",
-		up_text= "&leftarrow; " .. THEME:GetString("ScreenEditMenu", "copy_dest_slot_back"),
-	}
-	for i, diff in ipairs(Difficulty) do
-		if info.slots[diff] then
-			local name_format= THEME:GetString("ScreenEditMenu", "copy_to_slot_format")
-			local name= name_format:format(translate_stype(info.stype), translate_diff(diff))
-			choices[#choices+1]= {
-				name= name, translatable= false,
-				execute= function()
-					if diff == "Difficulty_Edit" then
-						handle_edit_description_prompt(info)
-					else
-						handle_edit_setup(info.song, info.steps, info.stype, diff)
-					end
-				end,
-			}
-		end
-	end
-	return choices
-end
-
-local function generate_copy_dest_menu(info)
-	local choices= {
-		name= "copy_dest_stype_menu",
-		up_text= "&leftarrow; " .. THEME:GetString("ScreenEditMenu", "copy_dest_style_back"),
-	}
-	local open_slots= get_open_slots(info.song)
-	foreach_ordered(
-		open_slots, function(stype, slots)
-			choices[#choices+1]= {
-				name= translate_stype(stype), translatable= false,
-				menu= nesty_option_menus.menu, args= function()
-					return generate_copy_dest_slot_menu{
-						song= info.song, steps= info.steps, stype= stype, slots= slots}
-				end,
-			}
-	end)
-	return choices
-end
-
-local function generate_copy_menu(info)
-	local choices= {
-		name= "copy_from_menu",
-		up_text= "&leftarrow; " .. THEME:GetString("ScreenEditMenu", "copy_from_back"),
-	}
-	local copyable_steps= {}
-	local all_steps= info.song:get_nonauto_steps()
-	table.sort(all_steps, steps_compare)
-	for i, steps in ipairs(all_steps) do
-		choices[#choices+1]= {
-			name= name_for_steps(steps), translatable= false,
-			menu= nesty_option_menus.menu, args= function()
-				return generate_copy_dest_menu{song= info.song, steps= steps}
-			end,
-		}
-	end
-	return choices
-end
-
-local function generate_new_chart_slot_menu(info)
-	local choices= {
-		name= "new_chart_slot_menu",
-		up_text= "&leftarrow; " .. THEME:GetString("ScreenEditMenu", "new_chart_slot_back"),
-	}
-	for i, diff in ipairs(Difficulty) do
-		if info.slots[diff] then
-			local name_format= THEME:GetString("ScreenEditMenu", "new_chart_slot_format")
-			local name= name_format:format(translate_stype(info.stype), translate_diff(diff))
-			choices[#choices+1]= {
-				name= name, translatable= false, execute= function()
-					if diff == "Difficulty_Edit" then
-						handle_edit_description_prompt(info)
-					else
-						handle_edit_setup(info.song, info.steps, info.stype, diff)
-					end
-				end,
-			}
-		end
-	end
-	return choices
-end
-
-local function generate_new_chart_stype_menu(info) 
-	local choices= {
-		name= "new_chart_stype_menu",
-		up_text= "&leftarrow; " .. THEME:GetString("ScreenEditMenu", "new_chart_stype_back"),
-	}
-	local open_slots= get_open_slots(info.song)
-	foreach_ordered(
-		open_slots, function(stype, slots)
-			choices[#choices+1]= {
-				name= translate_stype(stype), translatable= false,
-				menu= nesty_option_menus.menu, args= function()
-					return generate_new_chart_slot_menu{
-						song= info.song, stype= stype, slots= slots}
-				end,
-			}
-	end)
-	return choices
-end
-
-local function generate_steps_list(song)
-	MESSAGEMAN:Broadcast("edit_menu_selection_changed", {song= song})
-	local all_steps= song:get_nonauto_steps()
-	do
-		local id= #all_steps
-		while id > 0 do
-			if all_steps[id]:IsAutogen() then
-				table.remove(all_steps, id)
-			end
-			id= id - 1
-		end
-	end
-	table.sort(all_steps, steps_compare)
-	local choices= {
-		name= song:GetDisplayFullTitle(),
-		recall_init_on_pop= true,
-		up_text= "&leftarrow; " .. THEME:GetString("ScreenEditMenu", "steps_list_back"),
-	}
-	for i, steps in ipairs(all_steps) do
-		if editable_stepstypes[steps:GetStepsType()] then
-			choices[#choices+1]= {
-				name= name_for_steps(steps), translatable= false,
-				menu= nesty_option_menus.menu, args= function()
-					return generate_steps_action{song= song, steps= steps}
-				end,
-				on_focus= function()
-					MESSAGEMAN:Broadcast("edit_menu_selection_changed", {steps= steps})
-				end,
-			}
-		end
-	end
-	choices[#choices+1]= {
-		name= "new_chart", translatable= true,
-		menu= nesty_option_menus.menu, args= function()
-			return generate_new_chart_stype_menu{song= song}
-		end,
-	}
-	choices[#choices+1]= {
-		name= "copy_from", translatable= true,
-		menu= nesty_option_menus.menu, args= function()
-			return generate_copy_menu{song= song}
-		end,
-	}
-	return choices
-end
-
-local function generate_song_list(group_name)
-	add_to_recent_groups(group_name)
-	local songs= SONGMAN:GetSongsInGroup(group_name)
-	local choices= {
-		name= group_name,
-		up_text= "&leftarrow; " .. THEME:GetString("ScreenEditMenu", "song_list_back"),
-	}
-	for i, song in ipairs(songs) do
-		choices[#choices+1]= {
-			name= song:GetDisplayFullTitle(), translatable= false,
-			menu= nesty_option_menus.menu, args= function()
-				return generate_steps_list(song)
-			end,
-			on_focus= function()
-				MESSAGEMAN:Broadcast("edit_menu_selection_changed", {song= song})
-			end,
-		}
-	end
-	return choices
-end
-
 local function find_steps_entry_in_song(steps_entry, all_steps)
 	for i, steps in ipairs(all_steps) do
 		if steps:GetStepsType() == steps_entry.stepstype
@@ -362,90 +167,234 @@ local function shorten_name(name)
 	return name:sub(1, short_name_length)
 end
 
-local function recently_edited_menu()
-	local recent= editor_config:get_data().recently_edited
-	local menu_entries= {}
-	for i, entry in ipairs(recent) do
-		local song= SONGMAN:find_song_by_dir(entry.song_dir)
-		if song then
-			local steps= find_steps_entry_in_song(entry, song:get_nonauto_steps())
-			if steps then
-				menu_entries[#menu_entries+1]= {
-					name= shorten_name(song:GetGroupName()) .. " &leftarrow; " ..
-						shorten_name(song:GetDisplayFullTitle()) .. " &leftarrow; " ..
-						name_for_steps(steps),
-					execute= function()
-						handle_edit_setup(song, steps)
-					end,
-					on_focus= function()
-						MESSAGEMAN:Broadcast("edit_menu_selection_changed", {song= song, steps= steps})
-					end,
-				}
-			end
-		end
-	end
-	return nesty_options.submenu("recently_edited", menu_entries)
+local steps_list_menu
+
+local function steps_action_menu(info)
+	local items= {
+		{name= "edit_chart", translation_section= translation_section,
+		 type_hint= {main= "action", sub= "edit_chart"},
+		 func= function()
+			 handle_edit_setup(info.song, info.steps)
+		end},
+		{name= "delete_chart", translation_section= translation_section,
+		 type_hint= {main= "action", sub= "delete_chart"},
+		 func= function()
+			 prompt_screen(
+				 THEME:GetString(translation_section, "delete_chart_prompt"), 1,
+				 function(answer)
+					 if answer == "yes" then
+						 info.song:delete_steps(info.steps)
+					 end
+					 return "close", 1, steps_list_menu(info.song)
+			 end)
+		end},
+	}
+	return nesty_menus.add_close_item(items)
 end
 
-local function recent_groups_menu()
-	local function gen_entries()
-		local recent= editor_config:get_data().recent_groups
-		local menu_entries= {
-			name= "recent_groups",
+local function dest_slot_menu(info)
+	local name_format= THEME:GetString(translation_section, info.action.."_format")
+	local items= {}
+	for i, diff in ipairs(Difficulty) do
+		if info.slots[diff] then
+			local name= name_format:format(translate_stype(info.stype), translate_diff(diff))
+			items[#items+1]= {
+				type_hint= {main= "submenu", sub= info.action},
+				name= name, dont_translate_name= true, func= function()
+					if diff == "Difficulty_Edit" then
+						handle_edit_description_prompt(info)
+					else
+						handle_edit_setup(info.song, info.steps, info.stype, diff)
+					end
+			end}
+		end
+	end
+	local close= "&leftarrow; " .. THEME:GetString(translation_section, info.action.."_slot_back")
+	return nesty_menus.add_close_item(items, close)
+end
+
+local function dest_stype_menu(info)
+	local items= {}
+	local open_slots= get_open_slots(info.song)
+	foreach_ordered(
+		open_slots, function(stype, slots)
+			items[#items+1]= {
+				name= translate_stype(stype), dont_translate_name= true,
+				type_hint= {main= "submenu", sub= info.action},
+				func= function()
+					return "submenu", dest_slot_menu{
+						song= info.song, steps= info.steps, action= info.action,
+						stype= stype, slots= slots}
+			end}
+	end)
+	local close= "&leftarrow; " .. THEME:GetString(translation_section, info.action.."_style_back")
+	return nesty_menus.add_close_item(items, close)
+end
+
+steps_list_menu= function(song)
+	MESSAGEMAN:Broadcast("edit_menu_selection_changed", {song= song})
+	local all_steps= song:get_nonauto_steps()
+	table.sort(all_steps, steps_compare)
+	local items= {}
+	for i, steps in ipairs(all_steps) do
+		if editable_stepstypes[steps:GetStepsType()] then
+			items[#items+1]= {
+				name= name_for_steps(steps), dont_translate_name= true,
+				type_hint= {main= "submenu"},
+				func= function()
+					return "submenu", steps_action_menu{song= song, steps= steps}
+				end,
+				on_focus= function()
+					MESSAGEMAN:Broadcast("edit_menu_selection_changed", {steps= steps})
+				end,
+			}
+		end
+	end
+	items[#items+1]= {
+		name= "new_chart", translation_section= translation_section,
+		type_hint= {main= "submenu"},
+		func= function()
+			return dest_stype_menu{song= song, action= "new_chart"}
+	end}
+	items[#items+1]= {
+		name= "copy_from", translation_section= translation_section,
+		type_hint= {main= "submenu"},
+		func= function()
+			return dest_stype_menu{song= song, action= "copy_from"}
+	end}
+	local close= "&leftarrow; " .. THEME:GetString(translation_section, "steps_list_back")
+	return nesty_menus.add_close_item(items, close)
+end
+
+local function song_list_menu(group_name)
+	add_to_recent_groups(group_name)
+	local songs= SONGMAN:GetSongsInGroup(group_name)
+	local items= {}
+	for i, song in ipairs(songs) do
+		items[#items+1]= {
+			name= song:GetDisplayFullTitle(), dont_translate_name= true,
+			type_hint= {main= "submenu"},
+			func= function()
+				return "submenu", steps_list_menu(song)
+			end,
+			on_focus= function()
+				MESSAGEMAN:Broadcast("edit_menu_selection_changed", {song= song})
+			end,
 		}
+	end
+	local close= "&leftarrow; " .. THEME:GetString(translation_section, "song_list_back")
+	return nesty_menus.add_close_item(items, close)
+end
+
+local function recent_edit_menu()
+	local function generate()
+		local recent= editor_config:get_data().recently_edited
+		local items= {}
+		for i, entry in ipairs(recent) do
+			local song= SONGMAN:find_song_by_dir(entry.song_dir)
+			if song then
+				local steps= find_steps_entry_in_song(entry, song:get_nonauto_steps())
+				if steps then
+					items[#items+1]= {
+						type_hint= {main= "action", sub= "edit_chart"},
+						name= shorten_name(song:GetGroupName()) .. " &leftarrow; " ..
+							shorten_name(song:GetDisplayFullTitle()) .. " &leftarrow; " ..
+							name_for_steps(steps), dont_translate_name= true,
+						func= function()
+							handle_edit_setup(song, steps)
+						end,
+						on_focus= function()
+							MESSAGEMAN:Broadcast("edit_menu_selection_changed", {song= song, steps= steps})
+						end,
+					}
+				end
+			end
+		end
+		local close= "&leftarrow; " .. THEME:GetString(translation_section, "recently_edited_back")
+		return nesty_menus.add_close_item(items, close)
+	end
+	return {
+		type_hint= {main= "submenu"},
+		name= "recently_edited", translation_section= translation_section,
+		func= function() return "submenu", generate() end}
+end
+
+local function recent_group_menu()
+	local function generate()
+		local recent= editor_config:get_data().recent_groups
+		local items= {}
 		for i, group_name in ipairs(recent) do
 			if SONGMAN:DoesSongGroupExist(group_name) then
-				menu_entries[#menu_entries+1]= {
-					name= group_name, translatable= false,
-					menu= nesty_option_menus.menu, args= function()
-						return generate_song_list(group_name)
-					end,
+				items[#items+1]= {
+					name= group_name, dont_translate_name= true,
+					type_hint= {main= "submenu"},
+					func= function() return "submenu", song_list_menu(group_name) end,
 					on_focus= function()
 						MESSAGEMAN:Broadcast("edit_menu_selection_changed", {group= group_name})
 					end,
 				}
 			end
 		end
-		return menu_entries
+		local close= "&leftarrow; " .. THEME:GetString(translation_section, "recent_group")
+		return nesty_menus.add_close_item(items, close)
 	end
-	return nesty_options.submenu("recent_groups", gen_entries)
+	return {
+		type_hint= {main= "submenu"},
+		name= "recent_groups", translation_section= translation_section,
+		func= function() return "submenu", generate() end}
 end
 
-local function init_edit_picker()
+local function base_edit_menu()
 	local groups= SONGMAN:GetSongGroupNames()
-	song_menu_choices= {}
-	song_menu_choices[#song_menu_choices+1]= recently_edited_menu()
-	song_menu_choices[#song_menu_choices+1]= recent_groups_menu()
+	song_menu_choices= {
+		nesty_menus.close_item(THEME:GetString(translation_section, "exit_edit_menu")),
+		recent_edit_menu(),
+		recent_group_menu(),
+	}
 	for i, group_name in ipairs(groups) do
 		song_menu_choices[#song_menu_choices+1]= {
-			name= group_name, translatable= false,
-			menu= nesty_option_menus.menu, args= function()
-				return generate_song_list(group_name)
+			name= group_name, dont_translate_name= true,
+			type_hint= {main= "submenu"},
+			func= function()
+				return "submenu", song_list_menu(group_name)
 			end,
 			on_focus= function()
 				MESSAGEMAN:Broadcast("edit_menu_selection_changed", {group= group_name})
 			end,
 		}
 	end
+	return song_menu_choices
 end
 
-local function exit_edit_picker()
+local function exit_edit_menu()
 	song_menu_choices= nil
 end
 
-local paging_buttons= {
-	DeviceButton_pgdn= "page_down",
-	DeviceButton_pgup= "page_up",
-}
-
 local function menu_input(event)
-	if event.type == "InputEventType_Release" then return end
-	local button= paging_buttons[event.DeviceInput.button] or event.GameButton
-	if not button or button == "" then return end
-	local menu_action= song_menu_stack:interpret_code(button)
-	if menu_action == "close" then
+	local levels_left= song_menu_controller:input(event)
+	if levels_left and levels_left < 1 then
 		editor_config:save()
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
+	end
+end
+
+local prev_mx= INPUTFILTER:GetMouseX()
+local prev_my= INPUTFILTER:GetMouseY()
+local buttons_debug= false
+local focus_debug= false
+local function menu_update()
+	local mx= INPUTFILTER:GetMouseX()
+	local my= INPUTFILTER:GetMouseY()
+	if mx ~= prev_mx or my ~= prev_my then
+		song_menu_controller:update_focus(mx, my)
+		prev_mx= mx
+		prev_my= my
+	end
+	if buttons_debug then
+		buttons_debug:playcommand("Frame", song_menu_controller)
+	end
+	if focus_debug then
+		focus_debug:playcommand("Frame", song_menu_controller)
 	end
 end
 
@@ -503,29 +452,29 @@ function edit_pick_menu_steps_display_item(
 	return stype_item_mt
 end
 
-function edit_pick_menu_actor(menu_params)
-	menu_params.translation_section= "ScreenEditMenu"
-	return Def.ActorFrame{
+function edit_pick_menu_actor(menu_actor, repeats_to_big, debug_click_area)
+	repeats_to_big= repeats_to_big or 5
+	local frame= Def.ActorFrame{
+		Name= "edit_menu",
 		OnCommand= function(self)
 			SCREENMAN:GetTopScreen():AddInputCallback(menu_input)
-			init_edit_picker()
-			song_menu_stack:push_menu_stack(nesty_option_menus.menu, song_menu_choices, THEME:GetString("ScreenEditMenu", "exit_edit_menu"))
-			local most_recent_group= editor_config:get_data().recent_groups[1]
-			if most_recent_group then
-				local menu= song_menu_stack.menu_stack[1]
-				local group_pos= false
-				for i, item in ipairs(menu.shown_data) do
-					if item.name == most_recent_group then
-						group_pos= i
-					end
-				end
-				if group_pos then
-					menu.cursor_pos= group_pos
-					song_menu_stack:interpret_code("Start")
-				end
+			self:SetUpdateFunction(menu_update)
+			song_menu_controller:attach(self:GetChild("menu"))
+			song_menu_controller:set_info(base_edit_menu(), true)
+			song_menu_controller:set_input_mode("four_direction", repeats_to_big, true)
+			song_menu_controller:open_menu()
+			if debug_click_area then
+				buttons_debug= self:GetChild("buttons_debug")
+				focus_debug= self:GetChild("focus_debug")
+				local a= .75
+				local b= .75 * .25
+				local c= .75 * .25 * .25
+				song_menu_controller.debug_button_color= {a, b, c, 1}
+				song_menu_controller.debug_focus_color= {c, a, b, 1}
+				song_menu_controller.debug_scroll_color= {b, c, a, 1}
 			end
-			song_menu_stack:update_cursor_pos()
 		end,
+		menu_actor,
 		Def.Actor{
 			InitCommand= function(self)
 				delayer= self
@@ -538,8 +487,12 @@ function edit_pick_menu_actor(menu_params)
 				end
 			end,
 		},
-		song_menu_stack:create_actors(menu_params),
 	}
+	if debug_click_area then
+		frame[#frame+1]= menu_buttons_debug_actor()
+		frame[#frame+1]= menu_focus_debug_actor()
+	end
+	return frame
 end
 
 function edit_pick_menu_update_steps_display_info(steps_display)

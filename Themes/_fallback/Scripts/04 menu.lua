@@ -92,12 +92,6 @@ local shared_functions= {
 	scroll= function(self, num_items, scroll_type, from, to)
 		self.container:play_command_no_recurse("Scroll", {num_items= num_items, scroll_type= scroll_type, from= from, to= to})
 	end,
-	gain_focus= function(self)
-		self.container:play_command_no_recurse("GainFocus")
-	end,
-	lose_focus= function(self)
-		self.container:play_command_no_recurse("LoseFocus")
-	end,
 }
 
 local item_controller_mt= {
@@ -164,12 +158,15 @@ local item_controller_mt= {
 			end
 		end,
 		check_focus= function(self, mx, my)
+			if not self.info then return end
 			return self.container:pos_in_clickable_area(mx, my)
 		end,
 		name_click= function(self, press_info)
+			if not self.info then return end
 			return self:interact(press_info.big_any)
 		end,
 		value_click= function(self, press_info)
+			if not self.info then return end
 			if self.info.adjust then
 				self:adjust(press_info.adjust_dir, press_info.big_repeat)
 			else
@@ -186,6 +183,7 @@ local item_controller_mt= {
 			return true
 		end,
 		set_value= function(self, v)
+			if not self.info then return end
 			if type(v) == "table" then
 				local value= v[2]
 				v[3]= value
@@ -198,6 +196,7 @@ local item_controller_mt= {
 			self.value_actor:playcommand("SetValue", v)
 		end,
 		interact= function(self, big)
+			if not self.info then return end
 			-- return submenu info if this is a submenu item.
 			if self.info.func then
 				self.name_actor:playcommand("Click")
@@ -217,6 +216,7 @@ local item_controller_mt= {
 			end
 		end,
 		adjust= function(self, direction, big)
+			if not self.info then return end
 			if not self.info.adjust then return end
 			if direction > 0 then
 				click_it(self.adjust_up_actor)
@@ -227,10 +227,25 @@ local item_controller_mt= {
 				self.info.adjust(direction, big, self.info.arg, self.pn))
 		end,
 		reset_value= function(self)
+			if not self.info then return end
 			if self.info.reset then
 				self.container:play_command_no_recurse("Reset")
 				self:set_value(self.info.reset(self.info.arg, self.pn))
 			end
+		end,
+		gain_focus= function(self)
+			if not self.info then return end
+			if self.info.on_focus then
+				self.info.on_focus(self.info.arg, self.pn)
+			end
+			self.container:play_command_no_recurse("GainFocus")
+		end,
+		lose_focus= function(self)
+			if not self.info then return end
+			if self.info.off_focus then
+				self.info.off_focus(self.info.arg, self.pn)
+			end
+			self.container:play_command_no_recurse("LoseFocus")
 		end,
 }}
 
@@ -793,6 +808,12 @@ local display_controller_mt= {
 		get_cursor_info_pos= function(self)
 			return self.scroller:get_cursor_info_pos()
 		end,
+		gain_focus= function(self)
+			self.container:play_command_no_recurse("GainFocus")
+		end,
+		lose_focus= function(self)
+			self.container:play_command_no_recurse("LoseFocus")
+		end,
 }}
 
 for name, func in pairs(shared_functions) do
@@ -811,6 +832,8 @@ local menu_convert= {
 local page_convert= {
 	DeviceButton_pgdn= "page_down",
 	DeviceButton_pgup= "page_up",
+	DeviceButton_home= "jump_top",
+	DeviceButton_end= "jump_bottom",
 }
 menu_controller_mt= {
 	__index= {
@@ -954,7 +977,7 @@ menu_controller_mt= {
 				if action then
 					if type(action) == "string" then
 						local pop_to= self.scroller:item_id_to_info_id(id)
-						self:pop_menus_to(id)
+						self:pop_menus_to(pop_to)
 						return self:handle_menu_action(action, info, more_info)
 					else
 						return #self.menu_stack
@@ -971,6 +994,12 @@ menu_controller_mt= {
 				self:update_cursor()
 			elseif button == "page_up" then
 				active_display:page_up()
+				self:update_cursor()
+			elseif button == "jump_top" then
+				active_display:cursor_to_top()
+				self:update_cursor()
+			elseif button == "jump_bottom" then
+				active_display:cursor_to_bottom()
 				self:update_cursor()
 			else
 				if self.input_mode == "two_direction" then
@@ -1407,11 +1436,7 @@ local fallback_option_data= {
 }
 
 local submenu_puts_closure_at_top= true
-local default_close_item= {
-	name= "<-", dont_translate_name= true, type_hint= {main= "close"},
-	func= function() return "close", 1 end,
-}
-local submenu_close_item= default_close_item
+local default_close_text= "&leftarrow;"
 
 local menu_generics= {
 	number= function(params)
@@ -1646,14 +1671,17 @@ nesty_menus= {
 	set_close_default_to_top= function(val)
 		submenu_puts_closure_at_top= val
 	end,
-	set_submenu_close_item= function(item)
-		submenu_close_item= item
+	set_default_close_text= function(text)
+		default_close_text= text
 	end,
-	clear_submenu_close_item= function(item)
-		submenu_close_item= default_close_item
+	close_item= function(name)
+		return {
+			name= name, dont_translate_name= true, type_hint= {main= "close"},
+			func= function() return "close", 1 end}
 	end,
-	add_close_item= function(items)
-		if not submenu_close_item then return end
+	add_close_item= function(items, close_name)
+		local name= close_name or default_close_text
+		if not name then return items end
 		local found_closure= false
 		for i= 1, #items do
 			local it= items[i]
@@ -1668,12 +1696,14 @@ nesty_menus= {
 			end
 		end
 		if not found_closure then
+			local closure= nesty_menus.close_item(name)
 			if submenu_puts_closure_at_top then
-				table.insert(items, 1, default_close_item)
+				table.insert(items, 1, closure)
 			else
-				items[#items+1]= default_close_item
+				items[#items+1]= closure
 			end
 		end
+		return items
 	end,
 	item= function(sub, name, broad, params)
 		local sub_type= sub
