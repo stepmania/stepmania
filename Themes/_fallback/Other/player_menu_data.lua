@@ -11,9 +11,12 @@ for i, name in ipairs{
 } do
 	option_data[name]= {broad_type= "bool"}
 end
+-- The time life bar doesn't work sensibly outside the survival courses, so
+-- keep it out of the menu.
+local life_types= {"LifeType_Bar", "LifeType_Battery"}
 for i, info in ipairs{
 	{"FailSetting", FailType}, {"MinTNSToHideNotes", TapNoteScore},
-	{"LifeSetting", LifeType}, {"DrainSetting", DrainType},
+	{"LifeSetting", life_types}, {"DrainSetting", DrainType},
 } do
 	option_data[info[1]]= {broad_type= "choice", choices= info[2], value_type= "enum"}
 end

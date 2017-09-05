@@ -378,8 +378,8 @@ local function menu_input(event)
 	end
 end
 
-local prev_mx= INPUTFILTER:GetMouseX()
-local prev_my= INPUTFILTER:GetMouseY()
+local prev_mx= 0
+local prev_my= 0
 local buttons_debug= false
 local focus_debug= false
 local function menu_update()

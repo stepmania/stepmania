@@ -255,6 +255,10 @@ function notefield_prefs_speed_type_item()
 	return {"item", notefield_prefs_config, "speed_type", "choice", {choices= notefield_speed_types, translation_section= "notefield_options"}}
 end
 
+function notefield_prefs_perspective_item()
+	return {"item", notefield_prefs_config, "rotation_x", "name_value_pairs", {choices= {{"distant", -30}, {"overhead", 0}, {"hallway", 30}}}}
+end
+
 local function gen_speed_menu(pn)
 	local prefs= notefield_prefs_config:get_data(pn)
 	local float_args= {

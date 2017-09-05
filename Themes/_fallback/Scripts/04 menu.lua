@@ -104,10 +104,17 @@ local item_controller_mt= {
 			local clickables= {}
 			add_part(self, "name", clickables, self.name_click, "Menu item must have name actor.", true, "func")
 			add_part(self, "value", clickables, self.value_click, "Menu item must have value actor.", false, "adjust")
+			clickables[#clickables].alt_func_name= "func"
 			add_part(self, "adjust_up", clickables, self.adjust_up_click, nil, false, "adjust")
 			add_part(self, "adjust_down", clickables, self.adjust_down_click, nil, false, "adjust")
 			self.buttons= clickables
 			self.container:playcommand("Playerize", self.pn)
+		end,
+		apply_translation_section= function(self, section)
+			self.translation_section= section
+		end,
+		get_trans_section= function(self)
+			return self.info.translation_section or self.translation_section or "OptionNames"
 		end,
 		set_info= function(self, info)
 			local set_command= "SetItem"
@@ -119,8 +126,7 @@ local item_controller_mt= {
 				self.container:play_command_no_recurse(set_command, info)
 				local trans_name= info.name
 				if not info.dont_translate_name then
-					local section= info.translation_section or "OptionNames"
-					trans_name= want_string(section, info.name)
+					trans_name= want_string(self:get_trans_section(), info.name)
 				end
 				self.name_actor:playcommand("SetName", trans_name)
 				local value_type= type(info.value)
@@ -143,7 +149,7 @@ local item_controller_mt= {
 			if not self.info then return end
 			for i= 1, #self.buttons do
 				local entry= self.buttons[i]
-				if self.info[entry.func_name] then
+				if self.info[entry.func_name] or self.info[entry.alt_func_name] then
 					if not (press_info.scroll_dir and entry.is_name) then
 						if entry.actor:pos_in_clickable_area(press_info.mx, press_info.my) then
 							if press_info.reset_button and self.info.reset then
@@ -189,8 +195,7 @@ local item_controller_mt= {
 				v[3]= value
 				if type(value) == "string"
 				and not self.info.dont_translate_value then
-					local section= self.info.translation_section or "OptionNames"
-					v[2]= want_string(section, value)
+					v[2]= want_string(self:get_trans_section(), value)
 				end
 			end
 			self.value_actor:playcommand("SetValue", v)
@@ -732,6 +737,15 @@ local display_controller_mt= {
 			self.scroller:attach(item_controllers)
 			self.container:playcommand("Playerize", self.pn)
 		end,
+		apply_translation_section= function(self, section)
+			self:set_translation_section(self.scroller.main_items, self.scroller.num_main, section)
+			self:set_translation_section(self.scroller.spare_items, self.scroller.num_spare, section)
+		end,
+		set_translation_section= function(self, group, group_size, section)
+			for id= 0, group_size-1 do
+				group[id]:apply_translation_section(section)
+			end
+		end,
 		set_info= function(self, info)
 			-- info has menu info, and info for each item.
 			if self.info then
@@ -824,6 +838,7 @@ end
 local menu_convert= {
 	Start= "start",
 	Select= "select",
+	Back= "back",
 	MenuLeft= "left",
 	MenuRight= "right",
 	MenuUp= "up",
@@ -842,9 +857,25 @@ menu_controller_mt= {
 			two_direction_with_select= true, -- LR + Start + Select
 			four_direction= true, -- LRUD + Start + Select
 		},
+		init= function(self, args)
+			self:attach(args.actor, args.pn)
+			self:apply_translation_section(args.translation_section)
+			self:set_input_mode(args.input_mode, args.repeats_to_big, args.select_goes_to_top)
+			self:set_info(args.data)
+		end,
+		apply_translation_section= function(self, section)
+			self:set_translation_section(self.scroller.main_items, self.scroller.num_main, section)
+			self:set_translation_section(self.scroller.spare_items, self.scroller.num_spare, section)
+		end,
+		set_translation_section= function(self, group, group_size, section)
+			for id= 0, group_size-1 do
+				group[id]:apply_translation_section(section)
+			end
+		end,
 		attach= function(self, container, pn)
 			-- attach display_controllers to displays.
 			-- store clickable info from menu items.
+			if type(pn) ~= "string" then pn= nil end
 			self.container= container
 			self.pn= pn
 			local displays= rec_find_child(container, "display")
@@ -873,7 +904,11 @@ menu_controller_mt= {
 				self.in_adjust_mode= false
 			end
 			self.repeats_to_big= repeats_to_big or 10
-			self.select_goes_to_top= select_goes_to_top
+			if select_goes_to_top ~= nil then
+				self.select_goes_to_top= select_goes_to_top
+			else
+				self.select_goes_to_top= true
+			end
 			self.repeat_counts= {}
 		end,
 		set_info= function(self, info, custom)
@@ -969,7 +1004,7 @@ menu_controller_mt= {
 						if disp.mouse_scroll_area:pos_in_clickable_area(mx, my) then
 							disp:scroll_items(-press_info.scroll_dir)
 							self:update_cursor()
-							return
+							return nil, press_info.scroll_dir > 0 and "cursor_up" or "cursor_down"
 						end
 					end
 				end
@@ -980,7 +1015,7 @@ menu_controller_mt= {
 						self:pop_menus_to(pop_to)
 						return self:handle_menu_action(action, info, more_info)
 					else
-						return #self.menu_stack
+						return #self.menu_stack, "action"
 					end
 				end
 			end
@@ -989,27 +1024,37 @@ menu_controller_mt= {
 			local process, big= self:handle_repeats(button, press_type)
 			if not process then return end
 			local active_display= self.scroller:get_cursor_item()
+			local action_sound= false
 			if button == "page_down" then
 				active_display:page_down()
 				self:update_cursor()
+				action_sound= "page_down"
 			elseif button == "page_up" then
 				active_display:page_up()
 				self:update_cursor()
+				action_sound= "page_up"
 			elseif button == "jump_top" then
 				active_display:cursor_to_top()
 				self:update_cursor()
+				action_sound= "jump_top"
 			elseif button == "jump_bottom" then
 				active_display:cursor_to_bottom()
 				self:update_cursor()
+				action_sound= "jump_bottom"
+			elseif button == "back" then
+				return self:handle_menu_action("close", 1)
 			else
 				if self.input_mode == "two_direction" then
 					if self.in_adjust_mode then
 						if button == "left" then
 							active_display:get_cursor_item():adjust(-1, big)
+							action_sound= "adjust_down"
 						elseif button == "right" then
 							active_display:get_cursor_item():adjust(1, big)
+							action_sound= "adjust_up"
 						elseif button == "start" then
 							self.in_adjust_mode= false
+							action_sound= "adjust_mode_off"
 							if self.cursor then
 								self.cursor:playcommand("NormalMode")
 							end
@@ -1018,15 +1063,18 @@ menu_controller_mt= {
 						if button == "left" then
 							active_display:cursor_up()
 							self:update_cursor()
+							active_display= "cursor_up"
 						elseif button == "right" then
 							active_display:cursor_down()
 							self:update_cursor()
+							active_display= "cursor_down"
 						elseif button == "start" then
 							local item= active_display:get_cursor_item()
 							if item.info.func then
 								return self:handle_menu_action(item:interact(big))
 							elseif item.info.adjust then
 								self.in_adjust_mode= true
+								action_sound= "adjust_mode_on"
 								if self.cursor then
 									self.cursor:playcommand("AdjustMode")
 								end
@@ -1035,32 +1083,40 @@ menu_controller_mt= {
 					end
 				elseif self.input_mode == "two_direction_with_select" then
 					if button == "left" then
+						action_sound= "adjust_down"
 						active_display:get_cursor_item():adjust(-1, big)
 					elseif button == "right" then
 						local item= active_display:get_cursor_item()
 						if item.info.func then
 							return self:handle_menu_action(item:interact(big))
 						else
+							action_sound= "adjust_up"
 							item:adjust(1, big) 
 						end
 					elseif button == "start" then
 						active_display:cursor_down()
 						self:update_cursor()
+						action_sound= "cursor_down"
 					elseif button == "select" then
 						active_display:cursor_up()
 						self:update_cursor()
+						action_sound= "cursor_up"
 					end
 				elseif self.input_mode == "four_direction" then
 					if button == "left" then
 						active_display:get_cursor_item():adjust(-1, big)
+						action_sound= "adjust_down"
 					elseif button == "right" then
 						active_display:get_cursor_item():adjust(1, big)
+						action_sound= "adjust_up"
 					elseif button == "up" then
 						active_display:cursor_up()
 						self:update_cursor()
+						action_sound= "cursor_up"
 					elseif button == "down" then
 						active_display:cursor_down()
 						self:update_cursor()
+						action_sound= "cursor_down"
 					elseif button == "start" then
 						return self:handle_menu_action(
 							active_display:get_cursor_item():interact(big))
@@ -1068,28 +1124,37 @@ menu_controller_mt= {
 						if self.select_goes_to_top then
 							active_display:cursor_to_top()
 							self:update_cursor()
+							action_sound= "jump_top"
 						else
 							active_display:cursor_to_bottom()
 							self:update_cursor()
+							action_sound= "jump_bottom"
 						end
 					end
 				end
 			end
+			return nil, action_sound
 		end,
 		get_cursor_item= function(self)
-			return self.scroller:get_cursor_item():get_cursor_item()
+			local disp= self.scroller:get_cursor_item()
+			if disp then
+				return disp:get_cursor_item()
+			end
 		end,
 		handle_menu_action= function(self, action, info, extra)
 			if not action then return end
 			local active_display= self.scroller:get_cursor_item()
+			local action_sound= false
 			if action == "refresh" then
 				if type(info) == "table" then
 					active_display:refresh_info(info)
 					self:update_cursor()
+					action_sound= "refresh"
 				end
 			elseif action == "submenu" then
 				if type(info) == "table" then
 					self:push_menu(info)
+					action_sound= "submenu"
 				end
 			elseif action == "close" then
 				if type(info) ~= "number" then
@@ -1104,17 +1169,20 @@ menu_controller_mt= {
 					end
 					active_display:refresh_info(extra)
 					self:update_cursor()
+					action_sound= "close_submenu"
 				else
 					if info < 0 or info >= #self.menu_stack then
 						self:close_menu()
+						action_sound= "close_menu"
 					else
 						for i= 1, info do
 							self:pop_menu()
 						end
+						action_sound= "close_submenu"
 					end
 				end
 			end
-			return #self.menu_stack
+			return #self.menu_stack, action_sound
 		end,
 		push_menu= function(self, info)
 			if info.on_open then
@@ -1159,7 +1227,11 @@ menu_controller_mt= {
 							local new_item_id= disp.scroller.menu_pos
 							if old_disp_id ~= id or old_item_id ~= new_item_id then
 								self:update_cursor()
-								return
+								if old_item_id > new_item_id then
+									return "cursor_down"
+								else
+									return "cursor_up"
+								end
 							end
 						end
 					end
@@ -1234,18 +1306,20 @@ function menu_buttons_debug_actor()
 		InitCommand= function(self)
 			self:SetDrawState{Mode= "DrawMode_Quads"}
 		end,
-		FrameCommand= function(self, menu)
+		FrameCommand= function(self, menus)
 			local verts= {}
-			local vc= menu.debug_button_color or {.75, .75, .75, 1}
-			local displays= menu.scroller.main_items
-			for did= 0, menu.scroller.num_main-1 do
-				local disp= displays[did]
-				local items= disp.scroller.main_items
-				for iid= 0, disp.scroller.num_main-1 do
-					local item= items[iid]
-					if item.info ~= nil then
-						for cid= 1, #item.buttons do
-							add_area_to_verts(item.buttons[cid].actor:get_screen_clickable_area(), verts, vc)
+			for pn, menu in pairs(menus) do
+				local vc= menu.debug_button_color or {.75, .75, .75, 1}
+				local displays= menu.scroller.main_items
+				for did= 0, menu.scroller.num_main-1 do
+					local disp= displays[did]
+					local items= disp.scroller.main_items
+					for iid= 0, disp.scroller.num_main-1 do
+						local item= items[iid]
+						if item.info ~= nil then
+							for cid= 1, #item.buttons do
+								add_area_to_verts(item.buttons[cid].actor:get_screen_clickable_area(), verts, vc)
+							end
 						end
 					end
 				end
@@ -1261,22 +1335,24 @@ function menu_focus_debug_actor()
 		InitCommand= function(self)
 			self:SetDrawState{Mode= "DrawMode_Quads"}
 		end,
-		FrameCommand= function(self, menu)
+		FrameCommand= function(self, menus)
 			local verts= {}
-			local vc= menu.debug_focus_color or {.75, .75, .75, 1}
-			local sca= menu.debug_scroll_color or {.75, .75, .75, 1}
-			local displays= menu.scroller.main_items
-			for did= 0, menu.scroller.num_main-1 do
-				local disp= displays[did]
-				add_area_to_verts(disp.container:get_screen_clickable_area(), verts, vc)
-				if disp.mouse_scroll_area then
-					add_area_to_verts(disp.mouse_scroll_area:get_screen_clickable_area(), verts, sca)
-				end
-				local items= disp.scroller.main_items
-				for iid= 0, disp.scroller.num_main-1 do
-					local item= items[iid]
-					if item.info ~= nil then
-						add_area_to_verts(item.container:get_screen_clickable_area(), verts, vc)
+			for pn, menu in pairs(menus) do
+				local vc= menu.debug_focus_color or {.75, .75, .75, 1}
+				local sca= menu.debug_scroll_color or {.75, .75, .75, 1}
+				local displays= menu.scroller.main_items
+				for did= 0, menu.scroller.num_main-1 do
+					local disp= displays[did]
+					add_area_to_verts(disp.container:get_screen_clickable_area(), verts, vc)
+					if disp.mouse_scroll_area then
+						add_area_to_verts(disp.mouse_scroll_area:get_screen_clickable_area(), verts, sca)
+					end
+					local items= disp.scroller.main_items
+					for iid= 0, disp.scroller.num_main-1 do
+						local item= items[iid]
+						if item.info ~= nil then
+							add_area_to_verts(item.container:get_screen_clickable_area(), verts, vc)
+						end
 					end
 				end
 			end
@@ -1393,11 +1469,15 @@ local function add_broad_params(params, broad)
 	return params
 end
 
-local function add_translation_params(entry, params)
-	for i, name in ipairs{"translation_section", "dont_translate_name", "dont_translate_value"} do
-		entry[name]= params[name]
+local function copy_parts(to, from, parts)
+	for i, name in ipairs(parts) do
+		to[name]= from[name]
 	end
-	return entry
+	return to
+end
+
+local function add_translation_params(entry, params)
+	return copy_parts(entry, params, {"translation_section", "dont_translate_name", "dont_translate_value"})
 end
 
 local function one_index_is_a_mistake(i, n)
@@ -1504,16 +1584,39 @@ local menu_generics= {
 				local old_value= params.get(arg, pn)
 				local mid= (params.on + params.off) * .5
 				local new_value= old_value
-				if num_val > mid then
-					new_value= math.max(params.on, params.off)
+				local disp= false
+				if params.on > params.off then
+					if new_value < mid then
+						new_value= params.on
+						disp= true
+					else
+						new_value= params.off
+					end
 				else
-					new_value= math.min(params.on, params.off)
+					if new_value < mid then
+						new_value= params.off
+					else
+						new_value= params.on
+						disp= true
+					end
 				end
 				params.set(arg, new_value, pn)
-				return vtype_ret(new_value, params.value_type)
+				return vtype_ret(disp)
 			end,
 			value= function(arg, pn)
-				return vtype_ret(params.get(arg, pn), params.value_type)
+				local value= params.get(arg, pn)
+				local mid= (params.on + params.off) * .5
+				local disp= false
+				if params.on > params.off then
+					if value > mid then
+						disp= true
+					end
+				else
+					if value < mid then
+						disp= true
+					end
+				end
+				return vtype_ret(disp)
 			end,
 			reset= make_generic_reset(params),
 			type_hint= {main= "toggle_number", sub= params.sub_type},
@@ -1792,7 +1895,9 @@ nesty_menus= {
 					return add_translation_params(ret, entry)
 				end,
 				action= function()
-					return {name= entry[2], func= entry[3], arg= entry[4]}
+					return {
+						name= entry[2], func= entry[3], arg= entry[4],
+						type_hint= {main= "action", sub= entry[5]}}
 				end,
 				custom= function()
 					return entry[2]
@@ -1807,3 +1912,152 @@ nesty_menus= {
 		return ret
 	end,
 }
+
+-- Part 3: An actor to wrap around attaching the menu and the typical input
+-- and update functions.
+
+local function play_sound(sounds, name)
+	if not name then return end
+	local sound_entry= sounds[nesty_menus.action_to_sound_name[name]]
+	if sound_entry then
+		sound_entry:play()
+	end
+end
+
+local function make_typical_update(menu_controllers, sounds, item_change_callback, buttons_debug, focus_debug)
+	local prev_mx= INPUTFILTER:GetMouseX()
+	local prev_my= INPUTFILTER:GetMouseY()
+	local function common()
+		local mx= INPUTFILTER:GetMouseX()
+		local my= INPUTFILTER:GetMouseY()
+		if mx ~= prev_mx or my ~= prev_my then
+			local pn= GAMESTATE:GetMasterPlayerNumber()
+			local menu= menu_controllers[pn] or menu_controllers[1]
+			local sound_name= menu:update_focus(mx, my)
+			play_sound(sounds, sound_name)
+			if item_change_callback then
+				item_change_callback(menu:get_cursor_item(), pn)
+			end
+			prev_mx= mx
+			prev_my= my
+		end
+	end
+	if buttons_debug or focus_debug then
+		return function()
+			common()
+			if buttons_debug then
+				buttons_debug:playcommand("Frame", menu_controllers)
+			end
+			if focus_debug then
+				focus_debug:playcommand("Frame", menu_controllers)
+			end
+		end
+	else
+		return common
+	end
+end
+
+local function make_typical_input(menu_controllers, sounds, item_change_callback, exit_callback)
+	return function(event)
+		local pn= event.pn or GAMESTATE:GetMasterPlayerNumber()
+		local menu= menu_controllers[pn] or menu_controllers[1]
+		if menu then
+			local levels_left, sound_name= menu:input(event)
+			play_sound(sounds, sound_name)
+			if item_change_callback then
+				item_change_callback(menu:get_cursor_item(), pn)
+			end
+			if levels_left and levels_left < 1 then
+				if exit_callback then
+					exit_callback(pn)
+				end
+			end
+		end
+	end
+end
+
+nesty_menus.action_to_sound_name= {
+	action= "toggle",
+	cursor_down= "down",
+	cursor_up= "up",
+	page_down= "down",
+	page_up= "up",
+	jump_top= "up",
+	jump_bottom= "down",
+	adjust_down= "decrease",
+	adjust_up= "increase",
+	adjust_mode_on= "toggle",
+	adjust_mode_off= "toggle",
+	open_submenu= "confirm",
+	close_submenu= "back",
+	close_menu= "back",
+}
+
+nesty_menus.make_menu_actors= function(menu_args)
+	-- actors, data, input_mode, repeats_to_big, select_goes_to_top, dont_open,
+	-- item_change_callback, exit_callback, translation_section,
+	-- with_click_debug
+	local sound_names= {
+		"up", "down", "increase", "decrease", "toggle", "confirm", "back",
+	}
+	local menu_controllers= {}
+	local frame= Def.ActorFrame{
+		OnCommand= function(self)
+			local sound_actors= {}
+			for i, name in ipairs(sound_names) do
+				local actor= self:GetChild("sound_"..name)
+				if actor then
+					sound_actors[name]= actor
+				end
+			end
+			for pn, temp in pairs(menu_controllers) do
+				local menu= self:GetChild("menu_"..pn)
+				local controller= menu_controllers[pn]
+				local sub_args= copy_parts({}, menu_args, {"input_mode", "repeats_to_big", "select_goes_to_top", "data", "translation_section"})
+				sub_args.actor= menu
+				sub_args.pn= pn
+				controller:init(sub_args)
+				if not menu_args.dont_open then
+					controller:open_menu()
+					if menu_args.item_change_callback then
+						menu_args.item_change_callback(controller:get_cursor_item(), pn)
+					end
+				end
+				if menu_args.with_click_debug then
+					local a= .75
+					local b= .75 * .25
+					local c= .75 * .25 * .25
+					controller.debug_button_color= {a, b, c, 1}
+					controller.debug_focus_color= {c, a, b, 1}
+					controller.debug_scroll_color= {b, c, a, 1}
+				end
+			end
+			local input= make_typical_input(
+				menu_controllers, sound_actors, menu_args.item_change_callback,
+				menu_args.exit_callback)
+			SCREENMAN:GetTopScreen():AddInputCallback(input)
+			local buttons_debug= self:GetChild("buttons_debug")
+			local focus_debug= self:GetChild("focus_debug")
+			local update= make_typical_update(
+				menu_controllers, sound_actors, menu_args.item_change_callback,
+				buttons_debug, focus_debug)
+			self:SetUpdateFunction(update)
+		end,
+	}
+	for i, name in ipairs(sound_names) do
+		local path= THEME:GetPathS("OptionMenu", name, true)
+		if path ~= "" then
+			frame[#frame+1]= LoadActor(path) .. {Name= "sound_"..name}
+		end
+	end
+	for pn, temp in pairs(menu_args.actors) do
+		menu_controllers[pn]= setmetatable({}, menu_controller_mt)
+		temp.Name= "menu_"..pn
+		frame[#frame+1]= temp
+	end
+	if menu_args.with_click_debug then
+		frame[#frame+1]= menu_buttons_debug_actor()
+		frame[#frame+1]= menu_focus_debug_actor()
+	end
+	return frame, menu_controllers
+end
