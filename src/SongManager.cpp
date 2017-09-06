@@ -4,7 +4,7 @@
 #include "ActorUtil.h"
 #include "AnnouncerManager.h"
 #include "BackgroundUtil.h"
-#include "BannerCache.h"
+#include "ImageCache.h"
 #include "CommonMetrics.h"
 #include "Course.h"
 #include "CourseLoaderCRS.h"
@@ -380,7 +380,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		AddGroup(sDir, sGroupDirName);
 
 		// Cache and load the group banner. (and background if it has one -aj)
-		BANNERCACHE->CacheBanner( GetSongGroupBannerPath(sGroupDirName) );
+		IMAGECACHE->CacheImage( "Banner", GetSongGroupBannerPath(sGroupDirName) );
 
 		// Load the group sym links (if any)
 		LoadGroupSymLinks(sDir, sGroupDirName);
@@ -429,7 +429,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 
 void SongManager::PreloadSongImages()
 {
-	if( PREFSMAN->m_BannerCache != BNCACHE_FULL )
+	if( PREFSMAN->m_ImageCache != IMGCACHE_FULL )
 		return;
 
 	/* Load textures before unloading old ones, so we don't reload textures

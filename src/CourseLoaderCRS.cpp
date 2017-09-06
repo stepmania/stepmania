@@ -9,7 +9,7 @@
 #include "PlayerOptions.h"
 #include "SongManager.h"
 #include "TitleSubstitution.h"
-#include "BannerCache.h"
+#include "ImageCache.h"
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
 #include "RageUtil.h"
@@ -380,7 +380,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 	if( out.m_vEntries.empty() )
 		return true;
 	if( out.m_sBannerPath != "" )
-		BANNERCACHE->CacheBanner( out.GetBannerPath() );
+		IMAGECACHE->CacheImage( "Banner", out.GetBannerPath() );
 
 	/* Cache each trail RadarValues that's slow to load, so we
 	 * don't have to do it at runtime. */

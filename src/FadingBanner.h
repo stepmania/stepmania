@@ -32,7 +32,6 @@ public:
 	void LoadCustom( RString sBanner );
 
 	bool LoadFromCachedBanner( const RString &path );
-	bool LoadFromCachedBackground( const RString &path );
 
 	void SetMovingFast( bool fast ) { m_bMovingFast=fast; }
 	virtual void UpdateInternal( float fDeltaTime );

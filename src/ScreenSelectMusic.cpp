@@ -25,8 +25,7 @@
 #include "Style.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
-#include "BannerCache.h"
-//#include "BackgroundCache.h"
+#include "ImageCache.h"
 #include "ScreenPrompt.h"
 #include "Song.h"
 #include "InputEventPlus.h"
@@ -147,7 +146,7 @@ void ScreenSelectMusic::Init()
 	m_TexturePreload.Load( m_sFallbackCDTitlePath );
 
 	// load banners
-	if( PREFSMAN->m_BannerCache != BNCACHE_OFF )
+	if (PREFSMAN->m_ImageCache != IMGCACHE_OFF)
 	{
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","all music")) );
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
@@ -155,23 +154,9 @@ void ScreenSelectMusic::Init()
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","random")) );
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","mode")) );
 	}
-	// load backgrounds
-	/*
-	if( PREFSMAN->m_BackgroundCache != BGCACHE_OFF )
-	{
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","AllMusic")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("Common","fallback banner")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","roulette")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","random")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","Mode")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","group fallback")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","course fallback")) );
-	}
-	*/
 
 	// Load low-res banners and backgrounds if needed.
-	BANNERCACHE->Demand();
-	//BACKGROUNDCACHE->Demand();
+	IMAGECACHE->Demand("Banner");
 
 	m_MusicWheel.SetName( "MusicWheel" );
 	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
@@ -299,8 +284,7 @@ void ScreenSelectMusic::BeginScreen()
 ScreenSelectMusic::~ScreenSelectMusic()
 {
 	LOG->Trace( "ScreenSelectMusic::~ScreenSelectMusic()" );
-	BANNERCACHE->Undemand();
-	//BACKGROUNDCACHE->Undemand();
+	IMAGECACHE->Undemand("Banner");
 }
 
 // If bForce is true, the next request will be started even if it might cause a skip.

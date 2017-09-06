@@ -10,7 +10,7 @@
 #include "StepsUtil.h"
 #include "Foreach.h"
 #include "CommonMetrics.h"
-#include "BannerCache.h"
+#include "ImageCache.h"
 #include "UnlockManager.h"
 #include "SongUtil.h"
 
@@ -103,7 +103,7 @@ EditMenu::EditMenu()
 
 EditMenu::~EditMenu()
 {
-	BANNERCACHE->Undemand();
+	IMAGECACHE->Undemand("Banner");
 }
 
 void EditMenu::Load( const RString &sType )
@@ -149,7 +149,7 @@ void EditMenu::Load( const RString &sType )
 	m_textValue[ROW_GROUP].SetVisible( SHOW_GROUPS.GetValue() );
 
 	// Load low-res banners, if needed.
-	BANNERCACHE->Demand();
+	IMAGECACHE->Demand("Banner");
 
 	if( SHOW_GROUPS.GetValue() )
 	{

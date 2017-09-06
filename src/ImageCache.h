@@ -1,37 +1,37 @@
-#ifndef BANNER_CACHE_H
-#define BANNER_CACHE_H
+#ifndef IMAGE_CACHE_H
+#define IMAGE_CACHE_H
 
 #include "IniFile.h"
 
 #include "RageTexture.h"
 
 class LoadingWindow;
-/** @brief Maintains a cache of reduced-quality banners. */
-class BannerCache
+/** @brief Maintains a cache of reduced-quality images. */
+class ImageCache
 {
 public:
-	BannerCache();
-	~BannerCache();
+	ImageCache();
+	~ImageCache();
 	void ReadFromDisk();
 
-	RageTextureID LoadCachedBanner( RString sBannerPath );
-	void CacheBanner( RString sBannerPath );
-	void LoadBanner( RString sBannerPath );
+	RageTextureID LoadCachedImage( RString sImageDir, RString sImagePath );
+	void CacheImage( RString sImageDir, RString sImagePath );
+	void LoadImage( RString sImageDir, RString sImagePath );
 
-	void Demand();
-	void Undemand();
+	void Demand( RString sImageDir );
+	void Undemand( RString sImageDir );
 
 	void OutputStats() const;
 
 private:
-	static RString GetBannerCachePath( RString sBannerPath );
-	void UnloadAllBanners();
-	void CacheBannerInternal( RString sBannerPath );
+	static RString GetImageCachePath( RString sImageDir, RString sImagePath );
+	void UnloadAllImages();
+	void CacheImageInternal( RString sImageDir, RString sImagePath );
 
-	IniFile BannerData;
+	IniFile ImageData;
 };
 
-extern BannerCache *BANNERCACHE; // global and accessible from anywhere in our program
+extern ImageCache *IMAGECACHE; // global and accessible from anywhere in our program
 
 #endif
 

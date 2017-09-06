@@ -77,26 +77,16 @@ XToString( ShowDancingCharacters );
 StringToX( ShowDancingCharacters );
 LuaXType( ShowDancingCharacters );
 
-static const char *BannerCacheModeNames[] = {
+static const char *ImageCacheModeNames[] = {
 	"Off",
 	"LowResPreload",
 	"LowResLoadOnDemand",
 	"Full"
 };
-XToString( BannerCacheMode );
-StringToX( BannerCacheMode );
-LuaXType( BannerCacheMode );
-/*
-static const char *BackgroundCacheModeNames[] = {
-	"Off",
-	"LowResPreload",
-	"LowResLoadOnDemand",
-	"Full"
-};
-XToString( BackgroundCacheMode );
-StringToX( BackgroundCacheMode );
-LuaXType( BackgroundCacheMode );
-*/
+XToString( ImageCacheMode );
+StringToX( ImageCacheMode );
+LuaXType( ImageCacheMode );
+
 static const char *HighResolutionTexturesNames[] = {
 	"Auto",
 	"ForceOff",
@@ -191,8 +181,7 @@ PrefsManager::PrefsManager() :
 	m_bPAL				( "PAL",			false ),
 	m_bDelayedTextureDelete		( "DelayedTextureDelete",	false ),
 	m_bDelayedModelDelete		( "DelayedModelDelete",		false ),
-	m_BannerCache			( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
-	//m_BackgroundCache		( "BackgroundCache",		BGCACHE_LOW_RES_PRELOAD ),
+	m_ImageCache			( "ImageCache",		IMGCACHE_LOW_RES_PRELOAD ),
 	m_bFastLoad			( "FastLoad",			true ),
 	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    true ),
 	m_NeverCacheList		( "NeverCacheList", ""),
