@@ -299,8 +299,16 @@ local menu_scroller_mt= {
 				self.focus_pos= math.floor(self.focus_pos)
 			end
 		end,
+		max_menu_offset= function(self)
+			if #self.info > self.num_main then
+				-- max_offset + self.num_main == #self.info
+				return #self.info - self.num_main
+			else
+				return 0
+			end
+		end,
 		clamp_offset= function(self, offset)
-			return clamp(offset, 0, #self.info - self.num_main)
+			return clamp(offset, 0, self:max_menu_offset())
 		end,
 		set_info= function(self, info, pos)
 			self.info= info
@@ -322,7 +330,7 @@ local menu_scroller_mt= {
 						local item= self.main_items[id]
 						local info_id= one_index_is_a_mistake(info_start+id, #info)
 						item:set_info(info[info_id])
-						item:scroll(self.num_main, "first", id+1, id+1)
+						item:scroll(self.num_main, "first", id, id)
 						item:set_active()
 					end
 					self.menu_offset= (info_start-1) % #info
@@ -333,13 +341,13 @@ local menu_scroller_mt= {
 					for id= 0, num_to_set-1 do
 						local item= self.main_items[id]
 						item:set_info(info[id+self.menu_offset+1])
-						item:scroll(self.num_main, "first", id+1, id+1)
+						item:scroll(self.num_main, "first", id, id)
 						item:set_active()
 					end
 					for id= num_to_set, self.num_main-1 do
 						local item= self.main_items[id]
 						item:set_info(nil)
-						item:scroll(self.num_main, "first", id+1, id+1)
+						item:scroll(self.num_main, "first", id, id)
 						item:set_inactive()
 					end
 					self.menu_pos= pos - self.menu_offset - 1
@@ -367,9 +375,9 @@ local menu_scroller_mt= {
 					local shift_to= main_id + shift_dist
 					local scroll_type= shift_to >= self.num_main and "off" or "normal"
 					local info_id= self.menu_offset + main_id + 1
-					main:scroll(self.num_main, scroll_type, main_id+1, shift_to+1)
+					main:scroll(self.num_main, scroll_type, main_id, shift_to)
 					spare:set_info(self.info[info_id])
-					spare:scroll(self.num_main, "on", insert_from, main_id+1)
+					spare:scroll(self.num_main, "on", insert_from-1, main_id)
 					self.spare_items[spare_id]= main
 					self.main_items[main_id]= spare
 					spare_id= spare_id+1
@@ -409,20 +417,18 @@ local menu_scroller_mt= {
 				self.menu_offset= self.menu_offset - ((finish - start) + 1)
 			else
 				if self.menu_offset >= #self.info then
-					self.menu_offset= math.max(0, #self.info - self.num_main)
+					self.menu_offset= self:clamp_offset(self.menu_offset)
 					self:shift_all_items(1)
 					if self.menu_offset + self.menu_pos >= #self.info then
 						self.menu_pos= math.max(0, #self.info - self.menu_offset - 1)
 					end
 				else
 					local old_offset= self.menu_offset
-					if self.menu_offset + self.num_main >= #self.info then
-						self.menu_offset= math.max(0, #self.info - self.num_main - 1)
-					end
+					self.menu_offset= self:clamp_offset(self.menu_offset)
 					-- TODO: Scroll items around nicely.
 					for main_id= 0, self.num_main-1 do
 						local main= self.main_items[main_id]
-						local info_id= self.menu_offset + main_id + 1
+						local info_id= self:item_id_to_info_id(main_id)
 						local info= self.info[info_id]
 						if info ~= main.info then
 							main:set_info(info)
@@ -430,7 +436,7 @@ local menu_scroller_mt= {
 					end
 				end
 			end
-			if self.menu_offset + self.menu_pos >= #self.info then
+			if self:item_id_to_info_id(self.menu_pos) > #self.info then
 				self.menu_pos= math.max(0, #self.info - self.menu_offset - 1)
 			end
 		end,
@@ -459,6 +465,11 @@ local menu_scroller_mt= {
 					self:refresh_info()
 				end
 			else
+				if finish >= #self.info and self.menu_offset > 0 then
+					local rma= (finish - start) + 1
+					local sma= math.min(rma, self.menu_offset)
+					self:scroll_items(-sma)
+				end
 				self:non_wrapping_remove(start, finish)
 			end
 		end,
@@ -470,10 +481,7 @@ local menu_scroller_mt= {
 				return
 			end
 			for id= 0, self.num_main-1 do
-				local info_id= self.menu_offset + id + 1
-				if self.wrapping then
-					info_id= one_index_is_a_mistake(info_id, #self.info)
-				end
+				local info_id= self:item_id_to_info_id(id)
 				local info= self.info[info_id]
 				local item= self.main_items[id]
 				if info ~= item.info then
@@ -486,10 +494,10 @@ local menu_scroller_mt= {
 			for id= 0, self.num_main-1 do
 				local main= self.main_items[id]
 				local spare= self.spare_items[id]
-				main:scroll(self.num_main, "off", id+1, id + dist + 1)
+				main:scroll(self.num_main, "off", id, id + dist)
 				local info_id= self:item_id_to_info_id(id)
 				spare:set_info(self.info[info_id])
-				spare:scroll(self.num_main, "on", id - dist + 1, id+1)
+				spare:scroll(self.num_main, "on", id - dist, id)
 				self.main_items[id]= spare
 				self.spare_items[id]= main
 			end
@@ -504,21 +512,21 @@ local menu_scroller_mt= {
 				local item= self.main_items[id]
 				local to= id-amount
 				if to < 0 then
-					item:scroll(self.num_main, "off", id+1, to+1)
+					item:scroll(self.num_main, "off", id, to)
 					to_spare[#to_spare+1]= item
 				else
-					item:scroll(self.num_main, "normal", id+1, to+1)
+					item:scroll(self.num_main, "normal", id, to)
 					self.main_items[to]= item
 				end
 			end
 			for id= 0, amount-1 do
 				local spare= self.spare_items[id]
-				local to= self.num_main - amount + id + 1
+				local to= self.num_main - amount + id
 				local from= to + amount
-				local info_id= self.menu_offset + to
+				local info_id= self:item_id_to_info_id(to)
 				spare:set_info(self.info[info_id])
 				spare:scroll(self.num_main, "on", from, to)
-				self.main_items[to-1]= spare
+				self.main_items[to]= spare
 				self.spare_items[id]= to_spare[id+1]
 			end
 		end,
@@ -532,10 +540,10 @@ local menu_scroller_mt= {
 				local item= self.main_items[id]
 				local to= id+amount
 				if to >= self.num_main then
-					item:scroll(self.num_main, "off", id+1, to+1)
+					item:scroll(self.num_main, "off", id, to)
 					to_spare[#to_spare+1]= item
 				else
-					item:scroll(self.num_main, "normal", id+1, to+1)
+					item:scroll(self.num_main, "normal", id, to)
 					self.main_items[to]= item
 				end
 			end
@@ -543,10 +551,10 @@ local menu_scroller_mt= {
 				local spare= self.spare_items[id]
 				local to= id
 				local from= to - amount
-				local info_id= self.menu_offset + to + 1
+				local info_id= self:item_id_to_info_id(to)
 				spare:set_info(self.info[info_id])
-				spare:scroll(self.num_main, "on", from+1, to+1)
-				self.main_items[id]= spare
+				spare:scroll(self.num_main, "on", from, to)
+				self.main_items[to]= spare
 				self.spare_items[id]= to_spare[id+1]
 			end
 		end,
@@ -594,7 +602,7 @@ local menu_scroller_mt= {
 					if self.menu_pos < self.focus_pos then
 						self.menu_pos= self.menu_pos + 1
 					else
-						if self.menu_offset < #self.info - self.num_main then
+						if self.menu_offset < self:max_menu_offset() then
 							self.menu_offset= self.menu_offset + 1
 							self:left_shift_items(1)
 						else
@@ -612,8 +620,7 @@ local menu_scroller_mt= {
 			self.main_items[self.menu_pos]:gain_focus()
 		end,
 		scroll_items= function(self, dir)
-			local max_offset= math.max(0, #self.info - self.num_main)
-			local new_offset= clamp(self.menu_offset + dir, 0, max_offset)
+			local new_offset= self:clamp_offset(self.menu_offset + dir)
 			if new_offset ~= self.menu_offset then
 				self.main_items[self.menu_pos]:lose_focus()
 				self.menu_offset= new_offset
@@ -657,18 +664,18 @@ local menu_scroller_mt= {
 			pos= one_index_is_a_mistake(pos, #self.info)
 			self.main_items[self.menu_pos]:lose_focus()
 			if self.num_main < #self.info then
-				local cursor_info_pos= self:get_cursor_info_pos()
-				local dist= pos - cursor_info_pos
+				-- Convert to zero indexed positions.
+				local cursor_pos= self:get_cursor_info_pos() - 1
+				pos= pos - 1
 				local new_offset= self.menu_offset
-				local new_pos= self.menu_pos
 				if self.wrapping then
-					new_offset= (pos - self.focus_pos - 1) % #self.info
-					new_pos= self.focus_pos
+					new_offset= (pos - self.focus_pos) % #self.info
+					self.menu_pos= self.focus_pos
 				else
-					new_offset= self:clamp_offset(pos - self.focus_pos - 1)
-					new_pos= pos - 1 - new_offset
+					new_offset= self:clamp_offset(pos - self.focus_pos)
+					-- menu_offset + menu_pos == pos
+					self.menu_pos= pos - new_offset
 				end
-				self.menu_pos= new_pos
 				if new_offset ~= self.menu_offset then
 					local dist= new_offset - self.menu_offset
 					self.menu_offset= new_offset
@@ -1193,21 +1200,22 @@ menu_controller_mt= {
 				old_top.remembered_pos= self.scroller:get_cursor_item():get_cursor_info_pos()
 			end
 			self.scroller:insert_info({info})
-			self.scroller:cursor_down()
+			self.scroller:jump(#self.menu_stack)
 			self:update_cursor()
 		end,
 		pop_menu= function(self)
 			if #self.menu_stack <= 1 then return end
-			local being_popped= self.menu_stack[#self.menu_stack]
+			local pop_id= #self.menu_stack
+			local being_popped= self.menu_stack[pop_id]
 			local remembered_pos= being_popped.remembered_pos
 			if being_popped.on_close then
 				being_popped.on_close(being_popped.on_close_arg, remembered_pos, self.pn)
 			end
-			self.scroller:remove_info(#self.menu_stack)
+			self.scroller:remove_info(pop_id)
 			self:update_cursor()
 		end,
 		pop_menus_to= function(self, id)
-			while #self.menu_stack > id+1 do
+			while #self.menu_stack > id do
 				self:pop_menu()
 			end
 		end,
@@ -1477,7 +1485,7 @@ local function copy_parts(to, from, parts)
 end
 
 local function add_translation_params(entry, params)
-	return copy_parts(entry, params, {"translation_section", "dont_translate_name", "dont_translate_value"})
+	return copy_parts(entry, params, {"translation_section", "dont_translate_name", "dont_translate_value", "explanation"})
 end
 
 local function one_index_is_a_mistake(i, n)
@@ -1895,9 +1903,9 @@ nesty_menus= {
 					return add_translation_params(ret, entry)
 				end,
 				action= function()
-					return {
+					return add_translation_params({
 						name= entry[2], func= entry[3], arg= entry[4],
-						type_hint= {main= "action", sub= entry[5]}}
+						type_hint= {main= "action", sub= entry[5]}}, entry)
 				end,
 				custom= function()
 					return entry[2]

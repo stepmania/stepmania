@@ -137,6 +137,115 @@ function noteskin_menu_item()
 	}}
 end
 
+local function get_noteskin_param_translation(param_name, type_info)
+	local translation_table= type_info.translation
+	local ret= {title= param_name, explanation= param_name}
+	if type(translation_table) == "table" then
+		local language= PREFSMAN:GetPreference("Language")
+		if translation_table[language] then
+			ret= translation_table[language]
+		else
+			local base_language= "en"
+			if translation_table[base_language] then
+				ret= translation_table[base_language]
+			else
+				local lang, text= next(translation_table)
+				if text then ret= text end
+			end
+		end
+	end
+	if type_info.choices and not ret.choices then
+		ret.choices= type_info.choices
+	end
+	return ret
+end
+
+local function noteskin_params_menu_level(player_params, type_info, skin_defaults)
+	local items= {}
+	for field, info in pairs(type_info) do
+		local field_type= type(skin_defaults[field])
+		local translation= get_noteskin_param_translation(field, type_info[field])
+		if player_params[field] == nil then
+			if field_type == "table" then
+				player_params[field]= DeepCopy(skin_defaults[field])
+			else
+				player_params[field]= skin_defaults[field]
+			end
+		end
+		if field_type == "table" then
+			items[#items+1]= {
+				name= translation.title, explanation= translation.explanation,
+				type_hint= {main= "submenu", sub= "noteskin"},
+				dont_translate_name= true, func= function(big, arg, pn)
+					local sub_items= noteskin_params_menu_level(
+						player_params[field], info, skin_defaults[field])
+					return "submenu", nesty_menus.add_close_item(sub_items)
+				end,
+			}
+		elseif field_type == "string" then
+			local choices= {}
+			for i, choice in ipairs(info.choices) do
+				choices[#choices+1]= {translation.choices[i], choice}
+			end
+			items[#items+1]= nesty_menus.item(
+				player_params, translation.title, "name_value_pairs", {
+					reset= skin_defaults[field],
+					choices= choices, explanation= translation.explanation,
+					dont_translate_name= true, dont_translate_value= true, path= field})
+		elseif field_type == "number" then
+			local val_min= info.min
+			local val_max= info.max
+			local small_step= 1
+			if info.type ~= "int" then
+				small_step= .01
+			end
+			items[#items+1]= nesty_menus.item(
+				player_params, translation.title, "number", {
+					reset= skin_defaults[field], small_step= small_step,
+					big_step= small_step * 10, path= field,
+					dont_translate_name= true, dont_translate_value= true})
+		elseif field_type == "boolean" then
+			items[#items+1]= nesty_menus.item(
+				player_params, translation.title, "bool", {
+					reset= skin_defaults[field], path= field,
+					dont_translate_name= true, dont_translate_value= true})
+		end
+	end
+	local function item_cmp(a, b)
+		return a.name < b.name
+	end
+	table.sort(items, item_cmp)
+	return items
+end
+
+function noteskin_params_menu_item()
+	return {
+		"custom", {
+			name= "noteskin_params", type_hint= {main= "submenu", sub= "noteskin"},
+			translation_section= "notefield_options",
+			func= function(big, arg, pn)
+				local stepstype= find_current_stepstype(pn)
+				local profile= PROFILEMAN:GetProfile(pn)
+				local player_skin= profile:get_preferred_noteskin(stepstype)
+				local skin_info= NOTESKIN:get_skin_parameter_info(player_skin)
+				local skin_defaults= NOTESKIN:get_skin_parameter_defaults(player_skin)
+				if not skin_defaults or not skin_info then return end
+				local player_params= profile:get_noteskin_params(player_skin)
+				if not player_params then
+					player_params= {}
+					profile:set_noteskin_params(player_skin, player_params)
+				end
+				local items= noteskin_params_menu_level(
+					player_params, skin_info, skin_defaults)
+				if #items < 1 then return end
+				return "submenu", nesty_menus.add_close_item(items)
+			end,
+			on_close= function(arg, pos, pn)
+				MESSAGEMAN:Broadcast("NoteskinParamsChanged", {pn= pn})
+			end,
+	}}
+end
+
 nesty_option_menus.shown_noteskins= {
 	type= "menu",
 	__index= {
@@ -222,28 +331,6 @@ nesty_option_menus.noteskins= {
 		end
 }}
 
-local function get_noteskin_param_translation(param_name, type_info)
-	local translation_table= type_info.translation
-	local ret= {title= param_name, explanation= param_name}
-	if type(translation_table) == "table" then
-		local language= PREFSMAN:GetPreference("Language")
-		if translation_table[language] then
-			ret= translation_table[language]
-		else
-			local base_language= "en"
-			if translation_table[base_language] then
-				ret= translation_table[base_language]
-			else
-				local lang, text= next(translation_table)
-				if text then ret= text end
-			end
-		end
-	end
-	if type_info.choices and not ret.choices then
-		ret.choices= type_info.choices
-	end
-	return ret
-end
 local function int_val_text(pn, val)
 	return ("%d"):format(val)
 end
