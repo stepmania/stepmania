@@ -214,7 +214,7 @@ public:
 	}
 	TimingSegment* GetSegmentAtBeat( float fBeat, TimingSegmentType tst )
 	{
-		return const_cast<TimingSegment*>( GetSegmentAtBeat(fBeat, tst) );
+		return const_cast<TimingSegment*>( const_cast<const TimingData*>(this)->GetSegmentAtBeat(fBeat, tst) );
 	}
 
 	#define DefineSegmentWithName(Seg, SegName, SegType) \
