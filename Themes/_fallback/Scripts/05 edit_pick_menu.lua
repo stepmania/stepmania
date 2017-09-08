@@ -254,13 +254,13 @@ steps_list_menu= function(song)
 		name= "new_chart", translation_section= translation_section,
 		type_hint= {main= "submenu"},
 		func= function()
-			return dest_stype_menu{song= song, action= "new_chart"}
+			return "submenu", dest_stype_menu{song= song, action= "new_chart"}
 	end}
 	items[#items+1]= {
 		name= "copy_from", translation_section= translation_section,
 		type_hint= {main= "submenu"},
 		func= function()
-			return dest_stype_menu{song= song, action= "copy_from"}
+			return "submenu", dest_stype_menu{song= song, action= "copy_from"}
 	end}
 	local close= "&leftarrow; " .. THEME:GetString(translation_section, "steps_list_back")
 	return nesty_menus.add_close_item(items, close)

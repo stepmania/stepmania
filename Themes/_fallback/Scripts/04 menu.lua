@@ -1790,7 +1790,7 @@ nesty_menus= {
 			name= name, dont_translate_name= true, type_hint= {main= "close"},
 			func= function() return "close", 1 end}
 	end,
-	add_close_item= function(items, close_name)
+	add_close_item= function(items, close_name, as_custom)
 		local name= close_name or default_close_text
 		if not name then return items end
 		local found_closure= false
@@ -1808,6 +1808,9 @@ nesty_menus= {
 		end
 		if not found_closure then
 			local closure= nesty_menus.close_item(name)
+			if as_custom then
+				closure= {"custom", closure}
+			end
 			if submenu_puts_closure_at_top then
 				table.insert(items, 1, closure)
 			else
@@ -1837,6 +1840,9 @@ nesty_menus= {
 					params= add_broad_params(params, data_entry)
 				end
 			end
+		end
+		if not broad_params then
+			Trace("Invalid item: " .. tostring(sub) .. ", " .. tostring(name) .. ", " .. tostring(broad))
 		end
 		assert(broad_params, "No clue what you're trying to pull.")
 		params= add_broad_params(params, broad_params)
@@ -1876,6 +1882,7 @@ nesty_menus= {
 		return setmetatable(ret, mergable_table_mt)
 	end,
 	make_menu= function(info)
+		if not info then return end
 		local ret= {}
 		for eid= 1, #info do
 			local entry= info[eid]
@@ -1883,7 +1890,7 @@ nesty_menus= {
 			local entype= entry[1]
 			local type_handlers= {
 				close= function()
-					return default_close_item
+					return nesty_menus.close_item(entry[2] or default_close_text)
 				end,
 				item= function()
 					return nesty_menus.item(entry[2], entry[3], entry[4], entry[5])
@@ -1912,6 +1919,10 @@ nesty_menus= {
 				end,
 			}
 			local handler= type_handlers[entype]
+			if not handler then
+				Trace("Invalid menu entry:")
+				rec_print_table(entry)
+			end
 			assert(handler, "Menu entry " .. eid .. " is of unknown type.")
 			local success, item= pcall(handler)
 			assert(success, "Menu entry " .. eid .. " had problem..."..tostring(item))
@@ -1924,8 +1935,8 @@ nesty_menus= {
 -- Part 3: An actor to wrap around attaching the menu and the typical input
 -- and update functions.
 
-local function play_sound(sounds, name)
-	if not name then return end
+function play_menu_sound(sounds, name)
+	if not name or not sounds then return end
 	local sound_entry= sounds[nesty_menus.action_to_sound_name[name]]
 	if sound_entry then
 		sound_entry:play()
@@ -1942,7 +1953,7 @@ local function make_typical_update(menu_controllers, sounds, item_change_callbac
 			local pn= GAMESTATE:GetMasterPlayerNumber()
 			local menu= menu_controllers[pn] or menu_controllers[1]
 			local sound_name= menu:update_focus(mx, my)
-			play_sound(sounds, sound_name)
+			play_menu_sound(sounds, sound_name)
 			if item_change_callback then
 				item_change_callback(menu:get_cursor_item(), pn)
 			end
@@ -1971,7 +1982,7 @@ local function make_typical_input(menu_controllers, sounds, item_change_callback
 		local menu= menu_controllers[pn] or menu_controllers[1]
 		if menu then
 			local levels_left, sound_name= menu:input(event)
-			play_sound(sounds, sound_name)
+			play_menu_sound(sounds, sound_name)
 			if item_change_callback then
 				item_change_callback(menu:get_cursor_item(), pn)
 			end
@@ -2001,23 +2012,43 @@ nesty_menus.action_to_sound_name= {
 	close_menu= "back",
 }
 
+local sound_names= {
+	"up", "down", "increase", "decrease", "toggle", "confirm", "back",
+}
+
+function load_typical_menu_sounds()
+	local frame= Def.ActorFrame{Name= "sounds"}
+	for i, name in ipairs(sound_names) do
+		local path= THEME:GetPathS("OptionMenu", name, true)
+		if path ~= "" then
+			frame[#frame+1]= LoadActor(path) .. {Name= "sound_"..name}
+		end
+	end
+	if #frame < 1 then return end
+	return frame
+end
+
+function make_menu_sound_lookup(self)
+	container= self:GetChild("sounds")
+	if not container then return end
+	local sound_actors= {}
+	for i, name in ipairs(sound_names) do
+		local actor= container:GetChild("sound_"..name)
+		if actor then
+			sound_actors[name]= actor
+		end
+	end
+	return sound_actors
+end
+
 nesty_menus.make_menu_actors= function(menu_args)
 	-- actors, data, input_mode, repeats_to_big, select_goes_to_top, dont_open,
 	-- item_change_callback, exit_callback, translation_section,
 	-- with_click_debug
-	local sound_names= {
-		"up", "down", "increase", "decrease", "toggle", "confirm", "back",
-	}
 	local menu_controllers= {}
 	local frame= Def.ActorFrame{
 		OnCommand= function(self)
-			local sound_actors= {}
-			for i, name in ipairs(sound_names) do
-				local actor= self:GetChild("sound_"..name)
-				if actor then
-					sound_actors[name]= actor
-				end
-			end
+			local sound_actors= make_menu_sound_lookup(self)
 			for pn, temp in pairs(menu_controllers) do
 				local menu= self:GetChild("menu_"..pn)
 				local controller= menu_controllers[pn]
@@ -2052,11 +2083,9 @@ nesty_menus.make_menu_actors= function(menu_args)
 			self:SetUpdateFunction(update)
 		end,
 	}
-	for i, name in ipairs(sound_names) do
-		local path= THEME:GetPathS("OptionMenu", name, true)
-		if path ~= "" then
-			frame[#frame+1]= LoadActor(path) .. {Name= "sound_"..name}
-		end
+	local sounds= load_typical_menu_sounds()
+	if sounds then
+		frame[#frame+1]= sounds
 	end
 	for pn, temp in pairs(menu_args.actors) do
 		menu_controllers[pn]= setmetatable({}, menu_controller_mt)
@@ -2068,4 +2097,50 @@ nesty_menus.make_menu_actors= function(menu_args)
 		frame[#frame+1]= menu_focus_debug_actor()
 	end
 	return frame, menu_controllers
+end
+
+-- When the user goes up or down a page, or wraps from top to bottom, "from"
+-- or "to" will be far outside the range of 1 to num_items.  It looks bad
+-- when the item appears at the from position when that's outside the menu
+-- area, or moves all the way to the to position before disappearing.
+-- So this function takes care of hiding the item when it's outside the menu
+-- area.
+-- Maybe masking would be better. >_>
+function one_dimension_scroll(
+		self, dim, tween, time, spacing, from, to, low, high)
+	if from == to then
+		self[dim](self, from * spacing)
+		self:diffusealpha(1)
+		return
+	end
+	self:finishtweening()
+	local steps= math.abs(to-from)
+	local time_per_step= time / steps
+	local dir= from < to and 1 or -1
+	local visible_from= clamp(from, low, high)
+	local steps_before_visible= math.abs(visible_from - from)
+	local steps_before_fade_in= steps_before_visible - 1
+	if steps_before_visible > 0 then
+		local pos_before_vis= visible_from - dir
+		self[dim](self, pos_before_vis * spacing)
+		if steps_before_fade_in > 0 then
+			self:sleep(steps_before_fade_in * time_per_step)
+		end
+		self[tween](self, time_per_step)
+		self:diffusealpha(1)
+		self[dim](self, visible_from * spacing)
+	end
+	local visible_to= clamp(to, low, high)
+	local steps_after_visible= math.abs(visible_to - to)
+	local steps_visible= math.abs(visible_to - visible_from)
+	if steps_visible > 0 then
+		self[tween](self, steps_visible * time_per_step)
+		self[dim](self, visible_to * spacing)
+	end
+	if steps_after_visible > 0 then
+		local pos_after_vis= visible_to + dir
+		self[tween](self, time_per_step)
+			:diffusealpha(0)
+		self[dim](self, pos_after_vis * spacing)
+	end
 end

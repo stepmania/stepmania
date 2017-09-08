@@ -160,7 +160,7 @@ local function get_noteskin_param_translation(param_name, type_info)
 	return ret
 end
 
-local function noteskin_params_menu_level(player_params, type_info, skin_defaults)
+function noteskin_params_menu_level(player_params, type_info, skin_defaults)
 	local items= {}
 	for field, info in pairs(type_info) do
 		local field_type= type(skin_defaults[field])
