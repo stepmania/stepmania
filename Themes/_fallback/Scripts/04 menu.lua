@@ -129,20 +129,24 @@ local item_controller_mt= {
 					trans_name= want_string(self:get_trans_section(), info.name)
 				end
 				self.name_actor:playcommand("SetName", trans_name)
-				local value_type= type(info.value)
-				if value_type == "nil" then
-					self:set_value(nil)
-					self.container:play_command_no_recurse("SetTypeHint", info.type_hint)
-				elseif value_type == "function" then
-					local display_value= info.value(info.arg, self.pn)
-					self:set_value(display_value)
-				else
-					self:set_value(info.value)
-				end
+				self:refresh_value()
 				show_hide_part(self, "adjust_up_actor", info.adjust)
 				show_hide_part(self, "adjust_down_actor", info.adjust)
 			else
 				self.container:play_command_no_recurse("ClearItem")
+			end
+		end,
+		refresh_value= function(self)
+			if not self.info then return end
+			local value_type= type(self.info.value)
+			if value_type == "nil" then
+				self:set_value(nil)
+				self.container:play_command_no_recurse("SetTypeHint", self.info.type_hint)
+			elseif value_type == "function" then
+				local display_value= self.info.value(self.info.arg, self.pn)
+				self:set_value(display_value)
+			else
+				self:set_value(self.info.value)
 			end
 		end,
 		check_click= function(self, press_info)
@@ -1286,26 +1290,29 @@ local function cross_product(va, vb)
 	}
 end
 
-local function normalize(v)
-	local len= math.sqrt((v[1] * v[1]) + (v[2] * v[2])) * 2
+local function normalize(v, mag)
+	local len= math.sqrt((v[1] * v[1]) + (v[2] * v[2])) * mag
 	return {v[1] / len, v[2] / len}
 end
 
-local function add_line_to_verts(pa, pb, verts, vc)
+local function add_line_to_verts(pa, pb, verts, vc, thick, mag)
 	local to= {pb[1] - pa[1], pb[2] - pa[2], 0}
-	local left= normalize(cross_product(to, {0, 0, 1}))
+	local left= normalize(cross_product(to, {0, 0, 1}), mag)
+	local ht= thick * .5
 	verts[#verts+1]= {{pa[1] + left[1], pa[2] + left[2], 0}, vc}
 	verts[#verts+1]= {{pb[1] + left[1], pb[2] + left[2], 0}, vc}
 	verts[#verts+1]= {{pb[1] - left[1], pb[2] - left[2], 0}, vc}
 	verts[#verts+1]= {{pa[1] - left[1], pa[2] - left[2], 0}, vc}
 end
 
-local function add_area_to_verts(area, verts, vc)
+function add_area_to_verts(area, verts, vc, thick)
 	if #area < 2 then return end
+	thick= thick or .5
+	local mag= 1 / thick
 	for p= 2, #area do
-		add_line_to_verts(area[p-1], area[p], verts, vc)
+		add_line_to_verts(area[p-1], area[p], verts, vc, thick, mag)
 	end
-	add_line_to_verts(area[#area], area[1], verts, vc)
+	add_line_to_verts(area[#area], area[1], verts, vc, thick, mag)
 end
 
 function menu_buttons_debug_actor()
@@ -1978,7 +1985,7 @@ end
 
 local function make_typical_input(menu_controllers, sounds, item_change_callback, exit_callback)
 	return function(event)
-		local pn= event.pn or GAMESTATE:GetMasterPlayerNumber()
+		local pn= event.PlayerNumber or GAMESTATE:GetMasterPlayerNumber()
 		local menu= menu_controllers[pn] or menu_controllers[1]
 		if menu then
 			local levels_left, sound_name= menu:input(event)
@@ -2029,7 +2036,7 @@ function load_typical_menu_sounds()
 end
 
 function make_menu_sound_lookup(self)
-	container= self:GetChild("sounds")
+	local container= self:GetChild("sounds")
 	if not container then return end
 	local sound_actors= {}
 	for i, name in ipairs(sound_names) do
@@ -2039,6 +2046,45 @@ function make_menu_sound_lookup(self)
 		end
 	end
 	return sound_actors
+end
+
+nesty_menus.handle_menu_refresh_message= function(message_name, message_param, menu_controllers)
+	local mpnt_isn_str= type(message_param.pn) ~= "string"
+	for pn, controller in pairs(menu_controllers) do
+		local pnt_isn_str= type(pn) ~= "string"
+		for did= 0, controller.scroller.num_main-1 do
+			local disp= controller.scroller.main_items[did]
+			if disp.info and #disp.info > 1 then
+				for iid= 0, disp.scroller.num_main-1 do
+					local item= disp.scroller.main_items[iid]
+					if item.info then
+						local refresh= item.info.refresh
+						if refresh then
+							local should_refresh= false
+							if type(refresh) == "function" then
+								should_refresh= refresh(item.info, message_name, message_param)
+							else
+								if not refresh.match_pn or pnt_isn_str or mpnt_isn_str or pn == message_param.pn then
+									if message_name == refresh.message then
+										local parts_match= true
+										for name, value in pairs(message_param) do
+											if refresh[name] ~= nil and refresh[name] ~= value then
+												parts_match= false
+											end
+										end
+										should_refresh= parts_match
+									end
+								end
+							end
+							if should_refresh then
+								item:refresh_value()
+							end
+						end
+					end
+				end
+			end
+		end
+	end
 end
 
 nesty_menus.make_menu_actors= function(menu_args)
@@ -2083,6 +2129,14 @@ nesty_menus.make_menu_actors= function(menu_args)
 			self:SetUpdateFunction(update)
 		end,
 	}
+	local refresh_messages= menu_args.refresh_messages or {}
+	refresh_messages[#refresh_messages+1]= "ConfigValueChanged"
+	refresh_messages[#refresh_messages+1]= "DataValueChanged"
+	for i, mess_name in ipairs(refresh_messages) do
+		frame[mess_name.."MessageCommand"]= function(self, param)
+			nesty_menus.handle_menu_refresh_message(mess_name, param, menu_controllers)
+		end
+	end
 	local sounds= load_typical_menu_sounds()
 	if sounds then
 		frame[#frame+1]= sounds

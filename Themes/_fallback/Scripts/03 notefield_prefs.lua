@@ -1,4 +1,5 @@
 local notefield_default_prefs= {
+	speed_step= 10,
 	speed_mod= 250,
 	speed_type= "maximum",
 	hidden= false,
@@ -189,32 +190,6 @@ function reset_needs_defective_field_for_all_players()
 	end
 end
 
-function advanced_notefield_prefs_menu()
-	return nesty_options.submenu("advanced_notefield_config", {
-		nesty_options.float_config_val(notefield_prefs_config, "hidden_offset", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "sudden_offset", -1, 1, 2),
-		nesty_options.bool_config_val(notefield_prefs_config, "hidden"),
-		nesty_options.bool_config_val(notefield_prefs_config, "sudden"),
-		nesty_options.float_config_val(notefield_prefs_config, "fade_dist", -1, 1, 2),
-		nesty_options.bool_config_val(notefield_prefs_config, "glow_during_fade"),
-		nesty_options.float_config_val(notefield_prefs_config, "reverse", -2, 0, 0),
-		nesty_options.float_config_val(notefield_prefs_config, "zoom", -2, -1, 1),
-		nesty_options.float_config_val(notefield_prefs_config, "rotation_x", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "rotation_y", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "rotation_z", -1, 1, 2),
-		-- Something tells me the notefield code still doesn't handle the vanish
-		-- point right, so the vanish point options are disabled until I'm sure
-		-- it's right. -Kyz
---		nesty_options.float_config_val(notefield_prefs_config, "vanish_x", -1, 1, 2),
---		nesty_options.float_config_val(notefield_prefs_config, "vanish_y", -1, 1, 2),
---		nesty_options.float_config_val(notefield_prefs_config, "fov", -1, 0, 1, 1, 179),
-		nesty_options.float_config_val(notefield_prefs_config, "yoffset", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "zoom_x", -2, -1, 1),
-		nesty_options.float_config_val(notefield_prefs_config, "zoom_y", -2, -1, 1),
-		nesty_options.float_config_val(notefield_prefs_config, "zoom_z", -2, -1, 1),
-	})
-end
-
 function adv_notefield_prefs_menu()
 	local items= {}
 	local info= {
@@ -247,8 +222,58 @@ function adv_notefield_prefs_menu()
 	return {"submenu", "advanced_notefield_config", items, translation_section= "notefield_options"}
 end
 
+local function speed_mod_ret(data, value)
+	if get_element_by_path(data, "speed_type") == "multiple" then
+		return {"number", value / 100}
+	else
+		return {"number", value}
+	end
+end
+
+function notefield_prefs_speed_step_item()
+	return {"item", notefield_prefs_config, "speed_step", "number", {translation_section= "notefield_options"}}
+end
+
 function notefield_prefs_speed_mod_item()
-	return {"item", notefield_prefs_config, "speed_mod", "large_number", {translation_section= "notefield_options"}}
+	return {
+		"custom", {
+			name= "speed_mod",
+			arg= {config= notefield_prefs_config, path= "speed_mod"},
+			adjust= function(direction, big, arg, pn)
+				local data= arg.config:get_data(pn)
+				local step= get_element_by_path(data, "speed_step")
+				local amount= direction * step
+				if big then amount= amount * 10 end
+				local new_value= get_element_by_path(data, arg.path) + amount
+				set_element_by_path(data, arg.path, new_value)
+				arg.config:set_dirty(pn)
+				MESSAGEMAN:Broadcast(
+					"ConfigValueChanged", {
+						config_name= arg.config.name, field_name= arg.path,
+						value= new_value, pn= pn})
+				return speed_mod_ret(data, new_value)
+			end,
+			value= function(arg, pn)
+				local data= arg.config:get_data(pn)
+				return speed_mod_ret(data, get_element_by_path(data, "speed_mod"))
+			end,
+			reset= function(arg, pn)
+				local data= arg.config:get_data(pn)
+				local new_value= 100
+				set_element_by_path(data, arg.path, new_value)
+				arg.config:set_dirty(pn)
+				MESSAGEMAN:Broadcast(
+					"ConfigValueChanged", {
+						config_name= arg.config.name, field_name= arg.path,
+						value= new_value, pn= pn})
+				return speed_mod_ret(data, new_value)
+			end,
+			refresh= {
+				message= "ConfigValueChanged",
+				config_name= notefield_prefs_config.name,
+				field_name= "speed_type", match_pn= true,
+			},
+	}}
 end
 
 function notefield_prefs_speed_type_item()
