@@ -330,7 +330,7 @@ function editor_notefield_menu(menu_actor)
 		local my= INPUTFILTER:GetMouseY()
 		if mx ~= prev_mx or my ~= prev_my then
 			sound_name= menu:update_focus(mx, my)
-			play_menu_sound(sounds, sound_name)
+			nesty_menus.play_menu_sound(sounds, sound_name)
 			prev_mx= mx
 			prev_my= my
 		end
@@ -339,7 +339,7 @@ function editor_notefield_menu(menu_actor)
 	local function input(event)
 		if not in_option_menu then return end
 		local levels_left, sound_name= menu:input(event)
-		play_menu_sound(sound_actors, sound_name)
+		nesty_menus.play_menu_sound(sound_actors, sound_name)
 		if levels_left and levels_left < 1 then
 			editor_config:set_dirty()
 			editor_config:save()
@@ -353,7 +353,7 @@ function editor_notefield_menu(menu_actor)
 
 	return Def.ActorFrame{
 		OnCommand= function(self)
-			sound_actors= make_menu_sound_lookup(self)
+			sound_actors= nesty_menus.make_menu_sound_lookup(self)
 			container= self
 			editor_screen= SCREENMAN:GetTopScreen()
 			editor_screen:AddInputCallback(input)

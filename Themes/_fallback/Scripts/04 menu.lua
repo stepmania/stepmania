@@ -914,7 +914,11 @@ menu_controller_mt= {
 				self.input_mode= mode
 				self.in_adjust_mode= false
 			end
-			self.repeats_to_big= repeats_to_big or 10
+			if type(repeats_to_big) ~= "number" then
+				self.repeats_to_big= 10
+			else
+				self.repeats_to_big= repeats_to_big
+			end
 			if select_goes_to_top ~= nil then
 				self.select_goes_to_top= select_goes_to_top
 			else
@@ -1156,10 +1160,14 @@ menu_controller_mt= {
 			if not action then return end
 			local active_display= self.scroller:get_cursor_item()
 			local action_sound= false
+			local function handle_refresh(items)
+				self.menu_stack[#self.menu_stack]= items
+				active_display:refresh_info(items)
+				self:update_cursor()
+			end
 			if action == "refresh" then
 				if type(info) == "table" then
-					active_display:refresh_info(info)
-					self:update_cursor()
+					handle_refresh(info)
 					action_sound= "refresh"
 				end
 			elseif action == "submenu" then
@@ -1178,8 +1186,8 @@ menu_controller_mt= {
 					for i= 1, info do
 						self:pop_menu()
 					end
-					active_display:refresh_info(extra)
-					self:update_cursor()
+					active_display= self.scroller:get_cursor_item()
+					handle_refresh(extra)
 					action_sound= "close_submenu"
 				else
 					if info < 0 or info >= #self.menu_stack then
@@ -1315,7 +1323,7 @@ function add_area_to_verts(area, verts, vc, thick)
 	add_line_to_verts(area[#area], area[1], verts, vc, thick, mag)
 end
 
-function menu_buttons_debug_actor()
+local function button_debug_actor()
 	return Def.ActorMultiVertex{
 		Name= "buttons_debug",
 		InitCommand= function(self)
@@ -1324,7 +1332,7 @@ function menu_buttons_debug_actor()
 		FrameCommand= function(self, menus)
 			local verts= {}
 			for pn, menu in pairs(menus) do
-				local vc= menu.debug_button_color or {.75, .75, .75, 1}
+				local vc= menu.debug_button_color or {.75, 0, 0, 1}
 				local displays= menu.scroller.main_items
 				for did= 0, menu.scroller.num_main-1 do
 					local disp= displays[did]
@@ -1344,7 +1352,7 @@ function menu_buttons_debug_actor()
 	}
 end
 
-function menu_focus_debug_actor()
+local function focus_debug_actor()
 	return Def.ActorMultiVertex{
 		Name= "focus_debug",
 		InitCommand= function(self)
@@ -1353,8 +1361,8 @@ function menu_focus_debug_actor()
 		FrameCommand= function(self, menus)
 			local verts= {}
 			for pn, menu in pairs(menus) do
-				local vc= menu.debug_focus_color or {.75, .75, .75, 1}
-				local sca= menu.debug_scroll_color or {.75, .75, .75, 1}
+				local vc= menu.debug_focus_color or {0, .75, 0, 1}
+				local sca= menu.debug_scroll_color or {0, 0, .75, 1}
 				local displays= menu.scroller.main_items
 				for did= 0, menu.scroller.num_main-1 do
 					local disp= displays[did]
@@ -1783,6 +1791,8 @@ local menu_specifics= {
 }
 
 nesty_menus= {
+	button_debug_actor= button_debug_actor,
+	focus_debug_actor= focus_debug_actor,
 	add_broad_type= function(name, params)
 		broad_types[name]= params
 	end,
@@ -1942,7 +1952,7 @@ nesty_menus= {
 -- Part 3: An actor to wrap around attaching the menu and the typical input
 -- and update functions.
 
-function play_menu_sound(sounds, name)
+nesty_menus.play_menu_sound= function(sounds, name)
 	if not name or not sounds then return end
 	local sound_entry= sounds[nesty_menus.action_to_sound_name[name]]
 	if sound_entry then
@@ -1960,7 +1970,7 @@ local function make_typical_update(menu_controllers, sounds, item_change_callbac
 			local pn= GAMESTATE:GetMasterPlayerNumber()
 			local menu= menu_controllers[pn] or menu_controllers[1]
 			local sound_name= menu:update_focus(mx, my)
-			play_menu_sound(sounds, sound_name)
+			nesty_menus.play_menu_sound(sounds, sound_name)
 			if item_change_callback then
 				item_change_callback(menu:get_cursor_item(), pn)
 			end
@@ -1989,7 +1999,7 @@ local function make_typical_input(menu_controllers, sounds, item_change_callback
 		local menu= menu_controllers[pn] or menu_controllers[1]
 		if menu then
 			local levels_left, sound_name= menu:input(event)
-			play_menu_sound(sounds, sound_name)
+			nesty_menus.play_menu_sound(sounds, sound_name)
 			if item_change_callback then
 				item_change_callback(menu:get_cursor_item(), pn)
 			end
@@ -2023,7 +2033,7 @@ local sound_names= {
 	"up", "down", "increase", "decrease", "toggle", "confirm", "back",
 }
 
-function load_typical_menu_sounds()
+nesty_menus.load_typical_menu_sounds= function()
 	local frame= Def.ActorFrame{Name= "sounds"}
 	for i, name in ipairs(sound_names) do
 		local path= THEME:GetPathS("OptionMenu", name, true)
@@ -2035,7 +2045,7 @@ function load_typical_menu_sounds()
 	return frame
 end
 
-function make_menu_sound_lookup(self)
+nesty_menus.make_menu_sound_lookup= function(self)
 	local container= self:GetChild("sounds")
 	if not container then return end
 	local sound_actors= {}
@@ -2094,7 +2104,7 @@ nesty_menus.make_menu_actors= function(menu_args)
 	local menu_controllers= {}
 	local frame= Def.ActorFrame{
 		OnCommand= function(self)
-			local sound_actors= make_menu_sound_lookup(self)
+			local sound_actors= nesty_menus.make_menu_sound_lookup(self)
 			for pn, temp in pairs(menu_controllers) do
 				local menu= self:GetChild("menu_"..pn)
 				local controller= menu_controllers[pn]
@@ -2137,7 +2147,7 @@ nesty_menus.make_menu_actors= function(menu_args)
 			nesty_menus.handle_menu_refresh_message(mess_name, param, menu_controllers)
 		end
 	end
-	local sounds= load_typical_menu_sounds()
+	local sounds= nesty_menus.load_typical_menu_sounds()
 	if sounds then
 		frame[#frame+1]= sounds
 	end
@@ -2147,8 +2157,8 @@ nesty_menus.make_menu_actors= function(menu_args)
 		frame[#frame+1]= temp
 	end
 	if menu_args.with_click_debug then
-		frame[#frame+1]= menu_buttons_debug_actor()
-		frame[#frame+1]= menu_focus_debug_actor()
+		frame[#frame+1]= nesty_menus.button_debug_actor()
+		frame[#frame+1]= nesty_menus.focus_debug_actor()
 	end
 	return frame, menu_controllers
 end

@@ -184,8 +184,9 @@ local function steps_action_menu(info)
 				 function(answer)
 					 if answer == "yes" then
 						 info.song:delete_steps(info.steps)
+						 song_menu_controller:handle_menu_action(
+							 "close", 1, steps_list_menu(info.song))
 					 end
-					 return "close", 1, steps_list_menu(info.song)
 			 end)
 		end},
 	}
@@ -310,8 +311,7 @@ local function recent_edit_menu()
 				end
 			end
 		end
-		local close= "&leftarrow; " .. THEME:GetString(translation_section, "recently_edited_back")
-		return nesty_menus.add_close_item(items, close)
+		return nesty_menus.add_close_item(items)
 	end
 	return {
 		type_hint= {main= "submenu"},
@@ -335,8 +335,7 @@ local function recent_group_menu()
 				}
 			end
 		end
-		local close= "&leftarrow; " .. THEME:GetString(translation_section, "recent_group")
-		return nesty_menus.add_close_item(items, close)
+		return nesty_menus.add_close_item(items)
 	end
 	return {
 		type_hint= {main= "submenu"},
@@ -391,10 +390,10 @@ local function menu_update()
 		prev_my= my
 	end
 	if buttons_debug then
-		buttons_debug:playcommand("Frame", song_menu_controller)
+		buttons_debug:playcommand("Frame", {song_menu_controller})
 	end
 	if focus_debug then
-		focus_debug:playcommand("Frame", song_menu_controller)
+		focus_debug:playcommand("Frame", {song_menu_controller})
 	end
 end
 
@@ -489,8 +488,8 @@ function edit_pick_menu_actor(menu_actor, repeats_to_big, debug_click_area)
 		},
 	}
 	if debug_click_area then
-		frame[#frame+1]= menu_buttons_debug_actor()
-		frame[#frame+1]= menu_focus_debug_actor()
+		frame[#frame+1]= nesty_menus.button_debug_actor()
+		frame[#frame+1]= nesty_menus.focus_debug_actor()
 	end
 	return frame
 end
