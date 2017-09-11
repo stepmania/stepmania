@@ -247,10 +247,9 @@ function notefield_prefs_speed_mod_item()
 				local new_value= get_element_by_path(data, arg.path) + amount
 				set_element_by_path(data, arg.path, new_value)
 				arg.config:set_dirty(pn)
-				MESSAGEMAN:Broadcast(
-					"ConfigValueChanged", {
-						config_name= arg.config.name, field_name= arg.path,
-						value= new_value, pn= pn})
+				nesty_menus.menu_message{
+					category= "Config", config_name= arg.config.name,
+					field_name= arg.path, value= new_value, pn= pn}
 				return speed_mod_ret(data, new_value)
 			end,
 			value= function(arg, pn)
@@ -262,14 +261,13 @@ function notefield_prefs_speed_mod_item()
 				local new_value= 100
 				set_element_by_path(data, arg.path, new_value)
 				arg.config:set_dirty(pn)
-				MESSAGEMAN:Broadcast(
-					"ConfigValueChanged", {
-						config_name= arg.config.name, field_name= arg.path,
-						value= new_value, pn= pn})
+				nesty_menus.menu_message{
+					category= "Config", config_name= arg.config.name,
+					field_name= arg.path, value= new_value, pn= pn}
 				return speed_mod_ret(data, new_value)
 			end,
 			refresh= {
-				message= "ConfigValueChanged",
+				category= "Config",
 				config_name= notefield_prefs_config.name,
 				field_name= "speed_type", match_pn= true,
 			},
@@ -282,112 +280,4 @@ end
 
 function notefield_prefs_perspective_item()
 	return {"item", notefield_prefs_config, "rotation_x", "name_value_pairs", {choices= {{"distant", -30}, {"overhead", 0}, {"hallway", 30}}}}
-end
-
-local function gen_speed_menu(pn)
-	local prefs= notefield_prefs_config:get_data(pn)
-	local float_args= {
-		name= "speed_mod", initial_value= function(pn)
-			return get_element_by_path(prefs, "speed_mod") or 0
-		end,
-		set= function(pn, value)
-			set_element_by_path(prefs, "speed_mod", value)
-			notefield_prefs_config:set_dirty(pn)
-			MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_name= notefield_prefs_config.name, field_name= "speed_mod", value= value, pn= pn})
-		end,
-	}
-	if prefs.speed_type == "multiple" then
-		float_args.min_scale= -2
-		float_args.scale= -1
-		float_args.max_scale= 1
-		float_args.reset_value= 1
-	else
-		float_args.min_scale= 0
-		float_args.scale= 1
-		float_args.max_scale= 3
-		float_args.reset_value= 250
-		-- TODO: Make separate m and x speed mod reset values configurable.
-	end
-	return float_args
-end
-
-function notefield_prefs_speed_mod_menu()
-	return setmetatable({name= "speed_mod", menu= nesty_option_menus.adjustable_float,
-	 translatable= true, args= gen_speed_menu, exec_args= true,
-	 value= function(pn)
-		 return notefield_prefs_config:get_data(pn).speed_mod
-	 end}, mergable_table_mt)
-end
-
-function notefield_prefs_speed_type_menu()
-	return setmetatable({name= "speed_type", menu= nesty_option_menus.enum_option,
-	 translatable= true, value= function(pn)
-		 return notefield_prefs_config:get_data(pn).speed_type
-	 end,
-	 args= {
-		 name= "speed_type", enum= notefield_speed_types, fake_enum= true,
-		 obj_get= function(pn) return notefield_prefs_config:get_data(pn) end,
-		 get= function(pn, obj) return obj.speed_type end,
-		 set= function(pn, obj, value)
-			 obj.speed_type= value
-			 notefield_prefs_config:set_dirty(pn)
-			 MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_name= notefield_prefs_config.name, field_name= "speed_type", value= value, pn= pn})
-		 end,
-	}}, mergable_table_mt)
-end
-
-local function trisign_of_num(num)
-	if num < 0 then return -1 end
-	if num > 0 then return 1 end
-	return 0
-end
-
--- Skew needs to shift towards the center of the screen.
-local pn_skew_mult= {[PLAYER_1]= 1, [PLAYER_2]= -1}
-
-local function perspective_entry(name, skew_mult, rot_mult)
-	return setmetatable({
-		name= name, translatable= true, type= "choice", execute= function(pn)
-			local conf_data= notefield_prefs_config:get_data(pn)
-			local old_rot= get_element_by_path(conf_data, "rotation_x")
-			local old_skew= get_element_by_path(conf_data, "vanish_x")
-			local new_rot= rot_mult * 30
-			local new_skew= skew_mult * 160 * pn_skew_mult[pn]
-			set_element_by_path(conf_data, "rotation_x", new_rot)
-			set_element_by_path(conf_data, "vanish_x", new_skew)
-			-- Adjust the y offset to make the receptors appear at the same final
-			-- position on the screen.
-			if new_rot < 0 then
-				set_element_by_path(conf_data, "yoffset", 180)
-			elseif new_rot > 0 then
-				set_element_by_path(conf_data, "yoffset", 140)
-			else
-				set_element_by_path(conf_data, "yoffset", get_element_by_path(notefield_prefs_config:get_default(), "yoffset"))
-			end
-			MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_name= notefield_prefs_config.name, field_name= "rotation_x", value= new_rot, pn= pn})
-		end,
-		value= function(pn)
-			local conf_data= notefield_prefs_config:get_data(pn)
-			local old_rot= get_element_by_path(conf_data, "rotation_x")
-			local old_skew= get_element_by_path(conf_data, "vanish_x")
-			if trisign_of_num(old_rot) == trisign_of_num(rot_mult) and
-			trisign_of_num(old_skew) == trisign_of_num(skew_mult) * pn_skew_mult[pn] then
-				return true
-			end
-			return false
-		end,
-	}, mergable_table_mt)
-end
-
-function notefield_perspective_menu()
-	return nesty_options.submenu("perspective", {
-		perspective_entry("overhead", 0, 0),
-		perspective_entry("distant", 0, -1),
-		perspective_entry("hallway", 0, 1),
-		perspective_entry("incoming", 1, -1),
-		perspective_entry("space", 1, 1),
-	})
 end
