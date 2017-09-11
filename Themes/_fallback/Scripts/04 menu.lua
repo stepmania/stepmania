@@ -1545,7 +1545,7 @@ local menu_generics= {
 	number= function(params)
 		-- {name, get, set, arg, small_step, big_step, min, max, reset, sub_type, value_type}
 		return {
-			name= params.name, arg= params.arg,
+			name= params.name, arg= params.arg, refresh= params.refresh,
 			adjust= function(direction, big, arg, pn)
 				local amount= direction * params.small_step
 				if big and params.big_step then
@@ -1565,7 +1565,7 @@ local menu_generics= {
 	bool= function(params)
 		-- {name, get, set, arg, reset, sub_type}
 		return {
-			name= params.name, arg= params.arg,
+			name= params.name, arg= params.arg, refresh= params.refresh,
 			func_changes_value= true,
 			func= function(big, arg, pn)
 				local new_value= not params.get(arg, pn)
@@ -1582,7 +1582,30 @@ local menu_generics= {
 	choice= function(params)
 		-- {name, get, set, arg, choices, big_step, reset, sub_type}
 		return {
-			name= params.name, arg= params.arg,
+			name= params.name, arg= params.arg, refresh= params.refresh,
+			func= function(big, arg, pn)
+				local function gen_items()
+					local items= {}
+					for i, choice in ipairs(params.choices) do
+						items[#items+1]= {
+							name= choice, translation_section= params.translation_section,
+							dont_translate_name= params.dont_translate_value,
+							arg= params.arg, refresh= params.refresh,
+							value= function(arg, pn)
+								local curr_choice= params.get(arg, pn)
+								if curr_choice == choice then
+									return {"boolean", true}
+								end
+							end,
+							func= function(big, arg, pn)
+								params.set(arg, choice, pn)
+							end,
+						}
+					end
+					return nesty_menus.add_close_item(items)
+				end
+				return "submenu", gen_items()
+			end,
 			adjust= function(direction, big, arg, pn)
 				local choice_id= find_choice(params.get(arg, pn), params.reset, params.choices)
 				choice_id= advance_choice(choice_id, direction, big, params.big_step, #params.choices)
@@ -1601,7 +1624,7 @@ local menu_generics= {
 	toggle_number= function(params)
 		-- {name, get, set, arg, on, off, reset, sub_type, value_type}
 		return {
-			name= params.name, arg= params.arg,
+			name= params.name, arg= params.arg, refresh= params.refresh,
 			func_changes_value= true,
 			func= function(big, arg, pn)
 				local old_value= params.get(arg, pn)
@@ -1648,7 +1671,31 @@ local menu_generics= {
 	name_value_pairs= function(params)
 		-- {name, get, set, arg, choices, big_step, reset, sub_type, value_type}
 		return {
-			name= params.name, arg= params.arg,
+			name= params.name, arg= params.arg, refresh= params.refresh,
+			func= function(big, arg, pn)
+				local function gen_items()
+					local items= {}
+					for i, choice in ipairs(params.choices) do
+						items[#items+1]= {
+							name= choice[1],
+							translation_section= params.translation_section,
+							dont_translate_name= params.dont_translate_value,
+							arg= params.arg, refresh= params.refresh,
+							value= function(arg, pn)
+								local curr_choice= params.get(arg, pn)
+								if curr_choice == choice[2] then
+									return {"boolean", true}
+								end
+							end,
+							func= function(big, arg, pn)
+								params.set(arg, choice[2], pn)
+							end,
+						}
+					end
+					return nesty_menus.add_close_item(items)
+				end
+				return "submenu", gen_items()
+			end,
 			adjust= function(direction, big, arg, pn)
 				local choice_id= find_paired_choice(params.get(arg, pn), params.reset, params.choices)
 				choice_id= advance_choice(choice_id, direction, big, params.big_step, #params.choices)
@@ -1673,20 +1720,39 @@ local menu_generics= {
 		}
 	end,
 	mistake= function()
-		return {name= "themer mistake", func= function() SCREENMAN:SystemMessage("LOL") end}
+		return {name= "themer mistake", func= function() SCREENMAN:SystemMessage("LOL") end, type_hint= {main= "mistake"}}
 	end,
 }
+
+local function make_refresh(param_refresh, parts)
+	local ref= parts
+	if type(param_refresh) == "table" then
+		for name, part in pairs(params.refresh) do
+			ref[name]= part
+		end
+	end
+	return ref
+end
+
+local function menu_message(params)
+	MESSAGEMAN:Broadcast("MenuValueChanged", params)
+end
 
 local menu_specifics= {
 	preference= {
 		arg= function(params)
 			return params.name
 		end,
+		refresh= function(params)
+			return make_refresh(
+				params.refresh, {category= "Preference", field_name= params.name})
+		end,
 		get= function(name)
 			return PREFSMAN:GetPreference(name)
 		end,
 		set= function(name, value)
 			PREFSMAN:SetPreference(name, value)
+			menu_message{category= "Preference", field_name= name, value= value}
 		end,
 		reset= function(name, value)
 			if value == nil then return PREFSMAN:GetPreference(name) end
@@ -1697,15 +1763,22 @@ local menu_specifics= {
 		arg= function(params)
 			return {config= params.config, path= params.path, value_type= params.value_type}
 		end,
+		refresh= function(params)
+			return make_refresh(
+				params.refresh, {
+					category= "Config", config_name= params.config.name,
+					field_name= params.path,
+			})
+		end,
 		get= function(arg, pn)
 			return get_element_by_path(arg.config:get_data(pn), arg.path)
 		end,
 		set= function(arg, value, pn)
 			set_element_by_path(arg.config:get_data(pn), arg.path, value)
 			arg.config:set_dirty(pn)
-			MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_name= arg.config.name, field_name= arg.path,
-				value= value, pn= pn})
+			menu_message{
+				category= "Config", config_name= arg.config.name,
+				field_name= arg.path, value= value, pn= pn}
 		end,
 		reset= function(name, value)
 			if value ~= nil then return value end
@@ -1713,16 +1786,23 @@ local menu_specifics= {
 				local new_value= get_element_by_path(arg.config:get_default(), arg.path)
 				set_element_by_path(arg.config:get_data(pn), arg.path, new_value)
 				arg.config:set_dirty(pn)
-				MESSAGEMAN:Broadcast("ConfigValueChanged", {
-					config_name= arg.config.name, field_name= arg.path,
-					value= new_value, pn= pn})
+				menu_message{
+					category= "Config", config_name= arg.config.name,
+					field_name= arg.path, value= new_value, pn= pn}
 				return vtype_ret(new_value, arg.value_type)
 			end
-		end
+		end,
 	},
 	profile= {
 		arg= function(params)
 			return params.name
+		end,
+		refresh= function(params)
+			return make_refresh(
+				params.refresh, {
+					category= "Profile", data_name= params.data.name,
+					field_name= params.path, match_pn= true,
+			})
 		end,
 		get= function(name, pn)
 			local profile= PROFILEMAN:GetProfile(pn)
@@ -1731,25 +1811,39 @@ local menu_specifics= {
 		set= function(name, value, pn)
 			local profile= PROFILEMAN:GetProfile(pn)
 			profile["Set"..name](profile, value)
+			menu_message{category= "Profile", field_name= name, pn= pn, value= value}
 		end,
 	},
 	data= {
 		arg= function(params)
 			return {data= params.data, path= params.path}
 		end,
+		refresh= function(params)
+			return make_refresh(
+				params.refresh, {
+					category= "Data", data_name= params.data.name,
+					field_name= params.path,
+			})
+		end,
 		get= function(arg, pn)
 			return get_element_by_path(arg.data, arg.path)
 		end,
 		set= function(arg, value, pn)
 			set_element_by_path(arg.data, arg.path, value)
-			MESSAGEMAN:Broadcast("DataValueChanged", {
-				data_name= arg.data.name, field_name= arg.path,
-				value= value, pn= pn})
+			menu_message{
+				category= "Data", data_name= arg.data.name, field_name= arg.path,
+				value= value, pn= pn}
 		end,
 	},
 	player_option= {
 		arg= function(params)
 			return params.name
+		end,
+		refresh= function(params)
+			return make_refresh(
+				params.refresh, {
+					category= "PlayerOption", field_name= params.name,
+			})
 		end,
 		get= function(name, pn)
 			local ops= pops_get(pn)
@@ -1763,11 +1857,17 @@ local menu_specifics= {
 				GAMESTATE:SetFailTypeExplicitlySet()
 			end
 			ops[name](ops, value)
+			menu_message{
+				category= "PlayerOption", pn= pn, field_name= name, value= value}
 		end,
 	},
 	song_option= {
 		arg= function(params)
 			return params.name
+		end,
+		refresh= function(params)
+			return make_refresh(
+				params.refresh, {category= "SongOption", field_name= params.name})
 		end,
 		get= function(name)
 			local sops= sops_get()
@@ -1779,6 +1879,7 @@ local menu_specifics= {
 			-- Apply the change to the current and song levels too, so that if
 			-- this occurs during gameplay, it takes effect immediately.
 			GAMESTATE:ApplyPreferredSongOptionsToOtherLevels()
+			menu_message{category= "SongOption", field_name= name, value= value}
 		end,
 		reset= function(name, value)
 			if value == nil then
@@ -1791,6 +1892,7 @@ local menu_specifics= {
 }
 
 nesty_menus= {
+	menu_message= menu_message,
 	button_debug_actor= button_debug_actor,
 	focus_debug_actor= focus_debug_actor,
 	add_broad_type= function(name, params)
@@ -1879,11 +1981,16 @@ nesty_menus= {
 		if specific_entry.reset then
 			reset= specific_entry.reset(params.name, params.reset)
 		end
+		local refresh= params.refresh
+		if specific_entry.refresh and type(refresh) ~= "function" then
+			refresh= specific_entry.refresh(params)
+		end
 		local ret= generic_entry(
 			combine_menu_params(
 				params, {
 					get= specific_entry.get, set= specific_entry.set, reset= reset,
-					arg= specific_entry.arg(params), sub_type= sub_type}))
+					arg= specific_entry.arg(params), refresh= refresh,
+					sub_type= sub_type}))
 		add_translation_params(ret, params)
 		return setmetatable(ret, mergable_table_mt)
 	end,
@@ -2058,7 +2165,7 @@ nesty_menus.make_menu_sound_lookup= function(self)
 	return sound_actors
 end
 
-nesty_menus.handle_menu_refresh_message= function(message_name, message_param, menu_controllers)
+nesty_menus.handle_menu_refresh_message= function(message_param, menu_controllers)
 	local mpnt_isn_str= type(message_param.pn) ~= "string"
 	for pn, controller in pairs(menu_controllers) do
 		local pnt_isn_str= type(pn) ~= "string"
@@ -2072,18 +2179,16 @@ nesty_menus.handle_menu_refresh_message= function(message_name, message_param, m
 						if refresh then
 							local should_refresh= false
 							if type(refresh) == "function" then
-								should_refresh= refresh(item.info, message_name, message_param)
+								should_refresh= refresh(item.info, message_param)
 							else
 								if not refresh.match_pn or pnt_isn_str or mpnt_isn_str or pn == message_param.pn then
-									if message_name == refresh.message then
-										local parts_match= true
-										for name, value in pairs(message_param) do
-											if refresh[name] ~= nil and refresh[name] ~= value then
-												parts_match= false
-											end
+									local parts_match= true
+									for name, value in pairs(message_param) do
+										if refresh[name] ~= nil and refresh[name] ~= value then
+											parts_match= false
 										end
-										should_refresh= parts_match
 									end
+									should_refresh= parts_match
 								end
 							end
 							if should_refresh then
@@ -2138,15 +2243,10 @@ nesty_menus.make_menu_actors= function(menu_args)
 				buttons_debug, focus_debug)
 			self:SetUpdateFunction(update)
 		end,
+		MenuValueChangedMessageCommand= function(self, params)
+			nesty_menus.handle_menu_refresh_message(params, menu_controllers)
+		end,
 	}
-	local refresh_messages= menu_args.refresh_messages or {}
-	refresh_messages[#refresh_messages+1]= "ConfigValueChanged"
-	refresh_messages[#refresh_messages+1]= "DataValueChanged"
-	for i, mess_name in ipairs(refresh_messages) do
-		frame[mess_name.."MessageCommand"]= function(self, param)
-			nesty_menus.handle_menu_refresh_message(mess_name, param, menu_controllers)
-		end
-	end
 	local sounds= nesty_menus.load_typical_menu_sounds()
 	if sounds then
 		frame[#frame+1]= sounds
@@ -2207,4 +2307,73 @@ function one_dimension_scroll(
 			:diffusealpha(0)
 		self[dim](self, pos_after_vis * spacing)
 	end
+end
+
+function noop_nil() end
+
+function rec_calc_actor_extent(aframe, depth)
+	depth= depth or ""
+	if not aframe then return 0, 0, 0, 0 end
+	local halign= aframe:GetHAlign()
+	local valign= aframe:GetVAlign()
+	local w= aframe:GetZoomedWidth()
+	local h= aframe:GetZoomedHeight()
+	local halignjust= (halign - .5) * w
+	local valignjust= (valign - .5) * h
+	local xmin= w * -halign
+	local xmax= w * (1 - halign)
+	local ymin= h * -valign
+	local ymax= h * (1 - valign)
+	local function handle_child(xz, yz, child)
+		if child:GetVisible() then
+			local cx= child:GetX() + halignjust
+			local cy= child:GetY() + valignjust
+			--Trace(depth .. "child " .. child:GetName() .. " at " .. cx .. ", " .. cy)
+			local cxmin, cxmax, cymin, cymax= rec_calc_actor_extent(child,depth.."  ")
+			xmin= math.min((cxmin * xz) + cx, xmin)
+			ymin= math.min((cymin * yz) + cy, ymin)
+			xmax= math.max((cxmax * xz) + cx, xmax)
+			ymax= math.max((cymax * yz) + cy, ymax)
+		end
+	end
+	if aframe.GetChildren then
+		local xz= aframe:GetZoomX()
+		local yz= aframe:GetZoomY()
+		local children= aframe:GetChildren()
+		for i, c in pairs(children) do
+			if #c > 0 then
+				for subi= 1, #c do
+					handle_child(xz, yz, c[subi])
+				end
+			else
+				handle_child(xz, yz, c)
+			end
+		end
+	else
+		--Trace(depth .. "no children")
+	end
+	--Trace(depth .. "rec_calc_actor_extent:")
+	--Trace(depth .. "ha: " .. halign .. " va: " .. valign .. " w: " .. w ..
+	--			" h: " .. h .. " haj: " .. halignjust .. " vaj: " .. valignjust ..
+	--			" xmn: " .. xmin .. " xmx: " .. xmax .. " ymn: " .. ymin .. " ymx: "
+	--			.. ymax)
+	return xmin, xmax, ymin, ymax
+end
+
+function rec_calc_actor_pos(actor)
+	-- This doesn't handle zooming.
+	if not actor then return 0, 0 end
+	local x= actor:GetDestX()
+	local y= actor:GetDestY()
+	local wx, wy= 0, 0
+	if actor.GetNumWrapperStates then
+		local wrappers= actor:GetNumWrapperStates()
+		for i= 1, wrappers do
+			local nitori= actor:GetWrapperState(i)
+			wx= wx + nitori:GetDestX()
+			wy= wy + nitori:GetDestY()
+		end
+	end
+	local px, py= rec_calc_actor_pos(actor:GetParent())
+	return x+px+wx, y+py+wy
 end

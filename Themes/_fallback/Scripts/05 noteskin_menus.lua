@@ -76,18 +76,20 @@ local function generate_noteskin_menu_items(pn)
 	local stepstype= find_current_stepstype(pn)
 	local skins= filter_noteskin_list_with_shown_config(
 		pn, NOTESKIN:get_skin_names_for_stepstype(stepstype))
-	local player_skin= PROFILEMAN:GetProfile(pn)
-		:get_preferred_noteskin(stepstype)
 	for i, skin_name in ipairs(skins) do
 		items[#items+1]= {
 			name= skin_name, dont_translate_name= true,
 			translation_section= "notefield_options",
+			refresh= {category= "NoteSkin"},
 			func= function()
 				PROFILEMAN:GetProfile(pn):set_preferred_noteskin(skin_name)
+				nesty_menus.menu_message{
+					category= "NoteSkin", pn= pn, value= skin_name}
 				MESSAGEMAN:Broadcast("NoteskinChanged", {pn= pn})
-				return "refresh", generate_noteskin_menu_items(pn)
 			end,
 			value= function()
+				local player_skin= PROFILEMAN:GetProfile(pn)
+					:get_preferred_noteskin(stepstype)
 				if skin_name == player_skin then
 					return {"boolean", true}
 				end
@@ -99,22 +101,13 @@ local function generate_noteskin_menu_items(pn)
 	return items
 end
 
-function noteskin_menu()
-	return {
-		"custom", {
-			name= "noteskin", type_hint= {main= "submenu", sub= "noteskin"},
-			translation_section= "notefield_options",
-			func= function(big, arg, pn)
-				return "submenu", generate_noteskin_menu_items(pn)
-	end}}
-end
-
 function noteskin_menu_item()
 	return {
 		"custom", {
 			name= "noteskin", type_hint= {main= "choice", sub= "noteskin"},
 			translation_section= "notefield_options",
 			dont_translate_value= true,
+			refresh= {category= "NoteSkin"},
 			value= function(arg, pn)
 				return {"string", PROFILEMAN:GetProfile(pn):get_preferred_noteskin(find_current_stepstype(pn))}
 			end,
@@ -131,8 +124,13 @@ function noteskin_menu_item()
 				id= (((id + dir) - 1) % #skins) + 1
 				player_skin= skins[id]
 				PROFILEMAN:GetProfile(pn):set_preferred_noteskin(player_skin)
+				nesty_menus.menu_message{
+					category= "NoteSkin", pn= pn, value= player_skin}
 				MESSAGEMAN:Broadcast("NoteskinChanged", {pn= pn})
 				return {"string", player_skin}
+			end,
+			func= function(big, arg, pn)
+				return "submenu", generate_noteskin_menu_items(pn)
 			end,
 	}}
 end
