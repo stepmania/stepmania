@@ -1045,6 +1045,7 @@ function handle_notefield_mods(mods)
 			end
 		end
 	end
+	if type(mods) ~= "table" then return notefields end
 	organize_and_apply_notefield_mods(notefields, mods)
 	return notefields
 end

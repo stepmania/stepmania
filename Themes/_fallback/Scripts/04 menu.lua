@@ -196,9 +196,9 @@ local item_controller_mt= {
 			if not self.info then return end
 			if type(v) == "table" then
 				local value= v[2]
-				v[3]= value
-				if type(value) == "string"
+				if v[1] == "string"
 				and not self.info.dont_translate_value then
+					v.untranslated= value
 					v[2]= want_string(self:get_trans_section(), value)
 				end
 			end
@@ -1282,9 +1282,11 @@ menu_controller_mt= {
 			self.scroller:get_cursor_item():lose_focus()
 		end,
 		hide= function(self)
+			self.hidden= true
 			self.container:play_command_no_recurse("Hide")
 		end,
 		show= function(self)
+			self.hidden= false
 			self.container:play_command_no_recurse("Show")
 		end,
 }}
@@ -1800,8 +1802,7 @@ local menu_specifics= {
 		refresh= function(params)
 			return make_refresh(
 				params.refresh, {
-					category= "Profile", data_name= params.data.name,
-					field_name= params.path, match_pn= true,
+					category= "Profile", field_name= params.name, match_pn= true,
 			})
 		end,
 		get= function(name, pn)
@@ -2010,7 +2011,11 @@ nesty_menus= {
 		local ret= {}
 		for eid= 1, #info do
 			local entry= info[eid]
-			assert(type(entry) == "table", "Menu entry " .. eid .. " cannot hold drinks or food.")
+			if type(entry) ~= "table" then
+				Trace("All menu entries must be tables.")
+				rec_print_table(info, nil, 1)
+				assert(false, "Menu entry " .. eid .. " cannot hold drinks or food.")
+			end
 			local entype= entry[1]
 			local type_handlers= {
 				close= function()
@@ -2306,6 +2311,18 @@ function one_dimension_scroll(
 		self[tween](self, time_per_step)
 			:diffusealpha(0)
 		self[dim](self, pos_after_vis * spacing)
+	end
+end
+
+function add_defaults_to_params(params, defaults)
+	for key, value in pairs(defaults) do
+		if params[key] == nil then params[key]= value end
+	end
+end
+
+function add_blank_tables_to_params(params, table_names)
+	for i, name in ipairs(table_names) do
+		if not params[name] then params[name]= {} end
 	end
 end
 

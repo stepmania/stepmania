@@ -46,7 +46,7 @@ for i, info in ipairs{
 	{"RandomBackgroundMode", RandomBackgroundMode},
 	{"ShowSongOptions", Maybe},
 } do
-	option_data[info[1]]= {broad_type= "choice", choices= info[2], value_type= "enum"}
+	option_data[info[1]]= {broad_type= "choice", choices= info[2]}
 end
 for i, name in ipairs{
 	"BGBrightness", "FrameLimitPercent", "LifeDifficultyScale",
