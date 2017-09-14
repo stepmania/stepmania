@@ -527,6 +527,7 @@ struct NoteSkinData
 	// take ownership of the actors after loading.
 	std::vector<NoteSkinLayer> m_layers;
 	std::vector<Rage::Color> m_player_colors;
+	std::vector<Actor*> m_field_layers;
 private:
 	std::vector<NoteSkinColumn> m_columns;
 	LuaReference m_skin_parameters;
@@ -576,6 +577,7 @@ private:
 	std::string m_load_path;
 	std::string m_notes_loader;
 	std::vector<std::string> m_layer_loaders;
+	std::vector<std::string> m_field_layer_names;
 	std::vector<Rage::Color> m_player_colors;
 	std::unordered_set<std::string> m_supported_buttons;
 	LuaReference m_skin_parameters;

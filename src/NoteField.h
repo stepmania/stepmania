@@ -197,6 +197,9 @@ struct NoteFieldColumn : ActorFrame
 	void set_hold_status(TapNote const* tap, bool start, bool end);
 	void set_pressed(bool on);
 
+	void add_upcoming_notes(std::vector<std::pair<double, size_t>>& upcoming_notes, size_t note_receptors);
+	void set_note_receptors(size_t count);
+
 	virtual void UpdateInternal(float delta);
 	virtual bool EarlyAbortDraw() const;
 	void imitate_did_note(TapNote const& tap);
@@ -254,6 +257,7 @@ struct NoteFieldColumn : ActorFrame
 
 	ModifiableValue m_speed_mod;
 	ModifiableValue m_lift_pretrail_length;
+	ModifiableValue m_note_receptors;
 
 	ModifiableVector3 m_y_offset_vec_mod;
 
@@ -345,6 +349,9 @@ private:
 	double receptor_glow;
 	double explosion_alpha;
 	double explosion_glow;
+	size_t note_receptors;
+	bool use_column_note_receptors;
+	bool using_per_note_receptors;
 	bool pressed;
 	bool was_pressed;
 };
@@ -437,6 +444,8 @@ struct NoteField : ActorFrame
 
 	void set_layer_fade_type(Actor* child, FieldLayerFadeType type);
 	FieldLayerFadeType get_layer_fade_type(Actor* child);
+	void set_layer_transform_type(Actor* child, FieldLayerTransformType type);
+	FieldLayerTransformType get_layer_transform_type(Actor* child);
 
 	void update_displayed_time(double beat, double second);
 	double get_curr_beat() { return m_curr_beat; }
@@ -458,6 +467,7 @@ struct NoteField : ActorFrame
 	ModifiableValue m_explosion_alpha;
 	ModifiableValue m_explosion_glow;
 	ModifiableVector3 m_fov_mod;
+	ModifiableValue m_note_receptors;
 
 	// To allow the Player actor the field is inside to be moved around without
 	// causing skew problems, the field adds the vanish position to the actor
@@ -488,6 +498,8 @@ struct NoteField : ActorFrame
 	float selection_glow;
 
 private:
+	void AddChildInternal(Actor* act, bool from_noteskin);
+
 	void draw_entry(field_draw_entry& entry);
 	void draw_beat_bar(mod_val_inputs& input, int state, float alpha);
 	void draw_field_text(mod_val_inputs& input,
@@ -532,6 +544,9 @@ private:
 	// marked if they came from the noteskin.
 	std::list<FieldChild> m_layers;
 
+	size_t m_left_column_id;
+	size_t m_right_column_id;
+
 	Sprite m_beat_bars;
 	BitmapText m_field_text;
 
@@ -554,6 +569,9 @@ private:
 	double original_y;
 
 	double curr_z_bias;
+
+	Rage::transform avg_head_trans;
+	bool avg_head_trans_is_fresh;
 };
 
 #endif

@@ -126,6 +126,7 @@ NoteFieldColumn::NoteFieldColumn()
 	 m_quantization_offset(m_mod_manager, "quantization_offset", 0.0),
 	 m_speed_mod(m_mod_manager, "speed", 0.0),
 	 m_lift_pretrail_length(m_mod_manager, "lift_pretrail", 0.25),
+	 m_note_receptors(m_mod_manager, "note_receptors", 0.0),
 	 m_y_offset_vec_mod(m_mod_manager, "y_offset_vec", 0.0, 1.0, 0.0),
 	 m_reverse_offset_pixels(m_mod_manager, "reverse_offset", 240.0 - note_size),
 	 m_reverse_scale(m_mod_manager, "reverse", 1.0),
@@ -254,7 +255,7 @@ void NoteFieldColumn::set_note_data(const NoteData* note_data,
 	m_mod_manager.set_timing(timing_data);
 	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
 				&m_quantization_offset, &m_speed_mod, &m_lift_pretrail_length,
-				&m_reverse_offset_pixels, &m_reverse_scale,
+				&m_note_receptors, &m_reverse_offset_pixels, &m_reverse_scale,
 				&m_center_percent, &m_note_alpha, &m_note_glow, &m_receptor_alpha,
 				&m_receptor_glow, &m_explosion_alpha, &m_explosion_glow})
 	{
@@ -1348,6 +1349,8 @@ void NoteFieldColumn::add_renderable_to_lists(render_note& renderable)
 			if((!tn.result.bHidden || !m_use_game_music_beat) &&
 				(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
 			{
+				// The per-note receptor code in draw_thing_internal depends on the
+				// notes closest to the receptor being at the end of the list.
 				render_taps.push_front(renderable);
 				imitate_did_note(tn);
 				update_upcoming(tap_beat, tn.occurs_at_second);
@@ -1406,6 +1409,19 @@ void NoteFieldColumn::build_render_lists()
 		receptor_glow= m_receptor_glow.evaluate(input);
 		explosion_alpha= m_explosion_alpha.evaluate(input);
 		explosion_glow= m_explosion_glow.evaluate(input);
+		int temp_nr= std::floor(m_note_receptors.evaluate(input));
+		if(temp_nr <= 0)
+		{
+			note_receptors= 0;
+			use_column_note_receptors= false;
+			using_per_note_receptors= false;
+		}
+		else
+		{
+			note_receptors= static_cast<size_t>(temp_nr);
+			use_column_note_receptors= true;
+			using_per_note_receptors= true;
+		}
 	}
 	else
 	{
@@ -1416,6 +1432,8 @@ void NoteFieldColumn::build_render_lists()
 		receptor_glow= 0.0;
 		explosion_alpha= 1.0;
 		explosion_glow= 0.0;
+		note_receptors= 0;
+		using_per_note_receptors= false;
 	}
 
 	// Clearing and rebuilding the list of taps to render every frame is
@@ -1970,6 +1988,62 @@ void NoteFieldColumn::set_pressed(bool on)
 	pressed= on;
 }
 
+void NoteFieldColumn::add_upcoming_notes(
+	std::vector<std::pair<double, size_t>>& upcoming_notes, size_t note_receptors)
+{
+	if(use_column_note_receptors) { return; }
+	// Per-note receptors, shared by the whole field.
+	if(!render_taps.empty())
+	{
+		for(auto tapit= render_taps.rbegin(); tapit != render_taps.rend(); ++tapit)
+		{
+			double usd= tapit->input.eval_second - m_curr_second;
+			if(usd < 0.0) { continue; }
+			// Linear search from the end to find the insertion point, because
+			// inserting into a vector shifts all elements anyway.
+			std::pair<double, size_t> entry= {usd, m_column};
+			if(upcoming_notes.empty())
+			{
+				// upcoming_notes.size is 0.
+				upcoming_notes.push_back(entry);
+			}
+			else
+			{
+				// upcoming_notes.size is at least 1 at this point.
+				bool added= false;
+				for(size_t upid= 0; upid < upcoming_notes.size(); ++upid)
+				{
+					if(upcoming_notes[upid].first > entry.first)
+					{
+						added= true;
+						auto insert_at= upcoming_notes.begin() + upid;
+						upcoming_notes.insert(insert_at, entry);
+						break;
+					}
+				}
+				if(!added)
+				{
+					if(upcoming_notes.size() < note_receptors)
+					{
+						upcoming_notes.push_back(entry);
+					}
+					else
+					{
+						return;
+					}
+				}
+			}
+		}
+	}
+}
+
+void NoteFieldColumn::set_note_receptors(size_t count)
+{
+	note_receptors= count;
+	using_per_note_receptors= true;
+}
+
+
 void NoteFieldColumn::DrawPrimitives()
 {
 	if(!m_being_drawn_by_proxy)
@@ -2021,11 +2095,47 @@ void NoteFieldColumn::draw_thing_internal()
 			draw_selection_internal();
 			break;
 		case fdem_layer:
-			static_cast<FieldChild*>(curr_draw_entry->child)->apply_render_info(
-				head_transform, receptor_alpha, receptor_glow,
-				explosion_alpha, explosion_glow,
-				m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
-			curr_draw_entry->child->Draw();
+			{
+				FieldChild* child= static_cast<FieldChild*>(curr_draw_entry->child);
+				if(child->m_fade_type != FLFT_Receptor || !using_per_note_receptors)
+				{
+					child->apply_render_info(
+						head_transform, receptor_alpha, receptor_glow,
+						explosion_alpha, explosion_glow,
+						m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
+					curr_draw_entry->child->Draw();
+				}
+				else
+				{
+					// Per-note receptors.
+					if(!render_taps.empty())
+					{
+						size_t nid= 0;
+						for(auto tapit= render_taps.rbegin(); nid < note_receptors && tapit != render_taps.rend(); ++tapit)
+						{
+							double usd= tapit->input.eval_second - m_curr_second;
+							if(usd < 0.0) { continue; }
+							Rage::transform trans;
+							// y_offset will be set back to original after this render.
+							tapit->input.y_offset= 0.0;
+							calc_transform(tapit->input, trans);
+							double ubd= tapit->input.eval_beat - m_curr_beat;
+							Message msg("Upcoming");
+							msg.SetParam("beat_distance", ubd);
+							msg.SetParam("second_distance", usd);
+							child->m_child->HandleMessage(msg);
+							child->apply_render_info(
+								trans, receptor_alpha, receptor_glow,
+								explosion_alpha, explosion_glow,
+								m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
+							curr_draw_entry->child->Draw();
+							// y_offset must be set back.
+							tapit->input.y_offset= tapit->y_offset;
+							++nid;
+						}
+					}
+				}
+			}
 			break;
 		default:
 			break;
@@ -2147,6 +2257,7 @@ NoteField::NoteField()
 	 m_explosion_alpha(m_mod_manager, "explosion_alpha", 1.0),
 	 m_explosion_glow(m_mod_manager, "explosion_glow", 0.0),
 	 m_fov_mod(m_mod_manager, "fov", 0.0, 0.0, 45.0),
+	 m_note_receptors(m_mod_manager, "note_receptors", 0.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
 	 m_in_edit_mode(false), m_oitg_zoom_mode(false),
 	 m_visible_bg_change_layer(BACKGROUND_LAYER_1),
@@ -2209,9 +2320,14 @@ void NoteField::HandleMessage(Message const& msg)
 
 void NoteField::AddChild(Actor* act)
 {
+	AddChildInternal(act, false);
+}
+
+void NoteField::AddChildInternal(Actor* act, bool from_noteskin)
+{
 	// The actors have to be wrapped inside of frames so that modifiers
 	// can be applied without stomping what the layer actor does.
-	m_layers.emplace_back(act, FLFT_None, FLTT_None, false);
+	m_layers.emplace_back(act, FLFT_None, FLTT_None, from_noteskin);
 	FieldChild* new_child= &m_layers.back();
 	add_draw_entry({new_child, field_layer_column_index, act->GetDrawOrder(), fdem_layer});
 	if(!m_needs_reskin)
@@ -2221,6 +2337,7 @@ void NoteField::AddChild(Actor* act)
 	Message msg("PlayerStateSet");
 	msg.SetParam("PlayerNumber", m_pn);
 	act->HandleMessage(msg);
+	new_child->SetParent(this);
 }
 
 void NoteField::RemoveChild(Actor* act)
@@ -2463,7 +2580,7 @@ void NoteField::set_note_data(NoteData* note_data, TimingData const* timing, Ste
 	m_trans_mod.set_column(0);
 	m_fov_mod.set_column(0);
 	for(auto&& moddable : {&m_receptor_alpha, &m_receptor_glow,
-				&m_explosion_alpha, &m_explosion_glow})
+				&m_explosion_alpha, &m_explosion_glow, &m_note_receptors})
 	{
 		moddable->set_column(0);
 	}
@@ -2654,12 +2771,24 @@ void NoteField::draw_entry(field_draw_entry& entry)
 	switch(entry.column)
 	{
 		case field_layer_column_index:
-			static_cast<FieldChild*>(entry.child)->apply_render_info(
-				m_columns[0].get_head_trans(),
-				evaluated_receptor_alpha, evaluated_receptor_glow,
-				evaluated_explosion_alpha, evaluated_explosion_glow,
-				m_curr_beat, m_curr_second, m_receptor_alpha, m_receptor_glow);
-			entry.child->Draw();
+			{
+				FieldChild* child= static_cast<FieldChild*>(entry.child);
+				if(child->m_transform_type != FLTT_None && !avg_head_trans_is_fresh)
+				{
+					Rage::transform left= m_columns[m_left_column_id].get_head_trans();
+					Rage::transform right= m_columns[m_right_column_id].get_head_trans();
+					Rage::avg_vec3(left.pos, right.pos, avg_head_trans.pos);
+					Rage::avg_vec3(left.rot, right.rot, avg_head_trans.rot);
+					Rage::avg_vec3(left.zoom, right.zoom, avg_head_trans.zoom);
+					avg_head_trans_is_fresh= true;
+				}
+				child->apply_render_info(
+					avg_head_trans,
+					evaluated_receptor_alpha, evaluated_receptor_glow,
+					evaluated_explosion_alpha, evaluated_explosion_glow,
+					m_curr_beat, m_curr_second, m_receptor_alpha, m_receptor_glow);
+				child->Draw();
+			}
 			break;
 		case beat_bars_column_index:
 			draw_beat_bars_internal();
@@ -2979,6 +3108,29 @@ void NoteField::reskin_columns(NoteSkinLoader const* new_loader, LuaReference& n
 	m_newskin.swap(new_skin);
 	m_skin_parameters= new_params;
 
+	// Clear actors added by previous noteskin.
+	if(!m_layers.empty())
+	{
+		auto iter= m_layers.begin();
+		while(iter != m_layers.end())
+		{
+			if(iter->m_added_by_noteskin)
+			{
+				remove_draw_entry(field_layer_column_index, &*iter);
+				iter= m_layers.erase(iter);
+			}
+			else
+			{
+				++iter;
+			}
+		}
+	}
+	// Add new actors.
+	for(auto&& layer : m_newskin.m_field_layers)
+	{
+		AddChildInternal(layer, true);
+	}
+
 	m_player_colors= m_newskin.m_player_colors;
 	m_field_width= 0.0;
 	double leftmost= 0.0;
@@ -2999,13 +3151,16 @@ void NoteField::reskin_columns(NoteSkinLoader const* new_loader, LuaReference& n
 		}
 		else
 		{
-			auto_place_width+= width;
-			auto_place_width+= padding;
+			auto_place_width+= width + padding;
 		}
 	}
 	double custom_width= rightmost - leftmost;
 	m_field_width= std::max(custom_width, auto_place_width);
 
+	double left_col_x= 0.0;
+	double right_col_x= 0.0;
+	m_left_column_id= 0;
+	m_right_column_id= 0;
 	double curr_x= (auto_place_width * -.5);
 	// The column needs all of this info.
 	Message pn_msg("PlayerStateSet");
@@ -3033,6 +3188,16 @@ void NoteField::reskin_columns(NoteSkinLoader const* new_loader, LuaReference& n
 		else
 		{
 			col_x= curr_x + wid_pad * .5;
+		}
+		if(col_x < left_col_x)
+		{
+			left_col_x= col_x;
+			m_left_column_id= i;
+		}
+		if(col_x > right_col_x)
+		{
+			right_col_x= col_x;
+			m_right_column_id= i;
 		}
 		lua_createtable(L, 0, 3);
 		int this_col_info_table= lua_gettop(L);
@@ -3271,11 +3436,35 @@ FieldLayerFadeType NoteField::get_layer_fade_type(Actor* child)
 	return FieldLayerFadeType_Invalid;
 }
 
+void NoteField::set_layer_transform_type(Actor* child, FieldLayerTransformType type)
+{
+	for(auto&& entry : m_layers)
+	{
+		if(entry.m_child == child)
+		{
+			entry.m_transform_type= type;
+		}
+	}
+}
+
+FieldLayerTransformType NoteField::get_layer_transform_type(Actor* child)
+{
+	for(auto&& entry : m_layers)
+	{
+		if(entry.m_child == child)
+		{
+			return entry.m_transform_type;
+		}
+	}
+	return FieldLayerTransformType_Invalid;
+}
+
 void NoteField::update_displayed_time(double beat, double second)
 {
 	m_curr_beat= beat;
 	m_curr_second= second;
 	m_mod_manager.update(beat, second);
+	avg_head_trans_is_fresh= false;
 	if(m_in_defective_mode)
 	{
 		m_defective_mods.update(m_pn, m_curr_beat, m_curr_second);
@@ -3314,6 +3503,32 @@ void NoteField::update_displayed_time(double beat, double second)
 				break;
 		}
 		SetVanishPoint(vanish_x, vanish_y);
+		int temp_nr= std::floor(m_note_receptors.evaluate(input));
+		if(temp_nr > 0)
+		{
+			size_t note_receptors= static_cast<size_t>(temp_nr);
+			// First element of pair is the time of the note.
+			// Second element is the column id.
+			std::vector<std::pair<double, size_t>> upcoming_notes;
+			upcoming_notes.reserve(note_receptors+1);
+			for(size_t cid= 0; cid < m_columns.size(); ++cid)
+			{
+				m_columns[cid].add_upcoming_notes(upcoming_notes, note_receptors);
+			}
+			if(upcoming_notes.size() > note_receptors)
+			{
+				upcoming_notes.resize(note_receptors);
+			}
+			std::vector<size_t> counts(m_columns.size(), 0);
+			for(auto&& upentry : upcoming_notes)
+			{
+				++counts[upentry.second];
+			}
+			for(size_t cid= 0; cid < m_columns.size(); ++cid)
+			{
+				m_columns[cid].set_note_receptors(counts[cid]);
+			}
+		}
 		evaluated_receptor_alpha= m_receptor_alpha.evaluate(input);
 		evaluated_receptor_glow= m_receptor_glow.evaluate(input);
 		evaluated_explosion_alpha= m_explosion_alpha.evaluate(input);
@@ -3650,10 +3865,8 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 		ADD_METHOD(get_reverse_shift);
 		ADD_METHOD(apply_column_mods_to_actor);
 		ADD_METHOD(apply_note_mods_to_actor);
-		ADD_METHOD(get_layer_fade_type);
-		ADD_METHOD(get_layer_transform_type);
-		ADD_METHOD(set_layer_fade_type);
-		ADD_METHOD(set_layer_transform_type);
+		ADD_GET_SET_METHODS(layer_fade_type);
+		ADD_GET_SET_METHODS(layer_transform_type);
 	}
 };
 LUA_REGISTER_DERIVED_CLASS(NoteFieldColumn, ActorFrame);
@@ -3845,6 +4058,19 @@ struct LunaNoteField : Luna<NoteField>
 		p->set_layer_fade_type(layer, type);
 		COMMON_RETURN_SELF;
 	}
+	static int get_layer_transform_type(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		Enum::Push(L, p->get_layer_transform_type(layer));
+		return 1;
+	}
+	static int set_layer_transform_type(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		FieldLayerTransformType type= Enum::Check<FieldLayerTransformType>(L, 2);
+		p->set_layer_transform_type(layer, type);
+		COMMON_RETURN_SELF;
+	}
 	GETTER_SETTER_BOOL_METHOD(defective_mode);
 	GET_SET_BOOL_METHOD(oitg_zoom_mode, m_oitg_zoom_mode);
 	LunaNoteField()
@@ -3869,8 +4095,8 @@ struct LunaNoteField : Luna<NoteField>
 		ADD_GET_SET_METHODS(vanish_type);
 		ADD_METHOD(set_player_color);
 		ADD_GET_SET_METHODS(player_number);
-		ADD_METHOD(get_layer_fade_type);
-		ADD_METHOD(set_layer_fade_type);
+		ADD_GET_SET_METHODS(layer_fade_type);
+		ADD_GET_SET_METHODS(layer_transform_type);
 		ADD_GET_SET_METHODS(defective_mode);
 		ADD_GET_SET_METHODS(oitg_zoom_mode);
 	}

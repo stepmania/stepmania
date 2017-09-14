@@ -947,6 +947,7 @@ NoteSkinData::NoteSkinData()
 void NoteSkinData::swap(NoteSkinData& other)
 {
 	m_layers.swap(other.m_layers);
+	m_field_layers.swap(other.m_field_layers);
 	m_player_colors.swap(other.m_player_colors);
 	m_columns.swap(other.m_columns);
 	m_skin_parameters.swap(other.m_skin_parameters);
@@ -1012,6 +1013,7 @@ void NoteSkinLoader::swap(NoteSkinLoader& other)
 	m_notes_loader.swap(other.m_notes_loader);
 	m_layer_loaders.swap(other.m_layer_loaders);
 	m_player_colors.swap(other.m_player_colors);
+	m_field_layer_names.swap(other.m_field_layer_names);
 	m_supported_buttons.swap(other.m_supported_buttons);
 	m_skin_parameters.swap(other.m_skin_parameters);
 	m_skin_parameter_info.swap(other.m_skin_parameter_info);
@@ -1072,8 +1074,6 @@ bool NoteSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 	{
 		RETURN_NOT_SANE("Noteskin data is not a table.");
 	}
-	vector<Rage::Color> temp_player_colors;
-	unordered_set<string> temp_supported_buttons;
 	lua_getfield(L, index, "buttons");
 	// If there is no buttons table, it's not an error because a noteskin that
 	// supports all buttons can consider it more convenient to just use the
@@ -1085,21 +1085,38 @@ bool NoteSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 		{
 			lua_rawgeti(L, -1, b+1);
 			string button_name= lua_tostring(L, -1);
-			temp_supported_buttons.insert(button_name);
+			m_supported_buttons.insert(button_name);
 			lua_pop(L, 1);
 		}
 	}
 	lua_pop(L, 1);
-	vector<string> temp_layer_loaders;
 	lua_getfield(L, index, "layers");
 	if(lua_istable(L, -1))
 	{
 		string sub_sanity;
-		if(!load_string_table(L, lua_gettop(L), max_layers, temp_layer_loaders,
+		if(!load_string_table(L, lua_gettop(L), max_layers, m_layer_loaders,
 				"layers", sub_sanity))
 		{
 			RETURN_NOT_SANE("Error in layers table: " + sub_sanity);
 		}
+	}
+	else
+	{
+		lua_pop(L, 1);
+	}
+	lua_getfield(L, index, "field_layers");
+	if(lua_istable(L, -1))
+	{
+		string sub_sanity;
+		if(!load_string_table(L, lua_gettop(L), max_layers, m_field_layer_names,
+				"field_layers", sub_sanity))
+		{
+			RETURN_NOT_SANE("Error in field_layers table: " + sub_sanity);
+		}
+	}
+	else
+	{
+		lua_pop(L, 1);
 	}
 	lua_getfield(L, index, "notes");
 	if(!lua_isstring(L, -1))
@@ -1124,11 +1141,11 @@ bool NoteSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 	if(lua_istable(L, colors_index))
 	{
 		size_t num_colors= lua_objlen(L, colors_index);
-		temp_player_colors.resize(num_colors);
+		m_player_colors.resize(num_colors);
 		for(size_t c= 0; c < num_colors; ++c)
 		{
 			lua_rawgeti(L, colors_index, c+1);
-			FromStack(temp_player_colors[c], L, lua_gettop(L));
+			FromStack(m_player_colors[c], L, lua_gettop(L));
 		}
 	}
 	lua_pop(L, 1);
@@ -1142,9 +1159,6 @@ bool NoteSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 #undef RETURN_NOT_SANE
 	m_skin_name= name;
 	m_load_path= path;
-	m_layer_loaders.swap(temp_layer_loaders);
-	m_player_colors.swap(temp_player_colors);
-	m_supported_buttons.swap(temp_supported_buttons);
 	return true;
 }
 
@@ -1351,6 +1365,33 @@ bool NoteSkinLoader::load_into_data(StepsType stype,
 			dest.m_layers, sub_sanity))
 	{
 		RETURN_NOT_SANE("Error running layer loaders: " + sub_sanity);
+	}
+	dest.m_field_layers.reserve(m_field_layer_names.size());
+	for(size_t lid= 0; lid < m_field_layer_names.size(); ++lid)
+	{
+		if(!push_loader_function(L, m_field_layer_names[lid]))
+		{
+			RETURN_NOT_SANE("Could not load loader " + m_field_layer_names[lid]);
+		}
+		std::string error= "Error running " + m_load_path + m_field_layer_names[lid] + ": ";
+		lua_pushvalue(L, button_list_index);
+		lua_pushvalue(L, stype_index);
+		skin_params.PushSelf(L);
+		if(!LuaHelpers::RunScriptOnStack(L, error, 3, 1, true))
+		{
+			RETURN_NOT_SANE("Error running loader " + m_field_layer_names[lid]);
+		}
+		std::unique_ptr<XNode> node(XmlFileUtil::XNodeFromTable(L));
+		if(node.get() == nullptr)
+		{
+			RETURN_NOT_SANE("Actor not valid.");
+		}
+		Actor* act= ActorUtil::LoadFromNode(node.get(), nullptr);
+		if(act == nullptr)
+		{
+			RETURN_NOT_SANE("Error loading actor.");
+		}
+		dest.m_field_layers.push_back(act);
 	}
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);

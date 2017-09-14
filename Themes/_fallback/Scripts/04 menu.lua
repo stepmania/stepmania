@@ -1305,7 +1305,7 @@ local function normalize(v, mag)
 	return {v[1] / len, v[2] / len}
 end
 
-local function add_line_to_verts(pa, pb, verts, vc, thick, mag)
+function add_line_to_verts(pa, pb, verts, vc, thick, mag)
 	local to= {pb[1] - pa[1], pb[2] - pa[2], 0}
 	local left= normalize(cross_product(to, {0, 0, 1}), mag)
 	local ht= thick * .5
