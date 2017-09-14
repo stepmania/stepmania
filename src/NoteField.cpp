@@ -45,6 +45,7 @@ static const char* FieldLayerFadeTypeNames[]= {
 	"Note",
 	"Explosion",
 	"None",
+	"Upcoming",
 };
 XToString(FieldLayerFadeType);
 LuaXType(FieldLayerFadeType);
@@ -126,7 +127,7 @@ NoteFieldColumn::NoteFieldColumn()
 	 m_quantization_offset(m_mod_manager, "quantization_offset", 0.0),
 	 m_speed_mod(m_mod_manager, "speed", 0.0),
 	 m_lift_pretrail_length(m_mod_manager, "lift_pretrail", 0.25),
-	 m_note_receptors(m_mod_manager, "note_receptors", 0.0),
+	 m_num_upcoming(m_mod_manager, "num_upcoming", 0.0),
 	 m_y_offset_vec_mod(m_mod_manager, "y_offset_vec", 0.0, 1.0, 0.0),
 	 m_reverse_offset_pixels(m_mod_manager, "reverse_offset", 240.0 - note_size),
 	 m_reverse_scale(m_mod_manager, "reverse", 1.0),
@@ -255,7 +256,7 @@ void NoteFieldColumn::set_note_data(const NoteData* note_data,
 	m_mod_manager.set_timing(timing_data);
 	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
 				&m_quantization_offset, &m_speed_mod, &m_lift_pretrail_length,
-				&m_note_receptors, &m_reverse_offset_pixels, &m_reverse_scale,
+				&m_num_upcoming, &m_reverse_offset_pixels, &m_reverse_scale,
 				&m_center_percent, &m_note_alpha, &m_note_glow, &m_receptor_alpha,
 				&m_receptor_glow, &m_explosion_alpha, &m_explosion_glow})
 	{
@@ -1349,7 +1350,7 @@ void NoteFieldColumn::add_renderable_to_lists(render_note& renderable)
 			if((!tn.result.bHidden || !m_use_game_music_beat) &&
 				(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
 			{
-				// The per-note receptor code in draw_thing_internal depends on the
+				// The upcoming note code in draw_thing_internal depends on the
 				// notes closest to the receptor being at the end of the list.
 				render_taps.push_front(renderable);
 				imitate_did_note(tn);
@@ -1409,18 +1410,16 @@ void NoteFieldColumn::build_render_lists()
 		receptor_glow= m_receptor_glow.evaluate(input);
 		explosion_alpha= m_explosion_alpha.evaluate(input);
 		explosion_glow= m_explosion_glow.evaluate(input);
-		int temp_nr= std::floor(m_note_receptors.evaluate(input));
+		int temp_nr= std::floor(m_num_upcoming.evaluate(input));
 		if(temp_nr <= 0)
 		{
-			note_receptors= 0;
-			use_column_note_receptors= false;
-			using_per_note_receptors= false;
+			num_upcoming= 0;
+			use_column_num_upcoming= false;
 		}
 		else
 		{
-			note_receptors= static_cast<size_t>(temp_nr);
-			use_column_note_receptors= true;
-			using_per_note_receptors= true;
+			num_upcoming= static_cast<size_t>(temp_nr);
+			use_column_num_upcoming= true;
 		}
 	}
 	else
@@ -1432,8 +1431,7 @@ void NoteFieldColumn::build_render_lists()
 		receptor_glow= 0.0;
 		explosion_alpha= 1.0;
 		explosion_glow= 0.0;
-		note_receptors= 0;
-		using_per_note_receptors= false;
+		num_upcoming= 0;
 	}
 
 	// Clearing and rebuilding the list of taps to render every frame is
@@ -1989,10 +1987,10 @@ void NoteFieldColumn::set_pressed(bool on)
 }
 
 void NoteFieldColumn::add_upcoming_notes(
-	std::vector<std::pair<double, size_t>>& upcoming_notes, size_t note_receptors)
+	std::vector<std::pair<double, size_t>>& upcoming_notes, size_t num_upcoming)
 {
-	if(use_column_note_receptors) { return; }
-	// Per-note receptors, shared by the whole field.
+	if(use_column_num_upcoming) { return; }
+	// Upcoming notes, shared by the whole field.
 	if(!render_taps.empty())
 	{
 		for(auto tapit= render_taps.rbegin(); tapit != render_taps.rend(); ++tapit)
@@ -2023,7 +2021,7 @@ void NoteFieldColumn::add_upcoming_notes(
 				}
 				if(!added)
 				{
-					if(upcoming_notes.size() < note_receptors)
+					if(upcoming_notes.size() < num_upcoming)
 					{
 						upcoming_notes.push_back(entry);
 					}
@@ -2037,10 +2035,9 @@ void NoteFieldColumn::add_upcoming_notes(
 	}
 }
 
-void NoteFieldColumn::set_note_receptors(size_t count)
+void NoteFieldColumn::set_num_upcoming(size_t count)
 {
-	note_receptors= count;
-	using_per_note_receptors= true;
+	num_upcoming= count;
 }
 
 
@@ -2097,7 +2094,7 @@ void NoteFieldColumn::draw_thing_internal()
 		case fdem_layer:
 			{
 				FieldChild* child= static_cast<FieldChild*>(curr_draw_entry->child);
-				if(child->m_fade_type != FLFT_Receptor || !using_per_note_receptors)
+				if(child->m_fade_type != FLFT_Upcoming)
 				{
 					child->apply_render_info(
 						head_transform, receptor_alpha, receptor_glow,
@@ -2107,11 +2104,11 @@ void NoteFieldColumn::draw_thing_internal()
 				}
 				else
 				{
-					// Per-note receptors.
-					if(!render_taps.empty())
+					// Upcoming notes.
+					if(!render_taps.empty() && num_upcoming > 0)
 					{
 						size_t nid= 0;
-						for(auto tapit= render_taps.rbegin(); nid < note_receptors && tapit != render_taps.rend(); ++tapit)
+						for(auto tapit= render_taps.rbegin(); nid < num_upcoming && tapit != render_taps.rend(); ++tapit)
 						{
 							double usd= tapit->input.eval_second - m_curr_second;
 							if(usd < 0.0) { continue; }
@@ -2119,6 +2116,7 @@ void NoteFieldColumn::draw_thing_internal()
 							// y_offset will be set back to original after this render.
 							tapit->input.y_offset= 0.0;
 							calc_transform(tapit->input, trans);
+							apply_yoffset_to_pos(tapit->input, trans.pos);
 							double ubd= tapit->input.eval_beat - m_curr_beat;
 							Message msg("Upcoming");
 							msg.SetParam("beat_distance", ubd);
@@ -2257,7 +2255,7 @@ NoteField::NoteField()
 	 m_explosion_alpha(m_mod_manager, "explosion_alpha", 1.0),
 	 m_explosion_glow(m_mod_manager, "explosion_glow", 0.0),
 	 m_fov_mod(m_mod_manager, "fov", 0.0, 0.0, 45.0),
-	 m_note_receptors(m_mod_manager, "note_receptors", 0.0),
+	 m_num_upcoming(m_mod_manager, "num_upcoming", 0.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
 	 m_in_edit_mode(false), m_oitg_zoom_mode(false),
 	 m_visible_bg_change_layer(BACKGROUND_LAYER_1),
@@ -2580,7 +2578,7 @@ void NoteField::set_note_data(NoteData* note_data, TimingData const* timing, Ste
 	m_trans_mod.set_column(0);
 	m_fov_mod.set_column(0);
 	for(auto&& moddable : {&m_receptor_alpha, &m_receptor_glow,
-				&m_explosion_alpha, &m_explosion_glow, &m_note_receptors})
+				&m_explosion_alpha, &m_explosion_glow, &m_num_upcoming})
 	{
 		moddable->set_column(0);
 	}
@@ -3503,21 +3501,21 @@ void NoteField::update_displayed_time(double beat, double second)
 				break;
 		}
 		SetVanishPoint(vanish_x, vanish_y);
-		int temp_nr= std::floor(m_note_receptors.evaluate(input));
+		int temp_nr= std::floor(m_num_upcoming.evaluate(input));
 		if(temp_nr > 0)
 		{
-			size_t note_receptors= static_cast<size_t>(temp_nr);
+			size_t num_upcoming= static_cast<size_t>(temp_nr);
 			// First element of pair is the time of the note.
 			// Second element is the column id.
 			std::vector<std::pair<double, size_t>> upcoming_notes;
-			upcoming_notes.reserve(note_receptors+1);
+			upcoming_notes.reserve(num_upcoming+1);
 			for(size_t cid= 0; cid < m_columns.size(); ++cid)
 			{
-				m_columns[cid].add_upcoming_notes(upcoming_notes, note_receptors);
+				m_columns[cid].add_upcoming_notes(upcoming_notes, num_upcoming);
 			}
-			if(upcoming_notes.size() > note_receptors)
+			if(upcoming_notes.size() > num_upcoming)
 			{
-				upcoming_notes.resize(note_receptors);
+				upcoming_notes.resize(num_upcoming);
 			}
 			std::vector<size_t> counts(m_columns.size(), 0);
 			for(auto&& upentry : upcoming_notes)
@@ -3526,7 +3524,7 @@ void NoteField::update_displayed_time(double beat, double second)
 			}
 			for(size_t cid= 0; cid < m_columns.size(); ++cid)
 			{
-				m_columns[cid].set_note_receptors(counts[cid]);
+				m_columns[cid].set_num_upcoming(counts[cid]);
 			}
 		}
 		evaluated_receptor_alpha= m_receptor_alpha.evaluate(input);

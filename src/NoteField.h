@@ -26,6 +26,7 @@ enum FieldLayerFadeType
 	FLFT_Note,
 	FLFT_Explosion,
 	FLFT_None,
+	FLFT_Upcoming,
 	NUM_FieldLayerFadeType,
 	FieldLayerFadeType_Invalid
 };
@@ -197,8 +198,8 @@ struct NoteFieldColumn : ActorFrame
 	void set_hold_status(TapNote const* tap, bool start, bool end);
 	void set_pressed(bool on);
 
-	void add_upcoming_notes(std::vector<std::pair<double, size_t>>& upcoming_notes, size_t note_receptors);
-	void set_note_receptors(size_t count);
+	void add_upcoming_notes(std::vector<std::pair<double, size_t>>& upcoming_notes, size_t num_upcoming);
+	void set_num_upcoming(size_t count);
 
 	virtual void UpdateInternal(float delta);
 	virtual bool EarlyAbortDraw() const;
@@ -257,7 +258,7 @@ struct NoteFieldColumn : ActorFrame
 
 	ModifiableValue m_speed_mod;
 	ModifiableValue m_lift_pretrail_length;
-	ModifiableValue m_note_receptors;
+	ModifiableValue m_num_upcoming;
 
 	ModifiableVector3 m_y_offset_vec_mod;
 
@@ -349,9 +350,8 @@ private:
 	double receptor_glow;
 	double explosion_alpha;
 	double explosion_glow;
-	size_t note_receptors;
-	bool use_column_note_receptors;
-	bool using_per_note_receptors;
+	size_t num_upcoming;
+	bool use_column_num_upcoming;
 	bool pressed;
 	bool was_pressed;
 };
@@ -467,7 +467,7 @@ struct NoteField : ActorFrame
 	ModifiableValue m_explosion_alpha;
 	ModifiableValue m_explosion_glow;
 	ModifiableVector3 m_fov_mod;
-	ModifiableValue m_note_receptors;
+	ModifiableValue m_num_upcoming;
 
 	// To allow the Player actor the field is inside to be moved around without
 	// causing skew problems, the field adds the vanish position to the actor
