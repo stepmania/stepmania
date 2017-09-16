@@ -198,7 +198,7 @@ t[#t+1] = Def.ActorFrame {
 				(cmd(visible,true;diffusealpha,0;linear,0.3;diffusealpha,1))(self);
 			end;
 		end;
-		OffCommand=cmd(decelerate,0.3;zoomy,0.8;diffusealpha,0);
+		OffCommand=cmd(decelerate,0.3;diffusealpha,0);
 		LoadActor(THEME:GetPathG("ScreenSelectMusic", "pane background")) .. {
 			CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set";); 
 			PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;decelerate,0.3;diffusealpha,1;);
@@ -307,7 +307,7 @@ t[#t+1] = Def.ActorFrame {
 				(cmd(visible,true;diffusealpha,0;linear,0.3;diffusealpha,1))(self);
 			end;
 		end;
-		OffCommand=cmd(decelerate,0.3;zoomy,0.8;diffusealpha,0);
+		OffCommand=cmd(decelerate,0.3;diffusealpha,0);
 		LoadActor(THEME:GetPathG("ScreenSelectMusic", "pane background")) .. {
 			InitCommand=cmd(zoomx,-1;);
 			CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set";); 

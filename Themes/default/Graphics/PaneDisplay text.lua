@@ -109,28 +109,44 @@ t[#t+1] = Def.ActorFrame {
 	-- Left 
 	CreatePaneDisplayItem( iPN, "Taps", 'RadarCategory_TapsAndHolds' ) .. {
 		InitCommand=cmd(x,-128+16+8;y,-14);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;sleep,0.4;linear,0.3;diffusealpha,1;zoomy,1;);
+		OffCommand=cmd(linear,0.1;diffusealpha,0;zoomy,0.8;);
 	};
 	CreatePaneDisplayItem( iPN, "Jumps", 'RadarCategory_Jumps' ) .. {
 		InitCommand=cmd(x,-128+16+8;y,-14+24);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;sleep,0.5;linear,0.3;diffusealpha,1;zoomy,1;);
+		OffCommand=cmd(linear,0.15;diffusealpha,0;zoomy,0.8;);
 	};
 	CreatePaneDisplayItem( iPN, "Holds", 'RadarCategory_Holds' ) .. {
 		InitCommand=cmd(x,-128+16+8;y,-14+24*2);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;sleep,0.6;linear,0.3;diffusealpha,1;zoomy,1;);
+		OffCommand=cmd(linear,0.2;diffusealpha,0;zoomy,0.8;);
 	};
 	CreatePaneDisplayItem( iPN, "Mines", 'RadarCategory_Mines' ) .. {
 		InitCommand=cmd(x,-128+16+8;y,-14+24*3);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;sleep,0.7;linear,0.3;diffusealpha,1;zoomy,1;);
+		OffCommand=cmd(linear,0.25;diffusealpha,0;zoomy,0.8;);
 	};
 	-- Center
 	CreatePaneDisplayItem( iPN, "Hands", 'RadarCategory_Hands' ) .. {
 		InitCommand=cmd(x,36;y,-14);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;sleep,0.4;linear,0.3;diffusealpha,1;zoomy,1;);
+		OffCommand=cmd(linear,0.1;diffusealpha,0;zoomy,0.8;);
 	};
 	CreatePaneDisplayItem( iPN, "Rolls", 'RadarCategory_Rolls' ) .. {
 		InitCommand=cmd(x,36;y,-14+24);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;sleep,0.5;linear,0.3;diffusealpha,1;zoomy,1;);
+		OffCommand=cmd(linear,0.15;diffusealpha,0;zoomy,0.8;);
 	};
 	CreatePaneDisplayItem( iPN, "Lifts", 'RadarCategory_Lifts' ) .. {
 		InitCommand=cmd(x,36;y,-14+24*2);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;sleep,0.6;linear,0.3;diffusealpha,1;zoomy,1;);
+		OffCommand=cmd(linear,0.2;diffusealpha,0;zoomy,0.8;);
 	};
 	CreatePaneDisplayItem( iPN, "Fakes", 'RadarCategory_Fakes' ) .. {
 		InitCommand=cmd(x,36;y,-14+24*3);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;sleep,0.7;linear,0.3;diffusealpha,1;zoomy,1;);
+		OffCommand=cmd(linear,0.25;diffusealpha,0;zoomy,0.8;);
 	};
 };
 return t;
