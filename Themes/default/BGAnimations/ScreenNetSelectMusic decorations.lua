@@ -253,7 +253,7 @@ t[#t+1] = Def.ActorFrame {
 			  end
 		};
 		LoadFont("Common Normal") .. { 
-			  InitCommand=cmd(uppercase,true;zoom,0.75;addy,-20;addx,-143;diffuse,color("#000000"););
+			  InitCommand=cmd(uppercase,true;zoom,0.75;addy,-20;addx,-143;diffuse,color("#000000");maxwidth,130);
 			  OnCommand=cmd(diffusealpha,0;smooth,0.2;diffusealpha,0.75;);
 			  OffCommand=cmd(linear,0.3;diffusealpha,0;);
 			  CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set";); 
@@ -363,7 +363,7 @@ t[#t+1] = Def.ActorFrame {
 			  end
 		};
 		LoadFont("Common Normal") .. { 
-			  InitCommand=cmd(uppercase,true;zoom,0.75;addy,-20;addx,143;diffuse,color("#000000"););
+			  InitCommand=cmd(uppercase,true;zoom,0.75;addy,-20;addx,143;diffuse,color("#000000");maxwidth,130);
 			  OnCommand=cmd(diffusealpha,0;smooth,0.2;diffusealpha,0.75;);
 			  OffCommand=cmd(linear,0.3;diffusealpha,0;);
 			  CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set";); 
