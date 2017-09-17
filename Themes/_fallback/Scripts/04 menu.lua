@@ -803,6 +803,13 @@ local display_controller_mt= {
 				end
 			end
 		end,
+		cursor_move= function(self, dir)
+			if dir < 0 then
+				self.scroller:cursor_up()
+			else
+				self.scroller:cursor_down()
+			end
+		end,
 		cursor_up= function(self)
 			self.scroller:cursor_up()
 		end,
@@ -1039,116 +1046,114 @@ menu_controller_mt= {
 			local process, big= self:handle_repeats(button, press_type)
 			if not process then return end
 			local active_display= self.scroller:get_cursor_item()
-			local action_sound= false
-			if button == "page_down" then
-				active_display:page_down()
-				self:update_cursor()
-				action_sound= "page_down"
-			elseif button == "page_up" then
-				active_display:page_up()
-				self:update_cursor()
-				action_sound= "page_up"
-			elseif button == "jump_top" then
-				active_display:cursor_to_top()
-				self:update_cursor()
-				action_sound= "jump_top"
-			elseif button == "jump_bottom" then
-				active_display:cursor_to_bottom()
-				self:update_cursor()
-				action_sound= "jump_bottom"
-			elseif button == "back" then
-				return self:handle_menu_action("close", 1)
-			else
-				if self.input_mode == "two_direction" then
+			local function sound_ret(name) return nil, name end
+			local global_handlers= {
+				page_down= function()
+					active_display:page_down()
+					self:update_cursor()
+					return sound_ret("page_down")
+				end,
+				page_up= function()
+					active_display:page_down()
+					self:update_cursor()
+					return sound_ret("page_up")
+				end,
+				jump_top= function()
+					active_display:cursor_to_top()
+					self:update_cursor()
+					return sound_ret("jump_top")
+				end,
+				jump_bottom= function()
+					active_display:cursor_to_bottom()
+					self:update_cursor()
+					return sound_ret("jump_bottom")
+				end,
+				back= function()
+					return self:handle_menu_action("close", 1)
+				end,
+			}
+			local global= global_handlers[button]
+			if global then return global() end
+			local item= active_display:get_cursor_item()
+			local sub_handlers= {
+				adjust= function(dir, sound)
+					item:adjust(dir, big)
+					return sound_ret(sound)
+				end,
+				interact= function()
+					return self:handle_menu_action(item:interact(big))
+				end,
+				adjust_or_interact= function(dir, sound)
+					if item.info.adjust then
+						item:adjust(dir, big)
+						return sound_ret(sound)
+					elseif item.info.func then
+						return self:handle_menu_action(item:interact(big))
+					end
+				end,
+				cursor_move= function(dir, sound)
+					active_display:cursor_move(dir)
+					self:update_cursor()
+					return sound_ret(sound)
+				end,
+				two_dir_adjust= function(dir, adj_sound, curs_sound)
 					if self.in_adjust_mode then
-						if button == "left" then
-							active_display:get_cursor_item():adjust(-1, big)
-							action_sound= "adjust_down"
-						elseif button == "right" then
-							active_display:get_cursor_item():adjust(1, big)
-							action_sound= "adjust_up"
-						elseif button == "start" then
-							self.in_adjust_mode= false
-							action_sound= "adjust_mode_off"
-							if self.cursor then
-								self.cursor:playcommand("NormalMode")
-							end
-						end
+						return sub_handlers.adjust(dir, adj_sound)
 					else
-						if button == "left" then
-							active_display:cursor_up()
-							self:update_cursor()
-							active_display= "cursor_up"
-						elseif button == "right" then
-							active_display:cursor_down()
-							self:update_cursor()
-							active_display= "cursor_down"
-						elseif button == "start" then
-							local item= active_display:get_cursor_item()
-							if item.info.func then
-								return self:handle_menu_action(item:interact(big))
-							elseif item.info.adjust then
-								self.in_adjust_mode= true
-								action_sound= "adjust_mode_on"
-								if self.cursor then
-									self.cursor:playcommand("AdjustMode")
-								end
-							end
-						end
+						return sub_handlers.cursor_move(dir, curs_sound)
 					end
-				elseif self.input_mode == "two_direction_with_select" then
-					if button == "left" then
-						action_sound= "adjust_down"
-						active_display:get_cursor_item():adjust(-1, big)
-					elseif button == "right" then
-						local item= active_display:get_cursor_item()
-						if item.info.func then
-							return self:handle_menu_action(item:interact(big))
-						else
-							action_sound= "adjust_up"
-							item:adjust(1, big) 
+				end,
+				two_dir_interact= function()
+					if item.info.func then
+						return self:handle_menu_action(item:interact(big))
+					elseif item.info.adjust then
+						self.in_adjust_mode= true
+						if self.cursor then
+							self.cursor:playcommand("AdjustMode")
 						end
-					elseif button == "start" then
-						active_display:cursor_down()
-						self:update_cursor()
-						action_sound= "cursor_down"
-					elseif button == "select" then
-						active_display:cursor_up()
-						self:update_cursor()
-						action_sound= "cursor_up"
+						return sound_ret("adjust_mode_on")
 					end
-				elseif self.input_mode == "four_direction" then
-					if button == "left" then
-						active_display:get_cursor_item():adjust(-1, big)
-						action_sound= "adjust_down"
-					elseif button == "right" then
-						active_display:get_cursor_item():adjust(1, big)
-						action_sound= "adjust_up"
-					elseif button == "up" then
-						active_display:cursor_up()
+				end,
+				select_jump= function()
+					if self.select_goes_to_top then
+						active_display:cursor_to_top()
 						self:update_cursor()
-						action_sound= "cursor_up"
-					elseif button == "down" then
-						active_display:cursor_down()
+						return sound_ret("jump_top")
+					else
+						active_display:cursor_to_bottom()
 						self:update_cursor()
-						action_sound= "cursor_down"
-					elseif button == "start" then
-						return self:handle_menu_action(
-							active_display:get_cursor_item():interact(big))
-					elseif button == "select" then
-						if self.select_goes_to_top then
-							active_display:cursor_to_top()
-							self:update_cursor()
-							action_sound= "jump_top"
-						else
-							active_display:cursor_to_bottom()
-							self:update_cursor()
-							action_sound= "jump_bottom"
-						end
+						return sound_ret("jump_bottom")
 					end
+				end,
+			}
+			local button_to_sub= {
+				two_direction= {
+					left= {"two_dir_adjust", -1, "adjust_down", "cursor_up"},
+					right= {"two_dir_adjust", 1, "adjust_up", "cursor_down"},
+					start= {"two_dir_interact"},
+				},
+				two_direction_with_select= {
+					left= {"adjust_or_interact", -1, "adjust_down"},
+					right= {"adjust_or_interact", 1, "adjust_up"},
+					start= {"cursor_move", 1, "cursor_down"},
+					select= {"cursor_move", -1, "cursor_up"},
+				},
+				four_direction= {
+					left= {"adjust_or_interact", -1, "adjust_down"},
+					right= {"adjust_or_interact", 1, "adjust_up"},
+					up= {"cursor_move", -1, "cursor_up"},
+					down= {"cursor_move", 1, "cursor_down"},
+					start= {"interact"},
+					select= {"select_jump"},
+				},
+			}
+			local for_mode= button_to_sub[self.input_mode]
+			if for_mode then
+				local entry= for_mode[button]
+				if entry then
+					return sub_handlers[entry[1]](entry[2], entry[3], entry[4])
 				end
 			end
-			return nil, action_sound
 		end,
 		get_cursor_item= function(self)
 			local disp= self.scroller:get_cursor_item()
@@ -2229,12 +2234,9 @@ nesty_menus.make_menu_actors= function(menu_args)
 					end
 				end
 				if menu_args.with_click_debug then
-					local a= .75
-					local b= .75 * .25
-					local c= .75 * .25 * .25
-					controller.debug_button_color= {a, b, c, 1}
-					controller.debug_focus_color= {c, a, b, 1}
-					controller.debug_scroll_color= {b, c, a, 1}
+					controller.debug_button_color= {.75, 0, 0, 1}
+					controller.debug_focus_color= {0, .75, 0, 1}
+					controller.debug_scroll_color= {0, 0, .75, 1}
 				end
 			end
 			local input= make_typical_input(

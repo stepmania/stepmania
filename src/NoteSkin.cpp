@@ -915,9 +915,40 @@ bool NoteSkinLayer::load_from_lua(lua_State* L, int index, size_t columns,
 }
 
 NoteSkinData::NoteSkinData()
-	:m_loaded(false)
+	:m_children_owned_by_field_now(false), m_loaded(false)
 {
 	
+}
+
+NoteSkinData::~NoteSkinData()
+{
+	clear();
+}
+
+void NoteSkinData::clear()
+{
+	// The taps are cleared by AutoActor deleting them.
+	m_columns.clear();
+	m_player_colors.clear();
+	if(m_children_owned_by_field_now)
+	{
+		m_layers.clear();
+		m_field_layers.clear();
+		return;
+	}
+	for(auto&& layer : m_layers)
+	{
+		for(auto&& act : layer.m_actors)
+		{
+			delete act;
+		}
+	}
+	m_layers.clear();
+	for(auto&& act : m_field_layers)
+	{
+		delete act;
+	}
+	m_field_layers.clear();
 }
 
 void NoteSkinData::swap(NoteSkinData& other)
@@ -1239,7 +1270,7 @@ bool NoteSkinLoader::supports_needed_buttons(StepsType stype) const
 	return true;
 }
 
-bool NoteSkinLoader::push_loader_function(lua_State* L, string const& loader)
+bool NoteSkinLoader::push_loader_function(lua_State* L, string const& loader) const
 {
 	if(loader.empty())
 	{
@@ -1270,7 +1301,7 @@ bool NoteSkinLoader::push_loader_function(lua_State* L, string const& loader)
 bool NoteSkinLoader::load_layer_set_into_data(lua_State* L,
 	LuaReference& skin_params, int button_list_index, int stype_index,
 	size_t columns, vector<string> const& loader_set,
-	vector<NoteSkinLayer>& dest, string& insanity_diagnosis)
+	vector<NoteSkinLayer>& dest, string& insanity_diagnosis) const
 {
 	int original_top= lua_gettop(L);
 #define RETURN_NOT_SANE(message) lua_settop(L, original_top); insanity_diagnosis= message; return false;
@@ -1301,7 +1332,7 @@ bool NoteSkinLoader::load_layer_set_into_data(lua_State* L,
 }
 
 bool NoteSkinLoader::load_into_data(StepsType stype,
-	LuaReference& skin_params, NoteSkinData& dest, string& insanity_diagnosis)
+	LuaReference& skin_params, NoteSkinData& dest, string& insanity_diagnosis) const
 {
 	vector<string> const& button_list= button_lists[stype];
 	Lua* L= LUA->Get();
@@ -1377,7 +1408,7 @@ bool NoteSkinLoader::load_into_data(StepsType stype,
 void NoteSkinLoader::recursive_sanitize_skin_parameters(lua_State* L,
 	std::unordered_set<void const*>& visited_tables, int curr_depth,
 	int curr_param_set_info, int curr_param_set_defaults,
-	int curr_param_set_dest)
+	int curr_param_set_dest) const
 {
 	// max_depth is a protection against someone creating a pathologically deep
 	// table of parameters that could cause a stack overflow.
@@ -1508,7 +1539,7 @@ void NoteSkinLoader::recursive_sanitize_skin_parameters(lua_State* L,
 	}
 }
 
-void NoteSkinLoader::sanitize_skin_parameters(lua_State* L, LuaReference& params)
+void NoteSkinLoader::sanitize_skin_parameters(lua_State* L, LuaReference& params) const
 {
 	if(m_skin_parameter_info.IsNil() || m_skin_parameters.IsNil())
 	{

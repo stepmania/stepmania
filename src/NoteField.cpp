@@ -37,6 +37,11 @@ static const int selection_draw_order= 0;
 static const int holds_draw_order= 200;
 static const int lifts_draw_order= 200;
 static const int taps_draw_order= 300;
+// Field layers have the id of the noteskin they were loaded from, so they
+// can be unloaded when the skin is removed.
+static const size_t theme_noteskin_id= 1000;
+
+static const std::string no_skin_name= "";
 
 static ThemeMetric<Rage::Color> AREA_HIGHLIGHT_COLOR("NoteField", "AreaHighlightColor");
 
@@ -63,9 +68,9 @@ REGISTER_ACTOR_CLASS(NoteFieldColumn);
 #define HOLD_COUNTS_AS_ACTIVE(tn) (tn.HoldResult.bActive && tn.HoldResult.fLife > 0.0f)
 
 FieldChild::FieldChild(Actor* act, FieldLayerFadeType ftype,
-	FieldLayerTransformType ttype, bool from_noteskin)
+	FieldLayerTransformType ttype, size_t from_noteskin)
 	:m_child(act), m_fade_type(ftype), m_transform_type(ttype),
-	 m_added_by_noteskin(from_noteskin)
+	 m_from_noteskin(from_noteskin)
 {
 	WrapAroundChild(act);
 	act->PlayCommand("On");
@@ -128,6 +133,8 @@ NoteFieldColumn::NoteFieldColumn()
 	 m_speed_mod(m_mod_manager, "speed", 0.0),
 	 m_lift_pretrail_length(m_mod_manager, "lift_pretrail", 0.25),
 	 m_num_upcoming(m_mod_manager, "num_upcoming", 0.0),
+	 m_note_skin_id(m_mod_manager, "note_skin_id", 0.0),
+	 m_layer_skin_id(m_mod_manager, "layer_skin_id", 0.0),
 	 m_y_offset_vec_mod(m_mod_manager, "y_offset_vec", 0.0, 1.0, 0.0),
 	 m_reverse_offset_pixels(m_mod_manager, "reverse_offset", 240.0 - note_size),
 	 m_reverse_scale(m_mod_manager, "reverse", 1.0),
@@ -146,7 +153,7 @@ NoteFieldColumn::NoteFieldColumn()
 	 m_pixels_visible_after_beat(1024.0f),
 	 m_upcoming_time(2.0),
 	 m_playerize_mode(NPM_Off),
-	 m_newskin(nullptr), m_player_colors(nullptr), m_field(nullptr),
+	 m_player_colors(nullptr), m_field(nullptr),
 	 m_pn(NUM_PLAYERS), m_defective_mods(nullptr), m_in_defective_mode(false),
 	 m_note_data(nullptr),
 	 m_timing_data(nullptr),
@@ -173,17 +180,17 @@ void NoteFieldColumn::HandleMessage(Message const& msg)
 
 void NoteFieldColumn::AddChild(Actor* act)
 {
-	AddChildInternal(act, false);
+	AddChildInternal(act, theme_noteskin_id);
 }
 
-void NoteFieldColumn::AddChildInternal(Actor* act, bool from_noteskin)
+void NoteFieldColumn::AddChildInternal(Actor* act, size_t from_noteskin)
 {
 	// The actors have to be wrapped inside of frames so that modifiers
 	// can be applied without stomping what the layer actor does.
 	m_layers.emplace_back(act, FLFT_None, FLTT_Full, from_noteskin);
 	FieldChild* new_child= &m_layers.back();
 	m_field->add_draw_entry({new_child, static_cast<int>(m_column), act->GetDrawOrder(), fdem_layer});
-	if(m_newskin != nullptr)
+	if(!m_noteskins.empty())
 	{
 		act->HandleMessage(create_width_message());
 	}
@@ -226,8 +233,8 @@ Message NoteFieldColumn::create_width_message()
 	width_msg.SetParamFromStack(L, "column");
 	LUA->Release(L);
 	width_msg.SetParam("column_id", get_mod_col());
-	width_msg.SetParam("width", m_newskin->get_width());
-	width_msg.SetParam("padding", m_newskin->get_padding());
+	width_msg.SetParam("width", m_noteskins[0]->get_width());
+	width_msg.SetParam("padding", m_noteskins[0]->get_padding());
 	return width_msg;
 }
 
@@ -256,7 +263,8 @@ void NoteFieldColumn::set_note_data(const NoteData* note_data,
 	m_mod_manager.set_timing(timing_data);
 	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
 				&m_quantization_offset, &m_speed_mod, &m_lift_pretrail_length,
-				&m_num_upcoming, &m_reverse_offset_pixels, &m_reverse_scale,
+				&m_num_upcoming, &m_note_skin_id, &m_layer_skin_id,
+				&m_reverse_offset_pixels, &m_reverse_scale,
 				&m_center_percent, &m_note_alpha, &m_note_glow, &m_receptor_alpha,
 				&m_receptor_glow, &m_explosion_alpha, &m_explosion_glow})
 	{
@@ -272,30 +280,32 @@ void NoteFieldColumn::set_note_data(const NoteData* note_data,
 	}
 }
 
-void NoteFieldColumn::reskin(NoteSkinColumn* newskin, NoteSkinData& skin_data,
-		std::vector<Rage::Color>* player_colors, double x)
+void NoteFieldColumn::remove_layers_from_skin(size_t id, bool shift_others)
 {
-	// Clear actors added by previous noteskin.
 	if(!m_layers.empty())
 	{
 		auto iter= m_layers.begin();
 		while(iter != m_layers.end())
 		{
-			if(iter->m_added_by_noteskin)
+			if(iter->m_from_noteskin == id)
 			{
 				m_field->remove_draw_entry(static_cast<int>(m_column), &*iter);
 				iter= m_layers.erase(iter);
 			}
 			else
 			{
+				if(shift_others && iter->m_from_noteskin > id)
+				{
+					--(iter->m_from_noteskin);
+				}
 				++iter;
 			}
 		}
 	}
+}
 
-	// set new info.
-	m_newskin= newskin;
-	m_newskin->set_timing_source(&m_timing_source);
+void NoteFieldColumn::apply_base_skin(std::vector<Rage::Color>* player_colors, double x)
+{
 	Rage::transform tmp= {{static_cast<float>(x), 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}, 1.f, 0.f};
 	m_column_mod.set_base_value(tmp);
 	m_player_colors= player_colors;
@@ -303,11 +313,34 @@ void NoteFieldColumn::reskin(NoteSkinColumn* newskin, NoteSkinData& skin_data,
 	// Send width to already existing children.
 	Message width_msg= create_width_message();
 	pass_message_to_heads(width_msg);
+}
 
-	// Add new actors.
-	for(auto&& layer : skin_data.m_layers)
+void NoteFieldColumn::add_skin(NoteSkinData& data, bool replace_base)
+{
+	NoteSkinColumn* col= data.get_column(m_column);
+	size_t id= m_noteskins.size();
+	if(replace_base && !m_noteskins.empty())
 	{
-		AddChildInternal(layer.m_actors[m_column], true);
+		id= 0;
+		remove_layers_from_skin(0, false);
+		m_noteskins[0]= col;
+	}
+	else
+	{
+		m_noteskins.push_back(col);
+	}
+	for(auto&& layer : data.m_layers)
+	{
+		AddChildInternal(layer.m_actors[m_column], id);
+	}
+}
+
+void NoteFieldColumn::remove_skin(size_t id, bool shift_others)
+{
+	remove_layers_from_skin(id, shift_others);
+	if(shift_others)
+	{
+		m_noteskins.erase(m_noteskins.begin() + id);
 	}
 }
 
@@ -350,9 +383,12 @@ void NoteFieldColumn::set_displayed_time(double beat, double second)
 	m_timing_source.beat_delta= beat - m_curr_beat;
 	m_timing_source.second_delta= second - m_curr_second;
 	m_timing_source.curr_second= second;
-	if(m_newskin)
+	if(!m_noteskins.empty())
 	{
-		m_newskin->update_taps();
+		for(auto&& skin : m_noteskins)
+		{
+			skin->update_taps();
+		}
 	}
 	m_curr_beat= beat;
 	m_curr_second= second;
@@ -852,7 +888,7 @@ void NoteFieldColumn::calc_forward_and_left_for_hold(
 	{
 		RageAARotate(&left, &forward, -curr_trans.rot.y);
 	}
-	left*= (.5 * m_newskin->get_width()) * curr_trans.zoom.x;
+	left*= (.5 * note.skin->get_width()) * curr_trans.zoom.x;
 }
 
 static void calc_left_and_right_verts(
@@ -911,7 +947,7 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	}
 	double y_off_len= tail_y_offset - head_y_offset;
 	hold_time_lerper time_lerper(head_y_offset, y_off_len, head_beat, tail_beat - head_beat, head_second, tail_second - head_second);
-	float const color_scale= Rage::scale(note.note_iter->second.HoldResult.fLife, 0.f, 1.f, m_newskin->get_hold_gray_percent(), 1.f);
+	float const color_scale= Rage::scale(note.note_iter->second.HoldResult.fLife, 0.f, 1.f, note.skin->get_hold_gray_percent(), 1.f);
 	Rage::Color color(color_scale, color_scale, color_scale, 1.f);
 	Rage::Color glow_color(1.f, 1.f, 1.f, 0.f);
 	DISPLAY->ClearAllTextures();
@@ -1135,7 +1171,7 @@ void NoteFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 
 bool NoteFieldColumn::EarlyAbortDraw() const
 {
-	return m_newskin == nullptr || m_note_data == nullptr || m_timing_data == nullptr;
+	return m_noteskins.empty() || m_note_data == nullptr || m_timing_data == nullptr;
 }
 
 void NoteFieldColumn::imitate_did_note(TapNote const& tap)
@@ -1331,6 +1367,7 @@ NoteFieldColumn::render_note::render_note(NoteFieldColumn* column,
 			}
 			break;
 	}
+	input.y_offset= y_offset;
 }
 
 void NoteFieldColumn::add_renderable_to_lists(render_note& renderable)
@@ -1338,6 +1375,16 @@ void NoteFieldColumn::add_renderable_to_lists(render_note& renderable)
 	int tap_row= renderable.note_iter->first;
 	double tap_beat= NoteRowToBeat(tap_row);
 	const TapNote& tn= renderable.note_iter->second;
+	if(m_noteskins.size() == 1)
+	{
+		renderable.skin= m_noteskins[0];
+	}
+	else
+	{
+		size_t id= size_t(std::round(m_note_skin_id.evaluate(renderable.input)))
+			% m_noteskins.size();
+		renderable.skin= m_noteskins[id];
+	}
 	switch(tn.type)
 	{
 		case TapNoteType_Empty:
@@ -1389,7 +1436,7 @@ void NoteFieldColumn::add_renderable_to_lists(render_note& renderable)
 
 void NoteFieldColumn::build_render_lists()
 {
-	if(!m_newskin)
+	if(m_noteskins.empty())
 	{
 		return;
 	}
@@ -1410,7 +1457,7 @@ void NoteFieldColumn::build_render_lists()
 		receptor_glow= m_receptor_glow.evaluate(input);
 		explosion_alpha= m_explosion_alpha.evaluate(input);
 		explosion_glow= m_explosion_glow.evaluate(input);
-		int temp_nr= std::floor(m_num_upcoming.evaluate(input));
+		int temp_nr= std::round(m_num_upcoming.evaluate(input));
 		if(temp_nr <= 0)
 		{
 			num_upcoming= 0;
@@ -1421,6 +1468,8 @@ void NoteFieldColumn::build_render_lists()
 			num_upcoming= static_cast<size_t>(temp_nr);
 			use_column_num_upcoming= true;
 		}
+		layer_skin_id= size_t(std::round(m_layer_skin_id.evaluate(input)))
+			% m_noteskins.size();
 	}
 	else
 	{
@@ -1432,6 +1481,7 @@ void NoteFieldColumn::build_render_lists()
 		explosion_alpha= 1.0;
 		explosion_glow= 0.0;
 		num_upcoming= 0;
+		layer_skin_id= 0;
 	}
 
 	// Clearing and rebuilding the list of taps to render every frame is
@@ -1447,7 +1497,7 @@ void NoteFieldColumn::build_render_lists()
 	m_status.prev_active_hold= m_status.active_hold;
 	m_status.active_hold= nullptr;
 	m_status.found_upcoming= false;
-	if(m_newskin->get_anim_uses_beats())
+	if(m_noteskins[0]->get_anim_uses_beats())
 	{
 		m_status.anim_percent= m_curr_beat;
 	}
@@ -1455,7 +1505,7 @@ void NoteFieldColumn::build_render_lists()
 	{
 		m_status.anim_percent= m_curr_second;
 	}
-	m_status.anim_percent= fmod(m_status.anim_percent * m_newskin->get_anim_mult(), 1.0);
+	m_status.anim_percent= fmod(m_status.anim_percent * m_noteskins[0]->get_anim_mult(), 1.0);
 	if(m_status.anim_percent < 0.0)
 	{
 		m_status.anim_percent+= 1.0;
@@ -1629,25 +1679,34 @@ void NoteFieldColumn::build_render_lists()
 
 void NoteFieldColumn::draw_thing(field_draw_entry* entry)
 {
-#define RETURN_IF_EMPTY(empty_check) if(empty_check) { return; }
+#define RETURN_IF(empty_check) if(empty_check) { return; }
 	switch(entry->meaning)
 	{
 		case fdem_holds:
-			RETURN_IF_EMPTY(render_holds.empty());
+			RETURN_IF(render_holds.empty());
 			break;
 		case fdem_lifts:
-			RETURN_IF_EMPTY(render_lifts.empty());
+			RETURN_IF(render_lifts.empty());
 			break;
 		case fdem_taps:
-			RETURN_IF_EMPTY(render_taps.empty());
+			RETURN_IF(render_taps.empty());
 			break;
 		case fdem_selection:
-			RETURN_IF_EMPTY(m_field == nullptr || !m_field->m_in_edit_mode);
+			RETURN_IF(m_field == nullptr || !m_field->m_in_edit_mode);
+			break;
+		case fdem_layer:
+			{
+				FieldChild* child= static_cast<FieldChild*>(entry->child);
+				RETURN_IF((child->m_from_noteskin != theme_noteskin_id &&
+						child->m_from_noteskin != layer_skin_id) ||
+					(child->m_fade_type == FLFT_Upcoming && (
+						num_upcoming == 0 || render_taps.empty())));
+			}
 			break;
 		default:
 			break;
 	}
-#undef RETURN_IF_EMPTY
+#undef RETURN_IF
 	curr_draw_entry= entry;
 	Draw();
 }
@@ -1665,10 +1724,10 @@ void NoteFieldColumn::draw_holds_internal()
 		// heads.
 		TapNote const& tn= holdit.note_iter->second;
 		double const hold_beat= NoteRowToBeat(holdit.note_iter->first);
-		double const quantization= quantization_for_time(holdit.input);
+		double const quantization= quantization_for_time(holdit.input, holdit.skin);
 		bool active= HOLD_COUNTS_AS_ACTIVE(tn);
 		QuantizedHoldRenderData data;
-		m_newskin->get_hold_render_data(tn.subType, m_playerize_mode, tn.pn,
+		holdit.skin->get_hold_render_data(tn.subType, m_playerize_mode, tn.pn,
 			active, reverse, quantization, m_status.anim_percent, data);
 		double hold_draw_beat;
 		double hold_draw_second;
@@ -1692,9 +1751,9 @@ void NoteFieldColumn::draw_lifts_internal()
 		TapNote const& tn= liftit.note_iter->second;
 		double const lift_beat= NoteRowToBeat(liftit.note_iter->first);
 		double const lift_second= tn.occurs_at_second;
-		double const quantization= quantization_for_time(liftit.input);
+		double const quantization= quantization_for_time(liftit.input, liftit.skin);
 		QuantizedHoldRenderData data;
-		m_newskin->get_hold_render_data(TapNoteSubType_Hold, m_playerize_mode,
+		liftit.skin->get_hold_render_data(TapNoteSubType_Hold, m_playerize_mode,
 			tn.pn, false, reverse, quantization, m_status.anim_percent, data);
 		if(!data.parts.empty())
 		{
@@ -1721,7 +1780,7 @@ struct tap_draw_info
 };
 
 void set_tap_actor_info(tap_draw_info& draw_info, NoteFieldColumn& col,
-	NoteSkinColumn* newskin, get_norm_actor_fun get_normal,
+	get_norm_actor_fun get_normal,
 	get_play_actor_fun get_playerized, size_t part,
 	size_t pn, double draw_beat, double draw_second, double yoff,
 	double anim_percent, bool active,
@@ -1733,13 +1792,14 @@ void set_tap_actor_info(tap_draw_info& draw_info, NoteFieldColumn& col,
 	{
 		if(col.get_playerize_mode() != NPM_Quanta)
 		{
-			double const quantization= col.quantization_for_time(note.input);
-			draw_info.act= (newskin->*get_normal)(part, quantization, anim_percent,
-				active, reverse);
+			double const quantization= col.quantization_for_time(note.input,
+				note.skin);
+			draw_info.act= (note.skin->*get_normal)(part, quantization,
+				anim_percent, active, reverse);
 		}
 		else
 		{
-			draw_info.act= (newskin->*get_playerized)(part, pn, anim_percent,
+			draw_info.act= (note.skin->*get_playerized)(part, pn, anim_percent,
 				active, reverse);
 		}
 		draw_info.draw_second= draw_second;
@@ -1797,7 +1857,7 @@ void NoteFieldColumn::draw_taps_internal()
 				break;
 			default:
 				part= NSTP_Tap;
-				if(m_newskin->get_use_hold_head())
+				if(tapit.skin->get_use_hold_head())
 				{
 					switch(tn.highest_subtype_on_row)
 					{
@@ -1818,7 +1878,7 @@ void NoteFieldColumn::draw_taps_internal()
 		vector<tap_draw_info> acts(2);
 		if(part != NoteSkinTapPart_Invalid)
 		{
-			set_tap_actor_info(acts[0], *this, m_newskin,
+			set_tap_actor_info(acts[0], *this,
 				&NoteSkinColumn::get_tap_actor, &NoteSkinColumn::get_player_tap, part,
 				tn.pn, head_beat, head_second, tapit.y_offset,
 				m_status.anim_percent, active, m_status.in_reverse, tapit);
@@ -1828,7 +1888,7 @@ void NoteFieldColumn::draw_taps_internal()
 			// Handle the case where it's an obscenity instead of an actual hold.
 			if(tail_part == NoteSkinTapOptionalPart_Invalid)
 			{
-				set_tap_actor_info(acts[0], *this, m_newskin,
+				set_tap_actor_info(acts[0], *this,
 					&NoteSkinColumn::get_optional_actor,
 					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn,
 					head_beat, head_second, tapit.y_offset,
@@ -1837,12 +1897,12 @@ void NoteFieldColumn::draw_taps_internal()
 			else
 			{
 				// Put tails on the list first because they need to be under the heads.
-				set_tap_actor_info(acts[0], *this, m_newskin,
+				set_tap_actor_info(acts[0], *this,
 					&NoteSkinColumn::get_optional_actor,
 					&NoteSkinColumn::get_player_optional_tap, tail_part, tn.pn,
 					tail_beat, tn.end_second, tapit.tail_y_offset,
 					m_status.anim_percent, active, m_status.in_reverse, tapit);
-				set_tap_actor_info(acts[1], *this, m_newskin,
+				set_tap_actor_info(acts[1], *this,
 					&NoteSkinColumn::get_optional_actor,
 					&NoteSkinColumn::get_player_optional_tap, head_part, tn.pn,
 					head_beat, head_second, tapit.y_offset,
@@ -1897,7 +1957,7 @@ void NoteFieldColumn::draw_selection_internal()
 	{
 		apply_yoffset_to_pos(start_input, start_pos);
 		m_area_highlight.set_pos(start_pos);
-		m_area_highlight.SetWidth(m_newskin->get_width());
+		m_area_highlight.SetWidth(m_noteskins[0]->get_width());
 		m_area_highlight.SetHeight(note_size);
 		m_area_highlight.SetDiffuse(Rage::Color(0.5f, 0.5f, 0.5f, 0.5f));
 	}
@@ -1915,7 +1975,7 @@ void NoteFieldColumn::draw_selection_internal()
 		start_pos.y= (start_pos.y + end_pos.y) * .5;
 		start_pos.z= (start_pos.z + end_pos.z) * .5;
 		m_area_highlight.set_pos(start_pos);
-		m_area_highlight.SetWidth(m_newskin->get_width());
+		m_area_highlight.SetWidth(m_noteskins[0]->get_width());
 		m_area_highlight.SetHeight(height);
 		m_area_highlight.SetDiffuse(AREA_HIGHLIGHT_COLOR);
 	}
@@ -2105,32 +2165,29 @@ void NoteFieldColumn::draw_thing_internal()
 				else
 				{
 					// Upcoming notes.
-					if(!render_taps.empty() && num_upcoming > 0)
+					size_t nid= 0;
+					for(auto tapit= render_taps.rbegin(); nid < num_upcoming && tapit != render_taps.rend(); ++tapit)
 					{
-						size_t nid= 0;
-						for(auto tapit= render_taps.rbegin(); nid < num_upcoming && tapit != render_taps.rend(); ++tapit)
-						{
-							double usd= tapit->input.eval_second - m_curr_second;
-							if(usd < 0.0) { continue; }
-							Rage::transform trans;
-							// y_offset will be set back to original after this render.
-							tapit->input.y_offset= 0.0;
-							calc_transform(tapit->input, trans);
-							apply_yoffset_to_pos(tapit->input, trans.pos);
-							double ubd= tapit->input.eval_beat - m_curr_beat;
-							Message msg("Upcoming");
-							msg.SetParam("beat_distance", ubd);
-							msg.SetParam("second_distance", usd);
-							child->m_child->HandleMessage(msg);
-							child->apply_render_info(
-								trans, receptor_alpha, receptor_glow,
-								explosion_alpha, explosion_glow,
-								m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
-							curr_draw_entry->child->Draw();
-							// y_offset must be set back.
-							tapit->input.y_offset= tapit->y_offset;
-							++nid;
-						}
+						double usd= tapit->input.eval_second - m_curr_second;
+						if(usd < 0.0) { continue; }
+						Rage::transform trans;
+						// y_offset will be set back to original after this render.
+						tapit->input.y_offset= 0.0;
+						calc_transform(tapit->input, trans);
+						apply_yoffset_to_pos(tapit->input, trans.pos);
+						double ubd= tapit->input.eval_beat - m_curr_beat;
+						Message msg("Upcoming");
+						msg.SetParam("beat_distance", ubd);
+						msg.SetParam("second_distance", usd);
+						child->m_child->HandleMessage(msg);
+						child->apply_render_info(
+							trans, receptor_alpha, receptor_glow,
+							explosion_alpha, explosion_glow,
+							m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
+						curr_draw_entry->child->Draw();
+						// y_offset must be set back.
+						tapit->input.y_offset= tapit->y_offset;
+						++nid;
 					}
 				}
 			}
@@ -2144,7 +2201,7 @@ void NoteFieldColumn::set_playerize_mode(NotePlayerizeMode mode)
 {
 	if(mode == NPM_Mask)
 	{
-		if(!m_newskin->supports_masking())
+		if(!m_noteskins[0]->supports_masking())
 		{
 			mode= NPM_Quanta;
 		}
@@ -2256,11 +2313,12 @@ NoteField::NoteField()
 	 m_explosion_glow(m_mod_manager, "explosion_glow", 0.0),
 	 m_fov_mod(m_mod_manager, "fov", 0.0, 0.0, 45.0),
 	 m_num_upcoming(m_mod_manager, "num_upcoming", 0.0),
+	 m_layer_skin_id(m_mod_manager, "layer_skin_id", 0.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
 	 m_in_edit_mode(false), m_oitg_zoom_mode(false),
 	 m_visible_bg_change_layer(BACKGROUND_LAYER_1),
 	 m_share_steps_parent(nullptr),
-	 m_pn(NUM_PLAYERS), m_in_defective_mode(false), m_needs_reskin(true),
+	 m_pn(NUM_PLAYERS), m_in_defective_mode(false),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
 	 m_steps_type(StepsType_Invalid), m_gameplay_zoom(1.0),
 	 defective_render_y(0.0), original_y(0.0)
@@ -2318,17 +2376,17 @@ void NoteField::HandleMessage(Message const& msg)
 
 void NoteField::AddChild(Actor* act)
 {
-	AddChildInternal(act, false);
+	AddChildInternal(act, theme_noteskin_id);
 }
 
-void NoteField::AddChildInternal(Actor* act, bool from_noteskin)
+void NoteField::AddChildInternal(Actor* act, size_t from_noteskin)
 {
 	// The actors have to be wrapped inside of frames so that modifiers
 	// can be applied without stomping what the layer actor does.
 	m_layers.emplace_back(act, FLFT_None, FLTT_None, from_noteskin);
 	FieldChild* new_child= &m_layers.back();
 	add_draw_entry({new_child, field_layer_column_index, act->GetDrawOrder(), fdem_layer});
-	if(!m_needs_reskin)
+	if(!m_noteskins.empty())
 	{
 		act->HandleMessage(create_width_message());
 	}
@@ -2383,8 +2441,7 @@ void NoteField::UpdateInternal(float delta)
 bool NoteField::EarlyAbortDraw() const
 {
 	return m_note_data == nullptr || m_timing_data == nullptr ||
-		m_columns.empty() || !m_newskin.loaded_successfully() ||
-		m_needs_reskin ||
+		m_columns.empty() || m_noteskins.empty() ||
 		ActorFrame::EarlyAbortDraw();
 }
 
@@ -2513,30 +2570,263 @@ void NoteField::clear_steps()
 	m_steps_type= StepsType_Invalid;
 }
 
-void NoteField::set_skin(std::string const& skin_name, LuaReference& skin_params)
+bool NoteField::fill_skin_entry(field_skin_entry* entry, std::string const& name,
+	LuaReference& params)
 {
-	NoteSkinLoader const* loader= NOTESKIN->get_loader_for_skin(skin_name);
-	if(loader == nullptr)
+	entry->loader= NOTESKIN->get_loader_for_skin(name);
+	if(entry->loader == nullptr)
 	{
-		LuaHelpers::ReportScriptErrorFmt("Could not find loader for newskin '%s'.", skin_name.c_str());
+		return false;
+	}
+	entry->name= name;
+	entry->params= params;
+	return true;
+}
+
+enum FSED
+{
+	FSED_success,
+	FSED_stepstype_mismatch,
+	FSED_loader_failed,
+	FSED_column_count_mismatch
+};
+
+int NoteField::fill_skin_entry_data(field_skin_entry* entry)
+{
+	if(m_steps_type == StepsType_Invalid)
+	{
+		return FSED_stepstype_mismatch;
+	}
+	if(!entry->loader->supports_needed_buttons(m_steps_type))
+	{
+		return FSED_stepstype_mismatch;
+	}
+	string insanity;
+	if(!entry->loader->load_into_data(m_steps_type, entry->params, entry->data, insanity))
+	{
+		LuaHelpers::ReportScriptError("Error loading notekin: " + insanity);
+		entry->data.clear();
+		return FSED_loader_failed;
+	}
+	if(entry->data.num_columns() != static_cast<size_t>(m_note_data->GetNumTracks()))
+	{
+		LuaHelpers::ReportScriptErrorFmt("Error loading noteskin %s: Noteskin returned %zu columns, note data has %i columns", entry->loader->get_name().c_str(), entry->data.num_columns(), m_note_data->GetNumTracks());
+		entry->data.clear();
+		return FSED_column_count_mismatch;
+	}
+	return FSED_success;
+}
+
+field_skin_entry* NoteField::set_add_skin_common(std::string const& name,
+	LuaReference& params, bool replace_base)
+{
+	field_skin_entry* temp= new field_skin_entry;
+	if(!fill_skin_entry(temp, name, params))
+	{
+		// No loader, don't add it to m_unapplied_noteskins.
+		delete temp;
+		return nullptr;
+	}
+	temp->replaces_base_skin= replace_base;
+	switch(fill_skin_entry_data(temp))
+	{
+		case FSED_stepstype_mismatch:
+			m_unapplied_noteskins.push_back(temp);
+			return nullptr;
+			break;
+		case FSED_loader_failed:
+			delete temp;
+			return nullptr;
+			break;
+		case FSED_column_count_mismatch:
+			m_unapplied_noteskins.push_back(temp);
+			return nullptr;
+			break;
+		default:
+			break;
+	}
+	return temp;
+}
+
+void NoteField::set_skin(std::string const& name, LuaReference& params, int uid)
+{
+	field_skin_entry* temp= set_add_skin_common(name, params, true);
+	if(temp == nullptr)
+	{
 		return;
 	}
-	if(m_note_data != nullptr &&
-		NOTESKIN->skin_supports_stepstype(skin_name, m_steps_type))
+	temp->uid= uid;
+	if(m_noteskins.empty())
 	{
-		reskin_columns(loader, skin_params);
+		m_noteskins.push_back(temp);
 	}
 	else
 	{
-		m_needs_reskin= true;
-		m_skin_walker= *loader;
-		m_skin_parameters= skin_params;
+		remove_layers_from_skin(0, false);
+		delete m_noteskins[0];
+		m_noteskins[0]= temp;
 	}
+	add_layers_from_skin(m_noteskins[0]->data, 0);
+	apply_base_skin_to_columns();
 }
 
 std::string const& NoteField::get_skin()
 {
-	return m_skin_walker.get_name();
+	if(m_noteskins.empty())
+	{
+		return no_skin_name;
+	}
+	return m_noteskins[0]->name;
+}
+
+void NoteField::add_skin(std::string const& name, LuaReference& params, int uid)
+{
+	ASSERT_M(m_noteskins.size() + m_unapplied_noteskins.size() < theme_noteskin_id, "I want a 1000-word essay on why there are so many noteskins loaded.");
+	field_skin_entry* temp= set_add_skin_common(name, params, false);
+	if(temp == nullptr)
+	{
+		return;
+	}
+	temp->uid= uid;
+	m_noteskins.push_back(temp);
+	add_layers_from_skin(m_noteskins.back()->data, m_noteskins.size()-1);
+	if(m_noteskins.size() == 1)
+	{
+		apply_base_skin_to_columns();
+	}
+}
+
+void NoteField::apply_base_skin_to_columns()
+{
+	NoteSkinData& base_data= m_noteskins[0]->data;
+	m_player_colors= base_data.m_player_colors;
+	m_field_width= 0.0;
+	double leftmost= 0.0;
+	double rightmost= 0.0;
+	double auto_place_width= 0.0;
+	size_t max_column= size_t(m_note_data->GetNumTracks());
+	for(size_t i= 0; i < max_column; ++i)
+	{
+		NoteSkinColumn* column= base_data.get_column(i);
+		double width= column->get_width();
+		double padding= column->get_padding();
+		if(column->get_use_custom_x())
+		{
+			double custom_x= column->get_custom_x();
+			double hwp= (width + padding) * .5;
+			leftmost= std::min(leftmost, custom_x - hwp);
+			rightmost= std::max(rightmost, custom_x + hwp);
+		}
+		else
+		{
+			auto_place_width+= width + padding;
+		}
+	}
+	double custom_width= rightmost - leftmost;
+	m_field_width= std::max(custom_width, auto_place_width);
+
+	double left_col_x= 0.0;
+	double right_col_x= 0.0;
+	m_left_column_id= 0;
+	m_right_column_id= 0;
+	double curr_x= (auto_place_width * -.5);
+	// The column needs all of this info.
+	Message pn_msg("PlayerStateSet");
+	pn_msg.SetParam("PlayerNumber", m_pn);
+	Lua* L= LUA->Get();
+	lua_createtable(L, max_column, 0);
+	int column_info_table= lua_gettop(L);
+	vector<float> column_x;
+	column_x.reserve(max_column);
+	for(size_t i= 0; i < max_column; ++i)
+	{
+		NoteSkinColumn* col= base_data.get_column(i);
+		// curr_x is at the left edge of the column at the beginning of the loop.
+		// To put the column in the center, we add half the width of the current
+		// column, place the column, then add the other half of the width.  This
+		// allows columns to have different widths.
+		double col_x= curr_x;
+		double width= col->get_width();
+		double padding= col->get_padding();
+		double wid_pad= width + padding;
+		if(col->get_use_custom_x())
+		{
+			col_x= col->get_custom_x();
+		}
+		else
+		{
+			col_x= curr_x + wid_pad * .5;
+		}
+		if(col_x < left_col_x)
+		{
+			left_col_x= col_x;
+			m_left_column_id= i;
+		}
+		if(col_x > right_col_x)
+		{
+			right_col_x= col_x;
+			m_right_column_id= i;
+		}
+		lua_createtable(L, 0, 3);
+		int this_col_info_table= lua_gettop(L);
+		lua_pushnumber(L, width);
+		lua_setfield(L, this_col_info_table, "width");
+		lua_pushnumber(L, padding);
+		lua_setfield(L, this_col_info_table, "padding");
+		lua_pushnumber(L, col_x);
+		lua_setfield(L, this_col_info_table, "x");
+		lua_rawseti(L, column_info_table, i+1);
+
+		m_columns[i].apply_base_skin(&m_player_colors, col_x);
+
+		// The draw entries for a column can only be safely set when the noteskin
+		// is set, but the note data might change to a type that is invalid for
+		// the noteskin, causing the columns to be remade without a noteskin.
+		// Adding the draw entries during reskinning ensures the noteskin is
+		// valid.
+		// add_draw_entry filters out duplicate entries, so this piece of code
+		// doesn't need to.
+		int id_as_i= int(i);
+		add_draw_entry({nullptr, id_as_i, holds_draw_order, fdem_holds});
+		add_draw_entry({nullptr, id_as_i, lifts_draw_order, fdem_lifts});
+		add_draw_entry({nullptr, id_as_i, taps_draw_order, fdem_taps});
+		add_draw_entry({nullptr, id_as_i, selection_draw_order, fdem_selection});
+
+		column_x.push_back(col_x);
+		if(!col->get_use_custom_x())
+		{
+			curr_x+= wid_pad;
+		}
+	}
+	Message width_msg("WidthSet");
+	width_msg.SetParamFromStack(L, "columns");
+	width_msg.SetParam("width", get_field_width());
+	PushSelf(L);
+	width_msg.SetParamFromStack(L, "field");
+	LUA->Release(L);
+	m_defective_mods.set_column_pos(column_x);
+	// Handle the width message after the columns have been created so that the
+	// board can fetch the columns.
+	HandleMessage(width_msg);
+}
+
+void NoteField::remove_skin(std::string const& name, int uid)
+{
+	for(size_t id= 0; id < m_noteskins.size(); ++id)
+	{
+		field_skin_entry* entry= m_noteskins[id];
+		if(entry->name == name && entry->uid == uid)
+		{
+			remove_layers_from_skin(id, true);
+			delete entry;
+			m_noteskins.erase(m_noteskins.begin() + id);
+			if(id == 0 && !m_noteskins.empty())
+			{
+				apply_base_skin_to_columns();
+			}
+			return;
+		}
+	}
 }
 
 void NoteField::set_steps(Steps* data)
@@ -2578,25 +2868,82 @@ void NoteField::set_note_data(NoteData* note_data, TimingData const* timing, Ste
 	m_trans_mod.set_column(0);
 	m_fov_mod.set_column(0);
 	for(auto&& moddable : {&m_receptor_alpha, &m_receptor_glow,
-				&m_explosion_alpha, &m_explosion_glow, &m_num_upcoming})
+				&m_explosion_alpha, &m_explosion_glow, &m_num_upcoming,
+				&m_layer_skin_id})
 	{
 		moddable->set_column(0);
-	}
-	if(stype != m_steps_type)
-	{
-		m_steps_type= stype;
-		recreate_columns();
-		m_needs_reskin= true;
-	}
-	if(m_needs_reskin &&
-		NOTESKIN->skin_supports_stepstype(m_skin_walker.get_name(), stype))
-	{
-		reskin_columns(&m_skin_walker, m_skin_parameters);
 	}
 	NotePlayerizeMode player_mode= NPM_Off;
 	if(GAMEMAN->stepstype_is_multiplayer(stype))
 	{
 		player_mode= NPM_Quanta;
+	}
+	if(stype != m_steps_type)
+	{
+		m_steps_type= stype;
+		recreate_columns();
+		remove_all_noteskin_layers();
+		std::vector<field_skin_entry*> old_noteskins= m_noteskins;
+		m_noteskins.clear();
+		// Find the base noteskin first, either from m_unapplied_noteskins, or
+		// from old_noteskins.
+		// A noteskin in m_unapplied_noteskins with replaces_base_skin set takes
+		// priority for base because it was probably set with the intent of
+		// taking effect with the stepstype change.
+		// After the base is set, then old_noteskins are applied, then
+		// m_unapplied_noteskins.  Any noteskins in either group that don't fit
+		// the stepstype are discarded.
+		size_t old_start= 0;
+		for(size_t id= 0; id < m_unapplied_noteskins.size(); ++id)
+		{
+			if(m_unapplied_noteskins[id]->replaces_base_skin)
+			{
+				if(fill_skin_entry_data(m_unapplied_noteskins[id]) == FSED_success)
+				{
+					m_noteskins.push_back(m_unapplied_noteskins[id]);
+					// It will be applied later, after m_noteskins is filled.
+					old_start= 1;
+					m_unapplied_noteskins.erase(m_unapplied_noteskins.begin()+id);
+					break;
+				}
+			}
+		}
+		// If the base noteskin was set by m_unapplied_noteskins, skip the first
+		// entry in old_noteskins, because it has been replaced.
+		for(size_t id= old_start; id < old_noteskins.size(); ++id)
+		{
+			old_noteskins[id]->data.clear();
+			if(fill_skin_entry_data(old_noteskins[id]) == FSED_success)
+			{
+				m_noteskins.push_back(old_noteskins[id]);
+			}
+			else
+			{
+				delete old_noteskins[id];
+			}
+		}
+		old_noteskins.clear();
+		for(size_t id= 0; id < m_unapplied_noteskins.size(); ++id)
+		{
+			if(fill_skin_entry_data(m_unapplied_noteskins[id]) == FSED_success)
+			{
+				m_noteskins.push_back(m_unapplied_noteskins[id]);
+			}
+			else
+			{
+				delete m_unapplied_noteskins[id];
+			}
+		}
+		m_unapplied_noteskins.clear();
+		// Now apply the base noteskin, then layers from all.
+		if(!m_noteskins.empty())
+		{
+			for(size_t id= 0; id < m_noteskins.size(); ++id)
+			{
+				add_layers_from_skin(m_noteskins[id]->data, id);
+			}
+			apply_base_skin_to_columns();
+		}
 	}
 	for(size_t i= 0; i < m_columns.size(); ++i)
 	{
@@ -2771,6 +3118,11 @@ void NoteField::draw_entry(field_draw_entry& entry)
 		case field_layer_column_index:
 			{
 				FieldChild* child= static_cast<FieldChild*>(entry.child);
+				if(child->m_from_noteskin != theme_noteskin_id &&
+					child->m_from_noteskin != layer_skin_id)
+				{
+					return;
+				}
 				if(child->m_transform_type != FLTT_None && !avg_head_trans_is_fresh)
 				{
 					Rage::transform left= m_columns[m_left_column_id].get_head_trans();
@@ -3078,41 +3430,56 @@ void NoteField::recreate_columns()
 	}
 }
 
-void NoteField::reskin_columns(NoteSkinLoader const* new_loader, LuaReference& new_params)
+void NoteField::add_layers_from_skin(NoteSkinData& data, size_t id)
 {
-	ASSERT_M(m_note_data != nullptr, "m_note_data is not supposed to be null when reskin_columns is called.");
-	NoteSkinLoader new_skin_walker= *new_loader;
-	if(!new_skin_walker.supports_needed_buttons(m_steps_type))
+	for(auto&& layer : data.m_field_layers)
 	{
-		// Silently do nothing because the theme might be planning to change the
-		// steps to match next.
-		return;
+		AddChildInternal(layer, id);
 	}
-	// Load the noteskin into a temporary to protect against errors.
-	NoteSkinData new_skin;
-	string insanity;
-	if(!new_skin_walker.load_into_data(m_steps_type, new_params, new_skin, insanity))
+	bool replace_base= id == 0;
+	for(size_t cid= 0; cid < m_columns.size(); ++cid)
 	{
-		LuaHelpers::ReportScriptError("Error loading noteskin: " + insanity);
-		return;
+		m_columns[cid].add_skin(data, replace_base);
 	}
-	if(new_skin.num_columns() < m_note_data->GetNumTracks())
-	{
-		LuaHelpers::ReportScriptErrorFmt("Error loading noteskin %s: Noteskin returned %zu columns, note data has %i columns", new_loader->get_name().c_str(), new_skin.num_columns(), m_note_data->GetNumTracks());
-		return;
-	}
-	// Load successful, copy it into members.
-	m_skin_walker.swap(new_skin_walker);
-	m_newskin.swap(new_skin);
-	m_skin_parameters= new_params;
+	data.m_children_owned_by_field_now= true;
+}
 
-	// Clear actors added by previous noteskin.
+void NoteField::remove_layers_from_skin(size_t id, bool shift_others)
+{
 	if(!m_layers.empty())
 	{
 		auto iter= m_layers.begin();
 		while(iter != m_layers.end())
 		{
-			if(iter->m_added_by_noteskin)
+			if(iter->m_from_noteskin == id)
+			{
+				remove_draw_entry(field_layer_column_index, &*iter);
+				iter= m_layers.erase(iter);
+			}
+			else
+			{
+				if(shift_others && iter->m_from_noteskin > id)
+				{
+					--(iter->m_from_noteskin);
+				}
+				++iter;
+			}
+		}
+	}
+	for(auto&& col : m_columns)
+	{
+		col.remove_skin(id, shift_others);
+	}
+}
+
+void NoteField::remove_all_noteskin_layers()
+{
+	if(!m_layers.empty())
+	{
+		auto iter= m_layers.begin();
+		while(iter != m_layers.end())
+		{
+			if(iter->m_from_noteskin != theme_noteskin_id)
 			{
 				remove_draw_entry(field_layer_column_index, &*iter);
 				iter= m_layers.erase(iter);
@@ -3123,122 +3490,6 @@ void NoteField::reskin_columns(NoteSkinLoader const* new_loader, LuaReference& n
 			}
 		}
 	}
-	// Add new actors.
-	for(auto&& layer : m_newskin.m_field_layers)
-	{
-		AddChildInternal(layer, true);
-	}
-
-	m_player_colors= m_newskin.m_player_colors;
-	m_field_width= 0.0;
-	double leftmost= 0.0;
-	double rightmost= 0.0;
-	double auto_place_width= 0.0;
-	size_t max_column= m_newskin.num_columns();
-	max_column= std::min(max_column, size_t(m_note_data->GetNumTracks()));
-	for(size_t i= 0; i < max_column; ++i)
-	{
-		double width= m_newskin.get_column(i)->get_width();
-		double padding= m_newskin.get_column(i)->get_padding();
-		if(m_newskin.get_column(i)->get_use_custom_x())
-		{
-			double custom_x= m_newskin.get_column(i)->get_custom_x();
-			double hwp= (width + padding) * .5;
-			leftmost= std::min(leftmost, custom_x - hwp);
-			rightmost= std::max(rightmost, custom_x + hwp);
-		}
-		else
-		{
-			auto_place_width+= width + padding;
-		}
-	}
-	double custom_width= rightmost - leftmost;
-	m_field_width= std::max(custom_width, auto_place_width);
-
-	double left_col_x= 0.0;
-	double right_col_x= 0.0;
-	m_left_column_id= 0;
-	m_right_column_id= 0;
-	double curr_x= (auto_place_width * -.5);
-	// The column needs all of this info.
-	Message pn_msg("PlayerStateSet");
-	pn_msg.SetParam("PlayerNumber", m_pn);
-	Lua* L= LUA->Get();
-	lua_createtable(L, m_newskin.num_columns(), 0);
-	int column_info_table= lua_gettop(L);
-	vector<float> column_x;
-	column_x.reserve(m_columns.size());
-	for(size_t i= 0; i < m_columns.size(); ++i)
-	{
-		NoteSkinColumn* col= m_newskin.get_column(i);
-		// curr_x is at the left edge of the column at the beginning of the loop.
-		// To put the column in the center, we add half the width of the current
-		// column, place the column, then add the other half of the width.  This
-		// allows columns to have different widths.
-		double col_x= curr_x;
-		double width= col->get_width();
-		double padding= col->get_padding();
-		double wid_pad= width + padding;
-		if(col->get_use_custom_x())
-		{
-			col_x= col->get_custom_x();
-		}
-		else
-		{
-			col_x= curr_x + wid_pad * .5;
-		}
-		if(col_x < left_col_x)
-		{
-			left_col_x= col_x;
-			m_left_column_id= i;
-		}
-		if(col_x > right_col_x)
-		{
-			right_col_x= col_x;
-			m_right_column_id= i;
-		}
-		lua_createtable(L, 0, 3);
-		int this_col_info_table= lua_gettop(L);
-		lua_pushnumber(L, width);
-		lua_setfield(L, this_col_info_table, "width");
-		lua_pushnumber(L, padding);
-		lua_setfield(L, this_col_info_table, "padding");
-		lua_pushnumber(L, col_x);
-		lua_setfield(L, this_col_info_table, "x");
-		lua_rawseti(L, column_info_table, i+1);
-
-		m_columns[i].reskin(col, m_newskin, &m_player_colors, col_x);
-
-		// The draw entries for a column can only be safely set when the noteskin
-		// is set, but the note data might change to a type that is invalid for
-		// the noteskin, causing the columns to be remade without a noteskin.
-		// Adding the draw entries during reskinning ensures the noteskin is
-		// valid.
-		// add_draw_entry filters out duplicate entries, so this piece of code
-		// doesn't need to.
-		add_draw_entry({nullptr, static_cast<int>(i), holds_draw_order, fdem_holds});
-		add_draw_entry({nullptr, static_cast<int>(i), lifts_draw_order, fdem_lifts});
-		add_draw_entry({nullptr, static_cast<int>(i), taps_draw_order, fdem_taps});
-		add_draw_entry({nullptr, static_cast<int>(i), selection_draw_order, fdem_selection});
-
-		column_x.push_back(col_x);
-		if(!col->get_use_custom_x())
-		{
-			curr_x+= wid_pad;
-		}
-		m_columns[i].HandleMessage(pn_msg);
-	}
-	Message width_msg("WidthSet");
-	width_msg.SetParamFromStack(L, "columns");
-	width_msg.SetParam("width", get_field_width());
-	PushSelf(L);
-	width_msg.SetParamFromStack(L, "field");
-	LUA->Release(L);
-	m_defective_mods.set_column_pos(column_x);
-	// Handle the width message after the columns have been created so that the
-	// board can fetch the columns.
-	HandleMessage(width_msg);
-	m_needs_reskin= false;
 }
 
 Message NoteField::create_width_message()
@@ -3249,7 +3500,7 @@ Message NoteField::create_width_message()
 	int column_info_table= lua_gettop(L);
 	for(size_t i= 0; i < m_columns.size(); ++i)
 	{
-		NoteSkinColumn* col= m_newskin.get_column(i);
+		NoteSkinColumn* col= m_noteskins[0]->data.get_column(i);
 		lua_createtable(L, 0, 3);
 		int this_col_info_table= lua_gettop(L);
 		lua_pushnumber(L, col->get_width());
@@ -3501,6 +3752,8 @@ void NoteField::update_displayed_time(double beat, double second)
 				break;
 		}
 		SetVanishPoint(vanish_x, vanish_y);
+		layer_skin_id= size_t(std::round(m_layer_skin_id.evaluate(input)))
+			% m_noteskins.size();
 		int temp_nr= std::floor(m_num_upcoming.evaluate(input));
 		if(temp_nr > 0)
 		{
@@ -3953,7 +4206,40 @@ struct LunaNoteField : Luna<NoteField>
 			lua_pushvalue(L, 2);
 			skin_params.SetFromStack(L);
 		}
-		p->set_skin(skin_name, skin_params);
+		int uid= 0;
+		if(lua_type(L, 3) == LUA_TNUMBER)
+		{
+			uid= lua_tonumber(L, 3);
+		}
+		p->set_skin(skin_name, skin_params, uid);
+		COMMON_RETURN_SELF;
+	}
+	static int add_skin(T* p, lua_State* L)
+	{
+		std::string skin_name= SArg(1);
+		LuaReference skin_params;
+		if(lua_type(L, 2) == LUA_TTABLE)
+		{
+			lua_pushvalue(L, 2);
+			skin_params.SetFromStack(L);
+		}
+		int uid= 0;
+		if(lua_type(L, 3) == LUA_TNUMBER)
+		{
+			uid= lua_tonumber(L, 3);
+		}
+		p->add_skin(skin_name, skin_params, uid);
+		COMMON_RETURN_SELF;
+	}
+	static int remove_skin(T* p, lua_State* L)
+	{
+		std::string skin_name= SArg(1);
+		int uid= 0;
+		if(lua_type(L, 2) == LUA_TNUMBER)
+		{
+			uid= lua_tonumber(L, 2);
+		}
+		p->remove_skin(skin_name, uid);
 		COMMON_RETURN_SELF;
 	}
 	static int get_skin(T* p, lua_State* L)
@@ -4083,6 +4369,8 @@ struct LunaNoteField : Luna<NoteField>
 		ADD_METHOD(set_per_column_permanent_mods);
 		ADD_METHOD(set_per_column_timed_mods);
 		ADD_GET_SET_METHODS(skin);
+		ADD_METHOD(add_skin);
+		ADD_METHOD(remove_skin);
 		ADD_METHOD(set_steps);
 		ADD_METHOD(share_steps);
 		ADD_METHOD(get_columns);

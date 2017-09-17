@@ -47,7 +47,7 @@ LuaDeclareType(FieldLayerTransformType);
 struct FieldChild : ActorFrame
 {
 	FieldChild(Actor* act, FieldLayerFadeType ftype,
-		FieldLayerTransformType ttype, bool from_noteskin);
+		FieldLayerTransformType ttype, size_t from_noteskin);
 	void apply_render_info(Rage::transform const& trans,
 		double receptor_alpha, double receptor_glow,
 		double explosion_alpha, double explosion_glow,
@@ -56,7 +56,7 @@ struct FieldChild : ActorFrame
 	Actor* m_child;
 	FieldLayerFadeType m_fade_type;
 	FieldLayerTransformType m_transform_type;
-	bool m_added_by_noteskin;
+	size_t m_from_noteskin;
 };
 
 enum field_draw_entry_meaning
@@ -94,6 +94,7 @@ struct NoteFieldColumn : ActorFrame
 		double tail_second;
 		NoteData::TrackMap::const_iterator note_iter;
 		mod_val_inputs input;
+		NoteSkinColumn* skin;
 	};
 
 	Message create_width_message();
@@ -108,8 +109,9 @@ struct NoteFieldColumn : ActorFrame
 	// column knows its column id.
 	void set_parent_info(NoteField* field, size_t column,
 		ArrowDefects* defects);
-	void reskin(NoteSkinColumn* newskin, NoteSkinData& skin_data,
-		std::vector<Rage::Color>* player_colors, double x);
+	void apply_base_skin(std::vector<Rage::Color>* player_colors, double x);
+	void add_skin(NoteSkinData& data, bool replace_base);
+	void remove_skin(size_t id, bool shift_others);
 	void set_note_data(const NoteData* note_data,
 		const TimingData* timing_data);
 
@@ -168,9 +170,10 @@ struct NoteFieldColumn : ActorFrame
 	{
 		return reverse_shift;
 	}
-	double quantization_for_time(mod_val_inputs& input)
+	double quantization_for_time(mod_val_inputs& input, NoteSkinColumn* skin)
 	{
-		double mult= m_quantization_multiplier.evaluate(input) * m_newskin->get_quantum_mult();
+		double mult= m_quantization_multiplier.evaluate(input) *
+			skin->get_quantum_mult();
 		double offset= m_quantization_offset.evaluate(input);
 		return std::fmod((input.eval_beat * mult) + offset, 1.0);
 	}
@@ -259,6 +262,8 @@ struct NoteFieldColumn : ActorFrame
 	ModifiableValue m_speed_mod;
 	ModifiableValue m_lift_pretrail_length;
 	ModifiableValue m_num_upcoming;
+	ModifiableValue m_note_skin_id;
+	ModifiableValue m_layer_skin_id;
 
 	ModifiableVector3 m_y_offset_vec_mod;
 
@@ -293,7 +298,9 @@ private:
 	void draw_thing_internal();
 	void add_renderable_to_lists(render_note& renderable);
 
-	void AddChildInternal(Actor* act, bool from_noteskin);
+	void AddChildInternal(Actor* act, size_t from_noteskin);
+
+	void remove_layers_from_skin(size_t id, bool shift_others);
 
 	double m_curr_beat;
 	double m_curr_displayed_beat;
@@ -304,7 +311,7 @@ private:
 	double m_upcoming_time;
 	size_t m_column;
 	NotePlayerizeMode m_playerize_mode;
-	NoteSkinColumn* m_newskin;
+	std::vector<NoteSkinColumn*> m_noteskins;
 	std::vector<Rage::Color>* m_player_colors;
 	NoteField* m_field;
 	// Bypass ActorFrame's normal subactors structure because the children
@@ -350,6 +357,7 @@ private:
 	double receptor_glow;
 	double explosion_alpha;
 	double explosion_glow;
+	size_t layer_skin_id;
 	size_t num_upcoming;
 	bool use_column_num_upcoming;
 	bool pressed;
@@ -366,6 +374,16 @@ enum FieldVanishType
 };
 std::string const FieldVanishTypeToString(FieldVanishType fmt);
 LuaDeclareType(FieldVanishType);
+
+struct field_skin_entry
+{
+	NoteSkinLoader const* loader;
+	NoteSkinData data;
+	LuaReference params;
+	std::string name;
+	int uid; // Provided by whatever added the noteskin, uniqueness not enforced.
+	bool replaces_base_skin;
+};
 
 struct NoteField : ActorFrame
 {
@@ -398,10 +416,13 @@ struct NoteField : ActorFrame
 	void set_gameplay_zoom(double zoom);
 
 	void clear_steps();
-	void set_skin(std::string const& skin_name, LuaReference& skin_params);
+	void set_skin(std::string const& skin_name, LuaReference& skin_params, int uid);
 	std::string const& get_skin();
 	void set_steps(Steps* data);
 	void set_note_data(NoteData* note_data, TimingData const* timing, StepsType stype);
+
+	void add_skin(std::string const& name, LuaReference& params, int uid);
+	void remove_skin(std::string const& name, int uid);
 
 	// share_steps is a way for multiple notefields to use the same note data
 	// without duplicating it.  This also means that when edit mode edits the
@@ -468,6 +489,7 @@ struct NoteField : ActorFrame
 	ModifiableValue m_explosion_glow;
 	ModifiableVector3 m_fov_mod;
 	ModifiableValue m_num_upcoming;
+	ModifiableValue m_layer_skin_id;
 
 	// To allow the Player actor the field is inside to be moved around without
 	// causing skew problems, the field adds the vanish position to the actor
@@ -498,7 +520,21 @@ struct NoteField : ActorFrame
 	float selection_glow;
 
 private:
-	void AddChildInternal(Actor* act, bool from_noteskin);
+	void AddChildInternal(Actor* act, size_t from_noteskin);
+
+	void recreate_columns();
+	void apply_base_skin_to_columns();
+
+	field_skin_entry* set_add_skin_common(std::string const& name,
+		LuaReference& params, bool replace_base);
+
+	bool fill_skin_entry(field_skin_entry* entry, std::string const& name,
+		LuaReference& params);
+	int fill_skin_entry_data(field_skin_entry* entry);
+	void add_layers_from_skin(NoteSkinData& data, size_t id);
+	void remove_skin_from_columns(size_t id);
+	void remove_layers_from_skin(size_t id, bool shift_others);
+	void remove_all_noteskin_layers();
 
 	void draw_entry(field_draw_entry& entry);
 	void draw_beat_bar(mod_val_inputs& input, int state, float alpha);
@@ -513,8 +549,6 @@ private:
 		float const first_beat, float const last_beat,
 		vector<BackgroundChange>& changes, Rage::Color const& color,
 		Rage::Color const& text_glow);
-	void recreate_columns();
-	void reskin_columns(NoteSkinLoader const* new_loader, LuaReference& new_params);
 	double m_curr_beat;
 	double m_curr_second;
 	double m_field_width;
@@ -528,16 +562,19 @@ private:
 	ArrowDefects m_defective_mods;
 	bool m_in_defective_mode;
 
-	bool m_needs_reskin;
-
 	bool m_own_note_data;
 	NoteData* m_note_data;
 	const TimingData* m_timing_data;
 	StepsType m_steps_type;
 	std::vector<NoteFieldColumn> m_columns;
-	NoteSkinData m_newskin;
-	NoteSkinLoader m_skin_walker;
-	LuaReference m_skin_parameters;
+	// When a noteskin is added by set_skin or add_skin, if there is no steps
+	// loaded, or it doesn't work with the current stepstype, the noteskin goes
+	// in m_unapplied_noteskins.
+	// When the stepstype changes, m_noteskins are reapplied first, then
+	// m_unapplied_noteskins.  Any noteskins that don't fit are silently
+	// discarded.
+	std::vector<field_skin_entry*> m_noteskins;
+	std::vector<field_skin_entry*> m_unapplied_noteskins;
 	std::vector<Rage::Color> m_player_colors;
 	// Bypass ActorFrame's normal subactors structure because the children
 	// of a column need to be wrapped and have render info attached, and be
@@ -569,6 +606,8 @@ private:
 	double original_y;
 
 	double curr_z_bias;
+
+	size_t layer_skin_id;
 
 	Rage::transform avg_head_trans;
 	bool avg_head_trans_is_fresh;
