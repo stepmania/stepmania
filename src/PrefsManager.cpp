@@ -1,5 +1,6 @@
 #include "global.h"
 #include "PrefsManager.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include "IniFile.h"
 #include "LuaManager.h"
 #include "Preference.h"
@@ -589,6 +590,10 @@ public:
 
 		lua_pushvalue( L, 2 );
 		pPref->SetFromStack( L );
+		if(sName == "ShowMouseCursor")
+		{
+			HOOKS->UpdateShowMouseCursor();
+		}
 		COMMON_RETURN_SELF;
 	}
 	static int SetPreferenceToDefault(T* p, lua_State *L)

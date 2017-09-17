@@ -25,7 +25,7 @@ void NoteData::Init()
 	m_TapNotes = vector<TrackMap>();	// ensure that the memory is freed
 }
 
-void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
+void NoteData::SetOccuranceTimeForAllTaps(TimingData const* timing_data)
 {
 	ASSERT_M(timing_data != nullptr, "SetOccuranceTimeForAllTaps cannot run without timing data.");
 	timing_data->RequestLookup();
@@ -82,7 +82,7 @@ void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
 	timing_data->ReleaseLookup();
 }
 
-void NoteData::count_notes_in_columns(TimingData* timing_data,
+void NoteData::count_notes_in_columns(TimingData const* timing_data,
 	vector<std::map<TapNoteType, int> > note_counts,
 	vector<std::map<TapNoteSubType, float> > hold_durations)
 {

@@ -162,13 +162,14 @@ public:
 	bool GetDefaultModifiers( const Game* pGameType, std::string &sModifiersOut ) const;
 	void SetDefaultModifiers( const Game* pGameType, const std::string &sModifiers );
 	void get_preferred_noteskin(StepsType stype, std::string& skin) const;
-	bool set_preferred_noteskin(StepsType stype, std::string const& skin);
-	typedef std::map<StepsType, std::string> pref_noteskin_container;
+	bool set_preferred_noteskin(std::string const& skin);
+	void unprefer_noteskin(std::string const& skin);
+	typedef std::vector<std::string> pref_noteskin_container;
 	pref_noteskin_container const& get_all_preferred_noteskins()
 	{ return m_preferred_noteskins; }
-	LuaReference get_noteskin_params(std::string const& skin, StepsType stype) const;
-	void set_noteskin_params(std::string const& skin, StepsType stype, LuaReference& params);
-	typedef std::unordered_map<std::string, std::unordered_map<StepsType, LuaReference> > noteskin_param_container;
+	LuaReference get_noteskin_params(std::string const& skin) const;
+	void set_noteskin_params(std::string const& skin, LuaReference& params);
+	typedef std::unordered_map<std::string, LuaReference> noteskin_param_container;
 	noteskin_param_container const& get_all_noteskin_params() const
 	{ return m_noteskin_params; }
 

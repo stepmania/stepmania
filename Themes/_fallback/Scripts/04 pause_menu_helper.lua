@@ -9,14 +9,15 @@ local button_config= create_lua_config{
 button_config:load()
 
 function get_pause_config_menu()
-	return nesty_options.submenu(
-		"pause_config", {
-			nesty_options.bool_config_val(button_config, "pause_buttons.Start"),
-			nesty_options.bool_config_val(button_config, "pause_buttons.Select"),
-			nesty_options.bool_config_val(button_config, "pause_buttons.Back"),
-			nesty_options.float_config_val(button_config, "pause_tap_time", -3, -1, 0, .25, 2, 1),
-			nesty_options.float_config_val(button_config, "pause_debounce_time", -3, -1, 0, 0, .5, .1),
-	})..{on_close= function() button_config:save() end}
+	return {
+		"submenu", "pause_config", on_close= function() button_config:save() end,
+		{
+			{"item", button_config, "pause_buttons.Start", "bool"},
+			{"item", button_config, "pause_buttons.Select", "bool"},
+			{"item", button_config, "pause_buttons.Back", "bool"},
+			{"item", button_config, "pause_tap_time", "millisecond"},
+			{"item", button_config, "pause_debounce_time", "millisecond"},
+	}}
 end
 
 local config_data= {}
@@ -95,11 +96,11 @@ function pause_controller_actor()
 	gameplay_pause_count= 0
 	return Def.Actor{
 		OnCommand= function(self)
-			config_data= button_config:get_data()
 			screen_gameplay= SCREENMAN:GetTopScreen()
 			if screen_gameplay:GetName() == "ScreenGameplaySyncMachine" then
 				return
 			end
+			config_data= button_config:get_data()
 			screen_gameplay:AddInputCallback(input)
 			enabled_players= GAMESTATE:GetEnabledPlayers()
 			for i, pn in ipairs(enabled_players) do
