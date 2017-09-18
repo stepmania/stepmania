@@ -128,19 +128,24 @@ local t = Def.ActorFrame {
 		-- FullCombo Rewards
 		if param.FullComboW1 then
 			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W1"] );
+			cf.ComboLabel:diffuse( GameColor.Judgment["JudgmentLine_W1"] );
 		elseif param.FullComboW2 then
 			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W2"] );
+			cf.ComboLabel:diffuse( GameColor.Judgment["JudgmentLine_W2"] );
 		elseif param.FullComboW3 then
 			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W3"] );
+			cf.ComboLabel:diffuse( GameColor.Judgment["JudgmentLine_W3"] );
 		elseif param.Combo then
 			-- Player 1's color is Red, which conflicts with the miss combo.
 			-- instead, just diffuse to white for now. -aj
 			--c.Number:diffuse(PlayerColor(player));
 			cf.Number:diffuse(Color("White"));
+			cf.ComboLabel:diffuse(Color("White"));
 			cf.Number:strokecolor(Color("Stealth"));
 			cf.Number:stopeffect();
 		else
 			cf.Number:diffuse(color("#ff0000"));
+			cf.ComboLabel:diffuse(color("#ff0000"));
 			cf.Number:stopeffect();
 		end
 		-- Pulse
