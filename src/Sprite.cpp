@@ -14,6 +14,8 @@
 #include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
+#include "ImageCache.h"
+#include "ThemeMetric.h"
 
 REGISTER_ACTOR_CLASS( Sprite );
 
@@ -360,6 +362,27 @@ void Sprite::LoadFromTexture( RageTextureID ID )
 		pTexture = TEXTUREMAN->LoadTexture( ID );
 
 	SetTexture( pTexture );
+}
+
+void Sprite::LoadFromCached( const RString &sDir, const RString &sPath )
+{
+	if( sPath.empty() )
+	{
+		Load( THEME->GetPathG("Common","fallback %s", sDir) );
+		return;
+	}
+
+	RageTextureID ID;
+	
+	// Try to load the low quality version.
+	ID = IMAGECACHE->LoadCachedImage( sDir, sPath );
+
+	if( TEXTUREMAN->IsTextureRegistered(ID) )
+		Load( ID );
+	else if( IsAFile(sPath) )
+		Load( sPath );
+	else
+		Load( THEME->GetPathG("Common","fallback %s", sDir) );
 }
 
 void Sprite::LoadStatesFromTexture()
@@ -1276,12 +1299,18 @@ public:
 		p->m_DecodeMovie= BArg(1);
 		COMMON_RETURN_SELF;
 	}
+	static int LoadFromCached( T* p, lua_State *L )
+	{ 
+		p->LoadFromCached( SArg(1), SArg(2) );
+		COMMON_RETURN_SELF;
+	}
 
 	LunaSprite()
 	{
 		ADD_METHOD( Load );
 		ADD_METHOD( LoadBanner );
 		ADD_METHOD( LoadBackground );
+		ADD_METHOD( LoadFromCached );
 		ADD_METHOD( customtexturerect );
 		ADD_METHOD( SetCustomImageRect );
 		ADD_METHOD( SetCustomPosCoords );

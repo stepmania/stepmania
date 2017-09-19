@@ -74,6 +74,8 @@ namespace CommonMetrics
 	extern ThemeMetric<bool>			AUTO_SET_STYLE;
 	/** @brief How many decimal places are used? */
 	extern ThemeMetric<int>			PERCENT_SCORE_DECIMAL_PLACES;
+	
+	extern ThemeMetric<RString>		IMAGES_TO_CACHE;
 
 	RString LocalizeOptionItem( const RString &s, bool bOptional );
 };

@@ -6,6 +6,7 @@
 #include "RageFileManager.h"
 #include "Song.h"
 #include "SpecialFiles.h"
+#include "CommonMetrics.h"
 
 /*
  * A quick explanation of song cache hashes: Each song has two hashes; a hash of the
@@ -92,10 +93,13 @@ void SongCacheIndex::ReadCacheIndex()
 
 	LOG->Trace( "Cache format is out of date.  Deleting all cache files." );
 	EmptyDir( SpecialFiles::CACHE_DIR );
-	EmptyDir( SpecialFiles::CACHE_DIR+"Banners/" );
-	//EmptyDir( SpecialFiles::CACHE_DIR+"Backgrounds/" );
 	EmptyDir( SpecialFiles::CACHE_DIR+"Songs/" );
 	EmptyDir( SpecialFiles::CACHE_DIR+"Courses/" );
+	
+	vector<RString> ImageDir;
+	split( CommonMetrics::IMAGES_TO_CACHE, ",", ImageDir );
+	for( unsigned c=0; c<ImageDir.size(); c++ )
+		EmptyDir( SpecialFiles::CACHE_DIR+ImageDir[c]+"/" );
 
 	CacheIndex.Clear();
 	/* This is right now in place because our song file paths are apparently being

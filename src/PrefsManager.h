@@ -63,26 +63,15 @@ enum ShowDancingCharacters
 	NUM_ShowDancingCharacters,
 	ShowDancingCharacters_Invalid
 };
-enum BannerCacheMode
+enum ImageCacheMode
 {
-	BNCACHE_OFF,
-	BNCACHE_LOW_RES_PRELOAD, // preload low-res on start
-	BNCACHE_LOW_RES_LOAD_ON_DEMAND, // preload low-res on screen load
-	BNCACHE_FULL,
-	NUM_BannerCacheMode,
-	BannerCacheMode_Invalid
+	IMGCACHE_OFF,
+	IMGCACHE_LOW_RES_PRELOAD, // preload low-res on start
+	IMGCACHE_LOW_RES_LOAD_ON_DEMAND, // preload low-res on screen load
+	IMGCACHE_FULL,
+	NUM_ImageCacheMode,
+	ImageCacheMode_Invalid
 };
-/*
-enum BackgroundCacheMode
-{
-	BGCACHE_OFF,
-	BGCACHE_LOW_RES_PRELOAD, // preload low-res on start
-	BGCACHE_LOW_RES_LOAD_ON_DEMAND, // preload low-res on screen load
-	BGCACHE_FULL,
-	NUM_BackgroundCacheMode,
-	BackgroundCacheMode_Invalid
-};
-*/
 enum HighResolutionTextures
 {
 	HighResolutionTextures_Auto,
@@ -183,8 +172,7 @@ public:
 	Preference<bool>	m_bPAL;
 	Preference<bool>	m_bDelayedTextureDelete;
 	Preference<bool>	m_bDelayedModelDelete;
-	Preference<BannerCacheMode>		m_BannerCache;
-	//Preference<BackgroundCacheMode>		m_BackgroundCache;
+	Preference<ImageCacheMode>		m_ImageCache;
 	Preference<bool>	m_bFastLoad;
 	Preference<bool>	m_bFastLoadAdditionalSongs;
 	Preference<RString> m_NeverCacheList;

@@ -5241,6 +5241,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='LoadBanner' return='void' arguments='string sPath'>
 		Load the song banner texture at <code>sPath</code>.
 	</Function>
+	<Function name='LoadFromCached' return='void' arguments='string sType, string sPath'>
+		Loads the image of type <code>sType</code> from the cache based on <code>sPath</code>.
+		Internal types: "Banner", "Background", "CDTitle", "Jacket", "CDImage" and "Disc".
+	</Function>
 	<Function name='LoadFromCurrentSongBackground' theme='_fallback' return='void' arguments=''>
 		[02 Sprite.lua] Loads the background from the current Song or the first Trail entry.
 	</Function>

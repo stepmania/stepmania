@@ -1825,6 +1825,7 @@
 			<Function name='Load'/>
 			<Function name='LoadBackground'/>
 			<Function name='LoadBanner'/>
+			<Function name='LoadFromCached'/>
 			<Function name='LoadFromCurrentSongBackground'/>
 			<Function name='LoadFromSongBackground'/>
 			<Function name='LoadFromSongBanner'/>

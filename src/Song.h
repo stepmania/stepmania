@@ -260,6 +260,7 @@ public:
 	RString m_sBackgroundFile;
 	RString m_sCDTitleFile;
 	RString m_sPreviewVidFile;
+	vector<RString> ImageDir;
 
 	AttackArray m_Attacks;
 	vector<RString>	m_sAttackString;
@@ -277,6 +278,8 @@ public:
 	RString GetPreviewVidPath() const;
 	RString GetPreviewMusicPath() const;
 	float GetPreviewStartSeconds() const;
+	
+	RString GetCacheFile( RString sPath );
 
 	// For loading only:
 	bool m_bHasMusic, m_bHasBanner, m_bHasBackground;

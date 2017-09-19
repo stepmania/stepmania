@@ -12,8 +12,7 @@
 #include "Style.h"
 #include "FontCharAliases.h"
 #include "TitleSubstitution.h"
-#include "BannerCache.h"
-//#include "BackgroundCache.h"
+#include "ImageCache.h"
 #include "ProfileManager.h"
 #include "Sprite.h"
 #include "RageFile.h"
@@ -37,6 +36,7 @@
 #include "UnlockManager.h"
 #include "LyricsLoader.h"
 #include "ActorUtil.h"
+#include "CommonMetrics.h"
 
 #include <time.h>
 #include <set>
@@ -90,6 +90,7 @@ Song::Song()
 	m_bHasBanner = false;
 	m_bHasBackground = false;
 	m_loaded_from_autosave= false;
+	split( CommonMetrics::IMAGES_TO_CACHE, ",", ImageDir );
 }
 
 Song::~Song()
@@ -427,14 +428,14 @@ bool Song::LoadFromSongDir(RString sDir, bool load_autosave, ProfileSlot from_pr
 		(*s)->Compress();
 	}
 
-	// Load the cached banners, if it's not loaded already.
-	if( PREFSMAN->m_BannerCache == BNCACHE_LOW_RES_PRELOAD && m_bHasBanner )
-		BANNERCACHE->LoadBanner( GetBannerPath() );
-	// Load the cached background, if it's not loaded already.
-	/*
-	if( PREFSMAN->m_BackgroundCache == BGCACHE_LOW_RES_PRELOAD && m_bHasBackground )
-		BACKGROUNDCACHE->LoadBackground( GetBackgroundPath() );
-	*/
+	// Load the cached Images, if it's not loaded already.
+	if( PREFSMAN->m_ImageCache == IMGCACHE_LOW_RES_PRELOAD )
+	{
+		for( RString Image : ImageDir )
+		{
+			IMAGECACHE->LoadImage( Image, GetCacheFile( Image ) );
+		}		
+	}
 
 	// Add AutoGen pointers. (These aren't cached.)
 	AddAutoGenNotes();
@@ -678,12 +679,10 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		m_bHasBanner = HasBanner();
 		m_bHasBackground = HasBackground();
 
-		if(m_bHasBanner)
-		{ BANNERCACHE->CacheBanner(GetBannerPath()); }
-		/*
-			if(m_bHasBackground)
-			{ BANNERCACHE->CacheBackground(GetBackgroundPath()); }
-		*/
+		for( RString Image : ImageDir )
+		{
+			IMAGECACHE->LoadImage( Image, GetCacheFile( Image ) );
+		}
 
 		// There are several things that need to find a file from the dir with a
 		// particular extension or type of extension.  So fetch a list of all
@@ -1652,6 +1651,73 @@ vector<RString> Song::GetBGChanges2ToVectorString() const
 vector<RString> Song::GetFGChanges1ToVectorString() const
 {
 	return this->GetChangesToVectorString(this->GetForegroundChanges());
+}
+
+// We want to return a filename, We use this function for that.
+RString Song::GetCacheFile(RString sType)
+{
+	// We put the Predefined images into a map.
+	map< RString, RString > PreDefs;
+	PreDefs["Banner"] = GetBannerPath();
+	PreDefs["Background"] = GetBackgroundPath();
+	PreDefs["CDTitle"] = GetCDTitlePath();
+	PreDefs["Jacket"] = GetJacketPath();
+	PreDefs["CDImage"] = GetCDImagePath();
+	PreDefs["Disc"] = GetDiscPath();
+	
+	// Check if Predefined images exist, And return function if they do.
+	if(PreDefs[sType.c_str()])
+		return PreDefs[sType.c_str()];	
+	
+	// Get all image files and put them into a vector.
+	vector<RString> song_dir_listing;
+	FILEMAN->GetDirListing(m_sSongDir + "*", song_dir_listing, false, false);
+	vector<RString> image_list;
+	vector<RString> fill_exts = ActorUtil::GetTypeExtensionList(FT_Bitmap);
+	for( RString Image : song_dir_listing )
+	{
+		RString FileExt = GetExtension(Image);	
+		transform(FileExt.begin(), FileExt.end(), FileExt.begin(),::tolower);
+		for ( RString FindExt : fill_exts )
+		{
+			if(FileExt == FindExt)
+				image_list.push_back(Image);
+		}
+	}
+	
+	// Create a map that contains all the filenames to search for.
+	map<RString, map< int, RString > > PreSets;
+	PreSets["Banner"][1] = "bn";
+	PreSets["Banner"][2] = "banner";
+	PreSets["Background"][1] = "bg";
+	PreSets["Background"][2] = "background";
+	PreSets["CDTitle"][1] = "cdtitle";
+	PreSets["Jacket"][1] = "jk_";	
+	PreSets["Jacket"][2] = "jacket";
+	PreSets["Jacket"][3] = "albumart";
+	PreSets["CDImage"][1] = "-cd";
+	PreSets["Disc"][1] = " disc";
+	PreSets["Disc"][2] = " title";	
+	
+	for( RString Image : image_list)
+	{
+		// We want to make it lower case.
+		transform(Image.begin(), Image.end(), Image.begin(),::tolower);
+		for( pair< const int, RString> PreSet : PreSets[sType.c_str()] )
+		{
+			// Search for image using PreSets.
+			size_t Found = Image.find(PreSet.second.c_str());
+			if(Found!=RString::npos)
+				return GetSongAssetPath( Image, m_sSongDir );
+		}
+		// Search for the image directly if it doesnt exist in PreSets, 
+		// Or incase we define our own stuff.
+		size_t Found = Image.find(sType.c_str());
+		if(Found!=RString::npos)
+			return GetSongAssetPath( Image, m_sSongDir );
+	}
+	// Return empty if nothing found.
+	return "";
 }
 
 RString Song::GetFileHash()
