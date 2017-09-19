@@ -196,16 +196,19 @@ for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 			self:stoptweening():settext(param.text):cropright(1):linear(.5):cropright(0)
 		end,
 	}
-	frame[#frame+1]= Def.BitmapText{
-		Font= "Common Condensed", Text= "READY!", InitCommand= function(self)
+	frame[#frame+1]= LoadActor(THEME:GetPathG("NestyOptions", "ready")) .. {
+		InitCommand= function(self)
 			ready_indicators[pn]= self
-			self:xy(menu_x[pn], 146):zoom(1.5):diffuse(Color.Green):strokecolor(color("#2E540F")):diffusealpha(0)
+			self:xy(menu_x[pn], 581):zoom(0.4):diffusealpha(0)
 		end,
 		show_readyCommand= function(self)
-			self:stoptweening():decelerate(.5):diffusealpha(1)
+				self:stoptweening():bouncebegin(.2):diffusealpha(1):zoom(0.6):bounceend(0.2):zoom(0.5)
 		end,
 		hide_readyCommand= function(self)
-			self:stoptweening():accelerate(.5):diffusealpha(0)
+				self:stoptweening():decelerate(.3):diffusealpha(0):zoom(0.4)
+		end,
+		OffCommand=function(self)
+				self:finishtweening():bouncebegin(.2):zoom(0.6):bounceend(0.2):zoom(0):diffusealpha(0)
 		end,
 	}
 	local metrics_name = "PlayerNameplate" .. ToEnumShortString(pn)
