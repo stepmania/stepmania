@@ -385,9 +385,10 @@ void NoteFieldColumn::set_displayed_time(double beat, double second)
 	m_timing_source.curr_second= second;
 	if(!m_noteskins.empty())
 	{
+		float upde= std::max(0.f, float(m_timing_source.second_delta));
 		for(auto&& skin : m_noteskins)
 		{
-			skin->update_taps();
+			skin->update_taps(upde);
 		}
 	}
 	m_curr_beat= beat;
@@ -2604,7 +2605,7 @@ int NoteField::fill_skin_entry_data(field_skin_entry* entry)
 	string insanity;
 	if(!entry->loader->load_into_data(m_steps_type, entry->params, entry->data, insanity))
 	{
-		LuaHelpers::ReportScriptError("Error loading notekin: " + insanity);
+		LuaHelpers::ReportScriptError("Error loading noteskin: " + insanity);
 		entry->data.clear();
 		return FSED_loader_failed;
 	}
@@ -2731,8 +2732,6 @@ void NoteField::apply_base_skin_to_columns()
 	m_right_column_id= 0;
 	double curr_x= (auto_place_width * -.5);
 	// The column needs all of this info.
-	Message pn_msg("PlayerStateSet");
-	pn_msg.SetParam("PlayerNumber", m_pn);
 	Lua* L= LUA->Get();
 	lua_createtable(L, max_column, 0);
 	int column_info_table= lua_gettop(L);
@@ -3420,12 +3419,17 @@ void NoteField::recreate_columns()
 		m_columns.swap(old_columns);
 		m_columns.resize(m_note_data->GetNumTracks());
 	}
+	Message msg("PlayerStateSet");
+	msg.SetParam("PlayerNumber", m_pn);
 	for(size_t i= 0; i < m_columns.size(); ++i)
 	{
-		m_columns[i].set_parent_info(this, i, &m_defective_mods);
+		NoteFieldColumn& col= m_columns[i];
+		col.set_parent_info(this, i, &m_defective_mods);
+		col.set_player_number(m_pn);
+		col.HandleMessage(msg);
 		if(m_in_defective_mode)
 		{
-			m_columns[i].set_defective_mode(m_in_defective_mode);
+			col.set_defective_mode(m_in_defective_mode);
 		}
 	}
 }
@@ -4264,6 +4268,11 @@ struct LunaNoteField : Luna<NoteField>
 		p->share_steps(share_to);
 		COMMON_RETURN_SELF;
 	}
+	static int get_stepstype(T* p, lua_State* L)
+	{
+		Enum::Push(L, p->get_stepstype());
+		return 1;
+	}
 	static int get_columns(T* p, lua_State* L)
 	{
 		p->push_columns_to_lua(L);
@@ -4373,6 +4382,7 @@ struct LunaNoteField : Luna<NoteField>
 		ADD_METHOD(remove_skin);
 		ADD_METHOD(set_steps);
 		ADD_METHOD(share_steps);
+		ADD_METHOD(get_stepstype);
 		ADD_METHOD(get_columns);
 		ADD_METHOD(get_num_columns);
 		ADD_METHOD(get_width);

@@ -481,6 +481,8 @@ struct NoteField : ActorFrame
 	void did_hold_note(size_t column, HoldNoteScore hns, bool bright);
 	void set_pressed(size_t column, bool on);
 
+	StepsType get_stepstype() { return m_steps_type; }
+
 	ModManager m_mod_manager;
 	ModifiableTransform m_trans_mod;
 	ModifiableValue m_receptor_alpha;

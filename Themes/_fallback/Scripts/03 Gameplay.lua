@@ -434,3 +434,13 @@ function GetCodeForGame(codeName)
 	local inputCode = CodeDetectorCodes[codeName]
 	return inputCode[gameName] or inputCode["default"]
 end
+
+function GameState:applydefaultoptions()
+	local options= PREFSMAN:GetPreference("DefaultModifiers") .. THEME:GetMetric("Common", "DefaultModifiers")
+	for i, pn in ipairs(self:GetEnabledPlayers()) do
+		local pops= self:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred")
+		pops:FromString(options)
+	end
+	self:GetSongOptionsObject():FromString(options)
+	return self
+end

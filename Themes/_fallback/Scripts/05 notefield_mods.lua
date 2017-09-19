@@ -1008,15 +1008,135 @@ function organize_notefield_mods_by_target(mods_table)
 	end
 end
 
+local function process_skin_entries(notefields, noteskins)
+	local profiles= {}
+	for pn, field in pairs(notefields) do
+		profiles[pn]= PROFILEMAN:GetProfile(pn)
+	end
+	local function get_params_for_skin(pn, skin, maybe)
+		if type(maybe) == "table" then return maybe end
+		return profiles[pn]:get_noteskin_params(skin)
+	end
+	local function set_for_both(skin)
+		for pn, field in pairs(notefields) do
+			field:set_skin(skin, get_params_for_skin(pn, skin))
+		end
+	end
+	-- noteskin= "lambda"
+	if type(noteskins) == "string" then
+		set_for_both(noteskins)
+		return
+	end
+	if type(noteskins) ~= "table" then return end
+	-- noteskin= {
+	--   -- First entry replaces noteskin from the player's profile.
+	--
+	--   -- Affects all notefields, uses params from profiles.
+	--   {name= "lambda"},
+	--   -- Affects all notefields, uses params provided.
+	--   {name= "lambda", target= "all", params= {}},
+	--   -- Affects player 1 notefield, uses params from profile.
+	--   {name= "lambda", target= 1},
+	--   -- Affects player 2 notefield, uses params from profile.
+	--   {name= "lambda", target= 2},
+	--   -- Affects player 1 and 2 notefields, uses params from profiles.
+	--   {name= "lambda", target= {1, 2}},
+	--   -- Choose two random noteskins and apply them.
+	--   {random= 2, target= "all"}
+	--   -- Choose two random non-generic noteskins and apply them.
+	--   {random= 2, target= "all", disable_supports_all= true}
+	-- }
+	local set_flags= {}
+	local function do_set(pn, skin, params)
+		params= get_params_for_skin(pn, skin, params)
+		if set_flags[pn] then
+			notefields[pn]:add_skin(skin, params)
+		else
+			notefields[pn]:set_skin(skin, params)
+			set_flags[pn]= true
+		end
+	end
+	local function get_skins(pn, stype, without)
+		local skins= NOTESKIN:get_skin_names_for_stepstype(stype, without)
+		skins= filter_noteskin_list_with_shown_config(pn, skins)
+		for i, name in ipairs(skins) do
+			skins[name]= true
+		end
+		return skins
+	end
+	local all_skin_lists= {}
+	for pn, field in pairs(notefields) do
+		local stype= field:get_stepstype()
+		all_skin_lists[pn]= {
+			with_all= get_skins(pn, stype, false),
+			without_all= get_skins(pn, stype, true),
+		}
+	end
+	local function add_pick(pick, have)
+		have[#have+1]= pick
+		have[pick]= true
+	end
+	local function pick_random(list, already_have)
+		if #list == 1 then
+			add_pick(list[1], already_have)
+			return
+		end
+		local name
+		repeat
+			local pick= math.random(1, #list)
+			name= list[pick]
+			local used= already_have[name]
+		until not used or #list <= #already_have
+		add_pick(name, already_have)
+	end
+	for i, entry in ipairs(noteskins) do
+		if type(entry) == "table" then
+			local targets= {}
+			local targype= type(entry.target)
+			if targype == "number" then
+				local pn= PlayerNumber[entry.target] or PlayerNumber[1]
+				targets= {[pn]= notefields[pn]}
+			elseif targype == "table" then
+				for tid, dy in ipairs(entry.target) do
+					local pn= PlayerNumber[dy] or PlayerNumber[1]
+					targets= {[pn]= notefields[pn]}
+				end
+			else
+				targets= notefields
+			end
+			if type(entry.random) == "number" then
+				for pn, field in pairs(targets) do
+					local list= all_skin_lists[pn].with_all
+					if entry.disable_supports_all
+					and #all_skin_lists[pn].without_all > 0 then
+						list= all_skin_lists[pn].without_all
+					end
+					local picks= {}
+					for pid= 1, entry.random do
+						pick_random(list, picks)
+					end
+					for i, pick in ipairs(picks) do
+						do_set(pn, pick)
+					end
+				end
+			else
+				local skin= entry.name
+				for pn, field in pairs(targets) do
+					if all_skin_lists[pn].with_all[skin] then
+						do_set(pn, skin, entry.params)
+					end
+				end
+			end
+		end
+	end
+end
+
 function organize_and_apply_notefield_mods(notefields, mods)
 	local first_pn, first_field= next(notefields, nil)
-	if NoteField.get_num_columns then
-		mods.columns= first_field:get_num_columns()
-	else
-		mods.columns= #first_field:get_columns()
-	end
+	mods.columns= first_field:get_num_columns()
+	process_skin_entries(notefields, mods.noteskin)
+	mods.noteskin= nil
 	local organized_mods= organize_notefield_mods_by_target(mods)
-	local pn_to_field_index= PlayerNumber:Reverse()
 	if mods.field and mods.field ~= 1 then
 		for pn, field in pairs(notefields) do
 			-- stepmania enums are 0 indexed
