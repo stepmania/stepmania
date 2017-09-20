@@ -268,7 +268,7 @@ local function make_display(num_items)
 			self:visible(false)
 		end,
 		ScrollCommand= function(self, params)
-			one_dimension_scroll(self, "x", "decelerate", .2, display_width, params.from, params.to, 0, params.num_items-1)
+			one_dimension_scroll(self, "x", "bounceend", .2, 15, params.from, params.to, 0, params.num_items-1)
 			if params.scroll_type == "normal" then
 			elseif params.scroll_type == "off" then
 				-- Item will not be visible or interactive afterwards.

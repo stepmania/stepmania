@@ -3,7 +3,7 @@ local curStageIndex = GAMESTATE:GetCurrentStageIndex() + 1;
 local playMode = GAMESTATE:GetPlayMode();
 
 local t = Def.ActorFrame {
-	LoadActor("_stageFrame.png")  .. {
+	LoadActor(		THEME:GetPathG("ScreenGameplay", "progress"))  .. {
 		OnCommand=cmd(playcommand,"Set");
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
@@ -17,7 +17,7 @@ local t = Def.ActorFrame {
 		end
 	};
 	LoadFont("Common Italic Condensed") .. {
-		InitCommand=cmd(y,-1;uppercase,true;playcommand,"Set");
+		InitCommand=cmd(y,-1;x,-143;uppercase,true;horizalign,center;maxwidth,170;playcommand,"Set");
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
