@@ -1,50 +1,52 @@
 function GetLocalProfiles()
-	local ret = {};
+	local t = {};
+
+	function GetSongsPlayedString(numSongs)
+		return numSongs == 1 and Screen.String("SingularSongPlayed") or Screen.String("SeveralSongsPlayed")
+	end
 
 	for p = 0,PROFILEMAN:GetNumLocalProfiles()-1 do
 		local profile=PROFILEMAN:GetLocalProfileFromIndex(p);
-		local item = Def.ActorFrame {
+		local ProfileCard = Def.ActorFrame {
 --[[ 			Def.Quad {
 				InitCommand=cmd(zoomto,200,1;y,40/2);
 				OnCommand=cmd(diffuse,Color('Outline'););
 			}; --]]
-			LoadFont("Common Normal") .. {
+			LoadFont("Common Condensed") .. {
 				Text=profile:GetDisplayName();
 				InitCommand=cmd(shadowlength,1;y,-10;zoom,1;ztest,true);
 			};
-			LoadFont("Common Normal") .. {
+			LoadFont("Common Fallback") .. {
 				InitCommand=cmd(shadowlength,1;y,8;zoom,0.5;vertspacing,-8;ztest,true);
 				BeginCommand=function(self)
 					local numSongsPlayed = profile:GetNumTotalSongsPlayed();
-					local s = numSongsPlayed == 1 and "Song" or "Songs";
-					self:settext( string.format(THEME:GetString("ScreenSelectProfile","%d "..s.." Played"),numSongsPlayed) );
+					self:settext( string.format( GetSongsPlayedString( numSongsPlayed ), numSongsPlayed ) )
 				end;
 			};
 		};
-		table.insert( ret, item );
+		t[#t+1]=ProfileCard;
 	end;
 
-	return ret;
+	return t;
 end;
 
 function LoadCard(cColor)
 	local t = Def.ActorFrame {
-		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardBackground") ) .. {
-			InitCommand=cmd(diffuse,cColor);
-		};
-		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardFrame") );
-	};
+		Def.Quad {
+			InitCommand=cmd(zoomto,300,SCREEN_HEIGHT/1.3;y,20;diffuse,ColorDarkTone(cColor);diffusealpha,0.8;fadetop,0.2;fadebottom,0.2)
+		}
+	}
 	return t
 end
 function LoadPlayerStuff(Player)
-	local ret = {};
+	local t = {};
 
 	local pn = (Player == PLAYER_1) and 1 or 2;
 
 --[[ 	local t = LoadActor(THEME:GetPathB('', '_frame 3x3'), 'metal', 200, 230) .. {
 		Name = 'BigFrame';
 	}; --]]
-	local t = Def.ActorFrame {
+	t[#t+1] = Def.ActorFrame {
 		Name = 'JoinFrame';
 		LoadCard(Color('Orange'));
 --[[ 		Def.Quad {
@@ -55,54 +57,32 @@ function LoadPlayerStuff(Player)
 			InitCommand=cmd(zoomto,200,230);
 			OnCommand=cmd(diffuse,Color('Orange');diffusealpha,0.5);
 		}; --]]
-		LoadFont("Common Normal") .. {
-			Text=THEME:GetString("ScreenSelectProfile","PressStart");
-			InitCommand=cmd(shadowlength,1);
+		LoadFont("Common Italic Condensed") .. {
+			Text="Press &START; to join.";
+			InitCommand=cmd(shadowlength,1;zoom,1.25);
 			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5"));
 		};
 	};
-	table.insert( ret, t );
 	
-	t = Def.ActorFrame {
+	t[#t+1] = Def.ActorFrame {
 		Name = 'BigFrame';
 		LoadCard(PlayerColor(Player));
 	};
-	table.insert( ret, t );
-
---[[ 	t = LoadActor(THEME:GetPathB('', '_frame 3x3'), 'metal', 170, 20) .. {
+	t[#t+1] = Def.ActorFrame {
 		Name = 'SmallFrame';
-	}; --]]
-	t = Def.ActorFrame {
-		Name = 'SmallFrame';
---[[ 		Def.Quad {
-			InitCommand=cmd(zoomto,170+4,32+4);
-			OnCommand=cmd(shadowlength,1);
-		}; --]]
 		InitCommand=cmd(y,-2);
 		Def.Quad {
-			InitCommand=cmd(zoomto,200-10,40+2);
-			OnCommand=cmd(diffuse,Color('Black');diffusealpha,0.5);
+			InitCommand=cmd(zoomto,300,40);
+			OnCommand=cmd(diffuse,PlayerColor(Player);fadeleft,0.25;faderight,0.25);
 		};
-		Def.Quad {
-			InitCommand=cmd(zoomto,200-10,40);
-			OnCommand=cmd(diffuse,PlayerColor(Player);fadeleft,0.25;faderight,0.25;glow,color("1,1,1,0.25"));
-		};
-		Def.Quad {
-			InitCommand=cmd(zoomto,200-10,40;y,-40/2+20);
-			OnCommand=cmd(diffuse,Color("Black");fadebottom,1;diffusealpha,0.35);
-		};
-		Def.Quad {
-			InitCommand=cmd(zoomto,200-10,1;y,-40/2+1);
-			OnCommand=cmd(diffuse,PlayerColor(Player);glow,color("1,1,1,0.25"));
-		};	
 	};
-	table.insert( ret, t );
 
-	t = Def.ActorScroller{
-		Name = 'ProfileScroller';
+	t[#t+1] = Def.ActorScroller{
+		Name = 'Scroller';
 		NumItemsToDraw=6;
--- 		InitCommand=cmd(y,-230/2+20;);
+ 		--InitCommand=cmd(zoom,2);
 		OnCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15);
+		OffCommand=cmd(decelerate,0.5;diffusealpha,0);
 		TransformFunction=function(self, offset, itemIndex, numItems)
 			local focus = scale(math.abs(offset),0,2,1,0);
 			self:visible(false);
@@ -113,40 +93,22 @@ function LoadPlayerStuff(Player)
 		end;
 		children = GetLocalProfiles();
 	};
-	table.insert( ret, t );
 	
-	t = Def.ActorFrame {
+	t[#t+1] = Def.ActorFrame {
 		Name = "EffectFrame";
-	--[[ 		Def.Quad {
-				InitCommand=cmd(y,-230/2;vertalign,top;zoomto,200,8;fadebottom,1);
-				OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
-			};
-			Def.Quad {
-				InitCommand=cmd(y,230/2;vertalign,bottom;zoomto,200,8;fadetop,1);
-				OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
-			}; --]]
 	};
-	table.insert( ret, t );
---[[ 	t = Def.BitmapText {
-		OnCommand = cmd(y,160);
+	t[#t+1] = LoadFont("Common Condensed") .. {
 		Name = 'SelectedProfileText';
-		Font = "Common Normal";
-		Text = 'No profile';
-	}; --]]
-	t = LoadFont("Common Normal") .. {
-		Name = 'SelectedProfileText';
-		--InitCommand=cmd(y,160;shadowlength,1;diffuse,PlayerColor(Player));
-		InitCommand=cmd(y,160;shadowlength,1;);
+		InitCommand=cmd(y,160;shadowlength,1;diffuse,ColorLightTone(PlayerColor(Player));diffusebottomedge,color("#FFFFFF");zoom,1.25);
 	};
-	table.insert( ret, t );
 
-	return ret;
+	return t;
 end;
 
 function UpdateInternal3(self, Player)
 	local pn = (Player == PLAYER_1) and 1 or 2;
 	local frame = self:GetChild(string.format('P%uFrame', pn));
-	local scroller = frame:GetChild('ProfileScroller');
+	local scroller = frame:GetChild('Scroller');
 	local seltext = frame:GetChild('SelectedProfileText');
 	local joinframe = frame:GetChild('JoinFrame');
 	local smallframe = frame:GetChild('SmallFrame');
@@ -193,65 +155,74 @@ function UpdateInternal3(self, Player)
 	end;
 end;
 
--- Will be set to the main ActorFrame for the screen in its OnCommand.
-local main_frame= false
-
-local function input(event)
-	if event.type == "InputEventType_Release" then return end
-	local pn= event.PlayerNumber
-	local code= event.GameButton
-	if not pn or not code then return end
-	local input_functions= {
-		Start= function()
-			MESSAGEMAN:Broadcast("StartButton")
-			if not GAMESTATE:IsHumanPlayer(pn) then
-				SCREENMAN:GetTopScreen():SetProfileIndex(pn, -1)
-			else
-				SCREENMAN:GetTopScreen():Finish()
-			end
-		end,
-		Back= function()
-			if GAMESTATE:GetNumPlayersEnabled()==0 then
-				SCREENMAN:GetTopScreen():Cancel()
-			else
-				MESSAGEMAN:Broadcast("BackButton")
-				SCREENMAN:GetTopScreen():SetProfileIndex(pn, -2)
-			end
-		end,
-		MenuUp= function()
-			if GAMESTATE:IsHumanPlayer(pn) then
-				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(pn)
-				if ind > 1 then
-					if SCREENMAN:GetTopScreen():SetProfileIndex(pn, ind - 1) then
-						MESSAGEMAN:Broadcast("DirectionButton")
-						main_frame:queuecommand('UpdateInternal2')
-					end
-				end
-			end
-		end,
-		MenuDown= function()
-			if GAMESTATE:IsHumanPlayer(pn) then
-				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(pn)
-				if ind > 0 then
-					if SCREENMAN:GetTopScreen():SetProfileIndex(pn, ind + 1) then
-						MESSAGEMAN:Broadcast("DirectionButton")
-						main_frame:queuecommand('UpdateInternal2')
-					end
-				end
-			end
+-- here's a (messy) fix for one player's selection ending the screen,
+-- at least until this whole thing is rewritten to be... Not this
+local ready = {}
+local function AllPlayersReady()
+	for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
+		if not ready[pn] then
+			return false
 		end
-	}
-	input_functions.MenuLeft= input_functions.MenuUp
-	input_functions.MenuRight= input_functions.MenuDown
-	if input_functions[code] then
-		input_functions[code]()
 	end
+	-- if it hasn't returned false by now, surely it must be true, right? RIGHT???
+	return true
 end
 
 local t = Def.ActorFrame {
 
 	StorageDevicesChangedMessageCommand=function(self, params)
 		self:queuecommand('UpdateInternal2');
+	end;
+
+	CodeMessageCommand = function(self, params)
+		if params.Name == 'Start' or params.Name == 'Center' then
+			MESSAGEMAN:Broadcast("StartButton");
+			if not GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
+				SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, -1);
+			else
+				ready[params.PlayerNumber] = true
+				if AllPlayersReady() then
+					SCREENMAN:GetTopScreen():Finish();
+				end
+			end;
+		end;
+		if params.Name == 'Up' or params.Name == 'Up2' or params.Name == 'DownLeft' then
+			-- Added a line to make sure the player can't fiddle around in the menu
+			-- after they've already made a selection.
+			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) and not ready[params.PlayerNumber] then
+				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber);
+				if ind > 1 then
+					if SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, ind - 1 ) then
+						MESSAGEMAN:Broadcast("DirectionButton");
+						self:queuecommand('UpdateInternal2');
+					end;
+				end;
+			end;
+		end;
+		if params.Name == 'Down' or params.Name == 'Down2' or params.Name == 'DownRight' then
+			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) and not ready[params.PlayerNumber] then
+				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber);
+				if ind > 0 then
+					if SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, ind + 1 ) then
+						MESSAGEMAN:Broadcast("DirectionButton");
+						self:queuecommand('UpdateInternal2');
+					end;
+				end;
+			end;
+		end;
+		if params.Name == 'Back' then
+			if GAMESTATE:GetNumPlayersEnabled()==0 then
+				SCREENMAN:GetTopScreen():Cancel();
+			else
+				MESSAGEMAN:Broadcast("BackButton")
+				-- Allow... erm... un-readying a player.
+				if ready[params.PlayerNumber] then
+					ready[params.PlayerNumber] = false
+				else
+					SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, -2);
+				end
+			end;
+		end;
 	end;
 
 	PlayerJoinedMessageCommand=function(self, params)
@@ -263,8 +234,6 @@ local t = Def.ActorFrame {
 	end;
 
 	OnCommand=function(self, params)
-		main_frame= self:GetParent()
-		SCREENMAN:GetTopScreen():AddInputCallback(input)
 		self:queuecommand('UpdateInternal2');
 	end;
 
@@ -277,38 +246,35 @@ local t = Def.ActorFrame {
 		Def.ActorFrame {
 			Name = 'P1Frame';
 			InitCommand=cmd(x,SCREEN_CENTER_X-160;y,SCREEN_CENTER_Y);
-			OnCommand=cmd(zoom,0;bounceend,0.35;zoom,1);
-			OffCommand=cmd(bouncebegin,0.35;zoom,0);
-			PlayerJoinedMessageCommand=function(self,param)
-				if param.Player == PLAYER_1 then
-					(cmd(;zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
-				end;
-			end;
+			--OnCommand=cmd(zoom,0;bounceend,0.35;zoom,1);
+			OffCommand=cmd(decelerate,0.3;diffusealpha,0);
+			-- PlayerJoinedMessageCommand=function(self,param)
+				-- if param.Player == PLAYER_1 then
+					-- (cmd(;zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
+				-- end;
+			-- end;
 			children = LoadPlayerStuff(PLAYER_1);
 		};
 		Def.ActorFrame {
 			Name = 'P2Frame';
 			InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y);
-			OnCommand=cmd(zoom,0;bounceend,0.35;zoom,1);
-			OffCommand=cmd(bouncebegin,0.35;zoom,0);
-			PlayerJoinedMessageCommand=function(self,param)
-				if param.Player == PLAYER_2 then
-					(cmd(zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
-				end;
-			end;
+			--OnCommand=cmd(zoom,0;bounceend,0.35;zoom,1);
+			OffCommand=cmd(decelerate,0.3;diffusealpha,0);
+			-- PlayerJoinedMessageCommand=function(self,param)
+				-- if param.Player == PLAYER_2 then
+					-- (cmd(zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
+				-- end;
+			-- end;
 			children = LoadPlayerStuff(PLAYER_2);
 		};
 		-- sounds
 		LoadActor( THEME:GetPathS("Common","start") )..{
-			IsAction= true,
 			StartButtonMessageCommand=cmd(play);
 		};
 		LoadActor( THEME:GetPathS("Common","cancel") )..{
-			IsAction= true,
 			BackButtonMessageCommand=cmd(play);
 		};
 		LoadActor( THEME:GetPathS("Common","value") )..{
-			IsAction= true,
 			DirectionButtonMessageCommand=cmd(play);
 		};
 	};

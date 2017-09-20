@@ -56,7 +56,7 @@ return function(button_list, stepstype)
 	}
 
 	local hold_length = {
-		start_note_offset = 0, -- these shouldn't be 0, but it's what works (?)
+		start_note_offset = -0.5,
 		end_note_offset   = 0.5,
 		head_pixs         = 32,
 		body_pixs         = 256,

@@ -2,9 +2,9 @@ local theme_config_default= {
 	AutoSetStyle= true,
 	LongFail= false,
 	ComboOnRolls= false,
-	FancyUIBG= false,
+	FancyUIBG= true,
 	TimingDisplay= false,
-	GameplayFooter= false,
+	GameplayFooter= true,
 	Use12HourClock= false,
 }
 

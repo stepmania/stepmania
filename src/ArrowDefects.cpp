@@ -73,6 +73,16 @@ float ArrowDefects::get_notefield_height()
 	return SCREEN_HEIGHT + fabsf(m_options->m_fTilt)*200;
 }
 
+float ArrowDefects::get_drawsize()
+{
+	return (1.0 + m_options->m_fDrawSize);
+}
+
+float ArrowDefects::get_drawsizeback()
+{
+	return (1.0 + m_options->m_fDrawSizeBack);
+}
+
 float ArrowDefects::get_time()
 {
 	float mult = 1.f + m_options->m_fModTimerMult;
@@ -93,7 +103,7 @@ float ArrowDefects::get_time()
 }
 
 float ArrowDefects::calculate_tornado_offset_from_magnitude(int dimension, int col_id,
-	float magnitude, float effect_offset, float period, float y_offset)
+	float magnitude, float effect_offset, float period, float y_offset, bool is_tan)
 {
 	float const real_pixel_offset = m_column_x[col_id];
 	float const position_between= Rage::scale(real_pixel_offset,
@@ -104,7 +114,8 @@ float ArrowDefects::calculate_tornado_offset_from_magnitude(int dimension, int c
 	float rads= std::acos(position_between);
 	float frequency= tornado_offset_frequency;
 	rads+= (y_offset + effect_offset) * ((period * frequency) +  frequency) / SCREEN_HEIGHT;
-	float const adjusted_pixel_offset= Rage::scale(Rage::FastCos(rads),
+	float processed_rads = is_tan ? select_tan_calc(rads, m_options->m_bCosecant) : Rage::FastCos(rads); 
+	float const adjusted_pixel_offset= Rage::scale(processed_rads,
 		tornado_offset_scale_from_low,
 		tornado_offset_scale_from_high,
 		m_min_tornado_x[dimension][col_id],
@@ -143,6 +154,53 @@ void ArrowDefects::update_beat(int dimension, float beat_offset, float beat_mult
 			m_beat_factor[dimension]*= 20.f;
 		}
 	}
+}
+
+void ArrowDefects::update_tipsy(float offset, float speed, bool is_tan)
+{
+	float const time= get_time();
+	float const time_times_timer= time * ((speed * tipsy_timer_frequency) + tipsy_timer_frequency);
+	float const arrow_times_mag= arrow_spacing * tipsy_arrow_magnitude;
+	for(size_t col= 0; col < m_num_columns; ++col)
+	{
+		if (is_tan)
+		{
+			m_tan_tipsy_result[col]= select_tan_calc(time_times_timer + (col * ((offset * 
+				tipsy_column_frequency) + tipsy_column_frequency)), m_options->m_bCosecant)
+				* arrow_times_mag;
+		}
+		else
+		{
+			m_tipsy_result[col]= Rage::FastCos(time_times_timer + (col * ((offset * 
+				tipsy_column_frequency) + tipsy_column_frequency))) * arrow_times_mag;
+		}
+	}
+}
+
+float ArrowDefects::select_tan_calc(float angle, bool is_cosec)
+{
+	if (is_cosec)
+	    return Rage::FastCsc(angle);
+	else
+	    return Rage::FastTan(angle);
+}
+
+float ArrowDefects::calculate_drunk_angle(float speed, int col, float offset, 
+	float col_frequency, float y_offset, float period, float offset_frequency)
+{
+	float time = get_time();
+	return time * (1+speed) + col*( (offset*col_frequency) + col_frequency)
+		+ y_offset * ( (period*offset_frequency) + offset_frequency) / SCREEN_HEIGHT;
+}
+
+float ArrowDefects::calculate_bumpy_angle(float y_offset, float offset, float period)
+{
+	return (y_offset+(100.0f*offset))/((period*16.0f)+16.0f);
+}
+
+float ArrowDefects::calculate_digital_angle(float y_offset, float offset, float period)
+{
+	return Rage::PI * (y_offset + (1.0f * offset ) ) / (arrow_spacing + (period * arrow_spacing) );
 }
 
 void ArrowDefects::Init()
@@ -212,7 +270,7 @@ void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 	m_num_columns= column_x.size();
 	for(auto&& member : {&m_min_tornado_x[0], &m_max_tornado_x[0], &m_min_tornado_x[1], 
 				&m_max_tornado_x[1], &m_min_tornado_x[2], &m_max_tornado_x[2],
-				&m_invert_dist, &m_tipsy_result})
+				&m_invert_dist, &m_tipsy_result, &m_tan_tipsy_result})
 	{
 		member->resize(m_num_columns);
 	}
@@ -300,22 +358,32 @@ void ArrowDefects::update(PlayerNumber pn, float music_beat, float music_second)
 	{
 		m_expand_seconds= fmodf(m_timing_data->GetExpandSeconds(m_music_second), (Rage::PI * 2.0) / ((accels[PlayerOptions::ACCEL_EXPAND_PERIOD]+1)));
 	}
+	if(accels[PlayerOptions::ACCEL_TAN_EXPAND] != 0.f)
+	{
+		m_tan_expand_seconds= fmodf(m_timing_data->GetExpandSeconds(m_music_second), (Rage::PI * 2.0) / ((accels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD]+1)));
+	}
 	if(effects[PlayerOptions::EFFECT_TIPSY] != 0.f)
 	{
-		float const time= ArrowDefects::get_time();
-		float const time_times_timer= time * ((effects[PlayerOptions::EFFECT_TIPSY_SPEED] * tipsy_timer_frequency) + tipsy_timer_frequency);
-		float const arrow_times_mag= arrow_spacing * tipsy_arrow_magnitude;
-		for(size_t col= 0; col < m_num_columns; ++col)
-		{
-			m_tipsy_result[col]= Rage::FastCos(time_times_timer +
-				(col * ((effects[PlayerOptions::EFFECT_TIPSY_OFFSET] * tipsy_column_frequency) + tipsy_column_frequency))) * arrow_times_mag;
-		}
+		update_tipsy(effects[PlayerOptions::EFFECT_TIPSY_OFFSET], 
+				effects[PlayerOptions::EFFECT_TIPSY_SPEED], false);
 	}
 	else
 	{
 		for(size_t col= 0; col < m_num_columns; ++col)
 		{
 			m_tipsy_result[col]= 0;
+		}
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_TIPSY] != 0.f)
+	{
+		update_tipsy(effects[PlayerOptions::EFFECT_TAN_TIPSY_OFFSET], 
+				effects[PlayerOptions::EFFECT_TAN_TIPSY_SPEED], true);
+	}
+	else
+	{
+		for(size_t col= 0; col < m_num_columns; ++col)
+		{
+			m_tan_tipsy_result[col]= 0;
 		}
 	}
 	if(effects[PlayerOptions::EFFECT_BEAT] != 0.f)
@@ -444,6 +512,11 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 	{
 		y_adjust += effects[PlayerOptions::EFFECT_PARABOLA_Y] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing);
 	}
+	if(effects[PlayerOptions::EFFECT_ATTENUATE_Y] != 0.f )
+	{
+		const float x_offset = m_column_x[col];
+		y_adjust += effects[PlayerOptions::EFFECT_ATTENUATE_Y] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing) * (x_offset/arrow_spacing);
+	}
 	y_offset+= y_adjust;
 	if(accels[PlayerOptions::ACCEL_BOOMERANG] != 0.f)
 	{
@@ -473,6 +546,16 @@ float ArrowDefects::get_y_offset(float note_beat, float note_second, size_t col)
 			expand_speed_scale_from_low, expand_speed_scale_from_high,
 			expand_speed_scale_to_low, expand_multiplier);
 	}
+	if(accels[PlayerOptions::ACCEL_TAN_EXPAND] != 0.f)
+	{
+		float expand_multiplier= Rage::scale(
+			select_tan_calc(m_tan_expand_seconds * expand_multiplier_frequency * (accels[PlayerOptions::ACCEL_TAN_EXPAND_PERIOD]+1), m_options->m_bCosecant),
+			expand_multiplier_scale_from_low, expand_multiplier_scale_from_high,
+			expand_multiplier_scale_to_low, expand_multiplier_scale_to_high);
+		scroll_speed*= Rage::scale(accels[PlayerOptions::ACCEL_TAN_EXPAND],
+			expand_speed_scale_from_low, expand_speed_scale_from_high,
+			expand_speed_scale_to_low, expand_multiplier);
+	}
 	y_offset*= scroll_speed;
 	
 	if(effects[PlayerOptions::EFFECT_BEAT_Y] != 0.f)
@@ -494,19 +577,49 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 			effects[PlayerOptions::EFFECT_TORNADO],
 			effects[PlayerOptions::EFFECT_TORNADO_OFFSET],
 			effects[PlayerOptions::EFFECT_TORNADO_PERIOD],
-			y_offset);
+			y_offset, false);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_TORNADO] != 0.f)
+	{
+		pixel_offset_from_center+= calculate_tornado_offset_from_magnitude(dim_x, col,
+			effects[PlayerOptions::EFFECT_TAN_TORNADO],
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_OFFSET],
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_PERIOD],
+			y_offset, true);
 	}
 	if( effects[PlayerOptions::EFFECT_BUMPY_X] != 0 )
 	{
 		pixel_offset_from_center += effects[PlayerOptions::EFFECT_BUMPY_X] * 
-			40*Rage::FastSin( (y_offset+(100.0f*(effects[PlayerOptions::EFFECT_BUMPY_X_OFFSET])))/
-			((effects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]*16.0f)+16.0f) );
+			40*Rage::FastSin( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_BUMPY_X_OFFSET],
+			effects[PlayerOptions::EFFECT_BUMPY_X_PERIOD]) );
+			
+	}
+	if( effects[PlayerOptions::EFFECT_TAN_BUMPY_X] != 0 )
+	{
+		pixel_offset_from_center += effects[PlayerOptions::EFFECT_TAN_BUMPY_X] * 
+			40*select_tan_calc( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_TAN_BUMPY_X_OFFSET],
+			effects[PlayerOptions::EFFECT_TAN_BUMPY_X_PERIOD]), m_options->m_bCosecant );
+			
 	}
 	if(effects[PlayerOptions::EFFECT_DRUNK] != 0.f)
 	{
 		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_DRUNK] *
-			(Rage::FastCos(( get_time() * (1+effects[PlayerOptions::EFFECT_DRUNK_SPEED])) + (col * ((effects[PlayerOptions::EFFECT_DRUNK_OFFSET] * drunk_column_frequency) + drunk_column_frequency)) +
-				((y_offset * ((effects[PlayerOptions::EFFECT_DRUNK_PERIOD]*drunk_offset_frequency)+drunk_offset_frequency)) / SCREEN_HEIGHT)) *
+			(Rage::FastCos( calculate_drunk_angle(effects[PlayerOptions::EFFECT_DRUNK_SPEED], col, 
+					effects[PlayerOptions::EFFECT_DRUNK_OFFSET], drunk_column_frequency,
+					y_offset, effects[PlayerOptions::EFFECT_DRUNK_PERIOD],
+					drunk_offset_frequency) ) *
+					arrow_spacing * drunk_arrow_magnitude);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_DRUNK] != 0.f)
+	{
+		pixel_offset_from_center+= effects[PlayerOptions::EFFECT_TAN_DRUNK] *
+			(select_tan_calc( calculate_drunk_angle(effects[PlayerOptions::EFFECT_TAN_DRUNK_SPEED], col, 
+					effects[PlayerOptions::EFFECT_TAN_DRUNK_OFFSET],
+					drunk_column_frequency, y_offset,
+					effects[PlayerOptions::EFFECT_TAN_DRUNK_PERIOD], drunk_offset_frequency)
+					, m_options->m_bCosecant) *
 				arrow_spacing * drunk_arrow_magnitude);
 	}
 	if(effects[PlayerOptions::EFFECT_FLIP] != 0.f)
@@ -545,12 +658,26 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 	{
 		pixel_offset_from_center += effects[PlayerOptions::EFFECT_PARABOLA_X] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing);
 	}
+	if(effects[PlayerOptions::EFFECT_ATTENUATE_X] != 0.f )
+	{
+		const float x_offset = m_column_x[col];
+		pixel_offset_from_center += effects[PlayerOptions::EFFECT_ATTENUATE_X] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing) * (x_offset/arrow_spacing);
+	}
 	if(effects[PlayerOptions::EFFECT_DIGITAL] != 0.f)
 	{
 		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_DIGITAL] * arrow_spacing * 0.5f) *
-			round((effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * Rage::FastSin(
-				(Rage::PI * (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_DIGITAL_OFFSET]) ) ) / 
-					(arrow_spacing + (effects[PlayerOptions::EFFECT_DIGITAL_PERIOD] * arrow_spacing)) ) ) )/(effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+			round((effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1) * Rage::FastSin( 
+			calculate_digital_angle(y_offset, 
+				effects[PlayerOptions::EFFECT_DIGITAL_OFFSET], 
+				effects[PlayerOptions::EFFECT_DIGITAL_PERIOD]) ) )/(effects[PlayerOptions::EFFECT_DIGITAL_STEPS]+1);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_DIGITAL] != 0.f)
+	{
+		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_TAN_DIGITAL] * arrow_spacing * 0.5f) *
+			round((effects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS]+1) * select_tan_calc( 
+			calculate_digital_angle(y_offset, 
+				effects[PlayerOptions::EFFECT_TAN_DIGITAL_OFFSET], 
+				effects[PlayerOptions::EFFECT_TAN_DIGITAL_PERIOD]), m_options->m_bCosecant ) )/(effects[PlayerOptions::EFFECT_TAN_DIGITAL_STEPS]+1);
 	}
 	if(effects[PlayerOptions::EFFECT_SQUARE] != 0.f)
 	{
@@ -558,6 +685,13 @@ float ArrowDefects::get_x_pos(size_t col, float y_offset)
 			(arrow_spacing+(effects[PlayerOptions::EFFECT_SQUARE_PERIOD]*arrow_spacing))) );
 		
 		pixel_offset_from_center += (effects[PlayerOptions::EFFECT_SQUARE] * arrow_spacing * 0.5f) * result;
+	}
+	if(effects[PlayerOptions::EFFECT_BOUNCE] != 0.f)
+	{
+		float bounce_amt = fabsf( Rage::FastSin( ( (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_BOUNCE_OFFSET]) ) ) / 
+			( 60 + (effects[PlayerOptions::EFFECT_BOUNCE_PERIOD]*60) ) ) ) );
+		
+		pixel_offset_from_center += effects[PlayerOptions::EFFECT_BOUNCE] * arrow_spacing * 0.5f * bounce_amt;
 	}
 	if(effects[PlayerOptions::EFFECT_XMODE] != 0.f)
 	{
@@ -605,6 +739,7 @@ float ArrowDefects::get_y_pos(size_t col, float y_offset)
 	float f = y_offset;
 	float const* effects= m_options->m_fEffects;
 	f+= effects[PlayerOptions::EFFECT_TIPSY] * m_tipsy_result[col];
+	f+= effects[PlayerOptions::EFFECT_TAN_TIPSY] * m_tan_tipsy_result[col];
 	
 	// In beware's DDR Extreme-focused fork of StepMania 3.9, this value is
 	// floored, making arrows show on integer Y coordinates. Supposedly it makes
@@ -627,12 +762,36 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 			effects[PlayerOptions::EFFECT_TORNADO_Z],
 			effects[PlayerOptions::EFFECT_TORNADO_Z_OFFSET],
 			effects[PlayerOptions::EFFECT_TORNADO_Z_PERIOD],
-			y_offset);
+			y_offset, false);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_TORNADO_Z] != 0.f)
+	{
+		zpos += calculate_tornado_offset_from_magnitude(dim_z, col,
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_Z],
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_Z_OFFSET],
+			effects[PlayerOptions::EFFECT_TAN_TORNADO_Z_PERIOD],
+			y_offset, true);
 	}
 	if(effects[PlayerOptions::EFFECT_BUMPY] != 0.f)
 	{
 		zpos += effects[PlayerOptions::EFFECT_BUMPY] *
-			40 * Rage::FastSin((y_offset + (100.f * effects[PlayerOptions::EFFECT_BUMPY_OFFSET])) / ((effects[PlayerOptions::EFFECT_BUMPY_PERIOD] * 16.f) + 16.f));
+			40 * Rage::FastSin( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_BUMPY_OFFSET],
+			effects[PlayerOptions::EFFECT_BUMPY_PERIOD]) );
+	}
+	if(m_options->m_fBumpy[col] != 0.f)
+	{
+		zpos += m_options->m_fBumpy[col] * 
+			40 * Rage::FastSin( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_BUMPY_OFFSET],
+			effects[PlayerOptions::EFFECT_BUMPY_PERIOD]) );
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_BUMPY] != 0.f)
+	{
+		zpos += effects[PlayerOptions::EFFECT_TAN_BUMPY] *
+			40 * select_tan_calc( calculate_bumpy_angle(y_offset,
+			effects[PlayerOptions::EFFECT_TAN_BUMPY_OFFSET],
+			effects[PlayerOptions::EFFECT_TAN_BUMPY_PERIOD]), m_options->m_bCosecant );
 	}
 	if(effects[PlayerOptions::EFFECT_ZIGZAG_Z] != 0.f)
 	{
@@ -651,11 +810,28 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 	{
 		zpos += effects[PlayerOptions::EFFECT_PARABOLA_Z] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing);
 	}
+	if(effects[PlayerOptions::EFFECT_ATTENUATE_Z] != 0.f)
+	{
+		const float x_offset = m_column_x[col];
+		zpos += effects[PlayerOptions::EFFECT_ATTENUATE_Z] * (y_offset/arrow_spacing) * (y_offset/arrow_spacing) * (x_offset/arrow_spacing);
+	}
 	if(effects[PlayerOptions::EFFECT_DRUNK_Z] != 0.f)
 	{
 		zpos += effects[PlayerOptions::EFFECT_DRUNK_Z] * 
-			( Rage::FastCos( get_time()*(1+effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED]) + col*((effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET]*drunk_column_frequency)+drunk_column_frequency)
-				+ y_offset*((effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD]*drunk_offset_frequency)+drunk_offset_frequency)/SCREEN_HEIGHT) * arrow_spacing*drunk_arrow_magnitude );
+			( Rage::FastCos( calculate_drunk_angle(effects[PlayerOptions::EFFECT_DRUNK_Z_SPEED], col, 
+					effects[PlayerOptions::EFFECT_DRUNK_Z_OFFSET], drunk_column_frequency,
+					y_offset, effects[PlayerOptions::EFFECT_DRUNK_Z_PERIOD],
+					drunk_offset_frequency) ) * arrow_spacing*drunk_arrow_magnitude );
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_DRUNK_Z] != 0.f)
+	{
+		zpos += effects[PlayerOptions::EFFECT_TAN_DRUNK_Z] * 
+			( select_tan_calc( calculate_drunk_angle(effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_SPEED], col, 
+					effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_OFFSET],
+					drunk_column_frequency, y_offset,
+					effects[PlayerOptions::EFFECT_TAN_DRUNK_Z_PERIOD],
+					drunk_offset_frequency)
+				        , m_options->m_bCosecant) * arrow_spacing*drunk_arrow_magnitude );
 	}
 	if(effects[PlayerOptions::EFFECT_BEAT_Z] != 0.f)
 	{
@@ -667,14 +843,30 @@ float ArrowDefects::get_z_pos(size_t col, float y_offset)
 	{
 		zpos += (effects[PlayerOptions::EFFECT_DIGITAL_Z] * arrow_spacing * 0.5f) *
 			round((effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1) * Rage::FastSin(
-				(Rage::PI * (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET]) ) ) / 
-					(arrow_spacing + (effects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD] * arrow_spacing)) )))/(effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+				calculate_digital_angle(y_offset, 
+				effects[PlayerOptions::EFFECT_DIGITAL_Z_OFFSET], 
+				effects[PlayerOptions::EFFECT_DIGITAL_Z_PERIOD]) ) ) /(effects[PlayerOptions::EFFECT_DIGITAL_Z_STEPS]+1);
+	}
+	if(effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z] != 0.f)
+	{
+		zpos += (effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z] * arrow_spacing * 0.5f) *
+			round((effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS]+1) * select_tan_calc(
+				calculate_digital_angle(y_offset, 
+				effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_OFFSET], 
+				effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_PERIOD]), m_options->m_bCosecant ) ) /(effects[PlayerOptions::EFFECT_TAN_DIGITAL_Z_STEPS]+1);
 	}
 	if(effects[PlayerOptions::EFFECT_SQUARE_Z] != 0.f)
 	{
 		float result = Rage::SquareWave( (Rage::PI * (y_offset+(1.0f*(effects[PlayerOptions::EFFECT_SQUARE_Z_OFFSET]))) / 
 			(arrow_spacing+(effects[PlayerOptions::EFFECT_SQUARE_Z_PERIOD]*arrow_spacing))) );
 		zpos += (effects[PlayerOptions::EFFECT_SQUARE_Z] * arrow_spacing * 0.5f) * result;
+	}
+	if(effects[PlayerOptions::EFFECT_BOUNCE_Z] != 0.f)
+	{
+		float bounce_amt = fabsf( Rage::FastSin( ( (y_offset + (1.0f * (effects[PlayerOptions::EFFECT_BOUNCE_Z_OFFSET]) ) ) / 
+			( 60 + (effects[PlayerOptions::EFFECT_BOUNCE_Z_PERIOD]*60) ) ) ) );
+		
+		zpos += effects[PlayerOptions::EFFECT_BOUNCE_Z] * arrow_spacing * 0.5f * bounce_amt;
 	}
 	return zpos;
 }
@@ -717,22 +909,57 @@ float ArrowDefects::get_rotation_y(float y_offset)
 	return 0.f;
 }
 
-float ArrowDefects::get_zoom()
+float ArrowDefects::get_zoom(size_t col, float y_offset)
 {
+	float zoom = 1.f;
+	if( m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_INNER] != 0 || m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OUTER] != 0 )
+	{
+		float sine = Rage::FastSin(((y_offset+(100.0f*(m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OFFSET])))/
+			(0.4f*(arrow_spacing+(m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_PERIOD]*arrow_spacing)))));
+		
+		zoom *= (sine*(m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OUTER]*0.5f))+get_pulse_inner();
+	}
+	if(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT] != 0.f && y_offset >= 0.f )
+	{
+		zoom *= 1/(1+(y_offset*(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_MULT]/100.0f)));
+	}
+	if(m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR] != 0.f && y_offset >= 0.f )
+	{
+		zoom += y_offset*(0.5f*m_options->m_fEffects[PlayerOptions::EFFECT_SHRINK_TO_LINEAR]/arrow_spacing);
+	}
 	float tiny_percent= m_options->m_fEffects[PlayerOptions::EFFECT_TINY];
 	if(tiny_percent != 0.f)
 	{
 		tiny_percent= std::pow(.5f, tiny_percent);
-		return tiny_percent;
+		zoom *= tiny_percent;
 	}
-	return 1.f;
+	if( m_options->m_fTiny[col] != 0 )
+	{
+		tiny_percent = powf( 0.5f, m_options->m_fTiny[col] );
+		zoom *= tiny_percent;
+	}
+	return zoom;
+}
+
+float ArrowDefects::get_pulse_inner()
+{
+	float pulse_inner = 1.0f;
+	if( m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_INNER] != 0 || m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_OUTER] != 0 )
+	{
+		pulse_inner = ((m_options->m_fEffects[PlayerOptions::EFFECT_PULSE_INNER]*0.5f)+1);
+		if (pulse_inner == 0.f)
+		{
+			pulse_inner = 0.01f;
+		}
+	}
+	return pulse_inner;
 }
 
 void ArrowDefects::get_glow_alpha(size_t col, float y_offset,
 	Rage::transform& trans)
 {
 	float offset_with_tipsy= get_y_pos(col, y_offset);
-	float percent_visible= get_percent_visible(offset_with_tipsy);
+	float percent_visible= get_percent_visible(offset_with_tipsy, col, y_offset);
 	float const dist_from_half= fabsf(percent_visible - .5f);
 	// Logic that looked at fDrawDistanceBeforeTargetsPixels removed because
 	// when I put a break point in, it never triggered. -Kyz
@@ -752,11 +979,15 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 	trans.rot.x= 0.f;
 	trans.rot.y= get_rotation_y(y_offset);
 	trans.rot.z= 0.f;
-	trans.zoom.x= trans.zoom.y= trans.zoom.z= get_zoom();
+	trans.zoom.x= trans.zoom.y= trans.zoom.z= get_zoom(col, y_offset);
 	if(effects[PlayerOptions::EFFECT_ROLL] != 0.f)
 	{
 		trans.rot.x= Rage::DegreesToRadians(
 			effects[PlayerOptions::EFFECT_ROLL] * y_offset * .5f);
+	}
+	if(m_options->m_fConfusionZ[col] != 0.f)
+	{
+		trans.rot.z+= m_options->m_fConfusionZ[col];
 	}
 	if(effects[PlayerOptions::EFFECT_CONFUSION_OFFSET] != 0.f)
 	{
@@ -767,6 +998,10 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 		trans.rot.z-= fmodf(m_music_beat *
 			effects[PlayerOptions::EFFECT_CONFUSION], 2.0 * Rage::PI);
 	}
+	if(m_options->m_fConfusionX[col] != 0.f)
+	{
+		trans.rot.x+= m_options->m_fConfusionX[col];
+	}
 	if(effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET] != 0.f)
 	{
 		trans.rot.x+= effects[PlayerOptions::EFFECT_CONFUSION_X_OFFSET];
@@ -775,6 +1010,10 @@ void ArrowDefects::get_transform(float note_beat, float y_offset,
 	{
 		trans.rot.x-= fmodf(m_music_beat *
 			effects[PlayerOptions::EFFECT_CONFUSION_X], 2.0 * Rage::PI);
+	}
+	if(m_options->m_fConfusionY[col] != 0.f)
+	{
+		trans.rot.y+= m_options->m_fConfusionY[col];
 	}
 	if(effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET] != 0.f)
 	{
@@ -802,6 +1041,7 @@ void ArrowDefects::get_transform_with_glow_alpha(float note_beat,
 void ArrowDefects::hold_render_transform(float y_offset, size_t col,
 	Rage::transform& trans)
 {
+	float const* effects= m_options->m_fEffects;
 	trans.pos.x= get_move_x(col) + get_x_pos(col, y_offset);
 	// get_y_pos is passed a y offset of 0 because the hold rendering logic
 	// applies the reverse shift. -Kyz
@@ -810,8 +1050,22 @@ void ArrowDefects::hold_render_transform(float y_offset, size_t col,
 	trans.rot.x= 0.f;
 	trans.rot.y= get_rotation_y(y_offset);
 	trans.rot.z= 0.f;
-	trans.zoom.x= trans.zoom.y= trans.zoom.z= get_zoom();
+	trans.zoom.x= trans.zoom.y= trans.zoom.z= get_zoom(col, y_offset);
 	get_glow_alpha(col, y_offset, trans);
+	
+	if(m_options->m_fConfusionY[col] != 0.f)
+	{
+		trans.rot.y+= m_options->m_fConfusionY[col];
+	}
+	if(effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET] != 0.f)
+	{
+		trans.rot.y+= effects[PlayerOptions::EFFECT_CONFUSION_Y_OFFSET];
+	}
+	if(effects[PlayerOptions::EFFECT_CONFUSION_Y] != 0.f)
+	{
+		trans.rot.y-= fmodf(m_music_beat *
+			effects[PlayerOptions::EFFECT_CONFUSION_Y], 2.0 * Rage::PI);
+	}
 }
 
 float ArrowDefects::get_center_line()
@@ -828,10 +1082,17 @@ float ArrowDefects:: get_hidden_sudden()
 		m_options->m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN];
 }
 
-float ArrowDefects::get_percent_visible(float y_offset)
+float ArrowDefects::get_percent_visible(float y_pos_without_reverse, size_t col, float y_offset)
 {
-	float dist_from_center_line= y_offset - get_center_line();
-	if(y_offset < 0)
+	float dist_from_center_line= y_pos_without_reverse - get_center_line();
+	
+	float y_pos;
+	if( m_options->m_bStealthType == true )
+		y_pos = y_offset;
+	else
+		y_pos = y_pos_without_reverse;
+	
+	if(y_pos < 0 && m_options->m_bStealthPastReceptors == false)
 	{
 		return 1.f;
 	}
@@ -839,7 +1100,7 @@ float ArrowDefects::get_percent_visible(float y_offset)
 	float visible_adjust= 0;
 	if(appearances[PlayerOptions::APPEARANCE_HIDDEN] != 0.f)
 	{
-		float hidden_visible_adjust= Rage::scale(y_offset, m_hidden_start_line,
+		float hidden_visible_adjust= Rage::scale(y_pos, m_hidden_start_line,
 			m_hidden_end_line, 0.f, -1.f);
 		hidden_visible_adjust= Rage::clamp(hidden_visible_adjust, -1.f, 0.f);
 		visible_adjust+= appearances[PlayerOptions::APPEARANCE_HIDDEN] *
@@ -847,13 +1108,14 @@ float ArrowDefects::get_percent_visible(float y_offset)
 	}
 	if(appearances[PlayerOptions::APPEARANCE_SUDDEN] != 0.f)
 	{
-		float sudden_visible_adjust= Rage::scale(y_offset, m_sudden_start_line,
+		float sudden_visible_adjust= Rage::scale(y_pos, m_sudden_start_line,
 			m_sudden_end_line, -1.f, 0.f);
 		sudden_visible_adjust= Rage::clamp(sudden_visible_adjust, -1.f, 0.f);
 		visible_adjust+= appearances[PlayerOptions::APPEARANCE_SUDDEN] *
 			sudden_visible_adjust;
 	}
 	visible_adjust-= appearances[PlayerOptions::APPEARANCE_STEALTH];
+	visible_adjust-= m_options->m_fStealth[col];
 	if(appearances[PlayerOptions::APPEARANCE_BLINK] != 0.f)
 	{
 		float blink= Rage::FastSin(ArrowDefects::get_time() * 10);
@@ -875,9 +1137,9 @@ float ArrowDefects::get_field_y()
 	return (m_receptor_pos_normal + m_receptor_pos_reverse) * .5f;
 }
 
-float ArrowDefects::get_receptor_alpha()
+float ArrowDefects::get_receptor_alpha(size_t col)
 {
-	return Rage::clamp(1.f - m_options->m_fDark, 0.f, 1.f);
+	return Rage::clamp(1.f - m_options->m_fDark - m_options->m_fDarks[col], 0.f, 1.f);
 }
 
 float ArrowDefects::get_reverse_offset()

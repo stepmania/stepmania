@@ -240,6 +240,7 @@ list(APPEND SM_DATA_REST_HPP
   "LyricsLoader.h"
   "ModsGroup.h"
   "ModValue.h"
+  "ModValueInternal.h"
   "NoteSkin.h"
   "NoteTypes.h"
   "OptionRowHandler.h"

@@ -252,18 +252,23 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 
 	/* Possibly apply debounce,
 	 * If the input was coin, possibly apply distinct coin debounce in the else below. */
-	if (! INPUTMAPPER->DeviceToGame(di, gi) || gi.button != GAME_BUTTON_COIN )
+	// If mouse wheel events are debounced, then scrolling the wheel quickly
+	// won't trigger events faster -Kyz
+	if(!di.IsMouse())
 	{
-		/* If the last IET_FIRST_PRESS or IET_RELEASE event was sent too recently,
-		 * wait a while before sending it. */
-		if( now - bs.m_LastReportTime < g_fInputDebounceTime )
+		if (! INPUTMAPPER->DeviceToGame(di, gi) || gi.button != GAME_BUTTON_COIN )
 		{
-			return;
-		}
-	} else {
-		if( now - bs.m_LastReportTime < PREFSMAN->m_fDebounceCoinInputTime )
-		{
-			return;
+			/* If the last IET_FIRST_PRESS or IET_RELEASE event was sent too recently,
+			 * wait a while before sending it. */
+			if( now - bs.m_LastReportTime < g_fInputDebounceTime )
+			{
+				return;
+			}
+		} else {
+			if( now - bs.m_LastReportTime < PREFSMAN->m_fDebounceCoinInputTime )
+			{
+				return;
+			}
 		}
 	}
 

@@ -78,6 +78,13 @@ inline Vector3 operator/(Vector3 lhs, float rhs)
 	return lhs;
 }
 
+inline void avg_vec3(Vector3 const& lhs, Vector3 const& rhs, Vector3& res)
+{
+	res.x= (lhs.x + rhs.x) * .5;
+	res.y= (lhs.y + rhs.y) * .5;
+	res.z= (lhs.z + rhs.z) * .5;
+}
+
 // Little known fact: There are two ways to multiply two vectors:
 // Cross product, and dot product.  Because they are both vector
 // multiplication, neither of them should use the * operator.

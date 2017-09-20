@@ -594,70 +594,62 @@ void Profile::SetDefaultModifiers( const Game* pGameType, const std::string &sMo
 
 void Profile::get_preferred_noteskin(StepsType stype, std::string& skin) const
 {
-	auto entry= m_preferred_noteskins.find(stype);
-	if(entry != m_preferred_noteskins.end())
+	if(m_preferred_noteskins.empty())
 	{
-		if(!NOTESKIN->skin_supports_stepstype(entry->second, stype))
+		skin= NOTESKIN->get_first_skin_name_for_stepstype(stype);
+		return;
+	}
+	if(stype == StepsType_Invalid)
+	{
+		skin= m_preferred_noteskins[0];
+		return;
+	}
+	for(auto&& entry : m_preferred_noteskins)
+	{
+		if(NOTESKIN->skin_supports_stepstype(entry, stype))
 		{
-			entry= m_preferred_noteskins.end();
+			skin= entry;
+			return;
 		}
 	}
-	if(entry == m_preferred_noteskins.end())
-	{
-		// Try to find the skin that they use the most and use it.
-		// Go through m_preferred_noteskins, find the ones that support stype,
-		// and sort them by how many times they occur in m_preferred_noteskins.
-		// Use the one that is already used the most.
-		std::map<std::string, int> skin_counts;
-		for(auto&& pref_skin : m_preferred_noteskins)
-		{
-			auto entry= skin_counts.find(pref_skin.second);
-			if(entry != skin_counts.end())
-			{
-				++(entry->second);
-			}
-			else
-			{
-				if(NOTESKIN->skin_supports_stepstype(pref_skin.second, stype))
-				{
-					skin_counts[pref_skin.second]= 1;
-				}
-			}
-		}
-		if(skin_counts.empty())
-		{
-			skin= NOTESKIN->get_first_skin_name_for_stepstype(stype);
-		}
-		else
-		{
-			int highest_count= 0;
-			for(auto&& count : skin_counts)
-			{
-				if(count.second > highest_count)
-				{
-					highest_count= count.second;
-					skin= count.first;
-				}
-			}
-		}
-	}
-	else
-	{
-		skin= entry->second;
-	}
+	skin= NOTESKIN->get_first_skin_name_for_stepstype(stype);
 }
 
-bool Profile::set_preferred_noteskin(StepsType stype, std::string const& skin)
+bool Profile::set_preferred_noteskin(std::string const& skin)
 {
 	if(NOTESKIN->named_skin_exists(skin))
 	{
-		m_preferred_noteskins[stype]= skin;
+		if(m_preferred_noteskins.size() > 0 && m_preferred_noteskins[0] == skin)
+		{
+			return true;
+		}
+		for(auto entry= m_preferred_noteskins.begin(); entry != m_preferred_noteskins.end(); ++entry)
+		{
+			if(*entry == skin)
+			{
+				m_preferred_noteskins.erase(entry);
+				break;
+			}
+		}
+		m_preferred_noteskins.insert(m_preferred_noteskins.begin(), skin);
 		return true;
 	}
 	return false;
 }
 
-LuaReference Profile::get_noteskin_params(std::string const& skin, StepsType stype) const
+void Profile::unprefer_noteskin(std::string const& skin)
+{
+	for(auto entry= m_preferred_noteskins.begin(); entry != m_preferred_noteskins.end(); ++entry)
+	{
+		if(*entry == skin)
+		{
+			m_preferred_noteskins.erase(entry);
+			return;
+		}
+	}
+}
+
+LuaReference Profile::get_noteskin_params(std::string const& skin) const
 {
 	auto skin_entry= m_noteskin_params.find(skin);
 	if(skin_entry == m_noteskin_params.end())
@@ -666,30 +658,13 @@ LuaReference Profile::get_noteskin_params(std::string const& skin, StepsType sty
 		ret.SetFromNil();
 		return ret;
 	}
-	auto stype_entry= skin_entry->second.find(stype);
-	if(stype_entry == skin_entry->second.end())
-	{
-		stype_entry= skin_entry->second.find(StepsType_Invalid);
-		if(stype_entry == skin_entry->second.end())
-		{
-			stype_entry= skin_entry->second.begin();
-			if(stype_entry == skin_entry->second.end())
-			{
-				LuaReference ret;
-				ret.SetFromNil();
-				return ret;
-			}
-			return stype_entry->second;
-		}
-		return stype_entry->second;
-	}
-	return stype_entry->second;
+	return skin_entry->second;
 }
 
-void Profile::set_noteskin_params(std::string const& skin, StepsType stype, LuaReference& params)
+void Profile::set_noteskin_params(std::string const& skin, LuaReference& params)
 {
 	auto& skin_entry= m_noteskin_params[skin];
-	skin_entry[stype]= params;
+	skin_entry= params;
 }
 
 bool Profile::IsCodeUnlocked( std::string sUnlockEntryID ) const
@@ -1657,17 +1632,16 @@ void Profile::save_noteskin_params_to_dir(std::string const& dir) const
 	lua_State* L= LUA->Get();
 	lua_createtable(L, 0, m_noteskin_params.size());
 	int param_table_index= lua_gettop(L);
+	// Since noteskin names are forced lowercase when loading, even if the user
+	// has a noteskin named "VERSION", it will show up in-game as "version",
+	// and won't conflict with the version tag. -Kyz
+	lua_pushstring(L, "VERSION");
+	lua_pushstring(L, "5.1.-4");
+	lua_settable(L, param_table_index);
 	for(auto&& skin_entry : m_noteskin_params)
 	{
 		lua_pushstring(L, skin_entry.first.c_str());
-		lua_createtable(L, 0, skin_entry.second.size());
-		int skin_table_index= lua_gettop(L);
-		for(auto&& stype_entry : skin_entry.second)
-		{
-			Enum::Push(L, stype_entry.first);
-			stype_entry.second.PushSelf(L);
-			lua_settable(L, skin_table_index);
-		}
+		skin_entry.second.PushSelf(L);
 		lua_settable(L, param_table_index);
 	}
 	LuaHelpers::save_lua_table_to_file(L, param_table_index, dir + NOTESKIN_PARAM_LUA);
@@ -1736,14 +1710,12 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	}
 
 	{
-		vector<std::string> noteskin_entries;
+		XNode* preferred_noteskins= pGeneralDataNode->AppendChild("PreferredNoteskins");
 		for(auto&& entry : m_preferred_noteskins)
 		{
-			auto stype_str= StepsTypeToString(entry.first);
-			noteskin_entries.push_back(stype_str + "," + entry.second);
+			XNode* entry_node= preferred_noteskins->AppendChild("NoteSkin");
+			entry_node->AppendAttr(XNode::TEXT_ATTRIBUTE, entry);
 		}
-		auto as_one_string = Rage::join(";", noteskin_entries);
-		pGeneralDataNode->AppendChild("PreferredNoteskins", as_one_string);
 	}
 
 	{
@@ -1893,9 +1865,32 @@ void Profile::load_noteskin_params_from_dir(std::string const& dir)
 	lua_State* L= LUA->Get();
 	if(LuaHelpers::run_script_file_in_state(L, dir + NOTESKIN_PARAM_LUA, 1, true))
 	{
+		// 5.1.-3 format:
+		// {
+		//   skin_name= {
+		//     steps_type= {params},
+		//     ...
+		//   },
+		//   ...
+		// }
+		// 5.1.-4 format:
+		// {
+		//   skin_name= {params},
+		//   ...
+		// }
+		// -Kyz
 		int param_table_index= lua_gettop(L);
 		if(lua_type(L, param_table_index) == LUA_TTABLE)
 		{
+			lua_getfield(L, param_table_index, "VERSION");
+			bool is_old_version= true;
+			if(lua_type(L, -1) == LUA_TSTRING)
+			{
+				// spoiler: Only one format change, so it doesn't matter what the
+				// version string actually says. -Kyz
+				is_old_version= false;
+			}
+			lua_pop(L, 1);
 			lua_pushnil(L);
 			while(lua_next(L, param_table_index) != 0)
 			{
@@ -1904,16 +1899,37 @@ void Profile::load_noteskin_params_from_dir(std::string const& dir)
 					lua_type(L, skin_table_index) == LUA_TTABLE)
 				{
 					std::string skin_name= lua_tostring(L, skin_table_index-1);
-					lua_pushnil(L);
-					while(lua_next(L, skin_table_index) != 0)
+					if(is_old_version)
 					{
-						StepsType stype= Enum::Check<StepsType>(L, -2, true, true);
+						// 5.1.-3 format params.  Load whatever stepstype is first.
+						lua_pushnil(L);
+						int has_others= lua_next(L, skin_table_index);
 						LuaReference params;
 						params.SetFromStack(L);
-						set_noteskin_params(skin_name, stype, params);
+						set_noteskin_params(skin_name, params);
+						if(has_others == 0)
+						{
+							// Only pop the skin table.
+							lua_pop(L, 1);
+						}
+						else
+						{
+							// Pop the key that lua_next pushed, and the skin table.
+							lua_pop(L, 2);
+						}
+					}
+					else
+					{
+						// 5.1.-4 format params.
+						LuaReference params;
+						params.SetFromStack(L);
+						set_noteskin_params(skin_name, params);
 					}
 				}
-				lua_pop(L, 1);
+				else
+				{
+					lua_pop(L, 1);
+				}
 			}
 		}
 	}
@@ -1977,26 +1993,19 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	}
 
 	{
-		std::string pref_noteskins;
-		pNode->GetChildValue("PreferredNoteskins", pref_noteskins);
-		auto split_by_stype = Rage::split(pref_noteskins, ";");
-		for(auto&& entry : split_by_stype)
+		const XNode* preferred_noteskins= pNode->GetChild("PreferredNoteskins");
+		if(preferred_noteskins)
 		{
-			auto parts = Rage::split(entry, ",");
-			if(parts.size() != 2)
+			for(auto const* skin : *preferred_noteskins)
 			{
-				continue;
+				if(skin->GetName() != "NoteSkin")
+				{
+					continue;
+				}
+				std::string name;
+				skin->GetTextValue(name);
+				m_preferred_noteskins.push_back(name);
 			}
-			std::string lowerParts = Rage::make_lower(parts[0]);
-			Rage::replace(lowerParts, '_', '-');
-			// I hate that StepsTypeToString and StringToStepsType don't used the
-			// same formatting. -Kyz
-			StepsType stype= GAMEMAN->StringToStepsType(lowerParts);
-			if(stype == StepsType_Invalid)
-			{
-				continue;
-			}
-			set_preferred_noteskin(stype, parts[1]);
 		}
 	}
 
@@ -2914,17 +2923,16 @@ public:
 		auto& preferred_noteskins= p->get_all_preferred_noteskins();
 		lua_createtable(L, 0, preferred_noteskins.size());
 		int skin_table_index= lua_gettop(L);
-		for(auto&& stype_entry : preferred_noteskins)
+		for(size_t i= 0; i < preferred_noteskins.size(); ++i)
 		{
-			Enum::Push(L, stype_entry.first);
-			lua_pushstring(L, stype_entry.second.c_str());
-			lua_settable(L, skin_table_index);
+			lua_pushstring(L, preferred_noteskins[i].c_str());
+			lua_rawseti(L, skin_table_index, i+1);
 		}
 		return 1;
 	}
 	static int get_preferred_noteskin(T* p, lua_State* L)
 	{
-		StepsType stype= Enum::Check<StepsType>(L, 1);
+		StepsType stype= Enum::Check<StepsType>(L, 1, true, true);
 		std::string skin;
 		p->get_preferred_noteskin(stype, skin);
 		lua_pushstring(L, skin.c_str());
@@ -2932,30 +2940,32 @@ public:
 	}
 	static int set_preferred_noteskin(T* p, lua_State* L)
 	{
-		StepsType stype= Enum::Check<StepsType>(L, 1);
-		std::string skin= SArg(2);
-		if(!p->set_preferred_noteskin(stype, skin))
+		std::string skin= SArg(1);
+		if(!p->set_preferred_noteskin(skin))
 		{
 			LuaHelpers::ReportScriptError("The noteskin '" + skin + "' does not exist.");
 		}
 		COMMON_RETURN_SELF;
 	}
+	static int unprefer_noteskin(T* p, lua_State* L)
+	{
+		p->unprefer_noteskin(SArg(1));
+		COMMON_RETURN_SELF;
+	}
 	static int get_noteskin_params(T* p, lua_State* L)
 	{
 		std::string skin= SArg(1);
-		StepsType stype= Enum::Check<StepsType>(L, 2, true, true);
-		LuaReference params= p->get_noteskin_params(skin, stype);
+		LuaReference params= p->get_noteskin_params(skin);
 		params.PushSelf(L);
 		return 1;
 	}
 	static int set_noteskin_params(T* p, lua_State* L)
 	{
 		std::string skin= SArg(1);
-		StepsType stype= Enum::Check<StepsType>(L, 2, true, true);
 		LuaReference params;
-		lua_pushvalue(L, 3);
+		lua_pushvalue(L, 2);
 		params.SetFromStack(L);
-		p->set_noteskin_params(skin, stype, params);
+		p->set_noteskin_params(skin, params);
 		COMMON_RETURN_SELF;
 	}
 
@@ -3114,6 +3124,7 @@ public:
 		ADD_METHOD( GetHighScoreList );
 		ADD_METHOD( GetCategoryHighScoreList );
 		ADD_GET_SET_METHODS(preferred_noteskin);
+		ADD_METHOD(unprefer_noteskin);
 		ADD_GET_SET_METHODS(noteskin_params);
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );

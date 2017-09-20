@@ -140,28 +140,43 @@ return function(button_list, stepstype, skin_parameters)
 	-- or one of the values is not a number, the default value will
 	-- be used.
 	local hold_length= {
-		-- start_note_offset is where to start drawing the hold body,
-		-- relative to the note the head occurs at.
-		start_note_offset= -.5,
-		-- end_note_offset is where to stop drawing the hold body,
-		-- relative to the note the hold ends at.
-		end_note_offset= .5,
-		-- head_pixs is how many pixels tall the head section of the
-		-- texture is.
-		head_pixs= 32,
-		-- body_pixs is how many pixels tall one body section is.
-		-- Remember that the body occurs twice, so this is only half
-		-- the distance from the end of the head to the beginning of
-		-- the tail.
-		-- The body occurs twice so that part of the texture can be
-		-- repeated when rendering a long hold.
-		body_pixs= 32,
-		-- tail_pixs is how many pixels tall the tail section of the
-		-- texture is.
-		tail_pixs= 32,
-		-- If the hold texture is marked as doubleres, then head_pixs, body_pixs,
-		-- and tail_pixs need to be half the pixel height each part has in the
-		-- texture.
+		-- See Docs/Themerdocs/5.1_incompatibilities/noteskin_explanation_pics/
+		-- for pictures.
+		-- Docs/Themerdocs/Examples/holds_demo is another example noteskin,
+		-- showing different variants of using the hold length fields.
+		-- pixels_before_note is the number of pixels between the top of the hold
+		-- texture and where the note should be.
+		pixels_before_note= 32,
+		-- topcap_pixels is the number of pixels in the texture before the body
+		-- section that will be repeated.
+		-- If topcap_pixels is greater than pixels_before_note, then part of the
+		-- topcap will be after the note.
+		topcap_pixels= 32,
+		-- body_pixels is the length of the body section.
+		-- If the body of your hold has a repeating pattern instead of being a
+		-- simple color, you need two body sections and body_pixels is the length
+		-- of one section.
+		body_pixels= 64,
+		-- bottomcap_pixels is the number of pixels after the body section.
+		-- Similar to topcap_pixels, if bottomcap_pixels is greater than
+		-- pixels_after_note, then that part of the bottomcap will be drawn
+		-- above the row the hold ends on.
+		bottomcap_pixels= 32,
+		-- pixels_after_note is similar to pixels_before_note.
+		pixels_after_note= 32,
+		-- If your hold body is just a simple color and does not vary along its
+		-- length, then it does not need two body sections.
+		-- This reduces the number of verts the engine needs to render, because
+		-- of how the texture is repeated.
+		-- needs_jumpback defaults to true.
+		needs_jumpback= false,
+
+		-- If the hold texture is marked as doubleres, then all pixel numbers
+		-- need to be half the pixel height each part has in the texture.
+
+		-- start_note_offset, end_note_offset, head_pixs, body_pixs, and
+		-- tail_pixs are translated into the equivalent values in the new system,
+		-- so noteskins made for 5.1.-3 should work the same as before.
 	}
 
 	-- Taps are handled by a quantized_tap structure.  A quantized_tap contains

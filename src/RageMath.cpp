@@ -564,6 +564,75 @@ void RageBezier2D::SetFromBezier(
 	m_Y.SetFromBezier( fC1Y, fC2Y, fC3Y, fC4Y );
 }
 
+// A line equation of the form "Ax + By = C".
+// Start and end points are irrelevant to what it will be used for. -Kyz
+struct abc_line
+{
+	float a;
+	float b;
+	float c;
+};
+
+struct abc_poly
+{
+	vector<abc_line> edges;
+	float centroid_x;
+	float centroid_y;
+};
+
+void points_to_abc_line(Rage::Vector2 const& pa, Rage::Vector2 const& pb, abc_line& line)
+{
+	Rage::Vector2 v= (pb - pa).GetNormalized();
+	if(std::isnan(v.x) || !std::isfinite(v.x))
+	{
+		line.a= 0;
+		line.b= 0;
+		line.c= 0;
+		return;
+	}
+	line.a= v.y;
+	line.b= v.x;
+	line.c= (v.y * pa.x) + (v.x * pa.y);
+}
+
+bool point_below_abc_line(float x, float y, abc_line const& line)
+{
+	float point_c= (x * line.a) + (y * line.b);
+	return point_c > line.c;
+}
+
+void points_to_abc_poly(vector<Rage::Vector2> const& points, abc_poly& poly)
+{
+	poly.centroid_x= points[0].x;
+	poly.centroid_y= points[0].y;
+	size_t num_points= points.size();
+	poly.edges.resize(num_points);
+	for(size_t p= 1; p < num_points; ++p)
+	{
+		poly.centroid_x+= points[p].x;
+		poly.centroid_y+= points[p].y;
+		points_to_abc_line(points[p-1], points[p], poly.edges[p-1]);
+	}
+	points_to_abc_line(points[num_points-1], points[0], poly.edges[num_points-1]);
+	float npr= 1.f / static_cast<float>(num_points);
+	poly.centroid_x*= npr;
+	poly.centroid_y*= npr;
+}
+
+bool point_inside_poly(float x, float y, std::vector<Rage::Vector2> const& poly)
+{
+	abc_poly conv_poly;
+	points_to_abc_poly(poly, conv_poly);
+	for(auto&& edge : conv_poly.edges)
+	{
+		if(point_below_abc_line(x, y, edge) != point_below_abc_line(conv_poly.centroid_x, conv_poly.centroid_y, edge))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 #include "LuaBinding.h"
 
 struct LunaRageQuadratic : Luna<RageQuadratic>

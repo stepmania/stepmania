@@ -50,11 +50,6 @@ notefield_draw_order= {
 	over_field= 450,
 }
 
-function ModifiableValue:set_value(value)
-	if not self then return end
-	self:add_mod{name= "base_value", value}
-end
-
 -- The read_bpm arg to set_speed_mod is optional.  If it is exists,
 -- the speed is treated as an m-mod.  The read bpm for a chart can be fetched
 -- with PlayerState:get_read_bpm() or calculated by the theme.
@@ -99,116 +94,123 @@ function NoteField:set_speed_mod(constant, speed, read_bpm)
 	end
 	-- Each column has independent modifier state, so the speed mod needs to be
 	-- set in each column.
+	local speed_mod= {target= "speed", name= "speed", {"*", mod_input, mod_mult}}
 	for col in ivalues(self:get_columns()) do
 		-- The speed modifier is named so that repeated calls to
 		-- set_speed_mod do not add stacking speed mods.
-		col:get_speed_mod():add_mod{name= "speed", {"*", mod_input, mod_mult}}
+		col:set_permanent_mods{speed_mod}
 		col:set_show_unjudgable_notes(show_unjudgable)
 		col:set_speed_segments_enabled(speed_segments_enabled)
 		col:set_scroll_segments_enabled(scroll_segments_enabled)
 	end
+	return self
 end
 
 function NoteField:set_rev_offset_base(revoff)
 	if not revoff then return end
 	for col in ivalues(self:get_columns()) do
-		col:get_reverse_offset_pixels():set_value(revoff)
+		col:set_base_values{{target= "revserse_offset", value= revoff}}
 	end
+	return self
 end
 
 function NoteField:set_reverse_base(rev)
 	for col in ivalues(self:get_columns()) do
-		col:get_reverse_scale():set_value(rev)
+		col:set_base_values{{target= "revserse", value= rev}}
 	end
-end
-
-function NoteField:clear_column_mod(mod_field_name, mod_name)
-	for col in ivalues(self:get_columns()) do
-		col[mod_field_name](col):remove_mod(mod_name)
-	end
-end
-
-local function set_alpha_glow_mods(self, alpha_mod, glow_mod)
-	for col in ivalues(self:get_columns()) do
-		col:get_note_alpha():add_mod(alpha_mod)
-		if glow_mod then
-			col:get_note_glow():add_mod(glow_mod)
-		elseif alpha_mod.name then
-			col:get_note_glow():remove_mod(alpha_mod.name)
-		end
-	end
+	return self
 end
 
 function NoteField:set_hidden_mod(line, dist, add_glow)
 	local half_dist= dist / 2
-	local alpha_mod
-	local glow_mod
 	if add_glow then
-		alpha_mod= {
-			name= "hidden", {"phase", "y_offset", {
-				default= {0, 0, 0, 0},
-				{-32, line, 0, -1},
-		}}}
-		glow_mod= {
-			name= "hidden", {"phase", "y_offset", {
-				default= {0, 0, 0, 0},
-				 {line - half_dist, line, 1/half_dist, 0},
-				 {line, line + half_dist, -1/half_dist, 1},
-		}}}
+		local mods= {
+			{
+				target= "note_alpha", name= "hidden", {
+					"phase", "y_offset", {default= {0, 0, 0, 0}, {-32, line, 0, -1},
+			}}},
+			{
+				target= "note_glow", name= "hidden", {
+					"phase", "y_offset", {default= {0, 0, 0, 0},
+						{line - half_dist, line, 1/half_dist, 0},
+						{line, line + half_dist, -1/half_dist, 1},
+			}}},
+		}
+		for col in ivalues(self:get_columns()) do
+			col:set_permanent_mods(mods)
+		end
 	else
-		alpha_mod= {
-			name= "hidden", {"phase", "y_offset", {
+		local mods= {
+			{
+			target= "note_alpha", name= "hidden", {"phase", "y_offset", {
 				default= {0, 0, 0, 0},
 				 {-32, 0, 0, -1},
 				 {0, line - half_dist, 0, -1},
 				 {line - half_dist, line + half_dist, 1/dist, -1},
-		}}}
+			}}},
+		}
+		for col in ivalues(self:get_columns()) do
+			col:set_permanent_mods(mods)
+			col:remove_permanent_mods{{target= "note_glow", name= "hidden"}}
+		end
 	end
-	set_alpha_glow_mods(self, alpha_mod, glow_mod)
+	return self
 end
 
 function NoteField:set_sudden_mod(line, dist, add_glow)
 	local half_dist= dist / 2
-	local alpha_mod
-	local glow_mod
 	if add_glow then
-		alpha_mod= {
-			name= "sudden", {"phase", "y_offset", {
+		local mods= {
+		{
+			target= "note_alpha", name= "sudden", {"phase", "y_offset", {
 				 default= {0, 0, 0, 0},
 				 {line, math.huge, 0, -1},
-		}}}
-		glow_mod= {
-			name= "sudden", {"phase", "y_offset", {
+		}}},
+		{
+			target= "note_glow", name= "sudden", {"phase", "y_offset", {
 				 default= {0, 0, 0, 0},
 				 {line - half_dist, line, 1/half_dist, 0},
 				 {line, line + half_dist, -1/half_dist, 1},
-		}}}
+		}}},
+		}
+		for col in ivalues(self:get_columns()) do
+			col:set_permanent_mods(mods)
+		end
 	else
-		alpha_mod= {
-			name= "sudden", {"phase", "y_offset", {
+		local mods= {
+		{
+			target= "note_alpha", name= "sudden", {"phase", "y_offset", {
 				 default= {0, 0, 0, 0},
 				 {line - half_dist, line + half_dist, -1/dist, 0},
 				 {line + half_dist, math.huge, 0, -1},
-		}}}
+		}}},
+		}
+		for col in ivalues(self:get_columns()) do
+			col:set_permanent_mods(mods)
+			col:remove_permanent_mods{{target= "note_glow", name= "sudden"}}
+		end
 	end
-	set_alpha_glow_mods(self, alpha_mod, glow_mod)
+	return self
 end
 
 function NoteField:clear_hidden_mod()
-	self:clear_column_mod("get_note_alpha", "hidden")
-	self:clear_column_mod("get_note_glow", "hidden")
+	for col in ivalues(self:get_columns()) do
+		col:remove_permanent_mods{
+			{target= "note_glow", name= "hidden"},
+			{target= "note_alpha", name= "hidden"},
+		}
+	end
+	return self
 end
 
 function NoteField:clear_sudden_mod()
-	self:clear_column_mod("get_note_alpha", "sudden")
-	self:clear_column_mod("get_note_glow", "sudden")
-end
-
-function NoteField:all_columns_mod(mod_name, mod_function)
-	assert(NoteFieldColumn[mod_name], mod_name .. " is not a modifiable value.")
-	for i, col in ipairs(self:get_columns()) do
-		col[mod_name](col):add_mod(mod_function)
+	for col in ivalues(self:get_columns()) do
+		col:remove_permanent_mods{
+			{target= "note_glow", name= "sudden"},
+			{target= "note_alpha", name= "sudden"},
+		}
 	end
+	return self
 end
 
 function find_pactor_in_gameplay(screen_gameplay, pn)

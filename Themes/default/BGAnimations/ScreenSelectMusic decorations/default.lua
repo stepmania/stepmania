@@ -1,30 +1,11 @@
+reset_needs_defective_field_for_all_players()
+local curStage = GAMESTATE:GetCurrentStage();
+local curStageIndex = GAMESTATE:GetCurrentStageIndex();
 local t = LoadFallbackB();
 
--- Legacy StepMania 4 Function
-local function StepsDisplay(pn)
-	local function set(self, player)
-		self:SetFromGameState( player );
-	end
-
-	local t = Def.StepsDisplay {
-		InitCommand=cmd(Load,"StepsDisplay",GAMESTATE:GetPlayerState(pn););
-	};
-
-	if pn == PLAYER_1 then
-		t.CurrentStepsP1ChangedMessageCommand=function(self) set(self, pn); end;
-		t.CurrentTrailP1ChangedMessageCommand=function(self) set(self, pn); end;
-	else
-		t.CurrentStepsP2ChangedMessageCommand=function(self) set(self, pn); end;
-		t.CurrentTrailP2ChangedMessageCommand=function(self) set(self, pn); end;
-	end
-
-	return t;
-end
-t[#t+1] = StandardDecorationFromFileOptional("AlternateHelpDisplay","AlternateHelpDisplay");
-
 local function PercentScore(pn)
-	local t = LoadFont("Common normal")..{
-		InitCommand=cmd(zoom,0.625;shadowlength,1);
+	local t = LoadFont("_overpass Score")..{
+		InitCommand=cmd(zoom,1;diffuse,Color("Black");diffusealpha,0.75;);
 		BeginCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
 			local SongOrCourse, StepsOrTrail;
@@ -43,8 +24,6 @@ local function PercentScore(pn)
 				local diff = StepsOrTrail:GetDifficulty();
 				local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
 				local cd = GetCustomDifficulty(st, diff, courseType);
-				self:diffuse(CustomDifficultyToColor(cd));
-				self:shadowcolor(CustomDifficultyToDarkColor(cd));
 
 				if PROFILEMAN:IsPersistentProfile(pn) then
 					-- player profile
@@ -87,49 +66,37 @@ local function PercentScore(pn)
 	return t;
 end
 
--- Legacy StepMania 4 Function
-for pn in ivalues(PlayerNumber) do
-	local MetricsName = "StepsDisplay" .. PlayerNumberToString(pn);
-	t[#t+1] = StepsDisplay(pn) .. {
-		InitCommand=function(self) self:player(pn); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
-		PlayerJoinedMessageCommand=function(self, params)
-			if params.Player == pn then
-				self:visible(true);
-				(cmd(zoom,0;bounceend,0.3;zoom,1))(self);
-			end;
-		end;
-		PlayerUnjoinedMessageCommand=function(self, params)
-			if params.Player == pn then
-				self:visible(true);
-				(cmd(bouncebegin,0.3;zoom,0))(self);
-			end;
-		end;
+t[#t+1] = LoadActor(THEME:GetPathG("ScreenSelectMusic", "banner overlay")) .. {
+		 InitCommand=cmd(zoom,1;x,SCREEN_CENTER_X-228;y,SCREEN_CENTER_Y-165-11;draworder,47);
+		 OnCommand=cmd(zoomy,0;decelerate,0.3;zoomy,1;);
+		 OffCommand=cmd(decelerate,0.15;zoomx,0;);
 	};
-	if ShowStandardDecoration("PercentScore"..ToEnumShortString(pn)) then
-		t[#t+1] = StandardDecorationFromTable("PercentScore"..ToEnumShortString(pn), PercentScore(pn));
-	end;
-end
 
-t[#t+1] = StandardDecorationFromFileOptional("BannerFrame","BannerFrame");
-t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayFrameP1","PaneDisplayFrame");
-t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayFrameP2","PaneDisplayFrame");
-t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP1","PaneDisplayTextP1");
-t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP2","PaneDisplayTextP2");
-t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
 
-t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
-t[#t+1] = StandardDecorationFromFileOptional("BPMLabel","BPMLabel");
-t[#t+1] = StandardDecorationFromFileOptional("SegmentDisplay","SegmentDisplay");
---[[ t[#t+1] = StandardDecorationFromFileOptional("NegativeDisplay","NegativeDisplay") .. {
-}; --]]
+-- Genre/Artist data
+t[#t+1] = LoadActor(THEME:GetPathG("ScreenSelectMusic", "info pane")) .. {
+		InitCommand=cmd(horizalign,center;x,SCREEN_CENTER_X-228;y,SCREEN_CENTER_Y-75;zoom,1;);
+		OnCommand=function(self)
+			self:diffuse(ColorMidTone(StageToColor(curStage)));
+			self:zoomx(0):diffusealpha(0):decelerate(0.3):zoomx(1):diffusealpha(1);
+		end;
+		OffCommand=function(self)
+			self:sleep(0.3):decelerate(0.15):zoomx(0):diffusealpha(0);
+		end;
+		};
 
-t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
+t[#t+1] = Def.ActorFrame {
+    InitCommand=cmd(x,SCREEN_CENTER_X-330+6-138;draworder,126);
+    OnCommand=cmd(diffusealpha,0;smooth,0.3;diffusealpha,1;);
+    OffCommand=cmd(smooth,0.3;diffusealpha,0;);
+    -- Length
+	StandardDecorationFromFileOptional("SongTime","SongTime") .. {
 	SetCommand=function(self)
 		local curSelection = nil;
 		local length = 0.0;
 		if GAMESTATE:IsCourseMode() then
 			curSelection = GAMESTATE:GetCurrentCourse();
-			self:playcommand("Reset");
+			self:queuecommand("Reset");
 			if curSelection then
 				local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber());
 				if trail then
@@ -142,158 +109,344 @@ t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
 			end;
 		else
 			curSelection = GAMESTATE:GetCurrentSong();
-			self:playcommand("Reset");
+			self:queuecommand("Reset");
 			if curSelection then
 				length = curSelection:MusicLengthSeconds();
 				if curSelection:IsLong() then
-					self:playcommand("Long");
+					self:queuecommand("Long");
 				elseif curSelection:IsMarathon() then
-					self:playcommand("Marathon");
+					self:queuecommand("Marathon");
 				else
-					self:playcommand("Reset");
+					self:queuecommand("Reset");
 				end
 			else
 				length = 0.0;
-				self:playcommand("Reset");
+				self:queuecommand("Reset");
 			end;
 		end;
 		self:settext( SecondsToMSS(length) );
 	end;
-	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
-}
+    	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set");
+    	CurrentCourseChangedMessageCommand=cmd(queuecommand,"Set");
+    	CurrentTrailP1ChangedMessageCommand=cmd(queuecommand,"Set");
+    	CurrentTrailP2ChangedMessageCommand=cmd(queuecommand,"Set");
+    };
+};
+
+-- Course count and type
+t[#t+1] = Def.ActorFrame {
+    InitCommand=cmd(x,SCREEN_CENTER_X-200;draworder,126);
+    OnCommand=cmd(diffusealpha,0;smooth,0.3;diffusealpha,1;);
+    OffCommand=cmd(smooth,0.2;diffusealpha,0;);
+	LoadFont("Common Condensed") .. { 
+          InitCommand=cmd(horizalign,right;zoom,1.0;y,SCREEN_CENTER_Y-78+2;maxwidth,180;diffuse,color("#DFE2E9");visible,GAMESTATE:IsCourseMode(););
+          CurrentCourseChangedMessageCommand=cmd(queuecommand,"Set"); 
+          ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set"); 
+          SetCommand=function(self) 
+               local course = GAMESTATE:GetCurrentCourse(); 
+               if course then
+                    self:settext(course:GetEstimatedNumStages() .. " songs"); 
+                    self:queuecommand("Refresh");
+				else
+					self:settext("");
+					self:queuecommand("Refresh"); 	
+               end 
+          end; 
+		};
+};
+t[#t+1] = Def.ActorFrame {
+    InitCommand=cmd(x,SCREEN_CENTER_X+5;draworder,126);
+    OnCommand=cmd(diffusealpha,0;smooth,0.3;diffusealpha,1;);
+    OffCommand=cmd(smooth,0.2;diffusealpha,0;);
+	LoadFont("Common Condensed") .. { 
+          InitCommand=cmd(horizalign,right;zoom,1.0;y,SCREEN_CENTER_Y-78+2;maxwidth,180;diffuse,color("#DFE2E9");visible,GAMESTATE:IsCourseMode(););
+          CurrentCourseChangedMessageCommand=cmd(queuecommand,"Set"); 
+          ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set"); 
+          SetCommand=function(self) 
+               local course = GAMESTATE:GetCurrentCourse(); 
+               if course then
+                    self:settext(CourseTypeToLocalizedString(course:GetCourseType())); 
+                    self:queuecommand("Refresh");
+				else
+					self:settext("");
+					self:queuecommand("Refresh"); 	
+               end 
+          end; 
+		};
+};
+t[#t+1] = StandardDecorationFromFileOptional("CourseContentsList","CourseContentsList");
+
 
 if not GAMESTATE:IsCourseMode() then
-	local function CDTitleUpdate(self)
-		local song = GAMESTATE:GetCurrentSong();
-		local cdtitle = self:GetChild("CDTitle");
-		local height = cdtitle:GetHeight();
-		
-		if song then
-			if song:HasCDTitle() then
-				cdtitle:visible(true);
-				cdtitle:Load(song:GetCDTitlePath());
-			else
-				cdtitle:visible(false);
+
+-- P1 Difficulty Pane
+t[#t+1] = Def.ActorFrame {
+		InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(PLAYER_1);horizalign,center;x,SCREEN_CENTER_X-210-32;y,SCREEN_CENTER_Y+230+8;);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;smooth,0.4;diffusealpha,1;zoomy,1);
+		PlayerJoinedMessageCommand=function(self,param)
+			if param.Player == PLAYER_1 then
+				(cmd(visible,true;diffusealpha,0;linear,0.3;diffusealpha,1))(self);
 			end;
-		else
-			cdtitle:visible(false);
 		end;
-		
-		self:zoom(scale(height,32,480,1,32/480))
-	end;
-	t[#t+1] = Def.ActorFrame {
-		OnCommand=cmd(draworder,105;x,SCREEN_CENTER_X-256;y,SCREEN_CENTER_Y-84;zoom,0;sleep,0.5;decelerate,0.25;zoom,1;SetUpdateFunction,CDTitleUpdate);
-		OffCommand=cmd(bouncebegin,0.15;zoomx,0);
-		Def.Sprite {
-			Name="CDTitle";
-			OnCommand=cmd(draworder,106;shadowlength,1;zoom,0.75;diffusealpha,1;zoom,0;bounceend,0.35;zoom,0.75;spin;effectperiod,2;effectmagnitude,0,180,0);
-			BackCullCommand=cmd(diffuse,color("0.5,0.5,0.5,1"));
-		};	
-	};
-	t[#t+1] = StandardDecorationFromFileOptional("NewSong","NewSong") .. {
-	-- 	ShowCommand=THEME:GetMetric(Var "LoadingScreen", "NewSongShowCommand" );
-	-- 	HideCommand=THEME:GetMetric(Var "LoadingScreen", "NewSongHideCommand" );
-		InitCommand=cmd(playcommand,"Set");
-		BeginCommand=cmd(playcommand,"Set");
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-		SetCommand=function(self)
-	-- 		local pTargetProfile;
-			local sSong;
-			-- Start!
-			if GAMESTATE:GetCurrentSong() then
-				if PROFILEMAN:IsSongNew(GAMESTATE:GetCurrentSong()) then
-					self:playcommand("Show");
+		OffCommand=cmd(decelerate,0.3;diffusealpha,0);
+		LoadActor(THEME:GetPathG("ScreenSelectMusic", "pane background")) .. {
+			CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set";); 
+			PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;decelerate,0.3;diffusealpha,1;);
+			ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
+			SetCommand=function(self)
+					stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+					local song = GAMESTATE:GetCurrentSong();
+					if song then 
+						if stepsP1 ~= nil then
+							local st = stepsP1:GetStepsType();
+							local diff = stepsP1:GetDifficulty();
+							local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+							local cd = GetCustomDifficulty(st, diff, courseType);
+							self:finishtweening():linear(0.2):diffuse(ColorLightTone(CustomDifficultyToColor(cd)));
+						else
+							self:diffuse(color("#666666"));
+						end
+					else
+							self:diffuse(color("#666666"));
+					end
+				  end
+		};
+		LoadFont("StepsDisplay meter") .. { 
+			  InitCommand=cmd(zoom,1.25;diffuse,color("#000000");addx,-143;addy,13);
+			  OnCommand=cmd(diffusealpha,0;smooth,0.2;diffusealpha,0.75;);
+			  OffCommand=cmd(linear,0.3;diffusealpha,0;);
+			  CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set";); 
+			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75;);
+			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
+			  SetCommand=function(self)
+				stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+				local song = GAMESTATE:GetCurrentSong();
+				if song then 
+					if stepsP1 ~= nil then
+						local st = stepsP1:GetStepsType();
+						local diff = stepsP1:GetDifficulty();
+						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+						local cd = GetCustomDifficulty(st, diff, courseType);
+						self:settext(stepsP1:GetMeter())
+					else
+						self:settext("")
+					end
 				else
-					self:playcommand("Hide");
+					self:settext("")
 				end
-			else
-				self:playcommand("Hide");
-			end
-		end;
+			  end
+		};
+		LoadFont("Common Italic Condensed") .. { 
+			  InitCommand=cmd(uppercase,true;zoom,1;addy,-40;addx,-143;diffuse,color("#000000");maxwidth,115;);
+			  OnCommand=cmd(diffusealpha,0;smooth,0.2;diffusealpha,0.75;);
+			  OffCommand=cmd(linear,0.3;diffusealpha,0;);
+			  CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set";); 
+			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75;);
+			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
+			  SetCommand=function(self)
+				stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+				local song = GAMESTATE:GetCurrentSong();
+				if song then 
+					if stepsP1 ~= nil then
+						local st = stepsP1:GetStepsType();
+						local diff = stepsP1:GetDifficulty();
+						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+						local cd = GetCustomDifficulty(st, diff, courseType);
+						self:settext(THEME:GetString("CustomDifficulty",ToEnumShortString(diff)));
+					else
+						self:settext("")
+					end
+				else
+					self:settext("")
+				end
+			  end
+		};
+		LoadFont("Common Normal") .. { 
+			  InitCommand=cmd(uppercase,true;zoom,0.75;addy,-20;addx,-143;diffuse,color("#000000");maxwidth,130);
+			  OnCommand=cmd(diffusealpha,0;smooth,0.2;diffusealpha,0.75;);
+			  OffCommand=cmd(linear,0.3;diffusealpha,0;);
+			  CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set";); 
+			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75;);
+			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
+			  SetCommand=function(self)
+				stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+				local song = GAMESTATE:GetCurrentSong();
+				if song then 
+					if stepsP1 ~= nil then
+						local st = stepsP1:GetStepsType();
+						local diff = stepsP1:GetDifficulty();
+						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+						local cd = GetCustomDifficulty(st, diff, courseType);
+						self:settext(THEME:GetString("StepsType",ToEnumShortString(st)));
+					else
+						self:settext("")
+					end
+				else
+					self:settext("")
+				end
+			  end
+		};
 	};
-	t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
+	
+-- P2 Difficulty Pane	
+t[#t+1] = Def.ActorFrame {
+		InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(PLAYER_2);horizalign,center;x,SCREEN_CENTER_X+210+32;y,SCREEN_CENTER_Y+230+8;);
+		OnCommand=cmd(zoomy,0.8;diffusealpha,0;smooth,0.4;diffusealpha,1;zoomy,1);
+		PlayerJoinedMessageCommand=function(self,param)
+			if param.Player == PLAYER_2 then
+				(cmd(visible,true;diffusealpha,0;linear,0.3;diffusealpha,1))(self);
+			end;
+		end;
+		OffCommand=cmd(decelerate,0.3;diffusealpha,0);
+		LoadActor(THEME:GetPathG("ScreenSelectMusic", "pane background")) .. {
+			InitCommand=cmd(zoomx,-1;);
+			CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set";); 
+			PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;decelerate,0.3;diffusealpha,1;);
+			ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
+			SetCommand=function(self)
+					stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+					local song = GAMESTATE:GetCurrentSong();
+					if song then 
+						if stepsP2 ~= nil then
+							local st = stepsP2:GetStepsType();
+							local diff = stepsP2:GetDifficulty();
+							local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+							local cd = GetCustomDifficulty(st, diff, courseType);
+							self:finishtweening():linear(0.2):diffuse(ColorLightTone(CustomDifficultyToColor(cd)));
+						else
+							self:diffuse(color("#666666"));
+						end
+					else
+						self:diffuse(color("#666666"));
+					end
+				  end
+		};
+		LoadFont("StepsDisplay meter") .. { 
+			  InitCommand=cmd(zoom,1.25;diffuse,color("#000000");addx,143;addy,13);
+			  OnCommand=cmd(diffusealpha,0;smooth,0.2;diffusealpha,0.75;);
+			  OffCommand=cmd(linear,0.3;diffusealpha,0;);
+			  CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set";); 
+			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75;);
+			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
+			  SetCommand=function(self)
+				stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+				local song = GAMESTATE:GetCurrentSong();
+				if song then 
+					if stepsP2 ~= nil then
+						local st = stepsP2:GetStepsType();
+						local diff = stepsP2:GetDifficulty();
+						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+						local cd = GetCustomDifficulty(st, diff, courseType);
+						self:settext(stepsP2:GetMeter())
+					else
+						self:settext("")
+					end
+				else
+					self:settext("")
+				end
+			  end
+		};
+		LoadFont("Common Italic Condensed") .. { 
+			  InitCommand=cmd(uppercase,true;zoom,1;addy,-40;addx,143;diffuse,color("#000000");maxwidth,115;);
+			  OnCommand=cmd(diffusealpha,0;smooth,0.2;diffusealpha,0.75;);
+			  OffCommand=cmd(linear,0.3;diffusealpha,0;);
+			  CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set";); 
+			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75;);
+			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
+			  SetCommand=function(self)
+				stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+				local song = GAMESTATE:GetCurrentSong();
+				if song then 
+					if stepsP2 ~= nil then
+						local st = stepsP2:GetStepsType();
+						local diff = stepsP2:GetDifficulty();
+						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+						local cd = GetCustomDifficulty(st, diff, courseType);
+						self:settext(THEME:GetString("CustomDifficulty",ToEnumShortString(diff)));
+					else
+						self:settext("")
+					end
+				else
+					self:settext("")
+				end
+			  end
+		};
+		LoadFont("Common Normal") .. { 
+			  InitCommand=cmd(uppercase,true;zoom,0.75;addy,-20;addx,143;diffuse,color("#000000");maxwidth,130);
+			  OnCommand=cmd(diffusealpha,0;smooth,0.2;diffusealpha,0.75;);
+			  OffCommand=cmd(linear,0.3;diffusealpha,0;);
+			  CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set";); 
+			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75;);
+			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
+			  SetCommand=function(self)
+				stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+				local song = GAMESTATE:GetCurrentSong();
+				if song then 
+					if stepsP2 ~= nil then
+						local st = stepsP2:GetStepsType();
+						local diff = stepsP2:GetDifficulty();
+						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+						local cd = GetCustomDifficulty(st, diff, courseType);
+						self:settext(THEME:GetString("StepsType",ToEnumShortString(st)));
+					else
+						self:settext("")
+					end
+				else
+					self:settext("")
+				end
+			  end
+		};
+	};
+
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP1","PaneDisplayTextP1");
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP2","PaneDisplayTextP2");	
+
+t[#t+1] = StandardDecorationFromTable("PercentScore"..ToEnumShortString(PLAYER_1), PercentScore(PLAYER_1));
+t[#t+1] = StandardDecorationFromTable("PercentScore"..ToEnumShortString(PLAYER_2), PercentScore(PLAYER_2));
+
+
 end;
 
-if GAMESTATE:IsCourseMode() then
-	t[#t+1] = Def.ActorFrame {
-		Def.Quad {
-			InitCommand=cmd(
-				x,THEME:GetMetric(Var "LoadingScreen","CourseContentsListX");
-				y,THEME:GetMetric(Var "LoadingScreen","CourseContentsListY") - 118;
-				zoomto,256+32,192;
-			);
-			OnCommand=cmd(diffuse,Color.Green;MaskSource);
-		};
-		Def.Quad {
-			InitCommand=cmd(
-				x,THEME:GetMetric(Var "LoadingScreen","CourseContentsListX");
-				y,THEME:GetMetric(Var "LoadingScreen","CourseContentsListY") + 186;
-				zoomto,256+32,64;
-			);
-			OnCommand=cmd(diffuse,Color.Blue;MaskSource);
-		};
-	};
-	t[#t+1] = StandardDecorationFromFileOptional("CourseContentsList","CourseContentsList");
-	t[#t+1] = StandardDecorationFromFileOptional("NumCourseSongs","NumCourseSongs")..{
-		InitCommand=cmd(horizalign,right);
-		SetCommand=function(self)
-			local curSelection= nil;
-			local sAppend = "";
-			if GAMESTATE:IsCourseMode() then
-				curSelection = GAMESTATE:GetCurrentCourse();
-				if curSelection then
-					sAppend = (curSelection:GetEstimatedNumStages() == 1) and "Stage" or "Stages";
-					self:visible(true);
-					self:settext( curSelection:GetEstimatedNumStages() .. " " .. sAppend);
-				else
-					self:visible(false);
-				end;
-			else
-				self:visible(false);
-			end;
-		end;
-		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
-	};
-end
-
-t[#t+1] = StandardDecorationFromFileOptional("DifficultyDisplay","DifficultyDisplay");
-
-t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
-	BeginCommand=cmd(playcommand,"Set");
-	SortOrderChangedMessageCommand=cmd(playcommand,"Set");
-	SetCommand=function(self)
-		local s = GAMESTATE:GetSortOrder()
-		if s ~= nil then
-			local s = SortOrderToLocalizedString( s )
-			self:settext( s )
-			self:playcommand("Sort")
-		else
-			return
-		end
-	end;
+-- BPMDisplay
+t[#t+1] = Def.ActorFrame {
+    InitCommand=cmd(draworder,126;visible,not GAMESTATE:IsCourseMode(););
+    OnCommand=cmd(diffusealpha,0;smooth,0.3;diffusealpha,1;);
+    OffCommand=cmd(linear,0.3;diffusealpha,0;);
+    LoadFont("Common Condensed") .. {
+          InitCommand=cmd(horizalign,right;x,SCREEN_CENTER_X-198+69-66;y,SCREEN_CENTER_Y-78+2;diffuse,color("#512232");horizalign,right;visible,not GAMESTATE:IsCourseMode(););
+          OnCommand=cmd(queuecommand,"Set");
+          ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
+          SetCommand=function(self)
+              self:settext("BPM"):diffuse(ColorLightTone(StageToColor(curStage)));
+              end;
+    };
+    StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 };
 
-t[#t+1] = StandardDecorationFromFileOptional("SongOptionsFrame","SongOptionsFrame") .. {
-	ShowPressStartForOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsFrameShowCommand");
-	ShowEnteringOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsFrameEnterCommand");
-	HidePressStartForOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsFrameHideCommand");
-};
+t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
 t[#t+1] = StandardDecorationFromFileOptional("SongOptions","SongOptionsText") .. {
 	ShowPressStartForOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsShowCommand");
 	ShowEnteringOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsEnterCommand");
 	HidePressStartForOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsHideCommand");
 };
--- Sounds
-t[#t+1] = Def.ActorFrame {
-	LoadActor(THEME:GetPathS("_switch","up")) .. {
-		SelectMenuOpenedMessageCommand=cmd(stop;play);
-	};
-	LoadActor(THEME:GetPathS("_switch","down")) .. {
-		SelectMenuClosedMessageCommand=cmd(stop;play);
+
+t[#t+1] = Def.ActorFrame{
+	Def.Quad{
+		InitCommand=cmd(draworder,160;FullScreen;diffuse,color("0,0,0,1");diffusealpha,0);
+		ShowPressStartForOptionsCommand=cmd(sleep,0.2;decelerate,0.5;diffusealpha,1);
 	};
 };
 
-return t
+t[#t+1] = StandardDecorationFromFileOptional("AlternateHelpDisplay","AlternateHelpDisplay");
+
+
+t[#t+1] = Def.ActorFrame {
+    OffCommand=cmd(sleep,0.1;linear,0.2;diffusealpha,0;);
+    InitCommand=cmd(x,SCREEN_CENTER_X-84;visible,not GAMESTATE:IsCourseMode(););
+
+	StandardDecorationFromFileOptional("StageDisplay","StageDisplay") .. {
+		InitCommand=cmd(zoom,1);
+	};
+};
+
+return t;

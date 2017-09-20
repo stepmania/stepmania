@@ -1136,6 +1136,10 @@ bool LuaHelpers::run_script_file_in_state(lua_State* L,
 	std::string script;
 	if(!GetFileContents(filename, script))
 	{
+		if(return_values == LUA_MULTRET)
+		{
+			return false;
+		}
 		for(int i= 0; i < return_values; ++i)
 		{
 			lua_pushnil(L);
@@ -1252,6 +1256,10 @@ bool LuaHelpers::RunScriptOnStack(Lua *L, std::string &Error, int Args,
 			LuaHelpers::Pop( L, Error );
 		}
 		lua_remove( L, ErrFunc );
+		if(ReturnValues == LUA_MULTRET)
+		{
+			return false;
+		}
 		for( int i = 0; i < ReturnValues; ++i )
 		{
 			lua_pushnil( L );
@@ -1276,6 +1284,10 @@ bool LuaHelpers::RunScript(Lua *L, const std::string &Script,
 			ReportScriptError(Error);
 		}
 		lua_pop( L, Args );
+		if(ReturnValues == LUA_MULTRET)
+		{
+			return false;
+		}
 		for( int i = 0; i < ReturnValues; ++i )
 		{
 			lua_pushnil( L );
@@ -1581,8 +1593,10 @@ namespace
 	static int load_config_lua(lua_State* L)
 	{
 		std::string filename= SArg(1);
-		LuaHelpers::run_script_file_in_state(L, filename, 1, true);
-		return 1;
+		int stack_size_before_call= lua_gettop(L);
+		LuaHelpers::run_script_file_in_state(L, filename, LUA_MULTRET, true);
+		int stack_size_after_call= lua_gettop(L);
+		return (stack_size_after_call - stack_size_before_call);
 	}
 
 	const luaL_Reg luaTable[] =

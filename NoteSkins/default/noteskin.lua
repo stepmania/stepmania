@@ -7,6 +7,9 @@ return {
 	-- Docs/Themerdocs/5.1_incompatibilities/NewField.md explains draw orders.
 	-- receptors.lua has the explanation of the requirements of a layer file.
 	layers= {"receptors.lua", "explosions.lua"},
+	-- A noteskin may optionally have layers that are rendered in the field,
+	-- instead of part of each column.
+	--field_layers= {"calipers"},
 	-- Since all layers are considered the same, messages such as
 	-- judgment and step actions are sent to all layers.  This means you can
 	-- make receptors that respond to judgments, or explosions that respond to

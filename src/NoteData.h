@@ -162,8 +162,8 @@ private:
 public:
 	void Init();
 
-	void SetOccuranceTimeForAllTaps(TimingData* timing_data);
-	void count_notes_in_columns(TimingData* timing_data,
+	void SetOccuranceTimeForAllTaps(TimingData const* timing_data);
+	void count_notes_in_columns(TimingData const* timing_data,
 		std::vector<std::map<TapNoteType, int> > note_counts,
 		std::vector<std::map<TapNoteSubType, float> > hold_durations);
 

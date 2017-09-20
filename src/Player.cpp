@@ -627,7 +627,7 @@ void Player::Load()
 			if(prof != nullptr)
 			{
 				prof->get_preferred_noteskin(stype, skin_name);
-				skin_params= prof->get_noteskin_params(skin_name, stype);
+				skin_params= prof->get_noteskin_params(skin_name);
 			}
 			else
 			{
@@ -638,7 +638,7 @@ void Player::Load()
 		{
 			skin_name= "default";
 		}
-		m_note_field->set_skin(skin_name, skin_params);
+		m_note_field->set_skin(skin_name, skin_params, 0);
 		m_note_field->set_defective_mode(m_pPlayerState->m_player_needs_defective_field);
 	}
 
