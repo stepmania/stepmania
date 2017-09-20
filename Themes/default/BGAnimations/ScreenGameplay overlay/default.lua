@@ -11,6 +11,8 @@ local function UpdateTime(self)
 		end;
 	end;
 end
+local function songMeterScale(val) return scale(val,0,1,-380/2,380/2) end
+
 if GAMESTATE:GetCurrentCourse() then
 	if GAMESTATE:GetCurrentCourse():GetCourseType() == "CourseType_Survival" then
 		-- RemainingTime
@@ -195,4 +197,34 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 	end;
 
 	t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
+	t[#t+1] = Def.ActorFrame {
+		InitCommand=cmd(x,SCREEN_CENTER_X+103;y,SCREEN_BOTTOM-25;);
+		OnCommand=cmd(draworder,DrawOrder.Screen;addy,100;sleep,0.5;decelerate,0.7;addy,-100;);
+		OffCommand=cmd(sleep,1;decelerate,0.9;addy,100;);
+		Def.Quad {
+			InitCommand=cmd(zoomto,264,12);
+			OnCommand=cmd(diffuse,Color.Black;diffusealpha,0.3;fadeleft,0.05;faderight,0.05);
+		};
+		Def.Quad {
+			InitCommand=cmd(zoomto,2,8);
+			OnCommand=cmd(x,songMeterScale(0.25);diffuse,PlayerColor(pn);diffusealpha,0.5);
+		};
+		Def.Quad {
+			InitCommand=cmd(zoomto,2,8);
+			OnCommand=cmd(x,songMeterScale(0.5);diffuse,PlayerColor(pn);diffusealpha,0.5);
+		};
+		Def.Quad {
+			InitCommand=cmd(zoomto,2,8);
+			OnCommand=cmd(x,songMeterScale(0.75);diffuse,PlayerColor(pn);diffusealpha,0.5);
+		};
+		Def.SongMeterDisplay {
+			StreamWidth=260;
+			Stream=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'stream') )..{
+				InitCommand=cmd(diffuse,Color.White;diffusealpha,0.4;blend,Blend.Add;);
+			};
+			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip')) .. { 
+			InitCommand=cmd(visible,false); 
+			};
+		};
+	};
 return t

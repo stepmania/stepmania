@@ -12,11 +12,11 @@ function GetLocalProfiles()
 				InitCommand=cmd(zoomto,200,1;y,40/2);
 				OnCommand=cmd(diffuse,Color('Outline'););
 			}; --]]
-			LoadFont("Common Normal") .. {
+			LoadFont("Common Condensed") .. {
 				Text=profile:GetDisplayName();
 				InitCommand=cmd(shadowlength,1;y,-10;zoom,1;ztest,true);
 			};
-			LoadFont("Common Normal") .. {
+			LoadFont("Common Fallback") .. {
 				InitCommand=cmd(shadowlength,1;y,8;zoom,0.5;vertspacing,-8;ztest,true);
 				BeginCommand=function(self)
 					local numSongsPlayed = profile:GetNumTotalSongsPlayed();
@@ -33,7 +33,7 @@ end;
 function LoadCard(cColor)
 	local t = Def.ActorFrame {
 		Def.Quad {
-			InitCommand=cmd(zoomto,300,SCREEN_HEIGHT/1.3;diffuse,ColorDarkTone(cColor);diffusealpha,0.6;fadetop,0.3;fadebottom,0.3)
+			InitCommand=cmd(zoomto,300,SCREEN_HEIGHT/1.3;y,20;diffuse,ColorDarkTone(cColor);diffusealpha,0.8;fadetop,0.2;fadebottom,0.2)
 		}
 	}
 	return t
@@ -57,9 +57,9 @@ function LoadPlayerStuff(Player)
 			InitCommand=cmd(zoomto,200,230);
 			OnCommand=cmd(diffuse,Color('Orange');diffusealpha,0.5);
 		}; --]]
-		LoadFont("Common Normal") .. {
+		LoadFont("Common Italic Condensed") .. {
 			Text="Press &START; to join.";
-			InitCommand=cmd(shadowlength,1);
+			InitCommand=cmd(shadowlength,1;zoom,1.25);
 			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5"));
 		};
 	};
@@ -97,10 +97,9 @@ function LoadPlayerStuff(Player)
 	t[#t+1] = Def.ActorFrame {
 		Name = "EffectFrame";
 	};
-	t[#t+1] = LoadFont("Common Normal") .. {
+	t[#t+1] = LoadFont("Common Condensed") .. {
 		Name = 'SelectedProfileText';
-		--InitCommand=cmd(y,160;shadowlength,1;diffuse,PlayerColor(Player));
-		InitCommand=cmd(y,160;shadowlength,1;);
+		InitCommand=cmd(y,160;shadowlength,1;diffuse,ColorLightTone(PlayerColor(Player));diffusebottomedge,color("#FFFFFF");zoom,1.25);
 	};
 
 	return t;

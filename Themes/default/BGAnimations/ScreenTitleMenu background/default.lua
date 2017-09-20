@@ -1,3 +1,4 @@
+-- You know what, I guess the "fancy UI background" theme option can be put to use.
 if ThemePrefs.Get("FancyUIBG") then
 	return Def.ActorFrame {
 	LoadActor(THEME:GetPathG("common bg", "base")) .. {
