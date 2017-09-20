@@ -1,133 +1,5 @@
 local notefield_mods= {
 	effect= {
-		beat= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "beat", target= "note_pos_x",
-					 {"*", 20 * mag,
-						{"cos", {"*", "y_offset", 1/15, 1/math.pi}},
-						{"phase", {"repeat", "music_beat", 0, 2},
-						 {default= {0, 0, 0, 0},
-							{0, .2, 5, -1},
-							{.8, 1, 5, 0},
-							{1, 1.2, -5, 1},
-							{1.8, 2, -5, 0}
-						 }
-						}
-					 }
-					}
-				}
-			end
-		end,
-		blink= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "blink", target= "note_alpha",
-					 {'-', {'round', {'sin', {'*', 'music_second', 10 * mag, 1/math.pi}}, 1/3}, 1}
-					}
-				}
-			end
-		end,
-		bumpy= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "bumpy", target= "note_pos_z",
-					 {'*', 40 * mag, {'sin', {'*', 'y_offset', 1/16, 1/math.pi}}}
-					}
-				}
-			end
-		end,
-		confusion= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "confusion", target= "note_rot_z",
-					 {'*', 'music_beat', mag * 2 * math.pi}
-					}
-				}
-			end
-		end,
-		dizzy= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "dizzy", target= "note_rot_z",
-					 {'*', 'dist_beat', mag * 2 * math.pi}
-					}
-				}
-			end
-		end,
-		drunk= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "drunk", target= "note_pos_x",
-					 {"*", mag * 32,
-						{"cos",
-						 {'*', 1/math.pi,
-							{"+", "music_second",
-							 {"*", "column", .2},
-							 {"*", "y_offset", 10, 1/480}
-							}
-						 }
-						}
-					 }
-					}
-				}
-			end
-		end,
-		flip= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "flip", target= "column_pos_x", sum_type= '*', -1*mag}
-				}
-			end
-		end,
-		roll= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "roll", target= "note_rot_x",
-					 {"*", "y_offset", .5 * (math.pi / 180)}
-					}
-				}
-			end
-		end,
-		tiny= function(mag, field)
-			local zoom= {"exp", .5, mag}
-			local mods= {
-				{name= "tiny", target= "note_zoom", sum_type= "*", zoom},
-				-- min makes it so tiny can move columns together, but not apart.
-				{name= "tiny", target= "column_pos_x", sum_type= "*", {'min', 1, zoom}},
-			}
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods(mods)
-			end
-		end,
-		tipsy= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "tipsy", target= "column_pos_y",
-					 {"*", mag,
-						{"cos",
-						 {'*', 1/math.pi,
-							{"+",
-							 {"*", "music_second", 1.2},
-							 {"*", "column", 1.8}
-							},
-						 }
-						},
-						64 * .4,
-					 }
-					}
-				}
-			end
-		end,
-		twirl= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "twirl", target= "note_rot_y",
-					 {"*", "y_offset", .5 * mag * (math.pi / 180)}
-					}
-				}
-			end
-		end,
 	},
 	appearance= {
 		flat= function(mag, field)
@@ -203,6 +75,17 @@ local notefield_mods= {
 		end,
 	},
 }
+
+for i, name in ipairs{
+	"attenuate", "beat", "blink", "bounce", "bumpy", "confusion", 'digital',
+	'dizzy', 'drunk', 'flip', 'invert', 'mini', 'parabola', 'pulse', 'roll',
+	'sawtooth', 'shrinklinear', 'shrinkmult', 'square', 'tiny',
+	'tipsy', 'tornado', 'twirl', 'xmode', 'zigzag',
+} do
+	notefield_mods.effect[name]= function(mag)
+		return {{name= name, name, mag}}
+	end
+end
 
 -- todo:
 -- boost, boomerang, brake, expand, wave
@@ -315,104 +198,114 @@ local function set_multipart_mod_level(pn, multi_mod, level)
 	end
 end
 
-local function notefield_mods_menu(with_save, no_sections, name, per_mod_func)
-	local choices= {}
-	choices[#choices+1]= {
-		name= "notefield_mods_clear", translatable= true, execute= function(pn)
-			clear_notefield_mods(pn)
-		end,
+local function notefield_mods_menu(pn, with_save, no_sections, per_mod_func)
+	local items= {
+		{"action", "notefield_mods_clear",
+		 function(big, arg, pn) clear_notefield_mods(pn) end},
 	}
-	if with_save then
-		choices[#choices+1]= {
-			name= "notefield_mods_profile_save", translatable= true,
-			req_func= function(pn)
-				return PROFILEMAN:IsPersistentProfile(pn)
-			end,
-			execute= function(pn)
-				save_notefield_mods_to_profile(pn)
-			end,
-		}
-		choices[#choices+1]= {
-			name= "notefield_mods_profile_clear", translatable= true,
-			req_func= function(pn)
-				return PROFILEMAN:IsPersistentProfile(pn)
-			end,
-			execute= function(pn)
-				clear_notefield_mods_from_profile(pn)
-			end,
-		}
+	if with_save and PROFILEMAN:IsPersistentProfile(pn) then
+		items[#items+1]= {
+			"action", "notefield_mods_profile_save",
+			function(big, arg, pn) save_notefield_mods_to_profile(pn) end}
+		items[#items+1]= {
+			"action", "notefield_mods_profile_clear",
+			function(big, arg, pn) clear_notefield_mods_from_profile(pn) end}
 	end
-	local function add_section(name, section)
-		local sub_choices= {}
-		foreach_ordered(section, per_mod_func(name, sub_choices))
-		if #sub_choices == 0 then return end
-		if no_sections then
-			for i, sub in ipairs(sub_choices) do
-				choices[#choices+1]= sub
+	foreach_ordered(
+		notefield_menu_choices, function(secname, section)
+			local sub_items= {}
+			foreach_ordered(section, per_mod_func(secname, sub_items))
+			if #sub_items == 0 then return end
+			if no_sections then
+				for i, sub in ipairs(sub_items) do
+					items[#items+1]= sub
+				end
+			else
+				items[#items+1]= {"submenu", secname, sub_items}
 			end
-		else
-			choices[#choices+1]= nesty_options.submenu(name, sub_choices)
-		end
-	end
-	foreach_ordered(notefield_menu_choices, add_section)
-	return nesty_options.submenu(name, choices)
+	end)
+	return nesty_menus.add_close_item(nesty_menus.make_menu(items))
 end
 
-local function toggle_menu_per_mod(section_name, sub_choices)
+local function toggle_menu_per_mod(section_name, sub_items)
 	return function(name, mod)
 		local full_name= section_name.."."..name
-		sub_choices[#sub_choices+1]= {
-			type= "bool", name= full_name, translatable= true, execute= function(pn)
-				local pn_mods= player_mods[pn]
-				local level= get_multipart_mod_level(pn_mods, mod)
-				local new_val= 0
-				if level ~= 1 then
-					new_val= 1
-				end
-				set_multipart_mod_level(pn, mod, new_val)
-				MESSAGEMAN:Broadcast("NotefieldModChanged", {name= full_name, value= new_val, pn= pn})
-			end,
-			value= function(pn)
-				local pn_mods= player_mods[pn]
-				local level= get_multipart_mod_level(pn_mods, mod)
-				if level ~= 1 then
-					return false
-				else
-					return true
-				end
-			end,
-		}
+		sub_items[#sub_items+1]= {
+			"custom", {
+				type_hint= {main= "bool"},
+				name= full_name, func= function(big, arg, pn)
+					local pn_mods= player_mods[pn]
+					local level= get_multipart_mod_level(pn_mods, mod)
+					local new_val= 0
+					if level ~= 1 then
+						new_val= 1
+					end
+					set_multipart_mod_level(pn, mod, new_val)
+					MESSAGEMAN:Broadcast("NotefieldModChanged", {name= full_name, value= new_val, pn= pn})
+					if new_val == 1 then
+						return {"boolean", true}
+					else
+						return {"boolean", false}
+					end
+				end,
+				func_changes_value= true, value= function(arg, pn)
+					local level= get_multipart_mod_level(pn_mods, mod)
+					if level == 1 then
+						return {"boolean", true}
+					else
+						return {"boolean", false}
+					end
+		end}}
 	end
 end
 
 function get_notefield_mods_toggle_menu(with_save, no_sections)
-	return notefield_mods_menu(with_save, no_sections, "notefield_toggle_mods", toggle_menu_per_mod)
+	return {
+		"custom", {
+			type_hint= {main= "submenu", sub= "note_mod"},
+			name= "notefield_toggle_mods", func= function(big, arg, pn)
+				local items= notefield_mods_menu(
+					pn, with_save, no_sections, toggle_menu_per_mod)
+				return "submenu", items
+			end
+	}}
 end
 
-local function value_menu_per_mod(section_name, sub_choices)
+local function value_menu_per_mod(section_name, sub_items)
 	return function(name, mod)
 		local full_name= section_name.."."..name
-		sub_choices[#sub_choices+1]= {
-			name= full_name, translatable= true,
-			menu= nesty_option_menus.adjustable_float, args= {
-				name= full_name, min_scale= -2, scale= 0, max_scale= 0,
-				initial_value= function(pn)
-					return get_multipart_mod_level(player_mods[pn], mod)
+		sub_items[#sub_items+1]= {
+			"custom", {
+				type_hint= {main= "number", sub= "note_mod"},
+				name= full_name, value= function(arg, pn)
+					local value= get_multipart_mod_level(player_mods[pn], mod)
+					return {"number", value}
 				end,
-				set= function(pn, value)
+				adjust= function(dir, big, arg, pn)
+					local value= get_multipart_mod_level(player_mods[pn], mod)
+					local step= .1 * dir
+					if big then
+						step= step * 10
+					end
+					value= value + step
 					set_multipart_mod_level(pn, mod, value)
 					MESSAGEMAN:Broadcast("NotefieldModChanged", {name= full_name, value= value, pn= pn})
+					return {"number", value}
 				end,
-			},
-			value= function(pn)
-				return get_multipart_mod_level(player_mods[pn], mod)
-			end,
-		}
+		}}
 	end
 end
 
 function get_notefield_mods_value_menu(with_save, no_sections)
-	return notefield_mods_menu(with_save, no_sections, "notefield_value_mods", value_menu_per_mod)
+	return {
+		"custom", {
+			type_hint= {main= "submenu", sub= "note_mod"},
+			name= "notefield_value_mods", func= function(big, arg, pn)
+				local items= notefield_mods_menu(
+					pn, with_save, no_sections, value_menu_per_mod)
+				return "submenu", items
+			end
+	}}
 end
 
 -- 1. Translating mod names has always been optional in stepmania.
@@ -503,11 +396,18 @@ end
 function apply_notefield_mods(pn)
 	local field= find_notefield_in_gameplay(SCREENMAN:GetTopScreen(), pn)
 	if field then
-		local function apply_mod(name, value)
-			local func= get_element_by_path(notefield_mods, name)
-			func(value, field)
+		local mods_table= {}
+		foreach_ordered(
+			player_mods[pn], function(name, value)
+				local sub_mods= get_element_by_path(notefield_mods, name)
+				for i, sub in ipairs(mods_table) do
+					mods_table[#mods_table+1]= sub
+				end
+		end)
+		if #mods_table > 0 then
+			local organized= organize_notefield_mods_by_target(mods_table)
+			field:set_per_column_permanent_mods(organized)
 		end
-		foreach_ordered(player_mods[pn], apply_mod)
 	end
 end
 
@@ -520,6 +420,10 @@ function notefield_mods_actor()
 		CurrentStepsP2ChangedMessageCommand= function(self, param)
 			if not GAMESTATE:GetCurrentSteps(PLAYER_2) then return end
 			self:queuecommand("delayed_p2_steps_change")
+		end,
+		NoteFieldModChangedMessageCommand= function(self, param)
+			local pn= param.pn
+			apply_notefield_mods(pn)
 		end,
 		delayed_p1_steps_changeCommand= function(self)
 			apply_notefield_mods(PLAYER_1)

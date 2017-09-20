@@ -626,7 +626,7 @@ bool DWILoader::LoadFromDir( const std::string &sPath_, Song &out, std::set<std:
 
 		else if(tagName == "GAP" )
 			// the units of GAP is 1/1000 second
-			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt(sParams[1]) / 1000.0f;
+			out.m_SongTiming.set_offset(-StringToInt(sParams[1]) / 1000.0f);
 
 		else if(tagName == "SAMPLESTART" )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);

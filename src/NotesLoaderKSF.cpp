@@ -113,7 +113,7 @@ static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, b
 		else if( sValueName=="STARTTIME" )
 		{
 			SMGap1 = -StringToFloat( sParams[1] )/100;
-			stepsTiming.m_fBeat0OffsetInSeconds = SMGap1;
+			stepsTiming.set_offset(SMGap1);
 		}
 		// This is currently required for more accurate KIU BPM changes.
 		else if( sValueName=="STARTTIME2" )
@@ -595,7 +595,7 @@ static bool LoadGlobalData( const std::string &sPath, Song &out, bool &bKIUCompl
 		else if( sValueName=="STARTTIME" )
 		{
 			SMGap1 = -StringToFloat( sParams[1] )/100;
-			out.m_SongTiming.m_fBeat0OffsetInSeconds = SMGap1;
+			out.m_SongTiming.set_offset(SMGap1);
 		}
 		// This is currently required for more accurate KIU BPM changes.
 		else if( sValueName=="STARTTIME2" )

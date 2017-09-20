@@ -362,7 +362,7 @@ bool NotesWriterDWI::Write( std::string sPath, const Song &out )
 			 fmt::sprintf("The first BPM Segment must be defined at row 0, not %d!", bpms[0]->GetRow()) );
 	f.PutLine( fmt::sprintf("#FILE:%s;", DwiEscape(out.m_sMusicFile).c_str()) );
 	f.PutLine( fmt::sprintf("#BPM:%.3f;", static_cast<BPMSegment *>(bpms[0])->GetBPM()) );
-	f.PutLine( fmt::sprintf("#GAP:%ld;", -std::lrint( out.m_SongTiming.m_fBeat0OffsetInSeconds*1000 )) );
+	f.PutLine( fmt::sprintf("#GAP:%ld;", -std::lrint( out.m_SongTiming.get_offset()*1000 )) );
 	f.PutLine( fmt::sprintf("#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds) );
 	f.PutLine( fmt::sprintf("#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds) );
 	if( out.m_sCDTitleFile.size() )

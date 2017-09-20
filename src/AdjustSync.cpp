@@ -201,7 +201,7 @@ void AdjustSync::AutosyncOffset()
 		{
 			case AutosyncType_Song:
 			{
-				GAMESTATE->get_curr_song()->m_SongTiming.m_fBeat0OffsetInSeconds += mean;
+				GAMESTATE->get_curr_song()->m_SongTiming.adjust_offset(mean);
 				auto const & vpSteps = GAMESTATE->get_curr_song()->GetAllSteps();
 				for (auto *s: vpSteps)
 				{
@@ -209,7 +209,7 @@ void AdjustSync::AutosyncOffset()
 					// from the song and is already changed.
 					if( s->m_Timing.empty() )
 						continue;
-					s->m_Timing.m_fBeat0OffsetInSeconds += mean;
+					s->m_Timing.adjust_offset(mean);
 				}
 				break;
 			}
@@ -257,7 +257,7 @@ void AdjustSync::AutosyncTempo()
 		if( !CalcLeastSquares( s_vAutosyncTempoData, fSlope, fIntercept, fFilteredError ) )
 			return;
 
-		GAMESTATE->get_curr_song()->m_SongTiming.m_fBeat0OffsetInSeconds += fIntercept;
+		GAMESTATE->get_curr_song()->m_SongTiming.adjust_offset(fIntercept);
 		const float fScaleBPM = 1.0f/(1.0f - fSlope);
 		TimingData &timing = GAMESTATE->get_curr_song()->m_SongTiming;
 
@@ -342,8 +342,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<std::string> &vsAddTo )
 		TimingData &testing = GAMESTATE->get_curr_song()->m_SongTiming;
 
 		{
-			float fOld = Quantize( original.m_fBeat0OffsetInSeconds, 0.001f );
-			float fNew = Quantize( testing.m_fBeat0OffsetInSeconds, 0.001f );
+			float fOld = Quantize( original.get_offset(), 0.001f );
+			float fNew = Quantize( testing.get_offset(), 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabsf(fDelta) > 0.0001f )

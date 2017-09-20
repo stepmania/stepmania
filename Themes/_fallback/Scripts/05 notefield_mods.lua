@@ -1029,8 +1029,9 @@ local function process_skin_entries(notefields, noteskins)
 	end
 	if type(noteskins) ~= "table" then return end
 	-- noteskin= {
-	--   -- First entry replaces noteskin from the player's profile.
-	--
+	--   -- If add is true, skins are loaded after the one the player picked.
+	--   -- Otherwise, first entry replaces noteskin from the player's profile.
+	--   add= true,
 	--   -- Affects all notefields, uses params from profiles.
 	--   {name= "lambda"},
 	--   -- Affects all notefields, uses params provided.
@@ -1042,11 +1043,16 @@ local function process_skin_entries(notefields, noteskins)
 	--   -- Affects player 1 and 2 notefields, uses params from profiles.
 	--   {name= "lambda", target= {1, 2}},
 	--   -- Choose two random noteskins and apply them.
-	--   {random= 2, target= "all"}
+	--   {random= 2, target= "all"},
 	--   -- Choose two random non-generic noteskins and apply them.
-	--   {random= 2, target= "all", disable_supports_all= true}
+	--   {random= 2, target= "all", disable_supports_all= true},
 	-- }
 	local set_flags= {}
+	if noteskins.add then
+		for pn, field in pairs(notefields) do
+			set_flags[pn]= true
+		end
+	end
 	local function do_set(pn, skin, params)
 		params= get_params_for_skin(pn, skin, params)
 		if set_flags[pn] then

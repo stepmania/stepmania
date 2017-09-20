@@ -216,7 +216,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
 		}
 	}
-	f.PutLine( fmt::sprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( fmt::sprintf( "#OFFSET:%.6f;", out.m_SongTiming.get_offset() ) );
 	f.PutLine( fmt::sprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( fmt::sprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
 
@@ -391,7 +391,7 @@ static std::string GetSSCNoteData( const Song &song, const Steps &in, bool bSavi
 	// timing.  Write out the corresponding tags.
 	if( !in.m_Timing.empty() )
 	{
-		lines.push_back( fmt::sprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+		lines.push_back( fmt::sprintf( "#OFFSET:%.6f;", in.m_Timing.get_offset() ) );
 		GetTimingTags( lines, in.m_Timing );
 	}
 

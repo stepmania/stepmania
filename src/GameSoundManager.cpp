@@ -210,7 +210,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		float fDestBeat = fmodfp( GAMESTATE->m_Position.m_fSongBeatNoOffset, 1 );
 		float fTime = NewMusic->m_NewTiming.GetElapsedTimeFromBeatNoOffset( fDestBeat );
 
-		NewMusic->m_NewTiming.m_fBeat0OffsetInSeconds = fTime;
+		NewMusic->m_NewTiming.set_offset(fTime);
 
 		StartImmediately = true;
 	}

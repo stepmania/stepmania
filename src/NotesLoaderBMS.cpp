@@ -914,7 +914,7 @@ void BMSChartReader::ReadHeaders()
 		else if (it.first == "#offset")
 		{
 			// This gets copied into the real timing data later.
-			out->m_Timing.m_fBeat0OffsetInSeconds = -StringToFloat(it.second);
+			out->m_Timing.set_offset(-StringToFloat(it.second));
 		}
 		else if (it.first == "#maker")
 		{
@@ -1125,7 +1125,7 @@ bool BMSChartReader::ReadNoteData()
 	NoteData   nd;
 	TimingData td;
 
-	td.m_fBeat0OffsetInSeconds = out->m_Timing.m_fBeat0OffsetInSeconds;
+	td.set_offset(out->m_Timing.get_offset());
 	nd.SetNumTracks( tracks );
 	td.SetBPMAtRow( 0, currentBPM = initialBPM );
 

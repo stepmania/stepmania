@@ -470,11 +470,14 @@ public:
 	std::string					m_sFile;
 
 	/** @brief The initial offset of a song. */
-	float	m_fBeat0OffsetInSeconds;
+	void adjust_offset(float amount) { set_offset(m_fBeat0OffsetInSeconds + amount); }
+	void set_offset(float off);
+	float get_offset() const;
 
 	// XXX: this breaks encapsulation. get rid of it ASAP
 	std::vector<std::string> ToVectorString(TimingSegmentType tst, int dec = 6) const;
 protected:
+	float	m_fBeat0OffsetInSeconds;
 	// don't call this directly; use the derived-type overloads.
 	void AddSegment( const TimingSegment *seg );
 
