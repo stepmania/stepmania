@@ -812,6 +812,10 @@ local function resolve_redir(name, redir_stack)
 	end
 end
 
+function find_custom_mod(name)
+	return resolve_redir(name, {})
+end
+
 function handle_custom_mod(mod_entry)
 	local name= mod_entry[1]
 	local params= mod_entry[2]
@@ -962,23 +966,27 @@ function organize_notefield_mods_by_target(mods_table)
 		end
 		handle_custom_mod(entry)
 		if entry.column then
+			local column= entry.column
+			if type(column) == "function" then
+				column= column(num_columns)
+			end
 			local target_columns= {}
 			-- Support these kinds of column entries:
 			--   column= "all",
 			--   column= 1,
 			--   column= {2, 3},
-			if entry.column == "all" then
+			if column == "all" then
 				for cid= 1, num_columns do
 					target_columns[#target_columns+1]= cid
 				end
-			elseif type(entry.column) == "number" then
-				if entry.column < 1 or entry.column > num_columns then
+			elseif type(column) == "number" then
+				if column < 1 or column > num_columns then
 					lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
 					return {}
 				end
-				target_columns[#target_columns+1]= entry.column
-			elseif type(entry.column) == "table" then
-				for eid, cid in ipairs(entry.column) do
+				target_columns[#target_columns+1]= column
+			elseif type(column) == "table" then
+				for eid, cid in ipairs(column) do
 					if type(cid) ~= "number" or cid < 1 or cid > num_columns then
 						lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
 						return {}

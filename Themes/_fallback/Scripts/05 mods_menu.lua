@@ -2,88 +2,86 @@ local notefield_mods= {
 	effect= {
 	},
 	appearance= {
-		flat= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "flat", target= "quantization_multiplier",
-					 sum_type= 'replace', 1-mag}
-				}
-			end
+		flat= function(mag)
+			return {{name= "flat", column= "all", target= "quantization_multiplier", sum_type= '*', 1-mag}}
 		end,
-		rainbow= function(mag, field)
+		rainbow= function(mag)
 			local phases= {}
 			local quants= {0, 1/4, 1/3, 1/8, 1/16, 1/2, 1/6, 1/12}
 			for i= 1, #quants do
 				phases[i]= {i-1, i, 0, quants[i]}
 			end
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "rainbow", target= "quantization_multiplier",
-					 sum_type= 'replace', 0},
-					{name= "rainbow", target= "quantization_offset",
-					 {"phase", {"repeat", "row_id", 0, #quants}, phases}
-					}
-				}
-			end
+			return {
+				{name= "rainbow", column= "all", target= "quantization_multiplier",
+				 sum_type= '*', 0},
+				{name= "rainbow", column= "all", target= "quantization_offset",
+				 {"phase", {"repeat", "row_id", 0, #quants}, phases}},
+			}
 		end,
-		stealth= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "stealth", target= "note_alpha", sum_type= '*', 1-mag}
-				}
-			end
+		stealth= function(mag)
+			return {{name= "stealth", column= "all", 'stealth', sum_type= '*', mag}}
 		end,
 	},
 	scrolls= {
-		alternate= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				if i % 2 == 1 then
-					col:set_permanent_mods{
-						{name= "alternate", target= "reverse", sum_type= '*', -1*mag}
-					}
-				end
-			end
+		alternate= function(mag)
+			return {{
+					name= "alternate", column= function(num)
+						local ret= {}
+						for i= 1, num do
+							if i % 2 == 1 then
+								ret[#ret+1]= i
+							end
+						end
+						return ret
+					end,
+					target= "reverse", sum_type= '*', -1*mag
+			}}
 		end,
-		centered= function(mag, field)
-			for i, col in ipairs(field:get_columns()) do
-				col:set_permanent_mods{
-					{name= "center", target= "center", mag}
-				}
-			end
+		centered= function(mag)
+			return {{name= "center", column= "all", target= "center", mag}}
 		end,
-		cross= function(mag, field)
-			local columns= field:get_columns()
-			local first_cross= math.floor(#columns / 4)
-			local last_cross= #columns - 1 - first_cross
-			for i, col in ipairs(columns) do
-				if (i-1) >= first_cross and (i-1) <= last_cross then
-					col:set_permanent_mods{
-						{name= "cross", target= "reverse", sum_type= '*', -1 * mag}
-					}
-				end
-			end
+		cross= function(mag)
+			return {{
+					name= "cross", column= function(num)
+						local first_cross= math.floor(num / 4)
+						local last_cross= num - 1 - first_cross
+						local ret= {}
+						for i= 1, num do
+							if (i-1) >= first_cross and (i-1) <= last_cross then
+								ret[#ret+1]= i
+							end
+						end
+						return ret
+					end,
+					target= "reverse", sum_type= '*', -1 * mag
+			}}
 		end,
-		split= function(mag, field)
-			local columns= field:get_columns()
-			for i, col in ipairs(columns) do
-				if i > #columns / 2 then
-					col:set_permanent_mods{
-						{name= "split", target= "reverse", sum_type= '*', -1 * mag}
-					}
-				end
-			end
+		split= function(mag)
+			return {{
+					name= "split", column= function(num)
+						local half= num / 2
+						local ret= {}
+						for i= 1, num do
+							if i > half then
+								ret[#ret+1]= i
+							end
+						end
+						return ret
+					end,
+					target= "reverse", sum_type= '*', -1 * mag
+			}}
 		end,
 	},
 }
 
 for i, name in ipairs{
 	"attenuate", "beat", "blink", "bounce", "bumpy", "confusion", 'digital',
-	'dizzy', 'drunk', 'flip', 'invert', 'mini', 'parabola', 'pulse', 'roll',
+	'dizzy', 'drunk', 'flip', 'invert', 'parabola', 'pulse', 'roll',
 	'sawtooth', 'shrinklinear', 'shrinkmult', 'square', 'tiny',
 	'tipsy', 'tornado', 'twirl', 'xmode', 'zigzag',
 } do
 	notefield_mods.effect[name]= function(mag)
-		return {{name= name, name, mag}}
+		return {{name= name, column= "all", name, mag}}
 	end
 end
 
@@ -129,6 +127,10 @@ local player_mods= {
 	[PLAYER_1]= {},
 	[PLAYER_2]= {},
 }
+local player_clear_list= {
+	[PLAYER_1]= {},
+	[PLAYER_2]= {},
+}
 
 local profile_mods_config= create_lua_config{
 	name= "notefield_mods", file= "notefield_mods.lua", default= {},
@@ -157,6 +159,10 @@ function clear_notefield_mods_from_profile(pn)
 end
 
 function clear_notefield_mods(pn)
+	local pn_clear= player_clear_list[pn]
+	for name, level in pairs(player_mods[pn]) do
+		pn_clear[name]= true
+	end
 	player_mods[pn]= {}
 end
 
@@ -187,13 +193,16 @@ end
 
 local function set_multipart_mod_level(pn, multi_mod, level)
 	local pn_mods= player_mods[pn]
-	if level == 0 then
+	local pn_clear= player_clear_list[pn]
+	if math.abs(level) < .001 then
 		for i, part in ipairs(multi_mod) do
 			pn_mods[part[1]]= nil
+			pn_clear[part[1]]= true
 		end
 	else
 		for i, part in ipairs(multi_mod) do
 			pn_mods[part[1]]= level * part[2]
+			pn_clear[part[1]]= nil
 		end
 	end
 end
@@ -201,7 +210,10 @@ end
 local function notefield_mods_menu(pn, with_save, no_sections, per_mod_func)
 	local items= {
 		{"action", "notefield_mods_clear",
-		 function(big, arg, pn) clear_notefield_mods(pn) end},
+		 function(big, arg, pn)
+			 MESSAGEMAN:Broadcast("NoteFieldModChanged", {pn= pn})
+			 clear_notefield_mods(pn)
+		end},
 	}
 	if with_save and PROFILEMAN:IsPersistentProfile(pn) then
 		items[#items+1]= {
@@ -233,6 +245,7 @@ local function toggle_menu_per_mod(section_name, sub_items)
 		sub_items[#sub_items+1]= {
 			"custom", {
 				type_hint= {main= "bool"},
+				refresh= {category= "NoteFieldMod", match_pn= true},
 				name= full_name, func= function(big, arg, pn)
 					local pn_mods= player_mods[pn]
 					local level= get_multipart_mod_level(pn_mods, mod)
@@ -241,7 +254,8 @@ local function toggle_menu_per_mod(section_name, sub_items)
 						new_val= 1
 					end
 					set_multipart_mod_level(pn, mod, new_val)
-					MESSAGEMAN:Broadcast("NotefieldModChanged", {name= full_name, value= new_val, pn= pn})
+					nesty_menus.menu_message{category= "NoteFieldMod", pn= pn}
+					MESSAGEMAN:Broadcast("NoteFieldModChanged", {name= full_name, value= new_val, pn= pn})
 					if new_val == 1 then
 						return {"boolean", true}
 					else
@@ -249,6 +263,7 @@ local function toggle_menu_per_mod(section_name, sub_items)
 					end
 				end,
 				func_changes_value= true, value= function(arg, pn)
+					local pn_mods= player_mods[pn]
 					local level= get_multipart_mod_level(pn_mods, mod)
 					if level == 1 then
 						return {"boolean", true}
@@ -277,6 +292,7 @@ local function value_menu_per_mod(section_name, sub_items)
 		sub_items[#sub_items+1]= {
 			"custom", {
 				type_hint= {main= "number", sub= "note_mod"},
+				refresh= {category= "NoteFieldMod", match_pn= true},
 				name= full_name, value= function(arg, pn)
 					local value= get_multipart_mod_level(player_mods[pn], mod)
 					return {"number", value}
@@ -289,7 +305,8 @@ local function value_menu_per_mod(section_name, sub_items)
 					end
 					value= value + step
 					set_multipart_mod_level(pn, mod, value)
-					MESSAGEMAN:Broadcast("NotefieldModChanged", {name= full_name, value= value, pn= pn})
+					nesty_menus.menu_message{category= "NoteFieldMod", pn= pn}
+					MESSAGEMAN:Broadcast("NoteFieldModChanged", {name= full_name, value= value, pn= pn})
 					return {"number", value}
 				end,
 		}}
@@ -396,15 +413,52 @@ end
 function apply_notefield_mods(pn)
 	local field= find_notefield_in_gameplay(SCREENMAN:GetTopScreen(), pn)
 	if field then
+		local pn_clear= player_clear_list[pn]
+		local field_clear= {}
+		local column_clear= {}
+		for name, clear in pairs(pn_clear) do
+			local sub_func= get_element_by_path(notefield_mods, name)
+			if type(sub_func) == "function" then
+				local sub_mods= sub_func(0)
+				for i, sub in ipairs(sub_mods) do
+					local target= sub.target
+					if not target and type(sub[1]) == "string" then
+						local mod_entry= find_custom_mod(sub[1])
+						if mod_entry then
+							target= mod_entry.target
+						end
+					end
+					local clear_info= {target= target, name= sub.name}
+					if sub.column then
+						column_clear[#column_clear+1]= clear_info
+					else
+						field_clear[#field_clear+1]= clear_info
+					end
+				end
+			end
+		end
+		if #field_clear > 0 then
+			field:remove_permanent_mods(field_clear)
+		end
+		if #column_clear > 0 then
+			for i, col in ipairs(field:get_columns()) do
+				col:remove_permanent_mods(column_clear)
+			end
+		end
+		player_clear_list[pn]= {}
 		local mods_table= {}
 		foreach_ordered(
 			player_mods[pn], function(name, value)
-				local sub_mods= get_element_by_path(notefield_mods, name)
-				for i, sub in ipairs(mods_table) do
-					mods_table[#mods_table+1]= sub
+				local sub_func= get_element_by_path(notefield_mods, name)
+				if type(sub_func) == "function" then
+					local sub_mods= sub_func(value)
+					for i, sub in ipairs(sub_mods) do
+						mods_table[#mods_table+1]= sub
+					end
 				end
 		end)
 		if #mods_table > 0 then
+			mods_table.columns= field:get_num_columns()
 			local organized= organize_notefield_mods_by_target(mods_table)
 			field:set_per_column_permanent_mods(organized)
 		end

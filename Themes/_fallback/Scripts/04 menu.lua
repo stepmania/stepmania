@@ -2317,15 +2317,21 @@ function one_dimension_scroll(
 end
 
 function add_defaults_to_params(params, defaults)
+	if type(params) ~= "table" then params= {} end
+	if type(defaults) ~= "table" then return params end
 	for key, value in pairs(defaults) do
 		if params[key] == nil then params[key]= value end
 	end
+	return params
 end
 
 function add_blank_tables_to_params(params, table_names)
+	if type(params) ~= "table" then params= {} end
+	if type(table_names) ~= "table" then return params end
 	for i, name in ipairs(table_names) do
 		if not params[name] then params[name]= {} end
 	end
+	return params
 end
 
 function noop_nil() end
