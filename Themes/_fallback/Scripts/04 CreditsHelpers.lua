@@ -96,7 +96,7 @@ local stepmania_credits= {
 		"psmay", -- SextetStream driver and related things
 		"桜為小鳩/Sakurana-Kobato (@sakuraponila)", -- custom scoring fixes
 		"Samuel Kim (1a2a3a2a1a)", -- various beat mode fixes
-		"Spooky Magician", -- testing, debug builds
+		"SpoOkyMagician", -- testing, debug builds
 		"tuxdude", -- minor changes to service menu layout
 		"v1toko", -- x-mode from StepNXA
 		"Wallacoloo", -- delete songs, other fixes
