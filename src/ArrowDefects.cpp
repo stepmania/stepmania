@@ -61,10 +61,13 @@ float const center_line_y= 160.f; // from y_offset == 0
 float const fade_dist_y= 40.f;
 
 ArrowDefects::ArrowDefects()
-	:m_options(nullptr)
+	:m_options(nullptr), m_timing_data(nullptr), m_read_bpm(150.f),
+	 m_num_columns(4), m_num_pads(1), m_xmode_dir(1.f),
+	 m_receptor_pos_normal(-125.f), m_receptor_pos_reverse(145.f),
+	 m_beat_factor{0.f, 0.f, 0.f},
+	 m_expand_seconds(0.f), m_tan_expand_seconds(0.f),
+	 m_prev_style(nullptr)
 {
-	m_receptor_pos_normal= -125.f;
-	m_receptor_pos_reverse= 145.f;
 	m_reverse_offset= (m_receptor_pos_reverse - m_receptor_pos_normal) * .5f;
 }
 
