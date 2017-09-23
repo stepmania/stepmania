@@ -280,6 +280,29 @@ void NoteFieldColumn::set_note_data(const NoteData* note_data,
 	}
 }
 
+void NoteFieldColumn::replace_render_note_skin_entries(
+	NoteSkinColumn* being_removed, NoteSkinColumn* replacement)
+{
+	for(auto&& render_list : {&render_holds, &render_lifts, &render_taps})
+	{
+		for(auto&& note : *render_list)
+		{
+			if(note.skin == being_removed)
+			{
+				note.skin= replacement;
+			}
+		}
+	}
+}
+
+void NoteFieldColumn::add_layers_from_skin(NoteSkinData& data, size_t id)
+{
+	for(auto&& layer : data.m_layers)
+	{
+		AddChildInternal(layer.m_actors[m_column], id);
+	}
+}
+
 void NoteFieldColumn::remove_layers_from_skin(size_t id, bool shift_others)
 {
 	if(!m_layers.empty())
@@ -315,33 +338,30 @@ void NoteFieldColumn::apply_base_skin(std::vector<Rage::Color>* player_colors, d
 	pass_message_to_heads(width_msg);
 }
 
-void NoteFieldColumn::add_skin(NoteSkinData& data, bool replace_base)
+void NoteFieldColumn::set_skin(NoteSkinData& data)
 {
-	NoteSkinColumn* col= data.get_column(m_column);
-	size_t id= m_noteskins.size();
-	if(replace_base && !m_noteskins.empty())
-	{
-		id= 0;
-		remove_layers_from_skin(0, false);
-		m_noteskins[0]= col;
-	}
-	else
-	{
-		m_noteskins.push_back(col);
-	}
-	for(auto&& layer : data.m_layers)
-	{
-		AddChildInternal(layer.m_actors[m_column], id);
-	}
+	NoteSkinColumn* being_removed= m_noteskins[0];
+	remove_layers_from_skin(0, false);
+	m_noteskins[0]= data.get_column(m_column);
+	add_layers_from_skin(data, 0);
+	NoteSkinColumn* replacement= m_noteskins[0];
+	replace_render_note_skin_entries(being_removed, replacement);
 }
 
-void NoteFieldColumn::remove_skin(size_t id, bool shift_others)
+void NoteFieldColumn::add_skin(NoteSkinData& data)
 {
-	remove_layers_from_skin(id, shift_others);
-	if(shift_others)
-	{
-		m_noteskins.erase(m_noteskins.begin() + id);
-	}
+	size_t id= m_noteskins.size();
+	m_noteskins.push_back(data.get_column(m_column));
+	add_layers_from_skin(data, id);
+}
+
+void NoteFieldColumn::remove_skin(size_t id)
+{
+	NoteSkinColumn* being_removed= m_noteskins[id];
+	remove_layers_from_skin(id, true);
+	m_noteskins.erase(m_noteskins.begin() + id);
+	NoteSkinColumn* replacement= m_noteskins[0];
+	replace_render_note_skin_entries(being_removed, replacement);
 }
 
 void NoteFieldColumn::set_defective_mode(bool mode)
@@ -2660,14 +2680,20 @@ void NoteField::set_skin(std::string const& name, LuaReference& params, int uid)
 	if(m_noteskins.empty())
 	{
 		m_noteskins.push_back(temp);
+		add_layers_from_skin(m_noteskins[0]->data, 0);
+		add_skin_to_columns(m_noteskins[0]->data);
 	}
 	else
 	{
+		for(auto&& col : m_columns)
+		{
+			col.set_skin(temp->data);
+		}
 		remove_layers_from_skin(0, false);
 		delete m_noteskins[0];
 		m_noteskins[0]= temp;
+		add_layers_from_skin(m_noteskins[0]->data, 0);
 	}
-	add_layers_from_skin(m_noteskins[0]->data, 0);
 	apply_base_skin_to_columns();
 }
 
@@ -2691,6 +2717,7 @@ void NoteField::add_skin(std::string const& name, LuaReference& params, int uid)
 	temp->uid= uid;
 	m_noteskins.push_back(temp);
 	add_layers_from_skin(m_noteskins.back()->data, m_noteskins.size()-1);
+	add_skin_to_columns(m_noteskins.back()->data);
 	if(m_noteskins.size() == 1)
 	{
 		apply_base_skin_to_columns();
@@ -2811,12 +2838,17 @@ void NoteField::apply_base_skin_to_columns()
 
 void NoteField::remove_skin(std::string const& name, int uid)
 {
+	if(m_noteskins.size() == 1)
+	{
+		return;
+	}
 	for(size_t id= 0; id < m_noteskins.size(); ++id)
 	{
 		field_skin_entry* entry= m_noteskins[id];
 		if(entry->name == name && entry->uid == uid)
 		{
 			remove_layers_from_skin(id, true);
+			remove_skin_from_columns(id);
 			delete entry;
 			m_noteskins.erase(m_noteskins.begin() + id);
 			if(id == 0 && !m_noteskins.empty())
@@ -2940,6 +2972,7 @@ void NoteField::set_note_data(NoteData* note_data, TimingData const* timing, Ste
 			for(size_t id= 0; id < m_noteskins.size(); ++id)
 			{
 				add_layers_from_skin(m_noteskins[id]->data, id);
+				add_skin_to_columns(m_noteskins[id]->data);
 			}
 			apply_base_skin_to_columns();
 		}
@@ -3434,16 +3467,27 @@ void NoteField::recreate_columns()
 	}
 }
 
+void NoteField::add_skin_to_columns(NoteSkinData& data)
+{
+	for(auto&& col : m_columns)
+	{
+		col.add_skin(data);
+	}
+}
+
+void NoteField::remove_skin_from_columns(size_t id)
+{
+	for(auto&& col : m_columns)
+	{
+		col.remove_skin(id);
+	}
+}
+
 void NoteField::add_layers_from_skin(NoteSkinData& data, size_t id)
 {
 	for(auto&& layer : data.m_field_layers)
 	{
 		AddChildInternal(layer, id);
-	}
-	bool replace_base= id == 0;
-	for(size_t cid= 0; cid < m_columns.size(); ++cid)
-	{
-		m_columns[cid].add_skin(data, replace_base);
 	}
 	data.m_children_owned_by_field_now= true;
 }
@@ -3469,10 +3513,6 @@ void NoteField::remove_layers_from_skin(size_t id, bool shift_others)
 				++iter;
 			}
 		}
-	}
-	for(auto&& col : m_columns)
-	{
-		col.remove_skin(id, shift_others);
 	}
 }
 

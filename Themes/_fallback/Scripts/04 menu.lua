@@ -1263,6 +1263,15 @@ menu_controller_mt= {
 				end
 			end
 		end,
+		mouse_inside= function(self, mx, my)
+			if #self.menu_stack < 1 then return end
+			for id= 0, self.scroller.num_main-1 do
+				local disp= self.scroller.main_items[id]
+				if disp.info and disp:check_focus(mx, my) then
+					return true
+				end
+			end
+		end,
 		update_cursor= function(self)
 			if not self.cursor then return end
 			if not self.info then return end
@@ -2014,6 +2023,7 @@ nesty_menus= {
 	make_menu= function(info)
 		if not info then return end
 		local ret= {}
+		copy_parts(ret, info, {"on_open", "on_open_arg", "on_close", "on_close_arg"})
 		for eid= 1, #info do
 			local entry= info[eid]
 			if type(entry) ~= "table" then
@@ -2038,7 +2048,6 @@ nesty_menus= {
 					end
 					local ret= {
 						name= name, func= function() return "submenu", items end,
-						on_open= entry.on_open, on_close= entry.on_close,
 						type_hint= {main= "submenu", sub= sub_type},
 					}
 					return add_translation_params(ret, entry)
@@ -2057,7 +2066,7 @@ nesty_menus= {
 				Trace("Invalid menu entry:")
 				rec_print_table(entry)
 			end
-			assert(handler, "Menu entry " .. eid .. " is of unknown type.")
+			assert(handler, "Menu entry " .. eid .. " is of unknown type: " .. tostring(entype))
 			local success, item= pcall(handler)
 			assert(success, "Menu entry " .. eid .. " had problem..."..tostring(item))
 			ret[#ret+1]= item
