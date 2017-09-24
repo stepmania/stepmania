@@ -879,7 +879,7 @@ menu_controller_mt= {
 			self:attach(args.actor, args.pn)
 			self:apply_translation_section(args.translation_section)
 			self:set_input_mode(args.input_mode, args.repeats_to_big, args.select_goes_to_top)
-			self:set_info(args.data)
+			self:set_info(args.data, args.custom_menu)
 		end,
 		apply_translation_section= function(self, section)
 			self:set_translation_section(self.scroller.main_items, self.scroller.num_main, section)
