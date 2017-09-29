@@ -211,8 +211,8 @@ local function notefield_mods_menu(pn, with_save, no_sections, per_mod_func)
 	local items= {
 		{"action", "notefield_mods_clear",
 		 function(big, arg, pn)
-			 MESSAGEMAN:Broadcast("NoteFieldModChanged", {pn= pn})
 			 clear_notefield_mods(pn)
+			 MESSAGEMAN:Broadcast("NoteFieldModChanged", {pn= pn})
 		end},
 	}
 	if with_save and PROFILEMAN:IsPersistentProfile(pn) then

@@ -177,9 +177,6 @@ local engine_custom_mods= {
 			local wave_input= {'*', params.input, 1/64}
 			local wave= check_op{ops.wave, wave_input}
 			local amount= {'|', wave}
-			if not operator_list['|'] then
-				amount= {'*', {'square', wave_input}, wave}
-			end
 			return {'*', params.level, 64, .5, amount}
 		end,
 		params= {
