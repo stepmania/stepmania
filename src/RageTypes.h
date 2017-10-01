@@ -51,6 +51,7 @@ enum EffectMode
 	EffectMode_Overlay,
 	EffectMode_Screen,
 	EffectMode_YUYV422,
+	EffectMode_DistanceField,
 	NUM_EffectMode,
 	EffectMode_Invalid
 };

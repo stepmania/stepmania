@@ -364,6 +364,8 @@ GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefi
 		secondaryShader = CompileShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Cel.frag", asDefines);
 	else if (sFile == "Data/Shaders/GLSL/Shell.vert")
 		secondaryShader = CompileShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Shell.frag", asDefines);
+	else if (sFile == "Data/Shaders/GLSL/Distance field.vert")
+		secondaryShader = CompileShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Distance field.frag", asDefines);
 	
 	GLhandleARB hShader = CompileShader( ShaderType, sFile, asDefines );
 	if (hShader == 0)
@@ -405,6 +407,7 @@ static GLhandleARB g_hScreenShader = 0;
 static GLhandleARB g_hYUYV422Shader = 0;
 static GLhandleARB g_gShellShader = 0;
 static GLhandleARB g_gCelShader = 0;
+static GLhandleARB g_gDistanceFieldShader = 0;
 
 void InitShaders()
 {
@@ -419,6 +422,7 @@ void InitShaders()
 	// these two are for dancing characters and are both actually shader pairs
 	g_gShellShader = LoadShader(			GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Shell.vert", asDefines );
 	g_gCelShader = LoadShader(			GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Cel.vert", asDefines );
+	g_gDistanceFieldShader	= LoadShader( GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Distance field.vert", asDefines );
 	
 	// effects
 	g_bUnpremultiplyShader	= LoadShader(	GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Unpremultiply.frag", asDefines );
@@ -1798,6 +1802,8 @@ void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 		case EffectMode_YUYV422:
 			hShader = g_hYUYV422Shader;
 			break;
+		case EffectMode_DistanceField:
+			hShader = g_gDistanceFieldShader;
 		default:
 			break;
 	}
@@ -1844,6 +1850,8 @@ bool RageDisplay_Legacy::IsEffectModeSupported( EffectMode effect )
 			return g_hScreenShader != 0;
 		case EffectMode_YUYV422:
 			return g_hYUYV422Shader != 0;
+		case EffectMode_DistanceField:
+			return g_gDistanceFieldShader != 0;
 		default:
 			return false;
 	}
