@@ -272,7 +272,7 @@ int Font::GetGlyphsThatFit(const wstring& line, int* width) const
 }
 
 Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(NULL),
-	m_iCharToGlyph(), m_bRightToLeft(false),
+	m_iCharToGlyph(), m_bRightToLeft(false), m_bDistanceField(false),
 	// strokes aren't shown by default, hence the Color.
 	m_DefaultStrokeColor(RageColor(0,0,0,0)), m_sChars("") {}
 Font::~Font()
@@ -785,6 +785,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		ini.RenameKey("Char Widths", "main");	// backward compat
 		ini.GetValue( "common", "CapitalsOnly", bCapitalsOnly );
 		ini.GetValue( "common", "RightToLeft", m_bRightToLeft );
+		ini.GetValue( "common", "DistanceField", m_bDistanceField );
 		RString s;
 		if( ini.GetValue( "common", "DefaultStrokeColor", s ) )
 			m_DefaultStrokeColor.FromString( s );

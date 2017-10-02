@@ -414,6 +414,10 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 				m_aVertices[i+j].c.a = (unsigned char)( m_aVertices[i+j].c.a * fAlpha );
 		}
 	}
+	
+	bool bDistanceField = m_pFont->IsDistanceField();
+	if( bDistanceField )
+		DISPLAY->SetEffectMode( EffectMode_DistanceField );
 
 	for( int start = iStartGlyph; start < iEndGlyph; )
 	{
@@ -443,6 +447,8 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 
 		start = end;
 	}
+	if( bDistanceField )
+		DISPLAY->SetEffectMode( EffectMode_Normal );
 }
 
 /* sText is UTF-8. If not all of the characters in sText are available in the
