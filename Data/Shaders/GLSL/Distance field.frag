@@ -14,14 +14,14 @@ float median(float r, float g, float b) {
 
 const float distanceThreshold = 0.5;
 
-float sample(vec2 tc, vec2 offset, float width) {
-	vec3 texel = texture2D(Texture1, tc - offset).rgb;
+float sample(vec2 tc) {
+	vec3 texel = texture2D(Texture1, tc).rgb;
 	float dist = median(texel.r, texel.g, texel.b);
-	return aastep(distanceThreshold - width, dist);
+	return aastep(distanceThreshold, dist);
 }
 
 void main(void)
 {
-	float dfValue = sample(texCoords, vec2(0.0, 0.0), 0.0);
+	float dfValue = sample(texCoords);
 	gl_FragColor = vec4(vertexColor.rgb, vertexColor.a * dfValue);
 }
