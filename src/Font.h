@@ -174,6 +174,7 @@ public:
 	void SetDefaultGlyph( FontPage *pPage );
 
 	bool IsRightToLeft() const { return m_bRightToLeft; };
+	bool IsDistanceField() const { return m_bDistanceField; };
 	const RageColor &GetDefaultStrokeColor() const { return m_DefaultStrokeColor; };
 
 private:
@@ -198,6 +199,8 @@ private:
 	 * This will also change the way glyphs from the default FontPage are rendered. 
 	 * There may be a better way to handle this. */
 	bool m_bRightToLeft;
+	
+	bool m_bDistanceField;
 
 	RageColor m_DefaultStrokeColor;
 
