@@ -183,7 +183,9 @@ static const char *EffectModeNames[] =
 	"Overlay",
 	"Screen",
 
-	"YUYV422"
+	"YUYV422",
+	/* Draws a graphic from a signed distance field. */
+	"DistanceField"
 };
 XToString( EffectMode );
 LuaXType( EffectMode );
