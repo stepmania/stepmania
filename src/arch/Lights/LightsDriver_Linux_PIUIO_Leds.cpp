@@ -31,14 +31,14 @@ namespace {
 
 	const char *dance_leds[NUM_GameController][NUM_GameButton] = {
 		{
-			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 			"/sys/class/leds/piuio::output20/brightness",
 			"/sys/class/leds/piuio::output21/brightness",
 			"/sys/class/leds/piuio::output18/brightness",
 			"/sys/class/leds/piuio::output19/brightness",
 		},
 		{
-			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 			"/sys/class/leds/piuio::output4/brightness",
 			"/sys/class/leds/piuio::output5/brightness",
 			"/sys/class/leds/piuio::output2/brightness",
