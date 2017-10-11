@@ -317,7 +317,7 @@ void NoteFieldColumn::remove_layers_from_skin(size_t id, bool shift_others)
 			}
 			else
 			{
-				if(shift_others && iter->m_from_noteskin > id)
+				if(iter->m_from_noteskin != theme_noteskin_id && shift_others && iter->m_from_noteskin > id)
 				{
 					--(iter->m_from_noteskin);
 				}
@@ -1457,6 +1457,14 @@ void NoteFieldColumn::add_renderable_to_lists(render_note& renderable)
 
 void NoteFieldColumn::build_render_lists()
 {
+	// Clearing and rebuilding the list of taps to render every frame is
+	// unavoidable because the notes move every frame, which changes the y
+	// offset, which changes what is visible.  So even if the list wasn't
+	// cleared, it would still have to be traversed to recalculate the y
+	// offsets every frame.
+	render_holds.clear();
+	render_lifts.clear();
+	render_taps.clear();
 	if(m_noteskins.empty())
 	{
 		return;
@@ -1505,14 +1513,6 @@ void NoteFieldColumn::build_render_lists()
 		layer_skin_id= 0;
 	}
 
-	// Clearing and rebuilding the list of taps to render every frame is
-	// unavoidable because the notes move every frame, which changes the y
-	// offset, which changes what is visible.  So even if the list wasn't
-	// cleared, it would still have to be traversed to recalculate the y
-	// offsets every frame.
-	render_holds.clear();
-	render_lifts.clear();
-	render_taps.clear();
 	m_status.upcoming_beat_dist= 1000.0;
 	m_status.upcoming_second_dist= 1000.0;
 	m_status.prev_active_hold= m_status.active_hold;
@@ -2338,6 +2338,7 @@ NoteField::NoteField()
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
 	 m_in_edit_mode(false), m_oitg_zoom_mode(false),
 	 m_visible_bg_change_layer(BACKGROUND_LAYER_1),
+	 m_curr_beat(0.0), m_curr_second(0.0), m_field_width(0.0),
 	 m_share_steps_parent(nullptr),
 	 m_pn(NUM_PLAYERS), m_in_defective_mode(false),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
@@ -2648,7 +2649,7 @@ field_skin_entry* NoteField::set_add_skin_common(std::string const& name,
 		delete temp;
 		return nullptr;
 	}
-	temp->replaces_base_skin= replace_base;
+	temp->replaces_first_skin= replace_base;
 	switch(fill_skin_entry_data(temp))
 	{
 		case FSED_stepstype_mismatch:
@@ -2669,6 +2670,17 @@ field_skin_entry* NoteField::set_add_skin_common(std::string const& name,
 	return temp;
 }
 
+void NoteField::set_base_skin(std::string const& name, LuaReference& params, int uid)
+{
+	field_skin_entry temp;
+	if(!fill_skin_entry(&temp, name, params))
+	{
+		return;
+	}
+	m_base_noteskin= temp;
+	m_base_noteskin.uid= uid;
+}
+
 void NoteField::set_skin(std::string const& name, LuaReference& params, int uid)
 {
 	field_skin_entry* temp= set_add_skin_common(name, params, true);
@@ -2677,6 +2689,16 @@ void NoteField::set_skin(std::string const& name, LuaReference& params, int uid)
 		return;
 	}
 	temp->uid= uid;
+	if(m_base_noteskin.name.empty())
+	{
+		// m_base_noteskin should not contain filled data because the stepstype
+		// might be different when clear_to_base_skin applies it.  Also, the data
+		// wouldn't be used anyway.
+		m_base_noteskin.loader= temp->loader;
+		m_base_noteskin.name= temp->name;
+		m_base_noteskin.params= temp->params;
+		m_base_noteskin.uid= temp->uid;
+	}
 	if(m_noteskins.empty())
 	{
 		m_noteskins.push_back(temp);
@@ -2836,6 +2858,13 @@ void NoteField::apply_base_skin_to_columns()
 	HandleMessage(width_msg);
 }
 
+void NoteField::delete_skin_entry(size_t id, field_skin_entry* entry)
+{
+	remove_layers_from_skin(id, true);
+	remove_skin_from_columns(id);
+	delete entry;
+}
+
 void NoteField::remove_skin(std::string const& name, int uid)
 {
 	if(m_noteskins.size() == 1)
@@ -2847,16 +2876,53 @@ void NoteField::remove_skin(std::string const& name, int uid)
 		field_skin_entry* entry= m_noteskins[id];
 		if(entry->name == name && entry->uid == uid)
 		{
-			remove_layers_from_skin(id, true);
-			remove_skin_from_columns(id);
-			delete entry;
+			delete_skin_entry(id, entry);
 			m_noteskins.erase(m_noteskins.begin() + id);
 			if(id == 0 && !m_noteskins.empty())
 			{
 				apply_base_skin_to_columns();
 			}
+			for(auto&& col : m_columns)
+			{
+				col.build_render_lists();
+			}
 			return;
 		}
+	}
+}
+
+void NoteField::clear_to_base_skin()
+{
+	if(m_base_noteskin.name.empty())
+	{
+		return;
+	}
+	for(auto&& skin : m_unapplied_noteskins)
+	{
+		delete skin;
+	}
+	m_unapplied_noteskins.clear();
+	if(!m_noteskins.empty())
+	{
+		for(size_t id= m_noteskins.size()-1; id > 0; --id)
+		{
+			delete_skin_entry(id, m_noteskins[id]);
+		}
+		m_noteskins.resize(1);
+		if(m_noteskins[0]->name != m_base_noteskin.name)
+		{
+			delete_skin_entry(0, m_noteskins[0]);
+			m_noteskins.clear();
+			set_skin(m_base_noteskin.name, m_base_noteskin.params, m_base_noteskin.uid);
+		}
+	}
+	else
+	{
+		set_skin(m_base_noteskin.name, m_base_noteskin.params, m_base_noteskin.uid);
+	}
+	for(auto&& col : m_columns)
+	{
+		col.build_render_lists();
 	}
 }
 
@@ -2918,7 +2984,7 @@ void NoteField::set_note_data(NoteData* note_data, TimingData const* timing, Ste
 		m_noteskins.clear();
 		// Find the base noteskin first, either from m_unapplied_noteskins, or
 		// from old_noteskins.
-		// A noteskin in m_unapplied_noteskins with replaces_base_skin set takes
+		// A noteskin in m_unapplied_noteskins with replaces_first_skin set takes
 		// priority for base because it was probably set with the intent of
 		// taking effect with the stepstype change.
 		// After the base is set, then old_noteskins are applied, then
@@ -2927,7 +2993,7 @@ void NoteField::set_note_data(NoteData* note_data, TimingData const* timing, Ste
 		size_t old_start= 0;
 		for(size_t id= 0; id < m_unapplied_noteskins.size(); ++id)
 		{
-			if(m_unapplied_noteskins[id]->replaces_base_skin)
+			if(m_unapplied_noteskins[id]->replaces_first_skin)
 			{
 				if(fill_skin_entry_data(m_unapplied_noteskins[id]) == FSED_success)
 				{
@@ -3506,7 +3572,7 @@ void NoteField::remove_layers_from_skin(size_t id, bool shift_others)
 			}
 			else
 			{
-				if(shift_others && iter->m_from_noteskin > id)
+				if(iter->m_from_noteskin != theme_noteskin_id && shift_others && iter->m_from_noteskin > id)
 				{
 					--(iter->m_from_noteskin);
 				}
@@ -4286,6 +4352,11 @@ struct LunaNoteField : Luna<NoteField>
 		p->remove_skin(skin_name, uid);
 		COMMON_RETURN_SELF;
 	}
+	static int clear_to_base_skin(T* p, lua_State* L)
+	{
+		p->clear_to_base_skin();
+		COMMON_RETURN_SELF;
+	}
 	static int get_skin(T* p, lua_State* L)
 	{
 		lua_pushstring(L, p->get_skin().c_str());
@@ -4420,6 +4491,7 @@ struct LunaNoteField : Luna<NoteField>
 		ADD_GET_SET_METHODS(skin);
 		ADD_METHOD(add_skin);
 		ADD_METHOD(remove_skin);
+		ADD_METHOD(clear_to_base_skin);
 		ADD_METHOD(set_steps);
 		ADD_METHOD(share_steps);
 		ADD_METHOD(get_stepstype);

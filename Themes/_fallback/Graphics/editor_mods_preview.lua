@@ -62,7 +62,8 @@ local function reload_mods()
 		end
 		for pn, field in pairs(notefields) do
 			field:clear_timed_mods()
-			if pn_to_id[pn] > num_fields then
+			field:clear_to_base_skin()
+			if pn_to_id[pn] >= num_fields then
 				field:hibernate(math.huge):visible(false)
 			else
 				field:hibernate(0):visible(true)
@@ -75,6 +76,7 @@ local function reload_mods()
 		local num_fields= 1
 		for pn, field in pairs(notefields) do
 			field:clear_timed_mods()
+			field:clear_to_base_skin()
 			if pn_to_id[pn] > num_fields then
 				field:hibernate(math.huge):visible(false)
 			else

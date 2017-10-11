@@ -893,7 +893,7 @@ RageSurface* RageDisplay_Legacy::CreateScreenshot()
 		DebugFlushGLErrors();
 
 		//TODO: revisit for MacOS, where backbuffer size can be less than window size
-		glReadBuffer( GL_FRONT );
+		//glReadBuffer( GL_FRONT );
 		DebugAssertNoGLError();
 
 		glReadPixels( 0, 0, g_pWind->GetActualVideoModeParams().width, g_pWind->GetActualVideoModeParams().height, GL_RGBA,

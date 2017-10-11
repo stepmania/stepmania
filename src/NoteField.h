@@ -386,7 +386,7 @@ struct field_skin_entry
 	LuaReference params;
 	std::string name;
 	int uid; // Provided by whatever added the noteskin, uniqueness not enforced.
-	bool replaces_base_skin;
+	bool replaces_first_skin;
 };
 
 struct NoteField : ActorFrame
@@ -420,6 +420,7 @@ struct NoteField : ActorFrame
 	void set_gameplay_zoom(double zoom);
 
 	void clear_steps();
+	void set_base_skin(std::string const& skin_name, LuaReference& skin_params, int uid);
 	void set_skin(std::string const& skin_name, LuaReference& skin_params, int uid);
 	std::string const& get_skin();
 	void set_steps(Steps* data);
@@ -427,6 +428,7 @@ struct NoteField : ActorFrame
 
 	void add_skin(std::string const& name, LuaReference& params, int uid);
 	void remove_skin(std::string const& name, int uid);
+	void clear_to_base_skin();
 
 	// share_steps is a way for multiple notefields to use the same note data
 	// without duplicating it.  This also means that when edit mode edits the
@@ -537,6 +539,7 @@ private:
 	bool fill_skin_entry(field_skin_entry* entry, std::string const& name,
 		LuaReference& params);
 	int fill_skin_entry_data(field_skin_entry* entry);
+	void delete_skin_entry(size_t id, field_skin_entry* entry);
 	void add_layers_from_skin(NoteSkinData& data, size_t id);
 	void add_skin_to_columns(NoteSkinData& data);
 	void remove_skin_from_columns(size_t id);
@@ -580,6 +583,7 @@ private:
 	// When the stepstype changes, m_noteskins are reapplied first, then
 	// m_unapplied_noteskins.  Any noteskins that don't fit are silently
 	// discarded.
+	field_skin_entry m_base_noteskin;
 	std::vector<field_skin_entry*> m_noteskins;
 	std::vector<field_skin_entry*> m_unapplied_noteskins;
 	std::vector<Rage::Color> m_player_colors;

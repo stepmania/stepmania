@@ -937,20 +937,20 @@ function organize_notefield_mods_by_target(mods_table)
 		--   field= "all",
 		--   field= 1,
 		--   field= {2, 3},
-		if entry.field == "all" then
+		if entry.field == "all" or entry.field == nil then
 			for fid= 1, num_fields do
 				target_fields[#target_fields+1]= result[fid]
 			end
 		elseif type(entry.field) == "number" then
 			if entry.field < 1 or entry.field > num_fields then
-				lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+				lua.ReportScriptError("mods table entry " .. mid .. " field index " .. entry.field .. " is more than " .. num_fields)
 				return {}
 			end
-			target_fields[#target_fields+1]= result[fid]
+			target_fields[#target_fields+1]= result[entry.field]
 		elseif type(entry.field) == "table" then
 			for eid, fid in ipairs(entry.field) do
 				if type(fid) ~= "number" or fid < 1 or fid > num_fields then
-					lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+					lua.ReportScriptError("mods table entry " .. mid .. " field index " .. entry.field .. " is more than " .. num_fields)
 					return {}
 				end
 				target_fields[#target_fields+1]= result[fid]
@@ -1040,17 +1040,17 @@ local function process_skin_entries(notefields, noteskins)
 	--   -- Affects all notefields, uses params from profiles.
 	--   {name= "lambda"},
 	--   -- Affects all notefields, uses params provided.
-	--   {name= "lambda", target= "all", params= {}},
+	--   {name= "lambda", field= "all", params= {}},
 	--   -- Affects player 1 notefield, uses params from profile.
-	--   {name= "lambda", target= 1},
+	--   {name= "lambda", field= 1},
 	--   -- Affects player 2 notefield, uses params from profile.
-	--   {name= "lambda", target= 2},
+	--   {name= "lambda", field= 2},
 	--   -- Affects player 1 and 2 notefields, uses params from profiles.
-	--   {name= "lambda", target= {1, 2}},
+	--   {name= "lambda", field= {1, 2}},
 	--   -- Choose two random noteskins and apply them.
-	--   {random= 2, target= "all"},
+	--   {random= 2, field= "all"},
 	--   -- Choose two random non-generic noteskins and apply them.
-	--   {random= 2, target= "all", disable_supports_all= true},
+	--   {random= 2, field= "all", disable_supports_all= true},
 	-- }
 	local set_flags= {}
 	if noteskins.add then
@@ -1067,9 +1067,11 @@ local function process_skin_entries(notefields, noteskins)
 			set_flags[pn]= true
 		end
 	end
-	local function get_skins(pn, stype, without)
+	local function get_skins(pn, stype, without, nofilter)
 		local skins= NOTESKIN:get_skin_names_for_stepstype(stype, without)
-		skins= filter_noteskin_list_with_shown_config(pn, skins)
+		if not nofilter then
+			skins= filter_noteskin_list_with_shown_config(pn, skins)
+		end
 		for i, name in ipairs(skins) do
 			skins[name]= true
 		end
@@ -1079,6 +1081,7 @@ local function process_skin_entries(notefields, noteskins)
 	for pn, field in pairs(notefields) do
 		local stype= field:get_stepstype()
 		all_skin_lists[pn]= {
+			unfiltered= get_skins(pn, stype, false, true),
 			with_all= get_skins(pn, stype, false),
 			without_all= get_skins(pn, stype, true),
 		}
@@ -1102,21 +1105,21 @@ local function process_skin_entries(notefields, noteskins)
 	end
 	for i, entry in ipairs(noteskins) do
 		if type(entry) == "table" then
-			local targets= {}
-			local targype= type(entry.target)
+			local fields= {}
+			local targype= type(entry.field)
 			if targype == "number" then
-				local pn= PlayerNumber[entry.target] or PlayerNumber[1]
-				targets= {[pn]= notefields[pn]}
+				local pn= PlayerNumber[entry.field] or PlayerNumber[1]
+				fields= {[pn]= notefields[pn]}
 			elseif targype == "table" then
-				for tid, dy in ipairs(entry.target) do
+				for tid, dy in ipairs(entry.field) do
 					local pn= PlayerNumber[dy] or PlayerNumber[1]
-					targets= {[pn]= notefields[pn]}
+					fields= {[pn]= notefields[pn]}
 				end
 			else
-				targets= notefields
+				fields= notefields
 			end
 			if type(entry.random) == "number" then
-				for pn, field in pairs(targets) do
+				for pn, field in pairs(fields) do
 					local list= all_skin_lists[pn].with_all
 					if entry.disable_supports_all
 					and #all_skin_lists[pn].without_all > 0 then
@@ -1132,8 +1135,8 @@ local function process_skin_entries(notefields, noteskins)
 				end
 			else
 				local skin= entry.name
-				for pn, field in pairs(targets) do
-					if all_skin_lists[pn].with_all[skin] then
+				for pn, field in pairs(fields) do
+					if all_skin_lists[pn].unfiltered[skin] then
 						do_set(pn, skin, entry.params)
 					end
 				end
@@ -1142,13 +1145,15 @@ local function process_skin_entries(notefields, noteskins)
 	end
 end
 
+local pn_to_field_index= PlayerNumber:Reverse()
+
 function organize_and_apply_notefield_mods(notefields, mods)
 	local first_pn, first_field= next(notefields, nil)
 	mods.columns= first_field:get_num_columns()
 	process_skin_entries(notefields, mods.noteskin)
 	mods.noteskin= nil
 	local organized_mods= organize_notefield_mods_by_target(mods)
-	if mods.field and mods.field ~= 1 then
+	if mods.fields and mods.fields ~= 1 then
 		for pn, field in pairs(notefields) do
 			-- stepmania enums are 0 indexed
 			local field_index= pn_to_field_index[pn] + 1
@@ -1173,6 +1178,7 @@ function handle_notefield_mods(mods)
 			notefields[pn]= find_notefield_in_gameplay(screen, pn)
 			if notefields[pn] then
 				notefields[pn]:clear_timed_mods()
+				notefields[pn]:clear_to_base_skin()
 			end
 		end
 	end
