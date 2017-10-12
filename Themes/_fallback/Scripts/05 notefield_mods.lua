@@ -1013,7 +1013,7 @@ function organize_notefield_mods_by_target(mods_table)
 	end
 end
 
-local function process_skin_entries(notefields, noteskins)
+function process_mod_skin_entries(notefields, noteskins)
 	local profiles= {}
 	for pn, field in pairs(notefields) do
 		profiles[pn]= PROFILEMAN:GetProfile(pn)
@@ -1033,6 +1033,7 @@ local function process_skin_entries(notefields, noteskins)
 		return
 	end
 	if type(noteskins) ~= "table" then return end
+	if #noteskins < 1 then return end
 	-- noteskin= {
 	--   -- If add is true, skins are loaded after the one the player picked.
 	--   -- Otherwise, first entry replaces noteskin from the player's profile.
@@ -1090,6 +1091,13 @@ local function process_skin_entries(notefields, noteskins)
 		have[#have+1]= pick
 		have[pick]= true
 	end
+	local function get_list_for_random(pn, disable_supports_all)
+		if disable_supports_all
+		and #all_skin_lists[pn].without_all > 0 then
+			return all_skin_lists[pn].without_all
+		end
+		return all_skin_lists[pn].with_all
+	end
 	local function pick_random(list, already_have)
 		if #list == 1 then
 			add_pick(list[1], already_have)
@@ -1102,6 +1110,13 @@ local function process_skin_entries(notefields, noteskins)
 			local used= already_have[name]
 		until not used or #list <= #already_have
 		add_pick(name, already_have)
+	end
+	local function set_picks(fields, picks)
+		for pn, field in pairs(fields) do
+			for i, pick in ipairs(picks) do
+				do_set(pn, pick)
+			end
+		end
 	end
 	for i, entry in ipairs(noteskins) do
 		if type(entry) == "table" then
@@ -1118,21 +1133,23 @@ local function process_skin_entries(notefields, noteskins)
 			else
 				fields= notefields
 			end
-			if type(entry.random) == "number" then
-				for pn, field in pairs(fields) do
-					local list= all_skin_lists[pn].with_all
-					if entry.disable_supports_all
-					and #all_skin_lists[pn].without_all > 0 then
-						list= all_skin_lists[pn].without_all
-					end
-					local picks= {}
-					for pid= 1, entry.random do
-						pick_random(list, picks)
-					end
-					for i, pick in ipairs(picks) do
-						do_set(pn, pick)
-					end
+			if entry.random == "all" then
+				local first_pn= next(fields)
+				local picks= DeepCopy(get_list_for_random(first_pn, entry.disable_supports_all))
+				local len= #picks
+				for to= 1, len-1 do
+					local from= math.random(to, len)
+					picks[to], picks[from]= picks[from], picks[to]
 				end
+				set_picks(fields, picks)
+			elseif type(entry.random) == "number" then
+				local first_pn= next(fields)
+				local list= get_list_for_random(first_pn, entry.disable_supports_all)
+				local picks= {}
+				for pid= 1, entry.random do
+					pick_random(list, picks)
+				end
+				set_picks(fields, picks)
 			else
 				local skin= entry.name
 				for pn, field in pairs(fields) do
@@ -1150,7 +1167,7 @@ local pn_to_field_index= PlayerNumber:Reverse()
 function organize_and_apply_notefield_mods(notefields, mods)
 	local first_pn, first_field= next(notefields, nil)
 	mods.columns= first_field:get_num_columns()
-	process_skin_entries(notefields, mods.noteskin)
+	process_mod_skin_entries(notefields, mods.noteskin)
 	mods.noteskin= nil
 	local organized_mods= organize_notefield_mods_by_target(mods)
 	if mods.fields and mods.fields ~= 1 then

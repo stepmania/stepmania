@@ -2,6 +2,13 @@ local notefield_mods= {
 	effect= {
 	},
 	appearance= {
+		all_note= function(mag)
+			return {
+				noteskin= {{random= "all"}},
+				{name= "all_note", column= "all", target= "note_skin_id", {'*', 'row_id', mag}},
+				{name= "all_note", column= "all", target= "layer_skin_id", {'*', 'music_beat', mag}},
+			}
+		end,
 		flat= function(mag)
 			return {{name= "flat", column= "all", target= "quantization_multiplier", sum_type= '*', 1-mag}}
 		end,
@@ -447,18 +454,30 @@ function apply_notefield_mods(pn)
 		end
 		player_clear_list[pn]= {}
 		local mods_table= {}
+		local mods_skins= {}
 		foreach_ordered(
 			player_mods[pn], function(name, value)
 				local sub_func= get_element_by_path(notefield_mods, name)
 				if type(sub_func) == "function" then
 					local sub_mods= sub_func(value)
+					if type(sub_mods.noteskin) == "table" then
+						for i, entry in ipairs(sub_mods.noteskin) do
+							mods_skins[#mods_skins+1]= entry
+						end
+					elseif type(sub_mods.noteskin) == "string" then
+						mods_skins[#mods_skins+1]= sub_mods.noteskin
+					end
 					for i, sub in ipairs(sub_mods) do
 						mods_table[#mods_table+1]= sub
 					end
 				end
 		end)
-		if #mods_table > 0 then
+		if #mods_table > 0 or #mods_skins > 0 then
 			mods_table.columns= field:get_num_columns()
+			if #mods_skins > 0 then
+				field:clear_to_base_skin()
+				process_mod_skin_entries({[pn]= field}, mods_skins)
+			end
 			local organized= organize_notefield_mods_by_target(mods_table)
 			field:set_per_column_permanent_mods(organized)
 		end
