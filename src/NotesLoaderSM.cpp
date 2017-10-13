@@ -857,9 +857,15 @@ void SMLoader::ProcessTickcounts( TimingData &out, const std::string line, const
 		}
 
 		const float fTickcountBeat = RowToBeat( arrayTickcountValues[0], rowsPerBeat );
-		int iTicks = Rage::clamp(std::stoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
-
-		out.AddSegment( TickcountSegment(BeatToNoteRow(fTickcountBeat), iTicks) );
+		try
+		{
+			int iTicks = Rage::clamp(std::stoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
+			out.AddSegment( TickcountSegment(BeatToNoteRow(fTickcountBeat), iTicks) );
+		}
+		catch(...)
+		{
+			continue;
+		}
 	}
 }
 

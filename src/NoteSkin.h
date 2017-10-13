@@ -316,11 +316,12 @@ LuaDeclareType(TexCoordFlipMode);
 
 struct hold_part_lengths
 {
-	double start_note_offset;
-	double end_note_offset;
-	double head_pixs;
-	double body_pixs;
-	double tail_pixs;
+	double topcap_pixels;
+	double pixels_before_note;
+	double body_pixels;
+	double pixels_after_note;
+	double bottomcap_pixels;
+	bool needs_jumpback;
 };
 
 struct QuantizedHoldRenderData
@@ -508,6 +509,7 @@ struct NoteSkinData
 {
 	static const size_t max_columns= 256;
 	NoteSkinData();
+	~NoteSkinData();
 	void swap(NoteSkinData& other);
 	NoteSkinColumn* get_column(size_t column)
 	{
@@ -521,11 +523,14 @@ struct NoteSkinData
 	bool load_taps_from_lua(lua_State* L, int index, size_t columns,
 		NoteSkinLoader const* load_skin, std::string& insanity_diagnosis);
 	bool loaded_successfully() const { return m_loaded; }
+	void clear();
 
 	// The layers are public so that the NoteFieldColumns can go through and
 	// take ownership of the actors after loading.
 	std::vector<NoteSkinLayer> m_layers;
 	std::vector<Rage::Color> m_player_colors;
+	std::vector<Actor*> m_field_layers;
+	bool m_children_owned_by_field_now;
 private:
 	std::vector<NoteSkinColumn> m_columns;
 	LuaReference m_skin_parameters;
@@ -555,30 +560,31 @@ struct NoteSkinLoader
 	bool load_from_lua(lua_State* L, int index, std::string const& name,
 		std::string const& path, std::string& insanity_diagnosis);
 	bool supports_needed_buttons(StepsType stype) const;
-	bool push_loader_function(lua_State* L, std::string const& loader);
+	bool push_loader_function(lua_State* L, std::string const& loader) const;
 	bool load_layer_set_into_data(lua_State* L, LuaReference& skin_params,
 		int button_list_index, int stype_index,
 		size_t columns, std::vector<std::string> const& loader_set,
-		std::vector<NoteSkinLayer>& dest, std::string& insanity_diagnosis);
+		std::vector<NoteSkinLayer>& dest, std::string& insanity_diagnosis) const;
 	bool load_into_data(StepsType stype, LuaReference& skin_params,
-		NoteSkinData& dest, std::string& insanity_diagnosis);
-	void sanitize_skin_parameters(lua_State* L, LuaReference& params);
+		NoteSkinData& dest, std::string& insanity_diagnosis) const;
+	void sanitize_skin_parameters(lua_State* L, LuaReference& params) const;
 	void push_skin_parameter_info(lua_State* L) const;
 	void push_skin_parameter_defaults(lua_State* L) const;
 private:
 	void recursive_sanitize_skin_parameters(lua_State* L,
 		std::unordered_set<void const*>& visited_tables, int curr_depth,
 		int curr_param_set_info, int curr_param_set_defaults,
-		int curr_param_set_dest);
+		int curr_param_set_dest) const;
 	std::string m_skin_name;
 	std::string m_fallback_skin_name;
 	std::string m_load_path;
 	std::string m_notes_loader;
 	std::vector<std::string> m_layer_loaders;
+	std::vector<std::string> m_field_layer_names;
 	std::vector<Rage::Color> m_player_colors;
 	std::unordered_set<std::string> m_supported_buttons;
-	LuaReference m_skin_parameters;
-	LuaReference m_skin_parameter_info;
+	mutable LuaReference m_skin_parameters;
+	mutable LuaReference m_skin_parameter_info;
 	bool m_supports_all_buttons;
 };
 

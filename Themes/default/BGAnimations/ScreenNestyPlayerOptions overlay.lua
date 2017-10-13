@@ -1,114 +1,120 @@
-local menu_height= 300
-local menu_width= 250
+local menu_height= 410
+local menu_width= 346
 local menu_x= {
 	[PLAYER_1]= _screen.w * .25,
 	[PLAYER_2]= _screen.w * .75,
 }
-local menus= {}
-for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
-	menus[pn]= setmetatable({}, nesty_menu_stack_mt)
+
+
+local chart_mod_names= {
+	{"turn", {
+		 "Mirror",
+		 "Backwards",
+		 "Left",
+		 "Right",
+		 "Shuffle",
+		 "SoftShuffle",
+		 "SuperShuffle",
+	}},
+	{"removal", {
+		 "NoHolds",
+		 "NoRolls",
+		 "NoMines",
+		 "HoldRolls",
+		 "NoJumps",
+		 "NoHands",
+		 "NoLifts",
+		 "NoFakes",
+		 "NoQuads",
+		 "NoStretch",
+	}},
+	{"insertion", {
+		 "Little",
+		 "Wide",
+		 "Big",
+		 "Quick",
+		 "BMRize",
+		 "Skippy",
+		 "Mines",
+		 "Echo",
+		 "Stomp",
+		 "Planted",
+		 "Floored",
+		 "Twister",
+	}},
+}
+
+local chart_mods= {}
+for tid, info in ipairs(chart_mod_names) do
+	local items= {}
+	for nid, name in ipairs(info[2]) do
+		items[#items+1]= {"item", "player_option", name}
+	end
+	chart_mods[#chart_mods+1]= {"submenu", info[1].."_chart_mods", items}
 end
-local explanations= {}
-local ready_indicators= {}
 
-local turn_chart_mods= {
-	nesty_options.bool_player_mod_val("Mirror"),
-	nesty_options.bool_player_mod_val("Backwards"),
-	nesty_options.bool_player_mod_val("Left"),
-	nesty_options.bool_player_mod_val("Right"),
-	nesty_options.bool_player_mod_val("Shuffle"),
-	nesty_options.bool_player_mod_val("SoftShuffle"),
-	nesty_options.bool_player_mod_val("SuperShuffle"),
-}
+local gameplay_options= {}
+for i, name in ipairs{"ComboUnderField", "FlashyCombo", "GameplayShowScore", "JudgmentUnderField", "Protiming"} do
+	gameplay_options[#gameplay_options+1]= {"item", player_config, name, "bool"}
+end
 
-local removal_chart_mods= {
-	nesty_options.bool_player_mod_val("NoHolds"),
-	nesty_options.bool_player_mod_val("NoRolls"),
-	nesty_options.bool_player_mod_val("NoMines"),
-	nesty_options.bool_player_mod_val("HoldRolls"),
-	nesty_options.bool_player_mod_val("NoJumps"),
-	nesty_options.bool_player_mod_val("NoHands"),
-	nesty_options.bool_player_mod_val("NoLifts"),
-	nesty_options.bool_player_mod_val("NoFakes"),
-	nesty_options.bool_player_mod_val("NoQuads"),
-	nesty_options.bool_player_mod_val("NoStretch"),
-}
-
-local insertion_chart_mods= {
-	nesty_options.bool_player_mod_val("Little"),
-	nesty_options.bool_player_mod_val("Wide"),
-	nesty_options.bool_player_mod_val("Big"),
-	nesty_options.bool_player_mod_val("Quick"),
-	nesty_options.bool_player_mod_val("BMRize"),
-	nesty_options.bool_player_mod_val("Skippy"),
-	nesty_options.bool_player_mod_val("Mines"),
-	nesty_options.bool_player_mod_val("Echo"),
-	nesty_options.bool_player_mod_val("Stomp"),
-	nesty_options.bool_player_mod_val("Planted"),
-	nesty_options.bool_player_mod_val("Floored"),
-	nesty_options.bool_player_mod_val("Twister"),
-}
-
-local chart_mods= {
-	nesty_options.submenu("turn_chart_mods", turn_chart_mods),
-	nesty_options.submenu("removal_chart_mods", removal_chart_mods),
-	nesty_options.submenu("insertion_chart_mods", insertion_chart_mods),
-}
-
-local gameplay_options= {
-	nesty_options.bool_config_val(player_config, "ComboUnderField"),
-	nesty_options.bool_config_val(player_config, "FlashyCombo"),
-	nesty_options.bool_config_val(player_config, "GameplayShowStepsDisplay"),
-	nesty_options.bool_config_val(player_config, "GameplayShowScore"),
-	nesty_options.bool_config_val(player_config, "JudgmentUnderField"),
-	nesty_options.bool_config_val(player_config, "Protiming"),
-}
-
--- The time life bar doesn't work sensibly outside the survival courses, so
--- keep it out of the menu.
-local life_type_enum= {"LifeType_Bar", "LifeType_Battery"}
 local life_options= {
-	nesty_options.enum_player_mod_single_val("bar_type", "LifeType_Bar", "LifeSetting"),
-	nesty_options.enum_player_mod_single_val("battery_type", "LifeType_Battery", "LifeSetting"),
-	nesty_options.enum_player_mod_single_val("normal_drain", "DrainType_Normal", "DrainSetting"),
-	nesty_options.enum_player_mod_single_val("no_recover", "DrainType_NoRecover", "DrainSetting"),
-	nesty_options.enum_player_mod_single_val("sudden_death", "DrainType_SuddenDeath", "DrainSetting"),
-	nesty_options.enum_player_mod_single_val("fail_immediate", "FailType_Immediate", "FailSetting"),
-	nesty_options.enum_player_mod_single_val("fail_immediate_continue", "FailType_ImmediateContinue", "FailSetting"),
-	nesty_options.enum_player_mod_single_val("fail_end_of_song", "FailType_EndOfSong", "FailSetting"),
-	nesty_options.enum_player_mod_single_val("fail_off", "FailType_Off", "FailSetting"),
-	nesty_options.float_player_mod_val("BatteryLives", 0, 0, 0, 1, 10, 4),
+	{"item", "player_option", "LifeSetting"},
+	{"item", "player_option", "DrainSetting"},
+	{"item", "player_option", "FailSetting"},
+	{"item", "player_option", "BatteryLives"},
 }
 
-local base_options= {
-	notefield_prefs_speed_mod_menu(),
-	notefield_prefs_speed_type_menu(),
-	nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2, 1),
-	nesty_options.float_song_mod_toggle_val("Haste", 1, 0),
-	notefield_perspective_menu(),
-	nesty_options.float_config_toggle_val(notefield_prefs_config, "reverse", -1, 1),
-	nesty_options.float_config_val(notefield_prefs_config, "zoom", -2, -1, 0),
-	nesty_options.submenu("chart_mods", chart_mods),
-	{name= "noteskin", translatable= true, menu= nesty_option_menus.noteskins},
-	{name= "noteskin_params", translatable= true, menu= nesty_option_menus.menu,
-	 args= gen_noteskin_param_menu, req_func= show_noteskin_param_menu},
-	{name= "shown_noteskins", translatable= true, menu= nesty_option_menus.shown_noteskins, args= {}},
-	nesty_options.bool_config_val(notefield_prefs_config, "hidden"),
-	nesty_options.bool_config_val(notefield_prefs_config, "sudden"),
-	advanced_notefield_prefs_menu(),
-	nesty_options.submenu("gameplay_options", gameplay_options),
-	nesty_options.submenu("life_options", life_options),
-	nesty_options.bool_song_mod_val("AssistClap"),
-	nesty_options.bool_song_mod_val("AssistMetronome"),
-	nesty_options.bool_song_mod_val("StaticBackground"),
-	nesty_options.bool_song_mod_val("RandomBGOnly"),
-	nesty_options.float_config_val(player_config, "ScreenFilter", -2, -1, 0),
-	get_notefield_mods_toggle_menu(true, true),
-	{name= "reload_noteskins", translatable= true, type= "action",
-	 execute= function() NOTESKIN:reload_skins() end},
+local song_options= {
+	{"item", "song_option", "StaticBackground", "bool"},
+	{"item", "song_option", "RandomBGOnly", "bool"},	
+	{"item", "song_option", "AssistClap", "bool"},
+	{"item", "song_option", "AssistMetronome", "bool"},
+	{"item", "song_option", "MusicRate"},
+	{"item", "song_option", "Haste"},	
+}
+
+local menu_data= {
+	-- Play and back are inserted lower in this file.
+	notefield_prefs_speed_type_item(),
+	notefield_prefs_speed_mod_item(),	
+	notefield_prefs_perspective_item(),
+	{"item", notefield_prefs_config, "reverse", "toggle_number", {on= -1, off= 1}},
+	{"item", notefield_prefs_config, "zoom", "percent"},
+	{"submenu", "chart_mods", chart_mods},
+	{"item", notefield_prefs_config, "hidden", "bool"},
+	{"item", notefield_prefs_config, "sudden", "bool"},
+	adv_notefield_prefs_menu(),
+	noteskin_menu_item(),
+	noteskin_params_menu_item(),
+	shown_noteskins_menu(),
+	{"item", player_config, "ScreenFilter", "percent"},	
+	{"submenu", "song_options", song_options},	
+	{"submenu", "life_options", life_options},
+	{"submenu", "gameplay_options", gameplay_options},
 }
 
 local player_ready= {}
+local ready_indicators= {}
+local explanations= {}
+
+local prev_explanation= {}
+local function update_explanation(cursor_item, pn)
+	if cursor_item then
+		if not cursor_item.info then return end
+		local new_expl= cursor_item.info.name 
+		local expl_com= "change_explanation"
+		if cursor_item.info.explanation then
+			new_expl= cursor_item.info.explanation
+			expl_com= "translated_explanation"
+		end
+		if new_expl ~= prev_explanation[pn] then
+			prev_explanation[pn]= new_expl
+			explanations[pn]:playcommand(expl_com, {text= new_expl})
+		end
+		if not cursor_item.info then return end
+	end
+end
 
 local function exit_if_both_ready()
 	for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
@@ -117,112 +123,66 @@ local function exit_if_both_ready()
 	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 end
 
-local prev_explanation= {}
-local function update_explanation(pn)
-	local cursor_item= menus[pn]:get_cursor_item()
-	if cursor_item then
-		local new_expl= cursor_item.name or cursor_item.text
-		local expl_com= "change_explanation"
-		if cursor_item.explanation then
-			new_expl= cursor_item.explanation
-			expl_com= "translated_explanation"
-		end
-		if new_expl ~= prev_explanation[pn] then
-			prev_explanation[pn]= new_expl
-			explanations[pn]:playcommand(expl_com, {text= new_expl})
-		end
-	end
+-- The menu system passes in big and arg, but this doesn't really need them.
+-- big is true when the player has held the button for 10 or more repeats.
+-- arg is custom info in the menu data. Since the menu data didn't set it,
+-- it's blank.
+-- -Kyz
+local function change_ready(big, arg, pn)
+	player_ready[pn]= true
+	ready_indicators[pn]:playcommand("show_ready")
+	exit_if_both_ready()
 end
 
-local function input(event)
-	local pn= event.PlayerNumber
-	if not pn then return end
-	if not menus[pn] then return end
-	if menu_stack_generic_input(menus, event)
-	and event.type == "InputEventType_FirstPress" then
-		if event.GameButton == "Back" then
-			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
-		else
-			player_ready[pn]= true
-			ready_indicators[pn]:playcommand("show_ready")
-			exit_if_both_ready()
-		end
-	else
-		if player_ready[pn] and not menus[pn]:can_exit_screen() then
-			player_ready[pn]= false
-			ready_indicators[pn]:playcommand("hide_ready")
-		end
-	end
-	update_explanation(pn)
+local function back_to_ssm(big, arg, pn)
+	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
 end
 
-local frame= Def.ActorFrame{
-	OnCommand= function(self)
-		SCREENMAN:GetTopScreen():AddInputCallback(input)
-		for pn, menu in pairs(menus) do
-			menu:push_menu_stack(nesty_option_menus.menu, base_options, "play_song")
-			menu:update_cursor_pos()
-			update_explanation(pn)
-		end
-	end,
-}
-local item_params= {
-	text_commands= {
-		Font= "Common Normal", OnCommand= function(self)
-			self:diffusealpha(0):linear(1):diffusealpha(1)
-		end,
-	},
-	text_width= .7,
-	value_text_commands= {
-		Font= "Common Normal", OnCommand= function(self)
-			self:diffusealpha(0):linear(1):diffusealpha(1)
-		end,
-	},
-	value_image_commands= {
-		OnCommand= function(self)
-			self:diffusealpha(0):linear(1):diffusealpha(1)
-		end,
-	},
-	value_width= .25,
-	type_images= {
-		bool= THEME:GetPathG("", "menu_icons/bool"),
-		choice= THEME:GetPathG("", "menu_icons/bool"),
-		menu= THEME:GetPathG("", "menu_icons/menu"),
-	},
-}
-for pn, menu in pairs(menus) do
+-- Play and back options inserted here because breaking up the menu data
+-- section with the ready/back functiong bothered me. -Kyz
+table.insert(menu_data, 1, {"action", "play_song", change_ready})
+menu_data[#menu_data+1]= {"action", "back_to_ssm", back_to_ssm}
+
+local menu_actors= {}
+local frame= Def.ActorFrame{}
+
+for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
+	menu_actors[pn]= LoadActor(THEME:GetPathG("", "generic_menu.lua"), 1, 352, menu_height, 1, menu_x[pn]-(menu_width/2), 138, 36)
 	frame[#frame+1]= LoadActor(
 		THEME:GetPathG("ScreenOptions", "halfpage")) .. {
 		InitCommand= function(self)
-			self:xy(menu_x[pn], 250)
-		end
+			self:xy(menu_x[pn], 360)
+		end;
+		OnCommand=function(self)
+			self:diffusealpha(0):zoomx(0.8):decelerate(0.3):diffusealpha(1):zoomx(1)
+		end;
+		OffCommand=function(self)
+			self:decelerate(0.3):diffusealpha(0)
+		end;
 	}
-	frame[#frame+1]= menu:create_actors{
-		x= menu_x[pn], y= 96, width= menu_width, height= menu_height,
-		translation_section= "notefield_options",
-		num_displays= 1, pn= pn, el_height= 20,
-		menu_sounds= {
-			pop= THEME:GetPathS("Common", "Cancel"),
-			push= THEME:GetPathS("_common", "row"),
-			act= THEME:GetPathS("Common", "value"),
-			move= THEME:GetPathS("_switch", "down"),
-			move_up= THEME:GetPathS("_switch", "up"),
-			move_down= THEME:GetPathS("_switch", "down"),
-			inc= THEME:GetPathS("_switch", "up"),
-			dec= THEME:GetPathS("_switch", "down"),
-		},
-		display_params= {
-			el_zoom= .55, item_params= item_params, item_mt= nesty_items.value,
-			on= function(self)
-				self:zoomy(0):linear(1):zoomy(1)
-			end},
-	}
+end
+
+local menu_layer, menu_controllers= nesty_menus.make_menu_actors{
+	actors= menu_actors,
+	data= menu_data,
+	-- TODO: config or something for input_mode
+	input_mode= "four_direction",
+	item_change_callback= update_explanation,
+	exit_callback= back_to_ssm,
+	translation_section= "notefield_options",
+	-- Outlines clickable and focusable areas so you can tune them.
+	--with_click_debug= true,
+}
+
+frame[#frame+1]= menu_layer
+
+for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 	frame[#frame+1]= Def.BitmapText{
 		Font= "Common Normal", InitCommand= function(self)
 			explanations[pn]= self
-			self:xy(menu_x[pn] - (menu_width / 2), _screen.cy+174)
-				:diffuse(PlayerColor(pn))
-				:shadowlength(1):wrapwidthpixels(menu_width / .5):zoom(.5)
+			self:xy(menu_x[pn] - (menu_width / 2), _screen.cy+178)
+				:diffuse(ColorDarkTone((PlayerColor(pn)))):horizalign(left):vertalign(top)		
+				:wrapwidthpixels(menu_width / .8):zoom(.75)
 				:horizalign(left)
 		end,
 		change_explanationCommand= function(self, param)
@@ -236,16 +196,19 @@ for pn, menu in pairs(menus) do
 			self:stoptweening():settext(param.text):cropright(1):linear(.5):cropright(0)
 		end,
 	}
-	frame[#frame+1]= Def.BitmapText{
-		Font= "Common Normal", Text= "READY!", InitCommand= function(self)
+	frame[#frame+1]= LoadActor(THEME:GetPathG("NestyOptions", "ready")) .. {
+		InitCommand= function(self)
 			ready_indicators[pn]= self
-			self:xy(menu_x[pn], 106):zoom(1.5):diffuse(Color.Green):diffusealpha(0)
+			self:xy(menu_x[pn], 581):zoom(0.4):diffusealpha(0)
 		end,
 		show_readyCommand= function(self)
-			self:stoptweening():decelerate(.5):diffusealpha(1)
+				self:stoptweening():bouncebegin(.2):diffusealpha(1):zoom(0.6):bounceend(0.2):zoom(0.5)
 		end,
 		hide_readyCommand= function(self)
-			self:stoptweening():accelerate(.5):diffusealpha(0)
+				self:stoptweening():decelerate(.3):diffusealpha(0):zoom(0.4)
+		end,
+		OffCommand=function(self)
+				self:finishtweening():bouncebegin(.2):zoom(0.6):bounceend(0.2):zoom(0):diffusealpha(0)
 		end,
 	}
 	local metrics_name = "PlayerNameplate" .. ToEnumShortString(pn)

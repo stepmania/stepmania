@@ -1,6 +1,8 @@
 #ifndef RAGE_VECTOR_2_HPP_
 #define RAGE_VECTOR_2_HPP_
 
+#include "RageMatrix.hpp"
+
 namespace Rage
 {
 struct Vector2
@@ -18,6 +20,8 @@ public:
 	/** @brief Get a normalized version of the vector. */
 	Vector2 GetNormalized() const;
 	
+	Vector2 TransformCoords(Matrix const &mat) const;
+
 	float x, y;
 };
 

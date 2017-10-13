@@ -37,8 +37,38 @@ struct ModManager
 	ModManager()
 		:m_prev_curr_second(invalid_modfunction_time)
 	{}
+	~ModManager();
+	void set_timing(TimingData const* timing)
+	{
+		m_timing_data= timing;
+	}
+
 	void update(double curr_beat, double curr_second);
 	void add_mod(mod_function* func, ModifiableValue* parent);
+
+	// The notefield or column or whatever registers moddable things by name
+	// with the manager, then when a mod is set the manager uses the target
+	// name to find the moddable thing to add the mod function to.
+	// This way, notefield and column don't have to duplicate mod loading logic
+	// or both inherit from something that does.
+
+	void register_moddable(std::string const& name, ModifiableValue* thing);
+	void set_base_values(lua_State* L, int value_set);
+	void add_permanent_mods(lua_State* L, int mod_set);
+	void add_timed_mods(lua_State* L, int mod_set);
+	void push_target_info(lua_State* L);
+
+	void remove_permanent_mods(lua_State* L, int mod_set);
+	void clear_permanent_mods(lua_State* L, int mod_set);
+	void clear_timed_mods();
+
+	void load_time_pair(lua_State* L, int table,
+		char const* beat_name, char const* second_name,
+		double& beat_result, double& second_result);
+
+	void load_target_list(lua_State* L, int table,
+		std::unordered_set<ModifiableValue*>& target_list);
+
 	void remove_mod(mod_function* func);
 	void remove_all_mods(ModifiableValue* parent);
 
@@ -58,7 +88,7 @@ private:
 	INSERT_FAP(present);
 	INSERT_FAP(future);
 #undef INSERT_FAP
-	void remove_from_present(std::list<func_and_parent>::iterator fapi);
+	std::list<func_and_parent>::iterator remove_from_present(std::list<func_and_parent>::iterator fapi);
 
 	double m_prev_curr_second;
 	std::list<func_and_parent> m_past_funcs;
@@ -66,6 +96,9 @@ private:
 	std::list<func_and_parent> m_future_funcs;
 
 	std::unordered_set<mod_function*> m_per_frame_update_funcs;
+
+	TimingData const* m_timing_data;
+	std::unordered_map<std::string, ModifiableValue*> m_registered_targets;
 };
 
 struct mod_val_inputs
@@ -83,6 +116,8 @@ struct mod_val_inputs
 	double dist_second;
 	double start_beat;
 	double start_second;
+	double length_beats;
+	double length_seconds;
 	double end_beat;
 	double end_second;
 	double prefunres;
@@ -135,6 +170,8 @@ struct mod_val_inputs
 	{
 		start_beat= sb;
 		start_second= ss;
+		length_beats= eb-sb;
+		length_seconds= es-ss;
 		end_beat= eb;
 		end_second= es;
 	}
@@ -151,47 +188,36 @@ struct mod_val_inputs
 
 struct ModifiableValue
 {
-	ModifiableValue(ModManager* man, double value);
+	ModifiableValue(ModManager& man, std::string const& name, double value);
 	~ModifiableValue();
-	void set_timing(TimingData const* timing)
-	{
-		m_timing= timing;
-	}
-	void set_column(uint32_t col)
-	{
-		m_column= col;
-	}
+	double get_column() { return m_column; }
+	void set_column(uint32_t col) { m_column= col; }
+	void set_base_value(double value) { m_base_value= value; }
+	double get_base_value() { return m_base_value; }
 	double evaluate(mod_val_inputs& input);
 	std::list<mod_function*>::iterator find_mod(std::string const& name);
-	void add_mod(lua_State* L, int index);
-	void remove_mod(std::string const& name);
-	void clear_mods();
+
+	void add_mod(mod_function* func, ModManager& manager);
+	void remove_mod(std::string const& name, ModManager& manager);
+	void clear_mods(ModManager& manager);
 	bool empty() { return m_mods.empty() && m_active_managed_mods.empty(); }
 
-	void add_managed_mod(lua_State* L, int index);
-	void remove_managed_mod(std::string const& name);
-	void clear_managed_mods();
 	void add_mod_to_active_list(mod_function* mod);
 	void remove_mod_from_active_list(mod_function* mod);
-	void add_simple_mod(std::string const& name, std::string const& input_type,
-		double value);
-	void take_over_mods(ModifiableValue& other);
+	void clear_active_list();
 
 	bool needs_beat();
 	bool needs_second();
 	bool needs_y_offset();
 
-	virtual void PushSelf(lua_State* L);
+	double m_result;
 
 private:
-	void insert_mod_internal(mod_function* new_mod);
-
-	ModManager* m_manager;
-	TimingData const* m_timing;
 	double m_column;
 	std::list<mod_function*> m_mods;
-	std::unordered_map<std::string, mod_function*> m_managed_mods;
 	std::multimap<int, mod_function*> m_active_managed_mods;
+
+	double m_base_value;
 
 	bool m_needs_beat;
 	bool m_needs_second;
@@ -200,11 +226,13 @@ private:
 
 struct ModifiableVector3
 {
-	ModifiableVector3(ModManager* man, double value)
-		:x_mod(man, value), y_mod(man, value), z_mod(man, value)
+	ModifiableVector3(ModManager& man, std::string const& name, double value)
+		:x_mod(man, name + "_x", value), y_mod(man, name + "_y", value),
+			z_mod(man, name + "_z", value)
 	{}
-	ModifiableVector3(ModManager* man, double x, double y, double z)
-		:x_mod(man, x), y_mod(man, y), z_mod(man, z)
+	ModifiableVector3(ModManager& man, std::string const& name, double x, double y, double z)
+		:x_mod(man, name + "_x", x), y_mod(man, name + "_y", y),
+			z_mod(man, name + "_z", z)
 	{}
 	void evaluate(mod_val_inputs& input, Rage::Vector3& out)
 	{
@@ -212,23 +240,17 @@ struct ModifiableVector3
 		out.y = static_cast<float>(y_mod.evaluate(input));
 		out.z = static_cast<float>(z_mod.evaluate(input));
 	}
-	void set_timing(TimingData const* timing)
-	{
-		x_mod.set_timing(timing);
-		y_mod.set_timing(timing);
-		z_mod.set_timing(timing);
-	}
 	void set_column(uint32_t col)
 	{
 		x_mod.set_column(col);
 		y_mod.set_column(col);
 		z_mod.set_column(col);
 	}
-	void take_over_mods(ModifiableVector3& other)
+	void set_base_value(Rage::Vector3 const& value)
 	{
-		x_mod.take_over_mods(other.x_mod);
-		y_mod.take_over_mods(other.y_mod);
-		z_mod.take_over_mods(other.z_mod);
+		x_mod.set_base_value(value.x);
+		y_mod.set_base_value(value.y);
+		z_mod.set_base_value(value.z);
 	}
 	bool needs_beat();
 	bool needs_second();
@@ -241,41 +263,51 @@ struct ModifiableVector3
 
 struct ModifiableTransform
 {
-	ModifiableTransform(ModManager* man)
-		:pos_mod(man, 0.0), rot_mod(man, 0.0), zoom_mod(man, 1.0)
+	ModifiableTransform(ModManager& man, std::string const& name)
+		:pos_mod(man, name + "_pos", 0.0), rot_mod(man, name + "_rot", 0.0),
+		zoom_vmod(man, name + "_zoom", 1.0), zoom_mod(man, name + "_zoom", 1.0)
 	{}
-	void set_timing(TimingData const* timing)
-	{
-		pos_mod.set_timing(timing);
-		rot_mod.set_timing(timing);
-		zoom_mod.set_timing(timing);
-	}
 	void set_column(uint32_t col)
 	{
 		pos_mod.set_column(col);
 		rot_mod.set_column(col);
+		zoom_vmod.set_column(col);
 		zoom_mod.set_column(col);
+	}
+	void set_base_value(Rage::transform const& value)
+	{
+		pos_mod.set_base_value(value.pos);
+		rot_mod.set_base_value(value.rot);
+		zoom_vmod.set_base_value(value.zoom);
+		zoom_mod.set_base_value(1.0);
 	}
 	void evaluate(mod_val_inputs& input, Rage::transform& out)
 	{
 		pos_mod.evaluate(input, out.pos);
 		rot_mod.evaluate(input, out.rot);
-		zoom_mod.evaluate(input, out.zoom);
+		// Multiply by pi so that the lua side doesn't need to.
+		out.rot.x*= Rage::D_PI;
+		out.rot.y*= Rage::D_PI;
+		out.rot.z*= Rage::D_PI;
+		zoom_vmod.evaluate(input, out.zoom);
+		double zoom= zoom_mod.evaluate(input);
+		out.zoom.x*= zoom;
+		out.zoom.y*= zoom;
+		out.zoom.z*= zoom;
 	}
-	void hold_render_eval(mod_val_inputs& input, Rage::transform& out, bool do_rot)
+	void hold_render_eval(mod_val_inputs& input, Rage::transform& out, bool do_rot, bool do_y_zoom)
 	{
 		pos_mod.evaluate(input, out.pos);
 		if(do_rot)
 		{
 			out.rot.y = static_cast<float>(rot_mod.y_mod.evaluate(input));
 		}
-		out.zoom.x = static_cast<float>(zoom_mod.x_mod.evaluate(input));
-	}
-	void take_over_mods(ModifiableTransform& other)
-	{
-		pos_mod.take_over_mods(other.pos_mod);
-		rot_mod.take_over_mods(other.rot_mod);
-		zoom_mod.take_over_mods(other.zoom_mod);
+		double zoom= zoom_mod.evaluate(input);
+		out.zoom.x = static_cast<float>(zoom_vmod.x_mod.evaluate(input) * zoom);
+		if(do_y_zoom)
+		{
+			out.zoom.y = static_cast<float>(zoom_vmod.y_mod.evaluate(input) * zoom);
+		}
 	}
 	bool needs_beat();
 	bool needs_second();
@@ -283,7 +315,9 @@ struct ModifiableTransform
 
 	ModifiableVector3 pos_mod;
 	ModifiableVector3 rot_mod;
-	ModifiableVector3 zoom_mod;
+	ModifiableVector3 zoom_vmod;
+	// Often all three elements of zoom need to change together.
+	ModifiableValue zoom_mod;
 };
 
 #endif

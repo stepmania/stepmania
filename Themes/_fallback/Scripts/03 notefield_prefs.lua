@@ -1,4 +1,5 @@
 local notefield_default_prefs= {
+	speed_step= 10,
 	speed_mod= 250,
 	speed_type= "maximum",
 	hidden= false,
@@ -66,28 +67,36 @@ function set_notefield_default_yoffset(yoff)
 end
 
 function apply_notefield_prefs_nopn(read_bpm, field, prefs)
-	local torad= math.pi / 180
+	local torad= 1 / 180
 	if prefs.speed_type then
 		if prefs.speed_type == "maximum" then
 			field:set_speed_mod(false, prefs.speed_mod, read_bpm)
 		elseif prefs.speed_type == "constant" then
 			field:set_speed_mod(true, prefs.speed_mod)
 		else
-			field:set_speed_mod(false, prefs.speed_mod)
+			field:set_speed_mod(false, prefs.speed_mod/100)
 		end
 	end
-	field:get_fov_mod():set_value(prefs.fov)
-	field:get_vanish_x_mod():set_value(prefs.vanish_x)
-	field:get_vanish_y_mod():set_value(prefs.vanish_y)
-	field:get_trans_rot_x():set_value(prefs.rotation_x*torad)
-	field:get_trans_rot_y():set_value(prefs.rotation_y*torad)
-	field:get_trans_rot_z():set_value(prefs.rotation_z*torad)
+	field:set_base_values{
+		fov_x= prefs.vanish_x,
+		fov_y= prefs.vanish_y,
+		fov_z= prefs.fov,
+		transform_rot_x= prefs.rotation_x*torad,
+		transform_rot_y= prefs.rotation_y*torad,
+		transform_rot_z= prefs.rotation_z*torad,
+		transform_zoom= prefs.zoom,
+		transform_zoom_x= prefs.zoom_x,
+		transform_zoom_y= prefs.zoom_y,
+		transform_zoom_z= prefs.zoom_z,
+	}
 	-- Use the y zoom to adjust the y offset to put the receptors in the same
 	-- place.
 	local adjusted_offset= prefs.yoffset / (prefs.zoom * prefs.zoom_y)
 	for i, col in ipairs(field:get_columns()) do
-		col:get_reverse_scale():set_value(prefs.reverse)
-		col:get_reverse_offset_pixels():set_value(adjusted_offset)
+		col:set_base_values{
+			reverse= prefs.reverse,
+			reverse_offset= adjusted_offset,
+		}
 	end
 	if prefs.hidden then
 		field:set_hidden_mod(prefs.hidden_offset, prefs.fade_dist, prefs.glow_during_fade)
@@ -99,9 +108,6 @@ function apply_notefield_prefs_nopn(read_bpm, field, prefs)
 	else
 		field:clear_sudden_mod()
 	end
-	field:get_trans_zoom_x():set_value(prefs.zoom * prefs.zoom_x)
-	field:get_trans_zoom_y():set_value(prefs.zoom * prefs.zoom_y)
-	field:get_trans_zoom_z():set_value(prefs.zoom * prefs.zoom_z)
 end
 
 function apply_notefield_prefs(pn, field, prefs)
@@ -113,7 +119,7 @@ function apply_notefield_prefs(pn, field, prefs)
 	elseif prefs.speed_type == "constant" then
 		poptions:CMod(prefs.speed_mod, 1000)
 	else
-		poptions:XMod(prefs.speed_mod, 1000)
+		poptions:XMod(prefs.speed_mod/100, 1000)
 	end
 	local reverse= scale(prefs.reverse, 1, -1, 0, 1)
 	poptions:Reverse(reverse, 1000)
@@ -184,141 +190,94 @@ function reset_needs_defective_field_for_all_players()
 	end
 end
 
-function advanced_notefield_prefs_menu()
-	return nesty_options.submenu("advanced_notefield_config", {
-		nesty_options.float_config_val(notefield_prefs_config, "hidden_offset", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "sudden_offset", -1, 1, 2),
-		nesty_options.bool_config_val(notefield_prefs_config, "hidden"),
-		nesty_options.bool_config_val(notefield_prefs_config, "sudden"),
-		nesty_options.float_config_val(notefield_prefs_config, "fade_dist", -1, 1, 2),
-		nesty_options.bool_config_val(notefield_prefs_config, "glow_during_fade"),
-		nesty_options.float_config_val(notefield_prefs_config, "reverse", -2, 0, 0),
-		nesty_options.float_config_val(notefield_prefs_config, "zoom", -2, -1, 1),
-		nesty_options.float_config_val(notefield_prefs_config, "rotation_x", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "rotation_y", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "rotation_z", -1, 1, 2),
-		-- Something tells me the notefield code still doesn't handle the vanish
-		-- point right, so the vanish point options are disabled until I'm sure
-		-- it's right. -Kyz
---		nesty_options.float_config_val(notefield_prefs_config, "vanish_x", -1, 1, 2),
---		nesty_options.float_config_val(notefield_prefs_config, "vanish_y", -1, 1, 2),
---		nesty_options.float_config_val(notefield_prefs_config, "fov", -1, 0, 1, 1, 179),
-		nesty_options.float_config_val(notefield_prefs_config, "yoffset", -1, 1, 2),
-		nesty_options.float_config_val(notefield_prefs_config, "zoom_x", -2, -1, 1),
-		nesty_options.float_config_val(notefield_prefs_config, "zoom_y", -2, -1, 1),
-		nesty_options.float_config_val(notefield_prefs_config, "zoom_z", -2, -1, 1),
-	})
-end
-
-local function gen_speed_menu(pn)
-	local prefs= notefield_prefs_config:get_data(pn)
-	local float_args= {
-		name= "speed_mod", initial_value= function(pn)
-			return get_element_by_path(prefs, "speed_mod") or 0
-		end,
-		set= function(pn, value)
-			set_element_by_path(prefs, "speed_mod", value)
-			notefield_prefs_config:set_dirty(pn)
-			MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_name= notefield_prefs_config.name, field_name= "speed_mod", value= value, pn= pn})
-		end,
+function adv_notefield_prefs_menu()
+	local items= {}
+	local info= {
+		{"hidden_offset", "number"},
+		{"sudden_offset", "number"},
+		{"hidden"},
+		{"sudden"},
+		{"fade_dist", "number"},
+		{"glow_during_fade"},
+		{"reverse", "percent"},
+		{"zoom", "percent"},
+		{"rotation_x", "number"},
+		{"rotation_y", "number"},
+		{"rotation_z", "number"},
+		{"vanish_x", "number"},
+		{"vanish_y", "number"},
+		{"fov", "number", min= 1, max= 179},
+		{"yoffset", "number"},
+		{"zoom_x", "percent"},
+		{"zoom_y", "percent"},
+		{"zoom_z", "percent"},
 	}
-	if prefs.speed_type == "multiple" then
-		float_args.min_scale= -2
-		float_args.scale= -1
-		float_args.max_scale= 1
-		float_args.reset_value= 1
-	else
-		float_args.min_scale= 0
-		float_args.scale= 1
-		float_args.max_scale= 3
-		float_args.reset_value= 250
-		-- TODO: Make separate m and x speed mod reset values configurable.
+	for i, entry in ipairs(info) do
+		if #entry == 1 then
+			items[#items+1]= {"item", notefield_prefs_config, entry[1], "bool", {translation_section= "notefield_options"}}
+		else
+			items[#items+1]= {"item", notefield_prefs_config, entry[1], entry[2], {min= entry.min, max= entry.max, translation_section= "notefield_options"}}
+		end
 	end
-	return float_args
+	return {"submenu", "advanced_notefield_config", items, translation_section= "notefield_options"}
 end
 
-function notefield_prefs_speed_mod_menu()
-	return setmetatable({name= "speed_mod", menu= nesty_option_menus.adjustable_float,
-	 translatable= true, args= gen_speed_menu, exec_args= true,
-	 value= function(pn)
-		 return notefield_prefs_config:get_data(pn).speed_mod
-	 end}, mergable_table_mt)
+local function speed_mod_ret(data, value)
+	if get_element_by_path(data, "speed_type") == "multiple" then
+		return {"number", value / 100}
+	else
+		return {"number", value}
+	end
 end
 
-function notefield_prefs_speed_type_menu()
-	return setmetatable({name= "speed_type", menu= nesty_option_menus.enum_option,
-	 translatable= true, value= function(pn)
-		 return notefield_prefs_config:get_data(pn).speed_type
-	 end,
-	 args= {
-		 name= "speed_type", enum= notefield_speed_types, fake_enum= true,
-		 obj_get= function(pn) return notefield_prefs_config:get_data(pn) end,
-		 get= function(pn, obj) return obj.speed_type end,
-		 set= function(pn, obj, value)
-			 if obj.speed_type == "multiple" and value ~= "multiple" then
-				 obj.speed_mod= math.round(obj.speed_mod * 100)
-			 elseif obj.speed_type ~= "multiple" and value == "multiple" then
-				 obj.speed_mod= obj.speed_mod / 100
-			 end
-			 obj.speed_type= value
-			 notefield_prefs_config:set_dirty(pn)
-			 MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_name= notefield_prefs_config.name, field_name= "speed_type", value= value, pn= pn})
-		 end,
-	}}, mergable_table_mt)
+function notefield_prefs_speed_step_item()
+	return {"item", notefield_prefs_config, "speed_step", "number", {translation_section= "notefield_options"}}
 end
 
-local function trisign_of_num(num)
-	if num < 0 then return -1 end
-	if num > 0 then return 1 end
-	return 0
+function notefield_prefs_speed_mod_item()
+	return {
+		"custom", {
+			name= "speed_mod",
+			arg= {config= notefield_prefs_config, path= "speed_mod"},
+			adjust= function(direction, big, arg, pn)
+				local data= arg.config:get_data(pn)
+				local step= get_element_by_path(data, "speed_step")
+				local amount= direction * step
+				if big then amount= amount * 10 end
+				local new_value= get_element_by_path(data, arg.path) + amount
+				set_element_by_path(data, arg.path, new_value)
+				arg.config:set_dirty(pn)
+				nesty_menus.menu_message{
+					category= "Config", config_name= arg.config.name,
+					field_name= arg.path, value= new_value, pn= pn}
+				return speed_mod_ret(data, new_value)
+			end,
+			value= function(arg, pn)
+				local data= arg.config:get_data(pn)
+				return speed_mod_ret(data, get_element_by_path(data, "speed_mod"))
+			end,
+			reset= function(arg, pn)
+				local data= arg.config:get_data(pn)
+				local new_value= 100
+				set_element_by_path(data, arg.path, new_value)
+				arg.config:set_dirty(pn)
+				nesty_menus.menu_message{
+					category= "Config", config_name= arg.config.name,
+					field_name= arg.path, value= new_value, pn= pn}
+				return speed_mod_ret(data, new_value)
+			end,
+			refresh= {
+				category= "Config",
+				config_name= notefield_prefs_config.name,
+				field_name= "speed_type", match_pn= true,
+			},
+	}}
 end
 
--- Skew needs to shift towards the center of the screen.
-local pn_skew_mult= {[PLAYER_1]= 1, [PLAYER_2]= -1}
-
-local function perspective_entry(name, skew_mult, rot_mult)
-	return setmetatable({
-		name= name, translatable= true, type= "choice", execute= function(pn)
-			local conf_data= notefield_prefs_config:get_data(pn)
-			local old_rot= get_element_by_path(conf_data, "rotation_x")
-			local old_skew= get_element_by_path(conf_data, "vanish_x")
-			local new_rot= rot_mult * 30
-			local new_skew= skew_mult * 160 * pn_skew_mult[pn]
-			set_element_by_path(conf_data, "rotation_x", new_rot)
-			set_element_by_path(conf_data, "vanish_x", new_skew)
-			-- Adjust the y offset to make the receptors appear at the same final
-			-- position on the screen.
-			if new_rot < 0 then
-				set_element_by_path(conf_data, "yoffset", 180)
-			elseif new_rot > 0 then
-				set_element_by_path(conf_data, "yoffset", 140)
-			else
-				set_element_by_path(conf_data, "yoffset", get_element_by_path(notefield_prefs_config:get_default(), "yoffset"))
-			end
-			MESSAGEMAN:Broadcast("ConfigValueChanged", {
-				config_name= notefield_prefs_config.name, field_name= "rotation_x", value= new_rot, pn= pn})
-		end,
-		value= function(pn)
-			local conf_data= notefield_prefs_config:get_data(pn)
-			local old_rot= get_element_by_path(conf_data, "rotation_x")
-			local old_skew= get_element_by_path(conf_data, "vanish_x")
-			if trisign_of_num(old_rot) == trisign_of_num(rot_mult) and
-			trisign_of_num(old_skew) == trisign_of_num(skew_mult) * pn_skew_mult[pn] then
-				return true
-			end
-			return false
-		end,
-	}, mergable_table_mt)
+function notefield_prefs_speed_type_item()
+	return {"item", notefield_prefs_config, "speed_type", "choice", {choices= notefield_speed_types, translation_section= "notefield_options"}}
 end
 
-function notefield_perspective_menu()
-	return nesty_options.submenu("perspective", {
-		perspective_entry("overhead", 0, 0),
-		perspective_entry("distant", 0, -1),
-		perspective_entry("hallway", 0, 1),
-		perspective_entry("incoming", 1, -1),
-		perspective_entry("space", 1, 1),
-	})
+function notefield_prefs_perspective_item()
+	return {"item", notefield_prefs_config, "rotation_x", "name_value_pairs", {choices= {{"distant", -30}, {"overhead", 0}, {"hallway", 30}}}}
 end

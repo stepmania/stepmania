@@ -433,6 +433,10 @@ void Sprite::UpdateAnimationState()
 	// We already know what's going to show.
 	if( m_States.size() > 1 )
 	{
+		if(std::isnan(m_fSecsIntoState) || !std::isfinite(m_fSecsIntoState))
+		{
+			m_fSecsIntoState= 0.f;
+		}
 		// UpdateAnimationState changed to not loop forever on negative state
 		// delay.  This allows a state to last forever when it is reached, so
 		// the animation has a built-in ending point. -Kyz

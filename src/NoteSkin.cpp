@@ -21,6 +21,7 @@ static const double default_anim_time= 1.0;
 static const double min_anim_time= 0.01;
 static const double default_quantum_time= 1.0;
 static const double min_quantum_time= 0.01;
+static const double invalid_length= -1000.0;
 
 static const char* NoteSkinTapPartNames[] = {
 	"Tap",
@@ -225,8 +226,8 @@ bool QuantizedStateMap::load_from_lua(lua_State* L, int index, string& insanity_
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
 	int quanta_index= lua_gettop(L);
-	vector<QuantizedStates> temp_quanta(num_quanta);
-	for(size_t i= 0; i < temp_quanta.size(); ++i)
+	m_quanta.resize(num_quanta);
+	for(size_t i= 0; i < m_quanta.size(); ++i)
 	{
 		lua_rawgeti(L, quanta_index, i+1);
 		if(!lua_istable(L, -1))
@@ -238,7 +239,7 @@ bool QuantizedStateMap::load_from_lua(lua_State* L, int index, string& insanity_
 		{
 			RETURN_NOT_SANE(fmt::sprintf("Invalid per_beat value in quantum %zu.", i+1));
 		}
-		temp_quanta[i].per_beat= lua_tointeger(L, -1);
+		m_quanta[i].per_beat= lua_tointeger(L, -1);
 		lua_pop(L, 1);
 		lua_getfield(L, -1, "states");
 		if(!lua_istable(L, -1))
@@ -246,7 +247,7 @@ bool QuantizedStateMap::load_from_lua(lua_State* L, int index, string& insanity_
 			RETURN_NOT_SANE(fmt::sprintf("Invalid states in quantum %zu.", i+1));
 		}
 		if(!load_simple_table(L, lua_gettop(L), max_states,
-				temp_quanta[i].states, static_cast<size_t>(1), max_states, "states",
+				m_quanta[i].states, static_cast<size_t>(1), max_states, "states",
 				insanity_diagnosis))
 		{
 			RETURN_NOT_SANE(fmt::sprintf("Invalid states in quantum %zu: %s", i+1, insanity_diagnosis.c_str()));
@@ -261,7 +262,6 @@ bool QuantizedStateMap::load_from_lua(lua_State* L, int index, string& insanity_
 	m_parts_per_beat= lua_tointeger(L, -1);
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
-	m_quanta.swap(temp_quanta);
 	return true;
 }
 
@@ -281,8 +281,8 @@ bool QuantizedTextureMap::load_from_lua(lua_State* L, int index, std::string& in
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
 	int quanta_index= lua_gettop(L);
-	vector<TextureQuanta> temp_quanta(num_quanta);
-	for(size_t i= 0; i < temp_quanta.size(); ++i)
+	m_quanta.resize(num_quanta);
+	for(size_t i= 0; i < m_quanta.size(); ++i)
 	{
 		lua_rawgeti(L, quanta_index, i+1);
 		if(!lua_istable(L, -1))
@@ -295,9 +295,9 @@ bool QuantizedTextureMap::load_from_lua(lua_State* L, int index, std::string& in
 		{
 			RETURN_NOT_SANE(fmt::sprintf("Invalid per_beat value in quantum %zu.", i+1));
 		}
-		temp_quanta[i].per_beat= lua_tointeger(L, -1);
-		temp_quanta[i].trans_x= get_optional_double(L, this_quanta, "trans_x", .0);
-		temp_quanta[i].trans_y= get_optional_double(L, this_quanta, "trans_y", .0);
+		m_quanta[i].per_beat= lua_tointeger(L, -1);
+		m_quanta[i].trans_x= get_optional_double(L, this_quanta, "trans_x", .0);
+		m_quanta[i].trans_y= get_optional_double(L, this_quanta, "trans_y", .0);
 		lua_pop(L, 1);
 	}
 	lua_getfield(L, index, "parts_per_beat");
@@ -307,7 +307,6 @@ bool QuantizedTextureMap::load_from_lua(lua_State* L, int index, std::string& in
 	}
 	m_parts_per_beat= lua_tointeger(L, -1);
 #undef RETURN_NOT_SANE
-	m_quanta.swap(temp_quanta);
 	lua_settop(L, original_top);
 	return true;
 }
@@ -405,8 +404,7 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NoteSkinLoader const*
 	{
 		RETURN_NOT_SANE("No state map found.");
 	}
-	QuantizedStateMap temp_map;
-	if(!temp_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+	if(!m_state_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
 	{
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
@@ -421,7 +419,7 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NoteSkinLoader const*
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
 	int texind= lua_gettop(L);
-	vector<RageTexture*> temp_parts(num_tex);
+	m_parts.resize(num_tex);
 	for(size_t part= 0; part < num_tex; ++part)
 	{
 		lua_rawgeti(L, texind, part+1);
@@ -435,7 +433,7 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NoteSkinLoader const*
 		{
 			RETURN_NOT_SANE("Empty texture path is not valid.");
 		}
-		temp_parts[part]= load_noteskin_tex(path, load_skin);
+		m_parts[part]= load_noteskin_tex(path, load_skin);
 	}
 	lua_getfield(L, index, "flip");
 	m_flip= TCFM_None;
@@ -452,28 +450,71 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NoteSkinLoader const*
 	if(lua_istable(L, -1))
 	{
 		int length_data_index= lua_gettop(L);
-		m_part_lengths.start_note_offset= get_optional_double(L, length_data_index, "start_note_offset", -.5);
-		m_part_lengths.end_note_offset= get_optional_double(L, length_data_index, "end_note_offset", .5);
-		m_part_lengths.head_pixs= get_optional_double(L, length_data_index, "head_pixs", 32.0);
-		m_part_lengths.body_pixs= get_optional_double(L, length_data_index, "body_pixs", 64.0);
-		m_part_lengths.tail_pixs= get_optional_double(L, length_data_index, "tail_pixs", 32.0);
+		m_part_lengths.topcap_pixels= get_optional_double(L, length_data_index, "topcap_pixels", invalid_length);
+		if(m_part_lengths.topcap_pixels == invalid_length)
+		{
+			m_part_lengths.topcap_pixels= get_optional_double(L, length_data_index, "head_pixs", invalid_length);
+			if(m_part_lengths.topcap_pixels == invalid_length)
+			{
+				m_part_lengths.topcap_pixels= 32.0;
+			}
+		}
+		m_part_lengths.pixels_before_note= get_optional_double(L, length_data_index, "pixels_before_note", invalid_length);
+		if(m_part_lengths.pixels_before_note == invalid_length)
+		{
+			double note_offset= get_optional_double(L, length_data_index, "start_note_offset", invalid_length);
+			if(note_offset == invalid_length)
+			{
+				m_part_lengths.pixels_before_note= 32.0;
+			}
+			else
+			{
+				m_part_lengths.pixels_before_note= note_offset * -1.0 * 64.0;
+			}
+		}
+		m_part_lengths.body_pixels= get_optional_double(L, length_data_index, "head_pixels", invalid_length);
+		if(m_part_lengths.body_pixels == invalid_length)
+		{
+			m_part_lengths.body_pixels= get_optional_double(L, length_data_index, "body_pixs", 64.0);
+		}
+		m_part_lengths.pixels_after_note= get_optional_double(L, length_data_index, "pixels_after_note", invalid_length);
+		if(m_part_lengths.pixels_after_note == invalid_length)
+		{
+			double note_offset= get_optional_double(L, length_data_index, "end_note_offset", invalid_length);
+			if(note_offset == invalid_length)
+			{
+				m_part_lengths.pixels_after_note= 32.0;
+			}
+			else
+			{
+				m_part_lengths.pixels_after_note= note_offset * 64.0;
+			}
+		}
+		m_part_lengths.bottomcap_pixels= get_optional_double(L, length_data_index, "bottomcap_pixels", invalid_length);
+		if(m_part_lengths.bottomcap_pixels == invalid_length)
+		{
+			m_part_lengths.bottomcap_pixels= get_optional_double(L, length_data_index, "tail_pixs", invalid_length);
+			if(m_part_lengths.bottomcap_pixels == invalid_length)
+			{
+				m_part_lengths.bottomcap_pixels= 32.0;
+			}
+		}
+		m_part_lengths.needs_jumpback= get_optional_bool(L, length_data_index, "needs_jumpback", true);
 	}
 	else
 	{
-		m_part_lengths.start_note_offset= -.5;
-		m_part_lengths.end_note_offset= .5;
-		m_part_lengths.head_pixs= 32.0;
-		m_part_lengths.body_pixs= 64.0;
-		m_part_lengths.tail_pixs= 32.0;
+		m_part_lengths.topcap_pixels= 32.0;
+		m_part_lengths.bottomcap_pixels= 32.0;
+		m_part_lengths.pixels_before_note= 32.0;
+		m_part_lengths.pixels_after_note= 32.0;
+		m_part_lengths.body_pixels= 64.0;
+		m_part_lengths.needs_jumpback= true;
 	}
 	lua_getfield(L, index, "vivid");
 	m_vivid= lua_toboolean(L, -1);
-	m_texture_filtering= !get_optional_bool(L, index, "disable_filtering");
+	m_texture_filtering= !get_optional_bool(L, index, "disable_filtering", false);
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
-	m_state_map.swap(temp_map);
-	unload_texture_list(m_parts);
-	m_parts.swap(temp_parts);
 	return true;
 }
 
@@ -725,14 +766,6 @@ bool NoteSkinColumn::load_from_lua(lua_State* L, int index, NoteSkinLoader const
 	// Pop the table we're loading from off the stack when returning.
 	int original_top= lua_gettop(L) - 1;
 #define RETURN_NOT_SANE(message) lua_settop(L, original_top); insanity_diagnosis= message; return false;
-	vector<QuantizedTap> temp_taps;
-	vector<vector<QuantizedTap> > temp_player_taps;
-	vector<QuantizedTap*> temp_optionals(NUM_NoteSkinTapOptionalPart, nullptr);
-	vector<QuantizedTap*> temp_rev_optionals;
-	vector<vector<QuantizedHold> > temp_holds;
-	vector<vector<QuantizedHold> > temp_reverse_holds;
-	vector<RageTexture*> temp_hold_masks;
-	vector<RageTexture*> temp_hold_reverse_masks;
 	lua_getfield(L, index, "taps");
 	if(!lua_istable(L, -1))
 	{
@@ -740,7 +773,7 @@ bool NoteSkinColumn::load_from_lua(lua_State* L, int index, NoteSkinLoader const
 	}
 	int taps_index= lua_gettop(L);
 	string sub_sanity;
-	if(!load_tap_set_from_lua(L, taps_index, temp_taps, sub_sanity))
+	if(!load_tap_set_from_lua(L, taps_index, m_taps, sub_sanity))
 	{
 		RETURN_NOT_SANE(sub_sanity);
 	}
@@ -771,7 +804,7 @@ bool NoteSkinColumn::load_from_lua(lua_State* L, int index, NoteSkinLoader const
 					Rage::safe_delete(temp);
 					temp= nullptr;
 				}
-				temp_optionals[part]= temp;
+				m_optional_taps[part]= temp;
 			}
 		}
 	}
@@ -780,7 +813,7 @@ bool NoteSkinColumn::load_from_lua(lua_State* L, int index, NoteSkinLoader const
 	int rev_opt_taps_index= lua_gettop(L);
 	if(lua_istable(L, -1))
 	{
-		temp_rev_optionals.resize(NUM_NoteSkinTapOptionalPart);
+		m_reverse_optional_taps.resize(NUM_NoteSkinTapOptionalPart);
 		for(size_t part= NSTOP_HoldHead; part < NUM_NoteSkinTapOptionalPart; ++part)
 		{
 			Enum::Push(L, static_cast<NoteSkinTapOptionalPart>(part));
@@ -793,26 +826,26 @@ bool NoteSkinColumn::load_from_lua(lua_State* L, int index, NoteSkinLoader const
 					Rage::safe_delete(temp);
 					temp= nullptr;
 				}
-				temp_rev_optionals[part]= temp;
+				m_reverse_optional_taps[part]= temp;
 			}
 		}
 	}
 	lua_settop(L, rev_opt_taps_index-1);
-	if(!load_holds_from_lua(L, index, temp_holds, "holds", load_skin,
+	if(!load_holds_from_lua(L, index, m_holds, "holds", load_skin,
 			insanity_diagnosis))
 	{
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
-	if(!load_holds_from_lua(L, index, temp_reverse_holds, "reverse_holds", load_skin,
+	if(!load_holds_from_lua(L, index, m_reverse_holds, "reverse_holds", load_skin,
 			insanity_diagnosis))
 	{
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
-	if(!load_texs_from_lua(L, index, temp_hold_masks, "hold_masks", load_skin, insanity_diagnosis))
+	if(!load_texs_from_lua(L, index, m_hold_player_masks, "hold_masks", load_skin, insanity_diagnosis))
 	{
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
-	if(!load_texs_from_lua(L, index, temp_hold_reverse_masks, "hold_reverse_masks", load_skin, insanity_diagnosis))
+	if(!load_texs_from_lua(L, index, m_hold_reverse_player_masks, "hold_reverse_masks", load_skin, insanity_diagnosis))
 	{
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
@@ -839,20 +872,10 @@ bool NoteSkinColumn::load_from_lua(lua_State* L, int index, NoteSkinLoader const
 		m_quantum_mult= 1.0;
 	}
 	m_quantum_mult= 1.0 / m_quantum_mult;
-	m_anim_uses_beats= get_optional_bool(L, index, "anim_uses_beats");
-	m_use_hold_heads_for_taps_on_row= get_optional_bool(L, index, "use_hold_heads_for_taps_on_row");
+	m_anim_uses_beats= get_optional_bool(L, index, "anim_uses_beats", false);
+	m_use_hold_heads_for_taps_on_row= get_optional_bool(L, index, "use_hold_heads_for_taps_on_row", false);
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
-	m_taps.swap(temp_taps);
-	clear_optionals();
-	m_optional_taps.swap(temp_optionals);
-	m_reverse_optional_taps.swap(temp_rev_optionals);
-	m_holds.swap(temp_holds);
-	m_reverse_holds.swap(temp_reverse_holds);
-	unload_texture_list(m_hold_player_masks);
-	unload_texture_list(m_hold_reverse_player_masks);
-	m_hold_player_masks.swap(temp_hold_masks);
-	m_hold_reverse_player_masks.swap(temp_hold_reverse_masks);
 	return true;
 }
 
@@ -892,14 +915,46 @@ bool NoteSkinLayer::load_from_lua(lua_State* L, int index, size_t columns,
 }
 
 NoteSkinData::NoteSkinData()
-	:m_loaded(false)
+	:m_children_owned_by_field_now(false), m_loaded(false)
 {
 	
+}
+
+NoteSkinData::~NoteSkinData()
+{
+	clear();
+}
+
+void NoteSkinData::clear()
+{
+	// The taps are cleared by AutoActor deleting them.
+	m_columns.clear();
+	m_player_colors.clear();
+	if(m_children_owned_by_field_now)
+	{
+		m_layers.clear();
+		m_field_layers.clear();
+		return;
+	}
+	for(auto&& layer : m_layers)
+	{
+		for(auto&& act : layer.m_actors)
+		{
+			delete act;
+		}
+	}
+	m_layers.clear();
+	for(auto&& act : m_field_layers)
+	{
+		delete act;
+	}
+	m_field_layers.clear();
 }
 
 void NoteSkinData::swap(NoteSkinData& other)
 {
 	m_layers.swap(other.m_layers);
+	m_field_layers.swap(other.m_field_layers);
 	m_player_colors.swap(other.m_player_colors);
 	m_columns.swap(other.m_columns);
 	m_skin_parameters.swap(other.m_skin_parameters);
@@ -925,7 +980,7 @@ bool NoteSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns,
 	{
 		RETURN_NOT_SANE(fmt::sprintf("Invalid number of columns: %s", insanity_diagnosis.c_str()));
 	}
-	vector<NoteSkinColumn> temp_columns(num_columns);
+	m_columns.resize(num_columns);
 	int columns_index= lua_gettop(L);
 	string sub_sanity;
 	for(size_t c= 0; c < num_columns; ++c)
@@ -935,7 +990,7 @@ bool NoteSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns,
 		{
 			RETURN_NOT_SANE(fmt::sprintf("Nothing given for column %zu.", c+1));
 		}
-		if(!temp_columns[c].load_from_lua(L, lua_gettop(L), load_skin, sub_sanity))
+		if(!m_columns[c].load_from_lua(L, lua_gettop(L), load_skin, sub_sanity))
 		{
 			RETURN_NOT_SANE(fmt::sprintf("Error loading column %zu: %s", c+1, sub_sanity.c_str()));
 		}
@@ -945,14 +1000,13 @@ bool NoteSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns,
 	if(lua_isboolean(L, -1))
 	{
 		bool vivid= lua_toboolean(L, -1);
-		for(auto&& column : temp_columns)
+		for(auto&& column : m_columns)
 		{
 			column.vivid_operation(vivid);
 		}
 	}
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
-	m_columns.swap(temp_columns);
 	m_loaded= true;
 	return true;
 }
@@ -965,6 +1019,7 @@ void NoteSkinLoader::swap(NoteSkinLoader& other)
 	m_notes_loader.swap(other.m_notes_loader);
 	m_layer_loaders.swap(other.m_layer_loaders);
 	m_player_colors.swap(other.m_player_colors);
+	m_field_layer_names.swap(other.m_field_layer_names);
 	m_supported_buttons.swap(other.m_supported_buttons);
 	m_skin_parameters.swap(other.m_skin_parameters);
 	m_skin_parameter_info.swap(other.m_skin_parameter_info);
@@ -1025,8 +1080,6 @@ bool NoteSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 	{
 		RETURN_NOT_SANE("Noteskin data is not a table.");
 	}
-	vector<Rage::Color> temp_player_colors;
-	unordered_set<string> temp_supported_buttons;
 	lua_getfield(L, index, "buttons");
 	// If there is no buttons table, it's not an error because a noteskin that
 	// supports all buttons can consider it more convenient to just use the
@@ -1038,21 +1091,38 @@ bool NoteSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 		{
 			lua_rawgeti(L, -1, b+1);
 			string button_name= lua_tostring(L, -1);
-			temp_supported_buttons.insert(button_name);
+			m_supported_buttons.insert(button_name);
 			lua_pop(L, 1);
 		}
 	}
 	lua_pop(L, 1);
-	vector<string> temp_layer_loaders;
 	lua_getfield(L, index, "layers");
 	if(lua_istable(L, -1))
 	{
 		string sub_sanity;
-		if(!load_string_table(L, lua_gettop(L), max_layers, temp_layer_loaders,
+		if(!load_string_table(L, lua_gettop(L), max_layers, m_layer_loaders,
 				"layers", sub_sanity))
 		{
 			RETURN_NOT_SANE("Error in layers table: " + sub_sanity);
 		}
+	}
+	else
+	{
+		lua_pop(L, 1);
+	}
+	lua_getfield(L, index, "field_layers");
+	if(lua_istable(L, -1))
+	{
+		string sub_sanity;
+		if(!load_string_table(L, lua_gettop(L), max_layers, m_field_layer_names,
+				"field_layers", sub_sanity))
+		{
+			RETURN_NOT_SANE("Error in field_layers table: " + sub_sanity);
+		}
+	}
+	else
+	{
+		lua_pop(L, 1);
 	}
 	lua_getfield(L, index, "notes");
 	if(!lua_isstring(L, -1))
@@ -1077,11 +1147,11 @@ bool NoteSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 	if(lua_istable(L, colors_index))
 	{
 		size_t num_colors= lua_objlen(L, colors_index);
-		temp_player_colors.resize(num_colors);
+		m_player_colors.resize(num_colors);
 		for(size_t c= 0; c < num_colors; ++c)
 		{
 			lua_rawgeti(L, colors_index, c+1);
-			FromStack(temp_player_colors[c], L, lua_gettop(L));
+			FromStack(m_player_colors[c], L, lua_gettop(L));
 		}
 	}
 	lua_pop(L, 1);
@@ -1095,9 +1165,6 @@ bool NoteSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 #undef RETURN_NOT_SANE
 	m_skin_name= name;
 	m_load_path= path;
-	m_layer_loaders.swap(temp_layer_loaders);
-	m_player_colors.swap(temp_player_colors);
-	m_supported_buttons.swap(temp_supported_buttons);
 	return true;
 }
 
@@ -1203,7 +1270,7 @@ bool NoteSkinLoader::supports_needed_buttons(StepsType stype) const
 	return true;
 }
 
-bool NoteSkinLoader::push_loader_function(lua_State* L, string const& loader)
+bool NoteSkinLoader::push_loader_function(lua_State* L, string const& loader) const
 {
 	if(loader.empty())
 	{
@@ -1234,11 +1301,11 @@ bool NoteSkinLoader::push_loader_function(lua_State* L, string const& loader)
 bool NoteSkinLoader::load_layer_set_into_data(lua_State* L,
 	LuaReference& skin_params, int button_list_index, int stype_index,
 	size_t columns, vector<string> const& loader_set,
-	vector<NoteSkinLayer>& dest, string& insanity_diagnosis)
+	vector<NoteSkinLayer>& dest, string& insanity_diagnosis) const
 {
 	int original_top= lua_gettop(L);
 #define RETURN_NOT_SANE(message) lua_settop(L, original_top); insanity_diagnosis= message; return false;
-	vector<NoteSkinLayer> temp_dest(loader_set.size());
+	dest.resize(loader_set.size());
 	string sub_sanity;
 	for(size_t i= 0; i < loader_set.size(); ++i)
 	{
@@ -1254,19 +1321,18 @@ bool NoteSkinLoader::load_layer_set_into_data(lua_State* L,
 		{
 			RETURN_NOT_SANE("Error running loader " + loader_set[i]);
 		}
-		if(!temp_dest[i].load_from_lua(L, lua_gettop(L), columns, sub_sanity))
+		if(!dest[i].load_from_lua(L, lua_gettop(L), columns, sub_sanity))
 		{
 			RETURN_NOT_SANE("Error in layer data: " + sub_sanity);
 		}
 	}
 #undef RETURN_NOT_SANE
-	dest.swap(temp_dest);
 	lua_settop(L, original_top);
 	return true;
 }
 
 bool NoteSkinLoader::load_into_data(StepsType stype,
-	LuaReference& skin_params, NoteSkinData& dest, string& insanity_diagnosis)
+	LuaReference& skin_params, NoteSkinData& dest, string& insanity_diagnosis) const
 {
 	vector<string> const& button_list= button_lists[stype];
 	Lua* L= LUA->Get();
@@ -1305,6 +1371,33 @@ bool NoteSkinLoader::load_into_data(StepsType stype,
 	{
 		RETURN_NOT_SANE("Error running layer loaders: " + sub_sanity);
 	}
+	dest.m_field_layers.reserve(m_field_layer_names.size());
+	for(size_t lid= 0; lid < m_field_layer_names.size(); ++lid)
+	{
+		if(!push_loader_function(L, m_field_layer_names[lid]))
+		{
+			RETURN_NOT_SANE("Could not load loader " + m_field_layer_names[lid]);
+		}
+		std::string error= "Error running " + m_load_path + m_field_layer_names[lid] + ": ";
+		lua_pushvalue(L, button_list_index);
+		lua_pushvalue(L, stype_index);
+		skin_params.PushSelf(L);
+		if(!LuaHelpers::RunScriptOnStack(L, error, 3, 1, true))
+		{
+			RETURN_NOT_SANE("Error running loader " + m_field_layer_names[lid]);
+		}
+		std::unique_ptr<XNode> node(XmlFileUtil::XNodeFromTable(L));
+		if(node.get() == nullptr)
+		{
+			RETURN_NOT_SANE("Actor not valid.");
+		}
+		Actor* act= ActorUtil::LoadFromNode(node.get(), nullptr);
+		if(act == nullptr)
+		{
+			RETURN_NOT_SANE("Error loading actor.");
+		}
+		dest.m_field_layers.push_back(act);
+	}
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
 	LUA->Release(L);
@@ -1315,7 +1408,7 @@ bool NoteSkinLoader::load_into_data(StepsType stype,
 void NoteSkinLoader::recursive_sanitize_skin_parameters(lua_State* L,
 	std::unordered_set<void const*>& visited_tables, int curr_depth,
 	int curr_param_set_info, int curr_param_set_defaults,
-	int curr_param_set_dest)
+	int curr_param_set_dest) const
 {
 	// max_depth is a protection against someone creating a pathologically deep
 	// table of parameters that could cause a stack overflow.
@@ -1446,7 +1539,7 @@ void NoteSkinLoader::recursive_sanitize_skin_parameters(lua_State* L,
 	}
 }
 
-void NoteSkinLoader::sanitize_skin_parameters(lua_State* L, LuaReference& params)
+void NoteSkinLoader::sanitize_skin_parameters(lua_State* L, LuaReference& params) const
 {
 	if(m_skin_parameter_info.IsNil() || m_skin_parameters.IsNil())
 	{

@@ -434,6 +434,7 @@ function Actor:hidden(bHide)
 	self:visible(not bHide)
 end
 
+
 -- (c) 2006-2012 Glenn Maynard, the Spinal Shark Collective, et al.
 -- All rights reserved.
 --

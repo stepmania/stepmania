@@ -31,6 +31,8 @@ namespace X11Helper
 
 	void SetWMState( const Window &root, const Window &win, const long action, const Atom atom );
 
+	void UpdateShowCursor(Window &win);
+
 #ifdef HAVE_XINERAMA
 	bool SetWMFullscreenMonitors( const DisplaySpec &target );
 #endif

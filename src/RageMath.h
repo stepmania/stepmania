@@ -74,6 +74,8 @@ private:
 	RageQuadratic m_Y;
 };
 
+bool point_inside_poly(float x, float y, std::vector<Rage::Vector2> const& poly);
+
 #endif
 
 /*

@@ -27,8 +27,8 @@ end
 
 local item_params= {
 	text_commands= {
-		Font= "Common Normal", OnCommand= function(self)
-			self:diffusealpha(0):linear(1):diffusealpha(1)
+		Font= "Common Condensed", OnCommand= function(self)
+			self:diffuse(color("#512232")):diffusealpha(0):linear(1):diffusealpha(1)
 		end,
 	},
 	text_width= .7,
@@ -57,22 +57,22 @@ return Def.ActorFrame{
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
 	menu:create_actors{
-		x= _screen.cx, y= _screen.h*.125, width= _screen.cx,
-		height= _screen.h*.75, num_displays= 1, pn= nil, el_height= 20,
+		x= _screen.cx, y= _screen.cy-280, width= 760,
+		height= _screen.h*.75, num_displays= 1, pn= nil, el_height= 32,
 		menu_sounds= {
 			pop= THEME:GetPathS("Common", "Cancel"),
 			push= THEME:GetPathS("_common", "row"),
 			act= THEME:GetPathS("Common", "value"),
-			move= THEME:GetPathS("_switch", "down"),
-			move_up= THEME:GetPathS("_switch", "up"),
-			move_down= THEME:GetPathS("_switch", "down"),
+			move= THEME:GetPathS("Common", "value"),
+			move_up= THEME:GetPathS("Common", "value"),
+			move_down= THEME:GetPathS("Common", "value"),
 			inc= THEME:GetPathS("_switch", "up"),
 			dec= THEME:GetPathS("_switch", "down"),
 		},
 		display_params= {
-			el_zoom= .55, item_params= item_params, item_mt= nesty_items.value,
+			el_zoom= 1, item_params= item_params, item_mt= nesty_items.value,
 			on= function(self)
-				self:zoomy(0):linear(1):zoomy(1)
+				self:diffusealpha(0):decelerate(0.5):diffusealpha(1)
 			end},
 	},
 }

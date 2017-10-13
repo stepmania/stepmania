@@ -1410,9 +1410,9 @@ static void set_edit_mode_stuff_on_field(NoteField& field)
 {
 	field.m_being_drawn_by_player= false;
 	field.m_vanish_type= FVT_RelativeToSelf;
-	field.m_trans_mod.pos_mod.x_mod.add_simple_mod("base_value", "number", EDIT_X);
-	field.m_trans_mod.pos_mod.y_mod.add_simple_mod("base_value", "number", EDIT_Y);
-	field.set_speed(0.f, 0.f, 1.f, 0.f, 0.f, 1.f);
+	field.m_trans_mod.set_base_value(
+		{{EDIT_X, EDIT_Y, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}, 1.f, 0.f});
+	field.set_speed(1.f);
 	field.disable_speed_scroll_segments();
 	field.turn_on_edit_mode();
 }
@@ -1590,7 +1590,10 @@ void ScreenEdit::Init()
 
 ScreenEdit::~ScreenEdit()
 {
-	m_pSteps->GetTimingData()->ReleaseLookup();
+	if(m_pSteps != nullptr)
+	{
+		m_pSteps->GetTimingData()->ReleaseLookup();
+	}
 	// UGLY: Don't delete the Song's steps.
 	m_SongLastSave.DetachSteps();
 
@@ -1715,7 +1718,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		{
 			// TODO: Configurable approach speed. -Kyz
 			fapproach(m_curr_speed, m_goal_speed, fDeltaTime*4);
-			m_NoteFieldEdit.set_speed(0.f, 0.f, m_curr_speed, 0.f, 0.f, 1.f);
+			m_NoteFieldEdit.set_speed(m_curr_speed);
 		}
 	}
 
@@ -2122,7 +2125,13 @@ bool ScreenEdit::Input( const InputEventPlus &input )
 
 	EditButton EditB = DeviceToEdit( input.DeviceI );
 	if( EditB == EditButton_Invalid )
-		EditB = MenuButtonToEditButton( input.MenuI );
+	{
+		// I don't believe there's an actual good reason to be controlling edit
+		// mode with the menu/gameplay buttons when there are already keys mapped
+		// for everything.  Doing so just makes it harder to assign keys for new
+		// things. -Kyz
+		//EditB = MenuButtonToEditButton( input.MenuI );
+	}
 
 	if( EditB == EDIT_BUTTON_REMOVE_NOTE )
 	{
@@ -3494,6 +3503,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_RECORDING:
 	{
 		m_NoteDataEdit.RevalidateATIs(vector<int>(), false);
+		// Clear timed mods on the notefield, so gimmick charts don't have to do
+		// it manually.  We can't clear permanent mods because that's where speed
+		// and other stuff that should be persistent is.  -Kyz
+		m_Player->get_note_field_because_i_really_need_it_for_edit_mode()->clear_timed_mods();
 		if( bStateChanging )
 			AdjustSync::ResetOriginalSyncData();
 
@@ -6529,7 +6542,7 @@ struct EditHelpLine
 	}
 };
 // TODO: Identify which of these can be removed and sent to a readme.
-static std::array<EditHelpLine, 28> g_EditHelpLines =
+static std::array<EditHelpLine, 29> g_EditHelpLines =
 {
 	{
 		EditHelpLine( "Move cursor", EDIT_BUTTON_SCROLL_UP_LINE, EDIT_BUTTON_SCROLL_DOWN_LINE ),
@@ -6537,6 +6550,7 @@ static std::array<EditHelpLine, 28> g_EditHelpLines =
 		EditHelpLine( "Jump measure", EDIT_BUTTON_SCROLL_PREV_MEASURE, EDIT_BUTTON_SCROLL_NEXT_MEASURE ),
 		EditHelpLine( "Select region", EDIT_BUTTON_SCROLL_SELECT ),
 		EditHelpLine( "Jump to first/last beat", EDIT_BUTTON_SCROLL_HOME, EDIT_BUTTON_SCROLL_END ),
+		EditHelpLine( "Jump to previous/next note", EDIT_BUTTON_SCROLL_PREV, EDIT_BUTTON_SCROLL_NEXT ),
 		EditHelpLine( "Change zoom", EDIT_BUTTON_SCROLL_SPEED_UP, EDIT_BUTTON_SCROLL_SPEED_DOWN ),
 		EditHelpLine( "Play", EDIT_BUTTON_PLAY_SELECTION ),
 		EditHelpLine( "Play current beat to end", EDIT_BUTTON_PLAY_FROM_CURSOR ),

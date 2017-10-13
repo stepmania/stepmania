@@ -263,7 +263,7 @@ void SongUtil::AdjustDuplicateSteps( Song *pSong )
 			 * bug in an earlier version. */
 			DeleteDuplicateSteps( pSong, vSteps );
 
-			char const *songTitle = pSong->GetDisplayFullTitle().c_str();
+			std::string songTitle = pSong->GetDisplayFullTitle();
 			CHECKPOINT_M(fmt::sprintf("Duplicate steps from %s removed.", songTitle));
 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
 			CHECKPOINT_M(fmt::sprintf("Charts from %s sorted.", songTitle));

@@ -753,12 +753,47 @@ void Actor::BeginDraw() // set the world matrix
 		DISPLAY->SkewY( m_pTempState->fSkewY );
 	}
 
+	if(!m_clickable_area.empty())
+	{
+		Rage::Matrix conversion;
+		// This feels wrong because it's not using the projection matrix, but it
+		// works.  Maybe it won't work on an Actor that is inside an ActorFrame
+		// with a non-default FOV set. -Kyz
+		// Using the projection matrix seemed to put all 4 resulting screen
+		// corners at nearly the same point. -Kyz
+		RageMatrixMultiply(&conversion, DISPLAY->GetViewTop(), DISPLAY->GetWorldTop());
+		for(size_t corner= 0; corner < m_clickable_area.size(); ++corner)
+		{
+			m_screen_clickable_area[corner]= m_clickable_area[corner].TransformCoords(conversion);
+		}
+	}
+
 	if( m_texTranslate.x != 0 || m_texTranslate.y != 0 )
 	{
 		DISPLAY->TexturePushMatrix();
 		DISPLAY->TextureTranslate( m_texTranslate.x, m_texTranslate.y );
 	}
 
+}
+
+void Actor::set_clickable_area(vector<Rage::Vector2> const& points)
+{
+	m_clickable_area= points;
+	m_screen_clickable_area.resize(m_clickable_area.size());
+}
+
+vector<Rage::Vector2> const& Actor::get_screen_clickable_area()
+{
+	return m_screen_clickable_area;
+}
+
+bool Actor::pos_in_clickable_area(float x, float y)
+{
+	if(m_screen_clickable_area.empty())
+	{
+		return false;
+	}
+	return point_inside_poly(x, y, m_screen_clickable_area);
 }
 
 void Actor::SetGlobalRenderStates()
@@ -2022,8 +2057,8 @@ public:
 	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); COMMON_RETURN_SELF; }
 	static int playcommand( T* p, lua_State *L )
 	{
-		if( !lua_istable(L, 2) && !lua_isnoneornil(L, 2) )
-			luaL_typerror( L, 2, "table or nil" );
+		// Things other than tables are useful. Forcing the themer to use a table
+		// wrapper just makes params more awkward. -Kyz
 
 		LuaReference ParamTable;
 		lua_pushvalue( L, 2 );
@@ -2189,6 +2224,51 @@ public:
 		p->Draw();
 		LUA->UnyieldLua();
 		COMMON_RETURN_SELF;
+	}
+	static int set_clickable_area(T* p, lua_State* L)
+	{
+		vector<Rage::Vector2> points;
+		if(lua_type(L, 1) == LUA_TTABLE)
+		{
+			size_t num_points= lua_objlen(L, 1);
+			points.resize(num_points);
+			for(size_t p= 0; p < num_points; ++p)
+			{
+				lua_rawgeti(L, 1, p+1);
+				int point_table= lua_gettop(L);
+				if(lua_type(L, point_table) == LUA_TTABLE)
+				{
+					lua_rawgeti(L, point_table, 1);
+					points[p].x= lua_tonumber(L, -1);
+					lua_rawgeti(L, point_table, 2);
+					points[p].y= lua_tonumber(L, -1);
+					lua_pop(L, 2);
+				}
+				lua_pop(L, 1);
+			}
+		}
+		p->set_clickable_area(points);
+		COMMON_RETURN_SELF;
+	}
+	static int get_screen_clickable_area(T* p, lua_State* L)
+	{
+		vector<Rage::Vector2> const& points= p->get_screen_clickable_area();
+		lua_createtable(L, points.size(), 0);
+		for(size_t p= 0; p < points.size(); ++p)
+		{
+			lua_createtable(L, 2, 0);
+			lua_pushnumber(L, points[p].x);
+			lua_rawseti(L, -2, 1);
+			lua_pushnumber(L, points[p].y);
+			lua_rawseti(L, -2, 2);
+			lua_rawseti(L, -2, p+1);
+		}
+		return 1;
+	}
+	static int pos_in_clickable_area(T* p, lua_State* L)
+	{
+		lua_pushboolean(L, p->pos_in_clickable_area(FArg(1), FArg(2)));
+		return 1;
 	}
 
 	LunaActor()
@@ -2366,6 +2446,10 @@ public:
 		ADD_METHOD( GetWrapperState );
 
 		ADD_METHOD( Draw );
+
+		ADD_METHOD(set_clickable_area);
+		ADD_METHOD(get_screen_clickable_area);
+		ADD_METHOD(pos_in_clickable_area);
 	}
 };
 

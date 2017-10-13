@@ -682,6 +682,17 @@ void ActorFrame::SetDrawByZPosition( bool b )
 class LunaActorFrame : public Luna<ActorFrame>
 {
 public:
+	static int play_command_no_recurse(T* p, lua_State * L)
+	{
+		LuaReference ParamTable;
+		lua_pushvalue( L, 2 );
+		ParamTable.SetFromStack( L );
+
+		Message msg( SArg(1), ParamTable );
+		p->PlayCommandNoRecurse( msg );
+
+		COMMON_RETURN_SELF;
+	}
 	static int playcommandonchildren( T* p, lua_State *L )		{ p->PlayCommandOnChildren(SArg(1)); COMMON_RETURN_SELF; }
 	static int playcommandonleaves( T* p, lua_State *L )		{ p->PlayCommandOnLeaves(SArg(1)); COMMON_RETURN_SELF; }
 	static int runcommandsonleaves( T* p, lua_State *L )
@@ -851,6 +862,7 @@ public:
 
 	LunaActorFrame()
 	{
+		ADD_METHOD(play_command_no_recurse);
 		ADD_METHOD( playcommandonchildren );
 		ADD_METHOD( playcommandonleaves );
 		ADD_METHOD( runcommandsonleaves );

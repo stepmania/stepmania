@@ -410,6 +410,9 @@ support it, NotePlayerizeMode_Quanta will be used instead.
 
 # Non-modifier Functions
 
+Outdated until someone turns in a detailed review of the mod system
+documentation.
+
 ## NoteFieldColumn Functions
 
 * NoteFieldColumn:get_time_offset()  

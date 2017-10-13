@@ -115,27 +115,27 @@ public:
 		float velocity;
 	};
 	private:
-	std::vector<LineSegment> m_line_segments;
-	std::map<float, std::vector<LineSegment*> > m_segments_by_beat;
-	std::map<float, std::vector<LineSegment*> > m_segments_by_second;
+	mutable std::vector<LineSegment> m_line_segments;
+	mutable std::map<float, std::vector<LineSegment*> > m_segments_by_beat;
+	mutable std::map<float, std::vector<LineSegment*> > m_segments_by_second;
 
 	void PrepareLineLookup(int search_mode, float search_time,
-		LineSegment* search_ret);
-	void ReleaseLineLookup();
+		LineSegment* search_ret) const;
+	void ReleaseLineLookup() const;
 	float GetLineBeatFromSecond(float second) const;
 	float GetLineSecondFromBeat(float beat) const;
 
-	std::map<float, displayed_beat_entry> m_displayed_beat_lookup;
+	mutable std::map<float, displayed_beat_entry> m_displayed_beat_lookup;
 	// m_lookup_requester_count exists to track how many things have requested
 	// the lookup tables be prepared, so unrelated parts of code don't have to
 	// check for them.
 	// The lookup tables are only created if m_lookup_requester_count is 0 when
 	// PrepareLookup is called, and only released when it reaches 0 again.
 	// -Kyz
-	int m_lookup_requester_count;
+	mutable int m_lookup_requester_count;
 
-	void ReleaseDisplayedBeatLookup();
-	void ReleaseLookupInternal();
+	void ReleaseDisplayedBeatLookup() const;
+	void ReleaseLookupInternal() const;
 
 	public:
 	float GetExpandSeconds(float second) const;
@@ -153,10 +153,10 @@ public:
 			warp_begin_out(-1), freeze_out(false), delay_out(false) {}
 	};
 
-	void RequestLookup();
-	void PrepareLookup();
-	void ReleaseLookup();
-	void DumpLookupTables();
+	void RequestLookup() const;
+	void PrepareLookup() const;
+	void ReleaseLookup() const;
+	void DumpLookupTables() const;
 	int get_lookup_requester_count() { return m_lookup_requester_count; }
 
 	int GetSegmentIndexAtRow(TimingSegmentType tst, int row) const;
@@ -214,7 +214,7 @@ public:
 	}
 	TimingSegment* GetSegmentAtBeat( float fBeat, TimingSegmentType tst )
 	{
-		return const_cast<TimingSegment*>( GetSegmentAtBeat(fBeat, tst) );
+		return const_cast<TimingSegment*>( const_cast<const TimingData*>(this)->GetSegmentAtBeat(fBeat, tst) );
 	}
 
 	#define DefineSegmentWithName(Seg, SegName, SegType) \

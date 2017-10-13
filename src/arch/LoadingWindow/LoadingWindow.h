@@ -8,6 +8,10 @@ class LoadingWindow
 public:
 	static LoadingWindow *Create();
 
+	LoadingWindow()
+		:m_progress(0), m_totalWork(0), m_indeterminate(false)
+	{}
+
 	virtual std::string Init() { return std::string(); }
 	virtual ~LoadingWindow() { }
 

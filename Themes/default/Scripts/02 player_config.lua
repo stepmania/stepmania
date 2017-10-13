@@ -1,9 +1,9 @@
 local player_config_default= {
-	ComboUnderField= true,
+	ComboUnderField= false,
 	FlashyCombo= false,
 	GameplayShowStepsDisplay= true,
 	GameplayShowScore= true,
-	JudgmentUnderField= true,
+	JudgmentUnderField= false,
 	Protiming= false,
 	ScreenFilter= 0,
 }
