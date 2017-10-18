@@ -305,6 +305,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 
 void MusicWheelItem::RefreshGrades()
 {
+	if(!IsLoaded()) { return; }
 	const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
 
 	if( pWID == NULL )
@@ -375,6 +376,7 @@ void MusicWheelItem::RefreshGrades()
 
 void MusicWheelItem::HandleMessage( const Message &msg )
 {
+	if(!IsLoaded()) { return; }
 	if( msg == Message_CurrentStepsP1Changed ||
 	    msg == Message_CurrentStepsP2Changed ||
 	    msg == Message_CurrentTrailP1Changed ||
