@@ -62,16 +62,27 @@ setmetatable( Def, {
 			if t._Level then
 				level = t._Level + 1
 			end
-			local info = debug.getinfo(level,"Sl");
+			local info
 
-			-- Source file of caller:
-			local Source = info.source
-			t._Source = Source
+			-- Sometimes info.source will be "=(tail call)" when we need the actual
+			-- file something came from.
+			-- So this loop climbs the stack until it reaches an actual file path
+			-- or reaches end.
+			repeat
+				info = debug.getinfo(level,"Sl");
+				if info then
+					-- Source file of caller:
+					local source= info.source
+					t._Source= source
+					-- Line number of caller:
+					t._Line = info.currentline
+					t._Dir= DebugPathToRealPath(source)
 
-			t._Dir = DebugPathToRealPath( Source )
-
-			-- Line number of caller:
-			t._Line = info.currentline
+					-- level is incremented for the next time through the loop.  Take
+					-- that into account if level is used after the loop.
+					level= level + 1
+				end
+			until t._Dir or not info
 
 			setmetatable( t, DefMetatable )
 			return t
