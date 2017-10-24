@@ -527,6 +527,10 @@ else() # Unix / Linux
     ${XINERAMA_LIBRARIES}
   )
 
+  if(WITH_PARIO AND PARIO_FOUND)
+    list(APPEND SMDATA_LINK_LIB "pario") 
+  endif()
+
   list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
 endif()
 

@@ -432,6 +432,22 @@ elseif(LINUX)
     message(FATAL_ERROR "GLEW required to compile StepMania.")
   endif()
 
+  if(WITH_PARIO)
+    find_library( PARIO_LIBRARY pario
+      HINTS ${PARIO_LIBDIR}
+      PATHS ${PARIO_PREFIX}/lib
+            /usr/lib
+            /usr/lib64
+            /usr/local/lib
+            /usr/local/lib64 )
+    if( PARIO_LIBRARY )
+      set( PARIO_FOUND TRUE )
+    endif()
+    if (NOT ${PARIO_FOUND})
+      message(FATAL_ERROR "ParIO is required to compile StepMania (https://github.com/geefr/ParIO).")
+    endif()
+  endif()
+
 endif()
 
 configure_file("${SM_SRC_DIR}/config.in.hpp" "${SM_SRC_DIR}/generated/config.hpp")

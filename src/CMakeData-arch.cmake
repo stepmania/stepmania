@@ -305,13 +305,11 @@ if(NOT APPLE)
         "arch/Lights/LightsDriver_Linux_PIUIO.cpp"
         "arch/Lights/LightsDriver_Linux_PIUIO_Leds.cpp"
         "arch/Lights/LightsDriver_LinuxWeedTech.cpp"
-        "arch/Lights/LightsDriver_LinuxParallel.cpp"
       )
       list(APPEND SMDATA_ARCH_LIGHTS_HPP
         "arch/Lights/LightsDriver_Linux_PIUIO.h"
         "arch/Lights/LightsDriver_Linux_PIUIO_Leds.h"
         "arch/Lights/LightsDriver_LinuxWeedTech.h"
-        "arch/Lights/LightsDriver_LinuxParallel.h"
       )
       if (WITH_PARALLEL_PORT)
         list(APPEND SMDATA_ARCH_LIGHTS_SRC
@@ -319,6 +317,14 @@ if(NOT APPLE)
         )
         list(APPEND SMDATA_ARCH_LIGHTS_HPP
           "arch/Lights/LightsDriver_LinuxParallel.h"
+        )
+      endif()
+      if (WITH_PARIO AND PARIO_FOUND )
+        list(APPEND SMDATA_ARCH_LIGHTS_SRC
+          "arch/Lights/LightsDriver_LinuxParIO.cpp"
+        )
+        list(APPEND SMDATA_ARCH_LIGHTS_HPP
+          "arch/Lights/LightsDriver_LinuxParIO.h"
         )
       endif()
       if (WITH_MINIMAID)
