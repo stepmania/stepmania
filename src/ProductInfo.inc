@@ -6,9 +6,9 @@
 
 ; PRODUCT_ID must NOT be "StepMania" unless you want people to uninstall 3.9
 ; when they install StepMania 5. (not recommended)
-!define PRODUCT_ID "StepMania 5.0"
+!define PRODUCT_ID "StepMania 5.2"
 ; TODO: This needs to be updated with the git rev hash
-!define PRODUCT_VER "5.0-UNKNOWN"
+!define PRODUCT_VER "5.2-UNKNOWN"
 !define PRODUCT_DISPLAY "${PRODUCT_FAMILY} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "sm5"
 
