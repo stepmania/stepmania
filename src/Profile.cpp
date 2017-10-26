@@ -56,7 +56,7 @@ static ThemeMetric<std::string> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString
 
 #define MAX_EDITABLE_INI_SIZE_BYTES			2*1024		// 2KB
 #define MAX_PLAYER_STATS_XML_SIZE_BYTES	\
-	400 /* Songs */						\
+	10000 /* Songs */						\
 	* 5 /* Steps per Song */			\
 	* 5 /* HighScores per Steps */		\
 	* 1024 /* size in bytes of a HighScores XNode */
