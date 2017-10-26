@@ -89,11 +89,11 @@ local menu_data= {
 	noteskin_params_menu_item(),
 	shown_noteskins_menu(),
 	{"item", player_config, "ScreenFilter", "percent"},	
-	{"submenu", "gameplay_options", gameplay_options},
-	{"submenu", "song_options", song_options},
+	{"submenu", "song_options", song_options},	
 	{"submenu", "life_options", life_options},
 	get_notefield_mods_toggle_menu(true, false),
 	get_notefield_mods_value_menu(true, false),
+	{"submenu", "gameplay_options", gameplay_options},
 }
 
 local player_ready= {}

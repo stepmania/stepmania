@@ -17,7 +17,7 @@ local ShowFlashyCombo = player_config:get_data(player).FlashyCombo
 
 --different language support
 local lang = THEME:GetCurLanguage()
-local cur_dir= "/Themes/smtheme-fiftyone/Graphics/Player combo/"
+local cur_dir= "/Themes/"..THEME:GetCurThemeName().."/Graphics/Player combo/"
 local combo_label = cur_dir.."_combo"
 local miss_label = cur_dir.."_misses"
 

@@ -6542,7 +6542,7 @@ struct EditHelpLine
 	}
 };
 // TODO: Identify which of these can be removed and sent to a readme.
-static std::array<EditHelpLine, 28> g_EditHelpLines =
+static std::array<EditHelpLine, 29> g_EditHelpLines =
 {
 	{
 		EditHelpLine( "Move cursor", EDIT_BUTTON_SCROLL_UP_LINE, EDIT_BUTTON_SCROLL_DOWN_LINE ),
@@ -6550,6 +6550,7 @@ static std::array<EditHelpLine, 28> g_EditHelpLines =
 		EditHelpLine( "Jump measure", EDIT_BUTTON_SCROLL_PREV_MEASURE, EDIT_BUTTON_SCROLL_NEXT_MEASURE ),
 		EditHelpLine( "Select region", EDIT_BUTTON_SCROLL_SELECT ),
 		EditHelpLine( "Jump to first/last beat", EDIT_BUTTON_SCROLL_HOME, EDIT_BUTTON_SCROLL_END ),
+		EditHelpLine( "Jump to previous/next note", EDIT_BUTTON_SCROLL_PREV, EDIT_BUTTON_SCROLL_NEXT ),
 		EditHelpLine( "Change zoom", EDIT_BUTTON_SCROLL_SPEED_UP, EDIT_BUTTON_SCROLL_SPEED_DOWN ),
 		EditHelpLine( "Play", EDIT_BUTTON_PLAY_SELECTION ),
 		EditHelpLine( "Play current beat to end", EDIT_BUTTON_PLAY_FROM_CURSOR ),
