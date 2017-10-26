@@ -267,7 +267,7 @@ const BackgroundChange &Song::GetBackgroundAtBeat( BackgroundLayer iLayer, float
 
 std::string Song::GetCacheFilePath() const
 {
-	return SongCacheIndex::GetCacheFilePath( "Songs", m_sSongDir );
+	return SongCacheIndex::GetCacheFilePath( "Songs", m_sSongDir+".cache" );
 }
 
 // Get a path to the SM containing data for this song. It might be a cache file.
