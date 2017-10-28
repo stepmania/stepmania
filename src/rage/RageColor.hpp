@@ -66,7 +66,7 @@ namespace Rage
 	inline Color operator*(Color lhs, Color const &rhs)
 	{
 		lhs *= rhs;
-		return rhs;
+		return lhs;
 	}
 	
 	inline Color operator*(Color lhs, float rhs)
