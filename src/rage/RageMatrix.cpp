@@ -1,4 +1,5 @@
 #include "RageMatrix.hpp"
+#include <cstring>
 
 using namespace Rage;
 
