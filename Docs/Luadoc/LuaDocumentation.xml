@@ -3216,6 +3216,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetNumStates' return='int' arguments=''>
 		Returns the number of states the Model has.
 	</Function>
+	<Function name='InverseBindPose' return= 'void' arguments='bool bInverseBindPose'>
+		Controls if the inverse bind pose matrix fix is applied or not.
+	</Function>
 </Class>
 <Class name='ModIconRow'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup, PlayerNumber pn'>
