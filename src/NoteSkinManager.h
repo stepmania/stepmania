@@ -11,7 +11,7 @@ struct NoteSkinManager
 	void load_skins();
 	void get_skins_for_stepstype(StepsType type, std::vector<NoteSkinLoader const*>& ret);
 	void get_all_skin_names(std::vector<std::string>& ret);
-	void get_skin_names_for_stepstype(StepsType type, std::vector<std::string>& ret);
+	void get_skin_names_for_stepstype(StepsType type, std::vector<std::string>& ret, bool disable_supports_all= false);
 	std::string get_first_skin_name_for_stepstype(StepsType type);
 	std::vector<StepsType> const& get_supported_stepstypes();
 	bool skin_supports_stepstype(std::string const& skin, StepsType type);

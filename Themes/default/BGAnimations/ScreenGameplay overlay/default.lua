@@ -42,7 +42,7 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 	if GAMESTATE:GetPlayMode() ~= 'PlayMode_Rave' then
 		for ip, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 			if ShowStandardDecoration("LifeMeterBar" ..  ToEnumShortString(pn)) then
-				local life_type = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Song"):LifeSetting()
+				local life_type = GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Song"):LifeSetting()
 				t[#t+1] = LoadActor(THEME:GetPathG(Var "LoadingScreen", "lifebar_" .. ToEnumShortString(life_type)), pn) .. {
 					InitCommand=function(self)
 						self:name("LifeMeterBar" .. ToEnumShortString(pn))

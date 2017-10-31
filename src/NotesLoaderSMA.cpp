@@ -359,7 +359,7 @@ bool SMALoader::LoadFromSimfile( const std::string &sPath, Song &out, bool )
 		else if( sValueName=="OFFSET" )
 		{
 			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
-			timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+			timing.set_offset(StringToFloat( sParams[1] ));
 		}
 
 		else if( sValueName=="BPMS" )

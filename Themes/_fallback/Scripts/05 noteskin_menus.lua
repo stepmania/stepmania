@@ -59,6 +59,7 @@ function shown_noteskins_menu()
 						dont_translate_name= true,
 						func= function()
 							config[skin_name]= not config[skin_name]
+							shown_noteskins:set_dirty(pn)
 							return {"boolean", not config[skin_name]}
 						end,
 						value= function()

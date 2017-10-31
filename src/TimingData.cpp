@@ -70,6 +70,10 @@ void TimingData::Copy( const TimingData& cpy )
 			AddSegment( seg );
 		}
 	}
+	if(get_lookup_requester_count() > 0)
+	{
+		PrepareLookup();
+	}
 }
 
 void TimingData::Clear()
@@ -553,6 +557,10 @@ void TimingData::PrepareLookup() const
 	// If by some mistake the old lookup table is still hanging around, adding
 	// more entries would probably cause problems.  Release the lookups. -Kyz
 	ReleaseLookupInternal();
+	if(empty())
+	{
+		return;
+	}
 	PrepareLineLookup(SEARCH_NONE, 0.f, nullptr);
 
 	const vector<TimingSegment*>* segs= m_avpTimingSegments;
@@ -984,6 +992,23 @@ static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegmen
 
 	vSegs.erase( vSegs.begin() + index );
 	Rage::safe_delete( cur );
+}
+
+void TimingData::set_offset(float off)
+{
+	if(off != m_fBeat0OffsetInSeconds)
+	{
+		m_fBeat0OffsetInSeconds= off;
+		if(get_lookup_requester_count() > 0)
+		{
+			PrepareLookup();
+		}
+	}
+}
+
+float TimingData::get_offset() const
+{
+	return m_fBeat0OffsetInSeconds;
 }
 
 // NOTE: the pointer we're passed is a reference to a temporary,

@@ -42,7 +42,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	f.PutLine( fmt::sprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
 	f.PutLine( fmt::sprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
 	f.PutLine( fmt::sprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
-	f.PutLine( fmt::sprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( fmt::sprintf( "#OFFSET:%.6f;", out.m_SongTiming.get_offset() ) );
 	f.PutLine( fmt::sprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( fmt::sprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
 	float specBeat = out.GetSpecifiedLastBeat();

@@ -1923,6 +1923,21 @@ void ScreenSelectMusic::AfterMusicChange()
 			if(pStyle == NULL)
 			{
 				lCourse->GetAllTrails(m_vpTrails);
+				auto iter= m_vpTrails.begin();
+				int num_players= GAMESTATE->GetNumPlayersEnabled();
+				Game const* cur_game= GAMESTATE->GetCurrentGame();
+				while(iter != m_vpTrails.end())
+				{
+					Style const* compat= GAMEMAN->GetFirstCompatibleStyle(cur_game, num_players, (*iter)->m_StepsType);
+					if(compat == nullptr)
+					{
+						iter= m_vpTrails.erase(iter);
+					}
+					else
+					{
+						++iter;
+					}
+				}
 			}
 			else
 			{

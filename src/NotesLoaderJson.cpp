@@ -171,7 +171,7 @@ static void Deserialize(Song &out, const Json::Value &root)
 	out.m_sLyricsFile = root["LyricsFile"].asString();
 	out.m_sCDTitleFile = root["CDTitle"].asString();
 	out.m_sMusicFile = root["Music"].asString();
-	out.m_SongTiming.m_fBeat0OffsetInSeconds = (float)root["Offset"].asDouble();
+	out.m_SongTiming.set_offset((float)root["Offset"].asDouble());
 	out.m_fMusicSampleStartSeconds = (float)root["SampleStart"].asDouble();
 	out.m_fMusicSampleLengthSeconds = (float)root["SampleLength"].asDouble();
 	Rage::ci_ascii_string selectable { root["Selectable"].asString().c_str() };

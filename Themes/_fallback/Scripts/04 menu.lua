@@ -879,7 +879,7 @@ menu_controller_mt= {
 			self:attach(args.actor, args.pn)
 			self:apply_translation_section(args.translation_section)
 			self:set_input_mode(args.input_mode, args.repeats_to_big, args.select_goes_to_top)
-			self:set_info(args.data)
+			self:set_info(args.data, args.custom_menu)
 		end,
 		apply_translation_section= function(self, section)
 			self:set_translation_section(self.scroller.main_items, self.scroller.num_main, section)
@@ -1260,6 +1260,15 @@ menu_controller_mt= {
 							end
 						end
 					end
+				end
+			end
+		end,
+		mouse_inside= function(self, mx, my)
+			if #self.menu_stack < 1 then return end
+			for id= 0, self.scroller.num_main-1 do
+				local disp= self.scroller.main_items[id]
+				if disp.info and disp:check_focus(mx, my) then
+					return true
 				end
 			end
 		end,
@@ -2014,6 +2023,7 @@ nesty_menus= {
 	make_menu= function(info)
 		if not info then return end
 		local ret= {}
+		copy_parts(ret, info, {"on_open", "on_open_arg", "on_close", "on_close_arg"})
 		for eid= 1, #info do
 			local entry= info[eid]
 			if type(entry) ~= "table" then
@@ -2038,7 +2048,6 @@ nesty_menus= {
 					end
 					local ret= {
 						name= name, func= function() return "submenu", items end,
-						on_open= entry.on_open, on_close= entry.on_close,
 						type_hint= {main= "submenu", sub= sub_type},
 					}
 					return add_translation_params(ret, entry)
@@ -2057,7 +2066,7 @@ nesty_menus= {
 				Trace("Invalid menu entry:")
 				rec_print_table(entry)
 			end
-			assert(handler, "Menu entry " .. eid .. " is of unknown type.")
+			assert(handler, "Menu entry " .. eid .. " is of unknown type: " .. tostring(entype))
 			local success, item= pcall(handler)
 			assert(success, "Menu entry " .. eid .. " had problem..."..tostring(item))
 			ret[#ret+1]= item
@@ -2317,15 +2326,21 @@ function one_dimension_scroll(
 end
 
 function add_defaults_to_params(params, defaults)
+	if type(params) ~= "table" then params= {} end
+	if type(defaults) ~= "table" then return params end
 	for key, value in pairs(defaults) do
 		if params[key] == nil then params[key]= value end
 	end
+	return params
 end
 
 function add_blank_tables_to_params(params, table_names)
+	if type(params) ~= "table" then params= {} end
+	if type(table_names) ~= "table" then return params end
 	for i, name in ipairs(table_names) do
 		if not params[name] then params[name]= {} end
 	end
+	return params
 end
 
 function noop_nil() end

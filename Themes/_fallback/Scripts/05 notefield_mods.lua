@@ -177,9 +177,6 @@ local engine_custom_mods= {
 			local wave_input= {'*', params.input, 1/64}
 			local wave= check_op{ops.wave, wave_input}
 			local amount= {'|', wave}
-			if not operator_list['|'] then
-				amount= {'*', {'square', wave_input}, wave}
-			end
 			return {'*', params.level, 64, .5, amount}
 		end,
 		params= {
@@ -812,6 +809,10 @@ local function resolve_redir(name, redir_stack)
 	end
 end
 
+function find_custom_mod(name)
+	return resolve_redir(name, {})
+end
+
 function handle_custom_mod(mod_entry)
 	local name= mod_entry[1]
 	local params= mod_entry[2]
@@ -936,20 +937,20 @@ function organize_notefield_mods_by_target(mods_table)
 		--   field= "all",
 		--   field= 1,
 		--   field= {2, 3},
-		if entry.field == "all" then
+		if entry.field == "all" or entry.field == nil then
 			for fid= 1, num_fields do
 				target_fields[#target_fields+1]= result[fid]
 			end
 		elseif type(entry.field) == "number" then
 			if entry.field < 1 or entry.field > num_fields then
-				lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+				lua.ReportScriptError("mods table entry " .. mid .. " field index " .. entry.field .. " is more than " .. num_fields)
 				return {}
 			end
-			target_fields[#target_fields+1]= result[fid]
+			target_fields[#target_fields+1]= result[entry.field]
 		elseif type(entry.field) == "table" then
 			for eid, fid in ipairs(entry.field) do
 				if type(fid) ~= "number" or fid < 1 or fid > num_fields then
-					lua.ReportScriptError("mods table entry " .. mid .. " has an invalid field index.")
+					lua.ReportScriptError("mods table entry " .. mid .. " field index " .. entry.field .. " is more than " .. num_fields)
 					return {}
 				end
 				target_fields[#target_fields+1]= result[fid]
@@ -962,23 +963,27 @@ function organize_notefield_mods_by_target(mods_table)
 		end
 		handle_custom_mod(entry)
 		if entry.column then
+			local column= entry.column
+			if type(column) == "function" then
+				column= column(num_columns)
+			end
 			local target_columns= {}
 			-- Support these kinds of column entries:
 			--   column= "all",
 			--   column= 1,
 			--   column= {2, 3},
-			if entry.column == "all" then
+			if column == "all" then
 				for cid= 1, num_columns do
 					target_columns[#target_columns+1]= cid
 				end
-			elseif type(entry.column) == "number" then
-				if entry.column < 1 or entry.column > num_columns then
+			elseif type(column) == "number" then
+				if column < 1 or column > num_columns then
 					lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
 					return {}
 				end
-				target_columns[#target_columns+1]= entry.column
-			elseif type(entry.column) == "table" then
-				for eid, cid in ipairs(entry.column) do
+				target_columns[#target_columns+1]= column
+			elseif type(column) == "table" then
+				for eid, cid in ipairs(column) do
 					if type(cid) ~= "number" or cid < 1 or cid > num_columns then
 						lua.ReportScriptError("mods table entry " .. mid .. " has an invalid column index.")
 						return {}
@@ -1008,16 +1013,164 @@ function organize_notefield_mods_by_target(mods_table)
 	end
 end
 
+function process_mod_skin_entries(notefields, noteskins)
+	local profiles= {}
+	for pn, field in pairs(notefields) do
+		profiles[pn]= PROFILEMAN:GetProfile(pn)
+	end
+	local function get_params_for_skin(pn, skin, maybe)
+		if type(maybe) == "table" then return maybe end
+		return profiles[pn]:get_noteskin_params(skin)
+	end
+	local function set_for_both(skin)
+		for pn, field in pairs(notefields) do
+			field:set_skin(skin, get_params_for_skin(pn, skin))
+		end
+	end
+	-- noteskin= "lambda"
+	if type(noteskins) == "string" then
+		set_for_both(noteskins)
+		return
+	end
+	if type(noteskins) ~= "table" then return end
+	if #noteskins < 1 then return end
+	-- noteskin= {
+	--   -- If add is true, skins are loaded after the one the player picked.
+	--   -- Otherwise, first entry replaces noteskin from the player's profile.
+	--   add= true,
+	--   -- Affects all notefields, uses params from profiles.
+	--   {name= "lambda"},
+	--   -- Affects all notefields, uses params provided.
+	--   {name= "lambda", field= "all", params= {}},
+	--   -- Affects player 1 notefield, uses params from profile.
+	--   {name= "lambda", field= 1},
+	--   -- Affects player 2 notefield, uses params from profile.
+	--   {name= "lambda", field= 2},
+	--   -- Affects player 1 and 2 notefields, uses params from profiles.
+	--   {name= "lambda", field= {1, 2}},
+	--   -- Choose two random noteskins and apply them.
+	--   {random= 2, field= "all"},
+	--   -- Choose two random non-generic noteskins and apply them.
+	--   {random= 2, field= "all", disable_supports_all= true},
+	-- }
+	local set_flags= {}
+	if noteskins.add then
+		for pn, field in pairs(notefields) do
+			set_flags[pn]= true
+		end
+	end
+	local function do_set(pn, skin, params)
+		params= get_params_for_skin(pn, skin, params)
+		if set_flags[pn] then
+			notefields[pn]:add_skin(skin, params)
+		else
+			notefields[pn]:set_skin(skin, params)
+			set_flags[pn]= true
+		end
+	end
+	local function get_skins(pn, stype, without, nofilter)
+		local skins= NOTESKIN:get_skin_names_for_stepstype(stype, without)
+		if not nofilter then
+			skins= filter_noteskin_list_with_shown_config(pn, skins)
+		end
+		for i, name in ipairs(skins) do
+			skins[name]= true
+		end
+		return skins
+	end
+	local all_skin_lists= {}
+	for pn, field in pairs(notefields) do
+		local stype= field:get_stepstype()
+		all_skin_lists[pn]= {
+			unfiltered= get_skins(pn, stype, false, true),
+			with_all= get_skins(pn, stype, false),
+			without_all= get_skins(pn, stype, true),
+		}
+	end
+	local function add_pick(pick, have)
+		have[#have+1]= pick
+		have[pick]= true
+	end
+	local function get_list_for_random(pn, disable_supports_all)
+		if disable_supports_all
+		and #all_skin_lists[pn].without_all > 0 then
+			return all_skin_lists[pn].without_all
+		end
+		return all_skin_lists[pn].with_all
+	end
+	local function pick_random(list, already_have)
+		if #list == 1 then
+			add_pick(list[1], already_have)
+			return
+		end
+		local name
+		repeat
+			local pick= math.random(1, #list)
+			name= list[pick]
+			local used= already_have[name]
+		until not used or #list <= #already_have
+		add_pick(name, already_have)
+	end
+	local function set_picks(fields, picks)
+		for pn, field in pairs(fields) do
+			for i, pick in ipairs(picks) do
+				do_set(pn, pick)
+			end
+		end
+	end
+	for i, entry in ipairs(noteskins) do
+		if type(entry) == "table" then
+			local fields= {}
+			local targype= type(entry.field)
+			if targype == "number" then
+				local pn= PlayerNumber[entry.field] or PlayerNumber[1]
+				fields= {[pn]= notefields[pn]}
+			elseif targype == "table" then
+				for tid, dy in ipairs(entry.field) do
+					local pn= PlayerNumber[dy] or PlayerNumber[1]
+					fields= {[pn]= notefields[pn]}
+				end
+			else
+				fields= notefields
+			end
+			if entry.random == "all" then
+				local first_pn= next(fields)
+				local picks= DeepCopy(get_list_for_random(first_pn, entry.disable_supports_all))
+				local len= #picks
+				for to= 1, len-1 do
+					local from= math.random(to, len)
+					picks[to], picks[from]= picks[from], picks[to]
+				end
+				set_picks(fields, picks)
+			elseif type(entry.random) == "number" then
+				local first_pn= next(fields)
+				local list= get_list_for_random(first_pn, entry.disable_supports_all)
+				local picks= {}
+				for pid= 1, entry.random do
+					pick_random(list, picks)
+				end
+				set_picks(fields, picks)
+			else
+				local skin= entry.name
+				for pn, field in pairs(fields) do
+					if all_skin_lists[pn].unfiltered[skin] then
+						do_set(pn, skin, entry.params)
+					end
+				end
+			end
+		end
+	end
+end
+
+local pn_to_field_index= PlayerNumber:Reverse()
+
 function organize_and_apply_notefield_mods(notefields, mods)
 	local first_pn, first_field= next(notefields, nil)
-	if NoteField.get_num_columns then
-		mods.columns= first_field:get_num_columns()
-	else
-		mods.columns= #first_field:get_columns()
-	end
+	mods.columns= first_field:get_num_columns()
+	process_mod_skin_entries(notefields, mods.noteskin)
+	mods.noteskin= nil
 	local organized_mods= organize_notefield_mods_by_target(mods)
-	local pn_to_field_index= PlayerNumber:Reverse()
-	if mods.field and mods.field ~= 1 then
+	if mods.fields and mods.fields ~= 1 then
 		for pn, field in pairs(notefields) do
 			-- stepmania enums are 0 indexed
 			local field_index= pn_to_field_index[pn] + 1
@@ -1042,6 +1195,7 @@ function handle_notefield_mods(mods)
 			notefields[pn]= find_notefield_in_gameplay(screen, pn)
 			if notefields[pn] then
 				notefields[pn]:clear_timed_mods()
+				notefields[pn]:clear_to_base_skin()
 			end
 		end
 	end

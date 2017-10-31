@@ -50,6 +50,8 @@ local function get_current_stepstype()
 	return "StepsType_Invalid"
 end
 
+local pn_to_id= PlayerNumber:Reverse()
+
 local function reload_mods()
 	if FILEMAN:DoesFileExist(mods_path) then
 		local mods, custom_mods= lua.load_config_lua(mods_path)
@@ -58,9 +60,10 @@ local function reload_mods()
 		if type(mods.fields) == "number" and mods.fields > 0 then
 			num_fields= mods.fields
 		end
-		for id, field in ipairs(notefields) do
+		for pn, field in pairs(notefields) do
 			field:clear_timed_mods()
-			if id > num_fields then
+			field:clear_to_base_skin()
+			if pn_to_id[pn] >= num_fields then
 				field:hibernate(math.huge):visible(false)
 			else
 				field:hibernate(0):visible(true)
@@ -71,9 +74,10 @@ local function reload_mods()
 		return true
 	else
 		local num_fields= 1
-		for id, field in ipairs(notefields) do
+		for pn, field in pairs(notefields) do
 			field:clear_timed_mods()
-			if id > num_fields then
+			field:clear_to_base_skin()
+			if pn_to_id[pn] > num_fields then
 				field:hibernate(math.huge):visible(false)
 			else
 				field:hibernate(0):visible(true)
@@ -164,8 +168,7 @@ local function update(self, delta)
 		end
 		display_time= editor_time + curr_offset
 	end
-	for id= 1, #notefields do
-		local field= notefields[id]
+	for pn, field in pairs(notefields) do
 		if field:GetVisible() then
 			field:set_curr_second(display_time)
 		end
@@ -389,10 +392,10 @@ local function input(event)
 	end
 end
 
-local function make_field()
+local function make_field(pn)
 	return Def.NoteField{
 		InitCommand= function(self)
-			notefields[#notefields+1]= self
+			notefields[pn]= self
 			self:hibernate(math.huge)
 				:set_vanish_type("FieldVanishType_RelativeToSelf")
 				:set_base_values{
@@ -412,7 +415,7 @@ local frame= Def.ActorFrame{
 		editor_notefield= edit_screen:GetChild("NoteFieldEdit")
 		local skin_name= editor_config:get_data():get_test_skin_choice(get_current_stepstype(stepstype))
 		local skin_params= editor_config:get_data():get_skin_params(skin_name)
-		for id, field in ipairs(notefields) do
+		for pn, field in pairs(notefields) do
 			editor_notefield:share_steps(field)
 			field:set_skin(skin_name, skin_params)
 			field:set_speed_mod(false, 1)
@@ -429,7 +432,7 @@ local frame= Def.ActorFrame{
 	NoteskinChangedMessageCommand= function(self)
 		local skin_name= editor_config:get_data():get_test_skin_choice(get_current_stepstype(stepstype))
 		local skin_params= editor_config:get_data():get_skin_params(skin_name)
-		for id, field in ipairs(notefields) do
+		for pn, field in pairs(notefields) do
 			if field:get_skin() ~= skin_name then
 				field:set_skin(skin_name, skin_params)
 			end
@@ -450,8 +453,8 @@ local frame= Def.ActorFrame{
 					:EnablePreserveTexture(false)
 					:Create()
 			end,
-			make_field(),
-			make_field(),
+			make_field(PLAYER_1),
+			make_field(PLAYER_2),
 		},
 		Def.Sprite{
 			Texture= "mod_preview_overlay", InitCommand= function(self)

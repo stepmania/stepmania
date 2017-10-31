@@ -254,7 +254,7 @@ void SetAttacks(SongTagInfo& info)
 }
 void SetOffset(SongTagInfo& info)
 {
-	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
+	info.song->m_SongTiming.set_offset(StringToFloat((*info.params)[1]));
 }
 void SetSongStops(SongTagInfo& info)
 {
@@ -521,7 +521,7 @@ void SetStepsOffset(StepsTagInfo& info)
 {
 	if(info.song->m_fVersion >= VERSION_SPLIT_TIMING || info.for_load_edit)
 	{
-		info.timing->m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
+		info.timing->set_offset(StringToFloat((*info.params)[1]));
 		info.has_own_timing = true;
 	}
 }
@@ -1013,7 +1013,7 @@ bool SSCLoader::LoadFromSimfile( const std::string &sPath, Song &out, bool bFrom
 				{
 					state = GETTING_STEP_INFO;
 					pNewNotes = out.CreateSteps();
-					stepsTiming = TimingData(out.m_SongTiming.m_fBeat0OffsetInSeconds);
+					stepsTiming = TimingData(out.m_SongTiming.get_offset());
 					reused_steps_info.has_own_timing = false;
 					reused_steps_info.steps= pNewNotes;
 					reused_steps_info.timing= &stepsTiming;
