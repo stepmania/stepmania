@@ -1,4 +1,4 @@
-local filter_color= color("0.135,0.135,0.135,1")
+local filter_color= color("0,0,0,1")
 
 local layers= {
 	Def.Quad{

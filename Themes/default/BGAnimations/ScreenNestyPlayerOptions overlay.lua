@@ -85,14 +85,15 @@ local menu_data= {
 	{"item", notefield_prefs_config, "hidden", "bool"},
 	{"item", notefield_prefs_config, "sudden", "bool"},
 	adv_notefield_prefs_menu(),
+	get_notefield_mods_toggle_menu(true, false),
+	-- Uncomment this for more advanced effects mods.
+	-- get_notefield_mods_value_menu(true, false),
 	noteskin_menu_item(),
 	noteskin_params_menu_item(),
 	shown_noteskins_menu(),
 	{"item", player_config, "ScreenFilter", "percent"},	
 	{"submenu", "song_options", song_options},	
 	{"submenu", "life_options", life_options},
-	get_notefield_mods_toggle_menu(true, false),
-	get_notefield_mods_value_menu(true, false),
 	{"submenu", "gameplay_options", gameplay_options},
 }
 
