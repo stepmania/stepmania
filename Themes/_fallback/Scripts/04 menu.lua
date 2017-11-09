@@ -2086,6 +2086,14 @@ nesty_menus.play_menu_sound= function(sounds, name)
 	end
 end
 
+nesty_menus.find_menu_for_mouse= function(menus, mx, my)
+	for pn, menu in pairs(menus) do
+		if menu:mouse_inside(mx, my) then
+			return pn, menu
+		end
+	end
+end
+
 local function make_typical_update(menu_controllers, sounds, item_change_callback, buttons_debug, focus_debug)
 	local prev_mx= INPUTFILTER:GetMouseX()
 	local prev_my= INPUTFILTER:GetMouseY()
@@ -2093,12 +2101,13 @@ local function make_typical_update(menu_controllers, sounds, item_change_callbac
 		local mx= INPUTFILTER:GetMouseX()
 		local my= INPUTFILTER:GetMouseY()
 		if mx ~= prev_mx or my ~= prev_my then
-			local pn= GAMESTATE:GetMasterPlayerNumber()
-			local menu= menu_controllers[pn] or menu_controllers[1]
-			local sound_name= menu:update_focus(mx, my)
-			nesty_menus.play_menu_sound(sounds, sound_name)
-			if item_change_callback then
-				item_change_callback(menu:get_cursor_item(), pn)
+			local pn, menu= nesty_menus.find_menu_for_mouse(menu_controllers, mx, my)
+			if menu then
+				local sound_name= menu:update_focus(mx, my)
+				nesty_menus.play_menu_sound(sounds, sound_name)
+				if item_change_callback then
+					item_change_callback(menu:get_cursor_item(), pn)
+				end
 			end
 			prev_mx= mx
 			prev_my= my
@@ -2121,8 +2130,15 @@ end
 
 local function make_typical_input(menu_controllers, sounds, item_change_callback, exit_callback)
 	return function(event)
-		local pn= event.PlayerNumber or GAMESTATE:GetMasterPlayerNumber()
-		local menu= menu_controllers[pn] or menu_controllers[1]
+		local pn, menu
+		if event.DeviceInput.is_mouse then
+			local mx= INPUTFILTER:GetMouseX()
+			local my= INPUTFILTER:GetMouseY()
+			pn, menu= nesty_menus.find_menu_for_mouse(menu_controllers, mx, my)
+		else
+			pn= event.PlayerNumber
+			menu= menu_controllers[pn] or menu_controllers[1]
+		end
 		if menu then
 			local levels_left, sound_name= menu:input(event)
 			nesty_menus.play_menu_sound(sounds, sound_name)
