@@ -4,6 +4,7 @@ If you have any corrections to this list, let us know (via forums or IRC).
 
 ==StepMania Team==
 Chris Danford, Glenn Maynard, Steve Checkoway, et al
+ ( see credits_old_Stepmania_Team for full list )
  * Keeping StepMania 5 alive with changes, and providing a nice codebase for
    us to work with.
 

@@ -47,7 +47,7 @@ protected:
 
 /**
  * @file
- * @author Kevin Slaughter, Thad Ward (c) 2003
+ * @author Kevin Slaughter, Tracy Ward (c) 2003
  * @section LICENSE
  * All rights reserved.
  * 
