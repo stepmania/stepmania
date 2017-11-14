@@ -328,7 +328,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenHowToPlay, ScreenAttract )
 // lua end
 
 /*
- * (c) 2001-2004 Chris Danford, Thad Ward
+ * (c) 2001-2004 Chris Danford, Tracy Ward
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
