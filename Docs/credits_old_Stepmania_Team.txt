@@ -1,4 +1,4 @@
-These were the Stepmania Team credits as of April 15, 2009, when they were
+ï»¿These were the Stepmania Team credits as of April 15, 2009, when they were
 wiped with a todo message of "remake this list". That never happened and
 anybody that was not in that initial list got lost in the shuffle over the
 years.
@@ -9,37 +9,37 @@ lua format.
 
 === GRAPHICS ===
 
-Lucas “v1ral” Tang
+Lucas â€œv1ralâ€ Tang
 SPiGuMuS
 Visage
-Ryan “Plaguefox” McKanna
-Lamden “Cloud34” Travis
-Michael “Redcrusher” Curry
-Steve “healing_vision” Klise
+Ryan â€œPlaguefoxâ€ McKanna
+Lamden â€œCloud34â€ Travis
+Michael â€œRedcrusherâ€ Curry
+Steve â€œhealing_visionâ€ Klise
 Mauro Panichella
 Popnko
 Griever (Julian)
 Miguel Moore
-Dj “AeON ExOdus” Washington
+Dj â€œAeON ExOdusâ€ Washington
 Xelf
-James “SPDS” Sanders
+James â€œSPDSâ€ Sanders
 k0ldx
 Daisuke Master
 
 === THEME ===
 
 AJ Kelly
-Dan “dieKatze88” Colardeau
-Mike “mDaWg” Calfin
+Dan â€œdieKatze88â€ Colardeau
+Mike â€œmDaWgâ€ Calfin
 
 === WEB ===
 
-Brian “Bork” Bugh
+Brian â€œBorkâ€ Bugh
 
 === SOUND ===
 
-Kyle “KeeL” Ward
-Jim “Izlude” Cabeen
+Kyle â€œKeeLâ€ Ward
+Jim â€œIzludeâ€ Cabeen
 Sanxion7
 
 === PROGRAMMING ===
@@ -48,37 +48,37 @@ Chris Danford
 Frieza
 Glenn Maynard
 Bruno Figueiredo
-Peter “Dro Kulix” May
-Jared “nmspaz” Roberts
-Brendan “binarys” Walker
-Lance “Neovanglist” Gilbert
+Peter â€œDro Kulixâ€ May
+Jared â€œnmspazâ€ Roberts
+Brendan â€œbinarysâ€ Walker
+Lance â€œNeovanglistâ€ Gilbert
 Michel Donais
-Ben “Mantis” Nordstrom
-Chris “Parasyte” Gomez
-Michael “dirkthedaring” Patterson
-Sauleil “angedelamort” Lamarre
+Ben â€œMantisâ€ Nordstrom
+Chris â€œParasyteâ€ Gomez
+Michael â€œdirkthedaringâ€ Patterson
+Sauleil â€œangedelamortâ€ Lamarre
 Edwin Evans
-Brian “Bork” Bugh
-Joel “Elvis314” Maher
-Garth “Kefabi” Smith
+Brian â€œBorkâ€ Bugh
+Joel â€œElvis314â€ Maher
+Garth â€œKefabiâ€ Smith
 Pkillah
 Robert Kemmetmueller
-Ben “Shabach” Andersen
-Will “SlinkyWizard” Valladao
+Ben â€œShabachâ€ Andersen
+Will â€œSlinkyWizardâ€ Valladao
 TheChip
-David “WarriorBob” H
+David â€œWarriorBobâ€ H
 Mike Waltson
-Kevin “Miryokuteki” Slaughter
-Tracy “Coderjo” Ward
+Kevin â€œMiryokutekiâ€ Slaughter
+Tracy â€œCoderjoâ€ Ward
 Steve Checkoway
 Sean Burke
 XPort
 Charles Lohr
-Josh “Axlecrusher” Allen
-Jason “Wolfman2000” Felds
-Eric “Subwire” Gustafson
-Mike “Archer” Hawkins
-Colby “shakesoda“ Klein
+Josh â€œAxlecrusherâ€ Allen
+Jason â€œWolfman2000â€ Felds
+Eric â€œSubwireâ€ Gustafson
+Mike â€œArcherâ€ Hawkins
+Colby â€œshakesodaâ€œ Klein
 
 === THANKS ===
 
@@ -99,13 +99,13 @@ Deluxe
 Lagged
 The Melting Pot
 DDRJamz Global BBS
-Eric “WaffleKing” Webster
+Eric â€œWaffleKingâ€ Webster
 Gotetsu
-Mark “Foobly” Verrey
+Mark â€œFooblyâ€ Verrey
 Mandarin Blue
-Kenny “AngelTK” Lai
+Kenny â€œAngelTKâ€ Lai
 curewater
-Bill “DMAshura” Shillito
+Bill â€œDMAshuraâ€ Shillito
 Illusionz - Issaquah, WA
 Quarters - Kirkland, WA
 Pier Amusements - Bournemouth, UK
