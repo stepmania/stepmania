@@ -20,6 +20,23 @@
 
 REGISTER_INPUT_HANDLER_CLASS2( LinuxEvent, Linux_Event );
 
+static DeviceButton XSymToDeviceButton( int key )
+{
+	DeviceButton result( DeviceButton_Invalid );
+	switch( key )
+	{
+	// UDLR
+	case 103: result = (DeviceButton)165; break;
+	case 108: result = (DeviceButton)166; break;
+	case 105: result = (DeviceButton)167; break;
+	case 106: result = (DeviceButton)168; break;
+	// Enter
+	case 28: result = (DeviceButton)130; break;
+	}
+
+	return result;
+}
+
 static RString BustypeToString( int iBus )
 {
 	switch( iBus )
@@ -142,6 +159,19 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 	memset( iABSMask, 0, sizeof(iABSMask) );
 	if( ioctl(m_iFD, EVIOCGBIT(EV_ABS, sizeof(iABSMask)), iABSMask) < 0 )
 		LOG->Warn( "ioctl(EVIOCGBIT(EV_ABS)): %s", strerror(errno) );
+
+	bool IPACHack(false);
+	
+	if( m_sName.find("IPAC") != std::string::npos ||
+	    m_sName.find("SCISSORS") != std::string::npos )
+	{
+		// This should mean the Event driver can read the IPAC input
+		// but we still need to get the X11 driver to ignore it.
+		// This might work but requires system-wide changes
+		// https://askubuntu.com/questions/17603/how-to-get-xorg-to-ignore-certain-input-devices#17608
+		IPACHack = true;
+		m_Dev = DEVICE_KEYBOARD;
+	}
 
 	if( !BitIsSet(iABSMask, ABS_X) && !BitIsSet(iABSMask, ABS_THROTTLE) && !BitIsSet(iABSMask, ABS_WHEEL) )
 	{
@@ -404,8 +434,15 @@ void InputHandler_Linux_Event::InputThread()
 					// I don't know if this is appropriate at all, but what else to do?
 					iNum = event.code;
 				}
-				wrap( iNum, 32 );	// max number of joystick buttons.  Make this a constant?
-				ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, enum_add2(JOY_BUTTON_1, iNum), event.value != 0, now) );
+				if( g_apEventDevices[i]->m_Dev == DEVICE_KEYBOARD )
+				{
+					ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, XSymToDeviceButton(iNum), event.value != 0, now) );
+				}
+				else
+				{
+					wrap( iNum, 32 );	// max number of joystick buttons.  Make this a constant?
+					ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, enum_add2(JOY_BUTTON_1, iNum), event.value != 0, now) );
+				}
 				break;
 			}
 				
