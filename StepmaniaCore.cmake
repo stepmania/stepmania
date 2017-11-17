@@ -255,7 +255,6 @@ endif()
 
 if(WIN32)
   set(SYSTEM_PCRE_FOUND FALSE)
-  find_package(DirectX REQUIRED)
 
   if (MINGW AND WITH_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
