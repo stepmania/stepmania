@@ -418,7 +418,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
-	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )
+	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == DB_KEY_F9 )
 	{
 		if( input.type != IET_FIRST_PRESS ) 
 			return false;
@@ -431,12 +431,12 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( !IsTransitioning() && m_SelectionState != SelectionState_Finalized )
 	{
 		bool bHoldingCtrl = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL));
 
 		bool holding_shift=
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT));
 
 		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
 		MakeUpper( &c, 1 );
@@ -477,7 +477,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 				return true;
 			}
 		}
-		else if( input.DeviceI.device == DEVICE_KEYBOARD && bHoldingCtrl && input.DeviceI.button == KEY_BACK && input.type == IET_FIRST_PRESS
+		else if( input.DeviceI.device == DEVICE_KEYBOARD && bHoldingCtrl && input.DeviceI.button == DB_KEY_BACK && input.type == IET_FIRST_PRESS
 			&& m_MusicWheel.IsSettled() )
 		{
 			// Keyboard shortcut to delete a song from disk (ctrl + backspace)

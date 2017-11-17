@@ -51,22 +51,22 @@ static const AutoMappings g_DefaultKeyMappings = AutoMappings(
 	"",
 	"",
 	"",
-	AutoMappingEntry( 0, KEY_LEFT,	GAME_BUTTON_MENULEFT,	false ),
-	AutoMappingEntry( 0, KEY_RIGHT,	GAME_BUTTON_MENURIGHT,	false ),
-	AutoMappingEntry( 0, KEY_UP,	GAME_BUTTON_MENUUP,	false ),
-	AutoMappingEntry( 0, KEY_DOWN,	GAME_BUTTON_MENUDOWN,	false ),
-	AutoMappingEntry( 0, KEY_ENTER,	GAME_BUTTON_START,	false ),
-	AutoMappingEntry( 0, KEY_SLASH,	GAME_BUTTON_SELECT,	false ),
-	AutoMappingEntry( 0, KEY_ESC,	GAME_BUTTON_BACK,	false ),
-	AutoMappingEntry( 0, KEY_KP_C4,	GAME_BUTTON_MENULEFT,	true ),
-	AutoMappingEntry( 0, KEY_KP_C6,	GAME_BUTTON_MENURIGHT,	true ),
-	AutoMappingEntry( 0, KEY_KP_C8,	GAME_BUTTON_MENUUP,	true ),
-	AutoMappingEntry( 0, KEY_KP_C2,	GAME_BUTTON_MENUDOWN,	true ),
-	AutoMappingEntry( 0, KEY_KP_ENTER,	GAME_BUTTON_START,	true ),
-	AutoMappingEntry( 0, KEY_KP_C0,	GAME_BUTTON_SELECT,	true ),
-	AutoMappingEntry( 0, KEY_HYPHEN,	GAME_BUTTON_BACK,	true ), // laptop keyboards.
-	AutoMappingEntry( 0, KEY_F1,	GAME_BUTTON_COIN,	false ),
-	AutoMappingEntry( 0, KEY_SCRLLOCK,	GAME_BUTTON_OPERATOR,	false )
+	AutoMappingEntry( 0, DB_KEY_LEFT,	GAME_BUTTON_MENULEFT,	false ),
+	AutoMappingEntry( 0, DB_KEY_RIGHT,	GAME_BUTTON_MENURIGHT,	false ),
+	AutoMappingEntry( 0, DB_KEY_UP,	GAME_BUTTON_MENUUP,	false ),
+	AutoMappingEntry( 0, DB_KEY_DOWN,	GAME_BUTTON_MENUDOWN,	false ),
+	AutoMappingEntry( 0, DB_KEY_ENTER,	GAME_BUTTON_START,	false ),
+	AutoMappingEntry( 0, DB_KEY_SLASH,	GAME_BUTTON_SELECT,	false ),
+	AutoMappingEntry( 0, DB_KEY_ESC,	GAME_BUTTON_BACK,	false ),
+	AutoMappingEntry( 0, DB_KEY_KP_C4,	GAME_BUTTON_MENULEFT,	true ),
+	AutoMappingEntry( 0, DB_KEY_KP_C6,	GAME_BUTTON_MENURIGHT,	true ),
+	AutoMappingEntry( 0, DB_KEY_KP_C8,	GAME_BUTTON_MENUUP,	true ),
+	AutoMappingEntry( 0, DB_KEY_KP_C2,	GAME_BUTTON_MENUDOWN,	true ),
+	AutoMappingEntry( 0, DB_KEY_KP_ENTER,	GAME_BUTTON_START,	true ),
+	AutoMappingEntry( 0, DB_KEY_KP_C0,	GAME_BUTTON_SELECT,	true ),
+	AutoMappingEntry( 0, DB_KEY_HYPHEN,	GAME_BUTTON_BACK,	true ), // laptop keyboards.
+	AutoMappingEntry( 0, DB_KEY_F1,	GAME_BUTTON_COIN,	false ),
+	AutoMappingEntry( 0, DB_KEY_SCRLLOCK,	GAME_BUTTON_OPERATOR,	false )
 );
 
 void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()

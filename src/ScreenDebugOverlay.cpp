@@ -177,48 +177,48 @@ void ScreenDebugOverlay::Init()
 	{
 		g_Mappings.Clear();
 
-		g_Mappings.holdForDebug1 = DeviceInput(DEVICE_KEYBOARD, KEY_F3);
+		g_Mappings.holdForDebug1 = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F3);
 		g_Mappings.holdForDebug2.MakeInvalid();
-		g_Mappings.holdForSlow = DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT);
-		g_Mappings.holdForFast = DeviceInput(DEVICE_KEYBOARD, KEY_TAB);
-		g_Mappings.toggleMute = DeviceInput(DEVICE_KEYBOARD, KEY_PAUSE);
+		g_Mappings.holdForSlow = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ACCENT);
+		g_Mappings.holdForFast = DeviceInput(DEVICE_KEYBOARD, DB_KEY_TAB);
+		g_Mappings.toggleMute = DeviceInput(DEVICE_KEYBOARD, DB_KEY_PAUSE);
 
 		/* TODO: Find a better way of indicating which option is which here.
 		 * Maybe we should take a page from ScreenEdit's menus and make
 		 * RowDefs()? */
 
 		int i=0;
-		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F8);
-		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F7);
-		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F6);
+		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, DB_KEY_F8);
+		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, DB_KEY_F7);
+		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, DB_KEY_F6);
 		i=0;
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C2);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C3);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C4);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C5);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C6);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C7);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C8);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C9);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C0);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cq);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cw);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ce);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cy);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ci);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Co);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ca);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cs);
-		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cd);
-		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F5)] = 0;
-		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F6)] = 1;
-		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F7)] = 2;
-		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F8)] = 3;
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C1);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C2);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C3);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C4);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C5);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C6);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C7);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C8);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C9);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C0);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cq);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cw);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Ce);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cr);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Ct);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cy);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cu);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Ci);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Co);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cp);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Ca);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cs);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cd);
+		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, DB_KEY_F5)] = 0;
+		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, DB_KEY_F6)] = 1;
+		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, DB_KEY_F7)] = 2;
+		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, DB_KEY_F8)] = 3;
 	}
 
 	map<RString,int> iNextDebugButton;
@@ -546,7 +546,7 @@ static LocalizedString AUTOSYNC		( "ScreenDebugOverlay", "Autosync" );
 static LocalizedString COIN_MODE		( "ScreenDebugOverlay", "CoinMode" );
 static LocalizedString HALT			( "ScreenDebugOverlay", "Halt" );
 static LocalizedString LIGHTS_DEBUG	( "ScreenDebugOverlay", "Lights Debug" );
-static LocalizedString MONKEY_INPUT	( "ScreenDebugOverlay", "Monkey Input" );
+static LocalizedString MONDB_KEY_INPUT	( "ScreenDebugOverlay", "Monkey Input" );
 static LocalizedString RENDERING_STATS	( "ScreenDebugOverlay", "Rendering Stats" );
 static LocalizedString VSYNC			( "ScreenDebugOverlay", "Vsync" );
 static LocalizedString MULTITEXTURE	( "ScreenDebugOverlay", "Multitexture" );
@@ -556,7 +556,7 @@ static LocalizedString PROFILE			( "ScreenDebugOverlay", "Profile" );
 static LocalizedString CLEAR_PROFILE_STATS	( "ScreenDebugOverlay", "Clear Profile Stats" );
 static LocalizedString FILL_PROFILE_STATS	( "ScreenDebugOverlay", "Fill Profile Stats" );
 static LocalizedString SEND_NOTES_ENDED	( "ScreenDebugOverlay", "Send Notes Ended" );
-static LocalizedString RESET_KEY_MAP ("ScreenDebugOverlay", "Reset key mapping to default");
+static LocalizedString RESET_DB_KEY_MAP ("ScreenDebugOverlay", "Reset key mapping to default");
 static LocalizedString MUTE_ACTIONS ("ScreenDebugOverlay", "Mute actions");
 static LocalizedString RELOAD			( "ScreenDebugOverlay", "Reload" );
 static LocalizedString RESTART			( "ScreenDebugOverlay", "Restart" );
@@ -608,8 +608,8 @@ class DebugLineAutoplay : public IDebugLine
 		ASSERT( GAMESTATE->GetMasterPlayerNumber() != PLAYER_INVALID );
 		PlayerController pc = GAMESTATE->m_pPlayerState[GAMESTATE->GetMasterPlayerNumber()]->m_PlayerController;
 		bool bHoldingShift = 
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) || 
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) );
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT) ) || 
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT) );
 		if( bHoldingShift )
 			pc = (pc==PC_CPU) ? PC_HUMAN : PC_CPU;
 		else
@@ -622,8 +622,8 @@ class DebugLineAutoplay : public IDebugLine
 
 		// Hide Autoplay if Alt is held down
 		bool bHoldingAlt = 
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT) ) || 
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT) );
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT) ) || 
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT) );
 		ScreenSyncOverlay::SetShowAutoplay( !bHoldingAlt );
 
 		IDebugLine::DoAndLog( sMessageOut );
@@ -647,7 +647,7 @@ class DebugLineAssist : public IDebugLine
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		ASSERT( GAMESTATE->GetMasterPlayerNumber() != PLAYER_INVALID );
-		bool bHoldingShift = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
+		bool bHoldingShift = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT) );
 		bool b;
 		if( bHoldingShift )
 			b = !GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome;
@@ -750,7 +750,7 @@ class DebugLineLightsDebug : public IDebugLine
 
 class DebugLineMonkeyInput : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return MONKEY_INPUT.GetValue(); }
+	virtual RString GetDisplayTitle() { return MONDB_KEY_INPUT.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bMonkeyInput.Get(); }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -971,7 +971,7 @@ class DebugLineSendNotesEnded : public IDebugLine
 
 class DebugLineResetKeyMapping : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return RESET_KEY_MAP.GetValue(); }
+	virtual RString GetDisplayTitle() { return RESET_DB_KEY_MAP.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
 	virtual void DoAndLog( RString &sMessageOut )

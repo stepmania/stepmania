@@ -253,59 +253,59 @@ void ScreenEdit::InitEditMappings()
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV_MEASURE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV_MEASURE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_UP);
 		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_PREV_MEASURE][0] = GAME_BUTTON_UP;
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT_MEASURE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT_MEASURE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_DOWN);
 		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_NEXT_MEASURE][0] = GAME_BUTTON_DOWN;
 		break;
 	default:
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_UP);
 		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = GAME_BUTTON_UP;
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_DOWN);
 		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = GAME_BUTTON_DOWN;
 		break;
 	}
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGUP);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_PAGE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_SEMICOLON);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGDN);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_SQUOTE);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_PGUP);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_PAGE][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_SEMICOLON);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_PGDN);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_SQUOTE);
 	
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_UP_TS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_UP_TS][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_TS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGUP);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_TS][1] = DeviceInput(DEVICE_KEYBOARD, KEY_SEMICOLON);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_UP_TS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_UP_TS][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_TS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_PGUP);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_TS][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_SEMICOLON);
 	
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_DOWN_TS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_DOWN_TS][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_TS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGDN);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_TS][1] = DeviceInput(DEVICE_KEYBOARD, KEY_SQUOTE);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_DOWN_TS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_DOWN_TS][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_TS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_PGDN);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_TS][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_SQUOTE);
 	
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_HOME][0] = DeviceInput(DEVICE_KEYBOARD, KEY_HOME);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_END][0] = DeviceInput(DEVICE_KEYBOARD, KEY_END);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_HOME][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_HOME);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_END][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_END);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_PERIOD);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_COMMA);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SEGMENT_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_NEXT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SEGMENT_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_PERIOD);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_NEXT][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 	
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SEGMENT_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_PREV][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SEGMENT_PREV][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_COMMA);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_PREV][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SEGMENT_PREV][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 	
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_SPACE);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_SPACE);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_START][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cp);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_START][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cp);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cp);
 
 	// EditMode-specific mappings
 	switch( EDIT_MODE.GetValue() )
@@ -313,209 +313,209 @@ void ScreenEdit::InitEditMappings()
 	case EditMode_Practice:
 		// Left = Zoom out (1x, 2x, 4x)
 		// Right = Zoom in
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_SCROLL_SPEED_UP][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LEFT);
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_SCROLL_SPEED_UP][0]   = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RIGHT);
 
 		// F1 = Show help popup
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_INPUT_HELP][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_INPUT_HELP][0]   = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F1);
 
 		// Esc = Show Edit Menu
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ESC);
 		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = GAME_BUTTON_START;
 		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][1]    = GAME_BUTTON_BACK;
 
 			
 		// Escape, Enter = exit play/record
-		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ENTER);
+		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ESC);
 		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = GAME_BUTTON_BACK;
 		return;
 	case EditMode_CourseMods:
 		// Left/Right = Snap to Next/Prev
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LEFT);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_PREV][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RIGHT);
 
 		// v = course playback menu
-		// m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADD_COURSE_MODS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Co);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_COURSE_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
+		// m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cv);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADD_COURSE_MODS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Co);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_COURSE_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cv);
 
 		// F1 = Show help popup
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_INPUT_HELP][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_INPUT_HELP][0]   = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F1);
 
 		// Esc = Show Edit Menu
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ESC);
 		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = GAME_BUTTON_START;
 		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][1]    = GAME_BUTTON_BACK;
 
 		// Escape, Enter = exit play/record
-		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ENTER);
+		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ESC);
 		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = GAME_BUTTON_START;
 		return;
 
 	case EditMode_Full:
 		// F4 = Show timing menu
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_TIMING_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_TIMING_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F4);
 		
 		/* Don't allow F5/F6 in home mode. It breaks the "delay creation until first save" logic. */
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F5);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_NEXT_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F6);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_BPM_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F7);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_BPM_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F5);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_NEXT_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F6);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_BPM_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F7);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_BPM_UP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F8);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F9);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_STOP_UP][0]  = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F10);
 	
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F9);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELAY_UP][0]  = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F10);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELAY_UP][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
 			
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F11);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OFFSET_UP][0]  = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F12);
 
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAMPLE_START_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAMPLE_START_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAMPLE_START_UP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RBRACKET);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAMPLE_START_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LBRACKET);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RBRACKET);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LBRACKET);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
 
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SAMPLE_MUSIC][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cl);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SAMPLE_MUSIC][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cl);
 
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-		// m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADD_STEP_MODS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
-		// m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_STEP_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cb);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cb);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
+		// m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADD_STEP_MODS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cc);
+		// m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_STEP_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cv);
 
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DEL);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_INSERT);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_DEL);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_LESS][0]= DeviceInput(DEVICE_KEYBOARD, KEY_Cq);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_MORE][0]= DeviceInput(DEVICE_KEYBOARD, KEY_Cw);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_RESET][0]= DeviceInput(DEVICE_KEYBOARD, KEY_Ce);
-		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_OFF][0]= DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_LESS][0]= DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cq);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_MORE][0]= DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cw);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_RESET][0]= DeviceInput(DEVICE_KEYBOARD, DB_KEY_Ce);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_OFF][0]= DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cr);
 		break;
 	default: break;
 	}
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_0][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_1][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C2);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_2][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C3);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_3][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C4);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_4][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C5);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_5][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C6);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_6][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C7);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_7][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C8);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_8][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C9);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_9][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C0);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_0][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C1);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_1][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C2);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_2][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C3);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_3][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C4);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_4][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C5);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_5][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C6);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_6][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C7);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_7][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C8);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_8][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C9);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_COLUMN_9][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_C0);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RIGHT_SIDE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RIGHT_SIDE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RIGHT_SIDE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RIGHT_SIDE][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][0]   = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cn);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cm);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cn);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 	
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cm);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_RIGHT][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 	
-	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_UP);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 
-	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_DOWN);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_SELECT][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LEFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_PREV][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RIGHT);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ESC);
 	m_EditMappingsMenuButton.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = GAME_BUTTON_START;
 	m_EditMappingsMenuButton.button[EDIT_BUTTON_OPEN_EDIT_MENU][1] = GAME_BUTTON_BACK;
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_ALTER_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Ca);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ENTER);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_ALTER_MENU][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Ca);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_F1);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cb);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cb);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cr);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_INSERT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_INSERT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_BACKSLASH);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELETE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DEL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_INSERT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_INSERT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_INSERT][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_BACKSLASH);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELETE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_DEL);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cs);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cs);
 	#if defined(MACOSX)
 		/* use cmd */
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LMETA);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RMETA);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LMETA);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RMETA);
 	#else
 		/* use ctrl */
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
 	#endif
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_UNDO][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_UNDO][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cu);
 
 	// Switch players, if it makes sense to do so.
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_PLAYERS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_SLASH);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_PLAYERS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_SLASH);
 	
 	// Allow song and step timing to be swapped.
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_TIMINGS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_TIMINGS][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Ct);
 
-	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ENTER);
+	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ESC);
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = GAME_BUTTON_BACK;
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_START;
 
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ESC);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ENTER);
 	m_RecordMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = GAME_BUTTON_BACK;
 	m_RecordMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_START;
 
-	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
-	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
-	m_RecordPausedMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_RecordPausedMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
-	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RECORD_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
-	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cp);
+	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cr);
+	m_RecordPausedMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL);
+	m_RecordPausedMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][1] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL);
+	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RECORD_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cr);
+	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_ESC);
 	m_RecordPausedMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
-	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_UNDO][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
+	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_UNDO][0] = DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cu);
 
 	IniFile mapping_ini;
 	// Only use the mappings file if it exists.  It's meant to be optional, and
@@ -2051,8 +2051,8 @@ bool ScreenEdit::Input( const InputEventPlus &input )
 //	LOG->Trace( "ScreenEdit::Input()" );
 	
 	// invalidate input if cmd/meta is being held.
-	if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)) ||
-	    INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) )
+	if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LMETA)) ||
+	    INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RMETA)) )
 		return false;
 
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )

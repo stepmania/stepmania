@@ -143,13 +143,13 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 	bool bIncrease = true;
 	switch( input.DeviceI.button )
 	{
-	case KEY_F4:	a = RevertSyncChanges; break;
-	case KEY_F9:	bIncrease = false; /* fall through */
-	case KEY_F10:	a = ChangeSongBPM; break;
-	case KEY_F11:	bIncrease = false; /* fall through */
-	case KEY_F12:
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
-		    INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
+	case DB_KEY_F4:	a = RevertSyncChanges; break;
+	case DB_KEY_F9:	bIncrease = false; /* fall through */
+	case DB_KEY_F10:	a = ChangeSongBPM; break;
+	case DB_KEY_F11:	bIncrease = false; /* fall through */
+	case DB_KEY_F12:
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT)) ||
+		    INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT)) )
 			a = ChangeGlobalOffset;
 		else
 			a = ChangeSongOffset;
@@ -189,8 +189,8 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 	case ChangeSongBPM:
 		{
 			float fDelta = bIncrease? +0.02f:-0.02f;
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT)) ||
+				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT)) )
 			{
 				fDelta /= 20;
 			}
@@ -231,8 +231,8 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 	case ChangeSongOffset:
 		{
 			float fDelta = bIncrease? +0.02f:-0.02f;
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT)) ||
+				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT)) )
 			{
 				fDelta /= 20; /* 1ms */
 			}

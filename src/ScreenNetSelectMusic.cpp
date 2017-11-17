@@ -102,8 +102,8 @@ bool ScreenNetSelectMusic::Input( const InputEventPlus &input )
 		return false;
 
 	bool bHoldingCtrl = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL)) ||
 		(!NSMAN->useSMserver); // If we are disconnected, assume no chatting
 
 	wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);

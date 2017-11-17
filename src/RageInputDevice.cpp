@@ -24,84 +24,84 @@ static void InitNames()
 	if( !g_mapNamesToString.empty() )
 		return;
 
-	g_mapNamesToString[KEY_PERIOD] = "period";
-	g_mapNamesToString[KEY_COMMA] = "comma";
-	g_mapNamesToString[KEY_COLON] = "colon";
-	g_mapNamesToString[KEY_SPACE] = "space";
-	g_mapNamesToString[KEY_DEL] = "delete";
-	g_mapNamesToString[KEY_BACKSLASH] = "backslash";
+	g_mapNamesToString[DB_KEY_PERIOD] = "period";
+	g_mapNamesToString[DB_KEY_COMMA] = "comma";
+	g_mapNamesToString[DB_KEY_COLON] = "colon";
+	g_mapNamesToString[DB_KEY_SPACE] = "space";
+	g_mapNamesToString[DB_KEY_DEL] = "delete";
+	g_mapNamesToString[DB_KEY_BACKSLASH] = "backslash";
 
-	g_mapNamesToString[KEY_BACK] = "backspace";
-	g_mapNamesToString[KEY_TAB] = "tab";
-	g_mapNamesToString[KEY_ENTER] = "enter";
-	g_mapNamesToString[KEY_PAUSE] = "pause";
-	g_mapNamesToString[KEY_ESC] = "escape";
+	g_mapNamesToString[DB_KEY_BACK] = "backspace";
+	g_mapNamesToString[DB_KEY_TAB] = "tab";
+	g_mapNamesToString[DB_KEY_ENTER] = "enter";
+	g_mapNamesToString[DB_KEY_PAUSE] = "pause";
+	g_mapNamesToString[DB_KEY_ESC] = "escape";
 
-	g_mapNamesToString[KEY_F1] = "F1";
-	g_mapNamesToString[KEY_F2] = "F2";
-	g_mapNamesToString[KEY_F3] = "F3";
-	g_mapNamesToString[KEY_F4] = "F4";
-	g_mapNamesToString[KEY_F5] = "F5";
-	g_mapNamesToString[KEY_F6] = "F6";
-	g_mapNamesToString[KEY_F7] = "F7";
-	g_mapNamesToString[KEY_F8] = "F8";
-	g_mapNamesToString[KEY_F9] = "F9";
-	g_mapNamesToString[KEY_F10] = "F10";
-	g_mapNamesToString[KEY_F11] = "F11";
-	g_mapNamesToString[KEY_F12] = "F12";
-	g_mapNamesToString[KEY_F13] = "F13";
-	g_mapNamesToString[KEY_F14] = "F14";
-	g_mapNamesToString[KEY_F15] = "F15";
-	g_mapNamesToString[KEY_F16] = "F16";
+	g_mapNamesToString[DB_KEY_F1] = "F1";
+	g_mapNamesToString[DB_KEY_F2] = "F2";
+	g_mapNamesToString[DB_KEY_F3] = "F3";
+	g_mapNamesToString[DB_KEY_F4] = "F4";
+	g_mapNamesToString[DB_KEY_F5] = "F5";
+	g_mapNamesToString[DB_KEY_F6] = "F6";
+	g_mapNamesToString[DB_KEY_F7] = "F7";
+	g_mapNamesToString[DB_KEY_F8] = "F8";
+	g_mapNamesToString[DB_KEY_F9] = "F9";
+	g_mapNamesToString[DB_KEY_F10] = "F10";
+	g_mapNamesToString[DB_KEY_F11] = "F11";
+	g_mapNamesToString[DB_KEY_F12] = "F12";
+	g_mapNamesToString[DB_KEY_F13] = "F13";
+	g_mapNamesToString[DB_KEY_F14] = "F14";
+	g_mapNamesToString[DB_KEY_F15] = "F15";
+	g_mapNamesToString[DB_KEY_F16] = "F16";
 
-	g_mapNamesToString[KEY_LCTRL] = "left ctrl";
-	g_mapNamesToString[KEY_RCTRL] = "right ctrl";
-	g_mapNamesToString[KEY_LSHIFT] = "left shift";
-	g_mapNamesToString[KEY_RSHIFT] = "right shift";
-	g_mapNamesToString[KEY_LALT] = "left alt";
-	g_mapNamesToString[KEY_RALT] = "right alt";
-	g_mapNamesToString[KEY_LMETA] = "left meta";
-	g_mapNamesToString[KEY_RMETA] = "right meta";
+	g_mapNamesToString[DB_KEY_LCTRL] = "left ctrl";
+	g_mapNamesToString[DB_KEY_RCTRL] = "right ctrl";
+	g_mapNamesToString[DB_KEY_LSHIFT] = "left shift";
+	g_mapNamesToString[DB_KEY_RSHIFT] = "right shift";
+	g_mapNamesToString[DB_KEY_LALT] = "left alt";
+	g_mapNamesToString[DB_KEY_RALT] = "right alt";
+	g_mapNamesToString[DB_KEY_LMETA] = "left meta";
+	g_mapNamesToString[DB_KEY_RMETA] = "right meta";
 	// Note: On Windows, the Super key is the Windows key. -aj
-	g_mapNamesToString[KEY_LSUPER] = "left super";
-	g_mapNamesToString[KEY_RSUPER] = "right super";
-	g_mapNamesToString[KEY_MENU] = "menu";
+	g_mapNamesToString[DB_KEY_LSUPER] = "left super";
+	g_mapNamesToString[DB_KEY_RSUPER] = "right super";
+	g_mapNamesToString[DB_KEY_MENU] = "menu";
 
-	g_mapNamesToString[KEY_FN] = "function";
+	g_mapNamesToString[DB_KEY_FN] = "function";
 
-	g_mapNamesToString[KEY_NUMLOCK] = "num lock";
-	g_mapNamesToString[KEY_SCRLLOCK] = "scroll lock";
-	g_mapNamesToString[KEY_CAPSLOCK] = "caps lock";
-	g_mapNamesToString[KEY_PRTSC] = "prtsc";
+	g_mapNamesToString[DB_KEY_NUMLOCK] = "num lock";
+	g_mapNamesToString[DB_KEY_SCRLLOCK] = "scroll lock";
+	g_mapNamesToString[DB_KEY_CAPSLOCK] = "caps lock";
+	g_mapNamesToString[DB_KEY_PRTSC] = "prtsc";
 
-	g_mapNamesToString[KEY_UP] = "up";
-	g_mapNamesToString[KEY_DOWN] = "down";
-	g_mapNamesToString[KEY_LEFT] = "left";
-	g_mapNamesToString[KEY_RIGHT] = "right";
+	g_mapNamesToString[DB_KEY_UP] = "up";
+	g_mapNamesToString[DB_KEY_DOWN] = "down";
+	g_mapNamesToString[DB_KEY_LEFT] = "left";
+	g_mapNamesToString[DB_KEY_RIGHT] = "right";
 
-	g_mapNamesToString[KEY_INSERT] = "insert";
-	g_mapNamesToString[KEY_HOME] = "home";
-	g_mapNamesToString[KEY_END] = "end";
-	g_mapNamesToString[KEY_PGUP] = "pgup";
-	g_mapNamesToString[KEY_PGDN] = "pgdn";
+	g_mapNamesToString[DB_KEY_INSERT] = "insert";
+	g_mapNamesToString[DB_KEY_HOME] = "home";
+	g_mapNamesToString[DB_KEY_END] = "end";
+	g_mapNamesToString[DB_KEY_PGUP] = "pgup";
+	g_mapNamesToString[DB_KEY_PGDN] = "pgdn";
 
-	g_mapNamesToString[KEY_KP_C0] = "KP 0";
-	g_mapNamesToString[KEY_KP_C1] = "KP 1";
-	g_mapNamesToString[KEY_KP_C2] = "KP 2";
-	g_mapNamesToString[KEY_KP_C3] = "KP 3";
-	g_mapNamesToString[KEY_KP_C4] = "KP 4";
-	g_mapNamesToString[KEY_KP_C5] = "KP 5";
-	g_mapNamesToString[KEY_KP_C6] = "KP 6";
-	g_mapNamesToString[KEY_KP_C7] = "KP 7";
-	g_mapNamesToString[KEY_KP_C8] = "KP 8";
-	g_mapNamesToString[KEY_KP_C9] = "KP 9";
-	g_mapNamesToString[KEY_KP_SLASH] = "KP /";
-	g_mapNamesToString[KEY_KP_ASTERISK] = "KP *";
-	g_mapNamesToString[KEY_KP_HYPHEN] = "KP -";
-	g_mapNamesToString[KEY_KP_PLUS] = "KP +";
-	g_mapNamesToString[KEY_KP_PERIOD] = "KP .";
-	g_mapNamesToString[KEY_KP_EQUAL] = "KP =";
-	g_mapNamesToString[KEY_KP_ENTER] = "KP enter";
+	g_mapNamesToString[DB_KEY_KP_C0] = "KP 0";
+	g_mapNamesToString[DB_KEY_KP_C1] = "KP 1";
+	g_mapNamesToString[DB_KEY_KP_C2] = "KP 2";
+	g_mapNamesToString[DB_KEY_KP_C3] = "KP 3";
+	g_mapNamesToString[DB_KEY_KP_C4] = "KP 4";
+	g_mapNamesToString[DB_KEY_KP_C5] = "KP 5";
+	g_mapNamesToString[DB_KEY_KP_C6] = "KP 6";
+	g_mapNamesToString[DB_KEY_KP_C7] = "KP 7";
+	g_mapNamesToString[DB_KEY_KP_C8] = "KP 8";
+	g_mapNamesToString[DB_KEY_KP_C9] = "KP 9";
+	g_mapNamesToString[DB_KEY_KP_SLASH] = "KP /";
+	g_mapNamesToString[DB_KEY_KP_ASTERISK] = "KP *";
+	g_mapNamesToString[DB_KEY_KP_HYPHEN] = "KP -";
+	g_mapNamesToString[DB_KEY_KP_PLUS] = "KP +";
+	g_mapNamesToString[DB_KEY_KP_PERIOD] = "KP .";
+	g_mapNamesToString[DB_KEY_KP_EQUAL] = "KP =";
+	g_mapNamesToString[DB_KEY_KP_ENTER] = "KP enter";
 
 	g_mapNamesToString[JOY_LEFT] = "Left1";
 	g_mapNamesToString[JOY_RIGHT] = "Right1";
@@ -157,8 +157,8 @@ RString DeviceButtonToString( DeviceButton key )
 	if( key >= 33 && key < 127 && !(key >= 'A' && key <= 'Z' ) )
 		return ssprintf( "%c", key );
 
-	if( key >= KEY_OTHER_0 && key < KEY_LAST_OTHER )
-		return ssprintf( "unk %i", key-KEY_OTHER_0 );
+	if( key >= DB_KEY_OTHER_0 && key < DB_KEY_LAST_OTHER )
+		return ssprintf( "unk %i", key-DB_KEY_OTHER_0 );
 
 	if( key >= JOY_BUTTON_1 && key <= JOY_BUTTON_32 )
 		return ssprintf( "B%i", key-JOY_BUTTON_1+1 );
@@ -178,7 +178,7 @@ DeviceButton StringToDeviceButton( const RString& s )
 
 	int i;
 	if( sscanf(s, "unk %i", &i) == 1 )
-		return enum_add2( KEY_OTHER_0, i );
+		return enum_add2( DB_KEY_OTHER_0, i );
 
 	if( sscanf(s, "B%i", &i) == 1 )
 		return enum_add2( JOY_BUTTON_1, i-1 );

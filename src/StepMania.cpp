@@ -1383,11 +1383,11 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	/* Re-added for StepMania 3.9 theming veterans, plus it's just faster than
 	 * the debug menu. The Shift button only reloads the metrics, unlike in 3.9
 	 * (where it saved bookkeeping and machine profile). -aj */
-	bool bIsShiftHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
-		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT), &input.InputList);
-	bool bIsCtrlHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) ||
-		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList);
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F2) )
+	bool bIsShiftHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT), &input.InputList) ||
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT), &input.InputList);
+	bool bIsCtrlHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL), &input.InputList) ||
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL), &input.InputList);
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_F2) )
 	{
 		if( bIsShiftHeld && !bIsCtrlHeld )
 		{
@@ -1424,7 +1424,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		return true;
 	}
 
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PAUSE) )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_PAUSE) )
 	{
 		Message msg("ToggleConsoleDisplay");
 		MESSAGEMAN->Broadcast( msg );
@@ -1432,10 +1432,10 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	}
 
 #if !defined(MACOSX)
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4) )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_F4) )
 	{
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList) ||
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList) )
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT), &input.InputList) ||
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT), &input.InputList) )
 		{
 			// pressed Alt+F4
 			ArchHooks::SetUserQuit();
@@ -1443,9 +1443,9 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		}
 	}
 #else
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_Cq) &&
-		(INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList ) ||
-		 INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList )) )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_Cq) &&
+		(INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LMETA), &input.InputList ) ||
+		 INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RMETA), &input.InputList )) )
 	{
 		/* The user quit is handled by the menu item so we don't need to set it
 		 * here; however, we do want to return that it has been handled since
@@ -1457,26 +1457,26 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	bool bDoScreenshot =
 #if defined(MACOSX)
 	// Notebooks don't have F13. Use cmd-F12 as well.
-		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_PRTSC ) ||
-		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_F13 ) ||
-		( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) &&
-		  (INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList) ||
-		   INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList)) );
+		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, DB_KEY_PRTSC ) ||
+		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, DB_KEY_F13 ) ||
+		( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_F12) &&
+		  (INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LMETA), &input.InputList) ||
+		   INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RMETA), &input.InputList)) );
 #else
 	/* The default Windows message handler will capture the desktop window upon
 	 * pressing PrntScrn, or will capture the foreground with focus upon pressing
 	 * Alt+PrntScrn. Windows will do this whether or not we save a screenshot
 	 * ourself by dumping the frame buffer. */
 	// "if pressing PrintScreen and not pressing Alt"
-		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PRTSC) &&
-		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList) &&
-		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList);
+		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_PRTSC) &&
+		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT), &input.InputList) &&
+		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT), &input.InputList);
 #endif
 	if( bDoScreenshot )
 	{
 		// If holding Shift save uncompressed, else save compressed
-		bool bHoldingShift = ( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) )
-								|| INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) ) );
+		bool bHoldingShift = ( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT) )
+								|| INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT) ) );
 		bool bSaveCompressed = !bHoldingShift;
 		RageTimer timer;
 		StepMania::SaveScreenshot("Screenshots/", bSaveCompressed, false, "", "");
@@ -1484,9 +1484,9 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		return true; // handled
 	}
 
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) &&
-		(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList) ||
-		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList)) )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_ENTER) &&
+		(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RALT), &input.InputList) ||
+		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LALT), &input.InputList)) )
 	{
 		// alt-enter
 		/* In OS X, this is a menu item and will be handled as such. This will
@@ -1533,15 +1533,15 @@ void HandleInputEvents(float fDeltaTime)
 		/*
 		if( input.DeviceI.IsJoystick() )
 		{
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DB_KEY_LSHIFT) ) )
 				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 1);
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL) ) )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DB_KEY_LCTRL) ) )
 				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 2);
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LALT) ) )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DB_KEY_LALT) ) )
 				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 4);
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_RALT) ) )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DB_KEY_RALT) ) )
 				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 8);
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL) ) )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DB_KEY_RCTRL) ) )
 				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 16);
 		}
 		*/

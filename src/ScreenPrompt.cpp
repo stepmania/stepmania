@@ -126,9 +126,9 @@ bool ScreenPrompt::Input( const InputEventPlus &input )
 	{
 		switch( input.DeviceI.button )
 		{
-			case KEY_LEFT:
+			case DB_KEY_LEFT:
 				return this->MenuLeft( input );
-			case KEY_RIGHT:
+			case DB_KEY_RIGHT:
 				return this->MenuRight( input );
 			default: break;
 		}

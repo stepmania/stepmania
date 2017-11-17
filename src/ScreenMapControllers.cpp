@@ -357,7 +357,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 	{
 		if(input.type == IET_FIRST_PRESS &&
 			input.DeviceI.device == DEVICE_KEYBOARD &&
-			input.DeviceI.button == KEY_ENTER)
+			input.DeviceI.button == DB_KEY_ENTER)
 		{
 			m_AutoDismissWarningSecs = 0.0f;
 			DismissWarning();
@@ -369,7 +369,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 	{
 		if(input.type == IET_FIRST_PRESS &&
 			input.DeviceI.device == DEVICE_KEYBOARD &&
-			input.DeviceI.button == KEY_ENTER)
+			input.DeviceI.button == DB_KEY_ENTER)
 		{
 			m_AutoDismissNoSetListPromptSecs = 0.0f;
 			m_NoSetListPrompt->PlayCommand("TweenOff");
@@ -381,7 +381,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 	{
 		if(input.type == IET_FIRST_PRESS &&
 			input.DeviceI.device == DEVICE_KEYBOARD &&
-			input.DeviceI.button == KEY_ENTER)
+			input.DeviceI.button == DB_KEY_ENTER)
 		{
 			m_AutoDismissSanitySecs = 0.0f;
 			m_SanityMessage->PlayCommand("TweenOff");
@@ -418,7 +418,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			return false;
 
 		// Don't allow function keys to be mapped.
-		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= KEY_F1 && input.DeviceI.button <= KEY_F12) )
+		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= DB_KEY_F1 && input.DeviceI.button <= DB_KEY_F12) )
 		{
 			SCREENMAN->SystemMessage( INVALID_BUTTON );
 			SCREENMAN->PlayInvalidSound();
@@ -444,13 +444,13 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 		 * or backspace, and I find them more intuitive, so allow them, too. -gm */
 
 		/* XXX: For some reason that eludes me, this function gets sent an
-		 * KEY_SPACE button press every time the JOY_HAT_UP button is pressed.
+		 * DB_KEY_SPACE button press every time the JOY_HAT_UP button is pressed.
 		 * Had to put this in to prevent mappings being erased everytime the user
 		 * pressed up on the joypad. */
 
-		case KEY_DEL:
-		case KEY_SPACE:
-		case KEY_BACK: // Clear the selected input mapping.
+		case DB_KEY_DEL:
+		case DB_KEY_SPACE:
+		case DB_KEY_BACK: // Clear the selected input mapping.
 			if(!CursorOnKey())
 			{
 				break;
@@ -467,7 +467,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 				bHandled = true;
 			}
 			break;
-		case KEY_LEFT: // Move the selection left, wrapping up.
+		case DB_KEY_LEFT: // Move the selection left, wrapping up.
 			if(!CursorCanGoLeft())
 			{
 				break;
@@ -486,7 +486,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			m_soundChange.Play(true);
 			bHandled = true;
 			break;
-		case KEY_RIGHT:	// Move the selection right, wrapping down.
+		case DB_KEY_RIGHT:	// Move the selection right, wrapping down.
 			if(!CursorCanGoRight())
 			{
 				break;
@@ -502,7 +502,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			m_soundChange.Play(true);
 			bHandled = true;
 			break;
-		case KEY_UP: // Move the selection up.
+		case DB_KEY_UP: // Move the selection up.
 			if(!CursorCanGoUp())
 			{
 				break;
@@ -513,7 +513,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			m_soundChange.Play(true);
 			bHandled = true;
 			break;
-		case KEY_DOWN: // Move the selection down.
+		case DB_KEY_DOWN: // Move the selection down.
 			if(!CursorCanGoDown())
 			{
 				break;
@@ -524,11 +524,11 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			m_soundChange.Play(true);
 			bHandled = true;
 			break;
-		case KEY_ESC: // Quit the screen.
+		case DB_KEY_ESC: // Quit the screen.
 			ExitAction();
 			bHandled = true;
 			break;
-		case KEY_Cm:
+		case DB_KEY_Cm:
 			if(CursorOnKey())
 			{
 				SetListEntry to_add(SetListEntry(CurKeyIndex(), m_CurController, m_CurSlot));
@@ -545,8 +545,8 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 				}
 			}
 			break;
-		case KEY_ENTER: // Change the selection.
-		case KEY_KP_ENTER:
+		case DB_KEY_ENTER: // Change the selection.
+		case DB_KEY_KP_ENTER:
 			bHandled = true;
 			if(CursorOnAction())
 			{

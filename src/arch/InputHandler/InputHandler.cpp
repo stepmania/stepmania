@@ -46,15 +46,15 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 	default:
 		if( button < 127 )
 			c = (wchar_t) button;
-		else if( button >= KEY_KP_C0 && button <= KEY_KP_C9 )
-			c =(wchar_t) (button - KEY_KP_C0) + '0';
+		else if( button >= DB_KEY_KP_C0 && button <= DB_KEY_KP_C9 )
+			c =(wchar_t) (button - DB_KEY_KP_C0) + '0';
 		break;
-	case KEY_KP_SLASH:	c = L'/';	break;
-	case KEY_KP_ASTERISK:	c = L'*';	break;
-	case KEY_KP_HYPHEN:	c = L'-';	break;
-	case KEY_KP_PLUS:	c = L'+';	break;
-	case KEY_KP_PERIOD:	c = L'.';	break;
-	case KEY_KP_EQUAL:	c = L'=';	break;
+	case DB_KEY_KP_SLASH:	c = L'/';	break;
+	case DB_KEY_KP_ASTERISK:	c = L'*';	break;
+	case DB_KEY_KP_HYPHEN:	c = L'-';	break;
+	case DB_KEY_KP_PLUS:	c = L'+';	break;
+	case DB_KEY_KP_PERIOD:	c = L'.';	break;
+	case DB_KEY_KP_EQUAL:	c = L'=';	break;
 	}
 
 	// Handle some default US keyboard modifiers for derived InputHandlers that 
@@ -62,12 +62,12 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 	if( bUseCurrentKeyModifiers )
 	{
 		bool bHoldingShift = 
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LSHIFT)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RSHIFT));
 
 		bool bHoldingCtrl = 
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL));
 
 		// todo: handle Caps Lock -freem
 
@@ -142,19 +142,19 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 {
 	switch( di.button )
 	{
-	case KEY_HOME:		return HOME.GetValue();
-	case KEY_END:		return END.GetValue();
-	case KEY_UP:		return UP.GetValue();
-	case KEY_DOWN:		return DOWN.GetValue();
-	case KEY_SPACE:	return SPACE.GetValue();
-	case KEY_LSHIFT:	case KEY_RSHIFT:	return SHIFT.GetValue();
-	case KEY_LCTRL:	case KEY_RCTRL:	return CTRL.GetValue();
-	case KEY_LALT:		case KEY_RALT:		return ALT.GetValue();
-	case KEY_INSERT:	return INSERT.GetValue();
-	case KEY_DEL:		return DEL.GetValue();
-	case KEY_PGUP:		return PGUP.GetValue();
-	case KEY_PGDN:		return PGDN.GetValue();
-	case KEY_BACKSLASH:	return BACKSLASH.GetValue();
+	case DB_KEY_HOME:		return HOME.GetValue();
+	case DB_KEY_END:		return END.GetValue();
+	case DB_KEY_UP:		return UP.GetValue();
+	case DB_KEY_DOWN:		return DOWN.GetValue();
+	case DB_KEY_SPACE:	return SPACE.GetValue();
+	case DB_KEY_LSHIFT:	case DB_KEY_RSHIFT:	return SHIFT.GetValue();
+	case DB_KEY_LCTRL:	case DB_KEY_RCTRL:	return CTRL.GetValue();
+	case DB_KEY_LALT:		case DB_KEY_RALT:		return ALT.GetValue();
+	case DB_KEY_INSERT:	return INSERT.GetValue();
+	case DB_KEY_DEL:		return DEL.GetValue();
+	case DB_KEY_PGUP:		return PGUP.GetValue();
+	case DB_KEY_PGDN:		return PGDN.GetValue();
+	case DB_KEY_BACKSLASH:	return BACKSLASH.GetValue();
 	default:
 		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c && c != L' ' ) // Don't show "Key  " for space.
