@@ -1,25 +1,16 @@
 #include "global.h"
-#include "DirectXHelpers.h"
 #include "RageUtil.h"
+#include "DirectXHelpers.h"
 
-#include <windows.h>
-#if defined(USE_DXERR9)
-#include <dxerr9.h>
-#else
-#include <dxerr.h>
-#endif
-#if defined(_MSC_VER)
-#  pragma comment(lib, "dxerr.lib")
-#endif
-
-std::string hr_final(std::string const &msg, int hr)
+std::string hr_final(std::string const &msg, HRESULT hr)
 {
-#if defined(USE_DXERR9)
-	const char *szError = DXGetErrorString9(hr);
-#else
-	const char *szError = DXGetErrorString(hr);
-#endif
-	return msg + fmt::sprintf(" (%s)", szError);
+	const std::string sError = GetErrorString(hr);
+	return msg + fmt::sprintf(" (%s)", sError.c_str());
+}
+
+std::string GetErrorString(HRESULT hr)
+{
+	return "FIX ME";
 }
 
 /*
