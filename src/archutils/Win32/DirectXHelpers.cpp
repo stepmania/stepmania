@@ -8,9 +8,22 @@ std::string hr_final(std::string const &msg, HRESULT hr)
 	return msg + fmt::sprintf(" (%s)", sError.c_str());
 }
 
+#define DIRECTINPUT_VERSION 0x0800
+#define DIRECTSOUND_VERSION 0x0700
+#include <dinput.h>
+#include <d3d9.h>
+#include <MMSystem.h> // dsound needs this
+#include <dsound.h>
+
+#define DXERRMSG(hrcode, dummy) case hrcode: return #hrcode;
+
 std::string GetErrorString(HRESULT hr)
 {
-	return "FIX ME";
+	switch (hr)
+	{
+#include "DirectXErrorList.h"
+	default: return fmt::sprintf("unknown HRESULT 0x%8.8X", hr);
+	}
 }
 
 /*
