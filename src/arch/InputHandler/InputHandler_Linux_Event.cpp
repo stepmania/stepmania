@@ -469,7 +469,10 @@ bool InputHandler_Linux_Event::TryDevice(RString devfile)
 			g_apEventDevices.push_back( pDev );
 		}
 		if( hotplug ) StartThread();
-		
+
+		// Checked by InputHandler_X11
+		if( pDev->m_Dev == DEVICE_KEYBOARD ) m_bHaveKeyboard = true;
+
 		m_NextDevice = enum_add2(m_NextDevice, 1);
 		m_bDevicesChanged = true;
 		return true;
@@ -603,6 +606,11 @@ void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo
 	}
 	
 	m_bDevicesChanged = false;
+}
+
+bool InputHandler_Linux_Event::HasKeyboard() const
+{
+	return m_bHaveKeyboard;
 }
 
 /*

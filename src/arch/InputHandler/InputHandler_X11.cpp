@@ -5,6 +5,7 @@
 #include "RageDisplay.h"
 #include "InputFilter.h"
 #include "archutils/Unix/X11Helper.h"
+#include "LinuxInputManager.h"
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -142,11 +143,15 @@ InputHandler_X11::InputHandler_X11()
 	XGetWindowAttributes( Dpy, Win, &winAttrib );
 	// todo: add ButtonMotionMask, Button(1-5)MotionMask,
 	// (EnterWindowMask/LeaveWindowMask?) -aj
-	XSelectInput( Dpy, Win,
-		winAttrib.your_event_mask | KeyPressMask | KeyReleaseMask
+	long eventMask( winAttrib.your_event_mask
 		| ButtonPressMask | ButtonReleaseMask | PointerMotionMask
-		| FocusChangeMask
-	);
+		| FocusChangeMask );
+	if(LINUXINPUT == NULL) LINUXINPUT = new LinuxInputManager;
+	if( LINUXINPUT->X11IgnoreKeyboard() == false )
+	{
+		eventMask |= KeyPressMask | KeyReleaseMask;
+	}
+	XSelectInput( Dpy, Win, eventMask );
 }
 
 InputHandler_X11::~InputHandler_X11()
