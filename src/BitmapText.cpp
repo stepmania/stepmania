@@ -166,13 +166,46 @@ void BitmapText::FinishTweening()
 	Actor::FinishTweening();
 }
 
+// Stroke color defaults to transparent so it's not on by default. -Kyz
+BitmapText::BMT_TweenState::BMT_TweenState()
+	:m_stroke_color({Rage::Color(0,0,0,0), Rage::Color(0,0,0,0), Rage::Color(0,0,0,0), Rage::Color(0,0,0,0)})
+{}
+
+void BitmapText::BMT_TweenState::set_stroke_color(Rage::Color const& c, int id)
+{
+	if(id < 0 || id >= NUM_DIFFUSE_COLORS)
+	{
+		for(auto&& s : m_stroke_color)
+		{
+			s= c;
+		}
+	}
+	else
+	{
+		m_stroke_color[id]= c;
+	}
+}
+
+Rage::Color const& BitmapText::BMT_TweenState::get_a_stroke(int id)
+{
+	if(id < 0 || id >= NUM_DIFFUSE_COLORS)
+	{
+		return m_stroke_color[0];
+	}
+	return m_stroke_color[id];
+}
+
 void BitmapText::BMT_TweenState::MakeWeightedAverage(BMT_TweenState& out,
 	BMT_TweenState const& from, BMT_TweenState const& to, float between)
 {
-	out.m_stroke_color.b= Rage::lerp(between, from.m_stroke_color.b, to.m_stroke_color.b);
-	out.m_stroke_color.g= Rage::lerp(between, from.m_stroke_color.g, to.m_stroke_color.g);
-	out.m_stroke_color.r= Rage::lerp(between, from.m_stroke_color.r, to.m_stroke_color.r);
-	out.m_stroke_color.a= Rage::lerp(between, from.m_stroke_color.a, to.m_stroke_color.a);
+#define LERP_CHAN(id, chan) out.m_stroke_color[id].chan= Rage::lerp(between, from.m_stroke_color[id].chan, to.m_stroke_color[id].chan);
+	for(size_t id= 0; id < NUM_DIFFUSE_COLORS; ++id)
+	{
+		LERP_CHAN(id, r);
+		LERP_CHAN(id, g);
+		LERP_CHAN(id, b);
+		LERP_CHAN(id, a);
+	}
 }
 
 void BitmapText::LoadFromNode( const XNode* node )
@@ -220,7 +253,7 @@ bool BitmapText::LoadFromFont( const std::string& sFontFilePath )
 
 	m_pFont = FONT->LoadFont( sFontFilePath );
 
-	this->SetStrokeColor( m_pFont->GetDefaultStrokeColor() );
+	this->set_stroke_color(m_pFont->GetDefaultStrokeColor(), -1);
 
 	BuildChars();
 
@@ -694,15 +727,26 @@ void BitmapText::DrawPrimitives()
 		}
 
 		// render the stroke
-		Rage::Color stroke_color= GetCurrStrokeColor();
-		if( stroke_color.a > 0 )
+		auto&& stroke_colors= BMT_current.m_stroke_color;
+		bool has_visible_stroke= false;
+		for(int i= 0; i < NUM_DIFFUSE_COLORS; ++i)
 		{
-			stroke_color.a *= m_pTempState->diffuse[0].a;
-			for (auto &vertex: m_aVertices)
+			if(stroke_colors[i].a > 0)
 			{
-				vertex.c = stroke_color;
+				has_visible_stroke= true;
+				break;
 			}
-			DrawChars( true );
+		}
+		if(has_visible_stroke)
+		{
+			for(size_t vid= 0; vid < m_aVertices.size(); vid+= 4)
+			{
+				m_aVertices[vid+0].c = stroke_colors[0];	// top left
+				m_aVertices[vid+1].c = stroke_colors[2];	// bottom left
+				m_aVertices[vid+2].c = stroke_colors[3];	// bottom right
+				m_aVertices[vid+3].c = stroke_colors[1];	// top right
+			}
+			DrawChars(true);
 		}
 
 		// render the diffuse pass
@@ -1004,7 +1048,12 @@ public:
 	{
 		Rage::Color c;
 		FromStackCompat( c, L, 1 );
-		p->SetStrokeColor( c );
+		int id= -1;
+		if(lua_type(L, 2) == LUA_TNUMBER)
+		{
+			id= IArg(2);
+		}
+		p->set_stroke_color(c, id);
 		COMMON_RETURN_SELF;
 	}
 	DEFINE_METHOD(getstrokecolor, GetStrokeColor());
