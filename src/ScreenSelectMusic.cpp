@@ -996,14 +996,12 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	}
 	else if( CodeDetector::EnteredCloseFolder(input.GameI.controller) )
 	{
-		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-			m_soundLocked.Play(true);
-		else
-		{
-			std::string sCurSection = m_MusicWheel.GetSelectedSection();
-			m_MusicWheel.SelectSection(sCurSection);
-			m_MusicWheel.SetOpenSection("");
-			AfterMusicChange();
+		
+		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() ) 
+			m_soundLocked.Play(true); 
+		else 
+		{ 
+			CloseCurrentSection();
 		}
 	}
 	else
@@ -1011,6 +1009,18 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 		return false;
 	}
 	return true;
+}
+
+
+//Unfortunately, this is the only safe way to close the folder on the musicwheel while keeping it lua accessible.
+//Putting it in MusicWheel would mean AfterMusicChange() can't be accessed.
+void ScreenSelectMusic::CloseCurrentSection()
+{			
+	std::string sCurSection = m_MusicWheel.GetSelectedSection(); 
+	m_MusicWheel.SelectSection(sCurSection); 
+	m_MusicWheel.SetOpenSection("");
+	AfterMusicChange();
+	MESSAGEMAN->Broadcast("MusicWheelSectionClosed");
 }
 
 void ScreenSelectMusic::UpdateSelectButton( PlayerNumber pn, bool bSelectIsDown )
@@ -2076,7 +2086,8 @@ bool ScreenSelectMusic::can_open_options_list(PlayerNumber pn)
 #include "LuaBinding.h"
 
 /** @brief Allow Lua to have access to the ScreenSelectMusic. */
-class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
+class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
+
 {
 public:
 	static int GetGoToOptions( T* p, lua_State *L ) { lua_pushboolean( L, p->GetGoToOptions() ); return 1; }
@@ -2099,6 +2110,11 @@ public:
 		lua_pushboolean(L, p->can_open_options_list(pn));
 		return 1;
 	}
+	static int CloseCurrentSection( T* p, lua_State *L )
+	{
+		p->CloseCurrentSection();
+		COMMON_RETURN_SELF;
+	}
 
 	LunaScreenSelectMusic()
 	{
@@ -2106,6 +2122,7 @@ public:
 		ADD_METHOD( GetMusicWheel );
 		ADD_METHOD( OpenOptionsList );
 		ADD_METHOD( CanOpenOptionsList );
+		ADD_METHOD( CloseCurrentSection );
 	}
 };
 

@@ -1681,6 +1681,7 @@
 			<Function name='CanOpenOptionsList'/>
 			<Function name='GetGoToOptions'/>
 			<Function name='GetMusicWheel'/>
+			<Function name='CloseCurrentSection' />
 			<Function name='OpenOptionsList'/>
 			<Function name='setupcoursestagemods'/>
 			<Function name='setupmusicstagemods'/>
