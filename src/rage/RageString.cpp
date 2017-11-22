@@ -159,7 +159,7 @@ std::vector<S> do_split( S const &source, C const delimitor, Rage::EmptyEntries 
 		{
 			pos = source.size();
 		}
-		if( pos-startpos > 0 || shouldIgnore == Rage::EmptyEntries::include )
+		if( pos != startpos || shouldIgnore == Rage::EmptyEntries::include )
 		{
 			/* Optimization: if we're copying the whole string, avoid substr; this
 			 * allows this copy to be refcounted, which is much faster. */

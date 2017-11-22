@@ -62,7 +62,7 @@ namespace Rage
 	{
 		for (auto i = 0; i < 4; ++i)
 		{
-			for (auto j = 0; j < 4; ++i)
+			for (auto j = 0; j < 4; ++j)
 			{
 				if (lhs(i, j) != rhs(i, j))
 				{
