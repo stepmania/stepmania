@@ -10,7 +10,7 @@ void StyleID::FromStyle( const Style *p )
 {
 	if( p )
 	{
-		sGame = GAMEMAN->GetGameForStyle(p)->gameName;
+		sGame = GAME_MANAGER->GetGameForStyle(p)->gameName;
 		sStyle = p->m_szName;
 	}
 	else
@@ -22,11 +22,11 @@ void StyleID::FromStyle( const Style *p )
 
 const Style *StyleID::ToStyle() const
 {
-	const Game* pGame = GAMEMAN->StringToGame( sGame );
+	const Game* pGame = GAME_MANAGER->StringToGame( sGame );
 	if( pGame == nullptr )
 		return nullptr;
 
-	return GAMEMAN->GameAndStringToStyle( pGame, sStyle );
+	return GAME_MANAGER->GameAndStringToStyle( pGame, sStyle );
 }
 
 XNode* StyleID::CreateNode() const
