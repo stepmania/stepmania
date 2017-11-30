@@ -423,7 +423,7 @@ static std::string ResetPreferences()
 REGISTER_SCREEN_CLASS( ScreenServiceAction );
 void ScreenServiceAction::BeginScreen()
 {
-	std::string sActions = THEME->GetMetric(m_sName,"Actions");
+	std::string sActions = THEMEMAN->GetMetric(m_sName,"Actions");
 	auto vsActions = Rage::split(sActions, ",");
 
 	vector<std::string> vsResults;

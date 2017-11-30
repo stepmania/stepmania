@@ -24,7 +24,7 @@ function TableStringLookup(t, group)
 	local ret = { }
 	for key, val in t do
 		Trace(val)
-		ret[key] = THEME:GetString(group,val)
+		ret[key] = THEMEMAN:GetString(group,val)
 	end
 	return ret
 end
@@ -161,7 +161,7 @@ function GetRandomSongBackground()
 			end
 		end
 	end
-	return THEME:GetPathG("", "_blank")
+	return THEMEMAN:GetPathG("", "_blank")
 end
 
 function GetSongBackground()
@@ -172,7 +172,7 @@ function GetSongBackground()
 			return path
 		end
 	end
-	return THEME:GetPathG("Common","fallback background")
+	return THEMEMAN:GetPathG("Common","fallback background")
 end
 
 function StepsOrTrailToCustomDifficulty(stepsOrTrail)

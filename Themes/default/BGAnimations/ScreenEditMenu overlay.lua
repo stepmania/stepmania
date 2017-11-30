@@ -15,7 +15,7 @@ local stype_item_mt= edit_pick_menu_steps_display_item(
 			self:zoom(0.8):horizalign(left):shadowlength(1)
 		end,
 		SetCommand= function(self, param)
-			self:settext(THEME:GetString("LongStepsType", ToEnumShortString(param.stype)))
+			self:settext(THEMEMAN:GetString("LongStepsType", ToEnumShortString(param.stype)))
 		end,
 																 },
 	steps_transform, Def.BitmapText{
@@ -61,7 +61,7 @@ local steps_display_items= (_screen.h - steps_display_y) / steps_type_item_space
 local frame= Def.ActorFrame{
 	edit_menu_selection_changedMessageCommand=
 		edit_pick_menu_update_steps_display_info(steps_display),
-	edit_pick_menu_actor(LoadActor(THEME:GetPathG("", "generic_menu"), 1, _screen.cx-50, _screen.h-170, 1, 32, 125, 36)),
+	edit_pick_menu_actor(LoadActor(THEMEMAN:GetPathG("", "generic_menu"), 1, _screen.cx-50, _screen.h-170, 1, 32, 125, 36)),
 	Def.Sprite{
 		Name= "jacket", InitCommand= function(self)
 			self:xy(jacket_x, jacket_y)

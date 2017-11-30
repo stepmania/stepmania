@@ -30,16 +30,16 @@ void StreamDisplay::Load( const std::string & /* unreferenced: _sMetricsGroup  *
 	// XXX: actually load from the metrics group passed in -aj
 	std::string sMetricsGroup = "StreamDisplay";
 
-	m_transformPill.SetFromReference( THEME->GetMetricR(sMetricsGroup,"PillTransformFunction") );
+	m_transformPill.SetFromReference( THEMEMAN->GetMetricR(sMetricsGroup,"PillTransformFunction") );
 	VELOCITY_MULTIPLIER.Load(sMetricsGroup, "VelocityMultiplier");
 	VELOCITY_MIN.Load(sMetricsGroup, "VelocityMin");
 	VELOCITY_MAX.Load(sMetricsGroup, "VelocityMax");
 	SPRING_MULTIPLIER.Load(sMetricsGroup, "SpringMultiplier");
 	VISCOSITY_MULTIPLIER.Load(sMetricsGroup, "ViscosityMultiplier");
 
-	float fTextureCoordScaleX = THEME->GetMetricF(sMetricsGroup,"TextureCoordScaleX");
-	int iNumPills = static_cast<int>(THEME->GetMetricF(sMetricsGroup,"NumPills"));
-	m_bAlwaysBounce = THEME->GetMetricB(sMetricsGroup,"AlwaysBounceNormalBar");
+	float fTextureCoordScaleX = THEMEMAN->GetMetricF(sMetricsGroup,"TextureCoordScaleX");
+	int iNumPills = static_cast<int>(THEMEMAN->GetMetricF(sMetricsGroup,"NumPills"));
+	m_bAlwaysBounce = THEMEMAN->GetMetricB(sMetricsGroup,"AlwaysBounceNormalBar");
 
 	FOREACH_ENUM( StreamType, st )
 	{
@@ -49,7 +49,7 @@ void StreamDisplay::Load( const std::string & /* unreferenced: _sMetricsGroup  *
 		{
 			Sprite *pSpr = new Sprite;
 
-			pSpr->Load( THEME->GetPathG( sMetricsGroup, StreamTypeToString(st) ) );
+			pSpr->Load( THEMEMAN->GetPathG( sMetricsGroup, StreamTypeToString(st) ) );
 			m_vpSprPill[st].push_back( pSpr );
 
 			m_transformPill.TransformItemDirect( *pSpr, -1, i, iNumPills );
@@ -138,7 +138,7 @@ void StreamDisplay::Update( float fDeltaSecs )
 void StreamDisplay::SetPercent( float fPercent )
 {
 #ifdef DEBUG
-	float fLifeMultiplier = THEME->GetMetricF("LifeMeterBar","LifeMultiplier");
+	float fLifeMultiplier = THEMEMAN->GetMetricF("LifeMeterBar","LifeMultiplier");
 #endif
 	DEBUG_ASSERT( fPercent >= 0.0f && fPercent <= 1.0f * fLifeMultiplier );
 	if( std::isnan(fPercent) )

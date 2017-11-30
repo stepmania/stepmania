@@ -13,11 +13,11 @@
 
 using std::vector;
 
-#define LINE(sLineName)				THEME->GetMetric (m_sName,fmt::sprintf("Line%s",sLineName.c_str()))
-#define MAX_ITEMS_BEFORE_SPLIT			THEME->GetMetricI(m_sName,"MaxItemsBeforeSplit")
-#define ITEMS_SPLIT_WIDTH			THEME->GetMetricF(m_sName,"ItemsSplitWidth")
-#define DIRECT_LINES				THEME->GetMetric (m_sName,"DirectLines")
-#define TOP_MENUS				THEME->GetMetric (m_sName,"TopMenus")
+#define LINE(sLineName)				THEMEMAN->GetMetric (m_sName,fmt::sprintf("Line%s",sLineName.c_str()))
+#define MAX_ITEMS_BEFORE_SPLIT			THEMEMAN->GetMetricI(m_sName,"MaxItemsBeforeSplit")
+#define ITEMS_SPLIT_WIDTH			THEMEMAN->GetMetricF(m_sName,"ItemsSplitWidth")
+#define DIRECT_LINES				THEMEMAN->GetMetric (m_sName,"DirectLines")
+#define TOP_MENUS				THEMEMAN->GetMetric (m_sName,"TopMenus")
 
 static const std::string RESET_ROW = "ResetOptions";
 
@@ -28,11 +28,11 @@ void OptionListRow::Load( OptionsList *pOptions, const std::string &sType )
 
 	m_Text.resize( 1 );
 	m_Text[0].SetName( "Text" );
-	m_Text[0].LoadFromFont( THEME->GetPathF(sType, "normal") );
+	m_Text[0].LoadFromFont( THEMEMAN->GetPathF(sType, "normal") );
 	ActorUtil::LoadAllCommands( m_Text[0], sType );
 
 	m_Underlines.resize( 1 );
-	m_Underlines[0].Load( THEME->GetPathG(sType, "underline") );
+	m_Underlines[0].Load( THEMEMAN->GetPathG(sType, "underline") );
 	m_Underlines[0]->SetName( "Underline" );
 	ActorUtil::LoadAllCommands( *m_Underlines[0], sType );
 
@@ -197,7 +197,7 @@ void OptionsList::Load( std::string sType, PlayerNumber pn )
 
 	m_Codes.Load( sType );
 
-	m_Cursor.Load( THEME->GetPathG(sType, "cursor") );
+	m_Cursor.Load( THEMEMAN->GetPathG(sType, "cursor") );
 	m_Cursor->SetName( "Cursor" );
 	ActorUtil::LoadAllCommands( *m_Cursor, sType );
 	this->AddChild( m_Cursor );

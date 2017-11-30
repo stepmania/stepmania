@@ -67,7 +67,7 @@ local function PercentScore(pn)
 end
 
 -- Info panel
-t[#t+1] = LoadActor(THEME:GetPathG("ScreenSelectMusic", "info pane")) .. {
+t[#t+1] = LoadActor(THEMEMAN:GetPathG("ScreenSelectMusic", "info pane")) .. {
 		InitCommand=cmd(horizalign,center;x,SCREEN_CENTER_X-228;y,SCREEN_CENTER_Y-75;zoom,1;);
 		OnCommand=function(self)
 			self:diffuse(ColorMidTone(StageToColor(curStage)));
@@ -181,7 +181,7 @@ t[#t+1] = Def.ActorFrame {
 			end;
 		end;
 		OffCommand=cmd(decelerate,0.3;diffusealpha,0);
-		LoadActor(THEME:GetPathG("ScreenSelectMusic", "pane background")) .. {
+		LoadActor(THEMEMAN:GetPathG("ScreenSelectMusic", "pane background")) .. {
 			CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set";); 
 			PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;decelerate,0.3;diffusealpha,1;);
 			ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
@@ -244,7 +244,7 @@ t[#t+1] = Def.ActorFrame {
 						local diff = stepsP1:GetDifficulty();
 						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
 						local cd = GetCustomDifficulty(st, diff, courseType);
-						self:settext(THEME:GetString("CustomDifficulty",ToEnumShortString(diff)));
+						self:settext(THEMEMAN:GetString("CustomDifficulty",ToEnumShortString(diff)));
 					else
 						self:settext("")
 					end
@@ -269,7 +269,7 @@ t[#t+1] = Def.ActorFrame {
 						local diff = stepsP1:GetDifficulty();
 						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
 						local cd = GetCustomDifficulty(st, diff, courseType);
-						self:settext(THEME:GetString("StepsType",ToEnumShortString(st)));
+						self:settext(THEMEMAN:GetString("StepsType",ToEnumShortString(st)));
 					else
 						self:settext("")
 					end
@@ -290,7 +290,7 @@ t[#t+1] = Def.ActorFrame {
 			end;
 		end;
 		OffCommand=cmd(decelerate,0.3;diffusealpha,0);
-		LoadActor(THEME:GetPathG("ScreenSelectMusic", "pane background")) .. {
+		LoadActor(THEMEMAN:GetPathG("ScreenSelectMusic", "pane background")) .. {
 			InitCommand=cmd(zoomx,-1;);
 			CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set";); 
 			PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;decelerate,0.3;diffusealpha,1;);
@@ -354,7 +354,7 @@ t[#t+1] = Def.ActorFrame {
 						local diff = stepsP2:GetDifficulty();
 						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
 						local cd = GetCustomDifficulty(st, diff, courseType);
-						self:settext(THEME:GetString("CustomDifficulty",ToEnumShortString(diff)));
+						self:settext(THEMEMAN:GetString("CustomDifficulty",ToEnumShortString(diff)));
 					else
 						self:settext("")
 					end
@@ -379,7 +379,7 @@ t[#t+1] = Def.ActorFrame {
 						local diff = stepsP2:GetDifficulty();
 						local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
 						local cd = GetCustomDifficulty(st, diff, courseType);
-						self:settext(THEME:GetString("StepsType",ToEnumShortString(st)));
+						self:settext(THEMEMAN:GetString("StepsType",ToEnumShortString(st)));
 					else
 						self:settext("")
 					end

@@ -19,7 +19,7 @@ void ScreenOptionsMemoryCard::Init()
 	ScreenOptions::Init();
 
 	m_textOsMountDir.SetName( "Mount" );
-	m_textOsMountDir.LoadFromFont( THEME->GetPathF(m_sName,"mount") );
+	m_textOsMountDir.LoadFromFont( THEMEMAN->GetPathF(m_sName,"mount") );
 	ActorUtil::LoadAllCommands( m_textOsMountDir, m_sName );
 	this->AddChild( &m_textOsMountDir );
 

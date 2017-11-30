@@ -62,7 +62,7 @@
 --     If true, then a message that is identical to one already in the log
 --     will be ignored.
 --   Font= font name
---     The name of the font to use.  This will be passed to THEME:GetPathF,
+--     The name of the font to use.  This will be passed to THEMEMAN:GetPathF,
 --     so it should not be a path.
 --   LineHeight= number
 --     The height in pixels to use between lines.

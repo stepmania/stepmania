@@ -4,7 +4,7 @@ local params = ...
 return Def.ActorFrame {
 	-- Base
 	-- todo; make getting the base's image less stupid
-	LoadActor(THEME:GetPathG("","ScreenSelectPlayMode Icon/_background base")) .. {
+	LoadActor(THEMEMAN:GetPathG("","ScreenSelectPlayMode Icon/_background base")) .. {
 		InitCommand=cmd(zoomto,70,70;diffuse,params.base_color;diffusebottomedge,ColorMidTone(params.base_color);)
 	},
 	-- The wanted value

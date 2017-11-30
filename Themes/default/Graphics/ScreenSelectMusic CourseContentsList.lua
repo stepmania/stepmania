@@ -36,7 +36,7 @@ return Def.CourseContentsList {
 	Display = Def.ActorFrame { 
 		InitCommand=cmd(setsize,290,64),
 
-		LoadActor(THEME:GetPathG("CourseEntryDisplay","bar")) .. {
+		LoadActor(THEMEMAN:GetPathG("CourseEntryDisplay","bar")) .. {
 			SetSongCommand=function(self, params)
 				if params.Difficulty then
 					self:diffuse(ColorLightTone(CustomDifficultyToColor(params.Difficulty)));

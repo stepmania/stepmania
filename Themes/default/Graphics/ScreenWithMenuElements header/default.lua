@@ -45,14 +45,14 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(horizalign,center;y,18;x,-20;diffusealpha,0.8),
 		OnCommand=function(self)
 			local screen = SCREENMAN:GetTopScreen():GetName()
-			if FILEMAN:DoesFileExist("Themes/"..THEME:GetCurThemeName().."/Graphics/ScreenWithMenuElements header/"..screen.." icon.png") then
-				self:Load(THEME:GetPathG("","ScreenWithMenuElements header/"..screen.." icon"))
+			if FILEMAN:DoesFileExist("Themes/"..THEMEMAN:GetCurThemeName().."/Graphics/ScreenWithMenuElements header/"..screen.." icon.png") then
+				self:Load(THEMEMAN:GetPathG("","ScreenWithMenuElements header/"..screen.." icon"))
 			-- Little workaround so not every other options menu has the "graphic missing" icon.
 			elseif string.find(screen, "Options") then
-				self:Load(THEME:GetPathG("","ScreenWithMenuElements header/ScreenOptionsService icon"))
+				self:Load(THEMEMAN:GetPathG("","ScreenWithMenuElements header/ScreenOptionsService icon"))
 			else
 				print("iconerror: file does not exist")
-				self:Load(THEME:GetPathG("","ScreenWithMenuElements header/Generic icon"))
+				self:Load(THEMEMAN:GetPathG("","ScreenWithMenuElements header/Generic icon"))
 			end
 		end
 	}

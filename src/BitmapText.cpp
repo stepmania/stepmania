@@ -27,8 +27,8 @@ REGISTER_ACTOR_CLASS( BitmapText );
  * a waste, when we're usually setting them all to the same value. Rainbow and
  * fading are annoying to optimize, but rarely used. Iterating over every
  * character in Draw() is dumb. */
-#define NUM_RAINBOW_COLORS	THEME->GetMetricI("BitmapText","NumRainbowColors")
-#define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",fmt::sprintf("RainbowColor%i", n+1))
+#define NUM_RAINBOW_COLORS	THEMEMAN->GetMetricI("BitmapText","NumRainbowColors")
+#define RAINBOW_COLOR(n)	THEMEMAN->GetMetricC("BitmapText",fmt::sprintf("RainbowColor%i", n+1))
 
 static vector<Rage::Color> RAINBOW_COLORS;
 
@@ -232,7 +232,7 @@ void BitmapText::LoadFromNode( const XNode* node )
 				" not found", ActorUtil::GetWhere(node).c_str());
 			font = "Common Normal";
 		}
-		font = THEME->GetPathF("", font);
+		font = THEMEMAN->GetPathF("", font);
 	}
 
 	LoadFromFont(font);

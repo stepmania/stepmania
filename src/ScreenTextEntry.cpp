@@ -136,12 +136,12 @@ void ScreenTextEntry::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
+	m_textQuestion.LoadFromFont( THEMEMAN->GetPathF(m_sName,"question") );
 	m_textQuestion.SetName( "Question" );
 	LOAD_ALL_COMMANDS( m_textQuestion );
 	this->AddChild( &m_textQuestion );
 
-	m_textAnswer.LoadFromFont( THEME->GetPathF(m_sName,"answer") );
+	m_textAnswer.LoadFromFont( THEMEMAN->GetPathF(m_sName,"answer") );
 	m_textAnswer.SetName( "Answer" );
 	LOAD_ALL_COMMANDS( m_textAnswer );
 	this->AddChild( &m_textAnswer );
@@ -149,8 +149,8 @@ void ScreenTextEntry::Init()
 	m_bShowAnswerCaret = false;
 	//m_iCaretLocation = 0;
 
-	m_sndType.Load( THEME->GetPathS(m_sName,"type"), true );
-	m_sndBackspace.Load( THEME->GetPathS(m_sName,"backspace"), true );
+	m_sndType.Load( THEMEMAN->GetPathS(m_sName,"type"), true );
+	m_sndBackspace.Load( THEMEMAN->GetPathS(m_sName,"backspace"), true );
 }
 
 void ScreenTextEntry::BeginScreen()
@@ -640,7 +640,7 @@ void ScreenTextEntryVisual::Init()
 
 	ScreenTextEntry::Init();
 
-	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
+	m_sprCursor.Load( THEMEMAN->GetPathG(m_sName,"cursor") );
 	m_sprCursor->SetName( "Cursor" );
 	LOAD_ALL_COMMANDS( m_sprCursor );
 	this->AddChild( m_sprCursor );
@@ -648,7 +648,7 @@ void ScreenTextEntryVisual::Init()
 	// Init keyboard
 	{
 		BitmapText text;
-		text.LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
+		text.LoadFromFont( THEMEMAN->GetPathF(m_sName,"keyboard") );
 		text.SetName( "Keys" );
 		ActorUtil::LoadAllCommands( text, m_sName );
 		text.PlayCommand( "Init" );
@@ -663,13 +663,13 @@ void ScreenTextEntryVisual::Init()
 
 				std::string s = g_szKeys[r][x];
 				if( !s.empty()  &&  r == KEYBOARD_ROW_SPECIAL )
-					s = THEME->GetString( m_sName, s );
+					s = THEMEMAN->GetString( m_sName, s );
 				pbt->SetText( s );
 			}
 		}
 	}
 
-	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
+	m_sndChange.Load( THEMEMAN->GetPathS(m_sName,"change"), true );
 }
 
 ScreenTextEntryVisual::~ScreenTextEntryVisual()

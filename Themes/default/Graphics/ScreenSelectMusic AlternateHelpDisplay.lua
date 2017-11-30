@@ -1,14 +1,14 @@
 return Def.HelpDisplay {
-	File = THEME:GetPathF("HelpDisplay", "text");
+	File = THEMEMAN:GetPathF("HelpDisplay", "text");
 	InitCommand=function(self)
-		local s = THEME:GetString(Var "LoadingScreen","AlternateHelpText");
+		local s = THEMEMAN:GetString(Var "LoadingScreen","AlternateHelpText");
 		self:SetTipsColonSeparated(s);
 	end;
 	SetHelpTextCommand=function(self, params)
 		self:SetTipsColonSeparated( params.Text );
 	end;
 };
---[[ local sString = THEME:GetString(Var "LoadingScreen","AlternateHelpText");
+--[[ local sString = THEMEMAN:GetString(Var "LoadingScreen","AlternateHelpText");
 local tItems = split(sString,"&");
 
 local t = Def.ActorScroller {
@@ -25,7 +25,7 @@ for i=1,#tItems do
 	t[#t+1] = Def.ActorFrame {
 		LoadFont("HelpDisplay", "text") .. {
 			Text=tostring(tItems[i]);
-			OnCommand=THEME:GetMetric( Var "LoadingScreen","HelpOnCommand");
+			OnCommand=THEMEMAN:GetMetric( Var "LoadingScreen","HelpOnCommand");
 		};
 	};
 end

@@ -193,12 +193,12 @@ void ScoreScroller::Load( std::string sMetricsGroup )
 	int iNumCopies = SCROLLER_ITEMS_TO_DRAW+1;
 	for( int i=0; i<iNumCopies; ++i )
 	{
-		Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ScrollerItem") );
+		Actor *pActor = ActorUtil::MakeActor( THEMEMAN->GetPathG(sMetricsGroup,"ScrollerItem") );
 		if( pActor != nullptr )
 			this->AddChild( pActor );
 	}
 
-	DynamicActorScroller::SetTransformFromReference( THEME->GetMetricR(sMetricsGroup,"ScrollerItemTransformFunction") );
+	DynamicActorScroller::SetTransformFromReference( THEMEMAN->GetMetricR(sMetricsGroup,"ScrollerItemTransformFunction") );
 	DynamicActorScroller::SetNumItemsToDraw( (float) SCROLLER_ITEMS_TO_DRAW );
 	DynamicActorScroller::SetSecondsPerItem( SCROLLER_SECONDS_PER_ITEM );
 	DynamicActorScroller::Load2();

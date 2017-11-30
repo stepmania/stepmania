@@ -98,7 +98,7 @@ void OptionRowType::Load( const std::string &sMetricsGroup, Actor *pParent )
 	SHOW_UNDERLINES			.Load(sMetricsGroup,"ShowUnderlines");
 	MOD_ICON_METRICS_GROUP		.Load(sMetricsGroup,"ModIconMetricsGroup");
 
-	m_textItem.LoadFromFont( THEME->GetPathF(sMetricsGroup,"Item") );
+	m_textItem.LoadFromFont( THEMEMAN->GetPathF(sMetricsGroup,"Item") );
 	m_textItem.SetName( "Item" );
 	ActorUtil::LoadAllCommands( m_textItem, sMetricsGroup );
 
@@ -110,11 +110,11 @@ void OptionRowType::Load( const std::string &sMetricsGroup, Actor *pParent )
 		}
 	}
 
-	m_textTitle.LoadFromFont( THEME->GetPathF(sMetricsGroup,"title") );
+	m_textTitle.LoadFromFont( THEMEMAN->GetPathF(sMetricsGroup,"title") );
 	m_textTitle.SetName( "Title" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_textTitle, sMetricsGroup );
 
-	Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Frame"), pParent );
+	Actor *pActor = ActorUtil::MakeActor( THEMEMAN->GetPathG(sMetricsGroup,"Frame"), pParent );
 	if( pActor == nullptr )
 		pActor = new Actor;
 	m_sprFrame.Load( pActor );

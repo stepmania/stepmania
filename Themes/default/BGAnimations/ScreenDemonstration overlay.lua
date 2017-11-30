@@ -42,7 +42,7 @@ return Def.ActorFrame{
 			elseif song and song:HasBackground() then
 				self:LoadBanner(song:GetBackgroundPath())
 			else
-				self:LoadBanner(THEME:GetPathG("Common","fallback background"))
+				self:LoadBanner(THEMEMAN:GetPathG("Common","fallback background"))
 			end
 			self:scaletoclipped(172,172)
 		end

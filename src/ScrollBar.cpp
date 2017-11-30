@@ -9,23 +9,23 @@ ScrollBar::ScrollBar()
 {
 	std::string sMetricsGroup = "ScrollBar";
 
-	m_sprMiddle.Load( THEME->GetPathG(sMetricsGroup,"middle") );
+	m_sprMiddle.Load( THEMEMAN->GetPathG(sMetricsGroup,"middle") );
 	this->AddChild( m_sprMiddle );
 
-	m_sprTop.Load( THEME->GetPathG(sMetricsGroup,"top") );
+	m_sprTop.Load( THEMEMAN->GetPathG(sMetricsGroup,"top") );
 	m_sprTop->SetVertAlign( VertAlign_Bottom );
 	this->AddChild( m_sprTop );
 
-	m_sprBottom.Load( THEME->GetPathG(sMetricsGroup,"bottom") );
+	m_sprBottom.Load( THEMEMAN->GetPathG(sMetricsGroup,"bottom") );
 	m_sprBottom->SetVertAlign( VertAlign_Top );
 	this->AddChild( m_sprBottom );
 
-	m_sprScrollTickThumb.Load( THEME->GetPathG(sMetricsGroup,"TickThumb") );
+	m_sprScrollTickThumb.Load( THEMEMAN->GetPathG(sMetricsGroup,"TickThumb") );
 	this->AddChild( m_sprScrollTickThumb );
 
 	for (auto &actor: m_sprScrollStretchThumb)
 	{
-		actor.Load( THEME->GetPathG(sMetricsGroup,"StretchThumb") );
+		actor.Load( THEMEMAN->GetPathG(sMetricsGroup,"StretchThumb") );
 		this->AddChild( actor );
 	}
 

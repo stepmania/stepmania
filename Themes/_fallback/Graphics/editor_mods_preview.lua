@@ -1,5 +1,5 @@
 -- This file needs to be added to ScreenEdit overlay.lua like this:
---   LoadActor(THEME:GetPathG("", "editor_mods_preview.lua")),
+--   LoadActor(THEMEMAN:GetPathG("", "editor_mods_preview.lua")),
 -- Don't try to edit this file to style the preview to your theme.
 -- Edit the file pointed to by clickable_path to style the buttons and text
 -- for changing the config.
@@ -8,7 +8,7 @@ local song_dir= GAMESTATE:GetCurrentSong():GetSongDir()
 local mods_filename= "notefield_mods.lua"
 local mods_path= song_dir .. mods_filename
 
-local clickable_path= THEME:GetPathG("", "mod_preview_config_handler")
+local clickable_path= THEMEMAN:GetPathG("", "mod_preview_config_handler")
 
 local container= false
 local button_container= false

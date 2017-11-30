@@ -27,11 +27,11 @@ t[#t+1] = Def.ActorFrame {
 			OnCommand=cmd(diffuse,color("0,0,0,1"));
 		};
 		LoadFont("Common Normal") .. {
-			Text=THEME:GetThemeDisplayName();
+			Text=THEMEMAN:GetThemeDisplayName();
 			OnCommand=cmd(diffuse,color("0,0,0,1"));
 		};
 		LoadFont("Common Normal") .. {
-			Text="Created by " .. THEME:GetThemeAuthor();
+			Text="Created by " .. THEMEMAN:GetThemeAuthor();
 			InitCommand=cmd(y,24;zoom,0.75);
 			OnCommand=cmd(diffuse,color("0,0,0,1"));
 		};

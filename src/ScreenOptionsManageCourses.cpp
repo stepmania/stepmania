@@ -74,7 +74,7 @@ void ScreenOptionsManageCourses::Init()
 
 	ScreenOptions::Init();
 
-	m_soundDifficultyChanged.Load( THEME->GetPathS("ScreenEditCourseSubmenu", "difficulty changed") );
+	m_soundDifficultyChanged.Load( THEMEMAN->GetPathS("ScreenEditCourseSubmenu", "difficulty changed") );
 	EDIT_MODE.Load( m_sName,"EditMode" );
 	CREATE_NEW_SCREEN.Load( m_sName, "CreateNewScreen" );
 }

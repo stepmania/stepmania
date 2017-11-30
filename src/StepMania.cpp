@@ -114,7 +114,7 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 		PREFSMAN->m_bAnisotropicFiltering,
 		!PREFSMAN->m_bWindowed && PREFSMAN->m_bFullscreenIsBorderlessWindow,
 		CommonMetrics::WINDOW_TITLE.GetValue(),
-		THEME->GetPathG("Common","window icon"),
+		THEMEMAN->GetPathG("Common","window icon"),
 		PREFSMAN->m_bPAL,
 		PREFSMAN->m_fDisplayAspectRatio
 	);
@@ -186,7 +186,7 @@ bool StepMania::GetHighResolutionTextures()
 	case HighResolutionTextures_Auto:
 		{
 			int height = PREFSMAN->m_iDisplayHeight;
-			return height > THEME->GetMetricI("Common", "ScreenHeight");
+			return height > THEMEMAN->GetMetricI("Common", "ScreenHeight");
 		}
 	case HighResolutionTextures_ForceOn:
 		return true;
@@ -317,7 +317,7 @@ void ShutdownGame()
 	Rage::safe_delete( GAMESTATE );
 	Rage::safe_delete( GAMEMAN );
 	Rage::safe_delete( NOTESKIN );
-	Rage::safe_delete( THEME );
+	Rage::safe_delete( THEMEMAN );
 	Rage::safe_delete( ANNOUNCER );
 	Rage::safe_delete( BOOKKEEPER );
 	Rage::safe_delete( LIGHTSMAN );
@@ -349,14 +349,14 @@ void StepMania::ResetGame()
 {
 	GAMESTATE->Reset();
 
-	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
+	if( !THEMEMAN->DoesThemeExist( THEMEMAN->GetCurThemeName() ) )
 	{
 		std::string sGameName = GAMESTATE->GetCurrentGame()->gameName;
-		if( !THEME->DoesThemeExist(sGameName) )
+		if( !THEMEMAN->DoesThemeExist(sGameName) )
 		{
 			sGameName = PREFSMAN->m_sDefaultTheme.Get(); // was previously "default" -aj
 		}
-		THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
+		THEMEMAN->SwitchThemeAndLanguage( sGameName, THEMEMAN->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 		TEXTUREMAN->DoDelayedDelete();
 	}
 
@@ -627,7 +627,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 	ASSERT( g != nullptr );
 	ASSERT( GAMESTATE != nullptr );
 	ASSERT( ANNOUNCER != nullptr );
-	ASSERT( THEME != nullptr );
+	ASSERT( THEMEMAN != nullptr );
 
 	GAMESTATE->SetCurGame( g );
 
@@ -653,7 +653,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 		}
 	}
 
-	// It doesn't matter if sTheme is blank or invalid, THEME->STAL will set
+	// It doesn't matter if sTheme is blank or invalid, THEMEMAN->STAL will set
 	// a selectable theme for us. -Kyz
 
 	// process gametype, theme and language command line arguments;
@@ -676,7 +676,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
-	THEME->SwitchThemeAndLanguage( sTheme, sLanguage, PREFSMAN->m_bPseudoLocalize );
+	THEMEMAN->SwitchThemeAndLanguage( sTheme, sLanguage, PREFSMAN->m_bPseudoLocalize );
 
 	// Set the input scheme for the new game, and load keymaps.
 	if( INPUTMAPPER )
@@ -877,7 +877,7 @@ int sm_main(int argc, char* argv[])
 	AdjustForChangedSystemCapabilities();
 
 	GAMEMAN		= new GameManager;
-	THEME		= new ThemeManager;
+	THEMEMAN	= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
 	NOTESKIN	= new NoteSkinManager;
 
@@ -928,14 +928,14 @@ int sm_main(int argc, char* argv[])
 		GAMESTATE->m_bDopefish = true;
 
 	{
-		/* Now that THEME is loaded, load the icon and splash for the current
+		/* Now that THEMEMAN is loaded, load the icon and splash for the current
 		 * theme into the loading window. */
 		std::string sError;
-		RageSurface *pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
+		RageSurface *pSurface = RageSurfaceUtils::LoadFile( THEMEMAN->GetPathG( "Common", "window icon" ), sError );
 		if( pSurface != nullptr )
 			pLoadingWindow->SetIcon( pSurface );
 		delete pSurface;
-		pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG("Common","splash"), sError );
+		pSurface = RageSurfaceUtils::LoadFile( THEMEMAN->GetPathG("Common","splash"), sError );
 		if( pSurface != nullptr )
 			pLoadingWindow->SetSplash( pSurface );
 		delete pSurface;
@@ -1194,7 +1194,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		if( bIsShiftHeld && !bIsCtrlHeld )
 		{
 			// Shift+F2: refresh metrics,noteskin cache and CodeDetector cache only
-			THEME->ReloadMetrics();
+			THEMEMAN->ReloadMetrics();
 			NOTESKIN->load_skins();
 			CodeDetector::RefreshCacheItems();
 			SCREENMAN->SystemMessage( RELOADED_METRICS.GetValue() );
@@ -1202,21 +1202,21 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		else if( bIsCtrlHeld && !bIsShiftHeld )
 		{
 			// Ctrl+F2: reload scripts only
-			THEME->UpdateLuaGlobals();
+			THEMEMAN->UpdateLuaGlobals();
 			SCREENMAN->SystemMessage( RELOADED_SCRIPTS.GetValue() );
 		}
 		else if( bIsCtrlHeld && bIsShiftHeld )
 		{
 			// Shift+Ctrl+F2: reload overlay screens (and metrics, since themers
 			// are likely going to do this after changing metrics.)
-			THEME->ReloadMetrics();
+			THEMEMAN->ReloadMetrics();
 			SCREENMAN->ReloadOverlayScreens();
 			SCREENMAN->SystemMessage( RELOADED_OVERLAY_SCREENS.GetValue() );
 		}
 		else
 		{
 			// F2 alone: refresh metrics, textures, noteskins, codedetector cache
-			THEME->ReloadMetrics();
+			THEMEMAN->ReloadMetrics();
 			TEXTUREMAN->ReloadAll();
 			NOTESKIN->load_skins();
 			CodeDetector::RefreshCacheItems();

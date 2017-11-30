@@ -49,7 +49,7 @@ void ScreenSetTime::Init()
 		BitmapText &title = m_textTitle[s];
 		BitmapText &value = m_textValue[s];
 
-		title.LoadFromFont( THEME->GetPathF("Common","title") );
+		title.LoadFromFont( THEMEMAN->GetPathF("Common","title") );
 		title.SetDiffuse( Rage::Color(1,1,1,1) );
 		title.SetText( SetTimeSelectionToString(s) );
 		title.SetXY( GetTitleX(s), GetTitleY(s) );
@@ -59,7 +59,7 @@ void ScreenSetTime::Init()
 		title.BeginTweening( 0.3f, TWEEN_LINEAR );
 		title.SetDiffuse( Rage::Color(1,1,1,1) );
 
-		value.LoadFromFont( THEME->GetPathF("Common","normal") );
+		value.LoadFromFont( THEMEMAN->GetPathF("Common","normal") );
 		value.SetDiffuse( Rage::Color(1,1,1,1) );
 		value.SetXY( GetValueX(s), GetValueY(s) );
 		this->AddChild( &value );
@@ -69,8 +69,8 @@ void ScreenSetTime::Init()
 		value.SetDiffuse( Rage::Color(1,1,1,1) );
 	}
 
-	m_soundChangeSelection.Load( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
-	m_soundChangeValue.Load( THEME->GetPathS("ScreenSetTime","ChangeValue") );
+	m_soundChangeSelection.Load( THEMEMAN->GetPathS("ScreenSetTime","ChangeSelection") );
+	m_soundChangeValue.Load( THEMEMAN->GetPathS("ScreenSetTime","ChangeValue") );
 
 	m_TimeOffset = 0;
 	m_Selection = (SetTimeSelection)0;

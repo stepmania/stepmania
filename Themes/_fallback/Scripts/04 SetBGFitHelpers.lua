@@ -27,7 +27,7 @@ function BGFitChoiceExample(params)
 		-- Sprite representing the example bg.
 		Def.Sprite{
 			Name="mini_ex", InitCommand= function(self)
-				self:LoadBackground(THEME:GetPathG("ScreenSetBGFit", params.exname))
+				self:LoadBackground(THEMEMAN:GetPathG("ScreenSetBGFit", params.exname))
 				self:SetTextureFiltering(false)
 				params.example_function(self, params.mini_screen_w, params.mini_screen_h)
 			end
@@ -90,9 +90,9 @@ function BGFitInputActor(choices, lose_focus, gain_focus)
 			end
 			check_choice_and_change_focus(gain_focus)
 			PREFSMAN:SetPreference("BackgroundFitMode", BackgroundFitMode[curr_choice])
-			SOUNDMAN:PlayOnce(THEME:GetPathS("ScreenSelectMaster", "change"))
+			SOUNDMAN:PlayOnce(THEMEMAN:GetPathS("ScreenSelectMaster", "change"))
 		elseif event.GameButton == "Start" or event.GameButton == "Back" then
-			SOUNDMAN:PlayOnce(THEME:GetPathS("ScreenSelectMaster", "start"))
+			SOUNDMAN:PlayOnce(THEMEMAN:GetPathS("ScreenSelectMaster", "start"))
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 		end
 		return false

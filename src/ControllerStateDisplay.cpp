@@ -53,14 +53,14 @@ void ControllerStateDisplay::LoadInternal( std::string sType, MultiPlayer mp, Ga
 	m_mp = mp;
 
 	LuaThreadVariable varElement( "MultiPlayer", LuaReference::Create(m_mp) );
-	m_sprFrame.Load( THEME->GetPathG(sType, "frame") );
+	m_sprFrame.Load( THEMEMAN->GetPathG(sType, "frame") );
 	this->AddChild( m_sprFrame );
 
 	FOREACH_ENUM( ControllerStateButton, b )
 	{
 		Button &button = m_Buttons[ b ];
 
-		std::string sPath = THEME->GetPathG( sType, ControllerStateButtonToString(b) );
+		std::string sPath = THEMEMAN->GetPathG( sType, ControllerStateButtonToString(b) );
 		button.spr.Load( sPath );
 		this->AddChild( m_Buttons[b].spr );
 		

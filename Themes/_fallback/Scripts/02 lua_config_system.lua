@@ -109,7 +109,7 @@ local lua_config_mt= {
 			if not prof_dir or prof_dir == "" then
 				Trace("Could not fetch profile dir to " .. reason .. " for " .. tostring(slot) .. ".  " .. checked)
 				if PREFSMAN:GetPreference("WarnOnNoProfile") then
-					SCREENMAN:SystemMessage(THEME:GetString("Common", "NoProfileWarning"):format(ToEnumShortString(slot)))
+					SCREENMAN:SystemMessage(THEMEMAN:GetString("Common", "NoProfileWarning"):format(ToEnumShortString(slot)))
 				end
 				return
 			end
@@ -192,7 +192,7 @@ local lua_config_mt= {
 			if self.use_alternate_config_prefix then
 				return prof_dir .. self.use_alternate_config_prefix .. self.file
 			end
-			local config_prefix= THEME:GetCurThemeName().."_config/"
+			local config_prefix= THEMEMAN:GetCurThemeName().."_config/"
 			return prof_dir .. config_prefix .. self.file
 		end,
 		save= function(self, slot)

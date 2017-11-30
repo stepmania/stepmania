@@ -21,7 +21,7 @@ t[#t+1] = Def.ActorFrame {
 			elseif GAMESTATE:IsEventMode() then
 				self:settextf("STAGE %s", curStageIndex);
 			else
-				if THEME:GetMetric(curScreen,"StageDisplayUseShortString") then
+				if THEMEMAN:GetMetric(curScreen,"StageDisplayUseShortString") then
 				  self:settextf("%s", ToEnumShortString(curStage));
 				  self:zoom(1);
 				else

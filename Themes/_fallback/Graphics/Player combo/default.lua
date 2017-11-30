@@ -1,25 +1,25 @@
 local c;
 local player = Var "Player";
-local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt");
-local Pulse = THEME:GetMetric("Combo", "PulseCommand");
-local PulseLabel = THEME:GetMetric("Combo", "PulseLabelCommand");
+local ShowComboAt = THEMEMAN:GetMetric("Combo", "ShowComboAt");
+local Pulse = THEMEMAN:GetMetric("Combo", "PulseCommand");
+local PulseLabel = THEMEMAN:GetMetric("Combo", "PulseLabelCommand");
 
-local NumberMinZoom = THEME:GetMetric("Combo", "NumberMinZoom");
-local NumberMaxZoom = THEME:GetMetric("Combo", "NumberMaxZoom");
-local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
+local NumberMinZoom = THEMEMAN:GetMetric("Combo", "NumberMinZoom");
+local NumberMaxZoom = THEMEMAN:GetMetric("Combo", "NumberMaxZoom");
+local NumberMaxZoomAt = THEMEMAN:GetMetric("Combo", "NumberMaxZoomAt");
 
-local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom");
-local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
+local LabelMinZoom = THEMEMAN:GetMetric("Combo", "LabelMinZoom");
+local LabelMaxZoom = THEMEMAN:GetMetric("Combo", "LabelMaxZoom");
 
 local t = Def.ActorFrame {
 	InitCommand=cmd(vertalign,bottom);
 	LoadFont( "Combo", "numbers" ) .. {
 		Name="Number";
-		OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
+		OnCommand = THEMEMAN:GetMetric("Combo", "NumberOnCommand");
 	};
 	LoadFont("Common Normal") .. {
 		Name="Label";
-		OnCommand = THEME:GetMetric("Combo", "LabelOnCommand");
+		OnCommand = THEMEMAN:GetMetric("Combo", "LabelOnCommand");
 	};
 	
 	InitCommand = function(self)

@@ -15,8 +15,8 @@
 #include "XmlFile.h"
 #include "PlayerStageStats.h"
 
-#define SHIFT_X(pc)	THEME->GetMetricF(sMetricsGroup, fmt::sprintf("ShiftP%iX", pc+1))
-#define SHIFT_Y(pc)	THEME->GetMetricF(sMetricsGroup, fmt::sprintf("ShiftP%iY", pc+1))
+#define SHIFT_X(pc)	THEMEMAN->GetMetricF(sMetricsGroup, fmt::sprintf("ShiftP%iX", pc+1))
+#define SHIFT_Y(pc)	THEMEMAN->GetMetricF(sMetricsGroup, fmt::sprintf("ShiftP%iY", pc+1))
 
 static const char *PaneCategoryNames[] = {
 	"NumSteps",
@@ -74,13 +74,13 @@ void PaneDisplay::Load( const std::string &sMetricsGroup, PlayerNumber pn )
 
 		std::string sFontType = g_Contents[pc].sFontType;
 
-		m_textContents[pc].LoadFromFont( THEME->GetPathF(sMetricsGroup,sFontType) );
+		m_textContents[pc].LoadFromFont( THEMEMAN->GetPathF(sMetricsGroup,sFontType) );
 		m_textContents[pc].SetName( PaneCategoryToString(pc) + "Text" );
 		ActorUtil::LoadAllCommands( m_textContents[pc], sMetricsGroup );
 		ActorUtil::SetXY( m_textContents[pc], sMetricsGroup );
 		m_ContentsFrame.AddChild( &m_textContents[pc] );
 
-		m_Labels[pc].Load( THEME->GetPathG(sMetricsGroup,"label " + PaneCategoryToString(pc)) );
+		m_Labels[pc].Load( THEMEMAN->GetPathG(sMetricsGroup,"label " + PaneCategoryToString(pc)) );
 		m_Labels[pc]->SetName( PaneCategoryToString(pc) + "Label" );
 		ActorUtil::LoadAllCommands( *m_Labels[pc], sMetricsGroup );
 		ActorUtil::SetXY( m_Labels[pc], sMetricsGroup );

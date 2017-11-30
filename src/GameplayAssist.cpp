@@ -9,9 +9,9 @@
 
 void GameplayAssist::Init()
 {
-	m_soundAssistClap.Load(			THEME->GetPathS("GameplayAssist","clap"), true );
-	m_soundAssistMetronomeMeasure.Load(	THEME->GetPathS("GameplayAssist","metronome measure"), true );
-	m_soundAssistMetronomeBeat.Load(	THEME->GetPathS("GameplayAssist","metronome beat"), true );
+	m_soundAssistClap.Load(			THEMEMAN->GetPathS("GameplayAssist","clap"), true );
+	m_soundAssistMetronomeMeasure.Load(	THEMEMAN->GetPathS("GameplayAssist","metronome measure"), true );
+	m_soundAssistMetronomeBeat.Load(	THEMEMAN->GetPathS("GameplayAssist","metronome beat"), true );
 }
 
 void GameplayAssist::PlayTicks( const NoteData &nd, const PlayerState *ps )

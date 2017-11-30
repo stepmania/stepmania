@@ -27,7 +27,7 @@ function SelectMusicOrCourse()
 end
 
 function GameOverOrContinue()
-	if THEME:GetMetric("ScreenContinue", "ContinueEnabled") then
+	if THEMEMAN:GetMetric("ScreenContinue", "ContinueEnabled") then
 		return "ScreenContinue"
 	else
 		return "ScreenGameOver"
@@ -83,7 +83,7 @@ Branch = {
 			if IsNetConnected() then
 				return "ScreenSelectStyle"
 			else
-				if THEME:GetMetric("Common","AutoSetStyle") == false then
+				if THEMEMAN:GetMetric("Common","AutoSetStyle") == false then
 					return "ScreenSelectStyle"
 				else
 					return "ScreenProfileLoad"
@@ -114,7 +114,7 @@ Branch = {
 		--return CHARMAN:GetAllCharacters() ~= nil and "ScreenSelectCharacter" or "ScreenGameInformation"
 	end,
 	AfterSelectProfile = function()
-		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
+		if ( THEMEMAN:GetMetric("Common","AutoSetStyle") == true ) then
 			-- use SelectStyle in online...
 			return IsNetConnected() and "ScreenSelectStyle" or "ScreenSelectPlayMode"
 		else
@@ -193,7 +193,7 @@ Branch = {
 	end,
 	AfterGameplay = function()
 		-- pick an evaluation screen based on settings.
-		if THEME:GetMetric("ScreenHeartEntry", "HeartEntryEnabled") then
+		if THEMEMAN:GetMetric("ScreenHeartEntry", "HeartEntryEnabled") then
 			local go_to_heart= false
 			for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 				local profile= PROFILEMAN:GetProfile(pn)

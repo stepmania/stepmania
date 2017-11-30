@@ -2,22 +2,22 @@ local c;
 local cf;
 local canAnimate = false;
 local player = Var "Player";
-local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt");
-local Pulse = THEME:GetMetric("Combo", "PulseCommand");
-local PulseLabel = THEME:GetMetric("Combo", "PulseLabelCommand");
+local ShowComboAt = THEMEMAN:GetMetric("Combo", "ShowComboAt");
+local Pulse = THEMEMAN:GetMetric("Combo", "PulseCommand");
+local PulseLabel = THEMEMAN:GetMetric("Combo", "PulseLabelCommand");
 
-local NumberMinZoom = THEME:GetMetric("Combo", "NumberMinZoom");
-local NumberMaxZoom = THEME:GetMetric("Combo", "NumberMaxZoom");
-local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
+local NumberMinZoom = THEMEMAN:GetMetric("Combo", "NumberMinZoom");
+local NumberMaxZoom = THEMEMAN:GetMetric("Combo", "NumberMaxZoom");
+local NumberMaxZoomAt = THEMEMAN:GetMetric("Combo", "NumberMaxZoomAt");
 
-local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom");
-local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
+local LabelMinZoom = THEMEMAN:GetMetric("Combo", "LabelMinZoom");
+local LabelMaxZoom = THEMEMAN:GetMetric("Combo", "LabelMaxZoom");
 
 local ShowFlashyCombo = player_config:get_data(player).FlashyCombo
 
 --different language support
-local lang = THEME:GetCurLanguage()
-local cur_dir= "/Themes/"..THEME:GetCurThemeName().."/Graphics/Player combo/"
+local lang = THEMEMAN:GetCurLanguage()
+local cur_dir= "/Themes/"..THEMEMAN:GetCurThemeName().."/Graphics/Player combo/"
 local combo_label = cur_dir.."_combo"
 local miss_label = cur_dir.."_misses"
 
@@ -43,12 +43,12 @@ local t = Def.ActorFrame {
 		cf.MissLabel:visible(false)
 	end,
 	-- flashy combo elements:
-	LoadActor(THEME:GetPathG("Combo","100Milestone"), player) .. {
+	LoadActor(THEMEMAN:GetPathG("Combo","100Milestone"), player) .. {
 		Name="OneHundredMilestone";
 		InitCommand=cmd(visible,ShowFlashyCombo);
 		FiftyMilestoneCommand=cmd(playcommand,"Milestone");
 	};
-	LoadActor(THEME:GetPathG("Combo","1000Milestone")) .. {
+	LoadActor(THEMEMAN:GetPathG("Combo","1000Milestone")) .. {
 		Name="OneThousandMilestone";
 		InitCommand=cmd(visible,ShowFlashyCombo);
 		ToastyAchievedMessageCommand=cmd(playcommand,"Milestone");
@@ -58,15 +58,15 @@ local t = Def.ActorFrame {
 		Name="ComboFrame";
 		LoadFont( "Combo", "numbers" ) .. {
 			Name="Number";
-			OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
+			OnCommand = THEMEMAN:GetMetric("Combo", "NumberOnCommand");
 		};
 		LoadActor(combo_label)..{
 			Name="ComboLabel";
-			OnCommand = THEME:GetMetric("Combo", "ComboLabelOnCommand");
+			OnCommand = THEMEMAN:GetMetric("Combo", "ComboLabelOnCommand");
 		};
 		LoadActor(miss_label)..{
 			Name="MissLabel";
-			OnCommand = THEME:GetMetric("Combo", "MissLabelOnCommand");
+			OnCommand = THEMEMAN:GetMetric("Combo", "MissLabelOnCommand");
 		};
 	};
 	-- Milestones:

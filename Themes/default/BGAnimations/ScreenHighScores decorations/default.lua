@@ -1,9 +1,9 @@
 local t = LoadFallbackB();
 
 local StepsType = ToEnumShortString( GAMEMAN:GetFirstStepsTypeForGame(GAMESTATE:GetCurrentGame()) );
-local stString = THEME:GetString("StepsType",StepsType);
+local stString = THEMEMAN:GetString("StepsType",StepsType);
 
-local NumColumns = THEME:GetMetric(Var "LoadingScreen", "NumColumns");
+local NumColumns = THEMEMAN:GetMetric(Var "LoadingScreen", "NumColumns");
 
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-220);
@@ -16,13 +16,13 @@ t[#t+1] = Def.ActorFrame {
 };
 
 for i=1,NumColumns do
-	local st = THEME:GetMetric(Var "LoadingScreen","ColumnStepsType" .. i);	
-	local dc = THEME:GetMetric(Var "LoadingScreen","ColumnDifficulty" .. i);
+	local st = THEMEMAN:GetMetric(Var "LoadingScreen","ColumnStepsType" .. i);	
+	local dc = THEMEMAN:GetMetric(Var "LoadingScreen","ColumnDifficulty" .. i);
 	local s = GetCustomDifficulty( st, dc );
 	
 	t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(x,SCREEN_CENTER_X+32 + 84 * (i-1);y,SCREEN_CENTER_Y-220);
-		LoadActor(THEME:GetPathB("_frame","3x1"),"rounded light", 18) .. {
+		LoadActor(THEMEMAN:GetPathB("_frame","3x1"),"rounded light", 18) .. {
 			OnCommand=cmd(diffuse,CustomDifficultyToLightColor(s);diffusealpha,0.9);
 		};
 		LoadFont("StepsDisplayListRow description") .. {

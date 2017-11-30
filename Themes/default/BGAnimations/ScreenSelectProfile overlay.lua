@@ -43,7 +43,7 @@ function LoadPlayerStuff(Player)
 
 	local pn = (Player == PLAYER_1) and 1 or 2;
 
---[[ 	local t = LoadActor(THEME:GetPathB('', '_frame 3x3'), 'metal', 200, 230) .. {
+--[[ 	local t = LoadActor(THEMEMAN:GetPathB('', '_frame 3x3'), 'metal', 200, 230) .. {
 		Name = 'BigFrame';
 	}; --]]
 	t[#t+1] = Def.ActorFrame {
@@ -268,13 +268,13 @@ local t = Def.ActorFrame {
 			children = LoadPlayerStuff(PLAYER_2);
 		};
 		-- sounds
-		LoadActor( THEME:GetPathS("Common","start") )..{
+		LoadActor( THEMEMAN:GetPathS("Common","start") )..{
 			StartButtonMessageCommand=cmd(play);
 		};
-		LoadActor( THEME:GetPathS("Common","cancel") )..{
+		LoadActor( THEMEMAN:GetPathS("Common","cancel") )..{
 			BackButtonMessageCommand=cmd(play);
 		};
-		LoadActor( THEME:GetPathS("Common","value") )..{
+		LoadActor( THEMEMAN:GetPathS("Common","value") )..{
 			DirectionButtonMessageCommand=cmd(play);
 		};
 	};

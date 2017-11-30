@@ -80,7 +80,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const std::string& sPath )
 		if( pSong && pSong->HasBackground() )
 			sSongBGPath = pSong->GetBackgroundPath();
 		else
-			sSongBGPath = THEME->GetPathG("Common","fallback background");
+			sSongBGPath = THEMEMAN->GetPathG("Common","fallback background");
 
 		Sprite* pSprite = new Sprite;
 		pSprite->Load( Sprite::SongBGTexture(sSongBGPath) );

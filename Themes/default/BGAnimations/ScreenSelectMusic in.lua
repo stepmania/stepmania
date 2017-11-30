@@ -3,4 +3,4 @@ local transition_params = {
 	transition_type = "in"
 }
 
-return LoadActor(THEME:GetPathB("", "_transition"), transition_params)
+return LoadActor(THEMEMAN:GetPathB("", "_transition"), transition_params)

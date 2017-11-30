@@ -34,19 +34,19 @@ void ScreenBookkeeping::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	m_textAllTime.LoadFromFont( THEME->GetPathF(m_sName,"AllTime") );
+	m_textAllTime.LoadFromFont( THEMEMAN->GetPathF(m_sName,"AllTime") );
 	m_textAllTime.SetName( "AllTime" );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textAllTime );
 	this->AddChild( &m_textAllTime );
 
-	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"title") );
+	m_textTitle.LoadFromFont( THEMEMAN->GetPathF(m_sName,"title") );
 	m_textTitle.SetName( "Title" );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textTitle );
 	this->AddChild( &m_textTitle );
 
 	for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 	{
-		m_textData[i].LoadFromFont( THEME->GetPathF(m_sName,"data") );
+		m_textData[i].LoadFromFont( THEMEMAN->GetPathF(m_sName,"data") );
 		m_textData[i].SetName( "Data" );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textData[i] );
 		float fX = Rage::scale( i + 0.f, 0.f, NUM_BOOKKEEPING_COLS-1.f, SCREEN_LEFT+50.f, SCREEN_RIGHT-160.f );
@@ -56,7 +56,7 @@ void ScreenBookkeeping::Init()
 
 	FOREACH_ENUM( BookkeepingView, i )
 	{
-		if( THEME->GetMetricB(m_sName,"Show"+BookkeepingViewToString(i)) )
+		if( THEMEMAN->GetMetricB(m_sName,"Show"+BookkeepingViewToString(i)) )
 			m_vBookkeepingViews.push_back( i );
 	}
 

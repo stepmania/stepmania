@@ -23,7 +23,7 @@ t[#t+1] = StandardDecorationFromFileOptional("NumSongs","NumSongs") .. {
 			return
 		end
 
-		self:settextf(THEME:GetString("ScreenTitleMenu","%i Songs (%i Groups), %i Courses"), InstalledSongs, Groups, InstalledCourses);
+		self:settextf(THEMEMAN:GetString("ScreenTitleMenu","%i Songs (%i Groups), %i Courses"), InstalledSongs, Groups, InstalledCourses);
 -- 		self:settextf("%i (+%i) Songs (%i Groups), %i (+%i) Courses", InstalledSongs, AdditionalSongs, Groups, InstalledCourses, AdditionalCourses);
 	end;
 };

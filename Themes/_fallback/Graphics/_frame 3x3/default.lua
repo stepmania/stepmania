@@ -3,7 +3,7 @@ assert( File );
 assert( Width );
 assert( Height );
 
-local FullFile = THEME:GetPathG('','_frame files 3x3/'..File )
+local FullFile = THEMEMAN:GetPathG('','_frame files 3x3/'..File )
 local Frame = LoadActor( FullFile )
 return Def.ActorFrame {
 	Frame .. { InitCommand=cmd(setstate,0;pause;horizalign,right;vertalign,bottom;x,-Width/2;y,-Height/2) };

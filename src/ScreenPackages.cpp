@@ -36,7 +36,7 @@ void ScreenPackages::Init()
 	m_iLinksPos = 0;
 	m_iDLorLST = 0;
 	m_bIsDownloading = false;
-	m_bCanDL = THEME->GetMetricB( m_sName, "CanDL" );
+	m_bCanDL = THEMEMAN->GetMetricB( m_sName, "CanDL" );
 	m_sStatus = "";
 	m_fLastUpdate = 0;
 	m_iTotalBytes = 0;
@@ -45,12 +45,12 @@ void ScreenPackages::Init()
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->JoinPlayer( pn );
 
-	m_sprExistingBG.Load( THEME->GetPathG( m_sName, "PackagesBG" ) );
+	m_sprExistingBG.Load( THEMEMAN->GetPathG( m_sName, "PackagesBG" ) );
 	m_sprExistingBG->SetName( "PackagesBG" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprExistingBG );
 	this->AddChild( m_sprExistingBG );
 
-	m_sprWebBG.Load( THEME->GetPathG( m_sName, "WebBG" ) );
+	m_sprWebBG.Load( THEMEMAN->GetPathG( m_sName, "WebBG" ) );
 	m_sprWebBG->SetName( "WebBG" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprWebBG );
 	this->AddChild( m_sprWebBG );
@@ -59,7 +59,7 @@ void ScreenPackages::Init()
 	COMMAND( m_sprWebBG, "Away" );
 
 //	m_fOutputFile.
-	m_textPackages.LoadFromFont( THEME->GetPathF(m_sName,"default") );
+	m_textPackages.LoadFromFont( THEMEMAN->GetPathF(m_sName,"default") );
 	m_textPackages.SetShadowLength( 0 );
 	m_textPackages.SetName( "Packages" );
 	m_textPackages.SetMaxWidth( EXISTINGBG_WIDTH );
@@ -67,7 +67,7 @@ void ScreenPackages::Init()
 	this->AddChild( &m_textPackages );
 	RefreshPackages();
 
-	m_textWeb.LoadFromFont( THEME->GetPathF(m_sName,"default") );
+	m_textWeb.LoadFromFont( THEMEMAN->GetPathF(m_sName,"default") );
 	m_textWeb.SetShadowLength( 0 );
 	m_textWeb.SetName( "Web" );
 	m_textWeb.SetMaxWidth( WEBBG_WIDTH );
@@ -76,7 +76,7 @@ void ScreenPackages::Init()
 	m_Links.push_back( " " ); // what is this here for? -aj
 	m_LinkTitles.push_back( VISIT_URL.GetValue() );
 
-	m_textURL.LoadFromFont( THEME->GetPathF( m_sName,"default") );
+	m_textURL.LoadFromFont( THEMEMAN->GetPathF( m_sName,"default") );
 	m_textURL.SetShadowLength( 0 );
 	m_textURL.SetName( "WebURL" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textURL );
@@ -84,23 +84,23 @@ void ScreenPackages::Init()
 	UpdateLinksList();
 
 	m_sprWebSel.SetName( "WebSel" );
-	m_sprWebSel.Load( THEME->GetPathG( m_sName, "WebSel" ) );
+	m_sprWebSel.Load( THEMEMAN->GetPathG( m_sName, "WebSel" ) );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprWebSel );
 	this->AddChild( &m_sprWebSel );
 
 	m_sprDLBG.SetName( "Download" );
-	m_sprDLBG.Load( THEME->GetPathG( m_sName, "DownloadBG" ) );
+	m_sprDLBG.Load( THEMEMAN->GetPathG( m_sName, "DownloadBG" ) );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprDLBG );
 	this->AddChild( &m_sprDLBG );
 
 	//(HTTP ELEMENTS)
 	m_sprDL.SetName( "Download" );
-	m_sprDL.Load( THEME->GetPathG( m_sName, "Download" ) );
+	m_sprDL.Load( THEMEMAN->GetPathG( m_sName, "Download" ) );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprDL );
 	this->AddChild( &m_sprDL );
-	m_sprDL.RunCommands( THEME->GetMetricA( m_sName, "DownloadProgressCommand" ) );
+	m_sprDL.RunCommands( THEMEMAN->GetMetricA( m_sName, "DownloadProgressCommand" ) );
 
-	m_textStatus.LoadFromFont( THEME->GetPathF(m_sName,"default") );
+	m_textStatus.LoadFromFont( THEMEMAN->GetPathF(m_sName,"default") );
 	m_textStatus.SetShadowLength( 0 );
 	m_textStatus.SetName( "DownloadStatus" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textStatus );
@@ -130,11 +130,11 @@ void ScreenPackages::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToPrevScreen )
 	{
-		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
+		SCREENMAN->SetNewScreen( THEMEMAN->GetMetric (m_sName, "PrevScreen") );
 	}
 	else if( SM ==SM_GoToNextScreen )
 	{
-		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
+		SCREENMAN->SetNewScreen( THEMEMAN->GetMetric (m_sName, "NextScreen") );
 	}
 	else if( SM == SM_BackFromURL )
 	{

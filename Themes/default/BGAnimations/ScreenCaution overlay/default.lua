@@ -1,6 +1,6 @@
 local t = Def.ActorFrame {};
 
-t[#t+1] = LoadActor(THEME:GetPathG("common bg", "base")) .. {
+t[#t+1] = LoadActor(THEMEMAN:GetPathG("common bg", "base")) .. {
 		InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT)
 	};
 

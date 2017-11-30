@@ -1,9 +1,9 @@
 course_stopped_by_pause_menu= false
 
 local prompt_text= {
-	Start= THEME:GetString("ScreenGameplay", "GiveUpStartText"),
-	Select= THEME:GetString("ScreenGameplay", "GiveUpSelectText"),
-	Back= THEME:GetString("ScreenGameplay", "GiveUpBackText"),
+	Start= THEMEMAN:GetString("ScreenGameplay", "GiveUpStartText"),
+	Select= THEMEMAN:GetString("ScreenGameplay", "GiveUpSelectText"),
+	Back= THEMEMAN:GetString("ScreenGameplay", "GiveUpBackText"),
 }
 local prompt_actor= false
 
@@ -26,7 +26,7 @@ end
 local menu_spacing= 32
 local menu_bg_width= _screen.w * .2
 local menu_text_width= _screen.w * .35
-local menu_x= {[PLAYER_1]= THEME:GetMetric(Var "LoadingScreen","PlayerP1MiscX"), [PLAYER_2]= THEME:GetMetric(Var "LoadingScreen","PlayerP2MiscX")}
+local menu_x= {[PLAYER_1]= THEMEMAN:GetMetric(Var "LoadingScreen","PlayerP1MiscX"), [PLAYER_2]= THEMEMAN:GetMetric(Var "LoadingScreen","PlayerP2MiscX")}
 local menu_y= _screen.cy - (#menu_choices * .5 * menu_spacing)
 local current_menu_choice= {}
 local menu_is_showing= {}
@@ -34,7 +34,7 @@ local enabled_players= {}
 
 local function create_menu_item(pn, x, y, item_name)
 	return Def.BitmapText{
-		Font= "Common Condensed", Text= THEME:GetString("PauseMenu", item_name),
+		Font= "Common Condensed", Text= THEMEMAN:GetString("PauseMenu", item_name),
 		InitCommand= function(self)
 			self:xy(x, y)
 			table.insert(menu_items[pn], self)

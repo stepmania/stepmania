@@ -403,12 +403,12 @@ end
 you'll need to get width rather than height (I just don't feel like
 uglyfying my code just to handle rare cases). -shake ]]
 function GetReal()
-	local theme = THEME:GetMetric("Common","ScreenHeight")
+	local theme = THEMEMAN:GetMetric("Common","ScreenHeight")
 	local res = PREFSMAN:GetPreference("DisplayHeight")
 	return theme/res
 end
 function GetRealInverse()
-	local theme = THEME:GetMetric("Common","ScreenHeight")
+	local theme = THEMEMAN:GetMetric("Common","ScreenHeight")
 	local res = PREFSMAN:GetPreference("DisplayHeight")
 	return res/theme
 end

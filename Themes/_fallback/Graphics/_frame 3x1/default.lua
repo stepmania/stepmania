@@ -2,7 +2,7 @@ local File, Width = ...
 assert( File );
 assert( Width );
 
-local FullFile = THEME:GetPathG('','_frame files 3x1/'..File )
+local FullFile = THEMEMAN:GetPathG('','_frame files 3x1/'..File )
 local Frame = LoadActor( FullFile )
 
 return Def.ActorFrame {

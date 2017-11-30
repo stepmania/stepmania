@@ -33,7 +33,7 @@ void RoomWheel::Load( std::string sType )
 	m_offset = 0;
 	LOG->Trace( "RoomWheel::Load('%s')", sType.c_str() );
 
-	AddPermanentItem( new RoomWheelItemData(WheelItemDataType_Generic, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
+	AddPermanentItem( new RoomWheelItemData(WheelItemDataType_Generic, "Create Room", "Create a new game room", THEMEMAN->GetMetricC( m_sName, "CreateRoomColor")) );
 
 	BuildWheelItemsData( m_CurWheelItemData );
 	RebuildWheelItems();
@@ -71,23 +71,23 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 void RoomWheelItem::Load( std::string sType )
 {
 	// colorpart gets added first in MusicWheelItem, so follow that here.
-	m_sprColorPart.Load( THEME->GetPathG(sType,"ColorPart") );
+	m_sprColorPart.Load( THEMEMAN->GetPathG(sType,"ColorPart") );
 	this->AddChild( m_sprColorPart );
 
-	m_sprNormalPart.Load( THEME->GetPathG(sType,"NormalPart") );
+	m_sprNormalPart.Load( THEMEMAN->GetPathG(sType,"NormalPart") );
 	this->AddChild( m_sprNormalPart );
 
 	m_text.SetName( "Text" );
-	m_text.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_text.LoadFromFont( THEMEMAN->GetPathF(sType,"text") );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_text );
 	this->AddChild( &m_text );
 
 	m_Desc.SetName( "Description" );
-	m_Desc.LoadFromFont( THEME->GetPathF("RoomWheel","text") );
+	m_Desc.LoadFromFont( THEMEMAN->GetPathF("RoomWheel","text") );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_Desc );
 	this->AddChild( &m_Desc );
 
-	m_sprOverPart.Load( THEME->GetPathG(sType,"OverPart") );
+	m_sprOverPart.Load( THEMEMAN->GetPathG(sType,"OverPart") );
 	this->AddChild( m_sprOverPart );
 }
 

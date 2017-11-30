@@ -14,7 +14,7 @@
 
 using std::vector;
 
-//#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")
+//#define DIVIDE_LINE_WIDTH			THEMEMAN->GetMetricI(m_sName,"TexturedBottomHalf")
 REGISTER_ACTOR_CLASS( GraphDisplay );
 
 enum { VALUE_RESOLUTION=100 };
@@ -230,15 +230,15 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 void GraphDisplay::Load( std::string sMetricsGroup )
 {
-	m_size.x = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyWidth"));
-	m_size.y = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyHeight"));
+	m_size.x = static_cast<float>(THEMEMAN->GetMetricI(sMetricsGroup, "BodyWidth"));
+	m_size.y = static_cast<float>(THEMEMAN->GetMetricI(sMetricsGroup, "BodyHeight"));
 
-	m_sprBacking.Load( THEME->GetPathG(sMetricsGroup,"Backing") );
+	m_sprBacking.Load( THEMEMAN->GetPathG(sMetricsGroup,"Backing") );
 	m_sprBacking->ZoomToWidth( m_size.x );
 	m_sprBacking->ZoomToHeight( m_size.y );
 	this->AddChild( m_sprBacking );
 
-	m_pGraphBody = new GraphBody( THEME->GetPathG(sMetricsGroup,"Body") );
+	m_pGraphBody = new GraphBody( THEMEMAN->GetPathG(sMetricsGroup,"Body") );
 	this->AddChild( m_pGraphBody );
 
 	m_pGraphLine = new GraphLine;
@@ -246,9 +246,9 @@ void GraphDisplay::Load( std::string sMetricsGroup )
 	ActorUtil::LoadAllCommands( m_pGraphLine, sMetricsGroup );
 	this->AddChild( m_pGraphLine );
 
-	m_sprSongBoundary.Load( THEME->GetPathG(sMetricsGroup,"SongBoundary") );
+	m_sprSongBoundary.Load( THEMEMAN->GetPathG(sMetricsGroup,"SongBoundary") );
 
-	m_sprBarely.Load( THEME->GetPathG(sMetricsGroup,"Barely") );
+	m_sprBarely.Load( THEMEMAN->GetPathG(sMetricsGroup,"Barely") );
 }
 
 void GraphDisplay::UpdateVerts()

@@ -38,8 +38,8 @@ function rec_calc_actor_pos(actor)
 end
 
 local function want_string(section, name)
-	if THEME:HasString(section, name) then
-		return THEME:GetString(section, name)
+	if THEMEMAN:HasString(section, name) then
+		return THEMEMAN:GetString(section, name)
 	end
 	lua.ReportScriptError('String "'..section.."::"..name..'" is missing.')
 	return name
@@ -2178,7 +2178,7 @@ local sound_names= {
 nesty_menus.load_typical_menu_sounds= function()
 	local frame= Def.ActorFrame{Name= "sounds"}
 	for i, name in ipairs(sound_names) do
-		local path= THEME:GetPathS("OptionMenu", name, true)
+		local path= THEMEMAN:GetPathS("OptionMenu", name, true)
 		if path ~= "" then
 			frame[#frame+1]= LoadActor(path) .. {Name= "sound_"..name}
 		end

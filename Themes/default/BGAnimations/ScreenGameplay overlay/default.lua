@@ -17,7 +17,7 @@ if GAMESTATE:GetCurrentCourse() then
 		-- RemainingTime
 		for pn in ivalues(PlayerNumber) do
 			local MetricsName = "RemainingTime" .. PlayerNumberToString(pn);
-			t[#t+1] = LoadActor( THEME:GetPathG( Var "LoadingScreen", "RemainingTime"), pn ) .. {
+			t[#t+1] = LoadActor( THEMEMAN:GetPathG( Var "LoadingScreen", "RemainingTime"), pn ) .. {
 				InitCommand=function(self) 
 					self:player(pn); 
 					self:name(MetricsName); 
@@ -27,7 +27,7 @@ if GAMESTATE:GetCurrentCourse() then
 		end
 		for pn in ivalues(PlayerNumber) do
 			local MetricsName = "DeltaSeconds" .. PlayerNumberToString(pn);
-			t[#t+1] = LoadActor( THEME:GetPathG( Var "LoadingScreen", "DeltaSeconds"), pn ) .. {
+			t[#t+1] = LoadActor( THEMEMAN:GetPathG( Var "LoadingScreen", "DeltaSeconds"), pn ) .. {
 				InitCommand=function(self) 
 					self:player(pn); 
 					self:name(MetricsName); 
@@ -43,7 +43,7 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 		for ip, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 			if ShowStandardDecoration("LifeMeterBar" ..  ToEnumShortString(pn)) then
 				local life_type = GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Song"):LifeSetting()
-				t[#t+1] = LoadActor(THEME:GetPathG(Var "LoadingScreen", "lifebar_" .. ToEnumShortString(life_type)), pn) .. {
+				t[#t+1] = LoadActor(THEMEMAN:GetPathG(Var "LoadingScreen", "lifebar_" .. ToEnumShortString(life_type)), pn) .. {
 					InitCommand=function(self)
 						self:name("LifeMeterBar" .. ToEnumShortString(pn))
 						ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen")
@@ -60,7 +60,7 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 					InitCommand=cmd(x,life_x_position;y,SCREEN_CENTER_Y;rotationz,-90;);
 					OnCommand=cmd(addx,100*life_tween;sleep,1;decelerate,0.9;addx,100*second_tween);
 					OffCommand=cmd(sleep,1;decelerate,0.9;addx,100*life_tween;);
-					LoadActor(THEME:GetPathG("LifeMeter", "bar frame")) .. {
+					LoadActor(THEMEMAN:GetPathG("LifeMeter", "bar frame")) .. {
 					};
 					Def.ActorFrame {
 						InitCommand=cmd(x,-207;y,0;);
@@ -218,10 +218,10 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 		};
 		Def.SongMeterDisplay {
 			StreamWidth=260;
-			Stream=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'stream') )..{
+			Stream=LoadActor( THEMEMAN:GetPathG( 'SongMeterDisplay', 'stream') )..{
 				InitCommand=cmd(diffuse,Color.White;diffusealpha,0.4;blend,Blend.Add;);
 			};
-			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip')) .. { 
+			Tip=LoadActor( THEMEMAN:GetPathG( 'SongMeterDisplay', 'tip')) .. { 
 			InitCommand=cmd(visible,false); 
 			};
 		};

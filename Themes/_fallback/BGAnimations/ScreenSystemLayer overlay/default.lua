@@ -13,7 +13,7 @@ local function CreditsText( pn )
 			local bShow = true;
 			if screen then
 				local sClass = screen:GetName();
-				bShow = THEME:GetMetric( sClass, "ShowCreditDisplay" );
+				bShow = THEMEMAN:GetMetric( sClass, "ShowCreditDisplay" );
 			end
 
 			self:visible( bShow );
@@ -55,7 +55,7 @@ end --]]
 --
 local t = Def.ActorFrame {}
 	-- Aux
-t[#t+1] = LoadActor(THEME:GetPathB("ScreenSystemLayer","aux"));
+t[#t+1] = LoadActor(THEMEMAN:GetPathB("ScreenSystemLayer","aux"));
 	-- Credits
 t[#t+1] = Def.ActorFrame {
 --[[  	PlayerPane( PLAYER_1 ) .. {

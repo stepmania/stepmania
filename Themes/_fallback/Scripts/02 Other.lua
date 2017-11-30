@@ -16,13 +16,13 @@ function LoadFallbackB()
 
 	local metrics_group = g_metrics_group or Var 'MatchingMetricsGroup'
 	local element = g_element or Var 'MatchingElement'
-	local fallback = THEME:GetMetric(metrics_group,'Fallback')
+	local fallback = THEMEMAN:GetMetric(metrics_group,'Fallback')
 
 	local old_metrics_group = g_metrics_group
 	local old_element = g_element
 
 	local path
-	path, g_metrics_group, g_element = THEME:GetPathInfoB(fallback,element)
+	path, g_metrics_group, g_element = THEMEMAN:GetPathInfoB(fallback,element)
 	--Trace('path ' .. path )
 	local t = LoadActor( path )
 
@@ -97,13 +97,13 @@ end
 -- an actor, such as from File or InitCommand attributes; not from commands.
 Screen.Metric = function ( sName )
 	local sClass = Var "LoadingScreen"
-	return THEME:GetMetric( sClass, sName )
+	return THEMEMAN:GetMetric( sClass, sName )
 end
 ScreenMetric = Screen.Metric
 
 Screen.String = function ( sName )
 	local sClass = Var "LoadingScreen"
-	return THEME:GetString( sClass, sName )
+	return THEMEMAN:GetString( sClass, sName )
 end
 ScreenString = Screen.String
 

@@ -31,7 +31,7 @@ void ComboGraph::Load( std::string sMetricsGroup )
 
 	Actor *pActor = nullptr;
 
-	m_pBacking = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Backing") );
+	m_pBacking = ActorUtil::MakeActor( THEMEMAN->GetPathG(sMetricsGroup,"Backing") );
 	if( m_pBacking != nullptr )
 	{
 		m_pBacking->ZoomToWidth( BODY_WIDTH );
@@ -39,7 +39,7 @@ void ComboGraph::Load( std::string sMetricsGroup )
 		this->AddChild( m_pBacking );
 	}
 
-	m_pNormalCombo = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"NormalCombo") );
+	m_pNormalCombo = ActorUtil::MakeActor( THEMEMAN->GetPathG(sMetricsGroup,"NormalCombo") );
 	if( m_pNormalCombo != nullptr )
 	{
 		m_pNormalCombo->ZoomToWidth( BODY_WIDTH );
@@ -47,7 +47,7 @@ void ComboGraph::Load( std::string sMetricsGroup )
 		this->AddChild( m_pNormalCombo );
 	}
 
-	m_pMaxCombo = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"MaxCombo") );
+	m_pMaxCombo = ActorUtil::MakeActor( THEMEMAN->GetPathG(sMetricsGroup,"MaxCombo") );
 	if( m_pMaxCombo != nullptr )
 	{
 		m_pMaxCombo->ZoomToWidth( BODY_WIDTH );
@@ -55,7 +55,7 @@ void ComboGraph::Load( std::string sMetricsGroup )
 		this->AddChild( m_pMaxCombo );
 	}
 
-	pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ComboNumber") );
+	pActor = ActorUtil::MakeActor( THEMEMAN->GetPathG(sMetricsGroup,"ComboNumber") );
 	if( pActor != nullptr )
 	{
 		m_pComboNumber = dynamic_cast<BitmapText *>( pActor );

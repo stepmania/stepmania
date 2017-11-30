@@ -23,7 +23,7 @@ t[#t+1] = Def.ActorFrame {
 				self:settextf("Stage %s", curStageIndex);
 			else
 				local thed_stage= thified_curstage_index(curScreen:find("Evaluation"))
-				if THEME:GetMetric(curScreen,"StageDisplayUseShortString") then
+				if THEMEMAN:GetMetric(curScreen,"StageDisplayUseShortString") then
 					self:settext(thed_stage)
 					self:zoom(0.75);
 				else

@@ -20,14 +20,14 @@
 
 using std::wstring;
 
-#define CHAT_TEXT_OUTPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextOutputWidth")
-#define CHAT_TEXT_INPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextInputWidth")
-#define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")
+#define CHAT_TEXT_OUTPUT_WIDTH		THEMEMAN->GetMetricF(m_sName,"ChatTextOutputWidth")
+#define CHAT_TEXT_INPUT_WIDTH		THEMEMAN->GetMetricF(m_sName,"ChatTextInputWidth")
+#define SHOW_CHAT_LINES				THEMEMAN->GetMetricI(m_sName,"ChatOutputLines")
 
-#define USERS_X						THEME->GetMetricF(m_sName,"UsersX")
-#define USERS_Y						THEME->GetMetricF(m_sName,"UsersY")
-#define USER_SPACING_X				THEME->GetMetricF(m_sName,"UserSpacingX")
-#define USER_ADD_Y					THEME->GetMetricF(m_sName,"UserLine2Y")
+#define USERS_X						THEMEMAN->GetMetricF(m_sName,"UsersX")
+#define USERS_Y						THEMEMAN->GetMetricF(m_sName,"UsersY")
+#define USER_SPACING_X				THEMEMAN->GetMetricF(m_sName,"UserSpacingX")
+#define USER_ADD_Y					THEMEMAN->GetMetricF(m_sName,"UserLine2Y")
 
 AutoScreenMessage( SM_AddToChat );
 AutoScreenMessage( SM_UsersUpdate );
@@ -40,23 +40,23 @@ void ScreenNetSelectBase::Init()
 	ScreenWithMenuElements::Init();
 
 	// Chat boxes
-	m_sprChatInputBox.Load( THEME->GetPathG( m_sName, "ChatInputBox" ) );
+	m_sprChatInputBox.Load( THEMEMAN->GetPathG( m_sName, "ChatInputBox" ) );
 	m_sprChatInputBox->SetName( "ChatInputBox" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprChatInputBox );
 	this->AddChild( m_sprChatInputBox );
 
-	m_sprChatOutputBox.Load( THEME->GetPathG( m_sName, "ChatOutputBox" ) );
+	m_sprChatOutputBox.Load( THEMEMAN->GetPathG( m_sName, "ChatOutputBox" ) );
 	m_sprChatOutputBox->SetName( "ChatOutputBox" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprChatOutputBox );
 	this->AddChild( m_sprChatOutputBox );
 
-	m_textChatInput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textChatInput.LoadFromFont( THEMEMAN->GetPathF(m_sName,"chat") );
 	m_textChatInput.SetName( "ChatInput" );
 	m_textChatInput.SetWrapWidthPixels( (int)(CHAT_TEXT_INPUT_WIDTH) );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textChatInput );
 	this->AddChild( &m_textChatInput );
 
-	m_textChatOutput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textChatOutput.LoadFromFont( THEMEMAN->GetPathF(m_sName,"chat") );
 	m_textChatOutput.SetName( "ChatOutput" );
 	m_textChatOutput.SetWrapWidthPixels( (int)(CHAT_TEXT_OUTPUT_WIDTH) );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textChatOutput );
@@ -175,7 +175,7 @@ void ScreenNetSelectBase::UpdateUsers()
 
 	for( unsigned i=0; i < NSMAN->m_ActivePlayer.size(); i++)
 	{
-		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"users") );
+		m_textUsers[i].LoadFromFont( THEMEMAN->GetPathF(m_sName,"users") );
 		m_textUsers[i].SetHorizAlign( align_center );
 		m_textUsers[i].SetVertAlign( align_top );
 		m_textUsers[i].SetShadowLength( 0 );
@@ -193,7 +193,7 @@ void ScreenNetSelectBase::UpdateUsers()
 		ActorUtil::OnCommand( m_textUsers[i] );
 
 		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
-		m_textUsers[i].RunCommands( THEME->GetMetricA( m_sName,
+		m_textUsers[i].RunCommands( THEMEMAN->GetMetricA( m_sName,
 			fmt::sprintf("Users%dCommand", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
 
 		this->AddChild( &m_textUsers[i] );

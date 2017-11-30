@@ -51,7 +51,7 @@ void AutoActor::Load( const std::string &sPath )
 void AutoActor::LoadB( const std::string &sMetricsGroup, const std::string &sElement )
 {
 	ThemeManager::PathInfo pi;
-	bool b = THEME->GetPathInfo( pi, EC_BGANIMATIONS, sMetricsGroup, sElement );
+	bool b = THEMEMAN->GetPathInfo( pi, EC_BGANIMATIONS, sMetricsGroup, sElement );
 	ASSERT( b );
 	LuaThreadVariable var1( "MatchingMetricsGroup", pi.sMatchingMetricsGroup );
 	LuaThreadVariable var2( "MatchingElement", pi.sMatchingElement );
@@ -67,7 +67,7 @@ void AutoActor::LoadActorFromNode( const XNode* pNode, Actor *pParent )
 
 void AutoActor::LoadAndSetName( const std::string &sScreenName, const std::string &sActorName )
 {
-	Load( THEME->GetPathG(sScreenName,sActorName) );
+	Load( THEMEMAN->GetPathG(sScreenName,sActorName) );
 	m_pActor->SetName( sActorName );
 	ActorUtil::LoadAllCommands( *m_pActor, sScreenName );
 }

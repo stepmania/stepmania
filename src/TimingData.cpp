@@ -1604,7 +1604,7 @@ vector<std::string> TimingData::ToVectorString(TimingSegmentType tst, int dec) c
 // lua start
 #include "LuaBinding.h"
 
-#define TIMING_DATA_RETURNS_NUMBERS THEME->GetMetricB("TimingData", "GetReturnsNumbers")
+#define TIMING_DATA_RETURNS_NUMBERS THEMEMAN->GetMetricB("TimingData", "GetReturnsNumbers")
 
 // This breaks encapsulation just as much as TimingData::ToVectorString does.
 // But, it exists solely for the purpose of providing lua access, so it's as okay as all the other lua stuff that reaches past the encapsulation.

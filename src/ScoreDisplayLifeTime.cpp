@@ -20,17 +20,17 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 
 	const std::string sType = "ScoreDisplayLifeTime";
 
-	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
+	m_sprFrame.Load( THEMEMAN->GetPathG(sType,"frame") );
 	m_sprFrame->SetName( "Frame" );
 	this->AddChild( m_sprFrame );
 	ActorUtil::LoadAllCommandsAndOnCommand( m_sprFrame, sType );
 
-	m_textTimeRemaining.LoadFromFont( THEME->GetPathF(sType, "TimeRemaining") );
+	m_textTimeRemaining.LoadFromFont( THEMEMAN->GetPathF(sType, "TimeRemaining") );
 	m_textTimeRemaining.SetName( "TimeRemaining" );
 	this->AddChild( &m_textTimeRemaining );
 	ActorUtil::LoadAllCommandsAndOnCommand( m_textTimeRemaining, sType );
 	
-	m_textDeltaSeconds.LoadFromFont( THEME->GetPathF(sType,"DeltaSeconds") );
+	m_textDeltaSeconds.LoadFromFont( THEMEMAN->GetPathF(sType,"DeltaSeconds") );
 	m_textDeltaSeconds.SetName( "DeltaSeconds" );
 	this->AddChild( &m_textDeltaSeconds );
 	ActorUtil::LoadAllCommandsAndOnCommand( m_textDeltaSeconds, sType );

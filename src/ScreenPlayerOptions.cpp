@@ -23,7 +23,7 @@ void ScreenPlayerOptions::Init()
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
+		m_sprDisqualify[p].Load( THEMEMAN->GetPathG(m_sName,"disqualify") );
 		m_sprDisqualify[p]->SetName( fmt::sprintf("DisqualifyP%i",p+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetVisible( false );	// unhide later if handicapping options are discovered

@@ -13,11 +13,11 @@ ScoreDisplayOni::ScoreDisplayOni()
 {
 	LOG->Trace( "ScoreDisplayOni::ScoreDisplayOni()" );
 
-	m_sprFrame.Load( THEME->GetPathG("ScoreDisplayOni","frame") );
+	m_sprFrame.Load( THEMEMAN->GetPathG("ScoreDisplayOni","frame") );
 	this->AddChild( &m_sprFrame );
 
 	// init the text
-	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayOni","numbers") );
+	m_text.LoadFromFont( THEMEMAN->GetPathF("ScoreDisplayOni","numbers") );
 	m_text.SetName( "ScoreDisplayOni Numbers" );
 	m_text.SetShadowLength( 0 );
 	LOAD_ALL_COMMANDS( m_text );

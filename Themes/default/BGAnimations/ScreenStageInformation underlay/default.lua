@@ -50,7 +50,7 @@ t[#t+1] = Def.ActorFrame {
 };
 
 
-local stage_num_actor= THEME:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(sStage), true)
+local stage_num_actor= THEMEMAN:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(sStage), true)
 if stage_num_actor ~= "" and FILEMAN:DoesFileExist(stage_num_actor) then
 	stage_num_actor= LoadActor(stage_num_actor)
 else
@@ -89,7 +89,7 @@ t[#t+1] = Def.ActorFrame {
 			local song = GAMESTATE:GetCurrentSong();
 			if song then
 				if stepsP1:GetAuthorCredit() ~= "" then
-					self:settext(string.upper(THEME:GetString("OptionTitles","Step Author")) .. ":");
+					self:settext(string.upper(THEMEMAN:GetString("OptionTitles","Step Author")) .. ":");
 				else
 					self:settext("")
 				end
@@ -130,7 +130,7 @@ t[#t+1] = Def.ActorFrame {
 			if song then
 				local diff = stepsP2:GetDifficulty();
 				if stepsP2:GetAuthorCredit() ~= "" then
-					self:settext(string.upper(THEME:GetString("OptionTitles","Step Author")) .. ":");
+					self:settext(string.upper(THEMEMAN:GetString("OptionTitles","Step Author")) .. ":");
 				else
 					self:settext("")
 				end

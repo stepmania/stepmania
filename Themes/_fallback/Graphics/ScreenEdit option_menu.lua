@@ -12,7 +12,7 @@ local frame= Def.ActorFrame{
 				:diffuse{0, 0, 0, .75}
 		end,
 	},
-	editor_notefield_menu(LoadActor(THEME:GetPathG("", "generic_menu.lua"), 1, _screen.w/3, _screen.h*.95, .55, _screen.w*.01, _screen.h*.01)),
+	editor_notefield_menu(LoadActor(THEMEMAN:GetPathG("", "generic_menu.lua"), 1, _screen.w/3, _screen.h*.95, .55, _screen.w*.01, _screen.h*.01)),
 }
 
 return frame

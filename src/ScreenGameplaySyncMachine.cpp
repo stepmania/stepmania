@@ -25,7 +25,7 @@ void ScreenGameplaySyncMachine::Init()
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame), PLAYER_INVALID );
 	AdjustSync::ResetOriginalSyncData();
 
-	std::string sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
+	std::string sFile = THEMEMAN->GetPathO("ScreenGameplaySyncMachine","music");
 	// Allow themers to use either a .ssc or .sm file for this. -aj
 	SSCLoader loaderSSC;
 	SMLoader loaderSM;
@@ -61,7 +61,7 @@ void ScreenGameplaySyncMachine::Init()
 	m_DancingState = STATE_DANCING;
 
 	m_textSyncInfo.SetName( "SyncInfo" );
-	m_textSyncInfo.LoadFromFont( THEME->GetPathF(m_sName,"SyncInfo") );
+	m_textSyncInfo.LoadFromFont( THEMEMAN->GetPathF(m_sName,"SyncInfo") );
 	ActorUtil::LoadAllCommands( m_textSyncInfo, m_sName );
 	this->AddChild( &m_textSyncInfo );
 

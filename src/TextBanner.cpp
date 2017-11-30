@@ -19,19 +19,19 @@ void TextBanner::Load( std::string sMetricsGroup )
 	m_bInitted = true;
 
 	m_textTitle.SetName( "Title" );
-	m_textTitle.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
+	m_textTitle.LoadFromFont( THEMEMAN->GetPathF(sMetricsGroup,"text") );
 	this->AddChild( &m_textTitle );
 
 	m_textSubTitle.SetName( "Subtitle" );
-	m_textSubTitle.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
+	m_textSubTitle.LoadFromFont( THEMEMAN->GetPathF(sMetricsGroup,"text") );
 	this->AddChild( &m_textSubTitle );
 
 	m_textArtist.SetName( "Artist" );
-	m_textArtist.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
+	m_textArtist.LoadFromFont( THEMEMAN->GetPathF(sMetricsGroup,"text") );
 	this->AddChild( &m_textArtist );
 
-	AddCommand( "AfterSet", THEME->GetMetricA(sMetricsGroup,"AfterSetCommand") );
-	m_sArtistPrependString = THEME->GetMetric(sMetricsGroup,"ArtistPrependString");
+	AddCommand( "AfterSet", THEMEMAN->GetMetricA(sMetricsGroup,"AfterSetCommand") );
+	m_sArtistPrependString = THEMEMAN->GetMetric(sMetricsGroup,"ArtistPrependString");
 
 	ActorUtil::LoadAllCommandsAndOnCommand( m_textTitle, sMetricsGroup );
 	ActorUtil::LoadAllCommandsAndOnCommand( m_textSubTitle, sMetricsGroup );

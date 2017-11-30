@@ -37,13 +37,13 @@ for l in ivalues(Letters) do
 		Text = l;
 	};
 	if l == "BACK" or l == "ENTER" then
-		children[#children].File = THEME:GetPathF("Common", "Normal");
+		children[#children].File = THEMEMAN:GetPathF("Common", "Normal");
 	end;
 end;
-children[#children+1] = LoadActor( THEME:GetPathS("Common", "value") ) .. { Name = "Type"; SupportPan = true; }
-children[#children+1] = LoadActor( THEME:GetPathS("Common", "cancel") ) .. { Name = "Back"; SupportPan = true; }
-children[#children+1] = LoadActor( THEME:GetPathS("Common", "start") ).. { Name = "Enter"; SupportPan = true; }
-children[#children+1] = LoadActor( THEME:GetPathS("MusicWheel", "change") ) .. { Name = "Move"; SupportPan = true; }
+children[#children+1] = LoadActor( THEMEMAN:GetPathS("Common", "value") ) .. { Name = "Type"; SupportPan = true; }
+children[#children+1] = LoadActor( THEMEMAN:GetPathS("Common", "cancel") ) .. { Name = "Back"; SupportPan = true; }
+children[#children+1] = LoadActor( THEMEMAN:GetPathS("Common", "start") ).. { Name = "Enter"; SupportPan = true; }
+children[#children+1] = LoadActor( THEMEMAN:GetPathS("MusicWheel", "change") ) .. { Name = "Move"; SupportPan = true; }
 
 local CursorFiles = {
 	[PLAYER_1] = "Cursor P1",
@@ -51,7 +51,7 @@ local CursorFiles = {
 };
 
 for pn in ivalues(PlayerNumber) do
-	children[#children+1] = LoadActor( THEME:GetPathG("_frame", "1D"),
+	children[#children+1] = LoadActor( THEMEMAN:GetPathG("_frame", "1D"),
 		{ 4/10, 2/10, 4/10 },
 		LoadActor(CursorFiles[pn])
 	)..{

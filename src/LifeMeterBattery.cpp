@@ -14,8 +14,8 @@ LifeMeterBattery::LifeMeterBattery()
 	m_iLivesLeft= 4;
 	m_iTrailingLivesLeft = m_iLivesLeft;
 
-	m_soundGainLife.Load( THEME->GetPathS("LifeMeterBattery","gain") );
-	m_soundLoseLife.Load( THEME->GetPathS("LifeMeterBattery","lose"),true );
+	m_soundGainLife.Load( THEMEMAN->GetPathS("LifeMeterBattery","gain") );
+	m_soundLoseLife.Load( THEMEMAN->GetPathS("LifeMeterBattery","lose"),true );
 }
 
 void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
@@ -42,10 +42,10 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled( pPlayerState );
 	LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
 
-	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
+	m_sprFrame.Load( THEMEMAN->GetPathG(sType,"frame") );
 	this->AddChild( m_sprFrame );
 
-	m_sprBattery.Load( THEME->GetPathG(sType,"lives") );
+	m_sprBattery.Load( THEMEMAN->GetPathG(sType,"lives") );
 	m_sprBattery->SetName( fmt::sprintf("BatteryP%i",int(pn+1)) );
 	if( bPlayerEnabled )
 	{
@@ -53,7 +53,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 		this->AddChild( m_sprBattery );
 	}
 
-	m_textNumLives.LoadFromFont( THEME->GetPathF(sType, "lives") );
+	m_textNumLives.LoadFromFont( THEMEMAN->GetPathF(sType, "lives") );
 	m_textNumLives.SetName( fmt::sprintf("NumLivesP%i",int(pn+1)) );
 	if( bPlayerEnabled )
 	{

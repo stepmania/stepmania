@@ -10,12 +10,12 @@
 #include "MemoryCardDisplay.h"
 #include "InputEventPlus.h"
 
-#define TIMER_STEALTH				THEME->GetMetricB(m_sName,"TimerStealth")
-#define SHOW_STAGE_DISPLAY			THEME->GetMetricB(m_sName,"ShowStageDisplay")
-#define MEMORY_CARD_ICONS			THEME->GetMetricB(m_sName,"MemoryCardIcons")
-#define FORCE_TIMER				THEME->GetMetricB(m_sName,"ForceTimer")
-#define STOP_MUSIC_ON_BACK			THEME->GetMetricB(m_sName,"StopMusicOnBack")
-#define WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT	THEME->GetMetricB(m_sName,"WaitForChildrenBeforeTweeningOut")
+#define TIMER_STEALTH				THEMEMAN->GetMetricB(m_sName,"TimerStealth")
+#define SHOW_STAGE_DISPLAY			THEMEMAN->GetMetricB(m_sName,"ShowStageDisplay")
+#define MEMORY_CARD_ICONS			THEMEMAN->GetMetricB(m_sName,"MemoryCardIcons")
+#define FORCE_TIMER				THEMEMAN->GetMetricB(m_sName,"ForceTimer")
+#define STOP_MUSIC_ON_BACK			THEMEMAN->GetMetricB(m_sName,"StopMusicOnBack")
+#define WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT	THEMEMAN->GetMetricB(m_sName,"WaitForChildrenBeforeTweeningOut")
 
 REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements()
@@ -67,13 +67,13 @@ void ScreenWithMenuElements::Init()
 		this->AddChild( m_MenuTimer );
 	}
 
-	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
+	m_sprUnderlay.Load( THEMEMAN->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
 	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_UNDERLAY );
 	this->AddChild( m_sprUnderlay );
 	LOAD_ALL_COMMANDS( m_sprUnderlay );
 
-	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
+	m_sprOverlay.Load( THEMEMAN->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName("Overlay");
 	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
 	this->AddChild( m_sprOverlay );
@@ -98,26 +98,26 @@ void ScreenWithMenuElements::Init()
 	}
 
 	m_In.SetName( "In" );
-	m_In.Load( THEME->GetPathB(m_sName,"in") );
+	m_In.Load( THEMEMAN->GetPathB(m_sName,"in") );
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
 	LOAD_ALL_COMMANDS( m_In );
 
 	m_Out.SetName( "Out" );
-	m_Out.Load( THEME->GetPathB(m_sName,"out") );
+	m_Out.Load( THEMEMAN->GetPathB(m_sName,"out") );
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 	LOAD_ALL_COMMANDS( m_Out );
 
 	m_Cancel.SetName( "Cancel" );
-	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
+	m_Cancel.Load( THEMEMAN->GetPathB(m_sName,"cancel") );
 	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Cancel );
 	LOAD_ALL_COMMANDS( m_Cancel );
 
 	// Grab the music path here; don't GetPath during BeginScreen.
 	if( PLAY_MUSIC )
-		m_sPathToMusic = THEME->GetPathS( m_sName, "music" );
+		m_sPathToMusic = THEMEMAN->GetPathS( m_sName, "music" );
 }
 
 void ScreenWithMenuElements::BeginScreen()
@@ -203,7 +203,7 @@ std::string ScreenWithMenuElements::HandleLuaMusicFile(std::string const& path)
 			{
 				// there are two possible ways to load a music file via Lua.
 				// 1) return the path to the sound
-				// (themer has to use THEME:GetPathS())
+				// (themer has to use THEMEMAN:GetPathS())
 				std::string music_path_from_lua;
 				LuaHelpers::Pop(L, music_path_from_lua);
 				if(!music_path_from_lua.empty())

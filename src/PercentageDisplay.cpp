@@ -57,7 +57,7 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	{
 		LuaHelpers::ReportScriptError(ActorUtil::GetWhere(pNode) + ": PercentageDisplay: missing the node \"Percent\"");
 		// Make a BitmapText just so we don't crash.
-		m_textPercent.LoadFromFont(THEME->GetPathF("", "Common Normal"));
+		m_textPercent.LoadFromFont(THEMEMAN->GetPathF("", "Common Normal"));
 	}
 	else
 	{
@@ -91,12 +91,12 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	m_pPlayerStageStats = pPlayerStageStats;
 	m_bAutoRefresh = bAutoRefresh;
 
-	m_iDancePointsDigits = THEME->GetMetricI( sMetricsGroup, "DancePointsDigits" );
-	m_bUseRemainder = THEME->GetMetricB( sMetricsGroup, "PercentUseRemainder" );
-	m_FormatPercentScore = THEME->GetMetricR( sMetricsGroup, "Format" );
+	m_iDancePointsDigits = THEMEMAN->GetMetricI( sMetricsGroup, "DancePointsDigits" );
+	m_bUseRemainder = THEMEMAN->GetMetricB( sMetricsGroup, "PercentUseRemainder" );
+	m_FormatPercentScore = THEMEMAN->GetMetricR( sMetricsGroup, "Format" );
 
-	m_sPercentFormat = THEME->GetMetric( sMetricsGroup, "PercentFormat" );
-	m_sRemainderFormat = THEME->GetMetric( sMetricsGroup, "RemainderFormat" );
+	m_sPercentFormat = THEMEMAN->GetMetric( sMetricsGroup, "PercentFormat" );
+	m_sRemainderFormat = THEMEMAN->GetMetric( sMetricsGroup, "RemainderFormat" );
 
 	if(m_FormatPercentScore.GetLuaType() != LUA_TFUNCTION)
 	{
@@ -112,7 +112,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	else
 		m_textPercent.SetName( "Percent" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 
-	m_textPercent.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
+	m_textPercent.LoadFromFont( THEMEMAN->GetPathF(sMetricsGroup,"text") );
 	ActorUtil::SetXY( m_textPercent, sMetricsGroup );
 	ActorUtil::LoadAllCommands( m_textPercent, sMetricsGroup );
 	this->AddChild( &m_textPercent );
@@ -120,7 +120,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	if( !ShowDancePointsNotPercentage() && m_bUseRemainder )
 	{
 		m_textPercentRemainder.SetName( "PercentRemainder" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
-		m_textPercentRemainder.LoadFromFont( THEME->GetPathF(sMetricsGroup,"remainder") );
+		m_textPercentRemainder.LoadFromFont( THEMEMAN->GetPathF(sMetricsGroup,"remainder") );
 		ActorUtil::SetXY( m_textPercentRemainder, sMetricsGroup );
 		ActorUtil::LoadAllCommands( m_textPercentRemainder, sMetricsGroup );
 		ASSERT( m_textPercentRemainder.HasCommand("Off") );

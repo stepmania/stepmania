@@ -10,7 +10,7 @@
 PromptAnswer ScreenPrompt::s_LastAnswer = ANSWER_YES;
 bool ScreenPrompt::s_bCancelledLast = false;
 
-#define ANSWER_TEXT( s )	THEME->GetString(m_sName,s)
+#define ANSWER_TEXT( s )	THEMEMAN->GetString(m_sName,s)
 
 static const char *PromptAnswerNames[] = {
 	"Yes",
@@ -55,19 +55,19 @@ void ScreenPrompt::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
+	m_textQuestion.LoadFromFont( THEMEMAN->GetPathF(m_sName,"question") );
 	m_textQuestion.SetName( "Question" );
 	LOAD_ALL_COMMANDS( m_textQuestion );
 	this->AddChild( &m_textQuestion );
 
-	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
+	m_sprCursor.Load( THEMEMAN->GetPathG(m_sName,"cursor") );
 	m_sprCursor->SetName( "Cursor" );
 	LOAD_ALL_COMMANDS( m_sprCursor );
 	this->AddChild( m_sprCursor );
 
 	for( int i=0; i<NUM_PromptAnswer; i++ )
 	{
-		m_textAnswer[i].LoadFromFont( THEME->GetPathF(m_sName,"answer") );
+		m_textAnswer[i].LoadFromFont( THEMEMAN->GetPathF(m_sName,"answer") );
 		// The name of the actor isn't set because it is not known at this point
 		// how many answers there will be, and the name depends on the number of
 		// answers as a clumsy way of letting the themer set different positions
@@ -77,7 +77,7 @@ void ScreenPrompt::Init()
 		this->AddChild( &m_textAnswer[i] );
 	}
 
-	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
+	m_sndChange.Load( THEMEMAN->GetPathS(m_sName,"change"), true );
 }
 
 void ScreenPrompt::BeginScreen()

@@ -1,6 +1,6 @@
 local t = Def.ActorFrame {};
 	-- Bar
-	t[#t+1] = LoadActor(THEME:GetPathG("LifeMeter", "p1 bar")) .. {
+	t[#t+1] = LoadActor(THEMEMAN:GetPathG("LifeMeter", "p1 bar")) .. {
 	};
 
 	-- Difficulty

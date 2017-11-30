@@ -336,8 +336,8 @@ end
 -- 2. Seeing "foo.bar" in the menu and stuff will probably motivate themers
 --    that make custom mods to translate them.
 local function optional_trans(section, str)
-	if THEME:HasString(section, str) then
-		return THEME:GetString(section, str)
+	if THEMEMAN:HasString(section, str) then
+		return THEMEMAN:GetString(section, str)
 	end
 	return str
 end

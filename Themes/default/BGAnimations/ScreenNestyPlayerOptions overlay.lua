@@ -150,9 +150,9 @@ local menu_actors= {}
 local frame= Def.ActorFrame{}
 
 for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
-	menu_actors[pn]= LoadActor(THEME:GetPathG("", "generic_menu.lua"), 1, 352, menu_height, 1, menu_x[pn]-(menu_width/2), 138, 36)
+	menu_actors[pn]= LoadActor(THEMEMAN:GetPathG("", "generic_menu.lua"), 1, 352, menu_height, 1, menu_x[pn]-(menu_width/2), 138, 36)
 	frame[#frame+1]= LoadActor(
-		THEME:GetPathG("ScreenOptions", "halfpage")) .. {
+		THEMEMAN:GetPathG("ScreenOptions", "halfpage")) .. {
 		InitCommand= function(self)
 			self:xy(menu_x[pn], 360)
 		end;
@@ -190,8 +190,8 @@ for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 		end,
 		change_explanationCommand= function(self, param)
 			local text= ""
-			if THEME:HasString("notefield_explanations", param.text) then
-				text= THEME:GetString("notefield_explanations", param.text)
+			if THEMEMAN:HasString("notefield_explanations", param.text) then
+				text= THEMEMAN:GetString("notefield_explanations", param.text)
 			end
 			self:playcommand("translated_explanation", {text= text})
 		end,
@@ -199,7 +199,7 @@ for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 			self:stoptweening():settext(param.text):cropright(1):linear(.5):cropright(0)
 		end,
 	}
-	frame[#frame+1]= LoadActor(THEME:GetPathG("NestyOptions", "ready")) .. {
+	frame[#frame+1]= LoadActor(THEMEMAN:GetPathG("NestyOptions", "ready")) .. {
 		InitCommand= function(self)
 			ready_indicators[pn]= self
 			self:xy(menu_x[pn], 581):zoom(0.4):diffusealpha(0)
@@ -216,7 +216,7 @@ for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 	}
 	local metrics_name = "PlayerNameplate" .. ToEnumShortString(pn)
 	frame[#frame+1] = LoadActor(
-		THEME:GetPathG("ScreenPlayerOptions", "PlayerNameplate"), pn) .. {
+		THEMEMAN:GetPathG("ScreenPlayerOptions", "PlayerNameplate"), pn) .. {
 		InitCommand=function(self)
 			self:name(metrics_name)
 			ActorUtil.LoadAllCommandsAndSetXY(self,"ScreenPlayerOptions")

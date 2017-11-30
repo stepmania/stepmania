@@ -1,1 +1,1 @@
-return LoadActor(THEME:GetPathG("PaneDisplay","Text"),PLAYER_1);
+return LoadActor(THEMEMAN:GetPathG("PaneDisplay","Text"),PLAYER_1);

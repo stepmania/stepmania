@@ -4,4 +4,4 @@ local icon_params = {
 	value_text = GAMESTATE:GetCurrentGame():GetName()
 }
 
-return LoadActor(THEME:GetPathG("", "_title_info_icon"), icon_params)
+return LoadActor(THEMEMAN:GetPathG("", "_title_info_icon"), icon_params)

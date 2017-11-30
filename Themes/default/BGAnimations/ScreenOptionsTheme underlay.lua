@@ -1,5 +1,5 @@
 return Def.ActorFrame {
-	LoadActor(THEME:GetPathG("ScreenMiniMenu", "page")) .. {
+	LoadActor(THEMEMAN:GetPathG("ScreenMiniMenu", "page")) .. {
 		InitCommand=cmd(Center;)
 	},
 }

@@ -6,12 +6,12 @@
 
 using std::vector;
 
-#define CODE( s )		THEME->GetMetric (sType,fmt::sprintf("Code%s",s.c_str()))
+#define CODE( s )		THEMEMAN->GetMetric (sType,fmt::sprintf("Code%s",s.c_str()))
 void InputQueueCodeSet::Load( const std::string &sType )
 {
 	// Load the codes here. There is no guarantee that m_asCodeNames is not empty,
 	// so make a temporary to move it.
-	auto toDump = Rage::split(THEME->GetMetric(sType, "CodeNames"), ",", Rage::EmptyEntries::skip);
+	auto toDump = Rage::split(THEMEMAN->GetMetric(sType, "CodeNames"), ",", Rage::EmptyEntries::skip);
 	m_asCodeNames.insert(m_asCodeNames.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 
 	for (auto &name: m_asCodeNames)

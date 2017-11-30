@@ -250,7 +250,7 @@ void CourseUtil::AutogenEndlessFromGroup( const std::string &sGroupName, Difficu
 	{
 		out.m_sMainTitle = "All Songs";
 		// this sounds reasonable... -aj
-		out.m_sBannerPath = THEME->GetPathG("Banner","all music");
+		out.m_sBannerPath = THEMEMAN->GetPathG("Banner","all music");
 	}
 	else
 	{

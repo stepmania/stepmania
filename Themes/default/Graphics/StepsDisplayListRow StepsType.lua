@@ -4,11 +4,11 @@ local t = Def.ActorFrame{
 	Def.Sprite{
 		InitCommand=cmd(x,8;horizalign,right),
 		SetMessageCommand=function(self,param)
-			local path = "Themes/"..THEME:GetCurThemeName().."/Graphics/_StepsType/" .. ToEnumShortString(param.StepsType) .. ".png"
+			local path = "Themes/"..THEMEMAN:GetCurThemeName().."/Graphics/_StepsType/" .. ToEnumShortString(param.StepsType) .. ".png"
 			if FILEMAN:DoesFileExist(path) then
 				self:Load( path )
 			else
-				self:Load( THEME:GetPathG("","_StepsType/missing") )
+				self:Load( THEMEMAN:GetPathG("","_StepsType/missing") )
 			end
 		end
 	}
