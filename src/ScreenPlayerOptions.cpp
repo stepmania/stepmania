@@ -37,7 +37,7 @@ void ScreenPlayerOptions::Init()
 	m_bAcceptedChoices = false;
 	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == Maybe_YES );
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 
 	FOREACH_PlayerNumber( p )
 		m_bRowCausesDisqualified[p].resize( m_pRows.size(), false );

@@ -128,7 +128,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
-		SOUND->StopMusic();
+		SOUNDMAN->StopMusic();
 	else if( SM == SM_AddToChat )
 	{
 		m_textChatOutput.SetText( NSMAN->m_sChatText );

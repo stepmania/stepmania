@@ -81,7 +81,7 @@ local function input(event)
 	local input_functions = {
 		Start= function()
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
-			SOUND:PlayOnce(THEME:GetPathS("Common", "Start"), true)
+			SOUNDMAN:PlayOnce(THEME:GetPathS("Common", "Start"), true)
 		end,
 		Back= function()
 			SCREENMAN:GetTopScreen():Cancel()

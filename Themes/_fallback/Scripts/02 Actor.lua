@@ -388,7 +388,7 @@ end
 -- Play the sound on the given player's side. Must set SupportPan = true
 -- on load.
 function ActorSound:playforplayer(pn)
-	local fBalance = SOUND:GetPlayerBalance(pn)
+	local fBalance = SOUNDMAN:GetPlayerBalance(pn)
 	self:get():SetProperty("Pan", fBalance)
 	self:play()
 	return self

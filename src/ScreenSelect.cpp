@@ -125,7 +125,7 @@ void ScreenSelect::Update( float fDelta )
 	{
 		if( IDLE_COMMENT_SECONDS > 0  &&  m_timerIdleComment.PeekDeltaTime() >= IDLE_COMMENT_SECONDS )
 		{
-			SOUND->PlayOnceFromAnnouncer( m_sName+" IdleComment" );
+			SOUNDMAN->PlayOnceFromAnnouncer( m_sName+" IdleComment" );
 			m_timerIdleComment.GetDeltaTime();
 		}
 

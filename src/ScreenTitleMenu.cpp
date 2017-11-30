@@ -36,7 +36,7 @@ void ScreenTitleMenu::Init()
 {
 	ScreenSelectMaster::Init();
 
-	SOUND->PlayOnceFromAnnouncer( "title menu game name" );
+	SOUNDMAN->PlayOnceFromAnnouncer( "title menu game name" );
 }
 
 static LocalizedString THEME_		("ScreenTitleMenu","Theme");

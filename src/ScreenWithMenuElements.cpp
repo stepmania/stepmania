@@ -133,7 +133,7 @@ void ScreenWithMenuElements::BeginScreen()
 	this->SortByDrawOrder();
 	m_In.StartTransitioning( SM_DoneFadingIn );
 
-	SOUND->PlayOnceFromAnnouncer( m_sName+" intro" );
+	SOUNDMAN->PlayOnceFromAnnouncer( m_sName+" intro" );
 	StartPlayingMusic();
 
 	/* Evaluate FirstUpdateCommand. */
@@ -242,14 +242,14 @@ void ScreenWithMenuElements::StartPlayingMusic()
 	{
 		GameSoundManager::PlayMusicParams pmp;
 		pmp.sFile= HandleLuaMusicFile(m_sPathToMusic);
-		if(!pmp.sFile.empty() && pmp.sFile != SOUND->GetMusicPath())
+		if(!pmp.sFile.empty() && pmp.sFile != SOUNDMAN->GetMusicPath())
 		{
 			pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
 			if(DELAY_MUSIC_SECONDS > 0.0f)
 			{
 				pmp.fStartSecond = -DELAY_MUSIC_SECONDS;
 			}
-			SOUND->PlayMusic(pmp);
+			SOUNDMAN->PlayMusic(pmp);
 		}
 	}
 }
@@ -329,7 +329,7 @@ void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 		return;	// ignore
 
 	if( STOP_MUSIC_ON_BACK )
-		SOUND->StopMusic();
+		SOUNDMAN->StopMusic();
 
 	if( m_MenuTimer )
 		m_MenuTimer->Stop();

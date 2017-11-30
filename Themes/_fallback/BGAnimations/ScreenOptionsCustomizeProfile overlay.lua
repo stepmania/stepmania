@@ -138,7 +138,7 @@ local function exit_screen()
 	local profile_id= GAMESTATE:GetEditLocalProfileID()
 	PROFILEMAN:SaveLocalProfile(profile_id)
 	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
-	SOUND:PlayOnce(THEME:GetPathS("Common", "Start"))
+	SOUNDMAN:PlayOnce(THEME:GetPathS("Common", "Start"))
 end
 
 local function input(event)

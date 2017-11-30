@@ -312,7 +312,7 @@ local numpad_entry_mt= {
 			end
 			if not args.InvalidValueCommand then
 				args.InvalidValueCommand= function(subself)
-					SOUND:PlayOnce(THEME:GetPathS("Common", "Invalid"))
+					SOUNDMAN:PlayOnce(THEME:GetPathS("Common", "Invalid"))
 				end
 			end
 			add_default_commands_to_actor({"EntryDoneCommand"}, args)

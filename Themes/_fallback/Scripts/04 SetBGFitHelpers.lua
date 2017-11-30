@@ -90,9 +90,9 @@ function BGFitInputActor(choices, lose_focus, gain_focus)
 			end
 			check_choice_and_change_focus(gain_focus)
 			PREFSMAN:SetPreference("BackgroundFitMode", BackgroundFitMode[curr_choice])
-			SOUND:PlayOnce(THEME:GetPathS("ScreenSelectMaster", "change"))
+			SOUNDMAN:PlayOnce(THEME:GetPathS("ScreenSelectMaster", "change"))
 		elseif event.GameButton == "Start" or event.GameButton == "Back" then
-			SOUND:PlayOnce(THEME:GetPathS("ScreenSelectMaster", "start"))
+			SOUNDMAN:PlayOnce(THEME:GetPathS("ScreenSelectMaster", "start"))
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 		end
 		return false
