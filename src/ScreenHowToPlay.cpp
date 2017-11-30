@@ -304,11 +304,11 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_GainFocus )
 	{
 		// We do this ourself.
-		SOUND->HandleSongTimer( false );
+		SOUNDMAN->HandleSongTimer( false );
 	}
 	else if( SM == SM_LoseFocus )
 	{
-		SOUND->HandleSongTimer( true );
+		SOUNDMAN->HandleSongTimer( true );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{

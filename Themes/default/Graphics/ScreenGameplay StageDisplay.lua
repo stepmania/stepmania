@@ -3,7 +3,7 @@ local curStageIndex = GAMESTATE:GetCurrentStageIndex() + 1;
 local playMode = GAMESTATE:GetPlayMode();
 
 local t = Def.ActorFrame {
-	LoadActor(		THEME:GetPathG("ScreenGameplay", "progress"))  .. {
+	LoadActor(		THEMEMAN:GetPathG("ScreenGameplay", "progress"))  .. {
 		OnCommand=cmd(playcommand,"Set");
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
@@ -39,7 +39,7 @@ local t = Def.ActorFrame {
 					self:settextf("Stage %s", curStageIndex);
 				else
 					local thed_stage= thified_curstage_index(false)
-					if THEME:GetMetric(curScreen,"StageDisplayUseShortString") then
+					if THEMEMAN:GetMetric(curScreen,"StageDisplayUseShortString") then
 						self:settextf(thed_stage)
 					else
 						self:settextf("%s Stage", thed_stage)

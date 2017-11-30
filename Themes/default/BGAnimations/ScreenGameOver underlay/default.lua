@@ -1,4 +1,4 @@
-local timer_seconds = THEME:GetMetric(Var "LoadingScreen","TimerSeconds");
+local timer_seconds = THEMEMAN:GetMetric(Var "LoadingScreen","TimerSeconds");
 
 return Def.ActorFrame {
 	InitCommand=cmd(Center),
@@ -19,7 +19,7 @@ return Def.ActorFrame {
 		}
 	},
 	--
-	LoadActor(THEME:GetPathG("ScreenGameOver","gameover"))..{
+	LoadActor(THEMEMAN:GetPathG("ScreenGameOver","gameover"))..{
 		InitCommand=cmd(y,-16;shadowlength,2)
 	},
 	LoadFont("Common Normal")..{

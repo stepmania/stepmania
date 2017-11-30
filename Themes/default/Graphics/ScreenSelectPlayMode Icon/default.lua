@@ -1,7 +1,7 @@
 local gc = Var("GameCommand");
 
 local string_name = gc:GetText()
-local string_expl = THEME:GetString(Var "LoadingScreen", gc:GetName().."Explanation")
+local string_expl = THEMEMAN:GetString(Var "LoadingScreen", gc:GetName().."Explanation")
 local icon_color = ModeIconColors[gc:GetName()];
 local icon_size = 192
 

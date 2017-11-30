@@ -304,7 +304,7 @@ local function editor_menu_options(field, field_name, stepstype)
 		table.insert(items, 1, speed_mod_menu_item(config))
 		table.insert(items, 2, speed_type_menu_item(config))
 	end
-	return nesty_menus.add_close_item(items, THEME:GetString("editmode_options", "edit_return"), true)
+	return nesty_menus.add_close_item(items, THEMEMAN:GetString("editmode_options", "edit_return"), true)
 end
 
 

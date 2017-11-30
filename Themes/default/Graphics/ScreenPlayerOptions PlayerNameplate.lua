@@ -22,7 +22,7 @@ if GAMESTATE:GetCurrentSong() then
 end
 
 local t = Def.ActorFrame {
-	LoadActor(THEME:GetPathB("_frame","3x1"),"rounded fill", 250-16) .. {
+	LoadActor(THEMEMAN:GetPathB("_frame","3x1"),"rounded fill", 250-16) .. {
 		OnCommand=cmd(diffuse,ColorDarkTone(PlayerColor(PlayerNumber));diffusealpha,0.9);
 	};
 	LoadFont("Common Condensed") .. {
@@ -37,7 +37,7 @@ local t = Def.ActorFrame {
 		InitCommand=cmd(x,-60;maxwidth,88/bpm_text_zoom),
 		OnCommand=cmd(zoom,bpm_text_zoom)
 	},
-	LoadActor(THEME:GetPathG("_StepsDisplayListRow","arrow")) .. {
+	LoadActor(THEMEMAN:GetPathG("_StepsDisplayListRow","arrow")) .. {
 		Name="Seperator",
 		InitCommand=cmd(x,4)
 	},

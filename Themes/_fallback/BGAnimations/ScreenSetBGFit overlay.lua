@@ -27,9 +27,9 @@ function BGFitNormalExampleText(w, h)
 	return Def.BitmapText{
 		-- To use a different font for the text, change the Font field.
 		Name= "example_label", Font= "Common Normal",
-		-- The "BG" part of the text is fetched with THEME:GetString so that it
+		-- The "BG" part of the text is fetched with THEMEMAN:GetString so that it
 		-- can be translated.
-		Text= w .. ":" .. h .. " " .. THEME:GetString("ScreenSetBGFit", "BG"),
+		Text= w .. ":" .. h .. " " .. THEMEMAN:GetString("ScreenSetBGFit", "BG"),
 		InitCommand= function(self)
 			-- This positions the text underneath its corresponding example.
 			self:y(mini_screen_h * .5 + 9)
@@ -56,7 +56,7 @@ for i, mode in ipairs(BackgroundFitMode) do
 			-- This actor is a label for the choice, so the player knows the name
 			-- of their choice.
 			Name= "mode_label", Font= "Common Normal",
-			Text= THEME:GetString("ScreenSetBGFit", ToEnumShortString(mode)),
+			Text= THEMEMAN:GetString("ScreenSetBGFit", ToEnumShortString(mode)),
 			InitCommand= function(self)
 				-- Position the label above the topmost example.
 				self:y(mini_screen_h * -2.5)

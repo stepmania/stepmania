@@ -13,7 +13,7 @@ void ScreenStatsOverlay::Init()
 {
 	Screen::Init();
 
- 	m_textStats.LoadFromFont( THEME->GetPathF(m_sName,"stats") );
+ 	m_textStats.LoadFromFont( THEMEMAN->GetPathF(m_sName,"stats") );
 	m_textStats.SetName( "Stats" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textStats ); 
 	this->AddChild( &m_textStats );
@@ -47,7 +47,7 @@ void ScreenStatsOverlay::Init()
 			/* This is somewhat big.  Let's put it on the right side, where it'll
 			 * obscure the 2P side during gameplay; there's nowhere to put it that
 			 * doesn't obscure something, and it's just a diagnostic. */
-			m_textSkips[i].LoadFromFont( THEME->GetPathF("Common","normal") );
+			m_textSkips[i].LoadFromFont( THEMEMAN->GetPathF("Common","normal") );
 			m_textSkips[i].SetX( SKIP_X );
 			m_textSkips[i].SetY( 
 				Rage::scale( i + 0.f, 0.f, NUM_SKIPS_TO_SHOW-1.f, rectSkips.top + 10, rectSkips.bottom - 10 )

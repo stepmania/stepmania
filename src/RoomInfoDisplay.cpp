@@ -58,11 +58,11 @@ void RoomInfoDisplay::Load( std::string sType )
 	PLAYERLISTOFFSETX.Load( sType, "PlayerListElementOffsetX" );
 	PLAYERLISTOFFSETY.Load( sType, "PlayerListElementOffsetY" );
 
-	m_bg.Load( THEME->GetPathG(m_sName,"Background") );
+	m_bg.Load( THEMEMAN->GetPathG(m_sName,"Background") );
 	m_bg->SetName( "Background" );
 	this->AddChild( m_bg );
 
-	m_Title.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_Title.LoadFromFont( THEMEMAN->GetPathF(sType,"text") );
 	m_Title.SetName( "RoomTitle" );
 	m_Title.SetShadowLength( 0 );
 	m_Title.SetHorizAlign( align_left );
@@ -70,7 +70,7 @@ void RoomInfoDisplay::Load( std::string sType )
 	ON_COMMAND( m_Title );
 	this->AddChild( &m_Title );
 
-	m_Desc.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_Desc.LoadFromFont( THEMEMAN->GetPathF(sType,"text") );
 	m_Desc.SetName( "RoomDesc" );
 	m_Desc.SetShadowLength( 0 );
 	m_Desc.SetHorizAlign( align_left );
@@ -78,7 +78,7 @@ void RoomInfoDisplay::Load( std::string sType )
 	ON_COMMAND( m_Desc );
 	this->AddChild( &m_Desc );
 
-	m_lastRound.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_lastRound.LoadFromFont( THEMEMAN->GetPathF(sType,"text") );
 	m_lastRound.SetName( "LastRound" );
 	m_lastRound.SetText( LAST_ROUND_INFO.GetValue() );
 	m_lastRound.SetShadowLength( 0 );
@@ -87,7 +87,7 @@ void RoomInfoDisplay::Load( std::string sType )
 	ON_COMMAND( m_lastRound );
 	this->AddChild( &m_lastRound );
 
-	m_songTitle.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_songTitle.LoadFromFont( THEMEMAN->GetPathF(sType,"text") );
 	m_songTitle.SetName( "SongTitle" );
 	m_songTitle.SetShadowLength( 0 );
 	m_songTitle.SetHorizAlign( align_left );
@@ -95,7 +95,7 @@ void RoomInfoDisplay::Load( std::string sType )
 	ON_COMMAND( m_songTitle );
 	this->AddChild( &m_songTitle );
 
-	m_songSub.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_songSub.LoadFromFont( THEMEMAN->GetPathF(sType,"text") );
 	m_songSub.SetName( "SongSubTitle" );
 	m_songSub.SetShadowLength( 0 );
 	m_songSub.SetHorizAlign( align_left );
@@ -103,7 +103,7 @@ void RoomInfoDisplay::Load( std::string sType )
 	ON_COMMAND( m_songSub );
 	this->AddChild( &m_songSub );
 
-	m_songArtist.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_songArtist.LoadFromFont( THEMEMAN->GetPathF(sType,"text") );
 	m_songArtist.SetName( "SongArtist" );
 	m_songArtist.SetShadowLength( 0 );
 	m_songArtist.SetHorizAlign( align_left );
@@ -111,7 +111,7 @@ void RoomInfoDisplay::Load( std::string sType )
 	ON_COMMAND( m_songArtist );
 	this->AddChild( &m_songArtist );
 
-	m_players.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_players.LoadFromFont( THEMEMAN->GetPathF(sType,"text") );
 	m_players.SetName( "Players" );
 	m_players.SetShadowLength( 0 );
 	m_players.SetHorizAlign( align_left );
@@ -178,7 +178,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 		for (size_t i = oldsize; i < m_playerList.size(); i++)
 		{
 			m_playerList[i] = new BitmapText;
-			m_playerList[i]->LoadFromFont( THEME->GetPathF(GetName(),"text") );
+			m_playerList[i]->LoadFromFont( THEMEMAN->GetPathF(GetName(),"text") );
 			m_playerList[i]->SetName("PlayerListElement");
 			m_playerList[i]->SetHorizAlign( align_left );
 			m_playerList[i]->SetX(PLAYERLISTX + (i * PLAYERLISTOFFSETX));

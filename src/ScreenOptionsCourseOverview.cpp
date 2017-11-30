@@ -73,7 +73,7 @@ void ScreenOptionsCourseOverview::Init()
 
 	ScreenOptions::Init();
 
-	m_soundSave.Load( THEME->GetPathS(m_sName,"Save") );
+	m_soundSave.Load( THEMEMAN->GetPathS(m_sName,"Save") );
 	PLAY_SCREEN.Load(m_sName,"PlayScreen");
 	EDIT_SCREEN.Load(m_sName,"EditScreen");
 }

@@ -2,21 +2,21 @@ local c;
 local player = Var "Player";
 
 local JudgeCmds = {
-	TapNoteScore_W1 = THEME:GetMetric( "Judgment", "JudgmentW1Command" );
-	TapNoteScore_W2 = THEME:GetMetric( "Judgment", "JudgmentW2Command" );
-	TapNoteScore_W3 = THEME:GetMetric( "Judgment", "JudgmentW3Command" );
-	TapNoteScore_W4 = THEME:GetMetric( "Judgment", "JudgmentW4Command" );
-	TapNoteScore_W5 = THEME:GetMetric( "Judgment", "JudgmentW5Command" );
-	TapNoteScore_Miss = THEME:GetMetric( "Judgment", "JudgmentMissCommand" );
+	TapNoteScore_W1 = THEMEMAN:GetMetric( "Judgment", "JudgmentW1Command" );
+	TapNoteScore_W2 = THEMEMAN:GetMetric( "Judgment", "JudgmentW2Command" );
+	TapNoteScore_W3 = THEMEMAN:GetMetric( "Judgment", "JudgmentW3Command" );
+	TapNoteScore_W4 = THEMEMAN:GetMetric( "Judgment", "JudgmentW4Command" );
+	TapNoteScore_W5 = THEMEMAN:GetMetric( "Judgment", "JudgmentW5Command" );
+	TapNoteScore_Miss = THEMEMAN:GetMetric( "Judgment", "JudgmentMissCommand" );
 };
 
 local ProtimingCmds = {
-	TapNoteScore_W1 = THEME:GetMetric( "Protiming", "ProtimingW1Command" );
-	TapNoteScore_W2 = THEME:GetMetric( "Protiming", "ProtimingW2Command" );
-	TapNoteScore_W3 = THEME:GetMetric( "Protiming", "ProtimingW3Command" );
-	TapNoteScore_W4 = THEME:GetMetric( "Protiming", "ProtimingW4Command" );
-	TapNoteScore_W5 = THEME:GetMetric( "Protiming", "ProtimingW5Command" );
-	TapNoteScore_Miss = THEME:GetMetric( "Protiming", "ProtimingMissCommand" );
+	TapNoteScore_W1 = THEMEMAN:GetMetric( "Protiming", "ProtimingW1Command" );
+	TapNoteScore_W2 = THEMEMAN:GetMetric( "Protiming", "ProtimingW2Command" );
+	TapNoteScore_W3 = THEMEMAN:GetMetric( "Protiming", "ProtimingW3Command" );
+	TapNoteScore_W4 = THEMEMAN:GetMetric( "Protiming", "ProtimingW4Command" );
+	TapNoteScore_W5 = THEMEMAN:GetMetric( "Protiming", "ProtimingW5Command" );
+	TapNoteScore_Miss = THEMEMAN:GetMetric( "Protiming", "ProtimingMissCommand" );
 };
 
 local TNSFrames = {
@@ -29,17 +29,17 @@ local TNSFrames = {
 };
 local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
-	LoadActor(THEME:GetPathG("Judgment","Normal")) .. {
+	LoadActor(THEMEMAN:GetPathG("Judgment","Normal")) .. {
 		Name="Judgment";
 		InitCommand=cmd(pause;visible,false);
-		OnCommand=THEME:GetMetric("Judgment","JudgmentOnCommand");
+		OnCommand=THEMEMAN:GetMetric("Judgment","JudgmentOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	LoadFont("Common Normal") .. {
 		Name="ProtimingDisplay";
 		Text="";
 		InitCommand=cmd(visible,false);
-		OnCommand=THEME:GetMetric("Protiming","ProtimingOnCommand");
+		OnCommand=THEMEMAN:GetMetric("Protiming","ProtimingOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	

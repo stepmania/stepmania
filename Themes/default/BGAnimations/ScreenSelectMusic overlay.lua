@@ -4,7 +4,7 @@ local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
     InitCommand=cmd(x,SCREEN_RIGHT-290;y,SCREEN_TOP+49;;);
     OffCommand=cmd(linear,0.3;diffusealpha,0;);
-	LoadActor(THEME:GetPathG("", "_sortFrame"))  .. {
+	LoadActor(THEMEMAN:GetPathG("", "_sortFrame"))  .. {
 	    InitCommand=cmd(diffusealpha,0.9;zoom,1.5);
 		OnCommand=function(self)
 			self:diffuse(ScreenColor(SCREENMAN:GetTopScreen():GetName()));

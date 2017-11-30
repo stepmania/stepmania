@@ -59,7 +59,7 @@ local mid_pane = Def.ActorFrame {
 			if target and target:HasBanner() then
 				self:Load(target:GetBannerPath())
 			else
-				self:Load(THEME:GetPathG("Common fallback", "banner"))
+				self:Load(THEMEMAN:GetPathG("Common fallback", "banner"))
 			end
 			self:scaletoclipped(468,146):x(_screen.cx):y(_screen.cy-173):zoom(0.8)
 		end
@@ -73,7 +73,7 @@ local mid_pane = Def.ActorFrame {
 
 -- Text that's slapped on top of the banner frame.
 if not GAMESTATE:IsCourseMode() then
-	mid_pane[#mid_pane+1] = LoadActor(THEME:GetPathG("ScreenEvaluation", "StageDisplay")) .. {
+	mid_pane[#mid_pane+1] = LoadActor(THEMEMAN:GetPathG("ScreenEvaluation", "StageDisplay")) .. {
 		OnCommand=cmd(x,_screen.cx;y,_screen.cy-98;diffuse,color("#9d324e"))
 	}
 else
@@ -171,7 +171,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 			OffCommand=cmd(decelerate,0.3;diffusealpha,0)
 		},
 		
-		LoadActor(THEME:GetPathG("GradeDisplay", "Grade " .. p_grade)) .. {
+		LoadActor(THEMEMAN:GetPathG("GradeDisplay", "Grade " .. p_grade)) .. {
 			InitCommand=cmd(zoom,0.75;);
 			OnCommand=function(self)
 			        self:diffusealpha(0):zoom(1):sleep(0.63):decelerate(0.4):zoom(0.75):diffusealpha(1)
@@ -189,7 +189,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 			InitCommand=cmd(diffuse,Color.White;zoom,1;addy,38;maxwidth,160;uppercase,true;diffuse,ColorDarkTone(PlayerDarkColor(p));diffusetopedge,ColorMidTone(PlayerColor(p));shadowlength,1;),
 			OnCommand=function(self)
 				if STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetStageAward() then
-					self:settext(THEME:GetString( "StageAward", ToEnumShortString(STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetStageAward()) ))
+					self:settext(THEMEMAN:GetString( "StageAward", ToEnumShortString(STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetStageAward()) ))
 					self:diffusealpha(0):zoomx(0.5):sleep(1):decelerate(0.4):zoomx(1):diffusealpha(1)
 				end
 			end;
@@ -228,7 +228,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 			local record = STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetPersonalHighScoreIndex()
 			local hasPersonalRecord = record ~= -1
 			self:visible(hasPersonalRecord);
-			local text = string.format(THEME:GetString("ScreenEvaluation", "PersonalRecord"), record+1)
+			local text = string.format(THEMEMAN:GetString("ScreenEvaluation", "PersonalRecord"), record+1)
 			self:settext(text)
 			self:diffusealpha(0):sleep(0.6):decelerate(0.3):diffusealpha(1)
 		end;
@@ -264,7 +264,7 @@ if GAMESTATE:IsHumanPlayer(PLAYER_1) == true then
 				  local diff = stepsP1:GetDifficulty();
 				  local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
 				  local cdp1 = GetCustomDifficulty(st, diff, courseType);
-				  self:settext(string.upper(THEME:GetString("CustomDifficulty",ToEnumShortString(diff))) .. "  " .. stepsP1:GetMeter());
+				  self:settext(string.upper(THEMEMAN:GetString("CustomDifficulty",ToEnumShortString(diff))) .. "  " .. stepsP1:GetMeter());
 				  self:diffuse(ColorDarkTone(CustomDifficultyToColor(cdp1)));				  
 				else
 				  self:settext("")
@@ -302,7 +302,7 @@ if GAMESTATE:IsHumanPlayer(PLAYER_2) == true then
 				  local diff = stepsP2:GetDifficulty();
 				  local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
 				  local cdp2 = GetCustomDifficulty(st, diff, courseType);
-				  self:settext(string.upper(THEME:GetString("CustomDifficulty",ToEnumShortString(diff))) .. "  " .. stepsP2:GetMeter());
+				  self:settext(string.upper(THEMEMAN:GetString("CustomDifficulty",ToEnumShortString(diff))) .. "  " .. stepsP2:GetMeter());
 				  self:diffuse(ColorDarkTone(CustomDifficultyToColor(cdp2)));				  
 				else
 				  self:settext("")
@@ -323,7 +323,7 @@ t[#t+1] = Def.BitmapText {
 		Condition=GAMESTATE:HasEarnedExtraStage();
 		InitCommand=cmd(horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-244;zoom,1;diffuse,color("#EC3F99");diffusebottomedge,color("#AB3468");),
 		OnCommand=function(self)
-			local text = string.upper(THEME:GetString("ScreenEvaluation", "ExtraUnlocked"))
+			local text = string.upper(THEMEMAN:GetString("ScreenEvaluation", "ExtraUnlocked"))
 			self:settext(text)
 			self:diffusealpha(0):zoomx(0.7):sleep(1.3):decelerate(0.3):diffusealpha(1):zoomx(1)
 		end;
@@ -338,7 +338,7 @@ t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficult
 if gameplay_pause_count > 0 then
 	t[#t+1]= Def.BitmapText{
 		Font= "_roboto condensed 24px",
-		Text= THEME:GetString("PauseMenu", "pause_count") .. ": " .. gameplay_pause_count,
+		Text= THEMEMAN:GetString("PauseMenu", "pause_count") .. ": " .. gameplay_pause_count,
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-100+26;);
 		OnCommand=function(self)
 			self:diffuse(color("#512232")):zoom(0.8);

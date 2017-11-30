@@ -14,8 +14,8 @@
 
 using std::vector;
 
-#define SECONDS_TO_SHOW			THEME->GetMetricF(m_sName,"SecondsToShow")
-#define ALLOW_STYLE_TYPES		THEME->GetMetric (m_sName,"AllowStyleTypes")
+#define SECONDS_TO_SHOW			THEMEMAN->GetMetricF(m_sName,"SecondsToShow")
+#define ALLOW_STYLE_TYPES		THEMEMAN->GetMetric (m_sName,"AllowStyleTypes")
 
 REGISTER_SCREEN_CLASS( ScreenDemonstration );
 ScreenDemonstration::ScreenDemonstration()

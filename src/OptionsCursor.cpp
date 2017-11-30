@@ -38,7 +38,7 @@ OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
 void OptionsCursor::Load( const std::string &sMetricsGroup, bool bLoadCanGos )
 {
 #define LOAD_SPR( spr, name ) \
-	spr.Load( THEME->GetPathG(sMetricsGroup,name) ); \
+	spr.Load( THEMEMAN->GetPathG(sMetricsGroup,name) ); \
 	spr->SetName( name ); \
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( spr, sMetricsGroup ); \
 	this->AddChild( spr );

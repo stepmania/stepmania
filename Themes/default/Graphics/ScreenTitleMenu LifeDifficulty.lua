@@ -4,4 +4,4 @@ local icon_params = {
 	value_text = GetLifeDifficulty()
 }
 
-return LoadActor(THEME:GetPathG("", "_title_info_icon"), icon_params)
+return LoadActor(THEMEMAN:GetPathG("", "_title_info_icon"), icon_params)

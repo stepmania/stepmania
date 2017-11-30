@@ -56,7 +56,7 @@ void DialogUtil::SetHeaderFont( HWND hdlg, int nID )
 
 void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 {
-	ASSERT( THEME != nullptr );
+	ASSERT( THEMEMAN != nullptr );
 
 	const int LARGE_STRING = 256;
 	char szTemp[LARGE_STRING] = "";
@@ -66,7 +66,7 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 		::GetWindowText( hdlg, szTemp, ARRAYLEN(szTemp) );
 		std::string s = szTemp;
 		sGroup = "Dialog-"+s;
-		s = THEME->GetString( sGroup, s );
+		s = THEMEMAN->GetString( sGroup, s );
 		::SetWindowText( hdlg, ConvertUTF8ToACP(s).c_str() );
 	}
 
@@ -76,7 +76,7 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 		std::string s = szTemp;
 		if( s.empty() )
 			continue;
-		s = THEME->GetString( sGroup, s );
+		s = THEMEMAN->GetString( sGroup, s );
 		::SetWindowText( hwndChild, ConvertUTF8ToACP(s).c_str() );
 	}
 }

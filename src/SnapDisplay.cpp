@@ -10,7 +10,7 @@ SnapDisplay::SnapDisplay()
 {
 	for( int i=0; i<2; i++ )
 	{
-		m_sprIndicators[i].Load( THEME->GetPathG("SnapDisplay","icon 9x1") );
+		m_sprIndicators[i].Load( THEMEMAN->GetPathG("SnapDisplay","icon 9x1") );
 		m_sprIndicators[i].StopAnimating();
 		this->AddChild( &m_sprIndicators[i] );
 	}

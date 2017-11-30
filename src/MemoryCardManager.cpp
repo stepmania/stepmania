@@ -280,10 +280,10 @@ MemoryCardManager::MemoryCardManager()
 	}
 
 	/* These can play at any time.  Preload them, so we don't cause a skip in gameplay. */
-	m_soundReady.Load( THEME->GetPathS("MemoryCardManager","ready"), true );
-	m_soundError.Load( THEME->GetPathS("MemoryCardManager","error"), true );
-	m_soundTooLate.Load( THEME->GetPathS("MemoryCardManager","too late"), true );
-	m_soundDisconnect.Load( THEME->GetPathS("MemoryCardManager","disconnect"), true );
+	m_soundReady.Load( THEMEMAN->GetPathS("MemoryCardManager","ready"), true );
+	m_soundError.Load( THEMEMAN->GetPathS("MemoryCardManager","error"), true );
+	m_soundTooLate.Load( THEMEMAN->GetPathS("MemoryCardManager","too late"), true );
+	m_soundDisconnect.Load( THEMEMAN->GetPathS("MemoryCardManager","disconnect"), true );
 
 	/* Mount the filesystems that we'll use with Mount().  Use a bogus root for the internal
 	 * mount for now, since we don't know where we'll mount to yet; nothing reads from it

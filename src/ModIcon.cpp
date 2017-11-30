@@ -26,17 +26,17 @@ ModIcon::ModIcon( const ModIcon &cpy ):
 
 void ModIcon::Load( std::string sMetricsGroup )
 {
-	m_sprFilled.Load( THEME->GetPathG(sMetricsGroup,"Filled") );
+	m_sprFilled.Load( THEMEMAN->GetPathG(sMetricsGroup,"Filled") );
 	m_sprFilled->SetName("Filled");
 	ActorUtil::LoadAllCommands( m_sprFilled, sMetricsGroup );
 	this->AddChild( m_sprFilled );
 
-	m_sprEmpty.Load( THEME->GetPathG(sMetricsGroup,"Empty") );
+	m_sprEmpty.Load( THEMEMAN->GetPathG(sMetricsGroup,"Empty") );
 	m_sprEmpty->SetName("Empty");
 	ActorUtil::LoadAllCommands( m_sprEmpty, sMetricsGroup );
 	this->AddChild( m_sprEmpty );
 
-	m_text.LoadFromFont( THEME->GetPathF(sMetricsGroup,"Text") );
+	m_text.LoadFromFont( THEMEMAN->GetPathF(sMetricsGroup,"Text") );
 	m_text.SetName( "Text" );
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_text, sMetricsGroup );
 	this->AddChild( &m_text );

@@ -12,7 +12,7 @@
 #include "InputEventPlus.h"
 #include "RageSoundManager.h"
 
-#define START_SCREEN(sScreenName)	THEME->GetMetric (sScreenName,"StartScreen")
+#define START_SCREEN(sScreenName)	THEMEMAN->GetMetric (sScreenName,"StartScreen")
 
 ThemeMetric<bool>	BACK_GOES_TO_START_SCREEN( "ScreenAttract", "BackGoesToStartScreen" );
 Preference<float>	g_fSoundVolumeAttract( "SoundVolumeAttract", 1.0f );
@@ -140,7 +140,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		 * music before we fade out. */
 		bool bMusicChanging = false;
 		if( PLAY_MUSIC )
-			bMusicChanging = THEME->GetPathS(m_sName,"music") != THEME->GetPathS(GetNextScreenName(),"music",true);	// GetPath optional on the next screen because it may not have music.
+			bMusicChanging = THEMEMAN->GetPathS(m_sName,"music") != THEMEMAN->GetPathS(GetNextScreenName(),"music",true);	// GetPath optional on the next screen because it may not have music.
 
 		if( bMusicChanging )
 			SOUND->StopMusic();

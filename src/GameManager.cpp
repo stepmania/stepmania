@@ -40,9 +40,9 @@ enum
 
 std::string StepsTypeInfo::GetLocalizedString() const
 {
-	if( THEME->HasString( "StepsType", stepTypeName ) )
+	if( THEMEMAN->HasString( "StepsType", stepTypeName ) )
 	{
-		return THEME->GetString( "StepsType", stepTypeName );
+		return THEMEMAN->GetString( "StepsType", stepTypeName );
 	}
 	return stepTypeName;
 }
@@ -3386,8 +3386,8 @@ std::string GameManager::StyleToLocalizedString( const Style* style )
 {
 	std::string s = style->m_szName;
 	s = Capitalize( s );
-	if( THEME->HasString( "Style", s ) )
-		return THEME->GetString( "Style", s );
+	if( THEMEMAN->HasString( "Style", s ) )
+		return THEMEMAN->GetString( "Style", s );
 	else
 		return s;
 }
@@ -3515,7 +3515,7 @@ public:
 		if( lua_gettop(L) >= 2 && !lua_isnil(L, 2) )
 		{
 			theme = SArg(2);
-			if(!THEME->IsThemeSelectable(theme))
+			if(!THEMEMAN->IsThemeSelectable(theme))
 			{
 				luaL_error(L, "SetGame: Invalid Theme: '%s'", theme.c_str());
 			}

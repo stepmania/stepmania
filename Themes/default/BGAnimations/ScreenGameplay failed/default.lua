@@ -7,7 +7,7 @@ local t = Def.ActorFrame{};
 		InitCommand=cmd(FullScreen;diffuse,color("1,1,1,1");diffusealpha,0);
 		OnCommand=cmd(finishtweening;diffusealpha,1;decelerate,1.25;diffuse,color("1,0,0,0"));
 	};
-	t[#t+1] = LoadActor(THEME:GetPathS( Var "LoadingScreen", "failed" ) ) .. {
+	t[#t+1] = LoadActor(THEMEMAN:GetPathS( Var "LoadingScreen", "failed" ) ) .. {
 		StartTransitioningCommand=cmd(play);
 	};
 

@@ -16,29 +16,29 @@
 
 using std::vector;
 
-#define TITLE_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("TitleP%dOnCommand",p+1))
-#define TITLE_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("TitleP%dOffCommand",p+1))
-#define CARD_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardP%dOnCommand",p+1))
-#define CARD_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardP%dOffCommand",p+1))
-#define CARD_ARROWS_ON_COMMAND( p )			THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardArrowsP%dOnCommand",p+1))
-#define CARD_ARROWS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardArrowsP%dOffCommand",p+1))
-#define EXPLANATION_ON_COMMAND				THEME->GetMetricA("ScreenSelectCharacter","ExplanationOnCommand")
-#define EXPLANATION_OFF_COMMAND				THEME->GetMetricA("ScreenSelectCharacter","ExplanationOffCommand")
-#define ATTACK_FRAME_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackFrameP%dOnCommand",p+1))
-#define ATTACK_FRAME_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackFrameP%dOffCommand",p+1))
-#define ATTACK_ICON_WIDTH					THEME->GetMetricF("ScreenSelectCharacter","AttackIconWidth")
-#define ATTACK_ICON_HEIGHT					THEME->GetMetricF("ScreenSelectCharacter","AttackIconHeight")
-#define ATTACK_ICONS_START_X( p )			THEME->GetMetricF("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dStartX",p+1))
-#define ATTACK_ICONS_START_Y( p )			THEME->GetMetricF("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dStartY",p+1))
-#define ATTACK_ICONS_SPACING_X				THEME->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingX")
-#define ATTACK_ICONS_SPACING_Y				THEME->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingY")
-#define ATTACK_ICONS_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dOnCommand",p+1))
-#define ATTACK_ICONS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dOffCommand",p+1))
-#define TIMER_SECONDS						THEME->GetMetricI("ScreenSelectCharacter","TimerSeconds")
-#define ICON_WIDTH							THEME->GetMetricF("ScreenSelectCharacter","IconWidth")
-#define ICON_HEIGHT							THEME->GetMetricF("ScreenSelectCharacter","IconHeight")
-#define ICONS_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("IconsP%dOnCommand",p+1))
-#define ICONS_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("IconsP%dOffCommand",p+1))
+#define TITLE_ON_COMMAND( p )				THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("TitleP%dOnCommand",p+1))
+#define TITLE_OFF_COMMAND( p )				THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("TitleP%dOffCommand",p+1))
+#define CARD_ON_COMMAND( p )				THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardP%dOnCommand",p+1))
+#define CARD_OFF_COMMAND( p )				THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardP%dOffCommand",p+1))
+#define CARD_ARROWS_ON_COMMAND( p )			THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardArrowsP%dOnCommand",p+1))
+#define CARD_ARROWS_OFF_COMMAND( p )		THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardArrowsP%dOffCommand",p+1))
+#define EXPLANATION_ON_COMMAND				THEMEMAN->GetMetricA("ScreenSelectCharacter","ExplanationOnCommand")
+#define EXPLANATION_OFF_COMMAND				THEMEMAN->GetMetricA("ScreenSelectCharacter","ExplanationOffCommand")
+#define ATTACK_FRAME_ON_COMMAND( p )		THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackFrameP%dOnCommand",p+1))
+#define ATTACK_FRAME_OFF_COMMAND( p )		THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackFrameP%dOffCommand",p+1))
+#define ATTACK_ICON_WIDTH					THEMEMAN->GetMetricF("ScreenSelectCharacter","AttackIconWidth")
+#define ATTACK_ICON_HEIGHT					THEMEMAN->GetMetricF("ScreenSelectCharacter","AttackIconHeight")
+#define ATTACK_ICONS_START_X( p )			THEMEMAN->GetMetricF("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dStartX",p+1))
+#define ATTACK_ICONS_START_Y( p )			THEMEMAN->GetMetricF("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dStartY",p+1))
+#define ATTACK_ICONS_SPACING_X				THEMEMAN->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingX")
+#define ATTACK_ICONS_SPACING_Y				THEMEMAN->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingY")
+#define ATTACK_ICONS_ON_COMMAND( p )		THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dOnCommand",p+1))
+#define ATTACK_ICONS_OFF_COMMAND( p )		THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dOffCommand",p+1))
+#define TIMER_SECONDS						THEMEMAN->GetMetricI("ScreenSelectCharacter","TimerSeconds")
+#define ICON_WIDTH							THEMEMAN->GetMetricF("ScreenSelectCharacter","IconWidth")
+#define ICON_HEIGHT							THEMEMAN->GetMetricF("ScreenSelectCharacter","IconHeight")
+#define ICONS_ON_COMMAND( p )				THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("IconsP%dOnCommand",p+1))
+#define ICONS_OFF_COMMAND( p )				THEMEMAN->GetMetricA("ScreenSelectCharacter",fmt::sprintf("IconsP%dOffCommand",p+1))
 
 #define LEVEL_CURSOR_X( p, l )	( ICONS_START_X(p)+ICONS_SPACING_X*((NUM_ATTACKS_PER_LEVEL-1)/2.f) )
 #define LEVEL_CURSOR_Y( p, l )	( ICONS_START_Y(p)+ICONS_SPACING_Y*l )
@@ -89,7 +89,7 @@ void ScreenSelectCharacter::Init()
 
 	FOREACH_EnabledPlayer( p )
 	{
-		m_sprTitle[p].Load( THEME->GetPathG("ScreenSelectCharacter","title 2x2") );
+		m_sprTitle[p].Load( THEMEMAN->GetPathG("ScreenSelectCharacter","title 2x2") );
 		m_sprTitle[p].SetState( GAMESTATE->IsHumanPlayer(p) ? p : 2+p );
 		m_sprTitle[p].StopAnimating();
 		m_sprTitle[p].RunCommands( TITLE_ON_COMMAND(p) );
@@ -99,7 +99,7 @@ void ScreenSelectCharacter::Init()
 		m_sprCard[p].RunCommands( CARD_ON_COMMAND(p) );
 		this->AddChild( &m_sprCard[p] );
 
-		m_sprCardArrows[p].Load( THEME->GetPathG("ScreenSelectCharacter","card arrows") );
+		m_sprCardArrows[p].Load( THEMEMAN->GetPathG("ScreenSelectCharacter","card arrows") );
 		m_sprCardArrows[p].RunCommands( CARD_ARROWS_ON_COMMAND(p) );
 		this->AddChild( &m_sprCardArrows[p] );
 
@@ -111,7 +111,7 @@ void ScreenSelectCharacter::Init()
 
 		if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
 		{
-			m_sprAttackFrame[p].Load( THEME->GetPathG("ScreenSelectCharacter","attack frame 1x2") );
+			m_sprAttackFrame[p].Load( THEMEMAN->GetPathG("ScreenSelectCharacter","attack frame 1x2") );
 			m_sprAttackFrame[p].StopAnimating();
 			m_sprAttackFrame[p].SetState( p );
 			m_sprAttackFrame[p].RunCommands( ATTACK_FRAME_ON_COMMAND(p) );
@@ -129,14 +129,14 @@ void ScreenSelectCharacter::Init()
 		}
 	}
 
-	m_sprExplanation.Load( THEME->GetPathG("ScreenSelectCharacter","explanation") );
+	m_sprExplanation.Load( THEMEMAN->GetPathG("ScreenSelectCharacter","explanation") );
 	m_sprExplanation.RunCommands( EXPLANATION_ON_COMMAND );
 	this->AddChild( &m_sprExplanation );
 
 
-	m_soundChange.Load( THEME->GetPathS("ScreenSelectCharacter","change"), true );
+	m_soundChange.Load( THEMEMAN->GetPathS("ScreenSelectCharacter","change"), true );
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
+	SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("select group intro") );
 
 	FOREACH_PlayerNumber( p )
 	{

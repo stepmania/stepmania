@@ -42,7 +42,7 @@ void ScreenRanking::Init()
 	ScreenAttract::Init();
 
 	m_textStepsType.SetName( "StepsType" );
-	m_textStepsType.LoadFromFont( THEME->GetPathF(m_sName,"StepsType") );
+	m_textStepsType.LoadFromFont( THEMEMAN->GetPathF(m_sName,"StepsType") );
 	m_textStepsType.SetShadowLength( 0 );
 	this->AddChild( &m_textStepsType );
 	LOAD_ALL_COMMANDS( m_textStepsType );
@@ -70,7 +70,7 @@ void ScreenRanking::Init()
 	if( RANKING_TYPE == RankingType_Category )
 	{
 		m_textCategory.SetName( "Category" );
-		m_textCategory.LoadFromFont( THEME->GetPathF(m_sName,"category") );
+		m_textCategory.LoadFromFont( THEMEMAN->GetPathF(m_sName,"category") );
 		//m_textCategory.SetShadowLength( 0 );
 		this->AddChild( &m_textCategory );
 		LOAD_ALL_COMMANDS( m_textCategory );
@@ -96,7 +96,7 @@ void ScreenRanking::Init()
 		LOAD_ALL_COMMANDS( m_Banner );
 
 		m_textCourseTitle.SetName( "CourseTitle" );
-		m_textCourseTitle.LoadFromFont( THEME->GetPathF(m_sName,"course title") );
+		m_textCourseTitle.LoadFromFont( THEMEMAN->GetPathF(m_sName,"course title") );
 		//m_textCourseTitle.SetShadowLength( 0 );
 		this->AddChild( &m_textCourseTitle );
 		LOAD_ALL_COMMANDS( m_textCourseTitle );
@@ -125,7 +125,7 @@ void ScreenRanking::Init()
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
 	{
-		m_sprBullets[l].Load( THEME->GetPathG( m_sName, fmt::sprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
+		m_sprBullets[l].Load( THEMEMAN->GetPathG( m_sName, fmt::sprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
 		m_sprBullets[l]->SetName( fmt::sprintf("Bullet%d",l+1) );
 		m_sprBullets[l]->StopAnimating();
 		m_sprBullets[l]->SetState( l );
@@ -134,26 +134,26 @@ void ScreenRanking::Init()
 		this->AddChild( m_sprBullets[l] );
 
 		m_textNames[l].SetName( fmt::sprintf("Name%d",l+1) );
-		m_textNames[l].LoadFromFont( THEME->GetPathF(m_sName,"name") );
+		m_textNames[l].LoadFromFont( THEMEMAN->GetPathF(m_sName,"name") );
 		m_textNames[l].SetXY( NAME_X(l), NAME_Y(l) );
 		ActorUtil::LoadAllCommands( m_textNames[l], m_sName );
 		this->AddChild( &m_textNames[l] );
 
 		m_textScores[l].SetName( fmt::sprintf("Score%d",l+1) );
-		m_textScores[l].LoadFromFont( THEME->GetPathF(m_sName,"score") );
+		m_textScores[l].LoadFromFont( THEMEMAN->GetPathF(m_sName,"score") );
 		m_textScores[l].SetXY( SCORE_X(l), SCORE_Y(l) );
 		ActorUtil::LoadAllCommands( m_textScores[l], m_sName );
 		this->AddChild( &m_textScores[l] );
 
 		m_textPoints[l].SetName( fmt::sprintf("Points%d",l+1) );
-		m_textPoints[l].LoadFromFont( THEME->GetPathF(m_sName,"points") );
+		m_textPoints[l].LoadFromFont( THEMEMAN->GetPathF(m_sName,"points") );
 		m_textPoints[l].SetVisible( false );
 		m_textPoints[l].SetXY( POINTS_X(l), POINTS_Y(l) );
 		ActorUtil::LoadAllCommands( m_textPoints[l], m_sName );
 		this->AddChild( &m_textPoints[l] );
 
 		m_textTime[l].SetName( fmt::sprintf("Time%d",l+1) );
-		m_textTime[l].LoadFromFont( THEME->GetPathF(m_sName,"time") );
+		m_textTime[l].LoadFromFont( THEMEMAN->GetPathF(m_sName,"time") );
 		m_textTime[l].SetVisible( false );
 		m_textTime[l].SetXY( TIME_X(l), TIME_Y(l) );
 		ActorUtil::LoadAllCommands( m_textTime[l], m_sName );

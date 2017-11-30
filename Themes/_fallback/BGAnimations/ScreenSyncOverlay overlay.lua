@@ -1,8 +1,8 @@
-local revert_sync_changes= THEME:GetString("ScreenSyncOverlay", "revert_sync_changes")
-local change_bpm= THEME:GetString("ScreenSyncOverlay", "change_bpm")
-local change_song_offset= THEME:GetString("ScreenSyncOverlay", "change_song_offset")
-local change_machine_offset= THEME:GetString("ScreenSyncOverlay", "change_machine_offset")
-local hold_alt= THEME:GetString("ScreenSyncOverlay", "hold_alt")
+local revert_sync_changes= THEMEMAN:GetString("ScreenSyncOverlay", "revert_sync_changes")
+local change_bpm= THEMEMAN:GetString("ScreenSyncOverlay", "change_bpm")
+local change_song_offset= THEMEMAN:GetString("ScreenSyncOverlay", "change_song_offset")
+local change_machine_offset= THEMEMAN:GetString("ScreenSyncOverlay", "change_machine_offset")
+local hold_alt= THEMEMAN:GetString("ScreenSyncOverlay", "hold_alt")
 
 return Def.ActorFrame{
 	Def.Quad{

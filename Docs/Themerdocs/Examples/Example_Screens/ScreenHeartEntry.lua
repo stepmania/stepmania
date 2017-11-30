@@ -110,7 +110,7 @@ local function input(event)
 	local done= heart_entries[pn]:handle_input(event.GameButton)
 	if done then
 		-- Play a sound for the player so they know the value was entered.
-		SOUND:PlayOnce(THEME:GetPathS("Common", "Start"))
+		SOUNDMAN:PlayOnce(THEME:GetPathS("Common", "Start"))
 		-- Check whether all players that need to enter their heart rate are done.
 		local all_done= true
 		for pn, entry in pairs(heart_entries) do

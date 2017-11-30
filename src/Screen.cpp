@@ -12,11 +12,11 @@
 
 using std::vector;
 
-#define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
-#define PREV_SCREEN		THEME->GetMetric (m_sName,"PrevScreen")
-#define PREPARE_SCREENS		THEME->GetMetric (m_sName,"PrepareScreens")
-#define PERSIST_SCREENS		THEME->GetMetric (m_sName,"PersistScreens")
-#define GROUPED_SCREENS		THEME->GetMetric (m_sName,"GroupedScreens")
+#define NEXT_SCREEN		THEMEMAN->GetMetric (m_sName,"NextScreen")
+#define PREV_SCREEN		THEMEMAN->GetMetric (m_sName,"PrevScreen")
+#define PREPARE_SCREENS		THEMEMAN->GetMetric (m_sName,"PrepareScreens")
+#define PERSIST_SCREENS		THEMEMAN->GetMetric (m_sName,"PersistScreens")
+#define GROUPED_SCREENS		THEMEMAN->GetMetric (m_sName,"GroupedScreens")
 
 static const char *ScreenTypeNames[] = {
 	"Attract",
@@ -94,7 +94,7 @@ void Screen::BeginScreen()
 
 	m_fLockInputSecs = 0;
 
-	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenOnCommand") );
+	this->RunCommands( THEMEMAN->GetMetricA(m_sName, "ScreenOnCommand") );
 
 	if( m_fLockInputSecs == 0 )
 		m_fLockInputSecs = 0.0001f; // always lock for a tiny amount of time so that we throw away any queued inputs during the load.

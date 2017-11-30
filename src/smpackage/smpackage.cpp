@@ -71,7 +71,7 @@ BOOL CSmpackageApp::InitInstance()
 
 
 	LUA = new LuaManager;
-	THEME = new ThemeManager;
+	THEMEMAN = new ThemeManager;
 
 	// TODO: Use PrefsManager to get the current language instead?  PrefsManager would 
 	// need to be split up to reduce dependencies
@@ -109,7 +109,7 @@ BOOL CSmpackageApp::InitInstance()
 			ini.GetValue( "Options", "LogToDisk", bLogToDisk );
 		}
 	}
-	THEME->SwitchThemeAndLanguage( sTheme, sLanguage, bPseudoLocalize );
+	THEMEMAN->SwitchThemeAndLanguage( sTheme, sLanguage, bPseudoLocalize );
 	LOG->SetShowLogOutput( bShowLogOutput );
 	LOG->SetLogToDisk( bLogToDisk );
 	LOG->SetInfoToDisk( true );
@@ -157,7 +157,7 @@ BOOL CSmpackageApp::InitInstance()
 		int nResponse = dlg.DoModal();
 	}
 
-	SAFE_DELETE( THEME );
+	SAFE_DELETE( THEMEMAN );
 	SAFE_DELETE( LUA );
 	SAFE_DELETE( FILEMAN );
 

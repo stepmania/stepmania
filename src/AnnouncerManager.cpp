@@ -7,7 +7,7 @@
 
 using std::vector;
 
-AnnouncerManager*	ANNOUNCER = nullptr; // global and accessible from anywhere in our program
+AnnouncerManager*	ANNOUNCERMAN = nullptr; // global and accessible from anywhere in our program
 
 const std::string EMPTY_ANNOUNCER_NAME = "Empty";
 const std::string ANNOUNCERS_DIR  = "Announcers/";
@@ -17,7 +17,7 @@ AnnouncerManager::AnnouncerManager()
 	// Register with Lua.
 	{
 		Lua *L = LUA->Get();
-		lua_pushstring( L, "ANNOUNCER" );
+		lua_pushstring( L, "ANNOUNCERMAN" );
 		this->PushSelf( L );
 		lua_settable( L, LUA_GLOBALSINDEX );
 		LUA->Release( L );
@@ -27,7 +27,7 @@ AnnouncerManager::AnnouncerManager()
 AnnouncerManager::~AnnouncerManager()
 {
 	// Unregister with Lua.
-	LUA->UnsetGlobal( "ANNOUNCER" );
+	LUA->UnsetGlobal( "ANNOUNCERMAN" );
 }
 
 void AnnouncerManager::GetAnnouncerNames( vector<std::string>& AddTo )

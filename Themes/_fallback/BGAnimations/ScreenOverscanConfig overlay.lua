@@ -35,7 +35,7 @@ local widest_name= 0
 -- actors: one for the name and buttons, and one for the value.  This way,
 -- there are fewer lines of code, and they all behave the same.
 -- The value is left aligned and the name right aligned so they don't overlap.
--- Normally, all text displayed should be translated by using THEME:GetString,
+-- Normally, all text displayed should be translated by using THEMEMAN:GetString,
 -- but in this case, these are the exact names of the preferences, so it's
 -- important for people to be able to find them easily in Preferences.ini by
 -- recognizing the name shown on the screen.
@@ -81,7 +81,7 @@ local function input(event)
 	local input_functions = {
 		Start= function()
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
-			SOUND:PlayOnce(THEME:GetPathS("Common", "Start"), true)
+			SOUNDMAN:PlayOnce(THEMEMAN:GetPathS("Common", "Start"), true)
 		end,
 		Back= function()
 			SCREENMAN:GetTopScreen():Cancel()

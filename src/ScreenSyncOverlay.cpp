@@ -24,7 +24,7 @@ void ScreenSyncOverlay::Init()
 {
 	Screen::Init();
 
-	m_overlay.Load(THEME->GetPathB(m_sName, "overlay"));
+	m_overlay.Load(THEMEMAN->GetPathB(m_sName, "overlay"));
 	AddChild(m_overlay);
 	
 	Update( 0 );

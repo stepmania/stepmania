@@ -7,7 +7,7 @@ local hns_states= {
 
 return {
 	Def.Sprite{
-		Texture= THEME:GetPathG("HoldJudgment", "label"),
+		Texture= THEMEMAN:GetPathG("HoldJudgment", "label"),
 		InitCommand= function(self)
 			self:draworder(notefield_draw_order.under_field)
 				:y(offset):animate(false):diffusealpha(0)

@@ -81,7 +81,7 @@ bool ActorUtil::ResolvePath( std::string &sPath, const std::string &sName, bool 
 			}
 		}
 
-		THEME->FilterFileLanguages( asPaths );
+		THEMEMAN->FilterFileLanguages( asPaths );
 
 		if( asPaths.size() > 1 )
 		{
@@ -145,7 +145,7 @@ namespace
 				if (pSong && pSong->HasBackground())
 					pVal->SetValue(pSong->GetBackgroundPath());
 				else
-					pVal->SetValue(THEME->GetPathG("Common", "fallback background"));
+					pVal->SetValue(THEMEMAN->GetPathG("Common", "fallback background"));
 				pActor->AppendAttrFrom("Texture", pVal, false);
 				return "Sprite";
 			}
@@ -156,7 +156,7 @@ namespace
 				if (pSong && pSong->HasBanner())
 					pVal->SetValue(pSong->GetBannerPath());
 				else
-					pVal->SetValue(THEME->GetPathG("Common", "fallback banner"));
+					pVal->SetValue(THEMEMAN->GetPathG("Common", "fallback banner"));
 				pActor->AppendAttrFrom("Texture", pVal, false);
 				return "Sprite";
 			}
@@ -167,7 +167,7 @@ namespace
 				if (pCourse && pCourse->HasBanner())
 					pVal->SetValue(pCourse->GetBannerPath());
 				else
-					pVal->SetValue(THEME->GetPathG("Common", "fallback banner"));
+					pVal->SetValue(THEMEMAN->GetPathG("Common", "fallback banner"));
 				pActor->AppendAttrFrom("Texture", pVal, false);
 				return "Sprite";
 			}
@@ -517,8 +517,8 @@ void ActorUtil::SetXY( Actor& actor, const std::string &sMetricsGroup )
 	 * these are both 0, leave the actor where it is.  If InitCommand doesn't,
 	 * then 0,0 is the default, anyway.
 	 */
-	float fX = THEME->GetMetricF(sMetricsGroup,actor.GetName()+"X");
-	float fY = THEME->GetMetricF(sMetricsGroup,actor.GetName()+"Y");
+	float fX = THEMEMAN->GetMetricF(sMetricsGroup,actor.GetName()+"X");
+	float fY = THEMEMAN->GetMetricF(sMetricsGroup,actor.GetName()+"Y");
 	if( fX != 0 || fY != 0 )
 		actor.SetXY( fX, fY );
 }
@@ -530,7 +530,7 @@ void ActorUtil::LoadCommand( Actor& actor, const std::string &sMetricsGroup, con
 
 void ActorUtil::LoadCommandFromName( Actor& actor, const std::string &sMetricsGroup, const std::string &sCommandName, const std::string &sName )
 {
-	actor.AddCommand( sCommandName, THEME->GetMetricA(sMetricsGroup,sName+sCommandName+"Command") );
+	actor.AddCommand( sCommandName, THEMEMAN->GetMetricA(sMetricsGroup,sName+sCommandName+"Command") );
 }
 
 void ActorUtil::LoadAllCommands( Actor& actor, const std::string &sMetricsGroup )
@@ -541,7 +541,7 @@ void ActorUtil::LoadAllCommands( Actor& actor, const std::string &sMetricsGroup 
 void ActorUtil::LoadAllCommandsFromName( Actor& actor, const std::string &sMetricsGroup, const std::string &sName )
 {
 	std::set<std::string> vsValueNames;
-	THEME->GetMetricsThatBeginWith( sMetricsGroup, sName, vsValueNames );
+	THEMEMAN->GetMetricsThatBeginWith( sMetricsGroup, sName, vsValueNames );
 
 	for (auto const &sv: vsValueNames)
 	{

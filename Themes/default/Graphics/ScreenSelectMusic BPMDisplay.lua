@@ -1,5 +1,5 @@
 return Def.BPMDisplay {
-	File=THEME:GetPathF("BPMDisplay", "bpm");
+	File=THEMEMAN:GetPathF("BPMDisplay", "bpm");
 	Name="BPMDisplay";
 	SetCommand=function(self) self:SetFromGameState() end;
 	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");

@@ -44,7 +44,7 @@ local adjuster_x= value_x + value_adjuster_pad + (adjuster_size * .5) + 8
 
 local function make_adjuster(name, bzy)
 	return Def.Sprite{
-		Name= name, Texture= THEME:GetPathG("", "up_button.png"),
+		Name= name, Texture= THEMEMAN:GetPathG("", "up_button.png"),
 		InitCommand= function(self)
 			scale_to_fit(self, adjuster_size, adjuster_size)
 			-- scale_to_fit sets zoom, but zoom is used in the click animation, so
@@ -95,7 +95,7 @@ local value_type_handlers= {
 		self:GetChild("text"):settext("")
 		local image= self:GetChild("image")
 		image:visible(true)
-		image:Load(THEME:GetPathG("", "menu_icons/bool"))
+		image:Load(THEMEMAN:GetPathG("", "menu_icons/bool"))
 		scale_to_fit(image, value_width, value_height)
 		if value then
 			image:setstate(1)
@@ -143,7 +143,7 @@ local function make_item()
 			-- type_hint is from the menu data.
 			if type_hint.main == "submenu" then
 				local image= self:GetChild("value"):GetChild("image")
-				image:Load(THEME:GetPathG("", "menu_icons/menu.png")):visible(true)
+				image:Load(THEMEMAN:GetPathG("", "menu_icons/menu.png")):visible(true)
 				scale_to_fit(image, value_width, value_height)
 			end
 		end,
@@ -351,9 +351,9 @@ local menu_frame= Def.ActorFrame{
 		AdjustModeCommand= function(self)
 			self:linear(.1):rotationz(90)
 		end,
-		LoadActor(THEME:GetPathG("OptionsCursor", "Middle"))..{Name= "middle"},
-		LoadActor(THEME:GetPathG("OptionsCursor", "Left"))..{Name= "left"},
-		LoadActor(THEME:GetPathG("OptionsCursor", "Right"))..{Name= "right"},
+		LoadActor(THEMEMAN:GetPathG("OptionsCursor", "Middle"))..{Name= "middle"},
+		LoadActor(THEMEMAN:GetPathG("OptionsCursor", "Left"))..{Name= "left"},
+		LoadActor(THEMEMAN:GetPathG("OptionsCursor", "Right"))..{Name= "right"},
 	},
 }
 -- Half of the displays will be used to make scrolling look good.

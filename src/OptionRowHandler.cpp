@@ -24,11 +24,11 @@
 
 using std::vector;
 
-#define ENTRY(s)		THEME->GetMetric ("ScreenOptionsMaster",s)
-#define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",fmt::sprintf("%s,%i",(s).c_str(),(i+1)))
-#define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
-#define STEPS_ROW_LAYOUT_TYPE	THEME->GetMetric("ScreenOptionsMaster","StepsRowLayoutType")
-#define STEPS_USE_CHART_NAME	THEME->GetMetricB("ScreenOptionsMaster","StepsUseChartName")
+#define ENTRY(s)		THEMEMAN->GetMetric ("ScreenOptionsMaster",s)
+#define ENTRY_MODE(s,i)		THEMEMAN->GetMetric ("ScreenOptionsMaster",fmt::sprintf("%s,%i",(s).c_str(),(i+1)))
+#define ENTRY_DEFAULT(s)	THEMEMAN->GetMetric ("ScreenOptionsMaster",(s) + "Default")
+#define STEPS_ROW_LAYOUT_TYPE	THEMEMAN->GetMetric("ScreenOptionsMaster","StepsRowLayoutType")
+#define STEPS_USE_CHART_NAME	THEMEMAN->GetMetricB("ScreenOptionsMaster","StepsUseChartName")
 
 static const char *SelectTypeNames[] = {
 	"SelectOne",
@@ -59,7 +59,7 @@ std::string OptionRowHandler::OptionTitle() const
 	if( s.empty() )
 		return s;
 
-	return bTheme ? THEME->GetString("OptionTitles",s) : s;
+	return bTheme ? THEMEMAN->GetString("OptionTitles",s) : s;
 }
 
 std::string OptionRowHandler::GetThemedItemText( int iChoice ) const

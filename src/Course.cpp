@@ -39,14 +39,14 @@ XToLocalizedString( SongSort );
 /* Maximum lower value of ranges when difficult: */
 const int MAX_BOTTOM_RANGE = 10;
 
-#define SORT_PREFERRED_COLOR	THEME->GetMetricC("Course","SortPreferredColor")
-#define SORT_LEVEL1_COLOR	THEME->GetMetricC("Course","SortLevel1Color")
-#define SORT_LEVEL2_COLOR	THEME->GetMetricC("Course","SortLevel2Color")
-#define SORT_LEVEL3_COLOR	THEME->GetMetricC("Course","SortLevel3Color")
-#define SORT_LEVEL4_COLOR	THEME->GetMetricC("Course","SortLevel4Color")
-#define SORT_LEVEL5_COLOR	THEME->GetMetricC("Course","SortLevel5Color")
+#define SORT_PREFERRED_COLOR	THEMEMAN->GetMetricC("Course","SortPreferredColor")
+#define SORT_LEVEL1_COLOR	THEMEMAN->GetMetricC("Course","SortLevel1Color")
+#define SORT_LEVEL2_COLOR	THEMEMAN->GetMetricC("Course","SortLevel2Color")
+#define SORT_LEVEL3_COLOR	THEMEMAN->GetMetricC("Course","SortLevel3Color")
+#define SORT_LEVEL4_COLOR	THEMEMAN->GetMetricC("Course","SortLevel4Color")
+#define SORT_LEVEL5_COLOR	THEMEMAN->GetMetricC("Course","SortLevel5Color")
 
-//#define INCLUDE_BEGINNER_STEPS	THEME->GetMetricB( "Course","IncludeBeginnerSteps" );
+//#define INCLUDE_BEGINNER_STEPS	THEMEMAN->GetMetricB( "Course","IncludeBeginnerSteps" );
 
 std::string CourseEntry::GetTextDescription() const
 {
@@ -1144,7 +1144,7 @@ void Course::UpdateCourseStats( StepsType st )
 
 bool Course::IsRanking() const
 {
-	auto rankingSongs = Rage::split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",");
+	auto rankingSongs = Rage::split(THEMEMAN->GetMetric("ScreenRanking", "CoursesToShow"), ",");
 	Rage::ci_ascii_string path{ m_sPath.c_str() };
 
 	auto doesRank = [&path](std::string const &song) {

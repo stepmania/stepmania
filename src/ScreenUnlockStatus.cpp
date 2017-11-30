@@ -12,19 +12,19 @@
 
 using std::vector;
 
-#define UNLOCK_TEXT_SCROLL_X		THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollX");
-#define UNLOCK_TEXT_SCROLL_START_Y	THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollStartY")
-#define UNLOCK_TEXT_SCROLL_END_Y	THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollEndY")
-#define UNLOCK_TEXT_SCROLL_ZOOM		THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollZoom")
-#define UNLOCK_TEXT_SCROLL_ROWS		THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollRows")
-#define UNLOCK_TEXT_SCROLL_MAX_WIDTH	THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollMaxWidth")
-#define UNLOCK_TEXT_SCROLL_ICON_X	THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollIconX")
-#define UNLOCK_TEXT_SCROLL_ICON_SIZE	THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollIconSize")
-#define UNLOCK_TEXT_SCROLL		THEME->GetMetricI("ScreenUnlockStatus","UnlockTextScroll")
-#define TYPE_TO_DISPLAY			THEME->GetMetric ("ScreenUnlockStatus","TypeOfPointsToDisplay")
-#define ICON_COMMAND			THEME->GetMetricA("ScreenUnlockStatus","UnlockIconCommand")
-#define TIME_TO_DISPLAY			THEME->GetMetricF("ScreenUnlockStatus","TimeToDisplay")
-#define POINTS_ZOOM			THEME->GetMetricF("ScreenUnlockStatus","PointsZoom")
+#define UNLOCK_TEXT_SCROLL_X		THEMEMAN->GetMetricF("ScreenUnlockStatus","UnlockTextScrollX");
+#define UNLOCK_TEXT_SCROLL_START_Y	THEMEMAN->GetMetricF("ScreenUnlockStatus","UnlockTextScrollStartY")
+#define UNLOCK_TEXT_SCROLL_END_Y	THEMEMAN->GetMetricF("ScreenUnlockStatus","UnlockTextScrollEndY")
+#define UNLOCK_TEXT_SCROLL_ZOOM		THEMEMAN->GetMetricF("ScreenUnlockStatus","UnlockTextScrollZoom")
+#define UNLOCK_TEXT_SCROLL_ROWS		THEMEMAN->GetMetricF("ScreenUnlockStatus","UnlockTextScrollRows")
+#define UNLOCK_TEXT_SCROLL_MAX_WIDTH	THEMEMAN->GetMetricF("ScreenUnlockStatus","UnlockTextScrollMaxWidth")
+#define UNLOCK_TEXT_SCROLL_ICON_X	THEMEMAN->GetMetricF("ScreenUnlockStatus","UnlockTextScrollIconX")
+#define UNLOCK_TEXT_SCROLL_ICON_SIZE	THEMEMAN->GetMetricF("ScreenUnlockStatus","UnlockTextScrollIconSize")
+#define UNLOCK_TEXT_SCROLL		THEMEMAN->GetMetricI("ScreenUnlockStatus","UnlockTextScroll")
+#define TYPE_TO_DISPLAY			THEMEMAN->GetMetric ("ScreenUnlockStatus","TypeOfPointsToDisplay")
+#define ICON_COMMAND			THEMEMAN->GetMetricA("ScreenUnlockStatus","UnlockIconCommand")
+#define TIME_TO_DISPLAY			THEMEMAN->GetMetricF("ScreenUnlockStatus","TimeToDisplay")
+#define POINTS_ZOOM			THEMEMAN->GetMetricF("ScreenUnlockStatus","PointsZoom")
 
 REGISTER_SCREEN_CLASS( ScreenUnlockStatus );
 
@@ -42,7 +42,7 @@ void ScreenUnlockStatus::Init()
 
 	unsigned NumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
 
-	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathF("Common","normal") );
+	PointsUntilNextUnlock.LoadFromFont( THEMEMAN->GetPathF("Common","normal") );
 	PointsUntilNextUnlock.SetHorizAlign( align_left );
 
 	apActorCommands IconCommand = ICON_COMMAND;
@@ -58,7 +58,7 @@ void ScreenUnlockStatus::Init()
 		Sprite* pSpr = new Sprite;
 
 		// new unlock graphic
-		pSpr->Load( THEME->GetPathG("ScreenUnlockStatus",fmt::sprintf("%04d icon", i)) );
+		pSpr->Load( THEMEMAN->GetPathG("ScreenUnlockStatus",fmt::sprintf("%04d icon", i)) );
 
 		// set graphic location
 		pSpr->SetName( fmt::sprintf("Unlock%04d",i) );
@@ -98,7 +98,7 @@ void ScreenUnlockStatus::Init()
 
 			BitmapText* text = new BitmapText;
 
-			text->LoadFromFont( THEME->GetPathF("ScreenUnlockStatus","text") );
+			text->LoadFromFont( THEMEMAN->GetPathF("ScreenUnlockStatus","text") );
 			text->SetHorizAlign( align_left );
 			text->SetZoom(ScrollingTextZoom);
 
@@ -174,7 +174,7 @@ void ScreenUnlockStatus::Init()
 				Sprite* IconCount = new Sprite;
 
 				// new unlock graphic
-				IconCount->Load( THEME->GetPathG("ScreenUnlockStatus",fmt::sprintf("%04d icon", i)) );
+				IconCount->Load( THEMEMAN->GetPathG("ScreenUnlockStatus",fmt::sprintf("%04d icon", i)) );
 
 				// set graphic location
 				IconCount->SetXY( UNLOCK_TEXT_SCROLL_ICON_X, ScrollingTextStartY);
@@ -236,7 +236,7 @@ void ScreenUnlockStatus::Init()
 
 			BitmapText* NewText = new BitmapText;
 
-			NewText->LoadFromFont( THEME->GetPathF("ScreenUnlockStatus","text") );
+			NewText->LoadFromFont( THEMEMAN->GetPathF("ScreenUnlockStatus","text") );
 			NewText->SetHorizAlign( align_left );
 
 			std::string title = pSong->GetDisplayMainTitle();
@@ -259,7 +259,7 @@ void ScreenUnlockStatus::Init()
 
 			// new unlock graphic
 			Sprite* NewIcon = new Sprite;
-			NewIcon->Load( THEME->GetPathG("ScreenUnlockStatus",fmt::sprintf("%04d icon", NextIcon)) );
+			NewIcon->Load( THEMEMAN->GetPathG("ScreenUnlockStatus",fmt::sprintf("%04d icon", NextIcon)) );
 			NewIcon->SetXY( UNLOCK_TEXT_SCROLL_ICON_X, ScrollingTextStartY);
 			NewIcon->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			NewIcon->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);

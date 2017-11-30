@@ -23,7 +23,7 @@ void ScreenPlayerOptions::Init()
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
+		m_sprDisqualify[p].Load( THEMEMAN->GetPathG(m_sName,"disqualify") );
 		m_sprDisqualify[p]->SetName( fmt::sprintf("DisqualifyP%i",p+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetVisible( false );	// unhide later if handicapping options are discovered
@@ -37,7 +37,7 @@ void ScreenPlayerOptions::Init()
 	m_bAcceptedChoices = false;
 	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == Maybe_YES );
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 
 	FOREACH_PlayerNumber( p )
 		m_bRowCausesDisqualified[p].resize( m_pRows.size(), false );

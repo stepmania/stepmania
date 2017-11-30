@@ -22,7 +22,7 @@ std::string GameButtonToString( const InputScheme* pInputs, GameButton i )
 
 std::string GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i )
 {
-	return THEME->GetString( "GameButton", GameButtonToString(pInputs,i) );
+	return THEMEMAN->GetString( "GameButton", GameButtonToString(pInputs,i) );
 }
 
 GameButton StringToGameButton( const InputScheme* pInputs, const std::string& s )

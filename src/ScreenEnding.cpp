@@ -90,7 +90,7 @@ void ScreenEnding::Init()
 			continue;
 	
 		m_sprRemoveMemoryCard[p].SetName( fmt::sprintf("RemoveCardP%d",p+1) );
-		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",fmt::sprintf("remove card P%d",p+1)) );
+		m_sprRemoveMemoryCard[p].Load( THEMEMAN->GetPathG("ScreenEnding",fmt::sprintf("remove card P%d",p+1)) );
 		switch( MEMCARDMAN->GetCardState(p) )
 		{
 			case MemoryCardState_Removed:
@@ -103,7 +103,7 @@ void ScreenEnding::Init()
 		this->AddChild( &m_sprRemoveMemoryCard[p] );
 	}
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("music scroll") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("music scroll") );
 
 	// Now that we've read the data from the profile, it's ok to Reset()
 	GAMESTATE->Reset();

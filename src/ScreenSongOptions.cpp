@@ -18,7 +18,7 @@ void ScreenSongOptions::Init()
 	 * fade in. */
 	if( PREFSMAN->m_ShowSongOptions == Maybe_ASK )
 	{
-		m_In.Load( THEME->GetPathB("ScreenSongOptions","option in") );
+		m_In.Load( THEMEMAN->GetPathB("ScreenSongOptions","option in") );
 		m_In.StartTransitioning();
 	}
 }

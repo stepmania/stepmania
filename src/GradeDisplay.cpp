@@ -16,7 +16,7 @@ void GradeDisplay::Load( std::string sMetricsGroup )
 	FOREACH_PossibleGrade( g )
 	{
 		AutoActor &spr = m_vSpr[i];
-		spr.Load( THEME->GetPathG(sMetricsGroup,GradeToString(g)) );
+		spr.Load( THEMEMAN->GetPathG(sMetricsGroup,GradeToString(g)) );
 		spr->SetVisible( false );
 		this->AddChild( spr );
 		i++;

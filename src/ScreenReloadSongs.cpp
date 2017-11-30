@@ -54,7 +54,7 @@ void ScreenReloadSongs::Init()
 	m_iUpdates = 0;
 
 	m_Loading.SetName( "LoadingText" );
-	m_Loading.LoadFromFont( THEME->GetPathF(m_sName, "LoadingText") );
+	m_Loading.LoadFromFont( THEMEMAN->GetPathF(m_sName, "LoadingText") );
 	m_Loading.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	this->AddChild( &m_Loading );
 

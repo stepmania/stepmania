@@ -22,8 +22,8 @@ using std::vector;
 
 UnlockManager*	UNLOCKMAN = nullptr;	// global and accessible from anywhere in our program
 
-#define UNLOCK_NAMES		THEME->GetMetric ("UnlockManager","UnlockNames")
-#define UNLOCK(x)		THEME->GetMetricR("UnlockManager", fmt::sprintf("Unlock%sCommand",x.c_str()));
+#define UNLOCK_NAMES		THEMEMAN->GetMetric ("UnlockManager","UnlockNames")
+#define UNLOCK(x)		THEMEMAN->GetMetricR("UnlockManager", fmt::sprintf("Unlock%sCommand",x.c_str()));
 
 static ThemeMetric<bool> AUTO_LOCK_CHALLENGE_STEPS( "UnlockManager", "AutoLockChallengeSteps" );
 static ThemeMetric<bool> AUTO_LOCK_EDIT_STEPS( "UnlockManager", "AutoLockEditSteps" );

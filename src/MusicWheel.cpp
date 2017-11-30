@@ -30,8 +30,8 @@ static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 static Preference<bool> g_bPrecacheAllSorts( "PreCacheAllWheelSorts", false);
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
-#define WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", fmt::sprintf("%sText",s.c_str()) );
-#define CUSTOM_ITEM_WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", fmt::sprintf("CustomItem%sText",s.c_str()) );
+#define WHEEL_TEXT(s)		THEMEMAN->GetString( "MusicWheel", fmt::sprintf("%sText",s.c_str()) );
+#define CUSTOM_ITEM_WHEEL_TEXT(s)		THEMEMAN->GetString( "MusicWheel", fmt::sprintf("CustomItem%sText",s.c_str()) );
 
 static std::string SECTION_COLORS_NAME( size_t i )	{ return fmt::sprintf("SectionColor%d",int(i+1)); }
 static std::string CHOICE_NAME( std::string s )		{ return fmt::sprintf("Choice%s",s.c_str()); }
@@ -110,9 +110,9 @@ void MusicWheel::Load( std::string sType )
 
 	SONGMAN->UpdateRankingCourses();
 
-	m_soundChangeSort.Load(	THEME->GetPathS(sType,"sort") );
-	m_soundExpand.Load(	THEME->GetPathS(sType,"expand"), true );
-	m_soundCollapse.Load(	THEME->GetPathS(sType,"collapse"), true );
+	m_soundChangeSort.Load(	THEMEMAN->GetPathS(sType,"sort") );
+	m_soundExpand.Load(	THEMEMAN->GetPathS(sType,"expand"), true );
+	m_soundCollapse.Load(	THEMEMAN->GetPathS(sType,"collapse"), true );
 
 	// Update for SORT_MOST_PLAYED.
 	SONGMAN->UpdatePopular();

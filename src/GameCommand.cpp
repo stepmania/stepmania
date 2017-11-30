@@ -268,9 +268,9 @@ void GameCommand::LoadOne( const Command& cmd )
 		// When used to create an OptionRow, it pulls a metric from OptionsList.
 		// -Kyz
 
-		if(!THEME->HasMetric("ScreenOptionsMaster", sValue))
+		if(!THEMEMAN->HasMetric("ScreenOptionsMaster", sValue))
 		{
-			if(!THEME->HasMetric("OptionsList", "Line" + sValue))
+			if(!THEMEMAN->HasMetric("OptionsList", "Line" + sValue))
 			{
 				if(!SCREENMAN->IsScreenNameValid(sValue))
 				{
@@ -864,7 +864,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_sSoundPath != "" )
 	{
-		SOUND->PlayOnce( THEME->GetPathS( "", m_sSoundPath ) );
+		SOUND->PlayOnce( THEMEMAN->GetPathS( "", m_sSoundPath ) );
 	}
 	if( m_iWeightPounds != -1 )
 	{

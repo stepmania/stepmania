@@ -21,9 +21,9 @@ void RollingNumbers::Load(const std::string& metrics_group)
 {
 	// Deprecated interface, not going to bother with error handling. -Kyz
 #define HAS_GET(metric, member, get) \
-	if(THEME->HasMetric(metrics_group, metric)) \
+	if(THEMEMAN->HasMetric(metrics_group, metric)) \
 	{ \
-		member= THEME->get(metrics_group, metric); \
+		member= THEMEMAN->get(metrics_group, metric); \
 	}
 	HAS_GET("Width", m_chars_wide, GetMetricI);
 	HAS_GET("LeadGlyph", m_leading_glyph, GetMetric);

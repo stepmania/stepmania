@@ -1,4 +1,4 @@
-local fSleepTime = THEME:GetMetric( Var "LoadingScreen","ScreenOutDelay");
+local fSleepTime = THEMEMAN:GetMetric( Var "LoadingScreen","ScreenOutDelay");
 return Def.ActorFrame {
 	StartTransitioningCommand=cmd(sleep,0.15+fSleepTime);
 	Def.Quad {

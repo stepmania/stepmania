@@ -93,7 +93,7 @@ void ScreenSelectMaster::Init()
 		for (auto const &p: vpns)
 		{
 			std::string sElement = "Cursor" + PLAYER_APPEND_NO_SPACE(p);
-			m_sprCursor[p].Load( THEME->GetPathG(m_sName,sElement) );
+			m_sprCursor[p].Load( THEMEMAN->GetPathG(m_sName,sElement) );
 			Rage::replace(sElement, " ", "" );
 			m_sprCursor[p]->SetName( sElement );
 			this->AddChild( m_sprCursor[p] );
@@ -109,10 +109,10 @@ void ScreenSelectMaster::Init()
 	}
 	vector<Rage::Vector3> positions;
 	bool positions_set_by_lua= false;
-	if(THEME->HasMetric(m_sName, "IconChoicePosFunction"))
+	if(THEMEMAN->HasMetric(m_sName, "IconChoicePosFunction"))
 	{
 		positions_set_by_lua= true;
-		LuaReference command= THEME->GetMetricR(m_sName, "IconChoicePosFunction");
+		LuaReference command= THEMEMAN->GetMetricR(m_sName, "IconChoicePosFunction");
 		if(command.GetLuaType() != LUA_TFUNCTION)
 		{
 			LuaHelpers::ReportScriptError(m_sName+"::IconChoicePosFunction must be a function.");
@@ -184,7 +184,7 @@ void ScreenSelectMaster::Init()
 				vs.push_back( "Choice" + mc.m_sName );
 			}
 			auto sElement = Rage::join( " ", vs );
-			m_vsprIcon[c].Load( THEME->GetPathG(m_sName,sElement) );
+			m_vsprIcon[c].Load( THEMEMAN->GetPathG(m_sName,sElement) );
 			std::string sName = "Icon" "Choice" + mc.m_sName;
 			m_vsprIcon[c]->SetName( sName );
 			if( USE_ICON_METRICS )
@@ -200,9 +200,9 @@ void ScreenSelectMaster::Init()
 					LOAD_ALL_COMMANDS_AND_SET_XY( m_vsprIcon[c] );
 				}
 #define OPTIONAL_COMMAND(onoff) \
-				if(THEME->HasMetric(m_sName, "IconChoice" onoff "Command")) \
+				if(THEMEMAN->HasMetric(m_sName, "IconChoice" onoff "Command")) \
 				{ \
-					m_vsprIcon[c]->AddCommand(onoff, THEME->GetMetricA(m_sName, "IconChoice" onoff "Command"), false); \
+					m_vsprIcon[c]->AddCommand(onoff, THEMEMAN->GetMetricA(m_sName, "IconChoice" onoff "Command"), false); \
 				}
 				OPTIONAL_COMMAND("On");
 				OPTIONAL_COMMAND("Off");
@@ -226,7 +226,7 @@ void ScreenSelectMaster::Init()
 					vs.push_back( PLAYER_APPEND_NO_SPACE(p) );
 				}
 				std::string sElement = Rage::join( " ", vs );
-				m_vsprScroll[p][c].Load( THEME->GetPathG(m_sName,sElement) );
+				m_vsprScroll[p][c].Load( THEMEMAN->GetPathG(m_sName,sElement) );
 				std::string sName = "Scroll" "Choice" + mc.m_sName;
 				if( !SHARED_SELECTION )
 				{
@@ -258,20 +258,20 @@ void ScreenSelectMaster::Init()
 
 	FOREACH_ENUM( Page, page )
 	{
-		m_sprMore[page].Load( THEME->GetPathG(m_sName, fmt::sprintf("more page%d",page+1)) );
+		m_sprMore[page].Load( THEMEMAN->GetPathG(m_sName, fmt::sprintf("more page%d",page+1)) );
 		m_sprMore[page]->SetName( fmt::sprintf("MorePage%d",page+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprMore[page] );
 		this->AddChild( m_sprMore[page] );
 
-		m_sprExplanation[page].Load( THEME->GetPathG(m_sName, fmt::sprintf("explanation page%d",page+1)) );
+		m_sprExplanation[page].Load( THEMEMAN->GetPathG(m_sName, fmt::sprintf("explanation page%d",page+1)) );
 		m_sprExplanation[page]->SetName( fmt::sprintf("ExplanationPage%d",page+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprExplanation[page] );
 		this->AddChild( m_sprExplanation[page] );
 	}
 
-	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
-	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
-	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
+	m_soundChange.Load( THEMEMAN->GetPathS(m_sName,"change"), true );
+	m_soundDifficult.Load( ANNOUNCERMAN->GetPathTo("select difficulty challenge") );
+	m_soundStart.Load( THEMEMAN->GetPathS(m_sName,"start") );
 
 	// init m_Next order info
 	FOREACH_MenuDir( dir )
@@ -969,7 +969,7 @@ bool ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	if( !AnyOptionsArePlayable() )
 		return false;
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(fmt::sprintf("%s comment %s",m_sName.c_str(), mc->m_sName.c_str())) );
+	SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo(fmt::sprintf("%s comment %s",m_sName.c_str(), mc->m_sName.c_str())) );
 
 	// Play a copy of the sound, so it'll finish playing even if we leave the screen immediately.
 	if( mc->m_sSoundPath.empty() && !m_bDoubleChoiceNoSound )

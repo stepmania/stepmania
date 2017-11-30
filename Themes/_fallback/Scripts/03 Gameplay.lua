@@ -38,7 +38,7 @@ function GameplayPlayerPositions(widths)
 	local ret= {}
 	for i= 1, #widths do
 		local p= widths[i][1]
-		local x= THEME:GetMetric("ScreenGameplay", "PlayerP"..(p+1).."MiscX")
+		local x= THEMEMAN:GetMetric("ScreenGameplay", "PlayerP"..(p+1).."MiscX")
 		local dist_to_edge= _screen.cx
 		if x > _screen.cx then
 			dist_to_edge= _screen.w - edge_width - x
@@ -436,7 +436,7 @@ function GetCodeForGame(codeName)
 end
 
 function GameState:applydefaultoptions()
-	local options= PREFSMAN:GetPreference("DefaultModifiers") .. THEME:GetMetric("Common", "DefaultModifiers")
+	local options= PREFSMAN:GetPreference("DefaultModifiers") .. THEMEMAN:GetMetric("Common", "DefaultModifiers")
 	for i, pn in ipairs(self:GetEnabledPlayers()) do
 		local pops= self:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred")
 		pops:FromString(options)

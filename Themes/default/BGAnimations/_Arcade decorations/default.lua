@@ -8,7 +8,7 @@ t[#t+1] = Def.ActorFrame {
 	InitCommand=function(self)
 		ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen")
 	end;
-	LoadActor(THEME:GetPathB("_frame","3x1"),"rounded fill", 250-32) .. {
+	LoadActor(THEMEMAN:GetPathB("_frame","3x1"),"rounded fill", 250-32) .. {
 		OnCommand=cmd(diffuse,color("#8C1940");diffusealpha,1);
 	};
 	LoadFont("Common Italic Condensed") .. {
@@ -21,9 +21,9 @@ t[#t+1] = Def.ActorFrame {
 			local bCanPlay = GAMESTATE:EnoughCreditsToJoin();
 			local bReady = GAMESTATE:GetNumSidesJoined() > 0;
 			if bCanPlay or bReady then
-				self:settext(THEME:GetString("ScreenTitleJoin","HelpTextJoin"));
+				self:settext(THEMEMAN:GetString("ScreenTitleJoin","HelpTextJoin"));
 			else
-				self:settext(THEME:GetString("ScreenTitleJoin","HelpTextWait"));
+				self:settext(THEMEMAN:GetString("ScreenTitleJoin","HelpTextWait"));
 			end
 		end;
 	};

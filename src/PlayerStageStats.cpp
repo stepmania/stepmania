@@ -15,11 +15,11 @@
 
 using std::deque;
 
-#define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",fmt::sprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
+#define GRADE_PERCENT_TIER(i)	THEMEMAN->GetMetricF("PlayerStageStats",fmt::sprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 // deprecated, but no solution to replace them exists yet:
-#define GRADE_TIER02_IS_ALL_W2S	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllW2s")
-#define GRADE_TIER01_IS_ALL_W2S THEME->GetMetricB("PlayerStageStats","GradeTier01IsAllW2s")
-#define GRADE_TIER02_IS_FULL_COMBO THEME->GetMetricB("PlayerStageStats","GradeTier02IsFullCombo")
+#define GRADE_TIER02_IS_ALL_W2S	THEMEMAN->GetMetricB("PlayerStageStats","GradeTier02IsAllW2s")
+#define GRADE_TIER01_IS_ALL_W2S THEMEMAN->GetMetricB("PlayerStageStats","GradeTier01IsAllW2s")
+#define GRADE_TIER02_IS_FULL_COMBO THEMEMAN->GetMetricB("PlayerStageStats","GradeTier02IsFullCombo")
 
 static ThemeMetric<TapNoteScore> g_MinScoreToMaintainCombo( "Gameplay", "MinScoreToMaintainCombo" );
 static ThemeMetric<bool> g_MineHitIncrementsMissCombo( "Gameplay", "MineHitIncrementsMissCombo" );

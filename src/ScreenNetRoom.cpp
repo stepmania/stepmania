@@ -31,7 +31,7 @@ void ScreenNetRoom::Init()
 {
 	ScreenNetSelectBase::Init();
 
-	m_soundChangeSel.Load( THEME->GetPathS("ScreenNetRoom","change sel") );
+	m_soundChangeSel.Load( THEMEMAN->GetPathS("ScreenNetRoom","change sel") );
 
 	m_iRoomPlace = 0;
 
@@ -64,11 +64,11 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToPrevScreen )
 	{
-		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
+		SCREENMAN->SetNewScreen( THEMEMAN->GetMetric (m_sName, "PrevScreen") );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
+		SCREENMAN->SetNewScreen( THEMEMAN->GetMetric (m_sName, "NextScreen") );
 	}
 	else if( SM == SM_BackFromReqPass )
 	{
@@ -102,7 +102,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 
 					if ( NSMAN->m_SMOnlinePacket.Read1() != 0 )
 					{
-						std::string SMOnlineSelectScreen = THEME->GetMetric( m_sName, "MusicSelectScreen" );
+						std::string SMOnlineSelectScreen = THEMEMAN->GetMetric( m_sName, "MusicSelectScreen" );
 						SCREENMAN->SetNewScreen( SMOnlineSelectScreen );
 					}
 				}
@@ -292,18 +292,18 @@ void ScreenNetRoom::UpdateRoomsList()
 		switch( m_Rooms[i].State() )
 		{
 		case 0:
-			itemData->m_color = THEME->GetMetricC( m_sName, "OpenRoomColor");
+			itemData->m_color = THEMEMAN->GetMetricC( m_sName, "OpenRoomColor");
 			break;
 		case 2:
-			itemData->m_color = THEME->GetMetricC( m_sName, "InGameRoomColor");
+			itemData->m_color = THEMEMAN->GetMetricC( m_sName, "InGameRoomColor");
 			break;
 		default:
-			itemData->m_color = THEME->GetMetricC( m_sName, "OpenRoomColor");
+			itemData->m_color = THEMEMAN->GetMetricC( m_sName, "OpenRoomColor");
 			break;
 		}
 
 		if ( m_Rooms[i].GetFlags() % 2 )
-			itemData->m_color = THEME->GetMetricC( m_sName, "PasswdRoomColor");
+			itemData->m_color = THEMEMAN->GetMetricC( m_sName, "PasswdRoomColor");
 	}
 
 	m_RoomWheel.RebuildWheelItems();

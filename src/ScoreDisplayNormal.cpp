@@ -15,13 +15,13 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 
 	std::string sType = "ScoreDisplayNormal";
 
-	m_sprFrame.Load( THEME->GetPathG(sType,"Frame") );
+	m_sprFrame.Load( THEMEMAN->GetPathG(sType,"Frame") );
 	m_sprFrame->SetName( "Frame" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_sprFrame, sType );
 	this->AddChild( m_sprFrame );
 
 	// init the text
-	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayNormal","Text") );
+	m_text.LoadFromFont( THEMEMAN->GetPathF("ScoreDisplayNormal","Text") );
 	m_text.Load( "RollingNumbers" );
 	m_text.SetName( "Text" );
 	m_text.UpdateText();

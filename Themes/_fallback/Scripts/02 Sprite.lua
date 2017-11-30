@@ -2,12 +2,12 @@ function Sprite:LoadFromSongBanner(song)
 	if song then
 		local Path = song:GetBannerPath()
 		if not Path then
-			Path = THEME:GetPathG("Common","fallback banner")
+			Path = THEMEMAN:GetPathG("Common","fallback banner")
 		end
 
 		self:LoadBanner( Path )
 	else
-		self:LoadBanner( THEME:GetPathG("Common","fallback banner") )
+		self:LoadBanner( THEMEMAN:GetPathG("Common","fallback banner") )
 	end
 	return self
 end
@@ -15,7 +15,7 @@ end
 function Sprite:LoadFromSongBackground(song)
 	local Path = song:GetBackgroundPath()
 	if not Path then
-		Path = THEME:GetPathG("Common","fallback background")
+		Path = THEMEMAN:GetPathG("Common","fallback background")
 	end
 
 	self:LoadBackground( Path )

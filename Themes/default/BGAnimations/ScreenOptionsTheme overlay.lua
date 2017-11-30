@@ -35,7 +35,7 @@ local function input(event)
 		local metrics_need_to_be_reloaded= theme_config:check_dirty()
 		theme_config:save()
 		if metrics_need_to_be_reloaded then
-			THEME:ReloadMetrics()
+			THEMEMAN:ReloadMetrics()
 		end
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end
@@ -56,5 +56,5 @@ return Def.ActorFrame{
 	MenuValueChangedMessageCommand= function(self, params)
 		nesty_menus.handle_menu_refresh_message(params, {menu_controller})
 	end,
-	LoadActor(THEME:GetPathG("", "generic_menu.lua"), 1, 352, menu_height, 1, menu_x-(menu_width/2), 138, 36),
+	LoadActor(THEMEMAN:GetPathG("", "generic_menu.lua"), 1, 352, menu_height, 1, menu_x-(menu_width/2), 138, 36),
 }

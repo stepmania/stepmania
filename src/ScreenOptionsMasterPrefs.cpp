@@ -200,7 +200,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void LanguageChoices( vector<std::string> &out )
 {
 	vector<std::string> vs;
-	THEME->GetLanguages( vs );
+	THEMEMAN->GetLanguages( vs );
 	SortStringArray( vs, true );
 
 	for (auto const &s: vs)
@@ -208,7 +208,7 @@ static void LanguageChoices( vector<std::string> &out )
 		const LanguageInfo *pLI = GetLanguageInfo( s );
 		if( pLI )
 		{
-			out.push_back( THEME->GetString("NativeLanguageNames", pLI->englishName) );
+			out.push_back( THEMEMAN->GetString("NativeLanguageNames", pLI->englishName) );
 		}
 		else
 		{
@@ -220,12 +220,12 @@ static void LanguageChoices( vector<std::string> &out )
 static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	vector<std::string> vs;
-	THEME->GetLanguages( vs );
+	THEMEMAN->GetLanguages( vs );
 	SortStringArray( vs, true );
 
 	if( ToSel )
 	{
-		Rage::ci_ascii_string const currLang {THEME->GetCurLanguage().c_str()};
+		Rage::ci_ascii_string const currLang {THEMEMAN->GetCurLanguage().c_str()};
 		Rage::ci_ascii_string const baseLang {SpecialFiles::BASE_LANGUAGE.c_str()};
 		sel = -1;
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
@@ -246,24 +246,24 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 		if( sel == -1 )
 		{
 			LOG->Warn( "Couldn't find language \"%s\" or fallback \"%s\"; using \"%s\"",
-				THEME->GetCurLanguage().c_str(), SpecialFiles::BASE_LANGUAGE.c_str(), vs[0].c_str() );
+				THEMEMAN->GetCurLanguage().c_str(), SpecialFiles::BASE_LANGUAGE.c_str(), vs[0].c_str() );
 			sel = 0;
 		}
 	} else {
 		const std::string &sNewLanguage = vs[sel];
 
 		PREFSMAN->m_sLanguage.Set( sNewLanguage );
-		if( THEME->GetCurLanguage() != sNewLanguage )
-			THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage.Get(), PREFSMAN->m_bPseudoLocalize );
+		if( THEMEMAN->GetCurLanguage() != sNewLanguage )
+			THEMEMAN->SwitchThemeAndLanguage( THEMEMAN->GetCurThemeName(), PREFSMAN->m_sLanguage.Get(), PREFSMAN->m_bPseudoLocalize );
 	}
 }
 
 static void ThemeChoices( vector<std::string> &out )
 {
-	THEME->GetSelectableThemeNames( out );
+	THEMEMAN->GetSelectableThemeNames( out );
 	for (auto &s: out)
 	{
-		s = THEME->GetThemeDisplayName( s );
+		s = THEMEMAN->GetThemeDisplayName( s );
 	}
 }
 
@@ -295,7 +295,7 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 	pConfOption->MakeOptionsList( choices );
 
 	vector<std::string> vsThemeNames;
-	THEME->GetSelectableThemeNames( vsThemeNames );
+	THEMEMAN->GetSelectableThemeNames( vsThemeNames );
 
 	if( ToSel )
 	{
@@ -319,7 +319,7 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 static LocalizedString OFF ("ScreenOptionsMasterPrefs","Off");
 static void AnnouncerChoices( vector<std::string> &out )
 {
-	ANNOUNCER->GetAnnouncerNames( out );
+	ANNOUNCERMAN->GetAnnouncerNames( out );
 	out.insert( out.begin(), OFF.GetValue() );
 }
 
@@ -331,7 +331,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	if( ToSel )
 	{
 		sel = 0;
-		Rage::ci_ascii_string announcerName{ANNOUNCER->GetCurAnnouncerName().c_str()};
+		Rage::ci_ascii_string announcerName{ANNOUNCERMAN->GetCurAnnouncerName().c_str()};
 		for( unsigned i=1; i<choices.size(); i++ )
 		{
 			if (announcerName == choices[i])
@@ -343,7 +343,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	else
 	{
 		const std::string sNewAnnouncer = sel? choices[sel]:std::string("");
-		ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
+		ANNOUNCERMAN->SwitchAnnouncer( sNewAnnouncer );
 		PREFSMAN->m_sAnnouncer.Set( sNewAnnouncer );
 	}
 }

@@ -14,12 +14,12 @@
 
 // "PLAYER_X" offsets are relative to the pad.
 // ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310.
-#define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",fmt::sprintf("Player%dX",px+1))
+#define PLAYER_X( px )		THEMEMAN->GetMetricF("BeginnerHelper",fmt::sprintf("Player%dX",px+1))
 
 // "HELPER" offsets effect the pad/dancer as a whole.
 // Their relative Y cooridinates are hard-coded for each other.
-#define HELPER_X			THEME->GetMetricF("BeginnerHelper","HelperX")
-#define HELPER_Y			THEME->GetMetricF("BeginnerHelper","HelperY")
+#define HELPER_X			THEMEMAN->GetMetricF("BeginnerHelper","HelperX")
+#define HELPER_Y			THEMEMAN->GetMetricF("BeginnerHelper","HelperY")
 
 #define ST_LEFT		0x01
 #define ST_DOWN		0x02
@@ -95,11 +95,11 @@ bool BeginnerHelper::Init( int iDancePadType )
 	// Load the Background and flash. Flash only shows if the BG does.
 	if( m_bShowBackground )
 	{
-		m_sBackground.Load( THEME->GetPathG("BeginnerHelper","background") );
+		m_sBackground.Load( THEMEMAN->GetPathG("BeginnerHelper","background") );
 		this->AddChild( m_sBackground );
 		//m_sBackground.SetXY( 1, 1 );
 
-		m_sFlash.Load( THEME->GetPathG("BeginnerHelper","flash") );
+		m_sFlash.Load( THEMEMAN->GetPathG("BeginnerHelper","flash") );
 		m_sFlash.SetXY( 0, 0 );
 		m_sFlash.SetDiffuseAlpha( 0 );
 	}
@@ -109,7 +109,7 @@ bool BeginnerHelper::Init( int iDancePadType )
 	{
 		for( int lsce=0; lsce<4; lsce++ )
 		{
-			m_sStepCircle[lsc][lsce].Load( THEME->GetPathG("BeginnerHelper","stepcircle") );
+			m_sStepCircle[lsc][lsce].Load( THEMEMAN->GetPathG("BeginnerHelper","stepcircle") );
 			m_sStepCircle[lsc][lsce].SetZoom( 0 );	// Hide until needed.
 			this->AddChild(&m_sStepCircle[lsc][lsce]);
 

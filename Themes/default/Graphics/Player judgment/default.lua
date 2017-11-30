@@ -4,12 +4,12 @@ local player = Var "Player";
 local tTotalJudgments = {};
 
 local JudgeCmds = {
-	TapNoteScore_W1 = THEME:GetMetric( "Judgment", "JudgmentW1Command" );
-	TapNoteScore_W2 = THEME:GetMetric( "Judgment", "JudgmentW2Command" );
-	TapNoteScore_W3 = THEME:GetMetric( "Judgment", "JudgmentW3Command" );
-	TapNoteScore_W4 = THEME:GetMetric( "Judgment", "JudgmentW4Command" );
-	TapNoteScore_W5 = THEME:GetMetric( "Judgment", "JudgmentW5Command" );
-	TapNoteScore_Miss = THEME:GetMetric( "Judgment", "JudgmentMissCommand" );
+	TapNoteScore_W1 = THEMEMAN:GetMetric( "Judgment", "JudgmentW1Command" );
+	TapNoteScore_W2 = THEMEMAN:GetMetric( "Judgment", "JudgmentW2Command" );
+	TapNoteScore_W3 = THEMEMAN:GetMetric( "Judgment", "JudgmentW3Command" );
+	TapNoteScore_W4 = THEMEMAN:GetMetric( "Judgment", "JudgmentW4Command" );
+	TapNoteScore_W5 = THEMEMAN:GetMetric( "Judgment", "JudgmentW5Command" );
+	TapNoteScore_Miss = THEMEMAN:GetMetric( "Judgment", "JudgmentMissCommand" );
 };
 
 
@@ -30,10 +30,10 @@ local frame = Def.ActorFrame {
 		end
 		c = self:GetChildren();
 	end,
-	LoadActor(THEME:GetPathG("Judgment","Normal")) .. {
+	LoadActor(THEMEMAN:GetPathG("Judgment","Normal")) .. {
 		Name="Judgment";
 		InitCommand=cmd(pause;visible,false);
-		OnCommand=THEME:GetMetric("Judgment","JudgmentOnCommand");
+		OnCommand=THEMEMAN:GetMetric("Judgment","JudgmentOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	JudgmentMessageCommand=function(self, param)

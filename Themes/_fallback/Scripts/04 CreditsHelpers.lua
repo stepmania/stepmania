@@ -134,7 +134,7 @@ local kyzentuns_fancy_value= 16
 local special_logos= {
 	kyzentun= Def.ActorMultiVertex{
 		Name= "logo",
-		Texture= THEME:GetPathG("CreditsLogo", "kyzentun"),
+		Texture= THEMEMAN:GetPathG("CreditsLogo", "kyzentun"),
 		OnCommand= function(self)
 			self:SetDrawState{Mode= "DrawMode_Quads"}
 			kyzentuns_fancy_value= math.random(2, 32)
@@ -268,7 +268,7 @@ StepManiaCredits= {
 						Name= "logo",
 						InitCommand= function(self)
 							-- Use LoadBanner to disable the odd dimension warning.
-							self:LoadBanner(THEME:GetPathG("CreditsLogo", text.logo))
+							self:LoadBanner(THEMEMAN:GetPathG("CreditsLogo", text.logo))
 							-- Scale to slightly less than the line height for padding.
 							local yscale= (line_height-2) / self:GetHeight()
 							self:zoom(yscale)

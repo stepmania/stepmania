@@ -125,7 +125,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 			OffCommand=cmd(decelerate,0.3;diffusealpha,0)
 		},
 		
-		LoadActor(THEME:GetPathG("GradeDisplay", "Grade " .. p_grade)) .. {
+		LoadActor(THEMEMAN:GetPathG("GradeDisplay", "Grade " .. p_grade)) .. {
 			InitCommand=cmd(zoom,0.75;);
 			OnCommand=function(self)
 			    self:diffusealpha(0):zoom(1):sleep(0.63):decelerate(0.4):zoom(0.75):diffusealpha(1)

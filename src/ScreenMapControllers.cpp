@@ -14,10 +14,10 @@
 using std::vector;
 
 AutoScreenMessage(SM_DoSaveAndExit);
-#define BUTTONS_TO_MAP			THEME->GetMetric ( m_sName, "ButtonsToMap" )
+#define BUTTONS_TO_MAP			THEMEMAN->GetMetric ( m_sName, "ButtonsToMap" )
 static LocalizedString INVALID_BUTTON   ( "ScreenMapControllers", "InvalidButton" );
 static LocalizedString SAVE_PROMPT("ScreenMapControllers", "SavePrompt");
-#define MAPPED_TO_COMMAND(gc,slot)	THEME->GetMetricA( m_sName, fmt::sprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
+#define MAPPED_TO_COMMAND(gc,slot)	THEMEMAN->GetMetricA( m_sName, fmt::sprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
 
 static const float g_fSecondsToWaitForInput = 0.05f;
 
@@ -52,11 +52,11 @@ void ScreenMapControllers::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
-	m_soundDelete.Load( THEME->GetPathS(m_sName,"delete"), true );
+	m_soundChange.Load( THEMEMAN->GetPathS(m_sName,"change"), true );
+	m_soundDelete.Load( THEMEMAN->GetPathS(m_sName,"delete"), true );
 
 
-	m_textDevices.LoadFromFont( THEME->GetPathF(m_sName,"devices") );
+	m_textDevices.LoadFromFont( THEMEMAN->GetPathF(m_sName,"devices") );
 	m_textDevices.SetName( "Devices" );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textDevices );
 	this->AddChild( &m_textDevices );
@@ -91,7 +91,7 @@ void ScreenMapControllers::Init()
 		FOREACH_ENUM( GameController,  c )
 		{
 			BitmapText &text = m_textLabel[c];
-			text.LoadFromFont( THEME->GetPathF(m_sName,"title") );
+			text.LoadFromFont( THEMEMAN->GetPathF(m_sName,"title") );
 			PlayerNumber pn = (PlayerNumber)c;
 			text.SetName( "Label"+PlayerNumberToString(pn) );
 			std::string sText = rage_fmt_wrapper(PLAYER_SLOTS, PlayerNumberToLocalizedString(pn).c_str());
@@ -104,7 +104,7 @@ void ScreenMapControllers::Init()
 	// header row
 	{
 		m_Line.push_back(new ActorFrame);
-		m_ListHeaderCenter.LoadFromFont(THEME->GetPathF(m_sName, "title"));
+		m_ListHeaderCenter.LoadFromFont(THEMEMAN->GetPathF(m_sName, "title"));
 		m_ListHeaderCenter.SetName("ListHeaderCenter");
 		m_ListHeaderCenter.SetText(KEYNAME.GetValue());
 		ActorUtil::LoadAllCommands(m_ListHeaderCenter, m_sName);
@@ -114,10 +114,10 @@ void ScreenMapControllers::Init()
 			for(int s= 0; s < NUM_SHOWN_GAME_TO_DEVICE_SLOTS; ++s)
 			{
 				BitmapText& text= m_ListHeaderLabels[c][s];
-				text.LoadFromFont(THEME->GetPathF(m_sName, "title"));
+				text.LoadFromFont(THEMEMAN->GetPathF(m_sName, "title"));
 				text.SetName("ListHeader");
 				text.SetText(SLOT_NAMES[s].GetValue());
-				text.RunCommands(THEME->GetMetricA(
+				text.RunCommands(THEMEMAN->GetMetricA(
 						m_sName, fmt::sprintf("ListHeaderP%iS%iCommand", c+1, s+1)));
 				ActorUtil::LoadAllCommands(text, m_sName);
 				m_Line.back()->AddChild(&text);
@@ -134,7 +134,7 @@ void ScreenMapControllers::Init()
 		{
 			BitmapText *pName = new BitmapText;
 			pName->SetName( "Primary" );
-			pName->LoadFromFont( THEME->GetPathF(m_sName,"title") );
+			pName->LoadFromFont( THEMEMAN->GetPathF(m_sName,"title") );
 			std::string sText = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), key.m_GameButton );
 			pName->SetText( sText );
 			ActorUtil::LoadAllCommands( *pName, m_sName );
@@ -143,7 +143,7 @@ void ScreenMapControllers::Init()
 		{
 			BitmapText *pSecondary = new BitmapText;
 			pSecondary->SetName( "Secondary" );
-			pSecondary->LoadFromFont( THEME->GetPathF(m_sName,"title") );
+			pSecondary->LoadFromFont( THEMEMAN->GetPathF(m_sName,"title") );
 			GameButton mb = INPUTMAPPER->GetInputScheme()->GameButtonToMenuButton( key.m_GameButton );
 			std::string sText;
 			if( mb != GameButton_Invalid && mb != key.m_GameButton )
@@ -159,7 +159,7 @@ void ScreenMapControllers::Init()
 			{
 				key.m_textMappedTo[c][s] = new BitmapText;
 				key.m_textMappedTo[c][s]->SetName( "MappedTo" );
-				key.m_textMappedTo[c][s]->LoadFromFont( THEME->GetPathF(m_sName,"entry") );
+				key.m_textMappedTo[c][s]->LoadFromFont( THEMEMAN->GetPathF(m_sName,"entry") );
 				key.m_textMappedTo[c][s]->RunCommands( MAPPED_TO_COMMAND(c,s) );
 				ActorUtil::LoadAllCommands( key.m_textMappedTo[c][s], m_sName );
 				m_Line.back()->AddChild( key.m_textMappedTo[c][s] );
@@ -189,7 +189,7 @@ void ScreenMapControllers::Init()
 #undef ADD_ACTION
 
 	m_MaxDestItem= (1 + m_KeysToMap.size() + m_Actions.size()) -
-		THEME->GetMetricI("ScreenMapControllers", "LinesVisible");
+		THEMEMAN->GetMetricI("ScreenMapControllers", "LinesVisible");
 
 	m_LineScroller.SetName( "LineScroller" );
 	ActorUtil::LoadAllCommands( m_LineScroller, m_sName );
@@ -197,15 +197,15 @@ void ScreenMapControllers::Init()
 	m_LineScroller.Load2();
 	this->AddChild( &m_LineScroller );
 
-	m_NoSetListPrompt.Load(THEME->GetPathG(m_sName, "nosetlistprompt"));
+	m_NoSetListPrompt.Load(THEMEMAN->GetPathG(m_sName, "nosetlistprompt"));
 	m_NoSetListPrompt->SetName("NoSetListPrompt");
 	this->AddChild(m_NoSetListPrompt);
 
-	m_SanityMessage.Load(THEME->GetPathG(m_sName, "sanitymessage"));
+	m_SanityMessage.Load(THEMEMAN->GetPathG(m_sName, "sanitymessage"));
 	m_SanityMessage->SetName("SanityMessage");
 	this->AddChild(m_SanityMessage);
 
-	m_Warning.Load(THEME->GetPathG(m_sName, "warning"));
+	m_Warning.Load(THEMEMAN->GetPathG(m_sName, "warning"));
 	m_Warning->SetName("Warning");
 	m_Warning->SetDrawOrder(DRAW_ORDER_TRANSITIONS);
 	this->AddChild(m_Warning);
@@ -224,8 +224,8 @@ void ScreenMapControllers::BeginScreen()
 
 	Refresh();
 	AfterChangeFocus();
-	m_fLockInputSecs= THEME->GetMetricF(m_sName, "LockInputSecs");
-	m_AutoDismissWarningSecs= THEME->GetMetricF(m_sName, "AutoDismissWarningSecs");
+	m_fLockInputSecs= THEMEMAN->GetMetricF(m_sName, "LockInputSecs");
+	m_AutoDismissWarningSecs= THEMEMAN->GetMetricF(m_sName, "AutoDismissWarningSecs");
 	m_AutoDismissNoSetListPromptSecs= 0.0f;
 	m_AutoDismissSanitySecs= 0.0f;
 	if(m_AutoDismissWarningSecs > 0.25)
@@ -759,7 +759,7 @@ void ScreenMapControllers::SetListMode()
 	if(m_SetList.size() < 1)
 	{
 		m_NoSetListPrompt->PlayCommand("TweenOn");
-		m_AutoDismissNoSetListPromptSecs= THEME->GetMetricF(m_sName, "AutoDismissNoSetListPromptSecs");
+		m_AutoDismissNoSetListPromptSecs= THEMEMAN->GetMetricF(m_sName, "AutoDismissNoSetListPromptSecs");
 	}
 	else
 	{
@@ -803,14 +803,14 @@ bool ScreenMapControllers::SanityCheckWrapper()
 	{
 		for (auto &reason: reasons_not_sane)
 		{
-			reason= THEME->GetString("ScreenMapControllers", reason);
+			reason= THEMEMAN->GetString("ScreenMapControllers", reason);
 		}
 		std::string joined_reasons= Rage::join("\n", reasons_not_sane);
-		joined_reasons= THEME->GetString("ScreenMapControllers", "VitalButtons") + "\n" + joined_reasons;
+		joined_reasons= THEMEMAN->GetString("ScreenMapControllers", "VitalButtons") + "\n" + joined_reasons;
 		Message msg("SetText");
 		msg.SetParam("Text", joined_reasons);
 		m_SanityMessage->HandleMessage(msg);
-		m_AutoDismissSanitySecs= THEME->GetMetricF(m_sName, "AutoDismissSanitySecs");
+		m_AutoDismissSanitySecs= THEMEMAN->GetMetricF(m_sName, "AutoDismissSanitySecs");
 		return false;
 	}
 }
@@ -822,10 +822,10 @@ void ScreenMapControllers::ActionRow::Load(std::string const& scr_name,
 	m_action = action;
 	std::string lower_name = Rage::make_lower(name);
 	// Make the specific actor optional, use a fallback if it doesn't exist.
-	std::string path= THEME->GetPathG(scr_name, lower_name, true);
+	std::string path= THEMEMAN->GetPathG(scr_name, lower_name, true);
 	if(path.empty())
 	{
-		path= THEME->GetPathG(scr_name, "action");
+		path= THEMEMAN->GetPathG(scr_name, "action");
 	}
 	m_actor.Load(path);
 	m_actor->SetName(name);

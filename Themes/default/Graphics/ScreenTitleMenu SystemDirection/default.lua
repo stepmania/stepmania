@@ -19,7 +19,7 @@ local function MakeDisplayBar( fZoomX, fZoomY )
 end
 local function MakeIcon( sTarget )
 	local t = Def.ActorFrame {
-		LoadActor(THEME:GetPathG("MenuTimer","Frame"));
+		LoadActor(THEMEMAN:GetPathG("MenuTimer","Frame"));
 		LoadFont("Common Normal") .. {
 			Text=sTarget[2];
 			InitCommand=cmd(y,24+2;zoom,0.5;shadowlength,1);

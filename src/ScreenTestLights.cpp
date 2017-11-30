@@ -18,7 +18,7 @@ void ScreenTestLights::Init()
 	ScreenWithMenuElements::Init();
 
 	m_textInputs.SetName( "Text" );
-	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
+	m_textInputs.LoadFromFont( THEMEMAN->GetPathF("Common","normal") );
 	m_textInputs.SetText( "" );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textInputs );
 	this->AddChild( &m_textInputs );

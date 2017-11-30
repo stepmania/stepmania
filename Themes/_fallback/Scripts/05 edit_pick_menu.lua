@@ -24,11 +24,11 @@ local function run_delayed_command()
 end
 
 local function translate_stype(stype)
-	return THEME:GetString("LongStepsType", ToEnumShortString(stype))
+	return THEMEMAN:GetString("LongStepsType", ToEnumShortString(stype))
 end
 
 local function translate_diff(diff)
-	return THEME:GetString("CustomDifficulty", ToEnumShortString(diff))
+	return THEMEMAN:GetString("CustomDifficulty", ToEnumShortString(diff))
 end
 
 local function name_for_steps(steps)
@@ -108,7 +108,7 @@ end
 
 local function handle_edit_description_prompt(info)
 	local text_settings= {
-		Question= THEME:GetString("ScreenEditMenu", "edit_description_prompt"),
+		Question= THEMEMAN:GetString("ScreenEditMenu", "edit_description_prompt"),
 		InitialAnswer= "", MaxInputLength= 128,
 		OnOK= function(answer)
 			if answer ~= "" then
@@ -122,7 +122,7 @@ local function handle_edit_description_prompt(info)
 			if SongUtil.validate_edit_description(info.song, info.stype, answer) then
 				return true, ""
 			else
-				return false, THEME:GetString("SongUtil", "The name you chose conflicts with another edit. Please use a different name.")
+				return false, THEMEMAN:GetString("SongUtil", "The name you chose conflicts with another edit. Please use a different name.")
 			end
 		end,
 	}
@@ -180,7 +180,7 @@ local function steps_action_menu(info)
 		 type_hint= {main= "action", sub= "delete_chart"},
 		 func= function()
 			 prompt_screen(
-				 THEME:GetString(translation_section, "delete_chart_prompt"), 1,
+				 THEMEMAN:GetString(translation_section, "delete_chart_prompt"), 1,
 				 function(answer)
 					 if answer == "yes" then
 						 info.song:delete_steps(info.steps)
@@ -194,7 +194,7 @@ local function steps_action_menu(info)
 end
 
 local function dest_slot_menu(info)
-	local name_format= THEME:GetString(translation_section, info.action.."_format")
+	local name_format= THEMEMAN:GetString(translation_section, info.action.."_format")
 	local items= {}
 	for i, diff in ipairs(Difficulty) do
 		if info.slots[diff] then
@@ -210,7 +210,7 @@ local function dest_slot_menu(info)
 			end}
 		end
 	end
-	local close= "&leftarrow; " .. THEME:GetString(translation_section, info.action.."_slot_back")
+	local close= "&leftarrow; " .. THEMEMAN:GetString(translation_section, info.action.."_slot_back")
 	return nesty_menus.add_close_item(items, close)
 end
 
@@ -228,7 +228,7 @@ local function dest_stype_menu(info)
 						stype= stype, slots= slots}
 			end}
 	end)
-	local close= "&leftarrow; " .. THEME:GetString(translation_section, info.action.."_style_back")
+	local close= "&leftarrow; " .. THEMEMAN:GetString(translation_section, info.action.."_style_back")
 	return nesty_menus.add_close_item(items, close)
 end
 
@@ -263,7 +263,7 @@ steps_list_menu= function(song)
 		func= function()
 			return "submenu", dest_stype_menu{song= song, action= "copy_from"}
 	end}
-	local close= "&leftarrow; " .. THEME:GetString(translation_section, "steps_list_back")
+	local close= "&leftarrow; " .. THEMEMAN:GetString(translation_section, "steps_list_back")
 	return nesty_menus.add_close_item(items, close)
 end
 
@@ -283,7 +283,7 @@ local function song_list_menu(group_name)
 			end,
 		}
 	end
-	local close= "&leftarrow; " .. THEME:GetString(translation_section, "song_list_back")
+	local close= "&leftarrow; " .. THEMEMAN:GetString(translation_section, "song_list_back")
 	return nesty_menus.add_close_item(items, close)
 end
 
@@ -346,7 +346,7 @@ end
 local function base_edit_menu()
 	local groups= SONGMAN:GetSongGroupNames()
 	song_menu_choices= {
-		nesty_menus.close_item(THEME:GetString(translation_section, "exit_edit_menu")),
+		nesty_menus.close_item(THEMEMAN:GetString(translation_section, "exit_edit_menu")),
 		recent_edit_menu(),
 		recent_group_menu(),
 	}

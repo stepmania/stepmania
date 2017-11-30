@@ -257,7 +257,7 @@ void FadingBanner::LoadCourseFallback()
 void FadingBanner::LoadCustom( std::string sBanner )
 {
 	BeforeChange();
-	m_Banner[m_iIndexLatest].Load( THEME->GetPathG( "Banner", sBanner ) );
+	m_Banner[m_iIndexLatest].Load( THEMEMAN->GetPathG( "Banner", sBanner ) );
 	m_Banner[m_iIndexLatest].PlayCommand( sBanner );
 }
 

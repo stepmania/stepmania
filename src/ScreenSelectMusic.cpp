@@ -47,7 +47,7 @@ XToString( SelectionState );
 /** @brief The maximum number of digits for the ScoreDisplay. */
 const int NUM_SCORE_DIGITS = 9;
 
-#define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
+#define SHOW_OPTIONS_MESSAGE_SECONDS		THEMEMAN->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
 
 static const ThemeMetric<int> HARD_COMMENT_METER("ScreenSelectMusic", "HardCommentMeter");
 
@@ -112,20 +112,20 @@ void ScreenSelectMusic::Init()
 	CHANGE_STEPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeStepsWithGameButtons" );
 	CHANGE_GROUPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeGroupsWithGameButtons" );
 
-	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
-	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
+	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEMEMAN->GetMetric(m_sName,"PreviousSongButton") );
+	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEMEMAN->GetMetric(m_sName,"NextSongButton") );
 
 	// Ask for those only if changing steps with gamebuttons is allowed -DaisuMaster
 	if( CHANGE_STEPS_WITH_GAME_BUTTONS )
 	{
-		m_GameButtonPreviousDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousDifficultyButton") );
-		m_GameButtonNextDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextDifficultyButton") );
+		m_GameButtonPreviousDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEMEMAN->GetMetric(m_sName,"PreviousDifficultyButton") );
+		m_GameButtonNextDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEMEMAN->GetMetric(m_sName,"NextDifficultyButton") );
 	}
 	// same here but for groups -DaisuMaster
 	if( CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
-		m_GameButtonPreviousGroup = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousGroupButton") );
-		m_GameButtonNextGroup = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextGroupButton") );
+		m_GameButtonPreviousGroup = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEMEMAN->GetMetric(m_sName,"PreviousGroupButton") );
+		m_GameButtonNextGroup = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEMEMAN->GetMetric(m_sName,"NextGroupButton") );
 	}
 
 	FOREACH_ENUM( PlayerNumber, p )
@@ -140,36 +140,36 @@ void ScreenSelectMusic::Init()
 
 	// Cache these values
 	// Marking for change -- Midiman (why? -aj)
-	m_sSectionMusicPath =		THEME->GetPathS(m_sName,"section music");
-	m_sSortMusicPath =			THEME->GetPathS(m_sName,"sort music");
-	m_sRouletteMusicPath =		THEME->GetPathS(m_sName,"roulette music");
-	m_sRandomMusicPath =		THEME->GetPathS(m_sName,"random music");
-	m_sCourseMusicPath =		THEME->GetPathS(m_sName,"course music");
-	m_sLoopMusicPath =			THEME->GetPathS(m_sName,"loop music");
-	m_sFallbackCDTitlePath =	THEME->GetPathG(m_sName,"fallback cdtitle");
+	m_sSectionMusicPath =		THEMEMAN->GetPathS(m_sName,"section music");
+	m_sSortMusicPath =			THEMEMAN->GetPathS(m_sName,"sort music");
+	m_sRouletteMusicPath =		THEMEMAN->GetPathS(m_sName,"roulette music");
+	m_sRandomMusicPath =		THEMEMAN->GetPathS(m_sName,"random music");
+	m_sCourseMusicPath =		THEMEMAN->GetPathS(m_sName,"course music");
+	m_sLoopMusicPath =			THEMEMAN->GetPathS(m_sName,"loop music");
+	m_sFallbackCDTitlePath =	THEMEMAN->GetPathG(m_sName,"fallback cdtitle");
 
 	m_TexturePreload.Load( m_sFallbackCDTitlePath );
 
 	// load banners
 	if( PREFSMAN->m_BannerCache != BNCACHE_OFF )
 	{
-		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","all music")) );
-		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
-		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","roulette")) );
-		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","random")) );
-		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","mode")) );
+		m_TexturePreload.Load( Banner::SongBannerTexture(THEMEMAN->GetPathG("Banner","all music")) );
+		m_TexturePreload.Load( Banner::SongBannerTexture(THEMEMAN->GetPathG("Common","fallback banner")) );
+		m_TexturePreload.Load( Banner::SongBannerTexture(THEMEMAN->GetPathG("Banner","roulette")) );
+		m_TexturePreload.Load( Banner::SongBannerTexture(THEMEMAN->GetPathG("Banner","random")) );
+		m_TexturePreload.Load( Banner::SongBannerTexture(THEMEMAN->GetPathG("Banner","mode")) );
 	}
 	// load backgrounds
 	/*
 	if( PREFSMAN->m_BackgroundCache != BGCACHE_OFF )
 	{
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","AllMusic")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("Common","fallback banner")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","roulette")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","random")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","Mode")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","group fallback")) );
-		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","course fallback")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEMEMAN->GetPathG("SongBackgroundItem","AllMusic")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEMEMAN->GetPathG("Common","fallback banner")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEMEMAN->GetPathG("SongBackgroundItem","roulette")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEMEMAN->GetPathG("SongBackgroundItem","random")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEMEMAN->GetPathG("SongBackgroundItem","Mode")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEMEMAN->GetPathG("SongBackgroundItem","group fallback")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEMEMAN->GetPathG("SongBackgroundItem","course fallback")) );
 	}
 	*/
 
@@ -202,26 +202,26 @@ void ScreenSelectMusic::Init()
 	this->AddChild( &m_Banner );
 
 	m_sprCDTitleFront.SetName( "CDTitle" );
-	m_sprCDTitleFront.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
+	m_sprCDTitleFront.Load( THEMEMAN->GetPathG(m_sName,"fallback cdtitle") );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprCDTitleFront );
 	COMMAND( m_sprCDTitleFront, "Front" );
 	this->AddChild( &m_sprCDTitleFront );
 
 	m_sprCDTitleBack.SetName( "CDTitle" );
-	m_sprCDTitleBack.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
+	m_sprCDTitleBack.Load( THEMEMAN->GetPathG(m_sName,"fallback cdtitle") );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprCDTitleBack );
 	COMMAND( m_sprCDTitleBack, "Back" );
 	this->AddChild( &m_sprCDTitleBack );
 
 	FOREACH_ENUM( PlayerNumber, p )
 	{
-		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,fmt::sprintf("ScoreFrame P%d",p+1)) );
+		m_sprHighScoreFrame[p].Load( THEMEMAN->GetPathG(m_sName,fmt::sprintf("ScoreFrame P%d",p+1)) );
 		m_sprHighScoreFrame[p]->SetName( fmt::sprintf("ScoreFrameP%d",p+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprHighScoreFrame[p] );
 		this->AddChild( m_sprHighScoreFrame[p] );
 
 		m_textHighScore[p].SetName( fmt::sprintf("ScoreP%d",p+1) );
-		m_textHighScore[p].LoadFromFont( THEME->GetPathF(m_sName,"score") );
+		m_textHighScore[p].LoadFromFont( THEMEMAN->GetPathF(m_sName,"score") );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textHighScore[p] );
 		this->AddChild( &m_textHighScore[p] );
 	}
@@ -229,11 +229,11 @@ void ScreenSelectMusic::Init()
 	RageSoundLoadParams SoundParams;
 	SoundParams.m_bSupportPan = true;
 
-	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
-	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier"), false, &SoundParams );
-	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder"), false, &SoundParams );
-	m_soundOptionsChange.Load( THEME->GetPathS(m_sName,"options") );
-	m_soundLocked.Load( THEME->GetPathS(m_sName,"locked") );
+	m_soundStart.Load( THEMEMAN->GetPathS(m_sName,"start") );
+	m_soundDifficultyEasier.Load( THEMEMAN->GetPathS(m_sName,"difficulty easier"), false, &SoundParams );
+	m_soundDifficultyHarder.Load( THEMEMAN->GetPathS(m_sName,"difficulty harder"), false, &SoundParams );
+	m_soundOptionsChange.Load( THEMEMAN->GetPathS(m_sName,"options") );
+	m_soundLocked.Load( THEMEMAN->GetPathS(m_sName,"locked") );
 
 	this->SortByDrawOrder();
 }

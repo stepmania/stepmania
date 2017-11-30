@@ -185,7 +185,7 @@ function LoadFont(a, b)
 		sSection = "Common"
 		sFile = "normal"
 	end
-	local sPath = THEME:GetPathF(sSection, sFile)
+	local sPath = THEMEMAN:GetPathF(sSection, sFile)
 	return Def.BitmapText {
 		_Level = 2,
 		File = sPath
@@ -209,7 +209,7 @@ function StandardDecorationFromTable( MetricsName, t )
 end
 
 function StandardDecorationFromFile( MetricsName, FileName )
-	local t = LoadActor( THEME:GetPathG(Var "LoadingScreen",FileName) )
+	local t = LoadActor( THEMEMAN:GetPathG(Var "LoadingScreen",FileName) )
 	return StandardDecorationFromTable( MetricsName, t )
 end
 
@@ -220,7 +220,7 @@ function StandardDecorationFromFileOptional( MetricsName, FileName )
 end
 
 function ShowStandardDecoration( MetricsName )
-	return THEME:GetMetric(Var "LoadingScreen","Show"..MetricsName)
+	return THEMEMAN:GetMetric(Var "LoadingScreen","Show"..MetricsName)
 end
 
 --blank actor because these come in handy from time to time

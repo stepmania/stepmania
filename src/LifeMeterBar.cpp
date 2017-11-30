@@ -50,12 +50,12 @@ LifeMeterBar::LifeMeterBar()
 	bool bExtra = GAMESTATE->IsAnExtraStage();
 	std::string sExtra = bExtra ? "extra " : "";
 
-	m_sprUnder.Load( THEME->GetPathG(sType,sExtra+"Under") );
+	m_sprUnder.Load( THEMEMAN->GetPathG(sType,sExtra+"Under") );
 	m_sprUnder->SetName( "Under" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_sprUnder, sType );
 	this->AddChild( m_sprUnder );
 
-	m_sprDanger.Load( THEME->GetPathG(sType,sExtra+"Danger") );
+	m_sprDanger.Load( THEMEMAN->GetPathG(sType,sExtra+"Danger") );
 	m_sprDanger->SetName( "Danger" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_sprDanger, sType );
 	this->AddChild( m_sprDanger );
@@ -66,7 +66,7 @@ LifeMeterBar::LifeMeterBar()
 	ActorUtil::LoadAllCommandsAndSetXY( m_pStream, sType );
 	this->AddChild( m_pStream );
 
-	m_sprOver.Load( THEME->GetPathG(sType,sExtra+"Over") );
+	m_sprOver.Load( THEMEMAN->GetPathG(sType,sExtra+"Over") );
 	m_sprOver->SetName( "Over" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_sprOver, sType );
 	this->AddChild( m_sprOver );

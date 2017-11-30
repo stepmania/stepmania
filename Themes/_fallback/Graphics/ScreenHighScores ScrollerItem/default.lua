@@ -20,7 +20,7 @@ t[#t+1] = Def.TextBanner {
 	end;
 };
 
-local NumColumns = THEME:GetMetric(Var "LoadingScreen", "NumColumns");
+local NumColumns = THEMEMAN:GetMetric(Var "LoadingScreen", "NumColumns");
 
 local c;
 local Scores = Def.ActorFrame {
@@ -51,7 +51,7 @@ for idx=1,NumColumns do
 	
 end
 
-local sNoScoreName = THEME:GetMetric("Common", "NoScoreName");
+local sNoScoreName = THEMEMAN:GetMetric("Common", "NoScoreName");
 
 Scores.SetCommand=function(self, params)
 	local pProfile = PROFILEMAN:GetMachineProfile();

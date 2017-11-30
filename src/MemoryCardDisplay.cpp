@@ -22,7 +22,7 @@ void MemoryCardDisplay::Load( PlayerNumber pn )
 	{
 		MemoryCardState mcs = (MemoryCardState)i;
 		std::string sState = MemoryCardStateToString(mcs);
-		m_spr[i].Load( THEME->GetPathG("MemoryCardDisplay",fmt::sprintf("%s p%d",sState.c_str(),pn+1)) );
+		m_spr[i].Load( THEMEMAN->GetPathG("MemoryCardDisplay",fmt::sprintf("%s p%d",sState.c_str(),pn+1)) );
 		m_spr[i].SetVisible( false );
 		this->AddChild( &m_spr[i] );
 	}

@@ -11,8 +11,8 @@
 
 using std::vector;
 
-#define CHOICE( s )		THEME->GetMetric (m_sName,fmt::sprintf("Choice%s",s.c_str()))
-#define IDLE_TIMEOUT_SCREEN	THEME->GetMetric (m_sName,"IdleTimeoutScreen")
+#define CHOICE( s )		THEMEMAN->GetMetric (m_sName,fmt::sprintf("Choice%s",s.c_str()))
+#define IDLE_TIMEOUT_SCREEN	THEMEMAN->GetMetric (m_sName,"IdleTimeoutScreen")
 
 void ScreenSelect::Init()
 {
@@ -23,7 +23,7 @@ void ScreenSelect::Init()
 	ScreenWithMenuElements::Init();
 
 	// Load messages to update on
-	auto toDump = Rage::split(THEME->GetMetric(m_sName, "UpdateOnMessage"), ",");
+	auto toDump = Rage::split(THEMEMAN->GetMetric(m_sName, "UpdateOnMessage"), ",");
 	m_asSubscribedMessages.insert(m_asSubscribedMessages.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 	for (auto &message: m_asSubscribedMessages)
 	{
@@ -36,7 +36,7 @@ void ScreenSelect::Init()
 	}
 	// Load choices
 	// Allow lua as an alternative to metrics.
-	std::string choice_names = THEME->GetMetric(m_sName,"ChoiceNames");
+	std::string choice_names = THEMEMAN->GetMetric(m_sName,"ChoiceNames");
 	if (Rage::starts_with(choice_names, "lua,"))
 	{
 		std::string command = Rage::tail(choice_names, -4);
@@ -80,7 +80,7 @@ void ScreenSelect::Init()
 		// Each element in the list is a choice name. This level of indirection
 		// makes it easier to add or remove items without having to change a
 		// bunch of indices.
-		auto asChoiceNames = Rage::split(THEME->GetMetric (m_sName,"ChoiceNames"), ",", Rage::EmptyEntries::skip );
+		auto asChoiceNames = Rage::split(THEMEMAN->GetMetric (m_sName,"ChoiceNames"), ",", Rage::EmptyEntries::skip );
 
 		for( unsigned c=0; c<asChoiceNames.size(); c++ )
 		{
@@ -125,7 +125,7 @@ void ScreenSelect::Update( float fDelta )
 	{
 		if( IDLE_COMMENT_SECONDS > 0  &&  m_timerIdleComment.PeekDeltaTime() >= IDLE_COMMENT_SECONDS )
 		{
-			SOUND->PlayOnceFromAnnouncer( m_sName+" IdleComment" );
+			SOUNDMAN->PlayOnceFromAnnouncer( m_sName+" IdleComment" );
 			m_timerIdleComment.GetDeltaTime();
 		}
 

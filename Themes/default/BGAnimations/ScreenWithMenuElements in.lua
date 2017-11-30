@@ -6,6 +6,6 @@ local transition_params = {
 }
 
 -- Give it to another worker and let them do all the work with it
-return LoadActor(THEME:GetPathB("", "_transition"), transition_params)
+return LoadActor(THEMEMAN:GetPathB("", "_transition"), transition_params)
 
 -- Job done.

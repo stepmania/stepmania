@@ -51,18 +51,18 @@ local function value_handler(name)
 		Def.BitmapText{
 			Font= "Common Normal", InitCommand= function(self)
 				self:horizalign(left):x(2):strokecolor{0, 0, 0, 1}
-					:settext(THEME:GetString("EditModPreview", name))
+					:settext(THEMEMAN:GetString("EditModPreview", name))
 			end,
 		},
 		Def.Sprite{
-			Name= "increase_button", Texture= THEME:GetPathG("", "up_button.png"),
+			Name= "increase_button", Texture= THEMEMAN:GetPathG("", "up_button.png"),
 			InitCommand= function(self)
 				self:xy(-16, -24)
 			end,
 			ClickCommand= button_click,
 		},
 		Def.Sprite{
-			Name= "decrease_button", Texture= THEME:GetPathG("", "up_button.png"),
+			Name= "decrease_button", Texture= THEMEMAN:GetPathG("", "up_button.png"),
 			InitCommand= function(self)
 				self:xy(-16, 24):basezoomy(-1)
 			end,
@@ -81,7 +81,7 @@ local function bool_handler(name)
 		Def.Sprite{
 			Name= "checkbox",
 			-- don't feel like drawing a checkbox.
-			Texture= THEME:GetPathG("", "up_button.png"),
+			Texture= THEMEMAN:GetPathG("", "up_button.png"),
 			InitCommand= function(self)
 				self:rotationz(90):x(-10)
 			end,
@@ -101,7 +101,7 @@ local function bool_handler(name)
 		Def.BitmapText{
 			Font= "Common Normal", InitCommand= function(self)
 				self:horizalign(left):x(2):strokecolor{0, 0, 0, 1}
-					:settext(THEME:GetString("EditModPreview", name))
+					:settext(THEMEMAN:GetString("EditModPreview", name))
 			end
 		},
 	}
