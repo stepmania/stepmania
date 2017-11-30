@@ -33,6 +33,7 @@ public:
 	void	SetRate( float fRate ) { m_fCurAnimationRate = fRate; }
 	void	SetLoop( bool b ) { m_bLoop = b; }
 	void	SetPosition( float fSeconds );
+	void	SetInverseBindPose( bool b ) { m_bInverseBindPose = b; }
 
 	virtual void	UpdateInternal(float delta);
 	virtual bool	EarlyAbortDraw() const;
@@ -86,6 +87,7 @@ private:
 	float			m_fCurAnimationRate;
 	bool			m_bLoop;
 	bool			m_bDrawCelShaded; // for Lua models
+	bool			m_bInverseBindPose;
 	bool m_loaded_safely;
 
 	Model& operator=(const Model& rhs);

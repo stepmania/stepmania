@@ -1044,6 +1044,7 @@
 			<Function name='playanimation'/>
 			<Function name='position'/>
 			<Function name='rate'/>
+			<Function name='InverseBindPose'/>
 		</Class>
 		<Class base='WheelBase' name='MusicWheel'>
 			<Function name='ChangeSort'/>

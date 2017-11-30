@@ -37,6 +37,7 @@ Model::Model()
 	m_bDrawCelShaded = false;
 	m_pTempGeometry = nullptr;
 	m_loaded_safely= false;
+	m_bInverseBindPose = true;
 }
 
 Model::~Model()
@@ -554,13 +555,16 @@ void Model::DrawMesh( int i ) const
 		const Rage::Matrix &mat = m_vpBones[pMesh->m_iBoneIndex].m_Final;
 		DISPLAY->PreMultMatrix( mat );
 
-		Rage::Matrix inverse = m_vpBones[pMesh->m_iBoneIndex].m_Absolute.GetTranspose();
-		Rage::Vector3 vTmp = Rage::Vector3( inverse.m[3][0], inverse.m[3][1], inverse.m[3][2] );
-		vTmp = vTmp.TransformNormal( inverse );
-		inverse.m[3][0] = -vTmp.x;
-		inverse.m[3][1] = -vTmp.y;
-		inverse.m[3][2] = -vTmp.z;
-		DISPLAY->PreMultMatrix( inverse );
+		if (m_bInverseBindPose)
+		{
+			Rage::Matrix inverse = m_vpBones[pMesh->m_iBoneIndex].m_Absolute.GetTranspose();
+			Rage::Vector3 vTmp = Rage::Vector3( inverse.m[3][0], inverse.m[3][1], inverse.m[3][2] );
+			vTmp = vTmp.TransformNormal( inverse );
+			inverse.m[3][0] = -vTmp.x;
+			inverse.m[3][1] = -vTmp.y;
+			inverse.m[3][2] = -vTmp.z;
+			DISPLAY->PreMultMatrix( inverse );
+		}
 	}
 
 	// Draw it
@@ -899,6 +903,11 @@ public:
 		lua_pushnumber( L, p->GetNumStates() );
 		return 1;
 	}
+	static int InverseBindPose( T* p, lua_State *L )
+	{
+		p->SetInverseBindPose(BArg(1));
+		COMMON_RETURN_SELF;
+	}
 	/*
 	static int CelShading( T* p, lua_State *L )
 	{
@@ -918,6 +927,7 @@ public:
 		ADD_METHOD( GetNumStates );
 		//ADD_METHOD( CelShading );
 		// LoadMilkshapeAsciiBones?
+		ADD_METHOD( InverseBindPose );
 	}
 };
 
