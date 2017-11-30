@@ -270,7 +270,7 @@ void ScreenSelectMaster::Init()
 	}
 
 	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
-	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
+	m_soundDifficult.Load( ANNOUNCERMAN->GetPathTo("select difficulty challenge") );
 	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
 
 	// init m_Next order info
@@ -969,7 +969,7 @@ bool ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	if( !AnyOptionsArePlayable() )
 		return false;
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(fmt::sprintf("%s comment %s",m_sName.c_str(), mc->m_sName.c_str())) );
+	SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo(fmt::sprintf("%s comment %s",m_sName.c_str(), mc->m_sName.c_str())) );
 
 	// Play a copy of the sound, so it'll finish playing even if we leave the screen immediately.
 	if( mc->m_sSoundPath.empty() && !m_bDoubleChoiceNoSound )

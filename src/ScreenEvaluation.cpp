@@ -679,24 +679,24 @@ void ScreenEvaluation::Init()
 	{
 		SOUND->PlayOnce( THEME->GetPathS(m_sName,"try " + EarnedExtraStageToString(m_pStageStats->m_EarnedExtraStage)) );
 	}
-	else if( bOneHasNewTopRecord && ANNOUNCER->HasSoundsFor("evaluation new record") )
+	else if( bOneHasNewTopRecord && ANNOUNCERMAN->HasSoundsFor("evaluation new record") )
 	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
+		SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("evaluation new record") );
 	}
 	else if( bOneHasFullW4Combo && g_MinScoreToMaintainCombo == TNS_W4 )
 	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation full combo W4") );
+		SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("evaluation full combo W4") );
 	}
 	else if( (bOneHasFullW1Combo || bOneHasFullW2Combo || bOneHasFullW3Combo) )
 	{
 		std::string sComboType = bOneHasFullW1Combo ? "W1" : ( bOneHasFullW2Combo ? "W2" : "W3" );
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation full combo "+sComboType) );
+		SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("evaluation full combo "+sComboType) );
 	}
 	else
 	{
 		if( SUMMARY || GAMESTATE->IsCourseMode() )
 		{
-			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToOldString(best_grade)) );
+			SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("evaluation final "+GradeToOldString(best_grade)) );
 		}
 		else
 		{
@@ -706,11 +706,11 @@ void ScreenEvaluation::Init()
 				{
 					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->GetMasterPlayerNumber()) == RESULT_WIN;
 					std::string sResult = bWon ? "win" : "lose";
-					SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+sResult) );
+					SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("evaluation "+sResult) );
 				}
 				break;
 			default:
-				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToOldString(best_grade)) );
+				SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("evaluation "+GradeToOldString(best_grade)) );
 				break;
 			}
 		}
@@ -776,7 +776,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_PlayCheer )
 	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
+		SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("evaluation cheer") );
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );

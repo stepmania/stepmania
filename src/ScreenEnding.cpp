@@ -103,7 +103,7 @@ void ScreenEnding::Init()
 		this->AddChild( &m_sprRemoveMemoryCard[p] );
 	}
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("music scroll") );
+	SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("music scroll") );
 
 	// Now that we've read the data from the profile, it's ok to Reset()
 	GAMESTATE->Reset();

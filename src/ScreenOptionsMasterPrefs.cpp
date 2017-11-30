@@ -319,7 +319,7 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 static LocalizedString OFF ("ScreenOptionsMasterPrefs","Off");
 static void AnnouncerChoices( vector<std::string> &out )
 {
-	ANNOUNCER->GetAnnouncerNames( out );
+	ANNOUNCERMAN->GetAnnouncerNames( out );
 	out.insert( out.begin(), OFF.GetValue() );
 }
 
@@ -331,7 +331,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	if( ToSel )
 	{
 		sel = 0;
-		Rage::ci_ascii_string announcerName{ANNOUNCER->GetCurAnnouncerName().c_str()};
+		Rage::ci_ascii_string announcerName{ANNOUNCERMAN->GetCurAnnouncerName().c_str()};
 		for( unsigned i=1; i<choices.size(); i++ )
 		{
 			if (announcerName == choices[i])
@@ -343,7 +343,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	else
 	{
 		const std::string sNewAnnouncer = sel? choices[sel]:std::string("");
-		ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
+		ANNOUNCERMAN->SwitchAnnouncer( sNewAnnouncer );
 		PREFSMAN->m_sAnnouncer.Set( sNewAnnouncer );
 	}
 }

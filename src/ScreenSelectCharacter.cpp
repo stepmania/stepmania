@@ -136,7 +136,7 @@ void ScreenSelectCharacter::Init()
 
 	m_soundChange.Load( THEME->GetPathS("ScreenSelectCharacter","change"), true );
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
+	SOUND->PlayOnceFromDir( ANNOUNCERMAN->GetPathTo("select group intro") );
 
 	FOREACH_PlayerNumber( p )
 	{
