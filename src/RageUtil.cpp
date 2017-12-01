@@ -830,7 +830,7 @@ bool GetCommandlineArgument( const std::string &option, std::string *argument, i
 std::string GetCwd()
 {
 	char buf[PATH_MAX];
-	bool ret = getcwd(buf, PATH_MAX) != nullptr;
+	bool ret = _getcwd(buf, PATH_MAX) != nullptr;
 	ASSERT(ret);
 	return buf;
 }
