@@ -329,7 +329,7 @@ namespace SymbolLookup
 	{
 		_write( _fileno(stdout), &hMod,  sizeof(hMod) );
 
-		int iFD = fileno(stdin);
+		int iFD = _fileno(stdin);
 		int iSize;
 		if (!ReadFromParent(iFD, &iSize, sizeof(iSize)))
 		{
@@ -871,7 +871,7 @@ void ChildProcess()
 {
 	// Read the crash data from the crashed parent.
 	CompleteCrashData Data;
-	ReadCrashDataFromParent( fileno(stdin), Data );
+	ReadCrashDataFromParent( _fileno(stdin), Data );
 
 	std::string sCrashReport;
 	VDDebugInfo::VDDebugInfoInitFromFile( &g_debugInfo );
