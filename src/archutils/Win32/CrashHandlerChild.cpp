@@ -239,7 +239,7 @@ bool ReadFromParent( int fd, void *p, int size )
 	int got = 0;
 	while( got < size )
 	{
-		int ret = read( fd, buf+got, size-got );
+		int ret = _read( fd, buf+got, size-got );
 		if( ret == -1 )
 		{
 			if( errno == EINTR )
@@ -327,7 +327,7 @@ namespace SymbolLookup
 
 	std::string CrashChildGetModuleBaseName( HMODULE hMod )
 	{
-		write( _fileno(stdout), &hMod,  sizeof(hMod) );
+		_write( _fileno(stdout), &hMod,  sizeof(hMod) );
 
 		int iFD = fileno(stdin);
 		int iSize;
