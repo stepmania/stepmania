@@ -5344,8 +5344,8 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='customtexturerect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		Duplicates the given texture within the rectangle. The media hint "(stretch)" is needed.<br />
-		For example, the command customtexturerect(0,0,2,2) will duplicate the texture vertically and horizontally twice, creating a 4x4 grid.<br />
-		The command customtexturerect(2,2,0,0) will also duplicate it vertically and horizontally twice, but will flip the image horizontally and vertically.
+		For example, the command customtexturerect(0,0,2,2) will duplicate the texture vertically and horizontally once, creating a 2x2 grid.<br />
+		The command customtexturerect(2,2,0,0) will also duplicate it vertically and horizontally once, but will flip the image horizontally and vertically.
 	</Function>
 	<Function name='get_use_effect_clock_for_texcoords' return='bool' arguments=''>
 		Returns true if the sprite is using the effect clock for texcoordvelocity.
