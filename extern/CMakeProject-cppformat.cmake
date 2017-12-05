@@ -4,11 +4,11 @@ if (NOT IS_DIRECTORY "${SM_EXTERN_DIR}/cppformat")
 endif()
 
 list(APPEND CPPFORMAT_SRC
-  "cppformat/format.cc"
+  "cppformat/fmt/format.cc"
 )
 
 list(APPEND CPPFORMAT_HPP
-  "cppformat/format.h"
+  "cppformat/fmt/format.h"
 )
 
 source_group("" FILES ${CPPFORMAT_SRC} ${CPPFORMAT_HPP})

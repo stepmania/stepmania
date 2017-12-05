@@ -2,7 +2,7 @@
 #include "RageMath.hpp"
 #include <sstream>
 #include <cmath>
-#include "format.h"
+#include "fmt/format.h"
 
 Rage::Color::Color(): r(0), g(0), b(0), a(0)
 {
