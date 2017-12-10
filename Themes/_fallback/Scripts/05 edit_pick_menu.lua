@@ -369,11 +369,14 @@ local function exit_edit_menu()
 	song_menu_choices= nil
 end
 
-local function menu_input(event)
-	local levels_left= song_menu_controller:input(event)
-	if levels_left and levels_left < 1 then
-		editor_config:save()
-		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
+local function make_menu_input(sounds)
+	return function(event)
+		local levels_left, sound_name= song_menu_controller:input(event)
+		nesty_menus.play_menu_sound(sounds, sound_name)
+		if levels_left and levels_left < 1 then
+			editor_config:save()
+			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
+		end
 	end
 end
 
@@ -381,19 +384,22 @@ local prev_mx= 0
 local prev_my= 0
 local buttons_debug= false
 local focus_debug= false
-local function menu_update()
-	local mx= INPUTFILTER:GetMouseX()
-	local my= INPUTFILTER:GetMouseY()
-	if mx ~= prev_mx or my ~= prev_my then
-		song_menu_controller:update_focus(mx, my)
-		prev_mx= mx
-		prev_my= my
-	end
-	if buttons_debug then
-		buttons_debug:playcommand("Frame", {song_menu_controller})
-	end
-	if focus_debug then
-		focus_debug:playcommand("Frame", {song_menu_controller})
+local function make_menu_update(sounds)
+	return function()
+		local mx= INPUTFILTER:GetMouseX()
+		local my= INPUTFILTER:GetMouseY()
+		if mx ~= prev_mx or my ~= prev_my then
+			local sound_name= song_menu_controller:update_focus(mx, my)
+			nesty_menus.play_menu_sound(sounds, sound_name)
+			prev_mx= mx
+			prev_my= my
+		end
+		if buttons_debug then
+			buttons_debug:playcommand("Frame", {song_menu_controller})
+		end
+		if focus_debug then
+			focus_debug:playcommand("Frame", {song_menu_controller})
+		end
 	end
 end
 
@@ -456,8 +462,9 @@ function edit_pick_menu_actor(menu_actor, repeats_to_big, debug_click_area)
 	local frame= Def.ActorFrame{
 		Name= "edit_menu",
 		OnCommand= function(self)
-			SCREENMAN:GetTopScreen():AddInputCallback(menu_input)
-			self:SetUpdateFunction(menu_update)
+			local sound_actors= nesty_menus.make_menu_sound_lookup(self)
+			SCREENMAN:GetTopScreen():AddInputCallback(make_menu_input(sound_actors))
+			self:SetUpdateFunction(make_menu_update(sound_actors))
 			song_menu_controller:attach(self:GetChild("menu"))
 			song_menu_controller:set_info(base_edit_menu(), true)
 			song_menu_controller:set_input_mode("four_direction", repeats_to_big, true)
@@ -487,6 +494,10 @@ function edit_pick_menu_actor(menu_actor, repeats_to_big, debug_click_area)
 			end,
 		},
 	}
+	local sounds= nesty_menus.load_typical_menu_sounds()
+	if sounds then
+		frame[#frame+1]= sounds
+	end
 	if debug_click_area then
 		frame[#frame+1]= nesty_menus.button_debug_actor()
 		frame[#frame+1]= nesty_menus.focus_debug_actor()
