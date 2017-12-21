@@ -7,168 +7,6 @@ local prompt_text= {
 }
 local prompt_actor= false
 
-local screen_gameplay= false
-local menu_items= {[PLAYER_1]= {}, [PLAYER_2]= {}}
-local menu_frames= {}
-local menu_choices= {
-	"continue_playing",
-	"restart_song",
-	"forfeit_song",
-}
-if GAMESTATE:IsCourseMode() then
-	menu_choices= {
-		"continue_playing",
-		"skip_song",
-		"forfeit_course",
-		"end_course",
-	}
-end
-local menu_spacing= 32
-local menu_bg_width= _screen.w * .2
-local menu_text_width= _screen.w * .35
-local menu_x= {[PLAYER_1]= THEME:GetMetric(Var "LoadingScreen","PlayerP1MiscX"), [PLAYER_2]= THEME:GetMetric(Var "LoadingScreen","PlayerP2MiscX")}
-local menu_y= _screen.cy - (#menu_choices * .5 * menu_spacing)
-local current_menu_choice= {}
-local menu_is_showing= {}
-local enabled_players= {}
-
-local function create_menu_item(pn, x, y, item_name)
-	return Def.BitmapText{
-		Font= "Common Condensed", Text= THEME:GetString("PauseMenu", item_name),
-		InitCommand= function(self)
-			self:xy(x, y)
-			table.insert(menu_items[pn], self)
-			self:playcommand("LoseFocus")
-		end,
-		LoseFocusCommand= function(self)
-			self:diffusealpha(0.5)
-		end,
-		GainFocusCommand= function(self)
-			self:diffusealpha(1)
-		end,
-	}
-end
-
-local function create_menu_frame(pn, x, y)
-	local frame= Def.ActorFrame{
-		InitCommand= function(self)
-			self:xy(x, y):playcommand("Hide")
-			menu_frames[pn]= self
-		end,
-		ShowCommand= function(self)
-			self:visible(true)
-		end,
-		HideCommand= function(self)
-			self:visible(false)
-		end,
-		Def.Quad{
-			InitCommand= function(self)
-				self:setsize(menu_bg_width, menu_spacing * (#menu_choices + 1))
-					:y(-menu_spacing):vertalign(top)
-					:diffuse{0, 0, 0, .75}
-					:playcommand("Hide")
-			end,
-		},
-	}
-	for i, choice in ipairs(menu_choices) do
-		frame[#frame+1]= create_menu_item(pn, 0, (i-1)*menu_spacing, choice)
-	end
-	return frame
-end
-
-local function backout(screen)
-	screen_gameplay:SetPrevScreenName(screen):begin_backing_out()
-end
-
-local function show_menu(pn)
-	menu_frames[pn]:playcommand("Show")
-	for i, item in ipairs(menu_items[pn]) do
-		item:playcommand("LoseFocus")
-	end
-	current_menu_choice[pn]= 1
-	menu_items[pn][current_menu_choice[pn]]:playcommand("GainFocus")
-	menu_is_showing[pn]= true
-end
-
-local function close_menu(pn)
-	menu_frames[pn]:playcommand("Hide")
-	menu_is_showing[pn]= false
-	local stay_paused= false
-	for pn, showing in pairs(menu_is_showing) do
-		if showing then
-			stay_paused= true
-		end
-	end
-	if not stay_paused then
-		local fg= screen_gameplay:GetChild("SongForeground")
-		if fg then fg:visible(old_fg_visible) end
-		screen_gameplay:PauseGame(false)
-	end
-end
-
-local choice_actions= {
-	continue_playing= function(pn)
-		close_menu(pn)
-	end,
-	restart_song= function(pn)
-		backout("ScreenStageInformation")
-	end,
-	forfeit_song= function(pn)
-		backout(SelectMusicOrCourse())
-	end,
-	skip_song= function(pn)
-		screen_gameplay:PostScreenMessage("SM_NotesEnded", 0)
-	end,
-	forfeit_course= function(pn)
-		backout(SelectMusicOrCourse())
-	end,
-	end_course= function(pn)
-		course_stopped_by_pause_menu= true
-		screen_gameplay:PostScreenMessage("SM_NotesEnded", 0)
-	end,
-}
-
-local menu_actions= {
-	Start= function(pn)
-		local choice_name= menu_choices[current_menu_choice[pn]]
-		if choice_actions[choice_name] then
-			choice_actions[choice_name](pn)
-		end
-	end,
-	Left= function(pn)
-		if current_menu_choice[pn] > 1 then
-			menu_items[pn][current_menu_choice[pn]]:playcommand("LoseFocus")
-			current_menu_choice[pn]= current_menu_choice[pn] - 1
-			menu_items[pn][current_menu_choice[pn]]:playcommand("GainFocus")
-		end
-	end,
-	Right= function(pn)
-		if current_menu_choice[pn] < #menu_choices then
-			menu_items[pn][current_menu_choice[pn]]:playcommand("LoseFocus")
-			current_menu_choice[pn]= current_menu_choice[pn] + 1
-			menu_items[pn][current_menu_choice[pn]]:playcommand("GainFocus")
-		end
-	end,
-}
-menu_actions.Up= menu_actions.Left
-menu_actions.Down= menu_actions.Right
-menu_actions.MenuLeft= menu_actions.Left
-menu_actions.MenuRight= menu_actions.Right
-menu_actions.MenuUp= menu_actions.Up
-menu_actions.MenuDown= menu_actions.Down
-
-local function pause_and_show(pn)
-	gameplay_pause_count= gameplay_pause_count + 1
-	screen_gameplay:PauseGame(true)
-	local fg= screen_gameplay:GetChild("SongForeground")
-	if fg then
-		old_fg_visible= fg:GetVisible()
-		fg:visible(false)
-	end
-	prompt_actor:playcommand("Hide")
-	show_menu(pn)
-end
-
 local function show_prompt(button)
 	prompt_actor:playcommand("Show", {text= prompt_text[button]})
 end
@@ -177,36 +15,178 @@ local function hide_prompt()
 	prompt_actor:playcommand("Hide")
 end
 
-local function input(event)
-	local pn= event.PlayerNumber
-	if not enabled_players[pn] then return end
-	local button= event.GameButton
-	if not button then return end
-	if event.type == "InputEventType_Release" then return end
-	local is_paused= screen_gameplay:IsPaused()
-	if is_paused then
-		if menu_is_showing[pn] then
-			if menu_actions[button] then
-				menu_actions[button](pn)
-				return
-			end
-		else
-			if button == "Start" then
-				show_menu(pn)
-				return
-			end
+local enabled_players= {}
+local screen_gameplay= false
+local notefields= {}
+
+local menu_height= 410
+local menu_width= 346
+local menu_x= {[PLAYER_1]= THEME:GetMetric(Var "LoadingScreen","PlayerP1MiscX"), [PLAYER_2]= THEME:GetMetric(Var "LoadingScreen","PlayerP2MiscX")}
+
+local pause_menus= {}
+local menu_sounds= {}
+local menu_frames= {}
+local ignore_next_open= {}
+
+local function close_menu(pn)
+	pause_menus[pn]:close_menu()
+	pause_menus[pn]:hide()
+	menu_frames[pn]:visible(false)
+	local stay_paused= false
+	for pn, menu in pairs(pause_menus) do
+		if not menu.hidden then
+			stay_paused= true
 		end
+	end
+	if not stay_paused then
+		local fg= screen_gameplay:GetChild("SongForeground")
+		if fg then fg:visible(old_fg_visible) end
+		local overlay= screen_gameplay:GetChild("Overlay")
+		overlay:visible(old_overlay_visible)
+		screen_gameplay:PauseGame(false)
 	end
 end
 
-local frame= Def.ActorFrame{
+local function backout(screen)
+	screen_gameplay:SetPrevScreenName(screen):SetNextScreenName(screen)
+		:begin_backing_out()
+end
+
+local function forfeit()
+	backout(SelectMusicOrCourse())
+end
+
+local function restart_song()
+	local tokens_to_add= GAMESTATE:GetNumStagesForCurrentSongAndStepsOrCourse()
+	for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+		for t= 1, tokens_to_add do
+			GAMESTATE:AddStageToPlayer(pn)
+		end
+	end
+	backout(Branch.GameplayScreen())
+end
+
+local function skip_song()
+	screen_gameplay:PostScreenMessage("SM_NotesEnded", 0)
+end
+
+local function end_course()
+	course_stopped_by_pause_menu= true
+	screen_gameplay:PostScreenMessage("SM_NotesEnded", 0)
+end
+
+local menu_data= get_player_options_menu()
+
+table.insert(menu_data, 1, {"action", "play", function(b, a, pn)
+	close_menu(pn)
+end})
+
+if GAMESTATE:IsCourseMode() then
+	menu_data[#menu_data+1]= {"action", "skip_song", skip_song}
+	menu_data[#menu_data+1]= {"action", "forfeit", forfeit}
+	menu_data[#menu_data+1]= {"action", "end_course", end_course}
+else
+	menu_data[#menu_data+1]= {"action", "forfeit", forfeit}
+	menu_data[#menu_data+1]= {"action", "restart_song", restart_song}
+end
+
+local function show_menu(pn)
+	menu_frames[pn]:visible(true)
+	pause_menus[pn]:show()
+	pause_menus[pn]:open_menu()
+end
+
+local function mouse_pn()
+	local mx= INPUTFILTER:GetMouseX()
+	if mx < _screen.cx then return PLAYER_1 end
+	return PLAYER_2
+end
+
+local prev_mx= INPUTFILTER:GetMouseX()
+local prev_my= INPUTFILTER:GetMouseY()
+local function update()
+	if not screen_gameplay:IsPaused() then return end
+	local mx= INPUTFILTER:GetMouseX()
+	local my= INPUTFILTER:GetMouseY()
+	if mx == prev_mx and my == prev_my then return end
+	local pn= mouse_pn()
+	if not pause_menus[pn] then return end
+	local sound_name= pause_menus[pn]:update_focus(mx, my)
+	nesty_menus.play_menu_sound(menu_sounds, sound_name)
+	prev_mx= mx
+	prev_my= my
+end
+
+local function handle_menu(pn, event)
+	local levels_left, sound= pause_menus[pn]:input(event)
+	nesty_menus.play_menu_sound(menus_sounds, sound)
+	if levels_left and levels_left < 1 then
+		close_menu(pn)
+		ignore_next_open[pn]= true
+	end
+end
+
+
+local function input(event)
+	if not screen_gameplay:IsPaused() then return end
+	local pn= event.PlayerNumber
+	if event.DeviceInput.is_mouse then pn= mouse_pn() end
+	local was_ignored= false
+	if event.GameButton == "Start" and event.type == "InputEventType_Release" then
+		was_ignored= ignore_next_open[pn]
+		ignore_next_open[pn]= false
+	end
+	if not enabled_players[pn] then return end
+	if pause_menus[pn].hidden then
+		if event.GameButton == "Start" and event.type == "InputEventType_Release" and not was_ignored then
+			show_menu(pn)
+		end
+		return
+	else
+		handle_menu(pn, event)
+	end
+end
+
+local main_frame= Def.ActorFrame{
+	pause_controller_actor(),
 	OnCommand= function(self)
 		screen_gameplay= SCREENMAN:GetTopScreen()
 		if screen_gameplay:GetName() == "ScreenGameplaySyncMachine" then return end
+		menu_sounds= nesty_menus.make_menu_sound_lookup(self)
+		for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+			local side= screen_gameplay:GetChild("Player" .. ToEnumShortString(pn))
+			if side then
+				notefields[pn]= side:GetChild("NoteField")
+			end
+		end
+		for pn, on in pairs(enabled_players) do
+			local player_frame= self:GetChild("pause_stuff"..pn)
+			pause_menus[pn]:init{
+				actor= player_frame:GetChild("menu"), pn= pn,
+				data= menu_data, translation_section= "notefield_options"}
+			menu_frames[pn]:visible(false)
+			pause_menus[pn]:hide()
+		end
+		screen_gameplay= SCREENMAN:GetTopScreen()
 		screen_gameplay:AddInputCallback(input)
+		self:SetUpdateFunction(update)
+	end,
+	MenuValueChangedMessageCommand= function(self, params)
+		nesty_menus.handle_menu_refresh_message(params, pause_menus)
 	end,
 	PlayerHitPauseMessageCommand= function(self, params)
-		pause_and_show(params.pn)
+		local overlay= screen_gameplay:GetChild("Overlay")
+		old_overlay_visible= overlay:GetVisible()
+		overlay:visible(true):hibernate(0)
+		local fg= screen_gameplay:GetChild("SongForeground")
+		if fg then
+			old_fg_visible= fg:GetVisible()
+			fg:visible(false)
+		end
+		screen_gameplay:PauseGame(true)
+		ignore_next_open= {}
+		show_menu(params.pn)
+		hide_prompt()
 	end,
 	ShowPausePromptMessageCommand= function(self, params)
 		show_prompt(params.button)
@@ -214,7 +194,6 @@ local frame= Def.ActorFrame{
 	HidePausePromptMessageCommand= function(self)
 		hide_prompt()
 	end,
-	pause_controller_actor(),
 	Def.BitmapText{
 		Font= "Common Normal", InitCommand= function(self)
 			prompt_actor= self
@@ -229,10 +208,41 @@ local frame= Def.ActorFrame{
 		end,
 	},
 }
+local sand= nesty_menus.load_typical_menu_sounds()
+if sand then
+	main_frame[#main_frame+1]= sand
+end
 
 for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 	enabled_players[pn]= true
-	frame[#frame+1]= create_menu_frame(pn, menu_x[pn], menu_y)
+	pause_menus[pn]= setmetatable({}, menu_controller_mt)
+	local player_frame= Def.ActorFrame{
+		Name= "pause_stuff"..pn, InitCommand= function(self)
+			menu_frames[pn]= self
+			self:visible(false)
+			self:x(menu_x[pn])
+		end,
+		LoadActor(
+			THEME:GetPathG("ScreenOptions", "halfpage")) .. {
+			InitCommand= function(self)
+				self:xy(0, 360)
+			end,
+			OnCommand=function(self)
+				self:diffusealpha(0):zoomx(0.8):decelerate(0.3):diffusealpha(1):zoomx(1)
+			end,
+			OffCommand=function(self)
+				self:decelerate(0.3):diffusealpha(0)
+			end,
+		},
+		LoadActor(THEME:GetPathG("", "generic_menu.lua"), 1,
+							menu_width, menu_height, 1,
+							-(menu_width/2), 138, 36)
+	}
+	main_frame[#main_frame+1]= player_frame
 end
 
-return frame
+for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+	enabled_players[pn]= true
+end
+
+return main_frame
