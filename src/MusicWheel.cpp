@@ -1603,77 +1603,31 @@ Song* MusicWheel::GetSelectedSong()
 	}
 }
 
-/* Find a random song.  If possible, find one that has the preferred difficulties of
- * each player.  Prefer songs in the active group, if any. 
- *
- * Note that if this is called, we *must* find a song.  We will only be called if
- * the active sort has at least one song, but there may be no open group.  This means
- * that any filters and preferences applied here must be optional. */
+/* Find a random song. Get one from open group if there is one.
+ * If not, take a song from any group. */
 Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 {
-	// probe to find a song that has the preferred 
-	// difficulties of each player
-	vector<Difficulty> vDifficultiesToRequire;
-	FOREACH_HumanPlayer(p)
-	{
-		if( GAMESTATE->m_PreferredDifficulty[p] == Difficulty_Invalid )
-			continue;	// skip
-
-		// TRICKY: Don't require that edits be present if perferred 
-		// difficulty is Difficulty_Edit.  Otherwise, players could use this 
-		// to set up a 100% chance of getting a particular locked song by 
-		// having a single edit for a locked song.
-		if( GAMESTATE->m_PreferredDifficulty[p] == Difficulty_Edit )
-			continue;	// skip
-
-		vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );
-	}
-
 	RString sPreferredGroup = m_sExpandedSectionName;
 	vector<MusicWheelItemData *> &wid = getWheelItemsData(GAMESTATE->m_SortOrder);
+	vector<MusicWheelItemData *> randomPool;
 
-	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
-
-#define NUM_PROBES 1000
-	for( int i=0; i<NUM_PROBES; i++ )
+	FOREACH( MusicWheelItemData*, wid, musicWheelItem )
 	{
-		bool isValid = true;
-		/* Maintaining difficulties is higher priority than maintaining
-		 * the current group. */
-		if( i == NUM_PROBES/4 )
-			sPreferredGroup = "";
-		if( i == NUM_PROBES/2 )
-			vDifficultiesToRequire.clear();
-
-		int iSelection = RandomInt( wid.size() );
-		if( wid[iSelection]->m_Type != WheelItemDataType_Song )
-			continue;
-
-		const Song *pSong = wid[iSelection]->m_pSong;
-
-		if( !sPreferredGroup.empty() && wid[iSelection]->m_sText != sPreferredGroup )
-			continue;
-
-		// There's an off possibility that somebody might have only one song with only beginner steps.
-		if( i < 900 && pSong->IsTutorial() )
-			continue;
-
-		FOREACH( Difficulty, vDifficultiesToRequire, d )
-		{
-			if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
-			{
-				isValid = false;
-				break;
-			}
-		}
-
-		if (isValid)
-		{
-			return wid[iSelection]->m_pSong;
+		// if no selected group, anything goes - otherwise, make sure the item is from selected group
+		bool validGroup = sPreferredGroup.empty() || (*musicWheelItem)->m_sText == sPreferredGroup;
+		bool isSong = (*musicWheelItem)->m_Type == WheelItemDataType_Song;
+		if (validGroup && isSong) {
+			randomPool.push_back( *musicWheelItem );
 		}
 	}
-	LuaHelpers::ReportScriptError( "Couldn't find any songs" );
-	return wid[0]->m_pSong;
+
+	if ( randomPool.empty() ) {
+		LuaHelpers::ReportScriptError( "Couldn't find any songs" );
+		return wid[0]->m_pSong;
+	}
+
+	int iSelection = RandomInt( randomPool.size() );
+	return randomPool[iSelection]->m_pSong;
 }
 
 void MusicWheel::FinishChangingSorts()
