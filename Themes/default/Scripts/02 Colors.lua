@@ -26,7 +26,7 @@ end;
 
 ScreenColors = {
     Style           = color("#81468B"),
-    PlayMode        = color("#478e6f"),
+    PlayMode        = color("#b2350c"),
     Music           = color("#1268aa"),
     Online           = color("#1CA6A0"),
     Course          = color("#6D1646"),
