@@ -135,7 +135,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		local spacing = 38*i
 		eval_parts[#eval_parts+1] = Def.BitmapText {
 			Font = "_overpass 36px",
-			InitCommand=cmd(x,_screen.cx + step_count_offs;y,(_screen.cy/1.4)+(spacing);diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;diffusealpha,1.0;shadowlength,1),
+			InitCommand=cmd(x,_screen.cx + step_count_offs;y,(_screen.cy/1.4)+(spacing);diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;diffusealpha,1.0;shadowlength,1;maxwidth,120;),
 			OnCommand=function(self)
 				self:settext(GetJLineValue(v, p))
 				if string.find(p, "P1") then
@@ -164,7 +164,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 			OffCommand=cmd(decelerate,0.3;diffusealpha,0)
 		},
 		Def.Quad {
-			InitCommand=cmd(y,120;zoomto,190,120;diffuse,color("#fce1a1");),
+			InitCommand=cmd(vertalign,top;y,60;zoomto,190,136;diffuse,color("#fce1a1");),
 			OnCommand=function(self)
 			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.4)
 			end,
@@ -201,7 +201,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	-- Primary score.
 	eval_parts[#eval_parts+1] = Def.BitmapText {
 		Font = "_overpass 36px",
-		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65);diffuse,ColorMidTone(PlayerColor(p));zoom,1;shadowlength,1;maxwidth,180),
+		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-59);diffuse,ColorMidTone(PlayerColor(p));zoom,1;shadowlength,1;maxwidth,180),
 		OnCommand=function(self)
 			self:settext(GetPlScore(p, "primary")):diffusealpha(0):sleep(0.5):decelerate(0.3):diffusealpha(1)
 		end;
@@ -212,7 +212,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	-- Secondary score.
 	eval_parts[#eval_parts+1] = Def.BitmapText {
 		Font = "_overpass 36px",
-		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65)+30;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
+		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-59)+35;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
 		OnCommand=function(self)
 			self:settext(GetPlScore(p, "secondary")):diffusealpha(0):sleep(0.6):decelerate(0.3):diffusealpha(1)
 		end;
@@ -223,19 +223,32 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	
 	eval_parts[#eval_parts+1] = Def.BitmapText {
 		Font = "Common Condensed",
-		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65)+56;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
+		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-50)+56;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1;maxwidth,180),
 		OnCommand=function(self)
 			local record = STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetPersonalHighScoreIndex()
 			local hasPersonalRecord = record ~= -1
 			self:visible(hasPersonalRecord);
 			local text = string.format(THEME:GetString("ScreenEvaluation", "PersonalRecord"), record+1)
 			self:settext(text)
-			self:diffusealpha(0):sleep(0.6):decelerate(0.3):diffusealpha(1)
+			self:diffusealpha(0):sleep(0.6):decelerate(0.3):diffusealpha(0.9)
 		end;
 		OffCommand=function(self)
 			self:sleep(0.1):decelerate(0.3):diffusealpha(0)
 		end;
 	}
+	
+	-- Options
+	eval_parts[#eval_parts+1] = Def.BitmapText {
+		Font = "Common Condensed",
+		InitCommand=cmd(horizalign,center;vertalign,top;x,_screen.cx + (grade_parts_offs);y,(_screen.cy+37);wrapwidthpixels,240;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
+		OnCommand=function(self)
+			self:settext(GAMESTATE:GetPlayerState(p):GetPlayerOptionsString(0))
+			self:diffusealpha(0):sleep(0.8):decelerate(0.9):diffusealpha(1)
+			end;				
+		OffCommand=function(self)
+			self:sleep(0.1):decelerate(0.3):diffusealpha(0)
+		end;
+		};
 end
 
 t[#t+1] = eval_parts
@@ -247,7 +260,7 @@ if GAMESTATE:IsHumanPlayer(PLAYER_1) == true then
 	-- Difficulty banner
 	local grade_parts_offs = -320
 	t[#t+1] = Def.ActorFrame {
-	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-98;visible,not GAMESTATE:IsCourseMode(););
+	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-94;visible,not GAMESTATE:IsCourseMode(););
 	  OnCommand=cmd(zoomx,0.3;diffusealpha,0;sleep,0.5;decelerate,0.4;zoomx,1;diffusealpha,1;);
 	  OffCommand=cmd(decelerate,0.4;diffusealpha,0;);
 	  LoadFont("Common Fallback") .. {
@@ -285,7 +298,7 @@ if GAMESTATE:IsHumanPlayer(PLAYER_2) == true then
 	if GAMESTATE:IsCourseMode() == false then
 	local grade_parts_offs = 320	
 	t[#t+1] = Def.ActorFrame {
-	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-98;visible,not GAMESTATE:IsCourseMode(););
+	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-94;visible,not GAMESTATE:IsCourseMode(););
 	  OnCommand=cmd(zoomx,0.3;diffusealpha,0;sleep,0.5;decelerate,0.4;zoomx,1;diffusealpha,1;);
 	  OffCommand=cmd(decelerate,0.4;diffusealpha,0;);
 	  LoadFont("Common Fallback") .. {
