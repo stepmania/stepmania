@@ -400,7 +400,7 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.
 	 */
 	const char *szHome = getenv( "HOME" );
-	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", "stepmania-5.0" ); //call an ambulance!
+	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", "stepmania-5.1" ); //call an ambulance!
 	FILEMAN->Mount( "dir", sUserDataPath + "/Announcers", "/Announcers" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/BGAnimations", "/BGAnimations" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/BackgroundEffects", "/BackgroundEffects" );
