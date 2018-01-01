@@ -3,10 +3,48 @@ ________________________________________________________________________________
 The StepMania 5.1 Changelog covers all post-5.0.12 changes.
 ________________________________________________________________________________
 
+2017/10/20
+----------
+* [MusicWheelItem] Fix crash that only shows up on extra stage from MusicWheelItem handler [kyzentun]
+
+2017/10/02
+----------
+* [Actor] Support for distance field fonts [flameshadowxeroshin]
+* [Actor] Distance field EffectMode [flameshadowxeroshin]
+
+2017/09/19
+----------
+* [ImageCache] Changing BannerCache into ImageCache to support more imagetypes [jousway]
+
+2017/08/30
+----------
+* [General] Implemented SetActualDancePoints & SetPossibleDancePoints [mrthatkid]
+
+2017/08/14
+----------
+* [RageDisplay] backport fullscreen fix for macOS [dguzek]
+
+2017/08/08
+----------
+* [General] Add new 720p default theme Lambda [listenerjubatus]
+
+2017/07/15
+----------
+* [Modifiers] Added nITG's Tangent Modifiers [mrthatkid]
+
+2017/07/08
+----------
+* [Noteskins] Allow spaces in noteskin names. [kyzentun]
+* [Courses] Check entry id in GetCourseEntry. Add GetNumCourseEntries. [kyzentun]
+
 2017/06/18
 ----------
 * [RageDisplay, LLW_X11] Backport fullscreen borderless window, per-monitor
   fullscreen options to X11 backend
+
+2017/06/09
+----------
+* [Modifiers] Added nITG's various column specific & other misc modifiers [mrthatkid]  
 
 2017/06/06
 ----------
