@@ -260,7 +260,7 @@ if GAMESTATE:IsHumanPlayer(PLAYER_1) == true then
 	-- Difficulty banner
 	local grade_parts_offs = -320
 	t[#t+1] = Def.ActorFrame {
-	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-94;visible,not GAMESTATE:IsCourseMode(););
+	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-96;visible,not GAMESTATE:IsCourseMode(););
 	  OnCommand=cmd(zoomx,0.3;diffusealpha,0;sleep,0.5;decelerate,0.4;zoomx,1;diffusealpha,1;);
 	  OffCommand=cmd(decelerate,0.4;diffusealpha,0;);
 	  LoadFont("Common Fallback") .. {
@@ -298,7 +298,7 @@ if GAMESTATE:IsHumanPlayer(PLAYER_2) == true then
 	if GAMESTATE:IsCourseMode() == false then
 	local grade_parts_offs = 320	
 	t[#t+1] = Def.ActorFrame {
-	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-94;visible,not GAMESTATE:IsCourseMode(););
+	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-96;visible,not GAMESTATE:IsCourseMode(););
 	  OnCommand=cmd(zoomx,0.3;diffusealpha,0;sleep,0.5;decelerate,0.4;zoomx,1;diffusealpha,1;);
 	  OffCommand=cmd(decelerate,0.4;diffusealpha,0;);
 	  LoadFont("Common Fallback") .. {

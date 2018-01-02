@@ -2,7 +2,7 @@ local t = Def.ActorFrame {};
 
 -- Sort order
 t[#t+1] = Def.ActorFrame {
-    InitCommand=cmd(x,SCREEN_RIGHT-290;y,SCREEN_TOP+49;;);
+    InitCommand=cmd(x,SCREEN_RIGHT-290;y,SCREEN_TOP+49;);
     OffCommand=cmd(linear,0.3;diffusealpha,0;);
 	LoadActor(THEME:GetPathG("", "_sortFrame"))  .. {
 	    InitCommand=cmd(diffusealpha,0.9;zoom,1.5);
@@ -22,7 +22,7 @@ t[#t+1] = Def.ActorFrame {
     };
 
     LoadFont("Common Condensed") .. {
-          InitCommand=cmd(zoom,1;maxwidth,SCREEN_WIDTH;addx,115;diffuse,color("#FFFFFF");uppercase,true;horizalign,right;);
+          InitCommand=cmd(zoom,1;maxwidth,SCREEN_WIDTH;addx,115;diffuse,color("#FFFFFF");uppercase,true;horizalign,right;maxwidth,157;);
           OnCommand=cmd(queuecommand,"Set");
           SortOrderChangedMessageCommand=cmd(queuecommand,"Set");
           ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
