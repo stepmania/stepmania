@@ -12,13 +12,13 @@ for i=1, 6 do
 	local sleep_time = 0.1 * i
 	t[#t+1] = LoadActor(THEME:GetPathG("", "_pt" .. i)) .. {
 		InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;Center;diffuse,params.color),
-		OnCommand=cmd(diffusealpha,startAlpha;sleep,sleep_time;linear,0.2;diffusealpha,endAlpha)
+		OnCommand=cmd(diffusealpha,startAlpha;sleep,sleep_time;linear,0.10;diffusealpha,endAlpha)
 	}
 end
 
 t[#t+1] = Def.Quad {
 	InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;Center;diffuse,params.color),
-	OnCommand=cmd(diffusealpha,startAlpha;linear,0.7;diffusealpha,endAlpha)
+	OnCommand=cmd(diffusealpha,startAlpha;linear,0.5;diffusealpha,endAlpha)
 }
 	
 return t
