@@ -1,6 +1,6 @@
 local menu_height= 410
 local menu_width= 346
-local menu_x= _screen.w * .25
+local menu_x= _screen.w * .30
 
 local options= {
 	{"item", theme_config, "AutoSetStyle", "bool"},
@@ -57,5 +57,5 @@ return Def.ActorFrame{
 	MenuValueChangedMessageCommand= function(self, params)
 		nesty_menus.handle_menu_refresh_message(params, {menu_controller})
 	end,
-	LoadActor(THEME:GetPathG("", "generic_menu.lua"), 1, 352, menu_height, 1, menu_x-(menu_width/2), 138, 36),
+	LoadActor(THEME:GetPathG("", "generic_menu.lua"), 1, 880, menu_height, 1, menu_x-(menu_width/2), 138, 36),
 }
