@@ -168,8 +168,7 @@ end
 local menu_layer, menu_controllers= nesty_menus.make_menu_actors{
 	actors= menu_actors,
 	data= menu_data,
-	-- TODO: config or something for input_mode
-	input_mode= "four_direction",
+	input_mode= theme_config:get_data().menu_mode,
 	item_change_callback= update_explanation,
 	exit_callback= back_to_ssm,
 	translation_section= "notefield_options",

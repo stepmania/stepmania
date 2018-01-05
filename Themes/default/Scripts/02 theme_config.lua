@@ -6,6 +6,7 @@ local theme_config_default= {
 	TimingDisplay= false,
 	GameplayFooter= true,
 	Use12HourClock= false,
+	menu_mode= "four_direction",
 }
 
 theme_config= create_lua_config{

@@ -1096,22 +1096,23 @@ menu_controller_mt= {
 					self:update_cursor()
 					return sound_ret(sound)
 				end,
-				two_dir_adjust= function(dir, adj_sound, curs_sound)
-					if self.in_adjust_mode then
-						return sub_handlers.adjust(dir, adj_sound)
-					else
-						return sub_handlers.cursor_move(dir, curs_sound)
-					end
-				end,
 				two_dir_interact= function()
 					if item.info.func then
 						return self:handle_menu_action(item:interact(big))
 					elseif item.info.adjust then
-						self.in_adjust_mode= true
-						if self.cursor then
-							self.cursor:playcommand("AdjustMode")
+						if self.in_adjust_mode then
+							self.in_adjust_mode= false
+							if self.cursor then
+								self.cursor:playcommand("NormalMode")
+							end
+							return sound_ret("adjust_mode_off")
+						else
+							self.in_adjust_mode= true
+							if self.cursor then
+								self.cursor:playcommand("AdjustMode")
+							end
+							return sound_ret("adjust_mode_on")
 						end
-						return sound_ret("adjust_mode_on")
 					end
 				end,
 				select_jump= function()
@@ -1126,6 +1127,13 @@ menu_controller_mt= {
 					end
 				end,
 			}
+			sub_handlers.two_dir_adjust= function(dir, adj_sound, curs_sound)
+					if self.in_adjust_mode then
+						return sub_handlers.adjust(dir, adj_sound)
+					else
+						return sub_handlers.cursor_move(dir, curs_sound)
+					end
+			end
 			local button_to_sub= {
 				two_direction= {
 					left= {"two_dir_adjust", -1, "adjust_down", "cursor_up"},
