@@ -10,6 +10,7 @@ local options= {
 	{"item", theme_config, "TimingDisplay", "bool"},
 	{"item", theme_config, "GameplayFooter", "bool"},
 	{"item", theme_config, "Use12HourClock", "bool"},
+	{"item", theme_config, "menu_mode", "choice", {choices= {"two_direction", "two_direction_with_select", "four_direction"}}},
 }
 
 local menu_controller= setmetatable({}, menu_controller_mt)
@@ -45,7 +46,7 @@ return Def.ActorFrame{
 	OnCommand= function(self)
 		menu_sounds= nesty_menus.make_menu_sound_lookup(self)
 		menu_controller:init{
-			actor= self:GetChild("menu"), input_mode= "four_direction",
+			actor= self:GetChild("menu"), input_mode= theme_config:get_data().menu_mode,
 			repeats_to_big= 10, select_goes_to_top= true, data= options,
 			translation_section= "OptionTitles",
 		}
