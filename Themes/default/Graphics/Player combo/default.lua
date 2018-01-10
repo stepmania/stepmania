@@ -15,20 +15,6 @@ local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
 
 local ShowFlashyCombo = player_config:get_data(player).FlashyCombo
 
---different language support
-local lang = THEME:GetCurLanguage()
-local cur_dir= "/Themes/"..THEME:GetCurThemeName().."/Graphics/Player combo/"
-local combo_label = cur_dir.."_combo"
-local miss_label = cur_dir.."_misses"
-
-if lang ~= "en" and FILEMAN:DoesFileExist(combo_label.." (lang "..lang..").png") and FILEMAN:DoesFileExist(miss_label.." (lang "..lang..").png")  then
-	combo_label = combo_label.." (lang "..lang..").png"
-	miss_label = miss_label.." (lang "..lang..").png"
-else
-	combo_label = combo_label..".png"
-	miss_label = miss_label..".png"
-end
-
 local t = Def.ActorFrame {
 	InitCommand= function(self)
 		if player_config:get_data(player).ComboUnderField then
@@ -60,12 +46,18 @@ local t = Def.ActorFrame {
 			Name="Number";
 			OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
 		};
-		LoadActor(combo_label)..{
+		LoadFont("_roboto condensed Bold italic 24px") .. {
 			Name="ComboLabel";
-			OnCommand = THEME:GetMetric("Combo", "ComboLabelOnCommand");
+			InitCommand=function(self)
+				self:settext(string.upper(THEME:GetString("ScreenGameplay","Combo")));
+			end;
+			OnCommand = THEME:GetMetric("Combo", "LabelOnCommand");
 		};
-		LoadActor(miss_label)..{
+		LoadFont("_roboto condensed Bold italic 24px") .. {
 			Name="MissLabel";
+			InitCommand=function(self)
+				self:settext(string.upper(THEME:GetString("ScreenGameplay","Misses")));
+			end;
 			OnCommand = THEME:GetMetric("Combo", "MissLabelOnCommand");
 		};
 	};
@@ -127,25 +119,28 @@ local t = Def.ActorFrame {
 		cf.Number:settext( string.format("%i", iCombo) );
 		-- FullCombo Rewards
 		if param.FullComboW1 then
-			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W1"] );
-			cf.ComboLabel:diffuse( GameColor.Judgment["JudgmentLine_W1"] );
+			cf.Number:diffuse(color("#00aeef"));
+			cf.ComboLabel:diffuse(color("#C7E5F0")):diffusebottomedge(color("#00aeef")):strokecolor(color("#0E3D53"));
 		elseif param.FullComboW2 then
-			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W2"] );
-			cf.ComboLabel:diffuse( GameColor.Judgment["JudgmentLine_W2"] );
+			cf.Number:diffuse(color("#F3D58D"));
+			cf.ComboLabel:diffuse(color("#FAFAFA")):diffusebottomedge(color("#F3D58D")):strokecolor(color("#53450E"));
 		elseif param.FullComboW3 then
-			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W3"] );
-			cf.ComboLabel:diffuse( GameColor.Judgment["JudgmentLine_W3"] );
+			cf.Number:diffuse(color("#94D658"));
+			cf.ComboLabel:diffuse(color("#CFE5BC")):diffusebottomedge(color("#94D658")):strokecolor(color("#12530E"));
 		elseif param.Combo then
 			-- Player 1's color is Red, which conflicts with the miss combo.
 			-- instead, just diffuse to white for now. -aj
 			--c.Number:diffuse(PlayerColor(player));
 			cf.Number:diffuse(Color("White"));
-			cf.ComboLabel:diffuse(Color("White"));
 			cf.Number:strokecolor(Color("Stealth"));
 			cf.Number:stopeffect();
+			cf.ComboLabel:diffuse(color("#F5CB92")):diffusebottomedge(color("#EFA97A")):strokecolor(color("#602C1B"));
 		else
 			cf.Number:diffuse(color("#ff0000"));
+			cf.MissLabel:diffuse(color("#ff0000"));
 			cf.ComboLabel:diffuse(color("#ff0000"));
+			cf.MissLabel:strokecolor(color("#000000"));
+			cf.ComboLabel:strokecolor(color("#000000"));
 			cf.Number:stopeffect();
 		end
 		-- Pulse
