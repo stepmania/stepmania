@@ -86,7 +86,7 @@ local function generate_noteskin_menu_items(pn)
 				PROFILEMAN:GetProfile(pn):set_preferred_noteskin(skin_name)
 				nesty_menus.menu_message{
 					category= "NoteSkin", pn= pn, value= skin_name}
-				MESSAGEMAN:Broadcast("NoteskinChanged", {pn= pn})
+				MESSAGEMAN:Broadcast("NoteskinChanged", {pn= pn, skin= skin_name})
 			end,
 			value= function()
 				local player_skin= PROFILEMAN:GetProfile(pn)
