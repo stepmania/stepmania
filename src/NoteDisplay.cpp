@@ -1339,9 +1339,10 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 			break;
 		case NoteColorType_ProgressAlternate:
 			fScaledBeat = fBeat * cache->m_iNoteColorCount[part];
-			//knock it back into the last frame if it's on a boundary
-			if (fScaledBeat - int64_t(fScaledBeat) == 0.0f)
-				fScaledBeat -= 1.0f;
+			if( fScaledBeat - int64_t(fScaledBeat) == 0.0f )
+				//we're on a boundary, so move to the previous frame.
+				//doing it this way ensures that fScaledBeat is never negative so fmodf works.
+				fScaledBeat += cache->m_iNoteColorCount[part] - 1;
 			color = fmodf( ceilf( fScaledBeat ), (float)cache->m_iNoteColorCount[part] );
 			break;
 		default:
