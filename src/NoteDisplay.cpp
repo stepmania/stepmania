@@ -41,6 +41,7 @@ LuaXType( NotePart );
 static const char *NoteColorTypeNames[] = {
 	"Denominator",
 	"Progress",
+	"ProgressAlternate"
 };
 XToString( NoteColorType );
 StringToX( NoteColorType );
@@ -1325,6 +1326,8 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 	{
 		DISPLAY->TexturePushMatrix();
 		float color = 0.0f;
+		//this is only used for ProgressAlternate but must be declared here
+		float fScaledBeat = 0.0f;
 		switch( cache->m_NoteColorType[part] )
 		{
 		case NoteColorType_Denominator:
@@ -1333,6 +1336,13 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 			break;
 		case NoteColorType_Progress:
 			color = fmodf( ceilf( fBeat * cache->m_iNoteColorCount[part] ), (float)cache->m_iNoteColorCount[part] );
+			break;
+		case NoteColorType_ProgressAlternate:
+			fScaledBeat = fBeat * cache->m_iNoteColorCount[part];
+			//knock it back into the last frame if it's on a boundary
+			if (fScaledBeat - int64_t(fScaledBeat) == 0.0f)
+				fScaledBeat -= 1.0f;
+			color = fmodf( ceilf( fScaledBeat ), (float)cache->m_iNoteColorCount[part] );
 			break;
 		default:
 			FAIL_M(ssprintf("Invalid NoteColorType: %i", cache->m_NoteColorType[part]));
