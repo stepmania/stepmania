@@ -41,7 +41,7 @@ LuaXType( NotePart );
 static const char *NoteColorTypeNames[] = {
 	"Denominator",
 	"Progress",
-	"ProgressOnBeatAtEnd"
+	"ProgressAlternate"
 };
 XToString( NoteColorType );
 StringToX( NoteColorType );
@@ -1326,21 +1326,23 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 	{
 		DISPLAY->TexturePushMatrix();
 		float color = 0.0f;
+		//this is only used for ProgressAlternate but must be declared here
+		float fScaledBeat = 0.0f;
 		switch( cache->m_NoteColorType[part] )
 		{
 		case NoteColorType_Denominator:
 			color = float( BeatToNoteType( fBeat ) );
 			color = clamp( color, 0, (cache->m_iNoteColorCount[part]-1) );
 			break;
-		case NoteColorType_ProgressOnBeatAtEnd:
-			//if we're at the very beginning of the beat, it should be the last color.
-			if ( fBeat-int64_t(fBeat) == 0.0f ) {
-				color = float(cache->m_iNoteColorCount[part]-1);
-				break;
-			}
-			//otherwise, handle it the same as Progress.
 		case NoteColorType_Progress:
 			color = fmodf( ceilf( fBeat * cache->m_iNoteColorCount[part] ), (float)cache->m_iNoteColorCount[part] );
+			break;
+		case NoteColorType_ProgressAlternate:
+			fScaledBeat = fBeat * cache->m_iNoteColorCount[part];
+			//knock it back into the last frame if it's on a boundary
+			if (fScaledBeat - int64_t(fScaledBeat) == 0.0f)
+				fScaledBeat -= 1.0f;
+			color = fmodf( ceilf( fScaledBeat ), (float)cache->m_iNoteColorCount[part] );
 			break;
 		default:
 			FAIL_M(ssprintf("Invalid NoteColorType: %i", cache->m_NoteColorType[part]));

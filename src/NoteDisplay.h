@@ -36,7 +36,7 @@ enum NoteColorType
 {
 	NoteColorType_Denominator, /**< Color by note type. */
 	NoteColorType_Progress, /**< Color by progress. */
-	NoteColorType_ProgressOnBeatAtEnd, /**< Color by progress, except 4th notes are considered to occur at the end of the beat. */
+	NoteColorType_ProgressAlternate, /**< Color by progress, except the frame boundaries are slightly later. */
 	NUM_NoteColorType,
 	NoteColorType_Invalid
 };
