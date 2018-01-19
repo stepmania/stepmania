@@ -3,8 +3,24 @@ local curStageIndex = GAMESTATE:GetCurrentStageIndex();
 local t = Def.ActorFrame {};
 
 t[#t+1] = Def.ActorFrame {
+	LoadActor(THEME:GetPathG("", "_sortFrame"))  .. {
+	    InitCommand=cmd(diffusealpha,0.9;zoom,1.5);
+		BeginCommand=function(self)
+			local top = SCREENMAN:GetTopScreen()
+			if top then
+				if not string.find(top:GetName(),"ScreenEvaluation") then
+					curStageIndex = curStageIndex + 1
+				end
+			end
+			self:playcommand("Set")
+		end;
+		SetCommand=function(self)
+			local curStage = GAMESTATE:GetCurrentStage();
+			self:diffuse(StageToColor(curStage));
+		end
+	};
 	LoadFont("Common Italic Condensed") .. {
-		InitCommand=cmd(y,-1;zoom,1;shadowlength,1);
+		InitCommand=cmd(y,-1;zoom,1;shadowlength,1;uppercase,true;);
 		BeginCommand=function(self)
 			local top = SCREENMAN:GetTopScreen()
 			if top then
@@ -32,7 +48,7 @@ t[#t+1] = Def.ActorFrame {
 				end;
 			end;
 			-- StepMania is being stupid so we have to do this here;
-			self:diffuse(StageToColor(curStage)):diffusebottomedge(ColorMidTone(StageToColor(curStage)));
+			self:diffuse(StageToColor(curStage)):diffusetopedge(ColorLightTone(StageToColor(curStage)));
 			self:diffusealpha(0):smooth(0.3):diffusealpha(1);
 		end;
 	};

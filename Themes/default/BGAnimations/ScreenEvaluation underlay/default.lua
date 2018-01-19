@@ -8,12 +8,11 @@ local eval_lines = {
 	"W4",
 	"W5",
 	"Miss",
-	"Held",
 	"MaxCombo"
 }
 
 local eval_radar = {
-	Types = { 'Mines', 'Hands', 'Rolls', 'Lifts' },
+	Types = { 'Holds', 'Rolls', 'Hands', 'Mines', 'Lifts' },
 }
 
 local grade_area_offset = 16
@@ -71,22 +70,51 @@ local mid_pane = Def.ActorFrame {
 	}
 }
 
-
--- Text that's slapped on top of the banner frame.
+-- Song or Course Title
 if not GAMESTATE:IsCourseMode() then
-	mid_pane[#mid_pane+1] = LoadActor(THEME:GetPathG("ScreenEvaluation", "StageDisplay")) .. {
-		OnCommand=cmd(x,_screen.cx;y,_screen.cy-98;diffuse,color("#9d324e"))
+	mid_pane[#mid_pane+1] = Def.BitmapText {
+		Font="Common Fallback",
+		InitCommand=function(self)
+			self:x(_screen.cx):y(_screen.cy+188):diffuse(color("#512232")):shadowlength(1):zoom(0.75):maxwidth(500)
+		end;
+		OnCommand=function(self)
+			local song = GAMESTATE:GetCurrentSong();
+			if song then
+				self:settext(song:GetDisplayMainTitle());
+			else
+				self:settext("");
+			end;
+			self:diffusealpha(0):sleep(1.3):decelerate(0.4):diffusealpha(1)
+		end,
+		OffCommand=cmd(decelerate,0.4;diffusealpha,0)
+	}
+	mid_pane[#mid_pane+1] = Def.BitmapText {
+		Font="Common Fallback",
+		InitCommand=function(self)
+			self:x(_screen.cx):y(_screen.cy+188+22):diffuse(color("#512232")):shadowlength(1):zoom(0.6):maxwidth(500)
+		end;
+		OnCommand=function(self)
+			local song = GAMESTATE:GetCurrentSong();
+			if song then
+				self:settext(song:GetDisplaySubTitle());
+			else
+				self:settext("");
+			end;
+			self:diffusealpha(0):sleep(1.3):decelerate(0.4):diffusealpha(1)
+		end,
+		OffCommand=cmd(decelerate,0.4;diffusealpha,0)
 	}
 else
-
 	mid_pane[#mid_pane+1] = Def.BitmapText {
-		Font="_roboto condensed Bold italic 24px",
+		Font="Common Fallback",
 		InitCommand=function(self)
+			self:x(_screen.cx):y(_screen.cy+188):diffuse(color("#512232")):shadowlength(1):zoom(0.75):maxwidth(500)
+		end;
+		OnCommand=function(self)
 			local course = GAMESTATE:GetCurrentCourse()
-			self:settext(string.upper(ToEnumShortString( course:GetCourseType() )))
-			self:x(_screen.cx):y(_screen.cy-98):diffuse(color("#9d324e"))
+			self:settext(course:GetDisplayFullTitle())
+			self:diffusealpha(0):sleep(1.3):decelerate(0.4):diffusealpha(1)
 		end,
-		OnCommand=cmd(playcommand,"Set";zoomx,0.8;diffusealpha,0;decelerate,0.4;zoomx,1;diffusealpha,1),
 		OffCommand=cmd(decelerate,0.4;diffusealpha,0)
 	}
 end
@@ -97,7 +125,7 @@ for i, v in ipairs(eval_lines) do
 	local cur_line = "JudgmentLine_" .. v
 	
 	mid_pane[#mid_pane+1] = Def.ActorFrame{
-		InitCommand=cmd(x,_screen.cx;y,(_screen.cy/1.4)+(spacing)),
+		InitCommand=cmd(x,_screen.cx;y,(_screen.cy/1.48)+(spacing)),
 		OffCommand=function(self)			
 			self:sleep(0.13 * i):decelerate(0.6):diffusealpha(0)
 		end;	
@@ -136,7 +164,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		local spacing = 38*i
 		eval_parts[#eval_parts+1] = Def.BitmapText {
 			Font = "_overpass 36px",
-			InitCommand=cmd(x,_screen.cx + step_count_offs;y,(_screen.cy/1.4)+(spacing);diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;diffusealpha,1.0;shadowlength,1;maxwidth,120;),
+			InitCommand=cmd(x,_screen.cx + step_count_offs;y,(_screen.cy/1.48)+(spacing);diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;diffusealpha,1.0;shadowlength,1;maxwidth,120;),
 			OnCommand=function(self)
 				self:settext(GetJLineValue(v, p))
 				if string.find(p, "P1") then
@@ -279,7 +307,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	-- Options
 	eval_parts[#eval_parts+1] = Def.BitmapText {
 		Font = "Common Condensed",
-		InitCommand=cmd(horizalign,center;vertalign,top;x,_screen.cx + (grade_parts_offs);y,(_screen.cy+196);wrapwidthpixels,240;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
+		InitCommand=cmd(horizalign,center;vertalign,top;x,_screen.cx + (grade_parts_offs);y,(_screen.cy+196+43);wrapwidthpixels,240;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
 		OnCommand=function(self)
 			self:settext(GAMESTATE:GetPlayerState(p):GetPlayerOptionsString(0))
 			self:diffusealpha(0):sleep(0.8):decelerate(0.6):diffusealpha(1)
@@ -389,14 +417,14 @@ t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficult
 
 if gameplay_pause_count > 0 then
 	t[#t+1]= Def.BitmapText{
-		Font= "_roboto condensed 24px",
+		Font= "Common Italic Condensed",
 		Text= THEME:GetString("PauseMenu", "pause_count") .. ": " .. gameplay_pause_count,
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-100+26;);
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-130;shadowlength,1;maxwidth,140;);
 		OnCommand=function(self)
-			self:diffuse(color("#512232")):zoom(0.8);
-			self:diffusealpha(0):sleep(0.5):smooth(0.3):diffusealpha(1);
+			self:diffuse(color("#FF0000")):diffusebottomedge(color("#512232")):zoom(0.8);
+			self:diffusealpha(0):sleep(1.5):smooth(0.3):diffusealpha(1);
 		end;
-		OffCommand=cmd(decelerate,0.3;diffusealpha,0);
+		OffCommand=cmd(sleep,0.2;decelerate,0.3;diffusealpha,0;);
 	}
 end
 
