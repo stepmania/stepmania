@@ -51,7 +51,7 @@ public:
 	void OnConfirmSongDeletion();
 
 	bool can_open_options_list(PlayerNumber pn);
-
+	void CloseCurrentSection();
 	// Lua
 	virtual void PushSelf( lua_State *L );
 

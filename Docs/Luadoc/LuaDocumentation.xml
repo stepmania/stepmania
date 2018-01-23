@@ -3216,6 +3216,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetNumStates' return='int' arguments=''>
 		Returns the number of states the Model has.
 	</Function>
+	<Function name='InverseBindPose' return= 'void' arguments='bool bInverseBindPose'>
+		Controls if the inverse bind pose matrix fix is applied or not.
+	</Function>
 </Class>
 <Class name='ModIconRow'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup, PlayerNumber pn'>
@@ -4841,6 +4844,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetMusicWheel' return='MusicWheel' arguments=''>
 		Returns the MusicWheel used on this screen.
+	</Function>
+	<Function name='CloseCurrentSection' return='void' arguments=''>
+		Closes the current section on the MusicWheel, returning the player to the folder select.
 	</Function>
 	<Function name='OpenOptionsList' return='void' arguments='PlayerNumber pn'>
 		Opens the OptionsList for Player <code>pn</code>

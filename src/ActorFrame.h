@@ -78,6 +78,7 @@ public:
 	virtual void SetZWrite( bool b );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
+	virtual void SetTimingSource(TimingSource* source);
 
 	virtual void set_counter_rotation(Actor* counter);
 

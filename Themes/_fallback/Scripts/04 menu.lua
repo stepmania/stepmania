@@ -879,7 +879,7 @@ menu_controller_mt= {
 			self:attach(args.actor, args.pn)
 			self:apply_translation_section(args.translation_section)
 			self:set_input_mode(args.input_mode, args.repeats_to_big, args.select_goes_to_top)
-			self:set_info(args.data)
+			self:set_info(args.data, args.custom_menu)
 		end,
 		apply_translation_section= function(self, section)
 			self:set_translation_section(self.scroller.main_items, self.scroller.num_main, section)
@@ -1096,22 +1096,23 @@ menu_controller_mt= {
 					self:update_cursor()
 					return sound_ret(sound)
 				end,
-				two_dir_adjust= function(dir, adj_sound, curs_sound)
-					if self.in_adjust_mode then
-						return sub_handlers.adjust(dir, adj_sound)
-					else
-						return sub_handlers.cursor_move(dir, curs_sound)
-					end
-				end,
 				two_dir_interact= function()
 					if item.info.func then
 						return self:handle_menu_action(item:interact(big))
 					elseif item.info.adjust then
-						self.in_adjust_mode= true
-						if self.cursor then
-							self.cursor:playcommand("AdjustMode")
+						if self.in_adjust_mode then
+							self.in_adjust_mode= false
+							if self.cursor then
+								self.cursor:playcommand("NormalMode")
+							end
+							return sound_ret("adjust_mode_off")
+						else
+							self.in_adjust_mode= true
+							if self.cursor then
+								self.cursor:playcommand("AdjustMode")
+							end
+							return sound_ret("adjust_mode_on")
 						end
-						return sound_ret("adjust_mode_on")
 					end
 				end,
 				select_jump= function()
@@ -1126,6 +1127,13 @@ menu_controller_mt= {
 					end
 				end,
 			}
+			sub_handlers.two_dir_adjust= function(dir, adj_sound, curs_sound)
+					if self.in_adjust_mode then
+						return sub_handlers.adjust(dir, adj_sound)
+					else
+						return sub_handlers.cursor_move(dir, curs_sound)
+					end
+			end
 			local button_to_sub= {
 				two_direction= {
 					left= {"two_dir_adjust", -1, "adjust_down", "cursor_up"},
@@ -1260,6 +1268,15 @@ menu_controller_mt= {
 							end
 						end
 					end
+				end
+			end
+		end,
+		mouse_inside= function(self, mx, my)
+			if #self.menu_stack < 1 then return end
+			for id= 0, self.scroller.num_main-1 do
+				local disp= self.scroller.main_items[id]
+				if disp.info and disp:check_focus(mx, my) then
+					return true
 				end
 			end
 		end,
@@ -2014,6 +2031,7 @@ nesty_menus= {
 	make_menu= function(info)
 		if not info then return end
 		local ret= {}
+		copy_parts(ret, info, {"on_open", "on_open_arg", "on_close", "on_close_arg"})
 		for eid= 1, #info do
 			local entry= info[eid]
 			if type(entry) ~= "table" then
@@ -2038,7 +2056,6 @@ nesty_menus= {
 					end
 					local ret= {
 						name= name, func= function() return "submenu", items end,
-						on_open= entry.on_open, on_close= entry.on_close,
 						type_hint= {main= "submenu", sub= sub_type},
 					}
 					return add_translation_params(ret, entry)
@@ -2057,7 +2074,7 @@ nesty_menus= {
 				Trace("Invalid menu entry:")
 				rec_print_table(entry)
 			end
-			assert(handler, "Menu entry " .. eid .. " is of unknown type.")
+			assert(handler, "Menu entry " .. eid .. " is of unknown type: " .. tostring(entype))
 			local success, item= pcall(handler)
 			assert(success, "Menu entry " .. eid .. " had problem..."..tostring(item))
 			ret[#ret+1]= item
@@ -2077,6 +2094,14 @@ nesty_menus.play_menu_sound= function(sounds, name)
 	end
 end
 
+nesty_menus.find_menu_for_mouse= function(menus, mx, my)
+	for pn, menu in pairs(menus) do
+		if menu:mouse_inside(mx, my) then
+			return pn, menu
+		end
+	end
+end
+
 local function make_typical_update(menu_controllers, sounds, item_change_callback, buttons_debug, focus_debug)
 	local prev_mx= INPUTFILTER:GetMouseX()
 	local prev_my= INPUTFILTER:GetMouseY()
@@ -2084,12 +2109,13 @@ local function make_typical_update(menu_controllers, sounds, item_change_callbac
 		local mx= INPUTFILTER:GetMouseX()
 		local my= INPUTFILTER:GetMouseY()
 		if mx ~= prev_mx or my ~= prev_my then
-			local pn= GAMESTATE:GetMasterPlayerNumber()
-			local menu= menu_controllers[pn] or menu_controllers[1]
-			local sound_name= menu:update_focus(mx, my)
-			nesty_menus.play_menu_sound(sounds, sound_name)
-			if item_change_callback then
-				item_change_callback(menu:get_cursor_item(), pn)
+			local pn, menu= nesty_menus.find_menu_for_mouse(menu_controllers, mx, my)
+			if menu then
+				local sound_name= menu:update_focus(mx, my)
+				nesty_menus.play_menu_sound(sounds, sound_name)
+				if item_change_callback then
+					item_change_callback(menu:get_cursor_item(), pn)
+				end
 			end
 			prev_mx= mx
 			prev_my= my
@@ -2112,8 +2138,15 @@ end
 
 local function make_typical_input(menu_controllers, sounds, item_change_callback, exit_callback)
 	return function(event)
-		local pn= event.PlayerNumber or GAMESTATE:GetMasterPlayerNumber()
-		local menu= menu_controllers[pn] or menu_controllers[1]
+		local pn, menu
+		if event.DeviceInput.is_mouse then
+			local mx= INPUTFILTER:GetMouseX()
+			local my= INPUTFILTER:GetMouseY()
+			pn, menu= nesty_menus.find_menu_for_mouse(menu_controllers, mx, my)
+		else
+			pn= event.PlayerNumber
+			menu= menu_controllers[pn] or menu_controllers[1]
+		end
 		if menu then
 			local levels_left, sound_name= menu:input(event)
 			nesty_menus.play_menu_sound(sounds, sound_name)
@@ -2317,15 +2350,21 @@ function one_dimension_scroll(
 end
 
 function add_defaults_to_params(params, defaults)
+	if type(params) ~= "table" then params= {} end
+	if type(defaults) ~= "table" then return params end
 	for key, value in pairs(defaults) do
 		if params[key] == nil then params[key]= value end
 	end
+	return params
 end
 
 function add_blank_tables_to_params(params, table_names)
+	if type(params) ~= "table" then params= {} end
+	if type(table_names) ~= "table" then return params end
 	for i, name in ipairs(table_names) do
 		if not params[name] then params[name]= {} end
 	end
+	return params
 end
 
 function noop_nil() end

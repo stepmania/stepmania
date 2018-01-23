@@ -98,6 +98,58 @@ Affect the notefield instead of a column:
 {field= "all", start= 0, length= 4, target= 'transform_pos_y', 'some_mod_name'},
 ```
 
+## Noteskins
+
+### Fixed noteskins
+```lua
+local mods= {
+	noteskin= "lambda",
+}
+```
+Use the lambda noteskin instead of whatever the player picked.
+
+```lua
+local mods= {
+	noteskin= {
+		{name= "lambda", field= 1},
+		{name= "exactV2", field= 2},
+	},
+}
+```
+Use lambda for player 1, exactV2 for player 2.
+
+### Changing noteskins
+
+```lua
+local mods= {
+	noteskin= {
+		{name= "lambda"},
+		{name= "exactV2"},
+	},
+	{column= {1, 2}, start= 0, length= 4, target= 'note_skin_id', 0},
+	{column= {3, 4}, start= 0, length= 4, target= 'note_skin_id', 1},
+	{column= {1, 4}, start= 0, length= 4, target= 'layer_skin_id', 0},
+	{column= {2, 3}, start= 0, length= 4, target= 'layer_skin_id', 1},
+}
+```
+Use lambda for the notes in columns 1 and 2, exactV2 for the notes in columns
+3 and 4.
+
+The receptors in columns 1 and 4 use lambda, while columns 2 and 3 use
+exactV2 for the receptors.
+
+### Random noteskins
+```lua
+local mods= {
+	noteskin= {
+		{random= 4}
+	},
+}
+```
+Pick 4 random noteskins to use.  Random will not pick noteskins the player
+has hidden on the "Shown Noteskins" list.
+
+
 ## Detailed description
 
 Each modifier is actually a named equation.

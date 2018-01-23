@@ -1,21 +1,38 @@
+local menu_height= 410
+local menu_width= 346
+local menu_x= _screen.w * .30
+
 local options= {
-	nesty_options.bool_config_val(theme_config, "AutoSetStyle"),
-	nesty_options.bool_config_val(theme_config, "LongFail"),
-	nesty_options.bool_config_val(theme_config, "ComboOnRolls"),
-	nesty_options.bool_config_val(theme_config, "FancyUIBG"),
-	nesty_options.bool_config_val(theme_config, "TimingDisplay"),
-	nesty_options.bool_config_val(theme_config, "GameplayFooter"),
-	nesty_options.bool_config_val(theme_config, "Use12HourClock"),
+	{"item", theme_config, "AutoSetStyle", "bool"},
+	{"item", theme_config, "LongFail", "bool"},
+	{"item", theme_config, "ComboOnRolls", "bool"},
+	{"item", theme_config, "FancyUIBG", "bool"},
+	{"item", theme_config, "TimingDisplay", "bool"},
+	{"item", theme_config, "GameplayFooter", "bool"},
+	{"item", theme_config, "Use12HourClock", "bool"},
+	{"item", theme_config, "menu_mode", "choice", {choices= {"two_direction", "two_direction_with_select", "four_direction"}}},
 }
 
-local menu= setmetatable({}, nesty_menu_stack_mt)
+local menu_controller= setmetatable({}, menu_controller_mt)
+local menu_sounds= {}
+
+local prev_mx= INPUTFILTER:GetMouseX()
+local prev_my= INPUTFILTER:GetMouseY()
+local function update(delta)
+	local mx= INPUTFILTER:GetMouseX()
+	local my= INPUTFILTER:GetMouseY()
+	if mx ~= prev_mx or my ~= prev_my then
+		local sound_name= menu_controller:update_focus(mx, my)
+		nesty_menus.play_menu_sound(menu_sounds, sound_name)
+		prev_mx= mx
+		prev_my= my
+	end
+end
 
 local function input(event)
-	if event.type == "InputEventType_Release" then return end
-	local button= event.GameButton
-	if not button then return end
-	local menu_action= menu:interpret_code(button)
-	if menu_action == "close" then
+	local levels_left, sound_name= menu_controller:input(event)
+	nesty_menus.play_menu_sound(menu_sounds, sound_name)
+	if levels_left and levels_left < 1 then
 		local metrics_need_to_be_reloaded= theme_config:check_dirty()
 		theme_config:save()
 		if metrics_need_to_be_reloaded then
@@ -25,54 +42,20 @@ local function input(event)
 	end
 end
 
-local item_params= {
-	text_commands= {
-		Font= "Common Condensed", OnCommand= function(self)
-			self:diffuse(color("#512232")):diffusealpha(0):linear(1):diffusealpha(1)
-		end,
-	},
-	text_width= .7,
-	value_text_commands= {
-		Font= "Common Normal", OnCommand= function(self)
-			self:diffusealpha(0):linear(1):diffusealpha(1)
-		end,
-	},
-	value_image_commands= {
-		OnCommand= function(self)
-			self:diffusealpha(0):linear(1):diffusealpha(1)
-		end,
-	},
-	value_width= .25,
-	type_images= {
-		bool= THEME:GetPathG("", "menu_icons/bool"),
-		choice= THEME:GetPathG("", "menu_icons/bool"),
-		menu= THEME:GetPathG("", "menu_icons/menu"),
-	},
-}
-
 return Def.ActorFrame{
 	OnCommand= function(self)
-		menu:push_menu_stack(nesty_option_menus.menu, options, "Exit Menu")
-		menu:update_cursor_pos()
+		menu_sounds= nesty_menus.make_menu_sound_lookup(self)
+		menu_controller:init{
+			actor= self:GetChild("menu"), input_mode= theme_config:get_data().menu_mode,
+			repeats_to_big= 10, select_goes_to_top= true, data= options,
+			translation_section= "OptionTitles",
+		}
+		menu_controller:open_menu()
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
+		self:SetUpdateFunction(update)
 	end,
-	menu:create_actors{
-		x= _screen.cx, y= _screen.cy-280, width= 760,
-		height= _screen.h*.75, num_displays= 1, pn= nil, el_height= 32,
-		menu_sounds= {
-			pop= THEME:GetPathS("Common", "Cancel"),
-			push= THEME:GetPathS("_common", "row"),
-			act= THEME:GetPathS("Common", "value"),
-			move= THEME:GetPathS("Common", "value"),
-			move_up= THEME:GetPathS("Common", "value"),
-			move_down= THEME:GetPathS("Common", "value"),
-			inc= THEME:GetPathS("_switch", "up"),
-			dec= THEME:GetPathS("_switch", "down"),
-		},
-		display_params= {
-			el_zoom= 1, item_params= item_params, item_mt= nesty_items.value,
-			on= function(self)
-				self:diffusealpha(0):decelerate(0.5):diffusealpha(1)
-			end},
-	},
+	MenuValueChangedMessageCommand= function(self, params)
+		nesty_menus.handle_menu_refresh_message(params, {menu_controller})
+	end,
+	LoadActor(THEME:GetPathG("", "generic_menu.lua"), 1, 880, menu_height, 1, menu_x-(menu_width/2), 138, 36),
 }

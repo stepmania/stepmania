@@ -59,6 +59,7 @@ function shown_noteskins_menu()
 						dont_translate_name= true,
 						func= function()
 							config[skin_name]= not config[skin_name]
+							shown_noteskins:set_dirty(pn)
 							return {"boolean", not config[skin_name]}
 						end,
 						value= function()
@@ -85,7 +86,7 @@ local function generate_noteskin_menu_items(pn)
 				PROFILEMAN:GetProfile(pn):set_preferred_noteskin(skin_name)
 				nesty_menus.menu_message{
 					category= "NoteSkin", pn= pn, value= skin_name}
-				MESSAGEMAN:Broadcast("NoteskinChanged", {pn= pn})
+				MESSAGEMAN:Broadcast("NoteskinChanged", {pn= pn, skin= skin_name})
 			end,
 			value= function()
 				local player_skin= PROFILEMAN:GetProfile(pn)

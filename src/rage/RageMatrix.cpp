@@ -1,9 +1,11 @@
 #include "RageMatrix.hpp"
+#include <cstring>
 
 using namespace Rage;
 
 Matrix::Matrix()
 {
+	memset(m, 0, sizeof(float)*4*4);
 }
 
 Matrix::Matrix(Matrix const &rhs)

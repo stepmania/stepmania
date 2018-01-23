@@ -210,7 +210,9 @@ bool StepsUtil::CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, con
 		return true;
 	if( pStep1->m_StepsType > pStep2->m_StepsType )
 		return false;
-	return pStep1->GetDifficulty() < pStep2->GetDifficulty();
+	if(pStep1->GetDifficulty() < pStep2->GetDifficulty()) { return true; }
+	if(pStep1->GetDifficulty() > pStep2->GetDifficulty()) { return false; }
+	return pStep1->GetMeter() < pStep2->GetMeter();
 }
 
 void StepsUtil::SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers )

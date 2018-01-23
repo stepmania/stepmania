@@ -1044,6 +1044,7 @@
 			<Function name='playanimation'/>
 			<Function name='position'/>
 			<Function name='rate'/>
+			<Function name='InverseBindPose'/>
 		</Class>
 		<Class base='WheelBase' name='MusicWheel'>
 			<Function name='ChangeSort'/>
@@ -1681,6 +1682,7 @@
 			<Function name='CanOpenOptionsList'/>
 			<Function name='GetGoToOptions'/>
 			<Function name='GetMusicWheel'/>
+			<Function name='CloseCurrentSection' />
 			<Function name='OpenOptionsList'/>
 			<Function name='setupcoursestagemods'/>
 			<Function name='setupmusicstagemods'/>

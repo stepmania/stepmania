@@ -138,7 +138,7 @@ bool NotesWriterJson::WriteSong( const std::string &sFile, const Song &out, bool
 	root["LyricsFile"] = out.m_sLyricsFile;
 	root["CDTitle"] = out.m_sCDTitleFile;
 	root["Music"] = out.m_sMusicFile;
-	root["Offset"] = out.m_SongTiming.m_fBeat0OffsetInSeconds;
+	root["Offset"] = out.m_SongTiming.get_offset();
 	root["SampleStart"] = out.m_fMusicSampleStartSeconds;
 	root["SampleLength"] = out.m_fMusicSampleLengthSeconds;
 	if( out.m_SelectionDisplay == Song::SHOW_ALWAYS )

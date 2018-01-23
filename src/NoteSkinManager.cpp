@@ -85,11 +85,11 @@ void NoteSkinManager::get_all_skin_names(std::vector<std::string>& ret)
 	}
 }
 
-void NoteSkinManager::get_skin_names_for_stepstype(StepsType type, std::vector<std::string>& ret)
+void NoteSkinManager::get_skin_names_for_stepstype(StepsType type, std::vector<std::string>& ret, bool disable_supports_all)
 {
 	for(auto&& skin : m_skins)
 	{
-		if(skin.supports_needed_buttons(type))
+		if(skin.supports_needed_buttons(type, disable_supports_all))
 		{
 			ret.push_back(skin.get_name());
 		}
@@ -212,7 +212,8 @@ struct LunaNoteSkinManager: Luna<NoteSkinManager>
 	{
 		StepsType stype= Enum::Check<StepsType>(L, 1);
 		vector<std::string> names;
-		p->get_skin_names_for_stepstype(stype, names);
+		bool without_all= static_cast<bool>(lua_toboolean(L, 2));
+		p->get_skin_names_for_stepstype(stype, names, without_all);
 		LuaHelpers::CreateTableFromArray(names, L);
 		return 1;
 	}

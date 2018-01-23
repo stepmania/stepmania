@@ -181,6 +181,22 @@ function notefield_prefs_actor()
 		delayed_p2_steps_changeCommand= function(self)
 			find_field_apply_prefs(PLAYER_2)
 		end,
+		MenuValueChangedMessageCommand= function(self, params)
+			if params.pn then
+				if params.config_name == "notefield_prefs" then
+					find_field_apply_prefs(params.pn)
+				elseif params.category == "NoteSkin" then
+					local pn= params.pn
+					local skin= params.value
+					local field= find_notefield_in_gameplay(SCREENMAN:GetTopScreen(), pn)
+					if field then
+						local profile= PROFILEMAN:GetProfile(pn)
+						local skin_params= profile:get_noteskin_params(skin)
+						field:set_skin(skin, skin_params)
+					end
+				end
+			end
+		end,
 	}
 end
 

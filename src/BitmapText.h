@@ -23,15 +23,17 @@ public:
 	{
 		// We'd be better off not adding strokes to things we can't control
 		// themewise (ScreenDebugOverlay for example). -Midiman
-		BMT_TweenState(): m_stroke_color(Rage::Color(0,0,0,0)) {}
+		BMT_TweenState();
 		static void MakeWeightedAverage(BMT_TweenState& out,
 			BMT_TweenState const& from, BMT_TweenState const& to, float between);
 		bool operator==(BMT_TweenState const& other) const;
 		bool operator!=(BMT_TweenState const& other) const { return !operator==(other); }
-		void SetStrokeColor(Rage::Color const& c) { m_stroke_color= c; }
-		Rage::Color const& GetStrokeColor() { return m_stroke_color; }
+		void set_stroke_color(Rage::Color const& c, int id);
+		Rage::Color const& GetStrokeColor() { return m_stroke_color[0]; }
+		Rage::Color const& get_a_stroke(int id);
+	friend class BitmapText;
 	private:
-		Rage::Color m_stroke_color;
+		std::array<Rage::Color, NUM_DIFFUSE_COLORS> m_stroke_color;
 	};
 
 	BMT_TweenState& BMT_DestTweenState()
@@ -78,9 +80,9 @@ public:
 
 	void SetHorizAlign( float f );
 
-	void SetStrokeColor(Rage::Color c) { BMT_DestTweenState().SetStrokeColor(c); }
+	void set_stroke_color(Rage::Color const& c, int id) { BMT_DestTweenState().set_stroke_color(c, id); }
 	Rage::Color const& GetStrokeColor()		{ return BMT_DestTweenState().GetStrokeColor(); }
-	void SetCurrStrokeColor(Rage::Color c) { BMT_current.SetStrokeColor(c); }
+	Rage::Color const& get_a_stroke(int id)		{ return BMT_DestTweenState().get_a_stroke(id); }
 	Rage::Color const& GetCurrStrokeColor() { return BMT_current.GetStrokeColor(); }
 
 	void SetTextGlowMode( TextGlowMode tgm )	{ m_TextGlowMode = tgm; }

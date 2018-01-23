@@ -263,7 +263,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 				{
 					if( GAMESTATE->get_curr_song() != nullptr )
 					{
-						GAMESTATE->get_curr_song()->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
+						GAMESTATE->get_curr_song()->m_SongTiming.adjust_offset(fDelta);
 						auto const & vpSteps = GAMESTATE->get_curr_song()->GetAllSteps();
 						for (auto *s: vpSteps)
 						{
@@ -273,7 +273,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 							{
 								continue;
 							}
-							s->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+							s->m_Timing.adjust_offset(fDelta);
 						}
 					}
 					break;

@@ -2057,7 +2057,7 @@ void ScreenEdit::UpdateTextInfo()
 			   SONG_TIMING.GetValue().c_str() ) );
 		sText += rage_fmt_wrapper(BEAT_0_OFFSET_FORMAT,
 			  BEAT_0_OFFSET.GetValue().c_str(),
-			  GetAppropriateTiming().m_fBeat0OffsetInSeconds );
+			GetAppropriateTiming().get_offset());
 		sText += rage_fmt_wrapper(PREVIEW_START_FORMAT, PREVIEW_START.GetValue().c_str(), m_pSong->m_fMusicSampleStartSeconds );
 		sText += rage_fmt_wrapper(PREVIEW_LENGTH_FORMAT, PREVIEW_LENGTH.GetValue().c_str(), m_pSong->m_fMusicSampleLengthSeconds );
 		if(record_hold_seconds < record_hold_default - .001f ||
@@ -2730,7 +2730,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				else
 					fDelta *= 40;
 			}
-			GetAppropriateTimingForUpdate().m_fBeat0OffsetInSeconds += fDelta;
+			GetAppropriateTimingForUpdate().adjust_offset(fDelta);
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play(true);
 			if (GAMESTATE->m_bIsUsingStepTiming)
 			{
@@ -3393,7 +3393,7 @@ bool ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 					fOffsetDelta *= 40;
 			}
 
-			GetAppropriateTimingForUpdate().m_fBeat0OffsetInSeconds += fOffsetDelta;
+			GetAppropriateTimingForUpdate().adjust_offset(fOffsetDelta);
 			if (!GAMESTATE->m_bIsUsingStepTiming)
 			{
 				GAMESTATE->get_curr_song()->m_fMusicSampleStartSeconds += fOffsetDelta;
@@ -3825,9 +3825,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		float fBeat0 = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 
 		TimingData &timing = GetAppropriateTimingForUpdate();
-		float old = timing.m_fBeat0OffsetInSeconds;
-		timing.m_fBeat0OffsetInSeconds = fBeat0;
-		float delta = timing.m_fBeat0OffsetInSeconds - old;
+		float old = timing.get_offset();
+		timing.set_offset(fBeat0);
+		float delta = timing.get_offset() - old;
 
 		if (GAMESTATE->m_bIsUsingStepTiming)
 		{
@@ -4885,7 +4885,7 @@ void ScreenEdit::DisplayTimingMenu()
 	const TimingData &pTime = GetAppropriateTiming();
 	bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtRow( row )->GetRow() == row;
 
-	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( FloatToString(pTime.m_fBeat0OffsetInSeconds) );
+	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( FloatToString(pTime.get_offset()) );
 	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( FloatToString(pTime.GetBPMAtRow( row ) ) );
 	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( FloatToString(pTime.GetStopAtRow( row ) ) ) ;
 	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( FloatToString(pTime.GetDelayAtRow( row ) ) );
@@ -5980,7 +5980,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 			SM_BackFromBeat0Change,
 			ENTER_BEAT_0_OFFSET.GetValue(),
-			FloatToString(GetAppropriateTiming().m_fBeat0OffsetInSeconds),
+			FloatToString(GetAppropriateTiming().get_offset()),
 			20
 			);
 		break;

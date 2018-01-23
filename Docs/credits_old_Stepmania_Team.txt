@@ -1,0 +1,112 @@
+﻿These were the Stepmania Team credits as of April 15, 2009, when they were
+wiped with a todo message of "remake this list". That never happened and
+anybody that was not in that initial list got lost in the shuffle over the
+years.
+
+git commit fb1165e6be1cd1e40193b7d6a100c2525a670e04 contains this list in
+lua format.
+
+
+=== GRAPHICS ===
+
+Lucas “v1ral” Tang
+SPiGuMuS
+Visage
+Ryan “Plaguefox” McKanna
+Lamden “Cloud34” Travis
+Michael “Redcrusher” Curry
+Steve “healing_vision” Klise
+Mauro Panichella
+Popnko
+Griever (Julian)
+Miguel Moore
+Dj “AeON ExOdus” Washington
+Xelf
+James “SPDS” Sanders
+k0ldx
+Daisuke Master
+
+=== THEME ===
+
+AJ Kelly
+Dan “dieKatze88” Colardeau
+Mike “mDaWg” Calfin
+
+=== WEB ===
+
+Brian “Bork” Bugh
+
+=== SOUND ===
+
+Kyle “KeeL” Ward
+Jim “Izlude” Cabeen
+Sanxion7
+
+=== PROGRAMMING ===
+
+Chris Danford
+Frieza
+Glenn Maynard
+Bruno Figueiredo
+Peter “Dro Kulix” May
+Jared “nmspaz” Roberts
+Brendan “binarys” Walker
+Lance “Neovanglist” Gilbert
+Michel Donais
+Ben “Mantis” Nordstrom
+Chris “Parasyte” Gomez
+Michael “dirkthedaring” Patterson
+Sauleil “angedelamort” Lamarre
+Edwin Evans
+Brian “Bork” Bugh
+Joel “Elvis314” Maher
+Garth “Kefabi” Smith
+Pkillah
+Robert Kemmetmueller
+Ben “Shabach” Andersen
+Will “SlinkyWizard” Valladao
+TheChip
+David “WarriorBob” H
+Mike Waltson
+Kevin “Miryokuteki” Slaughter
+Tracy “Coderjo” Ward
+Steve Checkoway
+Sean Burke
+XPort
+Charles Lohr
+Josh “Axlecrusher” Allen
+Jason “Wolfman2000” Felds
+Eric “Subwire” Gustafson
+Mike “Archer” Hawkins
+Colby “shakesoda“ Klein
+
+=== THANKS ===
+
+SimWolf
+DJ DraftHorse
+Dance With Intensity
+BeMaNiRuler
+DDRLlama
+DDRManiaX
+NMR
+DJ Paranoia
+DJ Yuz
+Reo
+Random Hajile
+Chocobo Ghost
+Tyma
+Deluxe
+Lagged
+The Melting Pot
+DDRJamz Global BBS
+Eric “WaffleKing” Webster
+Gotetsu
+Mark “Foobly” Verrey
+Mandarin Blue
+Kenny “AngelTK” Lai
+curewater
+Bill “DMAshura” Shillito
+Illusionz - Issaquah, WA
+Quarters - Kirkland, WA
+Pier Amusements - Bournemouth, UK
+Westcliff Amusements - Bournemouth, UK

@@ -423,7 +423,7 @@ function editor_notefield_menu(menu_actor)
 		set_inCommand= function(self)
 			in_option_menu= true
 		end,
-		MenuValueChangedMessageCommand = function(self, params)
+		MenuValueChangedMessageCommand= function(self, params)
 			apply_notefield_prefs_nopn(current_read_bpm, current_field, current_field_options)
 			local vispix= 1024 / current_field_options.zoom
 			for i, col in ipairs(current_field:get_columns()) do

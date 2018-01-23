@@ -1126,9 +1126,10 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 		Trail* steps_to_match= m_pCurTrail[main].Get();
 		if(steps_to_match == nullptr) { return; }
 		int num_players= GAMESTATE->GetNumPlayersEnabled();
-		StyleType styletype_to_match= GAMEMAN->GetFirstCompatibleStyle(
-			GAMESTATE->GetCurrentGame(), num_players, steps_to_match->m_StepsType)
-			->m_StyleType;
+		Style const* first_compat= GAMEMAN->GetFirstCompatibleStyle(
+			GAMESTATE->GetCurrentGame(), num_players, steps_to_match->m_StepsType);
+		if(first_compat == nullptr) { return; }
+		StyleType styletype_to_match= first_compat->m_StyleType;
 		FOREACH_EnabledPlayer(pn)
 		{
 			Trail* pn_steps= m_pCurTrail[pn].Get();
