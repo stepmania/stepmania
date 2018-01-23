@@ -25,6 +25,14 @@ Windows
 
 For those that prefer package manager systems, [Chocolatey](https://chocolatey.org/) has a CMake package. Run `choco install cmake` to get the latest stable version.
 
+To compile StepMania, the [DirectX SDK](https://www.microsoft.com/en-ca/download/confirmation.aspx?id=6812) must be installed.  If you are running Windows 10, you will likely need to install the [Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) instead.
+
+Additionally, either [nasm](http://www.nasm.us/pub/nasm/releasebuilds/) or [yasm](http://yasm.tortall.net/Download.html) should be installed and present in your path.
+
+If you do not have an existing compiler, [Visual Studio Community 2017](https://www.visualstudio.com/downloads/) is freely available.  Use "Visual Studio 15 2017" as the generator.  Note that Visual Studio 2017 versions prior to 15.5 may experience compilation issues.
+
+To compile with Visual Studio, open the file StepMania.sln in the StepMania root directory after running CMake generation.  To build StepMania, right-click on the ALL_BUILD predefined target, and select Build.  
+
 Mac OS X Specific
 ===
 
