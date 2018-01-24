@@ -1885,6 +1885,21 @@ void ScreenSelectMusic::AfterMusicChange()
 			if(pStyle == NULL)
 			{
 				lCourse->GetAllTrails(m_vpTrails);
+				vector<Trail*>::iterator tra= m_vpTrails.begin();
+				Game const* cur_game= GAMESTATE->GetCurrentGame();
+				int num_players= GAMESTATE->GetNumPlayersEnabled();
+				while(tra != m_vpTrails.end())
+				{
+					if(GAMEMAN->GetFirstCompatibleStyle(cur_game, num_players,
+							(*tra)->m_StepsType) == NULL)
+					{
+						tra= m_vpTrails.erase(tra);
+					}
+					else
+					{
+						++tra;
+					}
+				}
 			}
 			else
 			{
