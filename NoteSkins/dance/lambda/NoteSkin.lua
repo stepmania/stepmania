@@ -47,6 +47,8 @@ ret.PartsToRotate =
 	["Ready Receptor"] = true,
 	["Tap Explosion Bright"] = true,
 	["Tap Explosion Dim"] = true,
+	["Hold Explosion"] = true,
+	["Roll Explosion"] = true,
 	["Hold Head Active"] = true,
 	["Hold Head Inactive"] = true,
 	["Roll Head Active"] = true,
@@ -64,8 +66,6 @@ ret.Rotate =
 
 ret.Blank =
 {
-	["Hold Explosion"] = true,
-	["Roll Explosion"] = true,
 	["Hold Topcap Active"] = true,
 	["Hold Topcap Inactive"] = true,
 	["Roll Topcap Active"] = true,
