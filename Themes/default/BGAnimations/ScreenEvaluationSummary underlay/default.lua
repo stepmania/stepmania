@@ -14,6 +14,9 @@ local eval_lines = {
 
 local grade_area_offset = 16
 
+local fade_out_speed = 0.3
+local fade_out_pause = 0.08
+
 -- And a function to make even better use out of the table.
 local function GetJLineValue(line, pl)
 	if line == "Held" then
@@ -50,22 +53,25 @@ for i, v in ipairs(eval_lines) do
 	
 	t[#t+1] = Def.ActorFrame{
 		InitCommand=cmd(x,_screen.cx;y,(_screen.cy/1.6)+(spacing)),
-		OffCommand=function(self)			
-			self:sleep(0.13 * i):decelerate(0.6):diffusealpha(0)
-		end;	
 		Def.Quad {
 			InitCommand=cmd(zoomto,400,36;diffuse,JudgmentLineToColor(cur_line);fadeleft,0.5;faderight,0.5;);
 			OnCommand=function(self)			
-				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.9):diffusealpha(1)
-			end;		
+				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.6):diffusealpha(0.8)
+			end;
+			OffCommand=function(self)			
+				self:sleep(fade_out_pause * i):decelerate(fade_out_speed):diffusealpha(0)
+			end;				
 		};
 	
 		Def.BitmapText {
 			Font = "_roboto condensed Bold 48px",
 			InitCommand=cmd(zoom,0.6;diffuse,color("#000000");settext,string.upper(JudgmentLineToLocalizedString(cur_line)));
 			OnCommand=function(self)			
-				self:diffusealpha(0):sleep(0.13 * i):decelerate(0.6):diffusealpha(0.6)
+				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.6):diffusealpha(0.8)
 			end;
+			OffCommand=function(self)			
+				self:sleep(fade_out_pause * i):decelerate(fade_out_speed):diffusealpha(0)
+			end;	
 		}
 	}
 end
@@ -94,11 +100,11 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 				else
 					self:horizalign(left)
 				end
-				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.9):diffusealpha(1)
+				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.6):diffusealpha(1)
 			end;
 			OffCommand=function(self)			
-				self:sleep(0.1 * i):decelerate(0.3):diffusealpha(0)
-			end;
+				self:sleep(fade_out_pause * i):decelerate(fade_out_speed):diffusealpha(0)
+			end;	
 		}
 	end
 	
