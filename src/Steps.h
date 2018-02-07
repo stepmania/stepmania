@@ -208,7 +208,7 @@ public:
 
 	RString GetAttackString() const
 	{
-		return join(":", this->m_sAttackString);
+		return join(": ", this->m_sAttackString);
 	}
 
 private:
