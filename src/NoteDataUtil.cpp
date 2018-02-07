@@ -368,7 +368,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 		{
 			if( m )
 				sRet.append( 1, ',' );
-			sRet += ssprintf("  // measure %d\n", m);
+			sRet += ssprintf( "\n" ); 
 
 			NoteType nt = GetSmallestNoteTypeForMeasure( *nd, m );
 			int iRowSpacing;
