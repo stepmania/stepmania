@@ -19,6 +19,13 @@
 
 ThemeMetric<bool> USE_CREDIT	( "NotesWriterSM", "DescriptionUsesCreditField" );
 
+static void write_tag( RageFile& f, RString const& format,
+	RString const& value )
+{
+	if( !value.empty() )
+		f.PutLine( ssprintf(format, SmEscape(value).c_str()) );
+}
+
 /**
  * @brief Write out the common tags for .SM files.
  * @param f the file in question.
@@ -26,36 +33,39 @@ ThemeMetric<bool> USE_CREDIT	( "NotesWriterSM", "DescriptionUsesCreditField" );
 static void WriteGlobalTags( RageFile &f, Song &out )
 {
 	TimingData &timing = out.m_SongTiming;
-	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
-	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
-	f.PutLine( ssprintf( "#TITLETRANSLIT:%s;", SmEscape(out.m_sMainTitleTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLETRANSLIT:%s;", SmEscape(out.m_sSubTitleTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#ARTISTTRANSLIT:%s;", SmEscape(out.m_sArtistTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#GENRE:%s;", SmEscape(out.m_sGenre).c_str() ) );
-	f.PutLine( ssprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
-	f.PutLine( ssprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
-	f.PutLine( ssprintf( "#BACKGROUND:%s;", SmEscape(out.m_sBackgroundFile).c_str() ) );
-	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
-	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
-	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
-	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
+	
+	write_tag( f, "#TITLE:%s;", out.m_sMainTitle );
+	write_tag( f, "#SUBTITLE:%s;", out.m_sSubTitle );
+	write_tag( f, "#ARTIST:%s;", out.m_sArtist );
+	write_tag( f, "#TITLETRANSLIT:%s;", out.m_sMainTitleTranslit );
+	write_tag( f, "#SUBTITLETRANSLIT:%s;", out.m_sSubTitleTranslit );
+	write_tag( f, "#ARTISTTRANSLIT:%s;", out.m_sArtistTranslit );
+	write_tag( f, "#GENRE:%s;", out.m_sGenre );
+	write_tag( f, "#CREDIT:%s;", out.m_sCredit );
+	write_tag( f, "#BANNER:%s;", out.m_sBannerFile );
+	write_tag( f, "#BACKGROUND:%s;", out.m_sBackgroundFile );
+	write_tag( f, "#LYRICSPATH:%s;", out.m_sLyricsFile );
+	write_tag( f, "#CDTITLE:%s;", out.m_sCDTitleFile );
+	write_tag( f, "#MUSIC:%s;", out.m_sMusicFile );
+	
+	if (out.m_SongTiming.m_fBeat0OffsetInSeconds != 0)
+		write_tag(f, "#OFFSET:%s;", FormatDouble("%.3f", out.m_SongTiming.m_fBeat0OffsetInSeconds));
+
+	write_tag(f, "#SAMPLESTART:%s;", FormatDouble("%.3f", out.m_fMusicSampleStartSeconds));
+	write_tag(f, "#SAMPLELENGTH:%s;", FormatDouble("%.3f", out.m_fMusicSampleLengthSeconds));
+
 	float specBeat = out.GetSpecifiedLastBeat();
 	if( specBeat > 0 )
-		f.PutLine( ssprintf("#LASTBEATHINT:%.6f;", specBeat) );
+		write_tag( f, "#LASTBEATHINT:%s;", FormatDouble("%.3f", specBeat) );
 
-	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
 	{
 		default:
 			FAIL_M(ssprintf("Invalid selection display: %i", out.m_SelectionDisplay));
-		case Song::SHOW_ALWAYS:	f.Write( "YES" );		break;
-		//case Song::SHOW_NONSTOP:	f.Write( "NONSTOP" );	break;
-		case Song::SHOW_NEVER:		f.Write( "NO" );		break;
+		case Song::SHOW_ALWAYS:		break;
+		//case Song::SHOW_NONSTOP:	f.Write( "NONSTOP" );		break;
+		case Song::SHOW_NEVER:		f.Write("#SELECTABLE:NO;");	break;
 	}
-	f.PutLine( ";" );
 
 	switch( out.m_DisplayBPMType )
 	{
@@ -64,11 +74,11 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			break;
 		case DISPLAY_BPM_SPECIFIED:
 			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
+				f.PutLine( ssprintf("#DISPLAYBPM:%s;", FormatDouble("%.3f", out.m_fSpecifiedBPMMin).c_str()) );
 			else
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", 
-							out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
-			break;
+				f.PutLine( ssprintf("#DISPLAYBPM:%s:%s;", FormatDouble("%.3f", out.m_fSpecifiedBPMMin).c_str(),
+					FormatDouble("%.3f", out.m_fSpecifiedBPMMax).c_str()) );
+					break;
 		case DISPLAY_BPM_RANDOM:
 			f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
 			break;
@@ -76,18 +86,14 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			break;
 	}
 
-
-	f.Write( "#BPMS:" );
 	const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
-	for( unsigned i=0; i<bpms.size(); i++ )
+	vector<RString> bpmLines; 
+	for (unsigned i = 0; i<bpms.size(); i++)
 	{
 		const BPMSegment *bs = ToBPM(bpms[i]);
-
-		f.PutLine( ssprintf( "%.6f=%.6f", bs->GetBeat(), bs->GetBPM() ) );
-		if( i != bpms.size()-1 )
-			f.Write( "," );
+		bpmLines.push_back( ssprintf("%s=%s", FormatDouble(bs->GetBeat()).c_str(), FormatDouble("%.3f", bs->GetBPM()).c_str()) );
 	}
-	f.PutLine( ";" );
+	write_tag( f, "#BPMS:%s;", join(",", bpmLines) );
 
 	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
 	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
@@ -138,35 +144,53 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		}
 	}
 
-	f.Write( "#STOPS:" );
 	vector<RString> stopLines;
 	FOREACHM(float, float, allPauses, ap)
 	{
-		stopLines.push_back(ssprintf("%.6f=%.6f", ap->first, ap->second));
+		stopLines.push_back( ssprintf("%s=%s", FormatDouble(ap->first).c_str(), FormatDouble("%.3f", ap->second).c_str()) );
 	}
-	f.PutLine(join(",\n", stopLines));
+	write_tag( f, "#STOPS:%s;", join(",", stopLines) );
 
-	f.PutLine( ";" );
+	const vector<TimingSegment *> &tSigs = timing.GetTimingSegments(SEGMENT_TIME_SIG);
+	vector<RString> tSigsLines; 
+	for (unsigned i = 0; i<tSigs.size(); i++)
+	{
+		const TimeSignatureSegment *ts = ToTimeSignature(tSigs[i]);
+		tSigsLines.push_back( ssprintf("%s=%d=%d", FormatDouble(ts->GetBeat()).c_str(), ts->GetNum(), ts->GetDen()) );
+	}
+
+	if( join(",", tSigsLines) != "0=4=4" )
+		write_tag( f, "#TIMESIGNATURES:%s;", join(",", tSigsLines) );
 
 	FOREACH_BackgroundLayer( b )
 	{
-		if( b==0 )
-			f.Write( "#BGCHANGES:" );
-		else if( out.GetBackgroundChanges(b).empty() )
-			continue;	// skip
-		else
-			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
+		if( out.GetBackgroundChanges(b).size() > 1 )
+		{
+			if( b==0 )
+				f.Write( "#BGCHANGES:" );
+			else
+				f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
-		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( (*bgc).ToString() +"," );
+			FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
+			{
+				if( bgc != (out.GetBackgroundChanges(b)).end()-1 )
+					f.PutLine( (*bgc).ToString() + "," );
+				else
+					f.PutLine( (*bgc).ToString() + ";" );
+			}
+		}
+		else if( !out.GetBackgroundChanges(b).empty() )
+		{
+			FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
+			{
+				if( b==0 && (*bgc).m_fStartBeat != 0 )
+					f.PutLine( ssprintf("#BGCHANGES:%s;", (*bgc).ToString()) );
+				else if( b > 0 )
+					f.PutLine( ssprintf("#BGCHANGES%d:%s;", b+1, (*bgc).ToString()) );
 
-		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
-		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
-		 * This tag will be removed on load.  Add it at a very high beat, so it won't cause
-		 * problems if loaded in older versions. */
-		if( b==0 && !out.GetBackgroundChanges(b).empty() )
-			f.PutLine( "99999=-nosongbg-=1.000=0=0=0 // don't automatically add -songbackground-" );
-		f.PutLine( ";" );
+				break;
+			}
+		}
 	}
 
 	if( out.GetForegroundChanges().size() )
@@ -179,16 +203,18 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		f.PutLine( ";" );
 	}
 
-	f.Write( "#KEYSOUNDS:" );
-	for( unsigned i=0; i<out.m_vsKeysoundFile.size(); i++ )
-	{
-		f.Write( out.m_vsKeysoundFile[i] );
-		if( i != out.m_vsKeysoundFile.size()-1 )
-			f.Write( "," );
-	}
-	f.PutLine( ";" );
-
-	f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
+	if( out.m_vsKeysoundFile.size() )
+ 	{
+		f.Write( "#KEYSOUNDS:" );
+		for( unsigned i=0; i<out.m_vsKeysoundFile.size(); i++ )
+		{
+			f.Write( out.m_vsKeysoundFile[i] );
+			if( i != out.m_vsKeysoundFile.size()-1 )
+				f.Write( "," );
+		}
+		f.PutLine( ";" );
+ 	}
+	write_tag( f, "#ATTACKS:%s;", out.GetAttackString() );
 }
 
 /**
@@ -227,21 +253,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	lines.push_back( ssprintf( "     %s:", SmEscape(desc).c_str() ) );
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
-	
-	vector<RString> asRadarValues;
-	// OpenITG simfiles use 11 radar categories.
-	int categories = 11;
-	FOREACH_PlayerNumber( pn )
-	{
-		const RadarValues &rv = in.GetRadarValues( pn );
-		// Can't use the foreach anymore due to flexible radar lines.
-		for( RadarCategory rc = (RadarCategory)0; rc < categories; 
-		    enum_add<RadarCategory>( rc, 1 ) )
-		{
-			asRadarValues.push_back( ssprintf("%.6f", rv[rc]) );
-		}
-	}
-	lines.push_back( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
+	lines.push_back( "     :" );
 
 	RString sNoteData;
 	in.GetSMNoteData( sNoteData );
