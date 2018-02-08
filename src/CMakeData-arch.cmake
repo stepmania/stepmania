@@ -349,6 +349,15 @@ list(APPEND SMDATA_ARCH_INPUT_HPP
   "arch/InputHandler/InputHandler_MonkeyKeyboard.h"
 )
 
+if(SDL2_FOUND)
+  list(APPEND SMDATA_ARCH_INPUT_SRC
+    "arch/InputHandler/InputHandler_SDL.cpp"
+  )
+  list(APPEND SMDATA_ARCH_INPUT_SRC
+    "arch/InputHandler/InputHandler_SDL.h"
+  )
+endif()
+
 if(WIN32)
   list(APPEND SMDATA_ARCH_INPUT_SRC
     "arch/InputHandler/InputHandler_DirectInput.cpp"
