@@ -193,10 +193,12 @@ std::string LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &
 		/* Set the pixel format. */
 		if( !SetPixelFormat(GraphicsWindow::GetHDC(), iPixelFormat, &pixfmt) )
 		{
+			DWORD err = GetLastError();
+
 			/* Destroy the window. */
 			DestroyGraphicsWindowAndOpenGLContext();
 
-			return werr_format( GetLastError(), "Pixel format failed" );
+			return werr_format( err, "Pixel format failed" );
 		}
 
 		DescribePixelFormat( GraphicsWindow::GetHDC(), iPixelFormat, sizeof(g_CurrentPixelFormat), &g_CurrentPixelFormat );
@@ -209,14 +211,16 @@ std::string LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &
 		g_HGLRC = wglCreateContext( GraphicsWindow::GetHDC() );
 		if ( g_HGLRC == nullptr )
 		{
+			DWORD err = GetLastError();
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_format( GetLastError(), "wglCreateContext" );
+			return werr_format( err, "wglCreateContext" );
 		}
 
 		if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC ) )
 		{
+			DWORD err = GetLastError();
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_format( GetLastError(), "wglCreateContext" );
+			return werr_format( err, "wglCreateContext" );
 		}
 	}
 	return std::string();	// we set the video mode successfully

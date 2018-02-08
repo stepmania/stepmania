@@ -17,18 +17,15 @@
 #include "DisplaySpec.h"
 #include "LocalizedString.h"
 
-#include <D3dx9tex.h>
 #include <d3d9.h>
-#include <dxerr.h>
 
 #include "archutils/Win32/GraphicsWindow.h"
+#include "archutils/Win32/DirectXHelpers.h"
 
 // Static libraries
 // load Windows D3D9 dynamically
 #if defined(_MSC_VER)
 	#pragma comment(lib, "d3d9.lib")
-	#pragma comment(lib, "d3dx9.lib")
-	#pragma comment(lib, "DxErr.lib")
 #endif
 
 #include <math.h>
@@ -36,11 +33,6 @@
 
 using std::list;
 using std::vector;
-
-std::string GetErrorString( HRESULT hr )
-{
-	return DXGetErrorString(hr);
-}
 
 // Globals
 HMODULE				g_D3D9_Module = nullptr;
@@ -666,6 +658,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
 	RageSurface * result = nullptr;
 
+#if 0 // FIX ME
 	// Get the back buffer.
 	IDirect3DSurface9* pSurface;
 	if( SUCCEEDED( g_pd3dDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface ) ) )
@@ -715,6 +708,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 
 		pSurface->Release();
 	}
+#endif
 
 	return result;
 }
