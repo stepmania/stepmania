@@ -4,7 +4,7 @@
 #define RAGE_LOG_H
 
 #include "enum_flags.h"
-#include "format.h"
+#include "fmt/format.h"
 
 ENUM_FLAGS(WriteDest);
 /** @brief The possible destinations/options for writing the logs. */
