@@ -26,6 +26,39 @@ static void write_tag( RageFile& f, RString const& format,
 		f.PutLine( ssprintf(format, SmEscape(value).c_str()) );
 }
 
+static RString TimingVectorValueToString( const TimingData &timing, TimingSegmentType tst )
+{
+	return join(",\r", timing.ToVectorString(tst, 3)).c_str();
+}
+
+static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong = false )
+{
+	write_tag( f, "#BPMS:%s;", TimingVectorValueToString(timing, SEGMENT_BPM) );
+	write_tag( f, "#STOPS:%s;", TimingVectorValueToString(timing, SEGMENT_STOP) );
+	write_tag( f, "#DELAYS:%s;", TimingVectorValueToString(timing, SEGMENT_DELAY) );
+	write_tag( f, "#WARPS:%s;", TimingVectorValueToString(timing, SEGMENT_WARP) );
+
+	if( TimingVectorValueToString(timing, SEGMENT_TIME_SIG) != "0=4=4" )
+		write_tag( f, "#TIMESIGNATURES:%s;", TimingVectorValueToString(timing, SEGMENT_TIME_SIG) );
+
+	if( TimingVectorValueToString(timing, SEGMENT_TICKCOUNT) != "0=4" )
+		write_tag( f, "#TICKCOUNTS:%s;", TimingVectorValueToString(timing, SEGMENT_TICKCOUNT) );
+
+	if( TimingVectorValueToString(timing, SEGMENT_COMBO) != "0=1" )
+		write_tag( f, "#COMBOS:%s;", TimingVectorValueToString(timing, SEGMENT_COMBO) );
+
+	if( TimingVectorValueToString(timing, SEGMENT_SPEED) != "0=1=0=0" )
+		write_tag( f, "#SPEEDS:%s;", TimingVectorValueToString(timing, SEGMENT_SPEED) );
+
+	if( TimingVectorValueToString(timing, SEGMENT_SCROLL) != "0=1" )
+		write_tag( f, "#SCROLLS:%s;", TimingVectorValueToString(timing, SEGMENT_SCROLL) );
+
+	write_tag( f, "#FAKES:%s;", TimingVectorValueToString(timing, SEGMENT_FAKE) );
+
+	if( TimingVectorValueToString(timing, SEGMENT_LABEL) != "0=Song Start" )
+		write_tag( f, "#LABELS:%s;", TimingVectorValueToString(timing, SEGMENT_LABEL) );
+}
+
 /**
  * @brief Write out the common tags for .SM files.
  * @param f the file in question.
@@ -41,12 +74,25 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	write_tag( f, "#SUBTITLETRANSLIT:%s;", out.m_sSubTitleTranslit );
 	write_tag( f, "#ARTISTTRANSLIT:%s;", out.m_sArtistTranslit );
 	write_tag( f, "#GENRE:%s;", out.m_sGenre );
+	write_tag( f, "#ORIGIN:%s;", out.m_sOrigin );
 	write_tag( f, "#CREDIT:%s;", out.m_sCredit );
 	write_tag( f, "#BANNER:%s;", out.m_sBannerFile );
 	write_tag( f, "#BACKGROUND:%s;", out.m_sBackgroundFile );
+	write_tag( f, "#PREVIEWVID:%s;", out.m_sPreviewVidFile );
+	write_tag( f, "#JACKET:%s;", out.m_sJacketFile );
+	write_tag( f, "#CDIMAGE:%s;", out.m_sCDFile );
+	write_tag( f, "#DISCIMAGE:%s;", out.m_sDiscFile );
 	write_tag( f, "#LYRICSPATH:%s;", out.m_sLyricsFile );
 	write_tag( f, "#CDTITLE:%s;", out.m_sCDTitleFile );
 	write_tag( f, "#MUSIC:%s;", out.m_sMusicFile );
+	write_tag( f, "#PREVIEW:%s;", out.m_PreviewFile );
+
+	vector<RString> vs = out.GetInstrumentTracksToVectorString();
+	if( !vs.empty() )
+	{
+		RString s = join( ",", vs );
+		f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
+	}
 	
 	if (out.m_SongTiming.m_fBeat0OffsetInSeconds != 0)
 		write_tag(f, "#OFFSET:%s;", FormatDouble("%.3f", out.m_SongTiming.m_fBeat0OffsetInSeconds));
@@ -86,81 +132,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			break;
 	}
 
-	const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
-	vector<RString> bpmLines; 
-	for (unsigned i = 0; i<bpms.size(); i++)
-	{
-		const BPMSegment *bs = ToBPM(bpms[i]);
-		bpmLines.push_back( ssprintf("%s=%s", FormatDouble(bs->GetBeat()).c_str(), FormatDouble("%.3f", bs->GetBPM()).c_str()) );
-	}
-	write_tag( f, "#BPMS:%s;", join(",", bpmLines) );
-
-	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
-	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
-
-	map<float, float> allPauses;
-	const vector<TimingSegment *> &warps = timing.GetTimingSegments(SEGMENT_WARP);
-	unsigned wSize = warps.size();
-	if( wSize > 0 )
-	{
-		for( unsigned i=0; i < wSize; i++ )
-		{
-			const WarpSegment *ws = static_cast<WarpSegment *>(warps[i]);
-			int iRow = ws->GetRow();
-			float fBPS = 60 / out.m_SongTiming.GetBPMAtRow(iRow);
-			float fSkip = fBPS * ws->GetLength();
-			allPauses.insert(std::pair<float, float>(ws->GetBeat(), -fSkip));
-		}
-	}
-
-	for( unsigned i=0; i<stops.size(); i++ )
-	{
-		const StopSegment *fs = ToStop( stops[i] );
-		// Handle warps on the same row by summing the values.  Not sure this
-		// plays out the same. -Kyz
-		map<float, float>::iterator already_exists= allPauses.find(fs->GetBeat());
-		if(already_exists != allPauses.end())
-		{
-			already_exists->second+= fs->GetPause();
-		}
-		else
-		{
-			allPauses.insert(pair<float, float>(fs->GetBeat(), fs->GetPause()));
-		}
-	}
-	// Delays can't be negative: thus, no effect.
-	FOREACH_CONST(TimingSegment *, delays, ss)
-	{
-		float fBeat = NoteRowToBeat( (*ss)->GetRow()-1 );
-		float fPause = ToDelay(*ss)->GetPause();
-		map<float, float>::iterator already_exists= allPauses.find(fBeat);
-		if(already_exists != allPauses.end())
-		{
-			already_exists->second+= fPause;
-		}
-		else
-		{
-			allPauses.insert(pair<float,float>(fBeat, fPause));
-		}
-	}
-
-	vector<RString> stopLines;
-	FOREACHM(float, float, allPauses, ap)
-	{
-		stopLines.push_back( ssprintf("%s=%s", FormatDouble(ap->first).c_str(), FormatDouble("%.3f", ap->second).c_str()) );
-	}
-	write_tag( f, "#STOPS:%s;", join(",", stopLines) );
-
-	const vector<TimingSegment *> &tSigs = timing.GetTimingSegments(SEGMENT_TIME_SIG);
-	vector<RString> tSigsLines; 
-	for (unsigned i = 0; i<tSigs.size(); i++)
-	{
-		const TimeSignatureSegment *ts = ToTimeSignature(tSigs[i]);
-		tSigsLines.push_back( ssprintf("%s=%d=%d", FormatDouble(ts->GetBeat()).c_str(), ts->GetNum(), ts->GetDen()) );
-	}
-
-	if( join(",", tSigsLines) != "0=4=4" )
-		write_tag( f, "#TIMESIGNATURES:%s;", join(",", tSigsLines) );
+	WriteTimingTags( f, out.m_SongTiming, true );
 
 	FOREACH_BackgroundLayer( b )
 	{
