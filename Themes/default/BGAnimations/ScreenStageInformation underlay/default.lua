@@ -32,7 +32,7 @@ end
 
 -- BG for credits
 t[#t+1] = Def.ActorFrame {
-	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;sleep,2-easeTime;smooth,bottomSlide;addy,240);
+	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;sleep,0.75);
 	-- Behind stage graphic
 	Def.Quad {
 		InitCommand=cmd(vertalign,bottom;x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-110;zoomto,SCREEN_WIDTH,120;);
@@ -70,7 +70,7 @@ end
 
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+190);
-	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;sleep,2-easeTime;smooth,bottomSlide;addy,240;);
+	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;sleep,0.75;);
 
 	stage_num_actor .. {
 		OnCommand=cmd(zoom,1;diffusealpha,1);
@@ -81,7 +81,7 @@ t[#t+1] = Def.ActorFrame {
 	if GAMESTATE:IsHumanPlayer(PLAYER_1) == true then
 	t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(y,SCREEN_BOTTOM-80;x,SCREEN_LEFT+40;);
-	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;sleep,2-easeTime;smooth,bottomSlide;addy,240;);
+	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;);
 		LoadFont("Common Italic Condensed") .. {
 		  OnCommand=cmd(playcommand,"Set";horizalign,left;diffuse,color("#FFFFFF"););
           SetCommand=function(self)
@@ -121,7 +121,7 @@ t[#t+1] = Def.ActorFrame {
 	if GAMESTATE:IsHumanPlayer(PLAYER_2) == true then
 	t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(y,SCREEN_BOTTOM-80;x,SCREEN_RIGHT-40;);
-	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;sleep,2-easeTime;smooth,bottomSlide;addy,240;);
+	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;sleep,0.75;);
 	LoadFont("Common Italic Condensed") .. {
 		  OnCommand=cmd(playcommand,"Set";horizalign,right;diffuse,color("#FFFFFF"););
           SetCommand=function(self)
@@ -163,7 +163,7 @@ t[#t+1] = Def.ActorFrame {
 -- Song title and artist
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-80);
-	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;sleep,2-easeTime;smooth,bottomSlide;addy,240;);
+	OnCommand=cmd(addy,SCREEN_HEIGHT;sleep,slideWait;smooth,slideTime+easeTime;addy,-SCREEN_HEIGHT;sleep,0.75);
 	LoadFont("Common Fallback Font") .. {
 		Text=GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle() or GAMESTATE:GetCurrentSong():GetDisplayFullTitle();
 		InitCommand=cmd(diffuse,color("#FFFFFF");maxwidth,SCREEN_WIDTH*0.6);

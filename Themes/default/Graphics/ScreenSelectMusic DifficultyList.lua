@@ -20,7 +20,7 @@ return Def.ActorFrame {
 		self:decelerate(0.3):zoomx(0):diffusealpha(0)
 		end;
 		CursorP1 = Def.ActorFrame {
-			InitCommand=cmd(x,-170;player,PLAYER_1);
+			InitCommand=cmd(x,-174;player,PLAYER_1);
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_1 then
 					self:visible(true);
@@ -43,7 +43,7 @@ return Def.ActorFrame {
 			};
 		};
 		CursorP2 = Def.ActorFrame {
-			InitCommand=cmd(x,170;player,PLAYER_2);
+			InitCommand=cmd(x,174;player,PLAYER_2);
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_2 then
 					self:visible(true);

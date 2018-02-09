@@ -23,7 +23,7 @@ end
 
 local t = Def.ActorFrame {
 	LoadActor(THEME:GetPathB("_frame","3x1"),"rounded light", 250-16) .. {
-		OnCommand=cmd(diffuse,ColorLightTone(PlayerColor(PlayerNumber));diffusealpha,0.5);
+		OnCommand=cmd(diffuse,ColorLightTone(PlayerColor(PlayerNumber));diffusealpha,0.8);
 	};
 	LoadFont("Common Condensed") .. {
 		Text=ToEnumShortString(PlayerNumber);

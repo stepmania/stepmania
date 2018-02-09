@@ -5,7 +5,7 @@ t[#t+1] = Def.ActorFrame {
 		Name="animation",
 		Texture="LoadScreen diamond 5x2.png",
 		InitCommand=function(self)
-			self:SetAllStateDelays(0.1):diffusealpha(1):diffuse(color("#6248A7")):Center()
+			self:SetAllStateDelays(0.1):diffusealpha(1):diffuse(color("#981F41")):Center()
 		end,
 		OnCommand=function(self)
 			self:zoom(0):decelerate(0.25):zoom(0.5)
