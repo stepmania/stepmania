@@ -45,12 +45,12 @@ local function updateFunc(self)
 	local beat = self:GetSecsIntoEffect() % 1
 	local _beat = self.life == 1.00 and 0 or beat
 	local _fillWidth = (life_meter_width * self.life - _beat * life_meter_tip_gap) / life_meter_width
-	local _clampedWidth = math.round(_fillWidth * life_meter_num_segments) 
-	local _tipPosition = (life_meter_width * self.life ) / life_meter_width
-	local _tipClamped = math.round( _tipPosition * life_meter_num_segments )
+	local _clampedWidth = math.round(_fillWidth * life_meter_num_segments)
+	local _tipPosition = self.life
+	local _tipClamped = math.round( _tipPosition * life_meter_num_segments ) / life_meter_num_segments
 	c.Fill:zoomtowidth( math.max(0,(_clampedWidth/life_meter_num_segments) * life_meter_width) )
 	--c.Fill:zoomtowidth( (life_meter_width * self.life) - beat * life_meter_tip_gap)
-	c.Tip:x( clamp(-life_meter_tip_width/2 + scale((_tipClamped/life_meter_num_segments) * life_meter_width,0,life_meter_width, -life_meter_width/2, life_meter_width/2),0, life_meter_width) ) 
+	c.Tip:x( (_tipClamped*life_meter_width) - life_meter_width/2)
 end
 
 t[#t+1] = Def.ActorFrame {
@@ -82,7 +82,7 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(zoomto,life_meter_width+life_meter_outline,life_meter_height+life_meter_outline),
 		OnCommand=cmd()
 	},
-	-- Background 
+	-- Background
 	Def.Quad {
 		Name="Background",
 		InitCommand=cmd(zoomto,life_meter_width,life_meter_height),
