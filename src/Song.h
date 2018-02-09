@@ -142,6 +142,8 @@ public:
 	bool SaveToDWIFile();
 
 	void RemoveAutosave();
+	void RemoveSMFile();
+	void RemoveSSCFile();
 	bool WasLoadedFromAutosave() const
 	{ return m_loaded_from_autosave; }
 

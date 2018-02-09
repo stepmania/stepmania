@@ -52,7 +52,7 @@
 const int FILE_CACHE_VERSION = 227;
 
 /** @brief How long does a song sample last by default? */
-const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
+const float DEFAULT_MUSIC_SAMPLE_LENGTH = 15.f;
 
 static Preference<float>	g_fLongVerSongSeconds( "LongVerSongSeconds", 60*2.5f );
 static Preference<float>	g_fMarathonVerSongSeconds( "MarathonVerSongSeconds", 60*5.f );
@@ -1223,6 +1223,7 @@ void Song::Save(bool autosave)
 	if(!AnyChartUsesSplitTiming())
 	{
 		SaveToSMFile();
+		RemoveSSCFile();
 	}
 	//SaveToDWIFile();
 
@@ -1254,9 +1255,12 @@ bool Song::SaveToSMFile()
 	LOG->Trace( "Song::SaveToSMFile(%s)", sPath.c_str() );
 
 	// If the file exists, make a backup.
-	if( IsAFile(sPath) )
-		FileCopy( sPath, sPath + ".old" );
+	//if( IsAFile(sPath) )
+	//	FileCopy( sPath, sPath + ".old" );
 
+	if( FILEMAN->DoesFileExist(sPath + ".old") )
+		FILEMAN->Remove( sPath + ".old" );
+	
 	vector<Steps*> vpStepsToSave;
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
@@ -1275,6 +1279,8 @@ bool Song::SaveToSMFile()
 		vpStepsToSave.push_back(*s);
 	}
 
+	StepsUtil::SortStepsByTypeAndDifficulty( vpStepsToSave );
+	
 	return NotesWriterSM::Write( sPath, *this, vpStepsToSave );
 
 }
@@ -1282,8 +1288,11 @@ bool Song::SaveToSMFile()
 bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 {
 	RString path = sPath;
-	if (!bSavingCache)
-		path = SetExtension(sPath, "ssc");
+	if( !bSavingCache && AnyChartUsesSplitTiming() )
+	{
+ 		path = SetExtension(sPath, "ssc");
+		RemoveSMFile();
+	}
 	if(autosave)
 	{
 		path = SetExtension(sPath, "ats");
@@ -1292,9 +1301,12 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 	LOG->Trace( "Song::SaveToSSCFile('%s')", path.c_str() );
 
 	// If the file exists, make a backup.
-	if(!bSavingCache && !autosave && IsAFile(path))
-		FileCopy( path, path + ".old" );
+	//if(!bSavingCache && !autosave && IsAFile(path))
+	//	FileCopy( path, path + ".old" );
 
+	if( FILEMAN->DoesFileExist(path + ".old") )
+		FILEMAN->Remove( path + ".old" );
+	
 	vector<Steps*> vpStepsToSave;
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
@@ -1315,7 +1327,9 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 		vpStepsToSave.push_back(*s);
 	}
 
-	if(bSavingCache || autosave)
+	StepsUtil::SortStepsByTypeAndDifficulty( vpStepsToSave );
+	
+	if( bSavingCache || autosave )
 	{
 		return NotesWriterSSC::Write(path, *this, vpStepsToSave, bSavingCache);
 	}
@@ -1401,6 +1415,20 @@ void Song::RemoveAutosave()
 		FILEMAN->Remove(autosave_path);
 		m_loaded_from_autosave= false;
 	}
+}
+
+void Song::RemoveSMFile()
+{
+	RString sm_path= SetExtension(m_sSongFileName, "sm");
+	if( FILEMAN->DoesFileExist(sm_path) )
+		FILEMAN->Remove(sm_path);
+}
+
+void Song::RemoveSSCFile()
+{
+	RString ssc_path= SetExtension(m_sSongFileName, "ssc");
+	if( FILEMAN->DoesFileExist(ssc_path) )
+		FILEMAN->Remove(ssc_path);
 }
 
 void Song::AddAutoGenNotes()

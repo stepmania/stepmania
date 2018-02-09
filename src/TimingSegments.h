@@ -43,6 +43,38 @@ const int ROW_INVALID = -1;
  * @brief The base timing segment for make glorious benefit wolfman
  * XXX: this should be an abstract class.
  */
+
+static RString FormatDouble(const RString &precision, double d)
+{
+	int size = snprintf( NULL, 0, precision.c_str(), d );
+	char *str = (char*)malloc(size + 1);
+	snprintf( str, size + 1, precision.c_str(), d );
+
+		for( int i = size - 1, end = size; i >= 0; i-- )
+		{
+			if( str[i] == '0' )
+			{
+				if( end == i + 1 )
+					end = i;
+			}
+			else if( str[i] == '.' )
+			{
+				if( end == i + 1 )
+					end = i;
+
+					str[end] = '\0';
+				break;
+			}
+		}
+
+		return str;
+	}
+
+static RString FormatDouble( double d )
+{
+	return FormatDouble("%.5f", d);
+}
+
 struct TimingSegment
 {
 	virtual TimingSegmentType GetType() const { return TimingSegmentType_Invalid; }
@@ -78,7 +110,7 @@ struct TimingSegment
 	float GetBeat() const { return NoteRowToBeat(m_iStartRow); }
 	void SetBeat( float fBeat ) { SetRow( BeatToNoteRow(fBeat) ); }
 
-	virtual RString ToString(int /* dec */) const
+	virtual RString ToString(int /*dec*/) const
 	{
 		return FloatToString(GetBeat());
 	}
