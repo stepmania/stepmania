@@ -52,7 +52,7 @@ Knowing the versions of StepMania is helpful, as it will help you deduce what
 you can and can not install. (Most songs are version-agnostic, though the
 background animations may not be. Themes, Noteskins, etc. are tied to
 specific versions.)
-StepMania 5.0 is the only version actively supported by the StepMania developers.
+StepMania 5 is the only version actively supported by the StepMania developers.
 All older versions have various problems and/or limitations that make them too
 burdensome to continue supporting.
 
@@ -328,11 +328,11 @@ the main StepMania folder is no longer the correct thing to do.
 
 The correct place to install content on StepMania 5 is the User Data folder.
 The exact location is different for each platform.
-Windows:  %APPDATA%/StepMania 5.0/
-Linux:  ~/.stepmania-5.0/
-OS X:  ~/Library/Application Support/StepMania 5/
+Windows:  %APPDATA%/StepMania 5.1/
+Linux:  ~/.stepmania-5.1/
+OS X:  ~/Library/Application Support/StepMania 5.1/
 Wherever you see the name "User Data folder", this is the folder it refers to.
-OS X additionally has ~/Library/Preferences/StepMania 5/ for storing preferences.
+OS X additionally has ~/Library/Preferences/StepMania 5.1/ for storing preferences.
 
 Inside the User Data folder you can install content by placing it in the following folders:
  * Songs

@@ -2,12 +2,12 @@ local t = Def.ActorFrame {};
 
 -- Sort order
 t[#t+1] = Def.ActorFrame {
-    InitCommand=cmd(x,SCREEN_RIGHT-290;y,SCREEN_TOP+49;;);
+    InitCommand=cmd(x,SCREEN_RIGHT-290;y,SCREEN_TOP+49;);
     OffCommand=cmd(linear,0.3;diffusealpha,0;);
 	LoadActor(THEME:GetPathG("", "_sortFrame"))  .. {
 	    InitCommand=cmd(diffusealpha,0.9;zoom,1.5);
 		OnCommand=function(self)
-			self:diffuse(ScreenColor(SCREENMAN:GetTopScreen():GetName()));
+			self:diffuse(ColorMidTone(ScreenColor(SCREENMAN:GetTopScreen():GetName())));
 		end
 	};
 
@@ -22,7 +22,7 @@ t[#t+1] = Def.ActorFrame {
     };
 
     LoadFont("Common Condensed") .. {
-          InitCommand=cmd(zoom,1;maxwidth,SCREEN_WIDTH;addx,115;diffuse,color("#FFFFFF");uppercase,true;horizalign,right;);
+          InitCommand=cmd(zoom,1;maxwidth,SCREEN_WIDTH;addx,115;diffuse,color("#FFFFFF");uppercase,true;horizalign,right;maxwidth,157;);
           OnCommand=cmd(queuecommand,"Set");
           SortOrderChangedMessageCommand=cmd(queuecommand,"Set");
           ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
@@ -41,5 +41,33 @@ t[#t+1] = Def.ActorFrame {
           end;
     };
 };
+
+if not GAMESTATE:IsCourseMode() then
+-- CD title
+t[#t+1] = Def.ActorFrame {
+	Def.Sprite {
+		name="CDTitle";
+		InitCommand=cmd(x,SCREEN_CENTER_X-40;y,SCREEN_CENTER_Y-140;zoom,0.75;);
+		OnCommand=cmd(zoomy,0.3;diffusealpha,0;decelerate,0.3;zoomy,0.75;diffusealpha,1);
+		OffCommand=cmd(decelerate,0.3;zoomy,0.3;diffusealpha,0;);
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+		SetCommand=function(self)
+			local song = GAMESTATE:GetCurrentSong();
+			if song then
+			if song:HasCDTitle() then
+				self:Load(song:GetCDTitlePath())
+				self:visible(true)
+			else
+				self:Load(nil)
+				self:visible(false)
+			end
+			else
+				self:Load(nil)
+				self:visible(false)
+			end
+		end;
+	};
+};
+end;
 
 return t

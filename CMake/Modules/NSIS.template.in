@@ -37,7 +37,7 @@
 
   ;Captions for the process.
   Caption "@CPACK_NSIS_PACKAGE_NAME@ | install"
-  Caption "@CPACK_NSIS_PACKAGE_NAME@ | uninstall"
+  UninstallCaption "@CPACK_NSIS_PACKAGE_NAME@ | uninstall"
 
   ;Set compression
   SetCompressor @CPACK_NSIS_COMPRESSOR@

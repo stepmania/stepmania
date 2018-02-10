@@ -1446,6 +1446,18 @@ public:
 		return 0;
 	}
 
+	static int get_theme_fallback_list(T* p, lua_State* L)
+	{
+		lua_createtable(L, g_vThemes.size(), 0);
+		int ret= lua_gettop(L);
+		for(size_t tid= 0; tid < g_vThemes.size(); ++tid)
+		{
+			lua_pushstring(L, g_vThemes[tid].sThemeName.c_str());
+			lua_rawseti(L, ret, tid+1);
+		}
+		return 1;
+	}
+
 	LunaThemeManager()
 	{
 		ADD_METHOD( ReloadMetrics );
@@ -1473,6 +1485,7 @@ public:
 		ADD_METHOD( GetMetricNamesInGroup );
 		ADD_METHOD( GetStringNamesInGroup );
 		ADD_METHOD( SetTheme );
+		ADD_METHOD(get_theme_fallback_list);
 	}
 };
 

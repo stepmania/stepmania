@@ -1256,7 +1256,19 @@ public:
 	static int HasMods( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMods() ); return 1; }
 	static int HasTimedMods( T* p, lua_State *L )		{ lua_pushboolean( L, p->HasTimedMods() ); return 1; }
 	DEFINE_METHOD( GetCourseType, GetCourseType() )
-	static int GetCourseEntry( T* p, lua_State *L )		{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
+	static int GetCourseEntry(T* p, lua_State* L)
+	{
+		size_t id= static_cast<size_t>(IArg(1));
+		if(id >= p->m_vEntries.size())
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			p->m_vEntries[id].PushSelf(L);
+		}
+		return 1;
+	}
 	static int GetCourseEntries( T* p, lua_State *L )
 	{
 		vector<CourseEntry*> v;
@@ -1265,6 +1277,11 @@ public:
 			v.push_back(&p->m_vEntries[i]);
 		}
 		LuaHelpers::CreateTableFromArray<CourseEntry*>( v, L );
+		return 1;
+	}
+	static int GetNumCourseEntries(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->m_vEntries.size());
 		return 1;
 	}
 	static int GetAllTrails( T* p, lua_State *L )
@@ -1318,6 +1335,7 @@ public:
 		ADD_METHOD( GetCourseType );
 		ADD_METHOD( GetCourseEntry );
 		ADD_METHOD( GetCourseEntries );
+		ADD_METHOD(GetNumCourseEntries);
 		ADD_METHOD( GetAllTrails );
 		ADD_METHOD( GetBannerPath );
 		ADD_METHOD( GetBackgroundPath );

@@ -44,7 +44,7 @@ if(WIN32)
   # This is currently done to maintain backwards compatibility.
   # However, removing these two will allow for multiple versions of StepMania
   # to be installed relatively cleanly.
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "StepMania ${SM_VERSION_MAJOR}")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "StepMania ${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}")
   set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "StepMania ${SM_VERSION_MAJOR}")
   set(CPACK_NSIS_EXECUTABLES_DIRECTORY "Program")
   set(CPACK_NSIS_INSTALL_ROOT "C:\\\\Games")
