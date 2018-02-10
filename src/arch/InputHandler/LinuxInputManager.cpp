@@ -119,7 +119,8 @@ void LinuxInputManager::X11FocusOut()
 {
 	if( m_EventDriver )
 	{
-		m_EventDriver->StopThread();
+		// Stop, but don't shutdown the thread
+		m_EventDriver->StopThread(false);
 	}
 }
 

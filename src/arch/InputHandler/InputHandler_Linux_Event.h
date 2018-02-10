@@ -18,7 +18,7 @@ public:
 	bool HasKeyboard() const;
 
 	void StartThread();
-	void StopThread();
+	void StopThread( bool shutdown = true );
 private:
 	static int InputThread_Start( void *p );
 	void InputThread();

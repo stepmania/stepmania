@@ -292,11 +292,13 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 	{
 		LOG->Info( "    Mapping %s as a joystick", m_sName.c_str() );
 	}
-	else
+	else if( DevInfo.bustype == BUS_USB ||
+	         DevInfo.bustype == BUS_XTKBD )
 	{
 		// TODO: Is there any way to actually check for a keybard?
-		// The bus can tell us whether it's a true keyboard vs a usb device, which is a start
-		// Would need to test with both ps/2 and usb
+		// Anything on BUS_XTKBD should be a keyboard
+		// Anything on BUS_USB which provides input, and isn't an analogue device may be a keyboard
+		// Anything on BUS_BLUETOOTH could be a keyboard. These are ignored for now.
 		LOG->Info( "    Mapping %s as a keyboard", m_sName.c_str() );
 		m_Dev = DEVICE_KEYBOARD;
 	}
@@ -435,7 +437,7 @@ InputHandler_Linux_Event::InputHandler_Linux_Event()
 	
 InputHandler_Linux_Event::~InputHandler_Linux_Event()
 {
-	if( m_InputThread.IsCreated() ) StopThread();
+	if( m_InputThread.IsCreated() ) StopThread( true );
 
 	for( int i = 0; i < (int) g_apEventDevices.size(); ++i )
 		delete g_apEventDevices[i];
@@ -444,17 +446,34 @@ InputHandler_Linux_Event::~InputHandler_Linux_Event()
 
 void InputHandler_Linux_Event::StartThread()
 {
+	if( m_bShutdown == false ) return;
 	m_bShutdown = false;
-	m_InputThread.SetName( "Event input thread" );
-	m_InputThread.Create( InputThread_Start, this );
+	
+	if( m_InputThread.IsCreated() == false )
+	{
+		m_InputThread.SetName( "Event input thread" );
+		m_InputThread.Create( InputThread_Start, this );
+	}
+	else
+	{
+		m_InputThread.Resume();
+	}
 }
 
-void InputHandler_Linux_Event::StopThread()
+void InputHandler_Linux_Event::StopThread( bool shutdown )
 {
-	m_bShutdown = true;
-	LOG->Trace( "Shutting down joystick thread ..." );
-	m_InputThread.Wait();
-	LOG->Trace( "Joystick thread shut down." );
+	if( m_bShutdown == true ) return;
+	if( shutdown )
+	{
+		m_bShutdown = true;
+		LOG->Trace( "Shutting down joystick thread ..." );
+		m_InputThread.Wait();
+		LOG->Trace( "Joystick thread shut down." );
+	}
+	else if( m_InputThread.IsCreated() )
+	{
+		m_InputThread.Halt();
+	}
 }
 
 bool InputHandler_Linux_Event::TryDevice(RString devfile)
