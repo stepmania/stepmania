@@ -115,6 +115,22 @@ bool LinuxInputManager::X11IgnoreKeyboard() const
 	return m_EventDriver->HasKeyboard();
 }
 
+void LinuxInputManager::X11FocusOut()
+{
+	if( m_EventDriver )
+	{
+		m_EventDriver->StopThread();
+	}
+}
+
+void LinuxInputManager::X11FocusIn()
+{
+	if( m_EventDriver )
+	{
+		m_EventDriver->StartThread();
+	}	
+}
+
 LinuxInputManager* LINUXINPUT = NULL; // global and accessible anywhere in our program
 
 /*

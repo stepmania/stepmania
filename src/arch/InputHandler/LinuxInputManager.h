@@ -18,6 +18,8 @@ public:
 	void InitDriver(InputHandler_Linux_Joystick* drv);
 	void InitDriver(InputHandler_Linux_Event* drv);
 	bool X11IgnoreKeyboard() const;
+	void X11FocusOut();
+	void X11FocusIn();
 	~LinuxInputManager();
 private:
 	bool m_bEventEnabled;

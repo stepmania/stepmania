@@ -17,9 +17,9 @@ public:
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 	bool HasKeyboard() const;
 
-private:
 	void StartThread();
 	void StopThread();
+private:
 	static int InputThread_Start( void *p );
 	void InputThread();
 

@@ -215,6 +215,15 @@ void InputHandler_X11::Update()
 
 		if( event.type == FocusOut )
 		{
+			// Ignore all input until we regain focus
+			LINUXINPUT->X11FocusOut();
+			// Release all buttons
+			INPUTFILTER->Reset();
+		}
+		else if( event.type == FocusIn )
+		{
+			// Stop ignoring events
+			LINUXINPUT->X11FocusIn();
 			// Release all buttons
 			INPUTFILTER->Reset();
 		}
