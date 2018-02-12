@@ -57,19 +57,45 @@ local function GetThemeName()
 	return PREFSMAN:GetPreference("Theme")
 end
 
--- Given a preference name, returns the table it's in. Checks the current
--- theme first, then _fallback, then all other sections, in that order.
-local function ResolveTable( pref )
-	-- check the section for this theme
-	local name = GetThemeName()
-	local val = PrefsTable[name][pref]
+local DetermineThemePath = function()
+	local theme = THEME:GetCurThemeName()
+	--lua.ReportScriptError(theme)
 
-	if val ~= nil then
-		--Trace( ("ResolveTable(%s): found in %s"):format(pref,name) )
-		return PrefsTable[name]
+	local themePath = {theme}
+
+	while theme ~= "_fallback" and theme ~= nil do
+		local metrics = IniFile.ReadFile("Themes/" .. theme .. "/metrics.ini")
+		--lua.ReportScriptError(rec_print_table_to_str(metrics))
+		if metrics and metrics.Global then
+			theme = metrics.Global.FallbackTheme
+			if theme then
+				themePath[#themePath+1] = theme
+			end
+		else
+			theme = nil
+		end
 	end
 
-	-- not in the current theme; check the fallback if it exists
+	return themePath
+end
+
+-- Given a preference name, returns the table it's in. Checks the theme
+-- fallack path in order, then all other sections
+local function ResolveTable( pref )
+	local val
+	local themePath = DetermineThemePath()
+
+	for i,name in ipairs(themePath) do
+		if PrefsTable[name] then
+			val = PrefsTable[name][pref]
+			if val ~= nil then
+				--Trace( ("ResolveTable(%s): found in %s"):format(pref,name) )
+				return PrefsTable[name]
+			end
+		end
+	end
+
+	-- not in the theme path; check the fallback if it exists
 	if PrefsTable[FallbackTheme] then
 		val = PrefsTable[FallbackTheme][pref]
 		if val ~= nil then
