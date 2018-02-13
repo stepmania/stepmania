@@ -3,6 +3,41 @@ ________________________________________________________________________________
 The StepMania 5.1 Changelog covers all post-5.0.12 changes.
 ________________________________________________________________________________
 
+2018/02/09
+----------
+* [Lambda] the ScreenFilter env will be nil sometimes, catch that [flameshadowxeroshin]
+* [Lambda] Fix LifeMeter tip not falling below 50% [flameshadowxeroshin]
+* [Utilities] Make getenv() and setenv() actually get and set the current env  [flameshadowxeroshin]
+
+2018/02/08
+----------
+* [Anouncers] Make announcers repeat their lines less [mark-blum]
+* [General] Fix compiling on Linux by updating the libmmmagic binaries. [mark-blum]
+
+2018/02/05
+----------
+* [ThemePrefs] Add THEME:get_theme_fallback_list function. [kyzentun]
+
+2018/02/02
+----------
+* [ThemePrefs] Change ThemePrefs to use the Theme preference instead of GetThemeDis [kyzentun]
+
+2018/01/25
+----------
+* [Installer] Repairs to NSIS scripts. [mrthatkid]
+
+2018/01/17
+----------
+* [Noteskin] Add NoteColorType ProgressAlternate and NoteColorMode ProgressOnBeatAtEnd [flameshadowxeroshin]
+
+2018/01/16
+----------
+* [Course] Unselectable trails are pruned from course selection. [kyzentun]
+
+2017/12/30
+----------
+* [Profile] Change user data directory to ~/stepmania-5.1 [concubidated]
+
 2017/10/20
 ----------
 * [MusicWheelItem] Fix crash that only shows up on extra stage from MusicWheelItem handler [kyzentun]
