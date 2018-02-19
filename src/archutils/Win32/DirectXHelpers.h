@@ -2,7 +2,7 @@
 #define DIRECTX_HELPERS_H
 
 #include <string>
-#include "format.h"
+#include "fmt/format.h"
 
 #include <Windows.h>
 
