@@ -658,20 +658,20 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
 	RageSurface * result = nullptr;
 
-#if 0 // FIX ME
-	// Get the back buffer.
+	// get the render target
 	IDirect3DSurface9* pSurface;
-	if( SUCCEEDED( g_pd3dDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface ) ) )
+	if (SUCCEEDED(g_pd3dDevice->GetRenderTarget(0, &pSurface)))
 	{
-		// Get the back buffer description.
+		// get the render target surface description
 		D3DSURFACE_DESC desc;
 		pSurface->GetDesc( &desc );
 
-		// Copy the back buffer into a surface of a type we support.
+		// create an offscreen plain surface of the same format in the SYSTEMMEM pool
 		IDirect3DSurface9* pCopy;
-		if( SUCCEEDED( g_pd3dDevice->CreateOffscreenPlainSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &pCopy, nullptr ) ) )
+		if (SUCCEEDED(g_pd3dDevice->CreateOffscreenPlainSurface(desc.Width, desc.Height, desc.Format, D3DPOOL_SYSTEMMEM, &pCopy, nullptr)))
 		{
-			if( SUCCEEDED( D3DXLoadSurfaceFromSurface( pCopy, nullptr, nullptr, pSurface, nullptr, nullptr, D3DX_FILTER_NONE, 0) ) )
+			// copy the data from the render target into the offscreen plain surface
+			if (SUCCEEDED(g_pd3dDevice->GetRenderTargetData(pSurface, pCopy)))
 			{
 				// Update desc from the copy.
 				pCopy->GetDesc( &desc );
@@ -688,8 +688,22 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 					pCopy->LockRect( &lr, &rect, D3DLOCK_READONLY );
 				}
 
-				RageSurface *surface = CreateSurfaceFromPixfmt( RagePixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
-				ASSERT( surface != nullptr );
+				// since we no longer have an easy function to force a conversion to A8R8G8B8, we need to figure out our pixel format.
+				// (yes, we could create a couple of surfaces in the default pool, copy the bits into the one matching our source,
+				// then use IDirect3DDevice::StretchRect to convert it without stretching into our desired format. This would mean
+				// a copy to device memory and a copy back again, though.)
+				// possible formats are found in FindBackBufferType
+				RagePixelFormat pf;
+				switch (desc.Format)
+				{
+				default:               pf = RagePixelFormat_Invalid; FAIL_M("Unknown pixel format");  break;
+				case D3DFMT_X8R8G8B8:  pf = RagePixelFormat_RGBA8; break;
+				case D3DFMT_A8R8G8B8:  pf = RagePixelFormat_RGBA8; break;
+				// 16-bit formats are not here. Does anybody actually use them? 
+				}
+
+				RageSurface *surface = CreateSurfaceFromPixfmt(pf, lr.pBits, desc.Width, desc.Height, lr.Pitch);
+				ASSERT(nullptr != surface);
 
 				// We need to make a copy, since lr.pBits will go away when we call UnlockRect().
 				result =
@@ -708,7 +722,6 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 
 		pSurface->Release();
 	}
-#endif
 
 	return result;
 }
