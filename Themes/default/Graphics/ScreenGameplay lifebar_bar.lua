@@ -1,7 +1,7 @@
 local pn = ...
 
 local life_meter_width = 400
-local life_meter_num_segments = 46
+local life_meter_num_segments = 80
 local life_meter_height = 20
 local life_meter_tip_width = 2
 local life_meter_tip_gap = 64
@@ -94,9 +94,9 @@ t[#t+1] = Def.ActorFrame {
 	Def.Quad {
 		Name="Fill",
 		InitCommand=cmd(x,-life_meter_width/2;zoomto,life_meter_width,life_meter_height;horizalign,left),
-		OnCommand=cmd(diffuse,PlayerColor(pn);),
+		OnCommand=cmd(diffuse,PlayerColor(pn);diffuse,PlayerColor(pn);),
 		--
-		HotCommand=cmd(diffuse,color("#FFB45E");glowshift;effectclock,'beat'),
+		HotCommand=cmd(diffuse,color("#ff9232");diffuseshift;effectclock,'beat';effectcolor1,color("#ff9232");effectcolor2,color("#ffe263");),
 		AliveCommand=cmd(diffuse,PlayerColor(pn);stopeffect),
 		DangerCommand=cmd(diffuse,Color.Red;diffuseshift;effectclock,'beat';effectcolor1,Color.Red;effectcolor2,color("#FF797C");),
 		DeadCommand=cmd(diffuse,Color.Red;stopeffect)

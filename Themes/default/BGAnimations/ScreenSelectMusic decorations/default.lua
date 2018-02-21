@@ -419,6 +419,39 @@ t[#t+1] = StandardDecorationFromTable("PercentScore"..ToEnumShortString(PLAYER_2
 
 end;
 
+
+if not GAMESTATE:IsCourseMode() then
+-- CD title
+	local function CDTitleUpdate(self)
+		local song = GAMESTATE:GetCurrentSong();
+		local cdtitle = self:GetChild("CDTitle");
+		local height = cdtitle:GetHeight();
+		
+		if song then
+			if song:HasCDTitle() then
+				cdtitle:visible(true);
+				cdtitle:Load(song:GetCDTitlePath());
+			else
+				cdtitle:visible(false);
+			end;
+		else
+			cdtitle:visible(false);
+		end;
+		
+		self:zoom(scale(height,64,480,1,64/480))
+	end;
+	t[#t+1] = Def.ActorFrame {
+		OnCommand=cmd(draworder,46;x,SCREEN_CENTER_X-420;y,SCREEN_CENTER_Y-147;zoom,0;sleep,0.5;decelerate,0.25;zoom,1;SetUpdateFunction,CDTitleUpdate);
+		OffCommand=cmd(decelerate,0.3;zoomy,0);
+		Def.Sprite {
+			Name="CDTitle";
+			OnCommand=cmd(draworder,46;zoom,0.75;diffusealpha,1;zoom,0;bounceend,0.35;zoom,0.75;);
+			BackCullCommand=cmd(diffuse,color("0.5,0.5,0.5,1"));
+			OffCommand=cmd(decelerate,0.3;zoomy,0);
+		};	
+	};
+end;
+
 -- BPMDisplay
 t[#t+1] = Def.ActorFrame {
     InitCommand=cmd(draworder,126;visible,not GAMESTATE:IsCourseMode(););

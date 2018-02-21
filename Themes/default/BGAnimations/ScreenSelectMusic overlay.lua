@@ -42,32 +42,4 @@ t[#t+1] = Def.ActorFrame {
     };
 };
 
-if not GAMESTATE:IsCourseMode() then
--- CD title
-t[#t+1] = Def.ActorFrame {
-	Def.Sprite {
-		name="CDTitle";
-		InitCommand=cmd(x,SCREEN_CENTER_X-40;y,SCREEN_CENTER_Y-140;zoom,0.75;);
-		OnCommand=cmd(zoomy,0.3;diffusealpha,0;decelerate,0.3;zoomy,0.75;diffusealpha,1);
-		OffCommand=cmd(decelerate,0.3;zoomy,0.3;diffusealpha,0;);
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-		SetCommand=function(self)
-			local song = GAMESTATE:GetCurrentSong();
-			if song then
-			if song:HasCDTitle() then
-				self:Load(song:GetCDTitlePath())
-				self:visible(true)
-			else
-				self:Load(nil)
-				self:visible(false)
-			end
-			else
-				self:Load(nil)
-				self:visible(false)
-			end
-		end;
-	};
-};
-end;
-
 return t
