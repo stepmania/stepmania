@@ -7,7 +7,17 @@ local grades = {
 	Grade_Tier05 = 4,
 	Grade_Tier06 = 5,
 	Grade_Tier07 = 6,
-	Grade_Failed = 7,
+	Grade_Tier08 = 7,
+	Grade_Tier09 = 8,
+	Grade_Tier10 = 9,
+	Grade_Tier11 = 10,
+	Grade_Tier12 = 11,
+	Grade_Tier13 = 12,
+	Grade_Tier14 = 13,
+	Grade_Tier15 = 14,
+	Grade_Tier16 = 15,
+	Grade_Tier17 = 16,
+	Grade_Failed = 17,
 	Grade_None = nil
 };
 
