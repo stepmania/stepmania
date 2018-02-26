@@ -94,7 +94,7 @@ t[#t+1] = Def.ActorFrame {
 	Def.Quad {
 		Name="Fill",
 		InitCommand=cmd(x,-life_meter_width/2;zoomto,life_meter_width,life_meter_height;horizalign,left),
-		OnCommand=cmd(diffuse,PlayerColor(pn);diffuse,PlayerColor(pn);),
+		OnCommand=cmd(diffuse,PlayerColor(pn);),
 		--
 		HotCommand=cmd(diffuse,color("#ff9232");diffuseshift;effectclock,'beat';effectcolor1,color("#ff9232");effectcolor2,color("#ffe263");),
 		AliveCommand=cmd(diffuse,PlayerColor(pn);stopeffect),
