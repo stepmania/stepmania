@@ -272,16 +272,14 @@ File = {
 	end
 }
 
-envTable = GAMESTATE:Env()
-
 -- setenv(name,value)
 -- Sets aside an entry for <name> and puts <value> into it.
 -- Use a table as <value> to store multiple values
-function setenv(name,value) envTable[name] = value end
+function setenv(name,value) GAMESTATE:Env()[name] = value end
 
 -- getenv(name)
--- This will return whatever value is at envTable[name].
-function getenv(name) return envTable[name] end
+-- This will return whatever value is at GAMESTATE:Env()[name]
+function getenv(name) return GAMESTATE:Env()[name] end
 
 -- tobool(v)
 -- Converts v to a boolean.

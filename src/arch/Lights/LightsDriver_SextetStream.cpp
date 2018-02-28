@@ -210,6 +210,7 @@ LightsDriver_SextetStream::LightsDriver_SextetStream()
 
 LightsDriver_SextetStream::~LightsDriver_SextetStream()
 {
+	LightsDriver::reset();
 	if(IMPL != NULL)
 	{
 		delete IMPL;

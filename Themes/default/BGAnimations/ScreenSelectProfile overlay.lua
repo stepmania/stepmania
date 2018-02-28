@@ -12,12 +12,12 @@ function GetLocalProfiles()
 				InitCommand=cmd(zoomto,200,1;y,40/2);
 				OnCommand=cmd(diffuse,Color('Outline'););
 			}; --]]
-			LoadFont("Common Condensed") .. {
-				Text=profile:GetDisplayName();
-				InitCommand=cmd(shadowlength,1;y,-10;zoom,1;ztest,true);
-			};
 			LoadFont("Common Fallback") .. {
-				InitCommand=cmd(shadowlength,1;y,8;zoom,0.5;vertspacing,-8;ztest,true);
+				Text=profile:GetDisplayName();
+				InitCommand=cmd(shadowlength,1;y,-12;zoom,1;strokecolor,color("#000000");ztest,true);
+			};
+			LoadFont("Common Condensed") .. {
+				InitCommand=cmd(shadowlength,1;y,10;zoom,0.7;vertspacing,-8;ztest,true);
 				BeginCommand=function(self)
 					local numSongsPlayed = profile:GetNumTotalSongsPlayed();
 					self:settext( string.format( GetSongsPlayedString( numSongsPlayed ), numSongsPlayed ) )
@@ -32,10 +32,10 @@ end;
 
 function LoadCard(cColor)
 	local t = Def.ActorFrame {
-		Def.Quad {
-			InitCommand=cmd(zoomto,300,SCREEN_HEIGHT/1.3;y,20;diffuse,ColorDarkTone(cColor);diffusealpha,0.8;fadetop,0.2;fadebottom,0.2)
-		}
-	}
+		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardBackground") ) .. {
+			InitCommand=cmd(diffuse,ColorMidTone(cColor));
+		};
+	};
 	return t
 end
 function LoadPlayerStuff(Player)
@@ -48,7 +48,7 @@ function LoadPlayerStuff(Player)
 	}; --]]
 	t[#t+1] = Def.ActorFrame {
 		Name = 'JoinFrame';
-		LoadCard(Color('Orange'));
+		LoadCard(color('#882D47'));
 --[[ 		Def.Quad {
 			InitCommand=cmd(zoomto,200+4,230+4);
 			OnCommand=cmd(shadowlength,1;diffuse,color("0,0,0,0.5"));
@@ -58,9 +58,9 @@ function LoadPlayerStuff(Player)
 			OnCommand=cmd(diffuse,Color('Orange');diffusealpha,0.5);
 		}; --]]
 		LoadFont("Common Italic Condensed") .. {
-			Text="Press &START; to join.";
+			Text="Press &START; to join";
 			InitCommand=cmd(shadowlength,1;zoom,1.25);
-			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5"));
+			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5");strokecolor,color("#4A1110"););
 		};
 	};
 	
@@ -72,8 +72,8 @@ function LoadPlayerStuff(Player)
 		Name = 'SmallFrame';
 		InitCommand=cmd(y,-2);
 		Def.Quad {
-			InitCommand=cmd(zoomto,300,40);
-			OnCommand=cmd(diffuse,PlayerColor(Player);fadeleft,0.25;faderight,0.25);
+			InitCommand=cmd(zoomto,270,48);
+			OnCommand=cmd(diffuse,PlayerDarkColor(Player);fadeleft,0.1;faderight,0.1;);
 		};
 	};
 
@@ -86,7 +86,7 @@ function LoadPlayerStuff(Player)
 		TransformFunction=function(self, offset, itemIndex, numItems)
 			local focus = scale(math.abs(offset),0,2,1,0);
 			self:visible(false);
-			self:y(math.floor( offset*40 ));
+			self:y(math.floor( offset*48 ));
 -- 			self:zoomy( focus );
 -- 			self:z(-math.abs(offset));
 -- 			self:zoom(focus);
@@ -97,9 +97,9 @@ function LoadPlayerStuff(Player)
 	t[#t+1] = Def.ActorFrame {
 		Name = "EffectFrame";
 	};
-	t[#t+1] = LoadFont("Common Condensed") .. {
+	t[#t+1] = LoadFont("Common Fallback") .. {
 		Name = 'SelectedProfileText';
-		InitCommand=cmd(y,160;shadowlength,1;diffuse,ColorLightTone(PlayerColor(Player));diffusebottomedge,color("#FFFFFF");zoom,1.25);
+		InitCommand=cmd(y,160;shadowlength,1;diffuse,color("#FFFFFF");strokecolor,ColorDarkTone(PlayerColor(Player));diffusebottomedge,color("#FFFFFF");zoom,1.25);
 	};
 
 	return t;

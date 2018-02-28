@@ -10,11 +10,11 @@ if ThemePrefs.Get("FancyUIBG") then
 		},
 		
 		LoadActor("_barcode") .. {
-			InitCommand=cmd(zoomto,36,1024;blend,'BlendMode_Add';x,SCREEN_LEFT+36;y,SCREEN_CENTER_Y;diffusealpha,0.08);
+			InitCommand=cmd(zoomto,36,1024;blend,'BlendMode_Add';x,SCREEN_LEFT+6;y,SCREEN_CENTER_Y;diffusealpha,0.08);
 			OnCommand=cmd(customtexturerect,0,0,1,1;texcoordvelocity,0,-0.1);
 		};
 		LoadActor("_barcode") .. {
-			InitCommand=cmd(zoomto,36,1024;blend,'BlendMode_Add';x,SCREEN_RIGHT-36;y,SCREEN_CENTER_Y;diffusealpha,0.08);
+			InitCommand=cmd(zoomto,36,1024;blend,'BlendMode_Add';x,SCREEN_RIGHT-6;y,SCREEN_CENTER_Y;diffusealpha,0.08);
 			OnCommand=cmd(customtexturerect,0,0,1,1;texcoordvelocity,0,0.1);
 		};
 		

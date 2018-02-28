@@ -1,8 +1,3 @@
--- ...So I realize that I completely ignored almost each and every
--- metrics-bound element this screen could use, but it's okay, right?
--- todo: make a more metrics-bound version of this screen anyways for beginner accessibility.
--- todo: accommodate EvaluationSummary too
-
 local t = Def.ActorFrame {};
 
 -- A very useful table...
@@ -16,6 +11,11 @@ local eval_lines = {
 	"Held",
 	"MaxCombo"
 }
+
+local grade_area_offset = 16
+
+local fade_out_speed = 0.3
+local fade_out_pause = 0.08
 
 -- And a function to make even better use out of the table.
 local function GetJLineValue(line, pl)
@@ -53,22 +53,25 @@ for i, v in ipairs(eval_lines) do
 	
 	t[#t+1] = Def.ActorFrame{
 		InitCommand=cmd(x,_screen.cx;y,(_screen.cy/1.6)+(spacing)),
-		OffCommand=function(self)			
-			self:sleep(0.06 * i):decelerate(0.1):diffusealpha(0)
-		end;	
 		Def.Quad {
 			InitCommand=cmd(zoomto,400,36;diffuse,JudgmentLineToColor(cur_line);fadeleft,0.5;faderight,0.5;);
 			OnCommand=function(self)			
-				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.9):diffusealpha(1)
-			end;		
+				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.6):diffusealpha(0.8)
+			end;
+			OffCommand=function(self)			
+				self:sleep(fade_out_pause * i):decelerate(fade_out_speed):diffusealpha(0)
+			end;				
 		};
 	
 		Def.BitmapText {
 			Font = "_roboto condensed Bold 48px",
 			InitCommand=cmd(zoom,0.6;diffuse,color("#000000");settext,string.upper(JudgmentLineToLocalizedString(cur_line)));
 			OnCommand=function(self)			
-				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.9):diffusealpha(0.6)
+				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.6):diffusealpha(0.8)
 			end;
+			OffCommand=function(self)			
+				self:sleep(fade_out_pause * i):decelerate(fade_out_speed):diffusealpha(0)
+			end;	
 		}
 	}
 end
@@ -97,11 +100,11 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 				else
 					self:horizalign(left)
 				end
-				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.9):diffusealpha(1)
+				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.6):diffusealpha(1)
 			end;
 			OffCommand=function(self)			
-				self:sleep(0.1 * i):decelerate(0.3):diffusealpha(0)
-			end;
+				self:sleep(fade_out_pause * i):decelerate(fade_out_speed):diffusealpha(0)
+			end;	
 		}
 	end
 	
@@ -109,7 +112,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	eval_parts[#eval_parts+1] = Def.ActorFrame{
 		InitCommand=cmd(x,_screen.cx + grade_parts_offs;y,_screen.cy/1.91),
 		
-		--Containers. todo: replace with, erm... not quads
+		--Containers.
 		Def.Quad {
 			InitCommand=cmd(zoomto,190,115;diffuse,ColorLightTone(PlayerColor(p));diffusebottomedge,color("#FEEFCA");),
 			OnCommand=function(self)
@@ -117,8 +120,9 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 			end,
 			OffCommand=cmd(decelerate,0.3;diffusealpha,0)
 		},
+		
 		Def.Quad {
-			InitCommand=cmd(y,120;zoomto,190,120;diffuse,color("#fce1a1");),
+			InitCommand=cmd(vertalign,top;y,60+grade_area_offset;zoomto,190,136;diffuse,color("#fce1a1");),
 			OnCommand=function(self)
 			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.4)
 			end,
@@ -137,7 +141,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	-- Primary score.
 	eval_parts[#eval_parts+1] = Def.BitmapText {
 		Font = "_overpass 36px",
-		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65);diffuse,ColorMidTone(PlayerColor(p));zoom,1;shadowlength,1;maxwidth,180),
+		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65)+grade_area_offset;diffuse,ColorMidTone(PlayerColor(p));zoom,1;shadowlength,1;maxwidth,180),
 		OnCommand=function(self)
 			self:settext(GetPlScore(p, "primary")):diffusealpha(0):sleep(0.5):decelerate(0.3):diffusealpha(1)
 		end;
@@ -148,7 +152,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	-- Secondary score.
 	eval_parts[#eval_parts+1] = Def.BitmapText {
 		Font = "_overpass 36px",
-		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65)+30;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
+		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65)+30+grade_area_offset;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
 		OnCommand=function(self)
 			self:settext(GetPlScore(p, "secondary")):diffusealpha(0):sleep(0.6):decelerate(0.3):diffusealpha(1)
 		end;

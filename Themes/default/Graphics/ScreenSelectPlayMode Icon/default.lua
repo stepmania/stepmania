@@ -12,22 +12,22 @@ t[#t+1] = Def.ActorFrame {
 	OffCommand=cmd(decelerate,0.2;zoom,0.7;diffusealpha,0),
 	
 	LoadActor("_background base") .. {
-		LoseFocusCommand=cmd(diffuse,ColorMidTone(icon_color)),
-		GainFocusCommand=cmd(diffuse,icon_color)
+		LoseFocusCommand=cmd(diffuse,icon_color),
+		GainFocusCommand=cmd(diffuse,ColorLightTone(icon_color)),
 	},
 	
 	LoadActor( gc:GetName() ) .. {
 		InitCommand=cmd(addy,-20;diffuse,Color.Black),
 		GainFocusCommand=cmd(diffusealpha,1.0),
-		LoseFocusCommand=cmd(diffusealpha,0.7)
+		LoseFocusCommand=cmd(diffusealpha,0.4)
 	},
 
 	-- todo: generate a better font for these.
 	LoadFont("_overpass 48px")..{
 		Text=string.upper(gc:GetText()),
 		InitCommand=cmd(horizalign,center;y,icon_size/3.4;zoom,0.5;maxwidth,icon_size*1.3;diffusecolor,color("#000000")),
-		GainFocusCommand=cmd(diffusealpha,0.8),
-		LoseFocusCommand=cmd(diffusealpha,0.6)
+		GainFocusCommand=cmd(diffusealpha,1),
+		LoseFocusCommand=cmd(diffusealpha,0.5)
 	},
 	
 	-- Will this ever actually be used?
@@ -38,7 +38,7 @@ t[#t+1] = Def.ActorFrame {
 	
 	LoadActor("_highlight") .. {
 		LoseFocusCommand=cmd(stopeffect;decelerate,0.1;diffuse,Color.Invisible),
-		GainFocusCommand=cmd(decelerate,0.2;diffuse,Color.White;diffuseshift;effectcolor1,Color.White;effectcolor2,color("#FFFFFF99"))
+		GainFocusCommand=cmd(decelerate,0.2;diffuse,Color.Black;diffuseshift;effectcolor1,Color.White;effectcolor2,color("#FFFFFF99"))
 	}
 }
 return t
