@@ -12,6 +12,7 @@ LightsDriver_SystemMessage::LightsDriver_SystemMessage()
 
 LightsDriver_SystemMessage::~LightsDriver_SystemMessage()
 {
+	LightsDriver::reset();
 }
 
 void LightsDriver_SystemMessage::Set( const LightsState *ls )
