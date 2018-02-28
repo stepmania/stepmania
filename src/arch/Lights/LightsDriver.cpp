@@ -30,6 +30,15 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 	}
 }
 
+void LightsDriver::reset()
+{
+	LightsState state;
+	ZERO( state.m_bCabinetLights );
+	ZERO( state.m_bGameButtonLights );
+	ZERO( state.m_bCoinCounter );
+	Set( &state );
+}
+
 /*
  * (c) 2002-2005 Glenn Maynard
  * All rights reserved.

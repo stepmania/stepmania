@@ -16,6 +16,9 @@ public:
 	virtual ~LightsDriver() {};
 
 	virtual void Set( const LightsState *ls ) = 0;
+
+        // Reset all lights to off
+        void reset();
 };
 
 #define REGISTER_LIGHTS_DRIVER_CLASS2( name, x ) \
