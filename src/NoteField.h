@@ -53,10 +53,16 @@ struct FieldChild : ActorFrame
 		double explosion_alpha, double explosion_glow,
 		double beat, double second,
 		ModifiableValue& note_alpha, ModifiableValue& note_glow);
+	void set_beat_offset(double value);
+	void set_second_offset(double value);
+	void update_is_offset();
 	Actor* m_child;
 	FieldLayerFadeType m_fade_type;
 	FieldLayerTransformType m_transform_type;
+	double m_second_offset;
+	double m_beat_offset;
 	size_t m_from_noteskin;
+	bool m_is_offset;
 };
 
 enum field_draw_entry_meaning
@@ -197,7 +203,7 @@ struct NoteFieldColumn : ActorFrame
 	Rage::transform const& get_head_trans() { return head_transform; }
 
 	void pass_message_to_heads(Message& msg);
-	void did_tap_note(TapNoteScore tns, bool bright);
+	void did_tap_note(TapNoteScore tns, bool bright, float second_offset);
 	void did_hold_note(HoldNoteScore hns, bool bright);
 	void set_hold_status(TapNote const* tap, bool start, bool end);
 	void set_pressed(bool on);
@@ -228,6 +234,8 @@ struct NoteFieldColumn : ActorFrame
 	FieldLayerFadeType get_layer_fade_type(Actor* child);
 	void set_layer_transform_type(Actor* child, FieldLayerTransformType type);
 	FieldLayerTransformType get_layer_transform_type(Actor* child);
+	void set_layer_beat_offset(Actor* child, double offset);
+	void set_layer_second_offset(Actor* child, double offset);
 
 	bool m_use_game_music_beat;
 	bool m_show_unjudgable_notes;
@@ -294,7 +302,7 @@ private:
 		Rage::Vector3& forward, Rage::Vector3& left,
 		NoteFieldColumn::render_note& note);
 
-	void did_tap_note_internal(TapNoteScore tns, bool bright);
+	void did_tap_note_internal(TapNoteScore tns, bool bright, float second_offset);
 	void did_hold_note_internal(HoldNoteScore hns, bool bright);
 	void draw_thing_internal();
 	void add_renderable_to_lists(render_note& renderable);
@@ -483,7 +491,7 @@ struct NoteField : ActorFrame
 	void set_displayed_second(double second);
 	bool timing_is_safe() { return m_timing_data != nullptr; }
 
-	void did_tap_note(size_t column, TapNoteScore tns, bool bright);
+	void did_tap_note(size_t column, TapNoteScore tns, bool bright, float second_offset);
 	void did_hold_note(size_t column, HoldNoteScore hns, bool bright);
 	void set_pressed(size_t column, bool on);
 
