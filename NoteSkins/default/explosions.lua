@@ -113,6 +113,10 @@ return function(button_list, stepstype, skin_params)
 			WidthSetCommand= function(self, param)
 				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
 			end,
+			ColumnJudgmentCommand= function(self, param)
+				param.column:set_layer_second_offset(self, -param.second_offset);
+				param.column:set_layer_beat_offset(self, -param.beat_offset);
+			end,
 			Def.Sprite{
 				Texture= "_glow", InitCommand= function(self)
 					self:visible(false)

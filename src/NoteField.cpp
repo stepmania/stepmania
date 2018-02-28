@@ -70,10 +70,28 @@ REGISTER_ACTOR_CLASS(NoteFieldColumn);
 FieldChild::FieldChild(Actor* act, FieldLayerFadeType ftype,
 	FieldLayerTransformType ttype, size_t from_noteskin)
 	:m_child(act), m_fade_type(ftype), m_transform_type(ttype),
-	 m_from_noteskin(from_noteskin)
+	 m_second_offset(0.0), m_beat_offset(0.0),
+	 m_from_noteskin(from_noteskin), m_is_offset(false)
 {
 	WrapAroundChild(act);
 	act->PlayCommand("On");
+}
+
+void FieldChild::set_beat_offset(double value)
+{
+	m_beat_offset= value;
+	update_is_offset();
+}
+
+void FieldChild::set_second_offset(double value)
+{
+	m_second_offset= value;
+	update_is_offset();
+}
+
+void FieldChild::update_is_offset()
+{
+	m_is_offset= m_second_offset != 0.0 || m_beat_offset != 0.0;
 }
 
 void FieldChild::apply_render_info(Rage::transform const& trans,
@@ -1214,7 +1232,7 @@ void NoteFieldColumn::imitate_did_note(TapNote const& tap)
 		}
 		else
 		{
-			did_tap_note_internal(tap.result.tns, false);
+			did_tap_note_internal(tap.result.tns, false, 0.f);
 		}
 	}
 }
@@ -2003,10 +2021,13 @@ void NoteFieldColumn::draw_selection_internal()
 	m_area_highlight.Draw();
 }
 
-static Message create_did_message(bool bright)
+static Message create_did_message(bool bright, NoteFieldColumn* col, float second_offset, float beat_offset)
 {
 	Message msg("ColumnJudgment");
 	msg.SetParam("bright", bright);
+	msg.SetParam("column", col);
+	msg.SetParam("second_offset", second_offset);
+	msg.SetParam("beat_offset", beat_offset);
 	return msg;
 }
 
@@ -2018,25 +2039,26 @@ void NoteFieldColumn::pass_message_to_heads(Message& msg)
 	}
 }
 
-void NoteFieldColumn::did_tap_note_internal(TapNoteScore tns, bool bright)
+void NoteFieldColumn::did_tap_note_internal(TapNoteScore tns, bool bright, float second_offset)
 {
-	Message msg(create_did_message(bright));
+	float beat_offset= get_beat_from_second(m_curr_second+second_offset) - m_curr_beat;
+	Message msg(create_did_message(bright, this, second_offset, beat_offset));
 	msg.SetParam("tap_note_score", tns);
 	pass_message_to_heads(msg);
 }
 
 void NoteFieldColumn::did_hold_note_internal(HoldNoteScore hns, bool bright)
 {
-	Message msg(create_did_message(bright));
+	Message msg(create_did_message(bright, this, 0.f, 0.f));
 	msg.SetParam("hold_note_score", hns);
 	pass_message_to_heads(msg);
 }
 
-void NoteFieldColumn::did_tap_note(TapNoteScore tns, bool bright)
+void NoteFieldColumn::did_tap_note(TapNoteScore tns, bool bright, float second_offset)
 {
 	if(m_use_game_music_beat)
 	{
-		did_tap_note_internal(tns, bright);
+		did_tap_note_internal(tns, bright, second_offset);
 	}
 }
 
@@ -2177,10 +2199,30 @@ void NoteFieldColumn::draw_thing_internal()
 				FieldChild* child= static_cast<FieldChild*>(curr_draw_entry->child);
 				if(child->m_fade_type != FLFT_Upcoming)
 				{
-					child->apply_render_info(
-						head_transform, receptor_alpha, receptor_glow,
-						explosion_alpha, explosion_glow,
-						m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
+					if(child->m_is_offset)
+					{
+						double beat= m_curr_beat+child->m_beat_offset;
+						double second= m_curr_second+child->m_second_offset;
+						mod_val_inputs input(beat, second, m_curr_beat, m_curr_second);
+						input.y_offset= calc_y_offset(input);
+						Rage::transform trans;
+						calc_transform(input, trans);
+						apply_yoffset_to_pos(input, trans.pos);
+						double ralph= m_receptor_alpha.evaluate(input);
+						double rglow= m_receptor_glow.evaluate(input);
+						double ealph= m_explosion_alpha.evaluate(input);
+						double eglow= m_explosion_glow.evaluate(input);
+						child->apply_render_info(
+							trans, ralph, rglow, ealph, eglow, beat, second,
+							m_note_alpha, m_note_glow);
+					}
+					else
+					{
+						child->apply_render_info(
+							head_transform, receptor_alpha, receptor_glow,
+							explosion_alpha, explosion_glow,
+							m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
+					}
 					curr_draw_entry->child->Draw();
 				}
 				else
@@ -2275,6 +2317,31 @@ FieldLayerTransformType NoteFieldColumn::get_layer_transform_type(Actor* child)
 	}
 	return FieldLayerTransformType_Invalid;
 }
+
+void NoteFieldColumn::set_layer_beat_offset(Actor* child, double offset)
+{
+	for(auto&& entry : m_layers)
+	{
+		if(entry.m_child == child)
+		{
+			entry.set_beat_offset(offset);
+			return;
+		}
+	}
+}
+
+void NoteFieldColumn::set_layer_second_offset(Actor* child, double offset)
+{
+	for(auto&& entry : m_layers)
+	{
+		if(entry.m_child == child)
+		{
+			entry.set_second_offset(offset);
+			return;
+		}
+	}
+}
+
 
 
 REGISTER_ACTOR_CLASS(NoteField);
@@ -3948,10 +4015,10 @@ void NoteField::set_displayed_second(double second)
 	update_displayed_time(m_timing_data->GetBeatFromElapsedTime(second), second);
 }
 
-void NoteField::did_tap_note(size_t column, TapNoteScore tns, bool bright)
+void NoteField::did_tap_note(size_t column, TapNoteScore tns, bool bright, float second_offset)
 {
 	if(column >= m_columns.size()) { return; }
-	m_columns[column].did_tap_note(tns, bright);
+	m_columns[column].did_tap_note(tns, bright, second_offset);
 }
 
 void NoteField::did_hold_note(size_t column, HoldNoteScore hns, bool bright)
@@ -4201,6 +4268,20 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 		p->set_layer_transform_type(layer, type);
 		COMMON_RETURN_SELF;
 	}
+	static int set_layer_beat_offset(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		double offset= FArg(2);
+		p->set_layer_beat_offset(layer, offset);
+		COMMON_RETURN_SELF;
+	}
+	static int set_layer_second_offset(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		double offset= FArg(2);
+		p->set_layer_second_offset(layer, offset);
+		COMMON_RETURN_SELF;
+	}
 	LunaNoteFieldColumn()
 	{
 		ADD_METHOD(set_base_values);
@@ -4228,6 +4309,8 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 		ADD_METHOD(apply_note_mods_to_actor);
 		ADD_GET_SET_METHODS(layer_fade_type);
 		ADD_GET_SET_METHODS(layer_transform_type);
+		ADD_METHOD(set_layer_beat_offset);
+		ADD_METHOD(set_layer_second_offset);
 	}
 };
 LUA_REGISTER_DERIVED_CLASS(NoteFieldColumn, ActorFrame);
