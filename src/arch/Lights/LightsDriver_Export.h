@@ -10,6 +10,7 @@ class LightsDriver_Export: public LightsDriver
 {
 public:
 	LightsDriver_Export();
+	virtual ~LightsDriver_Export();
 	virtual void Set( const LightsState *ls );
 
 	// Get the current lights state. This can be called from a thread.

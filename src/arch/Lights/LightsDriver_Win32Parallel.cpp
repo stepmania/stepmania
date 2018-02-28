@@ -57,6 +57,7 @@ LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
 
 LightsDriver_Win32Parallel::~LightsDriver_Win32Parallel()
 {
+	LightsDriver::reset();
 	FreeLibrary( hDLL );
 }
 
