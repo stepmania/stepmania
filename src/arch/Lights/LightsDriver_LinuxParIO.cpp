@@ -33,6 +33,7 @@ LightsDriver_LinuxParIO::LightsDriver_LinuxParIO()
 
 LightsDriver_LinuxParIO::~LightsDriver_LinuxParIO()
 {
+	LightsDriver::reset();
 }
 
 void LightsDriver_LinuxParIO::Set( const LightsState *ls )
