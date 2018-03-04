@@ -27,6 +27,10 @@ public:
 	void Resume();
 	uint64_t GetThreadId() const;
 	int Wait();
+
+	// pthread_setname_np name length can be at most 16 characters
+	// (including the terminating NUL character).
+	mutable char name[16];
 };
 
 class MutexImpl_Pthreads: public MutexImpl
