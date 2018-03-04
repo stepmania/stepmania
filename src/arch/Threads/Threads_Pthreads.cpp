@@ -1,9 +1,12 @@
 #include "global.h"
 #include "Threads_Pthreads.h"
+#include "RageLog.h"
+#include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageUtil.h"
 #include <sys/time.h>
 #include <errno.h>
+#include <string.h>
 
 #if defined(UNIX)
 #include "archutils/Unix/RunningUnderValgrind.h"
@@ -88,6 +91,36 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	// Don't return until StartThread sets m_piThreadID.
 	thread->m_StartFinishedSem->Wait();
 	delete thread->m_StartFinishedSem;
+
+	// Copy the thread name.
+	const char *rawname = RageThread::GetThreadNameByID( *piThreadID );
+	const size_t maxNameLen = sizeof( thread->name );
+	if (strlen(rawname) < maxNameLen) {
+		// If it fits, I sits^H^H^H^Hcopy.
+		strncpy( thread->name, rawname, maxNameLen );
+	} else {
+		if ( strstr( rawname, "Worker thread" ) && strchr( rawname, '(' ) ) {
+			// Special case for RageUtil_WorkerThread.cpp
+			// "Worker thread (name)", e.g.
+			// "Worker thread (/@mc1int/)" => "(/@mc1int/)".
+			const char *workername = strchr( rawname, '(' );
+			strncpy( thread->name, workername, maxNameLen );
+		} else {
+			// Abbreviate the name by taking the first 6, last 7
+			// characters and adding '..' in the middle.
+			LOG->Trace( "Truncated thread name due to size limit of %d: %s",
+				maxNameLen, rawname );
+			snprintf( thread->name, maxNameLen, "%.6s..%s",
+				rawname, &rawname[strlen(rawname) - 7] );
+			}
+	}
+	// Ensure there is always a terminating NUL character.
+	thread->name[maxNameLen - 1] = '\0';
+
+	ret = pthread_setname_np(thread->thread, thread->name);
+	if (ret != 0 && LOG) {
+		LOG->Trace("pthead_setname_np: %s", strerror(ret));
+	}
 
 	return thread;
 }
