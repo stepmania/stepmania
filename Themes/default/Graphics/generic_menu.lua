@@ -348,6 +348,8 @@ local menu_frame= Def.ActorFrame{
 		end,
 		AdjustModeCommand=function(self, pn)
 			self:linear(0.2):diffuseshift():effectclock('beatnooffset')
+			self:effectcolor1(BoostColor(ColorLightTone(PlayerColor(pn)),1.5))
+			self:effectcolor2(BoostColor(ColorLightTone(PlayerColor(pn)),1))
 		end,
 		LoadActor(THEME:GetPathG("OptionsCursor", "Middle"))..{Name= "middle"},
 		LoadActor(THEME:GetPathG("OptionsCursor", "Left"))..{Name= "left"},
