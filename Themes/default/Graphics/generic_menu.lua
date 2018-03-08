@@ -343,13 +343,11 @@ local menu_frame= Def.ActorFrame{
 		-- (left, right, and start buttons only)
 		-- So adjust mode means that left and right will change the value instead
 		-- of moving the cursor.
-		-- This is of course a placeholder command that Lirodon is supposed to
-		-- change.
-		NormalModeCommand= function(self)
-			self:linear(.1):rotationz(0)
+		NormalModeCommand=function(self, pn)
+			self:linear(0.2):diffuse(ColorLightTone(PlayerColor(pn))):stopeffect();
 		end,
-		AdjustModeCommand= function(self)
-			self:linear(.1):rotationz(90)
+		AdjustModeCommand=function(self, pn)
+			self:linear(0.2):diffuseshift():effectclock('beatnooffset')
 		end,
 		LoadActor(THEME:GetPathG("OptionsCursor", "Middle"))..{Name= "middle"},
 		LoadActor(THEME:GetPathG("OptionsCursor", "Left"))..{Name= "left"},
