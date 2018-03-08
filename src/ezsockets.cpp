@@ -173,6 +173,10 @@ bool EzSockets::create(EzSockets_Proto Protocol, int Type)
 	}
 
 	data->sock = socket(AF_INET, Type, realproto);
+	if (sock > SOCKET_NONE) {
+		struct timeval tv = { 2, 0 };
+		setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&tv, sizeof(struct timeval));
+	}
 	lastCode = data->sock;
 	return data->sock > SOCKET_NONE;	// Socket must be Greater than 0
 }
