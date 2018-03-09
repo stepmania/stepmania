@@ -21,6 +21,7 @@ return function(button_list, stepstype, skin_params)
 	local pardist= explosion_params.particle_dist
 	local particle_life= explosion_params.particle_life
 	local have_particles= explosion_params.particles
+	local explode_timing= explosion_params.explode_timing
 	if have_particles then
 		local angle_per_particle= (end_angle - start_angle) / (num_particles - 1)
 		for i= 0, num_particles-1 do
@@ -114,8 +115,12 @@ return function(button_list, stepstype, skin_params)
 				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
 			end,
 			ColumnJudgmentCommand= function(self, param)
-				param.column:set_layer_second_offset(self, -param.second_offset);
-				param.column:set_layer_beat_offset(self, -param.beat_offset);
+				if explode_timing == true then
+				-- This moves the explosion to correspond with the timing of the  
+				-- pressed note.
+					param.column:set_layer_second_offset(self, -param.second_offset);
+					param.column:set_layer_beat_offset(self, -param.beat_offset);
+				end
 			end,
 			Def.Sprite{
 				Texture= "_glow", InitCommand= function(self)

@@ -44,6 +44,7 @@ return {
 			particle_size= 32,
 			num_particles= 16,
 			particle_blend= "BlendMode_WeightedMultiply",
+			explode_timing=false,
 		},
 		receptors= {
 			warning_time= 2,
@@ -129,6 +130,10 @@ return {
 					},
 				},
 			},
+			explode_timing= {
+				translation= {
+					en= {title= "Timing Explosions", explanation= "When set to true, where the note explosion occurs on-screen is based on timing (before the receptors for early, past them for late)."},
+			}},
 		},
 		receptors= {
 			translation= {

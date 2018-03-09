@@ -425,10 +425,10 @@ t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficult
 if gameplay_pause_count > 0 then
 	t[#t+1]= Def.BitmapText{
 		Font= "Common Italic Condensed",
-		Text= THEME:GetString("PauseMenu", "pause_count") .. ": " .. gameplay_pause_count,
+		Text= THEME:GetString("notefield_options", "pause_count") .. ": " .. gameplay_pause_count,
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-130;shadowlength,1;maxwidth,140;);
 		OnCommand=function(self)
-			self:diffuse(color("#FF0000")):diffusebottomedge(color("#512232")):zoom(0.8);
+			self:diffuse(color("#FF0000")):strokecolor(color("#512232")):zoom(0.8);
 			self:diffusealpha(0):sleep(1.5):smooth(0.3):diffusealpha(1);
 		end;
 		OffCommand=cmd(sleep,0.2;decelerate,0.3;diffusealpha,0;);
