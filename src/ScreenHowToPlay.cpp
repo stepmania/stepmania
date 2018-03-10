@@ -206,6 +206,8 @@ void ScreenHowToPlay::Init()
 
 ScreenHowToPlay::~ScreenHowToPlay()
 {
+	SOUND->StopMusic();
+	GAMESTATE->set_curr_song(nullptr);
 	delete m_pLifeMeterBar;
 	delete m_pmCharacter;
 	delete m_pmDancePad;
