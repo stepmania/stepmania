@@ -38,11 +38,9 @@ static float const	expand_speed_scale_to_low= 1.0f;
 static float const	tipsy_timer_frequency= 1.2f;
 static float const	tipsy_column_frequency= 1.8f;
 static float const	tipsy_arrow_magnitude= .4f;
-static float const	tornado_position_scale_to_low= -1.0f;
-static float const	tornado_position_scale_to_high= 1.0f;
+static float const acos_min= -1.0f;
+static float const acos_max= 1.0f;
 static float const	tornado_offset_frequency= 6.0f;
-static float const	tornado_offset_scale_from_low= -1.0f;
-static float const	tornado_offset_scale_from_high= 1.0f;
 static float const	drunk_column_frequency= .2f;
 static float const	drunk_offset_frequency= 10.0f;
 static float const	drunk_arrow_magnitude= .5f;
@@ -64,8 +62,7 @@ ArrowDefects::ArrowDefects()
 	:m_options(nullptr), m_timing_data(nullptr), m_read_bpm(150.f),
 	 m_num_columns(4), m_num_pads(1), m_xmode_dir(1.f),
 	 m_receptor_pos_normal(-125.f), m_receptor_pos_reverse(145.f),
-	 m_expand_seconds(0.f), m_tan_expand_seconds(0.f),
-	 m_prev_style(nullptr)
+	 m_expand_seconds(0.f), m_tan_expand_seconds(0.f)
 {
 	m_reverse_offset= (m_receptor_pos_reverse - m_receptor_pos_normal) * .5f;
 	for(int i= 0; i < 3; ++i) { m_beat_factor[i]= 0.f; }
@@ -109,20 +106,22 @@ float ArrowDefects::calculate_tornado_offset_from_magnitude(int dimension, int c
 	float magnitude, float effect_offset, float period, float y_offset, bool is_tan)
 {
 	float const real_pixel_offset = m_column_x[col_id];
-	float const position_between= Rage::scale(real_pixel_offset,
-		m_min_tornado_x[dimension][col_id],
-		m_max_tornado_x[dimension][col_id],
-		tornado_position_scale_to_low,
-		tornado_position_scale_to_high);
-	float rads= std::acos(position_between);
+	float rads= m_tornado_column_rads[dimension][col_id];
 	float frequency= tornado_offset_frequency;
 	rads+= (y_offset + effect_offset) * ((period * frequency) +  frequency) / SCREEN_HEIGHT;
 	float processed_rads = is_tan ? select_tan_calc(rads, m_options->m_bCosecant) : Rage::FastCos(rads); 
 	float const adjusted_pixel_offset= Rage::scale(processed_rads,
-		tornado_offset_scale_from_low,
-		tornado_offset_scale_from_high,
+		acos_min, acos_max,
 		m_min_tornado_x[dimension][col_id],
 		m_max_tornado_x[dimension][col_id]);
+	auto&& tdi= td_info[dimension][col_id];
+	if(tdi.print_info && (
+			std::isnan(adjusted_pixel_offset) ||
+			!std::isfinite(adjusted_pixel_offset)))
+	{
+		tdi.print_info= false;
+		LOG->Trace("Tornado glitch debug info: Dimension %d, column %d affected. start_col %d, end_col %d, normalized %f, min_x %f, max_x %f, rads %f, period %f, effect_offset %f", dimension, col_id, tdi.start_col, tdi.end_col, tdi.normalized, m_min_tornado_x[dimension][col_id], m_max_tornado_x[dimension][col_id], rads, period, effect_offset);
+	}
 	return (adjusted_pixel_offset - real_pixel_offset) * magnitude;
 }
 
@@ -206,52 +205,6 @@ float ArrowDefects::calculate_digital_angle(float y_offset, float offset, float 
 	return Rage::PI * (y_offset + (1.0f * offset ) ) / (arrow_spacing + (period * arrow_spacing) );
 }
 
-void ArrowDefects::Init()
-{
-	// Init tornado limits.
-	// This used to run every frame, but it doesn't actually depend on anything
-	// that changes every frame.  In openitg, it runs for every note. -Kyz
-
-	// TRICKY: Tornado is very unplayable in doubles, so use a smaller
-	// tornado width if there are many columns
-
-	/* the wide_field check makes an assumption for dance mode.
-	 * perhaps check if we are actually playing on singles without,
-	 * say more than 6 columns. That would exclude IIDX, pop'n, and
-	 * techno-8, all of which would be very hectic.
-	 * certain non-singles modes (like halfdoubles 6cols)
-	 * could possibly have tornado enabled.
-	 * let's also take default resolution (640x480) into mind. -aj */
-	bool wide_field= m_num_columns > 4;
-	int max_player_col= m_num_columns-1;
-	for(int dimension= 0; dimension < 3; ++dimension)
-	{
-		int width= 3;
-		// wide_field only matters for x, which is dimension 0. -Kyz
-		if(dimension == 0 && wide_field)
-		{
-			width= 2;
-		}
-		for(int col_id= 0; col_id <= max_player_col; ++col_id)
-		{
-			int start_col= col_id - width;
-			int end_col= col_id + width;
-			Rage::clamp(start_col, 0, max_player_col);
-			Rage::clamp(end_col, 0, max_player_col);
-			m_min_tornado_x[dimension][col_id]= std::numeric_limits<float>::max();
-			m_max_tornado_x[dimension][col_id]= std::numeric_limits<float>::min();
-			for(int i= start_col; i <= end_col; ++i)
-			{
-				// Using the x offset when the dimension might be y or z feels so
-				// wrong, but it provides min and max values when otherwise the
-				// limits would just be zero, which would make it do nothing. -Kyz
-				m_min_tornado_x[dimension][col_id] = std::min(m_column_x[i], m_min_tornado_x[dimension][col_id]);
-				m_max_tornado_x[dimension][col_id] = std::max(m_column_x[i], m_max_tornado_x[dimension][col_id]);
-			}
-		}
-	}
-}
-
 void ArrowDefects::set_player_options(PlayerOptions const* options)
 {
 	m_options= options;
@@ -271,13 +224,23 @@ void ArrowDefects::set_player_options(PlayerOptions const* options)
 void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 {
 	m_num_columns= column_x.size();
-	for(auto&& member : {&m_min_tornado_x[0], &m_max_tornado_x[0], &m_min_tornado_x[1], 
-				&m_max_tornado_x[1], &m_min_tornado_x[2], &m_max_tornado_x[2],
-				&m_invert_dist, &m_tipsy_result, &m_tan_tipsy_result})
+	for(int dimension= 0; dimension < 3; ++dimension)
+	{
+		m_min_tornado_x[dimension].resize(m_num_columns);
+		m_max_tornado_x[dimension].resize(m_num_columns);
+		m_tornado_column_rads[dimension].resize(m_num_columns);
+		td_info[dimension].resize(m_num_columns);
+	}
+	for(auto&& member : {
+			&m_invert_dist, &m_tipsy_result, &m_tan_tipsy_result})
 	{
 		member->resize(m_num_columns);
 	}
-	m_column_x= column_x;
+	m_column_x.clear();
+	for(auto&& cx : column_x)
+	{
+		m_column_x.push_back(cx);
+	}
 
 	// Update positions used by invert mod.
 	// This is completely wrong for stepstypes that have a different number
@@ -323,6 +286,61 @@ void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 		float const new_pixel_offset= m_column_x[new_col];
 		m_invert_dist[col]= new_pixel_offset - old_pixel_offset;
 	}
+
+	// Original comment, unknown author.
+	// TRICKY: Tornado is very unplayable in doubles, so use a smaller
+	// tornado width if there are many columns
+
+	/* the wide_field check makes an assumption for dance mode.
+	 * perhaps check if we are actually playing on singles without,
+	 * say more than 6 columns. That would exclude IIDX, pop'n, and
+	 * techno-8, all of which would be very hectic.
+	 * certain non-singles modes (like halfdoubles 6cols)
+	 * could possibly have tornado enabled.
+	 * let's also take default resolution (640x480) into mind. -aj */
+	bool wide_field= m_num_columns > 4;
+	int max_player_col= m_num_columns-1;
+	for(int dimension= 0; dimension < 3; ++dimension)
+	{
+		int width= 3;
+		// wide_field only matters for x, which is dimension 0. -Kyz
+		if(dimension == 0 && wide_field)
+		{
+			width= 2;
+		}
+		for(int col_id= 0; col_id <= max_player_col; ++col_id)
+		{
+			int start_col= col_id - width;
+			int end_col= col_id + width;
+			Rage::clamp(start_col, 0, max_player_col);
+			Rage::clamp(end_col, 0, max_player_col);
+			m_min_tornado_x[dimension][col_id]= std::numeric_limits<float>::max();
+			m_max_tornado_x[dimension][col_id]= std::numeric_limits<float>::min();
+			for(int i= start_col; i <= end_col; ++i)
+			{
+				// Using the x offset when the dimension might be y or z feels so
+				// wrong, but it provides min and max values when otherwise the
+				// limits would just be zero, which would make it do nothing. -Kyz
+				m_min_tornado_x[dimension][col_id] = std::min(m_column_x[i], m_min_tornado_x[dimension][col_id]);
+				m_max_tornado_x[dimension][col_id] = std::max(m_column_x[i], m_max_tornado_x[dimension][col_id]);
+			}
+			// Tornado makes notes travel along a cosine wave.  The peak is at
+			// max_tornado_x, and the trough is at min_tornado_x.  To keep the
+			// receptor stationary, its radian offset must be calculated.
+			// First the position is normalized to the -1 to 1 range of a wave,
+			// then converted to radians.  -Kyz
+			float const normalized= Rage::scale(m_column_x[col_id],
+				m_min_tornado_x[dimension][col_id],
+				m_max_tornado_x[dimension][col_id],
+				acos_min, acos_max);
+			m_tornado_column_rads[dimension][col_id]= std::acos(normalized);
+			auto&& tdi= td_info[dimension][col_id];
+			tdi.print_info= true;
+			tdi.start_col= start_col;
+			tdi.end_col= end_col;
+			tdi.normalized= normalized;
+		}
+	}
 }
 
 void ArrowDefects::set_timing(TimingData const* timing)
@@ -349,13 +367,6 @@ void ArrowDefects::update(PlayerNumber pn, float music_beat, float music_second)
 
 	float const* effects= m_options->m_fEffects;
 	float const* accels= m_options->m_fAccels;
-	
-	const Style* pStyle = GAMESTATE->GetCurrentStyle(pn);
-	if(pStyle != m_prev_style)
-	{
-		Init();
-		m_prev_style= pStyle;
-	}
 	
 	if(accels[PlayerOptions::ACCEL_EXPAND] != 0.f)
 	{

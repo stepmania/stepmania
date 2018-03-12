@@ -12,7 +12,6 @@ struct ArrowDefects
 {
 	ArrowDefects();
 
-	void Init();
 	bool safe() { return m_options != nullptr; }
 	void set_player_options(PlayerOptions const* options);
 	void set_column_pos(std::vector<float>& column_x);
@@ -83,6 +82,7 @@ private:
 	std::vector<float> m_column_x;
 	std::vector<float> m_min_tornado_x[3];
 	std::vector<float> m_max_tornado_x[3];
+	std::vector<float> m_tornado_column_rads[3];
 	std::vector<float> m_invert_dist;
 	std::vector<float> m_tipsy_result;
 	std::vector<float> m_tan_tipsy_result;
@@ -99,8 +99,15 @@ private:
 	float m_music_second;
 	float m_display_beat;
 	float m_speed_percent;
-	
-	Style const* m_prev_style;
+
+	struct tornado_glitch_debug_info
+	{
+		bool print_info;
+		int start_col;
+		int end_col;
+		float normalized;
+	};
+	std::vector<tornado_glitch_debug_info> td_info[3];
 };
 
 #endif
