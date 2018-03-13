@@ -300,6 +300,11 @@ void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 	 * let's also take default resolution (640x480) into mind. -aj */
 	bool wide_field= m_num_columns > 4;
 	int max_player_col= m_num_columns-1;
+	LOG->Trace("max_player_col %d, m_num_columns %zu, m_column_x.size %zu", max_player_col, m_num_columns, m_column_x.size());
+	if(m_column_x.empty())
+	{
+		LOG->Warn("ArrowDefects.m_column_x is somehow empty. %zu columns passed in", column_x.size());
+	}
 	for(int dimension= 0; dimension < 3; ++dimension)
 	{
 		int width= 3;
