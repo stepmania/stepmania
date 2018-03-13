@@ -99,15 +99,6 @@ private:
 	float m_music_second;
 	float m_display_beat;
 	float m_speed_percent;
-
-	struct tornado_glitch_debug_info
-	{
-		bool print_info;
-		int start_col;
-		int end_col;
-		float normalized;
-	};
-	std::vector<tornado_glitch_debug_info> td_info[3];
 };
 
 #endif

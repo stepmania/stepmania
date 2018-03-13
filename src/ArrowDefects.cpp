@@ -114,14 +114,6 @@ float ArrowDefects::calculate_tornado_offset_from_magnitude(int dimension, int c
 		acos_min, acos_max,
 		m_min_tornado_x[dimension][col_id],
 		m_max_tornado_x[dimension][col_id]);
-	auto&& tdi= td_info[dimension][col_id];
-	if(tdi.print_info && (
-			std::isnan(adjusted_pixel_offset) ||
-			!std::isfinite(adjusted_pixel_offset)))
-	{
-		tdi.print_info= false;
-		LOG->Trace("Tornado glitch debug info: Dimension %d, column %d affected. start_col %d, end_col %d, normalized %f, min_x %f, max_x %f, rads %f, period %f, effect_offset %f", dimension, col_id, tdi.start_col, tdi.end_col, tdi.normalized, m_min_tornado_x[dimension][col_id], m_max_tornado_x[dimension][col_id], rads, period, effect_offset);
-	}
 	return (adjusted_pixel_offset - real_pixel_offset) * magnitude;
 }
 
@@ -229,7 +221,6 @@ void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 		m_min_tornado_x[dimension].resize(m_num_columns);
 		m_max_tornado_x[dimension].resize(m_num_columns);
 		m_tornado_column_rads[dimension].resize(m_num_columns);
-		td_info[dimension].resize(m_num_columns);
 	}
 	for(auto&& member : {
 			&m_invert_dist, &m_tipsy_result, &m_tan_tipsy_result})
@@ -300,11 +291,6 @@ void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 	 * let's also take default resolution (640x480) into mind. -aj */
 	bool wide_field= m_num_columns > 4;
 	int max_player_col= m_num_columns-1;
-	LOG->Trace("max_player_col %d, m_num_columns %zu, m_column_x.size %zu", max_player_col, m_num_columns, m_column_x.size());
-	if(m_column_x.empty())
-	{
-		LOG->Warn("ArrowDefects.m_column_x is somehow empty. %zu columns passed in", column_x.size());
-	}
 	for(int dimension= 0; dimension < 3; ++dimension)
 	{
 		int width= 3;
@@ -317,8 +303,8 @@ void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 		{
 			int start_col= col_id - width;
 			int end_col= col_id + width;
-			Rage::clamp(start_col, 0, max_player_col);
-			Rage::clamp(end_col, 0, max_player_col);
+			start_col= Rage::clamp(start_col, 0, max_player_col);
+			end_col= Rage::clamp(end_col, 0, max_player_col);
 			m_min_tornado_x[dimension][col_id]= std::numeric_limits<float>::max();
 			m_max_tornado_x[dimension][col_id]= std::numeric_limits<float>::min();
 			for(int i= start_col; i <= end_col; ++i)
@@ -339,11 +325,6 @@ void ArrowDefects::set_column_pos(std::vector<float>& column_x)
 				m_max_tornado_x[dimension][col_id],
 				acos_min, acos_max);
 			m_tornado_column_rads[dimension][col_id]= std::acos(normalized);
-			auto&& tdi= td_info[dimension][col_id];
-			tdi.print_info= true;
-			tdi.start_col= start_col;
-			tdi.end_col= end_col;
-			tdi.normalized= normalized;
 		}
 	}
 }
