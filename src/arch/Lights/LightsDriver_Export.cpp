@@ -13,7 +13,6 @@ LightsDriver_Export::LightsDriver_Export()
 
 LightsDriver_Export::~LightsDriver_Export()
 {
-	LightsDriver::reset();
 }
 
 void LightsDriver_Export::Set( const LightsState *ls )
