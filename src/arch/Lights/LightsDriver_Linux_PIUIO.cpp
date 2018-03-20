@@ -32,7 +32,6 @@ LightsDriver_Linux_PIUIO::LightsDriver_Linux_PIUIO()
 
 LightsDriver_Linux_PIUIO::~LightsDriver_Linux_PIUIO()
 {
-	LightsDriver::reset();
 	if( fd >= 0 )
 		close(fd);
 }
