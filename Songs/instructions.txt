@@ -1,22 +1,30 @@
+[Where to Download Songs]
+Many places host songs, the best places to download songs is:
+http://stepmaniaonline.net/index.php?page=downloads
+https://www.stepmania.com/forums/songs/
+https://www.stepmania.com/forums/songs-packs/
+
+YouTube is another very popular place to find songs!
+
 [How to Install Songs]
 Songs are laid out based on the group that they are in.
 
 Songs\							: root folder
 	StepMania 5\				: group folder
 		MechaTribe Assault\		: song/simfile folder
-			*.png, *.mp3/*.ogg, *.sm/*.ssc/etc files
+			*.png, *.mp3/*.ogg, *.sm or.ssc or.bms*
 
 [How NOT to install songs]
 This won't work because StepMania expects groups:
 
 Songs\
 	Some Song\
-		*.png, *.mp3/*.ogg, *.sm/*.ssc/etc files
+		*.png, *.mp3/*.ogg, *.sm/ or .ssc or .bms
 
-And this won't work because StepMania doesn't handle sub-groups:
+And this won't work because StepMania doesn't handle sub-groups yet:
 
 Songs\
 	Song Group\
 		SubGroup1\
 			Some Song\
-				*.png, *.mp3/*.ogg, *.sm/*.ssc/etc files
+				*.png, *.mp3/*.ogg, *.sm or .scc or .bms*
