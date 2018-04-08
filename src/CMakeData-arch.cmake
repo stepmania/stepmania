@@ -304,19 +304,17 @@ if(NOT APPLE)
         "arch/Lights/LightsDriver_Win32Minimaid.h"
       )
     endif()
-  else() # Unix/Linux TODO: Linux HAVE_PARALLEL_PORT
+  else()
     if(LINUX)
       list(APPEND SMDATA_ARCH_LIGHTS_SRC
         "arch/Lights/LightsDriver_Linux_PIUIO.cpp"
         "arch/Lights/LightsDriver_Linux_PIUIO_Leds.cpp"
         "arch/Lights/LightsDriver_LinuxWeedTech.cpp"
-        "arch/Lights/LightsDriver_LinuxParallel.cpp"
       )
       list(APPEND SMDATA_ARCH_LIGHTS_HPP
         "arch/Lights/LightsDriver_Linux_PIUIO.h"
         "arch/Lights/LightsDriver_Linux_PIUIO_Leds.h"
         "arch/Lights/LightsDriver_LinuxWeedTech.h"
-        "arch/Lights/LightsDriver_LinuxParallel.h"
       )
       if (WITH_PARALLEL_PORT)
         list(APPEND SMDATA_ARCH_LIGHTS_SRC
