@@ -10,6 +10,9 @@
 #    include "windows.h"
 #    include "archutils/Win32/Crash.h"
 #  endif
+#  if defined(_MSC_VER)
+#    include <intrin.h>
+#  endif
 #elif defined(MACOSX)
 #  include "archutils/Darwin/Crash.h"
 #  include <stdlib.h>
@@ -46,7 +49,7 @@ void NORETURN sm_crash( const char *reason )
 	/* Do something after the above, so the call/return isn't optimized to a jmp; that
 	 * way, this function will appear in backtrace stack traces. */
 #if defined(_MSC_VER)
-	_asm nop;
+	__nop();
 #elif defined(__GNUC__) // MinGW or similar
 	asm("nop");
 #endif
