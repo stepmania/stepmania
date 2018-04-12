@@ -800,8 +800,8 @@ public:
 	void Allocate( const vector<msMesh> &vMeshes )
 	{
 		using std::max;
-		m_vVertex.resize( max(1u, GetTotalVertices()) );
-		m_vTriangles.resize( max(1u, GetTotalTriangles()) );
+		m_vVertex.resize( max(size_t(1u), GetTotalVertices()) );
+		m_vTriangles.resize( max(size_t(1u), GetTotalTriangles()) );
 	}
 	void Change( const vector<msMesh> &vMeshes )
 	{
