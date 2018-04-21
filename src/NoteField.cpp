@@ -761,10 +761,6 @@ void NoteField::DrawPrimitives()
 			m_FieldRenderArgs.draw_pixels_before_targets);
 		return;
 	}
-
-	// Clear the z buffer so 3D notes aren't hidden by anything in the underlay using masking. -Kyz
-	DISPLAY->ClearZBuffer();
-
 	// Some might prefer an else block, instead of returning from the if, but I
 	// don't want to bump the indent on the entire remaining section. -Kyz
 	ArrowEffects::SetCurrentOptions(&m_pPlayerState->m_PlayerOptions.GetCurrent());
