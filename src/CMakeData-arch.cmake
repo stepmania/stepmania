@@ -9,6 +9,65 @@ list(APPEND SMDATA_ARCH_HPP
 
 source_group("Arch Specific" FILES ${SMDATA_ARCH_SRC} ${SMDATA_ARCH_HPP})
 
+list(APPEND SMDATA_ARCH_COM_SRC
+  "arch/COM/serial.cc"
+)
+
+list(APPEND SMDATA_ARCH_COM_HPP
+  "arch/COM/serial.h"
+  "arch/COM/v8stdint.h"
+)
+
+if(WIN32)
+  list(APPEND SMDATA_ARCH_COM_HPP
+    "arch/COM/impl/win.h"
+  )
+  list(APPEND SMDATA_ARCH_COM_SRC
+    "arch/COM/impl/win.cc"
+    "arch/COM/impl/list_ports/list_ports_win.cc"
+  )
+elseif(APPLE)
+  list(APPEND SMDATA_ARCH_COM_HPP
+    "arch/COM/impl/unix.h"
+  )
+  list(APPEND SMDATA_ARCH_COM_SRC
+    "arch/COM/impl/unix.cc"
+    "arch/COM/impl/list_ports/list_ports_osx.cc"
+  )
+else()
+  list(APPEND SMDATA_ARCH_COM_HPP
+	"arch/COM/impl/unix.h"
+  )
+  list(APPEND SMDATA_ARCH_COM_SRC
+	"arch/COM/impl/unix.cc"
+	"arch/COM/impl/list_ports/list_ports_linux.cc"
+  )
+endif()
+
+source_group("Arch Specific\\\\COM" FILES ${SMDATA_ARCH_COM_SRC} ${SMDATA_ARCH_COM_HPP})
+
+list(APPEND SMDATA_ARCH_ACIO_SRC
+  "arch/ACIO/ACIO.cpp"
+)
+
+list(APPEND SMDATA_ARCH_ACIO_HPP
+  "arch/ACIO/ACIO.h"
+)
+
+source_group("Arch Specific\\\\ACIO" FILES ${SMDATA_ARCH_ACIO_SRC} ${SMDATA_ARCH_ACIO_HPP})
+
+list(APPEND SMDATA_ARCH_USB_SRC
+  "arch/USB/USBDriver_Impl.cpp"
+  "arch/USB/USBDriver_Impl_Libusb.cpp"
+)
+
+list(APPEND SMDATA_ARCH_USB_HPP
+  "arch/USB/USBDriver_Impl.h"
+  "arch/USB/USBDriver_Impl_Libusb.h"
+)
+
+source_group("Arch Specific\\\\USB" FILES ${SMDATA_ARCH_USB_SRC} ${SMDATA_ARCH_USB_HPP})
+
 list(APPEND SMDATA_ARCH_THREADS_HPP
   "arch/Threads/Threads.h"
 )
@@ -270,13 +329,17 @@ list(APPEND SMDATA_ARCH_LIGHTS_HPP
 
 list(APPEND SMDATA_ARCH_LIGHTS_SRC
   "arch/Lights/LightsDriver_SextetStream.cpp"
+  "arch/Lights/LightsDriver_Satellite.cpp"
+  "arch/Lights/LightsDriver_EXTIO.cpp"
 )
 list(APPEND SMDATA_ARCH_LIGHTS_HPP
   "arch/Lights/LightsDriver_SextetStream.h"
+  "arch/Lights/LightsDriver_Satellite.h"
+  "arch/Lights/LightsDriver_EXTIO.h"
 )
 
 # TODO: Confirm if Apple can use the export.
-if(NOT APPLE)
+#if(NOT APPLE)
   list(APPEND SMDATA_ARCH_LIGHTS_SRC
     "arch/Lights/LightsDriver_Export.cpp"
   )
@@ -331,17 +394,19 @@ if(NOT APPLE)
       endif()
     endif()
   endif(WIN32)
-endif(NOT APPLE)
+#endif(NOT APPLE)
 
 source_group("Arch Specific\\\\Lights" FILES ${SMDATA_ARCH_LIGHTS_SRC} ${SMDATA_ARCH_LIGHTS_HPP})
 
 list(APPEND SMDATA_ARCH_INPUT_SRC
   "arch/InputHandler/InputHandler.cpp"
   "arch/InputHandler/InputHandler_MonkeyKeyboard.cpp"
+  "arch/InputHandler/InputHandler_P3IO.cpp"
 )
 list(APPEND SMDATA_ARCH_INPUT_HPP
   "arch/InputHandler/InputHandler.h"
   "arch/InputHandler/InputHandler_MonkeyKeyboard.h"
+  "arch/InputHandler/InputHandler_P3IO.h"
 )
 
 if(WIN32)
@@ -489,6 +554,9 @@ list(APPEND SMDATA_ALL_ARCH_SRC
   ${SMDATA_ARCH_MOVIE_TEXTURE_SRC}
   ${SMDATA_ARCH_SOUND_SRC}
   ${SMDATA_ARCH_THREADS_SRC}
+  ${SMDATA_ARCH_USB_SRC}
+  ${SMDATA_ARCH_COM_SRC}
+  ${SMDATA_ARCH_ACIO_SRC}
 )
 list(APPEND SMDATA_ALL_ARCH_HPP
   ${SMDATA_ARCH_HPP}
@@ -502,4 +570,7 @@ list(APPEND SMDATA_ALL_ARCH_HPP
   ${SMDATA_ARCH_MOVIE_TEXTURE_HPP}
   ${SMDATA_ARCH_SOUND_HPP}
   ${SMDATA_ARCH_THREADS_HPP}
+  ${SMDATA_ARCH_USB_HPP}
+  ${SMDATA_ARCH_COM_HPP}
+  ${SMDATA_ARCH_ACIO_HPP}
 )

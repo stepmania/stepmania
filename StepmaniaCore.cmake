@@ -186,7 +186,7 @@ if(NOT WITH_GPL_LIBS)
   message("Disabling GPL exclusive libraries: no MP3 support.")
   set(WITH_MP3 OFF)
 endif()
-
+find_package(libusb)
 if(WITH_WAV)
   # TODO: Identify which headers to check for ensuring this will always work.
   set(HAS_WAV TRUE)
@@ -244,6 +244,10 @@ endif()
 if(WIN32)
   set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
+  find_library(LIBUSB_WINDOWS_LIB NAMES "libusb"
+      PATHS "${SM_EXTERN_DIR}/libusb/lib/msvc" NO_DEFAULT_PATH
+    )
+    get_filename_component(LIBUSB_WINDOWS_LIB ${LIBUSB_WINDOWS_LIB} NAME)
 
   if (MINGW AND WITH_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")

@@ -7,6 +7,7 @@
 #include "LoadingWindow/LoadingWindow_Win32.h"
 #include "LowLevelWindow/LowLevelWindow_Win32.h"
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
+#include "USB/USBDriver_Impl_Libusb.h"
 #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "WaveOut,DirectSound-sw,WDMKS,Null"
@@ -34,6 +35,7 @@
 #include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
 #if defined(LINUX)
+#include "USB/USBDriver_Impl_Libusb.h"
 #define DEFAULT_INPUT_DRIVER_LIST "X11,LinuxEvent,LinuxJoystick"
 #else
 #define DEFAULT_INPUT_DRIVER_LIST "X11"
