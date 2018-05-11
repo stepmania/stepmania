@@ -12,11 +12,15 @@ LightsDriver_SystemMessage::LightsDriver_SystemMessage()
 
 LightsDriver_SystemMessage::~LightsDriver_SystemMessage()
 {
-	LightsDriver::reset();
 }
 
 void LightsDriver_SystemMessage::Set( const LightsState *ls )
 {
+	if (!PREFSMAN || !LIGHTSMAN || !SCREENMAN)
+	{
+		return;
+	}
+
 	if( !PREFSMAN->m_bDebugLights )
 		return;
 

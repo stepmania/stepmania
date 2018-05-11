@@ -30,7 +30,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 	}
 }
 
-void LightsDriver::reset()
+void LightsDriver::Reset()
 {
 	LightsState state;
 	ZERO( state.m_bCabinetLights );

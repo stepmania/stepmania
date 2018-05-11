@@ -24,7 +24,6 @@ LightsDriver_LinuxParallel::LightsDriver_LinuxParallel()
 
 LightsDriver_LinuxParallel::~LightsDriver_LinuxParallel()
 {
-	LightsDriver::reset();
 	// Reset all bits to zero and free the port's permissions
 	outb( 0, PORT_ADDRESS );
 	ioperm( PORT_ADDRESS, 1, 0 );

@@ -512,6 +512,12 @@ bool LightsManager::IsEnabled() const
 	return m_vpDrivers.size() >= 1 || PREFSMAN->m_bDebugLights;
 }
 
+void LightsManager::TurnOffAllLights()
+{
+	FOREACH( LightsDriver*, m_vpDrivers, iter )
+		(*iter)->Reset();
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
