@@ -290,6 +290,7 @@ public:
 	Preference<bool>	m_bThreadedMovieDecode;
 	Preference<RString>	m_sTestInitialScreen;
 	Preference<bool>	m_bDebugLights;
+	Preference<bool>	m_bOITGStyleLights;
 	Preference<bool>	m_bMonkeyInput;
 	Preference<RString>	m_sMachineName;
 	Preference<RString>	m_sCoursesToShowRanking;
