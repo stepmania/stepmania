@@ -271,6 +271,10 @@ EventDevice::~EventDevice()
 }
 
 InputHandler_Linux_Event::InputHandler_Linux_Event()
+  : m_bShutdown(true)
+  , m_bDevicesChanged(false)
+  , m_bHaveKeyboard(false)
+  , m_NextDevice(DEVICE_JOY10)
 {
 	m_NextDevice = DEVICE_JOY10;
 	m_bDevicesChanged = false;
