@@ -1,6 +1,6 @@
 #include "global.h"
 #include "RageSoundDriver.h"
-
+#include "PrefsManager.h"
 #include "RageLog.h"
 #include "RageSound.h"
 #include "RageUtil.h"
@@ -437,14 +437,20 @@ void RageSoundDriver::SetDecodeBufferSize( int iFrames )
 	frames_to_buffer = iFrames;
 }
 
+void RageSoundDriver::low_sample_count_workaround()
+{
+	if (soundDriverMaxSamples != 0) GetHardwareFrame(NULL);
+}
+
 RageSoundDriver::RageSoundDriver():
 	m_Mutex("RageSoundDriver"),
 	m_SoundListMutex("SoundListMutex")
 {
 	m_bShutdownDecodeThread = false;
 	m_iMaxHardwareFrame = 0;
+	m_iVMaxHardwareFrame = 0;
 	SetDecodeBufferSize( 4096 );
-	
+	soundDriverMaxSamples = PREFSMAN->m_iRageSoundSampleCountClamp;
 	m_DecodeThread.SetName("Decode thread");
 }
 
@@ -470,24 +476,62 @@ int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
 	/* It's sometimes possible for the hardware position to move backwards, usually
 	 * on underrun.  We can try to prevent this in each driver, but it's an obscure
 	 * error, so let's clamp the result here instead. */
-	if( iHardwareFrame < m_iMaxHardwareFrame )
+
+	/* New extra logic for devices and drivers that cant return large numbers in their sample position
+	* calculate a diff and if the current sample # is >= 0 and less than a minute based on sample rate
+	* check if the user set soundDriverMaxSamples to a value, if they did 
+	* (this is usually 134217728 aka 2^27 for some reason) hndle the wrap around to a rolling counter
+	* otherwise do the old logic for underrun
+	*/
+
+
+	//iHardwareFrame %= 0x800000; // debug test a sample value max of about 3 minutes so I dont have to spend an hour per test
+	int64_t diff = iHardwareFrame - m_iMaxHardwareFrame;
+	if( diff < 0 )
 	{
-		/* Clamp the output to one per second, so one underruns don't cascade due to
-		 * output spam. */
-		static RageTimer last(RageZeroTimer);
-		if( last.IsZero() || last.Ago() > 1.0f )
+		diff = 0;
+		int iMinuteSampleRate = GetSampleRate()*60; //get one minute worth of grace -- if you need more, there is very likely some other problem going on
+		//if we have a sample clamp and the new hardware frame is within a fresh minute of the sample rate max and have 'underrun'
+		if ((soundDriverMaxSamples>0) && (iHardwareFrame<iMinuteSampleRate) && iHardwareFrame >= 0)
 		{
-			LOG->Trace( "RageSoundDriver: driver returned a lesser position (%d < %d)",
-				    (int)iHardwareFrame, (int)m_iMaxHardwareFrame );
-			last.Touch();
+			LOG->Trace("RageSoundDriver: driver position mask adjustment hardware frame number: %d, last max frame number: %d, soundDriverMaxSamples: %d, iMinuteSampleRate: %d, m_iVMaxHardwareFrame: %d",
+																			(int)iHardwareFrame,    (int)m_iMaxHardwareFrame,  soundDriverMaxSamples,  iMinuteSampleRate, (int) m_iVMaxHardwareFrame);
+			diff = (soundDriverMaxSamples - m_iMaxHardwareFrame) + iHardwareFrame;
+			m_iMaxHardwareFrame = 0;
 		}
-		return m_iMaxHardwareFrame;
+		else
+		{
+			/* Clamp the output to one per second, so one underruns don't cascade due to
+			 * output spam. */
+			static RageTimer last(RageZeroTimer);
+			if (last.IsZero() || last.Ago() > 1.0f)
+			{
+
+				//try to hand hold the user if their audio driver is possibly bad
+				int p = 21; // save some time, assume the buffer has at least a minute of cd quality audio -- 2^21
+				while (pow(2,p) < m_iMaxHardwareFrame)
+				{
+					if (p == 31)  break; //do not want to go beyond signed DWORD size
+					p++;
+				}
+
+				LOG->Trace("RageSoundDriver: driver returned a lesser position (%d < %d). If this is a recurrent driver problem with your sound card and not an underrun, try setting the preference RageSoundSampleCountClamp to %d",
+					(int)iHardwareFrame, (int)m_iMaxHardwareFrame, (int)floor(pow(2.0, p)));
+				last.Touch();
+			}
+
+			//return m_iMaxHardwareFrame;
+
+		}
 	}
+	
 	m_iMaxHardwareFrame = iHardwareFrame = max( iHardwareFrame, m_iMaxHardwareFrame );
-	return iHardwareFrame;
+	//return iHardwareFrame;
+	m_iVMaxHardwareFrame += diff;
+	return m_iVMaxHardwareFrame;
 }
 
-int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
+int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp=NULL ) const
 {
 	if( pTimestamp == NULL )
 		return ClampHardwareFrame( GetPosition() );

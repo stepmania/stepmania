@@ -50,10 +50,13 @@ public:
 	 * RageSound::CommitPlayingPosition. */
 	int64_t GetHardwareFrame( RageTimer *pTimer ) const;
 	virtual int64_t GetPosition() const = 0;
+	void low_sample_count_workaround();
 
 	/* When a sound is finished playing (GetDataToPlay returns 0) and the sound has
 	 * been completely flushed (so GetPosition is no longer meaningful), call
 	 * RageSoundBase::SoundIsFinishedPlaying(). */
+
+
 
 	/* Optional, if needed:  */
 	virtual void Update();
@@ -199,6 +202,8 @@ private:
 
 	int64_t ClampHardwareFrame( int64_t iHardwareFrame ) const;
 	mutable int64_t m_iMaxHardwareFrame;
+	mutable int64_t m_iVMaxHardwareFrame;
+	mutable int32_t soundDriverMaxSamples = 0;
 
 	bool m_bShutdownDecodeThread;
 
