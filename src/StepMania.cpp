@@ -286,6 +286,14 @@ void ShutdownGame()
 	if( SOUNDMAN )
 		SOUNDMAN->Shutdown();
 
+	/* Reset all lights to off.
+	 * This is done before ~LightsManager as some drivers use SCREENMAN
+	 * and similar when setting lights. */
+	if( LIGHTSMAN )
+	{
+		LIGHTSMAN->TurnOffAllLights();
+	}
+
 	SAFE_DELETE( SCREENMAN );
 	SAFE_DELETE( STATSMAN );
 	SAFE_DELETE( MESSAGEMAN );

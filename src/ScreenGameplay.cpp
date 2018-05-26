@@ -61,6 +61,7 @@
 #include "Song.h"
 #include "XmlFileUtil.h"
 #include "Profile.h" // for replay data stuff
+#include "RageDisplay.h"
 
 // Defines
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
@@ -2046,6 +2047,8 @@ void ScreenGameplay::DrawPrimitives()
 	{
 		pi->m_pPlayer->DrawNoteFieldBoard();
 	}
+	// Clear the z buffer so 3D notes aren't hidden by anything in the underlay using masking. -Kyz
+	DISPLAY->ClearZBuffer();
 	ScreenWithMenuElements::DrawPrimitives();
 }
 

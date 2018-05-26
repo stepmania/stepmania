@@ -24,6 +24,15 @@ struct FontPageTextures
 
 	/** @brief Set up the initial textures. */
 	FontPageTextures(): m_pTextureMain(NULL), m_pTextureStroke(NULL) {}
+
+	bool operator == (const struct FontPageTextures& other) const {
+		return m_pTextureMain == other.m_pTextureMain &&
+			m_pTextureStroke == other.m_pTextureStroke;
+	}
+
+	bool operator != (const struct FontPageTextures& other) const {
+		return !operator==(other);
+	}
 };
 
 /** @brief The components of a glyph (not technically a character). */

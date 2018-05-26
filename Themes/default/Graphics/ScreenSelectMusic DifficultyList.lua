@@ -1,6 +1,13 @@
+local function arrow_bounce(self, x, y)
+	self:bounce()
+	self:effectmagnitude(x,y,0)
+	self:effecttiming(0,0,0.75,0.25)
+	self:effectclock('bgm')
+end
+
 return Def.ActorFrame {
 	CurrentSongChangedMessageCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong(); 
+		local song = GAMESTATE:GetCurrentSong();
 		if song then
 -- 			self:setaux(0);
 			self:finishtweening();
@@ -20,7 +27,11 @@ return Def.ActorFrame {
 		self:decelerate(0.3):zoomx(0):diffusealpha(0)
 		end;
 		CursorP1 = Def.ActorFrame {
-			InitCommand=cmd(x,-174;player,PLAYER_1);
+			InitCommand=function(self)
+				self:x(-174)
+				self:player(PLAYER_1)
+				arrow_bounce(self, 5, 0)
+			end,
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_1 then
 					self:visible(true);
@@ -43,7 +54,11 @@ return Def.ActorFrame {
 			};
 		};
 		CursorP2 = Def.ActorFrame {
-			InitCommand=cmd(x,174;player,PLAYER_2);
+			InitCommand=function(self)
+				self:x(174)
+				self:player(PLAYER_2)
+				arrow_bounce(self, -5, 0)
+			end,
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_2 then
 					self:visible(true);
