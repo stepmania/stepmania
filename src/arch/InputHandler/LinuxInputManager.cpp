@@ -106,6 +106,32 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Joystick* driver)
 	m_vsPendingJoystickDevices.clear();
 }
 
+bool LinuxInputManager::X11IgnoreKeyboard() const
+{
+	if( !m_EventDriver )
+	{
+		return false;
+	}
+	return m_EventDriver->HasKeyboard();
+}
+
+void LinuxInputManager::X11FocusOut()
+{
+	if( m_EventDriver )
+	{
+		// Stop, but don't shutdown the thread
+		m_EventDriver->StopThread(false);
+	}
+}
+
+void LinuxInputManager::X11FocusIn()
+{
+	if( m_EventDriver )
+	{
+		m_EventDriver->StartThread();
+	}	
+}
+
 LinuxInputManager* LINUXINPUT = NULL; // global and accessible anywhere in our program
 
 /*

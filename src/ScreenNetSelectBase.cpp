@@ -80,13 +80,13 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 		return false;
 
 	bool bHoldingCtrl = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	// If we are disconnected, assume no chatting.
 
 	switch( input.DeviceI.button )
 	{
-	case KEY_PGUP:
+	case DB_KEY_PGUP:
 		if (!bHoldingCtrl) {
 			ShowPreviousMsg();
 			break;
@@ -96,7 +96,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 			Scroll(1);
 			break;
 		}
-	case KEY_PGDN:
+	case DB_KEY_PGDN:
 		if (!bHoldingCtrl) {
 			ShowNextMsg();
 			break;
@@ -106,8 +106,8 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 			Scroll(-1);
 			break;
 		}
-	case KEY_ENTER:
-	case KEY_KP_ENTER:
+	case DB_KEY_ENTER:
+	case DB_KEY_KP_ENTER:
 		if (!bHoldingCtrl)
 		{
 			if (m_sTextInput != "") {
@@ -122,7 +122,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 			return true;
 		}
 		break;
-	case KEY_BACK:
+	case DB_KEY_BACK:
 		if(!m_sTextInput.empty())
 			m_sTextInput = m_sTextInput.erase( m_sTextInput.size()-1 );
 		UpdateTextInput();

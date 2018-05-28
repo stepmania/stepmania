@@ -210,7 +210,7 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 
 	// bLCtrl and bRCtl are whether their respective Ctrl keys are held
 	// We update them here.
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL) )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_LCTRL) )
 	{
 		switch( input.type )
 		{
@@ -225,7 +225,7 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 		}
 	}
 	
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL) )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_RCTRL) )
 	{
 		switch( input.type )
 		{
@@ -241,7 +241,7 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 	}
 	
 	bool bHandled = false;
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_BACK) )
 	{
 		switch( input.type )
 		{
@@ -315,7 +315,7 @@ void ScreenTextEntry::BackspaceInAnswer()
 bool ScreenTextEntry::MenuStart( const InputEventPlus &input )
 {
 	// HACK: Only allow the screen to end on the Enter key.-aj
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) && input.type==IET_FIRST_PRESS )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, DB_KEY_ENTER) && input.type==IET_FIRST_PRESS )
 	{
 		End( false );
 		return true;

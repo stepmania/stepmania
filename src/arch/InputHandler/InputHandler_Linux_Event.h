@@ -15,16 +15,17 @@ public:
 	bool TryDevice(RString devfile);
 	bool DevicesChanged() { return m_bDevicesChanged; }
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
+	bool HasKeyboard() const;
 
-private:
 	void StartThread();
-	void StopThread();
+	void StopThread( bool shutdown = true );
+private:
 	static int InputThread_Start( void *p );
 	void InputThread();
 
 	RageThread m_InputThread;
 	InputDevice m_NextDevice;
-	bool m_bShutdown, m_bDevicesChanged;
+	bool m_bShutdown, m_bDevicesChanged, m_bHaveKeyboard;
 };
 #define USE_INPUT_HANDLER_LINUX_JOYSTICK
 
