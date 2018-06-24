@@ -16,6 +16,7 @@
 #include "RageDisplay.h" // VideoModeParams
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
+#include "arch/InputHandler/InputHandler_SDL.h"
 
 #include "RageDisplay_OGL_Helpers.h"
 using namespace RageDisplay_Legacy_Helpers;
@@ -189,14 +190,16 @@ bool LowLevelWindow_SDL::IsSoftwareRenderer( std::string &sError )
 void LowLevelWindow_SDL::SwapBuffers()
 {
     SDL_GL_SwapWindow(g_DisplayWindow);
-	while (SDL_PollEvent(&g_Event) != 0)
-	{
-		if (g_Event.type == SDL_QUIT)
-		{
-			LOG->Trace("SDL_QUIT: shutting down");
-			ArchHooks::SetUserQuit();
-		}
-	}
+    if (!has_sdl_input) {
+        while (SDL_PollEvent(&g_Event) != 0)
+        {
+            if (g_Event.type == SDL_QUIT)
+            {
+                LOG->Trace("SDL_QUIT: shutting down");
+                ArchHooks::SetUserQuit();
+            }
+        }
+    }
 }
 
 void LowLevelWindow_SDL::GetDisplaySpecs( DisplaySpecs &out ) const

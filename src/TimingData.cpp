@@ -1183,6 +1183,7 @@ void TimingData::GetDetailedInfoForSecond(DetailedTimeInfo& args) const
 
 float TimingData::GetBeatFromElapsedTime(float second) const
 {
+	if(empty()) { return 0.f; }
 	float globoff= GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds;
 	if(!m_line_segments.empty())
 	{
@@ -1204,6 +1205,7 @@ float TimingData::GetBeatFromElapsedTime(float second) const
 
 float TimingData::GetBeatFromElapsedTimeNoOffset(float second) const
 {
+	if(empty()) { return 0.f; }
 	if(!m_line_segments.empty())
 	{
 		return GetLineBeatFromSecond(second);
@@ -1224,6 +1226,7 @@ float TimingData::GetBeatFromElapsedTimeNoOffset(float second) const
 
 void TimingData::GetDetailedInfoForSecondNoOffset(DetailedTimeInfo& args) const
 {
+	if(empty()) { return; }
 	LineSegment segment;
 	if(!m_line_segments.empty())
 	{
@@ -1265,6 +1268,7 @@ float TimingData::GetElapsedTimeFromBeat(float beat) const
 
 float TimingData::GetElapsedTimeFromBeatNoOffset(float beat) const
 {
+	if(empty()) { return 0.f; }
 	if(!m_line_segments.empty())
 	{
 		return GetLineSecondFromBeat(beat);

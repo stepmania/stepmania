@@ -86,6 +86,14 @@ local lua_config_mt= {
 			self.use_alternate_config_prefix= params.use_alternate_config_prefix
 			self.no_per_player= params.no_per_player
 			self.is_lua_config= true
+
+			-- Set the theme name part of the save path when the config object is
+			-- created to avoid problems when a theme falls back on another.
+			-- If get_filename() simply used the current theme name when called,
+			-- then a config object loaded during script loading would load from a
+			-- different prefix than where it saves to.
+			local config_prefix= self.use_alternate_config_prefix or THEME:GetCurThemeName().."_config/"
+			self.file_with_prefix= config_prefix..self.file
 			return self
 		end,
 		sanitize_profile_slot= function(self, slot)
@@ -189,11 +197,7 @@ local lua_config_mt= {
 				SCREENMAN:SystemMessage("Unable to get profile dir for " .. ToEnumShortString(slot))
 				return
 			end
-			if self.use_alternate_config_prefix then
-				return prof_dir .. self.use_alternate_config_prefix .. self.file
-			end
-			local config_prefix= THEME:GetCurThemeName().."_config/"
-			return prof_dir .. config_prefix .. self.file
+			return prof_dir .. self.file_with_prefix
 		end,
 		save= function(self, slot)
 			slot= self:sanitize_profile_slot(slot)

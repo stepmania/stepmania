@@ -1103,13 +1103,13 @@ menu_controller_mt= {
 						if self.in_adjust_mode then
 							self.in_adjust_mode= false
 							if self.cursor then
-								self.cursor:playcommand("NormalMode")
+								self.cursor:playcommand("NormalMode", self.pn)
 							end
 							return sound_ret("adjust_mode_off")
 						else
 							self.in_adjust_mode= true
 							if self.cursor then
-								self.cursor:playcommand("AdjustMode")
+								self.cursor:playcommand("AdjustMode", self.pn)
 							end
 							return sound_ret("adjust_mode_on")
 						end

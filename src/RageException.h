@@ -5,7 +5,7 @@
 #include "config.hpp"
 #endif
 
-#include "format.h"
+#include "fmt/printf.h"
 
 /**
  * @brief Namespace for throwing fatal errors.

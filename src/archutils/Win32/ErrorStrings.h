@@ -3,14 +3,14 @@
 
 #include <string>
 #include <windows.h>
-#include "format.h"
+#include "fmt/format.h"
 #include "RageString.hpp"
 
 template<typename... Args>
 std::string werr_format(int err, std::string const &msg, Args const & ...args)
 {
 	char buf[1024] = "";
-	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		0, err, 0, buf, sizeof(buf), nullptr);
 
 	// Why is FormatMessage returning text ending with \r\n? (who? -aj)

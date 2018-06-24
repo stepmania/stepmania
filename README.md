@@ -28,7 +28,7 @@ This repository now uses submodules to attempt to keep the repository size down.
 ## Resources
 
 * Website: http://www.stepmania.com/
-* IRC: irc.freenode.net/#stepmania-devs
+* IRC: #stepmania-devs on Freenode (chat.freenode.net), or [webchat client](http://webchat.freenode.net/?channels=%23stepmania-devs&uio=d4)
 * Lua for SM5: https://dguzek.github.io/Lua-For-SM5/
 * Lua API Documentation can be found in the Docs folder.
 

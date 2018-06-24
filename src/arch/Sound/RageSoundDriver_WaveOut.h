@@ -3,7 +3,7 @@
 
 #include "RageSoundDriver.h"
 #include "RageThreads.h"
-#include "format.h"
+#include "fmt/format.h"
 #include <windows.h>
 #include <mmsystem.h>
 
