@@ -5065,7 +5065,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCourseGroupNames' return='{string}' arguments=''>
 		Returns a table containing all of the course group names.
 	</Function>
-	<Function name='GetCoursesInGroup' return='{Course}' arguments='string sGroup'>
+	<Function name='GetCoursesInGroup' return='{Course}' arguments='string sGroup, bool bIncludeAutogen'>
 		Returns a table with all of the courses in the specified group.
 	</Function>
 	<Function name='GetExtraStageInfo' return='various' arguments='bool bExtra2, Style s'>
