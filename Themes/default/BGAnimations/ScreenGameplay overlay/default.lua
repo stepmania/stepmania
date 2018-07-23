@@ -59,7 +59,7 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 				local second_tween = string.find(pn, "P1") and 1 or -1
 				t[#t+1] = Def.ActorFrame {
 					InitCommand=cmd(x,life_x_position;y,SCREEN_CENTER_Y;rotationz,-90;);
-					OnCommand=cmd(addx,100*life_tween;sleep,1;decelerate,0.9;addx,100*second_tween);
+					OnCommand=cmd(addx,100*life_tween;sleep,0.25;decelerate,0.9;addx,100*second_tween);
 					OffCommand=cmd(sleep,1;decelerate,0.9;addx,100*life_tween;);
 					LoadActor(THEME:GetPathG("LifeMeter", "bar frame")) .. {
 					};

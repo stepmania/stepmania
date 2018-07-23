@@ -403,20 +403,6 @@ if GAMESTATE:IsHumanPlayer(PLAYER_2) == true then
 
 end;
 
-t[#t+1] = Def.BitmapText {
-		Font = "Common Italic Condensed",
-		Condition=GAMESTATE:HasEarnedExtraStage();
-		InitCommand=cmd(horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-244;zoom,1;diffuse,color("#EC3F99");diffusebottomedge,color("#AB3468");),
-		OnCommand=function(self)
-			local text = string.upper(THEME:GetString("ScreenEvaluation", "ExtraUnlocked"))
-			self:settext(text)
-			self:diffusealpha(0):zoomx(0.7):sleep(1.3):decelerate(0.3):diffusealpha(1):zoomx(1)
-		end;
-		OffCommand=function(self)
-			self:sleep(0.1):decelerate(0.3):diffusealpha(0)
-		end;
-	}
-
 t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
 
