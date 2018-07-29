@@ -57,18 +57,13 @@ const ThemeMetric<RageColor>	LIGHT_DFAILED_COLOR	( "DancingCamera", "DiffuseFail
 
 // Position of the model in X (one player)
 #define MODEL_X_ONE_PLAYER				THEME->GetMetricF("DancingCharacters","OnePlayerModelX")
-// Model spacing during Versus or Battle modes.
-#define MODEL_X_VERSUS					THEME->GetMetricF("DancingCharacters","TwoPlayersModelX")
 
 // As the name implies, this sets the ammount of beats that the camera will
 // stay in its current state until transitioning to the next camera tween.
 #define	AMM_BEATS_TIL_NEXTCAMERA			THEME->GetMetricF("DancingCamera","BeatsUntilNextCamPos")
 #define CAM_FOV						THEME->GetMetricF("DancingCamera","CameraFOV")
 
-// Since we only have two players, set those without changing the table too much.
-int VersusSpacing = (int)MODEL_X_VERSUS;
-const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = { VersusSpacing, -VersusSpacing };
-
+const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = { +8, -8 };
 const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = { -90, 90 };
 
 DancingCharacters::DancingCharacters(): m_bDrawDangerLight(false),
@@ -419,7 +414,7 @@ void DancingCharacters::DrawPrimitives()
 	 */
 }
 
-/*
+/*	2018 Jose Varela
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
  * 
