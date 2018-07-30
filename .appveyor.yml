@@ -33,6 +33,10 @@ install:
     choco install nsis -version 2.46.0.20150406
 before_build:
 - cmd: >-
+    choco upgrade cmake
+    
+    set path=C:\Program Files\CMake\bin;%path%
+    
     cd Build
 
     cmake -G "Visual Studio 14 2015" -T "v140_xp" -DWITH_IRC_POST_HOOK=ON ..
