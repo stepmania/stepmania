@@ -1,4 +1,4 @@
-version: 5.0.10.{build}.{branch}
+version: 5.1.{build}.{branch}
 environment:
   access_token:
     secure: vsDaeFdGCIGlIxWSEdsDomYtr5mKS5IPGHc4NwuDZ5D6mCna0STrDvMZ6IP6mOBK
@@ -9,7 +9,7 @@ os: Visual Studio 2015
 configuration: Release
 shallow_clone: false
 clone_depth: 1
-clone_folder: C:\Repos\wolfmania
+clone_folder: C:\Repos\Stepmania
 init:
 - cmd: >-
     git config --global credential.helper store
@@ -41,11 +41,11 @@ before_build:
 
     cmake -G "Visual Studio 14 2015" -T "v140_xp" -DWITH_IRC_POST_HOOK=ON ..
 build:
-  project: C:\Repos\wolfmania\Build\StepMania.sln
+  project: C:\Repos\StepMania\Build\StepMania.sln
   verbosity: normal
 after_build:
 - cmd: >-
-    msbuild "C:\Repos\wolfmania\Build\PACKAGE.vcxproj" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    msbuild "C:\Repos\StepMania\Build\PACKAGE.vcxproj" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 artifacts:
   - path: Build/*.exe
     type: exe
@@ -57,7 +57,7 @@ on_success:
 
     echo "Posting to IRC now..."
 
-    C:\Repos\wolfmania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%"  "%SM_COMMIT_SHORT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "%APPVEYOR_BUILD_URL%" "success"
+    C:\Repos\StepMania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%"  "%SM_COMMIT_SHORT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "%APPVEYOR_BUILD_URL%" "success"
 on_failure:
 - cmd: >-
     set GITHUB_API_FAILURE="{"""state""": """failure""", """target_url""": """%APPVEYOR_BUILD_URL%""", """description""": """Build failure on appveyor.""", """context""": """continuous-integration/appveyor"""}"
@@ -66,4 +66,4 @@ on_failure:
 
     echo "Posting to IRC now..."
 
-    C:\Repos\wolfmania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%" "%SM_COMMIT_SHORT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "%APPVEYOR_BUILD_URL%" "failure"
+    C:\Repos\StepMania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%" "%SM_COMMIT_SHORT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "%APPVEYOR_BUILD_URL%" "failure"
