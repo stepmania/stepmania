@@ -46,6 +46,7 @@ public:
 	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
 	void fix_bogus_sound_driver_pref(RString const& valid_setting);
+	void low_sample_count_workaround();
 
 private:
 	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;

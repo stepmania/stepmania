@@ -249,6 +249,54 @@ namespace
 		g_NewTheme= RString();
 	}
 }
+static bool m_bUpdatedDuringVBLANK = false;
+void GameLoop::UpdateAllButDraw(bool bRunningFromVBLANK)
+{
+	//if we are running our once per frame routine and we were already run from VBLANK, we did the work already
+	if (!bRunningFromVBLANK && m_bUpdatedDuringVBLANK)
+	{
+		m_bUpdatedDuringVBLANK = false;
+		return; //would it kill us to run it again or do we want to draw asap?
+	}
+	
+	//if vblank called us, we will tell the game loop we received an update for the frame it wants to process
+	if (bRunningFromVBLANK)	m_bUpdatedDuringVBLANK = true;
+	else m_bUpdatedDuringVBLANK = false;
+
+	// Update our stuff
+	float fDeltaTime = g_GameplayTimer.GetDeltaTime();
+
+	if (g_fConstantUpdateDeltaSeconds > 0)
+		fDeltaTime = g_fConstantUpdateDeltaSeconds;
+
+	CheckGameLoopTimerSkips(fDeltaTime);
+
+	fDeltaTime *= g_fUpdateRate;
+	
+	// Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data.
+	SOUNDMAN->Update();
+
+	/* Update song beat information -before- calling update on all the classes that
+	* depend on it. If you don't do this first, the classes are all acting on old
+	* information and will lag. (but no longer fatally, due to timestamping -glenn) */
+	SOUND->Update(fDeltaTime);
+	TEXTUREMAN->Update(fDeltaTime);
+	GAMESTATE->Update(fDeltaTime);
+	SCREENMAN->Update(fDeltaTime);
+	MEMCARDMAN->Update();
+	NSMAN->Update(fDeltaTime);
+
+	/* Important: Process input AFTER updating game logic, or input will be
+	* acting on song beat from last frame */
+	HandleInputEvents(fDeltaTime);
+
+	//bandaid for low max audio sample counter
+	SOUNDMAN->low_sample_count_workaround();
+	LIGHTSMAN->Update(fDeltaTime);
+	
+}
+
+
 
 void GameLoop::RunGameLoop()
 {
@@ -268,47 +316,19 @@ void GameLoop::RunGameLoop()
 			DoChangeTheme();
 		}
 
-		// Update
-		float fDeltaTime = g_GameplayTimer.GetDeltaTime();
-
-		if( g_fConstantUpdateDeltaSeconds > 0 )
-			fDeltaTime = g_fConstantUpdateDeltaSeconds;
-		
-		CheckGameLoopTimerSkips( fDeltaTime );
-
-		fDeltaTime *= g_fUpdateRate;
-
 		CheckFocus();
 
-		// Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data.
-		SOUNDMAN->Update();
-
-		/* Update song beat information -before- calling update on all the classes that
-		 * depend on it. If you don't do this first, the classes are all acting on old 
-		 * information and will lag. (but no longer fatally, due to timestamping -glenn) */
-		SOUND->Update( fDeltaTime );
-		TEXTUREMAN->Update( fDeltaTime );
-		GAMESTATE->Update( fDeltaTime );
-		SCREENMAN->Update( fDeltaTime );
-		MEMCARDMAN->Update();
-		NSMAN->Update( fDeltaTime );
-
-		/* Important: Process input AFTER updating game logic, or input will be
-		 * acting on song beat from last frame */
-		HandleInputEvents( fDeltaTime );
+		UpdateAllButDraw(false);
 
 		if( INPUTMAN->DevicesChanged() )
 		{
-			INPUTFILTER->Reset();	// fix "buttons stuck" if button held while unplugged
+			INPUTFILTER->Reset();	// fix "buttons stuck" once per frame if button held while unplugged
 			INPUTMAN->LoadDrivers();
 			RString sMessage;
 			if( INPUTMAPPER->CheckForChangedInputDevicesAndRemap(sMessage) )
 				SCREENMAN->SystemMessage( sMessage );
 		}
 
-		LIGHTSMAN->Update( fDeltaTime );
-
-		// Render
 		SCREENMAN->Draw();
 	}
 
