@@ -3,6 +3,63 @@ ________________________________________________________________________________
 The StepMania 5.1 Changelog covers all post-5.0.12 changes.
 ________________________________________________________________________________
 
+2018/08/02
+----------
+* [Sound] Fix audio drivers with a low sample count maximum value [chrispable]
+
+2018/07/30
+----------
+* [Lights] Disable minimaid by default [jousway]
+
+2018/07/29
+----------
+* [Characters] Add enhanced lighting and camera options for characters. [josevarelap]
+
+2018/07/17
+----------
+* [Lambda] Fix grade tiers in metrics [listenerjubatus]
+* [Noteskin] Fix mine graphic in Lambda noteskin. [listenerjubatus]
+ 
+2018/07/05
+----------
+* [Docs] fix LuaDoc for SONGMAN:GetCoursesInGroup() [dguzek]
+  
+2018/06/08
+----------
+* [Input] Preserve event timestamps in X11 input driver [geefr]
+
+2018/06/07
+----------
+* [Bug] linux event m_bShutdown undefined [geefr]
+ 
+2018/05/26
+----------
+* [Input] Initialise variables to ensure input thread is started  [geefr]
+
+2018/05/10
+----------
+* [Lights] Avoid crash in ~LightsDriver_SystemMessage [geefr]
+ 
+2018/04/20
+----------
+* [Actor] Moved display zbuffer clear to after notefields are drawn [mrthatkid]
+
+2018/03/08
+----------
+* [Actor] Improve DrawQuads batching in the font render. [ranma]
+
+2018/03/08
+----------
+* [Online] Add timeout to SMO sockets [nico-abram]
+
+2018/02/25
+----------
+* [Lights] Turn lights out on exit [geefr]
+
+2018/02/25
+----------
+* [Lambda] Round of adjustments.
+
 2018/02/09
 ----------
 * [Lambda] the ScreenFilter env will be nil sometimes, catch that [flameshadowxeroshin]
@@ -13,6 +70,7 @@ ________________________________________________________________________________
 ----------
 * [Anouncers] Make announcers repeat their lines less [mark-blum]
 * [General] Fix compiling on Linux by updating the libmmmagic binaries. [mark-blum]
+* [Lambda] Refresh based on consultation [listenerjubatus]
 
 2018/02/05
 ----------
