@@ -52,7 +52,7 @@ for i, v in ipairs(eval_lines) do
 	local cur_line = "JudgmentLine_" .. v
 	
 	t[#t+1] = Def.ActorFrame{
-		InitCommand=cmd(x,_screen.cx;y,(_screen.cy/1.6)+(spacing)),
+		InitCommand=cmd(x,_screen.cx;y,(_screen.cy/1.48)+(spacing)),
 		Def.Quad {
 			InitCommand=cmd(zoomto,400,36;diffuse,JudgmentLineToColor(cur_line);fadeleft,0.5;faderight,0.5;);
 			OnCommand=function(self)			
@@ -92,7 +92,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		local spacing = 38*i
 		eval_parts[#eval_parts+1] = Def.BitmapText {
 			Font = "_overpass 36px",
-			InitCommand=cmd(x,_screen.cx + step_count_offs;y,(_screen.cy/1.6)+(spacing);diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;diffusealpha,1.0;shadowlength,1),
+			InitCommand=cmd(x,_screen.cx + step_count_offs;y,(_screen.cy/1.48)+(spacing);diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;diffusealpha,1.0;shadowlength,1),
 			OnCommand=function(self)
 				self:settext(GetJLineValue(v, p))
 				if string.find(p, "P1") then
@@ -122,7 +122,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		},
 		
 		Def.Quad {
-			InitCommand=cmd(vertalign,top;y,60+grade_area_offset;zoomto,190,136;diffuse,color("#fce1a1");),
+			InitCommand=cmd(vertalign,top;y,60+grade_area_offset;zoomto,190,66;diffuse,color("#fce1a1");),
 			OnCommand=function(self)
 			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.4)
 			end,
@@ -141,7 +141,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	-- Primary score.
 	eval_parts[#eval_parts+1] = Def.BitmapText {
 		Font = "_overpass 36px",
-		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65)+grade_area_offset;diffuse,ColorMidTone(PlayerColor(p));zoom,1;shadowlength,1;maxwidth,180),
+		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65-26)+grade_area_offset;diffuse,ColorMidTone(PlayerColor(p));zoom,1;shadowlength,1;maxwidth,180),
 		OnCommand=function(self)
 			self:settext(GetPlScore(p, "primary")):diffusealpha(0):sleep(0.5):decelerate(0.3):diffusealpha(1)
 		end;
@@ -152,7 +152,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 	-- Secondary score.
 	eval_parts[#eval_parts+1] = Def.BitmapText {
 		Font = "_overpass 36px",
-		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65)+30+grade_area_offset;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
+		InitCommand=cmd(horizalign,center;x,_screen.cx + (grade_parts_offs);y,(_screen.cy-65-26)+30+grade_area_offset;diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;shadowlength,1),
 		OnCommand=function(self)
 			self:settext(GetPlScore(p, "secondary")):diffusealpha(0):sleep(0.6):decelerate(0.3):diffusealpha(1)
 		end;
