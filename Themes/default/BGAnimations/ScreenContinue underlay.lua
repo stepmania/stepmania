@@ -9,17 +9,19 @@ t[#t+1] = Def.ActorFrame {
 		OnCommand=cmd(diffuse,Color.Black;diffusealpha,0;linear,0.5;diffusealpha,0.25;
 					sleep,timer_seconds/2;  
 					linear,timer_seconds/2-0.5;diffusealpha,1);
+		OffCommand=cmd(stoptweening;sleep,0.4;decelerate,0.5;diffusealpha,1;);
 	};
 	-- Warning Fade
 	Def.Quad {
 		InitCommand=cmd(y,16;scaletoclipped,SCREEN_WIDTH,250);
 		OnCommand=cmd(diffuse,Color.Black;diffusealpha,0.5;
-					  linear,timer_seconds;zoomtoheight,200*0.75);
+					  linear,timer_seconds;zoomtoheight,180);
+		OffCommand=cmd(stoptweening;);
 	}
 };
 --
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(Center;y,SCREEN_CENTER_Y-48;zoom,1.5);
+	InitCommand=cmd(Center;y,SCREEN_CENTER_Y-56;zoom,1.5);
 	LoadFont("Common Fallback Font") .. {
 		Text="Continue?";
 		OnCommand=cmd(diffuse,color("#FF8312");diffusebottomedge,color("#FFD75B");shadowlength,1;strokecolor,color("#472211"););
