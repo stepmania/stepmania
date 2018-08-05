@@ -11,19 +11,35 @@ return Def.ActorFrame {
 						sleep,timer_seconds/2;  
 						linear,timer_seconds/2-0.5;diffusealpha,0.8),
 		},
-		-- Warning Fade
-		Def.Quad {
-			InitCommand=cmd(y,-4;scaletoclipped,SCREEN_WIDTH,164),
-			OnCommand=cmd(diffuse,Color.Black;diffusealpha,0.5;
-						  linear,timer_seconds;zoomtoheight,164*0.75),
-		}
 	},
-	--
+	
+	Def.Quad {
+		InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT),
+		OnCommand=cmd(diffuse,color("#000000");),
+	},	
+	
+	LoadActor("_diamond") .. {
+		InitCommand=cmd(diffusealpha,0;blend,'BlendMode_Add');
+		OnCommand=cmd(rotationz,0;zoom,0.5;diffusealpha,0.6;linear,2;zoom,1;diffusealpha,0);
+	};
+	
+	LoadActor("_sound") .. {
+		OnCommand=cmd(queuecommand,"Sound";);
+		SoundCommand=cmd(play);
+	};	
+	
 	LoadActor(THEME:GetPathG("ScreenGameOver","gameover"))..{
-		InitCommand=cmd(y,-16;shadowlength,2)
+		OnCommand=cmd(zoomx,1.1;diffusealpha,0;decelerate,0.6;diffusealpha,1;zoomx,1;);
 	},
-	LoadFont("Common Normal")..{
-		Text=ScreenString("Play again soon!"),
-		InitCommand=cmd(y,36;shadowlength,2)
-	}
+	
+	LoadFont("Common Condensed")..{
+		Text=ScreenString("Play again soon!");
+		InitCommand=cmd(y,68;shadowlength,2);
+		OnCommand=cmd(diffusealpha,0;sleep,2;linear,0.3;diffusealpha,1;);
+	},
+	
+	Def.Quad {
+		InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT);
+		OnCommand=cmd(diffuse,color("#a80b0b");diffusealpha,1;decelerate,0.4;diffusealpha,0;);
+	},	
 }
