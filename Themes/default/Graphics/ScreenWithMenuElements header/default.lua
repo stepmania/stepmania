@@ -62,7 +62,7 @@ t[#t+1] = Def.ActorFrame {
 t[#t+1] = LoadFont("Common Header") .. {
 	Name="HeaderTitle",
 	Text=Screen.String("HeaderText"),
-	InitCommand=cmd(zoom,1.0;x,-SCREEN_CENTER_X+110;y,49;horizalign,left;diffuse,color("#ffffff");shadowlength,1;),
+	InitCommand=cmd(zoom,1.0;x,-SCREEN_CENTER_X+110;y,49;horizalign,left;diffuse,color("#ffffff");shadowlength,1),
 	OnCommand=cmd(diffusealpha,0;sleep,0.5;smooth,0.3;diffusealpha,0.8),
 	UpdateScreenHeaderMessageCommand=function(self,param)
 		self:settext(param.Header)
@@ -74,11 +74,11 @@ t[#t+1] = LoadFont("Common Header") .. {
 	-- Name="HeaderSubTitle";
 	-- Text=Screen.String("HeaderSubText");
 	-- InitCommand=cmd(zoom,0.8;x,-SCREEN_CENTER_X+110;y,70;horizalign,left;diffuse,color("#ffffff");shadowlength,1;skewx,-0.1);
-	-- OnCommand=cmd(diffusealpha,0;sleep,0.55;smooth,0.3;diffusealpha,0.75;);
+	-- OnCommand=cmd(diffusealpha,0;sleep,0.55;smooth,0.3;diffusealpha,0.75);
 	-- UpdateScreenHeaderMessageCommand=function(self,param)
 		-- self:settext(param.Header);
 	-- end;
-	-- OffCommand=cmd(smooth,0.3;diffusealpha,0;);
+	-- OffCommand=cmd(smooth,0.3;diffusealpha,0);
 -- };
 
 return t

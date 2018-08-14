@@ -129,7 +129,7 @@ for i, v in ipairs(eval_lines) do
 	mid_pane[#mid_pane+1] = Def.ActorFrame{
 		InitCommand=cmd(x,_screen.cx;y,(_screen.cy/1.48)+(spacing)),
 		Def.Quad {
-			InitCommand=cmd(zoomto,400,36;diffuse,JudgmentLineToColor(cur_line);fadeleft,0.5;faderight,0.5;);
+			InitCommand=cmd(zoomto,400,36;diffuse,JudgmentLineToColor(cur_line);fadeleft,0.5;faderight,0.5);
 			OnCommand=function(self)			
 				self:diffusealpha(0):sleep(0.1 * i):decelerate(0.6):diffusealpha(1)
 			end;
@@ -169,7 +169,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		local spacing = 38*i
 		eval_parts[#eval_parts+1] = Def.BitmapText {
 			Font = "_overpass 36px",
-			InitCommand=cmd(x,_screen.cx + step_count_offs;y,(_screen.cy/1.48)+(spacing);diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;diffusealpha,1.0;shadowlength,1;maxwidth,120;),
+			InitCommand=cmd(x,_screen.cx + step_count_offs;y,(_screen.cy/1.48)+(spacing);diffuse,ColorDarkTone(PlayerColor(p));zoom,0.75;diffusealpha,1.0;shadowlength,1;maxwidth,120),
 			OnCommand=function(self)
 				self:settext(GetJLineValue(v, p))
 				if string.find(p, "P1") then
@@ -191,7 +191,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		
 		--Containers
 		Def.Quad {
-			InitCommand=cmd(zoomto,190,115;diffuse,ColorLightTone(PlayerColor(p));diffusebottomedge,color("#FEEFCA");),
+			InitCommand=cmd(zoomto,190,115;diffuse,ColorLightTone(PlayerColor(p));diffusebottomedge,color("#FEEFCA")),
 			OnCommand=function(self)
 			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.5)
 			end,
@@ -199,7 +199,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		},
 		
 		Def.Quad {
-			InitCommand=cmd(vertalign,top;y,60+grade_area_offset;zoomto,190,136;diffuse,color("#fce1a1");),
+			InitCommand=cmd(vertalign,top;y,60+grade_area_offset;zoomto,190,136;diffuse,color("#fce1a1")),
 			OnCommand=function(self)
 			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.4)
 			end,
@@ -207,7 +207,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		},
 		
 		LoadActor(THEME:GetPathG("GradeDisplay", "Grade " .. p_grade)) .. {
-			InitCommand=cmd(zoom,0.75;);
+			InitCommand=cmd(zoom,0.75);
 			OnCommand=function(self)
 			        self:diffusealpha(0):zoom(1):sleep(0.63):decelerate(0.4):zoom(0.75):diffusealpha(1)
 					if STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetStageAward() then
@@ -221,7 +221,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		
 		Def.BitmapText {
 			Font = "_roboto condensed 24px",
-			InitCommand=cmd(diffuse,Color.White;zoom,1;addy,38;maxwidth,160;uppercase,true;diffuse,ColorDarkTone(PlayerDarkColor(p));diffusetopedge,ColorMidTone(PlayerColor(p));shadowlength,1;),
+			InitCommand=cmd(diffuse,Color.White;zoom,1;addy,38;maxwidth,160;uppercase,true;diffuse,ColorDarkTone(PlayerDarkColor(p));diffusetopedge,ColorMidTone(PlayerColor(p));shadowlength,1),
 			OnCommand=function(self)
 				if STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetStageAward() then
 					self:settext(THEME:GetString( "StageAward", ToEnumShortString(STATSMAN:GetCurStageStats():GetPlayerStageStats(p):GetStageAward()) ))
@@ -290,18 +290,18 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 			self:sleep(0.13 * i):decelerate(0.6):diffusealpha(0)
 			end;	
 				Def.Quad {
-					InitCommand=cmd(zoomto,190,28;diffuse,color("#fce1a1");diffusealpha,0.4;);
+					InitCommand=cmd(zoomto,190,28;diffuse,color("#fce1a1");diffusealpha,0.4);
 				};
 				Def.BitmapText {
 					Font = "Common Condensed",
-					InitCommand=cmd(zoom,0.8;x,-80;horizalign,left;diffuse,color("0,0,0,0.75");shadowlength,1;),
+					InitCommand=cmd(zoom,0.8;x,-80;horizalign,left;diffuse,color("0,0,0,0.75");shadowlength,1),
 					BeginCommand=function(self)
 						self:settext(label .. ":")
 					end
 				};
 				Def.BitmapText {
 					Font = "_overpass 36px",
-					InitCommand=cmd(zoom,0.5;x,83;horizalign,right;maxwidth,200;diffuse,ColorDarkTone(PlayerColor(p));shadowlength,1;),
+					InitCommand=cmd(zoom,0.5;x,83;horizalign,right;maxwidth,200;diffuse,ColorDarkTone(PlayerColor(p));shadowlength,1),
 					BeginCommand=function(self)
 						self:settext(performance .. "/" .. possible)
 					end
@@ -332,14 +332,14 @@ if GAMESTATE:IsHumanPlayer(PLAYER_1) == true then
 	-- Difficulty banner
 	local grade_parts_offs = -320
 	t[#t+1] = Def.ActorFrame {
-	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-96+grade_area_offset;visible,not GAMESTATE:IsCourseMode(););
-	  OnCommand=cmd(zoomx,0.3;diffusealpha,0;sleep,0.5;decelerate,0.4;zoomx,1;diffusealpha,1;);
-	  OffCommand=cmd(decelerate,0.4;diffusealpha,0;);
+	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-96+grade_area_offset;visible,not GAMESTATE:IsCourseMode());
+	  OnCommand=cmd(zoomx,0.3;diffusealpha,0;sleep,0.5;decelerate,0.4;zoomx,1;diffusealpha,1);
+	  OffCommand=cmd(decelerate,0.4;diffusealpha,0);
 	  LoadFont("Common Fallback") .. {
 			InitCommand=cmd(zoom,1;horizalign,center;shadowlength,1);
-			OnCommand=cmd(playcommand,"Set";);
-			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set";);
-			ChangedLanguageDisplayMessageCommand=cmd(playcommand,"Set";);
+			OnCommand=cmd(playcommand,"Set");
+			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+			ChangedLanguageDisplayMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
 			stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 			local song = GAMESTATE:GetCurrentSong();
@@ -370,14 +370,14 @@ if GAMESTATE:IsHumanPlayer(PLAYER_2) == true then
 	if GAMESTATE:IsCourseMode() == false then
 	local grade_parts_offs = 320	
 	t[#t+1] = Def.ActorFrame {
-	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-96+grade_area_offset;visible,not GAMESTATE:IsCourseMode(););
-	  OnCommand=cmd(zoomx,0.3;diffusealpha,0;sleep,0.5;decelerate,0.4;zoomx,1;diffusealpha,1;);
-	  OffCommand=cmd(decelerate,0.4;diffusealpha,0;);
+	  InitCommand=cmd(horizalign,center;x,_screen.cx + grade_parts_offs;y,_screen.cy-96+grade_area_offset;visible,not GAMESTATE:IsCourseMode());
+	  OnCommand=cmd(zoomx,0.3;diffusealpha,0;sleep,0.5;decelerate,0.4;zoomx,1;diffusealpha,1);
+	  OffCommand=cmd(decelerate,0.4;diffusealpha,0);
 	  LoadFont("Common Fallback") .. {
 			InitCommand=cmd(zoom,1;horizalign,center;shadowlength,1);
-			OnCommand=cmd(playcommand,"Set";);
-			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set";);
-			ChangedLanguageDisplayMessageCommand=cmd(playcommand,"Set";);
+			OnCommand=cmd(playcommand,"Set");
+			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+			ChangedLanguageDisplayMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
 			stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 			local song = GAMESTATE:GetCurrentSong();
@@ -410,12 +410,12 @@ if gameplay_pause_count > 0 then
 	t[#t+1]= Def.BitmapText{
 		Font= "Common Italic Condensed",
 		Text= THEME:GetString("PauseMenu", "pause_count") .. ": " .. gameplay_pause_count,
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-130;shadowlength,1;maxwidth,140;);
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-130;shadowlength,1;maxwidth,140);
 		OnCommand=function(self)
 			self:diffuse(color("#FF0000")):diffusebottomedge(color("#512232")):zoom(0.8);
 			self:diffusealpha(0):sleep(1.5):smooth(0.3):diffusealpha(1);
 		end;
-		OffCommand=cmd(sleep,0.2;decelerate,0.3;diffusealpha,0;);
+		OffCommand=cmd(sleep,0.2;decelerate,0.3;diffusealpha,0);
 	}
 end
 

@@ -20,7 +20,7 @@ local t = Def.ActorFrame{
 
 if netConnected then
 	t[#t+1] = LoadFont("Common Condensed") .. {
-		InitCommand=cmd(y,16;horizalign,left;zoom,0.5875;shadowlength,1;diffuse,color("#268129");diffusebottomedge,color("#153F17"););
+		InitCommand=cmd(y,16;horizalign,left;zoom,0.5875;shadowlength,1;diffuse,color("#268129");diffusebottomedge,color("#153F17"));
 		BeginCommand=function(self)
 			self:settext( string.format(Screen.String("Connected to %s"), GetServerName()) );
 		end;

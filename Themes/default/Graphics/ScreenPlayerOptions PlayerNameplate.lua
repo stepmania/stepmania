@@ -28,19 +28,19 @@ local t = Def.ActorFrame {
 	LoadFont("Common Condensed") .. {
 		Text=ToEnumShortString(PlayerNumber);
 		Name="PlayerShortName",
-		InitCommand=cmd(x,-127;maxwidth,32;zoom,0.75;),
-		OnCommand=cmd(diffuse,ColorDarkTone(PlayerColor(PlayerNumber));)
+		InitCommand=cmd(x,-127;maxwidth,32;zoom,0.75),
+		OnCommand=cmd(diffuse,ColorDarkTone(PlayerColor(PlayerNumber)))
 	},
 	LoadFont("_overpass 36px") .. {
 		Text=bpm_text;
 		Name="BPMRangeOld",
 		InitCommand=cmd(x,-60;maxwidth,88/bpm_text_zoom),
-		OnCommand=cmd(zoom,bpm_text_zoom;diffuse,ColorDarkTone(PlayerColor(PlayerNumber));)
+		OnCommand=cmd(zoom,bpm_text_zoom;diffuse,ColorDarkTone(PlayerColor(PlayerNumber)))
 	},
 	LoadActor(THEME:GetPathG("_StepsDisplayListRow","arrow")) .. {
 		Name="Seperator",
 		InitCommand=cmd(x,4);
-		OnCommand=cmd(diffuse,ColorDarkTone(PlayerColor(PlayerNumber));)
+		OnCommand=cmd(diffuse,ColorDarkTone(PlayerColor(PlayerNumber)))
 	},
 	LoadFont("_overpass 36px") .. {
 		Text="100 - 200000";
@@ -51,8 +51,8 @@ local t = Def.ActorFrame {
 			local speed, mode= GetSpeedModeAndValueFromPoptions(PlayerNumber)
 			self:playcommand("SpeedChoiceChanged", {pn= PlayerNumber, mode= mode, speed= speed})
 		end,
-		BPMWillNotChangeCommand=cmd(stopeffect;diffuse,ColorDarkTone(PlayerColor(PlayerNumber));),
-		BPMWillChangeCommand=cmd(diffuseshift;effectcolor1,Color.Black;effectcolor2,ColorMidTone(PlayerColor(PlayerNumber));),
+		BPMWillNotChangeCommand=cmd(stopeffect;diffuse,ColorDarkTone(PlayerColor(PlayerNumber))),
+		BPMWillChangeCommand=cmd(diffuseshift;effectcolor1,Color.Black;effectcolor2,ColorMidTone(PlayerColor(PlayerNumber))),
 		SpeedChoiceChangedMessageCommand= function(self, param)
 			if param.pn ~= PlayerNumber then return end
 			local text= ""

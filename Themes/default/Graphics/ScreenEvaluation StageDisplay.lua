@@ -20,7 +20,7 @@ t[#t+1] = Def.ActorFrame {
 		end
 	};
 	LoadFont("Common Italic Condensed") .. {
-		InitCommand=cmd(y,-1;zoom,1;shadowlength,1;uppercase,true;);
+		InitCommand=cmd(y,-1;zoom,1;shadowlength,1;uppercase,true);
 		BeginCommand=function(self)
 			local top = SCREENMAN:GetTopScreen()
 			if top then

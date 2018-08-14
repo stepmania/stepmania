@@ -1,3 +1,5 @@
 return LoadActor(THEME:GetPathG("MusicWheelItem", "ModeItem")) .. {
-	OnCommand=cmd(diffuse,ScreenColor(SCREENMAN:GetTopScreen():GetName()););
+	OnCommand=function(self)
+		self:diffuse(ScreenColor(SCREENMAN:GetTopScreen():GetName()));
+	end;
 };

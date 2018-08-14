@@ -2,11 +2,11 @@
 if ThemePrefs.Get("FancyUIBG") then
 	return Def.ActorFrame {
 			Def.Quad {
-				InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color("#18060C");diffusetopedge,color("#000000"););
+				InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color("#18060C");diffusetopedge,color("#000000"));
 			};
 			
 			LoadActor("_base") .. {
-			InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;blend,'BlendMode_Add';);
+			InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;blend,'BlendMode_Add');
 			},
 			
 			LoadActor("_barcode") .. {
@@ -22,11 +22,11 @@ if ThemePrefs.Get("FancyUIBG") then
 else
 	return 	Def.ActorFrame {
 		Def.Quad {
-			InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color("#18060C");diffusetopedge,color("#000000"););
+			InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color("#18060C");diffusetopedge,color("#000000"));
 		};
 			
 		LoadActor("_base") .. {
-			InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;blend,'BlendMode_Add';);
+			InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;blend,'BlendMode_Add');
 		},
 	};
 end

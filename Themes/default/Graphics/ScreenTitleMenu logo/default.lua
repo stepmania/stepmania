@@ -6,8 +6,8 @@ local t = Def.ActorFrame{
 			LoadActor("_text");
 			LoadActor("_text")..{
 				Name="TextGlow";
-				InitCommand=cmd(blend,Blend.Add;diffusealpha,0.05;);
-				OnCommand=cmd(glowshift;effectperiod,5;effectcolor1,color("1,1,1,0.25");effectcolor2,color("1,1,1,1"););
+				InitCommand=cmd(blend,Blend.Add;diffusealpha,0.05);
+				OnCommand=cmd(glowshift;effectperiod,5;effectcolor1,color("1,1,1,0.25");effectcolor2,color("1,1,1,1"));
 			};
 		};
 	};

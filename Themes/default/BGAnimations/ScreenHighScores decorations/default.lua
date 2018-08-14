@@ -27,13 +27,13 @@ for i=1,NumColumns do
 		};
 		LoadFont("StepsDisplayListRow description") .. {
 			InitCommand=cmd(uppercase,true;settext,CustomDifficultyToLocalizedString(s));
-			OnCommand=cmd(zoom,0.675;maxwidth,80/0.675;diffuse,CustomDifficultyToDarkColor(s););
+			OnCommand=cmd(zoom,0.675;maxwidth,80/0.675;diffuse,CustomDifficultyToDarkColor(s));
 		};
 	};
 end
 
 t[#t+1] = LoadFont("Common Normal") .. {
-	InitCommand=cmd(settext,stString;x,SCREEN_CENTER_X-220;y,SCREEN_CENTER_Y-220;);
+	InitCommand=cmd(settext,stString;x,SCREEN_CENTER_X-220;y,SCREEN_CENTER_Y-220);
 	OnCommand=cmd(diffusebottomedge,color("0.75,0.75,0.75");shadowlength,2);
 };
 

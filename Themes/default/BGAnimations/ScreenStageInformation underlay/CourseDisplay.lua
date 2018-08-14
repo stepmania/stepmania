@@ -23,7 +23,7 @@ local t = Def.ActorFrame{
 		};
 	-- alternate background
 	Def.Sprite{
-		InitCommand=cmd(Center;);
+		InitCommand=cmd(Center);
 		BeginCommand=cmd(LoadFromCurrentSongBackground;scale_or_crop_background;diffusealpha,0);
 		OnCommand=cmd(playcommand,"Show");
 		ShowCommand=function(self)

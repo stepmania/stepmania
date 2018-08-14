@@ -10,7 +10,7 @@ function GetLocalProfiles()
 		local ProfileCard = Def.ActorFrame {
 --[[ 			Def.Quad {
 				InitCommand=cmd(zoomto,200,1;y,40/2);
-				OnCommand=cmd(diffuse,Color('Outline'););
+				OnCommand=cmd(diffuse,Color('Outline'));
 			}; --]]
 			LoadFont("Common Fallback") .. {
 				Text=profile:GetDisplayName();
@@ -60,7 +60,7 @@ function LoadPlayerStuff(Player)
 		LoadFont("Common Italic Condensed") .. {
 			Text="Press &START; to join";
 			InitCommand=cmd(shadowlength,1;zoom,1.25);
-			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5");strokecolor,color("#4A1110"););
+			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5");strokecolor,color("#4A1110"));
 		};
 	};
 	
@@ -73,7 +73,7 @@ function LoadPlayerStuff(Player)
 		InitCommand=cmd(y,-2);
 		Def.Quad {
 			InitCommand=cmd(zoomto,270,48);
-			OnCommand=cmd(diffuse,PlayerDarkColor(Player);fadeleft,0.1;faderight,0.1;);
+			OnCommand=cmd(diffuse,PlayerDarkColor(Player);fadeleft,0.1;faderight,0.1);
 		};
 	};
 
@@ -250,7 +250,7 @@ local t = Def.ActorFrame {
 			OffCommand=cmd(decelerate,0.3;diffusealpha,0);
 			-- PlayerJoinedMessageCommand=function(self,param)
 				-- if param.Player == PLAYER_1 then
-					-- (cmd(;zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
+					-- (cmd(;zoom,1.15;bounceend,0.175;zoom,1.0))(self);
 				-- end;
 			-- end;
 			children = LoadPlayerStuff(PLAYER_1);
@@ -262,7 +262,7 @@ local t = Def.ActorFrame {
 			OffCommand=cmd(decelerate,0.3;diffusealpha,0);
 			-- PlayerJoinedMessageCommand=function(self,param)
 				-- if param.Player == PLAYER_2 then
-					-- (cmd(zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
+					-- (cmd(zoom,1.15;bounceend,0.175;zoom,1.0))(self);
 				-- end;
 			-- end;
 			children = LoadPlayerStuff(PLAYER_2);

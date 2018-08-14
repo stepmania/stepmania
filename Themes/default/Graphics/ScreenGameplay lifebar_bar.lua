@@ -86,19 +86,19 @@ t[#t+1] = Def.ActorFrame {
 	Def.Quad {
 		Name="Background",
 		InitCommand=cmd(zoomto,life_meter_width,life_meter_height),
-		OnCommand=cmd(diffuse,color("#32373E");),
-		AliveCommand=cmd(stopeffect;diffuse,color("#32373E");),
+		OnCommand=cmd(diffuse,color("#32373E")),
+		AliveCommand=cmd(stopeffect;diffuse,color("#32373E")),
 		DangerCommand=cmd(diffuseshift;effectcolor2,ColorMidTone(Color.Red);effectcolor1,ColorDarkTone(Color.Red)),
-		DeadCommand=cmd(stopeffect;diffuse,color("#000000");),
+		DeadCommand=cmd(stopeffect;diffuse,color("#000000")),
 	},
 	Def.Quad {
 		Name="Fill",
 		InitCommand=cmd(x,-life_meter_width/2;zoomto,life_meter_width,life_meter_height;horizalign,left),
-		OnCommand=cmd(diffuse,PlayerColor(pn);),
+		OnCommand=cmd(diffuse,PlayerColor(pn)),
 		--
-		HotCommand=cmd(diffuse,color("#ff9232");diffuseshift;effectclock,'beat';effectcolor1,color("#ff9232");effectcolor2,color("#ffe263");),
+		HotCommand=cmd(diffuse,color("#ff9232");diffuseshift;effectclock,'beat';effectcolor1,color("#ff9232");effectcolor2,color("#ffe263")),
 		AliveCommand=cmd(diffuse,PlayerColor(pn);stopeffect),
-		DangerCommand=cmd(diffuse,Color.Red;diffuseshift;effectclock,'beat';effectcolor1,Color.Red;effectcolor2,color("#FF797C");),
+		DangerCommand=cmd(diffuse,Color.Red;diffuseshift;effectclock,'beat';effectcolor1,Color.Red;effectcolor2,color("#FF797C")),
 		DeadCommand=cmd(diffuse,Color.Red;stopeffect)
 	},
 	MakeSeperators(),
@@ -106,11 +106,11 @@ t[#t+1] = Def.ActorFrame {
 		Name="Tip",
 		InitCommand=cmd(basezoomx,life_meter_tip_width;basezoomy,life_meter_height),
 		--
-		OnCommand=cmd(diffuse,ColorLightTone(PlayerColor(pn));),
+		OnCommand=cmd(diffuse,ColorLightTone(PlayerColor(pn))),
 		--
 		HotCommand=cmd(diffuse,color("#FFED31");glowshift;effectclock,'beat'),
 		AliveCommand=cmd(diffuse,ColorLightTone(PlayerColor(pn));stopeffect),
-		DangerCommand=cmd(diffuse,Color.Red;diffuseshift;effectclock,'beat';effectcolor1,color("#000000");effectcolor2,Color.Red;),
+		DangerCommand=cmd(diffuse,Color.Red;diffuseshift;effectclock,'beat';effectcolor1,color("#000000");effectcolor2,Color.Red),
 		DeadCommand=cmd(diffuse,Color.Red;stopeffect)
 	}
 }

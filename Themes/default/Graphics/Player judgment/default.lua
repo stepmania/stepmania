@@ -85,25 +85,25 @@ t[#t+1] = Def.ActorFrame {
 		Name="ProtimingGraphBG";
 		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth,16);
 		ResetCommand=cmd(finishtweening;diffusealpha,0.8;visible,false);
-		OnCommand=cmd(diffuse,Color("Black");diffusetopedge,color("0.1,0.1,0.1,1");diffusealpha,0.8;shadowlength,2;);
+		OnCommand=cmd(diffuse,Color("Black");diffusetopedge,color("0.1,0.1,0.1,1");diffusealpha,0.8;shadowlength,2);
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW3";
 		InitCommand=cmd(visible,false;y,32;zoomto,ProtimingWidth-4,16-4);
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
-		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W3"];);
+		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W3"]);
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW2";
 		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW2"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,ProtimingWidth-4),16-4);
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
-		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W2"];);
+		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W2"]);
 	};
 	Def.Quad {
 		Name="ProtimingGraphWindowW1";
 		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW1"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,ProtimingWidth-4),16-4);
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
-		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W1"];);
+		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W1"]);
 	};
 	Def.Quad {
 		Name="ProtimingGraphUnderlay";
@@ -113,19 +113,19 @@ t[#t+1] = Def.ActorFrame {
 	};
 	Def.Quad {
 		Name="ProtimingGraphFill";
-		InitCommand=cmd(visible,false;y,32;zoomto,0,16-4;horizalign,left;);
+		InitCommand=cmd(visible,false;y,32;zoomto,0,16-4;horizalign,left);
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
-		OnCommand=cmd(diffuse,Color("Red"););
+		OnCommand=cmd(diffuse,Color("Red"));
 	};
 	Def.Quad {
 		Name="ProtimingGraphAverage";
-		InitCommand=cmd(visible,false;y,32;zoomto,2,7;);
+		InitCommand=cmd(visible,false;y,32;zoomto,2,7);
 		ResetCommand=cmd(finishtweening;diffusealpha,0.85;visible,false);
 		OnCommand=cmd(diffuse,Color("Orange");diffusealpha,0.85);
 	};
 	Def.Quad {
 		Name="ProtimingGraphCenter";
-		InitCommand=cmd(visible,false;y,32;zoomto,2,16-4;);
+		InitCommand=cmd(visible,false;y,32;zoomto,2,16-4);
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
 		OnCommand=cmd(diffuse,Color("White");diffusealpha,1);
 	};

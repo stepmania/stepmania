@@ -88,24 +88,24 @@ local t = Def.ActorFrame {
 		if param.FullComboW1 then
 			c.Number:diffuse(color("#00aeef"));
 			c.Number:glowshift();
-			(cmd(diffuse,color("#C7E5F0");diffusebottomedge,color("#00aeef");strokecolor,color("#0E3D53");))(c.Label);
+			(cmd(diffuse,color("#C7E5F0");diffusebottomedge,color("#00aeef");strokecolor,color("#0E3D53")))(c.Label);
 		elseif param.FullComboW2 then
 			c.Number:diffuse(color("#F3D58D"));
 			c.Number:glowshift();
-			(cmd(diffuse,color("#FAFAFA");diffusebottomedge,color("#F3D58D");strokecolor,color("#53450E");))(c.Label);
+			(cmd(diffuse,color("#FAFAFA");diffusebottomedge,color("#F3D58D");strokecolor,color("#53450E")))(c.Label);
 		elseif param.FullComboW3 then
 			c.Number:diffuse(color("#94D658"));
 			c.Number:stopeffect();
-			(cmd(diffuse,color("#CFE5BC");diffusebottomedge,color("#94D658");strokecolor,color("#12530E");))(c.Label);
+			(cmd(diffuse,color("#CFE5BC");diffusebottomedge,color("#94D658");strokecolor,color("#12530E")))(c.Label);
 		elseif param.Combo then
 			c.Number:diffuse(color("#FBE9DD"));
 -- 			c.Number:diffuse(PlayerColor(player));
 			c.Number:stopeffect();
-			(cmd(diffuse,color("#F5CB92");diffusebottomedge,color("#EFA97A");strokecolor,color("#602C1B");))(c.Label);
+			(cmd(diffuse,color("#F5CB92");diffusebottomedge,color("#EFA97A");strokecolor,color("#602C1B")))(c.Label);
 		else
 			c.Number:diffuse(color("#FBE9DD"));
 			c.Number:stopeffect();
-			(cmd(diffuse,color("#F5CB92");diffusebottomedge,color("#EFA97A");strokecolor,color("#602C1B");))(c.Label);
+			(cmd(diffuse,color("#F5CB92");diffusebottomedge,color("#EFA97A");strokecolor,color("#602C1B")))(c.Label);
 		end
 		-- Pulse
 		Pulse( c.Number, param );

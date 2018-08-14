@@ -45,7 +45,7 @@ for idx=1,NumColumns do
 	};
 	Scores[#Scores+1] = LoadActor("empty") .. {
 		Name = idx .. "Empty";
-		InitCommand=cmd(x,x_pos;);
+		InitCommand=cmd(x,x_pos);
 		OnCommand=cmd(zoom,0.75);
 	};
 	
