@@ -227,4 +227,10 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 			};
 		};
 	};
+	
+	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+		t[#t+1] = LoadActor("_fcsplash", pn) .. {
+		};
+	end;
+
 return t
