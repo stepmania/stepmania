@@ -131,13 +131,13 @@ t[#t+1] = LoadActor(THEME:GetPathG("FullCombo", "W3 text")) .. {
 };
 
 -- Sound
--- t[#t+1] = LoadActor("_splash") .. {
-	-- OffCommand=function(self)
-	-- local fct = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
-		-- if fct:FullCombo() then
-			-- self:play();
-		-- end;
-	-- end;
--- };	
+t[#t+1] = LoadActor("_bolt") .. {
+	OffCommand=function(self)
+	local fct = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
+		if fct:FullCombo() then
+			self:play();
+		end;
+	end;
+};	
 
 return t;
