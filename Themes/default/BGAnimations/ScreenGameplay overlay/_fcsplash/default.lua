@@ -4,17 +4,14 @@ local pn = ...;
 assert(pn);
 
 local t = Def.ActorFrame{};
-
-local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player');
-local NumPlayers = GAMESTATE:GetNumPlayersEnabled();
-local NumSides = GAMESTATE:GetNumSidesJoined();
 local pStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
 
 local function GetPosition(pn)
-	if IsUsingSoloSingles and NumPlayers == 1 and NumSides == 1 then return SCREEN_CENTER_X; end;
-
-	return THEME:GetMetric("ScreenGameplay","Player".. ToEnumShortString(pn) .. "MiscX");
-
+	if Center1Player() then 
+		return SCREEN_CENTER_X
+	else
+		return THEME:GetMetric("ScreenGameplay","Player".. ToEnumShortString(pn) .. "MiscX");
+	end;
 end;
 
 -- Reuse screen filter code for width-based explosion
