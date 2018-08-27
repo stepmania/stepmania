@@ -205,6 +205,7 @@ void InputHandler_X11::Update()
 			}
 
 			// This is a new event so the last release was not a repeat.
+			lastEvent.type = 0;
 			RegisterKeyEvent( event.xkey.time, false, lastDB );
 		}
 
