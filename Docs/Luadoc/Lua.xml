@@ -9,6 +9,8 @@
 		<Function name='AreStagePlayerModsForced'/>
 		<Function name='AreStageSongModsForced'/>
 		<Function name='ArgsIfPlayerJoinedOrNil'/>
+		<Function name='BGFitChoiceExample'/>
+		<Function name='BGFitInputActor'/>
 		<Function name='Basename'/>
 		<Function name='BoostColor'/>
 		<Function name='Brightness'/>
@@ -24,6 +26,11 @@
 		<Function name='ComboPerRow'/>
 		<Function name='ComboTransformCommand'/>
 		<Function name='ComboUnderField'/>
+		<Function name='ConfAspectRatio'/>
+		<Function name='ConfDisplayMode'/>
+		<Function name='ConfDisplayResolution'/>
+		<Function name='ConfFullscreenType'/>
+		<Function name='ConfRefreshRate'/>
 		<Function name='ConnectToServer'/>
 		<Function name='CourseDifficultyToLocalizedString'/>
 		<Function name='CourseTypeToLocalizedString'/>
@@ -42,11 +49,13 @@
 		<Function name='FormatNumberAndSuffix'/>
 		<Function name='FormatPercentScore'/>
 		<Function name='GameCompatibleModes'/>
-		<Function name='GamePrefDefaultFail'/>
+		<Function name='GameOverOrContinue'/>
+		<Function name='GameplayMargins'/>
 		<Function name='GetCodeForGame'/>
 		<Function name='GetCoursesToShowRanking'/>
 		<Function name='GetCustomDifficulty'/>
 		<Function name='GetDefaultOptionLines'/>
+		<Function name='GetDisplayRatesForResolution'/>
 		<Function name='GetEditModeSubScreens'/>
 		<Function name='GetExtraColorThreshold'/>
 		<Function name='GetGamePref'/>
@@ -63,6 +72,7 @@
 		<Function name='GetScreenAspectRatio'/>
 		<Function name='GetServerName'/>
 		<Function name='GetSongBackground'/>
+		<Function name='GetSpeedModeAndValueFromPoptions'/>
 		<Function name='GetTapPosition'/>
 		<Function name='GetThemeAspectRatio'/>
 		<Function name='GetThemePref'/>
@@ -87,6 +97,7 @@
 		<Function name='InitGamePrefs'/>
 		<Function name='InitUserPrefs'/>
 		<Function name='IsArcade'/>
+		<Function name='IsCourse'/>
 		<Function name='IsFreePlay'/>
 		<Function name='IsGame'/>
 		<Function name='IsHome'/>
@@ -118,12 +129,14 @@
 		<Function name='OldStyleStringToDifficulty'/>
 		<Function name='OptionRowProTiming'/>
 		<Function name='OptionRowScreenFilter'/>
+		<Function name='OptionsNavigationMode'/>
 		<Function name='OptionsRandomJukebox'/>
 		<Function name='OptionsRowTest'/>
 		<Function name='OptionsWeight'/>
 		<Function name='PeakComboAwardToLocalizedString'/>
 		<Function name='PlayModeToLocalizedString'/>
 		<Function name='PlayerColor'/>
+		<Function name='PlayerDarkColor'/>
 		<Function name='PlayerNumberToLocalizedString'/>
 		<Function name='PlayerNumberToString'/>
 		<Function name='PlayerScoreColor'/>
@@ -137,7 +150,6 @@
 		<Function name='ReadGamePrefFromFile'/>
 		<Function name='ReadPrefFromFile'/>
 		<Function name='ReportStyle'/>
-		<Function name='ResetDefaultFail'/>
 		<Function name='ResolveRelativePath'/>
 		<Function name='RoutineSkinP1'/>
 		<Function name='RoutineSkinP2'/>
@@ -146,7 +158,10 @@
 		<Function name='SaveProfileCustom'/>
 		<Function name='SaveScreenshot'/>
 		<Function name='ScoreKeeperClass'/>
+		<Function name='ScreenColor'/>
 		<Function name='ScreenMetric'/>
+		<Function name='ScreenSelectStyleChoices'/>
+		<Function name='ScreenSelectStylePositions'/>
 		<Function name='ScreenString'/>
 		<Function name='Second'/>
 		<Function name='SecondsToHHMMSS'/>
@@ -158,18 +173,13 @@
 		<Function name='SelectMusicOrCourse'/>
 		<Function name='SelectProfileKeys'/>
 		<Function name='Serialize'/>
-		<Function name='SetFail'/>
 		<Function name='SetGamePref'/>
 		<Function name='SetThemePref'/>
 		<Function name='SetUserPref'/>
 		<Function name='ShowHoldJudgments'/>
 		<Function name='ShowStandardDecoration'/>
-		<Function name='SongMeterDisplayCommand'/>
-		<Function name='SongMeterDisplayX'/>
-		<Function name='SongMeterDisplayY'/>
-		<Function name='SongPrefFail'/>
 		<Function name='SortOrderToLocalizedString'/>
-		<Function name='SpeedModIncMultiple'/>
+		<Function name='SpeedModIncLarge'/>
 		<Function name='SpeedModIncSize'/>
 		<Function name='SpeedMods'/>
 		<Function name='StageAwardToLocalizedString'/>
@@ -190,9 +200,9 @@
 		<Function name='ToEnumShortString'/>
 		<Function name='Trace'/>
 		<Function name='TrailToCustomDifficulty'/>
+		<Function name='TwoPartSelection'/>
 		<Function name='URLEncode'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
-		<Function name='update_centering'/>
 		<Function name='Var'/>
 		<Function name='VersionDate'/>
 		<Function name='VersionTime'/>
@@ -203,25 +213,33 @@
 		<Function name='WriteGamePrefToFile'/>
 		<Function name='WritePrefToFile'/>
 		<Function name='Year'/>
+		<Function name='alias_one'/>
+		<Function name='alias_set'/>
 		<Function name='approach'/>
 		<Function name='assert'/>
+		<Function name='check_stop_course_early'/>
 		<Function name='clamp'/>
 		<Function name='class'/>
 		<Function name='collectgarbage'/>
 		<Function name='color'/>
 		<Function name='commify'/>
+		<Function name='convert_text_to_indented_lines'/>
 		<Function name='convert_xml_bgs'/>
+		<Function name='create_bezier'/>
+		<Function name='create_spline'/>
 		<Function name='dofile'/>
 		<Function name='error'/>
 		<Function name='fapproach'/>
 		<Function name='find_missing_strings_in_theme_translations'/>
+		<Function name='force_to_range'/>
+		<Function name='foreach_by_sorted_keys'/>
 		<Function name='foreach_ordered'/>
 		<Function name='gcinfo'/>
+		<Function name='get_music_file_length'/>
+		<Function name='get_sound_driver_list'/>
 		<Function name='getenv'/>
 		<Function name='getfenv'/>
 		<Function name='getmetatable'/>
-		<Function name='get_music_file_length'/>
-		<Function name='get_sound_driver_list'/>
 		<Function name='ipairs'/>
 		<Function name='ivalues'/>
 		<Function name='join'/>
@@ -230,23 +248,29 @@
 		<Function name='load'/>
 		<Function name='loadfile'/>
 		<Function name='loadstring'/>
+		<Function name='make_camel_aliases'/>
 		<Function name='mbstrlen'/>
 		<Function name='module'/>
 		<Function name='multiapproach'/>
+		<Function name='new_numpad_entry'/>
 		<Function name='newproxy'/>
 		<Function name='next'/>
+		<Function name='oitg_zoom_mode_actor'/>
 		<Function name='pairs'/>
+		<Function name='pause_controller_actor'/>
 		<Function name='pcall'/>
 		<Function name='pname'/>
 		<Function name='print'/>
 		<Function name='rawequal'/>
 		<Function name='rawget'/>
 		<Function name='rawset'/>
+		<Function name='rec_count_children'/>
 		<Function name='rec_print_children'/>
 		<Function name='rec_print_table'/>
 		<Function name='require'/>
 		<Function name='round'/>
 		<Function name='scale'/>
+		<Function name='scale_to_fit'/>
 		<Function name='select'/>
 		<Function name='setenv'/>
 		<Function name='setfenv'/>
@@ -254,12 +278,18 @@
 		<Function name='split'/>
 		<Function name='tableshuffle'/>
 		<Function name='tableslice'/>
+		<Function name='thified_curstage_index'/>
 		<Function name='tobool'/>
 		<Function name='tonumber'/>
 		<Function name='tostring'/>
 		<Function name='type'/>
 		<Function name='unpack'/>
+		<Function name='update_centering'/>
+		<Function name='width_clip_limit_text'/>
+		<Function name='width_clip_text'/>
+		<Function name='width_limit_text'/>
 		<Function name='wrap'/>
+		<Function name='wrapped_index'/>
 		<Function name='xpcall'/>
 	</GlobalFunctions>
 	<Classes>
@@ -369,6 +399,7 @@
 			<Function name='draworder'/>
 			<Function name='drop'/>
 			<Function name='ease'/>
+			<Function name='effect_hold_at_full'/>
 			<Function name='effectclock'/>
 			<Function name='effectcolor1'/>
 			<Function name='effectcolor2'/>
@@ -376,16 +407,15 @@
 			<Function name='effectoffset'/>
 			<Function name='effectperiod'/>
 			<Function name='effecttiming'/>
-			<Function name='effect_hold_at_full'/>
 			<Function name='fadebottom'/>
 			<Function name='fadeleft'/>
 			<Function name='faderight'/>
 			<Function name='fadetop'/>
 			<Function name='finishtweening'/>
+			<Function name='get_tween_uses_effect_delta'/>
 			<Function name='getaux'/>
 			<Function name='geteffectmagnitude'/>
 			<Function name='getrotation'/>
-			<Function name='get_tween_uses_effect_delta'/>
 			<Function name='glow'/>
 			<Function name='glowblink'/>
 			<Function name='glowramp'/>
@@ -414,11 +444,12 @@
 			<Function name='rotationy'/>
 			<Function name='rotationz'/>
 			<Function name='scale_or_crop_background'/>
+			<Function name='scale_or_crop_background_no_move'/>
 			<Function name='scaletocover'/>
 			<Function name='scaletofit'/>
+			<Function name='set_tween_uses_effect_delta'/>
 			<Function name='setsize'/>
 			<Function name='setstate'/>
-			<Function name='set_tween_uses_effect_delta'/>
 			<Function name='shadowcolor'/>
 			<Function name='shadowlength'/>
 			<Function name='shadowlengthx'/>
@@ -504,8 +535,8 @@
 			<Function name='SetTextureMode'/>
 		</Class>
 		<Class base='Actor' name='ActorMultiVertex'>
-			<Function name='AddState'/>
 			<Function name='AddQuadState'/>
+			<Function name='AddState'/>
 			<Function name='ForceStateUpdate'/>
 			<Function name='GetCurrDrawMode'/>
 			<Function name='GetCurrFirstToDraw'/>
@@ -514,8 +545,8 @@
 			<Function name='GetDestDrawMode'/>
 			<Function name='GetDestFirstToDraw'/>
 			<Function name='GetDestNumToDraw'/>
-			<Function name='GetNumStates'/>
 			<Function name='GetNumQuadStates'/>
+			<Function name='GetNumStates'/>
 			<Function name='GetNumVertices'/>
 			<Function name='GetQuadState'/>
 			<Function name='GetSpline'/>
@@ -524,8 +555,8 @@
 			<Function name='GetTexture'/>
 			<Function name='GetUseAnimationState'/>
 			<Function name='LoadTexture'/>
-			<Function name='RemoveState'/>
 			<Function name='RemoveQuadState'/>
+			<Function name='RemoveState'/>
 			<Function name='SetAllStateDelays'/>
 			<Function name='SetDecodeMovie'/>
 			<Function name='SetDrawState'/>
@@ -571,6 +602,7 @@
 			<Function name='SetTransformFromFunction'/>
 			<Function name='SetTransformFromHeight'/>
 			<Function name='SetTransformFromWidth'/>
+			<Function name='SetWrap'/>
 			<Function name='getsecondtodestination'/>
 			<Function name='scrollthroughallitems'/>
 			<Function name='scrollwithpadding'/>
@@ -580,10 +612,12 @@
 		</Class>
 		<Class base='Actor' name='ActorSound'>
 			<Function name='get'/>
+			<Function name='get_is_action'/>
 			<Function name='load'/>
 			<Function name='pause'/>
 			<Function name='play'/>
 			<Function name='playforplayer'/>
+			<Function name='set_is_action'/>
 			<Function name='stop'/>
 		</Class>
 		<Class name='AnnouncerManager'>
@@ -604,7 +638,6 @@
 			<Function name='SetFromSteps'/>
 		</Class>
 		<Class base='Sprite' name='Banner'>
-			<Function name='GetDecodeMovie'/>
 			<Function name='GetPercentScrolling'/>
 			<Function name='GetScrolling'/>
 			<Function name='LoadBackgroundFromUnlockEntry'/>
@@ -617,7 +650,6 @@
 			<Function name='LoadFromSortOrder'/>
 			<Function name='LoadIconFromCharacter'/>
 			<Function name='ScaleToClipped'/>
-			<Function name='SetDecodeMovie'/>
 			<Function name='SetScrolling'/>
 			<Function name='scaletoclipped'/>
 		</Class>
@@ -631,6 +663,7 @@
 			<Function name='Stroke'/>
 			<Function name='distort'/>
 			<Function name='get_mult_attrs_with_diffuse'/>
+			<Function name='getstrokecolor'/>
 			<Function name='jitter'/>
 			<Function name='max_dimension_use_zoom'/>
 			<Function name='maxheight'/>
@@ -669,6 +702,10 @@
 			<Function name='Load'/>
 			<Function name='Set'/>
 		</Class>
+		<Class base='ActorFrame' name='ControllerStateDisplay'>
+			<Function name='LoadGameController'/>
+			<Function name='LoadMultiPlayer'/>
+		</Class>
 		<Class name='Course'>
 			<Function name='AllSongsAreFixed'/>
 			<Function name='GetAllTrails'/>
@@ -683,6 +720,7 @@
 			<Function name='GetEstimatedNumStages'/>
 			<Function name='GetGoalSeconds'/>
 			<Function name='GetGroupName'/>
+			<Function name='GetNumCourseEntries'/>
 			<Function name='GetPlayMode'/>
 			<Function name='GetScripter'/>
 			<Function name='GetTotalSeconds'/>
@@ -720,46 +758,52 @@
 			<Function name='SHA1String'/>
 		</Class>
 		<Class name='CubicSplineN'>
-			<Function name='solve'/>
+			<Function name='Destroy'/>
+			<Function name='Empty'/>
+			<Function name='Evaluate'/>
+			<Function name='EvaluateDerivative'/>
+			<Function name='EvaluateSecondDerivative'/>
+			<Function name='EvaluateThirdDerivative'/>
+			<Function name='GetCoefficients'/>
+			<Function name='GetDimension'/>
+			<Function name='GetDirty'/>
+			<Function name='GetLoop'/>
+			<Function name='GetMaxT'/>
+			<Function name='GetPolygonal'/>
+			<Function name='GetSize'/>
+			<Function name='GetSpatialExtent'/>
+			<Function name='SetCoefficients'/>
+			<Function name='SetDimension'/>
+			<Function name='SetDirty'/>
+			<Function name='SetLoop'/>
+			<Function name='SetPoint'/>
+			<Function name='SetPolygonal'/>
+			<Function name='SetSize'/>
+			<Function name='SetSpatialExtent'/>
+			<Function name='Solve'/>
+			<Function name='destroy'/>
+			<Function name='empty'/>
 			<Function name='evaluate'/>
 			<Function name='evaluate_derivative'/>
 			<Function name='evaluate_second_derivative'/>
 			<Function name='evaluate_third_derivative'/>
-			<Function name='set_point'/>
-			<Function name='set_coefficients'/>
 			<Function name='get_coefficients'/>
-			<Function name='set_spatial_extent'/>
-			<Function name='get_spatial_extent'/>
-			<Function name='get_max_t'/>
-			<Function name='set_size'/>
-			<Function name='get_size'/>
-			<Function name='set_dimension'/>
 			<Function name='get_dimension'/>
-			<Function name='empty'/>
-			<Function name='set_loop'/>
-			<Function name='get_loop'/>
-			<Function name='set_polygonal'/>
-			<Function name='get_polygonal'/>
-			<Function name='set_dirty'/>
 			<Function name='get_dirty'/>
-			<Function name='destroy'/>
-		</Class>
-		<Class name='DisplayMode'>
-			<Function name='GetWidth'/>
-			<Function name='GetHeight'/>
-			<Function name='GetRefreshRate'/>
-		</Class>
-		<Class name='DisplaySpec'>
-			<Function name='GetId'/>
-			<Function name='GetName'/>
-			<Function name='GetCurrentMode'/>
-			<Function name='GetSupportedModes'/>
-			<Function name='IsVirtual'/>
-		</Class>
-		<Class name='DisplaySpecs'>
-			<Function name='__len'/>
-			<Function name='__index'/>
-			<Function name='__tostring'/>
+			<Function name='get_loop'/>
+			<Function name='get_max_t'/>
+			<Function name='get_polygonal'/>
+			<Function name='get_size'/>
+			<Function name='get_spatial_extent'/>
+			<Function name='set_coefficients'/>
+			<Function name='set_dimension'/>
+			<Function name='set_dirty'/>
+			<Function name='set_loop'/>
+			<Function name='set_point'/>
+			<Function name='set_polygonal'/>
+			<Function name='set_size'/>
+			<Function name='set_spatial_extent'/>
+			<Function name='solve'/>
 		</Class>
 		<Class base='Sprite' name='DifficultyIcon'>
 			<Function name='SetFromDifficulty'/>
@@ -767,6 +811,18 @@
 			<Function name='SetFromTrail'/>
 			<Function name='SetPlayer'/>
 			<Function name='Unset'/>
+		</Class>
+		<Class name='DisplayMode'>
+			<Function name='GetHeight'/>
+			<Function name='GetRefreshRate'/>
+			<Function name='GetWidth'/>
+		</Class>
+		<Class name='DisplaySpec'>
+			<Function name='GetCurrentMode'/>
+			<Function name='GetId'/>
+			<Function name='GetName'/>
+			<Function name='GetSupportedModes'/>
+			<Function name='IsVirtual'/>
 		</Class>
 		<Class base='ActorFrame' name='FadingBanner'>
 			<Function name='GetLatestIndex'/>
@@ -813,21 +869,21 @@
 			<Function name='GetUrl'/>
 		</Class>
 		<Class name='GameManager'>
-			<Function name='GetFirstStepsTypeForGame'/>
-			<Function name='IsGameEnabled'/>
-			<Function name='StepsTypeToLocalizedString'/>
-			<Function name='SetGame'/>
 			<Function name='GetEnabledGames'/>
+			<Function name='GetFirstStepsTypeForGame'/>
 			<Function name='GetStylesForGame'/>
+			<Function name='IsGameEnabled'/>
+			<Function name='SetGame'/>
+			<Function name='StepsTypeToLocalizedString'/>
 		</Class>
 		<Class name='GameSoundManager'>
 			<Function name='DimMusic'/>
 			<Function name='GetPlayerBalance'/>
+			<Function name='IsTimingDelayed'/>
 			<Function name='PlayAnnouncer'/>
 			<Function name='PlayMusicPart'/>
 			<Function name='PlayOnce'/>
 			<Function name='StopMusic'/>
-			<Function name='IsTimingDelayed'/>
 		</Class>
 		<Class name='GameState'>
 			<Function name='AddStageToPlayer'/>
@@ -842,6 +898,7 @@
 			<Function name='Dopefish'/>
 			<Function name='EnoughCreditsToJoin'/>
 			<Function name='Env'/>
+			<Function name='GetAutoGenFarg'/>
 			<Function name='GetCharacter'/>
 			<Function name='GetCoinMode'/>
 			<Function name='GetCoins'/>
@@ -870,6 +927,7 @@
 			<Function name='GetGameplayLeadIn'/>
 			<Function name='GetHardestStepsDifficulty'/>
 			<Function name='GetHumanPlayers'/>
+			<Function name='GetLastGameplayDuration'/>
 			<Function name='GetLoadingCourseSongIndex'/>
 			<Function name='GetMasterPlayerNumber'/>
 			<Function name='GetMultiPlayerState'/>
@@ -904,9 +962,9 @@
 			<Function name='HasEarnedExtraStage'/>
 			<Function name='HaveProfileToLoad'/>
 			<Function name='HaveProfileToSave'/>
+			<Function name='InStepEditor'/>
 			<Function name='InsertCoin'/>
 			<Function name='InsertCredit'/>
-			<Function name='InStepEditor'/>
 			<Function name='IsAnExtraStage'/>
 			<Function name='IsAnyHumanPlayerUsingMemoryCard'/>
 			<Function name='IsBattleMode'/>
@@ -931,6 +989,7 @@
 			<Function name='ResetPlayerOptions'/>
 			<Function name='SaveLocalData'/>
 			<Function name='SaveProfiles'/>
+			<Function name='SetAutoGenFarg'/>
 			<Function name='SetCharacter'/>
 			<Function name='SetCurrentCourse'/>
 			<Function name='SetCurrentPlayMode'/>
@@ -946,10 +1005,12 @@
 			<Function name='SetPreferredSong'/>
 			<Function name='SetPreferredSongGroup'/>
 			<Function name='SetSongOptions'/>
+			<Function name='SetStepsForEditMode'/>
 			<Function name='SetTemporaryEventMode'/>
 			<Function name='ShowW1'/>
 			<Function name='StoreRankingName'/>
 			<Function name='UnjoinPlayer'/>
+			<Function name='prepare_song_for_gameplay'/>
 		</Class>
 		<Class base='ActorFrame' name='GradeDisplay'>
 			<Function name='Load'/>
@@ -994,6 +1055,16 @@
 		</Class>
 		<Class base='ActorFrame' name='HoldJudgment'>
 			<Function name='LoadFromMultiPlayer'/>
+		</Class>
+		<Class name='HoldNoteResult'>
+			<Function name='GetActive'/>
+			<Function name='GetCheckpointsHit'/>
+			<Function name='GetCheckpointsMissed'/>
+			<Function name='GetHeld'/>
+			<Function name='GetHoldNoteScore'/>
+			<Function name='GetLastHeldBeat'/>
+			<Function name='GetLife'/>
+			<Function name='GetOverlappedTime'/>
 		</Class>
 		<Class name='InputFilter'>
 			<Function name='GetMouseWheel'/>
@@ -1049,32 +1120,54 @@
 			<Function name='ChangeSort'/>
 			<Function name='GetSelectedSection'/>
 			<Function name='IsRouletting'/>
+			<Function name='Move'/>
 			<Function name='SelectCourse'/>
 			<Function name='SelectSong'/>
 		</Class>
 		<Class name='NCSplineHandler'>
-			<Function name='get_spline'/>
+			<Function name='GetBeatsPerT'/>
+			<Function name='GetReceptorT'/>
+			<Function name='GetSpline'/>
+			<Function name='GetSplineMode'/>
+			<Function name='GetSubtractSongBeat'/>
+			<Function name='SetBeatsPerT'/>
+			<Function name='SetReceptorT'/>
+			<Function name='SetSplineMode'/>
+			<Function name='SetSubtractSongBeat'/>
 			<Function name='get_beats_per_t'/>
-			<Function name='set_beats_per_t'/>
 			<Function name='get_receptor_t'/>
-			<Function name='set_receptor_t'/>
+			<Function name='get_spline'/>
 			<Function name='get_spline_mode'/>
-			<Function name='set_spline_mode'/>
 			<Function name='get_subtract_song_beat'/>
+			<Function name='set_beats_per_t'/>
+			<Function name='set_receptor_t'/>
+			<Function name='set_spline_mode'/>
 			<Function name='set_subtract_song_beat'/>
 		</Class>
 		<Class base='Actor' name='NoteColumnRenderer'>
+			<Function name='GetPosHandler'/>
+			<Function name='GetRotHandler'/>
+			<Function name='GetZoomHandler'/>
 			<Function name='get_pos_handler'/>
 			<Function name='get_rot_handler'/>
 			<Function name='get_zoom_handler'/>
 		</Class>
 		<Class base='ActorFrame' name='NoteField'>
+			<Function name='DidHoldNote'/>
+			<Function name='DidTapNote'/>
+			<Function name='GetColumnActors'/>
+			<Function name='SetDidHoldNoteCallback'/>
+			<Function name='SetDidTapNoteCallback'/>
+			<Function name='SetPressed'/>
+			<Function name='SetSetPressedCallback'/>
+			<Function name='SetStepCallback'/>
+			<Function name='Step'/>
 			<Function name='did_hold_note'/>
 			<Function name='did_tap_note'/>
 			<Function name='get_column_actors'/>
-			<Function name='set_pressed'/>
 			<Function name='set_did_hold_note_callback'/>
 			<Function name='set_did_tap_note_callback'/>
+			<Function name='set_pressed'/>
 			<Function name='set_set_pressed_callback'/>
 			<Function name='set_step_callback'/>
 			<Function name='step'/>
@@ -1116,10 +1209,12 @@
 		</Class>
 		<Class base='ActorFrame' name='Player'>
 			<Function name='ChangeLife'/>
-			<Function name='SetLife'/>
 			<Function name='GetPlayerTimingData'/>
 			<Function name='SetActorWithComboPosition'/>
 			<Function name='SetActorWithJudgmentPosition'/>
+			<Function name='SetLife'/>
+			<Function name='get_oitg_zoom_mode'/>
+			<Function name='set_oitg_zoom_mode'/>
 		</Class>
 		<Class name='PlayerInfo'>
 			<Function name='GetLifeMeter'/>
@@ -1131,6 +1226,7 @@
 			<Function name='AttenuateX'/>
 			<Function name='AttenuateY'/>
 			<Function name='AttenuateZ'/>
+			<Function name='BMRize'/>
 			<Function name='Backwards'/>
 			<Function name='BatteryLives'/>
 			<Function name='Beat'/>
@@ -1151,36 +1247,110 @@
 			<Function name='Boomerang'/>
 			<Function name='Boost'/>
 			<Function name='Bounce'/>
-			<Function name='BouncePeriod'/>
 			<Function name='BounceOffset'/>
+			<Function name='BouncePeriod'/>
 			<Function name='BounceZ'/>
-			<Function name='BounceZPeriod'/>
 			<Function name='BounceZOffset'/>
-			<Function name='BMRize'/>
+			<Function name='BounceZPeriod'/>
 			<Function name='Brake'/>
 			<Function name='Bumpy'/>
-			<Function name='Bumpyn'/>
+			<Function name='Bumpy1'/>
+			<Function name='Bumpy10'/>
+			<Function name='Bumpy11'/>
+			<Function name='Bumpy12'/>
+			<Function name='Bumpy13'/>
+			<Function name='Bumpy14'/>
+			<Function name='Bumpy15'/>
+			<Function name='Bumpy16'/>
+			<Function name='Bumpy2'/>
+			<Function name='Bumpy3'/>
+			<Function name='Bumpy4'/>
+			<Function name='Bumpy5'/>
+			<Function name='Bumpy6'/>
+			<Function name='Bumpy7'/>
+			<Function name='Bumpy8'/>
+			<Function name='Bumpy9'/>
 			<Function name='BumpyOffset'/>
 			<Function name='BumpyPeriod'/>
 			<Function name='BumpyX'/>
 			<Function name='BumpyXOffset'/>
 			<Function name='BumpyXPeriod'/>
-			<Function name='Centered'/>
 			<Function name='CMod'/>
+			<Function name='Centered'/>
 			<Function name='Confusion'/>
 			<Function name='ConfusionOffset'/>
-			<Function name='ConfusionOffsetn'/>
+			<Function name='ConfusionOffset1'/>
+			<Function name='ConfusionOffset10'/>
+			<Function name='ConfusionOffset11'/>
+			<Function name='ConfusionOffset12'/>
+			<Function name='ConfusionOffset13'/>
+			<Function name='ConfusionOffset14'/>
+			<Function name='ConfusionOffset15'/>
+			<Function name='ConfusionOffset16'/>
+			<Function name='ConfusionOffset2'/>
+			<Function name='ConfusionOffset3'/>
+			<Function name='ConfusionOffset4'/>
+			<Function name='ConfusionOffset5'/>
+			<Function name='ConfusionOffset6'/>
+			<Function name='ConfusionOffset7'/>
+			<Function name='ConfusionOffset8'/>
+			<Function name='ConfusionOffset9'/>
 			<Function name='ConfusionX'/>
 			<Function name='ConfusionXOffset'/>
-			<Function name='ConfusionXOffsetn'/>
+			<Function name='ConfusionXOffset1'/>
+			<Function name='ConfusionXOffset10'/>
+			<Function name='ConfusionXOffset11'/>
+			<Function name='ConfusionXOffset12'/>
+			<Function name='ConfusionXOffset13'/>
+			<Function name='ConfusionXOffset14'/>
+			<Function name='ConfusionXOffset15'/>
+			<Function name='ConfusionXOffset16'/>
+			<Function name='ConfusionXOffset2'/>
+			<Function name='ConfusionXOffset3'/>
+			<Function name='ConfusionXOffset4'/>
+			<Function name='ConfusionXOffset5'/>
+			<Function name='ConfusionXOffset6'/>
+			<Function name='ConfusionXOffset7'/>
+			<Function name='ConfusionXOffset8'/>
+			<Function name='ConfusionXOffset9'/>
 			<Function name='ConfusionY'/>
 			<Function name='ConfusionYOffset'/>
-			<Function name='ConfusionYOffsetn'/>
+			<Function name='ConfusionYOffset1'/>
+			<Function name='ConfusionYOffset10'/>
+			<Function name='ConfusionYOffset11'/>
+			<Function name='ConfusionYOffset12'/>
+			<Function name='ConfusionYOffset13'/>
+			<Function name='ConfusionYOffset14'/>
+			<Function name='ConfusionYOffset15'/>
+			<Function name='ConfusionYOffset16'/>
+			<Function name='ConfusionYOffset2'/>
+			<Function name='ConfusionYOffset3'/>
+			<Function name='ConfusionYOffset4'/>
+			<Function name='ConfusionYOffset5'/>
+			<Function name='ConfusionYOffset6'/>
+			<Function name='ConfusionYOffset7'/>
+			<Function name='ConfusionYOffset8'/>
+			<Function name='ConfusionYOffset9'/>
 			<Function name='Cosecant'/>
 			<Function name='Cover'/>
 			<Function name='Cross'/>
 			<Function name='Dark'/>
-			<Function name='Darkn'/>
+			<Function name='Dark1'/>
+			<Function name='Dark10'/>
+			<Function name='Dark11'/>
+			<Function name='Dark12'/>
+			<Function name='Dark13'/>
+			<Function name='Dark14'/>
+			<Function name='Dark15'/>
+			<Function name='Dark16'/>
+			<Function name='Dark2'/>
+			<Function name='Dark3'/>
+			<Function name='Dark4'/>
+			<Function name='Dark5'/>
+			<Function name='Dark6'/>
+			<Function name='Dark7'/>
+			<Function name='Dark8'/>
+			<Function name='Dark9'/>
 			<Function name='Digital'/>
 			<Function name='DigitalOffset'/>
 			<Function name='DigitalPeriod'/>
@@ -1189,9 +1359,9 @@
 			<Function name='DigitalZOffset'/>
 			<Function name='DigitalZPeriod'/>
 			<Function name='DigitalZSteps'/>
+			<Function name='Distant'/>
 			<Function name='Dizzy'/>
 			<Function name='DizzyHolds'/>
-			<Function name='Distant'/>
 			<Function name='DrainSetting'/>
 			<Function name='DrawSize'/>
 			<Function name='DrawSizeBack'/>
@@ -1209,31 +1379,77 @@
 			<Function name='FailSetting'/>
 			<Function name='Flip'/>
 			<Function name='Floored'/>
+			<Function name='FromString'/>
 			<Function name='GetReversePercentForColumn'/>
 			<Function name='GetStepAttacks'/>
-			<Function name='IsEasierForSongAndSteps'/>
-			<Function name='IsEasierForCourseAndTrail'/>
-			<Function name='Incoming'/>
 			<Function name='Hallway'/>
 			<Function name='Hidden'/>
 			<Function name='HiddenOffset'/>
 			<Function name='HoldRolls'/>
+			<Function name='Incoming'/>
 			<Function name='Invert'/>
+			<Function name='IsEasierForCourseAndTrail'/>
+			<Function name='IsEasierForSongAndSteps'/>
 			<Function name='Left'/>
 			<Function name='LifeSetting'/>
 			<Function name='Little'/>
-			<Function name='ModTimerSetting'/>
-			<Function name='ModTimerMult'/>
-			<Function name='ModTimerOffset'/>
+			<Function name='MMod'/>
 			<Function name='MaxScrollBPM'/>
+			<Function name='MinTNSToHideNotes'/>
 			<Function name='Mines'/>
 			<Function name='Mini'/>
-			<Function name='MinTNSToHideNotes' />
 			<Function name='Mirror'/>
-			<Function name='MMod'/>
-			<Function name='MoveXn'/>
-			<Function name='MoveYn'/>
-			<Function name='MoveZn'/>
+			<Function name='ModTimerMult'/>
+			<Function name='ModTimerOffset'/>
+			<Function name='ModTimerSetting'/>
+			<Function name='MoveX1'/>
+			<Function name='MoveX10'/>
+			<Function name='MoveX11'/>
+			<Function name='MoveX12'/>
+			<Function name='MoveX13'/>
+			<Function name='MoveX14'/>
+			<Function name='MoveX15'/>
+			<Function name='MoveX16'/>
+			<Function name='MoveX2'/>
+			<Function name='MoveX3'/>
+			<Function name='MoveX4'/>
+			<Function name='MoveX5'/>
+			<Function name='MoveX6'/>
+			<Function name='MoveX7'/>
+			<Function name='MoveX8'/>
+			<Function name='MoveX9'/>
+			<Function name='MoveY1'/>
+			<Function name='MoveY10'/>
+			<Function name='MoveY11'/>
+			<Function name='MoveY12'/>
+			<Function name='MoveY13'/>
+			<Function name='MoveY14'/>
+			<Function name='MoveY15'/>
+			<Function name='MoveY16'/>
+			<Function name='MoveY2'/>
+			<Function name='MoveY3'/>
+			<Function name='MoveY4'/>
+			<Function name='MoveY5'/>
+			<Function name='MoveY6'/>
+			<Function name='MoveY7'/>
+			<Function name='MoveY8'/>
+			<Function name='MoveY9'/>
+			<Function name='MoveZ1'/>
+			<Function name='MoveZ10'/>
+			<Function name='MoveZ11'/>
+			<Function name='MoveZ12'/>
+			<Function name='MoveZ13'/>
+			<Function name='MoveZ14'/>
+			<Function name='MoveZ15'/>
+			<Function name='MoveZ16'/>
+			<Function name='MoveZ2'/>
+			<Function name='MoveZ3'/>
+			<Function name='MoveZ4'/>
+			<Function name='MoveZ5'/>
+			<Function name='MoveZ6'/>
+			<Function name='MoveZ7'/>
+			<Function name='MoveZ8'/>
+			<Function name='MoveZ9'/>
 			<Function name='MuteOnError'/>
 			<Function name='NoAttack'/>
 			<Function name='NoFakes'/>
@@ -1262,7 +1478,22 @@
 			<Function name='RandomSpeed'/>
 			<Function name='RandomVanish'/>
 			<Function name='Reverse'/>
-			<Function name='Reversen'/>
+			<Function name='Reverse1'/>
+			<Function name='Reverse10'/>
+			<Function name='Reverse11'/>
+			<Function name='Reverse12'/>
+			<Function name='Reverse13'/>
+			<Function name='Reverse14'/>
+			<Function name='Reverse15'/>
+			<Function name='Reverse16'/>
+			<Function name='Reverse2'/>
+			<Function name='Reverse3'/>
+			<Function name='Reverse4'/>
+			<Function name='Reverse5'/>
+			<Function name='Reverse6'/>
+			<Function name='Reverse7'/>
+			<Function name='Reverse8'/>
+			<Function name='Reverse9'/>
 			<Function name='Right'/>
 			<Function name='Roll'/>
 			<Function name='Sawtooth'/>
@@ -1286,17 +1517,80 @@
 			<Function name='SquareZOffset'/>
 			<Function name='SquareZPeriod'/>
 			<Function name='Stealth'/>
-			<Function name='Stealthn'/>
+			<Function name='Stealth1'/>
+			<Function name='Stealth10'/>
+			<Function name='Stealth11'/>
+			<Function name='Stealth12'/>
+			<Function name='Stealth13'/>
+			<Function name='Stealth14'/>
+			<Function name='Stealth15'/>
+			<Function name='Stealth16'/>
+			<Function name='Stealth2'/>
+			<Function name='Stealth3'/>
+			<Function name='Stealth4'/>
+			<Function name='Stealth5'/>
+			<Function name='Stealth6'/>
+			<Function name='Stealth7'/>
+			<Function name='Stealth8'/>
+			<Function name='Stealth9'/>
 			<Function name='StealthPastReceptors'/>
 			<Function name='StealthType'/>
 			<Function name='Stomp'/>
 			<Function name='Sudden'/>
 			<Function name='SuddenOffset'/>
 			<Function name='SuperShuffle'/>
-			<Function name='TimeSpacing'/>
+			<Function name='TanBumpy'/>
+			<Function name='TanBumpyOffset'/>
+			<Function name='TanBumpyPeriod'/>
+			<Function name='TanBumpyX'/>
+			<Function name='TanBumpyXOffset'/>
+			<Function name='TanBumpyXPeriod'/>
+			<Function name='TanDigital'/>
+			<Function name='TanDigitalOffset'/>
+			<Function name='TanDigitalPeriod'/>
+			<Function name='TanDigitalSteps'/>
+			<Function name='TanDigitalZ'/>
+			<Function name='TanDigitalZOffset'/>
+			<Function name='TanDigitalZPeriod'/>
+			<Function name='TanDigitalZSteps'/>
+			<Function name='TanDrunk'/>
+			<Function name='TanDrunkOffset'/>
+			<Function name='TanDrunkPeriod'/>
+			<Function name='TanDrunkSpeed'/>
+			<Function name='TanDrunkZ'/>
+			<Function name='TanDrunkZOffset'/>
+			<Function name='TanDrunkZPeriod'/>
+			<Function name='TanDrunkZSpeed'/>
+			<Function name='TanExpand'/>
+			<Function name='TanExpandPeriod'/>
+			<Function name='TanTipsy'/>
+			<Function name='TanTipsyOffset'/>
+			<Function name='TanTipsySpeed'/>
+			<Function name='TanTornado'/>
+			<Function name='TanTornadoOffset'/>
+			<Function name='TanTornadoPeriod'/>
+			<Function name='TanTornadoZ'/>
+			<Function name='TanTornadoZOffset'/>
+			<Function name='TanTornadoZPeriod'/>
 			<Function name='Tilt'/>
+			<Function name='TimeSpacing'/>
 			<Function name='Tiny'/>
-			<Function name='Tinyn'/>
+			<Function name='Tiny1'/>
+			<Function name='Tiny10'/>
+			<Function name='Tiny11'/>
+			<Function name='Tiny12'/>
+			<Function name='Tiny13'/>
+			<Function name='Tiny14'/>
+			<Function name='Tiny15'/>
+			<Function name='Tiny16'/>
+			<Function name='Tiny2'/>
+			<Function name='Tiny3'/>
+			<Function name='Tiny4'/>
+			<Function name='Tiny5'/>
+			<Function name='Tiny6'/>
+			<Function name='Tiny7'/>
+			<Function name='Tiny8'/>
+			<Function name='Tiny9'/>
 			<Function name='Tipsy'/>
 			<Function name='TipsyOffset'/>
 			<Function name='TipsySpeed'/>
@@ -1386,9 +1680,9 @@
 		<Class name='PrefsManager'>
 			<Function name='GetPreference'/>
 			<Function name='PreferenceExists'/>
+			<Function name='SavePreferences'/>
 			<Function name='SetPreference'/>
 			<Function name='SetPreferenceToDefault'/>
-			<Function name='SavePreferences'/>
 		</Class>
 		<Class name='Profile'>
 			<Function name='AddCaloriesToDailyTotal'/>
@@ -1456,8 +1750,9 @@
 			<Function name='SetIgnoreStepCountCalories'/>
 			<Function name='SetIsMale'/>
 			<Function name='SetLastUsedHighScoreName'/>
-			<Function name='SetWeightPounds'/>
 			<Function name='SetVoomax'/>
+			<Function name='SetWeightPounds'/>
+			<Function name='get_songs'/>
 		</Class>
 		<Class name='ProfileManager'>
 			<Function name='GetLocalProfile'/>
@@ -1498,8 +1793,8 @@
 		<Class name='RageDisplay'>
 			<Function name='GetCumFPS'/>
 			<Function name='GetDisplayHeight'/>
-			<Function name='GetDisplayWidth'/>
 			<Function name='GetDisplaySpecs'/>
+			<Function name='GetDisplayWidth'/>
 			<Function name='GetFPS'/>
 			<Function name='GetVPF'/>
 			<Function name='SupportsFullscreenBorderlessWindow'/>
@@ -1540,26 +1835,27 @@
 			<Function name='set_from_cubic'/>
 		</Class>
 		<Class name='RageSound'>
-			<Function name='get_length'/>
 			<Function name='SetParam'/>
 			<Function name='SetProperty'/>
+			<Function name='get_length'/>
 			<Function name='pitch'/>
 			<Function name='speed'/>
 			<Function name='volume'/>
 		</Class>
 		<Class name='RageTexture'>
-			<Function name='GetSourceWidth'/>
-			<Function name='GetSourceHeight'/>
-			<Function name='GetTextureWidth'/>
-			<Function name='GetTextureHeight'/>
-			<Function name='GetImageWidth'/>
 			<Function name='GetImageHeight'/>
+			<Function name='GetImageWidth'/>
+			<Function name='GetNumFrames'/>
 			<Function name='GetPath'/>
+			<Function name='GetSourceHeight'/>
+			<Function name='GetSourceWidth'/>
 			<Function name='GetTextureCoordRect'/>
+			<Function name='GetTextureHeight'/>
+			<Function name='GetTextureWidth'/>
+			<Function name='Reload'/>
 			<Function name='loop'/>
 			<Function name='position'/>
 			<Function name='rate'/>
-			<Function name='Reload'/>
 		</Class>
 		<Class base='RageTexture' name='RageTextureRenderTarget'>
 			<Function name='BeginRenderingTo'/>
@@ -1568,6 +1864,9 @@
 		<Class base='BitmapText' name='RollingNumbers'>
 			<Function name='Load'/>
 			<Function name='targetnumber'/>
+		</Class>
+		<Class base='WheelBase' name='RoomWheel'>
+			<Function name='Move'/>
 		</Class>
 		<Class base='BitmapText' name='ScoreDisplayAliveTime'/>
 		<Class base='BitmapText' name='ScoreDisplayCalories'/>
@@ -1592,7 +1891,6 @@
 			<Function name='GetStageStats'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenGameplay'>
-			<Function name='begin_backing_out'/>
 			<Function name='Center1Player'/>
 			<Function name='GetDummyPlayerInfo'/>
 			<Function name='GetHasteRate'/>
@@ -1606,6 +1904,7 @@
 			<Function name='HasteTurningPoints'/>
 			<Function name='IsPaused'/>
 			<Function name='PauseGame'/>
+			<Function name='begin_backing_out'/>
 		</Class>
 		<Class base='ScreenAttract' name='ScreenHowToPlay'>
 			<Function name='GetLifeMeter'/>
@@ -1613,18 +1912,18 @@
 		<Class name='ScreenManager'>
 			<Function name='AddNewScreenToTop'/>
 			<Function name='GetTopScreen'/>
-			<Function name='get_input_redirected'/>
-			<Function name='PlayInvalidSound'/>
-			<Function name='PlayStartSound'/>
-			<Function name='PlayCoinSound'/>
 			<Function name='PlayCancelSound'/>
+			<Function name='PlayCoinSound'/>
+			<Function name='PlayInvalidSound'/>
 			<Function name='PlayScreenshotSound'/>
+			<Function name='PlayStartSound'/>
 			<Function name='ReloadOverlayScreens'/>
 			<Function name='ScreenClassExists'/>
 			<Function name='ScreenIsPrepped'/>
 			<Function name='SetNewScreen'/>
-			<Function name='set_input_redirected'/>
 			<Function name='SystemMessage'/>
+			<Function name='get_input_redirected'/>
+			<Function name='set_input_redirected'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenNameEntryTraditional'>
 			<Function name='Backspace'/>
@@ -1638,6 +1937,28 @@
 		</Class>
 		<Class base='ScreenEvaluation' name='ScreenNetEvaluation'>
 			<Function name='GetNumActivePlayers'/>
+		</Class>
+		<Class base='ScreenNetSelectBase' name='ScreenNetRoom'>
+			<Function name='GetMusicWheel'/>
+			<Function name='SelectCurrent'/>
+		</Class>
+		<Class base='ScreenWithMenuElements' name='ScreenNetSelectBase'>
+			<Function name='ChatboxInput'/>
+			<Function name='ChatboxVisible'/>
+			<Function name='GetChatLines'/>
+			<Function name='GetChatScroll'/>
+			<Function name='GetUser'/>
+			<Function name='GetUserQty'/>
+			<Function name='GetUserState'/>
+			<Function name='ScrollChatDown'/>
+			<Function name='ScrollChatUp'/>
+			<Function name='ShowNextMsg'/>
+			<Function name='ShowPreviousMsg'/>
+			<Function name='UsersVisible'/>
+		</Class>
+		<Class base='ScreenNetSelectBase' name='ScreenNetSelectMusic'>
+			<Function name='GetMusicWheel'/>
+			<Function name='SelectCurrent'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenOptions'>
 			<Function name='AllAreOnLastRow'/>
@@ -1686,9 +2007,9 @@
 		<Class base='ScreenWithMenuElements' name='ScreenWithMenuElementsSimple'/>
 		<Class name='Song'>
 			<Function name='GetAllSteps'/>
+			<Function name='GetBGChanges'/>
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
-			<Function name='GetBGChanges'/>
 			<Function name='GetCDImagePath'/>
 			<Function name='GetCDTitlePath'/>
 			<Function name='GetDiscPath'/>
@@ -1738,6 +2059,7 @@
 			<Function name='HasSignificantBPMChangesOrStops'/>
 			<Function name='HasStepsType'/>
 			<Function name='HasStepsTypeAndDifficulty'/>
+			<Function name='IsCustomSong'/>
 			<Function name='IsDisplayBpmConstant'/>
 			<Function name='IsDisplayBpmRandom'/>
 			<Function name='IsDisplayBpmSecret'/>
@@ -1749,6 +2071,7 @@
 			<Function name='IsTutorial'/>
 			<Function name='MusicLengthSeconds'/>
 			<Function name='NormallyDisplayed'/>
+			<Function name='ReloadFromSongDir'/>
 			<Function name='ShowInDemonstrationAndRanking'/>
 		</Class>
 		<Class name='SongManager'>
@@ -1818,6 +2141,7 @@
 		<Class base='Actor' name='Sprite'>
 			<Function name='CropTo'/>
 			<Function name='GetAnimationLengthSeconds'/>
+			<Function name='GetDecodeMovie'/>
 			<Function name='GetNumStates'/>
 			<Function name='GetState'/>
 			<Function name='GetTexture'/>
@@ -1832,6 +2156,7 @@
 			<Function name='SetAllStateDelays'/>
 			<Function name='SetCustomImageRect'/>
 			<Function name='SetCustomPosCoords'/>
+			<Function name='SetDecodeMovie'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetSecondsIntoAnimation'/>
 			<Function name='SetStateProperties'/>
@@ -1921,31 +2246,21 @@
 			<Function name='NeedsZoomOutWith2Players'/>
 		</Class>
 		<Class name='TapNote'>
-			<Function name='GetTapNoteType'/>
-			<Function name='GetTapNoteSubType'/>
-			<Function name='GetTapNoteSource'/>
-			<Function name='GetTapNoteResult'/>
-			<Function name='GetPlayerNumber'/>
-			<Function name='GetAttackModifiers'/>
 			<Function name='GetAttackDuration'/>
-			<Function name='GetKeysoundIndex'/>
+			<Function name='GetAttackModifiers'/>
 			<Function name='GetHoldDuration'/>
 			<Function name='GetHoldNoteResult'/>
+			<Function name='GetKeysoundIndex'/>
+			<Function name='GetPlayerNumber'/>
+			<Function name='GetTapNoteResult'/>
+			<Function name='GetTapNoteSource'/>
+			<Function name='GetTapNoteSubType'/>
+			<Function name='GetTapNoteType'/>
 		</Class>
 		<Class name='TapNoteResult'>
-			<Function name='GetTapNoteScore'/>
-			<Function name='GetTapNoteOffset'/>
 			<Function name='GetHidden'/>
-		</Class>
-		<Class name='HoldNoteResult'>
-			<Function name='GetHoldNoteScore'/>
-			<Function name='GetLife'/>
-			<Function name='GetOverlappedTime'/>
-			<Function name='GetLastHeldBeat'/>
-			<Function name='GetCheckpointsHit'/>
-			<Function name='GetCheckpointsMissed'/>
-			<Function name='GetHeld'/>
-			<Function name='GetActive'/>
+			<Function name='GetTapNoteOffset'/>
+			<Function name='GetTapNoteScore'/>
 		</Class>
 		<Class base='ActorFrame' name='TextBanner'>
 			<Function name='Load'/>
@@ -1979,6 +2294,7 @@
 			<Function name='ReloadMetrics'/>
 			<Function name='RunLuaScripts'/>
 			<Function name='SetTheme'/>
+			<Function name='get_theme_fallback_list'/>
 		</Class>
 		<Class name='TimingData'>
 			<Function name='GetActualBPM'/>
@@ -2105,12 +2421,12 @@
 			<Function name='GetRotationX'/>
 			<Function name='GetRotationY'/>
 			<Function name='GetRotationZ'/>
+			<Function name='GetXPos'/>
 			<Function name='GetYOffset'/>
 			<Function name='GetYOffsetFromYPos'/>
 			<Function name='GetYPos'/>
-			<Function name='GetXPos'/>
-			<Function name='GetZoom'/>
 			<Function name='GetZPos'/>
+			<Function name='GetZoom'/>
 			<Function name='NeedZBuffer'/>
 			<Function name='ReceptorGetRotationZ'/>
 			<Function name='Update'/>
@@ -2152,26 +2468,14 @@
 	</Namespaces>
 	<Singletons>
 		<Singleton class='AnnouncerManager' name='ANNOUNCER'/>
-		<Singleton class='CharacterManager' name='CHARMAN'/>
-		<Singleton class='CryptManager' name='CRYPTMAN'/>
-		<Singleton class='RageDisplay' name='DISPLAY'/>
 		<Singleton class='RageFileManager' name='FILEMAN'/>
 		<Singleton class='GameManager' name='GAMEMAN'/>
 		<Singleton class='GameState' name='GAMESTATE'/>
 		<Singleton class='ArchHooks' name='HOOKS'/>
-		<Singleton class='InputFilter' name='INPUTFILTER'/>
-		<Singleton class='RageInput' name='INPUTMAN'/>
-		<Singleton class='MemoryCardManager' name='MEMCARDMAN'/>
 		<Singleton class='MessageManager' name='MESSAGEMAN'/>
 		<Singleton class='NoteSkinManager' name='NOTESKIN'/>
 		<Singleton class='PrefsManager' name='PREFSMAN'/>
-		<Singleton class='ProfileManager' name='PROFILEMAN'/>
-		<Singleton class='ScreenManager' name='SCREENMAN'/>
-		<Singleton class='SongManager' name='SONGMAN'/>
-		<Singleton class='GameSoundManager' name='SOUND'/>
-		<Singleton class='StatsManager' name='STATSMAN'/>
 		<Singleton class='ThemeManager' name='THEME'/>
-		<Singleton class='UnlockManager' name='UNLOCKMAN'/>
 	</Singletons>
 	<Enums>
 		<Enum name='AllowW1'>
@@ -2193,11 +2497,12 @@
 			<EnumValue name='&apos;AutosyncType_Machine&apos;' value='2'/>
 			<EnumValue name='&apos;AutosyncType_Tempo&apos;' value='3'/>
 		</Enum>
-		<Enum name='BannerCacheMode'>
-			<EnumValue name='&apos;BannerCacheMode_Off&apos;' value='0'/>
-			<EnumValue name='&apos;BannerCacheMode_LowResPreload&apos;' value='1'/>
-			<EnumValue name='&apos;BannerCacheMode_LowResLoadOnDemand&apos;' value='2'/>
-			<EnumValue name='&apos;BannerCacheMode_Full&apos;' value='3'/>
+		<Enum name='BackgroundFitMode'>
+			<EnumValue name='&apos;BackgroundFitMode_CoverDistort&apos;' value='0'/>
+			<EnumValue name='&apos;BackgroundFitMode_CoverPreserve&apos;' value='1'/>
+			<EnumValue name='&apos;BackgroundFitMode_FitInside&apos;' value='2'/>
+			<EnumValue name='&apos;BackgroundFitMode_FitInsideAvoidLetter&apos;' value='3'/>
+			<EnumValue name='&apos;BackgroundFitMode_FitInsideAvoidPillar&apos;' value='4'/>
 		</Enum>
 		<Enum name='BlendMode'>
 			<EnumValue name='&apos;BlendMode_Normal&apos;' value='0'/>
@@ -2234,6 +2539,717 @@
 			<EnumValue name='&apos;CullMode_Back&apos;' value='0'/>
 			<EnumValue name='&apos;CullMode_Front&apos;' value='1'/>
 			<EnumValue name='&apos;CullMode_None&apos;' value='2'/>
+		</Enum>
+		<Enum name='DeviceButton'>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='0'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='1'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='2'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='3'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='4'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='5'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='6'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='7'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='8'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='9'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='10'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='11'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='12'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='13'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='14'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='15'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='16'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='17'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='18'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='19'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='20'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='21'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='22'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='23'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='24'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='25'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='26'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='27'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='28'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='29'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='30'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='31'/>
+			<EnumValue name='&apos;DeviceButton_space&apos;' value='32'/>
+			<EnumValue name='&apos;DeviceButton_!&apos;' value='33'/>
+			<EnumValue name='&apos;DeviceButton_&quot;&apos;' value='34'/>
+			<EnumValue name='&apos;DeviceButton_#&apos;' value='35'/>
+			<EnumValue name='&apos;DeviceButton_$&apos;' value='36'/>
+			<EnumValue name='&apos;DeviceButton_%&apos;' value='37'/>
+			<EnumValue name='&apos;DeviceButton_&amp;&apos;' value='38'/>
+			<EnumValue name='&apos;DeviceButton_&apos;&apos;' value='39'/>
+			<EnumValue name='&apos;DeviceButton_(&apos;' value='40'/>
+			<EnumValue name='&apos;DeviceButton_)&apos;' value='41'/>
+			<EnumValue name='&apos;DeviceButton_*&apos;' value='42'/>
+			<EnumValue name='&apos;DeviceButton_+&apos;' value='43'/>
+			<EnumValue name='&apos;DeviceButton_comma&apos;' value='44'/>
+			<EnumValue name='&apos;DeviceButton_-&apos;' value='45'/>
+			<EnumValue name='&apos;DeviceButton_period&apos;' value='46'/>
+			<EnumValue name='&apos;DeviceButton_/&apos;' value='47'/>
+			<EnumValue name='&apos;DeviceButton_0&apos;' value='48'/>
+			<EnumValue name='&apos;DeviceButton_1&apos;' value='49'/>
+			<EnumValue name='&apos;DeviceButton_2&apos;' value='50'/>
+			<EnumValue name='&apos;DeviceButton_3&apos;' value='51'/>
+			<EnumValue name='&apos;DeviceButton_4&apos;' value='52'/>
+			<EnumValue name='&apos;DeviceButton_5&apos;' value='53'/>
+			<EnumValue name='&apos;DeviceButton_6&apos;' value='54'/>
+			<EnumValue name='&apos;DeviceButton_7&apos;' value='55'/>
+			<EnumValue name='&apos;DeviceButton_8&apos;' value='56'/>
+			<EnumValue name='&apos;DeviceButton_9&apos;' value='57'/>
+			<EnumValue name='&apos;DeviceButton_colon&apos;' value='58'/>
+			<EnumValue name='&apos;DeviceButton_;&apos;' value='59'/>
+			<EnumValue name='&apos;DeviceButton_&lt;&apos;' value='60'/>
+			<EnumValue name='&apos;DeviceButton_=&apos;' value='61'/>
+			<EnumValue name='&apos;DeviceButton_&gt;&apos;' value='62'/>
+			<EnumValue name='&apos;DeviceButton_?&apos;' value='63'/>
+			<EnumValue name='&apos;DeviceButton_@&apos;' value='64'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='65'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='66'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='67'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='68'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='69'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='70'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='71'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='72'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='73'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='74'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='75'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='76'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='77'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='78'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='79'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='80'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='81'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='82'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='83'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='84'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='85'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='86'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='87'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='88'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='89'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='90'/>
+			<EnumValue name='&apos;DeviceButton_[&apos;' value='91'/>
+			<EnumValue name='&apos;DeviceButton_backslash&apos;' value='92'/>
+			<EnumValue name='&apos;DeviceButton_]&apos;' value='93'/>
+			<EnumValue name='&apos;DeviceButton_^&apos;' value='94'/>
+			<EnumValue name='&apos;DeviceButton__&apos;' value='95'/>
+			<EnumValue name='&apos;DeviceButton_`&apos;' value='96'/>
+			<EnumValue name='&apos;DeviceButton_a&apos;' value='97'/>
+			<EnumValue name='&apos;DeviceButton_b&apos;' value='98'/>
+			<EnumValue name='&apos;DeviceButton_c&apos;' value='99'/>
+			<EnumValue name='&apos;DeviceButton_d&apos;' value='100'/>
+			<EnumValue name='&apos;DeviceButton_e&apos;' value='101'/>
+			<EnumValue name='&apos;DeviceButton_f&apos;' value='102'/>
+			<EnumValue name='&apos;DeviceButton_g&apos;' value='103'/>
+			<EnumValue name='&apos;DeviceButton_h&apos;' value='104'/>
+			<EnumValue name='&apos;DeviceButton_i&apos;' value='105'/>
+			<EnumValue name='&apos;DeviceButton_j&apos;' value='106'/>
+			<EnumValue name='&apos;DeviceButton_k&apos;' value='107'/>
+			<EnumValue name='&apos;DeviceButton_l&apos;' value='108'/>
+			<EnumValue name='&apos;DeviceButton_m&apos;' value='109'/>
+			<EnumValue name='&apos;DeviceButton_n&apos;' value='110'/>
+			<EnumValue name='&apos;DeviceButton_o&apos;' value='111'/>
+			<EnumValue name='&apos;DeviceButton_p&apos;' value='112'/>
+			<EnumValue name='&apos;DeviceButton_q&apos;' value='113'/>
+			<EnumValue name='&apos;DeviceButton_r&apos;' value='114'/>
+			<EnumValue name='&apos;DeviceButton_s&apos;' value='115'/>
+			<EnumValue name='&apos;DeviceButton_t&apos;' value='116'/>
+			<EnumValue name='&apos;DeviceButton_u&apos;' value='117'/>
+			<EnumValue name='&apos;DeviceButton_v&apos;' value='118'/>
+			<EnumValue name='&apos;DeviceButton_w&apos;' value='119'/>
+			<EnumValue name='&apos;DeviceButton_x&apos;' value='120'/>
+			<EnumValue name='&apos;DeviceButton_y&apos;' value='121'/>
+			<EnumValue name='&apos;DeviceButton_z&apos;' value='122'/>
+			<EnumValue name='&apos;DeviceButton_{&apos;' value='123'/>
+			<EnumValue name='&apos;DeviceButton_|&apos;' value='124'/>
+			<EnumValue name='&apos;DeviceButton_}&apos;' value='125'/>
+			<EnumValue name='&apos;DeviceButton_~&apos;' value='126'/>
+			<EnumValue name='&apos;DeviceButton_delete&apos;' value='127'/>
+			<EnumValue name='&apos;DeviceButton_backspace&apos;' value='128'/>
+			<EnumValue name='&apos;DeviceButton_tab&apos;' value='129'/>
+			<EnumValue name='&apos;DeviceButton_enter&apos;' value='130'/>
+			<EnumValue name='&apos;DeviceButton_pause&apos;' value='131'/>
+			<EnumValue name='&apos;DeviceButton_escape&apos;' value='132'/>
+			<EnumValue name='&apos;DeviceButton_F1&apos;' value='133'/>
+			<EnumValue name='&apos;DeviceButton_F2&apos;' value='134'/>
+			<EnumValue name='&apos;DeviceButton_F3&apos;' value='135'/>
+			<EnumValue name='&apos;DeviceButton_F4&apos;' value='136'/>
+			<EnumValue name='&apos;DeviceButton_F5&apos;' value='137'/>
+			<EnumValue name='&apos;DeviceButton_F6&apos;' value='138'/>
+			<EnumValue name='&apos;DeviceButton_F7&apos;' value='139'/>
+			<EnumValue name='&apos;DeviceButton_F8&apos;' value='140'/>
+			<EnumValue name='&apos;DeviceButton_F9&apos;' value='141'/>
+			<EnumValue name='&apos;DeviceButton_F10&apos;' value='142'/>
+			<EnumValue name='&apos;DeviceButton_F11&apos;' value='143'/>
+			<EnumValue name='&apos;DeviceButton_F12&apos;' value='144'/>
+			<EnumValue name='&apos;DeviceButton_F13&apos;' value='145'/>
+			<EnumValue name='&apos;DeviceButton_F14&apos;' value='146'/>
+			<EnumValue name='&apos;DeviceButton_F15&apos;' value='147'/>
+			<EnumValue name='&apos;DeviceButton_F16&apos;' value='148'/>
+			<EnumValue name='&apos;DeviceButton_left ctrl&apos;' value='149'/>
+			<EnumValue name='&apos;DeviceButton_right ctrl&apos;' value='150'/>
+			<EnumValue name='&apos;DeviceButton_left shift&apos;' value='151'/>
+			<EnumValue name='&apos;DeviceButton_right shift&apos;' value='152'/>
+			<EnumValue name='&apos;DeviceButton_left alt&apos;' value='153'/>
+			<EnumValue name='&apos;DeviceButton_right alt&apos;' value='154'/>
+			<EnumValue name='&apos;DeviceButton_left meta&apos;' value='155'/>
+			<EnumValue name='&apos;DeviceButton_right meta&apos;' value='156'/>
+			<EnumValue name='&apos;DeviceButton_left super&apos;' value='157'/>
+			<EnumValue name='&apos;DeviceButton_right super&apos;' value='158'/>
+			<EnumValue name='&apos;DeviceButton_menu&apos;' value='159'/>
+			<EnumValue name='&apos;DeviceButton_function&apos;' value='160'/>
+			<EnumValue name='&apos;DeviceButton_num lock&apos;' value='161'/>
+			<EnumValue name='&apos;DeviceButton_scroll lock&apos;' value='162'/>
+			<EnumValue name='&apos;DeviceButton_caps lock&apos;' value='163'/>
+			<EnumValue name='&apos;DeviceButton_prtsc&apos;' value='164'/>
+			<EnumValue name='&apos;DeviceButton_up&apos;' value='165'/>
+			<EnumValue name='&apos;DeviceButton_down&apos;' value='166'/>
+			<EnumValue name='&apos;DeviceButton_left&apos;' value='167'/>
+			<EnumValue name='&apos;DeviceButton_right&apos;' value='168'/>
+			<EnumValue name='&apos;DeviceButton_insert&apos;' value='169'/>
+			<EnumValue name='&apos;DeviceButton_home&apos;' value='170'/>
+			<EnumValue name='&apos;DeviceButton_end&apos;' value='171'/>
+			<EnumValue name='&apos;DeviceButton_pgup&apos;' value='172'/>
+			<EnumValue name='&apos;DeviceButton_pgdn&apos;' value='173'/>
+			<EnumValue name='&apos;DeviceButton_KP 0&apos;' value='174'/>
+			<EnumValue name='&apos;DeviceButton_KP 1&apos;' value='175'/>
+			<EnumValue name='&apos;DeviceButton_KP 2&apos;' value='176'/>
+			<EnumValue name='&apos;DeviceButton_KP 3&apos;' value='177'/>
+			<EnumValue name='&apos;DeviceButton_KP 4&apos;' value='178'/>
+			<EnumValue name='&apos;DeviceButton_KP 5&apos;' value='179'/>
+			<EnumValue name='&apos;DeviceButton_KP 6&apos;' value='180'/>
+			<EnumValue name='&apos;DeviceButton_KP 7&apos;' value='181'/>
+			<EnumValue name='&apos;DeviceButton_KP 8&apos;' value='182'/>
+			<EnumValue name='&apos;DeviceButton_KP 9&apos;' value='183'/>
+			<EnumValue name='&apos;DeviceButton_KP /&apos;' value='184'/>
+			<EnumValue name='&apos;DeviceButton_KP *&apos;' value='185'/>
+			<EnumValue name='&apos;DeviceButton_KP -&apos;' value='186'/>
+			<EnumValue name='&apos;DeviceButton_KP +&apos;' value='187'/>
+			<EnumValue name='&apos;DeviceButton_KP .&apos;' value='188'/>
+			<EnumValue name='&apos;DeviceButton_KP =&apos;' value='189'/>
+			<EnumValue name='&apos;DeviceButton_KP enter&apos;' value='190'/>
+			<EnumValue name='&apos;DeviceButton_unk 0&apos;' value='191'/>
+			<EnumValue name='&apos;DeviceButton_unk 1&apos;' value='192'/>
+			<EnumValue name='&apos;DeviceButton_unk 2&apos;' value='193'/>
+			<EnumValue name='&apos;DeviceButton_unk 3&apos;' value='194'/>
+			<EnumValue name='&apos;DeviceButton_unk 4&apos;' value='195'/>
+			<EnumValue name='&apos;DeviceButton_unk 5&apos;' value='196'/>
+			<EnumValue name='&apos;DeviceButton_unk 6&apos;' value='197'/>
+			<EnumValue name='&apos;DeviceButton_unk 7&apos;' value='198'/>
+			<EnumValue name='&apos;DeviceButton_unk 8&apos;' value='199'/>
+			<EnumValue name='&apos;DeviceButton_unk 9&apos;' value='200'/>
+			<EnumValue name='&apos;DeviceButton_unk 10&apos;' value='201'/>
+			<EnumValue name='&apos;DeviceButton_unk 11&apos;' value='202'/>
+			<EnumValue name='&apos;DeviceButton_unk 12&apos;' value='203'/>
+			<EnumValue name='&apos;DeviceButton_unk 13&apos;' value='204'/>
+			<EnumValue name='&apos;DeviceButton_unk 14&apos;' value='205'/>
+			<EnumValue name='&apos;DeviceButton_unk 15&apos;' value='206'/>
+			<EnumValue name='&apos;DeviceButton_unk 16&apos;' value='207'/>
+			<EnumValue name='&apos;DeviceButton_unk 17&apos;' value='208'/>
+			<EnumValue name='&apos;DeviceButton_unk 18&apos;' value='209'/>
+			<EnumValue name='&apos;DeviceButton_unk 19&apos;' value='210'/>
+			<EnumValue name='&apos;DeviceButton_unk 20&apos;' value='211'/>
+			<EnumValue name='&apos;DeviceButton_unk 21&apos;' value='212'/>
+			<EnumValue name='&apos;DeviceButton_unk 22&apos;' value='213'/>
+			<EnumValue name='&apos;DeviceButton_unk 23&apos;' value='214'/>
+			<EnumValue name='&apos;DeviceButton_unk 24&apos;' value='215'/>
+			<EnumValue name='&apos;DeviceButton_unk 25&apos;' value='216'/>
+			<EnumValue name='&apos;DeviceButton_unk 26&apos;' value='217'/>
+			<EnumValue name='&apos;DeviceButton_unk 27&apos;' value='218'/>
+			<EnumValue name='&apos;DeviceButton_unk 28&apos;' value='219'/>
+			<EnumValue name='&apos;DeviceButton_unk 29&apos;' value='220'/>
+			<EnumValue name='&apos;DeviceButton_unk 30&apos;' value='221'/>
+			<EnumValue name='&apos;DeviceButton_unk 31&apos;' value='222'/>
+			<EnumValue name='&apos;DeviceButton_unk 32&apos;' value='223'/>
+			<EnumValue name='&apos;DeviceButton_unk 33&apos;' value='224'/>
+			<EnumValue name='&apos;DeviceButton_unk 34&apos;' value='225'/>
+			<EnumValue name='&apos;DeviceButton_unk 35&apos;' value='226'/>
+			<EnumValue name='&apos;DeviceButton_unk 36&apos;' value='227'/>
+			<EnumValue name='&apos;DeviceButton_unk 37&apos;' value='228'/>
+			<EnumValue name='&apos;DeviceButton_unk 38&apos;' value='229'/>
+			<EnumValue name='&apos;DeviceButton_unk 39&apos;' value='230'/>
+			<EnumValue name='&apos;DeviceButton_unk 40&apos;' value='231'/>
+			<EnumValue name='&apos;DeviceButton_unk 41&apos;' value='232'/>
+			<EnumValue name='&apos;DeviceButton_unk 42&apos;' value='233'/>
+			<EnumValue name='&apos;DeviceButton_unk 43&apos;' value='234'/>
+			<EnumValue name='&apos;DeviceButton_unk 44&apos;' value='235'/>
+			<EnumValue name='&apos;DeviceButton_unk 45&apos;' value='236'/>
+			<EnumValue name='&apos;DeviceButton_unk 46&apos;' value='237'/>
+			<EnumValue name='&apos;DeviceButton_unk 47&apos;' value='238'/>
+			<EnumValue name='&apos;DeviceButton_unk 48&apos;' value='239'/>
+			<EnumValue name='&apos;DeviceButton_unk 49&apos;' value='240'/>
+			<EnumValue name='&apos;DeviceButton_unk 50&apos;' value='241'/>
+			<EnumValue name='&apos;DeviceButton_unk 51&apos;' value='242'/>
+			<EnumValue name='&apos;DeviceButton_unk 52&apos;' value='243'/>
+			<EnumValue name='&apos;DeviceButton_unk 53&apos;' value='244'/>
+			<EnumValue name='&apos;DeviceButton_unk 54&apos;' value='245'/>
+			<EnumValue name='&apos;DeviceButton_unk 55&apos;' value='246'/>
+			<EnumValue name='&apos;DeviceButton_unk 56&apos;' value='247'/>
+			<EnumValue name='&apos;DeviceButton_unk 57&apos;' value='248'/>
+			<EnumValue name='&apos;DeviceButton_unk 58&apos;' value='249'/>
+			<EnumValue name='&apos;DeviceButton_unk 59&apos;' value='250'/>
+			<EnumValue name='&apos;DeviceButton_unk 60&apos;' value='251'/>
+			<EnumValue name='&apos;DeviceButton_unk 61&apos;' value='252'/>
+			<EnumValue name='&apos;DeviceButton_unk 62&apos;' value='253'/>
+			<EnumValue name='&apos;DeviceButton_unk 63&apos;' value='254'/>
+			<EnumValue name='&apos;DeviceButton_unk 64&apos;' value='255'/>
+			<EnumValue name='&apos;DeviceButton_unk 65&apos;' value='256'/>
+			<EnumValue name='&apos;DeviceButton_unk 66&apos;' value='257'/>
+			<EnumValue name='&apos;DeviceButton_unk 67&apos;' value='258'/>
+			<EnumValue name='&apos;DeviceButton_unk 68&apos;' value='259'/>
+			<EnumValue name='&apos;DeviceButton_unk 69&apos;' value='260'/>
+			<EnumValue name='&apos;DeviceButton_unk 70&apos;' value='261'/>
+			<EnumValue name='&apos;DeviceButton_unk 71&apos;' value='262'/>
+			<EnumValue name='&apos;DeviceButton_unk 72&apos;' value='263'/>
+			<EnumValue name='&apos;DeviceButton_unk 73&apos;' value='264'/>
+			<EnumValue name='&apos;DeviceButton_unk 74&apos;' value='265'/>
+			<EnumValue name='&apos;DeviceButton_unk 75&apos;' value='266'/>
+			<EnumValue name='&apos;DeviceButton_unk 76&apos;' value='267'/>
+			<EnumValue name='&apos;DeviceButton_unk 77&apos;' value='268'/>
+			<EnumValue name='&apos;DeviceButton_unk 78&apos;' value='269'/>
+			<EnumValue name='&apos;DeviceButton_unk 79&apos;' value='270'/>
+			<EnumValue name='&apos;DeviceButton_unk 80&apos;' value='271'/>
+			<EnumValue name='&apos;DeviceButton_unk 81&apos;' value='272'/>
+			<EnumValue name='&apos;DeviceButton_unk 82&apos;' value='273'/>
+			<EnumValue name='&apos;DeviceButton_unk 83&apos;' value='274'/>
+			<EnumValue name='&apos;DeviceButton_unk 84&apos;' value='275'/>
+			<EnumValue name='&apos;DeviceButton_unk 85&apos;' value='276'/>
+			<EnumValue name='&apos;DeviceButton_unk 86&apos;' value='277'/>
+			<EnumValue name='&apos;DeviceButton_unk 87&apos;' value='278'/>
+			<EnumValue name='&apos;DeviceButton_unk 88&apos;' value='279'/>
+			<EnumValue name='&apos;DeviceButton_unk 89&apos;' value='280'/>
+			<EnumValue name='&apos;DeviceButton_unk 90&apos;' value='281'/>
+			<EnumValue name='&apos;DeviceButton_unk 91&apos;' value='282'/>
+			<EnumValue name='&apos;DeviceButton_unk 92&apos;' value='283'/>
+			<EnumValue name='&apos;DeviceButton_unk 93&apos;' value='284'/>
+			<EnumValue name='&apos;DeviceButton_unk 94&apos;' value='285'/>
+			<EnumValue name='&apos;DeviceButton_unk 95&apos;' value='286'/>
+			<EnumValue name='&apos;DeviceButton_unk 96&apos;' value='287'/>
+			<EnumValue name='&apos;DeviceButton_unk 97&apos;' value='288'/>
+			<EnumValue name='&apos;DeviceButton_unk 98&apos;' value='289'/>
+			<EnumValue name='&apos;DeviceButton_unk 99&apos;' value='290'/>
+			<EnumValue name='&apos;DeviceButton_unk 100&apos;' value='291'/>
+			<EnumValue name='&apos;DeviceButton_unk 101&apos;' value='292'/>
+			<EnumValue name='&apos;DeviceButton_unk 102&apos;' value='293'/>
+			<EnumValue name='&apos;DeviceButton_unk 103&apos;' value='294'/>
+			<EnumValue name='&apos;DeviceButton_unk 104&apos;' value='295'/>
+			<EnumValue name='&apos;DeviceButton_unk 105&apos;' value='296'/>
+			<EnumValue name='&apos;DeviceButton_unk 106&apos;' value='297'/>
+			<EnumValue name='&apos;DeviceButton_unk 107&apos;' value='298'/>
+			<EnumValue name='&apos;DeviceButton_unk 108&apos;' value='299'/>
+			<EnumValue name='&apos;DeviceButton_unk 109&apos;' value='300'/>
+			<EnumValue name='&apos;DeviceButton_unk 110&apos;' value='301'/>
+			<EnumValue name='&apos;DeviceButton_unk 111&apos;' value='302'/>
+			<EnumValue name='&apos;DeviceButton_unk 112&apos;' value='303'/>
+			<EnumValue name='&apos;DeviceButton_unk 113&apos;' value='304'/>
+			<EnumValue name='&apos;DeviceButton_unk 114&apos;' value='305'/>
+			<EnumValue name='&apos;DeviceButton_unk 115&apos;' value='306'/>
+			<EnumValue name='&apos;DeviceButton_unk 116&apos;' value='307'/>
+			<EnumValue name='&apos;DeviceButton_unk 117&apos;' value='308'/>
+			<EnumValue name='&apos;DeviceButton_unk 118&apos;' value='309'/>
+			<EnumValue name='&apos;DeviceButton_unk 119&apos;' value='310'/>
+			<EnumValue name='&apos;DeviceButton_unk 120&apos;' value='311'/>
+			<EnumValue name='&apos;DeviceButton_unk 121&apos;' value='312'/>
+			<EnumValue name='&apos;DeviceButton_unk 122&apos;' value='313'/>
+			<EnumValue name='&apos;DeviceButton_unk 123&apos;' value='314'/>
+			<EnumValue name='&apos;DeviceButton_unk 124&apos;' value='315'/>
+			<EnumValue name='&apos;DeviceButton_unk 125&apos;' value='316'/>
+			<EnumValue name='&apos;DeviceButton_unk 126&apos;' value='317'/>
+			<EnumValue name='&apos;DeviceButton_unk 127&apos;' value='318'/>
+			<EnumValue name='&apos;DeviceButton_unk 128&apos;' value='319'/>
+			<EnumValue name='&apos;DeviceButton_unk 129&apos;' value='320'/>
+			<EnumValue name='&apos;DeviceButton_unk 130&apos;' value='321'/>
+			<EnumValue name='&apos;DeviceButton_unk 131&apos;' value='322'/>
+			<EnumValue name='&apos;DeviceButton_unk 132&apos;' value='323'/>
+			<EnumValue name='&apos;DeviceButton_unk 133&apos;' value='324'/>
+			<EnumValue name='&apos;DeviceButton_unk 134&apos;' value='325'/>
+			<EnumValue name='&apos;DeviceButton_unk 135&apos;' value='326'/>
+			<EnumValue name='&apos;DeviceButton_unk 136&apos;' value='327'/>
+			<EnumValue name='&apos;DeviceButton_unk 137&apos;' value='328'/>
+			<EnumValue name='&apos;DeviceButton_unk 138&apos;' value='329'/>
+			<EnumValue name='&apos;DeviceButton_unk 139&apos;' value='330'/>
+			<EnumValue name='&apos;DeviceButton_unk 140&apos;' value='331'/>
+			<EnumValue name='&apos;DeviceButton_unk 141&apos;' value='332'/>
+			<EnumValue name='&apos;DeviceButton_unk 142&apos;' value='333'/>
+			<EnumValue name='&apos;DeviceButton_unk 143&apos;' value='334'/>
+			<EnumValue name='&apos;DeviceButton_unk 144&apos;' value='335'/>
+			<EnumValue name='&apos;DeviceButton_unk 145&apos;' value='336'/>
+			<EnumValue name='&apos;DeviceButton_unk 146&apos;' value='337'/>
+			<EnumValue name='&apos;DeviceButton_unk 147&apos;' value='338'/>
+			<EnumValue name='&apos;DeviceButton_unk 148&apos;' value='339'/>
+			<EnumValue name='&apos;DeviceButton_unk 149&apos;' value='340'/>
+			<EnumValue name='&apos;DeviceButton_unk 150&apos;' value='341'/>
+			<EnumValue name='&apos;DeviceButton_unk 151&apos;' value='342'/>
+			<EnumValue name='&apos;DeviceButton_unk 152&apos;' value='343'/>
+			<EnumValue name='&apos;DeviceButton_unk 153&apos;' value='344'/>
+			<EnumValue name='&apos;DeviceButton_unk 154&apos;' value='345'/>
+			<EnumValue name='&apos;DeviceButton_unk 155&apos;' value='346'/>
+			<EnumValue name='&apos;DeviceButton_unk 156&apos;' value='347'/>
+			<EnumValue name='&apos;DeviceButton_unk 157&apos;' value='348'/>
+			<EnumValue name='&apos;DeviceButton_unk 158&apos;' value='349'/>
+			<EnumValue name='&apos;DeviceButton_unk 159&apos;' value='350'/>
+			<EnumValue name='&apos;DeviceButton_unk 160&apos;' value='351'/>
+			<EnumValue name='&apos;DeviceButton_unk 161&apos;' value='352'/>
+			<EnumValue name='&apos;DeviceButton_unk 162&apos;' value='353'/>
+			<EnumValue name='&apos;DeviceButton_unk 163&apos;' value='354'/>
+			<EnumValue name='&apos;DeviceButton_unk 164&apos;' value='355'/>
+			<EnumValue name='&apos;DeviceButton_unk 165&apos;' value='356'/>
+			<EnumValue name='&apos;DeviceButton_unk 166&apos;' value='357'/>
+			<EnumValue name='&apos;DeviceButton_unk 167&apos;' value='358'/>
+			<EnumValue name='&apos;DeviceButton_unk 168&apos;' value='359'/>
+			<EnumValue name='&apos;DeviceButton_unk 169&apos;' value='360'/>
+			<EnumValue name='&apos;DeviceButton_unk 170&apos;' value='361'/>
+			<EnumValue name='&apos;DeviceButton_unk 171&apos;' value='362'/>
+			<EnumValue name='&apos;DeviceButton_unk 172&apos;' value='363'/>
+			<EnumValue name='&apos;DeviceButton_unk 173&apos;' value='364'/>
+			<EnumValue name='&apos;DeviceButton_unk 174&apos;' value='365'/>
+			<EnumValue name='&apos;DeviceButton_unk 175&apos;' value='366'/>
+			<EnumValue name='&apos;DeviceButton_unk 176&apos;' value='367'/>
+			<EnumValue name='&apos;DeviceButton_unk 177&apos;' value='368'/>
+			<EnumValue name='&apos;DeviceButton_unk 178&apos;' value='369'/>
+			<EnumValue name='&apos;DeviceButton_unk 179&apos;' value='370'/>
+			<EnumValue name='&apos;DeviceButton_unk 180&apos;' value='371'/>
+			<EnumValue name='&apos;DeviceButton_unk 181&apos;' value='372'/>
+			<EnumValue name='&apos;DeviceButton_unk 182&apos;' value='373'/>
+			<EnumValue name='&apos;DeviceButton_unk 183&apos;' value='374'/>
+			<EnumValue name='&apos;DeviceButton_unk 184&apos;' value='375'/>
+			<EnumValue name='&apos;DeviceButton_unk 185&apos;' value='376'/>
+			<EnumValue name='&apos;DeviceButton_unk 186&apos;' value='377'/>
+			<EnumValue name='&apos;DeviceButton_unk 187&apos;' value='378'/>
+			<EnumValue name='&apos;DeviceButton_unk 188&apos;' value='379'/>
+			<EnumValue name='&apos;DeviceButton_unk 189&apos;' value='380'/>
+			<EnumValue name='&apos;DeviceButton_unk 190&apos;' value='381'/>
+			<EnumValue name='&apos;DeviceButton_unk 191&apos;' value='382'/>
+			<EnumValue name='&apos;DeviceButton_unk 192&apos;' value='383'/>
+			<EnumValue name='&apos;DeviceButton_unk 193&apos;' value='384'/>
+			<EnumValue name='&apos;DeviceButton_unk 194&apos;' value='385'/>
+			<EnumValue name='&apos;DeviceButton_unk 195&apos;' value='386'/>
+			<EnumValue name='&apos;DeviceButton_unk 196&apos;' value='387'/>
+			<EnumValue name='&apos;DeviceButton_unk 197&apos;' value='388'/>
+			<EnumValue name='&apos;DeviceButton_unk 198&apos;' value='389'/>
+			<EnumValue name='&apos;DeviceButton_unk 199&apos;' value='390'/>
+			<EnumValue name='&apos;DeviceButton_unk 200&apos;' value='391'/>
+			<EnumValue name='&apos;DeviceButton_unk 201&apos;' value='392'/>
+			<EnumValue name='&apos;DeviceButton_unk 202&apos;' value='393'/>
+			<EnumValue name='&apos;DeviceButton_unk 203&apos;' value='394'/>
+			<EnumValue name='&apos;DeviceButton_unk 204&apos;' value='395'/>
+			<EnumValue name='&apos;DeviceButton_unk 205&apos;' value='396'/>
+			<EnumValue name='&apos;DeviceButton_unk 206&apos;' value='397'/>
+			<EnumValue name='&apos;DeviceButton_unk 207&apos;' value='398'/>
+			<EnumValue name='&apos;DeviceButton_unk 208&apos;' value='399'/>
+			<EnumValue name='&apos;DeviceButton_unk 209&apos;' value='400'/>
+			<EnumValue name='&apos;DeviceButton_unk 210&apos;' value='401'/>
+			<EnumValue name='&apos;DeviceButton_unk 211&apos;' value='402'/>
+			<EnumValue name='&apos;DeviceButton_unk 212&apos;' value='403'/>
+			<EnumValue name='&apos;DeviceButton_unk 213&apos;' value='404'/>
+			<EnumValue name='&apos;DeviceButton_unk 214&apos;' value='405'/>
+			<EnumValue name='&apos;DeviceButton_unk 215&apos;' value='406'/>
+			<EnumValue name='&apos;DeviceButton_unk 216&apos;' value='407'/>
+			<EnumValue name='&apos;DeviceButton_unk 217&apos;' value='408'/>
+			<EnumValue name='&apos;DeviceButton_unk 218&apos;' value='409'/>
+			<EnumValue name='&apos;DeviceButton_unk 219&apos;' value='410'/>
+			<EnumValue name='&apos;DeviceButton_unk 220&apos;' value='411'/>
+			<EnumValue name='&apos;DeviceButton_unk 221&apos;' value='412'/>
+			<EnumValue name='&apos;DeviceButton_unk 222&apos;' value='413'/>
+			<EnumValue name='&apos;DeviceButton_unk 223&apos;' value='414'/>
+			<EnumValue name='&apos;DeviceButton_unk 224&apos;' value='415'/>
+			<EnumValue name='&apos;DeviceButton_unk 225&apos;' value='416'/>
+			<EnumValue name='&apos;DeviceButton_unk 226&apos;' value='417'/>
+			<EnumValue name='&apos;DeviceButton_unk 227&apos;' value='418'/>
+			<EnumValue name='&apos;DeviceButton_unk 228&apos;' value='419'/>
+			<EnumValue name='&apos;DeviceButton_unk 229&apos;' value='420'/>
+			<EnumValue name='&apos;DeviceButton_unk 230&apos;' value='421'/>
+			<EnumValue name='&apos;DeviceButton_unk 231&apos;' value='422'/>
+			<EnumValue name='&apos;DeviceButton_unk 232&apos;' value='423'/>
+			<EnumValue name='&apos;DeviceButton_unk 233&apos;' value='424'/>
+			<EnumValue name='&apos;DeviceButton_unk 234&apos;' value='425'/>
+			<EnumValue name='&apos;DeviceButton_unk 235&apos;' value='426'/>
+			<EnumValue name='&apos;DeviceButton_unk 236&apos;' value='427'/>
+			<EnumValue name='&apos;DeviceButton_unk 237&apos;' value='428'/>
+			<EnumValue name='&apos;DeviceButton_unk 238&apos;' value='429'/>
+			<EnumValue name='&apos;DeviceButton_unk 239&apos;' value='430'/>
+			<EnumValue name='&apos;DeviceButton_unk 240&apos;' value='431'/>
+			<EnumValue name='&apos;DeviceButton_unk 241&apos;' value='432'/>
+			<EnumValue name='&apos;DeviceButton_unk 242&apos;' value='433'/>
+			<EnumValue name='&apos;DeviceButton_unk 243&apos;' value='434'/>
+			<EnumValue name='&apos;DeviceButton_unk 244&apos;' value='435'/>
+			<EnumValue name='&apos;DeviceButton_unk 245&apos;' value='436'/>
+			<EnumValue name='&apos;DeviceButton_unk 246&apos;' value='437'/>
+			<EnumValue name='&apos;DeviceButton_unk 247&apos;' value='438'/>
+			<EnumValue name='&apos;DeviceButton_unk 248&apos;' value='439'/>
+			<EnumValue name='&apos;DeviceButton_unk 249&apos;' value='440'/>
+			<EnumValue name='&apos;DeviceButton_unk 250&apos;' value='441'/>
+			<EnumValue name='&apos;DeviceButton_unk 251&apos;' value='442'/>
+			<EnumValue name='&apos;DeviceButton_unk 252&apos;' value='443'/>
+			<EnumValue name='&apos;DeviceButton_unk 253&apos;' value='444'/>
+			<EnumValue name='&apos;DeviceButton_unk 254&apos;' value='445'/>
+			<EnumValue name='&apos;DeviceButton_unk 255&apos;' value='446'/>
+			<EnumValue name='&apos;DeviceButton_unk 256&apos;' value='447'/>
+			<EnumValue name='&apos;DeviceButton_unk 257&apos;' value='448'/>
+			<EnumValue name='&apos;DeviceButton_unk 258&apos;' value='449'/>
+			<EnumValue name='&apos;DeviceButton_unk 259&apos;' value='450'/>
+			<EnumValue name='&apos;DeviceButton_unk 260&apos;' value='451'/>
+			<EnumValue name='&apos;DeviceButton_unk 261&apos;' value='452'/>
+			<EnumValue name='&apos;DeviceButton_unk 262&apos;' value='453'/>
+			<EnumValue name='&apos;DeviceButton_unk 263&apos;' value='454'/>
+			<EnumValue name='&apos;DeviceButton_unk 264&apos;' value='455'/>
+			<EnumValue name='&apos;DeviceButton_unk 265&apos;' value='456'/>
+			<EnumValue name='&apos;DeviceButton_unk 266&apos;' value='457'/>
+			<EnumValue name='&apos;DeviceButton_unk 267&apos;' value='458'/>
+			<EnumValue name='&apos;DeviceButton_unk 268&apos;' value='459'/>
+			<EnumValue name='&apos;DeviceButton_unk 269&apos;' value='460'/>
+			<EnumValue name='&apos;DeviceButton_unk 270&apos;' value='461'/>
+			<EnumValue name='&apos;DeviceButton_unk 271&apos;' value='462'/>
+			<EnumValue name='&apos;DeviceButton_unk 272&apos;' value='463'/>
+			<EnumValue name='&apos;DeviceButton_unk 273&apos;' value='464'/>
+			<EnumValue name='&apos;DeviceButton_unk 274&apos;' value='465'/>
+			<EnumValue name='&apos;DeviceButton_unk 275&apos;' value='466'/>
+			<EnumValue name='&apos;DeviceButton_unk 276&apos;' value='467'/>
+			<EnumValue name='&apos;DeviceButton_unk 277&apos;' value='468'/>
+			<EnumValue name='&apos;DeviceButton_unk 278&apos;' value='469'/>
+			<EnumValue name='&apos;DeviceButton_unk 279&apos;' value='470'/>
+			<EnumValue name='&apos;DeviceButton_unk 280&apos;' value='471'/>
+			<EnumValue name='&apos;DeviceButton_unk 281&apos;' value='472'/>
+			<EnumValue name='&apos;DeviceButton_unk 282&apos;' value='473'/>
+			<EnumValue name='&apos;DeviceButton_unk 283&apos;' value='474'/>
+			<EnumValue name='&apos;DeviceButton_unk 284&apos;' value='475'/>
+			<EnumValue name='&apos;DeviceButton_unk 285&apos;' value='476'/>
+			<EnumValue name='&apos;DeviceButton_unk 286&apos;' value='477'/>
+			<EnumValue name='&apos;DeviceButton_unk 287&apos;' value='478'/>
+			<EnumValue name='&apos;DeviceButton_unk 288&apos;' value='479'/>
+			<EnumValue name='&apos;DeviceButton_unk 289&apos;' value='480'/>
+			<EnumValue name='&apos;DeviceButton_unk 290&apos;' value='481'/>
+			<EnumValue name='&apos;DeviceButton_unk 291&apos;' value='482'/>
+			<EnumValue name='&apos;DeviceButton_unk 292&apos;' value='483'/>
+			<EnumValue name='&apos;DeviceButton_unk 293&apos;' value='484'/>
+			<EnumValue name='&apos;DeviceButton_unk 294&apos;' value='485'/>
+			<EnumValue name='&apos;DeviceButton_unk 295&apos;' value='486'/>
+			<EnumValue name='&apos;DeviceButton_unk 296&apos;' value='487'/>
+			<EnumValue name='&apos;DeviceButton_unk 297&apos;' value='488'/>
+			<EnumValue name='&apos;DeviceButton_unk 298&apos;' value='489'/>
+			<EnumValue name='&apos;DeviceButton_unk 299&apos;' value='490'/>
+			<EnumValue name='&apos;DeviceButton_unk 300&apos;' value='491'/>
+			<EnumValue name='&apos;DeviceButton_unk 301&apos;' value='492'/>
+			<EnumValue name='&apos;DeviceButton_unk 302&apos;' value='493'/>
+			<EnumValue name='&apos;DeviceButton_unk 303&apos;' value='494'/>
+			<EnumValue name='&apos;DeviceButton_unk 304&apos;' value='495'/>
+			<EnumValue name='&apos;DeviceButton_unk 305&apos;' value='496'/>
+			<EnumValue name='&apos;DeviceButton_unk 306&apos;' value='497'/>
+			<EnumValue name='&apos;DeviceButton_unk 307&apos;' value='498'/>
+			<EnumValue name='&apos;DeviceButton_unk 308&apos;' value='499'/>
+			<EnumValue name='&apos;DeviceButton_unk 309&apos;' value='500'/>
+			<EnumValue name='&apos;DeviceButton_unk 310&apos;' value='501'/>
+			<EnumValue name='&apos;DeviceButton_unk 311&apos;' value='502'/>
+			<EnumValue name='&apos;DeviceButton_unk 312&apos;' value='503'/>
+			<EnumValue name='&apos;DeviceButton_unk 313&apos;' value='504'/>
+			<EnumValue name='&apos;DeviceButton_unk 314&apos;' value='505'/>
+			<EnumValue name='&apos;DeviceButton_unk 315&apos;' value='506'/>
+			<EnumValue name='&apos;DeviceButton_unk 316&apos;' value='507'/>
+			<EnumValue name='&apos;DeviceButton_unk 317&apos;' value='508'/>
+			<EnumValue name='&apos;DeviceButton_unk 318&apos;' value='509'/>
+			<EnumValue name='&apos;DeviceButton_unk 319&apos;' value='510'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='511'/>
+			<EnumValue name='&apos;DeviceButton_Left1&apos;' value='512'/>
+			<EnumValue name='&apos;DeviceButton_Right1&apos;' value='513'/>
+			<EnumValue name='&apos;DeviceButton_Up1&apos;' value='514'/>
+			<EnumValue name='&apos;DeviceButton_Down1&apos;' value='515'/>
+			<EnumValue name='&apos;DeviceButton_Left2&apos;' value='516'/>
+			<EnumValue name='&apos;DeviceButton_Right2&apos;' value='517'/>
+			<EnumValue name='&apos;DeviceButton_Up2&apos;' value='518'/>
+			<EnumValue name='&apos;DeviceButton_Down2&apos;' value='519'/>
+			<EnumValue name='&apos;DeviceButton_Z-Up&apos;' value='520'/>
+			<EnumValue name='&apos;DeviceButton_Z-Down&apos;' value='521'/>
+			<EnumValue name='&apos;DeviceButton_R-Up&apos;' value='522'/>
+			<EnumValue name='&apos;DeviceButton_R-Down&apos;' value='523'/>
+			<EnumValue name='&apos;DeviceButton_R-Left&apos;' value='524'/>
+			<EnumValue name='&apos;DeviceButton_R-Right&apos;' value='525'/>
+			<EnumValue name='&apos;DeviceButton_ZR-Up&apos;' value='526'/>
+			<EnumValue name='&apos;DeviceButton_ZR-Down&apos;' value='527'/>
+			<EnumValue name='&apos;DeviceButton_H-Left&apos;' value='528'/>
+			<EnumValue name='&apos;DeviceButton_H-Right&apos;' value='529'/>
+			<EnumValue name='&apos;DeviceButton_H-Up&apos;' value='530'/>
+			<EnumValue name='&apos;DeviceButton_H-Down&apos;' value='531'/>
+			<EnumValue name='&apos;DeviceButton_Aux1&apos;' value='532'/>
+			<EnumValue name='&apos;DeviceButton_Aux2&apos;' value='533'/>
+			<EnumValue name='&apos;DeviceButton_Aux3&apos;' value='534'/>
+			<EnumValue name='&apos;DeviceButton_Aux4&apos;' value='535'/>
+			<EnumValue name='&apos;DeviceButton_B1&apos;' value='536'/>
+			<EnumValue name='&apos;DeviceButton_B2&apos;' value='537'/>
+			<EnumValue name='&apos;DeviceButton_B3&apos;' value='538'/>
+			<EnumValue name='&apos;DeviceButton_B4&apos;' value='539'/>
+			<EnumValue name='&apos;DeviceButton_B5&apos;' value='540'/>
+			<EnumValue name='&apos;DeviceButton_B6&apos;' value='541'/>
+			<EnumValue name='&apos;DeviceButton_B7&apos;' value='542'/>
+			<EnumValue name='&apos;DeviceButton_B8&apos;' value='543'/>
+			<EnumValue name='&apos;DeviceButton_B9&apos;' value='544'/>
+			<EnumValue name='&apos;DeviceButton_B10&apos;' value='545'/>
+			<EnumValue name='&apos;DeviceButton_B11&apos;' value='546'/>
+			<EnumValue name='&apos;DeviceButton_B12&apos;' value='547'/>
+			<EnumValue name='&apos;DeviceButton_B13&apos;' value='548'/>
+			<EnumValue name='&apos;DeviceButton_B14&apos;' value='549'/>
+			<EnumValue name='&apos;DeviceButton_B15&apos;' value='550'/>
+			<EnumValue name='&apos;DeviceButton_B16&apos;' value='551'/>
+			<EnumValue name='&apos;DeviceButton_B17&apos;' value='552'/>
+			<EnumValue name='&apos;DeviceButton_B18&apos;' value='553'/>
+			<EnumValue name='&apos;DeviceButton_B19&apos;' value='554'/>
+			<EnumValue name='&apos;DeviceButton_B20&apos;' value='555'/>
+			<EnumValue name='&apos;DeviceButton_B21&apos;' value='556'/>
+			<EnumValue name='&apos;DeviceButton_B22&apos;' value='557'/>
+			<EnumValue name='&apos;DeviceButton_B23&apos;' value='558'/>
+			<EnumValue name='&apos;DeviceButton_B24&apos;' value='559'/>
+			<EnumValue name='&apos;DeviceButton_B25&apos;' value='560'/>
+			<EnumValue name='&apos;DeviceButton_B26&apos;' value='561'/>
+			<EnumValue name='&apos;DeviceButton_B27&apos;' value='562'/>
+			<EnumValue name='&apos;DeviceButton_B28&apos;' value='563'/>
+			<EnumValue name='&apos;DeviceButton_B29&apos;' value='564'/>
+			<EnumValue name='&apos;DeviceButton_B30&apos;' value='565'/>
+			<EnumValue name='&apos;DeviceButton_B31&apos;' value='566'/>
+			<EnumValue name='&apos;DeviceButton_B32&apos;' value='567'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='568'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='569'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='570'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='571'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='572'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='573'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='574'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='575'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='576'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='577'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='578'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='579'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='580'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='581'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='582'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='583'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='584'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='585'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='586'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='587'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='588'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='589'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='590'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='591'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='592'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='593'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='594'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='595'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='596'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='597'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='598'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='599'/>
+			<EnumValue name='&apos;DeviceButton_Midi 0&apos;' value='600'/>
+			<EnumValue name='&apos;DeviceButton_Midi 1&apos;' value='601'/>
+			<EnumValue name='&apos;DeviceButton_Midi 2&apos;' value='602'/>
+			<EnumValue name='&apos;DeviceButton_Midi 3&apos;' value='603'/>
+			<EnumValue name='&apos;DeviceButton_Midi 4&apos;' value='604'/>
+			<EnumValue name='&apos;DeviceButton_Midi 5&apos;' value='605'/>
+			<EnumValue name='&apos;DeviceButton_Midi 6&apos;' value='606'/>
+			<EnumValue name='&apos;DeviceButton_Midi 7&apos;' value='607'/>
+			<EnumValue name='&apos;DeviceButton_Midi 8&apos;' value='608'/>
+			<EnumValue name='&apos;DeviceButton_Midi 9&apos;' value='609'/>
+			<EnumValue name='&apos;DeviceButton_Midi 10&apos;' value='610'/>
+			<EnumValue name='&apos;DeviceButton_Midi 11&apos;' value='611'/>
+			<EnumValue name='&apos;DeviceButton_Midi 12&apos;' value='612'/>
+			<EnumValue name='&apos;DeviceButton_Midi 13&apos;' value='613'/>
+			<EnumValue name='&apos;DeviceButton_Midi 14&apos;' value='614'/>
+			<EnumValue name='&apos;DeviceButton_Midi 15&apos;' value='615'/>
+			<EnumValue name='&apos;DeviceButton_Midi 16&apos;' value='616'/>
+			<EnumValue name='&apos;DeviceButton_Midi 17&apos;' value='617'/>
+			<EnumValue name='&apos;DeviceButton_Midi 18&apos;' value='618'/>
+			<EnumValue name='&apos;DeviceButton_Midi 19&apos;' value='619'/>
+			<EnumValue name='&apos;DeviceButton_Midi 20&apos;' value='620'/>
+			<EnumValue name='&apos;DeviceButton_Midi 21&apos;' value='621'/>
+			<EnumValue name='&apos;DeviceButton_Midi 22&apos;' value='622'/>
+			<EnumValue name='&apos;DeviceButton_Midi 23&apos;' value='623'/>
+			<EnumValue name='&apos;DeviceButton_Midi 24&apos;' value='624'/>
+			<EnumValue name='&apos;DeviceButton_Midi 25&apos;' value='625'/>
+			<EnumValue name='&apos;DeviceButton_Midi 26&apos;' value='626'/>
+			<EnumValue name='&apos;DeviceButton_Midi 27&apos;' value='627'/>
+			<EnumValue name='&apos;DeviceButton_Midi 28&apos;' value='628'/>
+			<EnumValue name='&apos;DeviceButton_Midi 29&apos;' value='629'/>
+			<EnumValue name='&apos;DeviceButton_Midi 30&apos;' value='630'/>
+			<EnumValue name='&apos;DeviceButton_Midi 31&apos;' value='631'/>
+			<EnumValue name='&apos;DeviceButton_Midi 32&apos;' value='632'/>
+			<EnumValue name='&apos;DeviceButton_Midi 33&apos;' value='633'/>
+			<EnumValue name='&apos;DeviceButton_Midi 34&apos;' value='634'/>
+			<EnumValue name='&apos;DeviceButton_Midi 35&apos;' value='635'/>
+			<EnumValue name='&apos;DeviceButton_Midi 36&apos;' value='636'/>
+			<EnumValue name='&apos;DeviceButton_Midi 37&apos;' value='637'/>
+			<EnumValue name='&apos;DeviceButton_Midi 38&apos;' value='638'/>
+			<EnumValue name='&apos;DeviceButton_Midi 39&apos;' value='639'/>
+			<EnumValue name='&apos;DeviceButton_Midi 40&apos;' value='640'/>
+			<EnumValue name='&apos;DeviceButton_Midi 41&apos;' value='641'/>
+			<EnumValue name='&apos;DeviceButton_Midi 42&apos;' value='642'/>
+			<EnumValue name='&apos;DeviceButton_Midi 43&apos;' value='643'/>
+			<EnumValue name='&apos;DeviceButton_Midi 44&apos;' value='644'/>
+			<EnumValue name='&apos;DeviceButton_Midi 45&apos;' value='645'/>
+			<EnumValue name='&apos;DeviceButton_Midi 46&apos;' value='646'/>
+			<EnumValue name='&apos;DeviceButton_Midi 47&apos;' value='647'/>
+			<EnumValue name='&apos;DeviceButton_Midi 48&apos;' value='648'/>
+			<EnumValue name='&apos;DeviceButton_Midi 49&apos;' value='649'/>
+			<EnumValue name='&apos;DeviceButton_Midi 50&apos;' value='650'/>
+			<EnumValue name='&apos;DeviceButton_Midi 51&apos;' value='651'/>
+			<EnumValue name='&apos;DeviceButton_Midi 52&apos;' value='652'/>
+			<EnumValue name='&apos;DeviceButton_Midi 53&apos;' value='653'/>
+			<EnumValue name='&apos;DeviceButton_Midi 54&apos;' value='654'/>
+			<EnumValue name='&apos;DeviceButton_Midi 55&apos;' value='655'/>
+			<EnumValue name='&apos;DeviceButton_Midi 56&apos;' value='656'/>
+			<EnumValue name='&apos;DeviceButton_Midi 57&apos;' value='657'/>
+			<EnumValue name='&apos;DeviceButton_Midi 58&apos;' value='658'/>
+			<EnumValue name='&apos;DeviceButton_Midi 59&apos;' value='659'/>
+			<EnumValue name='&apos;DeviceButton_Midi 60&apos;' value='660'/>
+			<EnumValue name='&apos;DeviceButton_Midi 61&apos;' value='661'/>
+			<EnumValue name='&apos;DeviceButton_Midi 62&apos;' value='662'/>
+			<EnumValue name='&apos;DeviceButton_Midi 63&apos;' value='663'/>
+			<EnumValue name='&apos;DeviceButton_Midi 64&apos;' value='664'/>
+			<EnumValue name='&apos;DeviceButton_Midi 65&apos;' value='665'/>
+			<EnumValue name='&apos;DeviceButton_Midi 66&apos;' value='666'/>
+			<EnumValue name='&apos;DeviceButton_Midi 67&apos;' value='667'/>
+			<EnumValue name='&apos;DeviceButton_Midi 68&apos;' value='668'/>
+			<EnumValue name='&apos;DeviceButton_Midi 69&apos;' value='669'/>
+			<EnumValue name='&apos;DeviceButton_Midi 70&apos;' value='670'/>
+			<EnumValue name='&apos;DeviceButton_Midi 71&apos;' value='671'/>
+			<EnumValue name='&apos;DeviceButton_Midi 72&apos;' value='672'/>
+			<EnumValue name='&apos;DeviceButton_Midi 73&apos;' value='673'/>
+			<EnumValue name='&apos;DeviceButton_Midi 74&apos;' value='674'/>
+			<EnumValue name='&apos;DeviceButton_Midi 75&apos;' value='675'/>
+			<EnumValue name='&apos;DeviceButton_Midi 76&apos;' value='676'/>
+			<EnumValue name='&apos;DeviceButton_Midi 77&apos;' value='677'/>
+			<EnumValue name='&apos;DeviceButton_Midi 78&apos;' value='678'/>
+			<EnumValue name='&apos;DeviceButton_Midi 79&apos;' value='679'/>
+			<EnumValue name='&apos;DeviceButton_Midi 80&apos;' value='680'/>
+			<EnumValue name='&apos;DeviceButton_Midi 81&apos;' value='681'/>
+			<EnumValue name='&apos;DeviceButton_Midi 82&apos;' value='682'/>
+			<EnumValue name='&apos;DeviceButton_Midi 83&apos;' value='683'/>
+			<EnumValue name='&apos;DeviceButton_Midi 84&apos;' value='684'/>
+			<EnumValue name='&apos;DeviceButton_Midi 85&apos;' value='685'/>
+			<EnumValue name='&apos;DeviceButton_Midi 86&apos;' value='686'/>
+			<EnumValue name='&apos;DeviceButton_Midi 87&apos;' value='687'/>
+			<EnumValue name='&apos;DeviceButton_Midi 88&apos;' value='688'/>
+			<EnumValue name='&apos;DeviceButton_Midi 89&apos;' value='689'/>
+			<EnumValue name='&apos;DeviceButton_Midi 90&apos;' value='690'/>
+			<EnumValue name='&apos;DeviceButton_Midi 91&apos;' value='691'/>
+			<EnumValue name='&apos;DeviceButton_Midi 92&apos;' value='692'/>
+			<EnumValue name='&apos;DeviceButton_Midi 93&apos;' value='693'/>
+			<EnumValue name='&apos;DeviceButton_Midi 94&apos;' value='694'/>
+			<EnumValue name='&apos;DeviceButton_Midi 95&apos;' value='695'/>
+			<EnumValue name='&apos;DeviceButton_Midi 96&apos;' value='696'/>
+			<EnumValue name='&apos;DeviceButton_Midi 97&apos;' value='697'/>
+			<EnumValue name='&apos;DeviceButton_Midi 98&apos;' value='698'/>
+			<EnumValue name='&apos;DeviceButton_Midi 99&apos;' value='699'/>
+			<EnumValue name='&apos;DeviceButton_left mouse button&apos;' value='700'/>
+			<EnumValue name='&apos;DeviceButton_right mouse button&apos;' value='701'/>
+			<EnumValue name='&apos;DeviceButton_middle mouse button&apos;' value='702'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='703'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='704'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='705'/>
+			<EnumValue name='&apos;DeviceButton_unknown&apos;' value='706'/>
+			<EnumValue name='&apos;DeviceButton_mousewheel up&apos;' value='707'/>
+			<EnumValue name='&apos;DeviceButton_mousewheel down&apos;' value='708'/>
 		</Enum>
 		<Enum name='Difficulty'>
 			<EnumValue name='&apos;Difficulty_Beginner&apos;' value='0'/>
@@ -2294,6 +3310,7 @@
 			<EnumValue name='&apos;FileType_Xml&apos;' value='5'/>
 			<EnumValue name='&apos;FileType_Model&apos;' value='6'/>
 			<EnumValue name='&apos;FileType_Lua&apos;' value='7'/>
+			<EnumValue name='&apos;FileType_Ini&apos;' value='8'/>
 		</Enum>
 		<Enum name='GameController'>
 			<EnumValue name='&apos;GameController_1&apos;' value='0'/>
@@ -2361,10 +3378,56 @@
 			<EnumValue name='&apos;HorizAlign_Center&apos;' value='1'/>
 			<EnumValue name='&apos;HorizAlign_Right&apos;' value='2'/>
 		</Enum>
+		<Enum name='ImageCacheMode'>
+			<EnumValue name='&apos;ImageCacheMode_Off&apos;' value='0'/>
+			<EnumValue name='&apos;ImageCacheMode_LowResPreload&apos;' value='1'/>
+			<EnumValue name='&apos;ImageCacheMode_LowResLoadOnDemand&apos;' value='2'/>
+			<EnumValue name='&apos;ImageCacheMode_Full&apos;' value='3'/>
+		</Enum>
+		<Enum name='InputDevice'>
+			<EnumValue name='&apos;InputDevice_Key&apos;' value='0'/>
+			<EnumValue name='&apos;InputDevice_Joy1&apos;' value='1'/>
+			<EnumValue name='&apos;InputDevice_Joy2&apos;' value='2'/>
+			<EnumValue name='&apos;InputDevice_Joy3&apos;' value='3'/>
+			<EnumValue name='&apos;InputDevice_Joy4&apos;' value='4'/>
+			<EnumValue name='&apos;InputDevice_Joy5&apos;' value='5'/>
+			<EnumValue name='&apos;InputDevice_Joy6&apos;' value='6'/>
+			<EnumValue name='&apos;InputDevice_Joy7&apos;' value='7'/>
+			<EnumValue name='&apos;InputDevice_Joy8&apos;' value='8'/>
+			<EnumValue name='&apos;InputDevice_Joy9&apos;' value='9'/>
+			<EnumValue name='&apos;InputDevice_Joy10&apos;' value='10'/>
+			<EnumValue name='&apos;InputDevice_Joy11&apos;' value='11'/>
+			<EnumValue name='&apos;InputDevice_Joy12&apos;' value='12'/>
+			<EnumValue name='&apos;InputDevice_Joy13&apos;' value='13'/>
+			<EnumValue name='&apos;InputDevice_Joy14&apos;' value='14'/>
+			<EnumValue name='&apos;InputDevice_Joy15&apos;' value='15'/>
+			<EnumValue name='&apos;InputDevice_Joy16&apos;' value='16'/>
+			<EnumValue name='&apos;InputDevice_Joy17&apos;' value='17'/>
+			<EnumValue name='&apos;InputDevice_Joy18&apos;' value='18'/>
+			<EnumValue name='&apos;InputDevice_Joy19&apos;' value='19'/>
+			<EnumValue name='&apos;InputDevice_Joy20&apos;' value='20'/>
+			<EnumValue name='&apos;InputDevice_Joy21&apos;' value='21'/>
+			<EnumValue name='&apos;InputDevice_Joy22&apos;' value='22'/>
+			<EnumValue name='&apos;InputDevice_Joy23&apos;' value='23'/>
+			<EnumValue name='&apos;InputDevice_Joy24&apos;' value='24'/>
+			<EnumValue name='&apos;InputDevice_Joy25&apos;' value='25'/>
+			<EnumValue name='&apos;InputDevice_Joy26&apos;' value='26'/>
+			<EnumValue name='&apos;InputDevice_Joy27&apos;' value='27'/>
+			<EnumValue name='&apos;InputDevice_Joy28&apos;' value='28'/>
+			<EnumValue name='&apos;InputDevice_Joy29&apos;' value='29'/>
+			<EnumValue name='&apos;InputDevice_Joy30&apos;' value='30'/>
+			<EnumValue name='&apos;InputDevice_Joy31&apos;' value='31'/>
+			<EnumValue name='&apos;InputDevice_Joy32&apos;' value='32'/>
+			<EnumValue name='&apos;InputDevice_Pump1&apos;' value='33'/>
+			<EnumValue name='&apos;InputDevice_Pump2&apos;' value='34'/>
+			<EnumValue name='&apos;InputDevice_Midi&apos;' value='35'/>
+			<EnumValue name='&apos;InputDevice_Mouse&apos;' value='36'/>
+			<EnumValue name='&apos;InputDevice_PIUIO&apos;' value='37'/>
+		</Enum>
 		<Enum name='InputEventType'>
-			<EnumValue name='&apos;InputEventType_FirstPress&apos;' value= '0'/>
-			<EnumValue name='&apos;InputEventType_Repeat&apos;' value= '1'/>
-			<EnumValue name='&apos;InputEventType_Release&apos;' value= '2'/>
+			<EnumValue name='&apos;InputEventType_FirstPress&apos;' value='0'/>
+			<EnumValue name='&apos;InputEventType_Repeat&apos;' value='1'/>
+			<EnumValue name='&apos;InputEventType_Release&apos;' value='2'/>
 		</Enum>
 		<Enum name='JudgmentLine'>
 			<EnumValue name='&apos;JudgmentLine_W1&apos;' value='0'/>
@@ -2410,17 +3473,17 @@
 			<EnumValue name='&apos;MemoryCardState_removed&apos;' value='4'/>
 			<EnumValue name='&apos;MemoryCardState_none&apos;' value='5'/>
 		</Enum>
-		<Enum name='ModsLevel'>
-			<EnumValue name='&apos;ModsLevel_Preferred&apos;' value='0'/>
-			<EnumValue name='&apos;ModsLevel_Stage&apos;' value='1'/>
-			<EnumValue name='&apos;ModsLevel_Song&apos;' value='2'/>
-			<EnumValue name='&apos;ModsLevel_Current&apos;' value='3'/>
-		</Enum>
 		<Enum name='ModTimerType'>
 			<EnumValue name='&apos;ModTimerType_Game&apos;' value='0'/>
 			<EnumValue name='&apos;ModTimerType_Beat&apos;' value='1'/>
 			<EnumValue name='&apos;ModTimerType_Song&apos;' value='2'/>
 			<EnumValue name='&apos;ModTimerType_Default&apos;' value='3'/>
+		</Enum>
+		<Enum name='ModsLevel'>
+			<EnumValue name='&apos;ModsLevel_Preferred&apos;' value='0'/>
+			<EnumValue name='&apos;ModsLevel_Stage&apos;' value='1'/>
+			<EnumValue name='&apos;ModsLevel_Song&apos;' value='2'/>
+			<EnumValue name='&apos;ModsLevel_Current&apos;' value='3'/>
 		</Enum>
 		<Enum name='Month'>
 			<EnumValue name='&apos;Month_January&apos;' value='0'/>
@@ -2475,6 +3538,11 @@
 			<EnumValue name='&apos;MusicWheelUsesSections_Always&apos;' value='1'/>
 			<EnumValue name='&apos;MusicWheelUsesSections_ABCOnly&apos;' value='2'/>
 		</Enum>
+		<Enum name='NoteColorType'>
+			<EnumValue name='&apos;NoteColorType_Denominator&apos;' value='0'/>
+			<EnumValue name='&apos;NoteColorType_Progress&apos;' value='1'/>
+			<EnumValue name='&apos;NoteColorType_ProgressAlternate&apos;' value='2'/>
+		</Enum>
 		<Enum name='NoteColumnSplineMode'>
 			<EnumValue name='&apos;NoteColumnSplineMode_Disabled&apos;' value='0'/>
 			<EnumValue name='&apos;NoteColumnSplineMode_Offset&apos;' value='1'/>
@@ -2503,13 +3571,13 @@
 			<EnumValue name='&apos;NoteType_192nd&apos;' value='8'/>
 		</Enum>
 		<Enum name='OptEffect'>
-			<EnumValue name='&apos;OptEffect_SavePreferences&apos;' value='1'/>
-			<EnumValue name='&apos;OptEffect_ApplyGraphics&apos;' value='2'/>
-			<EnumValue name='&apos;OptEffect_ApplyTheme&apos;' value='4'/>
-			<EnumValue name='&apos;OptEffect_ChangeGame&apos;' value='8'/>
-			<EnumValue name='&apos;OptEffect_ApplySound&apos;' value='16'/>
-			<EnumValue name='&apos;OptEffect_ApplySong&apos;' value='32'/>
-			<EnumValue name='&apos;OptEffect_ApplyAspectRatio&apos;' value='64'/>
+			<EnumValue name='&apos;OptEffect_SavePreferences&apos;' value='0'/>
+			<EnumValue name='&apos;OptEffect_ApplyGraphics&apos;' value='1'/>
+			<EnumValue name='&apos;OptEffect_ApplyTheme&apos;' value='2'/>
+			<EnumValue name='&apos;OptEffect_ChangeGame&apos;' value='3'/>
+			<EnumValue name='&apos;OptEffect_ApplySound&apos;' value='4'/>
+			<EnumValue name='&apos;OptEffect_ApplySong&apos;' value='5'/>
+			<EnumValue name='&apos;OptEffect_ApplyAspectRatio&apos;' value='6'/>
 		</Enum>
 		<Enum name='PaneCategory'>
 			<EnumValue name='&apos;PaneCategory_NumSteps&apos;' value='0'/>
@@ -2574,14 +3642,15 @@
 			<EnumValue name='&apos;RadarCategory_Air&apos;' value='2'/>
 			<EnumValue name='&apos;RadarCategory_Freeze&apos;' value='3'/>
 			<EnumValue name='&apos;RadarCategory_Chaos&apos;' value='4'/>
-			<EnumValue name='&apos;RadarCategory_TapsAndHolds&apos;' value='5'/>
-			<EnumValue name='&apos;RadarCategory_Jumps&apos;' value='6'/>
-			<EnumValue name='&apos;RadarCategory_Holds&apos;' value='7'/>
-			<EnumValue name='&apos;RadarCategory_Mines&apos;' value='8'/>
-			<EnumValue name='&apos;RadarCategory_Hands&apos;' value='9'/>
-			<EnumValue name='&apos;RadarCategory_Rolls&apos;' value='10'/>
-			<EnumValue name='&apos;RadarCategory_Lifts&apos;' value='11'/>
-			<EnumValue name='&apos;RadarCategory_Fakes&apos;' value='12'/>
+			<EnumValue name='&apos;RadarCategory_Notes&apos;' value='5'/>
+			<EnumValue name='&apos;RadarCategory_TapsAndHolds&apos;' value='6'/>
+			<EnumValue name='&apos;RadarCategory_Jumps&apos;' value='7'/>
+			<EnumValue name='&apos;RadarCategory_Holds&apos;' value='8'/>
+			<EnumValue name='&apos;RadarCategory_Mines&apos;' value='9'/>
+			<EnumValue name='&apos;RadarCategory_Hands&apos;' value='10'/>
+			<EnumValue name='&apos;RadarCategory_Rolls&apos;' value='11'/>
+			<EnumValue name='&apos;RadarCategory_Lifts&apos;' value='12'/>
+			<EnumValue name='&apos;RadarCategory_Fakes&apos;' value='13'/>
 		</Enum>
 		<Enum name='RandomBackgroundMode'>
 			<EnumValue name='&apos;RandomBackgroundMode_Off&apos;' value='0'/>
@@ -2726,6 +3795,10 @@
 			<EnumValue name='&apos;StepsType_Pnm_Five&apos;' value='31'/>
 			<EnumValue name='&apos;StepsType_Pnm_Nine&apos;' value='32'/>
 			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='33'/>
+			<EnumValue name='&apos;StepsType_Kickbox_Human&apos;' value='34'/>
+			<EnumValue name='&apos;StepsType_Kickbox_Quadarm&apos;' value='35'/>
+			<EnumValue name='&apos;StepsType_Kickbox_Insect&apos;' value='36'/>
+			<EnumValue name='&apos;StepsType_Kickbox_Arachnid&apos;' value='37'/>
 		</Enum>
 		<Enum name='StyleType'>
 			<EnumValue name='&apos;StyleType_OnePlayerOneSide&apos;' value='0'/>
@@ -2750,6 +3823,14 @@
 			<EnumValue name='&apos;TapNoteScoreJudgeType_MinimumScore&apos;' value='0'/>
 			<EnumValue name='&apos;TapNoteScoreJudgeType_LastScore&apos;' value='1'/>
 		</Enum>
+		<Enum name='TapNoteSource'>
+			<EnumValue name='&apos;TapNoteSource_Original&apos;' value='0'/>
+			<EnumValue name='&apos;TapNoteSource_Addition&apos;' value='1'/>
+		</Enum>
+		<Enum name='TapNoteSubType'>
+			<EnumValue name='&apos;TapNoteSubType_Hold&apos;' value='0'/>
+			<EnumValue name='&apos;TapNoteSubType_Roll&apos;' value='1'/>
+		</Enum>
 		<Enum name='TapNoteType'>
 			<EnumValue name='&apos;TapNoteType_Empty&apos;' value='0'/>
 			<EnumValue name='&apos;TapNoteType_Tap&apos;' value='1'/>
@@ -2758,16 +3839,8 @@
 			<EnumValue name='&apos;TapNoteType_Mine&apos;' value='4'/>
 			<EnumValue name='&apos;TapNoteType_Lift&apos;' value='5'/>
 			<EnumValue name='&apos;TapNoteType_Attack&apos;' value='6'/>
-			<EnumValue name='&apos;TapNoteType_AutoKeysound&apos;' value='7'/>
+			<EnumValue name='&apos;TapNoteType_AutoKeySound&apos;' value='7'/>
 			<EnumValue name='&apos;TapNoteType_Fake&apos;' value='8'/>
-		</Enum>
-		<Enum name='TapNoteSubType'>
-			<EnumValue name='&apos;TapNoteSubType_Hold&apos;' value='0'/>
-			<EnumValue name='&apos;TapNoteSubType_Roll&apos;' value='1'/>
-		</Enum>
-		<Enum name='TapNoteSource'>
-			<EnumValue name='&apos;TapNoteSource_Original&apos;' value='0'/>
-			<EnumValue name='&apos;TapNoteSource_Addition&apos;' value='1'/>
 		</Enum>
 		<Enum name='TextGlowMode'>
 			<EnumValue name='&apos;TextGlowMode_Inner&apos;' value='0'/>
@@ -2835,22 +3908,25 @@
 		</Enum>
 	</Enums>
 	<Constants>
-		<Constant name='ASPECT_SCALE_FACTOR' value='854'/>
+		<Constant name='ASPECT_SCALE_FACTOR' value='1280'/>
 		<Constant name='NUM_PLAYERS' value='2'/>
-		<Constant name='REFRESH_DEFAULT'/>
-		<Constant name='SAFE_HEIGHT' value='36'/>
-		<Constant name='SAFE_WIDTH' value='64'/>
-		<Constant name='SCREEN_BOTTOM' value='480'/>
-		<Constant name='SCREEN_CENTER_X' value='427'/>
-		<Constant name='SCREEN_CENTER_Y' value='240'/>
-		<Constant name='SCREEN_HEIGHT' value='480'/>
+		<Constant name='REFRESH_DEFAULT' value='0'/>
+		<Constant name='SAFE_HEIGHT' value='54'/>
+		<Constant name='SAFE_WIDTH' value='96'/>
+		<Constant name='SCREEN_BOTTOM' value='720'/>
+		<Constant name='SCREEN_CENTER_X' value='640'/>
+		<Constant name='SCREEN_CENTER_Y' value='360'/>
+		<Constant name='SCREEN_HEIGHT' value='720'/>
 		<Constant name='SCREEN_LEFT' value='0'/>
-		<Constant name='SCREEN_RIGHT' value='854'/>
+		<Constant name='SCREEN_RIGHT' value='1280'/>
 		<Constant name='SCREEN_TOP' value='0'/>
-		<Constant name='SCREEN_WIDTH' value='854'/>
+		<Constant name='SCREEN_WIDTH' value='1280'/>
+		<Constant name='bCategory' value='2'/>
+		<Constant name='num' value='550'/>
 		<Constant name='PLAYER_1' value='&apos;PlayerNumber_P1&apos;'/>
 		<Constant name='PLAYER_2' value='&apos;PlayerNumber_P2&apos;'/>
 		<Constant name='_VERSION' value='&apos;Lua 5.1&apos;'/>
+		<Constant name='bPreference' value='&apos;Normal&apos;'/>
 		<Constant name='bottom' value='&apos;VertAlign_Bottom&apos;'/>
 		<Constant name='center' value='&apos;HorizAlign_Center&apos;'/>
 		<Constant name='left' value='&apos;HorizAlign_Left&apos;'/>
@@ -2858,6 +3934,6 @@
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania v5.0 beta 3</Version>
-	<Date>2014-09-15</Date>
+	<Version>StepMania5.1.0-b2</Version>
+	<Date>2018-08-27</Date>
 </Lua>
