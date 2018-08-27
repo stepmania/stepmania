@@ -2543,7 +2543,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
 		Return the localized string representation of <code>st</code>.
 	</Function>
-	<Function name='GetEnabledGames' return='{string}'>
+	<Function name='GetEnabledGames' return='{string}' arguments=''>
 		Returns a table of all selectable games.
 	</Function>
 	<Function name='GetStylesForGame' return='{style}' arguments='string game'>
@@ -2634,7 +2634,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCharacter' return='Character' arguments='PlayerNumber pn'>
 		Returns the current <Link class='Character' /> for the specified <Link class='ENUM' function='PlayerNumber' />.
 	</Function>
-	<Function name='GetCoinMode' return='CoinMode'>
+	<Function name='GetCoinMode' return='CoinMode' arguments=''>
 		Returns the current <Link class='ENUM' function='CoinMode' />.
 	</Function>
 	<Function name='GetCoins' return='int' arguments=''>
@@ -3174,7 +3174,7 @@ save yourself some time, copy this for undocumented things:
 		Sets the MenuTimer's stealth setting to <code>bStealth</code>. If
 		<code>true</code>, the timer will be invisible and silent.
 	</Function>
-	<Function name='stop' return='void'>
+	<Function name='stop' return='void' arguments=''>
 		Stops the MenuTimer by setting it to 0 and pausing.
 	</Function>
 </Class>
@@ -3634,7 +3634,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='Flip' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Floored' return='bool' arguments='bool value'> </Function>
-	<Function name='GetStepAttacks' return='bool' argument=''>
+	<Function name='GetStepAttacks' return='bool' arguments=''>
 		Returns true if step attacks or random attacks are enabled.
 	</Function>
 	<Function name='IsEasierForCourseAndTrail' return='bool' arguments='Course c, Trail t'>
@@ -5273,7 +5273,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetSecondsIntoAnimation' return='void' arguments='float fSeconds'>
 		Sets the number of seconds into the animation to <code>fSeconds</code>.
 	</Function>
-	<Function name='SetStateProperties' return= '' arguments='table properties'>
+	<Function name='SetStateProperties' return= 'void' arguments='table properties'>
 		Sets the properties of the states of the sprite.  The properties table is identical to the "Frames" table that can be put in the sprite when calling Def.Sprite.<br />
 		Example:<br />
 		{{Frame= 0, Delay= .016, {0, 0}, {.25, .25}},<br />
@@ -5556,7 +5556,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='HoldNoteResult'>
-	<Function name='GetHoldNoteScore'>
+	<Function name='GetHoldNoteScore' return='HoldNoteScore' arguments=''>
 		Returns the <Link class='HoldNoteScore' /> of the Hold Note.
 	</Function>
 	<Function name='GetLife' return='float' arguments=''>
