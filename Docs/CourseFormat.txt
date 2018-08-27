@@ -16,7 +16,8 @@ Complete Course Template
 
 #LIVES:4;
 --	The maximum(?) number of lives attainable in the course. Enabling this will
---	automatically force your course into an Oni course.
+--	automatically force your course into an Oni (Challenge) course.
+--  0 = Nonstop course.
 
 #BANNER:My Banner.png;
 --	A banner for your course.
