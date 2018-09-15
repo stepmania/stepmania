@@ -128,6 +128,14 @@ sm_add_compile_definition("${SM_EXE_NAME}" $<$<CONFIG:RelWithDebInfo>:RELWITHDEB
 
 set(SM_COMPILE_FLAGS "")
 
+if(CPU_TARGET)
+  set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} -mcpu=${CPU_TARGET} -mtune=${CPU_TARGET}")
+endif()
+
+if(FPU_TARGET)
+  set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} -mfloat-abi=hard -mfpu=${FPU_TARGET}")
+endif()
+
 if(WITH_SSE2)
   if(MSVC)
     set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /arch:SSE2")
