@@ -207,7 +207,7 @@ t[#t+1] = Def.ActorFrame {
 			PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;decelerate,0.3;diffusealpha,1);
 			ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
 			SetCommand=function(self)
-					stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+					local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 					local song = GAMESTATE:GetCurrentSong();
 					if song then 
 						if stepsP1 ~= nil then
@@ -232,7 +232,7 @@ t[#t+1] = Def.ActorFrame {
 			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75);
 			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
 			  SetCommand=function(self)
-				stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+				local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 				local song = GAMESTATE:GetCurrentSong();
 				if song then 
 					if stepsP1 ~= nil then
@@ -257,7 +257,7 @@ t[#t+1] = Def.ActorFrame {
 			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75);
 			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
 			  SetCommand=function(self)
-				stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+				local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 				local song = GAMESTATE:GetCurrentSong();
 				if song then 
 					if stepsP1 ~= nil then
@@ -282,7 +282,7 @@ t[#t+1] = Def.ActorFrame {
 			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75);
 			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
 			  SetCommand=function(self)
-				stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+				local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 				local song = GAMESTATE:GetCurrentSong();
 				if song then 
 					if stepsP1 ~= nil then
@@ -317,7 +317,7 @@ t[#t+1] = Def.ActorFrame {
 			PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;decelerate,0.3;diffusealpha,1);
 			ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
 			SetCommand=function(self)
-					stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+					local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 					local song = GAMESTATE:GetCurrentSong();
 					if song then 
 						if stepsP2 ~= nil then
@@ -342,7 +342,7 @@ t[#t+1] = Def.ActorFrame {
 			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75);
 			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
 			  SetCommand=function(self)
-				stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+				local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 				local song = GAMESTATE:GetCurrentSong();
 				if song then 
 					if stepsP2 ~= nil then
@@ -367,7 +367,7 @@ t[#t+1] = Def.ActorFrame {
 			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75);
 			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
 			  SetCommand=function(self)
-				stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+				local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 				local song = GAMESTATE:GetCurrentSong();
 				if song then 
 					if stepsP2 ~= nil then
@@ -392,7 +392,7 @@ t[#t+1] = Def.ActorFrame {
 			  PlayerJoinedMessageCommand=cmd(queuecommand,"Set";diffusealpha,0;linear,0.3;diffusealpha,0.75);
 			  ChangedLanguageDisplayMessageCommand=cmd(queuecommand,"Set");
 			  SetCommand=function(self)
-				stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+				local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 				local song = GAMESTATE:GetCurrentSong();
 				if song then 
 					if stepsP2 ~= nil then

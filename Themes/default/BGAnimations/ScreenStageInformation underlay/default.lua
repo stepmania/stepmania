@@ -85,7 +85,7 @@ t[#t+1] = Def.ActorFrame {
 		LoadFont("Common Italic Condensed") .. {
 		  OnCommand=cmd(playcommand,"Set";horizalign,left;diffuse,color("#FFFFFF"));
           SetCommand=function(self)
-			stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+			local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 			local song = GAMESTATE:GetCurrentSong();
 			if song then
 				if stepsP1:GetAuthorCredit() ~= "" then
@@ -102,7 +102,7 @@ t[#t+1] = Def.ActorFrame {
 		  InitCommand=cmd(addy,22);
 		  OnCommand=cmd(playcommand,"Set";horizalign,left;zoom,0.75;diffuse,color("#FFFFFF"));
           SetCommand=function(self)
-			stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+			local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 			local song = GAMESTATE:GetCurrentSong();
 			if song then
 				if stepsP1 ~= nil then
@@ -125,7 +125,7 @@ t[#t+1] = Def.ActorFrame {
 	LoadFont("Common Italic Condensed") .. {
 		  OnCommand=cmd(playcommand,"Set";horizalign,right;diffuse,color("#FFFFFF"));
           SetCommand=function(self)
-			stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+			local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 			local song = GAMESTATE:GetCurrentSong();
 			if song then
 				local diff = stepsP2:GetDifficulty();
@@ -144,7 +144,7 @@ t[#t+1] = Def.ActorFrame {
 		  InitCommand=cmd(addy,22);
 		  OnCommand=cmd(playcommand,"Set";horizalign,right;zoom,0.75;diffuse,color("#FFFFFF"));
           SetCommand=function(self)
-			stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+			local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 			local song = GAMESTATE:GetCurrentSong();
 			if song then
 				if stepsP2 ~= nil then
