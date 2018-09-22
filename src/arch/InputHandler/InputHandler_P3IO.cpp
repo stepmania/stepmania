@@ -154,9 +154,15 @@ InputHandler_P3IO::InputHandler_P3IO()
 		HDCabinet = true;
 		LOG->Info("P3IO Cabinet Type set to HD.");
 	}
-	else
+	else if (strcasecmp(m_sCabinetType.Get().c_str(), "SD") == 0)
 	{
 		LOG->Info("P3IO Cabinet Type set to SD.");
+	}
+	else
+	{
+		// This message is more of a formality than anything.
+		// The InputHandler logic is the same for P2IO/P3IO.
+		LOG->Info("P3IO Cabinet Type set to P2IO Compatibility Mode");
 	}
 
 

@@ -14,7 +14,6 @@ uint8_t P3IO::acio_response[256];
 
 PSTRING P3IO::m_sInputError;
 int P3IO::m_iInputErrorCount = 0;
-static int connect_index = -1; //used for determining if we find the mouse
 static uint8_t packet_sequence = 0;
 static uint8_t packets_since_keepalive = 0;
 // message timeout, in microseconds (so, 1 ms)
@@ -22,15 +21,12 @@ const int REQ_TIMEOUT = 1000;
 
 uint8_t pchunk[3][4];
 // p3io correlated pid/vid
-//first set is what a chimera uses, second set is a real ddr io (from an hd black cab), the last set is actually a mouse I use for testing!
+// first set is what a chimera uses
+// second set is a real ddr io (from an hd black cab)
+// third set is a p2io (from a Betson Supernova cabinet)
 
-//has mouse debugger
-//const uint16_t P3IO_VENDOR_ID[3] = { 0x0000, 0x1CCF, 0x046D};
-//const uint16_t P3IO_PRODUCT_ID[3] = { 0x5731, 0x8008, 0xC077};
-
-
-const uint16_t P3IO_VENDOR_ID[2] = { 0x0000, 0x1CCF };
-const uint16_t P3IO_PRODUCT_ID[2] = { 0x5731, 0x8008 };
+const uint16_t P3IO_VENDOR_ID[3] = { 0x0000, 0x1CCF, 0x0000 };
+const uint16_t P3IO_PRODUCT_ID[3] = { 0x5731, 0x8008, 0x7305 };
 uint8_t p_light_payload[] = { 0, 0, 0, 0, 0 };
 const unsigned NUM_P3IO_CHECKS_IDS = ARRAYLEN(P3IO_PRODUCT_ID);
 int interrupt_ep = 0x83;
@@ -72,18 +68,10 @@ bool P3IO::Open()
 		if (OpenInternal(P3IO_VENDOR_ID[i], P3IO_PRODUCT_ID[i]))
 		{
 			LOG->Info("P3IO Driver:: Connected to index %d", i);
-			connect_index = i;
-			if (i == 2)
-			{
-				interrupt_ep = 0x81; //debug mouse
-				LOG->Info("init p3io watch dog ");
-				InitHDAndWatchDog();
-			}
-			else
-			{
-				LOG->Info("init p3io watch dog ");
-				InitHDAndWatchDog();
-			}
+
+			LOG->Info("init p3io watch dog ");
+			InitHDAndWatchDog();
+
 			m_bConnected = true;
 			openHDXB();
 			usleep(906250); //capture waits this long
@@ -166,7 +154,7 @@ bool P3IO::interruptRead(uint8_t* dataToQueue)
 		{
 			m_iInputErrorCount = 0;
 			//LOG->Info("P3IO Got %d bytes of data: %02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",iResult, tchunk[0],tchunk[1],tchunk[2],tchunk[3],tchunk[4],tchunk[5],tchunk[6],tchunk[7],tchunk[8],tchunk[9],tchunk[10],tchunk[11]);
-			if (iResult >= 12 || connect_index == 2)
+			if (iResult >= 12)
 			{
 				//we have EVERYTHING
 				interruptChunkFlags[0] = true;
