@@ -122,7 +122,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		},
 		
 		Def.Quad {
-			InitCommand=cmd(vertalign,top;y,60+grade_area_offset;zoomto,190,66;diffuse,color("#fce1a1"));,
+			InitCommand=cmd(vertalign,top;y,60+grade_area_offset;zoomto,190,66;diffuse,color("#fce1a1"));
 			OnCommand=function(self)
 			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.4)
 			end,
