@@ -114,7 +114,7 @@ for ip, p in ipairs(GAMESTATE:GetHumanPlayers()) do
 		
 		--Containers.
 		Def.Quad {
-			InitCommand=cmd(zoomto,190,115;diffuse,ColorLightTone(PlayerColor(p));diffusebottomedge,color("#FEEFCA"));,
+			InitCommand=cmd(zoomto,190,115;diffuse,ColorLightTone(PlayerColor(p));diffusebottomedge,color("#FEEFCA"));
 			OnCommand=function(self)
 			    self:diffusealpha(0):decelerate(0.4):diffusealpha(0.5)
 			end,
