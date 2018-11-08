@@ -1,6 +1,6 @@
 uniform sampler2D Texture1;
 
-varying vec2 texCoords;
+varying vec4 texCoords;
 varying vec4 vertexColor;
 
 float aastep(float threshold, float dist) {
@@ -22,6 +22,6 @@ float sample(vec2 tc) {
 
 void main(void)
 {
-	float dfValue = sample(texCoords);
+	float dfValue = sample(texCoords.st);
 	gl_FragColor = vec4(vertexColor.rgb, vertexColor.a * dfValue);
 }
