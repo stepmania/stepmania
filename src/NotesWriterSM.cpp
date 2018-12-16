@@ -23,7 +23,7 @@ ThemeMetric<bool> USE_CREDIT	( "NotesWriterSM", "DescriptionUsesCreditField" );
  * @brief Write out the common tags for .SM files.
  * @param f the file in question.
  * @param out the Song in question. */
-static void WriteGlobalTags( RageFile &f, Song &out )
+static void WriteGlobalTags( RageFileBasic &f, Song &out )
 {
 	TimingData &timing = out.m_SongTiming;
 	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
@@ -52,7 +52,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		default:
 			FAIL_M(ssprintf("Invalid selection display: %i", out.m_SelectionDisplay));
 		case Song::SHOW_ALWAYS:	f.Write( "YES" );		break;
-		//case Song::SHOW_NONSTOP:	f.Write( "NONSTOP" );	break;
+			//case Song::SHOW_NONSTOP:	f.Write( "NONSTOP" );	break;
 		case Song::SHOW_NEVER:		f.Write( "NO" );		break;
 	}
 	f.PutLine( ";" );
@@ -66,8 +66,8 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
 				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
 			else
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", 
-							out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
+				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;",
+									 out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 			break;
 		case DISPLAY_BPM_RANDOM:
 			f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
@@ -220,14 +220,14 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	lines.push_back( "" );
 	// Escape to prevent some clown from making a comment of "\r\n;"
 	lines.push_back( ssprintf("//---------------%s - %s----------------",
-		in.m_StepsTypeStr.c_str(), SmEscape(in.GetDescription()).c_str()) );
+							  in.m_StepsTypeStr.c_str(), SmEscape(in.GetDescription()).c_str()) );
 	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 	lines.push_back( ssprintf( "     %s:", in.m_StepsTypeStr.c_str() ) );
 	RString desc = (USE_CREDIT ? in.GetCredit() : in.GetChartName());
 	lines.push_back( ssprintf( "     %s:", SmEscape(desc).c_str() ) );
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
-	
+
 	vector<RString> asRadarValues;
 	// OpenITG simfiles use 11 radar categories.
 	int categories = 11;
@@ -235,8 +235,8 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	{
 		const RadarValues &rv = in.GetRadarValues( pn );
 		// Can't use the foreach anymore due to flexible radar lines.
-		for( RadarCategory rc = (RadarCategory)0; rc < categories; 
-		    enum_add<RadarCategory>( rc, 1 ) )
+		for( RadarCategory rc = (RadarCategory)0; rc < categories;
+			 enum_add<RadarCategory>( rc, 1 ) )
 		{
 			asRadarValues.push_back( ssprintf("%.6f", rv[rc]) );
 		}
@@ -265,9 +265,14 @@ bool NotesWriterSM::Write( RString sPath, Song &out, const vector<Steps*>& vpSte
 		return false;
 	}
 
+	Write( f, out, vpStepsToSave );
+}
+
+bool NotesWriterSM::Write( RageFileBasic &f, Song &out, const vector<Steps*>& vpStepsToSave )
+{
 	WriteGlobalTags( f, out );
 
-	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
+	FOREACH_CONST( Steps*, vpStepsToSave, s )
 	{
 		const Steps* pSteps = *s;
 		RString sTag = GetSMNotesTag( out, *pSteps );
@@ -319,9 +324,9 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 	RString sPath = sDir + GetEditFileName(pSong,pSteps);
 
 	// Check to make sure that we're not clobering an existing file before opening.
-	bool bFileNameChanging = 
-		pSteps->GetSavedToDisk()  && 
-		pSteps->GetFilename() != sPath;
+	bool bFileNameChanging =
+			pSteps->GetSavedToDisk()  &&
+			pSteps->GetFilename() != sPath;
 	if( bFileNameChanging  &&  DoesFileExist(sPath) )
 	{
 		sErrorOut = ssprintf( DESTINATION_ALREADY_EXISTS.GetValue(), sPath.c_str() );
@@ -356,7 +361,7 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -366,7 +371,7 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

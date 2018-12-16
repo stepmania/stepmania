@@ -7,36 +7,40 @@
 class StatsManager
 {
 public:
-	StatsManager();
-	~StatsManager();
+    StatsManager();
+    ~StatsManager();
 
-	void Reset();
+    void Reset();
 
-	/**
-	 * @brief The current Stage stats.
-	 *
-	 * This is not necessarily passed stage stats if this is an Extra Stage. */
-	StageStats		m_CurStageStats;
-	vector<StageStats>	m_vPlayedStageStats;
+    /**
+     * @brief The current Stage stats.
+     *
+     * This is not necessarily passed stage stats if this is an Extra Stage. */
+    StageStats		m_CurStageStats;
+    vector<StageStats>	m_vPlayedStageStats;
 
-	// Only the latest 3 normal songs + passed extra stages.
-	void GetFinalEvalStageStats( StageStats& statsOut ) const;
+    // Only the latest 3 normal songs + passed extra stages.
+    void GetFinalEvalStageStats( StageStats& statsOut ) const;
 
-	// All stages played.  Returns a ref to the private member so that
-	// the object will remain alive while Lua is operating on it.
-	void CalcAccumPlayedStageStats();
-	StageStats& GetAccumPlayedStageStats() { return m_AccumPlayedStageStats; }
+    // All stages played.  Returns a ref to the private member so that
+    // the object will remain alive while Lua is operating on it.
+    void CalcAccumPlayedStageStats();
+    StageStats& GetAccumPlayedStageStats() { return m_AccumPlayedStageStats; }
 
-	static void CommitStatsToProfiles( const StageStats *pSS );
+    static void CommitStatsToProfiles( const StageStats *pSS );
 
-	void UnjoinPlayer( PlayerNumber pn );
-	void GetStepsInUse( set<Steps*> &apInUseOut ) const;
+    void UnjoinPlayer( PlayerNumber pn );
+    void GetStepsInUse( set<Steps*> &apInUseOut ) const;
 
-	// Lua
-	void PushSelf( lua_State *L );
+    // Lua
+    void PushSelf( lua_State *L );
+
+protected:
+    static void SaveUploadFile( const StageStats *pSS );
+    static void SavePadmissScore( const StageStats *pSS, PlayerNumber pn );
 
 private:
-	StageStats m_AccumPlayedStageStats;
+    StageStats m_AccumPlayedStageStats;
 };
 
 extern StatsManager*	STATSMAN;	// global and accessible from anywhere in our program
@@ -48,7 +52,7 @@ extern StatsManager*	STATSMAN;	// global and accessible from anywhere in our pro
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -58,7 +62,7 @@ extern StatsManager*	STATSMAN;	// global and accessible from anywhere in our pro
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -7,6 +7,23 @@
 
 static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
+enum MemoryCardDriverType {
+	MemoryCardDriverType_Usb,
+	MemoryCardDriverType_Directory,
+	NUM_MemoryCardDriverType,
+	MemoryCardDriverType_Invalid
+};
+
+static const char *MemoryCardDriverTypeNames[] = {
+		"USB",
+		"Directory"
+};
+XToString(MemoryCardDriverType);
+StringToX(MemoryCardDriverType);
+LuaXType(MemoryCardDriverType);
+
+Preference<MemoryCardDriverType> g_MemoryCardDriver("MemoryCardDriver", MemoryCardDriverType_Usb);
+
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 {
   //  LOG->Trace( "Comparing %d %d %d %s %s to %d %d %d %s %s",
@@ -126,15 +143,24 @@ MemoryCardDriver *MemoryCardDriver::Create()
 {
 	MemoryCardDriver *ret = NULL;
 
+	switch( g_MemoryCardDriver )
+	{
+		case MemoryCardDriverType_Directory:
+			ret = new MemoryCardDriverThreaded_Folder;
+			break;
+		case MemoryCardDriverType_Usb:
 #ifdef ARCH_MEMORY_CARD_DRIVER
-	ret = new ARCH_MEMORY_CARD_DRIVER;
+			ret = new ARCH_MEMORY_CARD_DRIVER;
 #endif
+			break;
+	}
 
 	if( !ret )
 		ret = new MemoryCardDriver_Null;
-	
+
 	return ret;
 }
+
 
 /*
  * (c) 2002-2004 Glenn Maynard
