@@ -204,6 +204,7 @@ if(WIN32)
     endif()
   endif()
 elseif(APPLE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14 -stdlib=libc++ -DMACOSX")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}"
@@ -458,9 +459,9 @@ elseif(APPLE)
 
   if (HAS_OGG)
     list(APPEND SMDATA_LINK_LIB
-      "${SM_OGG_ROOT}/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libogg.a"
-      "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbis.a"
-      "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbisfile.a"
+      "${SM_OGG_ROOT}/libogg.a"
+      "${SM_VORBIS_ROOT}/lib/libvorbis.a"
+      "${SM_VORBIS_ROOT}/lib/libvorbisfile.a"
     )
   endif()
 
@@ -556,7 +557,7 @@ else() # Unix / Linux
   if(X11_FOUND)
     list(APPEND SMDATA_LINK_LIB ${X11_LIBRARIES})
   endif()
-  
+
   if(SDL2_FOUND)
     list(APPEND SMDATA_LINK_LIB ${SDL2_LIBRARY})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_SDL)

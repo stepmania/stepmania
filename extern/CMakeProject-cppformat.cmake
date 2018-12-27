@@ -28,6 +28,8 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${SM_CPP_STANDARD}"
     XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
   )
+  sm_add_compile_flag("cppformat" "-std=${SM_CPP_STANDARD}")
+  sm_add_compile_flag("cppformat" "-stdlib=libc++")
 else() # Unix
   sm_add_compile_flag("cppformat" "-std=${SM_CPP_STANDARD}")
   if (CMAKE_CXX_COMPILER MATCHES "clang")

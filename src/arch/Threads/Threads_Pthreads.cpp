@@ -117,7 +117,10 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	// Ensure there is always a terminating NUL character.
 	thread->name[maxNameLen - 1] = '\0';
 
+#ifndef MACOSX
+	// macOS/BSD can only set the name of the calling thread
 	ret = pthread_setname_np(thread->thread, thread->name);
+#endif
 	if (ret != 0 && LOG) {
 		LOG->Trace("pthead_setname_np: %s", strerror(ret));
 	}
@@ -241,11 +244,6 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
-// commented out to allow comilation on macOS 10.12.  -dguzek
-//#elif defined(MACOSX)
-//typedef int clockid_t;
-//static const clockid_t CLOCK_REALTIME = 0;
-//static const clockid_t CLOCK_MONOTONIC = 1;
 #endif // On MinGW clockid_t is defined in pthread.h
 namespace
 {

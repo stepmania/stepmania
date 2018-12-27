@@ -3,6 +3,8 @@
 #ifndef RAGE_FILE_BASIC_H
 #define RAGE_FILE_BASIC_H
 
+#include "global.h"
+
 /* This is a simple file I/O interface.  Although most of these operations
  * are straightforward, there are several of them; most of the time, you'll
  * only want to implement RageFileObj. */
