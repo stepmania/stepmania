@@ -31,6 +31,8 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "gnu++14"
     XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
   )
+  sm_add_compile_flag("jsoncpp" "-std=${SM_CPP_STANDARD}")
+  sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
 else() # Unix/Linux
   sm_add_compile_flag("jsoncpp" "-std=gnu++11")
   if (CMAKE_CXX_COMPILER MATCHES "clang")
