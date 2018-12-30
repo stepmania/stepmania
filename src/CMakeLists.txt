@@ -459,9 +459,9 @@ elseif(APPLE)
 
   if (HAS_OGG)
     list(APPEND SMDATA_LINK_LIB
-      "${SM_OGG_ROOT}/libogg.a"
-      "${SM_VORBIS_ROOT}/lib/libvorbis.a"
-      "${SM_VORBIS_ROOT}/lib/libvorbisfile.a"
+      "${SM_OGG_ROOT}/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libogg.a"
+      "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbis.a"
+      "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbisfile.a"
     )
   endif()
 

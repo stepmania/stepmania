@@ -23,7 +23,7 @@ if (NOT (IS_DIRECTORY "${SM_VORBIS_SRC_DIR}"))
 endif()
 
 externalproject_add("vorbis"
-  CMAKE_ARGS -DCMAKE_BUILD_TYPE:STRING=Release -DOGG_INCLUDE_DIRS:STRING=${SM_OGG_INCLUDE_DIR} -DOGG_LIBRARIES:STRING=${SM_OGG_ROOT}/libogg.a
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE:STRING=Release -DOGG_INCLUDE_DIRS:STRING=${SM_OGG_INCLUDE_DIR} -DOGG_LIBRARIES:STRING=${SM_OGG_ROOT}/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libogg.a
   SOURCE_DIR "${SM_VORBIS_SRC_DIR}"
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""
@@ -35,4 +35,3 @@ set(SM_VORBIS_ROOT ${BINARY_DIR})
 set(SM_VORBIS_INCLUDE_DIR "${SM_VORBIS_SRC_DIR}/include")
 
 add_dependencies("vorbis" "ogg")
-
