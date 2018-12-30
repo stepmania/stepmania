@@ -98,7 +98,7 @@ bool CrashHandler::IsDebuggerPresent()
 
 void CrashHandler::DebugBreak()
 {
-	os_log(OS_LOG_DEFAULT, "\pDebugBreak()");
+	os_log(OS_LOG_DEFAULT, "DebugBreak()");
 }
 
 /*
