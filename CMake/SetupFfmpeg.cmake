@@ -32,6 +32,14 @@ if(MACOSX)
     "--arch=i386"
     "--cc=clang -m32"
   )
+
+  find_program(
+    FFMPEG_YASM_EXECUTABLE
+    yasm
+    PATHS /usr/bin /usr/local/bin /opt/local/bin)
+  list(APPEND FFMPEG_CONFIGURE
+    "--yasmexe=${FFMPEG_YASM_EXECUTABLE}"
+  )
 endif()
 
 if(WITH_GPL_LIBS)

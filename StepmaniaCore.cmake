@@ -221,6 +221,18 @@ if(WITH_OGG)
   endif()
 endif()
 
+if(WITH_SDL)
+
+    find_package(SDL2)
+
+    if(NOT SDL2_FOUND)
+        message(FATAL_ERROR "SDL2 Library was not found. If you wish to compile without SDL2, set WITH_SDL to OFF when configuring.")
+    else()
+        set(HAS_SDL TRUE)
+    endif()
+
+endif()
+
 find_package(nasm)
 find_package(yasm)
 
@@ -279,11 +291,8 @@ elseif(MACOSX)
 
   set(SYSTEM_PCRE_FOUND FALSE)
   set(WITH_CRASH_HANDLER TRUE)
-  # Apple Archs needs to be 32-bit for now.
-  # When SDL2 is introduced, this may change.
-  set(CMAKE_OSX_ARCHITECTURES "i386")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.7.1")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.9.0")
 
   find_library(MAC_FRAME_ACCELERATE Accelerate ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   find_library(MAC_FRAME_APPKIT AppKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
