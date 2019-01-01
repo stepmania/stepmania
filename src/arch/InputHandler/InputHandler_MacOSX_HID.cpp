@@ -450,7 +450,9 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 	UInt8 iMacVirtualKey;
 	if( KeyboardDevice::DeviceButtonToMacVirtualKey( button, iMacVirtualKey ) )
 	{
-		UInt32 nModifiers = bUseCurrentKeyModifiers ? GetCurrentKeyModifiers() : 0;
+		CGEventRef event = CGEventCreate(NULL);
+		CGEventFlags mods = CGEventGetFlags(event);
+		UInt32 nModifiers = bUseCurrentKeyModifiers ? (UInt32)mods : 0;
 		wchar_t sCharCode = KeyCodeToChar( iMacVirtualKey, nModifiers );
 		if( sCharCode != 0 )
 		{

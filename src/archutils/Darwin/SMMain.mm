@@ -7,6 +7,7 @@
 #import <Cocoa/Cocoa.h>
 #include "ProductInfo.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "StepMania.h"
 
 @interface NSApplication (PrivateShutUpWarning)
 - (void) setAppleMenu:(NSMenu *)menu;

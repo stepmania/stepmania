@@ -89,6 +89,39 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	thread->m_StartFinishedSem->Wait();
 	delete thread->m_StartFinishedSem;
 
+	// Copy the thread name.
+	const char *rawname = RageThread::GetThreadNameByID( *piThreadID );
+	const size_t maxNameLen = sizeof( thread->name );
+	if (strlen(rawname) < maxNameLen) {
+		// If it fits, I sits^H^H^H^Hcopy.
+		strncpy( thread->name, rawname, maxNameLen );
+	} else {
+		if ( strstr( rawname, "Worker thread" ) && strchr( rawname, '(' ) ) {
+			// Special case for RageUtil_WorkerThread.cpp
+			// "Worker thread (name)", e.g.
+			// "Worker thread (/@mc1int/)" => "(/@mc1int/)".
+			const char *workername = strchr( rawname, '(' );
+			strncpy( thread->name, workername, maxNameLen );
+		} else {
+			// Abbreviate the name by taking the first 6, last 7
+			// characters and adding '..' in the middle.
+			LOG->Trace( "Truncated thread name due to size limit of %d: %s",
+				maxNameLen, rawname );
+			snprintf( thread->name, maxNameLen, "%.6s..%s",
+				rawname, &rawname[strlen(rawname) - 7] );
+			}
+	}
+	// Ensure there is always a terminating NUL character.
+	thread->name[maxNameLen - 1] = '\0';
+
+#ifndef MACOSX
+	// macOS/BSD can only set the name of the calling thread
+	ret = pthread_setname_np(thread->thread, thread->name);
+	if (ret != 0 && LOG) {
+		LOG->Trace("pthead_setname_np: %s", strerror(ret));
+	}
+#endif
+
 	return thread;
 }
 
@@ -127,7 +160,7 @@ bool MutexImpl_Pthreads::Lock()
 
 		while( tries-- )
 		{
-			/* Wait for ten seconds. If it takes longer than that, we're 
+			/* Wait for ten seconds. If it takes longer than that, we're
 			 * probably deadlocked. */
 			timeval tv;
 			gettimeofday( &tv, NULL );
@@ -208,11 +241,6 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
-// commented out to allow comilation on macOS 10.12.  -dguzek
-//#elif defined(MACOSX)
-//typedef int clockid_t;
-//static const clockid_t CLOCK_REALTIME = 0;
-//static const clockid_t CLOCK_MONOTONIC = 1;
 #endif // On MinGW clockid_t is defined in pthread.h
 namespace
 {
@@ -288,7 +316,7 @@ EventImpl_Pthreads::EventImpl_Pthreads( MutexImpl_Pthreads *pParent )
 	m_pParent = pParent;
 
 	InitMonotonic();
-       
+
 	pthread_condattr_t condattr;
 	pthread_condattr_init( &condattr );
 
@@ -420,7 +448,7 @@ bool SemaImpl_Pthreads::TryWait()
 	int ret = sem_trywait( &sem );
 	if( ret == -1 && errno == EAGAIN )
 		return false;
-	
+
 	ASSERT_M( ret == 0, ssprintf("TryWait: sem_trywait failed: %s", strerror(errno)) );
 
 	return true;
@@ -433,7 +461,7 @@ SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
 	ret = pthread_mutex_init( &m_Mutex, NULL );
 	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
-		
+
 	m_iValue = iInitialValue;
 }
 
@@ -542,7 +570,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
 /*
  * (c) 2001-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -552,7 +580,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
