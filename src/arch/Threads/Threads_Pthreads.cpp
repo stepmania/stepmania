@@ -1,9 +1,12 @@
 #include "global.h"
 #include "Threads_Pthreads.h"
+#include "RageLog.h"
+#include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageUtil.h"
 #include <sys/time.h>
 #include <errno.h>
+#include <string.h>
 
 #if defined(UNIX)
 #include "archutils/Unix/RunningUnderValgrind.h"
