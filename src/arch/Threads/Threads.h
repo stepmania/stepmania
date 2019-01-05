@@ -19,6 +19,10 @@ public:
 	virtual uint64_t GetThreadId() const = 0;
 
 	virtual int Wait() = 0;
+	
+	// pthread_setname_np name length can be at most 16 characters
+	// (including the terminating NUL character).
+	mutable char name[16];
 };
 
 class MutexImpl
