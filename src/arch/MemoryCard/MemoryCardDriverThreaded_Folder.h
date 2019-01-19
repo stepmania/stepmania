@@ -26,7 +26,7 @@ protected:
 
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2018-2019 Electromuis
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

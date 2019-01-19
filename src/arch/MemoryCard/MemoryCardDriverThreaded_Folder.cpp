@@ -106,7 +106,7 @@ void MemoryCardDriverThreaded_Folder::Unmount( UsbStorageDevice* pDevice )
 }
 
 /*
- * (c) 2003-2005 Chris Danford, Glenn Maynard
+ * (c) 2018-2019 Electromuis
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
