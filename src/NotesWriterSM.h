@@ -3,6 +3,7 @@
 
 class Song;
 class Steps;
+class RageFileBasic;
 /** @brief Writes a Song to an .SM file. */
 namespace NotesWriterSM
 {
@@ -11,6 +12,7 @@ namespace NotesWriterSM
 	 * @param sPath the path to write the file.
 	 * @param out the Song to be written out.
 	 * @return its success or failure. */
+	bool Write( RageFileBasic &file, Song &out, const vector<Steps*>& vpStepsToSave );
 	bool Write( RString sPath, Song &out, const vector<Steps*>& vpStepsToSave );
 	/**
 	 * @brief Get some contents about the edit file first.
@@ -38,10 +40,10 @@ namespace NotesWriterSM
 
 /**
  * @file
- * @author Chris Danford, Glenn Maynard (c) 2001-2004 
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -51,7 +53,7 @@ namespace NotesWriterSM
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
