@@ -388,11 +388,11 @@ void StatsManager::SavePadmissScore( const StageStats *pSS, PlayerNumber pn )
 	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOSTRETCH, opts.m_bTransforms );
 
 #define ADD_FLOAT_OPTION( parent, name, opts ) \
-    do { \
-        float val = opts[ PlayerOptions::name ]; \
+	do { \
+		float val = opts[ PlayerOptions::name ]; \
 		if ( val != 0.0f ) \
 			parent->AppendChild( #name, val ); \
-    } while (0)
+	} while (0)
 
 	XNode *accels = mods->AppendChild( "Accels" );
 	ADD_FLOAT_OPTION( accels, ACCEL_BOOST, opts.m_fAccels );

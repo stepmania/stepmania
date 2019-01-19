@@ -15,8 +15,8 @@ enum MemoryCardDriverType {
 };
 
 static const char *MemoryCardDriverTypeNames[] = {
-		"USB",
-		"Directory"
+	"USB",
+	"Directory"
 };
 XToString(MemoryCardDriverType);
 StringToX(MemoryCardDriverType);

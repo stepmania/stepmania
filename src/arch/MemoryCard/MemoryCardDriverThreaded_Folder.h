@@ -18,7 +18,7 @@ protected:
 	bool TestWrite( UsbStorageDevice* pDevice );
 	bool FolderExists(RString path);
 
-	int GetActivePlayers();
+	int GetActivePlayerMask();
 	int m_LastDevices;
 };
 
