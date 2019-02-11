@@ -1,3 +1,7 @@
+if(WITH_SYSTEM_GLEW)
+  find_package(GLEW REQUIRED)
+else()
+
 set(GLEW_SRC "glew-1.5.8/src/glew.c")
 
 source_group("" FILES ${GLEW_SRC})
@@ -13,3 +17,5 @@ sm_add_compile_definition("glew" GLEW_STATIC)
 if(MSVC)
   sm_add_compile_definition("glew" _MBCS)
 endif(MSVC)
+
+endif()

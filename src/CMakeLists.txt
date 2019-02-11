@@ -499,6 +499,13 @@ elseif(APPLE)
 else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
   list(FIND SMDATA_LINK_LIB "jpeg" JPEG_INDEX)
   sm_list_replace(SMDATA_LINK_LIB ${JPEG_INDEX} "${JPEG_LIBRARY}")
+
+  if(WITH_SYSTEM_GLEW)
+    list(FIND SMDATA_LINK_LIB "glew" GLEW_INDEX)
+    list(REMOVE_ITEM SMDATA_LINK_LIB "glew")
+    list(INSERT SMDATA_LINK_LIB ${GLEW_INDEX} ${GLEW_LIBRARIES})
+  endif()
+
   if(HAS_FFMPEG)
     if(WITH_SYSTEM_FFMPEG)
       list(APPEND SMDATA_LINK_LIB
