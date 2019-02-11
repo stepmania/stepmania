@@ -1,3 +1,8 @@
+if(WITH_SYSTEM_TOMMATH)
+find_library(TOMMATH_LIBRARY tommath)
+if(TOMMATH_LIBRARY-NOTFOUND)
+message(FATAL_ERROR "Need tommath.")
+endif()
 set(TOMDIR "${SM_SRC_DIR}/libtommath")
 
 list(APPEND TOMMATH_SRC
@@ -136,3 +141,4 @@ set_property(TARGET "tommath" PROPERTY FOLDER "External Libraries")
 disable_project_warnings("tommath")
 
 target_include_directories("tommath" PUBLIC ${TOMDIR})
+endif()

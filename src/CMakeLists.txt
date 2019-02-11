@@ -391,11 +391,9 @@ set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
 list(APPEND SMDATA_LINK_LIB
             "lua-5.1"
             "tomcrypt"
-            "tommath"
             "zlib"
             "jsoncpp"
             "png"
-            "glew"
             "jpeg")
 include(../extern/CMakeProject-mmmagic.cmake)
 
@@ -410,6 +408,18 @@ endif()
 
 if(NOT SYSTEM_PCRE_FOUND)
   list(APPEND SMDATA_LINK_LIB "pcre")
+endif()
+
+if(WITH_SYSTEM_GLEW)
+  list(APPEND SMDATA_LINK_LIB ${GLEW_LIBRARIES})
+else()
+  list(APPEND SMDATA_LINK_LIB "glew")
+endif()
+
+if(WITH_SYSTEM_TOMMATH)
+  list(APPEND SMDATA_LINK_LIB ${TOMMATH_LIBRARY})
+else()
+  list(APPEND SMDATA_LINK_LIB "tommath")
 endif()
 
 if(WIN32)
@@ -499,12 +509,6 @@ elseif(APPLE)
 else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
   list(FIND SMDATA_LINK_LIB "jpeg" JPEG_INDEX)
   sm_list_replace(SMDATA_LINK_LIB ${JPEG_INDEX} "${JPEG_LIBRARY}")
-
-  if(WITH_SYSTEM_GLEW)
-    list(FIND SMDATA_LINK_LIB "glew" GLEW_INDEX)
-    list(REMOVE_ITEM SMDATA_LINK_LIB "glew")
-    list(INSERT SMDATA_LINK_LIB ${GLEW_INDEX} ${GLEW_LIBRARIES})
-  endif()
 
   if(HAS_FFMPEG)
     if(WITH_SYSTEM_FFMPEG)
