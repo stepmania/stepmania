@@ -1,3 +1,8 @@
+if(CMAKE_GENERATOR MATCHES "Ninja")
+  message(FATAL_ERROR
+          "You cannot use the Ninja generator when building the bundled ffmpeg library.")
+endif()
+
 set(SM_FFMPEG_VERSION "2.1.3")
 set(SM_FFMPEG_SRC_LIST
     "${SM_EXTERN_DIR}"
@@ -30,9 +35,6 @@ if(CMAKE_POSITION_INDEPENDENT_CODE)
 endif()
 
 if(MACOSX)
-  # TODO: Remove these two items when Mac OS X StepMania builds in 64-bit.
-  list(APPEND FFMPEG_CONFIGURE "--arch=i386" "--cc=clang -m32")
-
   find_program(FFMPEG_YASM_EXECUTABLE yasm
                PATHS /usr/bin /usr/local/bin /opt/local/bin)
   list(APPEND FFMPEG_CONFIGURE "--yasmexe=${FFMPEG_YASM_EXECUTABLE}")
