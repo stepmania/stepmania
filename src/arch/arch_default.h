@@ -54,6 +54,7 @@
 /* All use these. */
 #include "LoadingWindow/LoadingWindow_Null.h"
 #include "MemoryCard/MemoryCardDriver_Null.h"
+#include "MemoryCard/MemoryCardDriverThreaded_Folder.h"
 
 #endif
 
