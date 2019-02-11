@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(StepMania)
 
-include (StepmaniaCore.cmake)
+include(StepmaniaCore.cmake)
 
 # The external libraries need to be included.
 add_subdirectory(extern)

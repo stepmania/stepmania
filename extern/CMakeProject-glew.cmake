@@ -13,4 +13,3 @@ sm_add_compile_definition("glew" GLEW_STATIC)
 if(MSVC)
   sm_add_compile_definition("glew" _MBCS)
 endif(MSVC)
-
