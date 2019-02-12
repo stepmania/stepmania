@@ -1,3 +1,6 @@
+if(WITH_SYSTEM_TOMCRYPT)
+find_library(TOMCRYPT_LIBRARY tomcrypt)
+else()
 set(TOMDIR "${SM_SRC_DIR}/libtomcrypt")
 
 list(APPEND TOMCRYPT_MISC_CRYPT
@@ -269,3 +272,4 @@ endif()
 disable_project_warnings("tomcrypt")
 
 target_include_directories("tomcrypt" PUBLIC "${TOMDIR}/src/headers")
+endif()
