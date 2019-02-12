@@ -388,9 +388,7 @@ endif()
 
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
 
-list(APPEND SMDATA_LINK_LIB
-            "lua-5.1"
-            "tomcrypt")
+list(APPEND SMDATA_LINK_LIB "lua-5.1")
 include(../extern/CMakeProject-mmmagic.cmake)
 
 if(HAS_MP3)
@@ -412,6 +410,12 @@ if(WITH_SYSTEM_GLEW)
   list(APPEND SMDATA_LINK_LIB ${GLEW_LIBRARIES})
 else()
   list(APPEND SMDATA_LINK_LIB "glew")
+endif()
+
+if(WITH_SYSTEM_TOMCRYPT)
+  list(APPEND SMDATA_LINK_LIB ${TOMCRYPT_LIBRARY})
+else()
+  list(APPEND SMDATA_LINK_LIB "tomcrypt")
 endif()
 
 if(WITH_SYSTEM_TOMMATH)
