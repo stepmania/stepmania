@@ -444,6 +444,17 @@ else()
   list(APPEND SMDATA_LINK_LIB "jsoncpp")
 endif()
 
+if(WITH_OGG)
+if(WITH_SYSTEM_OGG)
+list(APPEND SMDATA_LINK_LIB
+            "${VORBISFILE_LIBRARY}"
+            "${VORBIS_LIBRARY}"
+            "${OGG_LIBRARY}")
+else()
+list(APPEND SMDATA_LINK_LIB "vorbisfile" "vorbis" "ogg")
+endif()
+endif()
+
 if(WIN32)
   list(APPEND SMDATA_LINK_LIB
               # The misc libraries are here.
@@ -451,13 +462,6 @@ if(WIN32)
               "${LIB_AVCODEC}"
               "${LIB_AVFORMAT}"
               "${LIB_AVUTIL}")
-
-  if(WITH_OGG)
-    list(APPEND SMDATA_LINK_LIB
-                "ogg"
-                "vorbis"
-                "vorbisfile")
-  endif()
 
   list(APPEND SMDATA_LINK_LIB
               "dbghelp.lib"
@@ -501,10 +505,7 @@ elseif(APPLE)
               ${MAC_FRAME_AUDIOTOOLBOX}
               ${MAC_FRAME_AUDIOUNIT}
               ${MAC_FRAME_COREAUDIO}
-              ${MAC_FRAME_CORESERVICES}
-              "ogg"
-              "theora"
-              "vorbis")
+              ${MAC_FRAME_CORESERVICES})
   list(APPEND SMDATA_LINK_LIB
               "${BZIP2_LIBRARY_RELEASE}"
               "${ICONV_LIBRARIES}"
@@ -558,13 +559,6 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
 
   if(${DL_FOUND})
     list(APPEND SMDATA_LINK_LIB ${DL_LIBRARIES})
-  endif()
-
-  if(HAS_OGG)
-    list(APPEND SMDATA_LINK_LIB
-                "${VORBISFILE_LIBRARY}"
-                "${VORBIS_LIBRARY}"
-                "${OGG_LIBRARY}")
   endif()
 
   list(APPEND SMDATA_LINK_LIB "${OPENGL_LIBRARY}")
