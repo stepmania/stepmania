@@ -51,7 +51,8 @@ option(WITH_OGG "Build with OGG/Vorbis Support." ON)
 option(WITH_LOGGING_TIMING_DATA
        "Build with logging all Add and Erase Segment calls." OFF)
 
-option(WITH_SYSTEM_PNG "Build with system PNG library (may not work on 1.6+)" OFF)
+option(WITH_SYSTEM_PNG "Build with system PNG library (may not work on 1.6+)"
+       OFF)
 option(WITH_SYSTEM_OGG "Build with system OGG libraries" OFF)
 option(WITH_SYSTEM_GLEW "Build with system GLEW library" OFF)
 option(WITH_SYSTEM_TOMMATH "Build with system libtommath" OFF)

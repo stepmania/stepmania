@@ -449,14 +449,17 @@ else()
 endif()
 
 if(WITH_OGG)
-if(WITH_SYSTEM_OGG)
-list(APPEND SMDATA_LINK_LIB
-            "${VORBISFILE_LIBRARY}"
-            "${VORBIS_LIBRARY}"
-            "${OGG_LIBRARY}")
-else()
-list(APPEND SMDATA_LINK_LIB "vorbisfile" "vorbis" "ogg")
-endif()
+  if(WITH_SYSTEM_OGG)
+    list(APPEND SMDATA_LINK_LIB
+                "${VORBISFILE_LIBRARY}"
+                "${VORBIS_LIBRARY}"
+                "${OGG_LIBRARY}")
+  else()
+    list(APPEND SMDATA_LINK_LIB
+                "vorbisfile"
+                "vorbis"
+                "ogg")
+  endif()
 endif()
 
 if(WIN32)
@@ -571,9 +574,7 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
     list(APPEND SMDATA_LINK_LIB "${GTK2_LIBRARIES}")
   endif()
 
-  list(APPEND SMDATA_LINK_LIB
-              "${BZIP2_LIBRARIES}"
-              "${CMAKE_THREAD_LIBS_INIT}")
+  list(APPEND SMDATA_LINK_LIB "${BZIP2_LIBRARIES}" "${CMAKE_THREAD_LIBS_INIT}")
 
   if(HAS_ALSA)
     list(APPEND SMDATA_LINK_LIB ${ALSA_LIBRARIES})

@@ -1,6 +1,8 @@
 if(CMAKE_GENERATOR MATCHES "Ninja")
-  message(FATAL_ERROR
-          "You cannot use the Ninja generator when building the bundled ffmpeg library.")
+  message(
+    FATAL_ERROR
+      "You cannot use the Ninja generator when building the bundled ffmpeg library."
+    )
 endif()
 
 set(SM_FFMPEG_VERSION "2.1.3")
@@ -52,7 +54,7 @@ if(NOT WITH_EXTERNAL_WARNINGS)
   list(APPEND FFMPEG_CONFIGURE "--extra-cflags=-w")
 endif()
 
-list(APPEND SM_FFMPEG_MAKE $(MAKE))
+list(APPEND SM_FFMPEG_MAKE $ (MAKE))
 if(WITH_FFMPEG_JOBS GREATER 0)
   list(APPEND SM_FFMPEG_MAKE "-j${WITH_FFMPEG_JOBS}")
 endif()

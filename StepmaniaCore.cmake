@@ -360,8 +360,8 @@ elseif(LINUX)
 
   set(HAS_X11 FALSE)
   if(WITH_X11)
-  find_package(X11 REQUIRED)
-  set(HAS_X11 TRUE)
+    find_package(X11 REQUIRED)
+    set(HAS_X11 TRUE)
   endif()
 
   find_package("ZLIB" REQUIRED)
@@ -371,14 +371,14 @@ elseif(LINUX)
 
   set(HAS_XRANDR FALSE)
   if(WITH_XRANDR)
-  find_package(Xrandr REQUIRED)
-  set(HAS_XRANDR TRUE)
+    find_package(Xrandr REQUIRED)
+    set(HAS_XRANDR TRUE)
   endif()
 
   set(HAS_XINERAMA FALSE)
   if(WITH_XINERAMA)
-  find_package(Xinerama REQUIRED)
-  set(HAS_XINERAMA TRUE)
+    find_package(Xinerama REQUIRED)
+    set(HAS_XINERAMA TRUE)
   endif()
 
   set(HAS_PULSE FALSE)
@@ -389,25 +389,27 @@ elseif(LINUX)
 
   set(HAS_ALSA FALSE)
   if(WITH_ALSA)
-  find_package(ALSA REQUIRED)
-  set(HAS_ALSA TRUE)
+    find_package(ALSA REQUIRED)
+    set(HAS_ALSA TRUE)
   endif()
 
   set(HAS_JACK FALSE)
   if(WITH_JACK)
-  find_package(JACK REQUIRED)
-  set(HAS_JACK TRUE)
+    find_package(JACK REQUIRED)
+    set(HAS_JACK TRUE)
   endif()
 
   set(HAS_OSS FALSE)
   if(WITH_OSS)
-  find_package(OSS)
-  set(HAS_OSS TRUE)
+    find_package(OSS)
+    set(HAS_OSS TRUE)
   endif()
 
   if(NOT OSS_FOUND AND NOT JACK_FOUND AND NOT ALSA_FOUND AND NOT PULSE_FOUND)
     message(
-      FATAL_ERROR "No sound libraries found (or selected). You will require at least one.")
+      FATAL_ERROR
+        "No sound libraries found (or selected). You will require at least one."
+      )
   else()
     message(
       STATUS
@@ -450,7 +452,7 @@ elseif(LINUX)
 
   find_package(OpenGL REQUIRED)
   find_package(GLEW REQUIRED)
-endif(WIN32)  # LINUX, APPLE
+endif(WIN32) # LINUX, APPLE
 
 configure_file("${SM_SRC_DIR}/config.in.hpp"
                "${SM_SRC_DIR}/generated/config.hpp")
