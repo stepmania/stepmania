@@ -1,4 +1,4 @@
-if(NOT (APPLE OR MSVC) AND WITH_SYSTEM_MAD)
+if(WITH_SYSTEM_MAD)
 find_package(Mad REQUIRED)
 else()
 set(MAD_DIR "${SM_EXTERN_DIR}/mad-0.15.1b")
