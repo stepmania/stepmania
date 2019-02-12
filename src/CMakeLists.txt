@@ -391,8 +391,6 @@ set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
 list(APPEND SMDATA_LINK_LIB
             "lua-5.1"
             "tomcrypt"
-            "zlib"
-            "jsoncpp"
             "png"
             "jpeg")
 include(../extern/CMakeProject-mmmagic.cmake)
@@ -422,8 +420,19 @@ else()
   list(APPEND SMDATA_LINK_LIB "tommath")
 endif()
 
-if(WIN32)
+if(WITH_SYSTEM_ZLIB)
+  list(APPEND SMDATA_LINK_LIB ${ZLIB_LIBRARIES})
+else()
+  list(APPEND SMDATA_LINK_LIB "zlib")
+endif()
 
+if(WITH_SYSTEM_JSONCPP)
+  list(APPEND SMDATA_LINK_LIB ${JSONCPP_LIBRARY})
+else()
+  list(APPEND SMDATA_LINK_LIB "jsoncpp")
+endif()
+
+if(WIN32)
   list(APPEND SMDATA_LINK_LIB
               # The misc libraries are here.
               "${LIB_SWSCALE}"
@@ -525,6 +534,11 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
                   "${SM_FFMPEG_ROOT}/libavutil/libavutil.a")
     endif()
 
+    if(NOT WITH_SYSTEM_ZLIB)
+      list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
+      list(APPEND SMDATA_LINK_LIB "zlib")
+    endif()
+
     if(VA_FOUND)
       list(APPEND SMDATA_LINK_LIB ${VA_LIBRARY})
     endif()
@@ -549,7 +563,6 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
 
   list(APPEND SMDATA_LINK_LIB
               "${BZIP2_LIBRARIES}"
-              "${ZLIB_LIBRARIES}"
               "${CMAKE_THREAD_LIBS_INIT}")
 
   if(HAS_ALSA)
@@ -589,8 +602,6 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
   endif()
 
   list(APPEND SMDATA_LINK_LIB ${XRANDR_LIBRARIES} ${XINERAMA_LIBRARIES})
-
-  list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
 endif()
 
 target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})

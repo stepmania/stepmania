@@ -1,3 +1,6 @@
+if(WITH_SYSTEM_ZLIB)
+find_package(ZLIB REQUIRED)
+else()
 list(APPEND ZLIB_SRC
             "zlib/adler32.c"
             "zlib/compress.c"
@@ -40,3 +43,4 @@ disable_project_warnings("zlib")
 if(MSVC)
   sm_add_compile_definition("zlib" _MBCS)
 endif(MSVC)
+endif()
