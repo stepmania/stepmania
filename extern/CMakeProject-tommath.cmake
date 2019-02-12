@@ -1,8 +1,9 @@
 if(WITH_SYSTEM_TOMMATH)
 find_library(TOMMATH_LIBRARY tommath)
-if(TOMMATH_LIBRARY-NOTFOUND)
+if(TOMMATH_LIBRARY MATCHES "TOMMATH_LIBRARY-NOTFOUND")
 message(FATAL_ERROR "Need tommath.")
 endif()
+else()
 set(TOMDIR "${SM_SRC_DIR}/libtommath")
 
 list(APPEND TOMMATH_SRC
