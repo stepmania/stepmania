@@ -51,7 +51,18 @@ option(WITH_OGG "Build with OGG/Vorbis Support." ON)
 option(WITH_LOGGING_TIMING_DATA
        "Build with logging all Add and Erase Segment calls." OFF)
 
+option(WITH_SYSTEM_PNG "Build with system PNG library (may not work on 1.6+)" OFF)
+option(WITH_SYSTEM_OGG "Build with system OGG libraries" OFF)
+option(WITH_SYSTEM_GLEW "Build with system GLEW library" OFF)
+option(WITH_SYSTEM_TOMMATH "Build with system libtommath" OFF)
+option(WITH_SYSTEM_TOMCRYPT "Build with system libtomcrypt" OFF)
+option(WITH_SYSTEM_MAD "Build with system libmad" OFF)
+option(WITH_SYSTEM_JSONCPP "Build with system jsoncpp" OFF)
+option(WITH_SYSTEM_JPEG "Build with system jpeglib" OFF)
+option(WITH_SYSTEM_PCRE "Build with system PCRE" OFF)
+
 if(NOT MSVC)
+  option(WITH_SYSTEM_ZLIB "Build against system zlib" OFF)
   # Turn this option off to disable using FFMEPG.
   option(WITH_FFMPEG "Build with FFMPEG." ON)
   # Change this number to utilize a different number of jobs for building
@@ -88,4 +99,11 @@ elseif(LINUX)
   option(WITH_XINERAMA
          "Build using libXinerama to query for monitor numbers (if available)."
          ON)
+  option(WITH_ALSA "Build with ALSA support" ON)
+  option(WITH_PULSEAUDIO "Build with PulseAudio support" OFF)
+  option(WITH_JACK "Build with JACK support" OFF)
+  option(WITH_XRANR "Build with Xrandr support" ON)
+  option(WITH_SDL "Build with SDL" ON)
+  option(WITH_X11 "Build with X11 support" ON)
+  option(WITH_SYSTEM_ZLIB "Build against system zlib" ON)
 endif()
