@@ -391,7 +391,6 @@ set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
 list(APPEND SMDATA_LINK_LIB
             "lua-5.1"
             "tomcrypt"
-            "png"
             "jpeg")
 include(../extern/CMakeProject-mmmagic.cmake)
 
@@ -418,6 +417,12 @@ if(WITH_SYSTEM_TOMMATH)
   list(APPEND SMDATA_LINK_LIB ${TOMMATH_LIBRARY})
 else()
   list(APPEND SMDATA_LINK_LIB "tommath")
+endif()
+
+if(WITH_SYSTEM_PNG)
+  list(APPEND SMDATA_LINK_LIB ${PNG_LIBRARIES})
+else()
+  list(APPEND SMDATA_LINK_LIB "png")
 endif()
 
 if(WITH_SYSTEM_ZLIB)
@@ -602,6 +607,8 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
   endif()
 
   list(APPEND SMDATA_LINK_LIB ${XRANDR_LIBRARIES} ${XINERAMA_LIBRARIES})
+
+  list(REMOVE_DUPLICATES SMDATA_LINK_LIB)
 endif()
 
 target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})

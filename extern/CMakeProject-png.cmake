@@ -1,3 +1,7 @@
+if(WITH_SYSTEM_PNG)
+find_package(PNG REQUIRED)
+set(PNG_LIBRARIES ${PNG_LIBRARIES} PARENT_SCOPE)
+else()
 set(PNG_SRC
     "libpng/include/png.c"
     "libpng/include/pngerror.c"
@@ -39,3 +43,4 @@ if(MSVC)
 endif()
 
 target_include_directories("png" PUBLIC "zlib")
+endif()
