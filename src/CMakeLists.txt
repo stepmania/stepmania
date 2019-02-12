@@ -402,7 +402,9 @@ if(HAS_MP3)
   endif()
 endif()
 
-if(NOT SYSTEM_PCRE_FOUND)
+if(WITH_SYSTEM_PCRE)
+  list(APPEND SMDATA_LINK_LIB ${PCRE_LIBRARY})
+else()
   list(APPEND SMDATA_LINK_LIB "pcre")
 endif()
 

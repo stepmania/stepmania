@@ -283,7 +283,6 @@ else()
 endif()
 
 if(WIN32)
-  set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
 
   if(MINGW AND WITH_FFMPEG)
@@ -322,7 +321,6 @@ elseif(MACOSX)
     set(HAS_FFMPEG TRUE)
   endif()
 
-  set(SYSTEM_PCRE_FOUND FALSE)
   set(WITH_CRASH_HANDLER TRUE)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9")
   set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.9.0")
@@ -377,9 +375,6 @@ elseif(LINUX)
   else()
     set(HAS_X11 FALSE)
   endif()
-
-  find_package(Pcre)
-  set(SYSTEM_PCRE_FOUND ${PCRE_FOUND})
 
   find_package("ZLIB" REQUIRED)
   find_package("JPEG" REQUIRED)
