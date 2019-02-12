@@ -1,3 +1,7 @@
+if(WITH_SYSTEM_JPEG)
+find_package(JPEG REQUIRED)
+set(JPEG_LIBRARIES ${JPEG_LIBRARIES} PARENT_SCOPE)
+else()
 set(JPEG_DIR "${SM_EXTERN_DIR}/libjpeg")
 
 configure_file("${SM_EXTERN_DIR}/config.jpeg.in.h" "${JPEG_DIR}/jconfig.h")
@@ -78,3 +82,4 @@ if(MSVC)
 endif(MSVC)
 
 target_include_directories("jpeg" PUBLIC "${JPEG_DIR}")
+endif()

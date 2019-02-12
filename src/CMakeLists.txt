@@ -390,8 +390,7 @@ set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
 
 list(APPEND SMDATA_LINK_LIB
             "lua-5.1"
-            "tomcrypt"
-            "jpeg")
+            "tomcrypt")
 include(../extern/CMakeProject-mmmagic.cmake)
 
 if(HAS_MP3)
@@ -417,6 +416,12 @@ if(WITH_SYSTEM_TOMMATH)
   list(APPEND SMDATA_LINK_LIB ${TOMMATH_LIBRARY})
 else()
   list(APPEND SMDATA_LINK_LIB "tommath")
+endif()
+
+if(WITH_SYSTEM_JPEG)
+  list(APPEND SMDATA_LINK_LIB ${JPEG_LIBRARIES})
+else()
+  list(APPEND SMDATA_LINK_LIB "jpeg")
 endif()
 
 if(WITH_SYSTEM_PNG)
