@@ -1,3 +1,6 @@
+if(NOT (APPLE OR MSVC) AND WITH_SYSTEM_MAD)
+find_package(Mad REQUIRED)
+else()
 set(MAD_DIR "${SM_EXTERN_DIR}/mad-0.15.1b")
 
 list(APPEND MAD_SRC
@@ -64,10 +67,11 @@ if(MSVC)
   sm_add_compile_definition("mad" $<$<CONFIG:RelWithDebInfo>:FPM_INTEL>)
   # TODO: Provide a proper define for inline.
   sm_add_compile_definition("mad" inline=__inline)
-elseif(APPLE)
+elseif(APPLE OR UNIX)
   sm_add_compile_definition("mad" FPM_64BIT=1)
 endif(MSVC)
 
 target_include_directories("mad" PUBLIC "${MAD_DIR}")
 
 configure_file("${SM_EXTERN_DIR}/config.mad.in.h" "${MAD_DIR}/config.h")
+endif()
