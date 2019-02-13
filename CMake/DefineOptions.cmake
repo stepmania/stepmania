@@ -31,7 +31,7 @@ option(WITH_PORTABLE_TOMCRYPT
 # WITH_PORTABLE_TOMCRYPT is ON, this will automatically have no effect.
 option(
   WITH_NO_ROLC_TOMCRYPT
-  "Build without the ROLC assembly instructions for tomcrypt. (Ignored by Apple builds)"
+  "Build without the ROLC assembly instructions for tomcrypt."
   OFF)
 
 # Turn this option off to not use the GPL exclusive components.

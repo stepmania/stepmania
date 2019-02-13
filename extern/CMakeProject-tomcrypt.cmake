@@ -254,18 +254,16 @@ else()
 
   if(WITH_PORTABLE_TOMCRYPT)
     sm_add_compile_definition("tomcrypt" LTC_NO_ASM)
-  elseif(WITH_NO_ROLC_TOMCRYPT AND NOT APPLE)
+  endif()
+  if(WITH_NO_ROLC_TOMCRYPT)
     sm_add_compile_definition("tomcrypt" LTC_NO_ROLC)
   endif()
 
   if(APPLE)
-    sm_add_compile_definition("tomcrypt" LTC_NO_ROLC)
     sm_append_simple_target_property("tomcrypt"
                                      XCODE_ATTRIBUTE_GCC_NO_COMMON_BLOCKS "YES")
-    sm_append_simple_target_property(
-      "tomcrypt" XCODE_ATTRIBUTE_GCC_PREPROCESSOR_DEFINITIONS[variant=Debug]
-      "'CMAKE_INTDIR=\"Debug\"' LTC_NO_ROLC DEBUG=1")
-  elseif(MSVC)
+  endif()
+  if(MSVC)
     sm_add_compile_definition("tomcrypt" _CRT_SECURE_NO_WARNINGS)
   endif()
 

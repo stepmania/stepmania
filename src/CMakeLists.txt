@@ -114,7 +114,8 @@ set_target_properties("${SM_EXE_NAME}"
 
 if(WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
-elseif(WITH_NO_ROLC_TOMCRYPT OR APPLE)
+endif()
+if(WITH_NO_ROLC_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ROLC)
 endif()
 
@@ -203,7 +204,9 @@ if(WIN32)
       COMMENT "Generating file to allow for easier stack traces.")
   endif()
 elseif(APPLE)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14 -stdlib=libc++ -DMACOSX")
+  sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_X86_DARWIN)
+  sm_add_compile_definition("${SM_EXE_NAME}" MACOSX)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14 -stdlib=libc++")
   set_target_properties(
     "${SM_EXE_NAME}"
     PROPERTIES
@@ -408,6 +411,7 @@ endif()
 
 if(WITH_SYSTEM_GLEW)
   list(APPEND SMDATA_LINK_LIB ${GLEW_LIBRARIES})
+  list(APPEND SM_INCLUDE_DIRS ${GLEW_INCLUDE_DIRS})
 else()
   list(APPEND SMDATA_LINK_LIB "glew")
 endif()
@@ -506,27 +510,17 @@ elseif(APPLE)
               ${MAC_FRAME_CARBON}
               ${MAC_FRAME_COCOA}
               ${MAC_FRAME_IOKIT}
-              ${MAC_FRAME_QUICKTIME}
               ${MAC_FRAME_OPENGL}
               ${MAC_FRAME_COREFOUNDATION}
               ${MAC_FRAME_AUDIOTOOLBOX}
               ${MAC_FRAME_AUDIOUNIT}
               ${MAC_FRAME_COREAUDIO}
-              ${MAC_FRAME_CORESERVICES})
+              ${MAC_FRAME_CORESERVICES}
+              ${MAC_FRAME_SYSTEM})
   list(APPEND SMDATA_LINK_LIB
               "${BZIP2_LIBRARY_RELEASE}"
               "${ICONV_LIBRARIES}"
               "pcre")
-
-  if(HAS_OGG)
-    list(
-      APPEND
-        SMDATA_LINK_LIB
-        "${SM_OGG_ROOT}/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libogg.a"
-        "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbis.a"
-        "${SM_VORBIS_ROOT}/lib/$<$<CONFIG:Release>:Release>$<$<CONFIG:Debug>:Debug>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/libvorbisfile.a"
-      )
-  endif()
 
   if(HAS_FFMPEG)
     list(APPEND SMDATA_LINK_LIB
@@ -536,9 +530,6 @@ elseif(APPLE)
                 "${SM_FFMPEG_ROOT}/libavutil/libavutil.a")
   endif()
 else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
-  list(FIND SMDATA_LINK_LIB "jpeg" JPEG_INDEX)
-  sm_list_replace(SMDATA_LINK_LIB ${JPEG_INDEX} "${JPEG_LIBRARY}")
-
   if(HAS_FFMPEG)
     if(WITH_SYSTEM_FFMPEG)
       list(APPEND SMDATA_LINK_LIB
