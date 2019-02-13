@@ -61,9 +61,11 @@ option(WITH_SYSTEM_MAD "Build with system libmad" OFF)
 option(WITH_SYSTEM_JSONCPP "Build with system jsoncpp" OFF)
 option(WITH_SYSTEM_JPEG "Build with system jpeglib" OFF)
 option(WITH_SYSTEM_PCRE "Build with system PCRE" OFF)
+option(WITH_SYSTEM_ZLIB "Build against system zlib" OFF)
+
+option(WITH_SDL "Build with SDL" OFF)
 
 if(NOT MSVC)
-  option(WITH_SYSTEM_ZLIB "Build against system zlib" OFF)
   # Turn this option off to disable using FFMEPG.
   option(WITH_FFMPEG "Build with FFMPEG." ON)
   # Change this number to utilize a different number of jobs for building
@@ -104,7 +106,5 @@ elseif(LINUX)
   option(WITH_PULSEAUDIO "Build with PulseAudio support" OFF)
   option(WITH_JACK "Build with JACK support" OFF)
   option(WITH_XRANDR "Build with Xrandr support" ON)
-  option(WITH_SDL "Build with SDL" OFF)
   option(WITH_X11 "Build with X11 support" ON)
-  option(WITH_SYSTEM_ZLIB "Build against system zlib" ON)
 endif()
