@@ -1,5 +1,6 @@
 if(WITH_SYSTEM_GLEW)
   find_package(GLEW REQUIRED)
+  set(GLEW_INCLUDE_DIRS ${GLEW_INCLUDE_DIRS} PARENT_SCOPE)
 else()
 
   set(GLEW_SRC "glew-1.5.8/src/glew.c")
