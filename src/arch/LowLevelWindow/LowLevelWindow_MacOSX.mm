@@ -516,6 +516,9 @@ static size_t GetDisplayBitsPerPixel( CGDirectDisplayID displayId )
 		depth = 16;
 	else if(CFStringCompare(pixEnc, CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
 		depth = 8;
+
+    CFRelease(pixEnc);
+    CGDisplayModeRelease(mode);
 	
 	return depth;
 
