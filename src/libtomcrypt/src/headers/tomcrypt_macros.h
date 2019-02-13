@@ -7,8 +7,8 @@
    typedef unsigned long long ulong64;
 #endif
 
-/* this is the "32-bit at least" data type 
- * Re-define it to suit your platform but it must be at least 32-bits 
+/* this is the "32-bit at least" data type
+ * Re-define it to suit your platform but it must be at least 32-bits
  */
 #if defined(__x86_64__) || (defined(__sparc__) && defined(__arch64__))
    typedef unsigned ulong32;
@@ -129,7 +129,7 @@ asm __volatile__ (             \
 
 #endif
 
-#ifdef ENDIAN_32BITWORD 
+#ifdef ENDIAN_32BITWORD
 
 #define STORE32L(x, y)        \
      { ulong32  __t = (x); XMEMCPY(y, &__t, 4); }
@@ -190,7 +190,7 @@ asm __volatile__ (             \
          (((ulong64)((y)[3] & 255))<<24)|(((ulong64)((y)[2] & 255))<<16) | \
          (((ulong64)((y)[1] & 255))<<8)|(((ulong64)((y)[0] & 255))); }
 
-#ifdef ENDIAN_32BITWORD 
+#ifdef ENDIAN_32BITWORD
 
 #define STORE32H(x, y)        \
      { ulong32 __t = (x); XMEMCPY(y, &__t, 4); }
@@ -262,21 +262,23 @@ static inline __attribute__((always_inline)) unsigned ROR(unsigned word, int i)
 
 #ifndef LTC_NO_ROLC
 
-static inline __attribute__((always_inline)) unsigned ROLc(unsigned word, const int i)
-{
-   asm ("roll %2,%0"
-      :"=r" (word)
-      :"0" (word),"I" (i));
-   return word;
-}
+#define ROLc(word,i) ({ \
+   ulong32 __ROLc_tmp = word; \
+   __asm__ ("roll %2, %0" : \
+            "=r" (__ROLc_tmp) : \
+            "0" (__ROLc_tmp), \
+            "I" (i)); \
+            __ROLc_tmp; \
+   })
+#define RORc(word,i) ({ \
+   ulong32 __RORc_tmp = word; \
+   __asm__ ("rorl %2, %0" : \
+            "=r" (__RORc_tmp) : \
+            "0" (__RORc_tmp), \
+            "I" (i)); \
+            __RORc_tmp; \
+   })
 
-static inline __attribute__((always_inline)) unsigned RORc(unsigned word, const int i)
-{
-   asm ("rorl %2,%0"
-      :"=r" (word)
-      :"0" (word),"I" (i));
-   return word;
-}
 
 #else
 
@@ -361,21 +363,22 @@ static inline __attribute__((always_inline)) unsigned long ROR64(unsigned long w
 
 #ifndef LTC_NO_ROLC
 
-static inline __attribute__((always_inline)) unsigned long ROL64c(unsigned long word, const int i)
-{
-   asm("rolq %2,%0"
-      :"=r" (word)
-      :"0" (word),"J" (i));
-   return word;
-}
-
-static inline __attribute__((always_inline)) unsigned long ROR64c(unsigned long word, const int i)
-{
-   asm("rorq %2,%0"
-      :"=r" (word)
-      :"0" (word),"J" (i));
-   return word;
-}
+#define ROL64c(word,i) ({ \
+   ulong64 __ROL64c_tmp = word; \
+   __asm__ ("rolq %2, %0" : \
+            "=r" (__ROL64c_tmp) : \
+            "0" (__ROL64c_tmp), \
+            "J" (i)); \
+            __ROL64c_tmp; \
+   })
+#define ROR64c(word,i) ({ \
+   ulong64 __ROR64c_tmp = word; \
+   __asm__ ("rorq %2, %0" : \
+            "=r" (__ROR64c_tmp) : \
+            "0" (__ROR64c_tmp), \
+            "J" (i)); \
+            __ROR64c_tmp; \
+   })
 
 #else /* LTC_NO_ROLC */
 
@@ -417,7 +420,7 @@ static inline __attribute__((always_inline)) unsigned long ROR64c(unsigned long 
    #define byte(x, n) ((unsigned char)((x) >> (8 * (n))))
 #else
    #define byte(x, n) (((x) >> (8 * (n))) & 255)
-#endif   
+#endif
 
 /* $Source$ */
 /* $Revision: 26244 $ */
