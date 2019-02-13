@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <sstream>
+#include "global.h"
 class RageFileDriver;
 
 /** @brief Safely delete pointers. */
@@ -193,7 +194,7 @@ static inline T enum_cycle( T val, int iMax, int iAmt = 1 )
 }
 
 
-/* We only have unsigned swaps; byte swapping a signed value doesn't make sense. 
+/* We only have unsigned swaps; byte swapping a signed value doesn't make sense.
  *
  * Platform-specific, optimized versions are defined in arch_setup, with the names
  * ArchSwap32, ArchSwap24, and ArchSwap16; we define them to their real names here,
@@ -488,16 +489,16 @@ float calc_mean( const float *pStart, const float *pEnd );
  * deviation. */
 float calc_stddev( const float *pStart, const float *pEnd, bool bSample = false );
 
-/* 
- * Find the slope, intercept, and error of a linear least squares regression 
+/*
+ * Find the slope, intercept, and error of a linear least squares regression
  * of the points given.  Error is returned as the sqrt of the average squared
- * Y distance from the chosen line. 
- * Returns true on success, false on failure. 
+ * Y distance from the chosen line.
+ * Returns true on success, false on failure.
  */
 bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
                        float &fSlope, float &fIntercept, float &fError );
 
-/* 
+/*
  * This method throws away any points that are more than fCutoff away from
  * the line defined by fSlope and fIntercept.
  */
@@ -601,7 +602,7 @@ struct char_traits_char_nocase: public char_traits<char>
 	{
 		return g_UpperCase[(unsigned char)a];
 	}
-	
+
 	static const char *find( const char* s, int n, char a )
 	{
 		a = fasttoupper(a);
