@@ -519,8 +519,7 @@ elseif(APPLE)
               ${MAC_FRAME_SYSTEM})
   list(APPEND SMDATA_LINK_LIB
               "${BZIP2_LIBRARY_RELEASE}"
-              "${ICONV_LIBRARIES}"
-              "pcre")
+              "${ICONV_LIBRARIES}")
 
   if(HAS_FFMPEG)
     list(APPEND SMDATA_LINK_LIB
