@@ -3,6 +3,10 @@
 #ifndef RAGE_DISPLAY_OGL_H
 #define RAGE_DISPLAY_OGL_H
 
+#ifdef __APPLE__
+#define GL_SILENCE_DEPRECATION 1
+#endif
+
 #include "RageDisplay.h"
 #include "RageTextureRenderTarget.h"
 #include "Sprite.h"
