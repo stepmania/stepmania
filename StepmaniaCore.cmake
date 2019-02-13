@@ -46,9 +46,6 @@ include("${SM_CMAKE_DIR}/DefineOptions.cmake")
 
 include("${SM_CMAKE_DIR}/SMDefs.cmake")
 
-# Put the predefined targets in separate groups.
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
 # Set up the linker flags for MSVC builds.
 configure_msvc_runtime()
 
@@ -314,22 +311,22 @@ elseif(MACOSX)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9")
   set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.9.0")
 
-  find_library(MAC_FRAME_ACCELERATE Accelerate ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_APPKIT AppKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_ACCELERATE Accelerate ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_APPKIT AppKit ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
   find_library(MAC_FRAME_AUDIOTOOLBOX AudioToolbox
-               ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_AUDIOUNIT AudioUnit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_CARBON Carbon ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_COCOA Cocoa ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_COREAUDIO CoreAudio ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+               ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_AUDIOUNIT AudioUnit ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_CARBON Carbon ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_COCOA Cocoa ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_COREAUDIO CoreAudio ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
   find_library(MAC_FRAME_COREFOUNDATION CoreFoundation
-               ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+               ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
   find_library(MAC_FRAME_CORESERVICES CoreServices
-               ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_FOUNDATION Foundation ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_IOKIT IOKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_OPENGL OpenGL ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_QUICKTIME QuickTime ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+               ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_FOUNDATION Foundation ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_IOKIT IOKit ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_OPENGL OpenGL ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_SYSTEM System ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
 
   mark_as_advanced(MAC_FRAME_ACCELERATE
                    MAC_FRAME_APPKIT
@@ -343,7 +340,7 @@ elseif(MACOSX)
                    MAC_FRAME_FOUNDATION
                    MAC_FRAME_IOKIT
                    MAC_FRAME_OPENGL
-                   MAC_FRAME_QUICKTIME)
+                   MAC_FRAME_SYSTEM)
 elseif(LINUX)
   if(WITH_GTK2)
     find_package("GTK2" 2.0)
