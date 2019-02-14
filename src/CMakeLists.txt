@@ -278,9 +278,9 @@ elseif(APPLE)
   set(SM_DMG_RELEASE_NAME "${SM_NAME_VERSION}-mac.dmg")
 
   add_custom_target(dmg
-                    COMMAND pushd ${SM_ROOT_DIR}\; mkdir dmgtmpdir\; cd
-                            dmgtmpdir\; mkdir ${SM_NAME_VERSION}\; cd
-                            ${SM_NAME_VERSION}\; mkdir ${SM_NAME_VERSION}\; cd
+                    COMMAND pushd ${SM_ROOT_DIR}\; mkdir -p dmgtmpdir\; cd
+                            dmgtmpdir\; mkdir -p ${SM_NAME_VERSION}\; cd
+                            ${SM_NAME_VERSION}\; mkdir -p ${SM_NAME_VERSION}\; cd
                             ${SM_NAME_VERSION}\; cp -R
                             "${SM_ROOT_DIR}/Announcers" .\; cp -R
                             "${SM_ROOT_DIR}/BackgroundEffects" .\; cp -R
@@ -299,7 +299,7 @@ elseif(APPLE)
                             ${SM_ROOT_DIR}\; hdiutil create
                             "${SM_DMG_RELEASE_NAME}" -VOLNAME
                             "StepMania ${SM_DMG_VERSION}" -SRCFOLDER
-                            "dmgtmpdir/${SM_NAME_VERSION}/" -OV\; rm -RF
+                            "dmgtmpdir/${SM_NAME_VERSION}/" -OV\; rm -fR
                             dmgtmpdir\; popd\;)
 
   # Add the ability to copy the resource file.
@@ -395,11 +395,10 @@ list(APPEND SMDATA_LINK_LIB "lua-5.1")
 include(../extern/CMakeProject-mmmagic.cmake)
 
 if(HAS_MP3)
-  list(FIND SMDATA_LINK_LIB "jsoncpp" JSON_INDEX)
-  if(WIN32 OR MACOSX OR NOT WITH_SYSTEM_MAD)
-    list(INSERT SMDATA_LINK_LIB ${JSON_INDEX} "mad")
+  if(WITH_SYSTEM_MAD)
+    list(APPEND SMDATA_LINK_LIB ${LIBMAD_LIBRARY})
   else()
-    list(INSERT SMDATA_LINK_LIB ${JSON_INDEX} ${LIBMAD_LIBRARY})
+    list(APPEND SMDATA_LINK_LIB "mad")
   endif()
 endif()
 
@@ -410,7 +409,7 @@ else()
 endif()
 
 if(WITH_SYSTEM_GLEW)
-  list(APPEND SMDATA_LINK_LIB ${GLEW_LIBRARIES})
+  list(APPEND SMDATA_LINK_LIB ${GLEW_LIBRARIES} ${GLEW_LIBRARY_RELEASE})
   list(APPEND SM_INCLUDE_DIRS ${GLEW_INCLUDE_DIRS})
 else()
   list(APPEND SMDATA_LINK_LIB "glew")
@@ -434,16 +433,16 @@ else()
   list(APPEND SMDATA_LINK_LIB "jpeg")
 endif()
 
+if(WITH_SYSTEM_ZLIB)
+  list(APPEND SMDATA_LINK_LIB ${ZLIB_LIBRARIES} ${ZLIB_LIBRARY_RELEASE})
+else()
+  list(APPEND SMDATA_LINK_LIB "zlib")
+endif()
+
 if(WITH_SYSTEM_PNG)
   list(APPEND SMDATA_LINK_LIB ${PNG_LIBRARIES})
 else()
   list(APPEND SMDATA_LINK_LIB "png")
-endif()
-
-if(WITH_SYSTEM_ZLIB)
-  list(APPEND SMDATA_LINK_LIB ${ZLIB_LIBRARIES})
-else()
-  list(APPEND SMDATA_LINK_LIB "zlib")
 endif()
 
 if(WITH_SYSTEM_JSONCPP)
