@@ -17,7 +17,7 @@ namespace jpeg
 }
 
 // Only Xcode wants this. FIXME
-#ifdef PBBUILD
+#if defined(PBBUILD) && defined(SYSTEM_JPEGLIB)
 #define TRUE jpeg::TRUE
 #define FALSE jpeg::FALSE
 #endif

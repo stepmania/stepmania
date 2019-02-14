@@ -428,6 +428,7 @@ else()
 endif()
 
 if(WITH_SYSTEM_JPEG)
+  sm_add_compile_definition("${SM_EXE_NAME}" SYSTEM_JPEGLIB)
   list(APPEND SMDATA_LINK_LIB ${JPEG_LIBRARIES})
 else()
   list(APPEND SMDATA_LINK_LIB "jpeg")
