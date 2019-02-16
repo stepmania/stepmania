@@ -56,7 +56,7 @@
 
 - (id) initWithArgc:(int)argc argv:(char **)argv
 {
-	[super init];
+	self = [super init];
 	if( argc == 2 && !strncmp(argv[1], "-psn_", 5) )
 		argc = 1;
 	m_iArgc = argc;

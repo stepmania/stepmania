@@ -188,3 +188,4 @@ BuildLog.htm
 *.swp
 *.pc
 *.d
+.vscode/
