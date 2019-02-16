@@ -13,6 +13,21 @@ namespace avcodec
 		#include <libavformat/avformat.h>
 		#include <libswscale/swscale.h>
 		#include <libavutil/pixdesc.h>
+
+		#if LIBAVCODEC_VERSION_MAJOR >= 58
+		#define av_free_packet av_packet_unref
+		#define PixelFormat AVPixelFormat
+		#define PIX_FMT_YUYV422 AV_PIX_FMT_YUYV422
+		#define PIX_FMT_BGRA    AV_PIX_FMT_BGRA
+		#define PIX_FMT_ARGB	AV_PIX_FMT_ARGB
+		#define PIX_FMT_ABGR	AV_PIX_FMT_ABGR
+		#define PIX_FMT_RGBA	AV_PIX_FMT_RGBA
+		#define PIX_FMT_RGB24	AV_PIX_FMT_RGB24
+		#define PIX_FMT_BGR24	AV_PIX_FMT_BGR24
+		#define PIX_FMT_RGB555	AV_PIX_FMT_RGB555
+		#define PIX_FMT_NB		AV_PIX_FMT_NB
+		#define CODEC_ID_NONE   AV_CODEC_ID_NONE
+		#endif
 	}
 };
 
@@ -48,8 +63,8 @@ public:
 	void GetFrame( RageSurface *pOut );
 	int DecodeFrame( float fTargetTime );
 
-	int GetWidth() const { return m_pStream->codec->width; }
-	int GetHeight() const { return m_pStream->codec->height; }
+	int GetWidth() const { return m_pStreamCodec->width; }
+	int GetHeight() const { return m_pStreamCodec->height; }
 
 	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout );
 
@@ -66,6 +81,7 @@ private:
 	avcodec::AVFrame *m_Frame;
 	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
 	avcodec::SwsContext *m_swsctx;
+	avcodec::AVCodecContext *m_pStreamCodec;
 
 	avcodec::AVFormatContext *m_fctx;
 	float m_fTimestamp;
@@ -106,7 +122,7 @@ static struct AVPixelFormat_t
 		true,
 		PixelFormatYCbCr_YUYV422,
 	},
-	{ 
+	{
 		32,
 		{ 0x0000FF00,
 		  0x00FF0000,
@@ -117,7 +133,7 @@ static struct AVPixelFormat_t
 		true,
 		PixelFormatYCbCr_Invalid,
 	},
-	{ 
+	{
 		32,
 		{ 0x00FF0000,
 		  0x0000FF00,
@@ -129,7 +145,7 @@ static struct AVPixelFormat_t
 		PixelFormatYCbCr_Invalid,
 	},
 	/*
-	{ 
+	{
 		32,
 		{ 0x000000FF,
 		  0x0000FF00,
@@ -140,7 +156,7 @@ static struct AVPixelFormat_t
 		true,
 		PixelFormatYCbCr_Invalid,
 	},
-	{ 
+	{
 		32,
 		{ 0xFF000000,
 		  0x00FF0000,
@@ -151,7 +167,7 @@ static struct AVPixelFormat_t
 		true,
 		PixelFormatYCbCr_Invalid,
 	}, */
-	{ 
+	{
 		24,
 		{ 0xFF0000,
 		  0x00FF00,
@@ -162,7 +178,7 @@ static struct AVPixelFormat_t
 		true,
 		PixelFormatYCbCr_Invalid,
 	},
-	{ 
+	{
 		24,
 		{ 0x0000FF,
 		  0x00FF00,
@@ -192,7 +208,7 @@ static struct AVPixelFormat_t
 /*
  * (c) 2003-2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -202,7 +218,7 @@ static struct AVPixelFormat_t
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

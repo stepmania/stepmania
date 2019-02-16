@@ -1,6 +1,8 @@
 #include "global.h"
 #include "Threads_Pthreads.h"
+#include "RageLog.h"
 #include "RageTimer.h"
+#include "RageThreads.h"
 #include "RageUtil.h"
 #include <sys/time.h>
 #include <errno.h>
@@ -17,6 +19,7 @@
 
 void ThreadImpl_Pthreads::Halt( bool Kill )
 {
+	(void)Kill;
 	/* Linux:
 	 * Send a SIGSTOP to the thread. If we send a SIGKILL, pthreads will
 	 * "helpfully" propagate it to the other threads, and we'll get killed, too.
@@ -105,7 +108,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 		} else {
 			// Abbreviate the name by taking the first 6, last 7
 			// characters and adding '..' in the middle.
-			LOG->Trace( "Truncated thread name due to size limit of %d: %s",
+			LOG->Trace( "Truncated thread name due to size limit of %zu: %s",
 				maxNameLen, rawname );
 			snprintf( thread->name, maxNameLen, "%.6s..%s",
 				rawname, &rawname[strlen(rawname) - 7] );

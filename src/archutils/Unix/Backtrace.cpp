@@ -441,7 +441,7 @@ static bool GetRegionInfo( mach_port_t self, const void *address, vm_address_t &
 	mach_port_t unused;
 	vm_size_t size = 0;
 	vm_address_t start = vm_address_t( address );
-	kern_return_t ret = vm_region( self, &start, &size, VM_REGION_BASIC_INFO_64,
+	kern_return_t ret = vm_region_64( self, &start, &size, VM_REGION_BASIC_INFO_64,
 				       (vm_region_info_t)&info, &infoCnt, &unused );
 	
 	if( ret != KERN_SUCCESS ||

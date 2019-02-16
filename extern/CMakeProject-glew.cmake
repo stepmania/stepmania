@@ -1,16 +1,22 @@
-set(GLEW_SRC "glew-1.5.8/src/glew.c")
+if(WITH_SYSTEM_GLEW)
+  find_package(GLEW REQUIRED)
+  set(GLEW_INCLUDE_DIRS ${GLEW_INCLUDE_DIRS} PARENT_SCOPE)
+else()
 
-source_group("" FILES ${GLEW_SRC})
+  set(GLEW_SRC "glew-1.5.8/src/glew.c")
 
-add_library("glew" STATIC ${GLEW_SRC})
+  source_group("" FILES ${GLEW_SRC})
 
-set_property(TARGET "glew" PROPERTY FOLDER "External Libraries")
+  add_library("glew" STATIC ${GLEW_SRC})
 
-target_include_directories("glew" PUBLIC "glew-1.5.8/include")
+  set_property(TARGET "glew" PROPERTY FOLDER "External Libraries")
 
-sm_add_compile_definition("glew" GLEW_STATIC)
+  target_include_directories("glew" PUBLIC "glew-1.5.8/include")
 
-if(MSVC)
-  sm_add_compile_definition("glew" _MBCS)
-endif(MSVC)
+  sm_add_compile_definition("glew" GLEW_STATIC)
 
+  if(MSVC)
+    sm_add_compile_definition("glew" _MBCS)
+  endif(MSVC)
+
+endif()
