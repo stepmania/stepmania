@@ -441,6 +441,7 @@ else()
 endif()
 
 if(WITH_SYSTEM_PNG)
+  sm_add_compile_definition("${SM_EXE_NAME}" SYSTEM_PNG)
   list(APPEND SMDATA_LINK_LIB ${PNG_LIBRARIES})
 else()
   list(APPEND SMDATA_LINK_LIB "png")

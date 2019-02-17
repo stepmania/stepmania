@@ -13,7 +13,11 @@
 #endif
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
+#ifndef SYSTEM_PNG
+#include "../extern/libpng/include/png.h"
+#else
 #include <png.h>
+#endif
 #endif // _MSC_VER
 
 static void SafePngError( png_struct *pPng, const RString &sStr )
@@ -141,7 +145,7 @@ bool RageSurfaceUtils::SavePNG( RageSurface *pImg, RageFile &f, RString &sError 
 /*
  * (c) 2004-2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -151,7 +155,7 @@ bool RageSurfaceUtils::SavePNG( RageSurface *pImg, RageFile &f, RString &sError 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
