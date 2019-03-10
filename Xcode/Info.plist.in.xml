@@ -28,7 +28,7 @@
       </dict>
     </array>
     <key>CFBundleExecutable</key>
-    <string>PRODUCT_NAME</string>
+    <string>@SM_EXE_NAME@</string>
     <key>CFBundleGetInfoString</key>
     <string>@SM_EXE_NAME@ @SM_VERSION_TRADITIONAL@</string>
     <key>CFBundleIconFile</key>

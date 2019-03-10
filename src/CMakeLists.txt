@@ -441,6 +441,7 @@ else()
 endif()
 
 if(WITH_SYSTEM_PNG)
+  sm_add_compile_definition("${SM_EXE_NAME}" SYSTEM_PNG)
   list(APPEND SMDATA_LINK_LIB ${PNG_LIBRARIES})
 else()
   list(APPEND SMDATA_LINK_LIB "png")
@@ -611,6 +612,7 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 
 list(APPEND SM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
             "${SM_SRC_DIR}/generated")
+list(APPEND SM_INCLUDE_DIRS "${JPEG_INCLUDE_DIR}")
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
               "${SM_EXTERN_DIR}/glew-1.5.8/include"
@@ -628,7 +630,6 @@ if(NOT APPLE)
     if(WITH_OGG)
       list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/vorbis")
     endif()
-    list(APPEND SM_INCLUDE_DIRS "${JPEG_INCLUDE_DIR}")
     if(HAS_FFMPEG)
       if(WITH_SYSTEM_FFMPEG)
         list(APPEND SM_INCLUDE_DIRS "${FFMPEG_INCLUDE_DIR}")
@@ -667,6 +668,7 @@ if(WIN32)
 else()
   list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/libpng/include")
 endif()
+
 
 target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 

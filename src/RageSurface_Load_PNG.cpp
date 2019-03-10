@@ -12,7 +12,11 @@
 #endif
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
+#ifndef SYSTEM_PNG
+#include "../extern/libpng/include/png.h"
+#else
 #include <png.h>
+#endif // SYSTEM_PNG
 #endif // _MSC_VER
 
 namespace
@@ -151,7 +155,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		type = PALETTE;
 		break;
 
-	case PNG_COLOR_TYPE_GRAY_ALPHA: 
+	case PNG_COLOR_TYPE_GRAY_ALPHA:
 		type = RGBA;
 		png_set_gray_to_rgb( png );
 		break;
@@ -279,7 +283,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const RString &sPath, RageSur
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -289,7 +293,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const RString &sPath, RageSur
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
