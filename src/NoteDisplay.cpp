@@ -1534,9 +1534,9 @@ void NoteColumnRenderer::DrawPrimitives()
 	NoteData::TrackMap::const_iterator begin, end;
 	m_field_render_args->note_data->GetTapNoteRangeInclusive(m_column,
 		m_field_render_args->first_row, m_field_render_args->last_row+1, begin, end);
-	for(; begin != end; ++begin)
+	for(; begin != end; end--)
 	{
-		const TapNote& tn= begin->second;
+		const TapNote& tn= end->second;
 		switch(tn.type)
 		{
 			case TapNoteType_Empty:
@@ -1550,13 +1550,13 @@ void NoteColumnRenderer::DrawPrimitives()
 			case TapNoteType_Fake:
 				if(!tn.result.bHidden)
 				{
-					taps[tn.pn].push_back(begin);
+					taps[tn.pn].push_back(end);
 				}
 				break;
 			case TapNoteType_HoldHead:
 				if(tn.HoldResult.hns != HNS_Held)
 				{
-					holds[tn.pn].push_back(begin);
+					holds[tn.pn].push_back(end);
 				}
 				break;
 			default:
