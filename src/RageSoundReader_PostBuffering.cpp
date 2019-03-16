@@ -31,7 +31,10 @@ int RageSoundReader_PostBuffering::Read( float *pBuf, int iFrames )
 
 	// Combine the sound's volume with master volume.
 	g_Mutex.Lock();
-	float fVolume = m_fVolume * g_fMasterVolume;
+
+	// Square the master so lower volumes are more sensitive.
+	// This lines up better with perceived volume.
+	float fVolume = m_fVolume * g_fMasterVolume * g_fMasterVolume;
 	fVolume = clamp( fVolume, 0, 1 );
 	g_Mutex.Unlock();
 
