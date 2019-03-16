@@ -472,8 +472,8 @@ bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
 	const vector<NoteData::TrackMap::const_iterator>& tap_set)
 {
 	bool any_upcoming = false;
-	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
-		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	for(vector<NoteData::TrackMap::const_iterator>::const_reverse_iterator tapit=
+		tap_set.rbegin(); tapit != tap_set.rend(); ++tapit)
 	{
 		const TapNote& tn= (*tapit)->second;
 		const HoldNoteResult& result= tn.HoldResult;
@@ -539,8 +539,8 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 {
 	bool any_upcoming= false;
 	// draw notes from furthest to closest
-	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
-		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	for(vector<NoteData::TrackMap::const_iterator>::const_reverse_iterator tapit=
+		tap_set.rbegin(); tapit != tap_set.rend(); ++tapit)
 	{
 		int tap_row= (*tapit)->first;
 		const TapNote& tn= (*tapit)->second;
@@ -614,6 +614,7 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 		any_upcoming |= NoteRowToBeat(tap_row) >
 			m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
 
+		// TODO: change to Z Bias, remove clear
 		if(!PREFSMAN->m_FastNoteRendering)
 		{
 			DISPLAY->ClearZBuffer();
@@ -1534,9 +1535,9 @@ void NoteColumnRenderer::DrawPrimitives()
 	NoteData::TrackMap::const_iterator begin, end;
 	m_field_render_args->note_data->GetTapNoteRangeInclusive(m_column,
 		m_field_render_args->first_row, m_field_render_args->last_row+1, begin, end);
-	for(; begin != end; end--)
+	for(; begin != end; ++begin)
 	{
-		const TapNote& tn= end->second;
+		const TapNote& tn= begin->second;
 		switch(tn.type)
 		{
 			case TapNoteType_Empty:
@@ -1550,13 +1551,13 @@ void NoteColumnRenderer::DrawPrimitives()
 			case TapNoteType_Fake:
 				if(!tn.result.bHidden)
 				{
-					taps[tn.pn].push_back(end);
+					taps[tn.pn].push_back(begin);
 				}
 				break;
 			case TapNoteType_HoldHead:
 				if(tn.HoldResult.hns != HNS_Held)
 				{
-					holds[tn.pn].push_back(end);
+					holds[tn.pn].push_back(begin);
 				}
 				break;
 			default:
@@ -1573,6 +1574,7 @@ void NoteColumnRenderer::DrawPrimitives()
 	{ \
 		DTS_INNER(pn, tap_set, draw_func, m_displays[pn]); \
 	}
+
 	DRAW_TAP_SET(holds, DrawHoldsInRange);
 	DTS_INNER(PLAYER_INVALID, holds, DrawHoldsInRange, m_displays[PLAYER_INVALID]);
 	DRAW_TAP_SET(taps, DrawTapsInRange);
