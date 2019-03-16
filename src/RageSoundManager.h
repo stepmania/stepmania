@@ -29,7 +29,6 @@ public:
 
 	void Init();
 
-	float GetMixVolume() const { return m_fMixVolume; }
 	void SetMixVolume();
 	float GetVolumeOfNonCriticalSounds() const { return m_fVolumeOfNonCriticalSounds; }
 	void SetVolumeOfNonCriticalSounds( float fVolumeOfNonCriticalSounds );
@@ -54,7 +53,6 @@ private:
 	RageSoundDriver *m_pDriver;
 
 	/* Prefs: */
-	float m_fMixVolume;
 	float m_fVolumeOfNonCriticalSounds;
 	// Swallow up warnings. If they must be used, define them.
 	RageSoundManager& operator=(const RageSoundManager& rhs);

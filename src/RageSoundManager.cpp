@@ -18,6 +18,7 @@
 #include "Foreach.h"
 #include "LocalizedString.h"
 #include "Preference.h"
+#include "RageSoundReader_PostBuffering.h"
 
 #include "arch/Sound/RageSoundDriver.h"
 
@@ -35,7 +36,7 @@ static Preference<RString> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAU
 
 RageSoundManager *SOUNDMAN = NULL;
 
-RageSoundManager::RageSoundManager(): m_pDriver(NULL), m_fMixVolume(1.0f),
+RageSoundManager::RageSoundManager(): m_pDriver(NULL),
 	m_fVolumeOfNonCriticalSounds(1.0f) {}
 
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
@@ -187,9 +188,7 @@ static Preference<float> g_fSoundVolume( "SoundVolume", 1.0f );
 
 void RageSoundManager::SetMixVolume()
 {
-	g_SoundManMutex.Lock(); /* lock for access to m_fMixVolume */
-	m_fMixVolume = clamp( g_fSoundVolume.Get(), 0.0f, 1.0f );
-	g_SoundManMutex.Unlock(); /* finished with m_fMixVolume */
+	RageSoundReader_PostBuffering::SetMasterVolume( g_fSoundVolume.Get() );
 }
 
 void RageSoundManager::SetVolumeOfNonCriticalSounds( float fVolumeOfNonCriticalSounds )

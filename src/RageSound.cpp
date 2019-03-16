@@ -583,7 +583,7 @@ void RageSound::ApplyParams()
 	m_pSource->SetProperty( "FadeInSeconds", m_Param.m_fFadeInSeconds );
 	m_pSource->SetProperty( "FadeSeconds", m_Param.m_fFadeOutSeconds );
 
-	float fVolume = m_Param.m_Volume * SOUNDMAN->GetMixVolume();
+	float fVolume = m_Param.m_Volume;
 	if( !m_Param.m_bIsCriticalSound )
 		fVolume *= m_Param.m_fAttractVolume;
 	m_pSource->SetProperty( "Volume", fVolume );
