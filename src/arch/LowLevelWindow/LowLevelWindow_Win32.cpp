@@ -15,6 +15,7 @@
 static PIXELFORMATDESCRIPTOR g_CurrentPixelFormat;
 static HGLRC g_HGLRC = NULL;
 static HGLRC g_HGLRC_Background = NULL;
+static HMODULE g_HGL_Module = NULL;
 
 static void DestroyGraphicsWindowAndOpenGLContext()
 {
@@ -31,6 +32,12 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 		g_HGLRC_Background = NULL;
 	}
 
+	if( g_HGL_Module != NULL )
+	{
+		FreeLibrary(g_HGL_Module);
+		g_HGL_Module = NULL;
+	}
+
 	ZERO( g_CurrentPixelFormat );
 
 	GraphicsWindow::DestroyGraphicsWindow();
@@ -42,6 +49,14 @@ void *LowLevelWindow_Win32::GetProcAddress( RString s )
 	if( pRet != NULL )
 		return pRet;
 
+	if (g_HGL_Module != NULL)
+	{
+		pRet = (void *) ::GetProcAddress( g_HGL_Module, s );
+
+		if (pRet != NULL)
+			return pRet;
+	}
+
 	return (void*) ::GetProcAddress( GetModuleHandle(NULL), s );
 }
 
@@ -49,6 +64,7 @@ LowLevelWindow_Win32::LowLevelWindow_Win32()
 {
 	ASSERT( g_HGLRC == NULL );
 	ASSERT( g_HGLRC_Background == NULL );
+	ASSERT( g_HGL_Module == NULL );
 
 	GraphicsWindow::Initialize( false );
 }
@@ -216,6 +232,8 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 
 	if( g_HGLRC == NULL )
 	{
+		g_HGL_Module = LoadLibraryA("opengl32.dll");
+
 		g_HGLRC = wglCreateContext( GraphicsWindow::GetHDC() );
 		if ( g_HGLRC == NULL )
 		{
