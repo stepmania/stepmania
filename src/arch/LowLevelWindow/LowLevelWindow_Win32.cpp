@@ -3,6 +3,7 @@
 #include "archutils/Win32/DirectXHelpers.h"
 #include "archutils/Win32/ErrorStrings.h"
 #include "archutils/Win32/GraphicsWindow.h"
+#include "PrefsManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
@@ -307,6 +308,7 @@ void LowLevelWindow_Win32::SwapBuffers()
 
 void LowLevelWindow_Win32::Update()
 {
+	::ShowCursor(PREFSMAN->m_bShowMouseCursor);
 	GraphicsWindow::Update();
 }
 
