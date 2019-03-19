@@ -172,7 +172,7 @@ PrefsManager::PrefsManager() :
 	m_bFullscreenIsBorderlessWindow( "FullscreenIsBorderlessWindow", true ),
 	m_bShowStats			( "ShowStats",			TRUE_IF_DEBUG),
 	m_bShowBanners			( "ShowBanners",		true ),
-	m_bShowMouseCursor		( "ShowMouseCursor",		true ),
+	m_bShowMouseCursor		( "ShowMouseCursor",		false ),
 
 	m_bHiddenSongs			( "HiddenSongs",		false ),
 	m_bVsync			( "Vsync",			true ),
