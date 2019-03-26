@@ -181,12 +181,14 @@ OptionsList::~OptionsList()
 		delete hand->second;
 }
 
+//This is the initialization function.
 void OptionsList::Load( RString sType, PlayerNumber pn )
 {
 	TOP_MENU.Load( sType, "TopMenu" );
 
 	m_pn = pn;
 	m_bStartIsDown = false;
+	m_bLeftAndRightSwitchesMenu = THEME->GetMetricB( m_sName,"LeftAndRightSwitchesMenu" );
 
 	m_Codes.Load( sType );
 
@@ -290,7 +292,8 @@ RString OptionsList::GetCurrentRow() const
 	return m_asMenuStack.back();
 }
 
-const OptionRowHandler *OptionsList::GetCurrentHandler()
+//This can't be const because OptionRowHandler->NotifyOfSelection() will modify the OptionRow.
+OptionRowHandler *OptionsList::GetCurrentHandler()
 {
 	RString sCurrentRow = GetCurrentRow();
 	return m_Rows[sCurrentRow];
@@ -419,7 +422,7 @@ bool OptionsList::Input( const InputEventPlus &input )
 		if( input.type == IET_RELEASE )
 			return false;
 
-		if( INPUTMAPPER->IsBeingPressed(GAME_BUTTON_RIGHT, pn) )
+		if(m_bLeftAndRightSwitchesMenu and INPUTMAPPER->IsBeingPressed(GAME_BUTTON_RIGHT, pn) )
 		{
 			if( input.type == IET_FIRST_PRESS )
 				SwitchMenu( -1 );
@@ -441,7 +444,7 @@ bool OptionsList::Input( const InputEventPlus &input )
 		if( input.type == IET_RELEASE )
 			return false;
 
-		if( INPUTMAPPER->IsBeingPressed(GAME_BUTTON_LEFT, pn) )
+		if(m_bLeftAndRightSwitchesMenu and INPUTMAPPER->IsBeingPressed(GAME_BUTTON_LEFT, pn) )
 		{
 			if( input.type == IET_FIRST_PRESS )
 				SwitchMenu( +1 );
@@ -501,6 +504,9 @@ void OptionsList::SwitchToCurrentRow()
 	Message msg("OptionsMenuChanged");
 	msg.SetParam( "Player", m_pn );
 	msg.SetParam( "Menu", m_asMenuStack.back() );
+	/* This is here because if we want to adjust the size of a graphic
+	 * behind the list or do other lua things, we'd need to know the size. */
+	msg.SetParam( "Size", (int)m_asMenuStack.size());
 	MESSAGEMAN->Broadcast( msg );
 }
 
@@ -662,7 +668,7 @@ void OptionsList::UpdateMenuFromSelections()
 
 bool OptionsList::Start()
 {
-	const OptionRowHandler *pHandler = GetCurrentHandler();
+	OptionRowHandler *pHandler = GetCurrentHandler();
 	const RString &sCurrentRow = m_asMenuStack.back();
 	vector<bool> &bSelections = m_bSelections[sCurrentRow];
 	if( m_iMenuStackSelection == (int)bSelections.size() )
@@ -717,12 +723,26 @@ bool OptionsList::Start()
 
 	SelectItem( GetCurrentRow(), m_iMenuStackSelection );
 
-	/* Move to the exit row. */
-	m_iMenuStackSelection = (int)bSelections.size();
-	PositionCursor();
+	/* Move to the exit row, but only if it's SelectOne. */
+	if (pHandler->m_Def.m_selectType == SELECT_ONE)
+	{
+		m_iMenuStackSelection = (int)bSelections.size();
+		PositionCursor();
+	}
+	if (pHandler->NotifyOfSelection(m_pn, m_iMenuStackSelection))
+	{
+		/* The current selections are irrelevant when we're getting them
+		 * from NotifyOfSelection. Re import them from the OptionRow. */
+		ImportRow(sCurrentRow);
+		UpdateMenuFromSelections();
+	}
 
+	/* Better to include Selection as a parameter since
+	 * the index may or may not change depending on if SelectType
+	 * is SELECT_ONE or SELECT_MULTIPLE. */
 	Message msg("OptionsListStart");
 	msg.SetParam( "Player", m_pn );
+	msg.SetParam( "Selection", m_iMenuStackSelection );
 	MESSAGEMAN->Broadcast( msg );
 
 	return false;

@@ -1326,7 +1326,7 @@ public:
 		LUA->Release(L);
 		return changed;
 	}
-	virtual bool GoToFirstOnStart()
+	virtual bool GoToFirstOnStart() const
 	{
 		return m_GoToFirstOnStart;
 	}
