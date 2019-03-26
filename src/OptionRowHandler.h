@@ -186,7 +186,7 @@ public:
 	virtual RString GetScreen( int /* iChoice */ ) const { return RString(); }
 	// Exists so that a lua function can act on the selection.  Returns true if the choices should be reloaded.
 	virtual bool NotifyOfSelection(PlayerNumber pn, int choice) { return false; }
-	virtual bool GoToFirstOnStart() { return true; }
+	virtual bool GoToFirstOnStart() const { return true; }
 };
 
 /** @brief Utilities for the OptionRowHandlers. */
