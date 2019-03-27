@@ -461,6 +461,32 @@ function GetCodeForGame(codeName)
 	return inputCode[gameName] or inputCode["default"]
 end
 
+local OptionsListKeys = {
+	PrevMenu = {
+		pump="MenuUp",
+		default="MenuLeft"
+	},
+	NextMenu = {
+		pump="MenuDown",
+		default="MenuRight"
+	},
+	PrevItem = {
+		pump="MenuLeft",
+		default="MenuUp"
+	},
+	NextItem = {
+		pump="MenuRight",
+		default="MenuDown"
+	}
+};
+
+function GetOptionsListMapping(name)
+	local sGame = string.lower(GAMESTATE:GetCurrentGame():GetName())
+	local map = OptionsListKeys[name]
+	return map[sGame] or map["default"]
+end
+
+
 function oitg_zoom_mode_actor()
 	return Def.Actor{
 		OnCommand= function(self)

@@ -188,8 +188,11 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 	m_pn = pn;
 	m_bStartIsDown = false;
-	m_bLeftAndRightSwitchesMenu = THEME->GetMetricB( m_sName,"LeftAndRightSwitchesMenu" );
-
+	m_GameButtonPreviousMenu = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric( m_sName,"PrevMenuButton" ) );
+	m_GameButtonNextMenu = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric( m_sName,"NextMenuButton" ) );
+	m_GameButtonPreviousItem = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric( m_sName,"PrevItemButton" ) );
+	m_GameButtonNextItem = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric( m_sName,"NextItemButton" ) );
+	
 	m_Codes.Load( sType );
 
 	m_Cursor.Load( THEME->GetPathG(sType, "cursor") );
@@ -417,17 +420,10 @@ bool OptionsList::Input( const InputEventPlus &input )
 		}
 	}
 
-	if( input.MenuI == GAME_BUTTON_LEFT )
+	if( input.MenuI == m_GameButtonPreviousItem )
 	{
 		if( input.type == IET_RELEASE )
 			return false;
-
-		if(m_bLeftAndRightSwitchesMenu and INPUTMAPPER->IsBeingPressed(GAME_BUTTON_RIGHT, pn) )
-		{
-			if( input.type == IET_FIRST_PRESS )
-				SwitchMenu( -1 );
-			return true;
-		}
 
 		--m_iMenuStackSelection;
 		wrap( m_iMenuStackSelection, pHandler->m_Def.m_vsChoices.size()+1 ); // +1 for exit row
@@ -439,17 +435,10 @@ bool OptionsList::Input( const InputEventPlus &input )
 		MESSAGEMAN->Broadcast( lMsg );
 		return true;
 	}
-	else if( input.MenuI == GAME_BUTTON_RIGHT )
+	else if( input.MenuI == m_GameButtonNextItem )
 	{
 		if( input.type == IET_RELEASE )
 			return false;
-
-		if(m_bLeftAndRightSwitchesMenu and INPUTMAPPER->IsBeingPressed(GAME_BUTTON_LEFT, pn) )
-		{
-			if( input.type == IET_FIRST_PRESS )
-				SwitchMenu( +1 );
-			return true;
-		}
 
 		++m_iMenuStackSelection;
 		wrap( m_iMenuStackSelection, pHandler->m_Def.m_vsChoices.size()+1 ); // +1 for exit row
@@ -460,6 +449,18 @@ bool OptionsList::Input( const InputEventPlus &input )
 		lMsg.SetParam( "Selection", m_iMenuStackSelection );
 		MESSAGEMAN->Broadcast( lMsg );
 		return true;
+	}
+	else if ( input.MenuI == m_GameButtonPreviousMenu )
+	{
+			if( input.type == IET_FIRST_PRESS )
+				SwitchMenu( -1 );
+			return true;
+	}
+	else if ( input.MenuI == m_GameButtonNextMenu )
+	{
+			if( input.type == IET_FIRST_PRESS )
+				SwitchMenu( +1 );
+			return true;
 	}
 	else if( input.MenuI == GAME_BUTTON_START )
 	{
