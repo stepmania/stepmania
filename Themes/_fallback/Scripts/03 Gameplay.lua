@@ -331,6 +331,13 @@ local CodeDetectorCodes = {
 	CloseCurrentFolder = {
 		default = "MenuUp-MenuDown",
 	},
+	-- OptionsList
+	PrevOptionsList = {
+		default = "@MenuUp-MenuDown",
+	},
+	NextOptionsList = {
+		default = "@MenuDown-MenuUp",
+	},
 	-- sorts
 	NextSort1 = {
 		default = "@MenuLeft-@MenuRight-Start",
@@ -462,14 +469,6 @@ function GetCodeForGame(codeName)
 end
 
 local OptionsListKeys = {
-	PrevMenu = {
-		pump="MenuUp",
-		default="MenuLeft"
-	},
-	NextMenu = {
-		pump="MenuDown",
-		default="MenuRight"
-	},
 	PrevItem = {
 		pump="MenuLeft",
 		default="MenuUp"

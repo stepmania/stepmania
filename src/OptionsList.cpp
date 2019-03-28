@@ -188,8 +188,6 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 	m_pn = pn;
 	m_bStartIsDown = false;
-	m_GameButtonPreviousMenu = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric( m_sName,"PrevMenuButton" ) );
-	m_GameButtonNextMenu = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric( m_sName,"NextMenuButton" ) );
 	m_GameButtonPreviousItem = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric( m_sName,"PrevItemButton" ) );
 	m_GameButtonNextItem = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric( m_sName,"NextItemButton" ) );
 	
@@ -450,13 +448,13 @@ bool OptionsList::Input( const InputEventPlus &input )
 		MESSAGEMAN->Broadcast( lMsg );
 		return true;
 	}
-	else if ( input.MenuI == m_GameButtonPreviousMenu )
+	else if ( CodeDetector::EnteredPrevOpList(input.GameI.controller) )
 	{
 			if( input.type == IET_FIRST_PRESS )
 				SwitchMenu( -1 );
 			return true;
 	}
-	else if ( input.MenuI == m_GameButtonNextMenu )
+	else if ( CodeDetector::EnteredNextOpList(input.GameI.controller) )
 	{
 			if( input.type == IET_FIRST_PRESS )
 				SwitchMenu( +1 );

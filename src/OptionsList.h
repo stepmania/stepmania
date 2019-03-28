@@ -102,8 +102,6 @@ private:
 	vector<RString> m_asMenuStack;
 	int m_iMenuStackSelection;
 protected:
-	GameButton m_GameButtonPreviousMenu;
-	GameButton m_GameButtonNextMenu;
 	GameButton m_GameButtonPreviousItem;
 	GameButton m_GameButtonNextItem;
 };

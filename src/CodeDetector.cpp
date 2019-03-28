@@ -53,6 +53,8 @@ const char *CodeNames[] = {
 	"CancelAllPlayerOptions",
 	"BackInEventMode",
 	"CloseCurrentFolder",
+	"PrevOptionsList",
+	"NextOptionsList"
 };
 XToString( Code );
 
@@ -114,6 +116,15 @@ bool CodeDetector::EnteredNextSort( GameController controller )
 bool CodeDetector::EnteredModeMenu( GameController controller )
 {
 	return EnteredCode(controller,CODE_MODE_MENU1) || EnteredCode(controller,CODE_MODE_MENU2);
+}
+
+bool CodeDetector::EnteredPrevOpList( GameController controller )
+{
+	return EnteredCode(controller,CODE_PREV_OPLIST);
+}
+bool CodeDetector::EnteredNextOpList( GameController controller )
+{
+	return EnteredCode(controller,CODE_NEXT_OPLIST);
 }
 
 #define  TOGGLE(v,a,b)	if(v!=a) v=a; else v=b;
