@@ -70,7 +70,7 @@ private:
 	void SelectionsChanged( const RString &sRowName );
 	void UpdateMenuFromSelections();
 	RString GetCurrentRow() const;
-	const OptionRowHandler *GetCurrentHandler();
+	OptionRowHandler *GetCurrentHandler();
 	int GetOneSelection( RString sRow, bool bAllowFail=false ) const;
 	void SwitchToCurrentRow();
 	void TweenOnCurrentRow( bool bForward );
@@ -101,6 +101,9 @@ private:
 
 	vector<RString> m_asMenuStack;
 	int m_iMenuStackSelection;
+protected:
+	GameButton m_GameButtonPreviousItem;
+	GameButton m_GameButtonNextItem;
 };
 
 
