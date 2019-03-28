@@ -713,7 +713,7 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 		ASSERT( e->iChooseIndex >= 0 );
 		if( e->iChooseIndex < int( vSongAndSteps.size() ) )
 		{
-			if( songIndex >= vpSongs.size() ) {
+			if( songIndex >= int(vpSongs.size()) ) {
 				songIndex = 0;
 			}
 			resolved.pSong = vpSongs[ songIndex ];
