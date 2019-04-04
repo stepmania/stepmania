@@ -1081,7 +1081,7 @@ public:
 		ADD_METHOD( GetCumFPS );
 		ADD_METHOD( GetDisplaySpecs );
 		ADD_METHOD( SupportsRenderToTexture );
-		ADD_METHOD( SupportsFullscreenBorderlessWindow);
+		ADD_METHOD( SupportsFullscreenBorderlessWindow );
 	}
 };
 

@@ -311,7 +311,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 			GAMESTATE->m_pCurCourse->m_fGoalSeconds = 0;
 			int mins;
 			if( sscanf( sValue, "%d", &mins ) == 1 )
-				GAMESTATE->m_pCurCourse->m_fGoalSeconds = mins * 60;
+				GAMESTATE->m_pCurCourse->m_fGoalSeconds = float(mins * 60);
 			break;
 		}
 	}

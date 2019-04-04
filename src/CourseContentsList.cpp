@@ -70,7 +70,7 @@ void CourseContentsList::SetFromGameState()
 	if( bLoop )
 	{
 		SetPauseCountdownSeconds( 1.5f );
-		this->SetDestinationItem( m_vpDisplay.size()+1 );	// loop forever
+		this->SetDestinationItem( (float)m_vpDisplay.size()+1 );	// loop forever
 	}
 }
 

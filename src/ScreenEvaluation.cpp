@@ -209,8 +209,8 @@ void ScreenEvaluation::Init()
 					case RadarCategory_Rolls:
 					case RadarCategory_Lifts:
 					case RadarCategory_Fakes:
-						ss.m_player[p].m_radarPossible[rc] = 1 + (rand() % 200);
-						ss.m_player[p].m_radarActual[rc] = rand() % (int)(ss.m_player[p].m_radarPossible[rc]);
+						ss.m_player[p].m_radarPossible[rc] = float(1 + (rand() % 200));
+						ss.m_player[p].m_radarActual[rc] = float(rand() % (int)(ss.m_player[p].m_radarPossible[rc]));
 						break;
 					default: break;
 				}
@@ -270,13 +270,13 @@ void ScreenEvaluation::Init()
 
 				m_SmallBanner[i].LoadFromSong( pSong );
 				m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
-				m_SmallBanner[i].SetName( ssprintf("SmallBanner%zu",i+1) );
+				m_SmallBanner[i].SetName( ssprintf("SmallBanner%u",(unsigned)i+1) );
 				ActorUtil::LoadAllCommands( m_SmallBanner[i], m_sName );
 				SET_XY( m_SmallBanner[i] );
 				this->AddChild( &m_SmallBanner[i] );
 
 				m_sprSmallBannerFrame[i].Load( THEME->GetPathG(m_sName,"BannerFrame") );
-				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%zu",i+1) );
+				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%u",(unsigned)i+1) );
 				ActorUtil::LoadAllCommands( *m_sprSmallBannerFrame[i], m_sName );
 				SET_XY( m_sprSmallBannerFrame[i] );
 				this->AddChild( m_sprSmallBannerFrame[i] );
@@ -548,7 +548,7 @@ void ScreenEvaluation::Init()
 				DEFAULT_FAIL( l );
 				}
 
-				m_textJudgmentLineNumber[l][p].SetTargetNumber( iValue );
+				m_textJudgmentLineNumber[l][p].SetTargetNumber( float(iValue) );
 			}
 		}
 	}
@@ -577,7 +577,7 @@ void ScreenEvaluation::Init()
 
 				static const int indices[NUM_DetailLine] =
 				{
-					RadarCategory_TapsAndHolds, RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, 
+					RadarCategory_TapsAndHolds, RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines,
 					RadarCategory_Hands, RadarCategory_Rolls, RadarCategory_Lifts, RadarCategory_Fakes
 				};
 				const int ind = indices[l];
@@ -607,7 +607,7 @@ void ScreenEvaluation::Init()
 			m_textScore[p].Load( "RollingNumbersEvaluation" );
 			ActorUtil::LoadAllCommands( m_textScore[p], m_sName );
 			SET_XY( m_textScore[p] );
-			m_textScore[p].SetTargetNumber( m_pStageStats->m_player[p].m_iScore );
+			m_textScore[p].SetTargetNumber( float(m_pStageStats->m_player[p].m_iScore) );
 			this->AddChild( &m_textScore[p] );
 		}
 	}
@@ -639,7 +639,7 @@ void ScreenEvaluation::Init()
 	bool bOneHasFullW2Combo = false;
 	bool bOneHasFullW3Combo = false;
 	bool bOneHasFullW4Combo = false;
-	
+
 	FOREACH_PlayerNumber( p )
 	{
 		if(GAMESTATE->IsPlayerEnabled(p))
@@ -666,7 +666,7 @@ void ScreenEvaluation::Init()
 
 	Grade best_grade = Grade_NoData;
 	FOREACH_PlayerNumber( p )
-		best_grade = min( best_grade, grade[p] ); 
+		best_grade = min( best_grade, grade[p] );
 
 	if( m_pStageStats->m_EarnedExtraStage != EarnedExtraStage_No )
 	{
@@ -799,7 +799,7 @@ void ScreenEvaluation::HandleMenuStart()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenEvaluation. */ 
+/** @brief Allow Lua to have access to the ScreenEvaluation. */
 class LunaScreenEvaluation: public Luna<ScreenEvaluation>
 {
 public:
@@ -817,7 +817,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenEvaluation, ScreenWithMenuElements )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -827,7 +827,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenEvaluation, ScreenWithMenuElements )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -314,7 +314,7 @@ static void DoPlayOnceFromDir( RString sPath )
 	// If order is exhausted, repopulate and reshuffle
 	if (order.size() == 0)
 	{
-		for (int i = 0; i < arraySoundFiles.size(); ++i)
+		for (int i = 0; i < (int)arraySoundFiles.size(); ++i)
 		{
 			order.push_back(i);
 		}

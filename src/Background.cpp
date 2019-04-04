@@ -447,7 +447,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 		int time_signature_start= max(ts->GetRow(),iStartRow);
 		for(int j= time_signature_start;
 			j<min(iEndRow,iSegmentEndRow);
-			j+= RAND_BG_CHANGE_MEASURES * ts->GetNoteRowsPerMeasure())
+			j+= int(RAND_BG_CHANGE_MEASURES * ts->GetNoteRowsPerMeasure()))
 		{
 			// Don't fade. It causes frame rate dip, especially on slower machines.
 			BackgroundDef bd = m_Layer[0].CreateRandomBGA(m_pSong,
