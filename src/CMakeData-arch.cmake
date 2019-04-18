@@ -214,9 +214,11 @@ if(NOT APPLE)
 
   if(WIN32)
     list(APPEND SMDATA_ARCH_LIGHTS_SRC
-                "arch/Lights/LightsDriver_Win32Parallel.cpp")
+                "arch/Lights/LightsDriver_Win32Parallel.cpp"
+                "arch/Lights/LightsDriver_PacDrive.cpp")
     list(APPEND SMDATA_ARCH_LIGHTS_HPP
-                "arch/Lights/LightsDriver_Win32Parallel.h")
+                "arch/Lights/LightsDriver_Win32Parallel.h"
+                "arch/Lights/LightsDriver_PacDrive.cpp")
     if(WITH_MINIMAID)
       list(APPEND SMDATA_ARCH_LIGHTS_SRC
                   "arch/Lights/LightsDriver_Win32Minimaid.cpp")
