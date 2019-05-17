@@ -74,7 +74,7 @@ void StepsUtil::GetAllMatchingEndless( Song *pSong, const StepsCriteria &stc, ve
 		successful = true;
 	}
 
-	if( !successful )
+	if( !successful && vSteps.size() > 0 )
 	{
 		Difficulty difficulty = ( *( vSteps.begin() ) )->GetDifficulty();
 		Difficulty previousDifficulty = difficulty;
