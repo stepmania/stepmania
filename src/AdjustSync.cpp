@@ -190,8 +190,14 @@ void AdjustSync::HandleSongEnd()
 
 void AdjustSync::AutosyncOffset()
 {
-	const float mean = calc_mean( s_fAutosyncOffset, s_fAutosyncOffset+OFFSET_SAMPLE_COUNT );
-	const float stddev = calc_stddev( s_fAutosyncOffset, s_fAutosyncOffset+OFFSET_SAMPLE_COUNT );
+    // Sort the steps by offset, so that outliers can be discarded.
+    std::sort( s_fAutosyncOffset, s_fAutosyncOffset+OFFSET_SAMPLE_COUNT );
+	const float mean = calc_mean( 
+	    s_fAutosyncOffset+OFFSET_OUTLIER_COUNT, 
+	    s_fAutosyncOffset+OFFSET_SAMPLE_COUNT-OFFSET_OUTLIER_COUNT);
+	const float stddev = calc_stddev(
+	    s_fAutosyncOffset+OFFSET_OUTLIER_COUNT, 
+	    s_fAutosyncOffset+OFFSET_SAMPLE_COUNT-OFFSET_OUTLIER_COUNT);
 
 	AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
 

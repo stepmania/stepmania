@@ -12,6 +12,16 @@
  */
 #define OFFSET_SAMPLE_COUNT 24
 
+/**
+ * @brief Removes outliers when adjusting sync of a song or machine.
+ *
+ * Of the OFFSET_SAMPLE_COUNT steps used to adjust the machine offset, the
+ * OFFSET_OUTLIER_COUNT earliest and OFFSET_OUTLIER_COUNT latest steps will
+ * be discarded prior to calculating mean / standard deviation. This makes
+ * adjustments more robust to the occassional misstep by the player.
+ */
+#define OFFSET_OUTLIER_COUNT 2
+
 class TimingData;
 /**
  * @brief Allows for adjusting the sync of a song.
