@@ -454,9 +454,9 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	}
 	else
 	{
+		vector<SongAndSteps> vSongAndSteps;
 		for (auto e = entries.begin(); e != entries.end(); ++e)
 		{
-			vector<SongAndSteps> vSongAndSteps;
 			SongAndSteps resolved;	// fill this in
 			SongCriteria soc = e->songCriteria;
 
@@ -480,6 +480,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 			if( pSong )
 			{
+				vSongAndSteps.clear();
 				StepsUtil::GetAllMatching( pSong, stc, vSongAndSteps );
 			}
 			else if( vSongAndSteps.empty() || !( bSameSongCriteria && bSameStepsCriteria ) )
@@ -704,27 +705,17 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 			// Make a backup of the steplist so we can revert if we overfilter
 			std::vector<SongAndSteps> revertList = vSongAndSteps;
 			// Filter candidate list via blacklist
-			vSongAndSteps.erase(std::remove_if(
-				vSongAndSteps.begin(),
-				vSongAndSteps.end(),
-				[&](const SongAndSteps& ss) {
-					return std::find(alreadySelected.begin(), alreadySelected.end(), ss.pSong) != alreadySelected.end();
-				}),
-				vSongAndSteps.end());
+			RemoveIf(vSongAndSteps, [&](const SongAndSteps& ss) {
+				return std::find(alreadySelected.begin(), alreadySelected.end(), ss.pSong) != alreadySelected.end();
+			});
 			// If every candidate is in the blacklist, pick random song that wasn't played last
 			// (Repeat songs may still occur if song after this is fixed; this algorithm doesn't look ahead)
 			if (vSongAndSteps.empty())
 			{
 				vSongAndSteps = revertList;
-				vSongAndSteps.erase(std::remove_if(
-					vSongAndSteps.begin(),
-					vSongAndSteps.end(),
-					[&](const SongAndSteps& ss) {
-						return ss.pSong == lastSongSelected;
-					}),
-					vSongAndSteps.end());
+				RemoveIf(vSongAndSteps, SongIsEqual(lastSongSelected));
 
-				// If the song that was played last was the only candidate, forget it
+				// If the song that was played last was the only candidate, give up pick randomly
 				if (vSongAndSteps.empty())
 				{
 					vSongAndSteps = revertList;
@@ -859,11 +850,6 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 		}
 
 		trail.m_vEntries.push_back( te );
-		//if( trail.m_vEntries.size() > 0 && te.dc != cd )
-		//{
-		//	trail.m_vEntries.reserve( trail.m_vEntries.size() - 1 );
-		//	trail.m_vEntries.resize( trail.m_vEntries.size() - 1 );
-		//}
 		// LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
 
 		if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&
