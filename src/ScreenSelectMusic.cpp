@@ -1183,6 +1183,15 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
+		// Reload the currently selected song. This fixes the song bg movies (with symbols in filename)
+		// from not playing in game - sillybear
+		Song* to_reload = m_MusicWheel.GetSelectedSong();
+		if( to_reload )
+		{
+			to_reload->ReloadFromSongDir();
+			AfterMusicChange();
+		}
+		
 		if( !m_bGoToOptions )
 			SOUND->StopMusic();
 	}
