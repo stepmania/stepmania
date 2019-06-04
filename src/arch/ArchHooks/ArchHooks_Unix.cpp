@@ -17,6 +17,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/sysinfo.h>
 
 #if defined(CRASH_HANDLER)
 #include "archutils/Unix/CrashHandler.h"
@@ -417,6 +418,14 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sUserDataPath + "/Songs", "/Songs" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/RandomMovies", "/RandomMovies" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Themes", "/Themes" );
+}
+
+unsigned long ArchHooks::GetSystemFreeRam()
+{
+	struct sysinfo si;
+	sysinfo (&si);
+
+	return si.freeram / (1024 * 1024);
 }
 
 /*

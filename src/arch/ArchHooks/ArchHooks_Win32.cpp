@@ -238,6 +238,16 @@ RString ArchHooks_Win32::GetClipboard()
 	return ret;
 }
 
+unsigned long ArchHooks::GetSystemFreeRam()
+{
+	MEMORYSTATUSEX statex;
+	statex.dwLength = sizeof(statex);
+
+	GlobalMemoryStatusEx(&statex);
+
+	return statex.ullTotalPhys / (1024 * 1024);
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.

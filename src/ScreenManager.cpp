@@ -73,11 +73,16 @@
 #include "Foreach.h"
 #include "ActorUtil.h"
 #include "InputEventPlus.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessible from anywhere in our program
 
 static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 //static Preference<bool> g_bPruneFonts( "PruneFonts", true );
+
+// settings for the watchdog to oversee that we don't remain in attract for too long while RAM is low
+static Preference<float> g_fAttractWatchdogTimeout( "AttractWatchdogTimeout", 0.0 );
+static Preference<int> g_iAttractWatchdogRAMThreshold( "AttractWatchdogRAMThreshold", 256 );
 
 // Screen registration
 static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
@@ -106,6 +111,7 @@ namespace ScreenManagerUtil
 
 	Actor				*g_pSharedBGA;  // BGA object that's persistent between screens
 	RString				m_sPreviousTopScreen;
+	ScreenType			m_stPrevScreenType;
 	vector<LoadedScreen>	g_ScreenStack;  // bottommost to topmost
 	vector<Screen*>		g_OverlayScreens;
 	set<RString>		g_setGroupedScreens;
@@ -113,12 +119,47 @@ namespace ScreenManagerUtil
 
 	vector<LoadedScreen>    g_vPreparedScreens;
 	vector<Actor*>          g_vPreparedBackgrounds;
+	RageTimer 				m_tAttractWatchdog;
+
+	void CheckOnAttractWatchdog(const LoadedScreen &ls)
+	{
+		//Check to see if the arcade operator wants to timeout during the attract sequence and reset.
+		if(g_fAttractWatchdogTimeout > 0)
+		{
+			//If we leave attract, then great we have a user, reset the timer.
+			if(m_stPrevScreenType == attract && ls.m_pScreen->GetScreenType() != attract)
+			{
+				//we have left attract, let's reset the timer.
+				LOG->Info( "Resetting Attract Watchdog timer..." );
+				m_tAttractWatchdog.Touch();
+			}
+			else if (m_stPrevScreenType == attract && ls.m_pScreen->GetScreenType() == attract)
+			{
+				//If we are in attract, and RAM is below threshold, then start keeping an eye on the clock.
+				if(ArchHooks::GetSystemFreeRam() < g_iAttractWatchdogRAMThreshold)
+				{
+					LOG->Warn("RAM is below set threshold: %dMB < %dMB", ArchHooks::GetSystemFreeRam(), g_iAttractWatchdogRAMThreshold.Get());
+
+					if(m_tAttractWatchdog.Ago() > g_fAttractWatchdogTimeout)
+					{
+						LOG->Info( "Attract Watchdog triggered %.1fs > %.1fs, stopping process",
+									m_tAttractWatchdog.Ago(), g_fAttractWatchdogTimeout.Get());
+
+						ArchHooks::SetUserQuit();
+					}
+				}
+			}
+		}
+	}
 
 	// Add a screen to g_ScreenStack. This is the only function that adds to g_ScreenStack.
 	void PushLoadedScreen( const LoadedScreen &ls )
 	{
 		LOG->Trace( "PushScreen: \"%s\"", ls.m_pScreen->GetName().c_str() );
 		LOG->MapLog( "ScreenManager::TopScreen", "Top Screen: %s", ls.m_pScreen->GetName().c_str() );
+
+		// Check on all the screens passing through to see if we are staying on attract for too long
+		CheckOnAttractWatchdog(ls);
 
 		// Be sure to push the screen first, so GetTopScreen returns the screen
 		// during BeginScreen.
@@ -133,7 +174,10 @@ namespace ScreenManagerUtil
 
 		// If this is the new top screen, save the name.
 		if( g_ScreenStack.size() == 1 )
+		{
 			m_sPreviousTopScreen = ls.m_pScreen->GetName();
+			m_stPrevScreenType = ls.m_pScreen->GetScreenType();
+		}
 
 		SCREENMAN->RefreshCreditsMessages();
 
