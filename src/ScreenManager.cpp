@@ -135,10 +135,12 @@ namespace ScreenManagerUtil
 			}
 			else if (m_stPrevScreenType == attract && ls.m_pScreen->GetScreenType() == attract)
 			{
+				unsigned long free_ram = ArchHooks::GetSystemAvailRam();
+
 				//If we are in attract, and RAM is below threshold, then start keeping an eye on the clock.
-				if(ArchHooks::GetSystemFreeRam() < g_iAttractWatchdogRAMThreshold)
+				if(free_ram < g_iAttractWatchdogRAMThreshold)
 				{
-					LOG->Warn("RAM is below set threshold: %dMB < %dMB", ArchHooks::GetSystemFreeRam(), g_iAttractWatchdogRAMThreshold.Get());
+					LOG->Warn("RAM is below set threshold: %dMB < %dMB", free_ram, g_iAttractWatchdogRAMThreshold.Get());
 
 					if(m_tAttractWatchdog.Ago() > g_fAttractWatchdogTimeout)
 					{

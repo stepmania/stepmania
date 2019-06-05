@@ -238,14 +238,22 @@ RString ArchHooks_Win32::GetClipboard()
 	return ret;
 }
 
-unsigned long ArchHooks::GetSystemFreeRam()
+unsigned long ArchHooks::GetSystemAvailRam()
 {
 	MEMORYSTATUSEX statex;
 	statex.dwLength = sizeof(statex);
 
+	// grab system info.
 	GlobalMemoryStatusEx(&statex);
 
-	return statex.ullTotalPhys / (1024 * 1024);
+	// grab memory currently in use by the process
+	// taken from RyTak
+	PROCESS_MEMORY_COUNTERS pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
+    SIZE_T MemUse = pmc.PagefileUsage / (1024 * 1024) - 32;
+
+	// return difference between total ram on the system and the memory currently in use.
+	return (statex.ullAvailPhys / (1024 * 1024)) - MemUse;
 }
 
 /*
