@@ -111,10 +111,16 @@ void ScreenSelectMusic::Init()
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
 
 	// Ask for those only if changing steps with gamebuttons is allowed -DaisuMaster
-	if( CHANGE_STEPS_WITH_GAME_BUTTONS )
+	// Use for TwoPartSelection too.
+	if( CHANGE_STEPS_WITH_GAME_BUTTONS || TWO_PART_SELECTION )
 	{
 		m_GameButtonPreviousDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousDifficultyButton") );
 		m_GameButtonNextDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextDifficultyButton") );
+	}
+	if( TWO_PART_SELECTION )
+	{
+		m_GameButtonCancelTwoPart1 = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"CancelTwoPartSelectButton1") );
+		m_GameButtonCancelTwoPart2 = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"CancelTwoPartSelectButton2") );
 	}
 	// same here but for groups -DaisuMaster
 	if( CHANGE_GROUPS_WITH_GAME_BUTTONS )
@@ -852,16 +858,16 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 	{
 		if( m_SelectionState == SelectionState_SelectingSteps && input.type == IET_FIRST_PRESS && !m_bStepsChosen[input.pn] )
 		{
-			if( input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong )
+			if( input.MenuI == m_GameButtonPreviousDifficulty || input.MenuI == m_GameButtonNextDifficulty )
 			{
-				if( input.MenuI == m_GameButtonPreviousSong )
+				if( input.MenuI == m_GameButtonPreviousDifficulty )
 				{
 					if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 						m_soundLocked.Play(true);
 					else
 						ChangeSteps( input.pn, -1 );
 				}
-				else if( input.MenuI == m_GameButtonNextSong )
+				else if( input.MenuI == m_GameButtonNextDifficulty )
 				{
 					if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 						m_soundLocked.Play(true);
@@ -869,7 +875,8 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 						ChangeSteps( input.pn, +1 );
 				}
 			}
-			else if( input.MenuI == GAME_BUTTON_MENUUP || input.MenuI == GAME_BUTTON_MENUDOWN ) // && TWO_PART_DESELECTS_WITH_MENUUPDOWN
+			//This should not be MENUP or MENUDOWN, different games use different buttons to cancel.
+			else if( input.MenuI == m_GameButtonCancelTwoPart1 || input.MenuI == m_GameButtonCancelTwoPart2 ) // && TWO_PART_DESELECTS_WITH_MENUUPDOWN
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 					m_soundLocked.Play(true);
