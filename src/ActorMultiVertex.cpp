@@ -14,6 +14,8 @@
 #include "LuaManager.h"
 #include "LocalizedString.h"
 
+#include <numeric>
+
 const float min_state_delay= 0.0001f;
 
 static const char *DrawModeNames[] = {
