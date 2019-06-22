@@ -13,7 +13,7 @@
 
 RageFile::RageFile()
 {
-	m_File = NULL;
+	m_File = nullptr;
 }
 	
 RageFile::RageFile( const RageFile &cpy ):
@@ -44,7 +44,7 @@ RString RageFile::GetPath() const
 
 bool RageFile::Open( const RString& path, int mode )
 {
-	ASSERT( FILEMAN != NULL );
+	ASSERT( FILEMAN != nullptr );
 	Close();
 
 	m_Path = path;
@@ -67,7 +67,7 @@ bool RageFile::Open( const RString& path, int mode )
 	int error;
 	m_File = FILEMAN->Open( path, mode, error );
 
-	if( m_File == NULL )
+	if( m_File == nullptr )
 	{
 		SetError( strerror(error) );
 		return false;
@@ -78,12 +78,12 @@ bool RageFile::Open( const RString& path, int mode )
 
 void RageFile::Close()
 {
-	if( m_File == NULL )
+	if( m_File == nullptr )
 		return;
 	delete m_File;
 	if( m_Mode & WRITE )
 		FILEMAN->CacheFile( m_File, m_Path );
-	m_File = NULL;
+	m_File = nullptr;
 }
 
 #define ASSERT_OPEN ASSERT_M( IsOpen(), ssprintf("\"%s\" is not open.", m_Path.c_str()) );
@@ -122,14 +122,14 @@ bool RageFile::AtEOF() const
 
 void RageFile::ClearError()
 {
-	if( m_File != NULL )
+	if( m_File != nullptr )
 		m_File->ClearError();
 	m_sError = "";
 }
 
 RString RageFile::GetError() const
 {
-	if( m_File != NULL && m_File->GetError() != "" )
+	if( m_File != nullptr && m_File->GetError() != "" )
 		return m_File->GetError();
 	return m_sError;
 }
@@ -137,7 +137,7 @@ RString RageFile::GetError() const
 
 void RageFile::SetError( const RString &err )
 {
-	if( m_File != NULL )
+	if( m_File != nullptr )
 		m_File->ClearError();
 	m_sError = err;
 }
@@ -475,7 +475,7 @@ namespace RageFileUtil
 	const luaL_Reg RageFileUtilTable[] =
 	{
 		LIST_METHOD( CreateRageFile ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 	LUA_REGISTER_NAMESPACE( RageFileUtil );
 }

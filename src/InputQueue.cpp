@@ -3,10 +3,9 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "InputEventPlus.h"
-#include "Foreach.h"
 #include "InputMapper.h"
 
-InputQueue*	INPUTQUEUE = NULL;	// global and accessible from anywhere in our program
+InputQueue*	INPUTQUEUE = nullptr;	// global and accessible from anywhere in our program
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 32;
 
@@ -38,7 +37,7 @@ bool InputQueue::WasPressedRecently( GameController c, const GameButton button, 
 		if( iep.GameI.button != button )
 			continue;
 
-		if( pIEP != NULL )
+		if( pIEP != nullptr )
 			*pIEP = iep;
 
 		return true;
@@ -95,7 +94,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 		int iMinSearchIndexUsed = iQueueIndex;
 		for( int b=0; b<(int) Press.m_aButtonsToPress.size(); ++b )
 		{
-			const InputEventPlus *pIEP = NULL;
+			const InputEventPlus *pIEP = nullptr;
 			int iQueueSearchIndex = iQueueIndex;
 			for( ; iQueueSearchIndex>=0; --iQueueSearchIndex )	// iterate newest to oldest
 			{
@@ -112,7 +111,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 					break;
 				}
 			}
-			if( pIEP == NULL )
+			if( pIEP == nullptr )
 				break;	// didn't find the button
 
 			// Check that m_aButtonsToHold were being held when the buttons were pressed.
@@ -167,11 +166,11 @@ bool InputQueueCode::Load( RString sButtonsNames )
 
 	vector<RString> asPresses;
 	split( sButtonsNames, ",", asPresses, false );
-	FOREACH( RString, asPresses, sPress )
+	for (RString &sPress : asPresses)
 	{
 		vector<RString> asButtonNames;
 
-		split( *sPress, "-", asButtonNames, false );
+		split( sPress, "-", asButtonNames, false );
 
 		if( asButtonNames.size() < 1 )
 		{
@@ -181,10 +180,8 @@ bool InputQueueCode::Load( RString sButtonsNames )
 		}
 
 		m_aPresses.push_back( ButtonPress() );
-		for( unsigned i=0; i<asButtonNames.size(); i++ )	// for each button in this code
+		for (RString sButtonName : asButtonNames)	// for each button in this code
 		{
-			RString sButtonName = asButtonNames[i];
-
 			bool bHold = false;
 			bool bNotHold = false;
 			for(;;)

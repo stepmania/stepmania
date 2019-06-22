@@ -278,7 +278,7 @@ void ScreenNetSelectBase::SetInputText(RString text)
 /** ColorBitmapText ***********************************************************/
 void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
 {
-	ASSERT( m_pFont != NULL );
+	ASSERT( m_pFont != nullptr );
 
 	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
@@ -339,55 +339,55 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 
 		switch( curChar )
 		{
-		case L' ':
-			if( /* iLineWidth == 0 &&*/ iWordWidth == 0 )
-				break;
-			sCurrentLine += sCurrentWord + " ";
-			iLineWidth += iWordWidth + iCharWidth;
-			sCurrentWord = "";
-			iWordWidth = 0;
-			iGlyphsSoFar++;
-			break;
-		case L'\n':
-			if( iLineWidth + iWordWidth > iWrapWidthPixels )
-			{
-				SimpleAddLine( sCurrentLine, iLineWidth );
-				if( iWordWidth > 0 )
-					iLineWidth = iWordWidth +	//Add the width of a space
-						m_pFont->GetLineWidthInSourcePixels( L" " );
-				sCurrentLine = sCurrentWord + " ";
-				iWordWidth = 0;
+			case L' ':
+				if( /* iLineWidth == 0 &&*/ iWordWidth == 0 )
+					break;
+				sCurrentLine += sCurrentWord + " ";
+				iLineWidth += iWordWidth + iCharWidth;
 				sCurrentWord = "";
+				iWordWidth = 0;
 				iGlyphsSoFar++;
-			} 
-			else
-			{
-				SimpleAddLine( sCurrentLine + sCurrentWord, iLineWidth + iWordWidth );
-				sCurrentLine = "";	iLineWidth = 0;
-				sCurrentWord = "";	iWordWidth = 0;
-			}
-			break;
-		default:
-			if( iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0 )
-			{
-				SimpleAddLine( sCurrentWord, iWordWidth );
-				sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
-			}
-			else if( iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels )
-			{
-				SimpleAddLine( sCurrentLine, iLineWidth );
-				sCurrentLine = ""; 
-				iLineWidth = 0;
-				sCurrentWord += curCharStr;
-				iWordWidth += iCharWidth;
-			}
-			else
-			{
-				sCurrentWord += curCharStr;
-				iWordWidth += iCharWidth;
-			}
-			iGlyphsSoFar++;
-			break;
+				break;
+			case L'\n':
+				if( iLineWidth + iWordWidth > iWrapWidthPixels )
+				{
+					SimpleAddLine( sCurrentLine, iLineWidth );
+					if( iWordWidth > 0 )
+						iLineWidth = iWordWidth +	//Add the width of a space
+							m_pFont->GetLineWidthInSourcePixels( L" " );
+					sCurrentLine = sCurrentWord + " ";
+					iWordWidth = 0;
+					sCurrentWord = "";
+					iGlyphsSoFar++;
+				} 
+				else
+				{
+					SimpleAddLine( sCurrentLine + sCurrentWord, iLineWidth + iWordWidth );
+					sCurrentLine = "";	iLineWidth = 0;
+					sCurrentWord = "";	iWordWidth = 0;
+				}
+				break;
+			default:
+				if( iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0 )
+				{
+					SimpleAddLine( sCurrentWord, iWordWidth );
+					sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
+				}
+				else if( iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels )
+				{
+					SimpleAddLine( sCurrentLine, iLineWidth );
+					sCurrentLine = ""; 
+					iLineWidth = 0;
+					sCurrentWord += curCharStr;
+					iWordWidth += iCharWidth;
+				}
+				else
+				{
+					sCurrentWord += curCharStr;
+					iWordWidth += iCharWidth;
+				}
+				iGlyphsSoFar++;
+				break;
 		}
 	}
 
@@ -408,7 +408,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 
 void ColorBitmapText::ResetText()
 {
-	ASSERT(m_pFont != NULL);
+	ASSERT(m_pFont != nullptr);
 
 	int iWrapWidthPixels = m_iWrapWidthPixels;
 

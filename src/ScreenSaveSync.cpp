@@ -60,7 +60,7 @@ void ScreenSaveSync::Init()
 		ANSWER_YES, 
 		SaveSyncChanges, 
 		RevertSyncChanges, 
-		NULL );
+		nullptr );
 }
 
 void ScreenSaveSync::PromptSaveSync( ScreenMessage sm )
@@ -72,7 +72,7 @@ void ScreenSaveSync::PromptSaveSync( ScreenMessage sm )
 		ANSWER_YES, 
 		SaveSyncChanges, 
 		RevertSyncChanges, 
-		NULL );
+		nullptr );
 }
 
 

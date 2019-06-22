@@ -9,7 +9,7 @@
 #include "Font.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
+
 
 REGISTER_ACTOR_CLASS( BitmapText );
 
@@ -42,7 +42,7 @@ BitmapText::BitmapText()
 	}
 	iReloadCounter++;
 
-	m_pFont = NULL;
+	m_pFont = nullptr;
 	m_bUppercase = false;
 
 	m_bRainbowScroll = false;
@@ -102,10 +102,10 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 	if( m_pFont )
 		FONT->UnloadFont( m_pFont );
 
-	if( cpy.m_pFont != NULL )
+	if( cpy.m_pFont != nullptr )
 		m_pFont = FONT->CopyFont( cpy.m_pFont );
 	else
-		m_pFont = NULL;
+		m_pFont = nullptr;
 
 	return *this;
 }
@@ -113,7 +113,7 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 BitmapText::BitmapText( const BitmapText &cpy ):
 	Actor( cpy )
 {
-	m_pFont = NULL;
+	m_pFont = nullptr;
 
 	*this = cpy;
 }
@@ -212,7 +212,7 @@ bool BitmapText::LoadFromFont( const RString& sFontFilePath )
 	if( m_pFont )
 	{
 		FONT->UnloadFont( m_pFont );
-		m_pFont = NULL;
+		m_pFont = nullptr;
 	}
 
 	m_pFont = FONT->LoadFont( sFontFilePath );
@@ -231,7 +231,7 @@ bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RSt
 	if( m_pFont )
 	{
 		FONT->UnloadFont( m_pFont );
-		m_pFont = NULL;
+		m_pFont = nullptr;
 	}
 
 	m_pFont = FONT->LoadFont( sTexturePath, sChars );
@@ -244,7 +244,7 @@ bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RSt
 void BitmapText::BuildChars()
 {
 	// If we don't have a font yet, we'll do this when it loads.
-	if( m_pFont == NULL )
+	if( m_pFont == nullptr )
 		return;
 
 	// calculate line lengths and widths
@@ -456,7 +456,7 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
  * in sAlternateText, too, just use sText. */
 void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
 {
-	ASSERT( m_pFont != NULL );
+	ASSERT( m_pFont != nullptr );
 
 	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
@@ -624,7 +624,7 @@ void BitmapText::UpdateBaseZoom()
 
 bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const
 {
-	ASSERT( m_pFont != NULL );
+	ASSERT( m_pFont != nullptr );
 
 	// Can't use the alternate if there isn't one.
 	if( !sAlternateText.size() )
@@ -856,7 +856,7 @@ void BitmapText::SetHorizAlign( float f )
 
 void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 {
-	ASSERT( m_pFont != NULL ); // always load a font first
+	ASSERT( m_pFont != nullptr ); // always load a font first
 	if( m_iWrapWidthPixels == iWrapWidthPixels )
 		return;
 	m_iWrapWidthPixels = iWrapWidthPixels;
@@ -878,9 +878,9 @@ void BitmapText::AddAttribute( size_t iPos, const Attribute &attr )
 	int iLines = 0;
 	size_t iAdjustedPos = iPos;
 	
-	FOREACH_CONST( wstring, m_wTextLines, line )
+	for (wstring const & line : m_wTextLines)
 	{
-		size_t length = line->length();
+		size_t length = line.length();
 		if( length >= iAdjustedPos )
 			break;
 		iAdjustedPos -= length;

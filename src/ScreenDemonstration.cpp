@@ -32,9 +32,9 @@ void ScreenDemonstration::Init()
 		vector<RString> v;
 		split( ALLOW_STYLE_TYPES, ",", v );
 		vector<StyleType> vStyleTypeAllow;
-		FOREACH_CONST( RString, v, s )
+		for (RString const &s : v)
 		{
-			StyleType st = StringToStyleType( *s );
+			StyleType st = StringToStyleType( s );
 			ASSERT( st != StyleType_Invalid );
 			vStyleTypeAllow.push_back( st );
 		}
@@ -57,7 +57,7 @@ void ScreenDemonstration::Init()
 
 	ScreenJukebox::Init();
 
-	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
+	if( GAMESTATE->m_pCurSong == nullptr )	// we didn't find a song.
 	{
 		PostScreenMessage( SM_GoToNextScreen, 0 );	// Abort demonstration.
 		return;

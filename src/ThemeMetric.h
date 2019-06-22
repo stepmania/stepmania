@@ -5,7 +5,7 @@
 
 #include "ThemeManager.h"
 #include <map>
-#include "Foreach.h"
+
 #include "LuaManager.h"
 #include "RageUtil.h"
 
@@ -194,7 +194,7 @@ public:
 	}
 	ThemeMetric1D()
 	{
-		Load( RString(), NULL, 0 );
+		Load( RString(), nullptr, 0 );
 	}
 	void Load( const RString& sGroup, MetricName1D pfn, size_t N )
 	{
@@ -228,7 +228,7 @@ class ThemeMetric2D : public IThemeMetric
 	vector<ThemeMetricTVector> m_metric;
 
 public:
-	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = NULL, size_t N = 0, size_t M = 0 )
+	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = nullptr, size_t N = 0, size_t M = 0 )
 	{
 		Load( sGroup, pfn, N, M );
 	}
@@ -269,15 +269,15 @@ class ThemeMetricMap : public IThemeMetric
 	map<RString,ThemeMetricT> m_metric;
 
 public:
-	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = NULL, const vector<RString> vsValueNames = vector<RString>() )
+	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = nullptr, const vector<RString> vsValueNames = vector<RString>() )
 	{
 		Load( sGroup, pfn, vsValueNames );
 	}
 	void Load( const RString& sGroup, MetricNameMap pfn, const vector<RString> vsValueNames )
 	{
 		m_metric.clear();
-		FOREACH_CONST( RString, vsValueNames, s )
-			m_metric[*s].Load( sGroup, pfn(*s) );
+		for (RString const &s : vsValueNames)
+			m_metric[s].Load( sGroup, pfn(s) );
 	}
 	void Read()
 	{

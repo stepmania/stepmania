@@ -27,8 +27,8 @@ static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight 
 		return;
 
 	// Check for nonsense values.  Some people might not intend the hint. -Kyz
-	int maybe_width= StringToInt(asMatches[0]);
-	int maybe_height= StringToInt(asMatches[1]);
+	int maybe_width= std::stoi(asMatches[0]);
+	int maybe_height= std::stoi(asMatches[1]);
 	if(maybe_width <= 0 || maybe_height <= 0)
 	{
 		return;
@@ -72,7 +72,7 @@ void RageBitmapTexture::Create()
 
 	/* Load the image into a RageSurface. */
 	RString error;
-	RageSurface *pImg= NULL;
+	RageSurface *pImg = nullptr;
 	if(actualID.filename == TEXTUREMAN->GetScreenTextureID().filename)
 	{
 		pImg= TEXTUREMAN->GetScreenSurface();
@@ -83,14 +83,14 @@ void RageBitmapTexture::Create()
 	}
 
 	/* Tolerate corrupt/unknown images. */
-	if( pImg == NULL )
+	if( pImg == nullptr )
 	{
 		RString warning = ssprintf("RageBitmapTexture: Couldn't load %s: %s",
 			actualID.filename.c_str(), error.c_str());
 		LOG->Warn("%s", warning.c_str());
 		Dialog::OK(warning, "missing_texture");
 		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
-		ASSERT( pImg != NULL );
+		ASSERT( pImg != nullptr );
 	}
 
 	if( actualID.bHotPinkColorKey )

@@ -73,7 +73,7 @@ class CourseID
 {
 public:
 	CourseID(): sPath(""), sFullTitle(""), m_Cache() { Unset(); }
-	void Unset() { FromCourse(NULL); }
+	void Unset() { FromCourse(nullptr); }
 	void FromCourse( const Course *p );
 	Course *ToCourse() const;
 	const RString &GetPath() const { return sPath; }

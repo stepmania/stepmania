@@ -8,7 +8,6 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "StatsManager.h"
-#include "Foreach.h"
 #include "Course.h"
 #include "Style.h"
 
@@ -23,8 +22,10 @@ WorkoutGraph::WorkoutGraph()
 
 WorkoutGraph::~WorkoutGraph()
 {
-	FOREACH( Sprite*, m_vpBars, a )
-		delete *a;
+	for (Sprite *s : m_vpBars)
+	{
+		delete s;
+	}
 	m_vpBars.clear();
 }
 
@@ -48,22 +49,22 @@ void WorkoutGraph::SetFromCurrentWorkout()
 
 void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 {
-	FOREACH( Sprite*, m_vpBars, p )
+	for (Sprite *s : m_vpBars)
 	{
-		this->RemoveChild( *p );
-		delete *p;
+		this->RemoveChild( s );
+		delete s;
 	}
 	m_vpBars.clear();
 
 	Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
-	if( pTrail == NULL )
+	if( pTrail == nullptr )
 		return;
 
 	vector<int> viMeters;
-	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+	for (TrailEntry const &e : pTrail->m_vEntries)
 	{
-		ASSERT( e->pSteps != NULL );
-		viMeters.push_back( e->pSteps->GetMeter() );
+		ASSERT( e.pSteps != nullptr );
+		viMeters.push_back( e.pSteps->GetMeter() );
 	}
 
 	int iBlocksWide = viMeters.size();
@@ -84,17 +85,17 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	m_sprEmpty.ZoomToWidth( iBlocksWide * fBlockSize );
 	m_sprEmpty.ZoomToHeight( iBlocksHigh * fBlockSize );
 
-	FOREACH_CONST( int, viMeters, iter )
+	int index = 0;
+	for (int const &meter : viMeters)
 	{
-		int iIndex = iter - viMeters.begin();
-		float fOffsetFromCenter = iIndex - (iBlocksWide-1)/2.0f;
+		float fOffsetFromCenter = (index++) - (iBlocksWide-1)/2.0f;
 		Sprite *p = new Sprite;
 		p->Load( THEME->GetPathG("WorkoutGraph","bar") );
 		p->SetVertAlign( align_bottom );
 		p->ZoomToWidth( fBlockSize );
-		int iMetersToCover = (MAX_METER - *iter);
+		int iMetersToCover = (MAX_METER - meter);
 		p->SetCustomImageRect( RectF(0,(float)iMetersToCover/(float)iBlocksHigh,1,1) );
-		p->ZoomToHeight( *iter * fBlockSize );
+		p->ZoomToHeight( meter * fBlockSize );
 		p->SetX( fOffsetFromCenter * fBlockSize );
 		m_vpBars.push_back( p );
 		this->AddChild( p );
@@ -105,8 +106,8 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 {
 	SetInternal( iSongIndex+1 );
 
-	FOREACH( Sprite*, m_vpBars, spr )
-		(*spr)->StopEffect();
+	for (Sprite *s : m_vpBars)
+		s->StopEffect();
 
 	int iBarIndex = iSongIndex - m_iSongsChoppedOffAtBeginning;
 

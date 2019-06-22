@@ -42,7 +42,7 @@ ArchHooks_Win32::ArchHooks_Win32()
 	 * the main thread. */
 	SetThreadPriorityBoost( GetCurrentThread(), TRUE );
 
-	g_hInstanceMutex = CreateMutex( NULL, TRUE, PRODUCT_ID );
+	g_hInstanceMutex = CreateMutex( nullptr, TRUE, PRODUCT_ID );
 
 	g_bIsMultipleInstance = false;
 	if( GetLastError() == ERROR_ALREADY_EXISTS )
@@ -90,20 +90,20 @@ bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 	/* Search for the existing window.  Prefer to use the class name, which is less likely to
 	 * have a false match, and will match the gameplay window.  If that fails, try the window
 	 * name, which should match the loading window. */
-	HWND hWnd = FindWindow( PRODUCT_ID, NULL );
-	if( hWnd == NULL )
-		hWnd = FindWindow( NULL, PRODUCT_ID );
+	HWND hWnd = FindWindow( PRODUCT_ID, nullptr );
+	if( hWnd == nullptr )
+		hWnd = FindWindow( nullptr, PRODUCT_ID );
 
-	if( hWnd != NULL )
+	if( hWnd != nullptr )
 	{
 		/* If the application has a model dialog box open, we want to be sure to give focus to it,
 		 * not the main window. */
 		CallbackData data;
 		data.hParent = hWnd;
-		data.hResult = NULL;
+		data.hResult = nullptr;
 		EnumWindows( GetEnabledPopup, (LPARAM) &data );
 
-		if( data.hResult != NULL )
+		if( data.hResult != nullptr )
 			SetForegroundWindow( data.hResult );
 		else
 			SetForegroundWindow( hWnd );
@@ -120,7 +120,7 @@ bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 		SendMessage( 
 			(HWND)hWnd, // HWND hWnd = handle of destination window
 			WM_COPYDATA,
-			(WPARAM)NULL, // HANDLE OF SENDING WINDOW
+			(WPARAM)nullptr, // HANDLE OF SENDING WINDOW
 			(LPARAM)&cds ); // 2nd msg parameter = pointer to COPYDATASTRUCT
 	}
 
@@ -193,7 +193,7 @@ float ArchHooks_Win32::GetDisplayAspectRatio()
 	DEVMODE dm;
 	ZERO( dm );
 	dm.dmSize = sizeof(dm);
-	BOOL bResult = EnumDisplaySettings( NULL, ENUM_REGISTRY_SETTINGS, &dm );
+	BOOL bResult = EnumDisplaySettings( nullptr, ENUM_REGISTRY_SETTINGS, &dm );
 	ASSERT( bResult != 0 );
 	return dm.dmPelsWidth / (float)dm.dmPelsHeight;
 }
@@ -210,15 +210,15 @@ RString ArchHooks_Win32::GetClipboard()
 	
 	// Yes. All this mess just to gain access to the string stored by the clipboard.
 	// I'm having flashbacks to Berkeley sockets.
-	if(unlikely( !OpenClipboard( NULL ) ))
+	if(unlikely( !OpenClipboard( nullptr ) ))
 		{ LOG->Warn(werr_ssprintf( GetLastError(), "InputHandler_DirectInput: OpenClipboard() failed" )); return ""; }
 	
 	hgl = GetClipboardData( CF_TEXT );
-	if(unlikely( hgl == NULL ))
+	if(unlikely( hgl == nullptr ))
 		{ LOG->Warn(werr_ssprintf( GetLastError(), "InputHandler_DirectInput: GetClipboardData() failed" )); CloseClipboard(); return ""; }
 
 	lpstr = (LPTSTR) GlobalLock( hgl );
-	if(unlikely( lpstr == NULL ))
+	if(unlikely( lpstr == nullptr ))
 		{ LOG->Warn(werr_ssprintf( GetLastError(), "InputHandler_DirectInput: GlobalLock() failed" )); CloseClipboard(); return ""; }
 
 	// And finally, we have a char (or wchar_t) array of the clipboard contents,

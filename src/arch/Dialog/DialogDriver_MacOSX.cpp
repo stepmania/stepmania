@@ -9,19 +9,19 @@
 REGISTER_DIALOG_DRIVER_CLASS( MacOSX );
 
 static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CFStringRef OK,
-				CFStringRef alt = NULL, CFStringRef other = NULL)
+				CFStringRef alt = nullptr, CFStringRef other = nullptr)
 {
 	CFOptionFlags result;
-	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
+	CFStringRef text = CFStringCreateWithCString( nullptr, sMessage, kCFStringEncodingUTF8 );
 
-	if( text == NULL )
+	if( text == nullptr )
 	{
 		RString error = ssprintf( "CFString for dialog string \"%s\" could not be created.", sMessage.c_str() );
 		WARN( error );
 		DEBUG_ASSERT_M( false, error );
 		return kCFUserNotificationDefaultResponse; // Is this better than displaying an "unknown error" message?
 	}
-	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_FAMILY),
+	CFUserNotificationDisplayAlert( 0.0, flags, nullptr, nullptr, nullptr, CFSTR(PRODUCT_FAMILY),
 					text, OK, alt, other, &result );
 	CFRelease( text );
 
@@ -36,7 +36,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 	return result;
 }
 
-#define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), NULL, CFSTR("Localizable") )
+#define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), nullptr, CFSTR("Localizable") )
 
 void DialogDriver_MacOSX::OK( RString sMessage, RString sID )
 {

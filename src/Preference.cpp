@@ -5,7 +5,7 @@
 #include "LuaManager.h"
 #include "MessageManager.h"
 #include "SubscriptionManager.h"
-#include "Foreach.h"
+
 
 static SubscriptionManager<IPreference> m_Subscribers;
 
@@ -23,40 +23,40 @@ IPreference::~IPreference()
 
 IPreference *IPreference::GetPreferenceByName( const RString &sName )
 {
-	FOREACHS( IPreference*, *m_Subscribers.m_pSubscribers, p )
+	for (IPreference *p : *m_Subscribers.m_pSubscribers)
 	{
-		if( !(*p)->GetName().CompareNoCase( sName ) )
-			return *p;
+		if( !p->GetName().CompareNoCase( sName ) )
+			return p;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void IPreference::LoadAllDefaults()
 {
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->LoadDefault();
+	for (IPreference *p : *m_Subscribers.m_pSubscribers)
+		p->LoadDefault();
 }
 
 void IPreference::ReadAllPrefsFromNode( const XNode* pNode, bool bIsStatic )
 {
-	ASSERT( pNode != NULL );
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->ReadFrom( pNode, bIsStatic );
+	ASSERT( pNode != nullptr );
+	for (IPreference *p : *m_Subscribers.m_pSubscribers)
+		p->ReadFrom( pNode, bIsStatic );
 }
 
 void IPreference::SavePrefsToNode( XNode* pNode )
 {
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->WriteTo( pNode );
+	for (IPreference *p : *m_Subscribers.m_pSubscribers)
+		p->WriteTo( pNode );
 }
 
 void IPreference::ReadAllDefaultsFromNode( const XNode* pNode )
 {
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return;
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->ReadDefaultFrom( pNode );
+	for (IPreference *p : *m_Subscribers.m_pSubscribers)
+		p->ReadDefaultFrom( pNode );
 }
 
 void IPreference::PushValue( lua_State *L ) const

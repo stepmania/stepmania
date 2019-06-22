@@ -155,7 +155,7 @@ void SMSetSelectable(SMSongTagInfo& info)
 	 * used 3.9+ features are not excluded here */
 	else if((*info.params)[1].EqualsNoCase("ES") || (*info.params)[1].EqualsNoCase("OMES"))
 	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
-	else if(StringToInt((*info.params)[1]) > 0)
+	else if(std::stoi((*info.params)[1]) > 0)
 	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
 	else
 	{ LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str()); }
@@ -336,7 +336,7 @@ void SMLoader::LoadFromTokens(
 		// have a meter on certain steps. Make the meter 1 in these instances.
 		sMeter = "1";
 	}
-	out.SetMeter( StringToInt(sMeter) );
+	out.SetMeter( std::stoi(sMeter) );
 
 	out.SetSMNoteData( sNoteData );
 
@@ -396,11 +396,11 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 		Trim( sBits[0] );
 		
 		if( !sBits[0].CompareNoCase("TIME") )
-			attack.fStartSecond = strtof( sBits[1], NULL );
+			attack.fStartSecond = strtof( sBits[1], nullptr );
 		else if( !sBits[0].CompareNoCase("LEN") )
-			attack.fSecsRemaining = strtof( sBits[1], NULL );
+			attack.fSecsRemaining = strtof( sBits[1], nullptr );
 		else if( !sBits[0].CompareNoCase("END") )
-			end = strtof( sBits[1], NULL );
+			end = strtof( sBits[1], nullptr );
 		else if( !sBits[0].CompareNoCase("MODS") )
 		{
 			Trim(sBits[1]);
@@ -424,10 +424,10 @@ void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
 {
 	vector<RString> vs1;
 	split( sParam, ",", vs1 );
-	FOREACH_CONST( RString, vs1, s )
+	for (RString const &s : vs1)
 	{
 		vector<RString> vs2;
-		split( *s, "=", vs2 );
+		split( s, "=", vs2 );
 		if( vs2.size() >= 2 )
 		{
 			InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
@@ -770,10 +770,10 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 	vector<RString> vs1;
 	split( line, ",", vs1 );
 
-	FOREACH_CONST( RString, vs1, s1 )
+	for (RString const &s1 : vs1)
 	{
 		vector<RString> vs2;
-		split( *s1, "=", vs2 );
+		split( s1, "=", vs2 );
 
 		if( vs2.size() < 3 )
 		{
@@ -785,8 +785,8 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 		}
 
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
-		const int iNumerator = StringToInt( vs2[1] );
-		const int iDenominator = StringToInt( vs2[2] );
+		const int iNumerator = std::stoi( vs2[1] );
+		const int iDenominator = std::stoi( vs2[2] );
 
 		if( fBeat < 0 )
 		{
@@ -849,10 +849,10 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 	vector<RString> vs1;
 	split( line, ",", vs1 );
 
-	FOREACH_CONST( RString, vs1, s1 )
+	for (RString const &s1 : vs1)
 	{
 		vector<RString> vs2;
-		split( *s1, "=", vs2 );
+		split( s1, "=", vs2 );
 
 		if( vs2[0] == 0 && vs2.size() == 2 ) // First one always seems to have 2.
 		{
@@ -878,7 +878,7 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 		const float fDelay = StringToFloat( vs2[2] );
 
 		// XXX: ugly...
-		int iUnit = StringToInt(vs2[3]);
+		int iUnit = std::stoi(vs2[3]);
 		SpeedSegment::BaseUnit unit = (iUnit == 0) ?
 			SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
 
@@ -979,7 +979,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bLoop = StringToInt( aBGChangeValues[5] ) != 0;
+			bool bLoop = std::stoi( aBGChangeValues[5] ) != 0;
 			if( !bLoop )
 				change.m_def.m_sEffect = SBE_StretchNoLoop;
 		}
@@ -989,7 +989,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bRewindMovie = StringToInt( aBGChangeValues[4] ) != 0;
+			bool bRewindMovie = std::stoi( aBGChangeValues[4] ) != 0;
 			if( bRewindMovie )
 				change.m_def.m_sEffect = SBE_StretchRewind;
 		}
@@ -998,7 +998,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// param 9 overrides this.
 		// Backward compatibility:
 		if( change.m_sTransition.empty() )
-			change.m_sTransition = (StringToInt( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
+			change.m_sTransition = (std::stoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
 		// fall through
 	case 3:
 		change.m_fRate = StringToFloat( aBGChangeValues[2] );
@@ -1170,7 +1170,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	return true;
 }
 
-bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =NULL */ )
+bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
 {
 	LOG->Trace( "SMLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
@@ -1198,7 +1198,7 @@ bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditF
 	return LoadEditFromMsd( msd, sEditFilePath, slot, true, givenSong );
 }
 
-bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =NULL */ )
+bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* = nullptr */ )
 {
 	Song* pSong = givenSong;
 
@@ -1225,7 +1225,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 			sSongFullTitle.Replace( '\\', '/' );
 
 			pSong = SONGMAN->FindSong( sSongFullTitle );
-			if( pSong == NULL )
+			if( pSong == nullptr )
 			{
 				LOG->UserLog( "Edit file", sEditFilePath, "requires a song \"%s\" that isn't present.", sSongFullTitle.c_str() );
 				return false;
@@ -1240,7 +1240,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 		else if( sValueName=="NOTES" )
 		{
-			if( pSong == NULL )
+			if( pSong == nullptr )
 			{
 				LOG->UserLog( "Edit file", sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag, and is not in a valid song-specific folder." );
 				return false;

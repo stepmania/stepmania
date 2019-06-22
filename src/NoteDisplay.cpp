@@ -14,7 +14,6 @@
 #include "Sprite.h"
 #include "NoteTypes.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
 #include "RageMath.h"
 
 static const double PI_180= PI / 180.0;
@@ -175,7 +174,7 @@ struct NoteResource
 	NoteResource( const NoteSkinAndPath &nsap ): m_nsap(nsap)
 	{
 		m_iRefCount = 0;
-		m_pActor = NULL;
+		m_pActor = nullptr;
 	}
 
 	~NoteResource()
@@ -203,8 +202,8 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 		NOTESKIN->SetPlayerNumber( pn );
 		NOTESKIN->SetGameController( gc );
 
-		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, NULL, bSpriteOnly );
-		ASSERT( pRes->m_pActor != NULL );
+		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, nullptr, bSpriteOnly );
+		ASSERT( pRes->m_pActor != nullptr );
 
 		g_NoteResource[nsap] = pRes;
 		it = g_NoteResource.find( nsap );
@@ -217,7 +216,7 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 
 static void DeleteNoteResource( NoteResource *pRes )
 {
-	ASSERT( pRes != NULL );
+	ASSERT( pRes != nullptr );
 
 	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("RefCount %i > 0", pRes->m_iRefCount) );
 	--pRes->m_iRefCount;
@@ -232,7 +231,7 @@ static void DeleteNoteResource( NoteResource *pRes )
 
 NoteColorActor::NoteColorActor()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorActor::~NoteColorActor()
@@ -256,7 +255,7 @@ Actor *NoteColorActor::Get()
 
 NoteColorSprite::NoteColorSprite()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorSprite::~NoteColorSprite()
@@ -1018,11 +1017,12 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			 * start off the strip again. */
 			if(!bAllAreTransparent)
 			{
-				FOREACH(Sprite*, vpSpr, spr)
+				int i = 0;
+				for (Sprite *spr : vpSpr)
 				{
-					RageTexture* pTexture = (*spr)->GetTexture();
+					RageTexture* pTexture = spr->GetTexture();
 					DISPLAY->SetTexture(TextureUnit_1, pTexture->GetTexHandle());
-					DISPLAY->SetBlendMode(spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD);
+					DISPLAY->SetBlendMode((i++ == 0) ? BLEND_NORMAL : BLEND_ADD);
 					DISPLAY->SetCullMode(CULL_NONE);
 					DISPLAY->SetTextureWrapping(TextureUnit_1, part_args.wrapping);
 					queue.Draw();
@@ -1367,7 +1367,7 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 	bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollStart,
 	bool bIsAddition, float fPercentFadeToFail)
 {
-	Actor* pActor = NULL;
+	Actor* pActor = nullptr;
 	NotePart part = NotePart_Tap;
 	/*
 	if( tn.source == TapNoteSource_Addition )

@@ -115,7 +115,7 @@ void RageWorkerThread::WorkerMain()
 		m_WorkerEvent.Lock();
 		while( m_iRequest == REQ_NONE && !bTimeToRunHeartbeat )
 		{
-			if( !m_WorkerEvent.Wait( m_fHeartbeat != -1? &m_NextHeartbeat:NULL ) )
+			if( !m_WorkerEvent.Wait( m_fHeartbeat != -1? &m_NextHeartbeat:nullptr ) )
 				bTimeToRunHeartbeat = true;
 		}
 		const int iRequest = m_iRequest;

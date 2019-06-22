@@ -5,7 +5,7 @@
 #include "RageLog.h"
 #include <map>
 
-FontManager*	FONT	= NULL;	// global and accessible from anywhere in our program
+FontManager*	FONT	= nullptr;	// global and accessible from anywhere in our program
 
 // map from file name to a texture holder
 typedef pair<RString,RString> FontName;

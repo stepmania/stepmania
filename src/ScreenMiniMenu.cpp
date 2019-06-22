@@ -3,7 +3,7 @@
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
+
 #include "ScreenDimensions.h"
 #include "GameState.h"
 #include "FontCharAliases.h"
@@ -27,7 +27,7 @@ void FinishedLoadingScreen() {}
 // Settings:
 namespace
 {
-	const MenuDef* g_pMenuDef = NULL;
+	const MenuDef* g_pMenuDef = nullptr;
 	ScreenMessage g_SendOnOK;
 	ScreenMessage g_SendOnCancel;
 };
@@ -59,12 +59,12 @@ void ScreenMiniMenu::Init()
 
 void ScreenMiniMenu::BeginScreen()
 {
-	ASSERT( g_pMenuDef != NULL );
+	ASSERT( g_pMenuDef != nullptr );
 
 	LoadMenu( g_pMenuDef );
 	m_SMSendOnOK = g_SendOnOK;
 	m_SMSendOnCancel = g_SendOnCancel;
-	g_pMenuDef = NULL;
+	g_pMenuDef = nullptr;
 
 	ScreenOptions::BeginScreen();
 

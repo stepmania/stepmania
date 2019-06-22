@@ -150,7 +150,7 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 	m_bPlaying = false;
 
 	m_uTexHandle = 0;
-	buffer = NULL;
+	buffer = nullptr;
 }
 
 RString MovieTexture_DShow::Init()
@@ -219,7 +219,7 @@ void MovieTexture_DShow::Reload()
  * and is waiting for us to do something with it. */
 void MovieTexture_DShow::CheckFrame()
 {
-	if(buffer == NULL)
+	if(buffer == nullptr)
 		return;
 
 	CHECKPOINT;
@@ -258,7 +258,7 @@ void MovieTexture_DShow::CheckFrame()
 
 	delete pFromDShow;
 
-	buffer = NULL;
+	buffer = nullptr;
 
 	CHECKPOINT;
 
@@ -310,12 +310,12 @@ RString MovieTexture_DShow::GetActiveFilterList()
 {
 	RString ret;
 	
-	IEnumFilters *pEnum = NULL;
+	IEnumFilters *pEnum = nullptr;
 	HRESULT hr = m_pGB->EnumFilters(&pEnum);
 	if (FAILED(hr))
 		return hr_ssprintf(hr, "EnumFilters");
 
-	IBaseFilter *pF = NULL;
+	IBaseFilter *pF = nullptr;
 	while( S_OK == pEnum->Next(1, &pF, 0) )
 	{
 		FILTER_INFO FilterInfo;
@@ -341,11 +341,11 @@ RString MovieTexture_DShow::Create()
 
 	actualID.iAlphaBits = 0;
 
-	if( FAILED( hr=CoInitialize(NULL) ) )
+	if( FAILED( hr=CoInitialize(nullptr) ) )
 		RageException::Throw( hr_ssprintf(hr, "Could not CoInitialize") );
 
 	// Create the filter graph
-	if( FAILED( hr=m_pGB.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC) ) )
+	if( FAILED( hr=m_pGB.CoCreateInstance(CLSID_FilterGraph, nullptr, CLSCTX_INPROC) ) )
 		RageException::Throw( hr_ssprintf(hr, "Could not create CLSID_FilterGraph!") );
 
 	// Create the Texture Renderer object
@@ -440,7 +440,7 @@ void MovieTexture_DShow::NewData(const char *data)
 
 	buffer_finished.Wait();
 
-	ASSERT( buffer == NULL );
+	ASSERT( buffer == nullptr );
 
 	buffer_lock.Post();
 }

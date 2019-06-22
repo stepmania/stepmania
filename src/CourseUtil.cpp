@@ -8,7 +8,7 @@
 #include "XmlFile.h"
 #include "GameState.h"
 #include "Style.h"
-#include "Foreach.h"
+
 #include "GameState.h"
 #include "LocalizedString.h"
 #include "RageLog.h"
@@ -110,7 +110,7 @@ void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCou
 #if 0
 RString GetSectionNameFromCourseAndSort( const Course *pCourse, SortOrder so )
 {
-	if( pCourse == NULL )
+	if( pCourse == nullptr )
 		return RString();
 	// more code here
 }
@@ -195,7 +195,7 @@ void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInO
 
 void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending )
 {
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
 		course_sort_val[vpCoursesInOut[i]] = ssprintf( "%09i", pProfile->GetCourseNumTimesPlayed(vpCoursesInOut[i]) );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
@@ -206,11 +206,11 @@ void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesI
 {
 	Profile *pProfile = PROFILEMAN->GetMachineProfile();
 
-	FOREACH_CONST( Course*, vpCoursesInOut, c )
+	for (Course const * c: vpCoursesInOut)
 	{
-		int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed( *c );
-		RString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(*c).GetString() : "9999999999999";
-		course_sort_val[*c] = val;
+		int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed( c );
+		RString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(c).GetString() : "9999999999999";
+		course_sort_val[c] = val;
 	}
 
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersBySortValueAscending );
@@ -327,12 +327,12 @@ void CourseUtil::WarnOnInvalidMods( RString sMods )
 	SongOptions so;
 	vector<RString> vs;
 	split( sMods, ",", vs, true );
-	FOREACH_CONST( RString, vs, s )
+	for (RString const &s : vs)
 	{
 		bool bValid = false;
 		RString sErrorDetail;
-		bValid |= po.FromOneModString( *s, sErrorDetail );
-		bValid |= so.FromOneModString( *s, sErrorDetail );
+		bValid |= po.FromOneModString( s, sErrorDetail );
+		bValid |= so.FromOneModString( s, sErrorDetail );
 		/* ==Invalid options that used to be valid==
 		 * all noteskins (solo, note, foon, &c.)
 		 * protiming (done in Lua now)
@@ -346,7 +346,7 @@ void CourseUtil::WarnOnInvalidMods( RString sMods )
 		 */
 		if( !bValid )
 		{
-			RString sFullError = ssprintf("Error processing '%s' in '%s'", (*s).c_str(), sMods.c_str() );
+			RString sFullError = ssprintf("Error processing '%s' in '%s'", s.c_str(), sMods.c_str() );
 			if( !sErrorDetail.empty() )
 				sFullError += ": " + sErrorDetail;
 			LOG->UserLog( "", "", "%s", sFullError.c_str() );
@@ -422,7 +422,7 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 	}
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
 	{
 		sErrorOut = ssprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -431,12 +431,12 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 	// Check for name conflicts
 	vector<Course*> vpCourses;
 	EditCourseUtil::GetAllEditCourses( vpCourses );
-	FOREACH_CONST( Course*, vpCourses, p )
+	for (Course const *p : vpCourses)
 	{
-		if( GAMESTATE->m_pCurCourse == *p )
+		if( GAMESTATE->m_pCurCourse == p )
 			continue;	// don't comepare name against ourself
 
-		if( (*p)->GetDisplayFullTitle() == sAnswer )
+		if( p->GetDisplayFullTitle() == sAnswer )
 		{
 			sErrorOut = EDIT_NAME_CONFLICTS;
 			return false;
@@ -448,9 +448,9 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 
 void EditCourseUtil::UpdateAndSetTrail()
 {
-	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != NULL );
+	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != nullptr );
 	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
-	Trail *pTrail = NULL;
+	Trail *pTrail = nullptr;
 	if( GAMESTATE->m_pCurCourse )
 		pTrail = GAMESTATE->m_pCurCourse->GetTrailForceRegenCache( st );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
@@ -458,7 +458,7 @@ void EditCourseUtil::UpdateAndSetTrail()
 
 void EditCourseUtil::PrepareForPlay()
 {
-	GAMESTATE->m_pCurSong.Set( NULL );	// CurSong will be set if we back out.  Set it back to NULL so that ScreenStage won't show the last song.
+	GAMESTATE->m_pCurSong.Set(nullptr);	// CurSong will be set if we back out.  Set it back to nullptr so that ScreenStage won't show the last song.
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
 	GAMESTATE->m_bSideIsJoined[0] = true;
 
@@ -471,10 +471,10 @@ void EditCourseUtil::GetAllEditCourses( vector<Course*> &vpCoursesOut )
 {
 	vector<Course*> vpCoursesTemp;
 	SONGMAN->GetAllCourses( vpCoursesTemp, false );
-	FOREACH_CONST( Course*, vpCoursesTemp, c )
+	for (Course *c : vpCoursesTemp)
 	{
-		if( (*c)->GetLoadedFromProfileSlot() != ProfileSlot_Invalid )
-			vpCoursesOut.push_back( *c );
+		if( c->GetLoadedFromProfileSlot() != ProfileSlot_Invalid )
+			vpCoursesOut.push_back( c );
 	}
 }
 
@@ -489,20 +489,11 @@ void EditCourseUtil::LoadDefaults( Course &out )
 	for( int i=0; i<10000; i++ )
 	{
 		out.m_sMainTitle = ssprintf("Workout %d", i+1);
-		bool bNameInUse = false;
-
+		
 		vector<Course*> vpCourses;
 		EditCourseUtil::GetAllEditCourses( vpCourses );
-		FOREACH_CONST( Course*, vpCourses, p )
-		{
-			if( out.m_sMainTitle == (*p)->m_sMainTitle )
-			{
-				bNameInUse = true;
-				break;
-			}
-		}
 
-		if( !bNameInUse )
+		if (std::any_of(vpCourses.begin(), vpCourses.end(), [&](Course const *p) { return out.m_sMainTitle == p->m_sMainTitle; }))
 			break;
 	}
 
@@ -552,7 +543,7 @@ void CourseID::FromCourse( const Course *p )
 
 Course *CourseID::ToCourse() const
 {
-	Course *pCourse = NULL;
+	Course *pCourse = nullptr;
 	if(m_Cache.Get(&pCourse))
 	{
 		return pCourse;
@@ -567,13 +558,13 @@ Course *CourseID::ToCourse() const
 			slash_path = "/" + slash_path;
 		}
 
-		if(pCourse == NULL)
+		if(pCourse == nullptr)
 		{
 			pCourse = SONGMAN->GetCourseFromPath(slash_path);
 		}
 	}
 
-	if( pCourse == NULL && !sFullTitle.empty() )
+	if( pCourse == nullptr && !sFullTitle.empty() )
 	{
 		pCourse = SONGMAN->GetCourseFromName( sFullTitle );
 	}

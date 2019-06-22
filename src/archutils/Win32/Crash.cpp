@@ -23,7 +23,7 @@ static void SpliceProgramPath(char *buf, int bufsiz, const char *fn) {
 	char tbuf[MAX_PATH];
 	char *pszFile;
 
-	GetModuleFileName(NULL, tbuf, sizeof tbuf);
+	GetModuleFileName(nullptr, tbuf, sizeof tbuf);
 	GetFullPathName(tbuf, bufsiz, buf, &pszFile);
 	strcpy(pszFile, fn);
 }
@@ -50,7 +50,7 @@ static const struct ExceptionLookup {
 	{ EXCEPTION_INVALID_HANDLE,		"Invalid handle"		},
 	{ EXCEPTION_STACK_OVERFLOW,		"Stack overflow"		},
 	{ 0xe06d7363,				"Unhandled Microsoft C++ Exception",	},
-	{ NULL },
+	{ nullptr },
 };
 
 static const char *LookupException( DWORD code )
@@ -59,7 +59,7 @@ static const char *LookupException( DWORD code )
 		if( exceptions[i].code == code )
 			return exceptions[i].name;
 
-	return NULL;
+	return nullptr;
 }
 
 static CrashInfo g_CrashInfo;
@@ -68,13 +68,13 @@ static void GetReason( const EXCEPTION_RECORD *pRecord, CrashInfo *crash )
 	// fill out bomb reason
 	const char *reason = LookupException( pRecord->ExceptionCode );
 
-	if( reason == NULL )
+	if( reason == nullptr )
 		wsprintf( crash->m_CrashReason, "unknown exception 0x%08lx", pRecord->ExceptionCode );
 	else
 		strcpy( crash->m_CrashReason, reason );
 }
 
-static HWND g_hForegroundWnd = NULL;
+static HWND g_hForegroundWnd = nullptr;
 void CrashHandler::SetForegroundWindow( HWND hWnd )
 {
 	g_hForegroundWnd = hWnd;
@@ -85,7 +85,7 @@ void WriteToChild( HANDLE hPipe, const void *pData, size_t iSize )
 	while( iSize )
 	{
 		DWORD iActual;
-		if( !WriteFile(hPipe, pData, iSize, &iActual, NULL) )
+		if( !WriteFile(hPipe, pData, iSize, &iActual, nullptr) )
 			return;
 		iSize -= iActual;
 	}
@@ -106,7 +106,7 @@ bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 		SECURITY_ATTRIBUTES sa;
 		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 		sa.bInheritHandle = true;
-		sa.lpSecurityDescriptor = NULL;
+		sa.lpSecurityDescriptor = nullptr;
 
 		CreatePipe( &si.hStdInput, &hToStdin, &sa, 0 );
 		CreatePipe( &hFromStdout, &si.hStdOutput, &sa, 0 );
@@ -115,19 +115,19 @@ bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 	}
 
 	char szBuf[256] = "";
-	GetModuleFileName( NULL, szBuf, MAX_PATH );
+	GetModuleFileName( nullptr, szBuf, MAX_PATH );
 	strcat( szBuf, " " );
 	strcat( szBuf, CHILD_MAGIC_PARAMETER );
 
 	PROCESS_INFORMATION pi;
 	int iRet = CreateProcess(
-		NULL,		// pointer to name of executable module
+		nullptr,		// pointer to name of executable module
 		szBuf,		// pointer to command line string
-		NULL,		// process security attributes
-		NULL,		// thread security attributes
+		nullptr,		// process security attributes
+		nullptr,		// thread security attributes
 		true,		// handle inheritance flag
 		0,		// creation flags
-		NULL,		// pointer to new environment block
+		nullptr,		// pointer to new environment block
 		cwd,		// pointer to current directory name
 		&si,		// pointer to STARTUPINFO
 		&pi		// pointer to PROCESS_INFORMATION
@@ -156,19 +156,19 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 // XXX: It looks like nothing in here COULD throw an exception. Need to verify that.
 //	__try {
 		if( !GetModuleFileName(hmod, szPath1, sizeof(szPath1)) )
-			return NULL;
+			return nullptr;
 
 		char *pszFile;
 		DWORD dw = GetFullPathName( szPath1, sizeof(szPath2), szPath2, &pszFile );
 
 		if( !dw || dw > sizeof(szPath2) )
-			return NULL;
+			return nullptr;
 
 		strcpy( pszBaseName, pszFile );
 
 		pszFile = pszBaseName;
 
-		char *period = NULL;
+		char *period = nullptr;
 		while( *pszFile++ )
 			if( pszFile[-1]=='.' )
 				period = pszFile-1;
@@ -176,7 +176,7 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 		if( period )
 			*period = 0;
 //	} __except(1) {
-//		return NULL;
+//		return nullptr;
 //	}
 
 	return pszBaseName;
@@ -222,7 +222,7 @@ void RunChild()
 		// 4. Write RecentLogs.
 		int cnt = 0;
 		const TCHAR *ps[1024];
-		while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != NULL )
+		while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != nullptr )
 				++cnt;
 
 		WriteToChild(hToStdin, &cnt, sizeof(cnt));
@@ -254,7 +254,7 @@ void RunChild()
 		 * since GetModuleFileNameEx might not be available. Run the requests here. */
 		HMODULE hMod;
 		DWORD iActual;
-		if( !ReadFile( hFromStdout, &hMod, sizeof(hMod), &iActual, NULL) )
+		if( !ReadFile( hFromStdout, &hMod, sizeof(hMod), &iActual, nullptr) )
 			break;
 
 		TCHAR szName[MAX_PATH];
@@ -301,8 +301,8 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 		/* If we get here, then we've been called recursively, which means we
 		 * crashed. If InHere is greater than 1, then we crashed after writing
 		 * the crash dump; say so. */
-		SetUnhandledExceptionFilter(NULL);
-		MessageBox( NULL,
+		SetUnhandledExceptionFilter(nullptr);
+		MessageBox( nullptr,
 			InHere == 1?
 			"The error reporting interface has crashed.\n":
 			"The error reporting interface has crashed. However, crashinfo.txt was"
@@ -333,7 +333,7 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 	/* Now things get more risky. If we're fullscreen, the window will obscure
 	 * the crash dialog. Try to hide the window. Things might blow up here; do
 	 * this after DoSave, so we always write a crash dump. */
-	if( GetWindowThreadProcessId( g_hForegroundWnd, NULL ) == GetCurrentThreadId() )
+	if( GetWindowThreadProcessId( g_hForegroundWnd, nullptr ) == GetCurrentThreadId() )
 	{
 		/* The thread that crashed was the thread that created the main window.
 		 * Hide the window. This will also restore the video mode, if necessary. */
@@ -342,12 +342,12 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 		/* A different thread crashed. Simply kill all other windows. We can't
 		 * safely call ShowWindow; the main thread might be deadlocked. */
 		RageThread::HaltAllThreads( true );
-		ChangeDisplaySettings( NULL, 0 );
+		ChangeDisplaySettings( nullptr, 0 );
 	}
 
 	InHere = false;
 
-	SetUnhandledExceptionFilter( NULL );
+	SetUnhandledExceptionFilter(nullptr);
 
 	/* Forcibly terminate; if we keep going, we'll try to shut down threads and
 	 * do other things that may deadlock, which is confusing for users. */
@@ -362,7 +362,7 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 	 * Allocate a new stack, and run the exception handler in it, to increase
 	 * the chances of success. */
 	int iSize = 1024*32;
-	char *pStack = (char *) VirtualAlloc( NULL, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
+	char *pStack = (char *) VirtualAlloc( nullptr, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
 	pStack += iSize;
 	// FIXME: This will probably explode on x86-64
 #if defined(_MSC_VER)
@@ -456,7 +456,7 @@ static bool PointsToValidCall( unsigned long ptr )
 
 	memset( buf, 0, sizeof(buf) );
 
-	while(len > 0 && !ReadProcessMemory(GetCurrentProcess(), (void *)(ptr-len), buf+7-len, len, NULL))
+	while(len > 0 && !ReadProcessMemory(GetCurrentProcess(), (void *)(ptr-len), buf+7-len, len, nullptr))
 		--len;
 
 	return IsValidCall(buf+7, len);
@@ -473,7 +473,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	 * due to stack corruption, we might not be able to get any frames from the
 	 * stack. Pull it out of pContext->Eip, which is always valid, and then
 	 * discard the first stack frame if it's the same. */
-	if( buf+1 != pLast && pContext->Eip != NULL )
+	if( buf+1 != pLast && pContext->Eip != 0 )
 	{
 		*buf = (void *) pContext->Eip;
 		++buf;
@@ -485,7 +485,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 		LDT_ENTRY sel;
 		if( !GetThreadSelectorEntry( hThread, pContext->SegFs, &sel ) )
 		{
-			*buf = NULL;
+			*buf = nullptr;
 			return;
 		}
 
@@ -532,16 +532,15 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 			break;
 
 		lpAddr += 4;
-	} while( ReadProcessMemory(hProcess, lpAddr-4, &data, 4, NULL));
+	} while( ReadProcessMemory(hProcess, lpAddr-4, &data, 4, nullptr));
 
-	*buf = NULL;
+	*buf = nullptr;
 }
 
 // Trigger the crash handler. This works even in the debugger.
 static void NORETURN debug_crash()
 {
-//	__try {
-#if defined(__MSC_VER)
+	__try {
 		__asm xor ebx,ebx
 		__asm mov eax,dword ptr [ebx]
 //		__asm mov dword ptr [ebx],eax

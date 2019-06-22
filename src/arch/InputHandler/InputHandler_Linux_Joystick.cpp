@@ -31,7 +31,7 @@ InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 	
 	m_iLastFd = 0;
 
-	if( LINUXINPUT == NULL ) LINUXINPUT = new LinuxInputManager;
+	if( LINUXINPUT == nullptr ) LINUXINPUT = new LinuxInputManager;
 	LINUXINPUT->InitDriver(this);
 
 	if( fds[0] != -1 ) // LinuxInputManager found at least one valid joystick for us
@@ -126,7 +126,7 @@ void InputHandler_Linux_Joystick::InputThread()
 			break;
 
 		struct timeval zero = {0,100000};
-		if( select(max_fd+1, &fdset, NULL, NULL, &zero) <= 0 )
+		if( select(max_fd+1, &fdset, nullptr, nullptr, &zero) <= 0 )
 			continue;
 		RageTimer now;
 

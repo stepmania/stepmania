@@ -2,7 +2,7 @@
 #include "LuaBinding.h"
 #include "LuaReference.h"
 #include "RageUtil.h"
-#include "Foreach.h"
+
 
 #include "SubscriptionManager.h"
 static SubscriptionManager<LuaBinding> m_Subscribers;
@@ -11,13 +11,13 @@ namespace
 {
 	void RegisterTypes( lua_State *L )
 	{
-		if( m_Subscribers.m_pSubscribers == NULL )
+		if( m_Subscribers.m_pSubscribers == nullptr )
 			return;
 
 		/* Register base classes first. */
 		map<RString, LuaBinding *> mapToRegister;
-		FOREACHS( LuaBinding*, *m_Subscribers.m_pSubscribers, p )
-			mapToRegister[(*p)->GetClassName()] = (*p);
+		for (LuaBinding *binding : *m_Subscribers.m_pSubscribers)
+			mapToRegister[binding->GetClassName()] = binding;
 
 		set<RString> setRegisteredAlready;
 
@@ -322,7 +322,7 @@ void *LuaBinding::GetPointerFromStack( Lua *L, const RString &sType, int iArg )
 		return *pData;
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 
 /* Tricky: when an instance table is copied, we want to do a deep
@@ -354,7 +354,7 @@ LuaClass &LuaClass::operator=( const LuaClass &cpy )
 
 LuaClass::~LuaClass()
 {
-	if( LUA == NULL )
+	if( LUA == nullptr )
 		return;
 
 	Lua *L = LUA->Get();

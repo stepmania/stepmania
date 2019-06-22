@@ -58,7 +58,7 @@ public:
 	 * @brief Determine if these steps were created by the autogenerator.
 	 * @return true if they were, false otherwise.
 	 */
-	bool IsAutogen() const				{ return parent != NULL; }
+	bool IsAutogen() const				{ return parent != nullptr; }
 
 	/**
 	 * @brief Determine if this set of Steps is an edit.

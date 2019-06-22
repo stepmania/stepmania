@@ -23,7 +23,7 @@ struct FontPageTextures
 	RageTexture *m_pTextureStroke;
 
 	/** @brief Set up the initial textures. */
-	FontPageTextures(): m_pTextureMain(NULL), m_pTextureStroke(NULL) {}
+	FontPageTextures(): m_pTextureMain(nullptr), m_pTextureStroke(nullptr) {}
 
 	bool operator == (const struct FontPageTextures& other) const {
 		return m_pTextureMain == other.m_pTextureMain &&
@@ -59,7 +59,7 @@ struct glyph
 	RectF m_TexRect;
 	
 	/** @brief Set up the glyph with default values. */
-	glyph() : m_pPage(NULL), m_FontPageTextures(), m_iHadvance(0),
+	glyph() : m_pPage(nullptr), m_FontPageTextures(), m_iHadvance(0),
 		m_fWidth(0), m_fHeight(0), m_fHshift(0), m_TexRect() {}
 };
 

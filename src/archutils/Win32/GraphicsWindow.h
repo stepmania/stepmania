@@ -37,7 +37,7 @@ namespace GraphicsWindow
 	HWND GetHwnd();
 
 	//dwm functions for vista+
-	static HINSTANCE hInstanceDwmapi = NULL;
+	static HINSTANCE hInstanceDwmapi = nullptr;
 	static HRESULT(WINAPI* PFN_DwmIsCompositionEnabled)(BOOL*);
 	static HRESULT (WINAPI* PFN_DwmFlush)(VOID);
 };

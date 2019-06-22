@@ -226,7 +226,7 @@ const wchar_t *FontCharmaps::get_char_map(RString name)
 
 	map<RString,const wchar_t*>::const_iterator i = charmaps.find(name);
 	if(i == charmaps.end())
-		return NULL;
+		return nullptr;
 
 	return i->second;
 }

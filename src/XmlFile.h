@@ -67,16 +67,16 @@ typedef vector<XNode*> XNodes;
 		++Var )
 /** @brief Loop through each child. */
 #define FOREACH_Child( pNode, Var ) \
-	XNode *Var = NULL; \
+	XNode *Var = nullptr; \
 	for( XNodes::iterator Var##Iter = (pNode)->GetChildrenBegin(); \
-		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:NULL, \
+		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:nullptr, \
 		Var##Iter != (pNode)->GetChildrenEnd(); \
 		++Var##Iter )
 /** @brief Loop through each child, using a constant iterator. */
 #define FOREACH_CONST_Child( pNode, Var ) \
-	const XNode *Var = NULL; \
+	const XNode *Var = nullptr; \
 	for( XNodes::const_iterator Var##Iter = (pNode)->GetChildrenBegin(); \
-		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:NULL, \
+		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:nullptr, \
 		Var##Iter != (pNode)->GetChildrenEnd(); \
 		++Var##Iter )
 
@@ -101,7 +101,7 @@ public:
 	const XNodeValue *GetAttr( const RString &sAttrName ) const; 
 	XNodeValue *GetAttr( const RString &sAttrName ); 
 	template <typename T>
-	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr== nullptr) return false; pAttr->GetValue(out); return true; }
 	bool PushAttrValue( lua_State *L, const RString &sName ) const;
 
 	XNodes::iterator GetChildrenBegin() { return m_childs.begin(); }
@@ -114,7 +114,7 @@ public:
 	const XNode *GetChild( const RString &sName ) const;
 	XNode *GetChild( const RString &sName );
 	template <typename T>
-	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetTextValue(out); return true; }
+	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild== nullptr) return false; pChild->GetTextValue(out); return true; }
 	bool PushChildValue( lua_State *L, const RString &sName ) const;
 
 	// modify DOM

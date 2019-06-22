@@ -166,7 +166,7 @@ bool FadingBanner::LoadFromCachedBanner( const RString &path )
 
 void FadingBanner::LoadFromSong( const Song* pSong )
 {
-	if( pSong == NULL )
+	if( pSong == nullptr )
 	{
 		LoadFallback();
 		return;
@@ -195,7 +195,7 @@ void FadingBanner::LoadFromSongGroup( RString sSongGroup )
 
 void FadingBanner::LoadFromCourse( const Course* pCourse )
 {
-	if( pCourse == NULL )
+	if( pCourse == nullptr )
 	{
 		LoadFallback();
 		return;
@@ -272,25 +272,25 @@ public:
 	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); COMMON_RETURN_SELF; }
 	static int LoadFromSong( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadFromSong( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadFromSong(nullptr); }
 		else { Song *pS = Luna<Song>::check(L,1); p->LoadFromSong( pS ); }
 		COMMON_RETURN_SELF;
 	}
 	static int LoadFromCourse( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadFromCourse( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadFromCourse(nullptr); }
 		else { Course *pC = Luna<Course>::check(L,1); p->LoadFromCourse( pC ); }
 		COMMON_RETURN_SELF;
 	}
 	static int LoadIconFromCharacter( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter(nullptr); }
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		COMMON_RETURN_SELF;
 	}
 	static int LoadCardFromCharacter( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter(nullptr); }
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		COMMON_RETURN_SELF;
 	}

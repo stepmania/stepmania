@@ -6,7 +6,6 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "NoteTypes.h"
-#include "Foreach.h"
 #include <float.h>
 
 static void EraseSegment(vector<TimingSegment*> &vSegs, int index, TimingSegment *cur);
@@ -63,10 +62,9 @@ bool TimingData::IsSafeFullTiming()
 		needed_segments.push_back(SEGMENT_SPEED);
 		needed_segments.push_back(SEGMENT_SCROLL);
 	}
-	vector<TimingSegment *> *segs = m_avpTimingSegments;
 	for(size_t s= 0; s < needed_segments.size(); ++s)
 	{
-		if(segs[needed_segments[s]].empty())
+		if(m_avpTimingSegments[needed_segments[s]].empty())
 		{
 			return false;
 		}
@@ -86,11 +84,10 @@ void TimingData::PrepareLookup()
 	// thing.  So release the lookups. -Kyz
 	ReleaseLookup();
 	const unsigned int segments_per_lookup= 16;
-	const vector<TimingSegment*>* segs= m_avpTimingSegments;
-	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
-	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
-	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
-	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
+	const vector<TimingSegment*>& bpms= m_avpTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment*>& warps= m_avpTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment*>& stops= m_avpTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment*>& delays= m_avpTimingSegments[SEGMENT_DELAY];
 
 	unsigned int total_segments= bpms.size() + warps.size() + stops.size() + delays.size();
 	unsigned int lookup_entries= total_segments / segments_per_lookup;
@@ -148,11 +145,10 @@ RString SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, const
 
 void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& name)
 {
-	const vector<TimingSegment*>* segs= m_avpTimingSegments;
-	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
-	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
-	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
-	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
+	const vector<TimingSegment*>& bpms= m_avpTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment*>& warps= m_avpTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment*>& stops= m_avpTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment*>& delays= m_avpTimingSegments[SEGMENT_DELAY];
 	LOG->Trace("%s lookup table:", name.c_str());
 	for(size_t lit= 0; lit < lookup.size(); ++lit)
 	{
@@ -529,21 +525,21 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
  * indiscriminate calls to get segments at arbitrary rows, I think it's the
  * best solution we've got for now.
  *
- * Note that types whose SegmentEffectAreas are "Indefinite" are NULL here,
+ * Note that types whose SegmentEffectAreas are "Indefinite" are nullptr here,
  * because they should never need to be used; we always have at least one such
  * segment in the TimingData, and if not, we'll crash anyway. -- vyhd */
 static const TimingSegment* DummySegments[NUM_TimingSegmentType] =
 {
-	NULL, // BPMSegment
+	nullptr, // BPMSegment
 	new StopSegment,
 	new DelaySegment,
-	NULL, // TimeSignatureSegment
+	nullptr, // TimeSignatureSegment
 	new WarpSegment,
-	NULL, // LabelSegment
-	NULL, // TickcountSegment
-	NULL, // ComboSegment
-	NULL, // SpeedSegment
-	NULL, // ScrollSegment
+	nullptr, // LabelSegment
+	nullptr, // TickcountSegment
+	nullptr, // ComboSegment
+	nullptr, // SpeedSegment
+	nullptr, // ScrollSegment
 	new FakeSegment
 };
 
@@ -814,11 +810,10 @@ void FindEvent(int& event_row, int& event_type,
 void TimingData::GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
 	unsigned int max_segment) const
 {
-	const vector<TimingSegment*>* segs= m_avpTimingSegments;
-	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
-	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
-	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
-	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
+	const vector<TimingSegment*>& bpms= m_avpTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment*>& warps= m_avpTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment*>& stops= m_avpTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment*>& delays= m_avpTimingSegments[SEGMENT_DELAY];
 	unsigned int curr_segment= start.bpm+start.warp+start.stop+start.delay;
 
 	float bps= GetBPMAtRow(start.last_row) / 60.0f;
@@ -932,11 +927,10 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset(GetBeatArgs& args) const
 float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 	unsigned int max_segment) const
 {
-	const vector<TimingSegment*>* segs= m_avpTimingSegments;
-	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
-	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
-	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
-	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
+	const vector<TimingSegment*>& bpms= m_avpTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment*>& warps= m_avpTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment*>& stops= m_avpTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment*>& delays= m_avpTimingSegments[SEGMENT_DELAY];
 	unsigned int curr_segment= start.bpm+start.warp+start.stop+start.delay;
 
 	float bps= GetBPMAtRow(start.last_row) / 60.0f;
@@ -1103,7 +1097,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		// Don't delete the indefinite segments that are still in effect
 		// at the end row; rather, shift them so they start there.
 		TimingSegment *tsEnd = GetSegmentAtRow(iStartRow + iRowsToDelete, tst);
-		if (tsEnd != NULL && tsEnd->GetEffectType() == SegmentEffectType_Indefinite &&
+		if (tsEnd != nullptr && tsEnd->GetEffectType() == SegmentEffectType_Indefinite &&
 				iStartRow <= tsEnd->GetRow() &&
 				tsEnd->GetRow() < iStartRow + iRowsToDelete)
 		{
@@ -1209,7 +1203,7 @@ void TimingData::TidyUpData(bool allowEmpty)
 		return;
 
 	// If there are no BPM segments, provide a default.
-	vector<TimingSegment *> *segs = m_avpTimingSegments;
+	auto &segs = m_avpTimingSegments;
 	if( segs[SEGMENT_BPM].empty() )
 	{
 		LOG->UserLog( "Song file", m_sFile, "has no BPM segments, default provided." );

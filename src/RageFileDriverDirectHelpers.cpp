@@ -2,7 +2,7 @@
 #include "RageFileDriverDirectHelpers.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "Foreach.h"
+
 
 #include <cerrno>
 #include <sys/types.h>
@@ -161,7 +161,7 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 	CHECKPOINT_M( root+sPath );
 	RString sDir = Dirname( sPath );
 	FileSet *pFileSet = GetFileSet( sDir, false );
-	if( pFileSet == NULL )
+	if( pFileSet == nullptr )
 	{
 		// This directory isn't cached so do nothing.
 		m_Mutex.Unlock(); // Locked by GetFileSet()
@@ -254,7 +254,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	 * scans are I/O-bound. */
 	 
 	DIR *pDir = opendir(root+sPath);
-	if( pDir == NULL )
+	if( pDir == nullptr )
 		return;
 
 	while( struct dirent *pEnt = readdir(pDir) )
@@ -315,11 +315,11 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 		vsFilesToRemove.push_back( sFileLNameToIgnore );
 	}
 	
-	FOREACH_CONST( RString, vsFilesToRemove, iter )
+	for (RString const &iter : vsFilesToRemove)
 	{
 		// Erase the file corresponding to the ignore marker
 		File fileToDelete;
-		fileToDelete.SetName( *iter );
+		fileToDelete.SetName( iter );
 		set<File>::iterator iter2 = fs.files.find( fileToDelete );
 		if( iter2 != fs.files.end() )
 			fs.files.erase( iter2 );

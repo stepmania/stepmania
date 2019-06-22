@@ -76,13 +76,12 @@ static bool ChangeAppPri()
 		if( INPUTMAN )
 		{
 			INPUTMAN->GetDevicesAndDescriptions(vDevices);
-			FOREACH_CONST( InputDeviceInfo, vDevices, d )
+			if (std::any_of(vDevices.begin(), vDevices.end(), [](InputDeviceInfo const &d) {
+				return d.sDesc.find("NTPAD") != string::npos;
+			}))
 			{
-				if( d->sDesc.find("NTPAD") != string::npos )
-				{
-					LOG->Trace( "Using NTPAD.  Don't boost priority." );
-					return false;
-				}
+				LOG->Trace( "Using NTPAD.  Don't boost priority." );
+				return false;
 			}
 		}
 	}
@@ -181,7 +180,7 @@ namespace
 	void DoChangeGame()
 	{
 		const Game* g= GAMEMAN->StringToGame(g_NewGame);
-		ASSERT(g != NULL);
+		ASSERT(g != nullptr);
 		GAMESTATE->SetCurGame(g);
 
 		bool theme_changing= false;
@@ -358,7 +357,7 @@ private:
 	enum State { RENDERING_IDLE, RENDERING_START, RENDERING_ACTIVE, RENDERING_END };
 	State m_State;
 };
-static ConcurrentRenderer *g_pConcurrentRenderer = NULL;
+static ConcurrentRenderer *g_pConcurrentRenderer = nullptr;
 
 ConcurrentRenderer::ConcurrentRenderer():
 	m_Event("ConcurrentRenderer")
@@ -405,7 +404,7 @@ void ConcurrentRenderer::Stop()
 
 void ConcurrentRenderer::RenderThread()
 {
-	ASSERT( SCREENMAN != NULL );
+	ASSERT( SCREENMAN != nullptr );
 
 	while( !m_bShutdown )
 	{
@@ -462,7 +461,7 @@ int ConcurrentRenderer::StartRenderThread( void *p )
 
 void GameLoop::StartConcurrentRendering()
 {
-	if( g_pConcurrentRenderer == NULL )
+	if( g_pConcurrentRenderer == nullptr )
 		g_pConcurrentRenderer = new ConcurrentRenderer;
 	g_pConcurrentRenderer->Start();
 }

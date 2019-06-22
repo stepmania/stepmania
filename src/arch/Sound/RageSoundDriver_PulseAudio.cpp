@@ -16,9 +16,9 @@ REGISTER_SOUND_DRIVER_CLASS2( Pulse, PulseAudio );
 /* Constructor */
 RageSoundDriver_PulseAudio::RageSoundDriver_PulseAudio()
 : RageSoundDriver(),
-m_LastPosition(0), m_SampleRate(0), m_Error(NULL),
+m_LastPosition(0), m_SampleRate(0), m_Error(nullptr),
 m_Sem("Pulseaudio Synchronization Semaphore"),
-m_PulseMainLoop(NULL), m_PulseCtx(NULL), m_PulseStream(NULL)
+m_PulseMainLoop(nullptr), m_PulseCtx(nullptr), m_PulseStream(nullptr)
 {
 	m_SampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	if( m_SampleRate == 0 )
@@ -32,7 +32,7 @@ RageSoundDriver_PulseAudio::~RageSoundDriver_PulseAudio()
 	pa_threaded_mainloop_stop(m_PulseMainLoop);
 	pa_threaded_mainloop_free(m_PulseMainLoop);
 	
-	if(m_Error != NULL)
+	if(m_Error != nullptr)
 	{
 		free(m_Error);
 	}
@@ -45,7 +45,7 @@ RString RageSoundDriver_PulseAudio::Init()
 
 	LOG->Trace("Pulse: pa_threaded_mainloop_new()...");
 	m_PulseMainLoop = pa_threaded_mainloop_new();
-	if(m_PulseMainLoop == NULL)
+	if(m_PulseMainLoop == nullptr)
 	{
 		return "pa_threaded_mainloop_new() failed!";
 	}
@@ -63,7 +63,7 @@ RString RageSoundDriver_PulseAudio::Init()
 			"StepMania", plist);
 	pa_proplist_free(plist);
 	
-	if(m_PulseCtx == NULL)
+	if(m_PulseCtx == nullptr)
 	{
 		return "pa_context_new_with_proplist() failed!";
 	}
@@ -72,7 +72,7 @@ RString RageSoundDriver_PulseAudio::Init()
 	m_PulseCtx = pa_context_new(
 			pa_threaded_mainloop_get_api(m_PulseMainLoop),
 			"Stepmania");
-	if(m_PulseCtx == NULL)
+	if(m_PulseCtx == nullptr)
 	{
 		return "pa_context_new() failed!";
 	}
@@ -81,7 +81,7 @@ RString RageSoundDriver_PulseAudio::Init()
 	pa_context_set_state_callback(m_PulseCtx, StaticCtxStateCb, this);
 	
 	LOG->Trace("Pulse: pa_context_connect()...");
-	error = pa_context_connect(m_PulseCtx, NULL, (pa_context_flags_t)0, NULL);
+	error = pa_context_connect(m_PulseCtx, nullptr, (pa_context_flags_t)0, nullptr);
 	
 	if(error < 0)
 	{
@@ -101,10 +101,10 @@ RString RageSoundDriver_PulseAudio::Init()
 	StartDecodeThread();
 
 	/* Wait for the pulseaudio stream to be ready before returning.
-	* An error may occur, if it appends, m_Error becomes non-NULL. */
+	* An error may occur, if it appends, m_Error becomes non-nullptr. */
 	m_Sem.Wait();
 
-	if(m_Error == NULL)
+	if(m_Error == nullptr)
 	{
 		return "";
 	}
@@ -137,7 +137,7 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 	{
 		if(asprintf(&m_Error, "invalid sample spec!") == -1)
 		{
-			m_Error = NULL;
+			m_Error = nullptr;
 		}
 		m_Sem.Post();
 		return;
@@ -151,11 +151,11 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 	/* create the stream */
 	LOG->Trace("Pulse: pa_stream_new()...");
 	m_PulseStream = pa_stream_new(m_PulseCtx, "Stepmania Audio", &ss, &map);
-	if(m_PulseStream == NULL)
+	if(m_PulseStream == nullptr)
 	{
 		if(asprintf(&m_Error, "pa_stream_new(): %s", pa_strerror(pa_context_errno(m_PulseCtx))) == -1)
 		{
-			m_Error = NULL;
+			m_Error = nullptr;
 		}
 		m_Sem.Post();
 		return;
@@ -224,14 +224,14 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 
 	 /* connect the stream for playback */
 	LOG->Trace("Pulse: pa_stream_connect_playback()...");
-	error = pa_stream_connect_playback(m_PulseStream, NULL, &attr,
-			PA_STREAM_AUTO_TIMING_UPDATE, NULL, NULL);
+	error = pa_stream_connect_playback(m_PulseStream, nullptr, &attr,
+			PA_STREAM_AUTO_TIMING_UPDATE, nullptr, nullptr);
 	if(error < 0)
 	{
 		if(asprintf(&m_Error, "pa_stream_connect_playback(): %s",
 				pa_strerror(pa_context_errno(m_PulseCtx))) == -1)
 		{
-			m_Error = NULL;
+			m_Error = nullptr;
 		}
 		m_Sem.Post();
 		return;
@@ -261,7 +261,7 @@ void RageSoundDriver_PulseAudio::CtxStateCb(pa_context *c)
 	case PA_CONTEXT_FAILED:
 		if(asprintf(&m_Error, "context connection failed: %s", pa_strerror(pa_context_errno(m_PulseCtx))) == -1)
 		{
-			m_Error = NULL;
+			m_Error = nullptr;
 		}
 		m_Sem.Post();
 		return;
@@ -316,7 +316,7 @@ void RageSoundDriver_PulseAudio::StreamWriteCb(pa_stream *s, size_t length)
 	int64_t pos1 = m_LastPosition;
 	int64_t pos2 = pos1 + nbframes/2; /* Mix() position in stereo frames */
 	this->Mix( buf, pos2-pos1, pos1, pos2);
-	if(pa_stream_write(m_PulseStream, buf, length, NULL, 0, PA_SEEK_RELATIVE) < 0)
+	if(pa_stream_write(m_PulseStream, buf, length, nullptr, 0, PA_SEEK_RELATIVE) < 0)
 	{
 		RageException::Throw("Pulse: pa_stream_write()");
 	}

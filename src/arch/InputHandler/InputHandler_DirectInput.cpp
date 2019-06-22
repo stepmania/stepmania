@@ -11,7 +11,6 @@
 #include "InputFilter.h"
 #include "PrefsManager.h"
 #include "GamePreferences.h" //needed for Axis Fix
-#include "Foreach.h"
 
 #include "InputHandler_DirectInputHelper.h"
 
@@ -32,13 +31,13 @@ static int g_iNumJoysticks;
 #define SAFE_RELEASE(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
 static BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 {
-	IWbemLocator*           pIWbemLocator = NULL;
-	IEnumWbemClassObject*   pEnumDevices = NULL;
+	IWbemLocator*           pIWbemLocator = nullptr;
+	IEnumWbemClassObject*   pEnumDevices = nullptr;
 	IWbemClassObject*       pDevices[20] = { 0 };
-	IWbemServices*          pIWbemServices = NULL;
-	BSTR                    bstrNamespace = NULL;
-	BSTR                    bstrDeviceID = NULL;
-	BSTR                    bstrClassName = NULL;
+	IWbemServices*          pIWbemServices = nullptr;
+	BSTR                    bstrNamespace = nullptr;
+	BSTR                    bstrDeviceID = nullptr;
+	BSTR                    bstrClassName = nullptr;
 	DWORD                   uReturned = 0;
 	bool                    bIsXinputDevice = false;
 	UINT                    iDevice = 0;
@@ -46,34 +45,34 @@ static BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 	HRESULT                 hr;
 
 	// CoInit if needed
-	hr = CoInitialize(NULL);
+	hr = CoInitialize(nullptr);
 	bool bCleanupCOM = SUCCEEDED(hr);
 
 	// Create WMI
 	hr = CoCreateInstance(__uuidof(WbemLocator),
-		NULL,
+		nullptr,
 		CLSCTX_INPROC_SERVER,
 		__uuidof(IWbemLocator),
 		(LPVOID*)&pIWbemLocator);
-	if (FAILED(hr) || pIWbemLocator == NULL)
+	if (FAILED(hr) || pIWbemLocator == nullptr)
 		goto LCleanup;
 
-	bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2"); if (bstrNamespace == NULL) goto LCleanup;
-	bstrClassName = SysAllocString(L"Win32_PNPEntity");   if (bstrClassName == NULL) goto LCleanup;
-	bstrDeviceID = SysAllocString(L"DeviceID");          if (bstrDeviceID == NULL)  goto LCleanup;
+	bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2"); if (bstrNamespace == nullptr) goto LCleanup;
+	bstrClassName = SysAllocString(L"Win32_PNPEntity");   if (bstrClassName == nullptr) goto LCleanup;
+	bstrDeviceID = SysAllocString(L"DeviceID");          if (bstrDeviceID == nullptr)  goto LCleanup;
 
 	// Connect to WMI 
-	hr = pIWbemLocator->ConnectServer(bstrNamespace, NULL, NULL, 0L,
-		0L, NULL, NULL, &pIWbemServices);
-	if (FAILED(hr) || pIWbemServices == NULL)
+	hr = pIWbemLocator->ConnectServer(bstrNamespace, nullptr, nullptr, 0L,
+		0L, nullptr, nullptr, &pIWbemServices);
+	if (FAILED(hr) || pIWbemServices == nullptr)
 		goto LCleanup;
 
 	// Switch security level to IMPERSONATE. 
-	CoSetProxyBlanket(pIWbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
-		RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE);
+	CoSetProxyBlanket(pIWbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr,
+		RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE);
 
-	hr = pIWbemServices->CreateInstanceEnum(bstrClassName, 0, NULL, &pEnumDevices);
-	if (FAILED(hr) || pEnumDevices == NULL)
+	hr = pIWbemServices->CreateInstanceEnum(bstrClassName, 0, nullptr, &pEnumDevices);
+	if (FAILED(hr) || pEnumDevices == nullptr)
 		goto LCleanup;
 
 	// Loop over all devices
@@ -89,8 +88,8 @@ static BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 		for (iDevice = 0; iDevice<uReturned; iDevice++)
 		{
 			// For each device, get its device ID
-			hr = pDevices[iDevice]->Get(bstrDeviceID, 0L, &var, NULL, NULL);
-			if (SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != NULL)
+			hr = pDevices[iDevice]->Get(bstrDeviceID, 0L, &var, nullptr, nullptr);
+			if (SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != nullptr)
 			{
 				// Check if the device ID contains "IG_".  If it does, then it's an XInput device
 				// This information can not be found from DirectInput 
@@ -257,23 +256,23 @@ InputHandler_DInput::InputHandler_DInput()
 	LOG->Info( "Found %u XInput devices.", XDevices.size() );
 
 	AppInstance inst;
-	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, NULL);
+	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, nullptr);
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_KEYBOARD)" );
-	hr = g_dinput->EnumDevices( DI8DEVCLASS_KEYBOARD, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_KEYBOARD, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_JOYSTICK)" );
-	hr = g_dinput->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	// mouse
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_MOUSE)" );
-	hr = g_dinput->EnumDevices( DI8DEVCLASS_POINTER, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_POINTER, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
@@ -339,7 +338,7 @@ InputHandler_DInput::~InputHandler_DInput()
 
 	Devices.clear();
 	g_dinput->Release();
-	g_dinput = NULL;
+	g_dinput = nullptr;
 }
 
 void InputHandler_DInput::WindowReset()
@@ -936,7 +935,7 @@ void InputHandler_DInput::InputThreadMain()
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
 	vector<DIDevice*> BufferedDevices;
-	HANDLE Handle = CreateEvent( NULL, FALSE, FALSE, NULL );
+	HANDLE Handle = CreateEvent( nullptr, FALSE, FALSE, nullptr );
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( !Devices[i].buffered )
@@ -987,7 +986,7 @@ void InputHandler_DInput::InputThreadMain()
 			continue;
 
 		Devices[i].Device->Unacquire();
-		Devices[i].Device->SetEventNotification( NULL );
+		Devices[i].Device->SetEventNotification(nullptr);
 	}
 
 	CloseHandle(Handle);
@@ -1022,7 +1021,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 	unsigned short result[2]; // ToAscii writes a max of 2 chars
 	ZERO( result );
 
-	if( pToUnicodeEx != NULL )
+	if( pToUnicodeEx != nullptr )
 	{
 		int iNum = pToUnicodeEx( vk, scancode, keys, (LPWSTR)result, 2, 0, layout );
 		if( iNum == 1 )
@@ -1054,14 +1053,14 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 		return '\0';
 	}
 
-	FOREACH_CONST( DIDevice, Devices, d )
+	for (DIDevice const &d : Devices)
 	{
-		if( d->type != DIDevice::KEYBOARD )
+		if( d.type != DIDevice::KEYBOARD )
 			continue;
 
-		FOREACH_CONST( input_t, d->Inputs, i )
+		for (input_t const &i : d.Inputs)
 		{
-			if( button != i->num )
+			if( button != i.num )
 				continue;
 
 			unsigned char keys[256];
@@ -1069,7 +1068,7 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 			if( bUseCurrentKeyModifiers )
 				GetKeyboardState(keys);
 			// todo: handle Caps Lock -freem
-			wchar_t c = ScancodeAndKeysToChar( i->ofs, keys );
+			wchar_t c = ScancodeAndKeysToChar( i.ofs, keys );
 			if( c )
 				return c;
 		}

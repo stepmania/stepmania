@@ -177,9 +177,9 @@ public:
 	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid ) const;
 	float GetSecsHeld( GameButton MenuI, PlayerNumber pn ) const;
 
-	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = NULL ) const;
+	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = nullptr ) const;
 	bool IsBeingPressed( GameButton MenuI, PlayerNumber pn ) const;
-	bool IsBeingPressed(const vector<GameInput>& GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = NULL ) const;
+	bool IsBeingPressed(const vector<GameInput>& GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = nullptr ) const;
 
 	void ResetKeyRepeat( const GameInput &GameI );
 	void ResetKeyRepeat( GameButton MenuI, PlayerNumber pn );

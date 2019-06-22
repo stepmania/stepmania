@@ -5,7 +5,6 @@
 #include "PlayerNumber.h"
 #include "ThemeManager.h"
 #include "XmlFile.h"
-#include "Foreach.h"
 #include "RadarValues.h"
 
 #include <algorithm>
@@ -406,7 +405,7 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 
 void HighScoreList::RemoveAllButOneOfEachName()
 {
-	FOREACH( HighScore, vHighScores, i )
+	for (vector<HighScore>::iterator i = vHighScores.begin(); i != vHighScores.end() - 1; ++i)
 	{
 		for( vector<HighScore>::iterator j = i+1; j != vHighScores.end(); j++ )
 		{

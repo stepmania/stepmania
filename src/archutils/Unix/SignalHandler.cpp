@@ -59,7 +59,7 @@ SaveSignals::SaveSignals()
 	for( int i = 0; signals[i] != -1; ++i )
 	{
 		struct sigaction sa;
-		sigaction( signals[i], NULL, &sa );
+		sigaction( signals[i], nullptr, &sa );
 		old_handlers.push_back( sa );
 	}
 }
@@ -68,7 +68,7 @@ SaveSignals::~SaveSignals()
 {
 	/* Restore the old signal handlers. */
 	for( unsigned i = 0; i < old_handlers.size(); ++i )
-		sigaction( signals[i], &old_handlers[i], NULL );
+		sigaction( signals[i], &old_handlers[i], nullptr );
 }
 
 static void SigHandler( int signal, siginfo_t *si, void *ucp )
@@ -88,7 +88,7 @@ static void SigHandler( int signal, siginfo_t *si, void *ucp )
 		struct sigaction old;
 		sigaction( signal, &sa, &old );
 		raise( signal );
-		sigaction( signal, &old, NULL );
+		sigaction( signal, &old, nullptr );
 	}
 }
 
@@ -117,13 +117,13 @@ static void *CreateStack( int size )
 	 *
 	 * mmap entries always show up individually in /proc/#/maps.  We could use posix_memalign as
 	 * a fallback, but we'd have to put a barrier page on both sides to guarantee that. */
-	char *p = NULL;
-	p = (char *) mmap( NULL, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
+	char *p = nullptr;
+	p = (char *) mmap( nullptr, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
 
 	if( p == (void *) -1 )
-		return NULL;
+		return nullptr;
 	// if( posix_memalign( (void**) &p, PageSize, RealSize ) != 0 )
-	//	return NULL;
+	//	return nullptr;
 
 	if( find_stack_direction() < 0 )
 	{
@@ -143,7 +143,7 @@ static void *CreateStack( int size )
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
 void SignalHandler::OnClose( handler h )
 {
-	if( saved_sigs == NULL )
+	if( saved_sigs == nullptr )
 	{
 		saved_sigs = new SaveSignals;
 
@@ -158,27 +158,27 @@ void SignalHandler::OnClose( handler h )
 		/* Allocate a separate signal stack.  This makes the crash handler work
 		 * if we run out of stack space. */
 		const int AltStackSize = 1024*64;
-		void *p = NULL;
+		void *p = nullptr;
 		if( bUseAltSigStack )
 			p = CreateStack( AltStackSize );
 
-		if( p != NULL )
+		if( p != nullptr )
 		{
 			stack_t ss;
 			ss.ss_sp = (char*)p; /* cast for Darwin */
 			ss.ss_size = AltStackSize;
 			ss.ss_flags = 0;
-			if( sigaltstack( &ss, NULL ) == -1 )
+			if( sigaltstack( &ss, nullptr ) == -1 )
 			{
 				LOG->Info( "sigaltstack failed: %s", strerror(errno) );
-				p = NULL; /* no SA_ONSTACK */
+				p = nullptr; /* no SA_ONSTACK */
 			}
 		}
 		
 		struct sigaction sa;
 
 		sa.sa_flags = 0;
-		if( p != NULL )
+		if( p != nullptr )
 			sa.sa_flags |= SA_ONSTACK;
 		sa.sa_flags |= SA_NODEFER;
 		sa.sa_flags |= SA_SIGINFO;
@@ -187,11 +187,11 @@ void SignalHandler::OnClose( handler h )
 		/* Set up our signal handlers. */
 		sa.sa_sigaction = SigHandler;
 		for( int i = 0; signals[i] != -1; ++i )
-			sigaction( signals[i], &sa, NULL );
+			sigaction( signals[i], &sa, nullptr );
 
 		/* Block SIGPIPE, so we get EPIPE. */
 		sa.sa_handler = SIG_IGN;
-		sigaction( SIGPIPE, &sa, NULL );
+		sigaction( SIGPIPE, &sa, nullptr );
 	}
 	handlers.push_back(h);
 }

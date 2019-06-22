@@ -75,7 +75,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
-		m_pText[i] = NULL;
+		m_pText[i] = nullptr;
 
 		// Don't init text for Type_Song. It uses a TextBanner.
 		if( i == MusicWheelItemType_Song )
@@ -145,9 +145,9 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
-		if( cpy.m_pText[i] == NULL )
+		if( cpy.m_pText[i] == nullptr )
 		{
-			m_pText[i] = NULL;
+			m_pText[i] = nullptr;
 		}
 		else
 		{
@@ -308,13 +308,13 @@ void MusicWheelItem::RefreshGrades()
 	if(!IsLoaded()) { return; }
 	const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
 
-	if( pWID == NULL )
+	if( pWID == nullptr )
 		return; // LoadFromWheelItemData() hasn't been called yet.
 	FOREACH_HumanPlayer( p )
 	{
 		m_pGradeDisplay[p]->SetVisible( false );
 
-		if( pWID->m_pSong == NULL && pWID->m_pCourse == NULL )
+		if( pWID->m_pSong == nullptr && pWID->m_pCourse == nullptr )
 			continue;
 
 		Difficulty dc;
@@ -346,19 +346,19 @@ void MusicWheelItem::RefreshGrades()
 
 		Profile *pProfile = PROFILEMAN->GetProfile(ps);
 
-		HighScoreList *pHSL = NULL;
+		HighScoreList *pHSL = nullptr;
 		if( PROFILEMAN->IsPersistentProfile(ps) && dc != Difficulty_Invalid )
 		{
 			if( pWID->m_pSong )
 			{
 				const Steps* pSteps = SongUtil::GetStepsByDifficulty( pWID->m_pSong, st, dc );
-				if( pSteps != NULL )
+				if( pSteps != nullptr )
 					pHSL = &pProfile->GetStepsHighScoreList(pWID->m_pSong, pSteps);
 			}
 			else if( pWID->m_pCourse )
 			{
 				const Trail *pTrail = pWID->m_pCourse->GetTrail( st, dc );
-				if( pTrail != NULL )
+				if( pTrail != nullptr )
 					pHSL = &pProfile->GetCourseHighScoreList( pWID->m_pCourse, pTrail );
 			}
 		}

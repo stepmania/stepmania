@@ -231,7 +231,6 @@ list(APPEND SM_DATA_REST_HPP
             "Difficulty.h"
             "EnumHelper.h"
             "FileDownload.h"
-            "Foreach.h"
             "Game.h"
             "GameCommand.h"
             "GameConstantsAndTypes.h"

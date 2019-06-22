@@ -109,8 +109,8 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 {
 	FixLilEndian();
 
-	m_fctx = NULL;
-	m_pStream = NULL;
+	m_fctx = nullptr;
+	m_pStream = nullptr;
 	m_iCurrentPacketOffset = -1;
 	m_Frame = avcodec::av_frame_alloc();
 
@@ -127,21 +127,21 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 	if (m_swsctx)
 	{
 		avcodec::sws_freeContext(m_swsctx);
-		m_swsctx = NULL;
+		m_swsctx = nullptr;
 	}
-    if (m_avioContext != NULL )
+    if (m_avioContext != nullptr )
     {
         RageFile *file = (RageFile *)m_avioContext->opaque;
         file->Close();
         delete file;
         avcodec::av_free(m_avioContext);
     }
-    if ( m_buffer != NULL )
+    if ( m_buffer != nullptr )
     {
         avcodec::av_free(m_buffer);
     }
 #if LIBAVCODEC_VERSION_MAJOR >= 58
-	if ( m_pStreamCodec != NULL)
+	if ( m_pStreamCodec != nullptr)
 	{
 		avcodec::avcodec_free_context(&m_pStreamCodec);
 	}
@@ -156,9 +156,9 @@ void MovieDecoder_FFMpeg::Init()
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
 	m_fLastFrame = 0;
-	m_swsctx = NULL;
-	m_avioContext = NULL;
-	m_buffer = NULL;
+	m_swsctx = nullptr;
+	m_avioContext = nullptr;
+	m_buffer = nullptr;
 
 	if( m_iCurrentPacketOffset != -1 )
 	{
@@ -277,7 +277,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 		int len;
 		/* Hack: we need to send size = 0 to flush frames at the end, but we have
 		 * to give it a buffer to read from since it tries to read anyway. */
-		m_Packet.data = m_Packet.size ? m_Packet.data : NULL;
+		m_Packet.data = m_Packet.size ? m_Packet.data : nullptr;
 #if LIBAVCODEC_VERSION_MAJOR < 58
 		len = avcodec::avcodec_decode_video2(
 				m_pStreamCodec,
@@ -360,13 +360,13 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 	 * XXX 2: The problem of doing this in Open() is that m_AVTexfmt is not
 	 * already initialized with its correct value.
 	 */
-	if( m_swsctx == NULL )
+	if( m_swsctx == nullptr )
 	{
 		m_swsctx = avcodec::sws_getCachedContext( m_swsctx,
 				GetWidth(), GetHeight(), m_pStreamCodec->pix_fmt,
 				GetWidth(), GetHeight(), m_AVTexfmt,
-				sws_flags, NULL, NULL, NULL );
-		if( m_swsctx == NULL )
+				sws_flags, nullptr, nullptr, nullptr );
+		if( m_swsctx == nullptr )
 		{
 			LOG->Warn("Cannot initialize sws conversion context for (%d,%d) %d->%d", GetWidth(), GetHeight(), m_pStreamCodec->pix_fmt, m_AVTexfmt);
 			return;
@@ -449,24 +449,24 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	}
 
 	m_buffer = (unsigned char *)avcodec::av_malloc(STEPMANIA_FFMPEG_BUFFER_SIZE);
-	m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, NULL, AVIORageFile_Seek);
+	m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, nullptr, AVIORageFile_Seek);
 	m_fctx->pb = m_avioContext;
-	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), NULL, NULL );
+	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), nullptr, nullptr );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
-	ret = avcodec::avformat_find_stream_info( m_fctx, NULL );
+	ret = avcodec::avformat_find_stream_info( m_fctx, nullptr );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
-	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0 );
+	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0 );
 	if ( stream_idx < 0 ||
 		static_cast<unsigned int>(stream_idx) >= m_fctx->nb_streams ||
-		m_fctx->streams[stream_idx] == NULL )
+		m_fctx->streams[stream_idx] == nullptr )
 		return "Couldn't find any video streams";
 	m_pStream = m_fctx->streams[stream_idx];
 #if LIBAVCODEC_VERSION_MAJOR >= 58
-	m_pStreamCodec = avcodec::avcodec_alloc_context3(NULL);
+	m_pStreamCodec = avcodec::avcodec_alloc_context3(nullptr);
 	if (avcodec::avcodec_parameters_to_context(m_pStreamCodec, m_pStream->codecpar) < 0)
 		return ssprintf("Could not get context from parameters");
 #else
@@ -490,12 +490,12 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 {
 	Init();
 
-	ASSERT( m_pStream != NULL );
+	ASSERT( m_pStream != nullptr );
 	if( m_pStreamCodec->codec )
 		avcodec::avcodec_close( m_pStreamCodec );
 
 	avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStreamCodec->codec_id );
-	if( pCodec == NULL )
+	if( pCodec == nullptr )
 		return ssprintf( "Couldn't find decoder %i", m_pStreamCodec->codec_id );
 
 	m_pStreamCodec->workaround_bugs   = 1;
@@ -509,10 +509,10 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 
 	LOG->Trace("Opening codec %s", pCodec->name );
 
-	int ret = avcodec::avcodec_open2( m_pStreamCodec, pCodec, NULL );
+	int ret = avcodec::avcodec_open2( m_pStreamCodec, pCodec, nullptr );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
-	ASSERT( m_pStreamCodec->codec != NULL );
+	ASSERT( m_pStreamCodec->codec != nullptr );
 
 	return RString();
 }
@@ -522,13 +522,13 @@ void MovieDecoder_FFMpeg::Close()
 	if( m_pStream && m_pStreamCodec->codec )
 	{
 		avcodec::avcodec_close( m_pStreamCodec );
-		m_pStream = NULL;
+		m_pStream = nullptr;
 	}
 
 	if( m_fctx )
 	{
 		avcodec::avformat_close_input( &m_fctx );
-		m_fctx = NULL;
+		m_fctx = nullptr;
 	}
 
 	Init();

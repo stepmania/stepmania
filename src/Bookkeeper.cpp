@@ -12,7 +12,7 @@
 #include "SpecialFiles.h"
 #include <ctime>
 
-Bookkeeper*	BOOKKEEPER = NULL;	// global and accessible from anywhere in our program
+Bookkeeper*	BOOKKEEPER = nullptr;	// global and accessible from anywhere in our program
 
 static const RString COINS_DAT = "Save/Coins.xml";
 
@@ -67,7 +67,7 @@ void Bookkeeper::LoadFromNode( const XNode *pNode )
 	}
 
 	const XNode *pData = pNode->GetChild( "Data" );
-	if( pData == NULL )
+	if( pData == nullptr )
 	{
 		LOG->Warn( "Error loading bookkeeping: Data node missing" );
 		return;
@@ -146,14 +146,14 @@ void Bookkeeper::WriteToDisk()
 		return;
 	}
 
-	auto_ptr<XNode> xml( CreateNode() );
+	std::unique_ptr<XNode> xml( CreateNode() );
 	XmlFileUtil::SaveToFile( xml.get(), f );
 }
 
 void Bookkeeper::CoinInserted()
 {
  	Date d;
-	d.Set( time(NULL) );
+	d.Set( time(nullptr) );
 
 	++m_mapCoinsForHour[d];
 }
@@ -199,7 +199,7 @@ int Bookkeeper::GetCoinsTotal() const
 
 void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] ) const
 {
-	time_t lOldTime = time(NULL);
+	time_t lOldTime = time(nullptr);
 	tm time;
 	localtime_r( &lOldTime, &time );
 
@@ -215,7 +215,7 @@ void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] ) const
 
 void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] ) const
 {
-	time_t lOldTime = time(NULL);
+	time_t lOldTime = time(nullptr);
 	tm time;
 	localtime_r( &lOldTime, &time );
 

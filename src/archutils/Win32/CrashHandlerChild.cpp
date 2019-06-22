@@ -41,8 +41,8 @@ namespace VDDebugInfo
 {
 	struct Context
 	{
-		Context() { pRVAHeap=NULL; }
-		bool Loaded() const { return pRVAHeap != NULL; }
+		Context() { pRVAHeap=nullptr; }
+		bool Loaded() const { return pRVAHeap != nullptr; }
 		RString sRawBlock;
 
 		int nBuildNumber;
@@ -59,7 +59,7 @@ namespace VDDebugInfo
 
 	static void GetVDIPath( char *buf, int bufsiz )
 	{
-		GetModuleFileName( NULL, buf, bufsiz );
+		GetModuleFileName( nullptr, buf, bufsiz );
 		buf[bufsiz-5] = 0;
 		char *p = strrchr( buf, '.' );
 		if( p )
@@ -86,7 +86,7 @@ namespace VDDebugInfo
 
 		const unsigned char *src = (const unsigned char *) pctx->sRawBlock.data();
 
-		pctx->pRVAHeap = NULL;
+		pctx->pRVAHeap = nullptr;
 
 		static const char *header = "symbolic debug information";
 		if( memcmp(src, header, strlen(header)) )
@@ -121,11 +121,11 @@ namespace VDDebugInfo
 			return true;
 
 		pctx->sRawBlock = RString();
-		pctx->pRVAHeap = NULL;
+		pctx->pRVAHeap = nullptr;
 		GetVDIPath( pctx->sFilename, ARRAYLEN(pctx->sFilename) );
 		pctx->sError = RString();
 
-		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
+		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
 		if( h == INVALID_HANDLE_VALUE )
 		{
 			pctx->sError = werr_ssprintf( GetLastError(), "CreateFile failed" );
@@ -133,7 +133,7 @@ namespace VDDebugInfo
 		}
 
 		do {
-			DWORD dwFileSize = GetFileSize( h, NULL );
+			DWORD dwFileSize = GetFileSize( h, nullptr );
 			if( dwFileSize == INVALID_FILE_SIZE )
 				break;
 
@@ -141,7 +141,7 @@ namespace VDDebugInfo
 			std::fill(buffer, buffer + dwFileSize + 1, '\0' );
 
 			DWORD dwActual;
-			int iRet = ReadFile(h, buffer, dwFileSize, &dwActual, NULL);
+			int iRet = ReadFile(h, buffer, dwFileSize, &dwActual, nullptr);
 			CloseHandle(h);
 			pctx->sRawBlock = buffer;
 			delete[] buffer;
@@ -268,7 +268,7 @@ namespace SymbolLookup
 		{
 			SymSetOptions( SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS );
 
-			if( !SymInitialize(g_hParent, NULL, TRUE) )
+			if( !SymInitialize(g_hParent, nullptr, TRUE) )
 				return false;
 
 			bInitted = true;
@@ -288,7 +288,7 @@ namespace SymbolLookup
 		pSymbol->MaxNameLen = sizeof(buffer) - sizeof(SYMBOL_INFO) + 1;
 
 		if( !SymFromAddr(g_hParent, ptr, &disp, pSymbol) )
-			return NULL;
+			return nullptr;
 
 		return pSymbol;
 	}
@@ -394,7 +394,7 @@ namespace
 RString SpliceProgramPath( RString fn )
 {
 	char szBuf[MAX_PATH];
-	GetModuleFileName( NULL, szBuf, sizeof(szBuf) );
+	GetModuleFileName( nullptr, szBuf, sizeof(szBuf) );
 
 	char szModName[MAX_PATH];
 	char *pszFile;
@@ -491,7 +491,7 @@ static void DoSave( const RString &sReport )
 
 	SetFileAttributes( sName, FILE_ATTRIBUTE_NORMAL );
 	FILE *pFile = fopen( sName, "w+" );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		return;
 	fprintf( pFile, "%s", sReport.c_str() );
 
@@ -659,7 +659,7 @@ CrashDialog::CrashDialog( const RString &sCrashReport, const CompleteCrashData &
 	m_CrashData( CrashData )
 {
 	LoadLocalizedStrings();
-	m_pPost = NULL;
+	m_pPost = nullptr;
 }
 
 CrashDialog::~CrashDialog()
@@ -692,7 +692,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		{
 			HDC hdc = (HDC)wParam;
 			HWND hwndStatic = (HWND)lParam;
-			HBRUSH hbr = NULL;
+			HBRUSH hbr = nullptr;
 
 			// TODO: Change any attributes of the DC here
 			switch( GetDlgCtrlID(hwndStatic) )
@@ -713,7 +713,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		switch(LOWORD(wParam))
 		{
 		case IDC_BUTTON_CLOSE:
-			if( m_pPost != NULL )
+			if( m_pPost != nullptr )
 			{
 				// Cancel reporting, and revert the dialog as if "report" had not been pressed.
 				m_pPost->Cancel();
@@ -734,7 +734,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			{
 				RString sLogPath;
 				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini"), "r" );
-				if(pFile != NULL)
+				if(pFile != nullptr)
 				{
 					sLogPath = SpliceProgramPath("../Logs/log.txt");
 					fclose( pFile );
@@ -742,11 +742,11 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				else
 					sLogPath = SpecialDirs::GetAppDataDir() + PRODUCT_ID +"/Logs/log.txt";
 
-				ShellExecute( NULL, "open", sLogPath, "", "", SW_SHOWNORMAL );
+				ShellExecute( nullptr, "open", sLogPath, "", "", SW_SHOWNORMAL );
 			}
 			break;
 		case IDC_CRASH_SAVE:
-			ShellExecute( NULL, "open", SpliceProgramPath("../crashinfo.txt"), "", "", SW_SHOWNORMAL );
+			ShellExecute( nullptr, "open", SpliceProgramPath("../crashinfo.txt"), "", "", SW_SHOWNORMAL );
 			return TRUE;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();
@@ -781,13 +781,13 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 			m_pPost->Start( CRASH_REPORT_HOST, CRASH_REPORT_PORT, CRASH_REPORT_PATH );
 
-			SetTimer( hDlg, 0, 100, NULL );
+			SetTimer( hDlg, 0, 100, nullptr );
 			break;
 		}
 		break;
 	case WM_TIMER:
 		{
-			if( m_pPost == NULL )
+			if( m_pPost == nullptr )
 				break;
 
 			float fProgress = m_pPost->GetProgress();
@@ -875,7 +875,7 @@ void ChildProcess()
 
 	// Now that we've done that, the process is gone. Don't use g_hParent.
 	CloseHandle( SymbolLookup::g_hParent );
-	SymbolLookup::g_hParent = NULL;
+	SymbolLookup::g_hParent = nullptr;
 
 	CrashDialog cd( sCrashReport, Data );
 #if defined(AUTOMATED_CRASH_REPORTS)

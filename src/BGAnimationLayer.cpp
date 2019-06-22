@@ -402,16 +402,16 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		{
 			m_Type = TYPE_TILES;
 		}
-		else if( StringToInt(type) == 1 )
+		else if( std::stoi(type) == 1 )
 		{
 			m_Type = TYPE_SPRITE; 
 			bStretch = true; 
 		}
-		else if( StringToInt(type) == 2 )
+		else if( std::stoi(type) == 2 )
 		{
 			m_Type = TYPE_PARTICLES; 
 		}
-		else if( StringToInt(type) == 3 )
+		else if( std::stoi(type) == 3 )
 		{
 			m_Type = TYPE_TILES; 
 		}
@@ -482,7 +482,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 			for( int i=0; i<iNumParticles; i++ )
 			{
 				Actor* pActor = ActorUtil::MakeActor( sFile, this );
-				if( pActor == NULL )
+				if( pActor == nullptr )
 					continue;
 				this->AddChild( pActor );
 				pActor->SetXY( randomf(float(FullScreenRectF.left),float(FullScreenRectF.right)),
@@ -520,7 +520,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
 				Actor* pSprite = ActorUtil::MakeActor( sFile, this );
-				if( pSprite == NULL )
+				if( pSprite == nullptr )
 					continue;
 				this->AddChild( pSprite );
 				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"

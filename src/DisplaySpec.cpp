@@ -37,7 +37,7 @@ public:
 	}
 	static int GetCurrentMode( T *p, lua_State *L )
 	{
-		if (p->currentMode() != NULL) {
+		if (p->currentMode() != nullptr) {
 			DisplayMode *m = const_cast<DisplayMode *>( p->currentMode() );
 			m->PushSelf( L );
 		} else {
@@ -65,7 +65,7 @@ namespace
 	DisplaySpecs *check_DisplaySpecs(lua_State *L)
 	{
 		void *ud = luaL_checkudata( L, 1, DISPLAYSPECS );
-		luaL_argcheck( L, ud != NULL, 1, "`DisplaySpecs` expected" );
+		luaL_argcheck( L, ud != nullptr, 1, "`DisplaySpecs` expected" );
 		return static_cast<DisplaySpecs *>(ud);
 	}
 
@@ -126,7 +126,7 @@ namespace
 		{"__index",    DisplaySpecs_get},
 		{"__len",      DisplaySpecs_len},
 		{"__tostring", DisplaySpecs_tostring},
-		{NULL, NULL}
+		{nullptr, nullptr}
 	};
 
 

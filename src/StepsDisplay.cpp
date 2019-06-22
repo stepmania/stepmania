@@ -150,25 +150,25 @@ void StepsDisplay::SetFromGameState( PlayerNumber pn )
 
 void StepsDisplay::SetFromSteps( const Steps* pSteps )
 {
-	if( pSteps == NULL )
+	if( pSteps == nullptr )
 	{
 		Unset();
 		return;
 	}
 
-	SetParams params = { pSteps, NULL, pSteps->GetMeter(), pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid };
+	SetParams params = { pSteps, nullptr, pSteps->GetMeter(), pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid };
 	SetInternal( params );
 }
 
 void StepsDisplay::SetFromTrail( const Trail* pTrail )
 {
-	if( pTrail == NULL )
+	if( pTrail == nullptr )
 	{
 		Unset();
 		return;
 	}
 
-	SetParams params = { NULL, pTrail, pTrail->GetMeter(), pTrail->m_StepsType, pTrail->m_CourseDifficulty, pTrail->m_CourseType };
+	SetParams params = { nullptr, pTrail, pTrail->GetMeter(), pTrail->m_StepsType, pTrail->m_CourseDifficulty, pTrail->m_CourseType };
 	SetInternal( params );
 }
 
@@ -179,7 +179,7 @@ void StepsDisplay::Unset()
 
 void StepsDisplay::SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType st, int iMeter, Difficulty dc, CourseType ct )
 {
-	SetParams params = { NULL, NULL, iMeter, st, dc, ct };
+	SetParams params = { nullptr, nullptr, iMeter, st, dc, ct };
 	SetInternal( params );
 }
 
@@ -288,12 +288,12 @@ void StepsDisplay::SetInternal( const SetParams &params )
 class LunaStepsDisplay: public Luna<StepsDisplay>
 {
 public:
-	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), NULL ); COMMON_RETURN_SELF; }
+	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), nullptr ); COMMON_RETURN_SELF; }
 	static int SetFromSteps( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) )
 		{
-			p->SetFromSteps( NULL );
+			p->SetFromSteps(nullptr);
 		}
 		else
 		{
@@ -306,7 +306,7 @@ public:
 	{ 
 		if( lua_isnil(L,1) )
 		{
-			p->SetFromTrail( NULL );
+			p->SetFromTrail(nullptr);
 		}
 		else
 		{

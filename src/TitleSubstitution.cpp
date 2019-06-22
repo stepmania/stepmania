@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "FontCharAliases.h"
 #include "RageFile.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
@@ -75,10 +74,8 @@ void TitleSubst::AddTrans(const TitleTrans &tr)
 
 void TitleSubst::Subst( TitleFields &tf )
 {
-	FOREACH_CONST( TitleTrans*, ttab, iter )
+	for (TitleTrans *tt : ttab)
 	{
-		TitleTrans* tt = *iter;
-
 		TitleFields to;
 		if( !tt->Matches(tf,to) )
 			continue;
@@ -146,7 +143,7 @@ void TitleSubst::Load(const RString &filename, const RString &section)
 	}
 
 	XNode *pGroup = xml.GetChild( section );
-	if( pGroup == NULL )
+	if( pGroup == nullptr )
 		return;
 	FOREACH_CONST_Child( pGroup, child )
 	{

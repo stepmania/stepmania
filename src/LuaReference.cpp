@@ -112,7 +112,7 @@ int LuaReference::GetLuaType() const
 
 void LuaReference::Unregister()
 {
-	if( LUA == NULL || m_iReference == LUA_NOREF )
+	if( LUA == nullptr || m_iReference == LUA_NOREF )
 		return; // nothing to do
 
 	Lua *L = LUA->Get();
@@ -148,7 +148,7 @@ RString LuaReference::Serialize() const
 
 	/* The return value is a string, which we store in m_sSerializedData. */
 	const char *pString = lua_tostring( L, -1 );
-	ASSERT_M( pString != NULL, "Serialize() didn't return a string" );
+	ASSERT_M( pString != nullptr, "Serialize() didn't return a string" );
 
 	RString sRet = pString;
 	lua_pop( L, 1 );

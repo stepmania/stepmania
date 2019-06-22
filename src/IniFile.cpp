@@ -9,7 +9,7 @@ http://en.wikipedia.org/wiki/INI_file
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
-#include "Foreach.h"
+
 
 IniFile::IniFile(): XNode("IniFile")
 {
@@ -35,7 +35,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 {
 	RString keyname;
 	// keychild is used to cache the node that values are being added to. -Kyz
-	XNode* keychild= NULL;
+	XNode* keychild= nullptr;
 	for(;;)
 	{
 		RString line;
@@ -82,7 +82,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 					// New section.
 					keyname = line.substr(1, line.size()-2);
 					keychild= GetChild(keyname);
-					if(keychild == NULL)
+					if(keychild == nullptr)
 					{
 						keychild= AppendChild(keyname);
 					}
@@ -90,7 +90,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 				}
 			default:
 			keyvalue:
-				if(keychild == NULL)
+				if(keychild == nullptr)
 				{ break; }
 				// New value.
 				size_t iEqualIndex = line.find("=");
@@ -164,7 +164,7 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 {
 	XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 	return pNode->RemoveAttr( valuename );
 }
@@ -173,7 +173,7 @@ bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 bool IniFile::DeleteKey(const RString &keyname)
 {
 	XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 	return RemoveChild( pNode );
 }
@@ -181,11 +181,11 @@ bool IniFile::DeleteKey(const RString &keyname)
 bool IniFile::RenameKey(const RString &from, const RString &to)
 {
 	// If to already exists, do nothing.
-	if( GetChild(to) != NULL )
+	if( GetChild(to) != nullptr )
 		return false;
 
 	XNode* pNode = GetChild( from );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 
 	pNode->SetName( to );

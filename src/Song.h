@@ -416,6 +416,7 @@ public:
 	bool SongCompleteForStyle( const Style *st ) const;
 	bool HasStepsType( StepsType st ) const;
 	bool HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const;
+	// TODO: Allow for a non const version.
 	const vector<Steps*>& GetAllSteps() const { return m_vpSteps; }
 	const vector<Steps*>& GetStepsByStepsType( StepsType st ) const { return m_vpStepsByType[st]; }
 	bool IsEasy( StepsType st ) const;
@@ -439,7 +440,7 @@ public:
 	void AddSteps( Steps* pSteps );
 	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
-	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const set<Steps*> *setInUse = NULL );
+	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const set<Steps*> *setInUse = nullptr );
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_Invalid; }
 	void GetStepsLoadedFromProfile( ProfileSlot slot, vector<Steps*> &vpStepsOut ) const;
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
@@ -471,7 +472,7 @@ private:
 	/** @brief the Steps that belong to this Song. */
 	vector<Steps*> m_vpSteps;
 	/** @brief the Steps of a particular StepsType that belong to this Song. */
-	vector<Steps*> m_vpStepsByType[NUM_StepsType];
+	std::array<vector<Steps *>, NUM_StepsType> m_vpStepsByType;
 	/** @brief the Steps that are of unrecognized Styles. */
 	vector<Steps*> m_UnknownStyleSteps;
 };

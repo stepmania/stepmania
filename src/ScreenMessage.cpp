@@ -1,7 +1,7 @@
 #include "global.h"
 #include "ScreenMessage.h"
 #include "RageLog.h"
-#include "Foreach.h"
+
 #include <map>
 
 const ScreenMessage SM_Invalid = "";
@@ -21,7 +21,7 @@ static map<RString, ScreenMessage> *m_pScreenMessages;
 
 ScreenMessage ScreenMessageHelpers::ToScreenMessage( const RString &sName )
 {
-	if( m_pScreenMessages == NULL )
+	if( m_pScreenMessages == nullptr )
 		m_pScreenMessages = new map<RString, ScreenMessage>;
 
 	if( m_pScreenMessages->find( sName ) == m_pScreenMessages->end() )
@@ -32,9 +32,9 @@ ScreenMessage ScreenMessageHelpers::ToScreenMessage( const RString &sName )
 
 RString	ScreenMessageHelpers::ScreenMessageToString( ScreenMessage SM )
 {
-	FOREACHM( RString, ScreenMessage, *m_pScreenMessages, it )
-		if( SM == it->second )
-			return (*it).first;
+	for (auto const & it : *m_pScreenMessages)
+		if( SM == it.second )
+			return it.first;
 
 	return RString();
 }

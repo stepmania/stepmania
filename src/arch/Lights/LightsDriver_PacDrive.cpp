@@ -8,24 +8,24 @@
 
 REGISTER_LIGHTS_DRIVER_CLASS(PacDrive);
 
-HINSTANCE PachDLL = NULL;
+HINSTANCE PachDLL = nullptr;
 
 bool PacDriveConnected = false;
 typedef int (WINAPI PacInitialize)(void);
-PacInitialize* m_pacinit = NULL;
+PacInitialize* m_pacinit = nullptr;
 typedef void (WINAPI PacShutdown)(void);
-PacShutdown* m_pacdone = NULL;
+PacShutdown* m_pacdone = nullptr;
 typedef bool (WINAPI PacSetLEDStates)(int, short int);
-PacSetLEDStates* m_pacset = NULL;
+PacSetLEDStates* m_pacset = nullptr;
 
 
 LightsDriver_PacDrive::LightsDriver_PacDrive()
 {
 	// init io.dll
 	PachDLL = LoadLibrary("pacdrive32.dll");
-	if(PachDLL == NULL)
+	if(PachDLL == nullptr)
 	{
-		MessageBox(NULL, "Could not LoadLibrary( pacdrive32.dll ).", "ERROR", MB_OK );
+		MessageBox(nullptr, "Could not LoadLibrary( pacdrive32.dll ).", "ERROR", MB_OK );
 		return;
 	}
 
@@ -39,7 +39,7 @@ LightsDriver_PacDrive::LightsDriver_PacDrive()
 	if( NumPacDrives == 0 )
 	{
 		PacDriveConnected = false; // set not connected 
-		MessageBox(NULL, "Could not find connected PacDrive.", "ERROR", MB_OK);
+		MessageBox(nullptr, "Could not find connected PacDrive.", "ERROR", MB_OK);
 		return;
 	}
 	else 

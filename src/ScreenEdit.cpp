@@ -7,7 +7,6 @@
 #include "ArrowEffects.h"
 #include "BackgroundUtil.h"
 #include "CommonMetrics.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "GamePreferences.h"
 #include "GameSoundManager.h"
@@ -535,7 +534,7 @@ void ScreenEdit::InitEditMappings()
 
 void ScreenEdit::LoadKeymapSectionIntoMappingsMember(XNode const* section, MapEditToDI& mappings)
 {
-	if(section == NULL) {return;} // Not an error, sections are optional. -Kyz
+	if(section == nullptr) {return;} // Not an error, sections are optional. -Kyz
 	FOREACH_CONST_Attr(section, attr)
 	{
 		map<RString, EditButton>::iterator name_entry=
@@ -783,49 +782,49 @@ static MenuDef g_MainMenu(
 	"ScreenMiniMenuMainMenu",
 	MenuRowDef(ScreenEdit::play_whole_song,
 		"Play whole song",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::play_current_beat_to_end,
 		"Play current beat to end",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::save,
 		"Save",
-		true, EditMode_Home, true, true, 0, NULL ),
+		true, EditMode_Home, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::play_selection,
 		"Play selection",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::set_selection_start,
 		"Set selection start",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::set_selection_end,
 		"Set selection end",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::revert_to_last_save,
 		"Revert to last save",
-		true, EditMode_Home, true, true, 0, NULL ),
+		true, EditMode_Home, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::revert_from_disk,
 		"Revert from disk",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::options,
 		"Editor options",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::edit_song_info,
 		"Edit song info",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::edit_steps_information,	
 		"Edit steps information",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::edit_timing_data,
 		"Edit Timing Data",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::view_steps_data,
 		"View steps data",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::play_preview_music,
 		"Play preview music",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::exit,
 		"Exit Edit Mode",
-		true, EditMode_Practice, true, true, 0, NULL )
+		true, EditMode_Practice, true, true, 0, nullptr )
 );
 
 static MenuDef g_AlterMenu(
@@ -833,12 +832,12 @@ static MenuDef g_AlterMenu(
 	MenuRowDef(ScreenEdit::cut,
 		"Cut",
 		true, 
-		EditMode_Practice, true, true, 0, NULL ),
+		EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::copy,
 		"Copy",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::clear,			"Clear area",				true, 
-	      EditMode_Practice, true, true, 0, NULL ),
+	      EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::quantize,			"Quantize",				true, 
 	      EditMode_Practice, true, true, 0, 
 	      "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
@@ -858,57 +857,57 @@ static MenuDef g_AlterMenu(
 	MenuRowDef(ScreenEdit::play,
 		"Play selection",
 		true,
-		EditMode_Practice, true, true, 0, NULL ),
+		EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::record,
 		"Record in selection",
 		true, 
-		EditMode_Practice, true, true, 0, NULL ),
+		EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::preview_designation,
 		"Designate as Music Preview",
 		true,
-		EditMode_Full, true, true, 0, NULL ),
+		EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::convert_to_pause,
 		"Convert selection to pause",
 		true, 
-		EditMode_Full, true, true, 0, NULL ),
+		EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::convert_to_delay,
 		"Convert selection to delay",	
 		true, 
-		EditMode_Full, true, true, 0, NULL ),
+		EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::convert_to_warp,	
 		"Convert selection to warp",
 		true, 
-		EditMode_Full, true, true, 0, NULL ),
+		EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::convert_to_fake,
 		"Convert selection to fake",
 		true, 
-		EditMode_Full, true, true, 0, NULL ),
+		EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::convert_to_attack,
 		"Convert selection to attack",
 		true,
-		EditMode_Full, true, true, 0, NULL),
+		EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::routine_invert_notes,
 		"Invert notes' player",
 		true,
-		EditMode_Full, true, true, 0, NULL ),
+		EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::routine_mirror_1_to_2,
 		"Mirror Player 1 to 2",
 		true,
-		EditMode_Full, true, true, 0, NULL ),
+		EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::routine_mirror_2_to_1,
 		"Mirror Player 2 to 1",	
 		true,
-		EditMode_Full, true, true, 0, NULL )
+		EditMode_Full, true, true, 0, nullptr )
 );
 
 static MenuDef g_AreaMenu(
 	"ScreenMiniMenuAreaMenu",
 	MenuRowDef(ScreenEdit::paste_at_current_beat,
 		"Paste at current beat",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::paste_at_begin_marker,
 		"Paste at begin marker",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
     MenuRowDef(ScreenEdit::insert_and_shift,
 		"Insert beat and shift down",
 		true, EditMode_Practice, true, true, RCC_CHOICES ),
@@ -924,27 +923,27 @@ static MenuDef g_AreaMenu(
 	MenuRowDef(ScreenEdit::convert_pause_to_beat,
 		"Convert pause to beats",
 		true, 
-		EditMode_Full, true, true, 0, NULL ),
+		EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::convert_delay_to_beat,
 		"Convert delay to beats",
 		true,
-		EditMode_Full, true, true, 0, NULL ),
+		EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::last_second_at_beat,
 		"Designate last second at current beat",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::undo,
 		"Undo",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::clear_clipboard,
 		"Clear clipboard",
 		true,
-		EditMode_Practice, true, true, 0, NULL ),
+		EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::modify_attacks_at_row,
 		"Modify Attacks at current beat",
-		true, EditMode_CourseMods, true, true, 0, NULL),
+		true, EditMode_CourseMods, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::modify_keysounds_at_row,
 		"Modify Keysounds at current beat",
-		true, EditMode_Full, true, true, 0, NULL)
+		true, EditMode_Full, true, true, 0, nullptr)
 			  
 );
 
@@ -952,155 +951,155 @@ static MenuDef g_StepsInformation(
 	"ScreenMiniMenuStepsInformation",
 	MenuRowDef(ScreenEdit::difficulty,
 		"Difficulty",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::meter,
 		"Meter",
-		true, EditMode_Practice, true, false, 0, NULL ),
+		true, EditMode_Practice, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::predict_meter,
 		"Predicted Meter",
-		false, EditMode_Full, true, true, 0, NULL ),
+		false, EditMode_Full, true, true, 0, nullptr ),
     MenuRowDef(ScreenEdit::chartname,
 		"Chart Name",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::description,
 		"Description",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::chartstyle,
 		"Chart Style",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::step_credit,	
 		"Step Author",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
     MenuRowDef(ScreenEdit::step_display_bpm,
 		"Display BPM",
 		true, EditMode_Full, true, true, 0, "Actual", "Specified", "Random" ),
     MenuRowDef(ScreenEdit::step_min_bpm,
 		"Min BPM",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
     MenuRowDef(ScreenEdit::step_max_bpm,
 		"Max BPM",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::step_music,
-		"Music File", true, EditMode_Full,true, true, 0, NULL)
+		"Music File", true, EditMode_Full,true, true, 0, nullptr)
 );
 
 static MenuDef g_StepsData(
 	"ScreenMiniMenuStepsData",
-	MenuRowDef( ScreenEdit::tap_notes,	"Tap Steps",	false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::jumps,		"Jumps",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::hands,		"Hands",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::quads,		"Quads",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::holds,		"Holds",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::mines,		"Mines",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef(ScreenEdit::rolls,		"Rolls",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef(ScreenEdit::lifts,		"Lifts",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef(ScreenEdit::fakes,		"Fakes",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::stream,		"Stream",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::voltage,	"Voltage",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::air,		"Air",			false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::freeze,		"Freeze",		false, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::chaos,		"Chaos",		false, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::tap_notes,	"Tap Steps",	false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::jumps,		"Jumps",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::hands,		"Hands",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::quads,		"Quads",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::holds,		"Holds",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::mines,		"Mines",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef(ScreenEdit::rolls,		"Rolls",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef(ScreenEdit::lifts,		"Lifts",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef(ScreenEdit::fakes,		"Fakes",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::stream,		"Stream",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::voltage,	"Voltage",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::air,		"Air",			false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::freeze,		"Freeze",		false, EditMode_Full, true, true, 0, nullptr ),
+	MenuRowDef( ScreenEdit::chaos,		"Chaos",		false, EditMode_Full, true, true, 0, nullptr )
 );
 
 static MenuDef g_SongInformation(
 	"ScreenMiniMenuSongInformation",
 	MenuRowDef(ScreenEdit::main_title,
 		"Main title",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::sub_title,
 		"Sub title",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::artist,
 		"Artist",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::genre,
 		"Genre",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::credit,
 		"Credit",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::preview,
 		"Preview",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::main_title_transliteration,	
 		"Main title transliteration",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::sub_title_transliteration,
 		"Sub title transliteration",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::artist_transliteration,
 		"Artist transliteration",
-		true, EditMode_Practice, true, true, 0, NULL ),
+		true, EditMode_Practice, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::last_second_hint,
 		"Last second hint",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::preview_start,
 		"Preview Start",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::preview_length,
 		"Preview Length",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::display_bpm,
 		"Display BPM",
 		true, EditMode_Full, true, true, 0, "Actual", "Specified", "Random" ),
 	MenuRowDef(ScreenEdit::min_bpm,
 		"Min BPM",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::max_bpm,
 		"Max BPM",
-		true, EditMode_Full, true, true, 0, NULL )
+		true, EditMode_Full, true, true, 0, nullptr )
 );
 
 // Ugh, I don't like making this global pointer to clipboardFullTiming, but
 // it's the only way to make it visible to EnabledIfClipboardTimingIsSafe for
 // making sure it's safe to paste as the timing data for the Steps/Song. -Kyz
-static TimingData* clipboard_full_timing= NULL;
+static TimingData* clipboard_full_timing= nullptr;
 static bool EnabledIfClipboardTimingIsSafe();
 static bool EnabledIfClipboardTimingIsSafe()
 {
-	return clipboard_full_timing != NULL && clipboard_full_timing->IsSafeFullTiming();
+	return clipboard_full_timing != nullptr && clipboard_full_timing->IsSafeFullTiming();
 }
 static MenuDef g_TimingDataInformation(
 	"ScreenMiniMenuTimingDataInformation",
 	MenuRowDef(ScreenEdit::beat_0_offset,
 		"Beat 0 Offset",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::bpm,
 		"Edit BPM change",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::stop,
 		"Edit stop",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::delay,
 		"Edit delay",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::label,
 		"Edit label",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::tickcount,
 		"Edit tickcount",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::combo,
 		"Edit combo",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::warp,
 		"Edit warp",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::speed_percent,
 		"Edit speed (percent)",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::speed_wait,
 		"Edit speed (wait)",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::speed_mode,
 		"Edit speed (mode)",
 		true, EditMode_Full, true, true, 0, "Beats", "Seconds" ),
 	MenuRowDef(ScreenEdit::scroll,
 		"Edit scrolling factor",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::fake,
 		"Edit fake",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::shift_timing_in_region_down,
 		"Shift timing in region down",
 		true, EditMode_Full, true, true, RCC_CHOICES),
@@ -1109,63 +1108,63 @@ static MenuDef g_TimingDataInformation(
 		true, EditMode_Full, true, true, RCC_CHOICES),
 	MenuRowDef(ScreenEdit::copy_timing_in_region,
 		"Copy timing in region",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::clear_timing_in_region,
 		"Clear timing in region",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::paste_timing_from_clip,
 		"Paste timing from clipboard",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::copy_full_timing,
 		"Copy timing data",
-		true, EditMode_Full, true, true, 0, NULL ),
+		true, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::paste_full_timing,
 		"Paste timing data",
-		EnabledIfClipboardTimingIsSafe, EditMode_Full, true, true, 0, NULL ),
+		EnabledIfClipboardTimingIsSafe, EditMode_Full, true, true, 0, nullptr ),
 	MenuRowDef(ScreenEdit::erase_step_timing,
 		"Erase step timing",
-		true, EditMode_Full, true, true, 0, NULL )
+		true, EditMode_Full, true, true, 0, nullptr )
 );
 
 static MenuDef g_TimingDataChangeInformation(
 	"ScreenMiniMenuTimingDataChangeInformation",
 	MenuRowDef(ScreenEdit::timing_all,
 		"All timing",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_bpm,
 		"BPM changes",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_stop,
 		"Stops",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_delay,
 		"Delays",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	// Time signatures disabled because they don't fully work. -Kyz
 	// MenuRowDef(ScreenEdit::timing_time_sig,
 	// 	"Time Signatures",
-	// 	true, EditMode_Full, true, true, 0, NULL),
+	// 	true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_warp,
 		"Warps",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_label,
 		"Labels",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_tickcount,
 		"Tickcount",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_combo,
 		"Combo segments",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_speed,
 		"Speed segments",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_scroll,
 		"Scroll segments",
-		true, EditMode_Full, true, true, 0, NULL),
+		true, EditMode_Full, true, true, 0, nullptr),
 	MenuRowDef(ScreenEdit::timing_fake,
 		"Fakes",
-		true, EditMode_Full, true, true, 0, NULL)
+		true, EditMode_Full, true, true, 0, nullptr)
 );
 
 // XXX: What are these enums used for?
@@ -1211,11 +1210,11 @@ static MenuDef g_BackgroundChange(
 	MenuRowDef(ScreenEdit::transition,
 		"Force Transition",
 		true,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::effect,
 		"Force Effect",
 		true,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::color1,
 		"Force Color 1",
 		true,
@@ -1236,31 +1235,31 @@ static MenuDef g_BackgroundChange(
 	MenuRowDef(ScreenEdit::file1_song_bganimation,
 		"File1 Song BGAnimation",
 		EnabledIfSet1SongBGAnimation,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file1_song_movie,
 		"File1 Song Movie",
 		EnabledIfSet1SongMovie,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file1_song_still,
 		"File1 Song Still",
 		EnabledIfSet1SongBitmap,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file1_global_bganimation,
 		"File1 Global BGAnimation",
 		EnabledIfSet1GlobalBGAnimation,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file1_global_movie,
 		"File1 Global Movie",
 		EnabledIfSet1GlobalMovie,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file1_global_movie_song_group,
 		"File1 Global Movie (Group)",
 		EnabledIfSet1GlobalMovieSongGroup,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file1_global_movie_song_group_and_genre,
 		"File1 Global Movie (Group + Genre)",
 		EnabledIfSet1GlobalMovieSongGroupAndGenre,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file2_type,
 		"File2 Type",
 		true,
@@ -1271,35 +1270,35 @@ static MenuDef g_BackgroundChange(
 	MenuRowDef(ScreenEdit::file2_song_bganimation,
 		"File2 Song BGAnimation",
 		EnabledIfSet2SongBGAnimation,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file2_song_movie,
 		"File2 Song Movie",
 		EnabledIfSet2SongMovie,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file2_song_still,
 		"File2 Song Still",
 		EnabledIfSet2SongBitmap,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file2_global_bganimation,
 		"File2 Global BGAnimation",
 		EnabledIfSet2GlobalBGAnimation,	
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file2_global_movie,
 		"File2 Global Movie",
 		EnabledIfSet2GlobalMovie,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file2_global_movie_song_group,
 		"File2 Global Movie (Group)",
 		EnabledIfSet2GlobalMovieSongGroup,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::file2_global_movie_song_group_and_genre,
 		"File2 Global Movie (Group + Genre)",
 		EnabledIfSet2GlobalMovieSongGroupAndGenre,
-		EditMode_Full, true, false, 0, NULL ),
+		EditMode_Full, true, false, 0, nullptr ),
 	MenuRowDef(ScreenEdit::delete_change,
 		"Remove Change",
 		true,
-		EditMode_Full, true, true, 0, NULL )
+		EditMode_Full, true, true, 0, nullptr )
 );
 static bool EnabledIfSet1SongBGAnimation()		{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_bganimation			&& !g_BackgroundChange.rows[ScreenEdit::file1_song_bganimation].choices.empty(); }
 static bool EnabledIfSet1SongMovie()			{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_movie				&& !g_BackgroundChange.rows[ScreenEdit::file1_song_movie].choices.empty(); }
@@ -1367,7 +1366,7 @@ static MenuDef g_InsertStepAttack(
 
 static MenuDef g_CourseMode(
 	"ScreenMiniMenuCourseDisplay",
-	MenuRowDef( -1, "Play mods from course",	true, EditMode_Practice, true, false, 0, NULL )
+	MenuRowDef( -1, "Play mods from course",	true, EditMode_Practice, true, false, 0, nullptr )
 );
 
 // HACK: need to remember the track we're inserting on so that we can lay the
@@ -1395,15 +1394,15 @@ REGISTER_SCREEN_CLASS( ScreenEdit );
 
 void ScreenEdit::Init()
 {
-	m_pSoundMusic = NULL;
+	m_pSoundMusic = nullptr;
 	
 	GAMESTATE->m_bIsUsingStepTiming = false;
 	GAMESTATE->m_bInStepEditor = true;
 
 	SubscribeToMessage( "Judgment" );
 
-	ASSERT( GAMESTATE->m_pCurSong != NULL );
-	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != NULL );
+	ASSERT( GAMESTATE->m_pCurSong != nullptr );
+	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != nullptr );
 
 	EDIT_MODE.Load( m_sName, "EditMode" );
 	ScreenWithMenuElements::Init();
@@ -1524,7 +1523,7 @@ void ScreenEdit::Init()
 		SetDirty(true);
 	}
 
-	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr );
 	m_Player->CacheAllUsedNoteSkins();
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player->SetXY( PLAYER_X, PLAYER_Y );
@@ -1618,7 +1617,7 @@ void ScreenEdit::PlayPreviewMusic()
 	SOUND->StopMusic();
 	SOUND->PlayMusic( 
 		m_pSong->GetPreviewMusicPath(),
-		NULL,
+		nullptr,
 		false,
 		m_pSong->GetPreviewStartSeconds(),
 		m_pSong->m_fMusicSampleLengthSeconds,
@@ -1632,11 +1631,11 @@ void ScreenEdit::MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu )
 	menu.rows.clear();
 
 	vector<MenuRowDef> aRows;
-	FOREACH_CONST( MenuRowDef, pDef->rows, r )
+	for (MenuRowDef const &r : pDef->rows)
 	{
 		// Don't add rows that aren't applicable to this edit mode.
-		if( EDIT_MODE >= r->emShowIn )
-			menu.rows.push_back( *r );
+		if( EDIT_MODE >= r.emShowIn )
+			menu.rows.push_back( r );
 	}
 }
 
@@ -1655,7 +1654,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	if( m_pSoundMusic->IsPlaying() )
 	{
 		RageTimer tm;
-		const float fSeconds = m_pSoundMusic->GetPositionSeconds( NULL, &tm );
+		const float fSeconds = m_pSoundMusic->GetPositionSeconds( nullptr, &tm );
 		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_SongTiming, tm );
 	}
 
@@ -1865,7 +1864,7 @@ static ThemeMetric<RString> PREVIEW_LENGTH_FORMAT("ScreenEdit", "PreviewLengthFo
 static ThemeMetric<RString> RECORD_HOLD_TIME_FORMAT("ScreenEdit", "RecordHoldTimeFormat");
 void ScreenEdit::UpdateTextInfo()
 {
-	if( m_pSteps == NULL )
+	if( m_pSteps == nullptr )
 		return;
 
 	// Don't update the text during playback or record.  It causes skips.
@@ -2003,7 +2002,7 @@ void ScreenEdit::UpdateTextInfo()
 
 	m_textInfo.SetText( sText );
 	
-	GAMESTATE->SetProcessedTimingData(NULL);
+	GAMESTATE->SetProcessedTimingData(nullptr);
 }
 
 void ScreenEdit::DrawPrimitives()
@@ -2440,7 +2439,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			
 			// save current steps
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 			pSteps->SetNoteData( m_NoteDataEdit );
 
 			// Get all Steps of this StepsType
@@ -2721,7 +2720,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				BackgroundUtil::GetSongBGAnimations(   m_pSong, "", vThrowAway, menu.rows[file1_song_bganimation].choices );
 				BackgroundUtil::GetSongMovies(         m_pSong, "", vThrowAway, menu.rows[file1_song_movie].choices );
 				BackgroundUtil::GetSongBitmaps(        m_pSong, "", vThrowAway, menu.rows[file1_song_still].choices );
-				BackgroundUtil::GetGlobalBGAnimations( m_pSong, "", vThrowAway, menu.rows[file1_global_bganimation].choices );	// NULL to get all background files
+				BackgroundUtil::GetGlobalBGAnimations( m_pSong, "", vThrowAway, menu.rows[file1_global_bganimation].choices );	// nullptr to get all background files
 				BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie].choices, false, false );	// all backgrounds
 				BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group].choices, false, true );	// song group's backgrounds
 				BackgroundUtil::GetGlobalRandomMovies( m_pSong, "", vThrowAway, menu.rows[file1_global_movie_song_group_and_genre].choices, true, true );	// song group and genre's backgrounds
@@ -2739,12 +2738,12 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				// Fill in lines enabled/disabled
 				bool bAlreadyBGChangeHere = false;
 				BackgroundChange bgChange; 
-				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), bgc )
+				for (BackgroundChange &bgc : m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer))
 				{
-					if( bgc->m_fStartBeat == GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat )
+					if( bgc.m_fStartBeat == GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat )
 					{
 						bAlreadyBGChangeHere = true;
-						bgChange = *bgc;
+						bgChange = bgc;
 					}
 				}
 
@@ -2843,7 +2842,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			// TODO: Give Song/Step Timing switches/functions here?
 			Course *pCourse = GAMESTATE->m_pCurCourse;
-			if( pCourse == NULL )
+			if( pCourse == nullptr )
 				return false;
 			CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 			float fStartTime = m_pSteps->GetTimingData()->GetElapsedTimeFromBeat( GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat );
@@ -2851,7 +2850,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			if( iAttack >= 0 )
 			{
-				const RString sDuration = FloatToString(ce.attacks[iAttack].fSecsRemaining );
+				const RString sDuration = std::to_string(ce.attacks[iAttack].fSecsRemaining );
 
 				g_InsertCourseAttack.rows[remove].bEnabled = true;
 				if( g_InsertCourseAttack.rows[duration].choices.size() == 9 )
@@ -2915,7 +2914,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			float fStart, fEnd;
 			PlayerOptions po;
 			const Course *pCourse = GAMESTATE->m_pCurCourse;
-			if( pCourse == NULL )
+			if( pCourse == nullptr )
 				return false;
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 
@@ -2962,12 +2961,13 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 				BackgroundChange bgChange;
 				bgChange.m_fStartBeat = GAMESTATE->m_Position.m_fSongBeat;
-				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(iLayer), bgc )
+				auto & changes = m_pSong->GetBackgroundChanges(iLayer);
+				for (auto bgc = changes.begin(); bgc != changes.end(); ++bgc)
 				{
 					if( bgc->m_fStartBeat == GAMESTATE->m_Position.m_fSongBeat )
 					{
 						bgChange = *bgc;
-						m_pSong->GetBackgroundChanges(iLayer).erase( bgc );
+						changes.erase( bgc );
 						break;
 					}
 				}
@@ -3434,7 +3434,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 			/* FirstBeat affects backgrounds, so commit changes to memory (not to disk)
 			 * and recalc it. */
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 			pSteps->SetNoteData( m_NoteDataEdit );
 			m_pSong->ReCalculateRadarValuesAndLastSecond();
 
@@ -3579,7 +3579,7 @@ void ScreenEdit::HandleMessage( const Message &msg )
 		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_bMuteOnError )
 		{
 			RageSoundReader *pSoundReader = m_AutoKeysounds.GetPlayerSound( pn );
-			if( pSoundReader == NULL )
+			if( pSoundReader == nullptr )
 				pSoundReader = m_AutoKeysounds.GetSharedSound();
 
 			HoldNoteScore hns;
@@ -3670,7 +3670,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromDifficultyMeterChange )
 	{
-		int i = StringToInt( ScreenTextEntry::s_sLastAnswer );
+		int i = std::stoi( ScreenTextEntry::s_sLastAnswer );
 		GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(i);
 		SetDirty( true );
 	}
@@ -3724,7 +3724,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromTickcountChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		int iTick = StringToInt( ScreenTextEntry::s_sLastAnswer );
+		int iTick = std::stoi( ScreenTextEntry::s_sLastAnswer );
 
 		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
 			GetAppropriateTimingForUpdate().AddSegment( TickcountSegment( GetRow(), iTick) );
@@ -3789,7 +3789,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			int tmp = StringToInt(ScreenTextEntry::s_sLastAnswer );
+			int tmp = std::stoi(ScreenTextEntry::s_sLastAnswer );
 
 			SpeedSegment::BaseUnit unit = (tmp == 0 ) ?
 			  SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
@@ -3827,24 +3827,26 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromCourseModeMenu )
 	{
 		const int num = ScreenMiniMenu::s_viLastAnswers[0];
-		GAMESTATE->m_pCurCourse.Set( NULL );
+		GAMESTATE->m_pCurCourse.Set(nullptr);
 		if( num != 0 )
 		{
 			const RString name = g_CourseMode.rows[0].choices[num];
 			Course *pCourse = SONGMAN->FindCourse( name );
 
 			int iCourseEntryIndex = -1;
-			FOREACH_CONST( CourseEntry, pCourse->m_vEntries, i )
+			int index = 0;
+			for (CourseEntry const &i : pCourse->m_vEntries)
 			{
-				if( i->songID.ToSong() == GAMESTATE->m_pCurSong.Get() )
-					iCourseEntryIndex = i - pCourse->m_vEntries.begin();
+				if( i.songID.ToSong() == GAMESTATE->m_pCurSong.Get() )
+					iCourseEntryIndex = index;
+				++index;
 			}
 
 			ASSERT( iCourseEntryIndex != -1 );
 
 			GAMESTATE->m_pCurCourse.Set( pCourse );
 			GAMESTATE->m_iEditCourseEntryIndex.Set( iCourseEntryIndex );
-			ASSERT( GAMESTATE->m_pCurCourse != NULL );
+			ASSERT( GAMESTATE->m_pCurCourse != nullptr );
 		}
 	}
 	else if (SM == SM_BackFromKeysoundTrack)
@@ -4042,14 +4044,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromEditingAttackStart,
 									   EDIT_ATTACK_START,
-									   FloatToString(attack.fStartSecond),
+									   std::to_string(attack.fStartSecond),
 									   10);
 		}
 		else if (option == 1) // adjusting the length of the attack
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromEditingAttackLength,
 									   EDIT_ATTACK_LENGTH,
-									   FloatToString(attack.fSecsRemaining),
+									   std::to_string(attack.fSecsRemaining),
 									   10);
 		}
 		else if (option >= 2 + mods.size()) // adding a new mod
@@ -4120,8 +4122,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 															 true,
 															 true,
 															 0,
-															 NULL));
-				g_IndividualAttack.rows[0].SetOneUnthemedChoice(FloatToString(attack.fStartSecond));
+															 nullptr));
+				g_IndividualAttack.rows[0].SetOneUnthemedChoice(std::to_string(attack.fStartSecond));
 				g_IndividualAttack.rows.push_back(MenuRowDef(1,
 															 "Secs Remaining",
 															 true,
@@ -4129,8 +4131,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 															 true,
 															 true,
 															 0,
-															 NULL));
-				g_IndividualAttack.rows[1].SetOneUnthemedChoice(FloatToString(attack.fSecsRemaining));
+															 nullptr));
+				g_IndividualAttack.rows[1].SetOneUnthemedChoice(std::to_string(attack.fSecsRemaining));
 				vector<RString> mods;
 				split(attack.sModifiers, ",", mods);
 				for (unsigned i = 0; i < mods.size(); ++i)
@@ -4143,7 +4145,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 																 false,
 																 true,
 																 0,
-																 NULL));
+																 nullptr));
 					g_IndividualAttack.rows[col].SetOneUnthemedChoice(mods[i].c_str());
 				}
 				
@@ -4154,7 +4156,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 															 true,
 															 true,
 															 0,
-															 NULL));
+															 nullptr));
 				
 				EditMiniMenu(&g_IndividualAttack, SM_BackFromInsertStepAttack);
 			}
@@ -4373,32 +4375,31 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		Song *pSong = GAMESTATE->m_pCurSong;
 		const vector<Steps*> &apSteps = pSong->GetAllSteps();
 		vector<Steps*> apToDelete;
-		FOREACH_CONST( Steps *, apSteps, s )
+		for (Steps *s : apSteps)
 		{
 			// If we're not on the same style, let it go.
-			if( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType != (*s)->m_StepsType )
+			if( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType != s->m_StepsType )
 				continue;
 			// If autogenned, it isn't being saved.
-			if( (*s)->IsAutogen() )
+			if( s->IsAutogen() )
 				continue;
 			// If the notedata has content, let it go.
-			if( !(*s)->GetNoteData().IsEmpty() )
+			if( !s->GetNoteData().IsEmpty() )
 				continue;
 			// It's hard to say if these steps were saved to disk or not.
 			/*
-			if( !(*s)->GetSavedToDisk() )
+			if( !(s->GetSavedToDisk() )
 				continue;
 			 */
-			apToDelete.push_back( *s );
+			apToDelete.push_back( s );
 		}
-		FOREACH_CONST( Steps *, apToDelete, s )
+		for (Steps *pSteps : apToDelete)
 		{
-			Steps *pSteps = *s;
 			pSong->DeleteSteps( pSteps );
 			if( m_pSteps == pSteps )
-				m_pSteps = NULL;
+				m_pSteps = nullptr;
 			if( GAMESTATE->m_pCurSteps[PLAYER_1].Get() == pSteps )
-				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+				GAMESTATE->m_pCurSteps[PLAYER_1].Set(nullptr);
 		}
 		
 
@@ -4561,7 +4562,7 @@ static void ChangeStepCredit( const RString &sNew )
 
 static void ChangeStepMeter( const RString &sNew )
 {
-	int diff = StringToInt(sNew);
+	int diff = std::stoi(sNew);
 	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(max(diff, 1));
 }
 
@@ -4608,7 +4609,7 @@ static void ChangePreview(const RString& sNew)
 	{
 		RString error;
 		RageSoundReader* sample= RageSoundReader_FileReader::OpenFile(pSong->GetPreviewMusicPath(), error);
-		if(sample == NULL)
+		if(sample == nullptr)
 		{
 			LOG->UserLog( "Preview file", pSong->GetPreviewMusicPath(), "couldn't be opened: %s", error.c_str() );
 		}
@@ -4747,25 +4748,25 @@ void ScreenEdit::DisplayTimingMenu()
 	// bool bIsSelecting = ( (m_NoteFieldEdit.m_iEndMarker != -1) && (m_NoteFieldEdit.m_iBeginMarker != -1) );
 
 
-	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( FloatToString(pTime.m_fBeat0OffsetInSeconds) );
-	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( FloatToString(pTime.GetBPMAtRow( row ) ) );
-	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( FloatToString(pTime.GetStopAtRow( row ) ) ) ;
-	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( FloatToString(pTime.GetDelayAtRow( row ) ) );
+	g_TimingDataInformation.rows[beat_0_offset].SetOneUnthemedChoice( std::to_string(pTime.m_fBeat0OffsetInSeconds) );
+	g_TimingDataInformation.rows[bpm].SetOneUnthemedChoice( std::to_string(pTime.GetBPMAtRow( row ) ) );
+	g_TimingDataInformation.rows[stop].SetOneUnthemedChoice( std::to_string(pTime.GetStopAtRow( row ) ) ) ;
+	g_TimingDataInformation.rows[delay].SetOneUnthemedChoice( std::to_string(pTime.GetDelayAtRow( row ) ) );
 
 	g_TimingDataInformation.rows[label].SetOneUnthemedChoice( pTime.GetLabelAtRow( row ).c_str() );
 	g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtRow( row ) ) );
 	g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d / %d",
 																	   pTime.GetComboAtRow( row ),
 																	   pTime.GetMissComboAtRow( row ) ) );
-	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( FloatToString(pTime.GetWarpAtRow( row ) ) );
-	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( bHasSpeedOnThisRow ? FloatToString(pTime.GetSpeedPercentAtRow( row ) ) : "---" );
-	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( bHasSpeedOnThisRow ? FloatToString(pTime.GetSpeedWaitAtRow( row ) ) : "---" );
+	g_TimingDataInformation.rows[warp].SetOneUnthemedChoice( std::to_string(pTime.GetWarpAtRow( row ) ) );
+	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( bHasSpeedOnThisRow ? std::to_string(pTime.GetSpeedPercentAtRow( row ) ) : "---" );
+	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( bHasSpeedOnThisRow ? std::to_string(pTime.GetSpeedWaitAtRow( row ) ) : "---" );
 
 	RString starting = ( pTime.GetSpeedModeAtRow( row ) == 1 ? "Seconds" : "Beats" );
 	g_TimingDataInformation.rows[speed_mode].SetOneUnthemedChoice( starting.c_str() );
 
-	g_TimingDataInformation.rows[scroll].SetOneUnthemedChoice( FloatToString(pTime.GetScrollAtRow( row ) ) );
-	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( FloatToString(pTime.GetFakeAtRow( row ) ) );
+	g_TimingDataInformation.rows[scroll].SetOneUnthemedChoice( std::to_string(pTime.GetScrollAtRow( row ) ) );
+	g_TimingDataInformation.rows[fake].SetOneUnthemedChoice( std::to_string(pTime.GetFakeAtRow( row ) ) );
 
 	// g_TimingDataInformation.rows[speed_percent].bEnabled = !bIsSelecting;
 	g_TimingDataInformation.rows[speed_wait].bEnabled = bHasSpeedOnThisRow;
@@ -4882,8 +4883,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[step_credit].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
 				g_StepsInformation.rows[step_credit].SetOneUnthemedChoice( pSteps->GetCredit() );
 				g_StepsInformation.rows[step_display_bpm].iDefaultChoice = pSteps->GetDisplayBPM();
-				g_StepsInformation.rows[step_min_bpm].SetOneUnthemedChoice( FloatToString(pSteps->GetMinBPM()));
-				g_StepsInformation.rows[step_max_bpm].SetOneUnthemedChoice( FloatToString(pSteps->GetMaxBPM()));
+				g_StepsInformation.rows[step_min_bpm].SetOneUnthemedChoice( std::to_string(pSteps->GetMinBPM()));
+				g_StepsInformation.rows[step_max_bpm].SetOneUnthemedChoice( std::to_string(pSteps->GetMaxBPM()));
 				g_StepsInformation.rows[step_music].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
 				g_StepsInformation.rows[step_music].SetOneUnthemedChoice( pSteps->GetMusicFile() );
 				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation, SM_None );
@@ -4964,12 +4965,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[main_title_transliteration].SetOneUnthemedChoice( pSong->m_sMainTitleTranslit );
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
-				g_SongInformation.rows[last_second_hint].SetOneUnthemedChoice( FloatToString(pSong->GetSpecifiedLastSecond()) );
-				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( FloatToString(pSong->m_fMusicSampleStartSeconds) );
-				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( FloatToString(pSong->m_fMusicSampleLengthSeconds) );
+				g_SongInformation.rows[last_second_hint].SetOneUnthemedChoice( std::to_string(pSong->GetSpecifiedLastSecond()) );
+				g_SongInformation.rows[preview_start].SetOneUnthemedChoice( std::to_string(pSong->m_fMusicSampleStartSeconds) );
+				g_SongInformation.rows[preview_length].SetOneUnthemedChoice( std::to_string(pSong->m_fMusicSampleLengthSeconds) );
 				g_SongInformation.rows[display_bpm].iDefaultChoice = pSong->m_DisplayBPMType;
-				g_SongInformation.rows[min_bpm].SetOneUnthemedChoice( FloatToString(pSong->m_fSpecifiedBPMMin) );
-				g_SongInformation.rows[max_bpm].SetOneUnthemedChoice( FloatToString(pSong->m_fSpecifiedBPMMax) );
+				g_SongInformation.rows[min_bpm].SetOneUnthemedChoice( std::to_string(pSong->m_fSpecifiedBPMMin) );
+				g_SongInformation.rows[max_bpm].SetOneUnthemedChoice( std::to_string(pSong->m_fSpecifiedBPMMax) );
 
 				EditMiniMenu( &g_SongInformation, SM_BackFromSongInformation );
 			}
@@ -5001,7 +5002,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			}
 			break;
 	};
-	GAMESTATE->SetProcessedTimingData(NULL);
+	GAMESTATE->SetProcessedTimingData(nullptr);
 }
 
 static LocalizedString ENTER_ARBITRARY_MAPPING( "ScreenEdit", "Enter the new track mapping." );
@@ -5607,7 +5608,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   MAX_STEPS_DESCRIPTION_LENGTH,
 									   SongUtil::ValidateCurrentStepsChartName,
 									   ChangeChartName,
-									   NULL);
+									   nullptr);
 			break;
 		}
 		case description:
@@ -5618,7 +5619,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   MAX_STEPS_DESCRIPTION_LENGTH,
 									   SongUtil::ValidateCurrentStepsDescription,
 									   ChangeDescription,
-									   NULL);
+									   nullptr);
 			break;
 		}
 		case chartstyle:
@@ -5627,9 +5628,9 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   ENTER_NEW_CHART_STYLE,
 									   m_pSteps->GetChartStyle(), 
 									   255,
-									   NULL,
+									   nullptr,
 									   ChangeChartStyle, 
-									   NULL);
+									   nullptr);
 			break;
 		}
 		case step_credit:
@@ -5640,7 +5641,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   255,
 									   SongUtil::ValidateCurrentStepsCredit,
 									   ChangeStepCredit,
-									   NULL);
+									   nullptr);
 			break;
 		}
 		case meter:
@@ -5651,23 +5652,23 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   4,
 									   ScreenTextEntry::IntValidate,
 									   ChangeStepMeter,
-									   NULL);
+									   nullptr);
 			break;
 		}
 		case step_min_bpm:
 		{
 			ScreenTextEntry::TextEntry(SM_None, ENTER_MIN_BPM,
-									   FloatToString(pSteps->GetMinBPM()), 20,
+									   std::to_string(pSteps->GetMinBPM()), 20,
 									   ScreenTextEntry::FloatValidate,
-									   ChangeStepsMinBPM, NULL);
+									   ChangeStepsMinBPM, nullptr);
 			break;
 		}
 		case step_max_bpm:
 		{
 			ScreenTextEntry::TextEntry(SM_None, ENTER_MAX_BPM,
-									   FloatToString(pSteps->GetMaxBPM()), 20,
+									   std::to_string(pSteps->GetMaxBPM()), 20,
 									   ScreenTextEntry::FloatValidate,
-									   ChangeStepsMaxBPM, NULL);
+									   ChangeStepsMaxBPM, nullptr);
 			break;
 		}
 		case step_music:
@@ -5678,7 +5679,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   255,
 									   SongUtil::ValidateCurrentStepsMusic,
 									   ChangeStepMusic,
-									   NULL);
+									   nullptr);
 			break;
 		}
 	default:
@@ -5692,7 +5693,7 @@ static LocalizedString ENTER_SUB_TITLE			("ScreenEdit","Enter a new sub title.")
 static LocalizedString ENTER_ARTIST			("ScreenEdit","Enter a new artist.");
 static LocalizedString ENTER_GENRE			("ScreenEdit","Enter a new genre.");
 static LocalizedString ENTER_CREDIT			("ScreenEdit","Enter a new credit.");
-static LocalizedString ENTER_PREVIEW ("ScreenEdit", "Enter a preview file.");
+static LocalizedString ENTER_PREVIEW			("ScreenEdit","Enter a preview file.");
 static LocalizedString ENTER_MAIN_TITLE_TRANSLIT	("ScreenEdit","Enter a new main title transliteration.");
 static LocalizedString ENTER_SUB_TITLE_TRANSLIT		("ScreenEdit","Enter a new sub title transliteration.");
 static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist transliteration.");
@@ -5707,56 +5708,56 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 	switch( c )
 	{
 	case main_title:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE, pSong->m_sMainTitle, 100, NULL, ChangeMainTitle, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE, pSong->m_sMainTitle, 100, nullptr, ChangeMainTitle, nullptr );
 		break;
 	case sub_title:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE, pSong->m_sSubTitle, 100, NULL, ChangeSubTitle, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE, pSong->m_sSubTitle, 100, nullptr, ChangeSubTitle, nullptr );
 		break;
 	case artist:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST, pSong->m_sArtist, 100, NULL, ChangeArtist, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST, pSong->m_sArtist, 100, nullptr, ChangeArtist, nullptr );
 		break;
 	case genre:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_GENRE, pSong->m_sGenre, 100, NULL, ChangeGenre, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_GENRE, pSong->m_sGenre, 100, nullptr, ChangeGenre, nullptr );
 		break;
 	case credit:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_CREDIT, pSong->m_sCredit, 100, NULL, ChangeCredit, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_CREDIT, pSong->m_sCredit, 100, nullptr, ChangeCredit, nullptr );
 		break;
 	case preview:
-		ScreenTextEntry::TextEntry(SM_None, ENTER_PREVIEW, pSong->m_PreviewFile, 100, SongUtil::ValidateCurrentSongPreview, ChangePreview, NULL);
+		ScreenTextEntry::TextEntry(SM_None, ENTER_PREVIEW, pSong->m_PreviewFile, 100, SongUtil::ValidateCurrentSongPreview, ChangePreview, nullptr);
 		break;
 	case main_title_transliteration:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE_TRANSLIT, pSong->m_sMainTitleTranslit, 100, NULL, ChangeMainTitleTranslit, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE_TRANSLIT, pSong->m_sMainTitleTranslit, 100, nullptr, ChangeMainTitleTranslit, nullptr );
 		break;
 	case sub_title_transliteration:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE_TRANSLIT, pSong->m_sSubTitleTranslit, 100, NULL, ChangeSubTitleTranslit, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE_TRANSLIT, pSong->m_sSubTitleTranslit, 100, nullptr, ChangeSubTitleTranslit, nullptr );
 		break;
 	case artist_transliteration:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100, NULL, ChangeArtistTranslit, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100, nullptr, ChangeArtistTranslit, nullptr );
 		break;
 	case last_second_hint:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_SECOND_HINT, 
-					   FloatToString(pSong->GetSpecifiedLastSecond()), 20, 
-					   ScreenTextEntry::FloatValidate, ChangeLastSecondHint, NULL );
+					   std::to_string(pSong->GetSpecifiedLastSecond()), 20, 
+					   ScreenTextEntry::FloatValidate, ChangeLastSecondHint, nullptr );
 		break;
 	case preview_start:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_START,
-					   FloatToString(pSong->m_fMusicSampleStartSeconds), 20,
-					   ScreenTextEntry::FloatValidate, ChangePreviewStart, NULL );
+					   std::to_string(pSong->m_fMusicSampleStartSeconds), 20,
+					   ScreenTextEntry::FloatValidate, ChangePreviewStart, nullptr );
 		break;
 	case preview_length:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_LENGTH,
-					   FloatToString(pSong->m_fMusicSampleLengthSeconds), 20,
-					   ScreenTextEntry::FloatValidate, ChangePreviewLength, NULL );
+					   std::to_string(pSong->m_fMusicSampleLengthSeconds), 20,
+					   ScreenTextEntry::FloatValidate, ChangePreviewLength, nullptr );
 		break;
 	case min_bpm:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MIN_BPM,
-					   FloatToString(pSong->m_fSpecifiedBPMMin), 20,
-					   ScreenTextEntry::FloatValidate, ChangeMinBPM, NULL );
+					   std::to_string(pSong->m_fSpecifiedBPMMin), 20,
+					   ScreenTextEntry::FloatValidate, ChangeMinBPM, nullptr );
 		break;
 	case max_bpm:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MAX_BPM,
-					   FloatToString(pSong->m_fSpecifiedBPMMax), 20,
-					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, NULL );
+					   std::to_string(pSong->m_fSpecifiedBPMMax), 20,
+					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, nullptr );
 		break;
 	default: break;
 	};
@@ -5775,7 +5776,7 @@ static LocalizedString ENTER_WARP_VALUE				( "ScreenEdit", "Enter a new Warp val
 static LocalizedString ENTER_SPEED_PERCENT_VALUE		( "ScreenEdit", "Enter a new Speed percent value." );
 static LocalizedString ENTER_SPEED_WAIT_VALUE			( "ScreenEdit", "Enter a new Speed wait value." );
 static LocalizedString ENTER_SPEED_MODE_VALUE			( "ScreenEdit", "Enter a new Speed mode value." );
-static LocalizedString ENTER_SCROLL_VALUE		( "ScreenEdit", "Enter a new Scroll value." );
+static LocalizedString ENTER_SCROLL_VALUE			( "ScreenEdit", "Enter a new Scroll value." );
 static LocalizedString ENTER_FAKE_VALUE				( "ScreenEdit", "Enter a new Fake value." );
 static LocalizedString CONFIRM_TIMING_ERASE			( "ScreenEdit", "Are you sure you want to erase this chart's timing data?" );
 void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice c, const vector<int> &iAnswers )
@@ -5787,7 +5788,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 			SM_BackFromBeat0Change,
 			ENTER_BEAT_0_OFFSET,
-			FloatToString(GetAppropriateTiming().m_fBeat0OffsetInSeconds),
+			std::to_string(GetAppropriateTiming().m_fBeat0OffsetInSeconds),
 			20
 			);
 		break;
@@ -5795,7 +5796,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromBPMChange, 
 			ENTER_BPM_VALUE, 
-			FloatToString( GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) ),
+			std::to_string( GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) ),
 			10
 			);
 		break;
@@ -5803,7 +5804,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromStopChange, 
 			ENTER_STOP_VALUE, 
-			FloatToString( GetAppropriateTiming().GetStopAtBeat( GetBeat() ) ),
+			std::to_string( GetAppropriateTiming().GetStopAtBeat( GetBeat() ) ),
 			10
 			);
 		break;
@@ -5811,7 +5812,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromDelayChange, 
 			ENTER_DELAY_VALUE, 
-			FloatToString( GetAppropriateTiming().GetDelayAtBeat( GetBeat() ) ),
+			std::to_string( GetAppropriateTiming().GetDelayAtBeat( GetBeat() ) ),
 			10
 		);
 		break;
@@ -5846,7 +5847,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 		   SM_BackFromWarpChange, 
 		   ENTER_WARP_VALUE, 
-		   FloatToString( GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
+		   std::to_string( GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
 		   10
 		   );
 		break;
@@ -5854,7 +5855,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedPercentChange,
 		   ENTER_SPEED_PERCENT_VALUE,
-		   FloatToString( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetRatio() ),
+		   std::to_string( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
 		break;
@@ -5862,7 +5863,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromScrollChange,
 		   ENTER_SCROLL_VALUE,
-		   FloatToString( GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() )->GetRatio() ),
+		   std::to_string( GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
 		break;
@@ -5870,7 +5871,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedWaitChange,
 		   ENTER_SPEED_WAIT_VALUE,
-		   FloatToString( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetDelay() ),
+		   std::to_string( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetDelay() ),
 		   10
 		   );
 		break;
@@ -5890,7 +5891,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			ScreenTextEntry::TextEntry(
 				SM_BackFromFakeChange,
 				ENTER_FAKE_VALUE,
-			        FloatToString(GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
+			        std::to_string(GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
 				10
 			);
 			break;
@@ -6015,13 +6016,14 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 {
 	BackgroundChange newChange;
 
-	FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), iter )
+	auto &changes = m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer);
+	for (auto iter = changes.begin(); iter != changes.end(); ++iter)
 	{
 		if( iter->m_fStartBeat == GAMESTATE->m_Position.m_fSongBeat )
 		{
 			newChange = *iter;
 			// delete the old change.  We'll add a new one below.
-			m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer).erase( iter );
+			changes.erase( iter );
 			break;
 		}
 	}
@@ -6116,8 +6118,8 @@ void ScreenEdit::SetupCourseAttacks()
 			}
 		}
 
-		FOREACH( Attack, Attacks, attack )
-			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+		for (Attack &attack: Attacks)
+			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( attack );
 	}
 	else 
 	{
@@ -6130,12 +6132,12 @@ void ScreenEdit::SetupCourseAttacks()
 			
 			if (attacks.size() > 0)
 			{
-				FOREACH(Attack, attacks, attack)
+				for (Attack &attack : attacks)
 				{
 					// LaunchAttack is actually a misnomer.  The function actually adds
 					// the attack to a list in the PlayerState which is checked and
 					// updated every tick to see which ones to actually activate. -Kyz
-					GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+					GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( attack );
 				}
 			}
 		}
@@ -6146,13 +6148,13 @@ void ScreenEdit::SetupCourseAttacks()
 
 void ScreenEdit::CopyToLastSave()
 {
-	ASSERT( GAMESTATE->m_pCurSong != NULL );
-	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != NULL );
+	ASSERT( GAMESTATE->m_pCurSong != nullptr );
+	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != nullptr );
 	m_SongLastSave = *GAMESTATE->m_pCurSong;
 	m_vStepsLastSave.clear();
 	const vector<Steps*> &vSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType );
-	FOREACH_CONST( Steps*, vSteps, it )
-		m_vStepsLastSave.push_back( **it );
+	for (Steps *it : vSteps)
+		m_vStepsLastSave.push_back( *it );
 }
 
 void ScreenEdit::CopyFromLastSave()
@@ -6169,7 +6171,7 @@ void ScreenEdit::CopyFromLastSave()
 
 void ScreenEdit::RevertFromDisk()
 {
-	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != NULL );
+	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] != nullptr );
 	StepsID id;
 	id.FromSteps( GAMESTATE->m_pCurSteps[PLAYER_1] );
 	ASSERT( id.IsValid() );
@@ -6355,7 +6357,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Play whole song",				EDIT_BUTTON_PLAY_FROM_START ),
 	EditHelpLine( "Record",						EDIT_BUTTON_RECORD_SELECTION ),
 	EditHelpLine( "Set selection",					EDIT_BUTTON_LAY_SELECT ),
-	EditHelpLine( "Next/prev steps of same StepsType", EDIT_BUTTON_OPEN_PREV_STEPS, EDIT_BUTTON_OPEN_NEXT_STEPS ),
+	EditHelpLine( "Next/prev steps of same StepsType",		EDIT_BUTTON_OPEN_PREV_STEPS, 		EDIT_BUTTON_OPEN_NEXT_STEPS ),
 	EditHelpLine( "Decrease/increase BPM at cur beat",		EDIT_BUTTON_BPM_DOWN,			EDIT_BUTTON_BPM_UP ),
 	EditHelpLine( "Decrease/increase stop at cur beat",		EDIT_BUTTON_STOP_DOWN,			EDIT_BUTTON_STOP_UP ),
 	EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
@@ -6392,8 +6394,8 @@ static void ProcessKeyName( RString &s )
 
 static void ProcessKeyNames( vector<RString> &vs, bool doSort )
 {
-	FOREACH( RString, vs, s )
-		ProcessKeyName( *s );
+	for (RString &s : vs)
+		ProcessKeyName( s );
 
 	if (doSort)
 		sort( vs.begin(), vs.end() );
@@ -6405,15 +6407,15 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 {
 	vector<RString> vsPress;
 	vector<RString> vsHold;
-	FOREACH_CONST( EditButton, veb, eb )
+	for (EditButton const &eb : veb)
 	{
-		if( !IsMapped( *eb, editmap ) )
+		if( !IsMapped( eb, editmap ) )
 			continue;
 
 		for( int s=0; s<NUM_EDIT_TO_DEVICE_SLOTS; s++ )
 		{
-			DeviceInput diPress = editmap.button[*eb][s];
-			DeviceInput diHold = editmap.hold[*eb][s];
+			DeviceInput diPress = editmap.button[eb][s];
+			DeviceInput diHold = editmap.hold[eb][s];
 			if( diPress.IsValid() )
 				vsPress.push_back( Capitalize(INPUTMAN->GetLocalizedInputString(diPress)) );
 			if( diHold.IsValid() )
@@ -6440,10 +6442,10 @@ void ScreenEdit::DoStepAttackMenu()
 		
 	g_AttackAtTimeMenu.rows.clear();
 	unsigned index = 0;
-		
-	FOREACH(int, points, i)
+	
+	for (int &i : points)
 	{
-		const Attack &attack = attacks[*i];
+		const Attack &attack = attacks[i];
 		RString desc = ssprintf("%g -> %g (%d mod[s])",
 			startTime, startTime + attack.fSecsRemaining,
 			attack.GetNumAttacks());
@@ -6465,7 +6467,7 @@ void ScreenEdit::DoStepAttackMenu()
 		true,
 		true,
 		0,
-		NULL));
+		nullptr));
 		
 	EditMiniMenu(&g_AttackAtTimeMenu, SM_BackFromAttackAtTime);
 }
@@ -6480,9 +6482,9 @@ void ScreenEdit::DoKeyboardTrackMenu()
 	vector<RString> &kses = m_pSong->m_vsKeysoundFile;
 	
 	vector<RString> choices;
-	FOREACH(RString, kses, ks)
+	for (RString const &ks : kses)
 	{
-		choices.push_back(*ks);
+		choices.push_back(ks);
 	}
 	choices.push_back(NEWKEYSND);
 	choices.push_back(NO_KEYSND);

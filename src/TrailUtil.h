@@ -35,7 +35,7 @@ class TrailID
 public:
 	TrailID(): st(StepsType_Invalid), cd(Difficulty_Invalid),
 		m_Cache() { m_Cache.Unset(); }
-	void Unset() { FromTrail(NULL); }
+	void Unset() { FromTrail(nullptr); }
 	void FromTrail( const Trail *p );
 	Trail *ToTrail( const Course *p, bool bAllowNull ) const;
 	bool operator<( const TrailID &rhs ) const;

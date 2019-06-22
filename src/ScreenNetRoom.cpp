@@ -177,7 +177,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 	{
 		int i = m_RoomWheel.GetCurrentIndex() - m_RoomWheel.GetPerminateOffset();
 		const RoomWheelItemData* data = m_RoomWheel.GetItem(i);
-		if( data != NULL )
+		if( data != nullptr )
 			m_roomInfo.SetRoom( data );
 	}
 
@@ -262,7 +262,7 @@ bool ScreenNetRoom::MenuRight( const InputEventPlus &input )
 void ScreenNetRoom::UpdateRoomsList()
 {
 	int difference = 0;
-	RoomWheelItemData* itemData = NULL;
+	RoomWheelItemData* itemData = nullptr;
 
 	difference = m_RoomWheel.GetNumItems() - m_Rooms.size();
 

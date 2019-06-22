@@ -15,7 +15,6 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 #include "RageSoundReader_Preload.h"
-#include "Foreach.h"
 #include "LocalizedString.h"
 #include "Preference.h"
 #include "RageSoundReader_PostBuffering.h"
@@ -34,16 +33,16 @@
 static RageMutex g_SoundManMutex("SoundMan");
 static Preference<RString> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAULT_SOUND_DRIVER_LIST
 
-RageSoundManager *SOUNDMAN = NULL;
+RageSoundManager *SOUNDMAN = nullptr;
 
-RageSoundManager::RageSoundManager(): m_pDriver(NULL),
+RageSoundManager::RageSoundManager(): m_pDriver(nullptr),
 	m_fVolumeOfNonCriticalSounds(1.0f) {}
 
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
 void RageSoundManager::Init()
 {
 	m_pDriver = RageSoundDriver::Create( g_sSoundDrivers );
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		RageException::Throw( "%s", COULDNT_FIND_SOUND_DRIVER.GetValue().c_str() );
 }
 
@@ -51,8 +50,8 @@ RageSoundManager::~RageSoundManager()
 {
 	/* Don't lock while deleting the driver (the decoder thread might deadlock). */
 	delete m_pDriver;
-	FOREACHM( RString, RageSoundReader_Preload *, m_mapPreloadedSounds, s )
-		delete s->second;
+	for (std::pair<RString const &, RageSoundReader_Preload *> s : m_mapPreloadedSounds)
+		delete s.second;
 	m_mapPreloadedSounds.clear();
 }
 
@@ -81,19 +80,19 @@ void RageSoundManager::Shutdown()
 
 void RageSoundManager::StartMixing( RageSoundBase *pSound )
 {
-	if( m_pDriver != NULL )
+	if( m_pDriver != nullptr )
 		m_pDriver->StartMixing( pSound );
 }
 
 void RageSoundManager::StopMixing( RageSoundBase *pSound )
 {
-	if( m_pDriver != NULL )
+	if( m_pDriver != nullptr )
 		m_pDriver->StopMixing( pSound );
 }
 
 bool RageSoundManager::Pause( RageSoundBase *pSound, bool bPause )
 {
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		return false;
 	else
 		return m_pDriver->PauseMixing( pSound, bPause );
@@ -101,7 +100,7 @@ bool RageSoundManager::Pause( RageSoundBase *pSound, bool bPause )
 
 int64_t RageSoundManager::GetPosition( RageTimer *pTimer ) const
 {
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		return 0;
 	return m_pDriver->GetHardwareFrame( pTimer );
 }
@@ -130,13 +129,13 @@ void RageSoundManager::Update()
 
 	g_SoundManMutex.Unlock(); /* finished with m_mapPreloadedSounds */
 
-	if( m_pDriver != NULL )
+	if( m_pDriver != nullptr )
 		m_pDriver->Update();
 }
 
 float RageSoundManager::GetPlayLatency() const
 {
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		return 0;
 
 	return m_pDriver->GetPlayLatency();
@@ -144,13 +143,13 @@ float RageSoundManager::GetPlayLatency() const
 
 int RageSoundManager::GetDriverSampleRate() const
 {
-	if( m_pDriver == NULL )
+	if( m_pDriver == nullptr )
 		return 44100;
 
 	return m_pDriver->GetSampleRate();
 }
 
-/* If the given path is loaded, return a copy; otherwise return NULL.
+/* If the given path is loaded, return a copy; otherwise return nullptr.
  * It's the caller's responsibility to delete the result. */
 RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 {
@@ -161,7 +160,7 @@ RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 	map<RString, RageSoundReader_Preload *>::const_iterator it;
 	it = m_mapPreloadedSounds.find( sPath );
 	if( it == m_mapPreloadedSounds.end() )
-		return NULL;
+		return nullptr;
 
 	return it->second->Copy();
 }
