@@ -37,7 +37,7 @@ static RString GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
 	if( h == nullptr )
-		return "(nullptr)";
+		return "(NULL)";
 
 	DWORD iProcessID;
 	GetWindowThreadProcessId( h, &iProcessID );

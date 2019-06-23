@@ -50,7 +50,7 @@ static const struct ExceptionLookup {
 	{ EXCEPTION_INVALID_HANDLE,		"Invalid handle"		},
 	{ EXCEPTION_STACK_OVERFLOW,		"Stack overflow"		},
 	{ 0xe06d7363,				"Unhandled Microsoft C++ Exception",	},
-	{ nullptr },
+	{ 0 },
 };
 
 static const char *LookupException( DWORD code )
@@ -540,7 +540,8 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 // Trigger the crash handler. This works even in the debugger.
 static void NORETURN debug_crash()
 {
-	__try {
+//	__try {
+#if defined(__MSC_VER)
 		__asm xor ebx,ebx
 		__asm mov eax,dword ptr [ebx]
 //		__asm mov dword ptr [ebx],eax

@@ -22,7 +22,7 @@ bool GetFileVersion( RString sFile, RString &sOut )
 
 		RString VersionBuffer( iSize, ' ' );
 		// Also VC6:
-		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), nullptr, iSize, const_cast<char *>(VersionBuffer.c_str()) ) )
+		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), 0, iSize, const_cast<char *>(VersionBuffer.c_str()) ) )
 			break;
 
 		WORD *iTrans;
@@ -146,7 +146,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 
 		if( pGetProcessImageFileName != nullptr )
 		{
-			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, nullptr, iProcessID );
+			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, FALSE, iProcessID );
 			if( hProc == nullptr )
 			{
 				sName = werr_ssprintf( GetLastError(), "OpenProcess" );
