@@ -8,6 +8,9 @@
 #include "PlayerNumber.h"
 #include "NoteData.h"
 #include "ThemeMetric.h"
+
+#include <array>
+
 class Model;
 /** @brief A dancing character that follows the steps of the Song. */
 class BeginnerHelper : public ActorFrame
