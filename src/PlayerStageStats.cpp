@@ -11,6 +11,8 @@
 #include "PrefsManager.h"
 #include "CommonMetrics.h"
 
+#include <numeric>
+
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 // deprecated, but no solution to replace them exists yet:
 #define GRADE_TIER02_IS_ALL_W2S	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllW2s")
