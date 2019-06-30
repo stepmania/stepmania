@@ -22,7 +22,7 @@ void ScreenContinue::Init()
 
 void ScreenContinue::BeginScreen()
 {
-	GAMESTATE->SetCurrentStyle( NULL, PLAYER_INVALID );
+	GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
 
 	// Unjoin human players with 0 stages left and reset non-human players.
 	// We need to reset non-human players because data in non-human (CPU) 

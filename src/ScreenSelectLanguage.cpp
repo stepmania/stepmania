@@ -13,18 +13,19 @@ void ScreenSelectLanguage::Init()
 	THEME->GetLanguages( vs );
 	SortRStringArray( vs, true );
 
-	FOREACH_CONST( RString, vs, s )
+	int index = 0;
+	for (RString const &s : vs)
 	{
-		const LanguageInfo *pLI = GetLanguageInfo( *s );
+		const LanguageInfo *pLI = GetLanguageInfo( s );
 
 		GameCommand gc;
-		gc.m_iIndex = s - vs.begin();
-		gc.m_sName = *s;
+		gc.m_iIndex = index++;
+		gc.m_sName = s;
 		gc.m_bInvalid = false;
 		if( pLI )
 			gc.m_sText = THEME->GetString("NativeLanguageNames", pLI->szEnglishName);
 		else
-			gc.m_sText = *s;
+			gc.m_sText = s;
 
 		m_aGameCommands.push_back( gc );
 	}

@@ -2,7 +2,6 @@
 #include "MemoryCardDriverThreaded_Folder.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Foreach.h"
 #include "PlayerNumber.h"
 #include "MemoryCardManager.h"
 

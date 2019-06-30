@@ -121,7 +121,7 @@ public:
 	Song*	GetSelectedSong() const	
 	{
 		RETURN_IF_INVALID(m_pSongs.empty() ||
-			m_iSelection[ROW_SONG] >= (int)m_pSongs.size(), NULL);
+			m_iSelection[ROW_SONG] >= (int)m_pSongs.size(), nullptr);
 		return m_pSongs[m_iSelection[ROW_SONG]]; 
 	}
 	/** @brief Retrieve the currently selected steps type.
@@ -137,7 +137,7 @@ public:
 	Steps*	GetSelectedSteps() const
 	{
 		RETURN_IF_INVALID(m_vpSteps.empty() ||
-			m_iSelection[ROW_STEPS] >= (int)m_vpSteps.size(), NULL);
+			m_iSelection[ROW_STEPS] >= (int)m_vpSteps.size(), nullptr);
 		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; 
 	}
 	/** @brief Retrieve the currently selected difficulty.
@@ -161,7 +161,7 @@ public:
 	Steps* GetSelectedSourceSteps() const 
 	{
 		RETURN_IF_INVALID(m_vpSourceSteps.empty() ||
-			m_iSelection[ROW_SOURCE_STEPS] >= (int)m_vpSourceSteps.size(), NULL);
+			m_iSelection[ROW_SOURCE_STEPS] >= (int)m_vpSourceSteps.size(), nullptr);
 		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; 
 	}
 	/** @brief Retrieve the currently selected difficulty.

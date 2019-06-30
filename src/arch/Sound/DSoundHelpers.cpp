@@ -43,10 +43,10 @@ void DSound::SetPrimaryBufferMode()
 	format.dwSize = sizeof(format);
 	format.dwFlags = DSBCAPS_PRIMARYBUFFER;
 	format.dwBufferBytes = 0;
-	format.lpwfxFormat = NULL;
+	format.lpwfxFormat = nullptr;
 
 	IDirectSoundBuffer *pBuffer;
-	HRESULT hr = this->GetDS()->CreateSoundBuffer( &format, &pBuffer, NULL );
+	HRESULT hr = this->GetDS()->CreateSoundBuffer( &format, &pBuffer, nullptr );
 	if( FAILED(hr) )
 	{
 		LOG->Warn(hr_ssprintf(hr, "Couldn't create primary buffer"));
@@ -98,15 +98,15 @@ void DSound::SetPrimaryBufferMode()
 DSound::DSound()
 {
 	HRESULT hr;
-	if( FAILED( hr = CoInitialize(NULL) ) )
+	if( FAILED( hr = CoInitialize(nullptr) ) )
 		RageException::Throw( hr_ssprintf(hr, "CoInitialize") );
-	m_pDS = NULL;
+	m_pDS = nullptr;
 }
 
 RString DSound::Init()
 {
 	HRESULT hr;
-	if( FAILED( hr = DirectSoundCreate(NULL, &m_pDS, NULL) ) )
+	if( FAILED( hr = DirectSoundCreate(nullptr, &m_pDS, nullptr) ) )
 		return hr_ssprintf( hr, "DirectSoundCreate" );
 
 	static bool bShownInfo = false;
@@ -139,7 +139,7 @@ RString DSound::Init()
 
 DSound::~DSound()
 {
-	if( m_pDS != NULL )
+	if( m_pDS != nullptr )
 		m_pDS->Release();
 	CoUninitialize();
 }
@@ -163,8 +163,8 @@ bool DSound::IsEmulated() const
 
 DSoundBuf::DSoundBuf()
 {
-	m_pBuffer = NULL;
-	m_pTempBuffer = NULL;
+	m_pBuffer = nullptr;
+	m_pTempBuffer = nullptr;
 }
 
 RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
@@ -236,7 +236,7 @@ RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 
 	format.lpwfxFormat = &waveformat;
 
-	HRESULT hr = ds.GetDS()->CreateSoundBuffer( &format, &m_pBuffer, NULL );
+	HRESULT hr = ds.GetDS()->CreateSoundBuffer( &format, &m_pBuffer, nullptr );
 	if( FAILED(hr) )
 		return hr_ssprintf( hr, "CreateSoundBuffer failed (%i hz)", m_iSampleBits );
 
@@ -318,7 +318,7 @@ static bool contained( int iStart, int iEnd, int iPos )
 
 DSoundBuf::~DSoundBuf()
 {
-	if( m_pBuffer != NULL )
+	if( m_pBuffer != nullptr )
 		m_pBuffer->Release();
 	delete [] m_pTempBuffer;
 }

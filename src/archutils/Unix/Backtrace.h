@@ -31,10 +31,10 @@ struct BacktraceContext
 void InitializeBacktrace();
 
 /* Retrieve up to size-1 backtrace pointers in buf.  The array will be
- * null-terminated.  If ctx is NULL, retrieve the current backtrace; otherwise
+ * null-terminated.  If ctx is nullptr, retrieve the current backtrace; otherwise
  * retrieve a backtrace for the given context.  (Not all backtracers may
  * support contexts.) */
-void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx = NULL );
+void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx = nullptr );
 
 /* Set up a BacktraceContext to get a backtrace for a thread.  ThreadID may
  * not be the current thread.  True is returned on success, false on failure. */

@@ -85,9 +85,9 @@ void ScreenNameEntry::ScrollingText::DrawPrimitives()
 		m_Stamp.SetDiffuseAlpha( fAlpha );
 		m_Stamp.SetText( c );
 		m_Stamp.SetY( fY );
-		FOREACH_CONST( float, m_Xs, x )
+		for (float const &x : m_Xs)
 		{
-			m_Stamp.SetX( *x );
+			m_Stamp.SetX( x );
 			m_Stamp.Draw();
 		}
 		fY += g_fCharsSpacingY;

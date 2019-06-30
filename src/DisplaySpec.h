@@ -114,7 +114,7 @@ public:
 	}
 
 	/*
-	 * Return a pointer to the currently active display mode, or NULL if
+	 * Return a pointer to the currently active display mode, or nullptr if
 	 * display is inactive
 	 *
 	 * Note that inactive *does not* necessarily mean unusable. E.g., in X11,

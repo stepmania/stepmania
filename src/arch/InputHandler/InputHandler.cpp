@@ -6,7 +6,7 @@
 #include "LocalizedString.h"
 #include "arch/arch_default.h"
 #include "InputHandler_MonkeyKeyboard.h"
-#include "Foreach.h"
+
 
 void InputHandler::UpdateTimer()
 {
@@ -176,12 +176,12 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 	if( DriversToTry.empty() )
 		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
 	
-	FOREACH_CONST( RString, DriversToTry, s )
+	for (RString const &s : DriversToTry)
 	{
-		RageDriver *pDriver = InputHandler::m_pDriverList.Create( *s );
-		if( pDriver == NULL )
+		RageDriver *pDriver = InputHandler::m_pDriverList.Create( s );
+		if( pDriver == nullptr )
 		{
-			LOG->Trace( "Unknown Input Handler name: %s", s->c_str() );
+			LOG->Trace( "Unknown Input Handler name: %s", s.c_str() );
 			continue;
 		}
 

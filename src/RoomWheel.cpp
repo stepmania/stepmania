@@ -17,8 +17,10 @@ AutoScreenMessage( SM_RoomInfoDeploy );
 
 RoomWheel::~RoomWheel()
 {
-	FOREACH( WheelItemBaseData*, m_CurWheelItemData, i )
-		SAFE_DELETE( *i );
+	for (WheelItemBaseData *i : m_CurWheelItemData)
+	{	
+		SAFE_DELETE( i );
+	}
 	m_CurWheelItemData.clear();
 }
 
@@ -127,9 +129,9 @@ void RoomWheel::RemoveItem( int index )
 	vector<WheelItemBaseData *>::iterator i = m_CurWheelItemData.begin();
 	i += index;
 
-	// If this item's data happened to be last selected, make it NULL.
+	// If this item's data happened to be last selected, make it nullptr.
 	if( m_LastSelection == *i )
-		m_LastSelection = NULL;
+		m_LastSelection = nullptr;
 
 	SAFE_DELETE( *i );
 	m_CurWheelItemData.erase( i );
@@ -152,8 +154,8 @@ bool RoomWheel::Select()
 		return WheelBase::Select();
 	if( m_iSelection == 0 )
 	{
-		// Since this is not actually an option outside of this wheel, NULL is a good idea.
-		m_LastSelection = NULL;
+		// Since this is not actually an option outside of this wheel, nullptr is a good idea.
+		m_LastSelection = nullptr;
 		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME, "", 255 );
 	}
 	return false;
@@ -178,7 +180,7 @@ void RoomWheel::Move( int n )
 	if( n == 0 && m_iSelection >= m_offset )
 	{
 		const RoomWheelItemData* data = GetItem( m_iSelection-m_offset );
-		if( data != NULL )
+		if( data != nullptr )
 			SCREENMAN->PostMessageToTopScreen( SM_RoomInfoDeploy, 0 );
 	}
 	else

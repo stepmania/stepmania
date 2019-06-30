@@ -7,7 +7,7 @@
 
 #include <dlfcn.h>
 
-static void *Handle = NULL;
+static void *Handle = nullptr;
 static INIT Module_Init;
 static SHUTDOWN Module_Shutdown;
 static SETTEXT Module_SetText;
@@ -27,10 +27,10 @@ static RString ModuleError( const RString s )
 
 RString LoadingWindow_Gtk::Init()
 {
-	ASSERT( Handle == NULL );
+	ASSERT( Handle == nullptr );
 
 	Handle = dlopen( RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
-	if( Handle == NULL )
+	if( Handle == nullptr )
 		return ssprintf( "dlopen(): %s", dlerror() );
 
 	Module_Init = (INIT) dlsym(Handle, "Init");
@@ -62,20 +62,20 @@ RString LoadingWindow_Gtk::Init()
 		return ModuleError("SetIndeterminate");
 
 	const char *ret = Module_Init( &g_argc, &g_argv );
-	if( ret != NULL )
+	if( ret != nullptr )
 		return ret;
 	return "";
 }
 
 LoadingWindow_Gtk::~LoadingWindow_Gtk()
 {
-	if( Module_Shutdown != NULL )
+	if( Module_Shutdown != nullptr )
 		Module_Shutdown();
-	Module_Shutdown = NULL;
+	Module_Shutdown = nullptr;
 
 	if( Handle )
 		dlclose( Handle );
-	Handle = NULL;
+	Handle = nullptr;
 }
 
 void LoadingWindow_Gtk::SetText( RString s )

@@ -31,8 +31,8 @@ using namespace X11Helper;
 // Display ID for treating the entire X screen as the display
 const std::string ID_XSCREEN = "XSCREEN_RANDR";
 
-static GLXContext g_pContext = NULL;
-static GLXContext g_pBackgroundContext = NULL;
+static GLXContext g_pContext = nullptr;
+static GLXContext g_pBackgroundContext = nullptr;
 static Window g_AltWindow = None;
 static bool g_bChangedScreenSize = false;
 static SizeID g_iOldSize = None;
@@ -98,12 +98,12 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	if( g_pContext )
 	{
 		glXDestroyContext( Dpy, g_pContext );
-		g_pContext = NULL;
+		g_pContext = nullptr;
 	}
 	if( g_pBackgroundContext )
 	{
 		glXDestroyContext( Dpy, g_pBackgroundContext );
-		g_pBackgroundContext = NULL;
+		g_pBackgroundContext = nullptr;
 	}
 	XDestroyWindow( Dpy, Win );
 	Win = None;
@@ -138,7 +138,7 @@ void LowLevelWindow_X11::RestoreOutputConfig() {
 void *LowLevelWindow_X11::GetProcAddress( RString s )
 {
 	// XXX: We should check whether glXGetProcAddress or
-	// glXGetProcAddressARB is available/not NULL, and go by that,
+	// glXGetProcAddressARB is available/not nullptr, and go by that,
 	// instead of assuming like this.
 	return (void*) glXGetProcAddressARB( (const GLubyte*) s.c_str() );
 }
@@ -156,9 +156,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	int windowHeight = p.height;
 	bool renderOffscreen = false;
 
-	if( g_pContext == NULL || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
+	if( g_pContext == nullptr || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
 	{
-		bool bFirstRun = g_pContext == NULL;
+		bool bFirstRun = g_pContext == nullptr;
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
 
@@ -186,7 +186,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		visAttribs[i++] = None;
 
 		XVisualInfo *xvi = glXChooseVisual( Dpy, DefaultScreen(Dpy), visAttribs );
-		if( xvi == NULL )
+		if( xvi == nullptr )
 			return "No visual available for that depth.";
 
 		// I get strange behavior if I add override redirect after creating the window.
@@ -205,7 +205,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			glXDestroyContext( Dpy, g_pContext );
 		if( g_pBackgroundContext )
 			glXDestroyContext( Dpy, g_pBackgroundContext );
-		g_pContext = glXCreateContext( Dpy, xvi, NULL, True );
+		g_pContext = glXCreateContext( Dpy, xvi, nullptr, True );
 		g_pBackgroundContext = glXCreateContext( Dpy, xvi, g_pContext, True );
 
 		glXMakeCurrent( Dpy, Win, g_pContext );
@@ -307,7 +307,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			LOG->Info("LowLevelWindow_X11: Using XRandR");
 
 			XRRScreenResources *scrRes = XRRGetScreenResources(Dpy, Win);
-			ASSERT(scrRes != NULL);
+			ASSERT(scrRes != nullptr);
 			ASSERT(scrRes->ncrtc > 0);
 			ASSERT(scrRes->noutput > 0);
 			ASSERT(scrRes->nmode > 0);
@@ -353,7 +353,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			// if the target output is not currently being driven by a crtc,
 			// find an unused crtc that can be connected to it
 			XRROutputInfo *tgtOutInfo = XRRGetOutputInfo( Dpy, scrRes, targetOut );
-			if (tgtOutInfo == NULL)
+			if (tgtOutInfo == nullptr)
 			{
 				XRRFreeScreenResources(scrRes);
 				return "Failed to find XRROutput";
@@ -748,7 +748,7 @@ void LowLevelWindow_X11::GetDisplaySpecs(DisplaySpecs &out) const {
 
 bool LowLevelWindow_X11::SupportsThreadedRendering()
 {
-	return g_pBackgroundContext != NULL;
+	return g_pBackgroundContext != nullptr;
 }
 
 class RenderTarget_X11: public RenderTarget
@@ -780,9 +780,9 @@ RenderTarget_X11::RenderTarget_X11( LowLevelWindow_X11 *pWind )
 {
 	m_pWind = pWind;
 	m_iPbuffer = 0;
-	m_pPbufferContext = NULL;
+	m_pPbufferContext = nullptr;
 	m_iTexHandle = 0;
-	m_pOldContext = NULL;
+	m_pOldContext = nullptr;
 	m_pOldDrawable = 0;
 }
 
@@ -860,7 +860,7 @@ void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidt
 	iTextureHeightOut = iTextureHeight;
 
 	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
-			iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB, GL_UNSIGNED_BYTE, NULL );
+			iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB, GL_UNSIGNED_BYTE, nullptr );
 	GLenum error = glGetError();
 	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
 
@@ -897,7 +897,7 @@ void RenderTarget_X11::FinishRenderingTo()
 	glBindTexture( GL_TEXTURE_2D, 0 );
 
 	glXMakeCurrent( Dpy, m_pOldDrawable, m_pOldContext );
-	m_pOldContext = NULL;
+	m_pOldContext = nullptr;
 	m_pOldDrawable = 0;
 
 }
@@ -906,7 +906,7 @@ bool LowLevelWindow_X11::SupportsRenderToTexture() const
 {
 	// Server must support pbuffers:
 	const int iScreen = DefaultScreen( Dpy );
-	float fVersion = strtof( glXQueryServerString(Dpy, iScreen, GLX_VERSION), NULL );
+	float fVersion = strtof( glXQueryServerString(Dpy, iScreen, GLX_VERSION), nullptr );
 	if( fVersion < 1.3f )
 		return false;
 
@@ -969,7 +969,7 @@ void LowLevelWindow_X11::BeginConcurrentRendering()
 
 void LowLevelWindow_X11::EndConcurrentRendering()
 {
-	bool b = glXMakeCurrent( Dpy, None, NULL );
+	bool b = glXMakeCurrent( Dpy, None, nullptr );
 	ASSERT(b);
 }
 

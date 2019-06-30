@@ -10,7 +10,6 @@
 #include "RageDisplay.h"
 #include "arch/Dialog/Dialog.h"
 #include "PrefsManager.h"
-#include "Foreach.h"
 #include "ActorUtil.h"
 #include "XmlFileUtil.h"
 #include "Sprite.h"
@@ -18,7 +17,7 @@
 #include "SpecialFiles.h"
 
 /** @brief Have the NoteSkinManager available throughout the program. */
-NoteSkinManager*	NOTESKIN = NULL; // global and accessible from anywhere in our program
+NoteSkinManager*	NOTESKIN = nullptr; // global and accessible from anywhere in our program
 
 const RString GAME_COMMON_NOTESKIN_NAME = "common";
 const RString GAME_BASE_NOTESKIN_NAME = "default";
@@ -47,7 +46,7 @@ namespace
 
 NoteSkinManager::NoteSkinManager()
 {
-	m_pCurGame = NULL;
+	m_pCurGame = nullptr;
 	m_PlayerNumber = PlayerNumber_Invalid;
 	m_GameController = GameController_Invalid;
 
@@ -311,7 +310,7 @@ RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &s
 
 int NoteSkinManager::GetMetricI( const RString &sButtonName, const RString &sValueName )
 {
-	return StringToInt( GetMetric(sButtonName,sValueName) );
+	return std::stoi( GetMetric(sButtonName,sValueName) );
 }
 
 float NoteSkinManager::GetMetricF( const RString &sButtonName, const RString &sValueName )
@@ -322,7 +321,7 @@ float NoteSkinManager::GetMetricF( const RString &sButtonName, const RString &sV
 bool NoteSkinManager::GetMetricB( const RString &sButtonName, const RString &sValueName )
 {
 	// Could also call GetMetricI here...hmm.
-	return StringToInt( GetMetric(sButtonName,sValueName) ) != 0;
+	return std::stoi( GetMetric(sButtonName,sValueName) ) != 0;
 }
 
 apActorCommands NoteSkinManager::GetMetricA( const RString &sButtonName, const RString &sValueName )
@@ -349,22 +348,22 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 	const NoteSkinData &data = iter->second;
 
 	RString sPath;	// fill this in below
-	FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
+	for (RString const &directory : data.vsDirSearchOrder)
 	{
 		if( sButtonName.empty() )
-			sPath = GetPathFromDirAndFile( *lIter, sElement );
+			sPath = GetPathFromDirAndFile( directory, sElement );
 		else
-			sPath = GetPathFromDirAndFile( *lIter, sButtonName+" "+sElement );
+			sPath = GetPathFromDirAndFile( directory, sButtonName+" "+sElement );
 		if( !sPath.empty() )
 			break;	// done searching
 	}
 
 	if( sPath.empty() )
 	{
-		FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
+		for (RString const &directory : data.vsDirSearchOrder)
 		{
 			if( !sButtonName.empty() )
-				sPath = GetPathFromDirAndFile( *lIter, "Fallback "+sElement );
+				sPath = GetPathFromDirAndFile( directory, "Fallback "+sElement );
 			if( !sPath.empty() )
 				break;	// done searching
 		}
@@ -373,12 +372,14 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 	if( sPath.empty() )
 	{
 		RString sPaths;
-		FOREACH_CONST( RString, data.vsDirSearchOrder, dir )
+
+		// TODO: Find a more elegant way of doing this.
+		for (RString const &dir : data.vsDirSearchOrder)
 		{
 			if( !sPaths.empty() )
 				sPaths += ", ";
 
-			sPaths += *dir;
+			sPaths += dir;
 		}
 
 		RString message = ssprintf(
@@ -389,8 +390,8 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 		switch(LuaHelpers::ReportScriptError(message, "NOTESKIN_ERROR", true))
 		{
 			case Dialog::retry:
-				FOREACH_CONST(RString, data.vsDirSearchOrder, dir)
-					FILEMAN->FlushDirCache(*dir);
+				for (RString const &dir : data.vsDirSearchOrder)
+					FILEMAN->FlushDirCache(dir);
 				g_PathCache.clear();
 				return GetPath(sButtonName, sElement);
 			case Dialog::abort:
@@ -416,9 +417,9 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 		GetFileContents( sPath, sNewFileName, true );
 		RString sRealPath;
 
-		FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
+		for (RString const &directory : data.vsDirSearchOrder)
 		{
-			 sRealPath = GetPathFromDirAndFile( *lIter, sNewFileName );
+			 sRealPath = GetPathFromDirAndFile( directory, sNewFileName );
 			 if( !sRealPath.empty() )
 				 break;	// done searching
 		}
@@ -433,8 +434,8 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 			switch(LuaHelpers::ReportScriptError(message, "NOTESKIN_ERROR", true))
 			{
 				case Dialog::retry:
-					FOREACH_CONST(RString, data.vsDirSearchOrder, dir)
-						FILEMAN->FlushDirCache(*dir);
+					for (RString const &dir : data.vsDirSearchOrder)
+						FILEMAN->FlushDirCache(dir);
 					g_PathCache.clear();
 					return GetPath(sButtonName, sElement);
 				case Dialog::abort:
@@ -492,8 +493,8 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 		return Sprite::NewBlankSprite();
 	}
 
-	auto_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
-	if( pNode.get() == NULL )
+	unique_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
+	if( pNode.get() == nullptr )
 	{
 		LUA->Release( L );
 		// XNode will warn about the error
@@ -508,7 +509,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	{
 		// Make sure pActor is a Sprite (or something derived from Sprite).
 		Sprite *pSprite = dynamic_cast<Sprite *>( pRet );
-		if( pSprite == NULL )
+		if( pSprite == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str());
 			delete pRet;

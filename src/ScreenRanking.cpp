@@ -111,11 +111,11 @@ void ScreenRanking::Init()
 				StepsType st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				pts.aTypes.push_back( make_pair(Difficulty_Invalid, st) );
 				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
-				if( pts.pCourse == NULL )
+				if( pts.pCourse == nullptr )
 					continue;
 
 				pts.pTrail = pts.pCourse->GetTrail( st );
-				if( pts.pTrail == NULL )
+				if( pts.pTrail == nullptr )
 					continue;
 
 				m_vPagesToShow.push_back( pts );

@@ -48,17 +48,17 @@ void ScreenOptionsMemoryCard::CreateMenu()
 {
 	vector<OptionRowHandler*> vHands;
 
-	FOREACH_CONST( UsbStorageDevice, m_CurrentUsbStorageDevices, iter )
+	for (UsbStorageDevice const &iter : m_CurrentUsbStorageDevices)
 	{
 		vector<RString> vs;
-		if( iter->sVolumeLabel.empty() )
+		if( iter.sVolumeLabel.empty() )
 			vs.push_back( NO_LABEL );
 		else
-			vs.push_back( iter->sVolumeLabel );
-		if( iter->iVolumeSizeMB == 0 )
+			vs.push_back( iter.sVolumeLabel );
+		if( iter.iVolumeSizeMB == 0 )
 			vs.push_back( SIZE_UNKNOWN );
 		else
-			vs.push_back( ssprintf(RString(VOLUME_SIZE).c_str(),iter->iVolumeSizeMB) );
+			vs.push_back( ssprintf(RString(VOLUME_SIZE).c_str(),iter.iVolumeSizeMB) );
 
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 

@@ -134,7 +134,7 @@ void RageSurfaceUtils::CopySurface( const RageSurface *src, RageSurface *dest )
 	// Copy the palette, if we have one.
 	if( src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 )
 	{
-		ASSERT( dest->fmt.palette != NULL );
+		ASSERT( dest->fmt.palette != nullptr );
 		*dest->fmt.palette = *src->fmt.palette;
 	}
 
@@ -151,7 +151,7 @@ bool RageSurfaceUtils::ConvertSurface( const RageSurface *src, RageSurface *&dst
 	if( width == src->w && height == src->h && src->format->Equivalent( *dst->format ) )
 	{
 		delete dst;
-		dst = NULL;
+		dst = nullptr;
 		return false;
 	}
 
@@ -772,26 +772,26 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 {
 	RageFile f;
 	if( !f.Open( file ) )
-		return NULL;
+		return nullptr;
 
 	SurfaceHeader h;
 	if( f.Read( &h, sizeof(h) ) != sizeof(h) )
-		return NULL;
+		return nullptr;
 
 	RageSurfacePalette palette;
 	if( h.bpp == 8 )
 	{
 		if( f.Read( &palette.ncolors, sizeof(palette.ncolors) ) != sizeof(palette.ncolors) )
-			return NULL;
+			return nullptr;
 		ASSERT_M( palette.ncolors <= 256, ssprintf("%i", palette.ncolors) );
 		if( f.Read( palette.colors, palette.ncolors * sizeof(RageSurfaceColor) ) != int(palette.ncolors * sizeof(RageSurfaceColor)) )
-			return NULL;
+			return nullptr;
 	}
 
 	// Create the surface.
 	RageSurface *img = CreateSurface( h.width, h.height, h.bpp,
 			h.Rmask, h.Gmask, h.Bmask, h.Amask );
-	ASSERT( img != NULL );
+	ASSERT( img != nullptr );
 
 	/* If the pitch has changed, this surface is either corrupt, or was
 	 * created with a different version whose CreateSurface() behavior
@@ -801,13 +801,13 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 		LOG->Trace( "Error loading \"%s\": expected pitch %i, got %i (%ibpp, %i width)",
 				file.c_str(), h.pitch, img->pitch, h.bpp, h.width );
 		delete img;
-		return NULL;
+		return nullptr;
 	}
 
 	if( f.Read( img->pixels, h.height * h.pitch ) != h.height * h.pitch )
 	{
 		delete img;
-		return NULL;
+		return nullptr;
 	}
 
 	// Set the palette.

@@ -62,7 +62,7 @@ void DifficultyIcon::SetPlayer( PlayerNumber pn )
 void DifficultyIcon::SetFromSteps( PlayerNumber pn, const Steps* pSteps )
 {
 	SetPlayer( pn );
-	if( pSteps == NULL )
+	if( pSteps == nullptr )
 		Unset();
 	else
 		SetFromDifficulty( pSteps->GetDifficulty() );
@@ -71,7 +71,7 @@ void DifficultyIcon::SetFromSteps( PlayerNumber pn, const Steps* pSteps )
 void DifficultyIcon::SetFromTrail( PlayerNumber pn, const Trail* pTrail )
 {
 	SetPlayer( pn );
-	if( pTrail == NULL )
+	if( pTrail == nullptr )
 		Unset();
 	else
 		SetFromDifficulty( pTrail->m_CourseDifficulty );

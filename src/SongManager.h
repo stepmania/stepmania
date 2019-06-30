@@ -65,7 +65,7 @@ public:
 	void InvalidateCachedTrails();
 
 	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
-	void Reload( bool bAllowFastLoad, LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
+	void Reload( bool bAllowFastLoad, LoadingWindow *ld=nullptr );	// songs, courses, groups - everything.
 	void PreloadSongImages();
 
 	bool IsGroupNeverCached(const RString& group) const;

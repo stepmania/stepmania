@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageThreads.h"
-#include "Foreach.h"
 #include "arch/Dialog/Dialog.h"
 #include "XmlFile.h"
 #include "Command.h"
@@ -19,7 +18,7 @@
 #include <cassert>
 #include <map>
 
-LuaManager *LUA = NULL;
+LuaManager *LUA = nullptr;
 struct Impl
 {
 	Impl(): g_pLock("Lua") {}
@@ -28,7 +27,7 @@ struct Impl
 
 	RageMutex g_pLock;
 };
-static Impl *pImpl = NULL;
+static Impl *pImpl = nullptr;
 
 #if defined(_MSC_VER)
 	/* "interaction between '_setjmp' and C++ object destruction is non-portable"
@@ -96,12 +95,12 @@ namespace LuaHelpers
 	{
 		size_t iLen;
 		const char *pStr = lua_tolstring( L, iOffset, &iLen );
-		if( pStr != NULL )
+		if( pStr != nullptr )
 			Object.assign( pStr, iLen );
 		else
 			Object.clear();
 
-		return pStr != NULL;
+		return pStr != nullptr;
 	}
 }
 
@@ -184,7 +183,7 @@ static int GetLuaStack( lua_State *L )
 		
 		if( !strcmp(ar.what, "C") )
 		{
-			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != NULL; ++i )
+			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != nullptr; ++i )
 			{
 				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
 				lua_pop( L, 1 ); // pop value
@@ -192,7 +191,7 @@ static int GetLuaStack( lua_State *L )
 		}
 		else
 		{
-			for( int i = 1; (name = lua_getlocal(L, &ar, i)) != NULL; ++i )
+			for( int i = 1; (name = lua_getlocal(L, &ar, i)) != nullptr; ++i )
 			{
 				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
 				lua_pop( L, 1 ); // pop value
@@ -236,11 +235,11 @@ static int LuaPanic( lua_State *L )
 }
 
 // Actor registration
-static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = NULL;
+static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = nullptr;
 
 void LuaManager::Register( RegisterWithLuaFn pfn )
 {
-	if( g_vRegisterActorTypes == NULL )
+	if( g_vRegisterActorTypes == nullptr )
 		g_vRegisterActorTypes = new vector<RegisterWithLuaFn>;
 
 	g_vRegisterActorTypes->push_back( pfn );
@@ -253,7 +252,7 @@ LuaManager::LuaManager()
 	LUA = this; // so that LUA is available when we call the Register functions
 
 	lua_State *L = lua_open();
-	ASSERT( L != NULL );
+	ASSERT( L != nullptr );
 
 	lua_atpanic( L, LuaPanic );
 	m_pLuaMain = L;
@@ -325,7 +324,7 @@ void LuaManager::Release( Lua *&p )
 
 	if( bDoUnlock )
 		pImpl->g_pLock.Unlock();
-	p = NULL;
+	p = nullptr;
 }
 
 /*
@@ -680,35 +679,35 @@ XNode *LuaHelpers::GetLuaInformation()
 
 	/* Globals */
 	sort( vFunctions.begin(), vFunctions.end() );
-	FOREACH_CONST( RString, vFunctions, func )
+	for (RString const &func : vFunctions)
 	{
 		XNode *pFunctionNode = pGlobalsNode->AppendChild( "Function" );
-		pFunctionNode->AppendAttr( "name", *func );
+		pFunctionNode->AppendAttr( "name", func );
 	}
 
 	/* Classes */
-	FOREACHM_CONST( RString, LClass, mClasses, c )
+	for (auto const &c : mClasses)
 	{
 		XNode *pClassNode = pClassesNode->AppendChild( "Class" );
 
-		pClassNode->AppendAttr( "name", c->first );
-		if( !c->second.m_sBaseName.empty() )
-			pClassNode->AppendAttr( "base", c->second.m_sBaseName );
-		FOREACH_CONST( RString, c->second.m_vMethods, m )
+		pClassNode->AppendAttr( "name", c.first );
+		if( !c.second.m_sBaseName.empty() )
+			pClassNode->AppendAttr( "base", c.second.m_sBaseName );
+		for (RString const & m : c.second.m_vMethods)
 		{
 			XNode *pMethodNode = pClassNode->AppendChild( "Function" );
-			pMethodNode->AppendAttr( "name", *m );
+			pMethodNode->AppendAttr( "name", m );
 		}
 	}
 
 	/* Singletons */
-	FOREACHM_CONST( RString, RString, mSingletons, s )
+	for (auto const &s : mSingletons)
 	{
-		if( mClasses.find(s->first) != mClasses.end() )
+		if( mClasses.find(s.first) != mClasses.end() )
 			continue;
 		XNode *pSingletonNode = pSingletonsNode->AppendChild( "Singleton" );
-		pSingletonNode->AppendAttr( "name", s->first );
-		pSingletonNode->AppendAttr( "class", s->second );
+		pSingletonNode->AppendAttr( "name", s.first );
+		pSingletonNode->AppendAttr( "class", s.second );
 	}
 
 	/* Namespaces */
@@ -718,10 +717,10 @@ XNode *LuaHelpers::GetLuaInformation()
 		const vector<RString> &vNamespace = iter->second;
 		pNamespaceNode->AppendAttr( "name", iter->first );
 
-		FOREACH_CONST( RString, vNamespace, func )
+		for (RString const &func: vNamespace)
 		{
 			XNode *pFunctionNode = pNamespaceNode->AppendChild( "Function" );
-			pFunctionNode->AppendAttr( "name", *func );
+			pFunctionNode->AppendAttr( "name", func );
 		}
 	}
 
@@ -742,21 +741,21 @@ XNode *LuaHelpers::GetLuaInformation()
 	}
 
 	/* Constants, String Constants */
-	FOREACHM_CONST( RString, float, mConstants, c )
+	for (auto const &c : mConstants)
 	{
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 
-		pConstantNode->AppendAttr( "name", c->first );
-		if( c->second == truncf(c->second) )
-			pConstantNode->AppendAttr( "value", int(c->second) );
+		pConstantNode->AppendAttr( "name", c.first );
+		if( c.second == truncf(c.second) )
+			pConstantNode->AppendAttr( "value", static_cast<int>(c.second) );
 		else
-			pConstantNode->AppendAttr( "value", c->second );
+			pConstantNode->AppendAttr( "value", c.second );
 	}
-	FOREACHM_CONST( RString, RString, mStringConstants, s )
+	for (auto const &s : mStringConstants)
 	{
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
-		pConstantNode->AppendAttr( "name", s->first );
-		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s->second.c_str()) );
+		pConstantNode->AppendAttr( "name", s.first );
+		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s.second.c_str()) );
 	}
 
 	return pLuaNode;
@@ -924,9 +923,8 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		if( bLegacy )
 			s << "\tparent = self:GetParent();\n";
 
-		FOREACH_CONST( Command, cmds.v, c )
+		for (Command const &cmd : cmds.v)
 		{
-			const Command& cmd = (*c);
 			RString sCmdName = cmd.GetName();
 			if( bLegacy )
 				sCmdName.MakeLower();
@@ -1137,8 +1135,8 @@ namespace
 		lua_call( L, iArgs, LUA_MULTRET );
 		int iVals = lua_gettop(L);
 
-		FOREACH( LuaThreadVariable *, apVars, v )
-			delete *v;
+		for (LuaThreadVariable *v : apVars)
+			delete v;
 		return iVals;
 	}
 
@@ -1176,7 +1174,7 @@ namespace
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
 		LIST_METHOD( ReportScriptError ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 

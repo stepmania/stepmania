@@ -32,7 +32,7 @@ public:
 	bool GetValue( const RString &sKey, const RString &sValueName, T& value ) const
 	{
 		const XNode* pNode = GetChild( sKey );
-		if( pNode == NULL )
+		if( pNode == nullptr )
 			return false;
 		return pNode->GetAttrValue<T>( sValueName, value );
 	}
@@ -40,7 +40,7 @@ public:
 	void SetValue( const RString &sKey, const RString &sValueName, const T &value )
 	{
 		XNode* pNode = GetChild( sKey );
-		if( pNode == NULL )
+		if( pNode == nullptr )
 			pNode = AppendChild( sKey );
 		pNode->AppendAttr<T>( sValueName, value );
 	}

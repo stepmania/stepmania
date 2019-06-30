@@ -20,7 +20,7 @@
 
 RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBasic *pFile, RString &error, RString format, bool &bKeepTrying )
 {
-	RageSoundReader_FileReader *Sample = NULL;
+	RageSoundReader_FileReader *Sample = nullptr;
 
 #if defined(HAS_WAV)
 	if( !format.CompareNoCase("wav") )
@@ -38,10 +38,10 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 #endif
 
 	if( !Sample )
-		return NULL;
+		return nullptr;
 
 	OpenResult ret = Sample->Open( pFile );
-	pFile = NULL; // Sample owns it now
+	pFile = nullptr; // Sample owns it now
 	if( ret == OPEN_OK )
 		return Sample;
 
@@ -84,7 +84,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 		default: break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 #include "RageFileDriverMemory.h"
@@ -98,7 +98,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		{
 			error = pFileOpen->GetError();
 			delete pFileOpen;
-			return NULL;
+			return nullptr;
 		}
 		pFile = pFileOpen;
 	}
@@ -108,11 +108,11 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		if( pFile->GetFileSize() < 1024*50 )
 		{
 			RageFileObjMem *pMem = new RageFileObjMem;
-			bool bRet = FileCopy( *pFile, *pMem, error, NULL );
+			bool bRet = FileCopy( *pFile, *pMem, error, nullptr );
 			if( !bRet )
 			{
 				delete pMem;
-				return NULL;
+				return nullptr;
 			}
 
 			pFile = pMem;
@@ -158,7 +158,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /*

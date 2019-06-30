@@ -2,7 +2,7 @@
 #include "OptionRow.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "Foreach.h"
+
 #include "OptionRowHandler.h"
 #include "CommonMetrics.h"
 #include "GameState.h"
@@ -33,9 +33,9 @@ RString MOD_ICON_X_NAME( size_t p )		{ return ssprintf("ModIconP%dX",int(p+1)); 
 OptionRow::OptionRow( const OptionRowType *pSource )
 {
 	m_pParentType = pSource;
-	m_pHand = NULL;
+	m_pHand = nullptr;
 
-	m_textTitle = NULL;
+	m_textTitle = nullptr;
 	ZERO( m_ModIcons );
 
 	Clear();
@@ -61,10 +61,10 @@ void OptionRow::Clear()
 	FOREACH_PlayerNumber( p )
 		m_Underline[p].clear();
 
-	if( m_pHand != NULL )
+	if( m_pHand != nullptr )
 	{
-		FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
-			MESSAGEMAN->Unsubscribe( this, *m );
+		for (RString const &m : m_pHand->m_vsReloadRowMessages)
+			MESSAGEMAN->Unsubscribe( this, m );
 	}
 	SAFE_DELETE( m_pHand );
 
@@ -108,7 +108,7 @@ void OptionRowType::Load( const RString &sMetricsGroup, Actor *pParent )
 	ActorUtil::LoadAllCommandsAndSetXY( m_textTitle, sMetricsGroup );
 
 	Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Frame"), pParent );
-	if( pActor == NULL )
+	if( pActor == nullptr )
 		pActor = new Actor;
 	m_sprFrame.Load( pActor );
 	m_sprFrame->SetName( "Frame" );
@@ -128,8 +128,8 @@ void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 	m_pHand = pHand;
 	m_bFirstItemGoesDown = bFirstItemGoesDown;
 
-	FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
-		MESSAGEMAN->Subscribe( this, *m );
+	for (RString const &m : m_pHand->m_vsReloadRowMessages)
+		MESSAGEMAN->Subscribe( this, m );
 
 	ChoicesChanged( RowType_Normal );
 }
@@ -204,7 +204,7 @@ RString OptionRow::GetRowTitle() const
 		if( GAMESTATE->m_pCurCourse )
 		{
 			const Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()];
-			ASSERT( pTrail != NULL );
+			ASSERT( pTrail != nullptr );
 			const int iNumCourseEntries = pTrail->m_vEntries.size();
 			if( iNumCourseEntries > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 				bShowBpmInSpeedTitle = false;
@@ -223,7 +223,7 @@ RString OptionRow::GetRowTitle() const
 				const Course *pCourse = GAMESTATE->m_pCurCourse;
 				StepsType st = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;
 				const Trail* pTrail = pCourse->GetTrail( st );
-				ASSERT( pTrail != NULL );
+				ASSERT( pTrail != nullptr );
 				pTrail->GetDisplayBpms( bpms );
 			}
 
@@ -503,7 +503,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 void OptionRow::PositionIcons( PlayerNumber pn )
 {
 	ModIcon *pIcon = m_ModIcons[pn];
-	if( pIcon == NULL )
+	if( pIcon == nullptr )
 		return;
 
 	pIcon->SetX( m_pParentType->MOD_ICON_X.GetValue(pn) );
@@ -650,7 +650,7 @@ void OptionRow::SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &
 	msg.SetParam( "GameCommand", &gc );
 	msg.SetParam( "Text", sText );
 	m_sprFrame->HandleMessage( msg );
-	if( m_ModIcons[pn] != NULL )
+	if( m_ModIcons[pn] != nullptr )
 		m_ModIcons[pn]->Set( sText );
 }
 
@@ -706,8 +706,7 @@ void OptionRow::SetOneSelection( PlayerNumber pn, int iChoice )
 	vector<bool> &vb = m_vbSelected[pn];
 	if( vb.empty() )
 		return;
-	FOREACH( bool, vb, b )
-		*b = false;
+	std::fill_n(vb.begin(), vb.size(), false);
 	vb[iChoice] = true;
 	NotifyHandlerOfSelection(pn, iChoice);
 }
@@ -882,10 +881,13 @@ void OptionRow::Reload()
 void OptionRow::HandleMessage( const Message &msg )
 {
 	bool bReload = false;
-	FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
+	for (RString const &m : m_pHand->m_vsReloadRowMessages)
 	{
-		if( *m == msg.GetName() )
+		if( m == msg.GetName() )
+		{
 			bReload = true;
+			break;
+		}
 	}
 	if( bReload )
 		Reload();
@@ -907,12 +909,9 @@ void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 {
 	ASSERT( m_pHand->m_Def.m_vsChoices.size() > 0 );
 
-	FOREACH_CONST( PlayerNumber, vpns, iter )
+	for (PlayerNumber const &p : vpns)
 	{
-		PlayerNumber p = *iter;
-
-		FOREACH( bool, m_vbSelected[p], b )
-			*b = false;
+		std::fill_n(m_vbSelected[p].begin(), m_vbSelected[p].size(), false);
 
 		ASSERT( m_vbSelected[p].size() == m_pHand->m_Def.m_vsChoices.size() );
 		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
@@ -920,10 +919,8 @@ void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 
 	m_pHand->ImportOption( this, vpns, m_vbSelected );
 
-	FOREACH_CONST( PlayerNumber, vpns, iter )
+	for (PlayerNumber const &p : vpns)
 	{
-		PlayerNumber p = *iter;
-
 		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 		VerifySelected( m_pHand->m_Def.m_selectType, m_vbSelected[p], m_pHand->m_Def.m_sName );
 	}
@@ -935,9 +932,8 @@ int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocu
 
 	int iChangeMask = 0;
 
-	FOREACH_CONST( PlayerNumber, vpns, iter )
+	for (PlayerNumber const &p : vpns)
 	{
-		PlayerNumber p = *iter;
 		bool bFocus = bRowHasFocus[p];
 
 		VerifySelected( m_pHand->m_Def.m_selectType, m_vbSelected[p], m_pHand->m_Def.m_sName );
@@ -952,9 +948,8 @@ int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocu
 
 	iChangeMask |= m_pHand->ExportOption( vpns, m_vbSelected );
 
-	FOREACH_CONST( PlayerNumber, vpns, iter )
+	for (PlayerNumber const &p : vpns)
 	{
-		PlayerNumber p = *iter;
 		bool bFocus = bRowHasFocus[p];
 
 		int iChoice = GetChoiceInRowWithFocus( p );

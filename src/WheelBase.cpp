@@ -11,7 +11,6 @@
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "Style.h"
 #include "ThemeMetric.h"
 #include "ScreenDimensions.h"
@@ -34,10 +33,12 @@ LuaXType( WheelState );
 
 WheelBase::~WheelBase()
 {
-	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
-		SAFE_DELETE( *i );
+	for (WheelItemBase *i : m_WheelBaseItems)
+	{
+		SAFE_DELETE( i );
+	}
 	m_WheelBaseItems.clear();
-	m_LastSelection = NULL;
+	m_LastSelection = nullptr;
 }
 
 void WheelBase::Load( RString sType ) 
@@ -46,7 +47,7 @@ void WheelBase::Load( RString sType )
 	ASSERT( this->GetNumChildren() == 0 ); // only load once
 
 	m_bEmpty = false;
-	m_LastSelection = NULL;
+	m_LastSelection = nullptr;
 	m_iSelection = 0;
 	m_fTimeLeftInState = 0;
 	m_fPositionOffsetFromSelection = 0;
@@ -306,7 +307,7 @@ WheelItemBaseData* WheelBase::GetItem( unsigned int iIndex )
 	if( !m_bEmpty && iIndex < m_CurWheelItemData.size() )
 		return m_CurWheelItemData[iIndex];
 
-	return NULL;
+	return nullptr;
 }
 
 int WheelBase::IsMoving() const
@@ -488,7 +489,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 WheelItemBaseData* WheelBase::LastSelected()
 {
 	if( m_bEmpty )
-		return NULL;
+		return nullptr;
 	else
 		return m_LastSelection;
 }
@@ -520,7 +521,7 @@ public:
 		int iItem = IArg(1);
 
 		WheelItemBase *pItem = p->GetWheelItem( iItem );
-		if( pItem == NULL )
+		if( pItem == nullptr )
 			luaL_error( L, "%i out of bounds", iItem );
 		pItem->PushSelf( L );
 

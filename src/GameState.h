@@ -246,13 +246,13 @@ public:
 
 	// State Info used during gameplay
 
-	// NULL on ScreenSelectMusic if the currently selected wheel item isn't a Song.
+	// nullptr on ScreenSelectMusic if the currently selected wheel item isn't a Song.
 	BroadcastOnChangePtr<Song>	m_pCurSong;
 	// The last Song that the user manually changed to.
 	Song*		m_pPreferredSong;
 	BroadcastOnChangePtr1D<Steps,NUM_PLAYERS> m_pCurSteps;
 
-	// NULL on ScreenSelectMusic if the currently selected wheel item isn't a Course.
+	// nullptr on ScreenSelectMusic if the currently selected wheel item isn't a Course.
 	BroadcastOnChangePtr<Course>	m_pCurCourse;
 	// The last Course that the user manually changed to.
 	Course*		m_pPreferredCourse;

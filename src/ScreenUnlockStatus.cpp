@@ -50,7 +50,7 @@ void ScreenUnlockStatus::Init()
 		const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[i-1];
 		const Song *pSong = entry.m_Song.ToSong();
 
-		if( pSong == NULL)
+		if( pSong == nullptr)
 			continue;
 
 		Sprite* pSpr = new Sprite;
@@ -105,7 +105,7 @@ void ScreenUnlockStatus::Init()
 			case UnlockRewardType_Song:
 				{
 					const Song *pSong = entry.m_Song.ToSong();
-					ASSERT( pSong != NULL );
+					ASSERT( pSong != nullptr );
 		
 					RString title = pSong->GetDisplayMainTitle();
 					RString subtitle = pSong->GetDisplaySubTitle();
@@ -118,7 +118,7 @@ void ScreenUnlockStatus::Init()
 			case UnlockRewardType_Course:
 				{
 					const Course *pCourse = entry.m_Course.ToCourse();
-					ASSERT( pCourse != NULL );
+					ASSERT( pCourse != nullptr );
 
 					text->SetMaxWidth( MaxWidth );
 					text->SetText( pCourse->GetDisplayFullTitle() );
@@ -229,7 +229,7 @@ void ScreenUnlockStatus::Init()
 
 			const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[NextIcon-1];
 			const Song *pSong = entry.m_Song.ToSong();
-			if( pSong == NULL )
+			if( pSong == nullptr )
 				continue;
 
 			BitmapText* NewText = new BitmapText;

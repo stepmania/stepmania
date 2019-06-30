@@ -62,9 +62,9 @@ void ScoreKeeperNormal::Load(
 	for( unsigned i=0; i<apSteps.size(); i++ )
 	{
 		Song* pSong = apSongs[i];
-		ASSERT( pSong != NULL );
+		ASSERT( pSong != nullptr );
 		Steps* pSteps = apSteps[i];
-		ASSERT( pSteps != NULL );
+		ASSERT( pSteps != nullptr );
 		const AttackArray &aa = asModifiers[i];
 		NoteData ndTemp;
 		pSteps->GetNoteData( ndTemp );
@@ -94,7 +94,7 @@ void ScoreKeeperNormal::Load(
 		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData()); // XXX: Not sure why but NoteDataUtil::CalculateRadarValues segfaults without this
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
-		GAMESTATE->SetProcessedTimingData(NULL);
+		GAMESTATE->SetProcessedTimingData(nullptr);
 	}
 
 	m_pPlayerStageStats->m_iPossibleDancePoints = iTotalPossibleDancePoints;
@@ -196,7 +196,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 
 	m_iTapNotesHit = 0;
 	
-	GAMESTATE->SetProcessedTimingData(NULL);
+	GAMESTATE->SetProcessedTimingData(nullptr);
 }
 
 static int GetScore(int p, int Z, int64_t S, int n)

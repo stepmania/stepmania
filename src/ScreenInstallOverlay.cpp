@@ -68,23 +68,23 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 		GetDirListingRecursive( TEMP_ZIP_MOUNT_POINT, "*", vsRawFiles);
 
 		vector<RString> vsPrettyFiles;
-		FOREACH_CONST( RString, vsRawFiles, s )
+		for (RString const &s : vsRawFiles)
 		{
-			if( GetExtension(*s).EqualsNoCase("ctl") )
+			if( GetExtension(s).EqualsNoCase("ctl") )
 				continue;
 
-			vsFiles.push_back( *s);
+			vsFiles.push_back( s);
 
-			RString s2 = s->Right( s->length() - TEMP_ZIP_MOUNT_POINT.length() );
+			RString s2 = s.Right( s.length() - TEMP_ZIP_MOUNT_POINT.length() );
 			vsPrettyFiles.push_back( s2 );
 		}
 		sort( vsPrettyFiles.begin(), vsPrettyFiles.end() );
 	}
 
 	RString sResult = "Success installing " + sZipFile;
-	FOREACH_CONST( RString, vsFiles, sSrcFile )
+	for (RString &tmpFile : vsFiles)
 	{
-		RString sDestFile = *sSrcFile;
+		RString sDestFile = tmpFile;
 		sDestFile = sDestFile.Right( sDestFile.length() - TEMP_ZIP_MOUNT_POINT.length() );
 
 		RString sDir, sThrowAway;
@@ -95,7 +95,7 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 
 		FILEMAN->CreateDir( sDir );
 
-		if( !FileCopy( *sSrcFile, sDestFile ) )
+		if( !FileCopy( tmpFile, sDestFile ) )
 		{
 			sResult = "Error extracting " + sDestFile;
 			break;
@@ -154,7 +154,7 @@ public:
 	}
 	RString GetStatus()
 	{
-		if( m_pTransfer == NULL )
+		if( m_pTransfer == nullptr )
 			return "";
 		else
 			return m_pTransfer->GetStatus();
@@ -187,9 +187,8 @@ public:
 					Json::Value require = root["Require"];
 					if( require.isArray() )
 					{
-						for( unsigned i=0; i<require.size(); i++)
+						for (Json::Value const &iter : require)
 						{
-							Json::Value iter = require[i];
 							if( iter["Dir"].isString() )
 							{
 								RString sDir = iter["Dir"].asString();
@@ -226,7 +225,7 @@ public:
 					RString sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
-					ASSERT(m_pTransfer == NULL);
+					ASSERT(m_pTransfer == nullptr);
 					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
@@ -245,7 +244,7 @@ public:
 					RString sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
-					ASSERT(m_pTransfer == NULL);
+					ASSERT(m_pTransfer == nullptr);
 					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
@@ -254,7 +253,7 @@ public:
 		}
 		bool bFinished = m_DownloadState == packages  &&  
 			m_vsQueuedPackageUrls.empty() && 
-			m_pTransfer == NULL;
+			m_pTransfer == nullptr;
 		if( bFinished )
 		{
 			Message msg( "DownloadFinished" );
@@ -363,19 +362,19 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 
 	{
 		vector<RString> vsMessages;
-		FOREACH_CONST( DownloadTask*, g_pDownloadTasks, pDT )
+		for (DownloadTask *pDT : g_pDownloadTasks)
 		{
-			vsMessages.push_back( (*pDT)->GetStatus() );
+			vsMessages.push_back( pDT->GetStatus() );
 		}
 		m_textStatus.SetText( join("\n", vsMessages) );
 	}
 #endif
 	if( playAfterLaunchInfo.bAnySongChanged )
-		SONGMAN->Reload( false, NULL );
+		SONGMAN->Reload( false, nullptr );
 
 	if( !playAfterLaunchInfo.sSongDir.empty() )
 	{
-		Song* pSong = NULL;
+		Song* pSong = nullptr;
 		GAMESTATE->Reset();
 		RString sInitialScreen;
 		if( playAfterLaunchInfo.sSongDir.length() > 0 )

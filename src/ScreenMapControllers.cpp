@@ -799,9 +799,9 @@ bool ScreenMapControllers::SanityCheckWrapper()
 	}
 	else
 	{
-		FOREACH(RString, reasons_not_sane, reason)
+		for (RString &reason : reasons_not_sane)
 		{
-			*reason= THEME->GetString("ScreenMapControllers", *reason);
+			reason= THEME->GetString("ScreenMapControllers", reason);
 		}
 		RString joined_reasons= join("\n", reasons_not_sane);
 		joined_reasons= THEME->GetString("ScreenMapControllers", "VitalButtons") + "\n" + joined_reasons;

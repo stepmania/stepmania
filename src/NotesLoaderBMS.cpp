@@ -237,16 +237,16 @@ struct bmsCommandTree
 
 		bmsNodeS()
 		{
-			parent = NULL;
+			parent = nullptr;
 			conditionValue = 0;
 			conditionType = CT_NULL;
 		}
 
 		~bmsNodeS()
 		{
-			FOREACH(bmsNodeS*, branches, b)
+			for (bmsNodeS *b : branches)
 			{
-				delete *b;
+				delete b;
 			}
 		}
 	};
@@ -264,7 +264,7 @@ struct bmsCommandTree
 		root.branchHeight = 0;
 		root.conditionValue = 0;
 		root.conditionTriggerValue = -1;
-		root.parent = NULL;
+		root.parent = nullptr;
 		root.conditionType = bmsNodeS::CT_NULL;
 
 		currentNode = &root;
@@ -354,8 +354,8 @@ struct bmsCommandTree
 
 	bool triggerBranches(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
 	{
-		FOREACH(bmsNodeS*, node->branches, b)
-			if (evaluateNode(*b, headersOut, linesOut))
+		for (bmsNodeS *b : node->branches)
+			if (evaluateNode(b, headersOut, linesOut))
 			{
 				return true;
 			}
@@ -438,7 +438,7 @@ struct bmsCommandTree
 		}
 		else if (name == "#else")
 		{
-			if (currentNode->parent != NULL) // Not the root node.
+			if (currentNode->parent != nullptr) // Not the root node.
 			{
 				if (currentNode->parent->conditionType == bmsNodeS::CT_CONDITIONALCHAIN)
 				{
@@ -452,7 +452,7 @@ struct bmsCommandTree
 		}
 		else if (name == "#elseif")
 		{
-			if (currentNode->parent != NULL) // Not the root node.
+			if (currentNode->parent != nullptr) // Not the root node.
 			{
 				if (currentNode->parent->conditionType == bmsNodeS::CT_CONDITIONALCHAIN)
 				{
@@ -464,7 +464,7 @@ struct bmsCommandTree
 		}
 		else if (name == "#endif" || name == "#end")
 		{
-			if (currentNode->parent != NULL) // not the root node
+			if (currentNode->parent != nullptr) // not the root node
 			{
 				currentNode = currentNode->parent;
 			}
@@ -483,7 +483,7 @@ struct bmsCommandTree
 			while (randomStack.size() < currentNode->branchHeight + 1) // if we're on branch level N we need N+1 values.
 				randomStack.push_back(0);
 
-			randomStack[currentNode->branchHeight] = rand() % StringToInt(value) + 1;
+			randomStack[currentNode->branchHeight] = rand() % std::stoi(value) + 1;
 		}
 		else
 		{
@@ -886,12 +886,12 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if( it->first == "#playlevel" )
 		{
-			out->SetMeter( StringToInt(it->second) );
+			out->SetMeter( std::stoi(it->second) );
 		}
 		else if( it->first == "#difficulty")
 		{
 			// only set the difficulty if the #difficulty tag is between 1 and 6 (beginner~edit)
-			int diff = StringToInt(it->second)-1; // BMS uses 1 to 6, SM uses 0 to 5
+			int diff = std::stoi(it->second)-1; // BMS uses 1 to 6, SM uses 0 to 5
 			if(diff>=0 && diff<NUM_Difficulty) {
 				out->SetDifficulty( (Difficulty)diff );
 			}

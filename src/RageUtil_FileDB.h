@@ -29,15 +29,15 @@ struct File
 	/* Private data, for RageFileDrivers. */
 	void *priv;
 
-	/* If this is non-NULL, and dir is true, this is a pointer to the FileSet containing
+	/* If this is non-nullptr, and dir is true, this is a pointer to the FileSet containing
 	 * the directory contents.  (This is a cache; it isn't always set.) */
 	const FileSet *dirp;
 
-	File() { dir=false; dirp=NULL; size=-1; hash=-1; priv=NULL;}
+	File() { dir=false; dirp=nullptr; size=-1; hash=-1; priv=nullptr;}
 	File( const RString &fn )
 	{
 		SetName( fn );
-		dir=false; size=-1; hash=-1; priv=NULL; dirp=NULL;
+		dir=false; size=-1; hash=-1; priv=nullptr; dirp=nullptr;
 	}
 	
 	bool operator< (const File &rhs) const { return lname<rhs.lname; }
@@ -92,7 +92,7 @@ public:
 		m_Mutex("FilenameDB"), ExpireSeconds( -1 ) { }
 	virtual ~FilenameDB() { FlushDirCache(); }
 
-	void AddFile( const RString &sPath, int iSize, int iHash, void *pPriv=NULL );
+	void AddFile( const RString &sPath, int iSize, int iHash, void *pPriv=nullptr );
 	void DelFile( const RString &sPath );
 	void *GetFilePriv( const RString &sPath );
 

@@ -24,7 +24,7 @@ public:
 	/**
 	 * @brief Give the Player a GrooveRadar based on some Steps.
 	 * @param pn the Player to give a GrooveRadar.
-	 * @param pSteps the Steps to use to make the radar. If NULL, there are no Steps. */
+	 * @param pSteps the Steps to use to make the radar. If nullptr, there are no Steps. */
 	void SetFromSteps( PlayerNumber pn, Steps* pSteps );
 	void SetFromValues( PlayerNumber pn, vector<float> vals );
 

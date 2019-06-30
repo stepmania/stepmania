@@ -11,7 +11,6 @@
 #include "PrefsManager.h"
 #include "StepMania.h"
 #include "RageSoundManager.h"
-#include "Foreach.h"
 #include "OptionRowHandler.h"
 #include "ScreenOptionsMasterPrefs.h"
 #include "CommonMetrics.h"
@@ -60,7 +59,7 @@ void ScreenOptionsMaster::Init()
 		ParseCommands( sRowCommands, cmds, false );
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
-		if( pHand == NULL )
+		if( pHand == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("Invalid OptionRowHandler \"%s\" in \"%s:Line:%s\".", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str());
 		}
@@ -74,8 +73,10 @@ void ScreenOptionsMaster::Init()
 
 void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 {
-	FOREACH_CONST( PlayerNumber, vpns, pn )
-		ASSERT( GAMESTATE->IsHumanPlayer(*pn) );
+	for (PlayerNumber const &pn : vpns)
+	{
+		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+	}
 	OptionRow &row = *m_pRows[r];
 	row.ImportOptions( vpns );
 }
@@ -87,10 +88,10 @@ void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns
 	OptionRow &row = *m_pRows[r];
 	bool bRowHasFocus[NUM_PLAYERS];
 	ZERO( bRowHasFocus );
-	FOREACH_CONST( PlayerNumber, vpns, p )
+	for (PlayerNumber const &p : vpns)
 	{
-		int iCurRow = m_iCurrentRow[*p];
-		bRowHasFocus[*p] = iCurRow == r;
+		int iCurRow = m_iCurrentRow[p];
+		bRowHasFocus[p] = iCurRow == r;
 	}
 	m_iChangeMask |= row.ExportOptions( vpns, bRowHasFocus );
 }

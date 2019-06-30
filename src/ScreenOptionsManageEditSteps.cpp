@@ -61,8 +61,8 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
 	SONGMAN->LoadStepEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
 	SONGMAN->LoadCourseEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
-	GAMESTATE->m_pCurSong.Set( NULL );
-	GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+	GAMESTATE->m_pCurSong.Set(nullptr);
+	GAMESTATE->m_pCurSteps[PLAYER_1].Set(nullptr);
 
 	vector<OptionRowHandler*> vHands;
 
@@ -82,18 +82,18 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 
 	SONGMAN->GetStepsLoadedFromProfile( m_vpSteps, ProfileSlot_Machine );
 
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (Steps const *s : m_vpSteps)
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
 		
-		Song *pSong = (*s)->m_pSong;
+		Song *pSong = s->m_pSong;
 
-		def.m_sName = pSong->GetTranslitFullTitle() + " - " + (*s)->GetDescription();
+		def.m_sName = pSong->GetTranslitFullTitle() + " - " + s->GetDescription();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Select Edit Steps";
 		def.m_vsChoices.clear();
-		StepsType st = (*s)->m_StepsType;
+		StepsType st = s->m_StepsType;
 		RString sType = GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString();
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
@@ -140,7 +140,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 		else	// a Steps
 		{
 			Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 			const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType( pSteps->m_StepsType );
 			GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
 			// do base behavior
@@ -177,7 +177,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			Steps *pSteps = GetStepsWithFocus();
 			FILEMAN->Remove( pSteps->GetFilename() );
 			SONGMAN->DeleteSteps( pSteps );
-			GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+			GAMESTATE->m_pCurSteps[PLAYER_1].Set(nullptr);
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
@@ -230,7 +230,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 void ScreenOptionsManageEditSteps::AfterChangeRow( PlayerNumber pn )
 {
 	Steps *pSteps = GetStepsWithFocus();
-	Song *pSong = pSteps ? pSteps->m_pSong : NULL;
+	Song *pSong = pSteps ? pSteps->m_pSong : nullptr;
 	
 	GAMESTATE->m_pCurSong.Set( pSong );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
@@ -294,9 +294,9 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	if( iCurRow == 0 )
-		return NULL;
+		return nullptr;
 	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
-		return NULL;
+		return nullptr;
 	
 	// a Steps
 	int iStepsIndex = iCurRow - 1;

@@ -16,7 +16,6 @@
 #include "Profile.h"
 #include "ActorUtil.h"
 #endif
-#include "Foreach.h"
 #include "GameLoop.h" // For ChangeTheme
 #include "ThemeMetric.h"
 #include "SubscriptionManager.h"
@@ -29,7 +28,7 @@
 #include "XmlFileUtil.h"
 #include <deque>
 
-ThemeManager*	THEME = NULL;	// global object accessible from anywhere in the program
+ThemeManager*	THEME = nullptr;	// global object accessible from anywhere in the program
 
 static const RString THEME_INFO_INI = "ThemeInfo.ini";
 
@@ -61,7 +60,7 @@ public:
 		iniStrings.Clear();
 	}
 };
-LoadedThemeData *g_pLoadedThemeData = NULL;
+LoadedThemeData *g_pLoadedThemeData = nullptr;
 
 
 // For self-registering metrics
@@ -284,7 +283,7 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 
 void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &sLanguage_ )
 {
-	if( g_pLoadedThemeData == NULL )
+	if( g_pLoadedThemeData == nullptr )
 		g_pLoadedThemeData = new LoadedThemeData;
 
 	// Don't delete and recreate LoadedThemeData.  There are references iniMetrics and iniStrings 
@@ -314,8 +313,8 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		{
 			vector<RString> vs;
 			GetOptionalLanguageIniPaths(vs,sThemeName,sLanguage);
-			FOREACH_CONST(RString,vs,s)
-				iniStrings.ReadFile( *s );
+			for (RString const &s : vs)
+				iniStrings.ReadFile( s );
 		}
 		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
 		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
@@ -445,7 +444,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	{
 #if !defined(SMPACKAGE)
 		// reload common sounds
-		if( SCREENMAN != NULL )
+		if( SCREENMAN != nullptr )
 			SCREENMAN->ThemeChanged();
 
 #endif
@@ -456,7 +455,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 		UpdateLuaGlobals();
 
 		// Reload MachineProfile with new theme's CustomLoadFunction
-		if( PROFILEMAN != NULL )
+		if( PROFILEMAN != nullptr )
 		{
 			Profile* pProfile = PROFILEMAN->GetMachineProfile();
 			pProfile->LoadCustomFunction("/Save/MachineProfile/", PlayerNumber_Invalid);
@@ -474,8 +473,8 @@ void ThemeManager::ReloadSubscribers()
 	// reload subscribers
 	if( g_Subscribers.m_pSubscribers )
 	{
-		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
-			(*p)->Read();
+		for (IThemeMetric *metric : *g_Subscribers.m_pSubscribers)
+			metric->Read();
 	}
 }
 
@@ -483,8 +482,8 @@ void ThemeManager::ClearSubscribers()
 {
 	if( g_Subscribers.m_pSubscribers )
 	{
-		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
-			(*p)->Clear();
+		for (IThemeMetric *metric : *g_Subscribers.m_pSubscribers)
+			metric->Clear();
 	}
 }
 
@@ -516,10 +515,9 @@ void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 		SortRStringArray( arrayScriptDirs );
 		StripCvsAndSvn( arrayScriptDirs );
 		StripMacResourceForks( arrayScriptDirs );
-		FOREACH_CONST( RString, arrayScriptDirs, s )	// foreach dir in /Scripts/
+		for( RString const &sScriptDirName : arrayScriptDirs )	// foreach dir in /Scripts/
 		{
 			// Find all Lua files in this directory, add them to asElementPaths
-			RString sScriptDirName = *s;
 			GetDirListing( sScriptDir + "Scripts/" + sScriptDirName + "/" + sMask, asElementChildPaths, false, true );
 			for( unsigned i = 0; i < asElementChildPaths.size(); ++i )
 			{
@@ -781,10 +779,10 @@ bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory cate
 	int n = 100;
 	while( n-- )
 	{
-		FOREACHD_CONST( Theme, g_vThemes, iter )
+		for (Theme const &theme : g_vThemes)
 		{
 			// search with requested name
-			if( GetPathInfoToRaw( out, iter->sThemeName, category, sMetricsGroup, sElement ) )
+			if( GetPathInfoToRaw( out, theme.sThemeName, category, sMetricsGroup, sElement ) )
 				return true;
 		}
 
@@ -943,7 +941,7 @@ void ThemeManager::ReloadMetrics()
 
 RString ThemeManager::GetMetricsGroupFallback( const RString &sMetricsGroup )
 {
-	ASSERT( g_pLoadedThemeData != NULL );
+	ASSERT( g_pLoadedThemeData != nullptr );
 
 	// always look in iniMetrics for "Fallback"
 	RString sFallback;
@@ -1172,18 +1170,18 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
 	
-	FOREACH_CONST( RString, as, s )
+	for (RString const &s : as)
 	{
 		// ignore metrics.ini
-		if( s->CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
+		if( s.CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
 			continue;
 
 		// Ignore filenames with a space.  These are optional language inis that probably came from a mounted package.
-		if( s->find(" ") != RString::npos )
+		if( s.find(" ") != RString::npos )
 			continue;
 
 		// strip ".ini"
-		RString s2 = s->Left( s->size()-4 );
+		RString s2 = s.Left( s.size()-4 );
 
 		asLanguagesOut.push_back( s2 );
 	}
@@ -1250,7 +1248,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	sValueName.Replace( "\r\n", "\\n" );
 	sValueName.Replace( "\n", "\\n" );
 
-	ASSERT( g_pLoadedThemeData != NULL );
+	ASSERT( g_pLoadedThemeData != nullptr );
 	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName );
 	FontCharAliases::ReplaceMarkers( s );
 
@@ -1296,7 +1294,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sMetricsGroup_, const
 	while( !sMetricsGroup.empty() )
 	{
 		const XNode *cur = g_pLoadedThemeData->iniMetrics.GetChild( sMetricsGroup );
-		if( cur != NULL )
+		if( cur != nullptr )
 		{
 			// Iterate over all metrics that match.
 			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); ++j )
@@ -1405,7 +1403,7 @@ public:
 	{
 		RString group_name= SArg(1);
 		const XNode* metric_node= ini.GetChild(group_name);
-		if(metric_node != NULL)
+		if(metric_node != nullptr)
 		{
 			// Placed in a table indexed by number, so the order is always the same.
 			lua_createtable(L, metric_node->m_attrs.size(), 0);

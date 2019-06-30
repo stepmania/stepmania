@@ -12,7 +12,6 @@
 #include "GameState.h"
 #include "StepMania.h"
 #include "Game.h"
-#include "Foreach.h"
 #include "GameConstantsAndTypes.h"
 #include "DisplaySpec.h"
 #include "LocalizedString.h"
@@ -103,9 +102,9 @@ static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, u
 template <class T>
 static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const T *mapping, unsigned cnt )
 {
-	ASSERT( pConfOption != NULL );
+	ASSERT( pConfOption != nullptr );
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
-	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+	ASSERT_M( pPref != nullptr, pConfOption->m_sPrefName );
 
 	MoveMap( sel, *pPref, ToSel, mapping, cnt );
 }
@@ -114,7 +113,7 @@ template <class T>
 static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
-	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+	ASSERT_M( pPref != nullptr, pConfOption->m_sPrefName );
 
 	if( bToSel )
 	{
@@ -134,7 +133,7 @@ template <>
 void MovePref<bool>( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
-	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+	ASSERT_M( pPref != nullptr, pConfOption->m_sPrefName );
 
 	if( bToSel )
 	{
@@ -165,9 +164,9 @@ static void GameChoices( vector<RString> &out )
 {
 	vector<const Game*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	FOREACH( const Game*, aGames, g )
+	for (Game const *g : aGames)
 	{
-		RString sGameName = (*g)->m_szName;
+		RString sGameName = g->m_szName;
 		out.push_back( sGameName );
 	}
 }
@@ -198,13 +197,13 @@ static void LanguageChoices( vector<RString> &out )
 	THEME->GetLanguages( vs );
 	SortRStringArray( vs, true );
 
-	FOREACH_CONST( RString, vs, s )
+	for (RString const &s : vs)
 	{
-		const LanguageInfo *pLI = GetLanguageInfo( *s );
+		const LanguageInfo *pLI = GetLanguageInfo( s );
 		if( pLI )
 			out.push_back( THEME->GetString("NativeLanguageNames", pLI->szEnglishName) );
 		else
-			out.push_back( *s );
+			out.push_back( s );
 	}
 }
 
@@ -244,8 +243,8 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void ThemeChoices( vector<RString> &out )
 {
 	THEME->GetSelectableThemeNames( out );
-	FOREACH( RString, out, s )
-		*s = THEME->GetThemeDisplayName( *s );
+	for (RString &s : out)
+		s = THEME->GetThemeDisplayName( s );
 }
 
 static DisplaySpecs display_specs;
@@ -260,11 +259,11 @@ static void cache_display_specs()
 static void DisplayResolutionChoices( vector<RString> &out )
 {
 	cache_display_specs();
-	FOREACHS_CONST( DisplaySpec, display_specs, iter )
+	for (DisplaySpec const &iter : display_specs)
 	{
-		if (iter->currentMode() != NULL)
+		if (iter.currentMode() != nullptr)
 		{
-			RString s = ssprintf("%dx%d", iter->currentMode()->width, iter->currentMode()->height);
+			RString s = ssprintf("%dx%d", iter.currentMode()->width, iter.currentMode()->height);
 			out.push_back(s);
 		}
 	}
@@ -590,11 +589,11 @@ static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOpt
 
 	if( res_choices.empty() )
 	{
-		FOREACHS_CONST( DisplaySpec, display_specs, iter )
+		for ( DisplaySpec const &iter : display_specs)
 		{
-			if ( iter->currentMode() != NULL )
+			if ( iter.currentMode() != nullptr )
 			{
-				res_choices.push_back( res_t( iter->currentMode()->width, iter->currentMode()->height ) );
+				res_choices.push_back( res_t( iter.currentMode()->width, iter.currentMode()->height ) );
 			}
 		}
 	}
@@ -948,12 +947,12 @@ ConfOption *ConfOption::Find( RString name )
 		return opt;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ConfOption::UpdateAvailableOptions()
 {
-	if( MakeOptionsListCB != NULL )
+	if( MakeOptionsListCB != nullptr )
 	{
 		names.clear();
 		MakeOptionsListCB( names );

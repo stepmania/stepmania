@@ -7,11 +7,12 @@ REGISTER_SCREEN_CLASS( ScreenUnlockBrowse );
 
 void ScreenUnlockBrowse::Init()
 {
+	int index = 0;
 	// fill m_aGameCommands before calling Init()
-	FOREACH_CONST( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+	for (UnlockEntry const &ue : UNLOCKMAN->m_UnlockEntries)
 	{
 		GameCommand gc;
-		UnlockEntryStatus st = ue->GetUnlockEntryStatus();
+		UnlockEntryStatus st = ue.GetUnlockEntryStatus();
 		switch( st )
 		{
 		default:
@@ -23,7 +24,7 @@ void ScreenUnlockBrowse::Init()
 		case UnlockEntryStatus_RequrementsNotMet:
 			break;
 		}
-		gc.m_iIndex = ue - UNLOCKMAN->m_UnlockEntries.begin();
+		gc.m_iIndex = index++;
 		// gc.m_sUnlockEntryID = ue->m_sEntryID;
 		gc.m_sName = ssprintf("%d",gc.m_iIndex);
 		

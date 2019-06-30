@@ -8,7 +8,6 @@
 #include "RageLog.h"
 #include "RageMath.h"
 #include "StageStats.h"
-#include "Foreach.h"
 #include "Song.h"
 #include "XmlFile.h"
 
@@ -126,7 +125,7 @@ public:
 	~GraphBody()
 	{
 		TEXTUREMAN->UnloadTexture( m_pTexture );
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 	}
 
 	void DrawPrimitives()
@@ -150,14 +149,16 @@ public:
 
 GraphDisplay::GraphDisplay()
 {
-	m_pGraphLine = NULL;
-	m_pGraphBody = NULL;
+	m_pGraphLine = nullptr;
+	m_pGraphBody = nullptr;
 }
 
 GraphDisplay::~GraphDisplay()
 {
-	FOREACH( Actor*, m_vpSongBoundaries, p )
-		SAFE_DELETE( *p );
+	for (Actor *p : m_vpSongBoundaries)
+	{
+		SAFE_DELETE( p );
+	}
 	m_vpSongBoundaries.clear();
 	SAFE_DELETE( m_pGraphLine );
 	SAFE_DELETE( m_pGraphBody );
@@ -176,18 +177,17 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 	// Show song boundaries
 	float fSec = 0;
-	FOREACH_CONST( Song*, ss.m_vpPossibleSongs, song )
-	{
-		if( song == ss.m_vpPossibleSongs.end()-1 )
-			continue;
-		fSec += (*song)->GetStepsSeconds();
+	vector<Song *> const &possibleSongs = ss.m_vpPossibleSongs;
+
+	std::for_each(possibleSongs.begin(), possibleSongs.end() - 1, [&](Song *song) {
+		fSec += song->GetStepsSeconds();
 
 		Actor *p = m_sprSongBoundary->Copy();
 		m_vpSongBoundaries.push_back( p );
 		float fX = SCALE( fSec, 0, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
 		p->SetX( fX );
 		this->AddChild( p );
-	}
+	});
 
 	if( !pss.m_bFailed )
 	{
@@ -288,11 +288,11 @@ public:
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
 		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
-		if(pStageStats == NULL)
+		if(pStageStats == nullptr)
 		{
 			luaL_error(L, "The StageStats passed to GraphDisplay:Set are nil.");
 		}
-		if(pPlayerStageStats == NULL)
+		if(pPlayerStageStats == nullptr)
 		{
 			luaL_error(L, "The PlayerStageStats passed to GraphDisplay:Set are nil.");
 		}

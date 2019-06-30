@@ -8,7 +8,8 @@
 #include "RageTextureManager.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "Foreach.h"
+
+#include <numeric>
 
 #define MS_MAX_NAME	32
 
@@ -30,7 +31,7 @@ AnimatedTexture::~AnimatedTexture()
 void AnimatedTexture::LoadBlank()
 {
 	AnimatedTextureState state(
-		NULL,
+		nullptr,
 		1,
 		RageVector2(0,0)
 		);
@@ -54,7 +55,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 			RageException::Throw( "Error reading \"%s\": %s", sTexOrIniPath.c_str(), ini.GetError().c_str() );
 
 		const XNode* pAnimatedTexture = ini.GetChild("AnimatedTexture");
-		if( pAnimatedTexture == NULL )
+		if( pAnimatedTexture == nullptr )
 			RageException::Throw( "The animated texture file \"%s\" doesn't contain a section called \"AnimatedTexture\".", sTexOrIniPath.c_str() );
 
 		pAnimatedTexture->GetAttrValue( "TexVelocityX", m_vTexVelocity.x );
@@ -130,7 +131,7 @@ void AnimatedTexture::Update( float fDelta )
 RageTexture* AnimatedTexture::GetCurrentTexture()
 {
 	if( vFrames.empty() )
-		return NULL;
+		return nullptr;
 	ASSERT( m_iCurState < (int)vFrames.size() );
 	return vFrames[m_iCurState].pTexture;
 }
@@ -148,10 +149,8 @@ void AnimatedTexture::SetState( int iState )
 
 float AnimatedTexture::GetAnimationLengthSeconds() const
 {
-	float fTotalSeconds = 0;
-	FOREACH_CONST( AnimatedTextureState, vFrames, ats )
-		fTotalSeconds += ats->fDelaySecs;
-	return fTotalSeconds;
+	return std::accumulate(vFrames.begin(), vFrames.end(), 0.f,
+		[](float total, AnimatedTextureState const &state) { return total + state.fDelaySecs; });
 }
 
 void AnimatedTexture::SetSecondsIntoAnimation( float fSeconds )

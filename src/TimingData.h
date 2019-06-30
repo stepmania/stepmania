@@ -5,6 +5,7 @@
 #include "TimingSegments.h"
 #include "PrefsManager.h"
 #include <float.h> // max float
+#include <array>
 struct lua_State;
 
 /** @brief Compare a TimingData segment's properties with one another. */
@@ -454,7 +455,7 @@ public:
 	 *
 	 * This is for informational purposes only.
 	 */
-	RString					m_sFile;
+	std::string					m_sFile;
 
 	/** @brief The initial offset of a song. */
 	float	m_fBeat0OffsetInSeconds;
@@ -466,7 +467,7 @@ protected:
 	void AddSegment( const TimingSegment *seg );
 
 	// All of the following vectors must be sorted before gameplay.
-	vector<TimingSegment *> m_avpTimingSegments[NUM_TimingSegmentType];
+	std::array<vector<TimingSegment *>, NUM_TimingSegmentType> m_avpTimingSegments;
 };
 
 #undef COMPARE

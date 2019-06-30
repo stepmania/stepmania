@@ -21,7 +21,6 @@
 #include "MenuTimer.h"
 #include "StatsManager.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
 #include "Style.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
@@ -235,14 +234,14 @@ void ScreenSelectMusic::BeginScreen()
 		GAMESTATE->SetCompatibleStylesForPlayers();
 	}
 
-	if( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == NULL )
+	if( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == nullptr )
 	{
 		LuaHelpers::ReportScriptError("The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic.");
 		// Instead of crashing, set the first compatible style.
 		vector<StepsType> vst;
 		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
-		if(pStyle == NULL)
+		if(pStyle == nullptr)
 		{
 			FAIL_M( ssprintf("No compatible styles for %s with %d player%s.",
 					GAMESTATE->m_pCurGame->m_szName,
@@ -1098,9 +1097,9 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 
 		// TODO: Invalidate the CurSteps only if they are no longer playable.
 		// That way, after music change will clamp to the nearest in the StepsDisplayList.
-		GAMESTATE->m_pCurSteps[master_pn].SetWithoutBroadcast( NULL );
+		GAMESTATE->m_pCurSteps[master_pn].SetWithoutBroadcast(nullptr);
 		FOREACH_ENUM( PlayerNumber, p )
-			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
+			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast(nullptr);
 
 		/* If a course is selected, it may no longer be playable.
 		 * Let MusicWheel know about the late join. */
@@ -1123,12 +1122,12 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 		m_iSelection[pn] = iSel;
 		if( GAMESTATE->IsCourseMode() )
 		{
-			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
+			Trail* pTrail = m_vpTrails.empty()? nullptr: m_vpTrails[m_iSelection[pn]];
 			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
 		}
 		else
 		{
-			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
+			Steps* pSteps = m_vpSteps.empty()? nullptr: m_vpSteps[m_iSelection[pn]];
 
 			// handle changing rave difficulty on join
 			if(GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
@@ -1155,7 +1154,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			m_MenuTimer->SetSeconds( ROULETTE_TIMER_SECONDS );
 			m_MenuTimer->Start();
 		}
-		else if( DO_ROULETTE_ON_MENU_TIMER  &&  m_MusicWheel.GetSelectedSong() == NULL  &&  m_MusicWheel.GetSelectedCourse() == NULL )
+		else if( DO_ROULETTE_ON_MENU_TIMER  &&  m_MusicWheel.GetSelectedSong() == nullptr  &&  m_MusicWheel.GetSelectedCourse() == nullptr )
 		{
 			m_MusicWheel.StartRoulette();
 			m_MenuTimer->SetSeconds( ROULETTE_TIMER_SECONDS );
@@ -1166,7 +1165,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			// Finish sort changing so that the wheel can respond immediately to
 			// our request to choose random.
 			m_MusicWheel.FinishChangingSorts();
-			if( m_MusicWheel.GetSelectedSong() == NULL && m_MusicWheel.GetSelectedCourse() == NULL )
+			if( m_MusicWheel.GetSelectedSong() == nullptr && m_MusicWheel.GetSelectedCourse() == nullptr )
 				m_MusicWheel.StartRandom();
 
 			MenuStart( InputEventPlus() );
@@ -1250,7 +1249,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			return false;
 
 		// a song was selected
-		if( m_MusicWheel.GetSelectedSong() != NULL )
+		if( m_MusicWheel.GetSelectedSong() != nullptr )
 		{
 			if(TWO_PART_CONFIRMS_ONLY && SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_StartToPreview)
 			{
@@ -1295,12 +1294,12 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			if( GAMESTATE->IsCourseMode() )
 				GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		}
-		else if( m_MusicWheel.GetSelectedCourse() != NULL )
+		else if( m_MusicWheel.GetSelectedCourse() != nullptr )
 		{
 			SOUND->PlayOnceFromAnnouncer( "select course comment general" );
 
 			Course *pCourse = m_MusicWheel.GetSelectedCourse();
-			ASSERT( pCourse != NULL );
+			ASSERT( pCourse != nullptr );
 			GAMESTATE->m_PlayMode.Set( pCourse->GetPlayMode() );
 
 			// apply #LIVES
@@ -1573,9 +1572,8 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
 	}
 
-	FOREACH_CONST( PlayerNumber, vpns, p )
+	for (PlayerNumber const &pn : vpns)
 	{
-		PlayerNumber pn = *p;
 		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
 		if( GAMESTATE->m_pCurSong )
@@ -1583,10 +1581,10 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 			CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
 
 			Song* pSong = GAMESTATE->m_pCurSong;
-			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
+			Steps* pSteps = m_vpSteps.empty()? nullptr: m_vpSteps[m_iSelection[pn]];
 
 			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
-			GAMESTATE->m_pCurTrail[pn].Set( NULL );
+			GAMESTATE->m_pCurTrail[pn].Set(nullptr);
 
 			int iScore = 0;
 			if( pSteps )
@@ -1602,9 +1600,9 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 			CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
 
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
+			Trail* pTrail = m_vpTrails.empty()? nullptr: m_vpTrails[m_iSelection[pn]];
 
-			GAMESTATE->m_pCurSteps[pn].Set( NULL );
+			GAMESTATE->m_pCurSteps[pn].Set(nullptr);
 			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
 
 			int iScore = 0;
@@ -1618,7 +1616,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		}
 		else
 		{
-			// The numbers shouldn't stay if the current selection is NULL.
+			// The numbers shouldn't stay if the current selection is nullptr.
 			m_textHighScore[pn].SetText( NULL_SCORE_STRING );
 		}
 	}
@@ -1633,12 +1631,11 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 			// Find the closest match to the user's preferred difficulty and StepsType.
 			int iCurDifference = -1;
 			int &iSelection = m_iSelection[pn];
-			FOREACH_CONST( Steps*, m_vpSteps, s )
+			int i = 0;
+			for (Steps *s : m_vpSteps)
 			{
-				int i = s - m_vpSteps.begin();
-
 				// If the current steps are listed, use them.
-				if( GAMESTATE->m_pCurSteps[pn] == *s )
+				if( GAMESTATE->m_pCurSteps[pn] == s )
 				{
 					iSelection = i;
 					break;
@@ -1646,10 +1643,10 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 
 				if( GAMESTATE->m_PreferredDifficulty[pn] != Difficulty_Invalid  )
 				{
-					int iDifficultyDifference = abs( (*s)->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
+					int iDifficultyDifference = abs( s->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
 					int iStepsTypeDifference = 0;
 					if( GAMESTATE->m_PreferredStepsType != StepsType_Invalid )
-						iStepsTypeDifference = abs( (*s)->m_StepsType - GAMESTATE->m_PreferredStepsType );
+						iStepsTypeDifference = abs( s->m_StepsType - GAMESTATE->m_PreferredStepsType );
 					int iTotalDifference = iStepsTypeDifference * NUM_Difficulty + iDifficultyDifference;
 
 					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
@@ -1658,6 +1655,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 						iCurDifference = iTotalDifference;
 					}
 				}
+				i += 1;
 			}
 
 			CLAMP( iSelection, 0, m_vpSteps.size()-1 );
@@ -1670,10 +1668,9 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 			// Find the closest match to the user's preferred difficulty.
 			int iCurDifference = -1;
 			int &iSelection = m_iSelection[pn];
-			FOREACH_CONST( Trail*, m_vpTrails, t )
+			int i = 0;
+			for (Trail *t : m_vpTrails)
 			{
-				int i = t - m_vpTrails.begin();
-
 				// If the current trail is listed, use it.
 				if( GAMESTATE->m_pCurTrail[pn] == m_vpTrails[i] )
 				{
@@ -1683,8 +1680,8 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 
 				if( GAMESTATE->m_PreferredCourseDifficulty[pn] != Difficulty_Invalid  &&  GAMESTATE->m_PreferredStepsType != StepsType_Invalid  )
 				{
-					int iDifficultyDifference = abs( (*t)->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn] );
-					int iStepsTypeDifference = abs( (*t)->m_StepsType - GAMESTATE->m_PreferredStepsType );
+					int iDifficultyDifference = abs( t->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn] );
+					int iStepsTypeDifference = abs( t->m_StepsType - GAMESTATE->m_PreferredStepsType );
 					int iTotalDifference = iStepsTypeDifference * NUM_CourseDifficulty + iDifficultyDifference;
 
 					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
@@ -1693,6 +1690,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 						iCurDifference = iTotalDifference;
 					}
 				}
+				i += 1;
 			}
 
 			CLAMP( iSelection, 0, m_vpTrails.size()-1 );
@@ -1732,7 +1730,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 		m_sSampleMusicToPlay = "";
 	}
-	m_pSampleMusicTimingData = NULL;
+	m_pSampleMusicTimingData = nullptr;
 	g_sCDTitlePath = "";
 	g_sBannerPath = "";
 	g_bWantFallbackCdTitle = false;
@@ -1885,11 +1883,11 @@ void ScreenSelectMusic::AfterMusicChange()
 	case WheelItemDataType_Course:
 	{
 		const Course *lCourse = m_MusicWheel.GetSelectedCourse();
-		const Style *pStyle = NULL;
+		const Style *pStyle = nullptr;
 		if(CommonMetrics::AUTO_SET_STYLE)
 		{
 			pStyle = pCourse->GetCourseStyle(GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled());
-			if(pStyle == NULL)
+			if(pStyle == nullptr)
 			{
 				lCourse->GetAllTrails(m_vpTrails);
 				vector<Trail*>::iterator tra= m_vpTrails.begin();
@@ -1898,7 +1896,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				while(tra != m_vpTrails.end())
 				{
 					if(GAMEMAN->GetFirstCompatibleStyle(cur_game, num_players,
-							(*tra)->m_StepsType) == NULL)
+							(*tra)->m_StepsType) == nullptr)
 					{
 						tra= m_vpTrails.erase(tra);
 					}
@@ -2019,7 +2017,7 @@ void ScreenSelectMusic::OnConfirmSongDeletion()
 	// delete the song directory from disk
 	FILEMAN->DeleteRecursive(deleteDir);
 
-	m_pSongAwaitingDeletionConfirmation = NULL;
+	m_pSongAwaitingDeletionConfirmation = nullptr;
 }
 
 bool ScreenSelectMusic::can_open_options_list(PlayerNumber pn)

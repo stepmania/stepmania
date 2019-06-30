@@ -48,22 +48,22 @@ static RString ov_ssprintf( int err, const char *fmt, ...)
 	{
 		// OV_FALSE, OV_EOF, and OV_HOLE were added to this switch because
 		// OV_EOF cases were being reported as unknown. -Kyz
-	case OV_FALSE: errstr = "OV_FALSE"; break;
-	case OV_EOF: errstr = "OV_EOF"; break;
-	case OV_HOLE: errstr = "OV_HOLE"; break;
-	/* XXX: In the case of OV_EREAD, can we snoop at errno? */
-	case OV_EREAD:		errstr = "Read error"; break;
-	case OV_EFAULT:		errstr = "Internal error"; break;
-	case OV_EIMPL:		errstr = "Feature not implemented"; break;
-	case OV_EINVAL:		errstr = "Invalid argument"; break;
-	case OV_ENOTVORBIS:	errstr = "Not Vorbis data"; break;
-	case OV_EBADHEADER:	errstr = "Invalid Vorbis bitstream header"; break;
-	case OV_EVERSION:	errstr = "Vorbis version mismatch"; break;
-	case OV_ENOTAUDIO:	errstr = "OV_ENOTAUDIO"; break;
-	case OV_EBADPACKET:	errstr = "OV_EBADPACKET"; break;
-	case OV_EBADLINK:	errstr = "Link corrupted"; break;
-	case OV_ENOSEEK:	errstr = "Stream is not seekable"; break;
-	default:		errstr = ssprintf( "unknown error %i", err ); break;
+		case OV_FALSE: errstr = "OV_FALSE"; break;
+		case OV_EOF: errstr = "OV_EOF"; break;
+		case OV_HOLE: errstr = "OV_HOLE"; break;
+		/* XXX: In the case of OV_EREAD, can we snoop at errno? */
+		case OV_EREAD:		errstr = "Read error"; break;
+		case OV_EFAULT:		errstr = "Internal error"; break;
+		case OV_EIMPL:		errstr = "Feature not implemented"; break;
+		case OV_EINVAL:		errstr = "Invalid argument"; break;
+		case OV_ENOTVORBIS:	errstr = "Not Vorbis data"; break;
+		case OV_EBADHEADER:	errstr = "Invalid Vorbis bitstream header"; break;
+		case OV_EVERSION:	errstr = "Vorbis version mismatch"; break;
+		case OV_ENOTAUDIO:	errstr = "OV_ENOTAUDIO"; break;
+		case OV_EBADPACKET:	errstr = "OV_EBADPACKET"; break;
+		case OV_EBADLINK:	errstr = "Link corrupted"; break;
+		case OV_ENOSEEK:	errstr = "Stream is not seekable"; break;
+		default:		errstr = ssprintf( "unknown error %i", err ); break;
 	}
 
 	return s + ssprintf( " (%s)", errstr.c_str() );
@@ -81,12 +81,12 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFil
 	callbacks.close_func = OggRageFile_close_func;
 	callbacks.tell_func  = OggRageFile_tell_func;
 
-	int ret = ov_open_callbacks( pFile, vf, NULL, 0, callbacks );
+	int ret = ov_open_callbacks( pFile, vf, nullptr, 0, callbacks );
 	if( ret < 0 )
 	{
 		SetError( ov_ssprintf(ret, "ov_open failed") );
 		delete vf;
-		vf = NULL;
+		vf = nullptr;
 		switch( ret )
 		{
 		case OV_ENOTVORBIS:
@@ -190,7 +190,7 @@ int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 
 			{
 				vorbis_info *vi = ov_info( vf, -1 );
-				ASSERT( vi != NULL );
+				ASSERT( vi != nullptr );
 
 				if( (unsigned) vi->channels != channels )
 					RageException::Throw( "File \"%s\" changes channel count from %i to %i; not supported.",
@@ -260,17 +260,17 @@ int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 
 int RageSoundReader_Vorbisfile::GetSampleRate() const
 {
-	ASSERT(vf != NULL);
+	ASSERT(vf != nullptr);
 
 	vorbis_info *vi = ov_info(vf, -1);
-	ASSERT(vi != NULL);
+	ASSERT(vi != nullptr);
 
 	return vi->rate;
 }
 
 int RageSoundReader_Vorbisfile::GetNextSourceFrame() const
 {
-	ASSERT(vf != NULL);
+	ASSERT(vf != nullptr);
 
 	int iFrame = (int)ov_pcm_tell( vf );
 	return iFrame;
@@ -278,7 +278,7 @@ int RageSoundReader_Vorbisfile::GetNextSourceFrame() const
 
 RageSoundReader_Vorbisfile::RageSoundReader_Vorbisfile()
 {
-	vf = NULL;
+	vf = nullptr;
 }
 
 RageSoundReader_Vorbisfile::~RageSoundReader_Vorbisfile()

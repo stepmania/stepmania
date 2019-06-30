@@ -7,7 +7,7 @@
 #include "SpecialFiles.h"
 #include "RageLog.h"
 #include "Preference.h"
-#include "Foreach.h"
+
 
 FileTransfer::FileTransfer()
 {
@@ -199,8 +199,8 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	vsHeaders.push_back( "Content-Length: " + ssprintf("%zd",sRequestPayload.size()) );
 
 	RString sHeader;
-	FOREACH_CONST( RString, vsHeaders, h )
-		sHeader += *h + "\r\n";
+	for (RString const &h : vsHeaders)
+		sHeader += h + "\r\n";
 	sHeader += "\r\n";
 
 	m_wSocket.SendData( sHeader.c_str(), sHeader.length() );
@@ -267,14 +267,14 @@ void FileTransfer::HTTPUpdate()
 			m_sResponseName = "Malformed response.";
 			return;
 		}
-		m_iResponseCode = StringToInt(m_sBUFFER.substr(i+1,j-i));
+		m_iResponseCode = std::stoi(m_sBUFFER.substr(i+1,j-i));
 		m_sResponseName = m_sBUFFER.substr( j+1, k-j );
 
 		i = m_sBUFFER.find("Content-Length:");
 		j = m_sBUFFER.find("\n", i+1 );
 
 		if( i != string::npos )
-			m_iTotalBytes = StringToInt(m_sBUFFER.substr(i+16,j-i));
+			m_iTotalBytes = std::stoi(m_sBUFFER.substr(i+16,j-i));
 		else
 			m_iTotalBytes = -1;	// We don't know, so go until disconnect
 
@@ -345,7 +345,7 @@ bool FileTransfer::ParseHTTPAddress( const RString &URL, RString &sProto, RStrin
 	sServer = asMatches[1];
 	if( asMatches[3] != "" )
 	{
-		iPort = StringToInt(asMatches[3]);
+		iPort = std::stoi(asMatches[3]);
 		if( iPort == 0 )
 			return false;
 	}

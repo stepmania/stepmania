@@ -26,7 +26,7 @@
 
 bool child_read( int fd, void *p, int size );
 
-const char *g_pCrashHandlerArgv0 = NULL;
+const char *g_pCrashHandlerArgv0 = nullptr;
 
 
 static void output_stack_trace( FILE *out, const void **BacktracePointers )
@@ -153,7 +153,7 @@ static void child_process()
 
 	FD_ZERO( &rs );
 	FD_SET( 3, &rs );
-	int ret = select( 4, &rs, NULL, NULL, &timeout );
+	int ret = select( 4, &rs, nullptr, nullptr, &timeout );
 
 	if( ret == 0 )
 	{
@@ -194,7 +194,7 @@ static void child_process()
 	sCrashInfoPath += "/crashinfo.txt";
 
 	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
-	if(CrashDump == NULL)
+	if(CrashDump == nullptr)
 	{
 		fprintf( stderr, "Couldn't open " + sCrashInfoPath + ": %s\n", strerror(errno) );
 		exit(1);
@@ -271,7 +271,7 @@ static void child_process()
 	/* stdout may have been inadvertently closed by the crash in the parent;
 	 * write to /dev/tty instead. */
 	FILE *tty = fopen( "/dev/tty", "w" );
-	if( tty == NULL )
+	if( tty == nullptr )
 		tty = stderr;
 
 	fputs( 	"\n"

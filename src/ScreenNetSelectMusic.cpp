@@ -50,7 +50,7 @@ void ScreenNetSelectMusic::Init()
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
-		m_StepsDisplays[p].Load( "StepsDisplayNet", NULL );
+		m_StepsDisplays[p].Load( "StepsDisplayNet", nullptr );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_StepsDisplays[p] );
 		this->AddChild( &m_StepsDisplays[p] );
 	}
@@ -159,7 +159,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		// you have multiple copies of the "same" song you can chose which copy to play.
 		Song* CurSong = m_MusicWheel.GetSelectedSong();
 
-		if(CurSong != NULL )
+		if(CurSong != nullptr )
 
 			if( ( !CurSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
 					( !CurSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
@@ -378,7 +378,7 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 		}
 	}
 
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 		return false;
 	StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType;
 	vector <Steps *> MultiSteps;
@@ -441,7 +441,7 @@ bool ScreenNetSelectMusic::SelectCurrent()
 
 	Song * pSong = m_MusicWheel.GetSelectedSong();
 
-	if (pSong == NULL)
+	if (pSong == nullptr)
 		return false;
 
 	GAMESTATE->m_pCurSong.Set(pSong);
@@ -509,10 +509,10 @@ void ScreenNetSelectMusic::StartSelectedSong()
 
 void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 	{
 		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid ); 
-		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	// It will blank it out 
+		//m_DifficultyIcon[pn].SetFromSteps( pn, nullptr );	// It will blank it out 
 		return;
 	}
 
@@ -529,14 +529,14 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 
 void ScreenNetSelectMusic::MusicChanged()
 {
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 	{
 		FOREACH_EnabledPlayer (pn)
 			UpdateDifficulties( pn );
 
 		SOUND->StopMusic();
 		// todo: handle playing section music correctly. -aj
-		// SOUND->PlayMusic( m_sSectionMusicPath, NULL, true, 0, -1 );
+		// SOUND->PlayMusic( m_sSectionMusicPath, nullptr, true, 0, -1 );
 		return;
 	} 
 
@@ -589,7 +589,7 @@ void ScreenNetSelectMusic::MusicChanged()
 			SOUND->StopMusic();
 			SOUND->PlayMusic(
 				GAMESTATE->m_pCurSong->GetPreviewMusicPath(),
-				NULL,
+				nullptr,
 				true,
 				GAMESTATE->m_pCurSong->GetPreviewStartSeconds(),
 				GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds );

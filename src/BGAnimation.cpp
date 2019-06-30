@@ -4,7 +4,7 @@
 #include "BGAnimationLayer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
+
 #include "LuaManager.h"
 #include "PrefsManager.h"
 
@@ -46,11 +46,10 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 		sort( vsLayerNames.begin(), vsLayerNames.end(), CompareLayerNames );
 
 
-		FOREACH_CONST( RString, vsLayerNames, s )
+		for (RString const &sLayer : vsLayerNames)
 		{
-			const RString &sLayer = *s;
 			const XNode* pKey = pNode->GetChild( sLayer );
-			ASSERT( pKey != NULL );
+			ASSERT( pKey != nullptr );
 
 			RString sImportDir;
 			if( pKey->GetAttrValue("Import", sImportDir) )
@@ -113,7 +112,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 			
 			XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 			XNode dummy( "BGAnimation" );
-			if( pBGAnimation == NULL )
+			if( pBGAnimation == nullptr )
 				pBGAnimation = &dummy;
 			
 			LoadFromNode( pBGAnimation );
