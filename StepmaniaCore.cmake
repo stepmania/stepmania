@@ -405,7 +405,7 @@ elseif(LINUX)
     set(HAS_OSS TRUE)
   endif()
 
-  if(NOT OSS_FOUND AND NOT JACK_FOUND AND NOT ALSA_FOUND AND NOT PULSE_FOUND)
+  if( NOT (HAS_OSS OR HAS_JACK OR HAS_ALSA OR HAS_PULSE) )
     message(
       FATAL_ERROR
         "No sound libraries found (or selected). You will require at least one."
