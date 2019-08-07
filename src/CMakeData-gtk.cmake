@@ -34,11 +34,13 @@ set_target_properties("GtkModule"
                                  "${SM_ROOT_DIR}")
 target_link_libraries("GtkModule" ${GTK2_LIBRARIES})
 set_property(TARGET "GtkModule" PROPERTY FOLDER "Internal Libraries")
+pkg_check_modules(HB REQUIRED harfbuzz)
 list(APPEND SM_GTK_INCLUDE_DIRS
             "${SM_SRC_DIR}"
             "${SM_SRC_DIR}/generated"
             "${SM_SRC_DIR}/arch/LoadingWindow"
-            "${GTK2_INCLUDE_DIRS}")
+            "${GTK2_INCLUDE_DIRS}"
+	          "${HB_INCLUDE_DIRS}")
 
 sm_add_compile_definition("GtkModule" CMAKE_POWERED)
 
