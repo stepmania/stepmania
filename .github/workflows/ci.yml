@@ -24,8 +24,9 @@ jobs:
           libxrandr-dev
           libxtst-dev
           nasm
+          ninja-build
       - name: Configure
-        run: cmake -B build
+        run: cmake -G Ninja -B build
       - name: Build
         run: cmake --build build
 

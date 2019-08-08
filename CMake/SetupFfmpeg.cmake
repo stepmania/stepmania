@@ -1,10 +1,3 @@
-if(CMAKE_GENERATOR MATCHES "Ninja")
-  message(
-    FATAL_ERROR
-      "You cannot use the Ninja generator when building the bundled ffmpeg library."
-    )
-endif()
-
 set(SM_FFMPEG_VERSION "2.1.3")
 set(SM_FFMPEG_SRC_LIST
     "${SM_EXTERN_DIR}"
@@ -54,7 +47,7 @@ if(NOT WITH_EXTERNAL_WARNINGS)
   list(APPEND FFMPEG_CONFIGURE "--extra-cflags=-w")
 endif()
 
-list(APPEND SM_FFMPEG_MAKE $(MAKE))
+list(APPEND SM_FFMPEG_MAKE make)
 if(WITH_FFMPEG_JOBS GREATER 0)
   list(APPEND SM_FFMPEG_MAKE "-j${WITH_FFMPEG_JOBS}")
 endif()
@@ -67,8 +60,11 @@ if(IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
                       ${FFMPEG_CONFIGURE}
                       BUILD_COMMAND
                       "${SM_FFMPEG_MAKE}"
-                      UPDATE_COMMAND
-                      ""
+                      BUILD_BYPRODUCTS
+                      <BINARY_DIR>/libavformat/libavformat.a
+                      <BINARY_DIR>/libavcodec/libavcodec.a
+                      <BINARY_DIR>/libswscale/libswscale.a
+                      <BINARY_DIR>/libavutil/libavutil.a
                       INSTALL_COMMAND
                       ""
                       TEST_COMMAND
@@ -89,8 +85,11 @@ else()
                       "${FFMPEG_CONFIGURE}"
                       BUILD_COMMAND
                       "${SM_FFMPEG_MAKE}"
-                      UPDATE_COMMAND
-                      ""
+                      BUILD_BYPRODUCTS
+                      <BINARY_DIR>/libavformat/libavformat.a
+                      <BINARY_DIR>/libavcodec/libavcodec.a
+                      <BINARY_DIR>/libswscale/libswscale.a
+                      <BINARY_DIR>/libavutil/libavutil.a
                       INSTALL_COMMAND
                       ""
                       TEST_COMMAND
