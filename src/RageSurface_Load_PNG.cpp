@@ -250,6 +250,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	}
 
 	png_read_image( png, row_pointers );
+	delete[] row_pointers;
 
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, nullptr );
