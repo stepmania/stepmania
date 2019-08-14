@@ -1,87 +1,54 @@
-language: cpp
-sudo: false
-git:
-    submodules: false
+language:
+  - cpp
+  - c
 notifications:
-    email: false
-    irc: "chat.freenode.net#stepmania"
+  email: false
+  irc: "chat.freenode.net#stepmania"
+
+os:
+  - linux
+  - osx
+
+env:
+  - BUILD_TYPE=Release
+
+compiler:
+  - gcc
+  - clang
+
+addons:
+  apt:
+    packages:
+      - libasound2-dev
+      - libglew-dev
+      - libmad0-dev
+      - libpulse-dev
+      - libva-dev
+      - libvorbis-dev
+      - libxinerama-dev
+      - libxrandr-dev
+      - yasm
 
 matrix:
-    include:
-        -
-            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
-            compiler: clang
-            addons: &clang36
-                apt:
-                    sources:
-                        - ubuntu-toolchain-r-test
-                        - llvm-toolchain-precise-3.6
-                    packages:
-                        - nasm
-                        - libudev-dev
-                        - clang-3.6
-                        - libmad0-dev
-                        - libgtk2.0-dev
-                        - binutils-dev
-                        - libasound-dev
-                        - libpulse-dev
-                        - libjack-dev
-                        - libc6-dev
-                        - libogg-dev
-                        - libvorbis-dev
-                        - libxtst-dev
-                        - libxrandr-dev
-                        - libglew-dev
-                        - libc++-dev
-                        - libstdc++-4.8-dev
+  exclude:
+    - os: osx
+      compiler: gcc
 
-        -
-            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=ON WITH_FFMPEG_JOBS=1
-            compiler: clang
-            addons: *clang36
-
-        -
-            env: CXX_COMPILER=g++-5 CC_COMPILER=gcc-5 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
-            compiler: gcc
-            addons: &gcc5
-                apt:
-                    sources:
-                        - ubuntu-toolchain-r-test
-                    packages:
-                        - nasm
-                        - libudev-dev
-                        - gcc-5
-                        - g++-5
-                        - libmad0-dev
-                        - libgtk2.0-dev
-                        - binutils-dev
-                        - libasound-dev
-                        - libpulse-dev
-                        - libjack-dev
-                        - libc6-dev
-                        - libogg-dev
-                        - libvorbis-dev
-                        - libxtst-dev
-                        - libxrandr-dev
-                        - libglew-dev
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
 
 install:
-    # Setup a directory for necessary dependencies.
-    - cd ~
-    - export DEPS_DIR="${PWD}/deps"
-    - mkdir ${DEPS_DIR}
-    - cd ${DEPS_DIR}
-    # Use the binary for cmake instead of building it now.
-    - export CMAKE_URL=https://cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz
-    - mkdir cmake
-    - wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
-    - export PATH=${PWD}/cmake/bin:${PATH}
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew upgrade cmake; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install yasm; fi
 
 before_script:
-    - cd ${TRAVIS_BUILD_DIR}
-    - cd Build
-    - cmake .. -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_C_COMPILER=${CC_COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DWITH_FFMPEG=${WITH_FFMPEG} -DWITH_FFMPEG_JOBS=${WITH_FFMPEG_JOBS}
+  - cd Build
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then export CMAKE_MAKE_PROGRAM="Unix Makefiles"; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export CMAKE_MAKE_PROGRAM=Xcode; fi
+  - cmake .. -G"${CMAKE_MAKE_PROGRAM}"
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+    -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX}
+    -DWITH_FFMPEG_JOBS=2
 
 script:
-    - make -j2
-
+  - cmake --build . --parallel 2
