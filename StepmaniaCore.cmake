@@ -41,11 +41,21 @@ else()
   set(BSD FALSE)
 endif()
 
+include("${SM_CMAKE_DIR}/DefineOptions.cmake")
+
+if(CMAKE_TOOLCHAIN_FILE)
+  if(USE_FFMPEG)
+    find_package(FFMPEG)
+  endif()
+endif()
+
 # Allow for finding our libraries in a standard location.
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}"
             "${SM_CMAKE_DIR}/Modules/")
 
-include("${SM_CMAKE_DIR}/DefineOptions.cmake")
+if(USE_FFMPEG AND NOT FFMPEG_FOUND)
+  find_package(FFMPEG REQUIRED)
+endif()
 
 include("${SM_CMAKE_DIR}/SMDefs.cmake")
 
@@ -274,42 +284,7 @@ endif()
 
 if(WIN32)
   find_package(DirectX REQUIRED)
-
-  if(MINGW AND WITH_FFMPEG AND NOT WITH_SYSTEM_FFMPEG)
-    include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
-    set(HAS_FFMPEG TRUE)
-  else()
-    # FFMPEG...it can be evil.
-    find_library(LIB_SWSCALE
-                 NAMES "swscale"
-                 PATHS "${SM_EXTERN_DIR}/ffmpeg/lib"
-                 NO_DEFAULT_PATH)
-    get_filename_component(LIB_SWSCALE ${LIB_SWSCALE} NAME)
-
-    find_library(LIB_AVCODEC
-                 NAMES "avcodec"
-                 PATHS "${SM_EXTERN_DIR}/ffmpeg/lib"
-                 NO_DEFAULT_PATH)
-    get_filename_component(LIB_AVCODEC ${LIB_AVCODEC} NAME)
-
-    find_library(LIB_AVFORMAT
-                 NAMES "avformat"
-                 PATHS "${SM_EXTERN_DIR}/ffmpeg/lib"
-                 NO_DEFAULT_PATH)
-    get_filename_component(LIB_AVFORMAT ${LIB_AVFORMAT} NAME)
-
-    find_library(LIB_AVUTIL
-                 NAMES "avutil"
-                 PATHS "${SM_EXTERN_DIR}/ffmpeg/lib"
-                 NO_DEFAULT_PATH)
-    get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
-  endif()
 elseif(MACOSX)
-  if(WITH_FFMPEG AND NOT WITH_SYSTEM_FFMPEG)
-    include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
-    set(HAS_FFMPEG TRUE)
-  endif()
-
   set(WITH_CRASH_HANDLER TRUE)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9")
   set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.9.0")
@@ -417,38 +392,7 @@ elseif(LINUX)
       )
   endif()
 
-  if(WITH_FFMPEG AND NOT YASM_FOUND AND NOT NASM_FOUND)
-    message(
-      "Neither NASM nor YASM were found. Please install at least one of them if you wish for ffmpeg support."
-      )
-    set(WITH_FFMPEG OFF)
-  endif()
-
   find_package("Va")
-
-  if(WITH_FFMPEG)
-    if(WITH_SYSTEM_FFMPEG)
-      find_package("FFMPEG")
-      if(NOT FFMPEG_FOUND)
-        message(
-          FATAL_ERROR
-            "System ffmpeg not found! Either install the libraries or remove the argument, then try again."
-          )
-      else()
-
-        message(
-          STATUS
-            "-- Warning! Your version of ffmpeg may be too high! If you want to use the system ffmpeg, clear your cmake cache and do not include the system ffmpeg argument."
-          )
-        set(HAS_FFMPEG TRUE)
-      endif()
-    else()
-      include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
-      set(HAS_FFMPEG TRUE)
-    endif()
-  else()
-    set(HAS_FFMPEG FALSE)
-  endif()
 
   find_package(OpenGL REQUIRED)
   find_package(GLEW REQUIRED)

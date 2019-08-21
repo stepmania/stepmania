@@ -1,5 +1,6 @@
 version: 5.1.{build}.{branch}
 environment:
+  vcpkg_commit: e5bf7eae99f3be342bfdd7a3c999daba62d4436a
   access_token:
     secure: vsDaeFdGCIGlIxWSEdsDomYtr5mKS5IPGHc4NwuDZ5D6mCna0STrDvMZ6IP6mOBK
 pull_requests:
@@ -8,6 +9,7 @@ skip_tags: true
 os: Visual Studio 2015
 configuration: Release
 shallow_clone: false
+cache: C:\tools\vcpkg\installed\
 clone_depth: 1
 clone_folder: C:\Repos\StepMania
 init:
@@ -21,21 +23,18 @@ init:
     set SM_COMMIT_SHORT=%APPVEYOR_REPO_COMMIT:~0,7%
 
     set SM_SETUP_EXE_NAME=StepMania-5.1-git-%SM_COMMIT_SHORT%-win32.exe
-
 install:
-- cmd: >-
-    choco install cmake
-
-    choco install nsis -version 2.46.0.20150406
+  - cd C:\Tools\vcpkg
+  - git fetch
+  - git checkout %vcpkg_commit%
+  - .\bootstrap-vcpkg.bat
+  - vcpkg install ffmpeg
+  - vcpkg upgrade --no-dry-run
+  - cd %APPVEYOR_BUILD_FOLDER%
 before_build:
-- cmd: >-
-    choco upgrade cmake
-
-    set path=C:\Program Files\CMake\bin;%path%
-
-    cd Build
-
-    cmake -G "Visual Studio 14 2015" -T "v140_xp" -DWITH_IRC_POST_HOOK=ON ..
+  - cd Build
+  - cmake .. -G "Visual Studio 14 2015"
+      -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
 build_script:
   - cmake --build . --config %CONFIGURATION% --parallel 2
 artifacts:

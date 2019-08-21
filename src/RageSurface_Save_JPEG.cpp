@@ -10,17 +10,14 @@
 /** @brief A helper to get the jpeg lib. */
 namespace jpeg
 {
-	extern "C"
-	{
 #include "jpeglib.h"
-	}
 }
 
-// Newer versions of jpeglib and jpeglib-turbo define TRUE/FALSE in a
-// typedef enum {}
-#if defined(SYSTEM_JPEGLIB) && JPEG_LIB_VERSION > 80
-#define TRUE jpeg::TRUE
-#define FALSE jpeg::FALSE
+#ifndef FALSE
+#define FALSE   jpeg::FALSE
+#endif
+#ifndef TRUE
+#define TRUE    jpeg::TRUE
 #endif
 
 #define OUTPUT_BUFFER_SIZE	4096

@@ -25,7 +25,7 @@
 #endif
 #endif
 
-#if defined(HAVE_FFMPEG)
+#if defined(USE_FFMPEG)
 extern "C"
 {
 	#include <libavcodec/avcodec.h>
@@ -88,7 +88,7 @@ static bool EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	/* We didn't run the crash handler.  Run the default handler, so we can dump core. */
 	return false;
 }
-	
+
 #if defined(HAVE_TLS)
 static thread_local int g_iTestTLS = 0;
 
@@ -124,14 +124,14 @@ static void TestTLS()
 namespace
 {
 	clockid_t g_Clock = CLOCK_REALTIME;
- 
+
 	void OpenGetTime()
 	{
 		static bool bInitialized = false;
 		if( bInitialized )
 			return;
 		bInitialized = true;
- 
+
 		/* Check whether the clock is actually supported. */
 		timespec ts;
 		if( clock_getres(CLOCK_MONOTONIC, &ts) == -1 )
@@ -140,7 +140,7 @@ namespace
 		/* If the resolution is worse than a millisecond, fall back on CLOCK_REALTIME. */
 		if( ts.tv_sec > 0 || ts.tv_nsec > 1000000 )
 			return;
-		
+
 		g_Clock = CLOCK_MONOTONIC;
 	}
 };
@@ -206,7 +206,7 @@ void ArchHooks_Unix::Init()
 	SignalHandler::OnClose( EmergencyShutdown );
 
 	InstallExceptionHandler();
-	
+
 #if defined(HAVE_TLS) && !defined(BSD)
 	TestTLS();
 #endif
@@ -242,7 +242,7 @@ bool ArchHooks_Unix::GoToURL( RString sUrl )
 #endif
 
 static RString LibcVersion()
-{	
+{
 	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBC_VERSION, buf, sizeof(buf) );
 	if( ret == -1 )
@@ -268,7 +268,7 @@ void ArchHooks_Unix::DumpDebugInfo()
 
 	LOG->Info( "Runtime library: %s", LibcVersion().c_str() );
 	LOG->Info( "Threads library: %s", ThreadsVersion().c_str() );
-#if defined(HAVE_FFMPEG)
+#if defined(USE_FFMPEG)
 	LOG->Info( "libavcodec: %#x (%u)", avcodec_version(), avcodec_version() );
 #endif
 }
@@ -283,7 +283,7 @@ void ArchHooks_Unix::SetTime( tm newtime )
 		newtime.tm_year+1900,
 		newtime.tm_sec );
 
-	LOG->Trace( "executing '%s'", sCommand.c_str() ); 
+	LOG->Trace( "executing '%s'", sCommand.c_str() );
 	int ret = system( sCommand );
 	if( ret == -1 || ret == 127 || !WIFEXITED(ret) || WEXITSTATUS(ret) )
 		LOG->Trace( "'%s' failed", sCommand.c_str() );
@@ -329,7 +329,7 @@ RString ArchHooks_Unix::GetClipboard()
 	// property on YOUR window.
 	XConvertSelection( Dpy, XA_CLIPBOARD, XA_STRING, XA_PRIMARY, Win, CurrentTime );
 	// XXX: This seems to always return 1 even when it works. (Success == 0)
-	
+
 	// Now we must wait for the clipboard owner to cough it up.
 	// HACK: What we SHOULD do is XSelectInput() for SelectionNotify before
 	// calling XConvertSelection and then block on XWindowEvent(), but that
@@ -422,7 +422,7 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -432,7 +432,7 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

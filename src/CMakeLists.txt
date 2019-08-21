@@ -167,11 +167,7 @@ set_target_properties("${SM_EXE_NAME}"
                                  "${SM_NAME_RELWITHDEBINFO}")
 
 list(APPEND SM_WINDOWS_PROGRAM_DLLS
-            "${SM_PROGRAM_DIR}/avcodec-55.dll"
-            "${SM_PROGRAM_DIR}/avformat-55.dll"
-            "${SM_PROGRAM_DIR}/avutil-52.dll"
-            "${SM_PROGRAM_DIR}/parallel_lights_io.dll"
-            "${SM_PROGRAM_DIR}/swscale-2.dll")
+            "${SM_PROGRAM_DIR}/parallel_lights_io.dll")
 
 if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" WINDOWS)
@@ -248,10 +244,6 @@ elseif(APPLE)
       "${SM_XCODE_DIR}/Libraries")
 
   sm_add_compile_definition("${SM_EXE_NAME}" _XOPEN_SOURCE)
-
-  if(${HAS_FFMPEG})
-    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
-  endif()
 
   if(CMAKE_BUILD_TYPE EQUAL "Debug")
     set(SM_APP_RELEASE_NAME "${SM_NAME_DEBUG}")
@@ -357,9 +349,6 @@ else() # Linux
     else()
       message("Unrecognized host processor type")
     endif()
-  endif()
-  if(${HAS_FFMPEG})
-    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
   endif()
   if(${HAS_XRANDR})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XRANDR)
@@ -468,14 +457,12 @@ if(WITH_OGG)
   endif()
 endif()
 
-if(WIN32)
-  list(APPEND SMDATA_LINK_LIB
-              # The misc libraries are here.
-              "${LIB_SWSCALE}"
-              "${LIB_AVCODEC}"
-              "${LIB_AVFORMAT}"
-              "${LIB_AVUTIL}")
+if(USE_FFMPEG)
+  list(APPEND SM_INCLUDE_DIRS ${FFMPEG_INCLUDE_DIRS})
+  list(APPEND SMDATA_LINK_LIB ${FFMPEG_LIBRARIES})
+endif()
 
+if(WIN32)
   list(APPEND SMDATA_LINK_LIB
               "dbghelp.lib"
               "setupapi.lib"
@@ -484,7 +471,6 @@ if(WIN32)
   get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
 
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
-  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}"
                    "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/ERRORREPORT:SEND")
@@ -503,9 +489,6 @@ if(WIN32)
                         PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
 
 elseif(APPLE)
-  # The following were removed from SMDATA_LINK_LIB to "match" StepMania's
-  # pbxproj. ${MAC_FRAME_APPKIT} ${MAC_FRAME_FOUNDATION} "ffmpeg"
-
   list(INSERT SMDATA_LINK_LIB
               0
               ${MAC_FRAME_ACCELERATE}
@@ -522,38 +505,14 @@ elseif(APPLE)
   list(APPEND SMDATA_LINK_LIB
               "${BZIP2_LIBRARY_RELEASE}"
               "${ICONV_LIBRARIES}")
-
-  if(HAS_FFMPEG)
-    list(APPEND SMDATA_LINK_LIB
-                "${SM_FFMPEG_ROOT}/libavformat/libavformat.a"
-                "${SM_FFMPEG_ROOT}/libavcodec/libavcodec.a"
-                "${SM_FFMPEG_ROOT}/libswscale/libswscale.a"
-                "${SM_FFMPEG_ROOT}/libavutil/libavutil.a")
-  endif()
 else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
-  if(HAS_FFMPEG)
-    if(WITH_SYSTEM_FFMPEG)
-      list(APPEND SMDATA_LINK_LIB
-                  "${FFMPEG_avformat_LIBRARY}"
-                  "${FFMPEG_avcodec_LIBRARY}"
-                  "${FFMPEG_swscale_LIBRARY}"
-                  "${FFMPEG_avutil_LIBRARY}")
-    else()
-      list(APPEND SMDATA_LINK_LIB
-                  "${SM_FFMPEG_ROOT}/libavformat/libavformat.a"
-                  "${SM_FFMPEG_ROOT}/libavcodec/libavcodec.a"
-                  "${SM_FFMPEG_ROOT}/libswscale/libswscale.a"
-                  "${SM_FFMPEG_ROOT}/libavutil/libavutil.a")
-    endif()
-
-    if(NOT WITH_SYSTEM_ZLIB)
+  if(NOT WITH_SYSTEM_ZLIB)
       list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
       list(APPEND SMDATA_LINK_LIB "zlib")
-    endif()
+  endif()
 
-    if(VA_FOUND)
+  if(VA_FOUND)
       list(APPEND SMDATA_LINK_LIB ${VA_LIBRARY})
-    endif()
   endif()
 
   if(${DL_FOUND})
@@ -626,18 +585,9 @@ if(NOT APPLE)
                   "${SM_EXTERN_DIR}/newvorbis/lib"
                   "${SM_EXTERN_DIR}/newvorbis/include")
     endif()
-    list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/ffmpeg/include")
   else()
     if(WITH_OGG)
       list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/vorbis")
-    endif()
-    if(HAS_FFMPEG)
-      if(WITH_SYSTEM_FFMPEG)
-        list(APPEND SM_INCLUDE_DIRS "${FFMPEG_INCLUDE_DIR}")
-      else()
-        add_dependencies("${SM_EXE_NAME}" "ffmpeg")
-        list(APPEND SM_INCLUDE_DIRS "${SM_FFMPEG_SRC_DIR}" "${SM_FFMPEG_ROOT}")
-      endif()
     endif()
     if(HAS_GTK2)
       list(APPEND SM_INCLUDE_DIRS "${GTK2_INCLUDE_DIRS}")
@@ -658,10 +608,6 @@ else()
                 "${SM_EXTERN_DIR}/newvorbis/include")
   endif()
   list(APPEND SM_INCLUDE_DIRS "archutils/Unix")
-  if(HAS_FFMPEG)
-    add_dependencies("${SM_EXE_NAME}" "ffmpeg")
-    list(APPEND SM_INCLUDE_DIRS "${SM_FFMPEG_SRC_DIR}" "${SM_FFMPEG_ROOT}")
-  endif()
 endif()
 
 if(WIN32)
@@ -690,15 +636,7 @@ if(NOT APPLE)
       install(FILES "${SM_PROGRAM_DIR}/Texture Font Generator.exe"
               DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     endif()
-    install(FILES "${SM_PROGRAM_DIR}/avcodec-55.dll"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/avformat-55.dll"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/avutil-52.dll"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/parallel_lights_io.dll"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll"
             DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/StepMania.vdi"
             DESTINATION "${SM_FULL_INSTALLATION_PATH}")

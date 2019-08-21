@@ -7,7 +7,7 @@
 #
 # This module defines::
 #
-# FFMPEG_INCLUDE_DIR, where to find avcodec.h, avformat.h ... FFMPEG_LIBRARIES,
+# FFMPEG_INCLUDE_DIRS, where to find avcodec.h, avformat.h ... FFMPEG_LIBRARIES,
 # the libraries to link against to use FFMPEG. FFMPEG_FOUND, If false, do not
 # try to use FFMPEG.
 #
@@ -34,7 +34,7 @@
 
 # Originally from VTK project
 
-find_path(FFMPEG_INCLUDE_DIR
+find_path(FFMPEG_INCLUDE_DIRS
           libavformat/avformat.h
           $ENV{FFMPEG_DIR}
           $ENV{FFMPEG_DIR}/ffmpeg
@@ -93,7 +93,7 @@ find_library(_FFMPEG_z_LIBRARY_
              /usr/local/lib
              /usr/lib)
 
-if(FFMPEG_INCLUDE_DIR)
+if(FFMPEG_INCLUDE_DIRS)
   if(FFMPEG_avformat_LIBRARY)
     if(FFMPEG_avcodec_LIBRARY)
       if(FFMPEG_avutil_LIBRARY)
@@ -116,7 +116,7 @@ if(FFMPEG_INCLUDE_DIR)
   endif()
 endif()
 
-mark_as_advanced(FFMPEG_INCLUDE_DIR
+mark_as_advanced(FFMPEG_INCLUDE_DIRS
                  FFMPEG_INCLUDE_DIR1
                  FFMPEG_INCLUDE_DIR2
                  FFMPEG_INCLUDE_DIR3

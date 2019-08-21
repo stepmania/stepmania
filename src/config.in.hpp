@@ -138,6 +138,8 @@ typedef long ssize_t;
 /* Defined to 1 if compiling with OGG support. */
 #cmakedefine HAS_OGG 1
 
+#cmakedefine USE_FFMPEG
+
 /* Defined to 1 if building on a windows system, and thus uses the windows loading window. */
 #cmakedefine NEED_WINDOWS_LOADING_WINDOW 1
 

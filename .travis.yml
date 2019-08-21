@@ -20,14 +20,17 @@ addons:
   apt:
     packages:
       - libasound2-dev
+      - libavcodec-dev
+      - libavformat-dev
+      - libavutil-dev
       - libglew-dev
       - libmad0-dev
       - libpulse-dev
+      - libswscale-dev
       - libva-dev
       - libvorbis-dev
       - libxinerama-dev
       - libxrandr-dev
-      - yasm
 
 matrix:
   exclude:
@@ -39,7 +42,7 @@ before_install:
 
 install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew upgrade cmake; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install yasm; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install ffmpeg; fi
 
 before_script:
   - cd Build
@@ -48,7 +51,6 @@ before_script:
   - cmake .. -G"${CMAKE_MAKE_PROGRAM}"
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
     -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX}
-    -DWITH_FFMPEG_JOBS=2
 
 script:
   - cmake --build . --parallel 2
