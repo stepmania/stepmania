@@ -25,6 +25,112 @@ using std::vector;
 
 REGISTER_INPUT_HANDLER_CLASS2( LinuxEvent, Linux_Event );
 
+// Maps Joystick/Gamepad buttons from Linux HID to DeviceButton enum.
+static DeviceButton HidKeyToButton(decltype(input_event::code) hid_key) {
+	switch( hid_key ) {
+#ifdef BTN_JOYSTICK
+	case BTN_TRIGGER: return JOY_HAT_UP;
+	case BTN_THUMB: return JOY_BUTTON_11;
+	case BTN_THUMB2: return JOY_BUTTON_12;
+	case BTN_TOP: return JOY_BUTTON_13;
+	case BTN_TOP2: return JOY_BUTTON_14;
+	case BTN_PINKIE: return JOY_Z_DOWN;
+	case BTN_BASE: return JOY_BUTTON_16;
+	case BTN_BASE2: return JOY_BUTTON_17;
+	case BTN_BASE3: return JOY_BUTTON_18;
+	case BTN_BASE4: return JOY_BUTTON_19;
+	case BTN_BASE5: return JOY_BUTTON_20;
+	case BTN_BASE6: return JOY_BUTTON_32;
+#endif
+#ifdef BTN_DPAD_UP
+	case BTN_DPAD_UP: return JOY_UP;
+	case BTN_DPAD_DOWN: return JOY_DOWN;
+	case BTN_DPAD_LEFT: return JOY_LEFT;
+	case BTN_DPAD_RIGHT: return JOY_RIGHT;
+#endif
+#ifdef BTN_GAMEPAD
+	case BTN_SOUTH: return JOY_DOWN_2;
+	case BTN_EAST: return JOY_RIGHT_2;
+	case BTN_C: return JOY_AUX_4;
+	case BTN_NORTH: return JOY_UP_2;
+	case BTN_WEST: return JOY_LEFT_2;
+	case BTN_Z: return JOY_Z_UP;
+	case BTN_TL: return JOY_ROT_LEFT;
+	case BTN_TR: return JOY_ROT_RIGHT;
+	case BTN_TL2: return JOY_ROT_UP;
+	case BTN_TR2: return JOY_ROT_DOWN;
+	case BTN_SELECT: return JOY_AUX_1;
+	case BTN_START: return JOY_AUX_2;
+	case BTN_MODE: return JOY_AUX_3;
+	case BTN_THUMBL: return JOY_HAT_LEFT;
+	case BTN_THUMBR: return JOY_HAT_RIGHT;
+#endif
+#ifdef BTN_WHEEL
+	case BTN_GEAR_DOWN: return JOY_ROT_Z_DOWN;
+	case BTN_GEAR_UP: return JOY_ROT_Z_UP;
+#endif
+#ifdef BTN_0
+	case BTN_0: return JOY_HAT_DOWN;
+	case BTN_1: return JOY_BUTTON_1;
+	case BTN_2: return JOY_BUTTON_2;
+	case BTN_3: return JOY_BUTTON_3;
+	case BTN_4: return JOY_BUTTON_4;
+	case BTN_5: return JOY_BUTTON_5;
+	case BTN_6: return JOY_BUTTON_6;
+	case BTN_7: return JOY_BUTTON_7;
+	case BTN_8: return JOY_BUTTON_8;
+	case BTN_9: return JOY_BUTTON_9;
+#endif
+#ifdef BTN_TRIGGER_HAPPY
+	case BTN_TRIGGER_HAPPY1: return JOY_BUTTON_21;
+	case BTN_TRIGGER_HAPPY2: return JOY_BUTTON_22;
+	case BTN_TRIGGER_HAPPY3: return JOY_BUTTON_23;
+	case BTN_TRIGGER_HAPPY4: return JOY_BUTTON_24;
+	case BTN_TRIGGER_HAPPY5: return JOY_BUTTON_25;
+	case BTN_TRIGGER_HAPPY6: return JOY_BUTTON_26;
+	case BTN_TRIGGER_HAPPY7: return JOY_BUTTON_27;
+	case BTN_TRIGGER_HAPPY8: return JOY_BUTTON_28;
+	case BTN_TRIGGER_HAPPY9: return JOY_BUTTON_29;
+	case BTN_TRIGGER_HAPPY10: return JOY_BUTTON_30;
+	case BTN_TRIGGER_HAPPY11: return JOY_BUTTON_31;
+	case BTN_TRIGGER_HAPPY12: return JOY_BUTTON_32;
+	// NOTE: Everything above this point has a unique
+	// mapping. Everything below this point will conflict with
+	// something above, so try to map with an likely unused button
+	// value.
+	case BTN_TRIGGER_HAPPY13: return JOY_BUTTON_13;
+	case BTN_TRIGGER_HAPPY14: return JOY_BUTTON_14;
+	case BTN_TRIGGER_HAPPY15: return JOY_BUTTON_15;
+	case BTN_TRIGGER_HAPPY16: return JOY_BUTTON_16;
+	case BTN_TRIGGER_HAPPY17: return JOY_BUTTON_17;
+	case BTN_TRIGGER_HAPPY18: return JOY_BUTTON_18;
+	case BTN_TRIGGER_HAPPY19: return JOY_BUTTON_19;
+	case BTN_TRIGGER_HAPPY20: return JOY_BUTTON_20;
+	case BTN_TRIGGER_HAPPY21: return JOY_BUTTON_1;
+	case BTN_TRIGGER_HAPPY22: return JOY_BUTTON_2;
+	case BTN_TRIGGER_HAPPY23: return JOY_BUTTON_3;
+	case BTN_TRIGGER_HAPPY24: return JOY_BUTTON_4;
+	case BTN_TRIGGER_HAPPY25: return JOY_BUTTON_5;
+	case BTN_TRIGGER_HAPPY26: return JOY_BUTTON_6;
+	case BTN_TRIGGER_HAPPY27: return JOY_BUTTON_7;
+	case BTN_TRIGGER_HAPPY28: return JOY_BUTTON_8;
+	case BTN_TRIGGER_HAPPY29: return JOY_BUTTON_9;
+	case BTN_TRIGGER_HAPPY30: return JOY_ROT_UP;
+	case BTN_TRIGGER_HAPPY31: return JOY_ROT_DOWN;
+	case BTN_TRIGGER_HAPPY32: return JOY_ROT_LEFT;
+	case BTN_TRIGGER_HAPPY33: return JOY_ROT_RIGHT;
+	case BTN_TRIGGER_HAPPY34: return JOY_ROT_Z_UP;
+	case BTN_TRIGGER_HAPPY35: return JOY_ROT_Z_DOWN;
+	case BTN_TRIGGER_HAPPY36: return JOY_HAT_LEFT;
+	case BTN_TRIGGER_HAPPY37: return JOY_HAT_RIGHT;
+	case BTN_TRIGGER_HAPPY38: return JOY_HAT_UP;
+	case BTN_TRIGGER_HAPPY39: return JOY_HAT_DOWN;
+	case BTN_TRIGGER_HAPPY40: return JOY_AUX_4;
+#endif
+	default: return DeviceButton_Invalid;
+	}
+}
+
 static std::string BustypeToString( int iBus )
 {
 	switch( iBus )
@@ -148,17 +254,31 @@ bool EventDevice::Open( std::string sFile, InputDevice dev )
 	if( ioctl(m_iFD, EVIOCGBIT(EV_ABS, sizeof(iABSMask)), iABSMask) < 0 )
 		LOG->Warn( "ioctl(EVIOCGBIT(EV_ABS)): %s", strerror(errno) );
 
-	if( !BitIsSet(iABSMask, ABS_X) && !BitIsSet(iABSMask, ABS_THROTTLE) && !BitIsSet(iABSMask, ABS_WHEEL) )
-	{
-		LOG->Info( "    Not a joystick; ignored" );
-		Close();
-		return false;
-	}
-
 	uint8_t iKeyMask[KEY_MAX/8 + 1];
 	memset( iKeyMask, 0, sizeof(iKeyMask) );
 	if( ioctl(m_iFD, EVIOCGBIT(EV_KEY, sizeof(iKeyMask)), iKeyMask) < 0 )
 		LOG->Warn( "ioctl(EVIOCGBIT(EV_KEY)): %s", strerror(errno) );
+
+	if( !BitIsSet(iABSMask, ABS_X) && !BitIsSet(iABSMask, ABS_THROTTLE) && !BitIsSet(iABSMask, ABS_WHEEL) )
+	{
+		// Okay, this input device doesn't seem to be an
+		// analog joystick, nor is it even trying to fake
+		// it. However, maybe it's a gamepad that only
+		// provides buttons (e.g., Cobalt Flux USB input)?
+		bool found_gamepad_button = false;
+		for( int i = 0; i <= KEY_MAX; ++i ) {
+			if( BitIsSet(iKeyMask, i) && HidKeyToButton(i) != DeviceButton_Invalid ) {
+				found_gamepad_button = true;
+				break;
+			}
+		}
+		if( !found_gamepad_button ) {
+			LOG->Info( "    Not a joystick nor a gamepad; ignored" );
+			Close();
+			return false;
+		}
+		LOG->Info( "    No analog inputs, but has gamepad buttons; ok" );
+	}
 
 	uint8_t iEventTypes[EV_MAX/8];
 	memset( iEventTypes, 0, sizeof(iEventTypes) );
@@ -185,7 +305,7 @@ bool EventDevice::Open( std::string sFile, InputDevice dev )
 	}
 
 	int iTotalKeys = 0;
-	for( int i = 0; i < KEY_MAX; ++i )
+	for( int i = 0; i <= KEY_MAX; ++i )
 	{
 		if( !BitIsSet(iKeyMask, i) )
 			continue;
@@ -403,20 +523,10 @@ void InputHandler_Linux_Event::InputThread()
 
 			switch (event.type) {
 			case EV_KEY: {
-				int iNum;
-				if (event.code >= BTN_JOYSTICK && event.code <= BTN_JOYSTICK + 0xf) {
-					// These guys have arbitrary names, but the kernel code in hid-input.c maps exactly 0xf of them.
-					iNum = event.code - BTN_JOYSTICK;
-				} else if (event.code >= BTN_TRIGGER_HAPPY1 && event.code <= BTN_TRIGGER_HAPPY40) {
-					// Actually, we only have 32 buttons defined.
-					iNum = event.code - BTN_TRIGGER_HAPPY1 + 0x10;
-				} else {
-					// If the button number is >40+0xf, it gets mapped to a code with no #define.
-					// I don't know if this is appropriate at all, but what else to do?
-					iNum = event.code;
+				const DeviceButton button = HidKeyToButton( event.code );
+				if( button != DeviceButton_Invalid ) {
+					ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, button, event.value != 0, now) );
 				}
-				wrap( iNum, 32 );	// max number of joystick buttons.  Make this a constant?
-				ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, enum_add2(JOY_BUTTON_1, iNum), event.value != 0, now) );
 				break;
 			}
 
