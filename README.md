@@ -18,7 +18,81 @@ For those that do not wish to compile the game on their own and use a binary rig
 
 ## Building
 
-StepMania can be compiled using [CMake](https://www.cmake.org/). More information about using CMake can be found in both the `Build` directory and CMake's documentation.
+### Prerequisites
+* A `C/C++` compiler
+* [Git](https://git-scm.com/)
+* [CMake](https://cmake.org/)
+
+Install those with a package manager of your choice or manually.
+
+### Dependencies
+* [FFmpeg](https://ffmpeg.org/)
+  * specifically `libavformat`, `libavutil` and `libswscale`
+  * optional, disable by setting the CMake option `USE_FFMPEG=OFF`
+
+Install those with a package/library manager of your choice.
+
+#### Windows
+
+On Windows we recommend [vcpkg](https://github.com/Microsoft/vcpkg). Note that we don't support `x86-64` on Windows yet (see [#1382](https://github.com/stepmania/stepmania/issues/1382)). See [target triplet](https://github.com/microsoft/vcpkg/blob/master/docs/users/triplets.md) to change the target environment.
+
+You also need to install the [DirectX SDK](https://www.microsoft.com/en-us/download/details.aspx?id=6812) (see [#1874](https://github.com/stepmania/stepmania/issues/1874))
+
+### [Generate a Project Buildsystem](https://cmake.org/cmake/help/latest/manual/cmake.1.html#generate-a-project-buildsystem)
+```bash
+$ mkdir build
+$ cd build
+$ cmake .. -G"$CMAKE_MAKE_PROGRAM"
+```
+
+With `$CMAKE_MAKE_PROGRAM` being the [CMake generator](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html) of your choice. On Windows we don't support `Visual Studio 15 2017` or higher yet (see [#1875](https://github.com/stepmania/stepmania/issues/1875)).
+
+On single-configuration generators specify the build type (e.g. `Release`, `Debug`, see [`CMAKE_BUILD_TYPE`](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)) using:
+```bash
+    -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+```
+
+When using vcpkg specify its toolchain with:
+```bash
+    -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+```
+
+You can change the target environment (see [vcpkg - triplet selection](https://github.com/microsoft/vcpkg/blob/master/docs/users/integration.md#with-cmake)) for this project like this:
+```bash
+    -DVCPKG_TARGET_TRIPLET=$VCPKG_TARGET_TRIPLET
+```
+
+On systems with multiple available compilers you can use a non-default one with:
+```bash
+    -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
+```
+
+If you want to install the project, you can specify a custom prefix using:
+```bash
+    -DCMAKE_INSTALL_PREFIX="$PREFIX"
+```
+
+### [Build the project](https://cmake.org/cmake/help/latest/manual/cmake.1.html#build-a-project)
+```bash
+$ cmake --build .
+```
+
+When using a multi-configuration tool, specify the configuration (e.g. `Release`, `Debug`) with:
+```bash
+    --config $CONFIG
+```
+
+You can override the native build tool's default maximum number of concurrent processes to use when building with:
+```bash
+    --parallel $JOBS
+```
+
+### Install the project
+```bash
+$ cmake --build build --target install
+```
+
+Set `$DESTDIR` for overriding the destination directory.
 
 ## Resources
 

@@ -32,7 +32,8 @@ install:
   - vcpkg upgrade --no-dry-run
   - cd %APPVEYOR_BUILD_FOLDER%
 before_build:
-  - cd Build
+  - mkdir build
+  - cd build
   - cmake .. -G "Visual Studio 14 2015"
       -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
 build_script:

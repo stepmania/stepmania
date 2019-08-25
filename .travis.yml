@@ -45,7 +45,8 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install ffmpeg; fi
 
 before_script:
-  - cd Build
+  - mkdir build
+  - cd build
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then export CMAKE_MAKE_PROGRAM="Unix Makefiles"; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export CMAKE_MAKE_PROGRAM=Xcode; fi
   - cmake .. -G"${CMAKE_MAKE_PROGRAM}"
