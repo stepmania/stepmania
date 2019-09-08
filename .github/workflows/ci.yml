@@ -56,7 +56,6 @@ jobs:
           ninja-build
       - name: Configure
         # TODO: png: https://github.com/stepmania/stepmania/issues/1881
-        # TODO: tomcrypt: https://github.com/stepmania/stepmania/issues/1885
         run: cmake -G Ninja -B build
           -DWITH_SYSTEM_FFMPEG=ON
           -DWITH_SYSTEM_GLEW=ON
@@ -66,7 +65,7 @@ jobs:
           -DWITH_SYSTEM_OGG=ON
           -DWITH_SYSTEM_PCRE=ON
           -DWITH_SYSTEM_PNG=OFF
-          -DWITH_SYSTEM_TOMCRYPT=OFF
+          -DWITH_SYSTEM_TOMCRYPT=ON
           -DWITH_SYSTEM_TOMMATH=ON
           -DWITH_SYSTEM_ZLIB=ON
       - name: Build
