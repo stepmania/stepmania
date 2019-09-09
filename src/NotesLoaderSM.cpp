@@ -976,9 +976,18 @@ bool SMLoader::LoadFromBGChangesVector( BackgroundChange &change, std::vector<RS
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bLoop = std::stoi( aBGChangeValues[5] ) != 0;
-			if( !bLoop )
+			try
+			{
+				if( std::stoi( aBGChangeValues[5] ) != 0 )
+				{
+					change.m_def.m_sEffect = SBE_StretchNoLoop;
+				}
+			}
+			catch ( const std::invalid_argument & )
+			{
+				// Failed conversions mean it's not 0 as well
 				change.m_def.m_sEffect = SBE_StretchNoLoop;
+			}
 		}
 		// fall through
 	case 5:
@@ -986,16 +995,38 @@ bool SMLoader::LoadFromBGChangesVector( BackgroundChange &change, std::vector<RS
 		// Backward compatibility:
 		if( change.m_def.m_sEffect.empty() )
 		{
-			bool bRewindMovie = std::stoi( aBGChangeValues[4] ) != 0;
-			if( bRewindMovie )
+			try
+			{
+				if( std::stoi( aBGChangeValues[4] ) != 0 )
+				{
+					change.m_def.m_sEffect = SBE_StretchRewind;
+				}
+			}
+			catch ( const std::invalid_argument & )
+			{
+				// Failed conversions mean it's not 0 as well
 				change.m_def.m_sEffect = SBE_StretchRewind;
+			}
 		}
 		// fall through
 	case 4:
 		// param 9 overrides this.
 		// Backward compatibility:
 		if( change.m_sTransition.empty() )
-			change.m_sTransition = (std::stoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
+		{
+			try
+			{
+				if( std::stoi( aBGChangeValues[3] ) != 0 )
+				{
+					change.m_sTransition = SBT_CrossFade;
+				}
+			}
+			catch ( const std::invalid_argument & )
+			{
+				// Failed conversions mean it's not 0 as well
+				change.m_sTransition = SBT_CrossFade;
+			}
+		}
 		// fall through
 	case 3:
 		change.m_fRate = StringToFloat( aBGChangeValues[2] );
