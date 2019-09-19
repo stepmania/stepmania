@@ -27,7 +27,7 @@ InputHandler_Win32_RTIO::~InputHandler_Win32_RTIO()
 		shutdown_ = true;
 		LOG->Trace("RTIO: Shutting down RTIO thread");
 		input_thread_.Wait();
-		LOG->Info("RTIO: RTIO thread shut down.");
+		LOG->Info("RTIO: Thread shut down");
 	}
 
 	rtio_.Disconnect();
@@ -77,11 +77,13 @@ bool InputHandler_Win32_RTIO::Initialize() {
 		LOG->Trace("RTIO: Initialize: Cannot connect to COM1");
 		return false;
 	}
+	// The following messages are not required to receive game/operator inputs,
+	// but they replicate the initialization sequence in DDR. We'll use the
+	// response from the version message to determine that the board is good.
 	if (!rtio_.WriteMsg("C0000")) {
 		LOG->Trace("RTIO: Initialize: Cannot write init message");
 		return false;
 	}
-	// The following messages replicate the rest of the initialization sequence in DDR X2
 	if (!rtio_.WriteMsg("v")) {
 		LOG->Trace("RTIO: Initialize: Cannot write version message");
 		return false;
@@ -121,9 +123,9 @@ int InputHandler_Win32_RTIO::InputThread_Start(void *this_ptr)
 
 void InputHandler_Win32_RTIO::InputThread()
 {
+	RageTimer start_time;
 	std::vector<std::string> msgs;
 	int failures = 0;
-	LOG->Trace("RTIO: In Thread");
 
 	while (!shutdown_) {
 		if (!rtio_.ReadMsgs(&msgs)) {
@@ -137,6 +139,11 @@ void InputHandler_Win32_RTIO::InputThread()
 
 		RageTimer now;
 
+		if (!initialized_ && now - start_time > 10.0) {
+			LOG->Warn("RTIO: Device failed to initialize; exiting input loop");
+			return;
+		}
+
 		for (auto msg : msgs) {
 			if (msg.length() < 1) continue;
 			if (msg[0] == 'c') {
@@ -145,6 +152,7 @@ void InputHandler_Win32_RTIO::InputThread()
 			}
 			if (msg[0] == 'v') {
 				LOG->Trace("RTIO: Received version response: %s", msg.c_str());
+				initialized_ = true;
 				continue;
 			}
 			if (msg[0] == 'd') {
@@ -162,7 +170,6 @@ void InputHandler_Win32_RTIO::InputThread()
 			LOG->Warn("RTIO: Unrecognized response: %s", msg.c_str());
 		}
 	}
-	LOG->Trace("RTIO: Leaving Thread");
 }
 
 int HexToChar(char ch)
@@ -172,7 +179,7 @@ int HexToChar(char ch)
 	return ch - '0';
 }
 
-void InputHandler_Win32_RTIO::HandleGameInput(const std::string &msg, RageTimer &now)
+void InputHandler_Win32_RTIO::HandleGameInput(const std::string &msg, const RageTimer &now)
 {
 	InputDevice id = InputDevice(DEVICE_JOY1);
 
@@ -257,18 +264,19 @@ void InputHandler_Win32_RTIO::HandleGameInput(const std::string &msg, RageTimer 
 	if (input_new.P2_MenuStart != last_game_input_.P2_MenuStart) {
 		ButtonPressed(DeviceInput(id, JOY_BUTTON_18, input_new.P2_MenuStart, now));
 	}
-
+/*
 	if (memcmp(&last_game_input_, &input_new, sizeof(GAME_INPUT)) != 0) {
-		LOG->Trace("RTIO: P1:%d%d%d%d P2:%d%d%d%d M1:%d%d%d%d-%d M2:%d%d%d%d-%d", // TODO: Delete me
-			input_new.P1_PadLeft, input_new.P1_PadDown, input_new.P1_PadUp, input_new.P1_PadRight,
-			input_new.P2_PadLeft, input_new.P2_PadDown, input_new.P2_PadUp, input_new.P2_PadRight,
-			input_new.P1_MenuLeft, input_new.P1_MenuDown, input_new.P1_MenuUp, input_new.P1_MenuRight, input_new.P1_MenuStart,
-			input_new.P2_MenuLeft, input_new.P2_MenuDown, input_new.P2_MenuUp, input_new.P2_MenuRight, input_new.P2_MenuStart);
+	LOG->Trace("RTIO: P1:%d%d%d%d P2:%d%d%d%d M1:%d%d%d%d-%d M2:%d%d%d%d-%d",
+	input_new.P1_PadLeft, input_new.P1_PadDown, input_new.P1_PadUp, input_new.P1_PadRight,
+	input_new.P2_PadLeft, input_new.P2_PadDown, input_new.P2_PadUp, input_new.P2_PadRight,
+	input_new.P1_MenuLeft, input_new.P1_MenuDown, input_new.P1_MenuUp, input_new.P1_MenuRight, input_new.P1_MenuStart,
+	input_new.P2_MenuLeft, input_new.P2_MenuDown, input_new.P2_MenuUp, input_new.P2_MenuRight, input_new.P2_MenuStart);
 	}
+*/
 	memcpy(&last_game_input_, &input_new, sizeof(GAME_INPUT));
 }
 
-void InputHandler_Win32_RTIO::HandleOperatorInput(const std::string &msg, RageTimer &now)
+void InputHandler_Win32_RTIO::HandleOperatorInput(const std::string &msg, const RageTimer &now)
 {
 	InputDevice id = InputDevice(DEVICE_JOY1);
 
@@ -305,11 +313,12 @@ void InputHandler_Win32_RTIO::HandleOperatorInput(const std::string &msg, RageTi
 	if (input_new.VolumeUp != last_operator_input_.VolumeUp) {
 		ButtonPressed(DeviceInput(id, JOY_BUTTON_24, input_new.VolumeUp, now));
 	}
-
+/*
 	if (memcmp(&last_operator_input_, &input_new, sizeof(OPERATOR_INPUT)) != 0) {
-		LOG->Trace("RTIO: C:%d%d V:%d%d S:%d%d", // TODO: Remove me
-			input_new.P1_InsertCoin, input_new.P2_InsertCoin, input_new.VolumeUp, input_new.VolumeDown, input_new.TestSwitch, input_new.SelectSwitch);
+	LOG->Trace("RTIO: C:%d%d V:%d%d S:%d%d",
+	input_new.P1_InsertCoin, input_new.P2_InsertCoin, input_new.VolumeUp, input_new.VolumeDown, input_new.TestSwitch, input_new.SelectSwitch);
 	}
+*/
 	memcpy(&last_operator_input_, &input_new, sizeof(OPERATOR_INPUT));
 }
 
@@ -359,9 +368,13 @@ bool RtioDevice::ReadMsgs(std::vector<std::string> *msgs)
 		int msg_size = ParseMsg(&read_buffer_[pos], read_offset_ - pos);
 
 		if (msg_size < 0) {
-			LOG->Trace("RTIO: RtioDevice: Bad msg start at offset %d (got %d)", pos, read_buffer_[pos]);
-			read_offset_ = 0;
-			return false;
+			LOG->Warn("RTIO: RtioDevice: Bad msg start at offset %d (got %d); skipping invalid data", pos, read_buffer_[pos]);
+			while (pos < read_offset_) {
+				if (read_buffer_[pos] == '\n')
+					break;
+				pos++;
+			}
+			continue;
 		}
 
 		if (msg_size == 0) {
@@ -394,16 +407,10 @@ int RtioDevice::ParseMsg(char *buffer, int buffer_size)
 	return 0;
 }
 
-char IntToHex(int num)
-{
-	if (num < 10) return num + '0';
-	return (num - 10) + 'A';
-}
-
 // Sends a message to the RTIO device. This function adds the necessary prefix
 // and suffix ('\n' and '\r', respectively).  Messages sent to RTIO also
 // include a checksum, expressed in hex.
-bool RtioDevice::WriteMsg(std::string const &msg)
+bool RtioDevice::WriteMsg(const std::string &msg)
 {
 	std::string buf;
 	buf = '\n';
@@ -441,12 +448,12 @@ bool SerialDevice::Connect(int com_number)
 		return false;
 	}
 
-	if (!SetupPort()) {
+	if (!Setup()) {
 		SetCommMask(com_handle_, 0);
 		return false;
 	}
 
-	LOG->Trace("RTIO: SerialDevice: Connect succeeded on %s", name.c_str());
+	LOG->Info("RTIO: SerialDevice: Connect succeeded on %s", name.c_str());
 	return true;
 }
 
@@ -460,10 +467,9 @@ void SerialDevice::Disconnect()
 	}
 }
 
-bool SerialDevice::SetupPort()
+bool SerialDevice::Setup()
 {
-	// Set the com device to monitor the following event:
-	// EV_RXCHAR = "A character was received and placed in the input buffer."
+	// Set the serial device to monitor for characters in the input buffer
 	if (!SetCommMask(com_handle_, EV_RXCHAR)) {
 		LOG->Warn("RTIO: SerialDevice: SetCommMask failed: %d", GetLastError());
 		return false;
@@ -475,7 +481,7 @@ bool SerialDevice::SetupPort()
 		return false;
 	}
 
-	// Discard all characters from the buffers of the com resource
+	// Discard all characters from the internal buffers
 	if (!PurgeComm(com_handle_, PURGE_TXABORT | PURGE_RXABORT | PURGE_TXCLEAR | PURGE_RXCLEAR)) {
 		LOG->Warn("RTIO: SerialDevice: PurgeComm failed: %d", GetLastError());
 		return false;
@@ -518,13 +524,13 @@ bool SerialDevice::SetupPort()
 	}
 
 	// Create a manually resettable events for the OVERLAPPED structures
-	read_overlapped_.hEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+	read_overlapped_.hEvent = CreateEvent(nullptr, true, false, nullptr);
 	if (read_overlapped_.hEvent == nullptr) {
 		LOG->Warn("RTIO: SerialDevice: CreateEvent failed: %d", GetLastError());
 		return false;
 	}
 
-	write_overlapped_.hEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+	write_overlapped_.hEvent = CreateEvent(nullptr, true, false, nullptr);
 	if (write_overlapped_.hEvent == nullptr) {
 		LOG->Warn("RTIO: SerialDevice: CreateEvent failed: %d", GetLastError());
 		return false;
@@ -591,3 +597,28 @@ int SerialDevice::Write(const char *buffer, int buffer_size)
 
 	return bytes_transferred;
 }
+
+/*
+ * (c) 2003-2004 Glenn Maynard
+ * All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */

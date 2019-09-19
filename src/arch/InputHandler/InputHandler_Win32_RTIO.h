@@ -47,7 +47,7 @@ public:
 	int Read(char *buffer, int buffer_size);
 	int Write(const char *buffer, int buffer_size);
 private:
-	bool SetupPort();
+	bool Setup();
 
 	HANDLE com_handle_ = INVALID_HANDLE_VALUE;
 	int read_buffer_size_;
@@ -62,7 +62,7 @@ public:
 	bool Connect();
 	void Disconnect();
 	bool ReadMsgs(std::vector<std::string> *msgs);
-	bool WriteMsg(std::string const &msg);
+	bool WriteMsg(const std::string &msg);
 private:
 	int ParseMsg(char *buffer, int buffer_size);
 	SerialDevice serial_;
@@ -82,14 +82,40 @@ public:
 private:
 	bool Initialize();
 	void InputThread();
-	void HandleGameInput(const std::string &msg, RageTimer &now);
-	void HandleOperatorInput(const std::string &msg, RageTimer &now);
+	void HandleGameInput(const std::string &msg, const RageTimer &now);
+	void HandleOperatorInput(const std::string &msg, const RageTimer &now);
 
 	RtioDevice rtio_;
 	RageThread input_thread_;
 	bool shutdown_ = false;
-	GAME_INPUT last_game_input_;
-	OPERATOR_INPUT last_operator_input_;
+	GAME_INPUT last_game_input_ = {};
+	OPERATOR_INPUT last_operator_input_ = {};
+	bool initialized_ = false;
 };
 
 #endif
+
+/*
+ * (c) 2003-2004 Glenn Maynard
+ * All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
