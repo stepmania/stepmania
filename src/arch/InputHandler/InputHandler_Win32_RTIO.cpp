@@ -1,3 +1,6 @@
+// This input handler is meant to be used with Raw Thrills DDR cabinets, such
+// as the US arcade release of DDR X2.
+
 #include "global.h"
 #include "InputHandler_Win32_RTIO.h"
 
@@ -599,6 +602,8 @@ int SerialDevice::Write(const char *buffer, int buffer_size)
 }
 
 /*
+ * Contributed by x0rbl (2019). Stepmania copyright/license:
+ *
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
  *

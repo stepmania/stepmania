@@ -96,6 +96,8 @@ private:
 #endif
 
 /*
+ * Contributed by x0rbl (2019). Stepmania copyright/license:
+ *
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
  *
