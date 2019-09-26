@@ -265,10 +265,10 @@ void SongUtil::AdjustDuplicateSteps( Song *pSong )
 			 * bug in an earlier version. */
 			DeleteDuplicateSteps( pSong, vSteps );
 
-			char const *songTitle = pSong->GetDisplayFullTitle().c_str();
-			CHECKPOINT_M(ssprintf("Duplicate steps from %s removed.", songTitle));
+			const RString &songTitle = pSong->GetDisplayFullTitle();
+			CHECKPOINT_M(ssprintf("Duplicate steps from %s removed.", songTitle.c_str()));
 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
-			CHECKPOINT_M(ssprintf("Charts from %s sorted.", songTitle));
+			CHECKPOINT_M(ssprintf("Charts from %s sorted.", songTitle.c_str()));
 			for( unsigned k=1; k<vSteps.size(); k++ )
 			{
 				vSteps[k]->SetDifficulty( Difficulty_Edit );
