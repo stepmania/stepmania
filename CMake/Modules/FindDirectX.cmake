@@ -13,12 +13,10 @@ if(NOT EXISTS "$ENV{DXSDK_DIR}")
 endif()
 
 set(DIRECTX_INCLUDE_SEARCH_PATHS
-    # TODO: Do not be limited to x86 in the future.
     "$ENV{DXSDK_DIR}/Include")
 
 set(DIRECTX_LIBRARY_SEARCH_PATHS
-    # TODO: Do not be limited to x86 in the future.
-    "$ENV{DXSDK_DIR}/Lib/x86")
+    "$ENV{DXSDK_DIR}/Lib/${SM_WIN32_ARCH}")
 
 find_path(DIRECTX_INCLUDE_DIR
           NAMES "DxErr.h"
