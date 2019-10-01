@@ -153,6 +153,12 @@ check_type_size(pid_t SIZEOF_PID_T)
 check_type_size(size_t SIZEOF_SIZE_T)
 check_type_size(ssize_t SIZEOF_SSIZE_T)
 
+if(WIN32 AND SIZEOF_INTPTR_T EQUAL 8)
+  set(SM_WIN32_ARCH "x64")
+else()
+  set(SM_WIN32_ARCH "x86")
+endif()
+
 include(TestBigEndian)
 test_big_endian(BIGENDIAN)
 if(${BIGENDIAN})
@@ -280,11 +286,6 @@ if(WIN32)
     set(HAS_FFMPEG TRUE)
   else()
     # FFMPEG...it can be evil.
-    if(SIZEOF_INTPTR_T EQUAL 8)
-      set(SM_WIN32_ARCH "x64")
-    else()
-      set(SM_WIN32_ARCH "x86")
-    endif()
     find_library(LIB_SWSCALE
                  NAMES "swscale"
                  PATHS "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/lib"
