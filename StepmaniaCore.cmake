@@ -280,29 +280,44 @@ if(WIN32)
     set(HAS_FFMPEG TRUE)
   else()
     # FFMPEG...it can be evil.
+    if(SIZEOF_INTPTR_T EQUAL 8)
+      set(SM_WIN32_ARCH "x64")
+    else()
+      set(SM_WIN32_ARCH "x86")
+    endif()
     find_library(LIB_SWSCALE
                  NAMES "swscale"
-                 PATHS "${SM_EXTERN_DIR}/ffmpeg/lib"
+                 PATHS "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/lib"
                  NO_DEFAULT_PATH)
     get_filename_component(LIB_SWSCALE ${LIB_SWSCALE} NAME)
 
     find_library(LIB_AVCODEC
                  NAMES "avcodec"
-                 PATHS "${SM_EXTERN_DIR}/ffmpeg/lib"
+                 PATHS "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/lib"
                  NO_DEFAULT_PATH)
     get_filename_component(LIB_AVCODEC ${LIB_AVCODEC} NAME)
 
     find_library(LIB_AVFORMAT
                  NAMES "avformat"
-                 PATHS "${SM_EXTERN_DIR}/ffmpeg/lib"
+                 PATHS "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/lib"
                  NO_DEFAULT_PATH)
     get_filename_component(LIB_AVFORMAT ${LIB_AVFORMAT} NAME)
 
     find_library(LIB_AVUTIL
                  NAMES "avutil"
-                 PATHS "${SM_EXTERN_DIR}/ffmpeg/lib"
+                 PATHS "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/lib"
                  NO_DEFAULT_PATH)
     get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
+
+    list(APPEND SM_FFMPEG_WIN32_DLLS
+      "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/bin/avcodec-55.dll"
+      "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/bin/avformat-55.dll"
+      "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/bin/avutil-52.dll"
+      "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/bin/swscale-2.dll"
+    )
+    foreach(dll ${SM_FFMPEG_WIN32_DLLS})
+      file(COPY "${dll}" DESTINATION "${SM_PROGRAM_DIR}/")
+    endforeach()
   endif()
 elseif(MACOSX)
   if(WITH_FFMPEG AND NOT WITH_SYSTEM_FFMPEG)
