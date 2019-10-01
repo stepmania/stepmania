@@ -62,7 +62,7 @@ else()
     # first glance.
     sm_add_compile_definition("mad" ASO_ZEROCHECK)
     sm_add_compile_definition("mad" $<$<CONFIG:Debug>:FPM_DEFAULT>)
-    if(SM_WIN32_ARCH EQUAL "x64")
+    if(SM_WIN32_ARCH MATCHES "x64")
       sm_add_compile_definition("mad" $<$<CONFIG:Release>:FPM_64BIT>)
       sm_add_compile_definition("mad" $<$<CONFIG:MinSizeRel>:FPM_64BIT>)
       sm_add_compile_definition("mad" $<$<CONFIG:RelWithDebInfo>:FPM_64BIT>)

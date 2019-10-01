@@ -57,7 +57,7 @@ else()
                 "archutils/Win32/WindowsDialogBox.cpp"
                 "archutils/Win32/WindowsResources.rc")
 
-    if(MSVC AND SM_WIN32_ARCH EQUAL "x64")
+    if(MSVC AND SM_WIN32_ARCH MATCHES "x64")
       enable_language(ASM_MASM)
       list(APPEND SMDATA_OS_SRC "archutils/Win32/ExceptionHandler_x64.asm")
     endif()

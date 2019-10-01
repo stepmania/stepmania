@@ -135,8 +135,10 @@ sm_add_compile_definition("${SM_EXE_NAME}"
 set(SM_COMPILE_FLAGS "")
 
 if(WITH_SSE2)
-  if(MSVC AND SM_WIN32_ARCH EQUAL "x86")
-    set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /arch:SSE2")
+  if(MSVC)
+    if(SM_WIN32_ARCH MATCHES "x86")
+      set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /arch:SSE2")
+    endif()
   else()
     set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} -msse2")
   endif()
