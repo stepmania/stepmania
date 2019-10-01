@@ -118,8 +118,7 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 
 	m_hIcon = IconFromSurface( pIcon );
 	if( m_hIcon != nullptr )
-		// XXX: GCL_HICON isn't available on x86-64 Windows
-		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
+ 		SetClassLongPtrA( hwnd, GCLP_HICON, (LONG) m_hIcon );
 }
 
 void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )
