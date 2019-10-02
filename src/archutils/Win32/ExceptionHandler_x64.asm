@@ -15,10 +15,10 @@ mov rdx, 8000h ; dwSize = iSize
 mov r8d, 00003000h; flAllocationType = MEM_COMMIT | MEM_RESERVE
 mov r9d, 04h ; flProtect = PAGE_READWRITE
 call VirtualAlloc ; char *pStack = (char *) VirtualAlloc( nullptr, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
-add rax, 8000h ; pStack += iSize;
+add rax, 7FE0h ; pStack += iSize; Reserve register parameter stack area for RCX, RDX, R8 and R9
 mov rcx, rsi ; Restore pExc
 pop rsi
-; mov rsp, rax ; FIXME: This instruction causes MainExceptionHandler abortion.
+mov rsp, rax
 call ?MainExceptionHandler@@YAJPEAU_EXCEPTION_POINTERS@@@Z
 mov rsp, rbp
 pop rbp
