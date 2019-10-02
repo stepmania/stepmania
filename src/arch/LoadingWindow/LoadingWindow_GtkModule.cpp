@@ -23,8 +23,8 @@ extern "C" const char *Init( int *argc, char ***argv )
 		return "Couldn't initialize gtk (cannot open display)";
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER );
-	gtk_widget_set_size_request(window,468,-1);
+	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER_ALWAYS );
+	gtk_widget_set_size_request(window,-1,-1);
 	gtk_window_set_deletable( GTK_WINDOW(window), FALSE );
 	gtk_window_set_resizable(GTK_WINDOW(window),FALSE);
 	gtk_window_set_role( GTK_WINDOW(window), "sm-startup" );
