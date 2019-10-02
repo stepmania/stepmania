@@ -736,11 +736,11 @@ static const Style g_Style_Pump_Couple =
 			{ TRACK_5,	+PUMP_COL_SPACING*2.0f, nullptr },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-PUMP_COL_SPACING*2.0f, nullptr },
-			{ TRACK_2,	-PUMP_COL_SPACING*1.0f, nullptr },
-			{ TRACK_3,	+PUMP_COL_SPACING*0.0f, nullptr },
-			{ TRACK_4,	+PUMP_COL_SPACING*1.0f, nullptr },
-			{ TRACK_5,	+PUMP_COL_SPACING*2.0f, nullptr },
+			{ TRACK_6,	-PUMP_COL_SPACING*2.0f, nullptr },
+			{ TRACK_7,	-PUMP_COL_SPACING*1.0f, nullptr },
+			{ TRACK_8,	+PUMP_COL_SPACING*0.0f, nullptr },
+			{ TRACK_9,	+PUMP_COL_SPACING*1.0f, nullptr },
+			{ TRACK_10,	+PUMP_COL_SPACING*2.0f, nullptr },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
