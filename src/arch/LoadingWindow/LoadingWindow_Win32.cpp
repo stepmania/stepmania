@@ -118,7 +118,7 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 
 	m_hIcon = IconFromSurface( pIcon );
 	if( m_hIcon != nullptr )
- 		SetClassLongPtrA( hwnd, GCLP_HICON, (LONG) m_hIcon );
+ 		SetClassLongPtrA( hwnd, GCLP_HICON, reinterpret_cast<LONG_PTR>(m_hIcon) );
 }
 
 void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )

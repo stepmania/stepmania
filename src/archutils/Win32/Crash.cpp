@@ -501,7 +501,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 			return;
 		}
 
-		const NT_TIB *tib = (NT_TIB *) ((sel.HighWord.Bits.BaseHi<<24)+(sel.HighWord.Bits.BaseMid<<16)+sel.BaseLow);
+		const NT_TIB *tib = reinterpret_cast<NT_TIB *>(((static_cast<DWORD_PTR>(sel.HighWord.Bits.BaseHi) << 24) + (static_cast<DWORD_PTR>(sel.HighWord.Bits.BaseMid) << 16) + sel.BaseLow));
 		const NT_TIB *pTib = tib->Self;
 		pStackBase = (char *)pTib->StackBase;
 	}
@@ -541,9 +541,9 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 				fValid = false;
 
 #if _WIN64
-			if ( data != (void *) pContext->Rip && !PointsToValidCall((unsigned long)data) )
+			if ( data != (void *) pContext->Rip && !PointsToValidCall(reinterpret_cast<ULONG_PTR>(data)) )
 #else
-			if ( data != (void *) pContext->Eip && !PointsToValidCall((unsigned long)data) )
+			if ( data != (void *) pContext->Eip && !PointsToValidCall(reinterpret_cast<ULONG_PTR>(data)) )
 #endif
 				fValid = false;
 		}
@@ -615,7 +615,7 @@ void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 			context.ContextFlags = CONTEXT_FULL;
 			if( !GetThreadContext( hThread, &context ) )
 				wsprintf( g_CrashInfo.m_CrashReason + strlen(g_CrashInfo.m_CrashReason),
-					"; GetThreadContext(%x) failed", (int) hThread );
+					"; GetThreadContext(%Ix) failed", reinterpret_cast<uintptr_t>(hThread) );
 			else
 			{
 				static const void *BacktracePointers[BACKTRACE_MAX_SIZE];

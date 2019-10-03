@@ -48,7 +48,7 @@ namespace VDDebugInfo
 		int nBuildNumber;
 
 		const unsigned char *pRVAHeap;
-		unsigned nFirstRVA;
+		uintptr_t nFirstRVA;
 
 		const char *pFuncNameHeap;
 		const unsigned long (*pSegments)[2];
@@ -176,7 +176,7 @@ namespace VDDebugInfo
 		return heap;
 	}
 
-	long VDDebugInfoLookupRVA( const Context *pctx, unsigned rva, char *buf, int buflen )
+	uintptr_t VDDebugInfoLookupRVA( const Context *pctx, uintptr_t rva, char *buf, int buflen )
 	{
 		if( !PointerIsInAnySegment(pctx, rva) )
 			return -1;
@@ -357,12 +357,12 @@ namespace SymbolLookup
 		VirtualQueryEx( g_hParent, ptr, &meminfo, sizeof meminfo );
 
 		char tmp[512];
-		long iAddress = VDDebugInfo::VDDebugInfoLookupRVA(pctx, (unsigned int)ptr, tmp, sizeof(tmp));
+		uintptr_t iAddress = VDDebugInfo::VDDebugInfoLookupRVA(pctx, reinterpret_cast<uintptr_t>(ptr), tmp, sizeof(tmp));
 		if( iAddress >= 0 )
 		{
-			wsprintf( buf, "%08x: %s [%08lx+%lx+%lx]", ptr, Demangle(tmp),
-				pctx->nFirstRVA,
-				((unsigned int) ptr) - pctx->nFirstRVA - iAddress,
+			wsprintf( buf, "%p: %s [%p+%Ix+%Ix]", ptr, Demangle(tmp),
+				reinterpret_cast<void *>(pctx->nFirstRVA),
+				reinterpret_cast<uintptr_t>(ptr) - pctx->nFirstRVA - iAddress,
 				iAddress );
 			return;
 		}
@@ -374,17 +374,17 @@ namespace SymbolLookup
 
 		if( pSymbol )
 		{
-			wsprintf( buf, "%08lx: %s!%s [%08lx+%lx+%lx]",
-				(unsigned long) ptr, sName.c_str(), pSymbol->Name,
-				(unsigned long) meminfo.AllocationBase,
-				(unsigned long) (pSymbol->Address) - (unsigned long) (meminfo.AllocationBase),
-				(unsigned long) disp);
+			wsprintf( buf, "%p: %s!%s [%p+%Ix+%Ix]",
+				ptr, sName.c_str(), pSymbol->Name,
+				meminfo.AllocationBase,
+				reinterpret_cast<uintptr_t>(pSymbol->Address) - reinterpret_cast<uintptr_t>(meminfo.AllocationBase),
+				static_cast<ULONG_PTR>(disp));
 			return;
 		}
 
-		wsprintf( buf, "%08lx: %s!%08lx",
-			(unsigned long) ptr, sName.c_str(), 
-			(unsigned long) meminfo.AllocationBase );
+		wsprintf( buf, "%p: %s!%p",
+			ptr, sName.c_str(), 
+			meminfo.AllocationBase );
 	}
 }
 
@@ -643,7 +643,7 @@ public:
 	~CrashDialog();
 
 protected:
-	virtual BOOL HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
+	virtual INT_PTR HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
 
 private:
 	void SetDialogInitial();
@@ -677,7 +677,7 @@ void CrashDialog::SetDialogInitial()
 	ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
 }
 
-BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	HWND hDlg = GetHwnd();
 
@@ -706,7 +706,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			}
 
 			// TODO: Return a different brush if the default is not desired
-			return (BOOL)hbr;
+			return reinterpret_cast<INT_PTR>(hbr);
 		}
 
 	case WM_COMMAND:

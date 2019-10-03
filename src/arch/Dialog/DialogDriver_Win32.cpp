@@ -208,7 +208,7 @@ static INT_PTR CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			}
 
 			// TODO:  Return a different brush if the default is not desired
-			return (BOOL)hbr;
+			return reinterpret_cast<INT_PTR>(hbr);
 		}
 	}
 	return FALSE;

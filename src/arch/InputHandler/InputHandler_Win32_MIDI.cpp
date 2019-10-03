@@ -11,7 +11,7 @@
 REGISTER_INPUT_HANDLER_CLASS2( MIDI, Win32_MIDI );
 
 static HMIDIIN g_device;
-static void CALLBACK midiCallback(HMIDIIN g_device, UINT status, DWORD instancePtr, DWORD data, DWORD timestamp);
+static void CALLBACK midiCallback(HMIDIIN g_device, UINT status, DWORD_PTR instancePtr, DWORD_PTR data, DWORD_PTR timestamp);
 
 static RString GetMidiError( MMRESULT result )
 {
@@ -33,7 +33,7 @@ InputHandler_Win32_MIDI::InputHandler_Win32_MIDI()
 	}
 	m_bFoundDevice = true;
 
-	MMRESULT result = midiInOpen( &g_device, device_id, (DWORD) &midiCallback, (DWORD) this, CALLBACK_FUNCTION );
+	MMRESULT result = midiInOpen( &g_device, device_id, reinterpret_cast<DWORD_PTR>(&midiCallback), reinterpret_cast<DWORD_PTR>(this), CALLBACK_FUNCTION );
 	if( result != MMSYSERR_NOERROR )
 	{
 		LOG->Warn( "Error opening MIDI device: %s", GetMidiError(result).c_str() );
@@ -75,7 +75,7 @@ void InputHandler_Win32_MIDI::GetDevicesAndDescriptions( vector<InputDeviceInfo>
 	}
 }
 
-static void CALLBACK midiCallback( HMIDIIN device, UINT status, DWORD instancePtr, DWORD data, DWORD timestamp )
+static void CALLBACK midiCallback( HMIDIIN device, UINT status, DWORD_PTR instancePtr, DWORD_PTR data, DWORD_PTR timestamp )
 {
 	if( status == MIM_DATA )
 	{
@@ -91,7 +91,7 @@ static void CALLBACK midiCallback( HMIDIIN device, UINT status, DWORD instancePt
 		{
 			DeviceInput di = DeviceInput( DEVICE_MIDI, enum_add2(MIDI_FIRST, iChannel), iValue > 0 );
 			di.ts.Touch();
-			((InputHandler_Win32_MIDI *)instancePtr)->SetDev( di );
+			(reinterpret_cast<InputHandler_Win32_MIDI*>(instancePtr))->SetDev( di );
 		}
 	}
 }
