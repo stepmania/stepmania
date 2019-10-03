@@ -277,7 +277,7 @@ namespace SymbolLookup
 		return true;
 	}
 
-	SYMBOL_INFO *GetSym( unsigned long ptr, DWORD64 &disp )
+	SYMBOL_INFO *GetSym( uintptr_t ptr, DWORD64 &disp )
 	{
 		InitDbghelp();
 
@@ -370,14 +370,14 @@ namespace SymbolLookup
 		RString sName = CrashChildGetModuleBaseName( (HMODULE)meminfo.AllocationBase );
 
 		DWORD64 disp;
-		SYMBOL_INFO *pSymbol = GetSym( (unsigned int)ptr, disp );
+		SYMBOL_INFO *pSymbol = GetSym( reinterpret_cast<uintptr_t>(ptr), disp );
 
 		if( pSymbol )
 		{
 			wsprintf( buf, "%p: %s!%s [%p+%Ix+%Ix]",
 				ptr, sName.c_str(), pSymbol->Name,
 				meminfo.AllocationBase,
-				reinterpret_cast<uintptr_t>(pSymbol->Address) - reinterpret_cast<uintptr_t>(meminfo.AllocationBase),
+				static_cast<uintptr_t>(pSymbol->Address) - reinterpret_cast<uintptr_t>(meminfo.AllocationBase),
 				static_cast<ULONG_PTR>(disp));
 			return;
 		}
