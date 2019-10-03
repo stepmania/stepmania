@@ -19,19 +19,19 @@ public:
 	void SetBlendMode( BlendMode ) { }
 	bool SupportsTextureFormat( RagePixelFormat, bool /* realtime */ =false ) { return true; }
 	bool SupportsPerVertexMatrixScale() { return false; }
-	unsigned CreateTexture(
+	uintptr_t CreateTexture(
 		RagePixelFormat,
 		RageSurface* /* img */,
 		bool /* bGenerateMipMaps */ ) { return 1; }
 	void UpdateTexture(
-		unsigned /* iTexHandle */,
+		uintptr_t /* iTexHandle */,
 		RageSurface* /* img */,
 		int /* xoffset */, int /* yoffset */, int /* width */, int /* height */
 		) { }
-	void DeleteTexture( unsigned /* iTexHandle */ ) { }
+	void DeleteTexture( uintptr_t /* iTexHandle */ ) { }
 	void ClearAllTextures() { }
 	int GetNumTextureUnits() { return 1; }
-	void SetTexture( TextureUnit, unsigned /* iTexture */ ) { }
+	void SetTexture( TextureUnit, uintptr_t /* iTexture */ ) { }
 	void SetTextureMode( TextureUnit, TextureMode ) { }
 	void SetTextureWrapping( TextureUnit, bool ) { }
 	int GetMaxTextureSize() const { return 2048; }

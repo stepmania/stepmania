@@ -318,7 +318,7 @@ public:
 	virtual ~RenderTarget_Win32();
 
 	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	unsigned int GetTexture() const { return m_texHandle; }
+	uintptr_t GetTexture() const { return static_cast<uintptr_t>(m_texHandle); }
 	void StartRenderingTo();
 	void FinishRenderingTo();
 	

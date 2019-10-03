@@ -22,19 +22,19 @@ public:
 	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsThreadedRendering();
 	bool SupportsPerVertexMatrixScale() { return false; }
-	unsigned CreateTexture( 
+	uintptr_t CreateTexture( 
 		RagePixelFormat pixfmt, 
 		RageSurface* img, 
 		bool bGenerateMipMaps );
 	void UpdateTexture( 
-		unsigned iTexHandle, 
+		uintptr_t iTexHandle, 
 		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		);
-	void DeleteTexture( unsigned iTexHandle );
+	void DeleteTexture( uintptr_t iTexHandle );
 	void ClearAllTextures();
 	int GetNumTextureUnits();
-	void SetTexture( TextureUnit tu, unsigned iTexture );
+	void SetTexture( TextureUnit tu, uintptr_t iTexture );
 	void SetTextureMode( TextureUnit tu, TextureMode tm );
 	void SetTextureWrapping( TextureUnit tu, bool b );
 	int GetMaxTextureSize() const;
