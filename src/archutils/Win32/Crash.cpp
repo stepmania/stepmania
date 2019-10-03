@@ -366,10 +366,8 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 	/* If the stack overflowed, we have a very limited amount of stack space.
 	 * Allocate a new stack, and run the exception handler in it, to increase
 	 * the chances of success. */
-	int iSize = 1024*32;
-	char *pStack = (char *) VirtualAlloc( nullptr, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
-	pStack += iSize;
-	// FIXME: This will probably explode on x86-64
+	static BYTE new_stack[0x8000];
+	LPBYTE pStack = new_stack + 0x8000;
 #if defined(_MSC_VER)
 	_asm mov esp, pStack;
 #elif defined(__GNUC__)
