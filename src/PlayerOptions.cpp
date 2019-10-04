@@ -7,7 +7,6 @@
 #include "Course.h"
 #include "Steps.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
 #include "Style.h"
 #include "CommonMetrics.h"
 #include <float.h>
@@ -564,18 +563,18 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 	vector<RString> vs;
 	split( sTemp, ",", vs, true );
 	RString sThrowAway;
-	FOREACH( RString, vs, s )
+	for (RString &s : vs)
 	{
-		if (!FromOneModString( *s, sThrowAway ))
+		if (!FromOneModString( s, sThrowAway ))
 		{
-			LOG->Trace( "Attempted to load a non-existing mod \'%s\' for the Player. Ignoring.", (*s).c_str() );
+			LOG->Trace( "Attempted to load a non-existing mod \'%s\' for the Player. Ignoring.", s.c_str() );
 		}
 	}
 }
 
 bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
-	ASSERT_M( NOTESKIN != NULL, "The Noteskin Manager must be loaded in order to process mods." );
+	ASSERT_M( NOTESKIN != nullptr, "The Noteskin Manager must be loaded in order to process mods." );
 
 	RString sBit = sOneMod;
 	RString sMod = "";
@@ -592,31 +591,31 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	vector<RString> asParts;
 	split( sBit, " ", asParts, true );
 
-	FOREACH_CONST( RString, asParts, s )
+	for (RString const &s : asParts)
 	{
-		if( *s == "no" )
+		if( s == "no" )
 		{
 			level = 0;
 		}
-		else if( isdigit((*s)[0]) || (*s)[0] == '-' )
+		else if( isdigit(s[0]) || s[0] == '-' )
 		{
 			/* If the last character is a *, they probably said "123*" when
 			 * they meant "*123". */
-			if( s->Right(1) == "*" )
+			if( s.Right(1) == "*" )
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris
-				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s->c_str(), StringToInt(*s) );
+				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s.c_str(), std::stoi(s) );
 				return false;
 			}
 			else
 			{
-				level = StringToFloat( *s ) / 100.0f;
+				level = StringToFloat( s ) / 100.0f;
 			}
 		}
-		else if( *s[0]=='*' )
+		else if( s[0]=='*' )
 		{
-			sscanf( *s, "*%f", &speed );
+			sscanf( s, "*%f", &speed );
 			if( !isfinite(speed) )
 				speed = 1.0f;
 		}
@@ -1313,7 +1312,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 {
 	float f = 0;
 	ASSERT(m_pn == PLAYER_1 || m_pn == PLAYER_2);
-	ASSERT(GAMESTATE->GetCurrentStyle(m_pn) != NULL);
+	ASSERT(GAMESTATE->GetCurrentStyle(m_pn) != nullptr);
 	int iNumCols = GAMESTATE->GetCurrentStyle(m_pn)->m_iColsPerPlayer;
 
 	f += m_fScrolls[SCROLL_REVERSE];
@@ -1599,25 +1598,20 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 
 bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) const
 {
-	ASSERT( pCourse != NULL );
-	ASSERT( pTrail != NULL );
+	ASSERT( pCourse != nullptr );
+	ASSERT( pTrail != nullptr );
 
-	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-	{
-		if( e->pSong && IsEasierForSongAndSteps(e->pSong, e->pSteps, PLAYER_1) )
-			return true;
-	}
-	return false;
+	return std::any_of(pTrail->m_vEntries.begin(), pTrail->m_vEntries.end(), [&](TrailEntry const &e) {
+		return e.pSong && IsEasierForSongAndSteps(e.pSong, e.pSteps, PLAYER_1);
+	});
 }
 
 void PlayerOptions::GetLocalizedMods( vector<RString> &AddTo ) const
 {
 	vector<RString> vMods;
 	GetMods( vMods );
-	FOREACH_CONST( RString, vMods, s )
+	for (RString const &sOneMod : vMods)
 	{
-		const RString& sOneMod = *s;
-
 		ASSERT( !sOneMod.empty() );
 
 		vector<RString> asTokens;

@@ -1,6 +1,9 @@
 #ifndef LOADING_WINDOW_H
 #define LOADING_WINDOW_H
 
+#include <string>
+#include "global.h"
+
 struct RageSurface;
 /** @brief Opens and displays the loading banner. */
 class LoadingWindow
@@ -31,7 +34,7 @@ protected:
  * @author Glenn Maynard (c) 2002-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -41,7 +44,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

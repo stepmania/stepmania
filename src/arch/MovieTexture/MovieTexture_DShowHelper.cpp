@@ -13,13 +13,13 @@ struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureR
 static HRESULT CBV_ret;
 CTextureRenderer::CTextureRenderer():
 	CBaseVideoRenderer(__uuidof(CLSID_TextureRenderer), 
-	NAME("Texture Renderer"), NULL, &CBV_ret),
+	NAME("Texture Renderer"), nullptr, &CBV_ret),
 	m_OneFrameDecoded( "m_OneFrameDecoded", 0 )
 {
 	if( FAILED(CBV_ret) )
 		RageException::Throw( hr_ssprintf(CBV_ret, "Could not create texture renderer object!") );
 
-	m_pTexture = NULL;
+	m_pTexture = nullptr;
 }
 
 CTextureRenderer::~CTextureRenderer()
@@ -69,9 +69,9 @@ void CTextureRenderer::SetRenderTarget( MovieTexture_DShow* pTexture )
 // DoRenderSample: A sample has been delivered. Copy it.
 HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 {
-	if( m_pTexture == NULL )
+	if( m_pTexture == nullptr )
 	{
-		LOG->Warn( "DoRenderSample called while m_pTexture was NULL!" );
+		LOG->Warn( "DoRenderSample called while m_pTexture was nullptr!" );
 		return S_OK;
 	}
 

@@ -78,7 +78,7 @@ static ThemeMetric<float>	BEAT_Z_PI_HEIGHT( "ArrowEffects", "BeatZPIHeight" );
 static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" );
 static ThemeMetric<float>	TINY_PERCENT_GATE( "ArrowEffects", "TinyPercentGate" );
 
-static const PlayerOptions* curr_options= NULL;
+static const PlayerOptions* curr_options= nullptr;
 
 float ArrowGetPercentVisible(float fYPosWithoutReverse, int iCol, float fYOffset);
 
@@ -1653,7 +1653,7 @@ namespace
 		LIST_METHOD( NeedZBuffer ),
 		LIST_METHOD( GetZoom ),
 		LIST_METHOD( GetFrameWidthScale ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 

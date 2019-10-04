@@ -2,12 +2,12 @@
 #include "CharacterManager.h"
 #include "Character.h"
 #include "GameState.h"
-#include "Foreach.h"
+
 #include "LuaManager.h"
 
 #define CHARACTERS_DIR "/Characters/"
 
-CharacterManager*	CHARMAN = NULL;	// global object accessible from anywhere in the program
+CharacterManager*	CHARMAN = nullptr;	// global object accessible from anywhere in the program
 
 CharacterManager::CharacterManager()
 {
@@ -82,27 +82,27 @@ Character* CharacterManager::GetRandomCharacter()
 
 Character* CharacterManager::GetDefaultCharacter()
 {
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
+	for (Character *c : m_pCharacters)
 	{
-		if( m_pCharacters[i]->IsDefaultCharacter() )
-			return m_pCharacters[i];
+		if( c->IsDefaultCharacter() )
+			return c;
 	}
 
 	/* We always have the default character. */
 	FAIL_M("There must be a default character available!");
-	return NULL;
+	return nullptr;
 }
 
 void CharacterManager::DemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->DemandGraphics();
+	for (Character *c : m_pCharacters)
+		c->DemandGraphics();
 }
 
 void CharacterManager::UndemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->UndemandGraphics();
+	for (Character *c : m_pCharacters)
+		c->UndemandGraphics();
 }
 
 Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
@@ -113,7 +113,7 @@ Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
 			return m_pCharacters[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -127,7 +127,7 @@ public:
 	static int GetCharacter( T* p, lua_State *L )
 	{
 		Character *pCharacter = p->GetCharacterFromID(SArg(1));
-		if( pCharacter != NULL )
+		if( pCharacter != nullptr )
 			pCharacter->PushSelf( L );
 		else
 			lua_pushnil( L );
@@ -137,7 +137,7 @@ public:
 	static int GetRandomCharacter( T* p, lua_State *L )
 	{
 		Character *pCharacter = p->GetRandomCharacter();
-		if( pCharacter != NULL )
+		if( pCharacter != nullptr )
 			pCharacter->PushSelf( L );
 		else
 			lua_pushnil( L );

@@ -11,7 +11,7 @@ LoadingWindow *LoadingWindow::Create()
 #if defined(UNIX) && !defined(HAVE_GTK)
 	return new LoadingWindow_Null;
 #endif
-	// Don't load NULL by default.
+	// Don't load nullptr by default.
 	const RString drivers = "win32,macosx,gtk";
 	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
@@ -19,9 +19,9 @@ LoadingWindow *LoadingWindow::Create()
 	ASSERT( DriversToTry.size() != 0 );
 
 	RString Driver;
-	LoadingWindow *ret = NULL;
+	LoadingWindow *ret = nullptr;
 
-	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
+	for( unsigned i = 0; ret == nullptr && i < DriversToTry.size(); ++i )
 	{
 		Driver = DriversToTry[i];
 
@@ -36,7 +36,7 @@ LoadingWindow *LoadingWindow::Create()
 #endif
 		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow_Null;
 
-		if( ret == NULL )
+		if( ret == nullptr )
 			continue;
 
 		RString sError = ret->Init();

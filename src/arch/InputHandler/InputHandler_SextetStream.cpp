@@ -96,7 +96,7 @@ class InputHandler_SextetStream::Impl
 
 		// Construct and return the LineReader that makes sense for this
 		// object. getLineReader() calls this; if the returned object claims
-		// it is valid, it is returned. Otherwise, it is destroyed and NULL
+		// it is valid, it is returned. Otherwise, it is destroyed and nullptr
 		// is returned.
 		virtual LineReader * getUnvalidatedLineReader() = 0;
 
@@ -115,10 +115,10 @@ class InputHandler_SextetStream::Impl
 		LineReader * getLineReader()
 		{
 			LineReader * linereader = getUnvalidatedLineReader();
-			if(linereader != NULL) {
+			if(linereader != nullptr) {
 				if(!linereader->IsValid()) {
 					delete linereader;
-					linereader = NULL;
+					linereader = nullptr;
 				}
 			}
 			return linereader;
@@ -230,7 +230,7 @@ class InputHandler_SextetStream::Impl
 			LOG->Trace("Input thread started; getting line reader");
 			linereader = getLineReader();
 
-			if(linereader == NULL) {
+			if(linereader == nullptr) {
 				LOG->Warn("Could not open line reader for SextetStream input");
 			}
 			else {
@@ -259,19 +259,19 @@ class InputHandler_SextetStream::Impl
 
 void InputHandler_SextetStream::GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut)
 {
-	if(_impl != NULL) {
+	if(_impl != nullptr) {
 		_impl->GetDevicesAndDescriptions(vDevicesOut);
 	}
 }
 
 InputHandler_SextetStream::InputHandler_SextetStream()
 {
-	_impl = NULL;
+	_impl = nullptr;
 }
 
 InputHandler_SextetStream::~InputHandler_SextetStream()
 {
-	if(_impl != NULL) {
+	if(_impl != nullptr) {
 		delete _impl;
 	}
 }
@@ -312,27 +312,27 @@ namespace
 					filename.c_str());
 				file = std::fopen(filename.c_str(), "rb");
 
-				if(file == NULL) {
+				if(file == nullptr) {
 					LOG->Warn("Error opening file '%s' for input (cstdio): %s", filename.c_str(),
 						std::strerror(errno));
 				}
 				else {
 					LOG->Info("File opened");
 					// Disable buffering on the file
-					std::setbuf(file, NULL);
+					std::setbuf(file, nullptr);
 				}
 			}
 
 			~StdCFileLineReader()
 			{
-				if(file != NULL) {
+				if(file != nullptr) {
 					std::fclose(file);
 				}
 			}
 
 			virtual bool IsValid()
 			{
-				return file != NULL;
+				return file != nullptr;
 			}
 
 			virtual bool ReadLine(RString& line)
@@ -342,8 +342,8 @@ namespace
 
 				line = "";
 
-				if(file != NULL) {
-					while(fgets(buffer, BUFFER_SIZE, file) != NULL) {
+				if(file != nullptr) {
+					while(fgets(buffer, BUFFER_SIZE, file) != nullptr) {
 						afterFirst = true;
 						line += buffer;
 						len = line.length();

@@ -57,13 +57,13 @@ static LocalizedString MUTE_ACTIONS_ON ("ScreenDebugOverlay", "Mute actions on")
 static LocalizedString MUTE_ACTIONS_OFF ("ScreenDebugOverlay", "Mute actions off");
 
 class IDebugLine;
-static vector<IDebugLine*> *g_pvpSubscribers = NULL;
+static vector<IDebugLine*> *g_pvpSubscribers = nullptr;
 class IDebugLine
 {
 public:
 	IDebugLine()
 	{ 
-		if( g_pvpSubscribers == NULL )
+		if( g_pvpSubscribers == nullptr )
 			g_pvpSubscribers = new vector<IDebugLine*>;
 		g_pvpSubscribers->push_back( this );
 	}
@@ -99,13 +99,19 @@ ScreenDebugOverlay::~ScreenDebugOverlay()
 {
 	this->RemoveAllChildren();
 
-	FOREACH( BitmapText*, m_vptextPages, p )
-		SAFE_DELETE( *p );
-	FOREACH( BitmapText*, m_vptextButton, p )
-		SAFE_DELETE( *p );
+	for (BitmapText *p : m_vptextPages)
+	{
+		SAFE_DELETE(p);
+	}
+	for (BitmapText *p : m_vptextButton)
+	{
+		SAFE_DELETE(p);
+	}
 	m_vptextButton.clear();
-	FOREACH( BitmapText*, m_vptextFunction, p )
-		SAFE_DELETE( *p );
+	for (BitmapText *p : m_vptextFunction)
+	{
+		SAFE_DELETE(p);
+	}
 	m_vptextFunction.clear();
 }
 
@@ -223,12 +229,12 @@ void ScreenDebugOverlay::Init()
 
 	map<RString,int> iNextDebugButton;
 	int iNextGameplayButton = 0;
-	FOREACH( IDebugLine*, *g_pvpSubscribers, p )
+	for (IDebugLine *p : *g_pvpSubscribers)
 	{
-		RString sPageName = (*p)->GetPageName();
+		RString sPageName = p->GetPageName();
 
 		DeviceInput di;
-		switch( (*p)->GetType() )
+		switch( p->GetType() )
 		{
 		case IDebugLine::all_screens:
 			di = g_Mappings.debugButton[iNextDebugButton[sPageName]++];
@@ -237,7 +243,7 @@ void ScreenDebugOverlay::Init()
 			di = g_Mappings.gameplayButton[iNextGameplayButton++];
 			break;
 		}
-		(*p)->m_Button = di;
+		p->m_Button = di;
 
 		if( find(m_asPages.begin(), m_asPages.end(), sPageName) == m_asPages.end() )
 			m_asPages.push_back( sPageName );
@@ -258,9 +264,10 @@ void ScreenDebugOverlay::Init()
 	m_textHeader.SetText( DEBUG_MENU );
 	this->AddChild( &m_textHeader );
 
-	FOREACH_CONST( RString, m_asPages, s )
+	auto start = m_asPages.begin();
+	for (vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
-		int iPage = s - m_asPages.begin();
+		int iPage = s - start;
 
 		DeviceInput di;
 		bool b = GetKeyFromMap( g_Mappings.pageButton, iPage, di );
@@ -279,7 +286,7 @@ void ScreenDebugOverlay::Init()
 		this->AddChild( p );
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	for (auto p = g_pvpSubscribers->begin(); p != g_pvpSubscribers->end(); ++p)
 	{
 		{
 			BitmapText *bt = new BitmapText;
@@ -352,19 +359,21 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 
 void ScreenDebugOverlay::UpdateText()
 {
-	FOREACH_CONST( RString, m_asPages, s )
+	auto start = m_asPages.begin();
+	for (vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
-		int iPage = s - m_asPages.begin();
+		int iPage = s - start;
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
 	}
 
 	// todo: allow changing of various spacing/location things -aj
 	int iOffset = 0;
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	auto subStart = g_pvpSubscribers->begin();
+	for (vector<IDebugLine *>::const_iterator p = subStart; p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
 
-		int i = p-g_pvpSubscribers->begin();
+		int i = p - subStart;
 
 		float fY = LINE_START_Y + iOffset * LINE_SPACING;
 
@@ -460,11 +469,12 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 		return true;
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	auto start = g_pvpSubscribers->begin();
+	for (vector<IDebugLine *>::const_iterator p = start; p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
 
-		int i = p-g_pvpSubscribers->begin();
+		int i = p - start;
 
 		// Gameplay buttons are available only in gameplay. Non-gameplay buttons
 		// are only available when the screen is displayed.
@@ -907,35 +917,35 @@ static void FillProfileStats( Profile *pProfile )
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer.Get();
 
 	vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
-	FOREACH( Song*, vpAllSongs, pSong )
+	for (Song const *pSong : vpAllSongs)
 	{
-		vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();
-		FOREACH( Steps*, vpAllSteps, pSteps )
+		vector<Steps*> vpAllSteps = pSong->GetAllSteps();
+		for (Steps const *pSteps : vpAllSteps)
 		{
 			if( rand() % 5 )
-				pProfile->IncrementStepsPlayCount( *pSong, *pSteps );
+				pProfile->IncrementStepsPlayCount( pSong, pSteps );
 			for( int i=0; i<iCount; i++ )
 			{
 				int iIndex = 0;
-				pProfile->AddStepsHighScore( *pSong, *pSteps, MakeRandomHighScore(fPercentDP), iIndex );
+				pProfile->AddStepsHighScore( pSong, pSteps, MakeRandomHighScore(fPercentDP), iIndex );
 			}
 		}
 	}
 
 	vector<Course*> vpAllCourses;
 	SONGMAN->GetAllCourses( vpAllCourses, true );
-	FOREACH( Course*, vpAllCourses, pCourse )
+	for (Course const *pCourse : vpAllCourses)
 	{
 		vector<Trail*> vpAllTrails;
-		(*pCourse)->GetAllTrails( vpAllTrails );
-		FOREACH( Trail*, vpAllTrails, pTrail )
+		pCourse->GetAllTrails( vpAllTrails );
+		for (Trail const *pTrail : vpAllTrails)
 		{
 			if( rand() % 5 )
-				pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
+				pProfile->IncrementCoursePlayCount( pCourse, pTrail );
 			for( int i=0; i<iCount; i++ )
 			{
 				int iIndex = 0;
-				pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(fPercentDP), iIndex );
+				pProfile->AddCourseHighScore( pCourse, pTrail, MakeRandomHighScore(fPercentDP), iIndex );
 			}
 		}
 	}

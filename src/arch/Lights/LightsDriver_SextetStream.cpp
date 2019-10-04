@@ -167,7 +167,7 @@ namespace
 		}
 
 		virtual ~Impl() {
-			if(out != NULL)
+			if(out != nullptr)
 			{
 				out->Flush();
 				out->Close();
@@ -184,7 +184,7 @@ namespace
 			// Only write if the message has changed since the last write.
 			if(memcmp(buffer, lastOutput, FULL_SEXTET_COUNT) != 0)
 			{
-				if(out != NULL)
+				if(out != nullptr)
 				{
 					out->Write(buffer, FULL_SEXTET_COUNT);
 					out->Flush();
@@ -205,12 +205,12 @@ namespace
 
 LightsDriver_SextetStream::LightsDriver_SextetStream()
 {
-	_impl = NULL;
+	_impl = nullptr;
 }
 
 LightsDriver_SextetStream::~LightsDriver_SextetStream()
 {
-	if(IMPL != NULL)
+	if(IMPL != nullptr)
 	{
 		delete IMPL;
 	}
@@ -218,7 +218,7 @@ LightsDriver_SextetStream::~LightsDriver_SextetStream()
 
 void LightsDriver_SextetStream::Set(const LightsState *ls)
 {
-	if(IMPL != NULL)
+	if(IMPL != nullptr)
 	{
 		IMPL->Set(ls);
 	}
@@ -244,7 +244,7 @@ inline RageFile * openOutputStream(const RString& filename)
 	{
 		LOG->Warn("Error opening file '%s' for output: %s", filename.c_str(), file->GetError().c_str());
 		SAFE_DELETE(file);
-		file = NULL;
+		file = nullptr;
 	}
 
 	return file;

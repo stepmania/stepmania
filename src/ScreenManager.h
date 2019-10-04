@@ -74,7 +74,7 @@ public:
 	void	PlaySharedBackgroundOffCommand();
 	void    ZeroNextUpdate();
 private:
-	Screen		*m_pInputFocus; // NULL = top of m_ScreenStack
+	Screen		*m_pInputFocus; // nullptr = top of m_ScreenStack
 
 	// Screen loads, removals, and concurrent prepares are delayed until the next update.
 	RString		m_sDelayedScreen;

@@ -32,7 +32,29 @@ local PrefsTable = nil;
 -- Gets the name of the current theme using themeInfo
 -- if available and the ThemeManager name otherwise.
 local function GetThemeName()
-	return themeInfo and themeInfo.Name or THEME:GetThemeDisplayName()
+	-- When loading a fallback theme, the theme manager pretends that the theme
+	-- being loaded is the current theme.  THEME:GetCurThemeName and everything
+	-- else that relies on the current theme will think that the fallback theme
+	-- is the current theme.
+	-- This includes the themeInfo table that some themes create in
+	-- "00 ThemeInfo.lua".
+
+	-- In diagram form, imagine the "home" theme, which falls back on
+	-- "default", which falls back on "_fallback".
+	-- Scripts being loaded  |  Current theme name.  |  themeInfo source
+	-- -----------------------------------------------------------------
+	-- _fallback/Scripts     |  _fallback            |  _fallback/Scripts/
+	-- default/Scripts       |  default              |  default/Scripts/
+	-- home/Scripts          |  home                 |  home/Scripts/
+
+	-- So when default calls ThemePrefs.Init at the end of its script loading,
+	-- ThemePrefs thinks the current theme is "default", even if the player
+	-- chose "home".  Thus, the ThemePrefs entry for "home" is not created.
+	-- Then later when a preference is used, ResolveTable thinks the current
+	-- theme is "home", but fails because there is no "home" entry in
+	-- PrefsTable.
+
+	return PREFSMAN:GetPreference("Theme")
 end
 
 -- Given a preference name, returns the table it's in. Checks the current
@@ -148,6 +170,16 @@ ThemePrefs =
 			return
 		end
 		Warn( "Set: "..GetString("UnknownPreference"):format(name) )
+	end,
+
+	CopyPrefsFrom = function(name)
+		local curr_prefs = PrefsTable[GetThemeName()]
+		local from_prefs = PrefsTable[name]
+		if curr_prefs and from_prefs then
+			for pref_name, pref_value in pairs(from_prefs) do
+				curr_prefs[pref_name] = pref_value
+			end
+		end
 	end,
 };
 

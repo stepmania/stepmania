@@ -15,7 +15,7 @@
 #include "RageLog.h"
 
 RageSoundReader_PitchChange::RageSoundReader_PitchChange( RageSoundReader *pSource ):
-	RageSoundReader_Filter( NULL )
+	RageSoundReader_Filter(nullptr)
 {
 	m_pSpeedChange = new RageSoundReader_SpeedChange( pSource );
 	m_pResample = new RageSoundReader_Resample_Good( m_pSpeedChange, m_pSpeedChange->GetSampleRate() );

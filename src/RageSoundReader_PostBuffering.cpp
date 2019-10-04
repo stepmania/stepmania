@@ -1,12 +1,16 @@
 #include "global.h"
 #include "RageSoundReader_PostBuffering.h"
 #include "RageSoundUtil.h"
+#include "RageThreads.h"
+#include "RageUtil.h"
 
 /*
  * This filter is normally inserted after extended buffering, implementing
  * properties that do not seek the sound, allowing these properties to be
  * changed with low latency.
  */
+RageMutex g_Mutex("PostBuffering");
+static float g_fMasterVolume = 1.0f;
 
 RageSoundReader_PostBuffering::RageSoundReader_PostBuffering( RageSoundReader *pSource ):
 	RageSoundReader_Filter( pSource )
@@ -14,6 +18,10 @@ RageSoundReader_PostBuffering::RageSoundReader_PostBuffering( RageSoundReader *p
 	m_fVolume = 1.0f;
 }
 
+void RageSoundReader_PostBuffering::SetMasterVolume(float fVolume) {
+	LockMut(g_Mutex);
+	g_fMasterVolume = fVolume;
+}
 
 int RageSoundReader_PostBuffering::Read( float *pBuf, int iFrames )
 {
@@ -21,8 +29,17 @@ int RageSoundReader_PostBuffering::Read( float *pBuf, int iFrames )
 	if( iFrames < 0 )
 		return iFrames;
 
-	if( m_fVolume != 1.0f )
-		RageSoundUtil::Attenuate( pBuf, iFrames * this->GetNumChannels(), m_fVolume );
+	// Combine the sound's volume with master volume.
+	g_Mutex.Lock();
+
+	// Square the master so lower volumes are more sensitive.
+	// This lines up better with perceived volume.
+	float fVolume = m_fVolume * g_fMasterVolume * g_fMasterVolume;
+	fVolume = clamp( fVolume, 0, 1 );
+	g_Mutex.Unlock();
+
+	if( fVolume != 1.0f )
+		RageSoundUtil::Attenuate( pBuf, iFrames * this->GetNumChannels(), fVolume );
 
 	return iFrames;
 }

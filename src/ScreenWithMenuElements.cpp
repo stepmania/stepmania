@@ -20,10 +20,10 @@
 REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements()
 {
-	m_MenuTimer = NULL;
+	m_MenuTimer = nullptr;
 	FOREACH_PlayerNumber( p )
-		m_MemoryCardDisplay[p] = NULL;
-	m_MenuTimer = NULL;
+		m_MemoryCardDisplay[p] = nullptr;
+	m_MenuTimer = nullptr;
 	m_bShouldAllowLateJoin= false;
 }
 
@@ -43,7 +43,7 @@ void ScreenWithMenuElements::Init()
 	{
 		FOREACH_PlayerNumber( p )
 		{
-			ASSERT( m_MemoryCardDisplay[p] == NULL );
+			ASSERT( m_MemoryCardDisplay[p] == nullptr );
 			m_MemoryCardDisplay[p] = new MemoryCardDisplay;
 			m_MemoryCardDisplay[p]->Load( p );
 			m_MemoryCardDisplay[p]->SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
@@ -54,7 +54,7 @@ void ScreenWithMenuElements::Init()
 
 	if( TIMER_SECONDS != -1 )
 	{
-		ASSERT( m_MenuTimer == NULL );	// don't load twice
+		ASSERT( m_MenuTimer == nullptr );	// don't load twice
 		m_MenuTimer = new MenuTimer;
 		m_MenuTimer->Load( TIMER_METRICS_GROUP.GetValue() );
 		m_MenuTimer->SetName( "Timer" );
@@ -87,8 +87,8 @@ void ScreenWithMenuElements::Init()
 		if( pFrame )
 		{
 			m_vDecorations = pFrame->GetChildren();
-			FOREACH( Actor*, m_vDecorations, child )
-				this->AddChild( *child );
+			for (Actor *child : m_vDecorations)
+				this->AddChild( child );
 			pFrame->RemoveAllChildren();
 		}
 	}
@@ -164,11 +164,11 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 	SAFE_DELETE( m_MenuTimer );
 	FOREACH_PlayerNumber( p )
 	{
-		if( m_MemoryCardDisplay[p] != NULL )
+		if( m_MemoryCardDisplay[p] != nullptr )
 			SAFE_DELETE( m_MemoryCardDisplay[p] );
 	}
-	FOREACH( Actor*, m_vDecorations, actor )
-		delete *actor;
+	for (Actor *actor : m_vDecorations)
+		delete actor;
 }
 
 void ScreenWithMenuElements::SetHelpText( RString s )
@@ -255,7 +255,7 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 
 void ScreenWithMenuElements::ResetTimer()
 {
-	if( m_MenuTimer == NULL )
+	if( m_MenuTimer == nullptr )
 		return;
 
 	if( TIMER_SECONDS > 0.0f && (PREFSMAN->m_bMenuTimer || FORCE_TIMER) )

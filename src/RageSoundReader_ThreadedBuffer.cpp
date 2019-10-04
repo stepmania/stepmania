@@ -2,7 +2,6 @@
 #include "RageSoundReader_ThreadedBuffer.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
-#include "Foreach.h"
 #include "RageLog.h"
 
 /* Implement threaded read-ahead buffering.
@@ -48,7 +47,7 @@ RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( RageSoundReader 
 }
 
 RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( const RageSoundReader_ThreadedBuffer &cpy ):
-	RageSoundReader_Filter( NULL ), // don't touch m_pSource before DisableBuffering
+	RageSoundReader_Filter(nullptr), // don't touch m_pSource before DisableBuffering
 	m_Event( "ThreadedBuffer" )
 {
 	bool bWasEnabled = cpy.DisableBuffering();

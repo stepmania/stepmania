@@ -81,7 +81,7 @@ static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iErr
 	if( iFD == -1 )
 	{
 		iError = errno;
-		return NULL;
+		return nullptr;
 	}
 
 #if defined(UNIX)
@@ -90,7 +90,7 @@ static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iErr
 	{
 		iError = EISDIR;
 		close( iFD );
-		return NULL;
+		return nullptr;
 	}
 #endif
 
@@ -141,7 +141,7 @@ bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPa
 	}
 
 	FDB->DelFile( sOldPath );
-	FDB->AddFile( sNewPath, size, hash, NULL );
+	FDB->AddFile( sNewPath, size, hash, nullptr );
 	return true;
 }
 
@@ -185,7 +185,7 @@ RageFileObjDirect *RageFileObjDirect::Copy() const
 	int iErr;
 	RageFileObjDirect *ret = MakeFileObjDirect( m_sPath, m_iMode, iErr );
 
-	if( ret == NULL )
+	if( ret == nullptr )
 		RageException::Throw( "Couldn't reopen \"%s\": %s", m_sPath.c_str(), strerror(iErr) );
 
 	ret->Seek( (int)lseek( m_iFD, 0, SEEK_CUR ) );
@@ -212,7 +212,7 @@ RageFileBasic *RageFileDriverDirectReadOnly::Open( const RString &sPath, int iMo
 	if( iMode & RageFile::WRITE )
 	{
 		iError = EROFS;
-		return NULL;
+		return nullptr;
 	}
 
 	return RageFileDriverDirect::Open( sPath, iMode, iError );

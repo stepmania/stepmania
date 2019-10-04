@@ -282,6 +282,7 @@ public:
 	Preference<bool>	m_bSmoothLines;
 	Preference<int>	m_iSoundWriteAhead;
 	Preference<RString>	m_iSoundDevice;	
+	Preference<int> m_iRageSoundSampleCountClamp;
 	Preference<int>	m_iSoundPreferredSampleRate;
 	Preference<RString>	m_sLightsStepsDifficulty;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;

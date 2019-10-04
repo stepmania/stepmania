@@ -2,7 +2,6 @@
 #include "PlayerStageStats.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include <float.h>
 #include "GameState.h"
@@ -11,6 +10,8 @@
 #include "ScoreKeeperNormal.h"
 #include "PrefsManager.h"
 #include "CommonMetrics.h"
+
+#include <numeric>
 
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 // deprecated, but no solution to replace them exists yet:
@@ -27,7 +28,7 @@ Grade GetGradeFromPercent( float fPercent );
 
 void PlayerStageStats::InternalInit()
 {
-	m_pStyle= NULL;
+	m_pStyle= nullptr;
 	m_for_multiplayer= false;
 	m_player_number= PLAYER_1;
 	m_multiplayer_number= MultiPlayer_P1;
@@ -88,8 +89,8 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
 	m_pStyle= other.m_pStyle;
 	m_bJoined = other.m_bJoined;
-	FOREACH_CONST( Steps*, other.m_vpPossibleSteps, s )
-		m_vpPossibleSteps.push_back( *s );
+	for (Steps *s : other.m_vpPossibleSteps)
+		m_vpPossibleSteps.push_back( s );
 	m_iStepsPlayed += other.m_iStepsPlayed;
 	m_fAliveSeconds += other.m_fAliveSeconds;
 	m_bFailed |= other.m_bFailed;
@@ -335,13 +336,8 @@ int PlayerStageStats::GetLessonScoreActual() const
 
 int PlayerStageStats::GetLessonScoreNeeded() const
 {
-	float fScore = 0;
-
-	FOREACH_CONST( Steps*, m_vpPossibleSteps, steps )
-	{
-		fScore += (*steps)->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds];
-	}
-
+	float fScore = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f,
+		[](float total, Steps const *steps) { return total + steps->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds]; });
 	return lrintf( fScore * LESSON_PASS_THRESHOLD );
 }
 

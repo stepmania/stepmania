@@ -198,7 +198,7 @@ static void update_centering()
 
 static void StartDisplay()
 {
-	if( DISPLAY != NULL )
+	if( DISPLAY != nullptr )
 		return; // already started
 
 	DISPLAY = CreateDisplay();
@@ -277,7 +277,7 @@ void StepMania::ResetPreferences()
 
 /* Shutdown all global singletons. Note that this may be called partway through
  * initialization, due to an object failing to initialize, in which case some of
- * these may still be NULL. */
+ * these may still be nullptr. */
 void ShutdownGame()
 {
 	/* First, tell SOUNDMAN that we're shutting down. This signals sound drivers to
@@ -285,6 +285,14 @@ void ShutdownGame()
 	 * are closed; this prevents annoying DirectSound glitches and delays. */
 	if( SOUNDMAN )
 		SOUNDMAN->Shutdown();
+
+	/* Reset all lights to off.
+	 * This is done before ~LightsManager as some drivers use SCREENMAN
+	 * and similar when setting lights. */
+	if( LIGHTSMAN )
+	{
+		LIGHTSMAN->TurnOffAllLights();
+	}
 
 	SAFE_DELETE( SCREENMAN );
 	SAFE_DELETE( STATSMAN );
@@ -751,7 +759,7 @@ RageDisplay *CreateDisplay()
 	if( asRenderers.empty() )
 		RageException::Throw( "%s", ERROR_NO_VIDEO_RENDERERS.GetValue().c_str() );
 
-	RageDisplay *pRet = NULL;
+	RageDisplay *pRet = nullptr;
 	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
 		RString sRenderer = asRenderers[i];
@@ -784,7 +792,7 @@ RageDisplay *CreateDisplay()
 			RageException::Throw( ERROR_UNKNOWN_VIDEO_RENDERER.GetValue(), sRenderer.c_str() );
 		}
 
-		if( pRet == NULL )
+		if( pRet == nullptr )
 			continue;
 
 		RString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
@@ -799,7 +807,7 @@ RageDisplay *CreateDisplay()
 		break; // the display is ready to go
 	}
 
-	if( pRet == NULL)
+	if( pRet == nullptr)
 		RageException::Throw( "%s", error.c_str() );
 
 	return pRet;
@@ -810,7 +818,7 @@ static void SwitchToLastPlayedGame()
 	const Game *pGame = GAMEMAN->StringToGame( PREFSMAN->GetCurrentGame() );
 
 	// If the active game type isn't actually available, revert to the default.
-	if( pGame == NULL )
+	if( pGame == nullptr )
 		pGame = GAMEMAN->GetDefaultGame();
 
 	if( !GAMEMAN->IsGameEnabled( pGame ) && pGame != GAMEMAN->GetDefaultGame() )
@@ -828,10 +836,10 @@ static void SwitchToLastPlayedGame()
 // This function is meant to only be called during start up.
 void StepMania::InitializeCurrentGame( const Game* g )
 {
-	ASSERT( g != NULL );
-	ASSERT( GAMESTATE != NULL );
-	ASSERT( ANNOUNCER != NULL );
-	ASSERT( THEME != NULL );
+	ASSERT( g != nullptr );
+	ASSERT( GAMESTATE != nullptr );
+	ASSERT( ANNOUNCER != nullptr );
+	ASSERT( THEME != nullptr );
 
 	GAMESTATE->SetCurGame( g );
 
@@ -846,7 +854,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 	if( GetCommandlineArgument( "game", &argCurGame) && argCurGame != sGametype )
 	{
 		Game const* new_game= GAMEMAN->StringToGame(argCurGame);
-		if(new_game == NULL)
+		if(new_game == nullptr)
 		{
 			LOG->Warn("%s is not a known game type, ignoring.", argCurGame.c_str());
 		}
@@ -1053,10 +1061,10 @@ int sm_main(int argc, char* argv[])
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
 	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
-	if(pLoadingWindow == NULL)
+	if(pLoadingWindow == nullptr)
 		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
-	srand( time(NULL) ); // seed number generator
+	srand( time(nullptr) ); // seed number generator
 
 	/* Do this early, so we have debugging output if anything else fails. LOG and
 	 * Dialog must be set up first. It shouldn't take long, but it might take a
@@ -1126,11 +1134,11 @@ int sm_main(int argc, char* argv[])
 		 * theme into the loading window. */
 		RString sError;
 		RageSurface *pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
-		if( pSurface != NULL )
+		if( pSurface != nullptr )
 			pLoadingWindow->SetIcon( pSurface );
 		delete pSurface;
 		pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG("Common","splash"), sError );
-		if( pSurface != NULL )
+		if( pSurface != nullptr )
 			pLoadingWindow->SetSplash( pSurface );
 		delete pSurface;
 	}
@@ -1620,8 +1628,8 @@ int LuaFunc_SaveScreenshot(lua_State *L)
 	// If pn is provided, save to that player's profile.
 	// Otherwise, save to the machine.
 	PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1, true);
-	bool compress= lua_toboolean(L, 2);
-	bool sign= lua_toboolean(L, 3);
+	bool compress= lua_toboolean(L, 2) > 0;
+	bool sign= lua_toboolean(L, 3) > 0;
 	RString prefix= luaL_optstring(L, 4, "");
 	RString suffix= luaL_optstring(L, 5, "");
 	RString dir;

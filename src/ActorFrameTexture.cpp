@@ -18,7 +18,7 @@ ActorFrameTexture::ActorFrameTexture()
 	++i;
 	m_sTextureName = ssprintf( ConvertI64FormatString("ActorFrameTexture %lli"), i );
 
-	m_pRenderTarget = NULL;
+	m_pRenderTarget = nullptr;
 }
 
 ActorFrameTexture::ActorFrameTexture( const ActorFrameTexture &cpy ):
@@ -35,7 +35,7 @@ ActorFrameTexture::~ActorFrameTexture()
 
 void ActorFrameTexture::Create()
 {
-	if( m_pRenderTarget != NULL )
+	if( m_pRenderTarget != nullptr )
 	{
 		LuaHelpers::ReportScriptError( "Can't Create an already created ActorFrameTexture" );
 		return;
@@ -71,7 +71,7 @@ void ActorFrameTexture::Create()
 
 void ActorFrameTexture::DrawPrimitives()
 {
-	if( m_pRenderTarget == NULL )
+	if( m_pRenderTarget == nullptr )
 		return;
 
 	m_pRenderTarget->BeginRenderingTo( m_bPreserveTexture );
@@ -97,7 +97,7 @@ public:
 	static int GetTexture( T* p, lua_State *L )
 	{
 		RageTexture *pTexture = p->GetTexture();
-		if( pTexture == NULL )
+		if( pTexture == nullptr )
 		{
 			lua_pushnil(L);
 		}

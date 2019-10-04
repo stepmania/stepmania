@@ -112,17 +112,17 @@ struct OptionRowDefinition
 		m_bShowChoicesListOnSelect = false;
 	}
 
-	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, 
-			    const char *c1=NULL, const char *c2=NULL, 
-			    const char *c3=NULL, const char *c4=NULL, 
-			    const char *c5=NULL, const char *c6=NULL, 
-			    const char *c7=NULL, const char *c8=NULL, 
-			    const char *c9=NULL, const char *c10=NULL, 
-			    const char *c11=NULL, const char *c12=NULL, 
-			    const char *c13=NULL, const char *c14=NULL, 
-			    const char *c15=NULL, const char *c16=NULL, 
-			    const char *c17=NULL, const char *c18=NULL, 
-			    const char *c19=NULL ): m_sName(n),
+	OptionRowDefinition( const char *n, bool b, const char *c0=nullptr, 
+			    const char *c1=nullptr, const char *c2=nullptr, 
+			    const char *c3=nullptr, const char *c4=nullptr, 
+			    const char *c5=nullptr, const char *c6=nullptr, 
+			    const char *c7=nullptr, const char *c8=nullptr, 
+			    const char *c9=nullptr, const char *c10=nullptr, 
+			    const char *c11=nullptr, const char *c12=nullptr, 
+			    const char *c13=nullptr, const char *c14=nullptr, 
+			    const char *c15=nullptr, const char *c16=nullptr, 
+			    const char *c17=nullptr, const char *c18=nullptr, 
+			    const char *c19=nullptr ): m_sName(n),
 		m_sExplanationName(""), m_bOneChoiceForAllPlayers(b),
 		m_selectType(SELECT_ONE),
 		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(), 
@@ -186,7 +186,7 @@ public:
 	virtual RString GetScreen( int /* iChoice */ ) const { return RString(); }
 	// Exists so that a lua function can act on the selection.  Returns true if the choices should be reloaded.
 	virtual bool NotifyOfSelection(PlayerNumber pn, int choice) { return false; }
-	virtual bool GoToFirstOnStart() { return true; }
+	virtual bool GoToFirstOnStart() const { return true; }
 };
 
 /** @brief Utilities for the OptionRowHandlers. */

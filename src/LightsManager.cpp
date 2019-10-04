@@ -10,7 +10,6 @@
 #include "PrefsManager.h"
 #include "Actor.h"
 #include "Preference.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "CommonMetrics.h"
 #include "Style.h"
@@ -57,9 +56,9 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 	split( GAME_BUTTONS_TO_SHOW.GetValue(), ",", asGameButtons );
 	FOREACH_ENUM( GameController,  gc )
 	{
-		FOREACH_CONST( RString, asGameButtons, button )
+		for (RString const &button : asGameButtons)
 		{
-			GameButton gb = StringToGameButton( INPUTMAPPER->GetInputScheme(), *button );
+			GameButton gb = StringToGameButton( INPUTMAPPER->GetInputScheme(), button );
 			if( gb != GameButton_Invalid )
 			{
 				GameInput gi = GameInput( gc, gb );
@@ -71,17 +70,18 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 	set<GameInput> vGIs;
 	vector<const Style*> vStyles;
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
-	FOREACH( const Style*, vStyles, style )
+	auto const &value = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
+	for (Style const *style : vStyles)
 	{
-		bool bFound = find( CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().begin(), CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end(), (*style)->m_StepsType ) != CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end();
+		bool bFound = find( value.begin(), value.end(), style->m_StepsType ) != value.end();
 		if( !bFound )
 			continue;
 		FOREACH_PlayerNumber( pn )
 		{
-			for( int iCol=0; iCol<(*style)->m_iColsPerPlayer; ++iCol )
+			for( int iCol=0; iCol < style->m_iColsPerPlayer; ++iCol )
 			{
 				vector<GameInput> gi;
-				(*style)->StyleInputToGameInput( iCol, pn, gi );
+				style->StyleInputToGameInput( iCol, pn, gi );
 				for(size_t i= 0; i < gi.size(); ++i)
 				{
 					if(gi[i].IsValid())
@@ -93,11 +93,11 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 		}
 	}
 
-	FOREACHS_CONST( GameInput, vGIs, gi )
-		vGameInputsOut.push_back( *gi );
+	for (GameInput const &input : vGIs)
+		vGameInputsOut.push_back( input );
 }
 
-LightsManager*	LIGHTSMAN = NULL;	// global and accessible from anywhere in our program
+LightsManager*	LIGHTSMAN = nullptr;	// global and accessible from anywhere in our program
 
 LightsManager::LightsManager()
 {
@@ -119,8 +119,10 @@ LightsManager::LightsManager()
 
 LightsManager::~LightsManager()
 {
-	FOREACH( LightsDriver*, m_vpDrivers, iter )
-		SAFE_DELETE( *iter );
+	for (LightsDriver *iter : m_vpDrivers)
+	{
+		SAFE_DELETE( iter );
+	}
 	m_vpDrivers.clear();
 }
 
@@ -438,8 +440,8 @@ void LightsManager::Update( float fDeltaTime )
 	}
 
 	// apply new light values we set above
-	FOREACH( LightsDriver*, m_vpDrivers, iter )
-		(*iter)->Set( &m_LightsState );
+	for (LightsDriver *iter : m_vpDrivers)
+		iter->Set( &m_LightsState );
 }
 
 void LightsManager::BlinkCabinetLight( CabinetLight cl )
@@ -510,6 +512,12 @@ GameInput LightsManager::GetFirstLitGameButtonLight()
 bool LightsManager::IsEnabled() const
 {
 	return m_vpDrivers.size() >= 1 || PREFSMAN->m_bDebugLights;
+}
+
+void LightsManager::TurnOffAllLights()
+{
+	for(LightsDriver *iter : m_vpDrivers)
+		iter->Reset();
 }
 
 /*

@@ -8,7 +8,7 @@ t[#t+1] = Def.Sprite {
 		else
 			self:scale_or_crop_background()
 		end
-		self:linear(1)
+		self:linear(0.2)
 		self:diffusealpha(0)
 	end;
 };

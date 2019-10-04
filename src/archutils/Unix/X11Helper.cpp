@@ -7,7 +7,7 @@
 
 #include <X11/extensions/dpms.h>
 
-Display *X11Helper::Dpy = NULL;
+Display *X11Helper::Dpy = nullptr;
 Window X11Helper::Win = None;
 
 static int ErrorCallback( Display*, XErrorEvent* );
@@ -20,9 +20,9 @@ static bool dpms_state_at_startup= false;
 
 bool X11Helper::OpenXConnection()
 {
-	DEBUG_ASSERT( Dpy == NULL && Win == None );
+	DEBUG_ASSERT( Dpy == nullptr && Win == None );
 	Dpy = XOpenDisplay(0);
-	if( Dpy == NULL )
+	if( Dpy == nullptr )
 		return false;
 
 	XSetIOErrorHandler( FatalCallback );
@@ -65,10 +65,10 @@ void X11Helper::CloseXConnection()
 		}
 	}
 	// The window should have been shut down
-	DEBUG_ASSERT( Dpy != NULL );
+	DEBUG_ASSERT( Dpy != nullptr );
 	DEBUG_ASSERT( Win == None );
 	XCloseDisplay( Dpy );
-	Dpy = NULL;
+	Dpy = nullptr;
 }
 
 bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
@@ -103,7 +103,7 @@ bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visua
 		return false;
 
 	XClassHint *hint = XAllocClassHint();
-	if ( hint == NULL ) {
+	if ( hint == nullptr ) {
 		LOG->Warn("Could not set class hint for X11 Window");
 	} else {
 		hint->res_name   = (char*)g_XWMName.Get().c_str();

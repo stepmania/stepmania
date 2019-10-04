@@ -1,7 +1,6 @@
 #include "global.h"
 #include "RageLog.h"
 #include "InputHandler_MacOSX_HID.h"
-#include "Foreach.h"
 #include "PrefsManager.h"
 #include "InputFilter.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
@@ -30,7 +29,7 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 	{
-		if( event.longValueSize != 0 && event.longValue != NULL )
+		if( event.longValueSize != 0 && event.longValue != nullptr )
 		{
 			free( event.longValue );
 			continue;
@@ -38,8 +37,8 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 		//LOG->Trace( "Got event with cookie %p, value %d", event.elementCookie, int(event.value) );
 		dev->GetButtonPresses( vPresses, event.elementCookie, event.value, now );
 	}
-	FOREACH_CONST( DeviceInput, vPresses, i )
-		INPUTFILTER->ButtonPressed( *i );
+	for (DeviceInput &i : vPresses)
+		INPUTFILTER->ButtonPressed( i );
 }
 
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )
@@ -66,7 +65,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 	{
 		/* The function copies the information out of the structure, so the memory
 		 * pointed to by context does not need to persist beyond the function call. */
-		CFRunLoopObserverContext context = { 0, &This->m_Sem, NULL, NULL, NULL };
+		CFRunLoopObserverContext context = { 0, &This->m_Sem, nullptr, nullptr, nullptr };
 		CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 								  false, 0, RunLoopStarted, &context);
 		CFRunLoopAddObserver( This->m_LoopRef, o, kCFRunLoopDefaultMode );
@@ -83,7 +82,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 		void *info = This->m_LoopRef;
 		void (*perform)(void *) = (void (*)(void *))CFRunLoopStop;
 		// { version, info, retain, release, copyDescription, equal, hash, schedule, cancel, perform }
-		CFRunLoopSourceContext context = { 0, info, NULL, NULL, NULL, NULL, NULL, NULL, NULL, perform };
+		CFRunLoopSourceContext context = { 0, info, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, perform };
 
 		// Pass 1 so that it is called after all inputs have been handled (they will have order = 0)
 		This->m_SourceRef = CFRunLoopSourceCreate( kCFAllocatorDefault, 1, &context );
@@ -120,8 +119,8 @@ void InputHandler_MacOSX_HID::StartDevices()
 	int n = 0;
 
 	ASSERT( m_LoopRef );
-	FOREACH( HIDDevice *, m_vDevices, i )
-		(*i)->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
+	for (HIDDevice *i : m_vDevices)
+		i->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
 
 	CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource( m_NotifyPort );
 
@@ -130,8 +129,8 @@ void InputHandler_MacOSX_HID::StartDevices()
 
 InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 {
-	FOREACH( HIDDevice *, m_vDevices, i )
-		delete *i;
+	for (HIDDevice *i : m_vDevices)
+		delete i;
 	if( PREFSMAN->m_bThreadedInput )
 	{
 		CFRunLoopSourceSignal( m_SourceRef );
@@ -142,8 +141,8 @@ InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 		LOG->Trace( "Input handler thread shut down." );
 	}
 
-	FOREACH( io_iterator_t, m_vIters, i )
-		IOObjectRelease( *i );
+	for (io_iterator_t &i : m_vIters)
+		IOObjectRelease( i );
 	IONotificationPortDestroy( m_NotifyPort );
 }
 
@@ -152,7 +151,7 @@ static CFDictionaryRef GetMatchingDictionary( int usagePage, int usage )
 	// Build the matching dictionary.
 	CFMutableDictionaryRef dict;
 
-	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == NULL )
+	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == nullptr )
 		FAIL_M( "Couldn't create a matching dictionary." );
 	// Refine the search by only looking for joysticks
 	CFNumberRef usagePageRef = CFInt( usagePage );
@@ -181,7 +180,7 @@ static HIDDevice *MakeDevice( InputDevice id )
 		return new JoystickDevice;
 	if( IsPump(id) )
 		return new PumpDevice;
-	return NULL;
+	return nullptr;
 }
 
 void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice &id )
@@ -277,8 +276,8 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 
 void InputHandler_MacOSX_HID::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices )
 {
-	FOREACH_CONST( HIDDevice *, m_vDevices, i )
-		(*i)->GetDevicesAndDescriptions( vDevices );
+	for (HIDDevice *i : m_vDevices)
+		i->GetDevicesAndDescriptions( vDevices );
 }
 
 RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput &di )
@@ -380,7 +379,7 @@ static wchar_t KeyCodeToChar(CGKeyCode keyCode, unsigned int modifierFlags)
 {
 	TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
 	CFDataRef uchr = (CFDataRef)TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
-	const UCKeyboardLayout *keyboardLayout = uchr ? (const UCKeyboardLayout*)CFDataGetBytePtr(uchr) : NULL;
+	const UCKeyboardLayout *keyboardLayout = uchr ? (const UCKeyboardLayout*)CFDataGetBytePtr(uchr) : nullptr;
 	
 	if( keyboardLayout )
 	{
@@ -450,7 +449,10 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 	UInt8 iMacVirtualKey;
 	if( KeyboardDevice::DeviceButtonToMacVirtualKey( button, iMacVirtualKey ) )
 	{
-		UInt32 nModifiers = bUseCurrentKeyModifiers ? GetCurrentKeyModifiers() : 0;
+		CGEventRef event = CGEventCreate(nullptr);
+		CGEventFlags mods = CGEventGetFlags(event);
+        CFRelease(event);
+		UInt32 nModifiers = bUseCurrentKeyModifiers ? (UInt32)mods : 0;
 		wchar_t sCharCode = KeyCodeToChar( iMacVirtualKey, nModifiers );
 		if( sCharCode != 0 )
 		{

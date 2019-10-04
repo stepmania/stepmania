@@ -4,7 +4,6 @@
 #include "RageTimer.h"
 #include "RageFile.h"
 #include "RageThreads.h"
-#include "Foreach.h"
 
 #include <ctime>
 #if defined(_WINDOWS)
@@ -374,7 +373,7 @@ void RageLog::AddToRecentLogs( const RString &str )
 const char *RageLog::GetRecentLog( int n )
 {
 	if( n >= BACKLOG_LINES || n >= backlog_cnt )
-		return NULL;
+		return nullptr;
 
 	if( backlog_cnt == BACKLOG_LINES )
 	{
@@ -394,8 +393,8 @@ static int g_AdditionalLogSize = 0;
 void RageLog::UpdateMappedLog()
 {
 	RString str;
-	FOREACHM_CONST( RString, RString, LogMaps, i )
-		str += ssprintf( "%s" NEWLINE, i->second.c_str() );
+	for (auto const &i : LogMaps)
+		str += ssprintf( "%s" NEWLINE, i.second.c_str() );
 
 	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size()+1 );
 	memcpy( g_AdditionalLogStr, str.c_str(), g_AdditionalLogSize );

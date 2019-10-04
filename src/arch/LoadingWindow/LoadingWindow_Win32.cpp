@@ -17,7 +17,7 @@
 #include "LocalizedString.h"
 
 #include "RageSurfaceUtils_Zoom.h"
-static HBITMAP g_hBitmap = NULL;
+static HBITMAP g_hBitmap = nullptr;
 
 /* Load a RageSurface into a GDI surface. */
 static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
@@ -39,11 +39,11 @@ static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 		RageSurfaceUtils::Zoom( s, iWidth, iHeight );
 	}
 
-	HDC hScreen = GetDC(NULL);
-	ASSERT_M( hScreen != NULL, werr_ssprintf(GetLastError(), "hScreen") );
+	HDC hScreen = GetDC(nullptr);
+	ASSERT_M( hScreen != nullptr, werr_ssprintf(GetLastError(), "hScreen") );
 
 	HBITMAP bitmap = CreateCompatibleBitmap( hScreen, s->w, s->h );
-	ASSERT_M( bitmap != NULL, werr_ssprintf(GetLastError(), "CreateCompatibleBitmap") );
+	ASSERT_M( bitmap != nullptr, werr_ssprintf(GetLastError(), "CreateCompatibleBitmap") );
 
 	HDC BitmapDC = CreateCompatibleDC( hScreen );
 	SelectObject( BitmapDC, bitmap );
@@ -60,10 +60,10 @@ static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 		}
 	}
 
-	SelectObject( BitmapDC, NULL );
+	SelectObject( BitmapDC, nullptr );
 	DeleteObject( BitmapDC );
 
-	ReleaseDC( NULL, hScreen );
+	ReleaseDC( nullptr, hScreen );
 
 	delete s;
 	return bitmap;
@@ -73,8 +73,8 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 {
         RString error;
         RageSurface *pSurface = RageSurfaceUtils::LoadFile( sFile, error );
-        if( pSurface == NULL )
-                return NULL;
+        if( pSurface == nullptr )
+                return nullptr;
 
         HBITMAP ret = LoadWin32Surface( pSurface, hWnd );
         delete pSurface;
@@ -92,7 +92,7 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 			if( !vs.empty() )
 				g_hBitmap = LoadWin32Surface( vs[0], hWnd );
 		}
-		if( g_hBitmap == NULL )
+		if( g_hBitmap == nullptr )
 			g_hBitmap = LoadWin32Surface( "Data/splash.bmp", hWnd );
 		SendMessage( 
 			GetDlgItem(hWnd,IDC_SPLASH), 
@@ -104,7 +104,7 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 
 	case WM_DESTROY:
 		DeleteObject( g_hBitmap );
-		g_hBitmap = NULL;
+		g_hBitmap = nullptr;
 		break;
 	}
 
@@ -113,25 +113,25 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 
 void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 {
-	if( m_hIcon != NULL )
+	if( m_hIcon != nullptr )
 		DestroyIcon( m_hIcon );
 
 	m_hIcon = IconFromSurface( pIcon );
-	if( m_hIcon != NULL )
+	if( m_hIcon != nullptr )
 		// XXX: GCL_HICON isn't available on x86-64 Windows
 		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
 }
 
 void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )
 {
-	if( g_hBitmap != NULL )
+	if( g_hBitmap != nullptr )
 	{
 		DeleteObject( g_hBitmap );
-		g_hBitmap = NULL;
+		g_hBitmap = nullptr;
 	}
 
 	g_hBitmap = LoadWin32Surface( pSplash, hwnd );
-	if( g_hBitmap != NULL )
+	if( g_hBitmap != nullptr )
 	{
 		SendDlgItemMessage(
 			hwnd, IDC_SPLASH,
@@ -144,9 +144,9 @@ void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )
 
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
-	m_hIcon = NULL;
-	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc );
-	ASSERT( hwnd != NULL );
+	m_hIcon = nullptr;
+	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), nullptr, WndProc );
+	ASSERT( hwnd != nullptr );
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
 	SetText( "" );
@@ -157,7 +157,7 @@ LoadingWindow_Win32::~LoadingWindow_Win32()
 {
 	if( hwnd )
 		DestroyWindow( hwnd );
-	if( m_hIcon != NULL )
+	if( m_hIcon != nullptr )
 		DestroyIcon( m_hIcon );
 }
 

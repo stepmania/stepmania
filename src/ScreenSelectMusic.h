@@ -123,6 +123,8 @@ protected:
 	GameButton m_GameButtonNextDifficulty;
 	GameButton m_GameButtonPreviousGroup;
 	GameButton m_GameButtonNextGroup;
+	GameButton m_GameButtonCancelTwoPart1;
+	GameButton m_GameButtonCancelTwoPart2;
 
 	RString m_sSectionMusicPath;
 	RString m_sSortMusicPath;

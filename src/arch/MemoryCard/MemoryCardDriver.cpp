@@ -2,10 +2,27 @@
 #include "MemoryCardDriver.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "Foreach.h"
+
 #include "ProfileManager.h"
 
 static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
+
+enum MemoryCardDriverType {
+	MemoryCardDriverType_Usb,
+	MemoryCardDriverType_Directory,
+	NUM_MemoryCardDriverType,
+	MemoryCardDriverType_Invalid
+};
+
+static const char *MemoryCardDriverTypeNames[] = {
+	"USB",
+	"Directory"
+};
+XToString(MemoryCardDriverType);
+StringToX(MemoryCardDriverType);
+LuaXType(MemoryCardDriverType);
+
+Preference<MemoryCardDriverType> g_MemoryCardDriver("MemoryCardDriver", MemoryCardDriverType_Usb);
 
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 {
@@ -51,11 +68,11 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 	GetUSBStorageDevices( vStorageDevicesOut );
 
 	// log connects
-	FOREACH( UsbStorageDevice, vStorageDevicesOut, newd )
+	for (UsbStorageDevice &newd : vStorageDevicesOut)
 	{
-		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
+		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), newd );
 		if( iter == vOld.end() )    // didn't find
-			LOG->Trace( "New device connected: %s", newd->sDevice.c_str() );
+			LOG->Trace( "New device connected: %s", newd.sDevice.c_str() );
 	}
 
 	/* When we first see a device, regardless of bMount, just return it as CHECKING,
@@ -124,17 +141,26 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 #include "arch/arch_default.h"
 MemoryCardDriver *MemoryCardDriver::Create()
 {
-	MemoryCardDriver *ret = NULL;
+	MemoryCardDriver *ret = nullptr;
 
+	switch( g_MemoryCardDriver )
+	{
+		case MemoryCardDriverType_Directory:
+			ret = new MemoryCardDriverThreaded_Folder;
+			break;
+		case MemoryCardDriverType_Usb:
 #ifdef ARCH_MEMORY_CARD_DRIVER
-	ret = new ARCH_MEMORY_CARD_DRIVER;
+			ret = new ARCH_MEMORY_CARD_DRIVER;
 #endif
+			break;
+	}
 
 	if( !ret )
 		ret = new MemoryCardDriver_Null;
-	
+
 	return ret;
 }
+
 
 /*
  * (c) 2002-2004 Glenn Maynard

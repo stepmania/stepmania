@@ -38,8 +38,8 @@ static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName
 
 NoteField::NoteField()
 {
-	m_pNoteData = NULL;
-	m_pCurDisplay = NULL;
+	m_pNoteData = nullptr;
+	m_pCurDisplay = nullptr;
 	m_drawing_board_primitive= false;
 
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("NoteField","MeasureNumber") );
@@ -87,7 +87,7 @@ void NoteField::Unload()
 		it != m_NoteDisplays.end(); ++it )
 		delete it->second;
 	m_NoteDisplays.clear();
-	m_pCurDisplay = NULL;
+	m_pCurDisplay = nullptr;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 }
 
@@ -137,10 +137,10 @@ void NoteField::CacheAllUsedNoteSkins()
 	vector<RString> asSkinsLower;
 	GAMESTATE->GetAllUsedNoteSkins( asSkinsLower );
 	asSkinsLower.push_back( m_pPlayerState->m_PlayerOptions.GetStage().m_sNoteSkin );
-	FOREACH( RString, asSkinsLower, s )
+	for (RString &s : asSkinsLower)
 	{
-		NOTESKIN->ValidateNoteSkinName(*s);
-		s->MakeLower();
+		NOTESKIN->ValidateNoteSkinName(s);
+		s.MakeLower();
 	}
 
 	for( unsigned i=0; i < asSkinsLower.size(); ++i )
@@ -149,14 +149,14 @@ void NoteField::CacheAllUsedNoteSkins()
 	/* If we're changing note skins in the editor, we can have old note skins lying
 	 * around.  Remove them so they don't accumulate. */
 	set<RString> setNoteSkinsToUnload;
-	FOREACHM( RString, NoteDisplayCols *, m_NoteDisplays, d )
+	for (std::pair<RString const &, NoteDisplayCols *> d : m_NoteDisplays)
 	{
-		bool unused = find(asSkinsLower.begin(), asSkinsLower.end(), d->first) == asSkinsLower.end();
+		bool unused = find(asSkinsLower.begin(), asSkinsLower.end(), d.first) == asSkinsLower.end();
 		if( unused )
-			setNoteSkinsToUnload.insert( d->first );
+			setNoteSkinsToUnload.insert( d.first );
 	}
-	FOREACHS( RString, setNoteSkinsToUnload, s )
-		UncacheNoteSkin( *s );
+	for (RString const & skin : setNoteSkinsToUnload)
+		UncacheNoteSkin( skin );
 
 	RString sCurrentNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 	NOTESKIN->ValidateNoteSkinName(sCurrentNoteSkinLower);
@@ -208,7 +208,7 @@ void NoteField::Load(
 	int iDrawDistanceAfterTargetsPixels,
 	int iDrawDistanceBeforeTargetsPixels )
 {
-	ASSERT( pNoteData != NULL );
+	ASSERT( pNoteData != nullptr );
 	m_pNoteData = pNoteData;
 	m_iDrawDistanceAfterTargetsPixels = iDrawDistanceAfterTargetsPixels;
 	m_iDrawDistanceBeforeTargetsPixels = iDrawDistanceBeforeTargetsPixels;
@@ -445,7 +445,7 @@ void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanc
 {
 	// todo: make this an AutoActor instead? -aj
 	Sprite *pSprite = dynamic_cast<Sprite *>( (Actor*)m_sprBoard );
-	if( pSprite == NULL )
+	if( pSprite == nullptr )
 	{
 		m_sprBoard->Draw();
 	}
@@ -749,7 +749,7 @@ void NoteField::DrawPrimitives()
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
 	// This should be filled in on the first update.
-	ASSERT( m_pCurDisplay != NULL );
+	ASSERT( m_pCurDisplay != nullptr );
 
 	// ArrowEffects::Update call moved because having it happen once per
 	// NoteField (which means twice in two player) seemed wasteful. -Kyz
@@ -761,10 +761,6 @@ void NoteField::DrawPrimitives()
 			m_FieldRenderArgs.draw_pixels_before_targets);
 		return;
 	}
-
-	// Clear the z buffer so 3D notes aren't hidden by anything in the underlay using masking. -Kyz
-	DISPLAY->ClearZBuffer();
-
 	// Some might prefer an else block, instead of returning from the if, but I
 	// don't want to bump the indent on the entire remaining section. -Kyz
 	ArrowEffects::SetCurrentOptions(&m_pPlayerState->m_PlayerOptions.GetCurrent());
@@ -800,7 +796,7 @@ void NoteField::DrawPrimitives()
 
 	unsigned i = 0;
 	// Draw beat bars
-	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != NULL )
+	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != nullptr )
 	{
 		const vector<TimingSegment *> &tSigs = *segs[SEGMENT_TIME_SIG];
 		int iMeasureIndex = 0;
@@ -840,9 +836,9 @@ void NoteField::DrawPrimitives()
 		}
 	}
 
-	if( GAMESTATE->IsEditing() && pTiming != NULL )
+	if( GAMESTATE->IsEditing() && pTiming != nullptr )
 	{
-		ASSERT(GAMESTATE->m_pCurSong != NULL);
+		ASSERT(GAMESTATE->m_pCurSong != nullptr);
 
 		const TimingData &timing = *pTiming;
 		const RageColor text_glow= RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f);
@@ -864,11 +860,11 @@ void NoteField::DrawPrimitives()
 			} \
 		}
 
-		draw_all_segments(FloatToString(seg->GetRatio()), Scroll, SCROLL);
-		draw_all_segments(FloatToString(seg->GetBPM()), BPM, BPM);
-		draw_all_segments(FloatToString(seg->GetPause()), Stop, STOP);
-		draw_all_segments(FloatToString(seg->GetPause()), Delay, DELAY);
-		draw_all_segments(FloatToString(seg->GetLength()), Warp, WARP);
+		draw_all_segments(std::to_string(seg->GetRatio()), Scroll, SCROLL);
+		draw_all_segments(std::to_string(seg->GetBPM()), BPM, BPM);
+		draw_all_segments(std::to_string(seg->GetPause()), Stop, STOP);
+		draw_all_segments(std::to_string(seg->GetPause()), Delay, DELAY);
+		draw_all_segments(std::to_string(seg->GetLength()), Warp, WARP);
 		draw_all_segments(ssprintf("%d\n--\n%d", seg->GetNum(), seg->GetDen()),
 			TimeSignature, TIME_SIG);
 		draw_all_segments(ssprintf("%d", seg->GetTicks()), Tickcount, TICKCOUNT);
@@ -876,10 +872,10 @@ void NoteField::DrawPrimitives()
 			ssprintf("%d/%d", seg->GetCombo(), seg->GetMissCombo()), Combo, COMBO);
 		draw_all_segments(seg->GetLabel(), Label, LABEL);
 		draw_all_segments(ssprintf("%s\n%s\n%s",
-				FloatToString(seg->GetRatio()).c_str(),
+				std::to_string(seg->GetRatio()).c_str(),
 				(seg->GetUnit() == 1 ? "S" : "B"),
-				FloatToString(seg->GetDelay()).c_str()), Speed, SPEED);
-		draw_all_segments(FloatToString(seg->GetLength()), Fake, FAKE);
+				std::to_string(seg->GetDelay()).c_str()), Speed, SPEED);
+		draw_all_segments(std::to_string(seg->GetLength()), Fake, FAKE);
 #undef draw_all_segments
 
 		// Course mods text
@@ -889,16 +885,16 @@ void NoteField::DrawPrimitives()
 			ASSERT_M( GAMESTATE->m_iEditCourseEntryIndex >= 0  &&  GAMESTATE->m_iEditCourseEntryIndex < (int)pCourse->m_vEntries.size(), 
 				ssprintf("%i",GAMESTATE->m_iEditCourseEntryIndex.Get()) );
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-			FOREACH_CONST( Attack, ce.attacks, a )
+			for (Attack const &a : ce.attacks)
 			{
-				float fSecond = a->fStartSecond;
+				float fSecond = a.fStartSecond;
 				float fBeat = timing.GetBeatFromElapsedTime( fSecond );
 
 				if( BeatToNoteRow(fBeat) >= m_FieldRenderArgs.first_row &&
 					BeatToNoteRow(fBeat) <= m_FieldRenderArgs.last_row &&
 					IS_ON_SCREEN(fBeat))
 				{
-					DrawAttackText(fBeat, *a, text_glow);
+					DrawAttackText(fBeat, a, text_glow);
 				}
 			}
 		}
@@ -910,14 +906,14 @@ void NoteField::DrawPrimitives()
 			// XXX: We're somehow getting here when attacks is null. Find the actual cause later.
 			if (&attacks)
 			{
-				FOREACH_CONST(Attack, attacks, a)
+				for (Attack const &a : attacks)
 				{
-					float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
+					float fBeat = timing.GetBeatFromElapsedTime(a.fStartSecond);
 					if (BeatToNoteRow(fBeat) >= m_FieldRenderArgs.first_row &&
 						BeatToNoteRow(fBeat) <= m_FieldRenderArgs.last_row &&
 						IS_ON_SCREEN(fBeat))
 					{
-						this->DrawAttackText(fBeat, *a, text_glow);
+						this->DrawAttackText(fBeat, a, text_glow);
 					}
 				}
 			}
@@ -975,22 +971,22 @@ void NoteField::DrawPrimitives()
 							if( IS_ON_SCREEN(fLowestBeat) )
 							{
 								vector<RString> vsBGChanges;
-								FOREACH_CONST( BackgroundLayer, viLowestIndex, bl )
+								for (BackgroundLayer const &bl : viLowestIndex)
 								{
-									ASSERT( iter[*bl] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*bl).end() );
-									const BackgroundChange& change = *iter[*bl];
+									ASSERT( iter[bl] != GAMESTATE->m_pCurSong->GetBackgroundChanges(bl).end() );
+									const BackgroundChange& change = *iter[bl];
 									RString s = change.GetTextDescription();
-									if( *bl!=0 )
+									if( bl!=0 )
 									{
-										s = ssprintf("%d: ",*bl) + s;
+										s = ssprintf("%d: ",bl) + s;
 									}
 									vsBGChanges.push_back( s );
 								}
 								DrawBGChangeText(fLowestBeat, join("\n",vsBGChanges), text_glow);
 							}
-							FOREACH_CONST( BackgroundLayer, viLowestIndex, bl )
+							for (BackgroundLayer const &bl : viLowestIndex)
 							{
-								iter[*bl]++;
+								iter[bl]++;
 							}
 						}
 					}

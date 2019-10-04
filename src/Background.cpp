@@ -151,15 +151,15 @@ static RageColor GetBrightnessColor( float fBrightnessPercent )
 BackgroundImpl::BackgroundImpl()
 {
 	m_bInitted = false;
-	m_pDancingCharacters = NULL;
-	m_pSong = NULL;
+	m_pDancingCharacters = nullptr;
+	m_pSong = nullptr;
 }
 
 BackgroundImpl::Layer::Layer()
 {
 	m_iCurBGChangeIndex = -1;
-	m_pCurrentBGA = NULL;
-	m_pFadingBGA = NULL;
+	m_pCurrentBGA = nullptr;
+	m_pFadingBGA = nullptr;
 }
 
 void BackgroundImpl::Init()
@@ -246,20 +246,20 @@ void BackgroundImpl::Unload()
 {
 	FOREACH_BackgroundLayer( i )
 		m_Layer[i].Unload();
-	m_pSong = NULL;
+	m_pSong = nullptr;
 	m_fLastMusicSeconds	= -9999;
 	m_RandomBGAnimations.clear();
 }
 
 void BackgroundImpl::Layer::Unload()
 {
-	FOREACHM( BackgroundDef, Actor*, m_BGAnimations, iter )
-		delete iter->second;
+	for (std::pair<BackgroundDef const &, Actor *> iter : m_BGAnimations)
+		delete iter.second;
 	m_BGAnimations.clear();
 	m_aBGChanges.clear();
 
-	m_pCurrentBGA = NULL;
-	m_pFadingBGA = NULL;
+	m_pCurrentBGA = nullptr;
+	m_pFadingBGA = nullptr;
 	m_iCurBGChangeIndex = -1;
 }
 
@@ -386,7 +386,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
 
-	if( pActor == NULL )
+	if( pActor == nullptr )
 		pActor = new Actor;
 	m_BGAnimations[bd] = pActor;
 
@@ -447,7 +447,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 		int time_signature_start= max(ts->GetRow(),iStartRow);
 		for(int j= time_signature_start;
 			j<min(iEndRow,iSegmentEndRow);
-			j+= RAND_BG_CHANGE_MEASURES * ts->GetNoteRowsPerMeasure())
+			j+= int(RAND_BG_CHANGE_MEASURES * ts->GetNoteRowsPerMeasure()))
 		{
 			// Don't fade. It causes frame rate dip, especially on slower machines.
 			BackgroundDef bd = m_Layer[0].CreateRandomBGA(m_pSong,
@@ -542,10 +542,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		int iSize = min( (int)g_iNumBackgrounds, (int)vsNames.size() );
 		vsNames.resize( iSize );
 
-		FOREACH_CONST( RString, vsNames, s )
+		for (RString const &s : vsNames)
 		{
 			BackgroundDef bd;
-			bd.m_sFile1 = *s;
+			bd.m_sFile1 = s;
 			m_RandomBGAnimations.push_back( bd );
 		}
 	}
@@ -574,9 +574,9 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			Layer &layer = m_Layer[i];
 
 			// Load all song-specified backgrounds
-			FOREACH_CONST( BackgroundChange, pSong->GetBackgroundChanges(i), bgc )
+			for (BackgroundChange const &bgc : pSong->GetBackgroundChanges(i))
 			{
-				BackgroundChange change = *bgc;
+				BackgroundChange change = bgc;
 				BackgroundDef &bd = change.m_def;
 				
 				bool bIsAlreadyLoaded = layer.m_BGAnimations.find(bd) != layer.m_BGAnimations.end();
@@ -643,9 +643,9 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	FOREACH_BackgroundLayer( i )
 	{
 		Layer &layer = m_Layer[i];
-		FOREACH_CONST( BackgroundChange, layer.m_aBGChanges, bgc )
+		for (BackgroundChange const &bgc : layer.m_aBGChanges)
 		{
-			const BackgroundDef &bd = bgc->m_def;
+			const BackgroundDef &bd = bgc.m_def;
 			if( bd == m_StaticBackgroundDef )
 			{
 				bStaticBackgroundUsed = true;
@@ -765,7 +765,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 		if( m_pFadingBGA == m_pCurrentBGA )
 		{
-			m_pFadingBGA = NULL;
+			m_pFadingBGA = nullptr;
 			//LOG->Trace( "bg didn't actually change.  Ignoring." );
 		}
 		else
@@ -807,7 +807,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	if( m_pFadingBGA )
 	{
 		if( m_pFadingBGA->GetTweenTimeLeft() == 0 )
-			m_pFadingBGA = NULL;
+			m_pFadingBGA = nullptr;
 	}
 
 	/* This is unaffected by the music rate. */

@@ -13,7 +13,11 @@
 #endif
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
+#ifndef SYSTEM_PNG
+#include "../extern/libpng/include/png.h"
+#else
 #include <png.h>
+#endif
 #endif // _MSC_VER
 
 static void SafePngError( png_struct *pPng, const RString &sStr )
@@ -81,16 +85,16 @@ static bool RageSurface_Save_PNG( RageFile &f, char szErrorbuf[1024], RageSurfac
 	error.szErr = szErrorbuf;
 
 	png_struct *pPng = png_create_write_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
-	if( pPng == NULL )
+	if( pPng == nullptr )
 	{
 		sprintf( szErrorbuf, "creating png_create_write_struct failed");
 		return false;
 	}
 
 	png_info *pInfo = png_create_info_struct(pPng);
-	if( pInfo == NULL )
+	if( pInfo == nullptr )
 	{
-		png_destroy_write_struct( &pPng, NULL );
+		png_destroy_write_struct( &pPng, nullptr );
 		if( bDeleteImg )
 			delete pImg;
 		sprintf( szErrorbuf, "creating png_create_info_struct failed");
@@ -141,7 +145,7 @@ bool RageSurfaceUtils::SavePNG( RageSurface *pImg, RageFile &f, RString &sError 
 /*
  * (c) 2004-2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -151,7 +155,7 @@ bool RageSurfaceUtils::SavePNG( RageSurface *pImg, RageFile &f, RString &sError 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

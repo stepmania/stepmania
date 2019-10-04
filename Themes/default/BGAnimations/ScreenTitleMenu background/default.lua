@@ -13,7 +13,7 @@ if ThemePrefs.Get("FancyUIBG") then
 	};
 	
 	Def.ActorFrame {
-		OnCommand=cmd(diffusealpha,0;decelerate,1.8;diffusealpha,1;);
+		OnCommand=cmd(diffusealpha,0;decelerate,1.8;diffusealpha,1);
 			LoadActor("_tunnel1") .. {
 				InitCommand=cmd(Center;blend,'BlendMode_Add';rotationz,-20),
 				OnCommand=cmd(zoom,1.75;diffusealpha,0.12;spin;effectmagnitude,0,0,16.5)

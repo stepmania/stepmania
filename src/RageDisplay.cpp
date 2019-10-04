@@ -43,7 +43,7 @@ struct Centering
 
 static vector<Centering> g_CenteringStack( 1, Centering(0, 0, 0, 0) );
 
-RageDisplay*		DISPLAY	= NULL; // global and accessible from anywhere in our program
+RageDisplay*		DISPLAY	= nullptr; // global and accessible from anywhere in our program
 
 Preference<bool>  LOG_FPS( "LogFPS", true );
 Preference<float> g_fFrameLimitPercent( "FrameLimitPercent", 0.0f );
@@ -1081,7 +1081,7 @@ public:
 		ADD_METHOD( GetCumFPS );
 		ADD_METHOD( GetDisplaySpecs );
 		ADD_METHOD( SupportsRenderToTexture );
-		ADD_METHOD( SupportsFullscreenBorderlessWindow);
+		ADD_METHOD( SupportsFullscreenBorderlessWindow );
 	}
 };
 

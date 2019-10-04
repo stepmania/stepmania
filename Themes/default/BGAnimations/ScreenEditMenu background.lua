@@ -10,8 +10,8 @@ t[#t+1] = Def.ActorFrame {
 
 t[#t+1] = Def.ActorFrame {
 	Def.Quad {
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+20;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT*0.70;);
-		OnCommand=cmd(diffuse,color("#61414B");diffusealpha,0.4);
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+20;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT*0.70);
+		OnCommand=cmd(diffuse,color("#61414B");diffusealpha,0.75);
 	};
 };
 

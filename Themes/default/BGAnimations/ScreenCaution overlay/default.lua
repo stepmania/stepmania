@@ -26,7 +26,7 @@ t[#t+1] = Def.ActorFrame {
 	OnCommand=cmd(diffusealpha,0;linear,0.2;diffusealpha,1);
 	LoadFont("_roboto condensed Bold 48px") .. {
 		Text=Screen.String("Caution");
-		OnCommand=cmd(skewx,-0.1;diffuse,color("#E6BF7C");diffusebottomedge,color("#FFB682");strokecolor,color("#594420"););
+		OnCommand=cmd(skewx,-0.1;diffuse,color("#E6BF7C");diffusebottomedge,color("#FFB682");strokecolor,color("#594420"));
 	};
 	LoadFont("Common Fallback Font") .. {
 		Text=Screen.String("CautionText");

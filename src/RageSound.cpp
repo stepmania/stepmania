@@ -48,12 +48,12 @@ RageSoundLoadParams::RageSoundLoadParams():
 	m_bSupportRateChanging(false), m_bSupportPan(false) {}
 
 RageSound::RageSound():
-	m_Mutex( "RageSound" ), m_pSource(NULL), 
+	m_Mutex( "RageSound" ), m_pSource(nullptr), 
 	m_sFilePath(""), m_Param(), m_iStreamFrame(0),
 	m_iStoppedSourceFrame(0), m_bPlaying(false),
 	m_bDeleteWhenFinished(false), m_sError("")
 {
-	ASSERT( SOUNDMAN != NULL );
+	ASSERT( SOUNDMAN != nullptr );
 }
 
 RageSound::~RageSound()
@@ -65,9 +65,9 @@ RageSound::RageSound( const RageSound &cpy ):
 	RageSoundBase( cpy ),
 	m_Mutex( "RageSound" )
 {
-	ASSERT(SOUNDMAN != NULL);
+	ASSERT(SOUNDMAN != nullptr);
 
-	m_pSource = NULL;
+	m_pSource = nullptr;
 
 	*this = cpy;
 }
@@ -86,14 +86,14 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 	m_bPlaying = false;
 	m_bDeleteWhenFinished = false;
 
-	if(m_pSource != NULL)
+	if(m_pSource != nullptr)
 	{
 		delete m_pSource;
 	}
 	if( cpy.m_pSource )
 		m_pSource = cpy.m_pSource->Copy();
 	else
-		m_pSource = NULL;
+		m_pSource = nullptr;
 
 	m_sFilePath = cpy.m_sFilePath;
 
@@ -107,11 +107,11 @@ void RageSound::Unload()
 
 	LockMut(m_Mutex);
 
-	if(m_pSource != NULL)
+	if(m_pSource != nullptr)
 	{
 		delete m_pSource;
 	}
-	m_pSource = NULL;
+	m_pSource = nullptr;
 	
 	m_sFilePath = "";
 }
@@ -136,7 +136,7 @@ void RageSound::DeleteSelfWhenFinishedPlaying()
 
 bool RageSound::IsLoaded() const
 {
-	return m_pSource != NULL;
+	return m_pSource != nullptr;
 }
 
 class RageSoundReader_Silence: public RageSoundReader
@@ -166,7 +166,7 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 {
 	LOG->Trace( "RageSound: Load \"%s\" (precache: %i)", sSoundFilePath.c_str(), bPrecache );
 
-	if( pParams == NULL )
+	if( pParams == nullptr )
 	{
 		static const RageSoundLoadParams Defaults;
 		pParams = &Defaults;
@@ -176,12 +176,12 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 	 * of that.  Since RageSoundReader_Preload is refcounted, this is cheap. */
 	RageSoundReader *pSound = SOUNDMAN->GetLoadedSound( sSoundFilePath );
 	bool bNeedBuffer = true;
-	if( pSound == NULL )
+	if( pSound == nullptr )
 	{
 		RString error;
 		bool bPrebuffer;
 		pSound = RageSoundReader_FileReader::OpenFile( sSoundFilePath, error, &bPrebuffer );
-		if( pSound == NULL )
+		if( pSound == nullptr )
 		{
 			LOG->Warn( "RageSound::Load: error opening sound \"%s\": %s",
 				sSoundFilePath.c_str(), error.c_str() );
@@ -272,7 +272,7 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 //	LockMut(m_Mutex);
 
 	ASSERT_M( m_bPlaying, ssprintf("%p", this) );
-	ASSERT( m_pSource != NULL );
+	ASSERT( m_pSource != nullptr );
 
 	iFramesStored = 0;
 	iStreamFrame = m_iStreamFrame;
@@ -370,7 +370,7 @@ void RageSound::SoundIsFinishedPlaying()
 		return;
 
 	/* Get our current hardware position. */
-	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( NULL );
+	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition(nullptr);
 
 	m_Mutex.Lock();
 
@@ -400,7 +400,7 @@ void RageSound::SoundIsFinishedPlaying()
 
 void RageSound::Play(bool is_action, const RageSoundParams *pParams)
 {
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 	{
 		LOG->Warn( "RageSound::Play: sound not loaded" );
 		return;
@@ -444,7 +444,7 @@ void RageSound::Stop()
 
 bool RageSound::Pause( bool bPause )
 {
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 	{
 		LOG->Warn( "RageSound::Pause: sound not loaded" );
 		return false;
@@ -455,7 +455,7 @@ bool RageSound::Pause( bool bPause )
 
 float RageSound::GetLengthSeconds()
 {
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 	{
 		LOG->Warn( "RageSound::GetLengthSeconds: sound not loaded" );
 		return -1;
@@ -487,10 +487,10 @@ int RageSound::GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bA
 	return (int) iSourceFrame;
 }
 
-/* If non-NULL, approximate is set to true if the returned time is approximated because of
+/* If non-nullptr, approximate is set to true if the returned time is approximated because of
  * underrun, the sound not having started (after Play()) or finished (after EOF) yet.
  *
- * If non-NULL, Timestamp is set to the real clock time associated with the returned sound
+ * If non-nullptr, Timestamp is set to the real clock time associated with the returned sound
  * position.  We might take a variable amount of time before grabbing the timestamp (to
  * lock SOUNDMAN); we might lose the scheduler after grabbing it, when releasing SOUNDMAN.
  */
@@ -529,7 +529,7 @@ bool RageSound::SetPositionFrames( int iFrames )
 {
 	LockMut( m_Mutex );
 
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 	{
 		LOG->Warn( "RageSound::SetPositionFrames(%d): sound not loaded", iFrames );
 		return false;
@@ -573,7 +573,7 @@ void RageSound::SetParams( const RageSoundParams &p )
 
 void RageSound::ApplyParams()
 {
-	if( m_pSource == NULL )
+	if( m_pSource == nullptr )
 		return;
 
 	m_pSource->SetProperty( "Pitch", m_Param.m_fPitch );
@@ -583,7 +583,7 @@ void RageSound::ApplyParams()
 	m_pSource->SetProperty( "FadeInSeconds", m_Param.m_fFadeInSeconds );
 	m_pSource->SetProperty( "FadeSeconds", m_Param.m_fFadeOutSeconds );
 
-	float fVolume = m_Param.m_Volume * SOUNDMAN->GetMixVolume();
+	float fVolume = m_Param.m_Volume;
 	if( !m_Param.m_bIsCriticalSound )
 		fVolume *= m_Param.m_fAttractVolume;
 	m_pSource->SetProperty( "Volume", fVolume );
@@ -654,7 +654,7 @@ public:
 	static int get_length(T* p, lua_State* L)
 	{
 		RageSoundReader* reader= p->GetSoundReader();
-		if(reader == NULL)
+		if(reader == nullptr)
 		{
 			lua_pushnumber(L, -1.0f);
 		}

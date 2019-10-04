@@ -1,7 +1,7 @@
 #include "global.h"
 #include "LightsDriver.h"
 #include "RageLog.h"
-#include "Foreach.h"
+
 #include "arch/arch_default.h"
 
 DriverList LightsDriver::m_pDriverList;
@@ -13,21 +13,30 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 	vector<RString> asDriversToTry;
 	split( sDrivers, ",", asDriversToTry, true );
 	
-	FOREACH_CONST( RString, asDriversToTry, Driver )
+	for (RString const &Driver : asDriversToTry)
 	{
-		RageDriver *pRet = m_pDriverList.Create( *Driver );
-		if( pRet == NULL )
+		RageDriver *pRet = m_pDriverList.Create( Driver );
+		if( pRet == nullptr )
 		{
-			LOG->Trace( "Unknown lights driver: %s", Driver->c_str() );
+			LOG->Trace( "Unknown lights driver: %s", Driver.c_str() );
 			continue;
 		}
 
 		LightsDriver *pDriver = dynamic_cast<LightsDriver *>( pRet );
-		ASSERT( pDriver != NULL );
+		ASSERT( pDriver != nullptr );
 
-		LOG->Info( "Lights driver: %s", Driver->c_str() );
+		LOG->Info( "Lights driver: %s", Driver.c_str() );
 		Add.push_back( pDriver );
 	}
+}
+
+void LightsDriver::Reset()
+{
+	LightsState state;
+	ZERO( state.m_bCabinetLights );
+	ZERO( state.m_bGameButtonLights );
+	ZERO( state.m_bCoinCounter );
+	Set( &state );
 }
 
 /*

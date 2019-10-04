@@ -40,6 +40,6 @@ In short- you can do anything you like with the game (including sell products ma
 
 For specific information/legalese:
 
-* All of the our source code is under the [MIT license](http://opensource.org/licenses/MIT).
+* All of our source code is under the [MIT license](http://opensource.org/licenses/MIT).
 * Any songs that are included within this repository are under the [<abbr title="Creative Commons Non-Commercial">CC-NC</abbr> license](https://creativecommons.org/).
 * The [MAD library](http://www.underbit.com/products/mad/) and [FFmpeg codecs](https://www.ffmpeg.org/) when built with our code use the [GPL license](http://www.gnu.org).

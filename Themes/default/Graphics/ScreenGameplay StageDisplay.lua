@@ -9,8 +9,8 @@ local t = Def.ActorFrame {
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentTraiP1ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentTraiP2ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentTrailPl2ChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
 		local curStage = GAMESTATE:GetCurrentStage();
 			self:diffuse(ColorMidTone(StageToColor(curStage)))
@@ -22,8 +22,8 @@ local t = Def.ActorFrame {
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentTraiP1ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentTraiP2ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
 			local curStage = GAMESTATE:GetCurrentStage();
 			if GAMESTATE:IsCourseMode() then

@@ -103,7 +103,7 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 		while( got < size-1 )
 		{
 			char *p = (char *) memchr( file, '\n', file_used );
-			if( p == NULL )
+			if( p == nullptr )
 				break;
 			*p++ = 0;
 
@@ -114,13 +114,13 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 
 			/* Search for the hyphen. */
 			char *hyphen = strchr( line, '-' );
-			if( hyphen == NULL )
+			if( hyphen == nullptr )
 				continue; /* Parse error. */
 
 
 			/* Search for the space. */
 			char *space = strchr( hyphen, ' ' );
-			if( space == NULL )
+			if( space == nullptr )
 				continue; /* Parse error. */
 
 			/* " rwxp".  If space[1] isn't 'r', then the block isn't readable. */
@@ -132,10 +132,10 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 				if( strlen(space) < 4 || space[3] != 'x' )
 					continue;
 
-			/* If, for some reason, either end is NULL, skip it; that's our terminator. */
+			/* If, for some reason, either end is nullptr, skip it; that's our terminator. */
 			const void *start = (const void *) xtoi( line );
 			const void *end = (const void *) xtoi( hyphen+1 );
-			if( start != NULL && end != NULL )
+			if( start != nullptr && end != nullptr )
 			{
 				*starts++ = start;
 				*ends++ = end;
@@ -153,8 +153,8 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 
 	close(fd);
 
-	*starts++ = NULL;
-	*ends++ = NULL;
+	*starts++ = nullptr;
+	*ends++ = nullptr;
 
 	return got;
 }
@@ -173,7 +173,7 @@ static int find_address( const void *p, const void **starts, const void **ends )
 	return -1;
 }
 
-static void *SavedStackPointer = NULL;
+static void *SavedStackPointer = nullptr;
 
 void InitializeBacktrace()
 {
@@ -380,7 +380,7 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 		frame = frame->link;
 	}
 
-	buf[i] = NULL;
+	buf[i] = nullptr;
 }
 
 #if defined(CPU_X86)
@@ -408,11 +408,11 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	InitializeBacktrace();
 	
 	BacktraceContext CurrentCtx;
-	if( ctx == NULL )
+	if( ctx == nullptr )
 	{
 		ctx = &CurrentCtx;
 
-		CurrentCtx.ip = NULL;
+		CurrentCtx.ip = nullptr;
 		CurrentCtx.bp = __builtin_frame_address(0);
 		CurrentCtx.sp = __builtin_frame_address(0);
 		CurrentCtx.pid = GetCurrentThreadId();
@@ -441,7 +441,7 @@ static bool GetRegionInfo( mach_port_t self, const void *address, vm_address_t &
 	mach_port_t unused;
 	vm_size_t size = 0;
 	vm_address_t start = vm_address_t( address );
-	kern_return_t ret = vm_region( self, &start, &size, VM_REGION_BASIC_INFO_64,
+	kern_return_t ret = vm_region_64( self, &start, &size, VM_REGION_BASIC_INFO_64,
 				       (vm_region_info_t)&info, &infoCnt, &unused );
 	
 	if( ret != KERN_SUCCESS ||
@@ -543,16 +543,16 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	if( g_StackPointer == 0 )
 	{
 		buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
-		buf[1] = NULL;
+		buf[1] = nullptr;
 		return;
 	}
 	
 	BacktraceContext CurrentCtx;
-	if( ctx == NULL )
+	if( ctx == nullptr )
 	{
 		ctx = &CurrentCtx;
 		
-		CurrentCtx.ip = NULL;
+		CurrentCtx.ip = nullptr;
 		CurrentCtx.bp = __builtin_frame_address(0);
 		CurrentCtx.sp = __builtin_frame_address(0);
 	}
@@ -582,7 +582,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	{
 		/* There isn't much we can do if this is the case. The stack should be read/write
 		 * and since it isn't, give up. */
-		buf[i] = NULL;
+		buf[i] = nullptr;
 		return;
 	}
 	const Frame *frame = (Frame *)ctx->sp;
@@ -640,7 +640,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 		frame = frame->link;
 	}
 
-	buf[i] = NULL;	
+	buf[i] = nullptr;	
 }
 #undef PROT_RW
 #undef PROT_EXE
@@ -664,14 +664,14 @@ void InitializeBacktrace() { }
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	BacktraceContext CurrentCtx;
-	if( ctx == NULL )
+	if( ctx == nullptr )
 	{
 		ctx = &CurrentCtx;
 
 		/* __builtin_frame_address is broken on OS X; it sometimes returns bogus results. */
 		register void *r1 __asm__ ("r1");
 		CurrentCtx.FramePtr = (const Frame *) r1;
-		CurrentCtx.PC = NULL;
+		CurrentCtx.PC = nullptr;
 	}
 	
 	const Frame *frame = ctx->FramePtr;
@@ -688,7 +688,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 		frame = frame->stackPointer;
 	}
 
-	buf[i] = NULL;
+	buf[i] = nullptr;
 }
 
 #elif defined(BACKTRACE_METHOD_PPC_LINUX)
@@ -713,13 +713,13 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	BacktraceContext CurrentCtx;
 
-	if( ctx == NULL )
+	if( ctx == nullptr )
 	{
 		ctx = &CurrentCtx;
 
 		register void *r1 __asm__("1");
 		CurrentCtx.FramePtr = (const Frame *)r1;
-		CurrentCtx.PC = NULL;
+		CurrentCtx.PC = nullptr;
 	}
 
 	const Frame *frame = (const Frame *)ctx->FramePtr;
@@ -733,7 +733,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 		if( frame->linkReg )
 			buf[i++] = frame->linkReg;
 	}
-	buf[i] = NULL;
+	buf[i] = nullptr;
 }
 
 #else
@@ -744,7 +744,7 @@ void InitializeBacktrace() { }
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
     buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
-    buf[1] = NULL;
+    buf[1] = nullptr;
 }
 
 #endif

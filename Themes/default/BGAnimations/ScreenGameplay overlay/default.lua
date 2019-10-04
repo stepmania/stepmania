@@ -58,16 +58,16 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 				local life_tween = string.find(pn, "P1") and -1 or 1
 				local second_tween = string.find(pn, "P1") and 1 or -1
 				t[#t+1] = Def.ActorFrame {
-					InitCommand=cmd(x,life_x_position;y,SCREEN_CENTER_Y;rotationz,-90;);
-					OnCommand=cmd(addx,100*life_tween;sleep,1;decelerate,0.9;addx,100*second_tween);
-					OffCommand=cmd(sleep,1;decelerate,0.9;addx,100*life_tween;);
+					InitCommand=cmd(x,life_x_position;y,SCREEN_CENTER_Y;rotationz,-90);
+					OnCommand=cmd(addx,100*life_tween;sleep,0.25;decelerate,0.9;addx,100*second_tween);
+					OffCommand=cmd(sleep,1;decelerate,0.9;addx,100*life_tween);
 					LoadActor(THEME:GetPathG("LifeMeter", "bar frame")) .. {
 					};
 					Def.ActorFrame {
-						InitCommand=cmd(x,-207;y,0;);
+						InitCommand=cmd(x,-207;y,0);
 						LoadActor("_diffdia") .. {
-						OnCommand=cmd(playcommand,"Set";);
-						["CurrentSteps"..ToEnumShortString(pn).."ChangedMessageCommand"]=cmd(playcommand,"Set";);
+						OnCommand=cmd(playcommand,"Set");
+						["CurrentSteps"..ToEnumShortString(pn).."ChangedMessageCommand"]=cmd(playcommand,"Set");
 						SetCommand=function(self)
 							steps_data = GAMESTATE:GetCurrentSteps(pn)
 							local song = GAMESTATE:GetCurrentSong();
@@ -83,8 +83,8 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 						};
 						LoadFont("StepsDisplay description") .. {
 							  InitCommand=cmd(zoom,0.75;horizalign,center;rotationz,90);
-							  OnCommand=cmd(playcommand,"Set";);
-							  ["CurrentSteps"..ToEnumShortString(pn).."ChangedMessageCommand"]=cmd(playcommand,"Set";);
+							  OnCommand=cmd(playcommand,"Set");
+							  ["CurrentSteps"..ToEnumShortString(pn).."ChangedMessageCommand"]=cmd(playcommand,"Set");
 							  ChangedLanguageDisplayMessageCommand=cmd(playcommand,"Set");
 							  SetCommand=function(self)
 								steps_data = GAMESTATE:GetCurrentSteps(pn)
@@ -112,12 +112,12 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 	if GAMESTATE:GetPlayMode() == 'PlayMode_Rave' then
 	-- P1
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=cmd(x,SCREEN_CENTER_X-110;y,SCREEN_BOTTOM-55;);
+		InitCommand=cmd(x,SCREEN_CENTER_X-110;y,SCREEN_BOTTOM-55);
 		LoadActor("_diffdia") .. {
-		OnCommand=cmd(playcommand,"Set";);
-		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set";);
+		OnCommand=cmd(playcommand,"Set");
+		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
-			stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+			local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 			local song = GAMESTATE:GetCurrentSong();
 			if song then
 				if stepsP1 ~= nil then
@@ -130,12 +130,12 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 		end;
 		};
 		LoadFont("StepsDisplay description") .. {
-			  InitCommand=cmd(zoom,0.75;horizalign,center;);
-			  OnCommand=cmd(playcommand,"Set";);
-			  CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set";);
+			  InitCommand=cmd(zoom,0.75;horizalign,center);
+			  OnCommand=cmd(playcommand,"Set");
+			  CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 			  ChangedLanguageDisplayMessageCommand=cmd(playcommand,"Set");
 			  SetCommand=function(self)
-				stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+				local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
 				local song = GAMESTATE:GetCurrentSong();
 				if song then
 					if stepsP1 ~= nil then
@@ -154,12 +154,12 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 	};
 	-- P2
 		t[#t+1] = Def.ActorFrame {
-		InitCommand=cmd(x,SCREEN_CENTER_X+110;y,SCREEN_BOTTOM-55;);
+		InitCommand=cmd(x,SCREEN_CENTER_X+110;y,SCREEN_BOTTOM-55);
 		LoadActor("_diffdia") .. {
-		OnCommand=cmd(playcommand,"Set";);
-		CurrentstepsP2ChangedMessageCommand=cmd(playcommand,"Set";);
+		OnCommand=cmd(playcommand,"Set");
+		CurrentstepsP2ChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
-			stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+			local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 			local song = GAMESTATE:GetCurrentSong();
 			if song then
 				if stepsP2 ~= nil then
@@ -173,11 +173,11 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 		};
 		LoadFont("StepsDisplay description") .. {
 			  InitCommand=cmd(zoom,0.75;horizalign,center);
-			  OnCommand=cmd(playcommand,"Set";);
-			  CurrentstepsP2ChangedMessageCommand=cmd(playcommand,"Set";);
+			  OnCommand=cmd(playcommand,"Set");
+			  CurrentstepsP2ChangedMessageCommand=cmd(playcommand,"Set");
 			  ChangedLanguageDisplayMessageCommand=cmd(playcommand,"Set");
 			  SetCommand=function(self)
-				stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+				local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 				local song = GAMESTATE:GetCurrentSong();
 				if song then
 					if stepsP2 ~= nil then
@@ -198,9 +198,9 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 
 	t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=cmd(x,SCREEN_CENTER_X+103;y,SCREEN_BOTTOM-25;);
-		OnCommand=cmd(draworder,DrawOrder.Screen;addy,100;sleep,0.5;decelerate,0.7;addy,-100;);
-		OffCommand=cmd(sleep,1;decelerate,0.9;addy,100;);
+		InitCommand=cmd(x,SCREEN_CENTER_X+103;y,SCREEN_BOTTOM-25);
+		OnCommand=cmd(draworder,DrawOrder.Screen;addy,100;sleep,0.5;decelerate,0.7;addy,-100);
+		OffCommand=cmd(sleep,1;decelerate,0.9;addy,100);
 		Def.Quad {
 			InitCommand=cmd(zoomto,264,12);
 			OnCommand=cmd(diffuse,Color.Black;diffusealpha,0.3;fadeleft,0.05;faderight,0.05);
@@ -220,11 +220,17 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 		Def.SongMeterDisplay {
 			StreamWidth=260;
 			Stream=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'stream') )..{
-				InitCommand=cmd(diffuse,Color.White;diffusealpha,0.4;blend,Blend.Add;);
+				InitCommand=cmd(diffuse,Color.White;diffusealpha,0.4;blend,Blend.Add);
 			};
 			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip')) .. { 
 			InitCommand=cmd(visible,false); 
 			};
 		};
 	};
+	
+	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+		t[#t+1] = LoadActor("_fcsplash", pn) .. {
+		};
+	end;
+
 return t

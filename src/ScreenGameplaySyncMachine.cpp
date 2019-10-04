@@ -98,11 +98,11 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 	{
 		FOREACH_PlayerNumber( pn )
 		{
-			GAMESTATE->m_pCurSteps[pn].Set( NULL );
+			GAMESTATE->m_pCurSteps[pn].Set( nullptr );
 		}
 		GAMESTATE->m_PlayMode.Set( PlayMode_Invalid );
-		GAMESTATE->SetCurrentStyle( NULL, PLAYER_INVALID );
-		GAMESTATE->m_pCurSong.Set( NULL );
+		GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
+		GAMESTATE->m_pCurSong.Set( nullptr );
 	}
 }
 

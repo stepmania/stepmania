@@ -1,7 +1,6 @@
 #include "global.h"
 #include "JoystickDevice.h"
 #include "RageLog.h"
-#include "Foreach.h"
 
 using __gnu_cxx::hash_map;
 
@@ -128,9 +127,8 @@ void JoystickDevice::AddElement( int usagePage, int usage, IOHIDElementCookie co
 void JoystickDevice::Open()
 {
 	// Add elements to the queue for each Joystick
-	FOREACH_CONST( Joystick, m_vSticks, i )
+	for (Joystick const &js : m_vSticks)
 	{
-		const Joystick& js = *i;
 #define ADD(x) if( js.x ) AddElementToQueue( js.x )
 		ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
@@ -156,10 +154,8 @@ bool JoystickDevice::InitDevice( int vid, int pid )
 
 void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
-	FOREACH_CONST( Joystick, m_vSticks, i )
+	for (Joystick const &js : m_vSticks)
 	{
-		const Joystick& js = *i;
-
 		if( js.x_axis == cookie )
 		{
 			float level = SCALE( value, js.x_min, js.x_max, -1.0f, 1.0f );
@@ -251,7 +247,7 @@ int JoystickDevice::AssignIDs( InputDevice startID )
 {
 	if( !IsJoystick(startID) )
 		return -1;
-	FOREACH( Joystick, m_vSticks, i )
+	for (auto i = m_vSticks.begin(); i != m_vSticks.end(); ++i)
 	{
 		if( !IsJoystick(startID) )
 		{
@@ -266,8 +262,8 @@ int JoystickDevice::AssignIDs( InputDevice startID )
 
 void JoystickDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
 {
-	FOREACH_CONST( Joystick, m_vSticks, i )
-		vDevices.push_back( InputDeviceInfo(i->id,GetDescription()) );
+	for (auto &i : m_vSticks)
+		vDevices.push_back( InputDeviceInfo(i.id,GetDescription()) );
 }
 
 /*

@@ -263,7 +263,7 @@ static int get_this_frame_byte( const madlib_t *mad )
 	int ret = mad->inbuf_filepos;
 
 	/* If we have a frame, adjust. */
-	if( mad->Stream.this_frame != NULL )
+	if( mad->Stream.this_frame != nullptr )
 		ret += mad->Stream.this_frame-mad->inbuf;
 
 	return ret;
@@ -324,7 +324,7 @@ int RageSoundReader_MP3::fill_buffer()
 {
 	/* Need more data. */
 	int inbytes = 0;
-	if( mad->Stream.next_frame != NULL )
+	if( mad->Stream.next_frame != nullptr )
 	{
 		/* Pull out remaining data from the last buffer. */
 		inbytes = mad->Stream.bufend-mad->Stream.next_frame;
@@ -738,7 +738,7 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 
 	mad_stream_finish(&mad->Stream);
 	mad_stream_init(&mad->Stream);
-	mad_stream_buffer(&mad->Stream, NULL, 0);
+	mad_stream_buffer(&mad->Stream, nullptr, 0);
 	mad->inbuf_filepos = 0;
 
 	/* Be careful.  We need to leave header_bytes alone, so if we try to SetPosition_estimate
@@ -747,7 +747,7 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 	 * set it, then we'll be desynced by a frame after an accurate seek. */
 //	mad->header_bytes = 0;
 	mad->first_frame = true;
-	mad->Stream.this_frame = NULL;
+	mad->Stream.this_frame = nullptr;
 
 	return true;
 }

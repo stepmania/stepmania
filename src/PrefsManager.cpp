@@ -1,6 +1,5 @@
 #include "global.h"
 #include "PrefsManager.h"
-#include "Foreach.h"
 #include "IniFile.h"
 #include "LuaManager.h"
 #include "Preference.h"
@@ -20,7 +19,7 @@
 //STATIC_INI_PATH	= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
 //TYPE_TXT_FILE	= "Data/Type.txt";
 
-PrefsManager*	PREFSMAN = NULL;	// global and accessible from anywhere in our program
+PrefsManager*	PREFSMAN = nullptr;	// global and accessible from anywhere in our program
 
 static const char *MusicWheelUsesSectionsNames[] = {
 	"Never",
@@ -169,10 +168,10 @@ PrefsManager::PrefsManager() :
 	m_iMaxTextureResolution		( "MaxTextureResolution",	2048 ),
 	m_iRefreshRate			( "RefreshRate",		REFRESH_DEFAULT ),
 	m_bAllowMultitexture		( "AllowMultitexture",		true ),
-	m_bFullscreenIsBorderlessWindow( "FullscreenIsBorderlessWindow", false ),
+	m_bFullscreenIsBorderlessWindow( "FullscreenIsBorderlessWindow", true ),
 	m_bShowStats			( "ShowStats",			TRUE_IF_DEBUG),
 	m_bShowBanners			( "ShowBanners",		true ),
-	m_bShowMouseCursor		( "ShowMouseCursor",		true ),
+	m_bShowMouseCursor		( "ShowMouseCursor",		false ),
 
 	m_bHiddenSongs			( "HiddenSongs",		false ),
 	m_bVsync			( "Vsync",			true ),
@@ -231,7 +230,7 @@ PrefsManager::PrefsManager() :
 	m_bLockCourseDifficulties	( "LockCourseDifficulties",		true ),
 	m_ShowDancingCharacters		( "ShowDancingCharacters",		SDC_Random ),
 	m_bUseUnlockSystem		( "UseUnlockSystem",			false ),
-	m_fGlobalOffsetSeconds		( "GlobalOffsetSeconds",		0 ),
+	m_fGlobalOffsetSeconds		( "GlobalOffsetSeconds",		-0.008f ),
 	m_iProgressiveLifebar		( "ProgressiveLifebar",			0 ),
 	m_iProgressiveStageLifebar	( "ProgressiveStageLifebar",		0 ),
 	m_iProgressiveNonstopLifebar	( "ProgressiveNonstopLifebar",		0 ),
@@ -245,7 +244,7 @@ PrefsManager::PrefsManager() :
 	m_fCenterImageAddWidth		( "CenterImageAddWidth",		0 ),
 	m_fCenterImageAddHeight		( "CenterImageAddHeight",		0 ),
 	m_AttractSoundFrequency		( "AttractSoundFrequency",		ASF_EVERY_TIME ),
-	m_bAllowExtraStage		( "AllowExtraStage",			true ),
+	m_bAllowExtraStage		( "AllowExtraStage",			false ),
 	m_iMaxHighScoresPerListForMachine	( "MaxHighScoresPerListForMachine",	10 ),
 	m_iMaxHighScoresPerListForPlayer	( "MaxHighScoresPerListForPlayer",	3 ),
 	m_bAllowMultipleHighScoreWithSameName	( "AllowMultipleHighScoreWithSameName",	true ),
@@ -274,6 +273,7 @@ PrefsManager::PrefsManager() :
 	m_bSmoothLines			( "SmoothLines",			false ),
 	m_iSoundWriteAhead		( "SoundWriteAhead",			0 ),
 	m_iSoundDevice			( "SoundDevice",			"" ),
+	m_iRageSoundSampleCountClamp	("RageSoundSampleCountClamp", 0), //some sound drivers mask the sample location number, the most popular number for this is 2^27, this causes lockup after ~50 minutes at 44.1khz sample rate
 	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		0 ),
 	m_sLightsStepsDifficulty	( "LightsStepsDifficulty",		"medium" ),
 	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ), 
@@ -445,7 +445,7 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection
 
 	/*
 	IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
-	if( pPref == NULL )
+	if( pPref == nullptr )
 	{
 		LOG->Warn( "Unknown preference in [%s]: %s", sClassName.c_str(), sName->c_str() );
 		continue;
@@ -513,18 +513,18 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 		StoreGamePrefs();
 
 	XNode* pNode = ini.GetChild( "Options" );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		pNode = ini.AppendChild( "Options" );
 	IPreference::SavePrefsToNode( pNode );
 
-	FOREACHM_CONST( RString, GamePrefs, m_mapGameNameToGamePrefs, iter )
+	for (auto const &iter : m_mapGameNameToGamePrefs)
 	{
-		RString sSection = "Game-" + RString( iter->first );
+		RString sSection = "Game-" + RString( iter.first );
 
 		// todo: write more values here? -aj
-		ini.SetValue( sSection, "Announcer",		iter->second.m_sAnnouncer );
-		ini.SetValue( sSection, "Theme",		iter->second.m_sTheme );
-		ini.SetValue( sSection, "DefaultModifiers",	iter->second.m_sDefaultModifiers );
+		ini.SetValue( sSection, "Announcer",		iter.second.m_sAnnouncer );
+		ini.SetValue( sSection, "Theme",		iter.second.m_sTheme );
+		ini.SetValue( sSection, "DefaultModifiers",	iter.second.m_sDefaultModifiers );
 	}
 }
 
@@ -554,7 +554,7 @@ public:
 	{
 		RString sName = SArg(1);
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "GetPreference: unknown preference \"%s\"", sName.c_str() );
 			lua_pushnil( L );
@@ -569,7 +569,7 @@ public:
 		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreference: unknown preference \"%s\"", sName.c_str() );
 			COMMON_RETURN_SELF;
@@ -584,7 +584,7 @@ public:
 		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
 			COMMON_RETURN_SELF;
@@ -599,7 +599,7 @@ public:
 		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			lua_pushboolean( L, false );
 			return 1;

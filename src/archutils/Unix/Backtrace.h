@@ -9,7 +9,7 @@ struct Frame;
 /* This contains the information necessary to backtrace a thread. */
 struct BacktraceContext
 {
-#if defined(CPU_X86) || defined(CPU_X86_64)
+#if defined(CPU_X86) || defined(CPU_X86_64) || defined(__APPLE__)
 	const void *ip, *bp, *sp;
 #endif
 
@@ -31,10 +31,10 @@ struct BacktraceContext
 void InitializeBacktrace();
 
 /* Retrieve up to size-1 backtrace pointers in buf.  The array will be
- * null-terminated.  If ctx is NULL, retrieve the current backtrace; otherwise
+ * null-terminated.  If ctx is nullptr, retrieve the current backtrace; otherwise
  * retrieve a backtrace for the given context.  (Not all backtracers may
  * support contexts.) */
-void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx = NULL );
+void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx = nullptr );
 
 /* Set up a BacktraceContext to get a backtrace for a thread.  ThreadID may
  * not be the current thread.  True is returned on success, false on failure. */
@@ -56,7 +56,7 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc );
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -66,7 +66,7 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -10,7 +10,6 @@
 #include "Course.h"
 #include "Style.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "XmlFile.h"
 #include "PlayerStageStats.h"
@@ -131,7 +130,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
-	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
+	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : nullptr;
 	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
 
 	// Defaults, will be filled in later
@@ -191,7 +190,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 
 	{
 		RadarValues rv;
-		HighScoreList *pHSL = NULL;
+		HighScoreList *pHSL = nullptr;
 		ProfileSlot slot = ProfileSlot_Machine;
 		switch( c )
 		{

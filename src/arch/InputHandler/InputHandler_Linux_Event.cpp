@@ -271,11 +271,11 @@ EventDevice::~EventDevice()
 }
 
 InputHandler_Linux_Event::InputHandler_Linux_Event()
+	: m_bShutdown(true)
+	, m_bDevicesChanged(false)
+	, m_NextDevice(DEVICE_JOY10)
 {
-	m_NextDevice = DEVICE_JOY10;
-	m_bDevicesChanged = false;
-
-	if(LINUXINPUT == NULL) LINUXINPUT = new LinuxInputManager;
+	if(LINUXINPUT == nullptr) LINUXINPUT = new LinuxInputManager;
 	LINUXINPUT->InitDriver(this);
 
 	if( ! g_apEventDevices.empty() ) // LinuxInputManager found at least one valid device for us
@@ -362,7 +362,7 @@ void InputHandler_Linux_Event::InputThread()
 			break;
 
 		struct timeval zero = {0,100000};
-		if( select(iMaxFD+1, &fdset, NULL, NULL, &zero) <= 0 )
+		if( select(iMaxFD+1, &fdset, nullptr, nullptr, &zero) <= 0 )
 			continue;
 		RageTimer now;
 

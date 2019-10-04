@@ -77,7 +77,7 @@ return Def.CourseContentsList {
 -- 					self:glow("1,1,1,0");
 				end
 				
-				--(cmd(finishtweening;diffusealpha,0;sleep,0.125*params.Number;smooth,0.2;diffusealpha,1;))(self);
+				--(cmd(finishtweening;diffusealpha,0;sleep,0.125*params.Number;smooth,0.2;diffusealpha,1))(self);
 			end
 		},
 

@@ -74,7 +74,7 @@ int RageSoundDriver_DSound_Software::MixerThread_start(void *p)
 RageSoundDriver_DSound_Software::RageSoundDriver_DSound_Software()
 {
 	m_bShutdownMixerThread = false;
-	m_pPCM = NULL;
+	m_pPCM = nullptr;
 }
 
 RString RageSoundDriver_DSound_Software::Init()

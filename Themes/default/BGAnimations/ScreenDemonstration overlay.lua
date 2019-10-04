@@ -26,8 +26,7 @@ return Def.ActorFrame{
 	
 	-- A temporary frame for the jacket.
 	Def.Quad {
-		InitCommand=cmd(horizalign,right;vertalign,bottom;x,_screen.w-39;y,_screen.h-14;zoomto,192,192;
-			diffuse,ColorDarkTone(ScreenColor("Default"));diffusealpha,0.9)
+		InitCommand=cmd(horizalign,right;vertalign,bottom;x,_screen.w-39;y,_screen.h-14;zoomto,192,192;diffuse,ColorDarkTone(ScreenColor("Default"));diffusealpha,0.9)
 	},
 	-- Jacket (real or not) of the currently playing song.
 	-- todo: make getting the jacket a bit more of a... global function?

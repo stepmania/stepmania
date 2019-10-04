@@ -7,12 +7,12 @@
 
 const int MAX_THREADS=128;
 
-static MutexImpl_Win32 *g_pThreadIdMutex = NULL;
+static MutexImpl_Win32 *g_pThreadIdMutex = nullptr;
 static void InitThreadIdMutex()
 {
-	if( g_pThreadIdMutex != NULL )
+	if( g_pThreadIdMutex != nullptr )
 		return;
-	g_pThreadIdMutex = new MutexImpl_Win32(NULL);
+	g_pThreadIdMutex = new MutexImpl_Win32(nullptr);
 }
 
 static uint64_t g_ThreadIds[MAX_THREADS];
@@ -26,7 +26,7 @@ HANDLE Win32ThreadIdToHandle( uint64_t iID )
 			return g_ThreadHandles[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ThreadImpl_Win32::Halt( bool Kill )
@@ -55,7 +55,7 @@ int ThreadImpl_Win32::Wait()
 	GetExitCodeThread( ThreadHandle, &ret );
 
 	CloseHandle( ThreadHandle );
-	ThreadHandle = NULL;
+	ThreadHandle = nullptr;
 
 	return ret;
 }
@@ -100,7 +100,7 @@ static DWORD WINAPI StartThread( LPVOID pData )
 	{
 		if( g_ThreadIds[i] == RageThread::GetCurrentThreadID() )
 		{
-			g_ThreadHandles[i] = NULL;
+			g_ThreadHandles[i] = nullptr;
 			g_ThreadIds[i] = 0;
 			break;
 		}
@@ -143,7 +143,7 @@ ThreadImpl *MakeThisThread()
 //		LOG->Warn( werr_ssprintf( GetLastError(), "DuplicateHandle(%p, %p) failed",
 //			CurProc, GetCurrentThread() ) );
 
-		thread->ThreadHandle = NULL;
+		thread->ThreadHandle = nullptr;
 	}
 
 	thread->ThreadId = GetCurrentThreadId();
@@ -160,9 +160,9 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	thread->m_pFunc = pFunc;
 	thread->m_pData = pData;
 
-	thread->ThreadHandle = CreateThread( NULL, 0, &StartThread, thread, CREATE_SUSPENDED, &thread->ThreadId );
+	thread->ThreadHandle = CreateThread( nullptr, 0, &StartThread, thread, CREATE_SUSPENDED, &thread->ThreadId );
 	*piThreadID = (uint64_t) thread->ThreadId;
-	ASSERT_M( thread->ThreadHandle != NULL, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread").c_str() ) );
+	ASSERT_M( thread->ThreadHandle != nullptr, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread").c_str() ) );
 
 	int slot = GetOpenSlot( thread->ThreadId );
 	g_ThreadHandles[slot] = thread->ThreadHandle;
@@ -177,8 +177,8 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 MutexImpl_Win32::MutexImpl_Win32( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
-	mutex = CreateMutex( NULL, false, NULL );
-	ASSERT_M( mutex != NULL, werr_ssprintf(GetLastError(), "CreateMutex") );
+	mutex = CreateMutex( nullptr, false, nullptr );
+	ASSERT_M( mutex != nullptr, werr_ssprintf(GetLastError(), "CreateMutex") );
 }
 
 MutexImpl_Win32::~MutexImpl_Win32()
@@ -188,7 +188,7 @@ MutexImpl_Win32::~MutexImpl_Win32()
 
 static bool SimpleWaitForSingleObject( HANDLE h, DWORD ms )
 {
-	ASSERT( h != NULL );
+	ASSERT( h != nullptr );
 
 	DWORD ret = WaitForSingleObject( h, ms );
 	switch( ret )
@@ -266,9 +266,9 @@ EventImpl_Win32::EventImpl_Win32( MutexImpl_Win32 *pParent )
 {
 	m_pParent = pParent;
 	m_iNumWaiting = 0;
-	m_WakeupSema = CreateSemaphore( NULL, 0, 0x7fffffff, NULL );
+	m_WakeupSema = CreateSemaphore( nullptr, 0, 0x7fffffff, nullptr );
 	InitializeCriticalSection( &m_iNumWaitingLock );
-	m_WaitersDone = CreateEvent( NULL, FALSE, FALSE, NULL );
+	m_WaitersDone = CreateEvent( nullptr, FALSE, FALSE, nullptr );
 }
 
 EventImpl_Win32::~EventImpl_Win32()
@@ -356,7 +356,7 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
 	unsigned iMilliseconds = INFINITE;
-	if( pTimeout != NULL )
+	if( pTimeout != nullptr )
 	{
 		float fSecondsInFuture = -pTimeout->Ago();
 		iMilliseconds = (unsigned) max( 0, int( fSecondsInFuture * 1000 ) );
@@ -435,7 +435,7 @@ EventImpl *MakeEvent( MutexImpl *pMutex )
 
 SemaImpl_Win32::SemaImpl_Win32( int iInitialValue )
 {
-	sem = CreateSemaphore( NULL, iInitialValue, 999999999, NULL );
+	sem = CreateSemaphore( nullptr, iInitialValue, 999999999, nullptr );
 	m_iCounter = iInitialValue;
 }
 
@@ -447,7 +447,7 @@ SemaImpl_Win32::~SemaImpl_Win32()
 void SemaImpl_Win32::Post()
 {
 	++m_iCounter;
-	ReleaseSemaphore( sem, 1, NULL );
+	ReleaseSemaphore( sem, 1, nullptr );
 }
 
 bool SemaImpl_Win32::Wait()

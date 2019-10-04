@@ -205,7 +205,7 @@ XmlToLua.cpp XmlToLua.h \
 XmlFileUtil.cpp XmlFileUtil.h
 
 StepMania = CommandLineActions.h CommandLineActions.cpp \
-StdString.h Foreach.h \
+StdString.h \
 StepMania.cpp StepMania.h \
 GameLoop.cpp GameLoop.h \
 global.cpp global.h \

@@ -79,8 +79,6 @@ static void Serialize( const NoteData &o, Json::Value &root )
 	{
 		NoteData::TrackMap::const_iterator begin, end;
 		o.GetTapNoteRange( t, 0, MAX_NOTE_ROW, begin, end );
-		//NoteData::TrackMap tm = o.GetTrack(t);
-		//FOREACHM_CONST( int, TapNote, tm, iter )
 		for( ; begin != end; ++begin )
 		{
 			int iRow = begin->first;
@@ -185,11 +183,11 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 	if( bWriteSteps )
 	{
 		vector<const Steps*> vpSteps;
-		FOREACH_CONST( Steps*, out.GetAllSteps(), iter )
+		for (Steps * iter : out.GetAllSteps())
 		{
-			if( (*iter)->IsAutogen() )
+			if( iter->IsAutogen() )
 				continue;
-			vpSteps.push_back( *iter );
+			vpSteps.push_back( iter );
 		}
 		JsonUtil::SerializeVectorPointers<Steps>( vpSteps, Serialize, root["Charts"] );
 	}

@@ -10,7 +10,6 @@
 #include "XmlFileUtil.h"
 #include "IniFile.h"
 #include "LuaManager.h"
-#include "Foreach.h"
 #include "Song.h"
 #include "Course.h"
 #include "GameState.h"
@@ -19,7 +18,7 @@
 
 
 // Actor registration
-static map<RString,CreateActorFn>	*g_pmapRegistrees = NULL;
+static map<RString,CreateActorFn>	*g_pmapRegistrees = nullptr;
 
 static bool IsRegistered( const RString& sClassName )
 {
@@ -28,7 +27,7 @@ static bool IsRegistered( const RString& sClassName )
 
 void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 {
-	if( g_pmapRegistrees == NULL )
+	if( g_pmapRegistrees == nullptr )
 		g_pmapRegistrees = new map<RString,CreateActorFn>;
 
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
@@ -123,7 +122,7 @@ namespace
 		// The non-legacy LoadFromNode has already checked the Class and
 		// Type attributes.
 
-		if (pActor->GetAttr("Text") != NULL)
+		if (pActor->GetAttr("Text") != nullptr)
 			return "BitmapText";
 
 		RString sFile;
@@ -172,7 +171,7 @@ namespace
 
 Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 {
-	ASSERT( _pNode != NULL );
+	ASSERT( _pNode != nullptr );
 
 	XNode node = *_pNode;
 
@@ -182,7 +181,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	{
 		bool bCond;
 		if( node.GetAttrValue("Condition", bCond) && !bCond )
-			return NULL;
+			return nullptr;
 	}
 
 	RString sClass;
@@ -190,7 +189,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	if( !bHasClass )
 		bHasClass = node.GetAttrValue( "Type", sClass );
 
-	bool bLegacy = (node.GetAttr( "_LegacyXml" ) != NULL);
+	bool bLegacy = (node.GetAttr( "_LegacyXml" ) != nullptr);
 	if( !bHasClass && bLegacy )
 		sClass = GetLegacyActorClass( &node );
 
@@ -209,8 +208,8 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 			if (ResolvePath(sPath, GetWhere(&node)))
 			{
 				Actor *pNewActor = MakeActor(sPath, pParentActor);
-				if (pNewActor == NULL)
-					return NULL;
+				if (pNewActor == nullptr)
+					return nullptr;
 				if (pParentActor)
 					pNewActor->SetParent(pParentActor);
 				pNewActor->LoadFromNode(&node);
@@ -241,7 +240,7 @@ namespace
 	{
 		RString sScript;
 		if( !GetFileContents(sFile, sScript) )
-			return NULL;
+			return nullptr;
 
 		Lua *L = LUA->Get();
 
@@ -251,10 +250,10 @@ namespace
 			LUA->Release( L );
 			sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 			LuaHelpers::ReportScriptError(sError);
-			return NULL;
+			return nullptr;
 		}
 
-		XNode *pRet = NULL;
+		XNode *pRet = nullptr;
 		if( ActorUtil::LoadTableFromStackShowErrors(L) )
 			pRet = XmlFileUtil::XNodeFromTable( L );
 
@@ -295,7 +294,7 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 	return true;
 }
 
-// NOTE: This function can return NULL if the actor should not be displayed.
+// NOTE: This function can return nullptr if the actor should not be displayed.
 // Callers should be aware of this and handle it appropriately.
 Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 {
@@ -306,8 +305,8 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 	{
 	case FT_Lua:
 		{
-			auto_ptr<XNode> pNode( LoadXNodeFromLuaShowErrors(sPath) );
-			if( pNode.get() == NULL )
+			unique_ptr<XNode> pNode( LoadXNodeFromLuaShowErrors(sPath) );
+			if( pNode.get() == nullptr )
 			{
 				// XNode will warn about the error
 				return new Actor;
@@ -475,9 +474,8 @@ void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGr
 	set<RString> vsValueNames;
 	THEME->GetMetricsThatBeginWith( sMetricsGroup, sName, vsValueNames );
 
-	FOREACHS_CONST( RString, vsValueNames, v )
+	for (RString const & sv : vsValueNames)
 	{
-		const RString &sv = *v;
 		static const RString sEnding = "Command"; 
 		if( EndsWith(sv,sEnding) )
 		{
@@ -680,7 +678,7 @@ namespace
 		LIST_METHOD( LoadAllCommands ),
 		LIST_METHOD( LoadAllCommandsFromName ), 
 		LIST_METHOD( LoadAllCommandsAndSetXY ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 

@@ -1,7 +1,6 @@
 #include "global.h"
 
 #include "ImageCache.h"
-#include "Foreach.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -79,7 +78,7 @@ void ImageCache::Demand( RString sImageDir )
 
 		const RString sCachePath = GetImageCachePath(sImageDir,sImagePath);
 		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
-		if( pImage == NULL )
+		if( pImage == nullptr )
 		{
 			continue; /* doesn't exist */
 		}
@@ -123,7 +122,7 @@ void ImageCache::LoadImage( RString sImageDir, RString sImagePath )
 
 		CHECKPOINT_M( ssprintf( "ImageCache::LoadImage: %s", sCachePath.c_str() ) );
 		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
-		if( pImage == NULL )
+		if( pImage == nullptr )
 		{
 			if( tries == 0 )
 			{
@@ -150,9 +149,9 @@ void ImageCache::LoadImage( RString sImageDir, RString sImagePath )
 void ImageCache::OutputStats() const
 {
 	int iTotalSize = 0;
-	FOREACHM_CONST( RString, RageSurface *, g_ImagePathToImage, it )
+	for (auto const &it : g_ImagePathToImage)
 	{
-		const RageSurface *pImage = it->second;
+		const RageSurface *pImage = it.second;
 		const int iSize = pImage->pitch * pImage->h;
 		iTotalSize += iSize;
 	}
@@ -161,8 +160,10 @@ void ImageCache::OutputStats() const
 
 void ImageCache::UnloadAllImages()
 {
-	FOREACHM( RString, RageSurface *, g_ImagePathToImage, it )
-		delete it->second;
+	for (auto &it: g_ImagePathToImage)
+	{
+		delete it.second;
+	}
 
 	g_ImagePathToImage.clear();
 }
@@ -203,7 +204,7 @@ struct ImageTexture: public RageTexture
 	
 	void Create()
 	{
-		ASSERT( m_pImage != NULL );
+		ASSERT( m_pImage != nullptr );
 
 		/* The image is preprocessed; do as little work as possible. */
 
@@ -239,7 +240,7 @@ struct ImageTexture: public RageTexture
 
 		ASSERT( DISPLAY->SupportsTextureFormat(pf) );
 
-		ASSERT(m_pImage != NULL);
+		ASSERT(m_pImage != nullptr);
 		m_uTexHandle = DISPLAY->CreateTexture( pf, m_pImage, false );
 
 		CreateFrameRects();
@@ -295,7 +296,7 @@ RageTextureID ImageCache::LoadCachedImage( RString sImageDir, RString sImagePath
 	 * when converting; this way, the conversion will end up in the map so we
 	 * only have to convert once. */
 	RageSurface *&pImage = g_ImagePathToImage[sImagePath];
-	ASSERT( pImage != NULL );
+	ASSERT( pImage != nullptr );
 
 	int iSourceWidth = 0, iSourceHeight = 0;
 	ImageData.GetValue( sImagePath, "Width", iSourceWidth );
@@ -373,7 +374,7 @@ void ImageCache::CacheImageInternal( RString sImageDir, RString sImagePath )
 {
 	RString sError;
 	RageSurface *pImage = RageSurfaceUtils::LoadFile( sImagePath, sError );
-	if( pImage == NULL )
+	if( pImage == nullptr )
 	{
 		LOG->UserLog( "Cache file", sImagePath, "couldn't be loaded: %s", sError.c_str() );
 		return;

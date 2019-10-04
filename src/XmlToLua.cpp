@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "IniFile.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
@@ -63,12 +62,12 @@ void convert_xmls_in_dir(RString const& dirname)
 
 RString convert_xpos(float x)
 {
-	return "SCREEN_CENTER_X + " + FloatToString(x - 320.0f);
+	return "SCREEN_CENTER_X + " + std::to_string(x - 320.0f);
 }
 
 RString convert_ypos(float y)
 {
-	return "SCREEN_CENTER_Y + " + FloatToString(y - 240.0f);
+	return "SCREEN_CENTER_Y + " + std::to_string(y - 240.0f);
 }
 
 RString maybe_conv_pos(RString pos, RString (*conv_func)(float p))
@@ -444,7 +443,7 @@ void actor_template_t::load_frames_from_file(RString const& fname, RString const
 		return;
 	}
 	XNode const* sprite_node= ini.GetChild("Sprite");
-	if(sprite_node != NULL)
+	if(sprite_node != nullptr)
 	{
 		FOREACH_CONST_Attr(sprite_node, attr)
 		{
@@ -453,13 +452,13 @@ void actor_template_t::load_frames_from_file(RString const& fname, RString const
 			RString field_type= attr->first.Left(5);
 			if(field_type == "Frame")
 			{
-				int id= StringToInt(attr->first.Right(attr->first.size()-5));
+				int id= std::stoi(attr->first.Right(attr->first.size()-5));
 				make_space_for_frame(id);
 				attr->second->GetValue(frames[id].frame);
 			}
 			else if(field_type == "Delay")
 			{
-				int id= StringToInt(attr->first.Right(attr->first.size()-5));
+				int id= std::stoi(attr->first.Right(attr->first.size()-5));
 				make_space_for_frame(id);
 				attr->second->GetValue(frames[id].delay);
 			}
@@ -484,7 +483,7 @@ void actor_template_t::load_model_from_file(RString const& fname, RString const&
 		return;
 	}
 	XNode const* model_node= ini.GetChild("Model");
-	if(model_node != NULL)
+	if(model_node != nullptr)
 	{
 		FOREACH_CONST_Attr(model_node, attr)
 		{
@@ -639,7 +638,7 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 		rename_field("File", "Texture");
 	}
 	XNode const* xren= node.GetChild("children");
-	if(xren != NULL)
+	if(xren != nullptr)
 	{
 		FOREACH_CONST_Child(xren, child)
 		{
@@ -688,8 +687,8 @@ void actor_template_t::output_to_file(RageFile* file, RString const& indent)
 		for(vector<frame_t>::iterator frame= frames.begin();
 			frame != frames.end(); ++frame)
 		{
-			file->Write(frameindent + "{Frame= " + IntToString(frame->frame) +
-				", Delay= " + FloatToString(frame->delay) + "},\n");
+			file->Write(frameindent + "{Frame= " + std::to_string(frame->frame) +
+				", Delay= " + std::to_string(frame->delay) + "},\n");
 		}
 		file->Write(indent + "},\n");
 	}

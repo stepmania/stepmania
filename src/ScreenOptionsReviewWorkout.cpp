@@ -29,10 +29,10 @@ enum ReviewWorkoutRow
 
 static const MenuRowDef g_MenuRows[] = 
 {
-	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Edit Workout",	true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Edit Workout",	true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, nullptr ),
 };
 
 REGISTER_SCREEN_CLASS( ScreenOptionsCourseOverview );
@@ -66,7 +66,7 @@ void ScreenOptionsCourseOverview::BeginScreen()
 	ScreenOptions::BeginScreen();
 
 	// clear the current song in case it's set when we back out from gameplay
-	GAMESTATE->m_pCurSong.Set( NULL );
+	GAMESTATE->m_pCurSong.Set(nullptr);
 }
 
 ScreenOptionsCourseOverview::~ScreenOptionsCourseOverview()

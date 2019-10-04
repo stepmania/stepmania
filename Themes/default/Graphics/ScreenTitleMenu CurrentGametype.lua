@@ -1,5 +1,5 @@
 local icon_params = {
-	base_color = color("#CC2E3C"),
+	base_color = color("#981F41"),
 	label_text = Screen.String("CurrentGametype"),
 	value_text = GAMESTATE:GetCurrentGame():GetName()
 }

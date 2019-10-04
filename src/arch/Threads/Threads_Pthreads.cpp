@@ -1,6 +1,8 @@
 #include "global.h"
 #include "Threads_Pthreads.h"
+#include "RageLog.h"
 #include "RageTimer.h"
+#include "RageThreads.h"
 #include "RageUtil.h"
 #include <sys/time.h>
 #include <errno.h>
@@ -17,6 +19,7 @@
 
 void ThreadImpl_Pthreads::Halt( bool Kill )
 {
+	(void)Kill;
 	/* Linux:
 	 * Send a SIGSTOP to the thread. If we send a SIGKILL, pthreads will
 	 * "helpfully" propagate it to the other threads, and we'll get killed, too.
@@ -82,12 +85,45 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	thread->m_StartFinishedSem = new SemaImpl_Pthreads( 0 );
 
-	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
+	int ret = pthread_create( &thread->thread, nullptr, StartThread, thread );
 	ASSERT_M( ret == 0, ssprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
 
 	// Don't return until StartThread sets m_piThreadID.
 	thread->m_StartFinishedSem->Wait();
 	delete thread->m_StartFinishedSem;
+
+	// Copy the thread name.
+	const char *rawname = RageThread::GetThreadNameByID( *piThreadID );
+	const size_t maxNameLen = sizeof( thread->name );
+	if (strlen(rawname) < maxNameLen) {
+		// If it fits, I sits^H^H^H^Hcopy.
+		strncpy( thread->name, rawname, maxNameLen );
+	} else {
+		if ( strstr( rawname, "Worker thread" ) && strchr( rawname, '(' ) ) {
+			// Special case for RageUtil_WorkerThread.cpp
+			// "Worker thread (name)", e.g.
+			// "Worker thread (/@mc1int/)" => "(/@mc1int/)".
+			const char *workername = strchr( rawname, '(' );
+			strncpy( thread->name, workername, maxNameLen );
+		} else {
+			// Abbreviate the name by taking the first 6, last 7
+			// characters and adding '..' in the middle.
+			LOG->Trace( "Truncated thread name due to size limit of %zu: %s",
+				maxNameLen, rawname );
+			snprintf( thread->name, maxNameLen, "%.6s..%s",
+				rawname, &rawname[strlen(rawname) - 7] );
+			}
+	}
+	// Ensure there is always a terminating NUL character.
+	thread->name[maxNameLen - 1] = '\0';
+
+#ifndef MACOSX
+	// macOS/BSD can only set the name of the calling thread
+	ret = pthread_setname_np(thread->thread, thread->name);
+	if (ret != 0 && LOG) {
+		LOG->Trace("pthead_setname_np: %s", strerror(ret));
+	}
+#endif
 
 	return thread;
 }
@@ -95,7 +131,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 MutexImpl_Pthreads::MutexImpl_Pthreads( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
-	pthread_mutex_init( &mutex, NULL );
+	pthread_mutex_init( &mutex, nullptr );
 }
 
 MutexImpl_Pthreads::~MutexImpl_Pthreads()
@@ -127,10 +163,10 @@ bool MutexImpl_Pthreads::Lock()
 
 		while( tries-- )
 		{
-			/* Wait for ten seconds. If it takes longer than that, we're 
+			/* Wait for ten seconds. If it takes longer than that, we're
 			 * probably deadlocked. */
 			timeval tv;
-			gettimeofday( &tv, NULL );
+			gettimeofday( &tv, nullptr );
 
 			timespec ts;
 			ts.tv_sec = tv.tv_sec + len;
@@ -208,16 +244,11 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
-// commented out to allow comilation on macOS 10.12.  -dguzek
-//#elif defined(MACOSX)
-//typedef int clockid_t;
-//static const clockid_t CLOCK_REALTIME = 0;
-//static const clockid_t CLOCK_MONOTONIC = 1;
 #endif // On MinGW clockid_t is defined in pthread.h
 namespace
 {
 	typedef int (* CONDATTR_SET_CLOCK)( pthread_condattr_t *attr, clockid_t clock_id );
-	CONDATTR_SET_CLOCK g_CondattrSetclock = NULL;
+	CONDATTR_SET_CLOCK g_CondattrSetclock = nullptr;
 	bool bInitialized = false;
 
 #if defined(UNIX)
@@ -232,17 +263,17 @@ namespace
 			return;
 		bInitialized = true;
 
-		void *pLib = NULL;
+		void *pLib = nullptr;
 
 		do {
 			{
-				pLib = dlopen( NULL, RTLD_LAZY );
-				if( pLib == NULL )
+				pLib = dlopen( nullptr, RTLD_LAZY );
+				if( pLib == nullptr )
 					break;
 
 				g_CondattrSetclock = (CONDATTR_SET_CLOCK) dlsym( pLib, "pthread_condattr_setclock" );
 
-				if( g_CondattrSetclock == NULL )
+				if( g_CondattrSetclock == nullptr )
 					break;
 			}
 
@@ -262,10 +293,10 @@ namespace
 			return;
 		} while(0);
 
-		g_CondattrSetclock = NULL;
-		if( pLib != NULL )
+		g_CondattrSetclock = nullptr;
+		if( pLib != nullptr )
 			dlclose( pLib );
-		pLib = NULL;
+		pLib = nullptr;
 	}
 #elif defined(MACOSX)
 	void InitMonotonic() { bInitialized = true; }
@@ -288,11 +319,11 @@ EventImpl_Pthreads::EventImpl_Pthreads( MutexImpl_Pthreads *pParent )
 	m_pParent = pParent;
 
 	InitMonotonic();
-       
+
 	pthread_condattr_t condattr;
 	pthread_condattr_init( &condattr );
 
-	if( g_CondattrSetclock != NULL )
+	if( g_CondattrSetclock != nullptr )
 		g_CondattrSetclock( &condattr, GetClock() );
 
 	pthread_cond_init( &m_Cond, &condattr );
@@ -307,7 +338,7 @@ EventImpl_Pthreads::~EventImpl_Pthreads()
 #if defined(HAVE_PTHREAD_COND_TIMEDWAIT)
 bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 {
-	if( pTimeout == NULL )
+	if( pTimeout == nullptr )
 	{
 		pthread_cond_wait( &m_Cond, &m_pParent->mutex );
 		return true;
@@ -317,7 +348,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	 * (no condattr_setclock), pthread_cond_timedwait has an inherent race
 	 * condition: the system clock may change before we call it. */
 	timespec abstime;
-	if( g_CondattrSetclock != NULL || GetClock() == CLOCK_REALTIME )
+	if( g_CondattrSetclock != nullptr || GetClock() == CLOCK_REALTIME )
 	{
 		/* If we support condattr_setclock, we'll set the condition to use
 		 * the same clock as RageTimer and can use it directly. If the
@@ -329,7 +360,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	{
 		// The RageTimer clock is different than the wait clock; convert it.
 		timeval tv;
-		gettimeofday( &tv, NULL );
+		gettimeofday( &tv, nullptr );
 
 		RageTimer timeofday( tv.tv_sec, tv.tv_usec );
 
@@ -420,7 +451,7 @@ bool SemaImpl_Pthreads::TryWait()
 	int ret = sem_trywait( &sem );
 	if( ret == -1 && errno == EAGAIN )
 		return false;
-	
+
 	ASSERT_M( ret == 0, ssprintf("TryWait: sem_trywait failed: %s", strerror(errno)) );
 
 	return true;
@@ -429,11 +460,11 @@ bool SemaImpl_Pthreads::TryWait()
 // Use conditions, to work around OS X "forgetting" to implement semaphores.
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
-	int ret = pthread_cond_init( &m_Cond, NULL );
+	int ret = pthread_cond_init( &m_Cond, nullptr );
 	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
-	ret = pthread_mutex_init( &m_Mutex, NULL );
+	ret = pthread_mutex_init( &m_Mutex, nullptr );
 	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
-		
+
 	m_iValue = iInitialValue;
 }
 
@@ -458,7 +489,7 @@ bool SemaImpl_Pthreads::Wait()
 	if( UseTimedlock() )
 	{
 		timeval tv;
-		gettimeofday( &tv, NULL );
+		gettimeofday( &tv, nullptr );
 
 		/* Wait for ten seconds.  If it takes longer than that, we're probably deadlocked. */
 		timespec ts;
@@ -542,7 +573,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
 /*
  * (c) 2001-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -552,7 +583,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

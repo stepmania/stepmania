@@ -14,7 +14,6 @@
 #include "Sprite.h"
 #include "NoteTypes.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
 #include "RageMath.h"
 
 static const double PI_180= PI / 180.0;
@@ -41,6 +40,7 @@ LuaXType( NotePart );
 static const char *NoteColorTypeNames[] = {
 	"Denominator",
 	"Progress",
+	"ProgressAlternate"
 };
 XToString( NoteColorType );
 StringToX( NoteColorType );
@@ -174,7 +174,7 @@ struct NoteResource
 	NoteResource( const NoteSkinAndPath &nsap ): m_nsap(nsap)
 	{
 		m_iRefCount = 0;
-		m_pActor = NULL;
+		m_pActor = nullptr;
 	}
 
 	~NoteResource()
@@ -202,8 +202,8 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 		NOTESKIN->SetPlayerNumber( pn );
 		NOTESKIN->SetGameController( gc );
 
-		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, NULL, bSpriteOnly );
-		ASSERT( pRes->m_pActor != NULL );
+		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, nullptr, bSpriteOnly );
+		ASSERT( pRes->m_pActor != nullptr );
 
 		g_NoteResource[nsap] = pRes;
 		it = g_NoteResource.find( nsap );
@@ -216,7 +216,7 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 
 static void DeleteNoteResource( NoteResource *pRes )
 {
-	ASSERT( pRes != NULL );
+	ASSERT( pRes != nullptr );
 
 	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("RefCount %i > 0", pRes->m_iRefCount) );
 	--pRes->m_iRefCount;
@@ -231,7 +231,7 @@ static void DeleteNoteResource( NoteResource *pRes )
 
 NoteColorActor::NoteColorActor()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorActor::~NoteColorActor()
@@ -255,7 +255,7 @@ Actor *NoteColorActor::Get()
 
 NoteColorSprite::NoteColorSprite()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorSprite::~NoteColorSprite()
@@ -471,8 +471,8 @@ bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
 	const vector<NoteData::TrackMap::const_iterator>& tap_set)
 {
 	bool any_upcoming = false;
-	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
-		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	for(vector<NoteData::TrackMap::const_iterator>::const_reverse_iterator tapit=
+		tap_set.rbegin(); tapit != tap_set.rend(); ++tapit)
 	{
 		const TapNote& tn= (*tapit)->second;
 		const HoldNoteResult& result= tn.HoldResult;
@@ -538,8 +538,8 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 {
 	bool any_upcoming= false;
 	// draw notes from furthest to closest
-	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
-		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	for(vector<NoteData::TrackMap::const_iterator>::const_reverse_iterator tapit=
+		tap_set.rbegin(); tapit != tap_set.rend(); ++tapit)
 	{
 		int tap_row= (*tapit)->first;
 		const TapNote& tn= (*tapit)->second;
@@ -613,6 +613,7 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 		any_upcoming |= NoteRowToBeat(tap_row) >
 			m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
 
+		// TODO: change to Z Bias, remove clear
 		if(!PREFSMAN->m_FastNoteRendering)
 		{
 			DISPLAY->ClearZBuffer();
@@ -1016,11 +1017,12 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			 * start off the strip again. */
 			if(!bAllAreTransparent)
 			{
-				FOREACH(Sprite*, vpSpr, spr)
+				int i = 0;
+				for (Sprite *spr : vpSpr)
 				{
-					RageTexture* pTexture = (*spr)->GetTexture();
+					RageTexture* pTexture = spr->GetTexture();
 					DISPLAY->SetTexture(TextureUnit_1, pTexture->GetTexHandle());
-					DISPLAY->SetBlendMode(spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD);
+					DISPLAY->SetBlendMode((i++ == 0) ? BLEND_NORMAL : BLEND_ADD);
 					DISPLAY->SetCullMode(CULL_NONE);
 					DISPLAY->SetTextureWrapping(TextureUnit_1, part_args.wrapping);
 					queue.Draw();
@@ -1044,24 +1046,25 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	const float bottom_beat, bool glow)
 {
 	// Draw the top cap
-	part_args.y_top= head_minus_top;
-	part_args.y_bottom= y_head;
-	part_args.top_beat= top_beat;
-	part_args.bottom_beat= top_beat;
-	part_args.wrapping= false;
+	part_args.y_top = head_minus_top;
+	part_args.y_bottom = y_head;
+	part_args.top_beat = top_beat;
+	part_args.bottom_beat = top_beat;
+	part_args.wrapping = false;
 	DrawHoldPart(sprite_top, field_args, column_args, part_args, glow, hpt_top);
 	// Draw the body
-	part_args.y_top= y_head;
-	part_args.y_bottom= y_tail;
-	part_args.bottom_beat= bottom_beat;
-	part_args.wrapping= true;
+	part_args.y_top = y_head;
+	part_args.y_bottom = y_tail;
+	part_args.bottom_beat = bottom_beat;
+	part_args.wrapping = true;
 	DrawHoldPart(sprite_body, field_args, column_args, part_args, glow, hpt_body);
 	// Draw the bottom cap
-	part_args.y_top= y_tail;
-	part_args.y_bottom = tail_plus_bottom;
+	float overlap_hack = 1.0f;
+	part_args.y_top = y_tail + overlap_hack;
+	part_args.y_bottom = tail_plus_bottom + overlap_hack;
 	part_args.top_beat = bottom_beat;
-	part_args.y_start_pos = max(part_args.y_start_pos, y_head);
-	part_args.wrapping= false;
+	part_args.y_start_pos = fmaxf(part_args.y_start_pos, y_head);
+	part_args.wrapping = false;
 	DrawHoldPart(sprite_bottom, field_args, column_args, part_args, glow, hpt_bottom);
 }
 
@@ -1325,6 +1328,8 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 	{
 		DISPLAY->TexturePushMatrix();
 		float color = 0.0f;
+		//this is only used for ProgressAlternate but must be declared here
+		float fScaledBeat = 0.0f;
 		switch( cache->m_NoteColorType[part] )
 		{
 		case NoteColorType_Denominator:
@@ -1333,6 +1338,14 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 			break;
 		case NoteColorType_Progress:
 			color = fmodf( ceilf( fBeat * cache->m_iNoteColorCount[part] ), (float)cache->m_iNoteColorCount[part] );
+			break;
+		case NoteColorType_ProgressAlternate:
+			fScaledBeat = fBeat * cache->m_iNoteColorCount[part];
+			if( fScaledBeat - int64_t(fScaledBeat) == 0.0f )
+				//we're on a boundary, so move to the previous frame.
+				//doing it this way ensures that fScaledBeat is never negative so fmodf works.
+				fScaledBeat += cache->m_iNoteColorCount[part] - 1;
+			color = fmodf( ceilf( fScaledBeat ), (float)cache->m_iNoteColorCount[part] );
 			break;
 		default:
 			FAIL_M(ssprintf("Invalid NoteColorType: %i", cache->m_NoteColorType[part]));
@@ -1354,7 +1367,7 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 	bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollStart,
 	bool bIsAddition, float fPercentFadeToFail)
 {
-	Actor* pActor = NULL;
+	Actor* pActor = nullptr;
 	NotePart part = NotePart_Tap;
 	/*
 	if( tn.source == TapNoteSource_Addition )
@@ -1561,6 +1574,7 @@ void NoteColumnRenderer::DrawPrimitives()
 	{ \
 		DTS_INNER(pn, tap_set, draw_func, m_displays[pn]); \
 	}
+
 	DRAW_TAP_SET(holds, DrawHoldsInRange);
 	DTS_INNER(PLAYER_INVALID, holds, DrawHoldsInRange, m_displays[PLAYER_INVALID]);
 	DRAW_TAP_SET(taps, DrawTapsInRange);

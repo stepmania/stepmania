@@ -25,12 +25,11 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "Foreach.h"
 #include "ActorUtil.h"
 
 #include <map>
 
-RageTextureManager*		TEXTUREMAN		= NULL; // global and accessible from anywhere in our program
+RageTextureManager*		TEXTUREMAN		= nullptr; // global and accessible from anywhere in our program
 
 namespace
 {
@@ -45,11 +44,11 @@ RageTextureManager::RageTextureManager():
 
 RageTextureManager::~RageTextureManager()
 {
-	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	for (std::pair<RageTextureID const &, RageTexture *> i : m_mapPathToTexture)
 	{
-		RageTexture* pTexture = i->second;
+		RageTexture* pTexture = i.second;
 		if( pTexture->m_iRefCount )
-			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first.filename.c_str(), pTexture->m_iRefCount );
+			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i.first.filename.c_str(), pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
 	m_textures_to_update.clear();
@@ -58,9 +57,9 @@ RageTextureManager::~RageTextureManager()
 
 void RageTextureManager::Update( float fDeltaTime )
 {
-	FOREACHM(RageTextureID, RageTexture*, m_textures_to_update, i)
+	for(std::pair<RageTextureID const &, RageTexture *> i : m_textures_to_update)
 	{
-		RageTexture* pTexture = i->second;
+		RageTexture* pTexture = i.second;
 		pTexture->Update( fDeltaTime );
 	}
 }
@@ -203,7 +202,7 @@ void RageTextureManager::VolatileTexture( RageTextureID ID )
 
 void RageTextureManager::UnloadTexture( RageTexture *t )
 {
-	if( t == NULL )
+	if( t == nullptr )
 		return;
 
 	t->m_iRefCount--;
@@ -258,14 +257,14 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 	else
 	{
 		FAIL_M("Tried to delete a texture that wasn't in the ids by pointer list.");
-		FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+		for (map<RageTextureID, RageTexture *>::iterator iter = m_mapPathToTexture.begin(); iter != m_mapPathToTexture.end(); ++iter)
 		{
-			if( i->second == t )
+			if( iter->second == t )
 			{
-				m_mapPathToTexture.erase( i );	// remove map entry
+				m_mapPathToTexture.erase( iter );	// remove map entry
 				SAFE_DELETE( t );	// free the texture
 				map<RageTextureID, RageTexture*>::iterator tex_update_entry=
-					m_textures_to_update.find(i->first);
+					m_textures_to_update.find(iter->first);
 				if(tex_update_entry != m_textures_to_update.end())
 				{
 					m_textures_to_update.erase(tex_update_entry);
@@ -334,9 +333,9 @@ void RageTextureManager::ReloadAll()
 	 * ton of cached data that we're not necessarily going to use. */
 	DoDelayedDelete();
 
-	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	for (auto const & i : m_mapPathToTexture)
 	{
-		i->second->Reload();
+		i.second->Reload();
 	}
 
 	EnableOddDimensionWarning();
@@ -350,9 +349,9 @@ void RageTextureManager::ReloadAll()
  * associated with a different texture).  Ack. */
 void RageTextureManager::InvalidateTextures()
 {
-	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	for (auto const & i : m_mapPathToTexture)
 	{
-		RageTexture* pTexture = i->second;
+		RageTexture* pTexture = i.second;
 		pTexture->Invalidate();
 	}
 }
@@ -376,10 +375,10 @@ void RageTextureManager::DiagnosticOutput() const
 	LOG->Trace( "%u textures loaded:", iCount );
 
 	int iTotal = 0;
-	FOREACHM_CONST( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	for (auto const &i : m_mapPathToTexture)
 	{
-		const RageTextureID &ID = i->first;
-		const RageTexture *pTex = i->second;
+		const RageTextureID &ID = i.first;
+		const RageTexture *pTex = i.second;
 
 		RString sDiags = DISPLAY->GetTextureDiagnostics( pTex->GetTexHandle() );
 		RString sStr = ssprintf( "%3ix%3i (%2i)", pTex->GetTextureHeight(), pTex->GetTextureWidth(),

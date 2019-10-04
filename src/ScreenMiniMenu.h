@@ -13,7 +13,7 @@ struct MenuRowDef
 	int			iRowCode;
 	RString		sName;
 	bool		bEnabled;
-	MenuRowUpdateEnabled	pfnEnabled;	// if ! NULL, used instead of bEnabled
+	MenuRowUpdateEnabled	pfnEnabled;	// if ! nullptr, used instead of bEnabled
 	EditMode	emShowIn;
 	int			iDefaultChoice;
 	vector<RString>		choices;
@@ -24,20 +24,20 @@ struct MenuRowDef
 		pfnEnabled(), emShowIn(), iDefaultChoice(0),
 		choices(), bThemeTitle(false), bThemeItems(false) {}
 	MenuRowDef( int r, RString n, MenuRowUpdateEnabled pe, EditMode s, 
-		   bool bTT, bool bTI, int d, const char *c0=NULL, 
-		   const char *c1=NULL, const char *c2=NULL, 
-		   const char *c3=NULL, const char *c4=NULL, 
-		   const char *c5=NULL, const char *c6=NULL, 
-		   const char *c7=NULL, const char *c8=NULL, 
-		   const char *c9=NULL, const char *c10=NULL, 
-		   const char *c11=NULL, const char *c12=NULL, 
-		   const char *c13=NULL, const char *c14=NULL, 
-		   const char *c15=NULL, const char *c16=NULL, 
-		   const char *c17=NULL, const char *c18=NULL, 
-		   const char *c19=NULL, const char *c20=NULL, 
-		   const char *c21=NULL, const char *c22=NULL, 
-		   const char *c23=NULL, const char *c24=NULL, 
-		   const char *c25=NULL ): iRowCode(r), sName(n),
+		   bool bTT, bool bTI, int d, const char *c0=nullptr, 
+		   const char *c1=nullptr, const char *c2=nullptr, 
+		   const char *c3=nullptr, const char *c4=nullptr, 
+		   const char *c5=nullptr, const char *c6=nullptr, 
+		   const char *c7=nullptr, const char *c8=nullptr, 
+		   const char *c9=nullptr, const char *c10=nullptr, 
+		   const char *c11=nullptr, const char *c12=nullptr, 
+		   const char *c13=nullptr, const char *c14=nullptr, 
+		   const char *c15=nullptr, const char *c16=nullptr, 
+		   const char *c17=nullptr, const char *c18=nullptr, 
+		   const char *c19=nullptr, const char *c20=nullptr, 
+		   const char *c21=nullptr, const char *c22=nullptr, 
+		   const char *c23=nullptr, const char *c24=nullptr, 
+		   const char *c25=nullptr ): iRowCode(r), sName(n),
 			bEnabled(true), pfnEnabled(pe), emShowIn(s),
 			iDefaultChoice(d), choices(),
 			bThemeTitle(bTT), bThemeItems(bTI)
@@ -53,31 +53,31 @@ struct MenuRowDef
 	
 	MenuRowDef(int r, RString n, bool e, EditMode s,
 			   bool bTT, bool bTI, int d, vector<RString> options):
-			iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
+			iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 			emShowIn(s), iDefaultChoice(d), choices(),
 			bThemeTitle(bTT), bThemeItems(bTI)
 	{
-		FOREACH(RString, options, str)
+		for (RString &str : options)
 		{
-			if (*str != "") choices.push_back(*str);
+			if (str != "") choices.push_back(str);
 		}
 	}
 	
 	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI, 
-		   int d, const char *c0=NULL, const char *c1=NULL, 
-		   const char *c2=NULL, const char *c3=NULL, 
-		   const char *c4=NULL, const char *c5=NULL, 
-		   const char *c6=NULL, const char *c7=NULL, 
-		   const char *c8=NULL, const char *c9=NULL, 
-		   const char *c10=NULL, const char *c11=NULL, 
-		   const char *c12=NULL, const char *c13=NULL, 
-		   const char *c14=NULL, const char *c15=NULL, 
-		   const char *c16=NULL, const char *c17=NULL, 
-		   const char *c18=NULL, const char *c19=NULL, 
-		   const char *c20=NULL, const char *c21=NULL, 
-		   const char *c22=NULL, const char *c23=NULL, 
-		   const char *c24=NULL, const char *c25=NULL ):
-		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
+		   int d, const char *c0=nullptr, const char *c1=nullptr, 
+		   const char *c2=nullptr, const char *c3=nullptr, 
+		   const char *c4=nullptr, const char *c5=nullptr, 
+		   const char *c6=nullptr, const char *c7=nullptr, 
+		   const char *c8=nullptr, const char *c9=nullptr, 
+		   const char *c10=nullptr, const char *c11=nullptr, 
+		   const char *c12=nullptr, const char *c13=nullptr, 
+		   const char *c14=nullptr, const char *c15=nullptr, 
+		   const char *c16=nullptr, const char *c17=nullptr, 
+		   const char *c18=nullptr, const char *c19=nullptr, 
+		   const char *c20=nullptr, const char *c21=nullptr, 
+		   const char *c22=nullptr, const char *c23=nullptr, 
+		   const char *c24=nullptr, const char *c25=nullptr ):
+		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 		emShowIn(s), iDefaultChoice(d), choices(),
 		bThemeTitle(bTT), bThemeItems(bTI)
 	{
@@ -92,13 +92,13 @@ struct MenuRowDef
 	
 	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI,
 		   int d, int low, int high ):
-		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
+		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 		emShowIn(s), iDefaultChoice(d), choices(),
 		bThemeTitle(bTT), bThemeItems(bTI)
 	{
 		for ( int i = low; i <= high; i++ )
 		{
-			choices.push_back(IntToString(i).c_str());
+			choices.push_back(std::to_string(i));
 		}
 	}
 
@@ -111,11 +111,11 @@ struct MenuRowDef
 	bool SetDefaultChoiceIfPresent( RString sChoice )
 	{
 		iDefaultChoice = 0;
-		FOREACH_CONST( RString, choices, s )
+		for (unsigned i = 0; i < choices.size(); ++i)
 		{
-			if( sChoice == *s )
+			if (choices[i] == sChoice)
 			{
-				iDefaultChoice = s - choices.begin();
+				iDefaultChoice = i;
 				return true;
 			}
 		}

@@ -7,7 +7,7 @@
 #include "StepsDisplay.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
-#include "Foreach.h"
+
 #include "SongUtil.h"
 #include "XmlFile.h"
 
@@ -49,12 +49,12 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 	MOVE_COMMAND.Load( m_sName, "MoveCommand" );
 
 	m_Lines.resize( MAX_METERS );
-	m_CurSong = NULL;
+	m_CurSong = nullptr;
 
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
 		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
-		if( pChild == NULL )
+		if( pChild == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("%s: StepsDisplayList: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1);
 		}
@@ -70,7 +70,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 		 * in separate tweening stacks.  This means the Cursor command can't change diffuse
 		 * colors; I think we do need a diffuse color stack ... */
 		pChild = pNode->GetChild( ssprintf("CursorP%iFrame",pn+1) );
-		if( pChild == NULL )
+		if( pChild == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("%s: StepsDisplayList: missing the node \"CursorP%dFrame\"", ActorUtil::GetWhere(pNode).c_str(), pn+1);
 		}
@@ -86,7 +86,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 	{
 		// todo: Use Row1, Row2 for names? also m_sName+"Row" -aj
 		m_Lines[m].m_Meter.SetName( "Row" );
-		m_Lines[m].m_Meter.Load( "StepsDisplayListRow", NULL );
+		m_Lines[m].m_Meter.Load( "StepsDisplayListRow", nullptr );
 		this->AddChild( &m_Lines[m].m_Meter );
 	}
 
@@ -102,7 +102,7 @@ int StepsDisplayList::GetCurrentRowIndex( PlayerNumber pn ) const
 	{
 		const Row &row = m_Rows[i];
 
-		if( GAMESTATE->m_pCurSteps[pn] == NULL )
+		if( GAMESTATE->m_pCurSteps[pn] == nullptr )
 		{
 			if( row.m_dc == ClosestDifficulty )
 				return i;
@@ -267,17 +267,17 @@ void StepsDisplayList::SetFromGameState()
 	const Song *pSong = GAMESTATE->m_pCurSong;
 	unsigned i = 0;
 
-	if( pSong == NULL )
+	if( pSong == nullptr )
 	{
 		// FIXME: This clamps to between the min and the max difficulty, but
 		// it really should round to the nearest difficulty that's in 
 		// DIFFICULTIES_TO_SHOW.
 		const vector<Difficulty>& difficulties = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
 		m_Rows.resize( difficulties.size() );
-		FOREACH_CONST( Difficulty, difficulties, d )
+		for (Difficulty const &d : difficulties)
 		{
-			m_Rows[i].m_dc = *d;
-			m_Lines[i].m_Meter.SetFromStepsTypeAndMeterAndDifficultyAndCourseType( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, 0, *d, CourseType_Invalid );
+			m_Rows[i].m_dc = d;
+			m_Lines[i].m_Meter.SetFromStepsTypeAndMeterAndDifficultyAndCourseType( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, 0, d, CourseType_Invalid );
 			++i;
 		}
 	}
@@ -288,11 +288,11 @@ void StepsDisplayList::SetFromGameState()
 		// Should match the sort in ScreenSelectMusic::AfterMusicChange.
 
 		m_Rows.resize( vpSteps.size() );
-		FOREACH_CONST( Steps*, vpSteps, s )
+		for (Steps const * s: vpSteps)
 		{
 			//LOG->Trace(ssprintf("setting steps for row %i",i));
-			m_Rows[i].m_Steps = *s;
-			m_Lines[i].m_Meter.SetFromSteps( *s );
+			m_Rows[i].m_Steps = s;
+			m_Lines[i].m_Meter.SetFromSteps( s );
 			++i;
 		}
 	}

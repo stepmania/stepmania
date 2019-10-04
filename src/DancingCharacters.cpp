@@ -25,23 +25,44 @@ int Neg1OrPos1();
  *
  * -- Colby
  */
-const float CAMERA_REST_DISTANCE = 32.f;
-const float CAMERA_REST_LOOK_AT_HEIGHT = -11.f;
 
-const float CAMERA_SWEEP_DISTANCE = 28.f;
-const float CAMERA_SWEEP_DISTANCE_VARIANCE = 4.f;
-const float CAMERA_SWEEP_HEIGHT_VARIANCE = 7.f;
-const float CAMERA_SWEEP_PAN_Y_RANGE_DEGREES = 45.f;
-const float CAMERA_SWEEP_PAN_Y_VARIANCE_DEGREES = 60.f;
-const float CAMERA_SWEEP_LOOK_AT_HEIGHT = -11.f;
+#define CAMERA_REST_DISTANCE				THEME->GetMetricF("DancingCamera","RestDistance")
+#define CAMERA_REST_LOOK_AT_HEIGHT			THEME->GetMetricF("DancingCamera","RestHeight")
+#define CAMERA_SWEEP_DISTANCE				THEME->GetMetricF("DancingCamera","SweepDistance")
+#define CAMERA_SWEEP_DISTANCE_VARIANCE			THEME->GetMetricF("DancingCamera","SweepDistanceVariable")
+#define CAMERA_SWEEP_HEIGHT_VARIANCE			THEME->GetMetricF("DancingCamera","SweepHeightVariable")
+#define CAMERA_SWEEP_PAN_Y_RANGE_DEGREES		THEME->GetMetricF("DancingCamera","SweepPanYRangeDegrees")
+#define CAMERA_SWEEP_PAN_Y_VARIANCE_DEGREES		THEME->GetMetricF("DancingCamera","SweepPanYVarianceDegrees")
+#define CAMERA_SWEEP_LOOK_AT_HEIGHT			THEME->GetMetricF("DancingCamera","SweepHeight")
+#define CAMERA_STILL_DISTANCE				THEME->GetMetricF("DancingCamera","StillDistance")
+#define CAMERA_STILL_DISTANCE_VARIANCE			THEME->GetMetricF("DancingCamera","StillDistanceVariance")
+#define CAMERA_STILL_PAN_Y_RANGE_DEGREES		THEME->GetMetricF("DancingCamera","StillPanYRangeDegrees")
+#define CAMERA_STILL_HEIGHT_VARIANCE			THEME->GetMetricF("DancingCamera","StillHeightVariance")
+#define CAMERA_STILL_LOOK_AT_HEIGHT			THEME->GetMetricF("DancingCamera","StillHeight")
 
-const float CAMERA_STILL_DISTANCE = 26.f;
-const float CAMERA_STILL_DISTANCE_VARIANCE = 3.f;
-const float CAMERA_STILL_PAN_Y_RANGE_DEGREES = 120.f;
-const float CAMERA_STILL_HEIGHT_VARIANCE = 5.f;
-const float CAMERA_STILL_LOOK_AT_HEIGHT = -10.f;
+// This is to setup the lighting color.
+const ThemeMetric<RageColor>	LIGHT_AMBIENT_COLOR	( "DancingCamera", "AmbientColor" );
+const ThemeMetric<RageColor>	LIGHT_DIFFUSE_COLOR	( "DancingCamera", "DiffuseColor" );
 
-const float MODEL_X_ONE_PLAYER = 0;
+// This is for Danger and Failed colors.
+const ThemeMetric<RageColor>	LIGHT_ADANGER_COLOR	( "DancingCamera", "AmbientDangerColor" );
+const ThemeMetric<RageColor>	LIGHT_AFAILED_COLOR	( "DancingCamera", "AmbientFailedColor" );
+const ThemeMetric<RageColor>	LIGHT_DDANGER_COLOR	( "DancingCamera", "DiffuseDangerColor" );
+const ThemeMetric<RageColor>	LIGHT_DFAILED_COLOR	( "DancingCamera", "DiffuseFailedColor" );
+
+// This is to make positioning of said light.
+#define LIGHTING_X					THEME->GetMetricF("DancingCamera","LightX")
+#define LIGHTING_Y					THEME->GetMetricF("DancingCamera","LightY")
+#define LIGHTING_Z					THEME->GetMetricF("DancingCamera","LightZ")
+
+// Position of the model in X (one player)
+#define MODEL_X_ONE_PLAYER				THEME->GetMetricF("DancingCharacters","OnePlayerModelX")
+
+// As the name implies, this sets the ammount of beats that the camera will
+// stay in its current state until transitioning to the next camera tween.
+#define	AMM_BEATS_TIL_NEXTCAMERA			THEME->GetMetricF("DancingCamera","BeatsUntilNextCamPos")
+#define CAM_FOV						THEME->GetMetricF("DancingCamera","CameraFOV")
+
 const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = { +8, -8 };
 const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = { -90, 90 };
 
@@ -166,7 +187,7 @@ void DancingCharacters::LoadNextSong()
 	m_fThisCameraStartBeat = 0;
 	m_fThisCameraEndBeat = 0;
 
-	ASSERT( GAMESTATE->m_pCurSong != NULL );
+	ASSERT( GAMESTATE->m_pCurSong != nullptr );
 	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->GetFirstBeat();
 
 	FOREACH_PlayerNumber( p )
@@ -223,19 +244,19 @@ void DancingCharacters::Update( float fDelta )
 	fLastBeat = fThisBeat;
 
 	// time for a new sweep?
-	if( GAMESTATE->m_Position.m_fSongBeat > m_fThisCameraEndBeat )
+	if (GAMESTATE->m_Position.m_fSongBeat > m_fThisCameraEndBeat)
 	{
-		if( RandomInt(6) >= 4 )
+		if (RandomInt(6) >= 4)
 		{
 			// sweeping camera
-			m_CameraDistance = CAMERA_SWEEP_DISTANCE + RandomInt(-1,1) * CAMERA_SWEEP_DISTANCE_VARIANCE;
-			m_CameraPanYStart = m_CameraPanYEnd = RandomInt(-1,1) * CAMERA_SWEEP_PAN_Y_RANGE_DEGREES;
+			m_CameraDistance = CAMERA_SWEEP_DISTANCE + RandomInt(-1, 1) * CAMERA_SWEEP_DISTANCE_VARIANCE;
+			m_CameraPanYStart = m_CameraPanYEnd = RandomInt(-1, 1) * CAMERA_SWEEP_PAN_Y_RANGE_DEGREES;
 			m_fCameraHeightStart = m_fCameraHeightEnd = CAMERA_STILL_LOOK_AT_HEIGHT;
 
-			m_CameraPanYEnd += RandomInt(-1,1) * CAMERA_SWEEP_PAN_Y_VARIANCE_DEGREES;
-			m_fCameraHeightStart = m_fCameraHeightEnd = m_fCameraHeightStart + RandomInt(-1,1) * CAMERA_SWEEP_HEIGHT_VARIANCE;
+			m_CameraPanYEnd += RandomInt(-1, 1) * CAMERA_SWEEP_PAN_Y_VARIANCE_DEGREES;
+			m_fCameraHeightStart = m_fCameraHeightEnd = m_fCameraHeightStart + RandomInt(-1, 1) * CAMERA_SWEEP_HEIGHT_VARIANCE;
 
-			float fCameraHeightVariance = RandomInt(-1,1) * CAMERA_SWEEP_HEIGHT_VARIANCE;
+			float fCameraHeightVariance = RandomInt(-1, 1) * CAMERA_SWEEP_HEIGHT_VARIANCE;
 			m_fCameraHeightStart -= fCameraHeightVariance;
 			m_fCameraHeightEnd += fCameraHeightVariance;
 
@@ -244,7 +265,7 @@ void DancingCharacters::Update( float fDelta )
 		else
 		{
 			// still camera
-			m_CameraDistance = CAMERA_STILL_DISTANCE + RandomInt(-1,1) * CAMERA_STILL_DISTANCE_VARIANCE;
+			m_CameraDistance = CAMERA_STILL_DISTANCE + RandomInt(-1, 1) * CAMERA_STILL_DISTANCE_VARIANCE;
 			m_CameraPanYStart = m_CameraPanYEnd = Neg1OrPos1() * CAMERA_STILL_PAN_Y_RANGE_DEGREES;
 			m_fCameraHeightStart = m_fCameraHeightEnd = CAMERA_SWEEP_LOOK_AT_HEIGHT + Neg1OrPos1() * CAMERA_STILL_HEIGHT_VARIANCE;
 
@@ -252,10 +273,12 @@ void DancingCharacters::Update( float fDelta )
 		}
 
 		int iCurBeat = (int)GAMESTATE->m_Position.m_fSongBeat;
-		iCurBeat -= iCurBeat%8;
+		// Need to convert it to a int, otherwise it complains.
+		int NewBeatToSet = (int)AMM_BEATS_TIL_NEXTCAMERA;
+		iCurBeat -= iCurBeat % NewBeatToSet;
 
-		m_fThisCameraStartBeat = (float) iCurBeat;
-		m_fThisCameraEndBeat = float(iCurBeat + 8);
+		m_fThisCameraStartBeat = (float)iCurBeat;
+		m_fThisCameraEndBeat = float(iCurBeat + AMM_BEATS_TIL_NEXTCAMERA);
 	}
 	/*
 	// is there any of this still around? This block of code is _ugly_. -Colby
@@ -327,7 +350,7 @@ void DancingCharacters::DrawPrimitives()
 
 	RageVector3 m_LookAt( 0, m_fLookAtHeight, 0 );
 
-	DISPLAY->LoadLookAt( 45,
+	DISPLAY->LoadLookAt( CAM_FOV,
 		m_CameraPoint,
 		m_LookAt,
 		RageVector3(0,1,0) );
@@ -339,15 +362,15 @@ void DancingCharacters::DrawPrimitives()
 
 		DISPLAY->SetLighting( true );
 
-		RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
-		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(1,0.95f,0.925f,1));
-		RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
+		RageColor ambient  = bFailed ? (RageColor)LIGHT_ADANGER_COLOR : (bDanger ? (RageColor)LIGHT_ADANGER_COLOR : (RageColor)LIGHT_AMBIENT_COLOR);
+		RageColor diffuse  = bFailed ? (RageColor)LIGHT_DDANGER_COLOR : (bDanger ? (RageColor)LIGHT_DDANGER_COLOR : (RageColor)LIGHT_DIFFUSE_COLOR);
+		RageColor specular = (RageColor)LIGHT_AMBIENT_COLOR;
 		DISPLAY->SetLightDirectional( 
 			0,
 			ambient, 
 			diffuse,
 			specular,
-			RageVector3(-3, -7.5f, +9) );
+			RageVector3(LIGHTING_X, LIGHTING_Y, LIGHTING_Z) );
 
 		if( PREFSMAN->m_bCelShadeModels )
 		{
@@ -391,7 +414,7 @@ void DancingCharacters::DrawPrimitives()
 	 */
 }
 
-/*
+/*	2018 Jose Varela
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
  * 

@@ -8,21 +8,21 @@ t[#t+1] = Def.ActorFrame {
 	end,
 	OffCommand=cmd(sleep,0.175;decelerate,0.4;addy,-105),
 	Def.Quad {
-		InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH,96),
+		InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH,92),
 		OnCommand=function(self)
-			self:diffuse(ScreenColor(SCREENMAN:GetTopScreen():GetName())):diffusetopedge(ColorDarkTone(ScreenColor(SCREENMAN:GetTopScreen():GetName()))):diffusealpha(0.8)
+			self:diffuse(ScreenColor(SCREENMAN:GetTopScreen():GetName())):diffusebottomedge(ColorDarkTone(ScreenColor(SCREENMAN:GetTopScreen():GetName()))):diffusealpha(1)
 		end
 	},
 	LoadActor("_shade") .. {
-		InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH,96),
+		InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH,92),
 		OnCommand=function(self)
-			self:diffuse(ScreenColor(SCREENMAN:GetTopScreen():GetName())):diffusetopedge(ColorDarkTone(ScreenColor(SCREENMAN:GetTopScreen():GetName()))):diffusealpha(0.8):faderight(1)
+			self:diffuse(ScreenColor(SCREENMAN:GetTopScreen():GetName())):diffusebottomedge(ColorDarkTone(ScreenColor(SCREENMAN:GetTopScreen():GetName()))):diffusealpha(0.8):faderight(1)
 		end
 	},
 	-- Shadow
 	Def.Quad {
-		InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH,8;y,96),
-		OnCommand=cmd(diffuse,Color("Black");fadebottom,1;diffusealpha,0.6)
+		InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH,4;y,92),
+		OnCommand=cmd(diffuse,Color("Black");fadebottom,1;diffusealpha,0.2)
 	}
 }
 
@@ -62,7 +62,7 @@ t[#t+1] = Def.ActorFrame {
 t[#t+1] = LoadFont("Common Header") .. {
 	Name="HeaderTitle",
 	Text=Screen.String("HeaderText"),
-	InitCommand=cmd(zoom,1.0;x,-SCREEN_CENTER_X+110;y,49;horizalign,left;diffuse,color("#ffffff");shadowlength,1;skewx,-0.1),
+	InitCommand=cmd(zoom,1.0;x,-SCREEN_CENTER_X+110;y,49;horizalign,left;diffuse,color("#ffffff");shadowlength,1),
 	OnCommand=cmd(diffusealpha,0;sleep,0.5;smooth,0.3;diffusealpha,0.8),
 	UpdateScreenHeaderMessageCommand=function(self,param)
 		self:settext(param.Header)
@@ -74,11 +74,11 @@ t[#t+1] = LoadFont("Common Header") .. {
 	-- Name="HeaderSubTitle";
 	-- Text=Screen.String("HeaderSubText");
 	-- InitCommand=cmd(zoom,0.8;x,-SCREEN_CENTER_X+110;y,70;horizalign,left;diffuse,color("#ffffff");shadowlength,1;skewx,-0.1);
-	-- OnCommand=cmd(diffusealpha,0;sleep,0.55;smooth,0.3;diffusealpha,0.75;);
+	-- OnCommand=cmd(diffusealpha,0;sleep,0.55;smooth,0.3;diffusealpha,0.75);
 	-- UpdateScreenHeaderMessageCommand=function(self,param)
 		-- self:settext(param.Header);
 	-- end;
-	-- OffCommand=cmd(smooth,0.3;diffusealpha,0;);
+	-- OffCommand=cmd(smooth,0.3;diffusealpha,0);
 -- };
 
 return t

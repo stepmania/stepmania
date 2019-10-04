@@ -3,13 +3,13 @@
 #include "GameState.h"
 #include "RageUtil.h"
 #include "Song.h"
-#include "Foreach.h"
+
 #include "PlayerOptions.h"
 #include "PlayerState.h"
 
 void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const
 {
-	ASSERT( pSong != NULL );
+	ASSERT( pSong != nullptr );
 	ASSERT_M( fStartSecond >= 0, ssprintf("StartSecond: %f",fStartSecond) );
 	
 	const TimingData &timing = pSong->m_SongTiming;
@@ -22,7 +22,7 @@ void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBe
  * prevent popping when the attack has note modifers. */
 void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
 {
-	ASSERT( pSong != NULL );
+	ASSERT( pSong != nullptr );
 
 	if( fStartSecond >= 0 )
 	{
@@ -30,7 +30,7 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 		return;
 	}
 
-	ASSERT( pPlayerState != NULL );
+	ASSERT( pPlayerState != nullptr );
 
 	/* If reasonable, push the attack forward 8 beats so that notes on screen don't change suddenly. */
 	fStartBeat = min( GAMESTATE->m_Position.m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );
@@ -91,32 +91,27 @@ int Attack::GetNumAttacks() const
 
 bool AttackArray::ContainsTransformOrTurn() const
 {
-	FOREACH_CONST( Attack, *this, a )
-	{
-		if( a->ContainsTransformOrTurn() )
-			return true;
-	}
-	return false;
+	return std::any_of((*this).begin(), (*this).end(), [](Attack const &a) { return a.ContainsTransformOrTurn(); });
 }
 
 vector<RString> AttackArray::ToVectorString() const
 {
 	vector<RString> ret;
-	FOREACH_CONST( Attack, *this, a )
+	for (Attack const &a : *this)
 	{
 		ret.push_back(ssprintf("TIME=%f:LEN=%f:MODS=%s",
-				       a->fStartSecond,
-				       a->fSecsRemaining,
-				       a->sModifiers.c_str()));
+				       a.fStartSecond,
+				       a.fSecsRemaining,
+				       a.sModifiers.c_str()));
 	}
 	return ret;
 }
 
 void AttackArray::UpdateStartTimes(float delta)
 {
-	FOREACH(Attack, *this, a)
+	for (Attack &a : *this)
 	{
-		a->fStartSecond += delta;
+		a.fStartSecond += delta;
 	}
 }
 

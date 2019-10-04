@@ -5,7 +5,7 @@
 #include "RageFile.h"
 #include <cstring>
 
-AnnouncerManager*	ANNOUNCER = NULL; // global and accessible from anywhere in our program
+AnnouncerManager*	ANNOUNCER = nullptr; // global and accessible from anywhere in our program
 
 
 const RString EMPTY_ANNOUNCER_NAME = "Empty";
@@ -101,7 +101,7 @@ static const char *aliases[][2] = {
 	{ "gameplay combo 900", "gameplay 900 combo" },
 	{ "gameplay combo 1000", "gameplay 1000 combo" },
 
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 /* Find an announcer directory with sounds in it.  First search sFolderName,
@@ -120,7 +120,7 @@ RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName
 
 	/* Search for the announcer folder in the list of aliases. */
 	int i;
-	for(i = 0; aliases[i][0] != NULL; ++i)
+	for(i = 0; aliases[i][0] != nullptr; ++i)
 	{
 		if(!sFolderName.EqualsNoCase(aliases[i][0]))
 			continue; /* no match */

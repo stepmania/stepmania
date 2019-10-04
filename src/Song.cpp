@@ -23,7 +23,6 @@
 #include "SongUtil.h"
 #include "SongManager.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
 #include "BackgroundUtil.h"
 #include "SpecialFiles.h"
 #include "NotesLoader.h"
@@ -95,12 +94,14 @@ Song::Song()
 
 Song::~Song()
 {
-	FOREACH( Steps*, m_vpSteps, s )
-		SAFE_DELETE( *s );
-	m_vpSteps.clear();
-	FOREACH(Steps*, m_UnknownStyleSteps, s)
+	for (Steps *s : m_vpSteps)
 	{
-		SAFE_DELETE(*s);
+		SAFE_DELETE( s );
+	}
+	m_vpSteps.clear();
+	for (Steps *s : m_UnknownStyleSteps)
+	{
+		SAFE_DELETE(s);
 	}
 	m_UnknownStyleSteps.clear();
 
@@ -164,14 +165,16 @@ void Song::SetSpecifiedLastSecond(const float f)
 // Reset to an empty song.
 void Song::Reset()
 {
-	FOREACH( Steps*, m_vpSteps, s )
-		SAFE_DELETE( *s );
+	for (Steps *s : m_vpSteps)
+	{	
+		SAFE_DELETE( s );
+	}
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
-	FOREACH(Steps*, m_UnknownStyleSteps, s)
+	for (Steps *s : m_UnknownStyleSteps)
 	{
-		SAFE_DELETE(*s);
+		SAFE_DELETE(s);
 	}
 	m_UnknownStyleSteps.clear();
 
@@ -186,7 +189,8 @@ void Song::Reset()
 void Song::AddBackgroundChange( BackgroundLayer iLayer, BackgroundChange seg )
 {
 	// Delete old background change at this start beat, if any.
-	FOREACH( BackgroundChange, GetBackgroundChanges(iLayer), bgc )
+	auto &changes = GetBackgroundChanges(iLayer);
+	for (vector<BackgroundChange>::iterator bgc = changes.begin(); bgc != changes.end(); ++bgc)
 	{
 		if( bgc->m_fStartBeat == seg.m_fStartBeat )
 		{
@@ -417,15 +421,15 @@ bool Song::LoadFromSongDir(RString sDir, bool load_autosave, ProfileSlot from_pr
 		m_sCDTitleFile.clear();
 	}
 
-	FOREACH( Steps*, m_vpSteps, s )
+	for (Steps *s : m_vpSteps)
 	{
 		if(m_LoadedFromProfile != ProfileSlot_Invalid)
 		{
-			(*s)->ChangeFilenamesForCustomSong();
+			s->ChangeFilenamesForCustomSong();
 		}
 		/* Compress all Steps. During initial caching, this will remove cached
 		 * NoteData; during cached loads, this will just remove cached SMData. */
-		(*s)->Compress();
+		s->Compress();
 	}
 
 	// Load the cached Images, if it's not loaded already.
@@ -638,9 +642,9 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 	m_SongTiming.TidyUpData(false);
 
-	FOREACH(Steps *, m_vpSteps, s)
+	for (Steps *s : m_vpSteps)
 	{
-		(*s)->m_Timing.TidyUpData(true);
+		s->m_Timing.TidyUpData(true);
 	}
 
 	if(!from_cache)
@@ -766,14 +770,14 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			/* XXX: Checking if the music file exists eliminates a warning
 			 * originating from BMS files (which have no music file, per se)
 			 * but it's something of a hack. */
-			if(Sample == NULL && m_sMusicFile != "")
+			if(Sample == nullptr && m_sMusicFile != "")
 			{
 				LOG->UserLog("Sound file", GetMusicPath(), "couldn't be opened: %s", error.c_str());
 
 				// Don't use this file.
 				m_sMusicFile = "";
 			}
-			else if(Sample != NULL)
+			else if(Sample != nullptr)
 			{
 				m_fMusicLengthSeconds = Sample->GetLength() / 1000.0f;
 				delete Sample;
@@ -808,7 +812,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		if(!m_PreviewFile.empty() && m_fMusicSampleLengthSeconds <= 0.00f) { // if there's a preview file and sample length isn't specified, set sample length to length of preview file
 			RString error;
 			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetPreviewMusicPath(), error);
-			if(Sample == NULL && m_sMusicFile != "")
+			if(Sample == nullptr && m_sMusicFile != "")
 			{
 				LOG->UserLog("Sound file", GetPreviewMusicPath(), "couldn't be opened: %s", error.c_str());
 
@@ -816,7 +820,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				m_PreviewFile = "";
 				m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 			}
-			else if(Sample != NULL)
+			else if(Sample != nullptr)
 			{
 				m_fMusicSampleLengthSeconds = Sample->GetLength() / 1000.0f;
 				delete Sample;
@@ -1193,12 +1197,12 @@ bool Song::SongCompleteForStyle( const Style *st ) const
 
 bool Song::HasStepsType( StepsType st ) const
 {
-	return SongUtil::GetOneSteps( this, st ) != NULL;
+	return SongUtil::GetOneSteps( this, st ) != nullptr;
 }
 
 bool Song::HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const
 {
-	return SongUtil::GetOneSteps( this, st, dc ) != NULL;
+	return SongUtil::GetOneSteps( this, st, dc ) != nullptr;
 }
 
 void Song::Save(bool autosave)
@@ -1258,9 +1262,8 @@ bool Song::SaveToSMFile()
 		FileCopy( sPath, sPath + ".old" );
 
 	vector<Steps*> vpStepsToSave;
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (Steps *pSteps : m_vpSteps)
 	{
-		Steps *pSteps = *s;
 		if( pSteps->IsAutogen() )
 			continue; // don't write autogen notes
 
@@ -1270,9 +1273,9 @@ bool Song::SaveToSMFile()
 
 		vpStepsToSave.push_back( pSteps );
 	}
-	FOREACH_CONST(Steps*, m_UnknownStyleSteps, s)
+	for (Steps *s : m_UnknownStyleSteps)
 	{
-		vpStepsToSave.push_back(*s);
+		vpStepsToSave.push_back(s);
 	}
 
 	return NotesWriterSM::Write( sPath, *this, vpStepsToSave );
@@ -1296,9 +1299,8 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 		FileCopy( path, path + ".old" );
 
 	vector<Steps*> vpStepsToSave;
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (Steps *pSteps : m_vpSteps)
 	{
-		Steps *pSteps = *s;
 		if( pSteps->IsAutogen() )
 			continue; // don't write autogen notes
 
@@ -1310,9 +1312,9 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 			pSteps->SetFilename(path);
 		vpStepsToSave.push_back( pSteps );
 	}
-	FOREACH_CONST(Steps*, m_UnknownStyleSteps, s)
+	for (Steps *s : m_UnknownStyleSteps)
 	{
-		vpStepsToSave.push_back(*s);
+		vpStepsToSave.push_back(s);
 	}
 
 	if(bSavingCache || autosave)
@@ -1347,8 +1349,8 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 	}
 
 	// Mark these steps saved to disk.
-	FOREACH( Steps*, vpStepsToSave, s )
-		(*s)->SetSavedToDisk( true );
+	for (Steps *s : vpStepsToSave)
+		s->SetSavedToDisk( true );
 
 	return true;
 }
@@ -1520,11 +1522,11 @@ bool Song::IsEasy( StepsType st ) const
 bool Song::IsTutorial() const
 {
 	// A Song is considered a Tutorial if it has only Beginner steps.
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (Steps const *s : m_vpSteps)
 	{
-		if( (*s)->m_StepsType == StepsType_lights_cabinet )
+		if( s->m_StepsType == StepsType_lights_cabinet )
 			continue; // ignore
-		if( (*s)->GetDifficulty() != Difficulty_Beginner )
+		if( s->GetDifficulty() != Difficulty_Beginner )
 			return false;
 	}
 
@@ -1533,22 +1535,13 @@ bool Song::IsTutorial() const
 
 bool Song::HasEdits( StepsType st ) const
 {
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )
-	{
-		Steps* pSteps = m_vpSteps[i];
-		if( pSteps->m_StepsType == st &&
-			pSteps->GetDifficulty() == Difficulty_Edit )
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return std::any_of(m_vpSteps.begin(), m_vpSteps.end(),
+		[&](Steps const *step) { return step->m_StepsType == st && step->GetDifficulty() == Difficulty_Edit; });
 }
 
 bool Song::NormallyDisplayed() const
 {
-	return UNLOCKMAN == NULL || !UNLOCKMAN->SongIsLocked(this);
+	return UNLOCKMAN == nullptr || !UNLOCKMAN->SongIsLocked(this);
 }
 
 bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }
@@ -1631,9 +1624,9 @@ vector<BackgroundChange> &Song::GetForegroundChanges()
 vector<RString> Song::GetChangesToVectorString(const vector<BackgroundChange> & changes) const
 {
 	vector<RString> ret;
-	FOREACH_CONST( BackgroundChange, changes, bgc )
+	for (BackgroundChange const &bgc : changes)
 	{
-		ret.push_back((*bgc).ToString());
+		ret.push_back(bgc.ToString());
 	}
 	return ret;
 }
@@ -1990,7 +1983,7 @@ void Song::FreeAllLoadedFromProfile( ProfileSlot slot, const set<Steps*> *setInU
 			continue;
 		if( slot != ProfileSlot_Invalid && pSteps->GetLoadedFromProfileSlot() != slot )
 			continue;
-		if( setInUse != NULL && setInUse->find(pSteps) != setInUse->end() )
+		if( setInUse != nullptr && setInUse->find(pSteps) != setInUse->end() )
 			continue;
 		apToRemove.push_back( pSteps );
 	}
@@ -2050,9 +2043,9 @@ bool Song::IsStepsUsingDifferentTiming(Steps *pSteps) const
 
 bool Song::AnyChartUsesSplitTiming() const
 {
-	FOREACH_CONST(Steps*, m_vpSteps, s)
+	for (Steps *s : m_vpSteps)
 	{
-		if(!(*s)->m_Timing.empty())
+		if(!s->m_Timing.empty())
 		{
 			return true;
 		}

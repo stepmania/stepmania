@@ -11,7 +11,7 @@
 
 #include "libtomcrypt/src/headers/tomcrypt.h"
 
-CryptManager*	CRYPTMAN	= NULL;	// global and accessible from anywhere in our program
+CryptManager*	CRYPTMAN	= nullptr;	// global and accessible from anywhere in our program
 
 static const RString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const RString PUBLIC_KEY_PATH = "Data/public.rsa";
@@ -74,13 +74,13 @@ static const int KEY_LENGTH = 1024;
  openssl genrsa -out testing -outform DER
  openssl rsa -in testing -out testing2 -outform DER
  openssl rsa -in testing -out testing2 -pubout -outform DER
- 
+
  openssl pkcs8 -inform DER -outform DER -nocrypt -in private.rsa -out private.der
- * 
+ *
  */
 
-static PRNGWrapper *g_pPRNG = NULL;
-
+static PRNGWrapper *g_pPRNG = nullptr;
+ltc_math_descriptor ltc_mp = ltm_desc;
 
 CryptManager::CryptManager()
 {
@@ -92,8 +92,6 @@ CryptManager::CryptManager()
 		lua_settable( L, LUA_GLOBALSINDEX );
 		LUA->Release( L );
 	}
-
-	ltc_mp = ltm_desc;
 
 	g_pPRNG = new PRNGWrapper( &yarrow_desc );
 }
@@ -144,7 +142,7 @@ static bool WriteFile( RString sFile, RString sBuf )
 		LOG->Warn( "WriteFile: opening %s failed: %s", sFile.c_str(), output.GetError().c_str() );
 		return false;
 	}
-	
+
 	if( output.Write(sBuf) == -1 || output.Flush() == -1 )
 	{
 		LOG->Warn( "WriteFile: writing %s failed: %s", sFile.c_str(), output.GetError().c_str() );
@@ -447,7 +445,7 @@ RString CryptManager::GenerateRandomUUID()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the CryptManager. */ 
+/** @brief Allow Lua to have access to the CryptManager. */
 class LunaCryptManager: public Luna<CryptManager>
 {
 public:
@@ -504,7 +502,7 @@ LUA_REGISTER_CLASS( CryptManager )
 /*
  * (c) 2004-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -514,7 +512,7 @@ LUA_REGISTER_CLASS( CryptManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

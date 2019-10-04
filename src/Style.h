@@ -54,7 +54,7 @@ public:
 	{ 
 		int   track;		/**< Take note data from this track. */
 		float fXOffset;		/**< This is the x position of the column relative to the player's center. */
-		const char *pzName;	/**< The name of the column, or NULL to use the button name mapped to it. */
+		const char *pzName;	/**< The name of the column, or nullptr to use the button name mapped to it. */
 	};
 
 	/** @brief Map each players' colun to a track in the NoteData. */

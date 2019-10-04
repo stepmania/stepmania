@@ -3,6 +3,7 @@
 #include "ProductInfo.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include <CoreServices/CoreServices.h>
+#include <os/log.h>
 #include <sys/types.h>
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
@@ -23,7 +24,7 @@ RString CrashHandler::GetLogsDirectory()
 }
 
 // XXX Can we use LocalizedString here instead?
-#define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), NULL, CFSTR("Localizable") )
+#define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), nullptr, CFSTR("Localizable") )
 
 void CrashHandler::InformUserOfCrash( const RString& sPath )
 {
@@ -40,12 +41,12 @@ void CrashHandler::InformUserOfCrash( const RString& sPath )
 	CFStringRef sFormat = LSTRING( bundle, PRODUCT_FAMILY " has crashed. "
 				       "Debugging information has been output to\n\n%s\n\n"
 				       "Please file a bug report at\n\n%s" );
-	CFStringRef sBody = CFStringCreateWithFormat( kCFAllocatorDefault, NULL, sFormat,
+	CFStringRef sBody = CFStringCreateWithFormat( kCFAllocatorDefault, nullptr, sFormat,
 						      sPath.c_str(), REPORT_BUG_URL );
 	CFOptionFlags response = kCFUserNotificationCancelResponse;
 	CFTimeInterval timeout = 0.0; // Should we ever time out?
 	
-	CFUserNotificationDisplayAlert( timeout, kCFUserNotificationStopAlertLevel, NULL, NULL, NULL,
+	CFUserNotificationDisplayAlert( timeout, kCFUserNotificationStopAlertLevel, nullptr, nullptr, nullptr,
 					sTitle, sBody, sDefault, sAlternate, sOther, &response );
 	
 	switch( response )
@@ -85,7 +86,7 @@ bool CrashHandler::IsDebuggerPresent()
 	
 	// Call sysctl.
 	size = sizeof( info );
-	ret = sysctl( mib, sizeof(mib)/sizeof(*mib), &info, &size, NULL, 0 );
+	ret = sysctl( mib, sizeof(mib)/sizeof(*mib), &info, &size, nullptr, 0 );
 	
 	// We're being debugged if the P_TRACED flag is set.
 	
@@ -97,13 +98,13 @@ bool CrashHandler::IsDebuggerPresent()
 
 void CrashHandler::DebugBreak()
 {
-	DebugStr( "\pDebugBreak()" );
+	os_log(OS_LOG_DEFAULT, "DebugBreak()");
 }
 
 /*
  * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including

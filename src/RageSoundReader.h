@@ -15,7 +15,7 @@ public:
 	virtual int GetSampleRate() const = 0;
 	virtual unsigned GetNumChannels() const = 0;
 	virtual bool SetProperty( const RString & /* sProperty */, float /* fValue */ ) { return false; }
-	virtual RageSoundReader *GetSource() { return NULL; }
+	virtual RageSoundReader *GetSource() { return nullptr; }
 
 	/* Return values for Read(). */
 	enum {
@@ -40,7 +40,7 @@ public:
 	virtual float GetStreamToSourceRatio() const = 0;
 
 	virtual RString GetError() const = 0;
-	int RetriedRead( float *pBuffer, int iFrames, int *iSourceFrame = NULL, float *fRate = NULL );
+	int RetriedRead( float *pBuffer, int iFrames, int *iSourceFrame = nullptr, float *fRate = nullptr );
 };
 
 #endif

@@ -3,10 +3,141 @@ ________________________________________________________________________________
 The StepMania 5.1 Changelog covers all post-5.0.12 changes.
 ________________________________________________________________________________
 
+2018/08/02
+----------
+* [Sound] Fix audio drivers with a low sample count maximum value [chrispable]
+
+2018/07/30
+----------
+* [Lights] Disable minimaid by default [jousway]
+
+2018/07/29
+----------
+* [Characters] Add enhanced lighting and camera options for characters. [josevarelap]
+
+2018/07/17
+----------
+* [Lambda] Fix grade tiers in metrics [listenerjubatus]
+* [Noteskin] Fix mine graphic in Lambda noteskin. [listenerjubatus]
+ 
+2018/07/05
+----------
+* [Docs] fix LuaDoc for SONGMAN:GetCoursesInGroup() [dguzek]
+  
+2018/06/08
+----------
+* [Input] Preserve event timestamps in X11 input driver [geefr]
+
+2018/06/07
+----------
+* [Bug] linux event m_bShutdown undefined [geefr]
+ 
+2018/05/26
+----------
+* [Input] Initialise variables to ensure input thread is started  [geefr]
+
+2018/05/10
+----------
+* [Lights] Avoid crash in ~LightsDriver_SystemMessage [geefr]
+ 
+2018/04/20
+----------
+* [Actor] Moved display zbuffer clear to after notefields are drawn [mrthatkid]
+
+2018/03/08
+----------
+* [Actor] Improve DrawQuads batching in the font render. [ranma]
+
+2018/03/08
+----------
+* [Online] Add timeout to SMO sockets [nico-abram]
+
+2018/02/25
+----------
+* [Lights] Turn lights out on exit [geefr]
+
+2018/02/25
+----------
+* [Lambda] Round of adjustments.
+
+2018/02/09
+----------
+* [Lambda] the ScreenFilter env will be nil sometimes, catch that [flameshadowxeroshin]
+* [Lambda] Fix LifeMeter tip not falling below 50% [flameshadowxeroshin]
+* [Utilities] Make getenv() and setenv() actually get and set the current env  [flameshadowxeroshin]
+
+2018/02/08
+----------
+* [Anouncers] Make announcers repeat their lines less [mark-blum]
+* [General] Fix compiling on Linux by updating the libmmmagic binaries. [mark-blum]
+* [Lambda] Refresh based on consultation [listenerjubatus]
+
+2018/02/05
+----------
+* [ThemePrefs] Add THEME:get_theme_fallback_list function. [kyzentun]
+
+2018/02/02
+----------
+* [ThemePrefs] Change ThemePrefs to use the Theme preference instead of GetThemeDis [kyzentun]
+
+2018/01/25
+----------
+* [Installer] Repairs to NSIS scripts. [mrthatkid]
+
+2018/01/17
+----------
+* [Noteskin] Add NoteColorType ProgressAlternate and NoteColorMode ProgressOnBeatAtEnd [flameshadowxeroshin]
+
+2018/01/16
+----------
+* [Course] Unselectable trails are pruned from course selection. [kyzentun]
+
+2017/12/30
+----------
+* [Profile] Change user data directory to ~/stepmania-5.1 [concubidated]
+
+2017/10/20
+----------
+* [MusicWheelItem] Fix crash that only shows up on extra stage from MusicWheelItem handler [kyzentun]
+
+2017/10/02
+----------
+* [Actor] Support for distance field fonts [flameshadowxeroshin]
+* [Actor] Distance field EffectMode [flameshadowxeroshin]
+
+2017/09/19
+----------
+* [ImageCache] Changing BannerCache into ImageCache to support more imagetypes [jousway]
+
+2017/08/30
+----------
+* [General] Implemented SetActualDancePoints & SetPossibleDancePoints [mrthatkid]
+
+2017/08/14
+----------
+* [RageDisplay] backport fullscreen fix for macOS [dguzek]
+
+2017/08/08
+----------
+* [General] Add new 720p default theme Lambda [listenerjubatus]
+
+2017/07/15
+----------
+* [Modifiers] Added nITG's Tangent Modifiers [mrthatkid]
+
+2017/07/08
+----------
+* [Noteskins] Allow spaces in noteskin names. [kyzentun]
+* [Courses] Check entry id in GetCourseEntry. Add GetNumCourseEntries. [kyzentun]
+
 2017/06/18
 ----------
 * [RageDisplay, LLW_X11] Backport fullscreen borderless window, per-monitor
   fullscreen options to X11 backend
+
+2017/06/09
+----------
+* [Modifiers] Added nITG's various column specific & other misc modifiers [mrthatkid]  
 
 2017/06/06
 ----------

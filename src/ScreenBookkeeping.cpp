@@ -147,9 +147,8 @@ void ScreenBookkeeping::UpdateView()
 
 			vector<Song*> vpSongs;
 			int iCount = 0;
-			FOREACH_CONST( Song *, SONGMAN->GetAllSongs(), s )
+			for (Song *pSong : SONGMAN->GetAllSongs())
 			{
-				Song *pSong = *s;
 				if( UNLOCKMAN->SongIsLocked(pSong) & ~LOCKED_DISABLED )
 					continue;
 				iCount += pProfile->GetSongNumTimesPlayed( pSong );

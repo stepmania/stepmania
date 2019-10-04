@@ -29,7 +29,6 @@ public:
 
 	void Init();
 
-	float GetMixVolume() const { return m_fMixVolume; }
 	void SetMixVolume();
 	float GetVolumeOfNonCriticalSounds() const { return m_fVolumeOfNonCriticalSounds; }
 	void SetVolumeOfNonCriticalSounds( float fVolumeOfNonCriticalSounds );
@@ -46,6 +45,7 @@ public:
 	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
 	void fix_bogus_sound_driver_pref(RString const& valid_setting);
+	void low_sample_count_workaround();
 
 private:
 	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
@@ -53,7 +53,6 @@ private:
 	RageSoundDriver *m_pDriver;
 
 	/* Prefs: */
-	float m_fMixVolume;
 	float m_fVolumeOfNonCriticalSounds;
 	// Swallow up warnings. If they must be used, define them.
 	RageSoundManager& operator=(const RageSoundManager& rhs);

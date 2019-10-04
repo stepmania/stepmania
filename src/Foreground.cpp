@@ -7,7 +7,7 @@
 #include "ActorUtil.h"
 #include "Song.h"
 #include "BackgroundUtil.h"
-#include "Foreach.h"
+
 
 Foreground::~Foreground()
 {
@@ -21,7 +21,7 @@ void Foreground::Unload()
 	m_BGAnimations.clear();
 	m_SubActors.clear();
 	m_fLastMusicSeconds = -9999;
-	m_pSong = NULL;
+	m_pSong = nullptr;
 }
 
 void Foreground::LoadFromSong( const Song *pSong )
@@ -31,9 +31,8 @@ void Foreground::LoadFromSong( const Song *pSong )
 	TEXTUREMAN->SetDefaultTexturePolicy( RageTextureID::TEX_VOLATILE );
 
 	m_pSong = pSong;
-	FOREACH_CONST( BackgroundChange, pSong->GetForegroundChanges(), bgc )
+	for (BackgroundChange const &change : pSong->GetForegroundChanges())
 	{
-		const BackgroundChange &change = *bgc;
 		RString sBGName = change.m_def.m_sFile1,
 			sLuaFile = pSong->GetSongDir() + sBGName + "/default.lua",
 			sXmlFile = pSong->GetSongDir() + sBGName + "/default.xml";
@@ -51,7 +50,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 		{
 			bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName, this );
 		}
-		if( bga.m_bga == NULL )
+		if( bga.m_bga == nullptr )
 			continue;
 		bga.m_bga->SetName( sBGName );
 		// ActorUtil::MakeActor calls LoadFromNode to load the actor, and

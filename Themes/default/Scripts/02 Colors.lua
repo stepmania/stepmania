@@ -25,76 +25,76 @@ function ScreenColor(screen)
 end;
 
 ScreenColors = {
-    Style           = color("#81468B"),
-    PlayMode        = color("#478e6f"),
-    Music           = color("#1268aa"),
-    Online           = color("#1CA6A0"),
-    Course          = color("#6D1646"),
-    PlayerOptions   = color("#544abe"),
-    OptionsService  = color("#5F2D41"),
-    Evaluation      = color("#806635"),
-    Summary         = color("#B38D47"),
+    Style           = color("#882D47"),
+    PlayMode        = color("#882D47"),
+    Music           = color("#882D47"),
+    Online           = color("#882D47"),
+    Course          = color("#882D47"),
+    PlayerOptions   = color("#882D47"),
+    OptionsService  = color("#882D47"),
+    Evaluation      = color("#882D47"),
+    Summary         = color("#882D47"),
     StageInformation  = color("#D05722"),
     Edit         = color("#B34754"),
-    Default         = color("#5F2D41"),
+    Default         = color("#882D47"),
 }
 
 ModeIconColors = {
-    Normal      = color("#339FF2"),
-    Rave        = color("#6BFF90"), 
-    Nonstop     = color("#FF66AB"),
-    Oni         = color("#FF714D"),
-    Endless     = color("#6A62CA"),
+    Normal      = color("#1AE0E4"),
+    Rave        = color("#3ACF2A"), 
+    Nonstop     = color("#CFC42A"),
+    Oni         = color("#CF502A"),
+    Endless     = color("#981F41"),
 }
 
 GameColor = {
     PlayerColors = {
-        PLAYER_1 = color("#3982FF"),
-        PLAYER_2 = color("#FF4596"),
+        PLAYER_1 = color("#4B82DC"),
+        PLAYER_2 = color("#DF4C47"),
 		both = color("#FFFFFF"),
     },
     PlayerDarkColors = {
-        PLAYER_1 = color("#023C9F"),
-        PLAYER_2 = color("#7F083C"),
+        PLAYER_1 = color("#16386E"),
+        PLAYER_2 = color("#65110F"),
 		both = color("#F5E1E1"),
     },
     Difficulty = {
         --[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
         in some cases, especially to apply new colors for stuff you
         couldn't before. (huh? -aj) ]]
-        Beginner    = color("#A165CE"),         --  purple
-        Easy        = color("#50DA1A"),         -- green
-        Medium      = color("#FFE53E"),         -- yellow
-        Hard        = color("#FE4F49"),         -- orange
-        Challenge   = color("#2DDBFF"),         -- light blue
-        Edit        = color("0.8,0.8,0.8,1"),   -- gray
+        Beginner    = color("#1AE0E4"),         -- Mint
+        Easy        = color("#3ACF2A"),         -- Green
+        Medium      = color("#CFC42A"),         -- Yellow
+        Hard        = color("#CF502A"),         -- Orange
+        Challenge   = color("#981F41"),         -- Plum
+        Edit        = color("0.8,0.8,0.8,1"),   -- Gray
         Couple      = color("#ed0972"),         -- hot pink
         Routine     = color("#ff9a00"),         -- orange
         --[[ These are for courses, so let's slap them here in case someone
         wanted to use Difficulty in Course and Step regions. ]]
-        Difficulty_Beginner = color("#A165CE"),     -- purple
-        Difficulty_Easy     = color("#50DA1A"),     -- green
-        Difficulty_Medium   = color("#FFE53E"),     -- yellow
-        Difficulty_Hard     = color("#FE4F49"),     -- orange
-        Difficulty_Challenge    = color("#2DDBFF"), -- light blue
+        Difficulty_Beginner = color("#1AE0E4"),     -- Mint
+        Difficulty_Easy     = color("#2FA74D"),     -- Green
+        Difficulty_Medium   = color("#CFC42A"),     -- Yellow
+        Difficulty_Hard     = color("#CF502A"),     -- Orange
+        Difficulty_Challenge    = color("#981F41"), -- Plum
         Difficulty_Edit     = color("0.8,0.8,0.8,1"),       -- gray
         Difficulty_Couple   = color("#ed0972"),             -- hot pink
         Difficulty_Routine  = color("#ff9a00")              -- orange
     },
     Stage = {
-        Stage_1st   = color("#F6C455"),
-        Stage_2nd   = color("#EDA858"),
-        Stage_3rd   = color("#E69259"),
-        Stage_4th   = color("#DD775B"),
-        Stage_5th   = color("#D55E5D"),
-        Stage_6th   = color("#CD445F"),
-        Stage_Next  = color("#73ff00"),
-        Stage_Final = color("#4BC6EB"),
+        Stage_1st   = color("#9d324e"),
+        Stage_2nd   = color("#9d3262"),
+        Stage_3rd   = color("#9d3280"),
+        Stage_4th   = color("#9d329d"),
+        Stage_5th   = color("#7b329d"),
+        Stage_6th   = color("#52329d"),
+        Stage_Next  = color("#52329d"),
+        Stage_Final = color("#325c9d"),
         Stage_Extra1    = color("#B60052"),
         Stage_Extra2    = color("#FF499B"),
-        Stage_Nonstop   = color("#FFD782"),
-        Stage_Oni   = color("#FF714D"),
-        Stage_Endless   = color("#6040A7"),
+        Stage_Nonstop   = color("#9d324e"),
+        Stage_Oni   = color("#9d3232"),
+        Stage_Endless   = color("#9d3232"),
         Stage_Event = color("#9d324e"),
         Stage_Demo  = color("#9d324e")
     },

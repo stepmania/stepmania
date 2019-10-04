@@ -8,12 +8,11 @@
 #include "RageFileDriver.h"
 #include "RageFileDriverTimeout.h"
 #include "MessageManager.h"
-#include "Foreach.h"
 #include "RageUtil_WorkerThread.h"
 #include "arch/MemoryCard/MemoryCardDriver_Null.h"
 #include "LuaManager.h"
 
-MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessible from anywhere in our program
+MemoryCardManager*	MEMCARDMAN = nullptr;	// global and accessible from anywhere in our program
 
 static void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
 {
@@ -253,11 +252,11 @@ bool ThreadedMemoryCardWorker::Unmount( const UsbStorageDevice *pDevice )
 	return true;
 }
 
-static ThreadedMemoryCardWorker *g_pWorker = NULL;
+static ThreadedMemoryCardWorker *g_pWorker = nullptr;
 
 MemoryCardManager::MemoryCardManager()
 {
-	ASSERT( g_pWorker == NULL );
+	ASSERT( g_pWorker == nullptr );
 
 	// Register with Lua.
 	{
@@ -298,7 +297,7 @@ MemoryCardManager::~MemoryCardManager()
 	// Unregister with Lua.
 	LUA->UnsetGlobal( "MEMCARDMAN" );
 
-	ASSERT( g_pWorker != NULL );
+	ASSERT( g_pWorker != nullptr );
 	SAFE_DELETE(g_pWorker);
 
 	FOREACH_PlayerNumber( pn )
@@ -337,7 +336,7 @@ void MemoryCardManager::UpdateAssignments()
 		if( assigned_device.IsBlank() )     // no card assigned to this player
 			continue;
 
-		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
+		for (vector<UsbStorageDevice>::iterator d = vUnassignedDevices.begin(); d != vUnassignedDevices.end(); ++d)
 		{
 			if( *d == assigned_device )
 			{
@@ -372,8 +371,8 @@ void MemoryCardManager::UpdateAssignments()
 		}
 
 		LOG->Trace( "Looking for a card for Player %d", p+1 );
-				
-		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
+		
+		for (vector<UsbStorageDevice>::iterator d = vUnassignedDevices.begin(); d != vUnassignedDevices.end(); ++d)
 		{
 			// search for card dir match
 			if( !m_sMemoryCardOsMountPoint[p].Get().empty() &&
@@ -608,7 +607,7 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 	m_bMounted[pn] = true;
 
 	RageFileDriver *pDriver = FILEMAN->GetFileDriver( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
-	if( pDriver == NULL )
+	if( pDriver == nullptr )
 	{
 		LOG->Warn( "FILEMAN->GetFileDriver(%s) failed", MEM_CARD_MOUNT_POINT_INTERNAL[pn].c_str() );
 		return true;

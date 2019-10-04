@@ -1,6 +1,5 @@
 #include "global.h"
 #include "PlayerState.h"
-#include "Foreach.h"
 #include "GameState.h"
 #include "RageLog.h"
 #include "RadarValues.h"
@@ -142,8 +141,8 @@ void PlayerState::RemoveActiveAttacks( AttackLevel al )
 
 void PlayerState::EndActiveAttacks()
 {
-	FOREACH( Attack, m_ActiveAttacks, a )
-		a->fSecsRemaining = 0;
+	for (Attack &a : m_ActiveAttacks)
+		a.fSecsRemaining = 0;
 }
 
 void PlayerState::RemoveAllInventory()
@@ -205,7 +204,7 @@ const SongPosition &PlayerState::GetDisplayedPosition() const
 const TimingData &PlayerState::GetDisplayedTiming() const
 {
 	Steps *steps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
-	if( steps == NULL )
+	if( steps == nullptr )
 		return GAMESTATE->m_pCurSong->m_SongTiming;
 	return *steps->GetTimingData();
 }

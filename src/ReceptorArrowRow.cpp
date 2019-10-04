@@ -9,10 +9,10 @@
 
 ReceptorArrowRow::ReceptorArrowRow()
 {
-	m_pPlayerState = NULL;
+	m_pPlayerState = nullptr;
 	m_fYReverseOffsetPixels = 0;
 	m_fFadeToFailPercent = 0;
-	m_renderers= NULL;
+	m_renderers= nullptr;
 }
 
 void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
@@ -54,7 +54,7 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 	// ArrowEffects.  But if we're on ScreenNameEntry, there is no notefield,
 	// Checking whether m_renderers is null is a proxy for checking whether
 	// there is a notefield. -Kyz
-	if(m_renderers == NULL)
+	if(m_renderers == nullptr)
 	{
 		ArrowEffects::Update();
 	}
@@ -72,7 +72,7 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		CLAMP( fBaseAlpha, 0.0f, 1.0f );
 		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );
 
-		if(m_renderers != NULL)
+		if(m_renderers != nullptr)
 		{
 			// set arrow XYZ
 			(*m_renderers)[c].UpdateReceptorGhostStuff(m_ReceptorArrow[c]);
