@@ -205,7 +205,7 @@ namespace VDDebugInfo
 		while( pr < pr_limit )
 		{
 			unsigned char c;
-			unsigned diff = 0;
+			uintptr_t diff = 0;
 
 			do
 			{
