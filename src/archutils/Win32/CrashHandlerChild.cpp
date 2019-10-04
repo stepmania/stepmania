@@ -51,7 +51,7 @@ namespace VDDebugInfo
 		uintptr_t nFirstRVA;
 
 		const char *pFuncNameHeap;
-		const unsigned long (*pSegments)[2];
+		const uintptr_t (*pSegments)[2];
 		int nSegments;
 		char sFilename[1024];
 		RString sError;
@@ -103,7 +103,7 @@ namespace VDDebugInfo
 		pctx->pRVAHeap			= (const unsigned char *)(src + 20);
 		pctx->nFirstRVA			= *(const long *)(src + 16);
 		pctx->pFuncNameHeap		= (const char *)pctx->pRVAHeap - 4 + *(const long *)(src + 4);
-		pctx->pSegments			= (unsigned long (*)[2])(pctx->pFuncNameHeap + *(const long *)(src + 8));
+		pctx->pSegments			= (uintptr_t (*)[2])(pctx->pFuncNameHeap + *(const long *)(src + 8));
 		pctx->nSegments			= *(const long *)(src + 12);
 
 		return true;
@@ -157,7 +157,7 @@ namespace VDDebugInfo
 		return false;
 	}
 
-	static bool PointerIsInAnySegment( const Context *pctx, unsigned rva )
+	static bool PointerIsInAnySegment( const Context *pctx, uintptr_t rva )
 	{
 		for( int i=0; i<pctx->nSegments; ++i )
 		{
