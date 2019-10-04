@@ -49,6 +49,9 @@ include("${SM_CMAKE_DIR}/DefineOptions.cmake")
 
 include("${SM_CMAKE_DIR}/SMDefs.cmake")
 
+# Put the predefined targets in separate groups.
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 # Set up the linker flags for MSVC builds.
 configure_msvc_runtime()
 
