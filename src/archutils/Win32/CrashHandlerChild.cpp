@@ -36,6 +36,12 @@
 // XXX: What happens when we *don't* have version info? Does that ever actually happen?
 #include "ver.h"
 
+#if _WIN64
+#define ADDRESS_ZEROS "016"
+#else
+#define ADDRESS_ZEROS "08"
+#endif
+
 // VDI symbol lookup:
 namespace VDDebugInfo
 {
@@ -98,13 +104,18 @@ namespace VDDebugInfo
 		// Extract fields
 
 		src += 64;
+		const int* pVer = reinterpret_cast<const int*>(src);
+		const size_t* pRVASize = reinterpret_cast<const size_t*>(src + sizeof(int));
+		const size_t* pFNamSize = reinterpret_cast<const size_t*>(src + sizeof(int) + sizeof(size_t));
+		const int* pSegCnt = reinterpret_cast<const int*>(src + sizeof(int) + 2 * sizeof(size_t));
+		src += 2 * (sizeof(int) + sizeof(size_t));
 
-		pctx->nBuildNumber		= *(int *)src;
-		pctx->pRVAHeap			= (const unsigned char *)(src + 20);
-		pctx->nFirstRVA			= *(const long *)(src + 16);
-		pctx->pFuncNameHeap		= (const char *)pctx->pRVAHeap - 4 + *(const long *)(src + 4);
-		pctx->pSegments			= (uintptr_t (*)[2])(pctx->pFuncNameHeap + *(const long *)(src + 8));
-		pctx->nSegments			= *(const long *)(src + 12);
+		pctx->nBuildNumber		= *pVer;
+		pctx->pRVAHeap			= reinterpret_cast<const unsigned char*>(src + sizeof(uintptr_t));
+		pctx->nFirstRVA			= *reinterpret_cast<const uintptr_t*>(src);
+		pctx->pFuncNameHeap		= reinterpret_cast<const char*>(src + *pRVASize);
+		pctx->pSegments			= reinterpret_cast<const uintptr_t(*)[2]>(src + *pRVASize + *pFNamSize);
+		pctx->nSegments			= *pSegCnt;
 
 		return true;
 	}
@@ -137,7 +148,7 @@ namespace VDDebugInfo
 			if( dwFileSize == INVALID_FILE_SIZE )
 				break;
 
-			char *buffer = new char[dwFileSize + 1];
+			char *buffer = new char[static_cast<size_t>(dwFileSize) + 1];
 			std::fill(buffer, buffer + dwFileSize + 1, '\0' );
 
 			DWORD dwActual;
@@ -168,7 +179,7 @@ namespace VDDebugInfo
 		return false;
 	}
 
-	static const char *GetNameFromHeap(const char *heap, int idx)
+	static const char *GetNameFromHeap(const char *heap, size_t idx)
 	{
 		while(idx--)
 			while(*heap++);
@@ -176,19 +187,19 @@ namespace VDDebugInfo
 		return heap;
 	}
 
-	uintptr_t VDDebugInfoLookupRVA( const Context *pctx, uintptr_t rva, char *buf, int buflen )
+	intptr_t VDDebugInfoLookupRVA( const Context *pctx, uintptr_t rva, char *buf, int buflen )
 	{
 		if( !PointerIsInAnySegment(pctx, rva) )
 			return -1;
 
 		const unsigned char *pr = pctx->pRVAHeap;
 		const unsigned char *pr_limit = (const unsigned char *)pctx->pFuncNameHeap;
-		int idx = 0;
+		size_t idx = 0;
 
 		// Linearly unpack RVA deltas and find lower_bound
 		rva -= pctx->nFirstRVA;
 
-		if( (signed)rva < 0 )
+		if( static_cast<intptr_t>(rva) < 0 )
 			return -1;
 
 		while( pr < pr_limit )
@@ -205,7 +216,7 @@ namespace VDDebugInfo
 
 			rva -= diff;
 
-			if ((signed)rva < 0) {
+			if (static_cast<intptr_t>(rva) < 0) {
 				rva += diff;
 				break;
 			}
@@ -224,7 +235,7 @@ namespace VDDebugInfo
 		strncpy( buf, fn_name, buflen );
 		buf[buflen-1] = 0;
 
-		return rva;
+		return static_cast<intptr_t>(rva);
 	}
 }
 
@@ -234,7 +245,7 @@ bool ReadFromParent( int fd, void *p, int size )
 	int got = 0;
 	while( got < size )
 	{
-		int ret = read( fd, buf+got, size-got );
+		int ret = _read( fd, buf+got, size-got );
 		if( ret == -1 )
 		{
 			if( errno == EINTR )
@@ -322,16 +333,16 @@ namespace SymbolLookup
 
 	RString CrashChildGetModuleBaseName( HMODULE hMod )
 	{
-		write( _fileno(stdout), &hMod,  sizeof(hMod) );
+		_write( _fileno(stdout), &hMod,  sizeof(hMod) );
 
-		int iFD = fileno(stdin);
+		int iFD = _fileno(stdin);
 		int iSize;
 		if (!ReadFromParent(iFD, &iSize, sizeof(iSize)))
 		{
 			return "???";
 		}
 		RString sName;
-		char *buffer = new char[iSize + 1];
+		char *buffer = new char[static_cast<size_t>(iSize) + 1];
 		std::fill(buffer, buffer + iSize + 1, '\0');
 		if (!ReadFromParent(iFD, buffer, iSize))
 		{
@@ -357,11 +368,11 @@ namespace SymbolLookup
 		VirtualQueryEx( g_hParent, ptr, &meminfo, sizeof meminfo );
 
 		char tmp[512];
-		uintptr_t iAddress = VDDebugInfo::VDDebugInfoLookupRVA(pctx, reinterpret_cast<uintptr_t>(ptr), tmp, sizeof(tmp));
+		intptr_t iAddress = VDDebugInfo::VDDebugInfoLookupRVA(pctx, reinterpret_cast<uintptr_t>(ptr), tmp, sizeof(tmp));
 		if( iAddress >= 0 )
 		{
-			wsprintf( buf, "%p: %s [%p+%Ix+%Ix]", ptr, Demangle(tmp),
-				reinterpret_cast<void *>(pctx->nFirstRVA),
+			wsprintf( buf, "%" ADDRESS_ZEROS "Ix: %s [%" ADDRESS_ZEROS "Ix+%Ix+%Ix]", reinterpret_cast<uintptr_t>(ptr), Demangle(tmp),
+				pctx->nFirstRVA,
 				reinterpret_cast<uintptr_t>(ptr) - pctx->nFirstRVA - iAddress,
 				iAddress );
 			return;
@@ -374,17 +385,17 @@ namespace SymbolLookup
 
 		if( pSymbol )
 		{
-			wsprintf( buf, "%p: %s!%s [%p+%Ix+%Ix]",
-				ptr, sName.c_str(), pSymbol->Name,
-				meminfo.AllocationBase,
+			wsprintf( buf, "%" ADDRESS_ZEROS "Ix: %s!%s [%" ADDRESS_ZEROS "Ix+%Ix+%Ix]",
+				reinterpret_cast<uintptr_t>(ptr), sName.c_str(), pSymbol->Name,
+				reinterpret_cast<uintptr_t>(meminfo.AllocationBase),
 				static_cast<uintptr_t>(pSymbol->Address) - reinterpret_cast<uintptr_t>(meminfo.AllocationBase),
 				static_cast<ULONG_PTR>(disp));
 			return;
 		}
 
-		wsprintf( buf, "%p: %s!%p",
-			ptr, sName.c_str(), 
-			meminfo.AllocationBase );
+		wsprintf( buf, "%" ADDRESS_ZEROS "Ix: %s!%" ADDRESS_ZEROS "Ix",
+			reinterpret_cast<uintptr_t>(ptr), sName.c_str(), 
+			reinterpret_cast<uintptr_t>(meminfo.AllocationBase) );
 	}
 }
 
@@ -518,7 +529,7 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
-	char *buffer = new char[iSize + 1];
+	char *buffer = new char[static_cast<size_t>(iSize) + 1];
 	std::fill(buffer, buffer + iSize + 1, '\0');
 	bool wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
 	RString tmp = buffer;
@@ -861,7 +872,7 @@ void ChildProcess()
 {
 	// Read the crash data from the crashed parent.
 	CompleteCrashData Data;
-	ReadCrashDataFromParent( fileno(stdin), Data );
+	ReadCrashDataFromParent( _fileno(stdin), Data );
 
 	RString sCrashReport;
 	VDDebugInfo::VDDebugInfoInitFromFile( &g_debugInfo );

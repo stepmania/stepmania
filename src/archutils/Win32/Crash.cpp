@@ -85,7 +85,7 @@ void WriteToChild( HANDLE hPipe, const void *pData, size_t iSize )
 	while( iSize )
 	{
 		DWORD iActual;
-		if( !WriteFile(hPipe, pData, iSize, &iActual, nullptr) )
+		if( !WriteFile(hPipe, pData, static_cast<DWORD>(iSize), &iActual, nullptr) )
 			return;
 		iSize -= iActual;
 	}
@@ -114,7 +114,7 @@ bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 		SetHandleInformation( hFromStdout, HANDLE_FLAG_INHERIT, 0 );
 	}
 
-	char szBuf[256] = "";
+	char szBuf[MAX_PATH] = "";
 	GetModuleFileName( nullptr, szBuf, MAX_PATH );
 	strcat( szBuf, " " );
 	strcat( szBuf, CHILD_MAGIC_PARAMETER );
@@ -144,6 +144,7 @@ bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 	}
 
 	hProcess = pi.hProcess;
+	CloseHandle(pi.hThread);
 
 	return true;
 }
@@ -209,13 +210,13 @@ void RunChild()
 
 		// 2. Write info.
 		const TCHAR *p = RageLog::GetInfo();
-		int iSize = strlen( p );
+		int iSize = static_cast<int>(strlen( p ));
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, p, iSize );
 
 		// 3. Write AdditionalLog.
 		p = RageLog::GetAdditionalLog();
-		iSize = strlen( p );
+		iSize = static_cast<int>(strlen( p ));
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, p, iSize );
 
@@ -228,7 +229,7 @@ void RunChild()
 		WriteToChild(hToStdin, &cnt, sizeof(cnt));
 		for( int i = 0; i < cnt; ++i )
 		{
-				iSize = strlen(ps[i])+1;
+				iSize = static_cast<int>(strlen(ps[i])) + 1;
 				WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 				WriteToChild( hToStdin, ps[i], iSize );
 		}
@@ -236,13 +237,13 @@ void RunChild()
 		// 5. Write CHECKPOINTs.
 		static TCHAR buf[1024*32];
 		Checkpoints::GetLogs( buf, sizeof(buf), "$$" );
-		iSize = strlen( buf )+1;
+		iSize = static_cast<int>(strlen( buf )) + 1;
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, buf, iSize );
 
 		// 6. Write the crashed thread's name.
 		p = RageThread::GetCurrentThreadName();
-		iSize = strlen( p )+1;
+		iSize = static_cast<int>(strlen( p )) + 1;
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, p, iSize );
 
@@ -260,7 +261,7 @@ void RunChild()
 		TCHAR szName[MAX_PATH];
 		if( !CrashGetModuleBaseName(hMod, szName) )
 			strcpy( szName, "???" );
-		iSize = strlen( szName );
+		iSize = static_cast<int>(strlen( szName ));
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, szName, iSize );
 	}
