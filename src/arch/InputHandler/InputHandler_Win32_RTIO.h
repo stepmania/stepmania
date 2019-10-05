@@ -38,6 +38,13 @@ typedef struct {
 	int SelectSwitch;
 } OPERATOR_INPUT;
 
+enum COUNTER_STATE {
+	COUNTER_STATE_SEND_1 = 0, // Ready to send "H10" (first coin counter increment command)
+	COUNTER_STATE_RECV_1,     // Ready to recv "h10" (ack for first coin counter increment command)
+	COUNTER_STATE_SEND_2,     // Ready to send "H00" (second coin counter increment command)
+	COUNTER_STATE_RECV_2,     // Ready to recv "h00" (ack for second coin counter increment command)
+};
+
 class SerialDevice {
 public:
 	SerialDevice(int read_buffer_size = 0x1000, int write_buffer_size = 0x1000) : read_buffer_size_(read_buffer_size), write_buffer_size_(write_buffer_size) {}
@@ -65,6 +72,7 @@ public:
 	bool WriteMsg(const std::string &msg);
 private:
 	int ParseMsg(char *buffer, int buffer_size);
+
 	SerialDevice serial_;
 	char read_buffer_[0x2000];
 	int read_offset_ = 0;
@@ -84,13 +92,18 @@ private:
 	void InputThread();
 	void HandleGameInput(const std::string &msg, const RageTimer &now);
 	void HandleOperatorInput(const std::string &msg, const RageTimer &now);
+	void HandleCounterAck(const std::string &msg);
 
 	RtioDevice rtio_;
 	RageThread input_thread_;
+	bool initialized_ = false;
 	bool shutdown_ = false;
 	GAME_INPUT last_game_input_ = {};
 	OPERATOR_INPUT last_operator_input_ = {};
-	bool initialized_ = false;
+	int counter_cycles_pending_ = 0;
+	COUNTER_STATE counter_state_ = COUNTER_STATE_SEND_1;
+	RageTimer last_counter_send_;
+	RageTimer last_counter_recv_;
 };
 
 #endif

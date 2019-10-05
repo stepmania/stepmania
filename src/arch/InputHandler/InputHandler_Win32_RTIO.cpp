@@ -9,6 +9,24 @@
 #include "RageLog.h"
 #include "RageInputDevice.h"
 
+// The coin counter won't accept an increment command immediately after acking
+// an older increment command. This delay is the minimum amount of time to wait
+// between receiving an ack for an increment command and sending a new
+// increment command.
+const static float COUNTER_MINIMUM_SEND_DELAY = 0.15;
+
+// The longest amount of time to wait for an ack to the increment command
+// before moving on with the coin counter increment sequence.
+const static float COUNTER_MAXIMUM_RECV_DELAY = 3.0;
+
+// If RTIO does not initialize within this amount of time, exit the RTIO input
+// loop to free resources.
+const static float RTIO_INIT_TIME_MAX = 10.0;
+
+// If there are this many failures, something has most likely gone very wrong,
+// so just exit the RTIO input loop.
+const static int RTIO_MAX_READ_FAILURES = 50;
+
 REGISTER_INPUT_HANDLER_CLASS2(Rtio, Win32_RTIO);
 
 InputHandler_Win32_RTIO::InputHandler_Win32_RTIO()
@@ -77,42 +95,42 @@ RString InputHandler_Win32_RTIO::GetDeviceSpecificInputString(const DeviceInput 
 
 bool InputHandler_Win32_RTIO::Initialize() {
 	if (!rtio_.Connect()) {
-		LOG->Trace("RTIO: Initialize: Cannot connect to COM1");
+		LOG->Warn("RTIO: Initialize: Cannot connect to COM1");
 		return false;
 	}
 	// The following messages are not required to receive game/operator inputs,
 	// but they replicate the initialization sequence in DDR. We'll use the
 	// response from the version message to determine that the board is good.
 	if (!rtio_.WriteMsg("C0000")) {
-		LOG->Trace("RTIO: Initialize: Cannot write init message");
+		LOG->Warn("RTIO: Initialize: Cannot write init message");
 		return false;
 	}
 	if (!rtio_.WriteMsg("v")) {
-		LOG->Trace("RTIO: Initialize: Cannot write version message");
+		LOG->Warn("RTIO: Initialize: Cannot write version message");
 		return false;
 	}
 	if (!rtio_.WriteMsg("D0020008")) {
-		LOG->Trace("RTIO: Initialize: Cannot send dongle message (1/6)");
+		LOG->Warn("RTIO: Initialize: Cannot send dongle message (1/6)");
 		return false;
 	}
 	if (!rtio_.WriteMsg("D0010008")) {
-		LOG->Trace("RTIO: Initialize: Cannot send dongle message (2/6)");
+		LOG->Warn("RTIO: Initialize: Cannot send dongle message (2/6)");
 		return false;
 	}
 	if (!rtio_.WriteMsg("D0000020")) {
-		LOG->Trace("RTIO: Initialize: Cannot send dongle message (3/6)");
+		LOG->Warn("RTIO: Initialize: Cannot send dongle message (3/6)");
 		return false;
 	}
 	if (!rtio_.WriteMsg("D1020008")) {
-		LOG->Trace("RTIO: Initialize: Cannot send dongle message (4/6)");
+		LOG->Warn("RTIO: Initialize: Cannot send dongle message (4/6)");
 		return false;
 	}
 	if (!rtio_.WriteMsg("D1010008")) {
-		LOG->Trace("RTIO: Initialize: Cannot send dongle message (5/6)");
+		LOG->Warn("RTIO: Initialize: Cannot send dongle message (5/6)");
 		return false;
 	}
 	if (!rtio_.WriteMsg("D1000020")) {
-		LOG->Trace("RTIO: Initialize: Cannot send dongle message (6/6)");
+		LOG->Warn("RTIO: Initialize: Cannot send dongle message (6/6)");
 		return false;
 	}
 	return true;
@@ -128,13 +146,13 @@ void InputHandler_Win32_RTIO::InputThread()
 {
 	RageTimer start_time;
 	std::vector<std::string> msgs;
-	int failures = 0;
+	int read_failures = 0;
 
 	while (!shutdown_) {
 		if (!rtio_.ReadMsgs(&msgs)) {
-			failures++;
-			LOG->Warn("RTIO: HandlerLoop: Failed to read (%d)", failures);
-			if (failures == 10) {
+			read_failures++;
+			LOG->Warn("RTIO: HandlerLoop: Failed to read (%d failures)", read_failures);
+			if (read_failures == RTIO_MAX_READ_FAILURES) {
 				return;
 			}
 			continue;
@@ -142,7 +160,7 @@ void InputHandler_Win32_RTIO::InputThread()
 
 		RageTimer now;
 
-		if (!initialized_ && now - start_time > 10.0) {
+		if (!initialized_ && now - start_time > RTIO_INIT_TIME_MAX) {
 			LOG->Warn("RTIO: Device failed to initialize; exiting input loop");
 			return;
 		}
@@ -170,12 +188,53 @@ void InputHandler_Win32_RTIO::InputThread()
 				HandleOperatorInput(msg, now);
 				continue;
 			}
+			if (msg[0] == 'h' && msg.length() == 3) {
+				HandleCounterAck(msg);
+				continue;
+			}
 			LOG->Warn("RTIO: Unrecognized response: %s", msg.c_str());
+		}
+
+		if (counter_cycles_pending_ > 0) {
+			switch (counter_state_) {
+			case COUNTER_STATE_SEND_1:
+				if (last_counter_recv_.Ago() > COUNTER_MINIMUM_SEND_DELAY) {
+					if (!rtio_.WriteMsg("H10")) {
+						LOG->Warn("RTIO: Could not send coin counter increment (1/2)");
+					}
+					counter_state_ = COUNTER_STATE_RECV_1;
+					last_counter_send_.Touch();
+				}
+				break;
+			case COUNTER_STATE_SEND_2:
+				if (last_counter_recv_.Ago() > COUNTER_MINIMUM_SEND_DELAY) {
+					if (!rtio_.WriteMsg("H00")) {
+						LOG->Warn("RTIO: Could not send coin counter increment (2/2)");
+					}
+					counter_state_ = COUNTER_STATE_RECV_2;
+					last_counter_send_.Touch();
+				}
+				break;
+			}
+
+			if (last_counter_send_.Ago() > COUNTER_MAXIMUM_RECV_DELAY) {
+				switch (counter_state_) {
+				case COUNTER_STATE_RECV_1:
+					LOG->Warn("RTIO: Never received coin counter increment acknowledgement (1/2)");
+					counter_state_ = COUNTER_STATE_SEND_2;
+					break;
+				case COUNTER_STATE_RECV_2:
+					LOG->Warn("RTIO: Never received coin counter increment acknowledgement (2/2)");
+					counter_state_ = COUNTER_STATE_SEND_1;
+					counter_cycles_pending_--;
+					break;
+				}
+			}
 		}
 	}
 }
 
-int HexToChar(char ch)
+int HexCharToInt(char ch)
 {
 	if (ch >= 'A' && ch <= 'F')
 		return ch - 'A' + 10;
@@ -186,12 +245,12 @@ void InputHandler_Win32_RTIO::HandleGameInput(const std::string &msg, const Rage
 {
 	InputDevice id = InputDevice(DEVICE_JOY1);
 
-	int pad1 = HexToChar(msg[1]);
-	int pad2 = HexToChar(msg[2]);
-	int menu1 = HexToChar(msg[3]);
-	int menu2 = HexToChar(msg[4]);
-	int start1 = HexToChar(msg[5]);
-	int start2 = HexToChar(msg[6]);
+	int pad1 = HexCharToInt(msg[1]);
+	int pad2 = HexCharToInt(msg[2]);
+	int menu1 = HexCharToInt(msg[3]);
+	int menu2 = HexCharToInt(msg[4]);
+	int start1 = HexCharToInt(msg[5]);
+	int start2 = HexCharToInt(msg[6]);
 
 	GAME_INPUT input_new;
 	input_new.P1_PadUp = (pad1 >> 3) & 1;
@@ -214,58 +273,58 @@ void InputHandler_Win32_RTIO::HandleGameInput(const std::string &msg, const Rage
 	input_new.P2_MenuStart = start2 & 1;
 
 	if (input_new.P1_PadLeft != last_game_input_.P1_PadLeft) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_1, input_new.P1_PadLeft, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_1, (float)input_new.P1_PadLeft, now));
 	}
 	if (input_new.P1_PadDown != last_game_input_.P1_PadDown) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_2, input_new.P1_PadDown, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_2, (float)input_new.P1_PadDown, now));
 	}
 	if (input_new.P1_PadUp != last_game_input_.P1_PadUp) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_3, input_new.P1_PadUp, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_3, (float)input_new.P1_PadUp, now));
 	}
 	if (input_new.P1_PadRight != last_game_input_.P1_PadRight) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_4, input_new.P1_PadRight, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_4, (float)input_new.P1_PadRight, now));
 	}
 	if (input_new.P1_MenuLeft != last_game_input_.P1_MenuLeft) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_5, input_new.P1_MenuLeft, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_5, (float)input_new.P1_MenuLeft, now));
 	}
 	if (input_new.P1_MenuDown != last_game_input_.P1_MenuDown) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_6, input_new.P1_MenuDown, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_6, (float)input_new.P1_MenuDown, now));
 	}
 	if (input_new.P1_MenuUp != last_game_input_.P1_MenuUp) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_7, input_new.P1_MenuUp, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_7, (float)input_new.P1_MenuUp, now));
 	}
 	if (input_new.P1_MenuRight != last_game_input_.P1_MenuRight) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_8, input_new.P1_MenuRight, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_8, (float)input_new.P1_MenuRight, now));
 	}
 	if (input_new.P1_MenuStart != last_game_input_.P1_MenuStart) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_9, input_new.P1_MenuStart, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_9, (float)input_new.P1_MenuStart, now));
 	}
 	if (input_new.P2_PadLeft != last_game_input_.P2_PadLeft) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_10, input_new.P2_PadLeft, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_10, (float)input_new.P2_PadLeft, now));
 	}
 	if (input_new.P2_PadDown != last_game_input_.P2_PadDown) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_11, input_new.P2_PadDown, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_11, (float)input_new.P2_PadDown, now));
 	}
 	if (input_new.P2_PadUp != last_game_input_.P2_PadUp) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_12, input_new.P2_PadUp, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_12, (float)input_new.P2_PadUp, now));
 	}
 	if (input_new.P2_PadRight != last_game_input_.P2_PadRight) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_13, input_new.P2_PadRight, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_13, (float)input_new.P2_PadRight, now));
 	}
 	if (input_new.P2_MenuLeft != last_game_input_.P2_MenuLeft) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_14, input_new.P2_MenuLeft, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_14, (float)input_new.P2_MenuLeft, now));
 	}
 	if (input_new.P2_MenuDown != last_game_input_.P2_MenuDown) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_15, input_new.P2_MenuDown, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_15, (float)input_new.P2_MenuDown, now));
 	}
 	if (input_new.P2_MenuUp != last_game_input_.P2_MenuUp) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_16, input_new.P2_MenuUp, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_16, (float)input_new.P2_MenuUp, now));
 	}
 	if (input_new.P2_MenuRight != last_game_input_.P2_MenuRight) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_17, input_new.P2_MenuRight, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_17, (float)input_new.P2_MenuRight, now));
 	}
 	if (input_new.P2_MenuStart != last_game_input_.P2_MenuStart) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_18, input_new.P2_MenuStart, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_18, (float)input_new.P2_MenuStart, now));
 	}
 /*
 	if (memcmp(&last_game_input_, &input_new, sizeof(GAME_INPUT)) != 0) {
@@ -283,12 +342,12 @@ void InputHandler_Win32_RTIO::HandleOperatorInput(const std::string &msg, const 
 {
 	InputDevice id = InputDevice(DEVICE_JOY1);
 
-	int coin1 = HexToChar(msg[3]);
-	int coin2 = HexToChar(msg[4]);
-	int vol_up = HexToChar(msg[5]);
-	int vol_dn = HexToChar(msg[6]);
-	int test = HexToChar(msg[7]);
-	int select = HexToChar(msg[8]);
+	int coin1 = HexCharToInt(msg[3]);
+	int coin2 = HexCharToInt(msg[4]);
+	int vol_up = HexCharToInt(msg[5]);
+	int vol_dn = HexCharToInt(msg[6]);
+	int test = HexCharToInt(msg[7]);
+	int select = HexCharToInt(msg[8]);
 
 	OPERATOR_INPUT input_new;
 	input_new.P1_InsertCoin = coin1 & 1;
@@ -299,22 +358,28 @@ void InputHandler_Win32_RTIO::HandleOperatorInput(const std::string &msg, const 
 	input_new.SelectSwitch = select & 1;
 
 	if (input_new.TestSwitch != last_operator_input_.TestSwitch) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_19, input_new.TestSwitch, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_19, (float)input_new.TestSwitch, now));
 	}
 	if (input_new.SelectSwitch != last_operator_input_.SelectSwitch) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_20, input_new.SelectSwitch, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_20, (float)input_new.SelectSwitch, now));
 	}
 	if (input_new.P1_InsertCoin != last_operator_input_.P1_InsertCoin) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_21, input_new.P1_InsertCoin, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_21, (float)input_new.P1_InsertCoin, now));
+		if (input_new.P1_InsertCoin) {
+			counter_cycles_pending_++;
+		}
 	}
 	if (input_new.P2_InsertCoin != last_operator_input_.P2_InsertCoin) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_22, input_new.P2_InsertCoin, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_22, (float)input_new.P2_InsertCoin, now));
+		if (input_new.P2_InsertCoin) {
+			counter_cycles_pending_++;
+		}
 	}
 	if (input_new.VolumeDown != last_operator_input_.VolumeDown) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_23, input_new.VolumeDown, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_23, (float)input_new.VolumeDown, now));
 	}
 	if (input_new.VolumeUp != last_operator_input_.VolumeUp) {
-		ButtonPressed(DeviceInput(id, JOY_BUTTON_24, input_new.VolumeUp, now));
+		ButtonPressed(DeviceInput(id, JOY_BUTTON_24, (float)input_new.VolumeUp, now));
 	}
 /*
 	if (memcmp(&last_operator_input_, &input_new, sizeof(OPERATOR_INPUT)) != 0) {
@@ -323,6 +388,27 @@ void InputHandler_Win32_RTIO::HandleOperatorInput(const std::string &msg, const 
 	}
 */
 	memcpy(&last_operator_input_, &input_new, sizeof(OPERATOR_INPUT));
+}
+
+
+void InputHandler_Win32_RTIO::HandleCounterAck(const std::string &msg)
+{
+	int ack_num = HexCharToInt(msg[1]);
+
+	last_counter_recv_.Touch();
+
+	if (ack_num == 1 && counter_state_ == COUNTER_STATE_RECV_1) {
+		counter_state_ = COUNTER_STATE_SEND_2;
+		return;
+	}
+
+	if (ack_num == 0 && counter_state_ == COUNTER_STATE_RECV_2) {
+		counter_state_ = COUNTER_STATE_SEND_1;
+		counter_cycles_pending_ = max(counter_cycles_pending_ - 1, 0);
+		return;
+	}
+
+	LOG->Warn("RTIO: Received stray coin counter increment acknowledgement: state=%d, msg=%s", counter_state_, msg.c_str());
 }
 
 
@@ -552,6 +638,8 @@ void ResetOverlapped(OVERLAPPED *overlapped)
 }
 
 
+// Reads up to buffer_size bytes from the serial device. Returns as fast as
+// possible by only reading bytes that are already available in the queue.
 int SerialDevice::Read(char *buffer, int buffer_size)
 {
 	DWORD errors;
@@ -570,19 +658,22 @@ int SerialDevice::Read(char *buffer, int buffer_size)
 
 	ResetOverlapped(&read_overlapped_);
 
-	int copy_size = min((int)stat.cbInQue, read_buffer_size_);
-	copy_size = min(copy_size, buffer_size);
+	DWORD read_size = min(stat.cbInQue, (DWORD)read_buffer_size_);
+	read_size = min(read_size, (DWORD)buffer_size);
 
 	DWORD bytes_transferred;
-	if (!ReadFile(com_handle_, buffer, (DWORD)copy_size, &bytes_transferred, &read_overlapped_)) {
+	if (!ReadFile(com_handle_, buffer, read_size, &bytes_transferred, &read_overlapped_)) {
 		DWORD err = GetLastError();
 		if (err != ERROR_IO_PENDING) {
-			LOG->Warn("RTIO: SerialDevice: ReadFile failed: %n", err);
+			LOG->Warn("RTIO: SerialDevice: ReadFile failed: %d", err);
 			return -1;
 		}
 
 		// Wait for the read operation to finish
-		GetOverlappedResult(com_handle_, &read_overlapped_, &bytes_transferred, true);
+		if (!GetOverlappedResult(com_handle_, &read_overlapped_, &bytes_transferred, true)) {
+			LOG->Warn("RTIO: SerialDevice: GetOverlappedResult failed on read: %d\n", GetLastError());
+			return -1;
+		}
 	}
 
 	return bytes_transferred;
@@ -591,12 +682,23 @@ int SerialDevice::Read(char *buffer, int buffer_size)
 int SerialDevice::Write(const char *buffer, int buffer_size)
 {
 	DWORD bytes_transferred;
-	DWORD write_size = min(buffer_size, write_buffer_size_);
+	DWORD write_size = min((DWORD)buffer_size, (DWORD)write_buffer_size_);
 
 	ResetOverlapped(&write_overlapped_);
 
-	WriteFile(com_handle_, buffer, (DWORD)write_size, nullptr, &write_overlapped_);
-	GetOverlappedResult(com_handle_, &write_overlapped_, &bytes_transferred, true);
+	if (!WriteFile(com_handle_, buffer, write_size, &bytes_transferred, &write_overlapped_)) {
+		DWORD err = GetLastError();
+		if (err != ERROR_IO_PENDING) {
+			LOG->Warn("RTIO: SerialDevice: WriteFile failed: %d", err);
+			return -1;
+		}
+
+		// Wait for the write operation to finish
+		if (!GetOverlappedResult(com_handle_, &write_overlapped_, &bytes_transferred, true)) {
+			LOG->Warn("RTIO: SerialDevice: GetOverlappedResult failed on write: %d\n", GetLastError());
+			return -1;
+		}
+	}
 
 	return bytes_transferred;
 }
