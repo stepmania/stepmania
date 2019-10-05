@@ -483,9 +483,6 @@ if(WIN32)
               "setupapi.lib"
               "hid.lib")
 
-  get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
-
-  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}"
                    "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk/${SM_WIN32_ARCH}\"")
@@ -667,7 +664,8 @@ else()
 endif()
 
 if(WIN32)
-  list(APPEND SM_INCLUDE_DIRS ${DIRECTX_INCLUDE_DIR})
+  # FIXME: This makes no sense...
+  #list(APPEND SM_INCLUDE_DIRS ${DIRECTX_INCLUDE_DIR})
 else()
   list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/libpng/include")
 endif()

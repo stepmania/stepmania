@@ -469,6 +469,7 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\Docs"
 	File "Docs\Licenses.txt"
 	File "Docs\credits.txt"
+	File "Docs\credits_old_Stepmania_Team.txt"
 	File "Docs\Changelog_sm-ssc.txt"
 	File "Docs\Changelog_sm5.txt"
 	File "Docs\Changelog_SSCformat.txt"

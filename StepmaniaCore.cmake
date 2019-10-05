@@ -49,6 +49,9 @@ include("${SM_CMAKE_DIR}/DefineOptions.cmake")
 
 include("${SM_CMAKE_DIR}/SMDefs.cmake")
 
+# Put the predefined targets in separate groups.
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 # Set up the linker flags for MSVC builds.
 configure_msvc_runtime()
 
@@ -281,8 +284,6 @@ else()
 endif()
 
 if(WIN32)
-  find_package(DirectX REQUIRED)
-
   if(MINGW AND WITH_FFMPEG AND NOT WITH_SYSTEM_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
     set(HAS_FFMPEG TRUE)
