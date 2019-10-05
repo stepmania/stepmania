@@ -766,6 +766,13 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 	RageTimer timer;
 	RageSurface *surface = this->CreateScreenshot();
 //	LOG->Trace( "CreateScreenshot took %f seconds", timer.GetDeltaTime() );
+	
+	if (nullptr == surface)
+	{
+		LOG->Trace("CreateScreenshot failed to return a surface");
+		return false;
+	}
+	
 	/* Unless we're in lossless, resize the image to 640x480.  If we're saving lossy,
 	 * there's no sense in saving 1280x960 screenshots, and we don't want to output
 	 * screenshots in a strange (non-1) sample aspect ratio. */

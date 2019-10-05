@@ -276,8 +276,6 @@ else()
 endif()
 
 if(WIN32)
-  find_package(DirectX REQUIRED)
-
   if(MINGW AND WITH_FFMPEG AND NOT WITH_SYSTEM_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
     set(HAS_FFMPEG TRUE)

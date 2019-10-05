@@ -42,6 +42,7 @@ else()
                 "archutils/Win32/CrashHandlerNetworking.cpp"
                 "archutils/Win32/DebugInfoHunt.cpp"
                 "archutils/Win32/DialogUtil.cpp"
+                "archutils/Win32/DirectXGuids.cpp"
                 "archutils/Win32/DirectXHelpers.cpp"
                 "archutils/Win32/ErrorStrings.cpp"
                 "archutils/Win32/GetFileInformation.cpp"

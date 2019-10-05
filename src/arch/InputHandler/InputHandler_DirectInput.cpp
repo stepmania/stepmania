@@ -20,6 +20,12 @@
 #include <WbemIdl.h>
 #include <OleAuto.h>
 
+// this may not be defined if we are using an older Windows SDK. (for instance, toolsetversion v140_xp does not define it)
+// the number was taken from the documentation
+#ifndef XUSER_MAX_COUNT
+#define XUSER_MAX_COUNT 4
+#endif
+
 REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
 
 static vector<DIDevice> Devices;
