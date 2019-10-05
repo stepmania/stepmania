@@ -8,9 +8,6 @@
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "dinput8.lib")
-#if defined(_WINDOWS)
-#pragma comment(lib, "dxguid.lib")
-#endif
 #endif
 LPDIRECTINPUT8 g_dinput = nullptr;
 

@@ -22,6 +22,8 @@ osvi.wServicePackMajor = 0;
 return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, dwlConditionMask) != false;
 }
 
+RString GetErrorString(HRESULT hr);
+
 #endif
 
 /*
