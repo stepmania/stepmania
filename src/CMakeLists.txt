@@ -369,6 +369,9 @@ else() # Linux
   if(${HAS_XRANDR})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XRANDR)
   endif()
+  if(${HAS_LIBXTST})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_LIBXTST)
+  endif()
   if(${HAS_XINERAMA})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XINERAMA)
   endif()
@@ -606,7 +609,7 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
     list(APPEND SMDATA_LINK_LIB ${PCRE_LIBRARY})
   endif()
 
-  list(APPEND SMDATA_LINK_LIB ${XRANDR_LIBRARIES} ${XINERAMA_LIBRARIES})
+  list(APPEND SMDATA_LINK_LIB ${XRANDR_LIBRARIES} ${LIBXTST_LIBRARY} ${XINERAMA_LIBRARIES})
 
   list(REMOVE_DUPLICATES SMDATA_LINK_LIB)
 endif()
