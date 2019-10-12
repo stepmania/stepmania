@@ -158,7 +158,8 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 	RageTimer tm;
 	// Tell SONGINDEX to not write the cache index file every time a song adds
 	// an entry. -Kyz
-	SONGINDEX->delay_save_cache= true;
+	SONGINDEX->delay_save_cache = true;
+	IMAGECACHE->delay_save_cache = true;
 	LoadStepManiaSongDir( SpecialFiles::SONGS_DIR, ld );
 
 	const bool bOldVal = PREFSMAN->m_bFastLoad;
@@ -168,6 +169,8 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 	LoadEnabledSongsFromPref();
 	SONGINDEX->SaveCacheIndex();
 	SONGINDEX->delay_save_cache= false;
+	IMAGECACHE->WriteToDisk();
+	IMAGECACHE->delay_save_cache = false;
 
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
 }

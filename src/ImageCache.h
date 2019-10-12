@@ -13,6 +13,7 @@ public:
 	ImageCache();
 	~ImageCache();
 	void ReadFromDisk();
+	void WriteToDisk();
 
 	RageTextureID LoadCachedImage( RString sImageDir, RString sImagePath );
 	void CacheImage( RString sImageDir, RString sImagePath );
@@ -22,6 +23,8 @@ public:
 	void Undemand( RString sImageDir );
 
 	void OutputStats() const;
+
+	bool delay_save_cache;
 
 private:
 	static RString GetImageCachePath( RString sImageDir, RString sImagePath );
