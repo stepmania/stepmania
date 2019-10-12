@@ -1378,14 +1378,6 @@ std::vector<RString> SMLoader::GetSongDirFiles(const RString &sSongDir)
 		}
 	}
 
-	// sort from longest to shortest string
-	//std::sort(m_SongDirFiles.begin(), m_SongDirFiles.end(), 
-	//	[](const RString &l, const RString &r) { 
-	//		if (l.size() > r.size()) return true;
-	//		if (l.size() < r.size()) return false;
-	//		return (l > r); 
-	//	});
-
 	return m_SongDirFiles;
 }
 
