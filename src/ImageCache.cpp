@@ -169,6 +169,7 @@ void ImageCache::UnloadAllImages()
 }
 
 ImageCache::ImageCache()
+	: delay_save_cache(false)
 {
 	ReadFromDisk();
 }
@@ -457,8 +458,15 @@ void ImageCache::CacheImageInternal( RString sImageDir, RString sImagePath )
 	ImageData.SetValue( sImagePath, "Width", iSourceWidth );
 	ImageData.SetValue( sImagePath, "Height", iSourceHeight );
 	ImageData.SetValue( sImagePath, "FullHash", GetHashForFile( sImagePath ) );
-	ImageData.WriteFile( IMAGE_CACHE_INDEX );
+	if (!delay_save_cache)
+		WriteToDisk();
 }
+
+void ImageCache::WriteToDisk()
+{
+	ImageData.WriteFile(IMAGE_CACHE_INDEX);
+}
+
 
 /*
  * (c) 2003 Glenn Maynard

@@ -210,14 +210,14 @@ void SetBGChanges(SongTagInfo& info)
 }
 void SetFGChanges(SongTagInfo& info)
 {
-	vector<RString> aFGChangeExpressions;
-	split((*info.params)[1], ",", aFGChangeExpressions);
+	std::vector<std::vector<RString> > aFGChanges;
+	info.loader->ParseBGChangesString((*info.params)[1], aFGChanges, info.song->GetSongDir());
 
-	for(size_t b = 0; b < aFGChangeExpressions.size(); ++b)
+	for (const auto &b : aFGChanges)
 	{
 		BackgroundChange change;
-		if(info.loader->LoadFromBGChangesString(change, aFGChangeExpressions[b]))
-		{ info.song->AddForegroundChange(change); }
+		if (info.loader->LoadFromBGChangesVector(change, b))
+			info.song->AddForegroundChange(change);
 	}
 }
 void SetKeysounds(SongTagInfo& info)

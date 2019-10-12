@@ -344,14 +344,14 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		
 		else if( sValueName=="FGCHANGES" )
 		{
-			vector<RString> aFGChangeExpressions;
-			split( sParams[1], ",", aFGChangeExpressions );
+			std::vector<std::vector<RString> > aFGChanges;
+			ParseBGChangesString(sParams[1], aFGChanges, out.GetSongDir());
 
-			for( unsigned b=0; b<aFGChangeExpressions.size(); b++ )
+			for (const auto &b : aFGChanges)
 			{
 				BackgroundChange change;
-				if( LoadFromBGChangesString( change, aFGChangeExpressions[b] ) )
-					out.AddForegroundChange( change );
+				if (LoadFromBGChangesVector(change, b))
+					out.AddForegroundChange(change);
 			}
 		}
 
