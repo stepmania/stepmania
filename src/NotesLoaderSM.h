@@ -65,8 +65,7 @@ struct SMLoader
 	virtual bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
 	virtual bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot, Song *givenSong=nullptr );
 	virtual bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
-	virtual bool LoadFromBGChangesString(BackgroundChange &change, 
-					     const RString &sBGChangeExpression );
+	virtual bool LoadFromBGChangesVector(BackgroundChange &change, std::vector<RString> aBGChangeValues);
 	
 	/**
 	 * @brief Parse BPM Changes data from a string.
@@ -153,6 +152,8 @@ struct SMLoader
 	
 	virtual void ProcessBGChanges( Song &out, const RString &sValueName, 
 			      const RString &sPath, const RString &sParam );
+
+	virtual void ParseBGChangesString(const RString& _sChanges, std::vector<std::vector<RString> > &vvsAddTo, const RString &sSongDir);
 	
 	/**
 	 * @brief Put the attacks in the attacks string.
@@ -199,6 +200,8 @@ protected:
 	 * @return the file extension. */
 	RString GetFileExtension() const { return fileExt; }
 
+	std::vector<RString> GetSongDirFiles(const RString &sSongDir);
+
 public:
 	// SetSongTitle and GetSongTitle changed to public to allow the functions
 	// used by the parser helper to access them. -Kyz
@@ -217,6 +220,8 @@ private:
 	const RString fileExt;
 	/** @brief The song title that is being processed. */
 	RString songTitle;
+
+	std::vector<RString> m_SongDirFiles;
 };
 
 #endif
