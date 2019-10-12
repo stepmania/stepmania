@@ -166,14 +166,14 @@ void SMSetBGChanges(SMSongTagInfo& info)
 }
 void SMSetFGChanges(SMSongTagInfo& info)
 {
-	vector<RString> aFGChangeExpressions;
-	split((*info.params)[1], ",", aFGChangeExpressions);
+	std::vector<std::vector<RString> > aFGChanges;
+	info.loader->ParseBGChangesString((*info.params)[1], aFGChanges, info.song->GetSongDir());
 
-	for(unsigned int b = 0; b < aFGChangeExpressions.size(); ++b)
+	for (const auto &b : aFGChanges)
 	{
 		BackgroundChange change;
-		if(info.loader->LoadFromBGChangesString(change, aFGChangeExpressions[b]))
-		info.song->AddForegroundChange(change);
+		if (info.loader->LoadFromBGChangesVector(change, b))
+			info.song->AddForegroundChange(change);
 	}
 }
 void SMSetKeysounds(SMSongTagInfo& info)
@@ -356,14 +356,14 @@ void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RSt
 	}
 	else
 	{
-		vector<RString> aBGChangeExpressions;
-		split( sParam, ",", aBGChangeExpressions );
-		
-		for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
+		std::vector<std::vector<RString> > aBGChanges;
+		ParseBGChangesString(sParam, aBGChanges, out.GetSongDir());
+
+		for (const auto &b : aBGChanges)
 		{
 			BackgroundChange change;
-			if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
-				out.AddBackgroundChange( iLayer, change );
+			if(LoadFromBGChangesVector( change, b))
+				out.AddBackgroundChange(iLayer, change);
 		}
 	}
 }
@@ -937,11 +937,8 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 	}
 }
 
-bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
+bool SMLoader::LoadFromBGChangesVector( BackgroundChange &change, std::vector<RString> aBGChangeValues )
 {
-	vector<RString> aBGChangeValues;
-	split( sBGChangeExpression, "=", aBGChangeValues, false );
-
 	aBGChangeValues.resize( min((int)aBGChangeValues.size(),11) );
 
 	switch( aBGChangeValues.size() )
@@ -1352,6 +1349,169 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 	{
 		song.TidyUpData( bFromCache, true );
 	}
+}
+
+std::vector<RString> SMLoader::GetSongDirFiles(const RString &sSongDir)
+{
+	if (!m_SongDirFiles.empty())
+		return m_SongDirFiles;
+
+	ASSERT(!sSongDir.empty());
+
+	std::vector<RString> vsDirs;
+	vsDirs.push_back(sSongDir);
+
+	while (!vsDirs.empty())
+	{
+		RString d = vsDirs.back();
+		vsDirs.pop_back();
+
+		std::vector<RString> vsFiles;
+		GetDirListing(d+"*", vsFiles, false, true);
+
+		for (const RString& f : vsFiles)
+		{
+			if (IsADirectory(f))
+				vsDirs.push_back(f+"/");
+
+			m_SongDirFiles.push_back(f.substr(sSongDir.size()));
+		}
+	}
+
+	return m_SongDirFiles;
+}
+
+void SMLoader::ParseBGChangesString(const RString& _sChanges, std::vector<std::vector<RString> > &vvsAddTo, const RString& sSongDir)
+{
+	// short circuit: empty string
+	if (_sChanges.empty())
+		return;
+
+	// strip newlines (basically operates as both split and join at the same time)
+	RString sChanges;
+	size_t start = 0;
+	do {
+		size_t pos = _sChanges.find_first_of("\r\n", start);
+		if (RString::npos == pos)
+			pos = _sChanges.size();
+
+		if (pos - start > 0) {
+			if ((start == 0) && (pos == _sChanges.size()))
+				sChanges = _sChanges;
+			else
+				sChanges += _sChanges.substr(start, pos - start);
+		}
+		start = pos + 1;
+	} while (start <= _sChanges.size());
+
+	// after removing newlines, do we have anything?
+	if (sChanges.empty())
+		return;
+
+	// get the list of possible files/directories for the file parameters
+	std::vector<RString> vsFiles = GetSongDirFiles(sSongDir);
+
+	start = 0;
+	int pnum = 0;
+	do {
+		switch (pnum) {
+		// parameters 1 and 7 can be files or folder names
+		case 1:
+		case 7:
+		{
+			// see if one of the files in the song directory are listed.
+			RString found;
+			for (const auto& f : vsFiles)
+			{
+				// there aren't enough characters for this to match
+				if ((sChanges.size() - start) < f.size())
+					continue;
+
+				// the string itself matches
+				if (f.EqualsNoCase(sChanges.substr(start, f.size()).c_str())) 
+				{
+					size_t nextpos = start + f.size();
+
+					// is this name followed by end-of-string, equals, or comma?
+					if ((nextpos == sChanges.size()) || (sChanges[nextpos] == '=') || (sChanges[nextpos] == ','))
+					{
+						found = f;
+						break;
+					}
+				}
+			}
+			// yes. use that as this parameter, even if it has commas or equals signs in it
+			if (!found.empty())
+			{
+				vvsAddTo.back().push_back(found);
+				start += found.size();
+				// the next character should be a comma or equals. skip it
+				if (start < sChanges.size())
+				{
+					if (sChanges[start] == '=')
+						++pnum;
+					else
+					{
+						ASSERT(sChanges[start] == ',');
+						pnum = 0;
+					}
+					start += 1;
+				}
+				// move to the next parameter
+				break;
+			}
+			// deliberate fall-through if not found. treat it as a normal string like before
+		}
+		// everything else should be safe
+		default:
+			if(0 == pnum) vvsAddTo.push_back(std::vector<RString>()); // first value of this set. create our vector
+
+			{
+				size_t eqpos = sChanges.find('=', start);
+				size_t compos = sChanges.find(',', start);
+				
+				if ((eqpos == RString::npos) && (compos == RString::npos))
+				{
+					// neither = nor , were found in the remainder of the string. consume the rest of the string.
+					vvsAddTo.back().push_back(sChanges.substr(start));
+					start = sChanges.size() + 1;
+				}
+				else if ((eqpos != RString::npos) && (compos != RString::npos))
+				{
+					// both were found. which came first?
+					if (eqpos < compos)
+					{
+						// equals. consume value and move to next value
+						vvsAddTo.back().push_back(sChanges.substr(start, eqpos - start));
+						start = eqpos + 1;
+						++pnum;
+					}
+					else
+					{
+						// comma. consume value and move to next set
+						vvsAddTo.back().push_back(sChanges.substr(start, compos - start));
+						start = compos + 1;
+						pnum = 0;
+					}
+				}
+				else if (eqpos != RString::npos)
+				{
+					// found only equals. consume and move on.
+					vvsAddTo.back().push_back(sChanges.substr(start, eqpos - start));
+					start = eqpos + 1;
+					++pnum;
+				}
+				else
+				{
+					// only foudn comma. consume and move on.
+					vvsAddTo.back().push_back(sChanges.substr(start, compos - start));
+					start = compos + 1;
+					pnum = 0;
+				}
+				break;
+			}
+		}
+	} while (start <= sChanges.size());
 }
 
 /*
