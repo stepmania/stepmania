@@ -24,9 +24,11 @@
 extern "C" {
 # endif
 
+# if _WIN64
+# define FPM_64BIT
+# else
 # define FPM_INTEL
-
-
+# endif
 
 # define SIZEOF_INT 4
 # define SIZEOF_LONG 4

@@ -93,7 +93,7 @@ public:
 	virtual void DecodeSeconds( float fSeconds );
 	virtual void SetPlaybackRate( float fRate ) { m_fRate = fRate; }
 	void SetLooping( bool bLooping=true ) { m_bLoop = bLooping; }
-	unsigned GetTexHandle() const;
+	uintptr_t GetTexHandle() const;
 
 	static EffectMode GetEffectMode( MovieDecoderPixelFormatYCbCr fmt );
 
@@ -110,7 +110,7 @@ private:
 
 	enum State { DECODER_QUIT, DECODER_RUNNING } m_State;
 
-	unsigned m_uTexHandle;
+	uintptr_t m_uTexHandle;
 	RageTextureRenderTarget *m_pRenderTarget;
 	RageTexture *m_pTextureIntermediate;
 	Sprite *m_pSprite;

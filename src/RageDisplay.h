@@ -205,7 +205,7 @@ struct RageTextureLock
 
 	/* Given a surface with a format and no pixel data, lock the texture into the
 	 * surface. The data is write-only. */
-	virtual void Lock( unsigned iTexHandle, RageSurface *pSurface ) = 0;
+	virtual void Lock( uintptr_t iTexHandle, RageSurface *pSurface ) = 0;
 
 	/* Unlock and update the texture. If bChanged is false, the texture update
 	 * may be omitted. */
@@ -261,23 +261,23 @@ public:
 
 	/* return 0 if failed or internal texture resource handle 
 	 * (unsigned in OpenGL, texture pointer in D3D) */
-	virtual unsigned CreateTexture( 
+	virtual uintptr_t CreateTexture( 
 		RagePixelFormat pixfmt,		// format of img and of texture in video mem
 		RageSurface* img,		// must be in pixfmt
 		bool bGenerateMipMaps
 		) = 0;
 	virtual void UpdateTexture( 
-		unsigned iTexHandle, 
+		uintptr_t iTexHandle, 
 		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		) = 0;
-	virtual void DeleteTexture( unsigned iTexHandle ) = 0;
+	virtual void DeleteTexture( uintptr_t iTexHandle ) = 0;
 	/* Return an object to lock pixels for streaming. If not supported, returns nullptr.
 	 * Delete the object normally. */
 	virtual RageTextureLock *CreateTextureLock() { return nullptr; }
 	virtual void ClearAllTextures() = 0;
 	virtual int GetNumTextureUnits() = 0;
-	virtual void SetTexture( TextureUnit, unsigned /* iTexture */ ) = 0;
+	virtual void SetTexture( TextureUnit, uintptr_t /* iTexture */ ) = 0;
 	virtual void SetTextureMode( TextureUnit, TextureMode ) = 0;
 	virtual void SetTextureWrapping( TextureUnit, bool ) = 0;
 	virtual int GetMaxTextureSize() const = 0;
@@ -293,9 +293,9 @@ public:
 	 * DeleteTexture. (UpdateTexture is not permitted.) Returns 0 if render-to-
 	 * texture is unsupported.
 	 */
-	virtual unsigned CreateRenderTarget( const RenderTargetParam &, int & /* iTextureWidthOut */, int & /* iTextureHeightOut */ ) { return 0; }
+	virtual uintptr_t CreateRenderTarget( const RenderTargetParam &, int & /* iTextureWidthOut */, int & /* iTextureHeightOut */ ) { return 0; }
 
-	virtual unsigned GetRenderTarget()	{ return 0; }
+	virtual uintptr_t GetRenderTarget()	{ return 0; }
 
 	/* Set the render target, or 0 to resume rendering to the framebuffer. An active render
 	 * target may not be used as a texture. If bPreserveTexture is true, the contents
@@ -303,7 +303,7 @@ public:
 	 * bPreserveTexture is true the first time a render target is used, behave as if
 	 * bPreserveTexture was false.
 	 */
-	virtual void SetRenderTarget( unsigned /* iHandle */, bool /* bPreserveTexture */ = true ) { }
+	virtual void SetRenderTarget( uintptr_t /* iHandle */, bool /* bPreserveTexture */ = true ) { }
 
 	virtual bool IsZTestEnabled() const = 0;
 	virtual bool IsZWriteEnabled() const = 0;
@@ -364,9 +364,9 @@ public:
 	};
 	bool SaveScreenshot( RString sPath, GraphicsFileFormat format );
 
-	virtual RString GetTextureDiagnostics( unsigned /* id */ ) const { return RString(); }
+	virtual RString GetTextureDiagnostics( uintptr_t /* id */ ) const { return RString(); }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
-	virtual RageSurface *GetTexture( unsigned /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
+	virtual RageSurface *GetTexture( uintptr_t /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
 
 protected:
 	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;

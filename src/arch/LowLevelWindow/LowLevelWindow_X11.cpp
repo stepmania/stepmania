@@ -758,7 +758,7 @@ public:
 	~RenderTarget_X11();
 
 	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	unsigned GetTexture() const { return m_iTexHandle; }
+	uintptr_t GetTexture() const { return static_cast<uintptr_t>(m_iTexHandle); }
 	void StartRenderingTo();
 	void FinishRenderingTo();
 
@@ -770,7 +770,7 @@ private:
 	LowLevelWindow_X11 *m_pWind;
 	GLXPbuffer m_iPbuffer;
 	GLXContext m_pPbufferContext;
-	unsigned int m_iTexHandle;
+	GLuint m_iTexHandle;
 
 	GLXContext m_pOldContext;
 	GLXDrawable m_pOldDrawable;

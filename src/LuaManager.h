@@ -224,8 +224,7 @@ inline bool MyLua_checkintboolean( lua_State *L, int iArg )
 	int iType = lua_type( L, iArg );
 	if( iType == LUA_TNUMBER )
 	{
-		int iValue = lua_tointeger( L, iArg );
-		return iValue != 0;
+		return lua_tointeger(L, iArg) != 0;
 	}
 
 	return MyLua_checkboolean( L, iArg );

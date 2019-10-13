@@ -44,13 +44,13 @@ const D3DFORMAT g_DefaultAdapterFormat = D3DFMT_X8R8G8B8;
 /* Direct3D doesn't associate a palette with textures. Instead, we load a
  * palette into a slot. We need to keep track of which texture's palette is
  * stored in what slot. */
-map<unsigned,int>		g_TexResourceToPaletteIndex;
-list<int>			g_PaletteIndex;
+std::map<uintptr_t, size_t>		g_TexResourceToPaletteIndex;
+std::list<size_t>			g_PaletteIndex;
 struct TexturePalette { PALETTEENTRY p[256]; };
-map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
+std::map<uintptr_t, TexturePalette>	g_TexResourceToTexturePalette;
 
 // Load the palette, if any, for the given texture into a palette slot, and make it current.
-static void SetPalette( unsigned TexResource )
+static void SetPalette( uintptr_t TexResource )
 {
 	// If the texture isn't paletted, we have nothing to do.
 	if( g_TexResourceToTexturePalette.find(TexResource) == g_TexResourceToTexturePalette.end() )
@@ -60,10 +60,10 @@ static void SetPalette( unsigned TexResource )
 	if( g_TexResourceToPaletteIndex.find(TexResource) == g_TexResourceToPaletteIndex.end() )
 	{
 		// It's not. Grab the least recently used slot.
-		int iPalIndex = g_PaletteIndex.front();
+		UINT iPalIndex = static_cast<UINT>(g_PaletteIndex.front());
 
 		// If any other texture is currently using this slot, mark that palette unloaded.
-		for( map<unsigned,int>::iterator i = g_TexResourceToPaletteIndex.begin(); i != g_TexResourceToPaletteIndex.end(); ++i )
+		for( std::map<uintptr_t, size_t>::iterator i = g_TexResourceToPaletteIndex.begin(); i != g_TexResourceToPaletteIndex.end(); ++i )
 		{
 			if( i->second != iPalIndex )
 				continue;
@@ -81,7 +81,7 @@ static void SetPalette( unsigned TexResource )
 	const int iPalIndex = g_TexResourceToPaletteIndex[TexResource];
 
 	// Find this palette index in the least-recently-used queue and move it to the end.
-	for(list<int>::iterator i = g_PaletteIndex.begin(); i != g_PaletteIndex.end(); ++i)
+	for(std::list<size_t>::iterator i = g_PaletteIndex.begin(); i != g_PaletteIndex.end(); ++i)
 	{
 		if( *i != iPalIndex )
 			continue;
@@ -327,7 +327,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	}
 
 	// Test each back buffer format until we find something that works.
-	for( unsigned i=0; i < vBackBufferFormats.size(); i++ )
+	for( size_t i=0; i < vBackBufferFormats.size(); i++ )
 	{
 		D3DFORMAT fmtBackBuffer = vBackBufferFormats[i];
 
@@ -782,18 +782,18 @@ public:
 	}
 	void Change( const vector<msMesh> &vMeshes )
 	{
-		for( unsigned i=0; i<vMeshes.size(); i++ )
+		for( size_t i=0; i<vMeshes.size(); i++ )
 		{
 			const MeshInfo& meshInfo = m_vMeshInfo[i];
 			const msMesh& mesh = vMeshes[i];
 			const vector<RageModelVertex> &Vertices = mesh.Vertices;
 			const vector<msTriangle> &Triangles = mesh.Triangles;
 
-			for( unsigned j=0; j<Vertices.size(); j++ )
+			for( size_t j=0; j<Vertices.size(); j++ )
 				m_vVertex[meshInfo.iVertexStart+j] = Vertices[j];
 
-			for( unsigned j=0; j<Triangles.size(); j++ )
-				for( unsigned k=0; k<3; k++ )
+			for( size_t j=0; j<Triangles.size(); j++ )
+				for( size_t k=0; k<3; k++ )
 					m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (uint16_t) meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
 		}
 	}
@@ -851,8 +851,8 @@ void RageDisplay_D3D::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVer
 
 	// make a temporary index buffer
 	static vector<uint16_t> vIndices;
-	unsigned uOldSize = vIndices.size();
-	unsigned uNewSize = max(uOldSize,(unsigned)iNumIndices);
+	size_t uOldSize = vIndices.size();
+	size_t uNewSize = max(uOldSize, static_cast<size_t>(iNumIndices));
 	vIndices.resize( uNewSize );
 	for( uint16_t i=(uint16_t)uOldSize/6; i<(uint16_t)iNumQuads; i++ )
 	{
@@ -887,8 +887,8 @@ void RageDisplay_D3D::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 
 	// make a temporary index buffer
 	static vector<uint16_t> vIndices;
-	unsigned uOldSize = vIndices.size();
-	unsigned uNewSize = max(uOldSize,(unsigned)iNumIndices);
+	size_t uOldSize = vIndices.size();
+	size_t uNewSize = max(uOldSize, static_cast<size_t>(iNumIndices));
 	vIndices.resize( uNewSize );
 	for( uint16_t i=(uint16_t)uOldSize/6; i<(uint16_t)iNumQuads; i++ )
 	{
@@ -922,8 +922,8 @@ void RageDisplay_D3D::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[]
 
 	// make a temporary index buffer
 	static vector<uint16_t> vIndices;
-	unsigned uOldSize = vIndices.size();
-	unsigned uNewSize = max(uOldSize,(unsigned)iNumIndices);
+	size_t uOldSize = vIndices.size();
+	size_t uNewSize = max(uOldSize, static_cast<size_t>(iNumIndices));
 	vIndices.resize( uNewSize );
 	for( uint16_t i=(uint16_t)uOldSize/12; i<(uint16_t)iNumPieces; i++ )
 	{
@@ -1048,7 +1048,7 @@ int RageDisplay_D3D::GetNumTextureUnits()
 	return g_DeviceCaps.MaxSimultaneousTextures;
 }
 
-void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
+void RageDisplay_D3D::SetTexture( TextureUnit tu, uintptr_t iTexture )
 {
 //	g_DeviceCaps.MaxSimultaneousTextures = 1;
 	if( tu >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
@@ -1065,7 +1065,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
 	}
 	else
 	{
-		IDirect3DTexture9* pTex = (IDirect3DTexture9*) iTexture;
+		IDirect3DTexture9* pTex = reinterpret_cast<IDirect3DTexture9*>(iTexture);
 		g_pd3dDevice->SetTexture( tu, pTex );
 
 		/* Intentionally commented out. Don't mess with texture stage state
@@ -1356,12 +1356,12 @@ void RageDisplay_D3D::SetCullMode( CullMode mode )
 	}
 }
 
-void RageDisplay_D3D::DeleteTexture( unsigned iTexHandle )
+void RageDisplay_D3D::DeleteTexture( uintptr_t iTexHandle )
 {
 	if( iTexHandle == 0 )
 		return;
 
-	IDirect3DTexture9* pTex = (IDirect3DTexture9*) iTexHandle;
+	IDirect3DTexture9* pTex = reinterpret_cast<IDirect3DTexture9*>(iTexHandle);
 	pTex->Release();
 
 	// Delete palette (if any)
@@ -1372,7 +1372,7 @@ void RageDisplay_D3D::DeleteTexture( unsigned iTexHandle )
 }
 
 
-unsigned RageDisplay_D3D::CreateTexture( 
+uintptr_t RageDisplay_D3D::CreateTexture( 
 	RagePixelFormat pixfmt,
 	RageSurface* img,
 	bool bGenerateMipMaps )
@@ -1385,7 +1385,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 		RageException::Throw( "CreateTexture(%i,%i,%s) failed: %s", 
 		img->w, img->h, RagePixelFormatToString(pixfmt).c_str(), GetErrorString(hr).c_str() );
 
-	unsigned uTexHandle = (unsigned)pTex;
+	uintptr_t uTexHandle = reinterpret_cast<uintptr_t>(pTex);
 
 	if( pixfmt == RagePixelFormat_PAL )
 	{
@@ -1411,11 +1411,11 @@ unsigned RageDisplay_D3D::CreateTexture(
 }
 
 void RageDisplay_D3D::UpdateTexture( 
-	unsigned uTexHandle, 
+	uintptr_t uTexHandle, 
 	RageSurface* img,
 	int xoffset, int yoffset, int width, int height )
 {
-	IDirect3DTexture9* pTex = (IDirect3DTexture9*)uTexHandle;
+	IDirect3DTexture9* pTex = reinterpret_cast<IDirect3DTexture9*>(uTexHandle);
 	ASSERT( pTex != nullptr );
 
 	RECT rect; 

@@ -15,7 +15,7 @@ void WindowsDialogBox::Run( int iDialog )
 	DialogBoxParam( hHandle, MAKEINTRESOURCE(iDialog), nullptr, DlgProc, (LPARAM) this );
 }
 
-BOOL APIENTRY WindowsDialogBox::DlgProc( HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR APIENTRY WindowsDialogBox::DlgProc( HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	if( msg == WM_INITDIALOG )
 		SetProp( hDlg, "WindowsDialogBox", (HANDLE) lParam );
