@@ -314,13 +314,14 @@ if(WIN32)
     get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
 
     list(APPEND SM_FFMPEG_WIN32_DLLS
-      "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/bin/avcodec-55.dll"
-      "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/bin/avformat-55.dll"
-      "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/bin/avutil-52.dll"
-      "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/bin/swscale-2.dll"
+      "avcodec-55.dll"
+      "avformat-55.dll"
+      "avutil-52.dll"
+      "swscale-2.dll"
     )
     foreach(dll ${SM_FFMPEG_WIN32_DLLS})
-      file(COPY "${dll}" DESTINATION "${SM_PROGRAM_DIR}/")
+      file(REMOVE "${SM_PROGRAM_DIR}/${dll}")
+      file(COPY "${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/bin/${dll}" DESTINATION "${SM_PROGRAM_DIR}/")
     endforeach()
   endif()
 elseif(MACOSX)
