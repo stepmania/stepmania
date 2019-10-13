@@ -392,7 +392,8 @@ if WINDOWS
 		arch/InputHandler/InputHandler_DirectInputHelper.cpp arch/InputHandler/InputHandler_DirectInputHelper.h \
 		arch/InputHandler/InputHandler_Win32_MIDI.cpp arch/InputHandler/InputHandler_Win32_MIDI.h \
 		arch/InputHandler/InputHandler_Win32_Para.cpp arch/InputHandler/InputHandler_Win32_Para.h \
-		arch/InputHandler/InputHandler_Win32_Pump.cpp arch/InputHandler/InputHandler_Win32_Pump.h
+		arch/InputHandler/InputHandler_Win32_Pump.cpp arch/InputHandler/InputHandler_Win32_Pump.h \
+		arch/InputHandler/InputHandler_Win32_RTIO.cpp arch/InputHandler/InputHandler_Win32_RTIO.h
 
  Sound += arch/Sound/RageSoundDriver_DSound_Software.cpp arch/Sound/RageSoundDriver_DSound_Software.h \
 	arch/Sound/DSoundHelpers.cpp arch/Sound/DSoundHelpers.h \
