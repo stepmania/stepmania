@@ -136,7 +136,9 @@ set(SM_COMPILE_FLAGS "")
 
 if(WITH_SSE2)
   if(MSVC)
-    set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /arch:SSE2")
+    if(SM_WIN32_ARCH MATCHES "x86")
+      set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /arch:SSE2")
+    endif()
   else()
     set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} -msse2")
   endif()
@@ -481,9 +483,9 @@ if(WIN32)
               "setupapi.lib"
               "hid.lib")
 
-  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
+  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}"
-                   "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
+                   "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk/${SM_WIN32_ARCH}\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/ERRORREPORT:SEND")
   sm_add_link_flag("${SM_EXE_NAME}" "/MAPINFO:EXPORTS")
   sm_add_link_flag("${SM_EXE_NAME}" "/SAFESEH:NO")

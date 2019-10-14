@@ -28,7 +28,7 @@ public:
 	virtual ~RenderTarget() { }
 	virtual void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut ) = 0;
 
-	virtual unsigned GetTexture() const = 0;
+	virtual uintptr_t GetTexture() const = 0;
 
 	/* Render to this RenderTarget. */
 	virtual void StartRenderingTo() = 0;

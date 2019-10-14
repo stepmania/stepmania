@@ -31,8 +31,10 @@ inline float max( float a, int b ) { return a > b? a:b; }
 inline float max( int a, float b ) { return a > b? a:b; }
 inline unsigned long min( unsigned int a, unsigned long b ) { return a < b? a:b; }
 inline unsigned long min( unsigned long a, unsigned int b ) { return a < b? a:b; }
+inline unsigned long long min( unsigned int a, unsigned long long b ) { return a < b? a:b; }
 inline unsigned long max( unsigned int a, unsigned long b ) { return a > b? a:b; }
 inline unsigned long max( unsigned long a, unsigned int b ) { return a > b? a:b; }
+inline unsigned long long max( unsigned int a, unsigned long long b ) { return a > b? a:b; }
 
 /** @brief If outside the range from low to high, bring it within range. */
 #define clamp(val,low,high)		( max( (low), min((val),(high)) ) )

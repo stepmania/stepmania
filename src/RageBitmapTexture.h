@@ -13,12 +13,12 @@ public:
 	/* only called by RageTextureManager::InvalidateTextures */
 	virtual void Invalidate() { m_uTexHandle = 0; /* don't Destroy() */}
 	virtual void Reload();
-	virtual unsigned GetTexHandle() const { return m_uTexHandle; };	// accessed by RageDisplay
+	virtual uintptr_t GetTexHandle() const { return m_uTexHandle; };	// accessed by RageDisplay
 
 private:
 	void Create();	// called by constructor and Reload
 	void Destroy();
-	unsigned m_uTexHandle;	// treat as unsigned in OpenGL, ID3D8Texture* for D3D
+	uintptr_t m_uTexHandle;	// treat as unsigned in OpenGL, IDirect3DTexture9* for D3D
 };
 
 #endif

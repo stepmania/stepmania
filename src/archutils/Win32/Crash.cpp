@@ -85,7 +85,7 @@ void WriteToChild( HANDLE hPipe, const void *pData, size_t iSize )
 	while( iSize )
 	{
 		DWORD iActual;
-		if( !WriteFile(hPipe, pData, iSize, &iActual, nullptr) )
+		if( !WriteFile(hPipe, pData, static_cast<DWORD>(iSize), &iActual, nullptr) )
 			return;
 		iSize -= iActual;
 	}
@@ -114,7 +114,7 @@ bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 		SetHandleInformation( hFromStdout, HANDLE_FLAG_INHERIT, 0 );
 	}
 
-	char szBuf[256] = "";
+	char szBuf[MAX_PATH] = "";
 	GetModuleFileName( nullptr, szBuf, MAX_PATH );
 	strcat( szBuf, " " );
 	strcat( szBuf, CHILD_MAGIC_PARAMETER );
@@ -144,6 +144,7 @@ bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 	}
 
 	hProcess = pi.hProcess;
+	CloseHandle(pi.hThread);
 
 	return true;
 }
@@ -209,13 +210,13 @@ void RunChild()
 
 		// 2. Write info.
 		const TCHAR *p = RageLog::GetInfo();
-		int iSize = strlen( p );
+		int iSize = static_cast<int>(strlen( p ));
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, p, iSize );
 
 		// 3. Write AdditionalLog.
 		p = RageLog::GetAdditionalLog();
-		iSize = strlen( p );
+		iSize = static_cast<int>(strlen( p ));
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, p, iSize );
 
@@ -228,7 +229,7 @@ void RunChild()
 		WriteToChild(hToStdin, &cnt, sizeof(cnt));
 		for( int i = 0; i < cnt; ++i )
 		{
-				iSize = strlen(ps[i])+1;
+				iSize = static_cast<int>(strlen(ps[i])) + 1;
 				WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 				WriteToChild( hToStdin, ps[i], iSize );
 		}
@@ -236,13 +237,13 @@ void RunChild()
 		// 5. Write CHECKPOINTs.
 		static TCHAR buf[1024*32];
 		Checkpoints::GetLogs( buf, sizeof(buf), "$$" );
-		iSize = strlen( buf )+1;
+		iSize = static_cast<int>(strlen( buf )) + 1;
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, buf, iSize );
 
 		// 6. Write the crashed thread's name.
 		p = RageThread::GetCurrentThreadName();
-		iSize = strlen( p )+1;
+		iSize = static_cast<int>(strlen( p )) + 1;
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, p, iSize );
 
@@ -260,13 +261,13 @@ void RunChild()
 		TCHAR szName[MAX_PATH];
 		if( !CrashGetModuleBaseName(hMod, szName) )
 			strcpy( szName, "???" );
-		iSize = strlen( szName );
+		iSize = static_cast<int>(strlen( szName ));
 		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
 		WriteToChild( hToStdin, szName, iSize );
 	}
 }
 
-static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
+static DWORD WINAPI MainExceptionHandler( LPVOID lpParameter )
 {
 	// Flush the log so it isn't cut off at the end.
 	/* 1. We can't do regular file access in the crash handler.
@@ -283,6 +284,7 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 	 * does this exception occur, and we never unmask it.
 	 * However, once in a while some driver or library turns evil and unmasks an
 	 * exception flag on us. If this happens, re-mask it and continue execution. */
+	PEXCEPTION_POINTERS pExc = reinterpret_cast<PEXCEPTION_POINTERS>(lpParameter);
 	switch( pExc->ExceptionRecord->ExceptionCode )
 	{
 	case EXCEPTION_FLT_INVALID_OPERATION:
@@ -291,7 +293,11 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 	case EXCEPTION_FLT_OVERFLOW:
 	case EXCEPTION_FLT_UNDERFLOW:
 	case EXCEPTION_FLT_INEXACT_RESULT:
+#if _WIN64
+		pExc->ContextRecord->FltSave.ControlWord |= 0x3F;
+#else
 		pExc->ContextRecord->FloatSave.ControlWord |= 0x3F;
+#endif
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 
@@ -361,20 +367,19 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 	/* If the stack overflowed, we have a very limited amount of stack space.
 	 * Allocate a new stack, and run the exception handler in it, to increase
 	 * the chances of success. */
-	int iSize = 1024*32;
-	char *pStack = (char *) VirtualAlloc( nullptr, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
-	pStack += iSize;
-	// FIXME: This will probably explode on x86-64
-#if defined(_MSC_VER)
-	_asm mov esp, pStack;
-#elif defined(__GNUC__)
-	asm volatile ("movl %%esp, %0\n\t"
-	:
-	: "r" (pStack)
-	);
-#endif
+	HANDLE hExceptionHandler = CreateThread(nullptr, 1024 * 32, MainExceptionHandler, reinterpret_cast<LPVOID>(pExc), 0, nullptr);
+	if (hExceptionHandler == NULL)
+	{
+		TerminateProcess(GetCurrentProcess(), 0);
+		return EXCEPTION_EXECUTE_HANDLER;
+	}
+	WaitForSingleObject(hExceptionHandler, INFINITE);
 
-	return MainExceptionHandler( pExc );
+	DWORD ret;
+	GetExitCodeThread(hExceptionHandler, &ret);
+	CloseHandle(hExceptionHandler);
+
+	return static_cast<long>(ret);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -449,7 +454,7 @@ static bool IsExecutableProtection(DWORD dwProtect) {
 	return false;
 }
 
-static bool PointsToValidCall( unsigned long ptr )
+static bool PointsToValidCall( ULONG_PTR ptr )
 {
 	char buf[7];
 	int len = 7;
@@ -473,9 +478,15 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	 * due to stack corruption, we might not be able to get any frames from the
 	 * stack. Pull it out of pContext->Eip, which is always valid, and then
 	 * discard the first stack frame if it's the same. */
+#if _WIN64
+	if( buf+1 != pLast && pContext->Rip != 0 )
+	{
+		*buf = (void *) pContext->Rip;
+#else
 	if( buf+1 != pLast && pContext->Eip != 0 )
 	{
 		*buf = (void *) pContext->Eip;
+#endif
 		++buf;
 	}
 
@@ -489,15 +500,21 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 			return;
 		}
 
-		const NT_TIB *tib = (NT_TIB *) ((sel.HighWord.Bits.BaseHi<<24)+(sel.HighWord.Bits.BaseMid<<16)+sel.BaseLow);
+		const NT_TIB *tib = reinterpret_cast<NT_TIB *>(((static_cast<DWORD_PTR>(sel.HighWord.Bits.BaseHi) << 24) + (static_cast<DWORD_PTR>(sel.HighWord.Bits.BaseMid) << 16) + sel.BaseLow));
 		const NT_TIB *pTib = tib->Self;
 		pStackBase = (char *)pTib->StackBase;
 	}
 
 	// Walk up the stack.
+#if _WIN64
+	const char *lpAddr = (const char *)pContext->Rsp;
+
+	const void *data = (void *) pContext->Rip;
+#else
 	const char *lpAddr = (const char *)pContext->Esp;
 
 	const void *data = (void *) pContext->Eip;
+#endif
 	do {
 		if( buf == pLast )
 			break;
@@ -506,7 +523,11 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 
 		/* The first entry is usually EIP.  We already logged it; skip it, so we don't always
 		 * show the first frame twice. */
+#if _WIN64
+		if( bFirst && data == (void *) pContext->Rip )
+#else
 		if( bFirst && data == (void *) pContext->Eip )
+#endif
 			fValid = false;
 		bFirst = false;
 
@@ -518,7 +539,11 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 			if (!IsExecutableProtection(meminfo.Protect) || meminfo.State!=MEM_COMMIT)
 				fValid = false;
 
-			if ( data != (void *) pContext->Eip && !PointsToValidCall((unsigned long)data) )
+#if _WIN64
+			if ( data != (void *) pContext->Rip && !PointsToValidCall(reinterpret_cast<ULONG_PTR>(data)) )
+#else
+			if ( data != (void *) pContext->Eip && !PointsToValidCall(reinterpret_cast<ULONG_PTR>(data)) )
+#endif
 				fValid = false;
 		}
 
@@ -589,7 +614,7 @@ void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 			context.ContextFlags = CONTEXT_FULL;
 			if( !GetThreadContext( hThread, &context ) )
 				wsprintf( g_CrashInfo.m_CrashReason + strlen(g_CrashInfo.m_CrashReason),
-					"; GetThreadContext(%x) failed", (int) hThread );
+					"; GetThreadContext(%Ix) failed", reinterpret_cast<uintptr_t>(hThread) );
 			else
 			{
 				static const void *BacktracePointers[BACKTRACE_MAX_SIZE];

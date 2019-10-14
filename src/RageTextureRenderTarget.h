@@ -14,7 +14,7 @@ public:
 	virtual ~RageTextureRenderTarget();
 	virtual void Invalidate() { m_iTexHandle = 0; /* don't Destroy() */ }
 	virtual void Reload();
-	virtual unsigned GetTexHandle() const { return m_iTexHandle; }
+	virtual uintptr_t GetTexHandle() const { return m_iTexHandle; }
 
 	void BeginRenderingTo( bool bPreserveTexture = true );
 	void FinishRenderingTo();
@@ -26,8 +26,8 @@ private:
 
 	void Create();
 	void Destroy();
-	unsigned m_iTexHandle;
-	unsigned m_iPreviousRenderTarget;
+	uintptr_t m_iTexHandle;
+	uintptr_t m_iPreviousRenderTarget;
 };
 
 #endif

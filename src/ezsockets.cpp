@@ -60,7 +60,7 @@ namespace
 #endif
 
 		int MAXCON;
-		int sock;
+		uintptr_t sock;
 		struct sockaddr_in addr;
 
 		struct sockaddr_in fromAddr;
@@ -439,7 +439,7 @@ int EzSockets::ReadPack(char *data, unsigned int max)
 	int size = PeekPack(data, max);
 
 	if (size != -1)
-		inBuffer = inBuffer.substr(size+4);
+		inBuffer = inBuffer.substr(static_cast<size_t>(size) + 4);
 
 	return size;
 }
@@ -466,10 +466,10 @@ int EzSockets::PeekPack(char *data, unsigned int max)
 	size = ntohl(size);
 
 	if (blocking)
-		while (inBuffer.length()<(size+4) && !IsError())
+		while (inBuffer.length()<(static_cast<size_t>(size) + 4) && !IsError())
 			pUpdateRead();
 	else
-		if (inBuffer.length()<(size+4) || inBuffer.length()<=4)
+		if (inBuffer.length()<(static_cast<size_t>(size) + 4) || inBuffer.length()<=4)
 			return -1;
 
 	if (IsError())

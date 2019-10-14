@@ -53,23 +53,23 @@ public:
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsPerVertexMatrixScale();
-	unsigned CreateTexture(
+	uintptr_t CreateTexture(
 		RagePixelFormat pixfmt,
 		RageSurface* img,
 		bool bGenerateMipMaps );
 	void UpdateTexture(
-		unsigned iTexHandle,
+		uintptr_t iTexHandle,
 		RageSurface* img,
 		int xoffset, int yoffset, int width, int height
 		);
-	void DeleteTexture( unsigned iTexHandle );
+	void DeleteTexture( uintptr_t iTexHandle );
 	bool UseOffscreenRenderTarget();
-	RageSurface *GetTexture( unsigned iTexture );
+	RageSurface *GetTexture( uintptr_t iTexture );
 	RageTextureLock *CreateTextureLock();
 
 	void ClearAllTextures();
 	int GetNumTextureUnits();
-	void SetTexture( TextureUnit tu, unsigned iTexture );
+	void SetTexture( TextureUnit tu, uintptr_t iTexture );
 	void SetTextureMode( TextureUnit tu, TextureMode tm );
 	void SetTextureWrapping( TextureUnit tu, bool b );
 	int GetMaxTextureSize() const;
@@ -78,9 +78,9 @@ public:
 	bool IsEffectModeSupported( EffectMode effect );
 	bool SupportsRenderToTexture() const;
 	bool SupportsFullscreenBorderlessWindow() const;
-	unsigned CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	unsigned GetRenderTarget();
-	void SetRenderTarget( unsigned iHandle, bool bPreserveTexture );
+	uintptr_t CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
+	uintptr_t GetRenderTarget();
+	void SetRenderTarget( uintptr_t iHandle, bool bPreserveTexture );
 	bool IsZWriteEnabled() const;
 	bool IsZTestEnabled() const;
 	void SetZWrite( bool b );
