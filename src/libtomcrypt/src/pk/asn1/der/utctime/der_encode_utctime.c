@@ -5,8 +5,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -17,7 +15,7 @@
 
 #ifdef LTC_DER
 
-static const char *baseten = "0123456789";
+static const char * const baseten = "0123456789";
 
 #define STORE_V(y) \
     out[x++] = der_ia5_char_encode(baseten[(y/10) % 10]); \
@@ -30,12 +28,12 @@ static const char *baseten = "0123456789";
   @param outlen       [in/out] The length of the DER encoding
   @return CRYPT_OK if successful
 */
-int der_encode_utctime(ltc_utctime *utctime, 
+int der_encode_utctime(ltc_utctime *utctime,
                        unsigned char *out,   unsigned long *outlen)
 {
     unsigned long x, tmplen;
     int           err;
- 
+
     LTC_ARGCHK(utctime != NULL);
     LTC_ARGCHK(out     != NULL);
     LTC_ARGCHK(outlen  != NULL);
@@ -47,7 +45,7 @@ int der_encode_utctime(ltc_utctime *utctime,
         *outlen = tmplen;
         return CRYPT_BUFFER_OVERFLOW;
     }
-    
+
     /* store header */
     out[0] = 0x17;
 
@@ -70,7 +68,7 @@ int der_encode_utctime(ltc_utctime *utctime,
 
     /* store length */
     out[1] = (unsigned char)(x - 2);
-   
+
     /* all good let's return */
     *outlen = x;
     return CRYPT_OK;
@@ -78,6 +76,6 @@ int der_encode_utctime(ltc_utctime *utctime,
 
 #endif
 
-/* $Source$ */
-/* $Revision: 24838 $ */
-/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */
+/* ref:         HEAD -> master, tag: v1.18.2 */
+/* git commit:  7e7eb695d581782f04b24dc444cbfde86af59853 */
+/* commit time: 2018-07-01 22:49:01 +0200 */

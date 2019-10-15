@@ -1,0 +1,10 @@
+prefix=@to-be-replaced@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: LibTomCrypt
+Description: public domain open source cryptographic toolkit
+Version: @to-be-replaced@
+Libs: -L${libdir} -ltomcrypt
+Cflags: -I${includedir}
