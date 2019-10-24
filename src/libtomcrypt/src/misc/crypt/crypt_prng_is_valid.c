@@ -5,8 +5,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -31,6 +29,6 @@ int prng_is_valid(int idx)
    return CRYPT_OK;
 }
 
-/* $Source$ */
-/* $Revision: 24838 $ */
-/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */
+/* ref:         HEAD -> master, tag: v1.18.2 */
+/* git commit:  7e7eb695d581782f04b24dc444cbfde86af59853 */
+/* commit time: 2018-07-01 22:49:01 +0200 */

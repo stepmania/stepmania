@@ -5,8 +5,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -55,7 +53,7 @@ int der_encode_object_identifier(unsigned long *words, unsigned long  nwords,
    }
 
    /* store header + length */
-   x = 0; 
+   x = 0;
    out[x++] = 0x06;
    if (z < 128) {
       out[x++] = (unsigned char)z;
@@ -71,33 +69,33 @@ int der_encode_object_identifier(unsigned long *words, unsigned long  nwords,
    }
 
    /* store first byte */
-    wordbuf = words[0] * 40 + words[1];   
-    for (i = 1; i < nwords; i++) {
-        /* store 7 bit words in little endian */
-        t    = wordbuf & 0xFFFFFFFF;
-        if (t) {
-           y    = x;
-           mask = 0;
-           while (t) {
-               out[x++] = (unsigned char)((t & 0x7F) | mask);
-               t    >>= 7;
-               mask  |= 0x80;  /* upper bit is set on all but the last byte */
-           }
-           /* now swap bytes y...x-1 */
-           z = x - 1;
-           while (y < z) {
-               t = out[y]; out[y] = out[z]; out[z] = (unsigned char)t;
-               ++y; 
-               --z;
-           }
-       } else {
-          /* zero word */
-          out[x++] = 0x00;
-       }
-       
-       if (i < nwords - 1) {
-          wordbuf = words[i + 1];
-       }
+   wordbuf = words[0] * 40 + words[1];
+   for (i = 1; i < nwords; i++) {
+      /* store 7 bit words in little endian */
+      t    = wordbuf & 0xFFFFFFFF;
+      if (t) {
+         y    = x;
+         mask = 0;
+         while (t) {
+            out[x++] = (unsigned char)((t & 0x7F) | mask);
+            t    >>= 7;
+            mask  |= 0x80;  /* upper bit is set on all but the last byte */
+         }
+         /* now swap bytes y...x-1 */
+         z = x - 1;
+         while (y < z) {
+            t = out[y]; out[y] = out[z]; out[z] = (unsigned char)t;
+            ++y;
+            --z;
+         }
+      } else {
+         /* zero word */
+         out[x++] = 0x00;
+      }
+
+      if (i < nwords - 1) {
+         wordbuf = words[i + 1];
+      }
    }
 
    *outlen = x;
@@ -106,6 +104,6 @@ int der_encode_object_identifier(unsigned long *words, unsigned long  nwords,
 
 #endif
 
-/* $Source$ */
-/* $Revision: 24838 $ */
-/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */
+/* ref:         HEAD -> master, tag: v1.18.2 */
+/* git commit:  7e7eb695d581782f04b24dc444cbfde86af59853 */
+/* commit time: 2018-07-01 22:49:01 +0200 */

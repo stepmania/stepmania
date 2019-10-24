@@ -5,8 +5,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -15,7 +13,7 @@
    DSA implementation, free a DSA key, Tom St Denis
 */
 
-#ifdef MDSA
+#ifdef LTC_MDSA
 
 /**
    Free a DSA key
@@ -24,11 +22,12 @@
 void dsa_free(dsa_key *key)
 {
    LTC_ARGCHKVD(key != NULL);
-   mp_clear_multi(key->g, key->q, key->p, key->x, key->y, NULL);
+   mp_cleanup_multi(&key->y, &key->x, &key->q, &key->g, &key->p, NULL);
+   key->type = key->qord = 0;
 }
 
 #endif
 
-/* $Source$ */
-/* $Revision: 24838 $ */
-/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */
+/* ref:         HEAD -> master, tag: v1.18.2 */
+/* git commit:  7e7eb695d581782f04b24dc444cbfde86af59853 */
+/* commit time: 2018-07-01 22:49:01 +0200 */

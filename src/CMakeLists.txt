@@ -112,6 +112,9 @@ set_target_properties("${SM_EXE_NAME}"
                                  RELWITHDEBINFO_OUTPUT_NAME
                                  "${SM_NAME_RELWITHDEBINFO}")
 
+# Required for usage of tomcrypt and tommath.
+sm_add_compile_definition("${SM_EXE_NAME}" LTM_DESC)
+
 if(WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
 endif()
