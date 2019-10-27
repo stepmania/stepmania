@@ -33,6 +33,11 @@ RString getDevice(RString inputDir, RString type)
 	return result;
 }
 
+static bool cmpDevices(RString a, RString b)
+{
+	return a < b;
+}
+
 LinuxInputManager::LinuxInputManager()
 {
 	m_bEventEnabled = g_sInputDrivers.Get().find("LinuxEvent") != std::string::npos;
@@ -71,6 +76,10 @@ LinuxInputManager::LinuxInputManager()
 		if( !bEventPresent && !bJoystickPresent )
 			LOG->Info("LinuxInputManager: %s seems to have no eventNN or jsNN.", dName.c_str() );
 	}
+
+	// Sort devices for more consistent numbering.
+	std::sort(m_vsPendingEventDevices.begin(), m_vsPendingEventDevices.end(), cmpDevices);
+	std::sort(m_vsPendingJoystickDevices.begin(), m_vsPendingJoystickDevices.end(), cmpDevices);
 }
 
 void LinuxInputManager::InitDriver(InputHandler_Linux_Event* driver)
