@@ -69,19 +69,6 @@ struct EventDevice
 
 static vector<EventDevice *> g_apEventDevices;
 
-/* Return true if the numbered event device exists.  sysfs may not always be
- * there; return false if we don't know. */
-static bool EventDeviceExists( int iNum )
-{
-	RString sDir = ssprintf( "/sys/class" );
-	struct stat st;
-	if( stat(sDir, &st) == -1 )
-		return true;
-
-	RString sFile = ssprintf( "/sys/class/input/event%i", iNum );
-	return stat(sFile, &st) == 0;
-}
-
 static bool BitIsSet( const uint8_t *pArray, uint32_t iBit )
 {
 	return !!(pArray[iBit/8] & (1<<(iBit%8)));
