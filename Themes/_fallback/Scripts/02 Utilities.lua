@@ -352,11 +352,7 @@ end
 
 function IsUsingWideScreen()
 	local curAspect = GetScreenAspectRatio()
-	if math.abs(curAspect-16/9) <= .044 or math.abs(curAspect - 16/10) <= .044 then
-		return true
-	else
-		return false
-	end
+	return curAspect > 16/10 - .044
 end
 
 -- Usage:  Pass in an ActorFrame and a string to put in front of every line.
