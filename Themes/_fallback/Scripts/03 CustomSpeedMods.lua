@@ -70,7 +70,7 @@ end
 -- Parses a speed mod and returns the pair (type, number) or nil if parsing
 -- failed.
 local function CanonicalizeMod(mod)
-	num = tonumber(mod:match("^(%d+.?%d*)[xX]$"))
+	local num = tonumber(mod:match("^(%d+.?%d*)[xX]$"))
 	if num ~= nil then
 		return "x", num
 	end
