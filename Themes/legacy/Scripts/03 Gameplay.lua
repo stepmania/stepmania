@@ -12,11 +12,11 @@ local tNotePositions = {
 }
 
 function GetTapPosition( sType )
-	bCategory = (sType == 'Standard') and 1 or 2
+	local bCategory = (sType == 'Standard') and 1 or 2
 	-- true: Normal
 	-- false: Lower
-	bPreference = ThemePrefs.Get("NotePosition") and "Normal" or "Lower"
-	tNotePos = tNotePositions[bPreference]
+	local bPreference = ThemePrefs.Get("NotePosition") and "Normal" or "Lower"
+	local tNotePos = tNotePositions[bPreference]
 	return tNotePos[bCategory]
 end
 
