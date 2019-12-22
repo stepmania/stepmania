@@ -425,9 +425,10 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 			m_BGContext = nil;
 		}
 	}
-	
-	[m_Context setFullScreen];
-	[m_Context update];
+	dispatch_sync(dispatch_get_main_queue(), ^{
+        [m_Context setFullScreen];
+        [m_Context update];
+    });
 	[m_Context makeCurrentContext];
 	
 	if( bChangeVsync )
@@ -639,7 +640,10 @@ void LowLevelWindow_MacOSX::Update()
 	m_CurrentParams.width = g_iWidth;
 	m_CurrentParams.height = g_iHeight;
 	lock.Unlock(); // Unlock before calling ResolutionChanged().
-	[m_Context update];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [m_Context update];
+    });
+    
 	DISPLAY->ResolutionChanged();
 }
 
