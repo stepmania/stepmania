@@ -6,6 +6,7 @@
 #include "LocalizedString.h"
 #include "arch/arch_default.h"
 #include "InputHandler_MonkeyKeyboard.h"
+//#include "InputHandler_NSEvent.hpp"
 
 
 void InputHandler::UpdateTimer()
@@ -192,6 +193,7 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 
 	// Always add
 	Add.push_back( new InputHandler_MonkeyKeyboard );
+//    Add.push_back( new InputHandler_NSEvent );
 }
 
 
