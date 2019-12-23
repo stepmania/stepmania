@@ -4,7 +4,6 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "ProductInfo.h"
-#include "Foreach.h"
 
 REGISTER_SOUND_DRIVER_CLASS( JACK );
 
@@ -144,9 +143,9 @@ RString RageSoundDriver_JACK::ConnectPorts()
 		// jack_port_name to use their canonical name.  (I'm not sure 
 		// if that second step is necessary, I've seen something about 
 		// "aliases" in the docs.)
-		FOREACH( RString, portNames, portName )
+		for ( RString const &portName : portNames )
 		{
-			jack_port_t *out = jack_port_by_name( client, *portName );
+			jack_port_t *out = jack_port_by_name( client, portName );
 			// Make sure the port is a sink.
 			if( ! ( jack_port_flags( out ) & JackPortIsInput ) )
 				continue;
