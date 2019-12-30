@@ -64,6 +64,7 @@ set_property(TARGET "lua-5.1" PROPERTY FOLDER "External Libraries")
 
 if(MSVC)
   sm_add_compile_definition("lua-5.1" _CRT_SECURE_NO_WARNINGS)
+  sm_add_compile_flag("lua-5.1" /TP)
 endif(MSVC)
 
 disable_project_warnings("lua-5.1")
