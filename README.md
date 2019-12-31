@@ -23,9 +23,9 @@ StepMania can be compiled using [CMake](http://www.cmake.org/). More information
 
 ## Resources
 
-* Website: http://www.stepmania.com/
+* Website: https://www.stepmania.com/
 * IRC: irc.freenode.net/#stepmania-devs
-* Lua for SM5: https://dguzek.github.io/Lua-For-SM5/
+* Lua for SM5: https://quietly-turning.github.io/Lua-For-SM5/
 * Lua API Documentation can be found in the Docs folder.
 
 ## Licensing Terms
