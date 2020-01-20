@@ -1883,7 +1883,14 @@ float StringToFloat( const RString &sString )
 	{
 		return 0;
 	}
-	return std::stof(toTrim);
+	try
+	{
+		return std::stof(toTrim);
+	}
+	catch( std::logic_error& )
+	{
+		return 0;
+	}
 }
 
 bool StringToFloat( const RString &sString, float &fOut )
@@ -2331,8 +2338,15 @@ namespace StringConversion
 		if( sValue.size() == 0 )
 			return false;
 
-		out = (std::stoi(sValue) != 0);
-		return true;
+		try
+		{
+			out = (std::stoi(sValue) != 0);
+			return true;
+		}
+		catch( std::logic_error& )
+		{
+			return false;
+		}
 	}
 
 	template<> RString ToString<int>( const int &value )
