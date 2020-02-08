@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ArchHooks.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageFileManager.h"
@@ -166,7 +167,7 @@ static RString LangIdToString( LANGID l )
 	// These aren't present in the VC6 headers. We'll never have translations to these languages anyway. -C
 	//case LANG_MONGOLIAN: return "mn";
 	//case LANG_GALICIAN: return "gl";
-	default:
+	default: LOG->Warn("Unable to determine system language. Using English.");
 	case LANG_ENGLISH: return "en";
 	}
 }
