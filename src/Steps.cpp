@@ -595,7 +595,9 @@ bool Steps::HasSignificantTimingChanges() const
 	if( timing->HasBpmChanges() )
 	{
 		// check to see if these changes are significant.
-		if( (GetMaxBPM() - GetMinBPM()) > 3.000f )
+		DisplayBpms bpms;
+		m_pSong->GetDisplayBpms(bpms);
+		if (bpms.GetMax() - bpms.GetMin() > 3.000f)
 			return true;
 	}
 
