@@ -335,7 +335,7 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 		}
 
 		++iCol;
-		if( iCol == pPage->m_iNumFramesY )
+		if( iCol == pPage->m_iNumFramesX )
 		{
 			iCol = 0;
 			++iRow;
