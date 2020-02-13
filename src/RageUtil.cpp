@@ -547,7 +547,6 @@ RString ConvertI64FormatString( const RString &sStr ) { return sStr; }
 #endif
 
 /* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
- * native forms: http://people.w3.org/rishida/names/languages.html
  * We don't use 3-letter codes, so we don't bother supporting them. */
 static const LanguageInfo g_langs[] =
 {
@@ -688,7 +687,8 @@ static const LanguageInfo g_langs[] =
 	{"xh", "Xhosa"},
 	{"yi", "Yiddish"},
 	{"yo", "Yoruba"},
-	{"zh", "Chinese"},
+	{"zh-Hans", "Chinese (Simplified)"},
+	{"zh-Hant", "Chinese (Traditional)"},
 	{"zu", "Zulu"},
 };
 

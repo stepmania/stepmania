@@ -179,13 +179,29 @@ RString ArchHooks::GetPreferredLanguage()
 {
 	RString locale;
 
-	if(getenv("LANG"))
+	if (getenv("LANG"))
 	{
 		locale = getenv("LANG");
-		locale = locale.substr(0,2);
+		RString region = locale.substr(3, 2);
+		locale = locale.substr(0, 2);
+
+		if (locale == "zh")
+		{
+			if (region == "CN" || region == "SG")
+			{
+				locale = "zh-Hans";
+			}
+			else if (region == "HK" || region == "TW")
+			{
+				locale = "zh-Hant";
+			}
+		}
 	}
 	else
+	{
+		LOG->Warn("Unable to determine system language. Using English.");
 		locale = "en";
+	}
 
 	return locale;
 }

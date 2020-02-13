@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ArchHooks.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageFileManager.h"
@@ -98,7 +99,19 @@ static RString LangIdToString( LANGID l )
 	case LANG_ARABIC: return "ar";
 	case LANG_BULGARIAN: return "bg";
 	case LANG_CATALAN: return "ca";
-	case LANG_CHINESE: return "zh";
+	case LANG_CHINESE:
+	{
+		switch (SUBLANGID(l))
+		{
+		case SUBLANG_CHINESE_TRADITIONAL:
+		case SUBLANG_CHINESE_HONGKONG:
+		case SUBLANG_CHINESE_MACAU:
+			return "zh-Hant";
+		case SUBLANG_CHINESE_SIMPLIFIED:
+		case SUBLANG_CHINESE_SINGAPORE:
+			return "zh-Hans";
+		}
+	}
 	case LANG_CZECH: return "cs";
 	case LANG_DANISH: return "da";
 	case LANG_GERMAN: return "de";
@@ -154,7 +167,7 @@ static RString LangIdToString( LANGID l )
 	// These aren't present in the VC6 headers. We'll never have translations to these languages anyway. -C
 	//case LANG_MONGOLIAN: return "mn";
 	//case LANG_GALICIAN: return "gl";
-	default:
+	default: LOG->Warn("Unable to determine system language. Using English.");
 	case LANG_ENGLISH: return "en";
 	}
 }
