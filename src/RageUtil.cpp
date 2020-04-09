@@ -1877,38 +1877,20 @@ void MakeLower( wchar_t *p, size_t iLen )
 
 float StringToFloat( const RString &sString )
 {
-	try
+	float fOut = std::strtof(sString, nullptr);
+	if (!isfinite(fOut))
 	{
-		float fOut = std::stof(sString);
-		if (!isfinite(fOut))
-		{
-			fOut = 0.0f;
-		}
-		return fOut;
+		fOut = 0.0f;
 	}
-	catch(...)
-	{
-		return 0.0f;
-	}	
+	return fOut;
 }
 
 bool StringToFloat( const RString &sString, float &fOut )
 {
-	try
-	{
-		fOut = std::stof(sString);
-		if (!isfinite(fOut))
-		{
-			fOut = 0.0f;
-			return false;
-		}
-		return true;
-	}
-	catch(...)
-	{
-		fOut = 0.0f;
-		return false;
-	}	
+	char *endPtr = nullptr;
+
+	fOut = std::strtof(sString, &endPtr);
+	return sString.size() && *endPtr == '\0' && isfinite(fOut);
 }
 
 RString FloatToString( const float &num )
