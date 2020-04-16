@@ -823,7 +823,8 @@ save yourself some time, copy this for undocumented things:
 		error is optional an defaults to "Script error occurred.".  error_type is optional and defaults to "LUA_ERROR".
 	</Function>
 	<Function name='RunWithThreadVariables' return='int' arguments='function func, table t, ...'>
-		Calls <code>func(...)</code> with two LuaThreadVariables set, and returns the return values of <code>func()</code>.
+		Calls <code>func(...)</code> with LuaThreadVariables set according to the keys and values of <code>t</code>, and returns the return values of <code>func()</code>.<br/>
+		For example, if <code>t</code> is <code>{x=12}</code>, calling <code>Var "x"</code> from <code>func</code> will return 12.
 	</Function>
 	<Function name='Trace' return='void' arguments='string sString'>
 		Writes <code>sString</code> to log.txt. Aliased by
