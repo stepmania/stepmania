@@ -40,8 +40,5 @@ else()
     sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
   else() # Unix/Linux
     sm_add_compile_flag("jsoncpp" "-std=gnu++11")
-    if(CMAKE_CXX_COMPILER MATCHES "clang")
-      sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
-    endif()
   endif()
 endif()

@@ -8,10 +8,6 @@ add_library("GtkModule"
             "arch/LoadingWindow/LoadingWindow_GtkModule.h")
 
 sm_add_compile_flag("GtkModule" "-std=${SM_CPP_STANDARD}")
-if(CMAKE_CXX_COMPILER MATCHES "clang")
-  sm_add_compile_flag("GtkModule" "-stdlib=libc++")
-  set_target_properties("GtkModule" PROPERTIES LINK_FLAGS "-stdlib=libc++")
-endif()
 
 # It is normally not appropriate to set the prefix to the empty string. This is
 # to maintain compatibility with the current source. At some point, it may be
