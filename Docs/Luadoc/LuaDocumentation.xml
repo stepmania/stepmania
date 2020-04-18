@@ -67,9 +67,6 @@ save yourself some time, copy this for undocumented things:
 		CLAMP is an all-female Japanese mangaka group that formed in the mid 1980s.
 		Erm, I mean... Clamps <code>fValue</code> between <code>fLow</code> and <code>fHigh</code>.
 	</Function>
-	<Function name='ClearEnterMappedKeys' theme='_fallback' return='void' arguments=''>
-		[04 KeymapGuard.lua]
-	</Function>
 	<Function name='CloseConnection' return='void' arguments=''>
 		Closes any connection to an online server.
 	</Function>
@@ -465,7 +462,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ProductVersion' return='string' arguments=''>
 		Returns the product version.
 	</Function>
-	<Function name='rawequal' return='bool' arguments='various v1, varoius v2'>
+	<Function name='rawequal' return='bool' arguments='various v1, various v2'>
 		"Checks whether <code>v1</code> is equal to <code>v2</code>, without invoking any metamethod."
 	</Function>
 	<Function name='rawget' return='various' arguments='table t, various index'>
@@ -530,22 +527,22 @@ save yourself some time, copy this for undocumented things:
 		Returns the current second.
 	</Function>
 	<Function name='SecondsToHHMMSS' return='string' arguments='float fSecs'>
-		Converts <code>fSecs</code> to Minutes:Seconds:Milliseconds format using two digits for each section.
+		Converts <code>fSecs</code> to Hours:Minutes:Seconds format using two digits for each section.
 	</Function>
 	<Function name='SecondsToMSS' return='string' arguments='float fSecs'>
-		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section except Minutes (uses 1).
+		Converts <code>fSecs</code> to Minutes:Seconds format using one digit for Minutes and two digits for Seconds.
 	</Function>
 	<Function name='SecondsToMMSS' return='string' arguments='float fSecs'>
-		Converts <code>fSecs</code> to Minutes:Seconds format.
+		Converts <code>fSecs</code> to Minutes:Seconds format using two digits for both sections.
 	</Function>
 	<Function name='SecondsToMSSMsMs' return='string' arguments='float fSecs'>
-		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format.
+		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using one digit for Minutes, two digits for Seconds, and two digits for Milliseconds.
 	</Function>
 	<Function name='SecondsToMMSSMsMs' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section.
 	</Function>
 	<Function name='SecondsToMMSSMsMsMs' return='string' arguments='float fSecs'>
-		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section except Milliseconds (uses 3).
+		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for Minutes, two digits for Seconds, and three digits for Milliseconds.
 	</Function>
 	<Function name='select' return='various' arguments='various index, ...'>
 		"If <code>index</code> is a number, returns all arguments after argument
@@ -819,8 +816,9 @@ save yourself some time, copy this for undocumented things:
 		If unsuccessful, it returns two values: <code>nil</code> and <code>"error"</code>.
 	</Function>
 	<Function name='ReportScriptError' return='void' arguments='string error, string error_type'>
-		Reports the error through the error reporting system.  error_type is the type used for the dialog that is presented, a dialog will not appear for a type the user has chosen to ignore.<br/>
-		error is optional an defaults to "Script error occurred.".  error_type is optional and defaults to "LUA_ERROR".
+		Reports the error through the error reporting system.<br/>
+		<code>error</code> is optional and defaults to "Script error occurred.".<br/>
+		<code>error_type</code> is optional and defaults to "LUA_ERROR".  Errors of type "LUA_ERROR" will be shown in-game if the <code>ShowThemeErrors</code> preference is enabled. A dialog will not appear for an <code>error_type</code> the user has chosen to ignore.
 	</Function>
 	<Function name='RunWithThreadVariables' return='int' arguments='function func, table t, ...'>
 		Calls <code>func(...)</code> with LuaThreadVariables set according to the keys and values of <code>t</code>, and returns the return values of <code>func()</code>.<br/>
@@ -1849,10 +1847,11 @@ save yourself some time, copy this for undocumented things:
 </Class>
 <Class name='ActorSound'>
 	<Description>
-		This Actor represents a playable sound. There are two attributes that can be set on load.<br />
-		* <code>SupportPan</code> - Let the sound pan from side to side.<br />
-		* <code>SupportRateChanging</code> - Let the sound change rate and pitch.<br />
-		* <code>IsAction</code> - If true, the sound is an action sound, and will be muted if the MuteActions preference is turned on.
+		This Actor represents a playable sound.  Though the C++ class is ActorSound, it is accessible to Lua via <code>Def.Sound</code>.<br/>
+		There are three attributes that can be set as booleans on load:<br />
+		• <code>SupportPan</code> - Let the sound pan from side to side.<br />
+		• <code>SupportRateChanging</code> - Let the sound change rate and pitch.<br />
+		• <code>IsAction</code> - If true, the sound is an action sound, and will be muted if the MuteActions preference is turned on.
 	</Description>
 	<Function name='get' return='RageSound' arguments=''>
 		Returns the <Link class='RageSound' /> that can be played by this Actor.
@@ -2128,7 +2127,7 @@ save yourself some time, copy this for undocumented things:
 		Returns the path to the Course's banner.
 	</Function>
 	<Function name='GetCourseDir' return='string' arguments=''>
-		Returns the Course's directory.
+		Returns the path to the crs file for this Course, for example "/Courses/Default/MostPlayed_01_04.crs".
 	</Function>
 	<Function name='GetCourseEntries' return='{CourseEntry}' arguments=''>
 		Returns a table of CourseEntry items.
@@ -2137,7 +2136,7 @@ save yourself some time, copy this for undocumented things:
 		Gets the CourseEntry at <code>iIndex</code> from the Course.
 	</Function>
 	<Function name='GetCourseType' renamed='true' return='CourseType' arguments=''>
-		Returns the Course's <Link class='ENUM' function='CourseType' />. (Returns CourseType in SM5; integer in SM4)
+		Returns the Course's <Link class='ENUM' function='CourseType' />.
 	</Function>
 	<Function name='GetDescription' return='string' arguments=''>
 		Returns the description for this Course.
@@ -2155,7 +2154,7 @@ save yourself some time, copy this for undocumented things:
 		Returns the Course's group name.
 	</Function>
 	<Function name='GetPlayMode' renamed='true' return='PlayMode' arguments=''>
-		Returns the Course's <Link class='ENUM' function='PlayMode' />. (Returns PlayMode in SM5; integer in SM4)
+		Returns the Course's <Link class='ENUM' function='PlayMode' />.
 	</Function>
 	<Function name='GetScripter' return='string' arguments=''>
 		Returns the name of the person who scripted the Course.
@@ -2771,8 +2770,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetPlayMode' return='PlayMode' arguments=''>
 		Returns the current PlayMode.
 	</Function>
-	<Function name='GetPreferredDifficulty' return='Difficulty' arguments=''>
-		Returns the preferred difficulty.
+	<Function name='GetPreferredDifficulty' return='Difficulty' arguments='PlayerNumber pn'>
+		Returns the preferred difficulty for player <code>pn</code>.
 	</Function>
 	<Function name='GetPreferredSong' return='Song' arguments=''>
 		Returns the preferred song.
@@ -3039,9 +3038,6 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetGrade' return='Grade' arguments=''>
 		Returns the Grade of this high score.
-	</Function>
-	<Function name='GetHighScore' return='HighScore' arguments=''>
-		Returns the HighScore for this PlayerStageStats.
 	</Function>
 	<Function name='GetHoldNoteScore' return='int' arguments='HoldNoteScore hns'>
 		Return the number of HoldNoteScores that match <code>hns</code>.
@@ -3900,7 +3896,7 @@ save yourself some time, copy this for undocumented things:
 		Returns the player's grade.
 	</Function>
 	<Function name='GetHighScore' return='HighScore' arguments=''>
-		Returns the player's HighScore.
+		Returns the HighScore for this PlayerStageStats.
 	</Function>
 	<Function name='GetHoldNoteScores' return='int' arguments='HoldNoteScore hns'>
 		Returns the number of judgments for a specified HoldNoteScore.
@@ -4813,7 +4809,10 @@ save yourself some time, copy this for undocumented things:
 		Returns the profile index of the specified Player.
 	</Function>
 	<Function name='SetProfileIndex' return='bool' arguments='PlayerNumber pn, int iProfileIndex'>
-		Sets the profile index of Player <code>pn</code> to <code>iProfileIndex</code>.
+		Sets the profile index of Player <code>pn</code> to <code>iProfileIndex</code>.<br/>
+		The following values of <code>iProfileIndex</code> have special, hardcoded behavior:<br/>
+		• <code>-1</code>: join the player and play the theme's start sound effect<br/>
+		• <code>-2</code>: unjoin the player, unlock their MemoryCard, and unmount their MemoryCard
 	</Function>
 </Class>
 <Class name='ScreenTextEntry'>
@@ -5497,8 +5496,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetStyleType' return='StyleType' arguments=''>
 		Returns the StyleType for this Style.
 	</Function>
-	<Function name='GetColumnInfo' return='{int, int, string}' arguments='int column'>
-		Returns a table containing the Track, XOffset, and Name of the column.
+	<Function name='GetColumnInfo' return='{int, int, string}' arguments='PlayerNumber pn, int column'>
+		Returns a table containing the <code>Track</code>, <code>XOffset</code>, and <code>Name</code> of the column.<br/>
+		For example, calling <code>GAMESTATE:GetCurrentStyle():GetColumnInfo('PlayerNumber_P1', 2)</code> when the current
+		game is dance will return <code>{Track=2, XOffset=-32, Name="Down"}</code>.<br/>
+		Calling <code>GAMESTATE:GetCurrentStyle():GetColumnInfo('PlayerNumber_P1', 1)</code> when the current
+		game is pump will return <code>{Track=1, XOffset=-96, Name="DownLeft"}</code>.<br/>
 	</Function>
 	<Function name='GetColumnDrawOrder' return='int' arguments='int column'>
 		Returns the draw order of the column.
