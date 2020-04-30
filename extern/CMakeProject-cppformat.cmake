@@ -32,7 +32,4 @@ elseif(APPLE)
   sm_add_compile_flag("cppformat" "-stdlib=libc++")
 else() # Unix
   sm_add_compile_flag("cppformat" "-std=${SM_CPP_STANDARD}")
-  if(CMAKE_CXX_COMPILER MATCHES "clang")
-    sm_add_compile_flag("cppformat" "-stdlib=libc++")
-  endif()
 endif()
