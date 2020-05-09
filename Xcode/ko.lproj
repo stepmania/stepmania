@@ -1,0 +1,35 @@
+/* Button name */
+"Abort" = "멈추기";
+
+/* Menu item */
+"About StepMania" = "스텝마니아에대해";
+
+/* Button name */
+"Don't show again" = "다시는보지않기";
+
+/* Menu item */
+"Enter Full Screen" = "온화면으로";
+
+/* Menu item */
+"Hide StepMania" = "스텝마니아를숨기기";
+
+/* Menu item */
+"Hide Others" = "다른것을숨기기";
+
+/* Button name */
+"Ignore" = "무시";
+
+/* Menu item */
+"Minimize" = "가장작게";
+
+/* Menu item */
+"Quit StepMania" = "스텝마니아를끝마치기";
+
+/* Button name */
+"Retry" = "다시시도";
+
+/* Menu item */
+"Show All" = "모두보여주기";
+
+/* Menu title */
+"Window" = "창화면";
