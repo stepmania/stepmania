@@ -752,6 +752,8 @@
 			<Function name='get_dirty'/>
 			<Function name='destroy'/>
 		</Class>
+		<Class base='BitmapText' name='DeviceList'>
+		</Class>
 		<Class name='DisplayMode'>
 			<Function name='GetWidth'/>
 			<Function name='GetHeight'/>
@@ -1012,6 +1014,8 @@
 			<Function name='GetMouseWheel'/>
 			<Function name='GetMouseX'/>
 			<Function name='GetMouseY'/>
+		</Class>
+		<Class base='BitmapText' name='InputList'>
 		</Class>
 		<Class base='ActorFrame' name='LifeMeter'>
 			<Function name='GetLife'/>
@@ -1837,6 +1841,8 @@
 			<Function name='SongToPreferredSortSectionName'/>
 			<Function name='WasLoadedFromAdditionalCourses'/>
 			<Function name='WasLoadedFromAdditionalSongs'/>
+		</Class>
+		<Class base='MeterDisplay' name='SongMeterDisplay'>
 		</Class>
 		<Class name='SongOptions'>
 			<Function name='AssistClap'/>

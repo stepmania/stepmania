@@ -2334,6 +2334,12 @@ save yourself some time, copy this for undocumented things:
 		Destroys the spline, freeing the memory allocated for it.  This can only be called on splines created with create_spline().
 	</Function>
 </Class>
+<Class name='DeviceList'>
+	<Description>
+		A newline-delimited list of available input devices.<br />
+		The list shown will the same as that returned by <Link class='RageInput' function='GetDescriptions'>INPUTMAN:GetDescriptions()</Link>, but with "MonkeyKeyboard" removed.
+	</Description>
+</Class>
 <Class name='DifficultyIcon'>
 	<Function name='SetFromDifficulty' return='void' arguments='Difficulty dc'>
 		Sets the DifficultyIcon's state from the difficulty passed in.
@@ -3105,6 +3111,11 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetMouseY' return='float' arguments=''>
 		Returns the Y position of the mouse.
 	</Function>
+</Class>
+<Class name='InputList'>
+	<Description>
+		A newline-delimited list of inputs that are currently being pressed.  It will update as inputs are held and released.  Handy for custom TestInput screens.
+	</Description>
 </Class>
 <Class name='LifeMeter'>
 	<Function name='GetLife' return='float' arguments=''>
