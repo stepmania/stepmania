@@ -45,7 +45,8 @@ save yourself some time, copy this for undocumented things:
 		[02 StageMods.lua]
 	</Function>
 	<Function name='assert' return='various' arguments='LuaReference v, string sAssertMessage'>
-		Issues an error when <code>v</code> is <code>false</code> (or <code>nil</code>). Returns all arguments otherwise. <code>sAssertMessage</code> is an optional error message (the default is "assertion failed!").
+		Issues an error when <code>v</code> is <code>false</code> (or <code>nil</code>). Returns all arguments otherwise. <code>sAssertMessage</code> is an optional error message (the default is "assertion failed!").<br/>
+		<code>assert</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
 	<Function name='Basename' return='string' arguments='string path'>
 		Returns the base name of file path.
@@ -71,7 +72,8 @@ save yourself some time, copy this for undocumented things:
 		Closes any connection to an online server.
 	</Function>
 	<Function name='collectgarbage' return='void' arguments='string opt, float arg'>
-		A generic interface to Lua's garbage collector. Performs different functions based on the value of <code>opt</code>.
+		A generic interface to Lua's garbage collector. Performs different functions based on the value of <code>opt</code>.<br/>
+		<code>collectgarbage</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
 	<Function name='color' return='color' arguments='string color'>
 		Returns a color from a string. <code>color</code> can be in hex (<code>"#FFFFFFFF"</code>) or 0..1 values (<code>"1.0,1.0,1.0,1.0"</code>), in RGBA order.
@@ -148,7 +150,8 @@ save yourself some time, copy this for undocumented things:
 		[02 Serialize] Recursively deep-copy a table.
 	</Function>
 	<Function name='dofile' theme='_fallback' return='chunk' arguments='string sFilePath'>
-		[01 base.lua] "Override Lua's dofile to use our <Link function="loadfile">loadfile</Link>."
+		<code>dofile</code> is normally a core function of Lua's basic library.  StepMania overrides this in
+		[01 base.lua] to use <Link function="loadfile">loadfile</Link>, which itself has been overridden.
 	</Function>
 	<Function name='EvalUsesCheckpointsWithJudgments' theme='_fallback' return='bool' arguments=''>
 		[03 Gameplay.lua]
@@ -177,7 +180,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 		Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 	</Function>
-	<!-- FormatNumSongsPlayed -->
+	<Function name='FormatNumSongsPlayed' return='string' arguments='int num'>
+		[02 Other.lua] Appends <code>num</code> to " songs played" and returns the resulting string.
+	</Function>
 	<Function name='FormatPercentScore' return='string' arguments='float fPercentDancePoints'>
 		Returns <code>fPercentDancePoints</code> formatted as a percentage.
 	</Function>
@@ -209,14 +214,11 @@ save yourself some time, copy this for undocumented things:
 		Returns the current Life Difficulty.
 	</Function>
 	<Function name='get_music_file_length' return='float' arguments='string path'>
-		Returns the length of the music file found at path.<br />
-		If you are loading the sound into an ActorSound, ActorSound:get to get its RageSound then use RageSound's get_length function instead to avoid loading the file twice.
+		Returns the length of the music file found at <code>path</code> in seconds.<br />
+		If the file has already been loaded into an ActorSound, use <Link class='ActorSound' function='get' /> to get its <code>RageSound</code>, and then use <Link class='RageSound' function='get_length' /> to avoid loading the file twice.
 	</Function>
 	<Function name='get_sound_driver_list' return='table' arguments=''>
 		Returns a table of the names of the sound drivers available.  If the SoundDriver preference is set to something that is not in this list, StepMania WILL NOT START UP.  Changes to the SoundDriver preference do not take effect until the next time StepMania starts up.
-	</Function>
-	<Function name='GetOSName' return='string' arguments=''>
-		Returns a string representing the name of the operating system being used. (e.g. "Windows", "Linux", "Mac, "Unknown")
 	</Function>
 	<Function name='GetPlayerOrMachineProfile' theme='_fallback' return='Profile' arguments='PlayerNumber pn'>
 		[02 Utilities.lua] "This returns a profile, preferably a player one. If there isn't one, [it falls] back on the machine profile."
@@ -313,8 +315,11 @@ save yourself some time, copy this for undocumented things:
 	<Function name='InitUserPrefs' theme='default' return='void' arguments=''>
 		[03 ThemePrefs.lua] Initializes various user preferences.
 	</Function>
-	<Function name='ipairs' theme='_fallback' return='function' arguments='table t'>
-		[01 base.lua] "Like ipairs(), but returns only values."
+	<Function name='ipairs' theme='_fallback' return='function, table, int' arguments='table t'>
+		Returns three values: an iterator function, the table <code>t</code>, and <code>0</code>,
+		so that the construction <code>for i,v in ipairs(t) do body end</code>
+		will iterate over the pairs (1,t[1]), (2,t[2]), ···, up to the first integer key absent from the table.<br/>
+		<code>ipairs</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
 	<Function name='IsArcade' theme="_fallback" return='bool' arguments=''>
 		[02 Utilities.lua] Returns <code>true</code> if the coin mode is not set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
@@ -323,7 +328,7 @@ save yourself some time, copy this for undocumented things:
 		Returns <code>true</code> if Event Mode is turned on.
 	</Function>
 	<Function name='IsFreePlay' theme="_fallback" return='bool' arguments=''>
-		[02 Utilities.lua] Returns <code>true</code> <Link function='IsArcade'>if Arcade</Link> and the coin mode is <Link class='ENUM' function='CoinMode'>CoinMode_Free</Link>.
+		[02 Utilities.lua] Returns <code>true</code> if <Link function='IsArcade'>IsArcade()</Link> and the coin mode is <Link class='ENUM' function='CoinMode'>CoinMode_Free</Link>.
 	</Function>
 	<Function name='IsGame' theme='_fallback' return='bool' arguments='string sGame'>
 		[03 Gameplay.lua] Returns <code>true</code> if the current game is <code>sGame</code>.
@@ -377,7 +382,8 @@ save yourself some time, copy this for undocumented things:
 		[02 ActorDef.lua] Loads an actor with params.
 	</Function>
 	<Function name='loadfile' theme='_fallback' return='chunk' arguments='string sFilePath'>
-		[01 base.lua] "Override Lua's loadfile to use <Link class="lua" function="ReadFile">lua.ReadFile</Link>."
+		<code>loadfile</code> is normally a core function of Lua's basic library.  StepMania overrides this in
+		[01 base.lua] to use <Link class="lua" function="ReadFile">lua.ReadFile</Link>.
 	</Function>
 	<Function name='LoadFallbackB' theme='_fallback' return='ActorDef' arguments=''>
 		[02 ActorDef.lua] Load the fallback BGA for the element that is currently being loaded.
@@ -416,10 +422,10 @@ save yourself some time, copy this for undocumented things:
 		Note:  When you see the error "approach: speed 1 is negative." it means that a speed value passed was negative.  The 1 tells you which entry in the table was invalid.
 	</Function>
 	<Function name='next' return='void' arguments='table t, int index'>
-		"Allows a program to traverse all fields of a table. Its first argument is a
+		Allows a program to traverse all fields of a table. Its first argument is a
 		table and its second argument is an index in this table.
-		<code>next</code> returns the next index of the table and its associated value."
-		See the Lua manual for more details.
+		<code>next</code> returns the next index of the table and its associated value.<br/>
+		<code>next</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
 	<Function name='OldStyleStringToDifficulty' return='Difficulty' arguments='string dc'>
 		Converts a string such as 'oni' or 'expert' or 'trick' to the appropriate difficulty.
@@ -428,9 +434,10 @@ save yourself some time, copy this for undocumented things:
 		[03 ThemePrefs.lua] Returns a Lua option row for ProTiming.
 	</Function>
 	<Function name='pairs' return='function' arguments='table t'>
-		"Returns three values: the <Link class='GLOBAL' function='next' /> function, the table <code>t</code>, and <code>nil</code>,
+		Returns three values: the <Link class='GLOBAL' function='next' /> function, the table <code>t</code>, and <code>nil</code>,
 		so that the construction <code>for k,v in pairs(t) do body end</code>
-		will iterate over all key–value pairs of table <code>t</code>."
+		will iterate over all key–value pairs of table <code>t</code>.<br/>
+		<code>pairs</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
 	<Function name='PlayerColor' theme='_fallback' return='color' arguments='PlayerNumber pn'>
 		[02 Colors.lua]
@@ -631,7 +638,7 @@ save yourself some time, copy this for undocumented things:
 		Returns a string with characters escaped for URLs. (e.g. a space becomes '%20')
 	</Function>
 	<Function name='update_centering' return='' arguments=''>
-		This tells Stepmania to update the screen position for any changes to these preferences: CenterImageAddWidth, CenterImageAddHeight, CenterImageTranslateX, CenterImageTranslateY.<br />
+		This tells StepMania to update the screen position for any changes to these preferences: CenterImageAddWidth, CenterImageAddHeight, CenterImageTranslateX, CenterImageTranslateY.<br />
 		This way, a theme can implement a custom interactive screen for adjusting those preferences.
 	</Function>
 	<Function name='Var' theme='_fallback' return='ThreadVariable' arguments=''>
@@ -770,15 +777,11 @@ save yourself some time, copy this for undocumented things:
 		The functions defined in the <code>Enum</code> namespace are valid member
 		functions of every <Link class='Enums'>Enum</Link> where the first argument is
 		omitted and the name of the <Link class='Enums'>Enum</Link> is used in place
-		of <code>Enum</code>. Instead of
-		<code><Link function='GetName'>Enum.GetName</Link>(
-		<Link class='ENUM' function='PlayerNumber' /> )</code> or
-		<code><Link function='Reverse'>Enum.Reverse</Link>(
-		<Link class='ENUM' function='PlayerNumber' /> )</code>, one can use
-		<code><Link class='ENUM' function='PlayerNumber' />:<!--
-		--><Link function='GetName'>GetName</Link>()</code> or
-		<code><Link class='ENUM' function='PlayerNumber' />:<!--
-		--><Link function='Reverse'>Reverse</Link>()</code>, respectively.
+		of <code>Enum</code>.<br /> Instead of
+		<code><Link function='GetName'>Enum.GetName</Link>(<Link class='ENUM' function='PlayerNumber' />)</code> or
+		<code><Link function='Reverse'>Enum.Reverse</Link>(<Link class='ENUM' function='PlayerNumber' />)</code>, one can use
+		<code><Link class='ENUM' function='PlayerNumber' />:<Link function='GetName'>GetName</Link>()</code> or
+		<code><Link class='ENUM' function='PlayerNumber' />:<Link function='Reverse'>Reverse</Link>()</code>, respectively.
 	</Description>
 	<Function name='Compare' return='int' arguments='Enum e, string x, string y'>
 		Both <code>x</code> and <code>y</code> need to be elements of the enumerated
@@ -2549,7 +2552,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
 		Return the localized string representation of <code>st</code>.
 	</Function>
-	<Function name='GetEnabledGames' return='{string}'>
+	<Function name='GetEnabledGames' return='{string}' arguments=''>
 		Returns a table of all selectable games.
 	</Function>
 	<Function name='GetStylesForGame' return='{style}' arguments='string game'>
@@ -2640,7 +2643,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCharacter' return='Character' arguments='PlayerNumber pn'>
 		Returns the current <Link class='Character' /> for the specified <Link class='ENUM' function='PlayerNumber' />.
 	</Function>
-	<Function name='GetCoinMode' return='CoinMode'>
+	<Function name='GetCoinMode' return='CoinMode' arguments=''>
 		Returns the current <Link class='ENUM' function='CoinMode' />.
 	</Function>
 	<Function name='GetCoins' return='int' arguments=''>
@@ -3182,7 +3185,7 @@ save yourself some time, copy this for undocumented things:
 		Sets the MenuTimer's stealth setting to <code>bStealth</code>. If
 		<code>true</code>, the timer will be invisible and silent.
 	</Function>
-	<Function name='stop' return='void'>
+	<Function name='stop' return='void' arguments=''>
 		Stops the MenuTimer by setting it to 0 and pausing.
 	</Function>
 </Class>
@@ -3642,7 +3645,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='Flip' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Floored' return='bool' arguments='bool value'> </Function>
-	<Function name='GetStepAttacks' return='bool' argument=''>
+	<Function name='GetStepAttacks' return='bool' arguments=''>
 		Returns true if step attacks or random attacks are enabled.
 	</Function>
 	<Function name='IsEasierForCourseAndTrail' return='bool' arguments='Course c, Trail t'>
@@ -3983,8 +3986,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='IsDisqualified' return='bool' arguments=''>
 		Returns <code>true</code> if the player was disqualified from ranking.
 	</Function>
+	<Function name='SetCurMaxScore' return='void' arguments='int maxscore'>
+	</Function>
 	<Function name='SetDancePointLimits' return='void' arguments='int actual, int possible'>
 		Sets the Dance Point limits of the stage.
+	</Function>
+	<Function name='SetScore' return='void' arguments='int score'>
 	</Function>
 </Class>
 <Class name='PlayerState'>
@@ -5284,7 +5291,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetSecondsIntoAnimation' return='void' arguments='float fSeconds'>
 		Sets the number of seconds into the animation to <code>fSeconds</code>.
 	</Function>
-	<Function name='SetStateProperties' return= '' arguments='table properties'>
+	<Function name='SetStateProperties' return= 'void' arguments='table properties'>
 		Sets the properties of the states of the sprite.  The properties table is identical to the "Frames" table that can be put in the sprite when calling Def.Sprite.<br />
 		Example:<br />
 		{{Frame= 0, Delay= .016, {0, 0}, {.25, .25}},<br />
@@ -5571,7 +5578,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='HoldNoteResult'>
-	<Function name='GetHoldNoteScore'>
+	<Function name='GetHoldNoteScore' return='HoldNoteScore' arguments=''>
 		Returns the <Link class='HoldNoteScore' /> of the Hold Note.
 	</Function>
 	<Function name='GetLife' return='float' arguments=''>
