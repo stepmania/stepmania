@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
+#include <memory>
 
 #if defined(HAVE_LIBPTHREAD)
 #include "archutils/Common/PthreadHelpers.h"
@@ -31,7 +32,7 @@ static int find_stack_direction2( char *p ) NOINLINE;
 static int find_stack_direction() NOINLINE;
 
 static vector<SignalHandler::handler> handlers;
-SaveSignals *saved_sigs;
+unique_ptr<SaveSignals> saved_sigs;
 
 static int signals[] =
 {
@@ -143,10 +144,10 @@ static void *CreateStack( int size )
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
 void SignalHandler::OnClose( handler h )
 {
-	if( saved_sigs == nullptr )
+	//if the unique_ptr has not been set, then enter.
+	if( !saved_sigs )
 	{
-		saved_sigs = new SaveSignals;
-
+		saved_sigs.reset(new SaveSignals());
 		bool bUseAltSigStack = true;
 
 #if defined(LINUX)
