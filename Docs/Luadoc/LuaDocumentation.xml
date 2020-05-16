@@ -1971,6 +1971,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='AnnouncerManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>ANNOUNCER</code>.
+	</Description>
 	<Function name='DoesAnnouncerExist' return='bool' arguments='string sAnnonucer'>
 		Returns true if Announcer <code>sAnnouncer</code> exists.
 	</Function>
@@ -1985,6 +1988,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ArchHooks'>
+	<Description>
+		This singleton is accessible to Lua via <code>HOOKS</code>.
+	</Description>
 	<Function name='AppHasFocus' return='bool' arguments=''>
 		Returns <code>true</code> if the application presently has focus.
 	</Function>
@@ -2176,6 +2182,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='CharacterManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>CHARMAN</code>.
+	</Description>
 	<Function name='GetAllCharacters' return='{Character}' arguments=''>
 		Returns a table of all characters installed.
 	</Function>
@@ -2324,6 +2333,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='CryptManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>CRYPTMAN</code>.
+	</Description>
 	<Function name='GenerateRandomUUID' return='string' arguments=''>
 		Generates a random UUID (version 4).
 	</Function>
@@ -2632,6 +2644,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='GameManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>GAMEMAN</code>.
+	</Description>
 	<Function name='GetFirstStepsTypeForGame' return='StepsType' arguments='Game game'>
 		Return the first <Link class='StepsType' /> for the specified <code>game</code>.
 	</Function>
@@ -2655,6 +2670,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='GameSoundManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>SOUND</code>.
+	</Description>
 	<Function name='DimMusic' return='void' arguments='float fVolume, float fDuration'>
 		Set the music volume to <code>fVolume</code> for <code>fDuration</code> seconds.
 	</Function>
@@ -2685,6 +2703,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='GameState'>
+	<Description>
+		This singleton is accessible to Lua via <code>GAMESTATE</code>.
+	</Description>
 	<Function name='AddStageToPlayer' return='void' arguments='PlayerNumber pn'>
 		Adds another stage to the specifed player.
 	</Function>
@@ -3194,6 +3215,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='InputFilter'>
+	<Description>
+		This singleton is accessible to Lua via <code>INPUTFILTER</code>.
+	</Description>
 	<Function name='GetMouseWheel' return='float' arguments=''>
 		Returns the mouse wheel value.
 	</Function>
@@ -3235,6 +3259,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='MemoryCardManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>MEMCARDMAN</code>.
+	</Description>
 	<Function name='GetCardLocked' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code>'s card is locked.
 	</Function>
@@ -3279,6 +3306,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='MessageManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>MESSAGEMAN</code>.
+	</Description>
 	<Function name='Broadcast' return='void' arguments='string sMessage, table paramTable'>
 		Broadcast the message to all listeners subscribed to <code>sMessage</code>. The
 		second argument is an optional table of parameters. It may be omitted or explicitly
@@ -3340,6 +3370,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='NoteSkinManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>NOTESKIN</code>.
+	</Description>
 	<Function name='GetMetric' return='string' arguments='string sElement, string sValue'>
 		Returns a string from the specified element and value.
 	</Function>
@@ -4122,6 +4155,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='PrefsManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>PREFSMAN</code>.
+	</Description>
 	<Function name='GetPreference' return='various' arguments='string sPreference'>
 		Return the value of the preference <code>sPreference</code>.
 	</Function>
@@ -4344,6 +4380,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ProfileManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>PROFILEMAN</code>.
+	</Description>
 	<Function name='GetLocalProfile' return='Profile' arguments='string sProfileID'>
 		Returns the Profile for the specified profile ID.
 	</Function>
@@ -4443,6 +4482,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RageDisplay'>
+	<Description>
+		This singleton is accessible to Lua via <code>DISPLAY</code>.
+	</Description>
 	<Function name='GetDisplayHeight' return='int' arguments=''>
 		Return the height of the display.
 	</Function>
@@ -4522,6 +4564,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RageFileManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>FILEMAN</code>.
+	</Description>
 	<Function name='DoesFileExist' return='bool' arguments='string sPath'>
 		Returns <code>true</code> if a file exists at <code>sPath</code>.
 	</Function>
@@ -4536,6 +4581,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RageInput'>
+	<Description>
+		This singleton is accessible to Lua via <code>INPUTMAN</code>.
+	</Description>
 	<Function name='GetDescriptions' return='{string}' arguments=''>
 		Return an array of connected input device descriptions.
 	</Function>
@@ -4764,6 +4812,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ScreenManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>SCREENMAN</code>.
+	</Description>
 	<Function name='AddNewScreenToTop' return='void' arguments='string sScreenName, string sMessage'>
 		Adds a screen at the top of the screen stack. (<code>sMessage</code> is an optional ScreenMessage posted once the new screen is finished.)
 	</Function>
@@ -5145,6 +5196,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='SongManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>SONGMAN</code>.
+	</Description>
 	<Function name='DoesCourseGroupExist' return='bool' arguments='string sGroup'>
 		Returns <code>true</code> if the specified course group exists.
 	</Function>
@@ -5474,6 +5528,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='StatsManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>STATSMAN</code>.
+	</Description>
 	<Function name='GetAccumPlayedStageStats' return='StageStats' arguments=''>
 		Returns the accumulated played StageStats.
 	</Function>
@@ -5704,6 +5761,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ThemeManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>THEME</code>.
+	</Description>
 	<Function name='DoesLanguageExist' return='bool' arguments='string langName'>
 		Returns <code>true</code> if the specified language exists in the current theme.
 	</Function>
@@ -5993,6 +6053,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='UnlockManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>UNLOCKMAN</code>.
+	</Description>
 	<Function name='AnyUnlocksToCelebrate' return='bool' arguments=''>
 		Returns <code>true</code> if there are any unlocks to celebrate.
 	</Function>
