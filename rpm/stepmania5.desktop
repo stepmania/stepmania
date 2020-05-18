@@ -1,0 +1,7 @@
+[Desktop Entry]
+Categories=Game;ArcadeGame;
+Type=Application
+Name=Stepmania
+GenericName=A dance and rhythm game
+Exec=/opt/stepmania-5.1/stepmania
+Icon=/opt/stepmania-5.1/Themes/default/Graphics/Common window icon.png
