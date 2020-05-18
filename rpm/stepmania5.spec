@@ -10,15 +10,12 @@ Requires:      libmad0 libvorbis0 libvorbisfile3 libbz2-1 libX11-6 libjpeg62 lib
 StepMania is a free dance and rhythm game. It features 3D graphics, keyboard and "dance pad" support, and an editor for creating your own steps.
 
 %prep
-#---------------------
-#--- Checkout repo ---
-#---------------------
+#--------------------------------------------------------------------------------
+#--- If repo exists locally on ~/git/stepmania it will be checkout from there ---
+#--- Otherwise it will be checked-out from the official repository URL        ---
+#--------------------------------------------------------------------------------
 rm -rf %{_builddir}/stepmania
 git clone ~/git/stepmania %{_builddir}/stepmania || git clone https://github.com/stepmania/stepmania.git %{_builddir}/stepmania
-#------------------------
-#--- Start menu entry ---
-#------------------------
-install %{_builddir}/stepmania/rpm/stepmania5.desktop %{buildroot}/usr/share/applications/stepmania5.desktop
 
 %build
 cd %{_builddir}/stepmania
@@ -28,12 +25,15 @@ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%{buildroot}/opt ..
 make -j5
 
 %install
+# --- Install binaries ---
 cd %{_builddir}/stepmania/build-rpm
 make install
+# --- Install start menu entry ---
+install -D %{_builddir}/stepmania/rpm/stepmania5.desktop %{buildroot}/usr/share/applications/stepmania5.desktop
 
 %files
 /opt/stepmania-5.1
-#/usr/share/applications/stepmania5.desktop
+/usr/share/applications/stepmania5.desktop
 
 %changelog
 # let's skip this for now

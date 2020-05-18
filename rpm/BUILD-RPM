@@ -1,0 +1,6 @@
+
+On OpenSUSE, executing:
+
+    rpmbuild -bb stepmania5.spec
+
+Will generate an RPM package provided all needed development packages are available
