@@ -13,7 +13,7 @@ StepMania is a free dance and rhythm game. It features 3D graphics, keyboard and
 #--- If repo exists locally on ~/git/stepmania it will be checkout from there ---
 #--- Otherwise it will be checked-out from the official repository URL        ---
 #--------------------------------------------------------------------------------
-rm -rf %{_builddir}/stepmania
+rm -rf %{_sourcedir}/*
 git clone ~/git/stepmania %{_sourcedir} || git clone https://github.com/stepmania/stepmania.git %{_sourcedir}
 
 %build
