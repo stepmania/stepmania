@@ -1,6 +1,7 @@
-
-On OpenSUSE, executing:
+The stepmania5.spec file will allow you to create RPM pachages for distros
+using them like Fedora or OpenSUSE. To build and package Stepmania run:
 
     rpmbuild -bb stepmania5.spec
 
-Will generate an RPM package provided all needed development packages are available
+Will generate an RPM package provided all needed development packages are
+available, if not, a message will tell you which packages are missing.

@@ -30,7 +30,7 @@ make -j5
 cd %{_builddir}/stepmania/build-rpm
 make install
 # --- Install start menu entry ---
-install -D %{_builddir}/stepmania/rpm/stepmania5.desktop %{buildroot}/usr/share/applications/stepmania5.desktop
+install -D %{_builddir}/stepmania/build/rpm/stepmania5.desktop %{buildroot}/usr/share/applications/stepmania5.desktop
 
 %files
 /opt/stepmania-5.1
