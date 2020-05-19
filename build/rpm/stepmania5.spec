@@ -4,7 +4,7 @@ Release:    12
 Summary:    A dance and rhythm game
 License:    GPL
 BuildRequires: gcc-c++ cmake libmad-devel libvorbis-devel libbz2-devel libX11-devel libjpeg62-devel libXtst-devel libpulse-devel alsa-devel libva-devel glew-devel libXrandr-devel libXinerama-devel
-Requires:      glibc libasound2 libbz2-1 libdbus-1-3 libFLAC8 libgcc_s1 libgcrypt20 libGLEW2_2 libGLU1 libglvnd libgpg-error0 libjpeg62 liblz4-1 liblzma5 libmad0 libogg0 libpulse0 libsndfile1 libspeex1 libstdc++6 libsystemd0 libva2 libvorbis0 libvorbisenc2 libvorbisfile3 libX11-6 libXau6 libxcb1 libXext6 libXinerama1 libXrandr2 libXrender1 libXtst
+Requires:      glibc libasound2 libbz2-1 libdbus-1-3 libFLAC8 libgcc_s1 libgcrypt20 libGLEW2_2 libGLU1 libglvnd libgpg-error0 libjpeg62 liblz4-1 liblzma5 libmad0 libogg0 libpulse0 libsndfile1 libspeex1 libstdc++6 libsystemd0 libva2 libvorbis0 libvorbisenc2 libvorbisfile3 libX11-6 libXau6 libxcb1 libXext6 libXinerama1 libXrandr2 libXrender1 libXtst6
 %description
 StepMania is a free dance and rhythm game. It features 3D graphics, keyboard and "dance pad" support, and an editor for creating your own steps.
 
