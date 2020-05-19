@@ -14,7 +14,6 @@ StepMania is a free dance and rhythm game. It features 3D graphics, keyboard and
 #--- Otherwise it will be checked-out from the official repository URL        ---
 #--------------------------------------------------------------------------------
 rm -rf %{_builddir}/stepmania
-#git clone ~/git/stepmania %{_builddir} || git clone https://github.com/stepmania/stepmania.git %{_builddir}
 git clone ~/git/stepmania %{_sourcedir} || git clone https://github.com/stepmania/stepmania.git %{_sourcedir}
 
 %build
@@ -27,7 +26,7 @@ make -j5
 cd %{_builddir}
 make install
 # --- Install start menu entry ---
-install -D %{_sourcedir}/build/rpm/stepmania5.desktop %{buildroot}/usr/share/applications/stepmania5.desktop
+install -D %{_sourcedir}/Build/rpm/stepmania5.desktop %{buildroot}/usr/share/applications/stepmania5.desktop
 
 %files
 /opt/stepmania-5.1
