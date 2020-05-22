@@ -368,8 +368,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='IsArcade' theme="_fallback" return='bool' arguments=''>
 		[02 Utilities.lua] Returns <code>true</code> if the coin mode is not set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
 	</Function>
-	<Function name='IsEventMode' return='bool' arguments=''>
-		Returns <code>true</code> if Event Mode is turned on.
+	<Function name='IsCourse' theme="_fallback" return='bool' arguments=''>
+		Returns <code>true</code> if the current <Link class='ENUM' function='PlayMode' /> is Nonstop, Oni, or Endless.<br/>
+		This is effectively the same as <Link class='GameState' function='IsCourseMode' />.
 	</Function>
 	<Function name='IsFreePlay' theme="_fallback" return='bool' arguments=''>
 		[02 Utilities.lua] Returns <code>true</code> if <Link function='IsArcade'>IsArcade()</Link> and the coin mode is <Link class='ENUM' function='CoinMode'>CoinMode_Free</Link>.
@@ -1939,7 +1940,7 @@ save yourself some time, copy this for undocumented things:
 </Class>
 <Class name='ActorSound'>
 	<Description>
-		This Actor represents a playable sound.  Though the C++ class is ActorSound, it is accessible to Lua via <code>Def.Sound</code>.<br/>
+		This actor represents a playable sound.  Though the C++ class is ActorSound, it is accessible to Lua via <code>Def.Sound</code>.<br/>
 		There are three attributes that can be set as booleans on load:<br />
 		• <code>SupportPan</code> - Let the sound pan from side to side.<br />
 		• <code>SupportRateChanging</code> - Let the sound change rate and pitch.<br />
@@ -2005,10 +2006,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetPercentScrolling' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
-	<Function name='LoadBackgroundFromUnlockEntry' return='void' arguments='UnlockEntry pUE'>
+	<Function name='LoadBackgroundFromUnlockEntry' return='void' arguments='UnlockEntry ue'>
 		Loads the background from an UnlockEntry.
 	</Function>
-	<Function name='LoadBannerFromUnlockEntry' return='void' arguments='UnlockEntry pUE'>
+	<Function name='LoadBannerFromUnlockEntry' return='void' arguments='UnlockEntry ue'>
 		Loads the banner from an UnlockEntry.
 	</Function>
 	<Function name='LoadCardFromCharacter' return='void' arguments='Character pCharacter'>
@@ -5000,21 +5001,25 @@ save yourself some time, copy this for undocumented things:
 		Returns an array of all the available <Link class='Steps' /> objects for a <Link class='Song' />.
 	</Function>
 	<Function name='GetBackgroundPath' return='string' arguments=''>
-		Returns the path to the song's background image.
+		Returns the path to the song's background image.<br/>
+		If the stepartist did not provide a path for a background, this returns <code>nil</code>.
 	</Function>
 	<Function name='GetBannerPath' return='string' arguments=''>
-		Returns the path to the song's banner.
+		Returns the path to the song's banner.<br/>
+		If the stepartist did not provide a path for a banner, this returns <code>nil</code>.
 	</Function>
 	<Function name='GetBGChanges' return='table' arguments=''>
 		Returns a table with all the data for the song's BGCHANGES line.<br />
 		Each element of the table is one change like this:<br />
-		{start_beat= 1.0, rate= 1.0, transition= "example", effect= "example", file1= "example", file2= "example", color1= "#FFFFFFFF", color2= "#FFFFFFFF"}
+		<code>{start_beat=1.0, rate=1.0, transition="example", effect="example", file1="example", file2="example", color1="#FFFFFFFF", color2="#FFFFFFFF"}</code>
 	</Function>
 	<Function name='GetCDImagePath' return='string' arguments=''>
-		Returns the path to the song's CD image.
+		Returns the path to the song's CD image.<br/>
+		If the stepartist did not provide a path for a CDImage, this returns <code>nil</code>.
 	</Function>
 	<Function name='GetCDTitlePath' return='string' arguments=''>
-		Gets the path to the CDTitle.
+		Gets the path to the CDTitle.<br/>
+		If the stepartist did not provide a path for a CDTitle, this returns <code>nil</code>.
 	</Function>
 	<Function name='GetDiscPath' return='string' arguments=''>
 		Returns the path to the song's disc image (different from CD, think Pump).
@@ -5026,13 +5031,17 @@ save yourself some time, copy this for undocumented things:
 		Returns a table of 2 floats containing the display BPMs.
 	</Function>
 	<Function name='GetDisplayFullTitle' return='string' arguments=''>
-		Returns the displayed full title of the song, including subtitle.
+		Returns the displayed full title of the song.<br/>
+		The full title is, at minimum, the main title.
+		If the <Link class='Song' function='GetDisplaySubTitle'>subtitle</Link> is not an empty string,
+		the full title is main title + " " + subtitle.
 	</Function>
 	<Function name='GetDisplayMainTitle' return='string' arguments=''>
 		Returns the displayed main title of the song.
 	</Function>
 	<Function name='GetDisplaySubTitle' return='string' arguments=''>
-		Returns the displayed subtitle of the song.
+		Returns the displayed subtitle of the song.<br/>
+		If the stepartist did not provide a subtitle, this returns an empty string.
 	</Function>
 	<Function name='GetFirstBeat' return='float' arguments=''>
 		Returns the first beat of the song.
@@ -5800,8 +5809,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetPathG' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Graphics folder.
 	</Function>
-	<Function name='GetPathInfoB' return='string' arguments='string ClassName, string Element'>
-		returns three strings: BGAnimation ResolvedPath, MatchingMetricsGroup, MatchingElement. Used in <Link class='GLOBAL' function='LoadFallbackB'>LoadFallbackB</Link> in themes/_fallback/02 Other.lua. (Lua.xsd sucks)
+	<Function name='GetPathInfoB' return='string, string, string' arguments='string ClassName, string Element'>
+		Returns three strings: BGAnimation ResolvedPath, MatchingMetricsGroup, MatchingElement.<br/>
+		Used in <Link class='GLOBAL' function='LoadFallbackB'>LoadFallbackB</Link> in themes/_fallback/02 Other.lua<br/>
+		Example: <code>local path, metrics_group, element = THEME:GetPathInfoB("ScreenTitleJoin", "decorations")</code>
 	</Function>
 	<Function name='GetPathO' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Other folder.
