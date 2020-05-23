@@ -2726,15 +2726,17 @@ save yourself some time, copy this for undocumented things:
 		The second argument is optional. Apply the GameCommand represented by <code>sCommand</code>
 		for <code>pn</code>, if given. See <Link class='GameCommand' />.
 	</Function>
-	<Function name='CanSafelyEnterGameplay' return='bool,string' arguments=''>
-		Checks various things to determine whether the game will crash when gameplay starts.  Returns false and a string if gameplay cannot be entered safely.<br />
+	<Function name='CanSafelyEnterGameplay' return='bool, string' arguments=''>
+		Checks various things to determine whether the game will crash when gameplay starts.  Returns <code>false</code> and an error string if gameplay cannot be entered safely.<br />
 		Might not work in all cases, but will catch things like a player not having
 		steps set or no current song or style.  Mainly exists for people with a custom ScreenSelectMusic replacement.<br />
 		Example:<br />
-		local can, reason= GAMESTATE:CanSafelyEnterGameplay()<br />
-		if not can then<br />
-		lua.ReportScriptError("Cannot safely enter gameplay: " .. tostring(reason))<br />
-		end<br />
+		<code>
+			local can, reason = GAMESTATE:CanSafelyEnterGameplay()<br />
+			if not can then<br />
+				lua.ReportScriptError("Cannot safely enter gameplay: " .. tostring(reason))<br />
+			end<br />
+		</code>
 	</Function>
 	<Function name='ClearStageModifiersIllegalForCourse' return='void' arguments=''>
 		Removes any stage modifiers that are illegal for course play.
@@ -5859,19 +5861,23 @@ save yourself some time, copy this for undocumented things:
 <Class name='TimingData'>
 	<Description>
 		GetBPMsAndTimes, GetStops, GetDelays, GetLabels, GetWarps, GetCombos, GetTimeSignatures, GetTickcounts, GetFakes, GetScrolls, and GetSpeeds all have two different modes.<br />
-		If false (or nothing) is the argument to these functions, they return tables of strings.  The strings are numbers separated by '='.<br />
-		If the argument is true, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
-		The first form is kept around and is the default for compatibility with older themes.  The advantage of the second form is that you no longer need to have a bit of code in your theme to transform the string into a table of numbers before you can use it.<br />
-		Example:<br />
-		local bpmsand= timing_data:GetBPMsAndTimes()<br />
-		for i, s in ipairs(bpmsand) do<br />
-		local sand= split("=", s)<br />
-		bpmsand[i]= {tonumber(sand[1]), tonumber(sand[2])}<br />
+		If <code>false</code> (or nothing) is the argument to these functions, they return tables of strings.  The strings are numbers separated by '='.<br />
+		If the argument is <code>true</code>, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
+		The first form is kept as the default to maintain compatibility with older themes.  The second form can be convenient because there is no need to transform the string into a table of numbers before using it.<br />
+		Example of first form:<br />
+		<code>
+		local bpms_and_times = timing_data:GetBPMsAndTimes()<br />
+		for i, s in ipairs(bpms_and_times) do<br />
+		   local bpm_and_time = split("=", s)<br />
+		   bpms_and_times[i] = {tonumber(bpm_and_time[1]), tonumber(bpm_and_time[2])}<br />
 		end<br />
-		-- do something that looks at all the bpms and times. <br />
-		Becomes:<br />
-		local bpmsand= timing_data:GetBPMsAndTimes(true)<br />
-		-- do something that looks at all the bpms and times. <br />
+		-- do something with the bpms and times now that they are numbers.
+		</code><br/>
+		Example of second form:<br />
+		<code>
+			local bpms_and_times = timing_data:GetBPMsAndTimes(true)<br />
+			-- do something with the bpms and times because they are already numbers.
+		</code>
 	</Description>
 	<Function name='GetActualBPM' return='{float}' arguments=''>
 		Returns the minimum and maximum BPM of the song in a table (in that order).
@@ -6164,6 +6170,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 </Classes>
+
 <!-- Enums -->
 <Enums>
 <Enum name='BlendMode'>
