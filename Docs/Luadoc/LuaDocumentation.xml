@@ -6173,6 +6173,20 @@ save yourself some time, copy this for undocumented things:
 
 <!-- Enums -->
 <Enums>
+<Description>
+	StepMania's enums are exposed to Lua as global tables.  Note that although the enum values start at 0, these global Lua tables are indexed starting at 1.<br/>
+	Functions that require enums as arguments will accept either the string constant or number value.<br/>
+	For example, <Link class='GameState' function='SetPreferredDifficulty' /> accepts a <code>PlayerNumber</code> and <code>Difficulty</code> as arguments.
+	Each of these is valid way to set P1's preferred difficulty to hard:<br/>
+	<code>
+		-- using strings<br/>
+		GAMESTATE:SetPreferredDifficulty( "PlayerNumber_P1", "Difficulty_Hard" )<br/>
+		-- using values<br/>
+		GAMESTATE:SetPreferredDifficulty( 0, 3 )<br/>
+		-- using global Lua tables<br/>
+		GAMESTATE:SetPreferredDifficulty( PlayerNumber[1], Difficulty[4] )
+	</code>
+</Description>
 <Enum name='BlendMode'>
 	<Description>
 		Blending modes. See <Link class='Actor' function='blend' />.
@@ -6189,4 +6203,13 @@ save yourself some time, copy this for undocumented things:
 	</Description>
 </Enum>
 </Enums>
+
+<!-- Singletons -->
+<Singletons>
+<Description>
+	The StepMania engine uses singletons internally when it needs only one instance of a class.<br/>
+	Each singleton here has a class name (e.g. RageDisplay, NoteSkinManager, etc.) that is used in the C++ engine, and a similar but different Lua userdata name (e.g. <code>DISPLAY</code>, <code>NOTESKIN</code>, etc.).<br/>
+	An example of using the GameState singleton to find the current song in Lua: <code>GAMESTATE:GetCurrentSong()</code>
+</Description>
+</Singletons>
 </Documentation>
