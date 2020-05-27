@@ -789,11 +789,11 @@ save yourself some time, copy this for undocumented things:
 <Namespaces>
 <Description>
 	The StepMania engine makes some of its namespaces available to Lua.  These can be thought of as collections of utility functions.<br />
-	Example using <code>SongUtil</code> to get playable <Link class='Steps' /> from a song given the current <Link class='Game' />:<br />
-<code>
-local song = GAMESTATE:GetCurrentSong()<br />
+	Example using <code>SongUtil</code> to get playable <Link class='Steps' /> from a song given the current <Link class='Game' />:
+<pre><code>
+local song = GAMESTATE:GetCurrentSong()
 local playable_steps = SongUtil.GetPlayableSteps(song)
-</code>
+</code></pre>
 </Description>
 <Namespace name='ActorUtil'>
 	<Function name='GetFileType' return='FileType' arguments='string sPath'>
@@ -897,11 +897,11 @@ local playable_steps = SongUtil.GetPlayableSteps(song)
 	</Function>
 	<Function name='Reverse' return='{int}' arguments='Enum e'>
 		Returns a reverse lookup table for the enumerated type <code>e</code>. For
-		example: <br />
-<code>
-local r = PlayerNumber:Reverse()<br />
+		example:
+<pre><code>
+local r = PlayerNumber:Reverse()
 local n = r['PlayerNumber_P2']
-</code><br />
+</code></pre>
 		The value of <code>n</code> in this case would be <code>1</code> corresponding
 		to the 0-based indexing using in C++ and not <code>2</code> as might be
 		expected for the 1-based indexing used in Lua.
@@ -1814,15 +1814,15 @@ local n = r['PlayerNumber_P2']
 		<code>First</code> is the index of the first vertex to draw.<br />
 		<code>Num</code> is the number of vertices to draw.  -1 for <code>Num</code> means draw all verts after <code>First</code>.<br />
 		Any value not in the table defaults to the already set value.<br />
-		Examples:<br />
-<code>
--- Sets all three parts of the draw state.<br />
-self:SetDrawState{Mode="DrawMode_Quads", First= 1, Num= -1}<br />
--- Set only the draw mode.  First and Num remain unchanged from previous.<br />
-self:SetDrawState{Mode="DrawMode_Quads"}<br />
--- Set the first and number to draw.  Draw mode remains unchanged.<br />
+		Examples:
+<pre><code>
+-- Sets all three parts of the draw state.
+self:SetDrawState{Mode="DrawMode_Quads", First= 1, Num= -1}
+-- Set only the draw mode.  First and Num remain unchanged from previous.
+self:SetDrawState{Mode="DrawMode_Quads"}
+-- Set the first and number to draw.  Draw mode remains unchanged.
 self:SetDrawState{First= 3, Num= 4}
-</code>
+</code></pre>
 	</Function>
 	<Function name='GetDestDrawMode' return='DrawMode' arguments='void'>
 		Get the <Link class='ENUM' function='DrawMode'>DrawMode</Link> of the destination tween state.
@@ -1959,10 +1959,29 @@ self:SetDrawState{First= 3, Num= 4}
 <Class name='ActorSound' grouping='Actor'>
 	<Description>
 		This actor represents a playable sound.  Though the C++ class is ActorSound, it is accessible to Lua via <code>Def.Sound</code>.<br />
-		There are three attributes that can be set as booleans on load:<br />
+		You must provide <em>ActorSound</em>s with a filepath to the asset using their <code>File</code> attribute.
+<pre><code>
+Def.Sound{
+	File="./path/to/soundeffect.ogg",
+	OnCommand=function(self)
+		-- play this sound effect at the parent screen's OnCommand
+		self:play()
+	end
+}
+</code></pre>
+		 <em>ActorSound</em>s have three additional boolean attributes:<br />
 		• <code>SupportPan</code> - Let the sound pan from side to side.<br />
 		• <code>SupportRateChanging</code> - Let the sound change rate and pitch.<br />
-		• <code>IsAction</code> - If true, the sound is an action sound, and will be muted if the MuteActions preference is turned on.
+		• <code>IsAction</code> - If true, the sound is an action sound, and will be muted if the MuteActions preference is turned on.<br />
+		Basic example:
+<pre><code>
+Def.Sound{
+	File="./path/to/soundeffect.ogg",
+	SupportPan=true,
+	SupportRateChanging=true,
+	IsAction=false,
+}
+</code></pre>
 	</Description>
 	<Function name='get' return='RageSound' arguments=''>
 		Returns the <Link class='RageSound' /> that can be played by this Actor.
@@ -2748,13 +2767,13 @@ self:SetDrawState{First= 3, Num= 4}
 		Checks various things to determine whether the game will crash when gameplay starts.  Returns <code>false</code> and an error string if gameplay cannot be entered safely.<br />
 		Might not work in all cases, but will catch things like a player not having
 		steps set or no current song or style.  Mainly exists for people with a custom ScreenSelectMusic replacement.<br />
-		Example:<br />
-<code>
-local can, reason = GAMESTATE:CanSafelyEnterGameplay()<br />
-if not can then<br />
-	lua.ReportScriptError("Cannot safely enter gameplay: " .. tostring(reason))<br />
+		Example:
+<pre><code>
+local can, reason = GAMESTATE:CanSafelyEnterGameplay()
+if not can then
+	lua.ReportScriptError("Cannot safely enter gameplay: " .. tostring(reason))
 end
-</code>
+</code></pre>
 	</Function>
 	<Function name='ClearStageModifiersIllegalForCourse' return='void' arguments=''>
 		Removes any stage modifiers that are illegal for course play.
@@ -3625,19 +3644,19 @@ end
 		If approach_speed is a float, sets the speed of the transition to approach_speed.  Returns the previous values of both.<br />
 		approach_speed is in units of n per second.  value will be approached at the rate of approach_speed per second.<br />
 		Note that the value and the approach speed arguments are both independently optional.<br />
-		Example:<br />
-<code>
--- Sets a to the current value and b to the current approach_speed<br />
-a,b = options:Boost()<br />
-<br />
--- Stores the previous values in a and b, NOT to 5 and .5<br />
--- Sets the value to 5 and the approach speed to .5<br />
-a,b = options:Boost(5, .5)<br />
-<br />
--- Sets a and b to the previous values, NOT to 5 and .5<br />
--- Sets the value to 5 and leaves the approach speed at whatever it was<br />
+		Example:
+<pre><code>
+-- Sets a to the current value and b to the current approach_speed
+a,b = options:Boost()
+
+-- Stores the previous values in a and b, NOT to 5 and .5
+-- Sets the value to 5 and the approach speed to .5
+a,b = options:Boost(5, .5)
+
+-- Sets a and b to the previous values, NOT to 5 and .5
+-- Sets the value to 5 and leaves the approach speed at whatever it was
 a,b = options:Boost(5)
-</code>
+</code></pre>
 		<br />
 		Setting the approach speed only matters when modifying the PlayerOptions from ModsLevel_Song.<br />
 		Int type options are similar to float in that they return and take a number, but they do not have an approach speed.<br />
@@ -3874,16 +3893,16 @@ a,b = options:Boost(5)
 	<Function name='NoteSkin' return='string, bool' arguments='string name'>
 		Sets the NoteSkin to the named noteskin, unless name is <code>nil</code> or the NoteSkin does not exist.  Returns the name of the previous NoteSkin and whether the set attempt succeeded.<br />
 		Changing the NoteSkin during gameplay is not supported.<br />
-		Example:<br />
-<code>
--- Sets note_name to the player's current noteskin<br />
-note_name = options:NoteSkin()<br />
-<br />
--- Sets prev_note_name to the noteskin the player had set<br />
--- changes the current noteskin to "cel"<br />
--- sets succeeded to true if the "cel" noteskin exists.<br />
+		Example:
+<pre><code>
+-- Sets note_name to the player's current noteskin
+note_name = options:NoteSkin()
+
+-- Sets prev_note_name to the noteskin the player had set
+-- changes the current noteskin to "cel"
+-- sets succeeded to true if the "cel" noteskin exists.
 prev_note_name, succeeded = options:NoteSkin("cel")
-</code>
+</code></pre>
 	</Function>
 	<Function name='Overhead' return='bool' arguments='bool'>
 		If the player is using Overhead (0 tilt, 0 skew), returns true.<br />
@@ -4488,6 +4507,13 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		Sets the current stats prefix.  The stats prefix is prepended to the Stats.xml file when loading or saving a profile.  SetStatsPrefix will reload all profiles from the Stats.xml that has the given prefix.  In general, score entries are the only thing not preserved when changing the stats prefix.  Profile::HandleStatsPrefixChange in Profile.cpp lists the fields that are preserved.
 	</Function>
 </Class>
+<Class name='Quad' grouping='Actor'>
+	<Description>
+	 A rectangular Actor that can have color.<br />
+	 Somewhat confusingly, <em>Quad</em> inherits from <Link class='Sprite' />, though support for loading textures
+	 <a href="https://github.com/stepmania/stepmania/blob/6bea7639e8c184ca5d681d5d2f665c71eef64d44/src/Quad.cpp#L15-L16" target="_blank" rel="noopener noreferrer">is absent</a>.
+	</Description>
+</Class>
 <Class name='RadarValues'>
 	<Function name='GetValue' return='int' arguments='RadarCategory rc'>
 		Returns the value of <code>rc</code> from <Link class='Steps' function='GetRadarValues' />.
@@ -4726,72 +4752,101 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 	</Function>
 </Class>
 <Class name='Screen' grouping='Screen'>
+	<Description>
+		<em>Screen</em> is the base screen class containing common methods that all specialized screens inherit.<br />
+		By itself, <em>Screen</em> does not have the layers (underlay, overlay, decorations, in, out, cancel) commonly
+		used in theming, so themers designing custom screens typically use <Link class='ScreenWithMenuElements' /> as
+		the screen class for such endeavors.
+	</Description>
 	<Function name='AddInputCallback' return='void' arguments='function callback'>
-		This adds the lua function "callback" to the list of functions the screen will pass input to.  Whenever an input event occurs, callback will be passed a table with the details of the event.  callback must return a bool to indicate whether the event was handled.  If callback returns true, the event will not be passed any further.<br />
-		This should not be used to provide text input because that would not handle localization or different keyboard layouts.<br />
-		The screen and the callbacks will both be passed input events, so be aware of what input the current screen responds to and consider the effects.<br />
-		Details of the table containing the event data:<br />
-<code>
-{<br />
-	-- The "semi-raw" button that was pressed. This is what<br />
-	-- the button was mapped to by the keymap settings, without<br />
-	-- the conversions that occur when OnlyDedicatedMenuButtons<br />
-	--  is true. Will be empty if the button was not mapped.<br />
-	button = string,<br />
-	<br />
-	-- "InputEventType_FirstPress", "InputEventType_Repeat",<br />
-	-- or "InputEventType_Release".<br />
-	type = string,<br />
-	<br />
-	-- The "cooked" button that was pressed.  This is button with<br />
-	-- mapping that occurs when OnlyDedicatedMenuButtons is true<br />
-	-- applied.  This is nil for unmapped buttons.<br />
-	GameButton = string,<br />
-	<br />
-	-- The player that the controller is mapped to, or nil.<br />
-	PlayerNumber = PlayerNumber,<br />
-	<br />
-	-- The game controller this event was mapped to.<br />
-	-- "GameController_1" or "GameController_2", or nil if the event<br />
-	-- wasn't mapped to either controller.<br />
-	controller = string,<br />
-	<br />
-	-- The details of the event.<br />
-	DeviceInput = {<br />
-		-- The type of device.  The first half of the string will<br />
-		be "Device_", the second half will be from InputDeviceNames<br />
-		in RageInputDevice.cpp.<br />
-		device = string,<br />
-		<br />
-		-- The button that was pressed. The first half of the string<br />
-		will be "DeviceButton_", the second half will be from InitNames<br />
-		in RageInputDevice.cpp.<br />
-		button = string,<br />
-		<br />
-		-- A floating point value for analog input.<br />
-		level = float,<br />
-		<br />
-		-- Mousewheel input.<br />
-		z = float,<br />
-		<br />
-		-- Whether the button is down.  This is level with a threshold<br />
-		-- and debouncing applied.<br />
-		down = bool,<br />
-		<br />
-		-- How long ago this input occurred, in seconds.<br />
-		ago = float,<br />
-		<br />
-		-- True if the device is a joystick.<br />
-		is_joystick = bool,<br />
-		<br />
-		-- True if the device is a mouse.<br />
-		is_mouse = bool<br />
-		<br />
-	},<br />
-	-- Unknown purpose. SMOnline?
-	MultiPlayer = string<br />
+		This adds the Lua function <code>callback</code> to the list of functions the screen will pass input to, giving Lua access to player input as it occurs.<br />
+		When an input event occurs, <code>callback</code> will be passed a table with the details of the event.  <code>callback</code> must return a bool to indicate whether the event was handled.  If <code>callback</code> returns <code>true</code>, the event will not be passed any further.<br />
+		This method does not handle localization or different keyboard layouts, so <Link class='ScreenTextEntry' /> is better suited to getting text input from players.<br />
+		Be aware that both the screen (as handled by the StepMania engine) and your Lua callbacks will be passed input events, and this can result in undesirable side effects.<br />
+		Basic usage example:
+<pre><code>
+local InputHandler = function( event )
+	-- do something cool with the event table in here :)
+	-- the details of the event table are documented below
+
+	-- example:
+	-- show the GameButton that was most recently pressed/held
+	if event.type ~= "InputEventType_Release" then
+		SCREENMAN:SystemMessage( event.GameButton )
+	end
+
+	return false
+end
+
+Def.ActorFrame{
+	OnCommand=function(self)
+		SCREENMAN:GetTopScreen():AddInputCallback( InputHandler )
+	end
 }
-</code>
+</code></pre>
+
+Details of the <code>event</code> table:
+<pre><code>
+{
+	-- The "semi-raw" button that was pressed. This is what
+	-- the button was mapped to by the keymap settings, without
+	-- the conversions that occur when OnlyDedicatedMenuButtons
+	--  is true. Will be empty if the button was not mapped.
+	button = string,
+
+	-- "InputEventType_FirstPress", "InputEventType_Repeat",
+	-- or "InputEventType_Release".
+	type = string,
+
+	-- The "cooked" button that was pressed.  This is button with
+	-- mapping that occurs when OnlyDedicatedMenuButtons is true
+	-- applied.  This is nil for unmapped buttons.
+	GameButton = string,
+
+	-- The player that the controller is mapped to, or nil.
+	PlayerNumber = PlayerNumber,
+
+	-- The game controller this event was mapped to.
+	-- "GameController_1" or "GameController_2", or nil if the event
+	-- wasn't mapped to either controller.
+	controller = string,
+
+	-- The details of the event.
+	DeviceInput = {
+		-- The type of device.  The first half of the string will
+		-- be "Device_", the second half will be from InputDeviceNames
+		-- in RageInputDevice.cpp.
+		device = string,
+
+		-- The button that was pressed. The first half of the string
+		-- will be "DeviceButton_", the second half will be from InitNames
+		-- in RageInputDevice.cpp.
+		button = string,
+
+		-- A floating point value for analog input.
+		level = float,
+
+		-- Mousewheel input.
+		z = float,
+
+		-- Whether the button is down.  This is level with a threshold
+		-- and debouncing applied.
+		down = bool,
+
+		-- How long ago this input occurred, in seconds.
+		ago = float,
+
+		-- True if the device is a joystick.
+		is_joystick = bool,
+
+		-- True if the device is a mouse.
+		is_mouse = bool
+	},
+
+	-- Unknown purpose. SMOnline?
+	MultiPlayer = string
+}
+</code></pre>
 	</Function>
 	<Function name='GetNextScreenName' return='string' arguments=''>
 		Returns the name of the next Screen.
@@ -4865,19 +4920,19 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 	</Function>
 	<Function name='HasteAddAmounts' return='{float}' arguments='{float}'>
 		This is part of the system for controlling how haste behaves. <br />
-		Read Docs/Themerdocs/haste.txt.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/haste.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/haste.txt</a>.
 	</Function>
 	<Function name='HasteLifeSwitchPoint' return='float' arguments='float'>
 		This is part of the system for controlling how haste behaves. <br />
-		Read Docs/Themerdocs/haste.txt.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/haste.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/haste.txt</a>.
 	</Function>
 	<Function name='HasteTimeBetweenUpdates' return='float' arguments='float'>
 		This is part of the system for controlling how haste behaves. <br />
-		Read Docs/Themerdocs/haste.txt.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/haste.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/haste.txt</a>.
 	</Function>
 	<Function name='HasteTurningPoints' return='{float}' arguments='{float}'>
 		This is part of the system for controlling how haste behaves. <br />
-		Read Docs/Themerdocs/haste.txt.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/haste.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/haste.txt</a>.
 	</Function>
 	<Function name='SetNewScreen' return='void' arguments='string s'>
 		Sets the next Screen to be loaded.
@@ -4905,7 +4960,7 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		Gets the screen at the top of the screen stack.
 	</Function>
 	<Function name='get_input_redirected' return='bool' arguments='PlayerNumber pn'>
-		Returns whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.
+		Returns whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to Lua input callbacks.
 	</Function>
 	<Function name='PlayInvalidSound' return='' arguments=''>
 		Plays the invalid sound.
@@ -4935,8 +4990,8 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		Sets the next screen to <code>s</code>.
 	</Function>
 	<Function name='set_input_redirected' return='bool' arguments='PlayerNumber pn, bool redir'>
-		Sets whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.<br />
-		This can be useful when putting a custom menu on a screen, and you want to disable the built in actors while the menu is open.  Then you handle input through an input callback until the player closes the menu.
+		Sets whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to Lua input callbacks.<br />
+		This can be useful when putting a custom menu on a screen, and you want to disable the built in actors while the menu is open.  You can handle input through an <Link class='Screen' function='AddInputCallback'>input callback</Link> until the player closes the menu.
 	</Function>
 	<Function name='SystemMessage' return='void' arguments='string s'>
 		Broadcasts a system message.
@@ -5478,12 +5533,12 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		<em>Sprite</em> actors can be used to display images and video.  If you want to load a png as part of your UI,
 		or animate a visual effect from a sprite sheet, or play a video file, <em>Sprite</em> is what you're looking for.<br />
 		<br />
-		You must provide <em>Sprite</em>s with filepath to the asset you wish to load using their <code>Texture</code> attribute.<br />
-<code>
-local spr = Def.Sprite{<br />
-	Texture="path/to/mycoolimage.png"<br />
+		You must provide <em>Sprite</em>s with a filepath to the asset you wish to load using their <code>Texture</code> attribute.
+<pre><code>
+local spr = Def.Sprite{
+	Texture="path/to/mycoolimage.png"
 }
-</code>
+</code></pre>
 	</Description>
 	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>
 		Returns the length of the animation in seconds.
@@ -5963,20 +6018,21 @@ local spr = Def.Sprite{<br />
 		If <code>false</code> (or nothing) is the argument to these functions, they return tables of strings.  The strings are numbers separated by '='.<br />
 		If the argument is <code>true</code>, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
 		The first form is kept as the default to maintain compatibility with older themes.  The second form can be convenient because there is no need to transform the string into a table of numbers before using it.<br />
-		Example of first form:<br />
-<code>
-local bpms_and_times = timing_data:GetBPMsAndTimes()<br />
-for i, s in ipairs(bpms_and_times) do<br />
-	local bpm_and_time = split("=", s)<br />
-	bpms_and_times[i] = {tonumber(bpm_and_time[1]), tonumber(bpm_and_time[2])}<br />
-end<br />
+		Example of first form:
+<pre><code>
+local bpms_and_times = timing_data:GetBPMsAndTimes()
+for i, s in ipairs(bpms_and_times) do
+	local bpm_and_time = split("=", s)
+	bpms_and_times[i] = {tonumber(bpm_and_time[1]), tonumber(bpm_and_time[2])}
+end
 -- do something with the bpms and times now that they are numbers.
-</code><br />
-		Example of second form:<br />
-<code>
-local bpms_and_times = timing_data:GetBPMsAndTimes(true)<br />
+</code></pre>
+		<br />
+		Example of second form:
+<pre><code>
+local bpms_and_times = timing_data:GetBPMsAndTimes(true)
 -- do something with the bpms and times because they are already numbers.
-</code>
+</code></pre>
 	</Description>
 	<Function name='GetActualBPM' return='{float}' arguments=''>
 		Returns the minimum and maximum BPM of the song in a table (in that order).
@@ -6277,14 +6333,14 @@ local bpms_and_times = timing_data:GetBPMsAndTimes(true)<br />
 	Functions that require enums as arguments will accept either the string constant or number value.<br />
 	For example, <Link class='GameState' function='SetPreferredDifficulty' /> accepts a <code>PlayerNumber</code> and <code>Difficulty</code> as arguments.
 	Each of these is valid way to set P1's preferred difficulty to hard:<br />
-<code>
--- using strings<br />
-GAMESTATE:SetPreferredDifficulty( "PlayerNumber_P1", "Difficulty_Hard" )<br />
--- using values<br />
-GAMESTATE:SetPreferredDifficulty( 0, 3 )<br />
--- using global Lua tables<br />
+<pre><code>
+-- using strings
+GAMESTATE:SetPreferredDifficulty( "PlayerNumber_P1", "Difficulty_Hard" )
+-- using values
+GAMESTATE:SetPreferredDifficulty( 0, 3 )
+-- using global Lua tables
 GAMESTATE:SetPreferredDifficulty( PlayerNumber[1], Difficulty[4] )
-</code>
+</code></pre>
 </Description>
 <Enum name='BlendMode'>
 	<Description>
@@ -6332,35 +6388,39 @@ GAMESTATE:SetPreferredDifficulty( PlayerNumber[1], Difficulty[4] )
 		As functions, each actor accepts a table as an argument, and that table contains attributes
 		and commands that define how the actor will behave when rendered by the StepMania engine.<br />
 		<br />
-		For example:<br />
-<code>
-local spr = Def.Sprite{ Texture="./path/to/image.png" }<br />
-local snd = Def.Sound{ File="./path/to/soundeffect.ogg" }<br />
-local sqr = Def.Quad{ InitCommand=function(self) self:xy(80, 100) end }<br />
-<br />
--- common convention is to not use () with actor<br />
--- functions, but syntax like this is also valid<br />
-local args = { Texture="./path/to/image.png" }<br />
-local spr  = Def.Sprite(args)<br />
-</code>
+		Basic examples:
+<pre><code>
+-- Sprite, Sound, and Quad are each Actors with unique specializations
+local spr = Def.Sprite{ Texture="./path/to/image.png" }
+local snd = Def.Sound{ File="./path/to/soundeffect.ogg" }
+local sqr = Def.Quad{ InitCommand=function(self) self:xy(80, 100) end }
+
+-- common convention is to not use () with actor
+-- functions, but syntax like this is also valid
+local args = { Texture="./path/to/image.png" }
+local spr  = Def.Sprite(args)
+</code></pre>
 	</Description>
 </Actors>
 
 <Screens>
 	<Description>
-		For players, screens are individual units of a game cycle that they interact with.  Even without technical
-		knowledge of StepMania, most players understand there is a place where gameplay occurs (ScreenGameplay) which
-		is different than the place used to choose the next song (ScreenSelectMusic).<br />
+		For players, screens are individual units of a game cycle that they interact with. Most players
+		understand there is a place where gameplay occurs (ScreenGameplay) that is different than the
+		place used to choose the next song (ScreenSelectMusic).<br />
 		<br />
-		For scripters, screens are collections of distinct actors wrapped up in a a single
+		For scripters, screens are collections of distinct actors wrapped up in a single
 		ActorFrame.  That ActorFrame is the "screen" that players interact with.<br />
 		<br />
-		To be available in a theme, screens must be defined in that theme's metrics.ini file like:
-		<code>[ScreenTitleJoin]</code> or <code>[ScreenPlayerOptions]</code>.<br />
+		To be available in a theme, screens must be defined in that theme's metrics.ini file with the
+		desired name between square brackets like <code>[ScreenTitleJoin]</code> or
+		<code>[ScreenPlayerOptions]</code>.<br />
 		<br />
-		The StepMania engine defines many, many classes of screens, each with unique specialization.  For now,
-		the screens documented here are only those with methods available to Lua.
+		The StepMania engine defines many, many classes of screens, each with unique specialization
+		not directly available to Lua. For now, the screens documented here are only those with methods
+		available to Lua.
 	</Description>
 </Screens>
+
 
 </Documentation>
