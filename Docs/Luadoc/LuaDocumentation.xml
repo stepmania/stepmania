@@ -3236,7 +3236,7 @@ save yourself some time, copy this for undocumented things:
 		Selects a course. Returns <code>false</code> on failure.
 	</Function>
 	<Function name='GetCurrentSections' return='{string}' arguments=''>
-		Returns the current sections in the MusicWheel, for use with a custom group select that supports sorting.
+		Returns a string array of the currently displayed sections in the MusicWheel.
 	</Function>
 </Class>
 <Class name='NoteSkinManager'>
