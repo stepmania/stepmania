@@ -3235,6 +3235,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SelectCourse' return='bool' arguments='Course cCourse'>
 		Selects a course. Returns <code>false</code> on failure.
 	</Function>
+	<Function name='GetCurrentSections' return='{string}' arguments=''>
+		Returns a string array of the currently displayed sections in the MusicWheel.
+	</Function>
 </Class>
 <Class name='NoteSkinManager'>
 	<Function name='GetMetric' return='string' arguments='string sElement, string sValue'>
