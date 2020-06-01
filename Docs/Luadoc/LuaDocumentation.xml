@@ -39,7 +39,7 @@ save yourself some time, copy this for undocumented things:
 		Note:  When you see the error "approach: speed 1 is negative." it means that the speed value passed was negative.  The 1 is there because approach and multiapproach use the same internal function and can be ignored when using approach.
 	</Function>
 	<Function name='ArbitrarySpeedMods' theme='_fallback' return='LuaOptionRow' arguments=''>
-		[03 CustomSpeedMods.lua] Returns an <Link class='OptionRow' /> of speed mod choices generated from the comma-delimited list of speed mods in <em>SpeedMods.txt</em> in the root of the current Profile directory (player if available, machine otherwise).
+		[03 CustomSpeedMods.lua] Returns an <Link class='OptionRow' /> of speed mod choices generated from the comma-delimited list in <em>SpeedMods.txt</em> in the root of the current Profile directory (player if available, machine otherwise).
 	</Function>
 	<Function name='AreStagePlayerModsForced' theme='_fallback' return='bool' arguments=''>
 		[02 StageMods.lua] Returns <code>true</code> if player modifiers should be forced.  This is effectively the negation of <Link class='GLOBAL' function='AllowOptionsMenu' />.
@@ -60,7 +60,7 @@ save yourself some time, copy this for undocumented things:
 		[04 SetBGFitHelpers.lua] Returns an ActorFrame containing examples of how a given background image (with set aspect ratio) will appear in a particular <Link class='ENUM' function='BackgroundFitMode' />.<br />
 		The _fallback theme uses this to visually represent choices for ScreenSetBGFit, intended to help players choose a BackgroundFitMode preference.
 	</Function>
-	<Function name='BGFitInputActor' theme='_fallback' return='ActorFrame' arguments='table choices, function LoseFocus, GainFocus'>
+	<Function name='BGFitInputActor' theme='_fallback' return='ActorFrame' arguments='table choices, function LoseFocus, function GainFocus'>
 		[04 SetBGFitHelpers.lua] Returns an ActorFrame with an <Link class='Screen' Function='AddInputCallback'>InputCallback</Link> attached.<br />
 		The _fallback theme uses this to manage input on ScreenSetBGFit, intended to help players choose a <Link class='ENUM' function='BackgroundFitMode' /> preference.
 	</Function>
@@ -150,9 +150,8 @@ save yourself some time, copy this for undocumented things:
 		[02 Utilities.lua] Utillity function used to format log output for presenting on-screen.  <code>indent</code> is the number of pixels to indent lines.  <code>width</code> is the width in pixels that lines should be constrained to.
 	</Function>
 	<Function name='convert_xml_bgs' return='' arguments='string dir'>
-		Recursively searches <code>dir</code> for xml files of actors and
-		converts them to equivalent lua files.  See Docs/Themerdocs/XmlToLua.txt
-		for details.
+		Recursively searches <code>dir</code> for xml files of actors and converts them to equivalent lua files.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/XmlToLua.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/XmlToLua.txt</a>.
 	</Function>
 	<Function name='create_bezier' return='RageBezier2D' arguments=''>
 		Creates a RageBezier2D for you to use.  Make sure you destroy the RageBezier2D when you're done with it, or you will have a memory leak.
@@ -208,6 +207,8 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='foreach_ordered' theme='_fallback' return='void' arguments='table t, function f'>
 		<code>f</code> takes a key and a value.
+	</Function>
+	<Function name='force_to_range' theme='default' return='float' args='float min, float number, float max'>
 	</Function>
 	<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 		Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
@@ -485,6 +486,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='OptionRowProTiming' theme='default' return='LuaOptionRow' arguments=''>
 		[03 ThemePrefs.lua] Returns a Lua option row for ProTiming.
 	</Function>
+	<Function name='OptionRowScreenFilter' return='OptionRow' arguments=''></Function>
 	<Function name='pairs' return='function' arguments='table t'>
 		Returns three values: the <Link class='GLOBAL' function='next' /> function, the table <code>t</code>, and <code>nil</code>,
 		so that the construction <code>for k,v in pairs(t) do body end</code>
@@ -599,6 +601,8 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='ScreenMetric' theme='_fallback' return='string' arguments='string s'>
 		[02 Other.lua] alias for <Link class='Screen' function='Metric' />.
+	</Function>
+	<Function name='ScreenSelectStylePositions' arguments='int count' return='{{float, float}}'>
 	</Function>
 	<Function name='ScreenString' theme='_fallback' return='string' arguments='string s'>
 		[02 Other.lua] alias for <Link class='Screen' function='String' />.
@@ -982,7 +986,7 @@ local n = r['PlayerNumber_P2']
 	<Description>
 		<em>Actor</em> is the base class containing common methods that all specialized actor classes inherit.
 		For example, <Link class='Actor' function='GetX'>GetX</Link> is a method belonging to <em>Actor</em>,
-		but <Link class='Sprite' />s, <Link class='BitmapText' />s, and <Link class='Quad' />s can use <code>GetX()</code>.
+		but <Link class='Sprite' />s, <Link class='BitmapText' />s, <Link class='Quad' />s, and so on can use <code>GetX()</code>.
 	</Description>
 	<Function name='AddWrapperState' return='ActorFrame' arguments=''>
 		This adds a wrapper state around the Actor, which is like wrapping the Actor in an ActorFrame, except that you can use it on any actor, and add or remove wrapper states in response to things that happen while the screen is being used. (wrapping an Actor in an ActorFrame normally requires setting it up before the screen starts)<br />
@@ -1160,7 +1164,9 @@ local n = r['PlayerNumber_P2']
 		Sets the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
 	<Function name='diffuseblink' return='void' arguments=''>
-		Makes the Actor switch between two colors immediately.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor switch between two colors immediately.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='diffusebottomedge' return='void' arguments=''>
 		Sets the Actor's bottom edge color to <code>c</code>.
@@ -1178,13 +1184,17 @@ local n = r['PlayerNumber_P2']
 		Sets the Actor's lower right corner color to <code>c</code>.
 	</Function>
 	<Function name='diffuseramp' return='void' arguments=''>
-		Makes the Actor switch between two colors, jumping back to the first after reaching the second.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor switch between two colors, jumping back to the first after reaching the second.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='diffuserightedge' return='void' arguments='color c'>
 		Sets the Actor's right edge color to <code>c</code>.
 	</Function>
 	<Function name='diffuseshift' return='void' arguments=''>
-		Makes the Actor shift between two colors smoothly.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor shift between two colors smoothly.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='diffusetopedge' return='void' arguments='color c'>
 		Sets the Actor's top edge color to <code>c</code>.
@@ -1340,13 +1350,19 @@ local n = r['PlayerNumber_P2']
 		Sets the Actor's glow color.
 	</Function>
 	<Function name='glowblink' return='void' arguments=''>
-		Makes the Actor glow between two colors immediately.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor glow between two colors immediately.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='glowramp' return='void' arguments=''>
-		Makes the Actor glow between two colors smoothly, jumping back to the first at the end.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor glow between two colors smoothly, jumping back to the first at the end.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='glowshift' return='void' arguments=''>
-		Makes the Actor glow between two colors smoothly.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor glow between two colors smoothly.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
@@ -4510,7 +4526,7 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 <Class name='Quad' grouping='Actor'>
 	<Description>
 	 A rectangular Actor that can have color.<br />
-	 Somewhat confusingly, <em>Quad</em> inherits from <Link class='Sprite' />, though support for loading textures
+	 Curiously, <em>Quad</em> inherits from <Link class='Sprite' />, though support for loading textures
 	 <a href="https://github.com/stepmania/stepmania/blob/6bea7639e8c184ca5d681d5d2f665c71eef64d44/src/Quad.cpp#L15-L16" target="_blank" rel="noopener noreferrer">is absent</a>.
 	</Description>
 </Class>
@@ -5119,10 +5135,68 @@ Details of the <code>event</code> table:
 </Class>
 <Class name='ScreenTextEntry' grouping='Screen'>
 	<Description>
-		TextEntrySettings is implemented similar to the Attributes in BitmapText. Formatting issues prevent the sample from being properly shown here.<br />Please see docs/Themerdocs/ScreenTextEntry.txt for the TextEntrySettings format.
+		Using ScreenTextEntry is the preferred way to get text input from players.<br />
+		For theming, ScreenTextEntry is unique because it is typically added temporarily to the engine's
+		screen stack to be popped off the stack when the player is done entering text.<br />
+		As such, it is commonly styled to appear to players as an overlay or modal.<br />
+		Basic usage example:
+<pre><code>
+local args = {
+	Question="Do you like Waffles?",
+	InitialAnswer="Yeah, we like waffles!",
+	MaxInputLength=300,
+	OnOK=function(answer)
+		-- answer is what the player typed
+		local msg = "Your response was: " .. answer
+		SCREENMAN:SystemMessage(msg)
+	end
+}
+
+SCREENMAN:AddNewScreenToTop("ScreenTextEntry")
+SCREENMAN:GetTopScreen():Load( args )
+</code></pre>
 	</Description>
 	<Function name='Load' return='void' arguments='TextEntrySettings args'>
-		Sets up a ScreenTextEntry's values.
+		Sets up a ScreenTextEntry's values using <code>args</code>.<br />
+		TextEntrySettings is special struct for ScreenTextEntry, and
+		as a Lua table, it should contain specific attributes:
+<pre><code>
+local args = {
+	-- ScreenMessage to send on pop
+	-- optional, "SM_None" if omitted
+	SendOnPop = "",
+
+	-- the question text to display
+	Question = "",
+
+	-- initial answer text
+	InitialAnswer = "",
+
+	-- Maximum amount of characters
+	MaxInputLength = 0,
+
+	-- mask character input (optional)
+	Password = false,
+
+	-- validation function
+	-- must return boolean and string
+	Validate = function(answer, errorStr) end,
+
+	-- function called on ok
+	OnOK = function(answer) end,
+
+	-- function called on cancel
+	OnCancel = function() end,
+
+	-- Validate appending a character <!-- what does this mean? -quietly -->
+	-- must return boolean
+	ValidateAppend = function(answer, append) end,
+
+	-- Format answer for display
+	-- must return string
+	FormatAnswerForDisplay = function(answer) end
+}
+</code></pre>
 	</Function>
 </Class>
 <Class name='ScreenWithMenuElements' grouping='Screen'>
@@ -6364,7 +6438,7 @@ GAMESTATE:SetPreferredDifficulty( PlayerNumber[1], Difficulty[4] )
 <Description>
 	The StepMania engine uses singletons internally when it needs only one instance of a class.<br />
 	Each singleton here has a class name (e.g. RageDisplay, NoteSkinManager, etc.) that is used in the C++ engine, and a similar but different Lua userdata name (e.g. <code>DISPLAY</code>, <code>NOTESKIN</code>, etc.).<br />
-	An example of using the GameState singleton to find the current song in Lua: <code>GAMESTATE:GetCurrentSong()</code>
+	Simple example of using the GameState singleton to find the current song in Lua: <code>GAMESTATE:GetCurrentSong()</code>
 </Description>
 </Singletons>
 
