@@ -468,6 +468,7 @@ LuaDeclareType( Premium );
 /** @brief The various stage awards that can be given based on excellent play. */
 enum StageAward
 {
+	StageAward_FullComboW4, /**< A full good combo (or equivalent) was earned. */
 	StageAward_FullComboW3, /**< A full great combo (or equivalent) was earned. */
 	StageAward_SingleDigitW3, /**< A single digit great combo (or equivalent) was earned. */
 	StageAward_OneW3, /**< Only one great (or equivalent) was earned. */
