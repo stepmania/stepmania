@@ -652,6 +652,8 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	// don't give per-difficutly awards if using easy mods
 	if( !IsDisqualified() )
 	{
+		if( FullComboOfScore( TNS_W4 ) )
+			vPdas.push_back( StageAward_FullComboW4 );
 		if( FullComboOfScore( TNS_W3 ) )
 			vPdas.push_back( StageAward_FullComboW3 );
 		if( SingleDigitsOfScore( TNS_W3 ) )
