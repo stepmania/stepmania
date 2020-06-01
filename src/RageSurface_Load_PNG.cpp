@@ -123,7 +123,6 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		CHECKPOINT_M("Header only png about to be processed.");
 		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, nullptr, width*4 );
 		png_destroy_read_struct( &png, &info_ptr, nullptr );
-
 		return img;
 	}
 
@@ -254,6 +253,11 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, nullptr );
+
+	if(row_pointers != nullptr)
+	{
+		delete[] row_pointers;
+	}
 
 	return img;
 }

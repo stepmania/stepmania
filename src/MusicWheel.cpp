@@ -1468,6 +1468,16 @@ void MusicWheel::SetOpenSection( RString group )
 	RebuildWheelItems();
 }
 
+void MusicWheel::GetCurrentSections(vector<RString> &sections)
+{
+	vector<MusicWheelItemData *> &wiWheelItems = getWheelItemsData(GAMESTATE->m_SortOrder);
+	for( unsigned i = 0; i < wiWheelItems.size(); i++ )
+	{
+		if ( wiWheelItems[i]->m_Type == WheelItemDataType_Section && !wiWheelItems[i]->m_sText.empty())
+			sections.push_back(wiWheelItems[i]->m_sText);
+	}
+}
+
 // sm-ssc additions: jump to group
 RString MusicWheel::JumpToNextGroup()
 {
@@ -1693,6 +1703,13 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD(GetSelectedSection, GetSelectedSection());
+	static int GetCurrentSections( T* p, lua_State *L )
+	{
+		vector<RString> v;
+		p->GetCurrentSections(v);
+		LuaHelpers::CreateTableFromArray<RString>( v, L );
+		return 1;
+	}
 	static int IsRouletting( T* p, lua_State *L ){ lua_pushboolean( L, p->IsRouletting() ); return 1; }
 	static int SelectSong( T* p, lua_State *L )
 	{
@@ -1733,6 +1750,7 @@ public:
 		ADD_METHOD( SelectSong );
 		ADD_METHOD( SelectCourse );
 		ADD_METHOD( Move );
+		ADD_METHOD( GetCurrentSections );
 	}
 };
 

@@ -1069,6 +1069,7 @@
 			<Function name='Move'/>
 			<Function name='SelectCourse'/>
 			<Function name='SelectSong'/>
+			<Function name='GetCurrentSections' />
 		</Class>
 		<Class name='NCSplineHandler'>
 			<Function name='get_spline'/>
