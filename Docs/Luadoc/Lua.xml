@@ -2743,16 +2743,17 @@
 			<EnumValue name='&apos;Stage_Demo&apos;' value='14'/>
 		</Enum>
 		<Enum name='StageAward'>
-			<EnumValue name='&apos;StageAward_FullComboW3&apos;' value='0'/>
-			<EnumValue name='&apos;StageAward_SingleDigitW3&apos;' value='1'/>
-			<EnumValue name='&apos;StageAward_OneW3&apos;' value='2'/>
-			<EnumValue name='&apos;StageAward_FullComboW2&apos;' value='3'/>
-			<EnumValue name='&apos;StageAward_SingleDigitW2&apos;' value='4'/>
-			<EnumValue name='&apos;StageAward_OneW2&apos;' value='5'/>
-			<EnumValue name='&apos;StageAward_FullComboW1&apos;' value='6'/>
-			<EnumValue name='&apos;StageAward_80PercentW3&apos;' value='7'/>
-			<EnumValue name='&apos;StageAward_90PercentW3&apos;' value='8'/>
-			<EnumValue name='&apos;StageAward_100PercentW3&apos;' value='9'/>
+			<EnumValue name='&apos;StageAward_FullComboW4&apos;' value='0'/>
+			<EnumValue name='&apos;StageAward_FullComboW3&apos;' value='1'/>
+			<EnumValue name='&apos;StageAward_SingleDigitW3&apos;' value='2'/>
+			<EnumValue name='&apos;StageAward_OneW3&apos;' value='3'/>
+			<EnumValue name='&apos;StageAward_FullComboW2&apos;' value='4'/>
+			<EnumValue name='&apos;StageAward_SingleDigitW2&apos;' value='5'/>
+			<EnumValue name='&apos;StageAward_OneW2&apos;' value='6'/>
+			<EnumValue name='&apos;StageAward_FullComboW1&apos;' value='7'/>
+			<EnumValue name='&apos;StageAward_80PercentW3&apos;' value='8'/>
+			<EnumValue name='&apos;StageAward_90PercentW3&apos;' value='9'/>
+			<EnumValue name='&apos;StageAward_100PercentW3&apos;' value='10'/>
 		</Enum>
 		<Enum name='StageResult'>
 			<EnumValue name='&apos;StageResult_Win&apos;' value='0'/>
