@@ -28,6 +28,13 @@ save yourself some time, copy this for undocumented things:
 <Documentation xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
 <!-- Global functions -->
 <GlobalFunctions>
+	<Description>
+		Many global functions are available when scripting with Lua for StepMania.<br />
+		Some, like <Link class='GLOBAL' function='collectgarbage' />, are core functions of Lua's basic Library.<br />
+		Others, like <Link class='GLOBAL' function='Basename' />, are defined in the StepMania engine's C++ but made available to Lua.<br />
+	  And others, like <Link class='GLOBAL' function='DeepCopy' />, are defined in the _fallback theme's Lua files.<br />
+		When scripting with StepMania, keep in mind that if you do not scope your functions (and variables) using the <code>local</code> keyword, they will be global.
+	</Description>
 	<Function name='AllowOptionsMenu' theme='_fallback' return='bool' arguments=''>
 		[03 Gameplay.lua] Returns <code>false</code> if the player should be disallowed from entering the options menu from ScreenSelectMusic (i.e. during <Link class='GameState' function='IsAnExtraStage'>an ExtraStage</Link> or when the <Link class='ENUM' function='PlayMode' /> is Oni).  Returns <code>true</code> otherwise.
 	</Function>
@@ -214,7 +221,7 @@ save yourself some time, copy this for undocumented things:
 		Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 	</Function>
 	<Function name='FormatNumSongsPlayed' return='string' arguments='int num'>
-		[02 Other.lua] Appends <code>num</code> to " songs played" and returns the resulting string.
+		[02 Other.lua] Concatenates <code>num</code> with " songs played" and returns the resulting string.
 	</Function>
 	<Function name='FormatPercentScore' return='string' arguments='float fPercentDancePoints'>
 		Returns <code>fPercentDancePoints</code> formatted as a percentage.
@@ -536,16 +543,16 @@ save yourself some time, copy this for undocumented things:
 		Returns <Link class='ENUM' function='RadarCategory' /> <code>cat</code> localized for the current language using strings defined under <code>[RadarCategory]</code>.
 	</Function>
 	<Function name='rawequal' return='bool' arguments='various v1, various v2'>
-		Checks whether <code>v1</code> is equal to <code>v2</code>, without invoking any metamethod.
+		Checks whether <code>v1</code> is equal to <code>v2</code>, without invoking any metamethod.<br />
 		<code>rawequal</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
 	<Function name='rawget' return='various' arguments='table t, various index'>
-		Gets the real value of <code>t[index]</code>, without invoking any metamethod.
+		Gets the real value of <code>t[index]</code>, without invoking any metamethod.<br />
 		<code>rawget</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
 	<Function name='rawset' return='table' arguments='table t, int index, various value'>
 		Sets the real value of <code>t[index]</code> to <code>value</code>, without invoking any metamethod.
-		The modified <code>t</code> is then returned.
+		The modified <code>t</code> is then returned.<br />
 		<code>rawset</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
 	<Function name='ResolveRelativePath' theme='_fallback' return='string' arguments='string path, int level, bool optional'>
@@ -1601,6 +1608,66 @@ local n = r['PlayerNumber_P2']
 	</Function>
 </Class>
 <Class name='ActorFrame' grouping='Actor'>
+	<Description>
+		ActorFrames are containers that allow multiple children actors to be grouped and scripted together.<br />
+		In theming, the StepMania engine expects a screen layer (underlay, overlay, decorations, in, out, cancel)
+		file to return one actor, and it is common to return one ActorFrame that contains many actors of various
+		specialization.<br />
+		A common convention is to add children at the next index (current size of the table plus <code>1</code>).<br />
+		Basic example:
+<pre><code>
+-- in the context of a lua file as a screen layer
+-- this ActorFrame is a table
+local af = Def.ActorFrame{}
+
+-- add a Sprite at the next index
+af[#af+1] = Def.Sprite{
+	Texture="smilingsun.png"
+}
+
+-- add a BitmapText at the next index
+af[#af+1] = Def.BitmapText{
+	Font="Common normal",
+	Text="Yo!"
+}
+
+-- have the file return the ActorFrame
+-- for the StepMania engine to interpret
+return af
+</code></pre>
+	When actor commands like <Link class='Actor' function='xy' /> and <Link class='Actor' function='zoom' />
+	can be used to position and scale an ActorFrame, its children will position relative to the parent ActorFrame
+	and scale proportionally.<br />
+	For example, if you want to animate 50 actors moving 100px to the right in unison, it is easier to move the
+	parent ActorFrame than each actor individually.<br />
+	Basic example:
+<pre><code>
+local af = Def.ActorFrame{}
+
+-- move the ActorFrame +100px
+-- over a 2 second duration
+-- its children will move with it
+af.OnCommand=function(self)
+	self:linear(2):addx(100)
+end
+
+-- add various children actors
+-- to the parent ActorFrame
+af[#af+1] = Def.Sprite{
+	Texture="taro.png"
+}
+
+af[#af+1] = Def.Sprite{
+	Texture="laer.png"
+}
+
+-- etc.
+
+return af
+</code></pre>
+	ActorFrames can contain ActorFrames, and doing so is good design for sufficiently complex screens.
+	</Description>
+
 	<Function name='AddChildFromPath' return='bool' arguments='string sPath'>
 		Adds a child to the ActorFrame from the specified path.
 	</Function>
@@ -2097,6 +2164,40 @@ Def.Sound{
 	</Function>
 </Class>
 <Class name='BitmapText' grouping='Actor'>
+	<Description>
+		<em>BitmapText</em> actors are used to display text on-screen.<br />
+		The font can be specified using the <code>Font</code> attribute. It takes a font name a string,
+		pathed relative to the current theme's <code>./Fonts/</code> directory.<br />
+		StepMania expects fonts to be formatted as spritesheets with accompanying ini files.
+		These can be generated from ttf files using <em>Texture Font Generator.exe</em> in the
+		<code>./Program/</code> directory of packaged StepMania releases.<br />
+		The text displayed can be initially set using the <code>Text</code> attribute, and changed
+		later using <Link class='BitmapText' function='settext'>settext()</Link>.<br />
+		Basic usage example:
+<pre><code>
+Def.BitmapText{
+	Font="Common normal",
+	Text="Hello!",
+	OnCommand=function(self)
+		self:sleep(2):settext("Hey!")
+	end
+}
+</code></pre>
+<br />
+	The font can alternatively be specified with the <code>File</code> attribute,
+	which takes the path to the ini file as a string, relative to the root of StepMania.<br />
+	Basic example:
+<pre><code>
+-- use a custom font from a simfile
+local song_dir = GAMESTATE:GetCurrentSong():GetSongDir()
+local ini_path = "Fonts/courier/_courier 20px.ini"
+
+Def.BitmapText{
+	File=song_dir .. ini_path,
+	Text="Hello, World!"
+}
+</code></pre>
+	</Description>
 	<Function name='AddAttribute' return='void' arguments='int iPos, Attribute attr'>
 		Add the attribute <code>attr</code> to the string at position
 		<code>iPos</code>.<br />
@@ -4528,8 +4629,8 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 </Class>
 <Class name='Quad' grouping='Actor'>
 	<Description>
-	 A rectangular Actor that can have color.<br />
-	 Curiously, <em>Quad</em> inherits from <Link class='Sprite' />, though support for loading textures
+	 Quads are rectangular actors that players can see.  A Quad can have color, size, position, etc. – all <Link class='Actor' /> methods can be used.<br />
+	 As a technical note, <em>Quad</em> curiously inherits from <Link class='Sprite' />, but support for loading textures
 	 <a href="https://github.com/stepmania/stepmania/blob/6bea7639e8c184ca5d681d5d2f665c71eef64d44/src/Quad.cpp#L15-L16" target="_blank" rel="noopener noreferrer">is absent</a>.
 	</Description>
 </Class>
@@ -5610,7 +5711,7 @@ local args = {
 		<em>Sprite</em> actors can be used to display images and video.  If you want to load a png as part of your UI,
 		or animate a visual effect from a sprite sheet, or play a video file, <em>Sprite</em> is what you're looking for.<br />
 		<br />
-		You must provide <em>Sprite</em>s with a filepath to the asset you wish to load using their <code>Texture</code> attribute.
+		You must provide <em>Sprite</em>s with a filepath to the graphic asset using their <code>Texture</code> attribute.
 <pre><code>
 local spr = Def.Sprite{
 	Texture="path/to/mycoolimage.png"
