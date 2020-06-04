@@ -709,7 +709,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	switch( best_grade )
+	switch( GradeToOldGrade(best_grade) )
 	{
 		case Grade_Tier01:
 		case Grade_Tier02:
