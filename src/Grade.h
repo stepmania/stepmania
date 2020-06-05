@@ -67,6 +67,7 @@ static inline RString GradeToString( Grade g )
  * @param g the current Grade.
  * @return the old styled grade string. */
 RString GradeToOldString( Grade g );
+Grade GradeToOldGrade( Grade g );
 RString GradeToLocalizedString( Grade g );
 /**
  * @brief Convert the given RString into a proper Grade.
