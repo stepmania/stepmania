@@ -90,10 +90,11 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 		// offsets each timestamp after the offset by that amount.
 		//float fLyricOffset = 0.0f;
 
+		// Enforce strict timestamp format to prevent crashing the program.
+		vector<RString> dummy;
+		static Regex timestamp("^([0-9]+:){0,2}[0-9]+(.[0-9]*)?$");
+		if (timestamp.Compare(sValueName, dummy))
 		{
-			/* If we've gotten this far, and no other statement caught this
-			 * value before this does, assume it's a time value. */
-
 			LyricSegment seg;
 			seg.m_Color = CurrentColor;
 			seg.m_fStartTime = HHMMSSToSeconds(sValueName);
