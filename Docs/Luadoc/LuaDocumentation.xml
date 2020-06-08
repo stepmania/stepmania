@@ -1061,13 +1061,13 @@ local n = r['PlayerNumber_P2']
 		Adds a command to the Actor.
 	</Function>
 	<Function name='addrotationx' return='void' arguments='float rot'>
-		Adds <code>rot</code> to the Actor's current x rotation.
+		Adds <code>rot</code> degrees to the Actor's current X rotation.
 	</Function>
 	<Function name='addrotationy' return='void' arguments='float rot'>
-		Adds <code>rot</code> to the Actor's current y rotation.
+		Adds <code>rot</code> degrees to the Actor's current Y rotation.
 	</Function>
 	<Function name='addrotationz' return='void' arguments='float rot'>
-		Adds <code>rot</code> to the Actor's current z rotation.
+		Adds <code>rot</code> degrees to the Actor's current Z rotation.
 	</Function>
 	<Function name='addx' return='void' arguments='float xPos'>
 		Adds <code>xPos</code> to the Actor's current x position.
@@ -1094,13 +1094,13 @@ local n = r['PlayerNumber_P2']
 		Sets the Actor's base alpha to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
 	<Function name='baserotationx' return='void' arguments='float rot'>
-		Sets the Actor's base X rotation to <code>rot</code>.
+		Sets the Actor's base X rotation to <code>rot</code> degrees.
 	</Function>
 	<Function name='baserotationy' return='void' arguments='float rot'>
-		Sets the Actor's base Y rotation to <code>rot</code>.
+		Sets the Actor's base Y rotation to <code>rot</code> degrees.
 	</Function>
 	<Function name='baserotationz' return='void' arguments='float rot'>
-		Sets the Actor's base Z rotation to <code>rot</code>.
+		Sets the Actor's base Z rotation to <code>rot</code> degrees.
 	</Function>
 	<Function name='basezoom' return='void' arguments='float zoom'>
 		Sets the Actor's base zoom to <code>zoom</code>.
@@ -1304,8 +1304,8 @@ local n = r['PlayerNumber_P2']
 	<Function name='GetEffectDelta' return='float' arguments=''>
 		Returns the Actor's current effect delta.
 	</Function>
-	<Function name='geteffectmagnitude' return='float' arguments=''>
-		Returns the Actor's current effect magnitude as three floats (not one; I hate Lua.xsd).
+	<Function name='geteffectmagnitude' return='float, float, float' arguments=''>
+		Returns the Actor's current effect magnitude as three floats.
 	</Function>
 	<Function name='GetGlow' return='color' arguments=''>
 		Returns the Actor's current glow color.
@@ -1322,15 +1322,17 @@ local n = r['PlayerNumber_P2']
 	<Function name='GetHeight' return='float' arguments=''>
 		Returns the Actor's current height.
 	</Function>
-	<!-- todo: GetRotation() returns three numbers, the x, y, and z -->
+	<Function name='getrotation' return='float, float, float' arguments=''>
+		Returns the Actor's current X, Y, and Z rotation in degrees as three separate floats.
+	</Function>
 	<Function name='GetRotationX' return='float' arguments=''>
-		Returns the Actor's current X rotation.
+		Returns the Actor's current X rotation in degrees.
 	</Function>
 	<Function name='GetRotationY' return='float' arguments=''>
-		Returns the Actor's current Y rotation.
+		Returns the Actor's current Y rotation in degrees.
 	</Function>
 	<Function name='GetRotationZ' return='float' arguments=''>
-		Returns the Actor's current Z rotation.
+		Returns the Actor's current Z rotation in degrees.
 	</Function>
 	<Function name='GetSecsIntoEffect' return='float' arguments=''>
 		Returns the number of seconds into the currently running effect (e.g. diffuseshift, bob).
@@ -1432,13 +1434,13 @@ local n = r['PlayerNumber_P2']
 		Sets the roll of this Actor to <code>fRoll</code>.
 	</Function>
 	<Function name='rotationx' return='void' arguments='float fRotation'>
-		Set the Actor's rotation on the X axis to <code>fAlign</code>.
+		Set the Actor's rotation on the X axis to <code>fRotation</code> degrees.
 	</Function>
 	<Function name='rotationy' return='void' arguments='float fRotation'>
-		Set the Actor's rotation on the Y axis to <code>fAlign</code>.
+		Set the Actor's rotation on the Y axis to <code>fRotation</code> degrees.
 	</Function>
 	<Function name='rotationz' return='void' arguments='float fRotation'>
-		Set the Actor's rotation on the Z axis to <code>fAlign</code>.
+		Set the Actor's rotation on the Z axis to <code>fRotation</code> degrees.
 	</Function>
 	<!-- RunCommandsRecursively -->
 	<Function name='scale_or_crop_alternative' theme="_fallback" return='void' arguments=''>
@@ -1515,8 +1517,11 @@ local n = r['PlayerNumber_P2']
 		Determines if the Actor should use texture wrapping or not.
 	</Function>
 	<Function name='tween' return= '' arguments='float time, TweenType type, table params'>
-		Uses type to determine the tween to use.  The type must be one of the TweenType enum values.  If the type is note TweenType_Bezier, the params table is ignored.  If the type is TweenType_Bezier, then the params table must have 4 or 8 numbers.  4 numbers in the params creates a 1 dimensional bezier curve, 8 numbers creates a 2 dimensional bezier curve.<br />
-		It's usually more convenient to use Actor:linear, Actor:accelerate, and so on, rather than using Actor:tween directly.
+		Generic method for tweening an actor.<br />
+		<code>time</code> is in seconds.  <code>type</code> is a <Link class='ENUM' function='TweenType' /><br />
+		If the type is <code>TweenType_Bezier</code>, then the <code>params</code> table must have 4 or 8 numbers.  4 numbers creates a 1 dimensional bezier curve, 8 numbers creates a 2 dimensional bezier curve.<br />
+		If the type is not <code>TweenType_Bezier</code>, the <code>params</code> table is ignored.<br />
+		It's usually more convenient to use <Link function='linear' />, <Link function='accelerate' />, <Link function='decelerate' />, or <Link function='spring' /> rather than using Actor:tween() directly.
 	</Function>
 	<Function name='valign' return='void' arguments='float fAlign'>
 		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign" /> for the common case.
@@ -5561,8 +5566,8 @@ local args = {
 	<Function name='GetCoursesInGroup' return='{Course}' arguments='string sGroup, bool bIncludeAutogen'>
 		Returns a table with all of the courses in the specified group.
 	</Function>
-	<Function name='GetExtraStageInfo' return='various' arguments='bool bExtra2, Style s'>
-		Returns the extra stage info (Song, Steps) for the specified Style <code>s</code>. (If <code>bExtra2</code> is true, it will use the second Extra Stage data instead of the first. Again, Lua.xsd sucks)
+	<Function name='GetExtraStageInfo' return='various' arguments='bool b2ndExtra, Style s'>
+		Returns the extra stage info (Song, Steps) for the specified Style <code>s</code>. If <code>b2ndExtra</code> is true, it will use the second Extra Stage data instead of the first.
 	</Function>
 	<Function name='GetNumAdditionalCourses' return='int' arguments=''>
 		Returns the number of courses loaded via Additional folders.
