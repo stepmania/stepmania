@@ -750,7 +750,7 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 		CourseSortSongs(e->songSort, vpSongs, rnd);
 		resolved.pSong = vpSongs[e->iChooseIndex];
 		const vector<Steps*>& songSteps = songStepMap[resolved.pSong];
-		resolved.pSteps = songSteps[random_up_to(rnd, songSteps.size())];
+		resolved.pSteps = songSteps[RandomInt(songSteps.size())];
 
 		lastSongSelected = resolved.pSong;
 		alreadySelected.emplace(resolved.pSong);
