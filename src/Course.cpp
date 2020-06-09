@@ -455,7 +455,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	else
 	{
 		vector<SongAndSteps> vSongAndSteps;
-		for (std::vector<CourseEntry>::const_iterator e = entries.begin(); e != entries.end(); ++e)
+		for (auto e = entries.begin(); e != entries.end(); ++e)
 		{
 			SongAndSteps resolved;	// fill this in
 			SongCriteria soc = e->songCriteria;
@@ -480,6 +480,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 			if( pSong )
 			{
+				vSongAndSteps.clear();
 				StepsUtil::GetAllMatching( pSong, stc, vSongAndSteps );
 			}
 			else if( vSongAndSteps.empty() || !( bSameSongCriteria && bSameStepsCriteria ) )
@@ -651,15 +652,12 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail &trail, StepsType &st, 
 	CourseDifficulty &cd, RandomGen &rnd, bool &bCourseDifficultyIsSignificant ) const
 {
-	vector<Song*> vpAllPossibleSongs;
-	vector<SongAndSteps> vSongAndSteps;
-	vector<Song*> vpSongs;
 	typedef vector<Steps*> StepsVector;
-	map<Song*, StepsVector> mapSongToSteps;
-	int songIndex = 0;
-	bool vpSongsSorted = false;
-	// Resolve each entry to a Song and Steps.
-	for (std::vector<CourseEntry>::const_iterator e = entries.begin(); e != entries.end(); ++e)
+
+	std::set<Song*> alreadySelected;
+	Song* lastSongSelected;
+	vector<SongAndSteps> vSongAndSteps;
+	for (auto e = entries.begin(); e != entries.end(); ++e)
 	{
 
 		SongAndSteps resolved;	// fill this in
@@ -684,8 +682,11 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 		const bool bSameSongCriteria = e != entries.begin() && ( e - 1 )->songCriteria == soc;
 		const bool bSameStepsCriteria = e != entries.begin() && ( e - 1 )->stepsCriteria == stc;
 
+		// If we're doing the same wildcard search as last entry,
+		// we can just reuse the vSongAndSteps vector.
 		if( pSong )
 		{
+			vSongAndSteps.clear();
 			StepsUtil::GetAllMatchingEndless( pSong, stc, vSongAndSteps );
 		}
 		else if( vSongAndSteps.empty() || !( bSameSongCriteria && bSameStepsCriteria ) )
@@ -698,40 +699,64 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 		if( vSongAndSteps.empty() )
 			continue;
 
-		if( !vpSongsSorted && !vSongAndSteps.empty() ) {
-			vector<Song*> vpSongs;
-			typedef vector<Steps*> StepsVector;
-			map<Song*,StepsVector> mapSongToSteps;
-			for (SongAndSteps const &sas : vSongAndSteps)
+		// if we're doing a RANDOM wildcard search, try to avoid repetition
+		if (vSongAndSteps.size() > 1 && e->songSort == SongSort::SongSort_Randomize)
+		{
+			// Make a backup of the steplist so we can revert if we overfilter
+			std::vector<SongAndSteps> revertList = vSongAndSteps;
+			// Filter candidate list via blacklist
+			RemoveIf(vSongAndSteps, [&](const SongAndSteps& ss) {
+				return std::find(alreadySelected.begin(), alreadySelected.end(), ss.pSong) != alreadySelected.end();
+			});
+			// If every candidate is in the blacklist, pick random song that wasn't played last
+			// (Repeat songs may still occur if song after this is fixed; this algorithm doesn't look ahead)
+			if (vSongAndSteps.empty())
 			{
-				StepsVector &v = mapSongToSteps[sas.pSong];
-				v.push_back( sas.pSteps );
-				if( v.size() == 1 )
-					vpSongs.push_back( sas.pSong );
+				vSongAndSteps = revertList;
+				RemoveIf(vSongAndSteps, SongIsEqual(lastSongSelected));
+
+				// If the song that was played last was the only candidate, give up pick randomly
+				if (vSongAndSteps.empty())
+				{
+					vSongAndSteps = revertList;
+				}
 			}
-			vpSongsSorted = true;
-			CourseSortSongs( e->songSort, vpSongs, rnd );
-			songIndex = 0;
 		}
 
-		ASSERT( e->iChooseIndex >= 0 );
-		if( e->iChooseIndex < static_cast<int>(vSongAndSteps.size()) )
+		std::vector<Song*> vpSongs;
+		std::map<Song*, StepsVector> songStepMap;
+		// Build list of songs for sorting, and mapping of songs to steps simultaneously
+		for (auto& ss : vSongAndSteps)
 		{
-			if( songIndex >= int(vpSongs.size()) ) {
-				songIndex = 0;
+			StepsVector& stepsForSong = songStepMap[ss.pSong];
+			// If we haven't noted this song yet, add it to the song list
+			if (stepsForSong.size() == 0)
+			{
+				vpSongs.push_back(ss.pSong);
 			}
-			resolved.pSong = vpSongs[ songIndex ];
-			const vector<Steps*> &mappedSongs = mapSongToSteps[ resolved.pSong ];
-			songIndex++;
-			resolved.pSteps = mappedSongs[ RandomInt( mappedSongs.size() ) ];
+
+			stepsForSong.push_back(ss.pSteps);
 		}
-		else
-		{
+
+		ASSERT(e->iChooseIndex >= 0);
+		// If we're trying to pick BEST100 when only 99 songs exist,
+		// we have a problem, so bail out
+		if (e->iChooseIndex >= vpSongs.size()) {
 			continue;
 		}
 
-		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are 
-		 * either easier or harder than the base difficulty.  If no such steps exist, then 
+
+		// Otherwise, pick random steps corresponding to the selected song
+		CourseSortSongs(e->songSort, vpSongs, rnd);
+		resolved.pSong = vpSongs[e->iChooseIndex];
+		const vector<Steps*>& songSteps = songStepMap[resolved.pSong];
+		resolved.pSteps = songSteps[RandomInt(songSteps.size())];
+
+		lastSongSelected = resolved.pSong;
+		alreadySelected.emplace(resolved.pSong);
+
+		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are
+		 * either easier or harder than the base difficulty.  If no such steps exist, then
 		 * just use the one we already have. */
 		Difficulty dc = resolved.pSteps->GetDifficulty();
 		int iLowMeter = e->stepsCriteria.m_iLowMeter;
@@ -825,11 +850,6 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 		}
 
 		trail.m_vEntries.push_back( te );
-		if( trail.m_vEntries.size() > 0 && te.dc != cd )
-		{
-			trail.m_vEntries.reserve( trail.m_vEntries.size() - 1 );
-			trail.m_vEntries.resize( trail.m_vEntries.size() - 1 );
-		}
 		// LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
 
 		if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&
