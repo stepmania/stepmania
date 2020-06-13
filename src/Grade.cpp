@@ -53,7 +53,7 @@ Grade GradeToOldGrade( Grade g )
 	// There used to be 7 grades (plus fail) but grades can now be defined by themes.
 	// So we need to re-scale the grade bands based on how many actual grades the theme defines.
 	if( g < NUM_GRADE_TIERS_USED )
-		g = (Grade)round((double)g * Grade_Tier07 / (NUM_GRADE_TIERS_USED - 1));
+		g = (Grade)std::lround((double)g * Grade_Tier07 / (NUM_GRADE_TIERS_USED - 1));
 
 	return g;
 }
