@@ -247,8 +247,6 @@ elseif(APPLE)
       "${SM_XCODE_DIR}/plistHelper.hpp"
       XCODE_ATTRIBUTE_GCC_PREFIX_HEADER
       "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
-      XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS
-      "NO"
       XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS
       "${SM_XCODE_DIR}/Libraries")
 
