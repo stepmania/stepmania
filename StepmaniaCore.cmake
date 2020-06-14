@@ -443,7 +443,7 @@ elseif(LINUX)
       )
   endif()
 
-  if(WITH_FFMPEG AND NOT YASM_FOUND AND NOT NASM_FOUND)
+  if(WITH_FFMPEG AND NOT WITH_SYSTEM_FFMPEG AND NOT YASM_FOUND AND NOT NASM_FOUND)
     message(
       "Neither NASM nor YASM were found. Please install at least one of them if you wish for ffmpeg support."
       )
