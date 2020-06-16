@@ -23,11 +23,6 @@ void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> 
  * and makes it much easier to change NoteData internally in the future. */
 namespace NoteDataUtil
 {
-	/**
-	 * @brief Whether a string can be interpreted as the provided signed integer
-	 */
-	bool StringInterpretsAs( const std::string& str, int integer );
-
 	NoteType GetSmallestNoteTypeForMeasure( const NoteData &nd, int iMeasureIndex );
 	NoteType GetSmallestNoteTypeInRange( const NoteData &nd, int iStartIndex, int iEndIndex );
 	void LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData, bool bComposite );
