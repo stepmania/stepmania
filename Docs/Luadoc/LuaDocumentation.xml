@@ -1649,7 +1649,7 @@ af[#af+1] = Def.BitmapText{
 return af
 </code></pre>
 	When actor commands like <Link class='Actor' function='xy' /> and <Link class='Actor' function='zoom' />
-	can be used to position and scale an ActorFrame, its children will position relative to the parent ActorFrame
+	are used position and scale an ActorFrame, its children will position relative to the parent ActorFrame
 	and scale proportionally.<br />
 	For example, if you want to animate 50 actors moving 100px to the right in unison, it is easier to move the
 	parent ActorFrame than each actor individually.<br />
@@ -4642,9 +4642,7 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 </Class>
 <Class name='Quad' grouping='Actor'>
 	<Description>
-	 Quads are rectangular actors that players can see.  A Quad can have color, size, position, etc. – all <Link class='Actor' /> methods can be used.<br />
-	 As a technical note, <em>Quad</em> curiously inherits from <Link class='Sprite' />, but support for loading textures
-	 <a href="https://github.com/stepmania/stepmania/blob/6bea7639e8c184ca5d681d5d2f665c71eef64d44/src/Quad.cpp#L15-L16" target="_blank" rel="noopener noreferrer">is absent</a>.
+	 Quads are rectangular actors that players can see.  A Quad can have color, size, position, etc.
 	</Description>
 </Class>
 <Class name='RadarValues'>
@@ -4782,7 +4780,7 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		This singleton is accessible to Lua via <code>INPUTMAN</code>.
 	</Description>
 	<Function name='GetDescriptions' return='{string}' arguments=''>
-		Return an array of connected input device descriptions.
+		Returns an array of connected input device descriptions.
 	</Function>
 </Class>
 <Class name='RageQuadratic'>
@@ -6201,6 +6199,16 @@ local spr = Def.Sprite{
 	<Function name='GetThemeDisplayName' return='string' arguments=''>
 		Returns the display name of the current theme.
 	</Function>
+	<Function name='get_theme_fallback_list' return='{ string }' arguments=''>
+		Returns a table of strings showing what themes the current theme falls back on.<br />
+		For example, if the current theme is in a folder named "Home", and the "Home" theme falls back on the "default" theme, which itself falls back on the "_fallback" theme, the table would be:
+<pre><code>
+{
+	[1]="Home",
+	[2]="default",
+	[3]="_fallback"
+}</code></pre>
+	</Function>
 	<Function name='HasMetric' return='bool' arguments='string section, string value'>
 		Returns <code>true</code> if the theme has the specified metric.
 	</Function>
@@ -6573,8 +6581,15 @@ GAMESTATE:SetPreferredDifficulty( PlayerNumber[1], Difficulty[4] )
 <Singletons>
 <Description>
 	The StepMania engine uses singletons internally when it needs only one instance of a class.<br />
-	Each singleton here has a class name (e.g. RageDisplay, NoteSkinManager, etc.) that is used in the C++ engine, and a similar but different Lua userdata name (e.g. <code>DISPLAY</code>, <code>NOTESKIN</code>, etc.).<br />
-	Simple example of using the GameState singleton to find the current song in Lua: <code>GAMESTATE:GetCurrentSong()</code>
+	Each singleton has a class name (e.g. RageDisplay, NoteSkinManager, etc.) from the C++ engine, and a similar (but different) userdata name available to Lua (e.g. <code>DISPLAY</code>, <code>NOTESKIN</code>, etc.).<br />
+Simple examples:
+<pre><code>
+-- use GameState's singleton to get the current song
+local song = GAMESTATE:GetCurrentSong()
+
+-- use ScreenManager's singleton to briefly show text on-screen
+SCREENMAN:SystemMessage("hello from Lua!")
+</code></pre>
 </Description>
 </Singletons>
 
