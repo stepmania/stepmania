@@ -75,6 +75,19 @@ bool JsonUtil::WriteFile(const Json::Value &root, const RString &sFile, bool bMi
 	return true;
 }
 
+std::vector<RString> JsonUtil::DeserializeArrayStrings(const Json::Value &value)
+{
+	std::vector<RString> values;
+	for(auto &&inner_value : value)
+	{
+		if(inner_value.isConvertibleTo(Json::stringValue))
+		{
+			values.push_back(inner_value.asString());
+		}
+	}
+	return values;
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
