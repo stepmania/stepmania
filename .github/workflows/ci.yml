@@ -55,14 +55,13 @@ jobs:
           libxtst-dev
           ninja-build
       - name: Configure
-        # TODO: jsoncpp: https://github.com/stepmania/stepmania/issues/1883
         # TODO: png: https://github.com/stepmania/stepmania/issues/1881
         # TODO: tomcrypt: https://github.com/stepmania/stepmania/issues/1885
         run: cmake -G Ninja -B build
           -DWITH_SYSTEM_FFMPEG=ON
           -DWITH_SYSTEM_GLEW=ON
           -DWITH_SYSTEM_JPEG=ON
-          -DWITH_SYSTEM_JSONCPP=OFF
+          -DWITH_SYSTEM_JSONCPP=ON
           -DWITH_SYSTEM_MAD=ON
           -DWITH_SYSTEM_OGG=ON
           -DWITH_SYSTEM_PCRE=ON
