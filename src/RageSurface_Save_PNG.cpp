@@ -1,4 +1,7 @@
 #include "global.h"
+
+#include <png.h>
+
 #include "RageSurface_Save_PNG.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
@@ -7,17 +10,10 @@
 #include "RageUtil.h"
 
 #if defined(_MSC_VER)
-#include "../extern/libpng/include/png.h"
 #if defined(_BINARY_PNG)
 #pragma comment(lib, "libpng.lib")
 #endif
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
-#else
-#ifndef SYSTEM_PNG
-#include "../extern/libpng/include/png.h"
-#else
-#include <png.h>
-#endif
 #endif // _MSC_VER
 
 static void SafePngError( png_struct *pPng, const RString &sStr )

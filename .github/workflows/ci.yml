@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y
           libasound2-dev
@@ -44,6 +46,7 @@ jobs:
           libjack-dev
           libjsoncpp-dev
           libmad0-dev
+          libpng-dev
           libpulse-dev
           libtomcrypt-dev
           libtommath-dev
@@ -65,7 +68,7 @@ jobs:
           -DWITH_SYSTEM_MAD=ON
           -DWITH_SYSTEM_OGG=ON
           -DWITH_SYSTEM_PCRE=ON
-          -DWITH_SYSTEM_PNG=OFF
+          -DWITH_SYSTEM_PNG=ON
           -DWITH_SYSTEM_TOMCRYPT=OFF
           -DWITH_SYSTEM_TOMMATH=ON
           -DWITH_SYSTEM_ZLIB=ON
@@ -77,6 +80,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Install dependencies
         run: brew install
           nasm
@@ -90,6 +95,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Configure
         run: cmake -B build
       - name: Build

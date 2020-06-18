@@ -48,17 +48,17 @@ ver.cpp:
 	fi
 
 PNG = \
-../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
-../extern/libpng/include/pngconf.h ../extern/libpng/include/pngdebug.h \
-../extern/libpng/include/pngerror.c ../extern/libpng/include/pngget.c \
-../extern/libpng/include/pnginfo.h ../extern/libpng/include/scripts/pnglibconf.h \
-../extern/libpng/include/pngmem.c ../extern/libpng/include/pngpread.c \
-../extern/libpng/include/pngpriv.h ../extern/libpng/include/pngread.c \
-../extern/libpng/include/pngrio.c ../extern/libpng/include/pngrtran.c \
-../extern/libpng/include/pngrutil.c ../extern/libpng/include/pngset.c \
-../extern/libpng/include/pngstruct.h ../extern/libpng/include/pngtrans.c \
-../extern/libpng/include/pngwio.c ../extern/libpng/include/pngwrite.c \
-../extern/libpng/include/pngwtran.c ../extern/libpng/include/pngwutil.c
+../extern/libpng/png.c ../extern/libpng/.png.h \
+../extern/libpng/pngconf.h ../extern/libpng/pngdebug.h \
+../extern/libpng/pngerror.c ../extern/libpng/pngget.c \
+../extern/libpng/pnginfo.h ../extern/libpng/scripts/pnglibconf.h \
+../extern/libpng/pngmem.c ../extern/libpng/pngpread.c \
+../extern/libpng/pngpriv.h ../extern/libpng/pngread.c \
+../extern/libpng/pngrio.c ../extern/libpng/pngrtran.c \
+../extern/libpng/pngrutil.c ../extern/libpng/pngset.c \
+../extern/libpng/pngstruct.h ../extern/libpng/pngtrans.c \
+../extern/libpng/pngwio.c ../extern/libpng/pngwrite.c \
+../extern/libpng/pngwtran.c ../extern/libpng/pngwutil.c
 
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
