@@ -1278,6 +1278,8 @@ bool Song::SaveToSMFile()
 		vpStepsToSave.push_back(s);
 	}
 
+	StepsUtil::SortStepsByTypeAndDifficulty( vpStepsToSave );
+	
 	return NotesWriterSM::Write( sPath, *this, vpStepsToSave );
 
 }
@@ -1317,6 +1319,8 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 		vpStepsToSave.push_back(s);
 	}
 
+	StepsUtil::SortStepsByTypeAndDifficulty( vpStepsToSave );
+	
 	if(bSavingCache || autosave)
 	{
 		return NotesWriterSSC::Write(path, *this, vpStepsToSave, bSavingCache);
