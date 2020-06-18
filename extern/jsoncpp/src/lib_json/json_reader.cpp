@@ -1,5 +1,5 @@
-#include "json/reader.h"
-#include "json/value.h"
+#include <json/reader.h>
+#include <json/value.h>
 #include <utility>
 #include <cstdio>
 #include <cassert>
@@ -877,8 +877,7 @@ std::istream& operator>>( std::istream &sin, Value &root )
     Json::Reader reader;
     bool ok = reader.parse(sin, root, true);
     //JSON_ASSERT( ok );
-//    if (!ok) throw std::runtime_error(reader.getFormatedErrorMessages());
-    assert(ok);
+    if (!ok) throw std::runtime_error(reader.getFormatedErrorMessages());
     return sin;
 }
 
