@@ -236,8 +236,7 @@ static bool PointsToValidCall( const void *ptr )
 	int len = 7;
 	while( len )
 	{
-		int val = find_address( buf-len, g_ReadableBegin, g_ReadableEnd );
-		if( val != -1 )
+		if( IsExecutableAddress( buf - len ) )
 			break;
 		--len;
 	}
