@@ -1,8 +1,6 @@
 if(WITH_SYSTEM_JSONCPP)
-  find_library(JSONCPP_LIBRARY jsoncpp)
-  if(JSONCPP_LIBRARY MATCHES "JSONCPP_LIBRARY-NOTFOUND")
-    message(FATAL_ERROR "Need jsoncpp.")
-  endif()
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(JSONCPP REQUIRED jsoncpp)
 else()
   list(APPEND JSON_SRC
               "jsoncpp/src/lib_json/json_reader.cpp"
