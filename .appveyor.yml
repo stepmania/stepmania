@@ -24,8 +24,6 @@ init:
 
 install:
 - cmd: >-
-    git submodule update --init
-
     choco install cmake
 
     choco install nsis -version 2.46.0.20150406
