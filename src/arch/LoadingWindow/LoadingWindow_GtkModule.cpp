@@ -31,7 +31,9 @@ extern "C" const char *Init( int *argc, char ***argv )
 	//gtk_window_set_icon( GTK_WINDOW(window), );
 	gtk_widget_realize(window);
 
-	splash = gtk_image_new_from_file(splash_image_path);
+	splash = gtk_image_new_from_pixbuf(
+		gdk_pixbuf_new_from_file (splash_image_path, nullptr)
+	);
 
 	label = gtk_label_new(nullptr);
 	gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);

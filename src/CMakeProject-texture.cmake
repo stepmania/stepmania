@@ -59,7 +59,7 @@ endif()
 
 if(NOT WITH_SYSTEM_PNG)
   list(APPEND TEXTURE_INCLUDE_DIRS
-              "${SM_EXTERN_DIR}/libpng/include")
+              "${SM_EXTERN_DIR}/libpng")
 endif()
 
 target_include_directories("TextureFontGenerator"

@@ -677,8 +677,10 @@ endif()
 if(WIN32)
   # FIXME: This makes no sense...
   #list(APPEND SM_INCLUDE_DIRS ${DIRECTX_INCLUDE_DIR})
-elseif(NOT WITH_SYSTEM_PNG)
-  list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/libpng/include")
+endif()
+
+if(NOT WITH_SYSTEM_PNG)
+  list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/libpng")
 endif()
 
 
