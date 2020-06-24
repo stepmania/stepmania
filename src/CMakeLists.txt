@@ -390,7 +390,7 @@ else() # Linux
     sm_add_compile_definition("${SM_EXE_NAME}" BSD)
   endif()
 
-  if(GTK2_FOUND)
+  if(GTK3_FOUND)
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_GTK)
   endif()
 
@@ -571,8 +571,8 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
 
   list(APPEND SMDATA_LINK_LIB "${OPENGL_LIBRARY}")
 
-  if(GTK2_FOUND)
-    list(APPEND SMDATA_LINK_LIB "${GTK2_LIBRARIES}")
+  if(GTK3_FOUND)
+    list(APPEND SMDATA_LINK_LIB "${GTK3_LIBRARIES}")
   endif()
 
   list(APPEND SMDATA_LINK_LIB "${BZIP2_LIBRARIES}" "${CMAKE_THREAD_LIBS_INIT}")
@@ -661,8 +661,8 @@ if(NOT APPLE)
         list(APPEND SM_INCLUDE_DIRS "${SM_FFMPEG_SRC_DIR}" "${SM_FFMPEG_ROOT}")
       endif()
     endif()
-    if(HAS_GTK2)
-      list(APPEND SM_INCLUDE_DIRS "${GTK2_INCLUDE_DIRS}")
+    if(HAS_GTK3)
+      list(APPEND SM_INCLUDE_DIRS "${GTK3_INCLUDE_DIRS}")
     endif()
     if(X11_FOUND)
       list(APPEND SM_INCLUDE_DIRS "${X11_INCLUDE_DIR}")
