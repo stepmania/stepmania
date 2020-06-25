@@ -2361,6 +2361,18 @@
 			<EnumValue name='&apos;EditState_RecordPaused&apos;' value='2'/>
 			<EnumValue name='&apos;EditState_Playing&apos;' value='3'/>
 		</Enum>
+		<Enum name='EffectMode'>
+			<EnumValue name='&apos;EffectMode_Normal&apos;' value='0'/>
+			<EnumValue name='&apos;EffectMode_Unpremultiply&apos;' value='1'/>
+			<EnumValue name='&apos;EffectMode_ColorBurn&apos;' value='2'/>
+			<EnumValue name='&apos;EffectMode_ColorDodge&apos;' value='3'/>
+			<EnumValue name='&apos;EffectMode_VividLight&apos;' value='4'/>
+			<EnumValue name='&apos;EffectMode_HardMix&apos;' value='5'/>
+			<EnumValue name='&apos;EffectMode_Overlay&apos;' value='6'/>
+			<EnumValue name='&apos;EffectMode_Screen&apos;' value='7'/>
+			<EnumValue name='&apos;EffectMode_YUYV422&apos;' value='8'/>
+			<EnumValue name='&apos;EffectMode_DistanceField&apos;' value='9'/>
+		</Enum>
 		<Enum name='FailType'>
 			<EnumValue name='&apos;FailType_Immediate&apos;' value='0'/>
 			<EnumValue name='&apos;FailType_ImmediateContinue&apos;' value='1'/>
