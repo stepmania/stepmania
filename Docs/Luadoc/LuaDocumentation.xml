@@ -789,6 +789,14 @@ save yourself some time, copy this for undocumented things:
 
 <!-- Namespaces -->
 <Namespaces>
+<Description>
+	The StepMania engine makes some of its namespaces available to Lua.  These can be thought of as collections of utility functions.<br />
+	Example using <code>SongUtil</code> to get playable <Link class='Steps' /> from a song given the current <Link class='Game' />:
+<pre><code>
+local song = GAMESTATE:GetCurrentSong()
+local playable_steps = SongUtil.GetPlayableSteps(song)
+</code></pre>
+</Description>
 <Namespace name='ActorUtil'>
 	<Function name='GetFileType' return='FileType' arguments='string sPath'>
 		Returns the <Link class='ENUM' function='FileType' /> for the file at <code>sPath</code>.
@@ -864,20 +872,17 @@ save yourself some time, copy this for undocumented things:
 	<Description>
 		Enumerated types are lookup tables associating a string to each numerical
 		value for each <Link class='Enums'>Enum</Link>. For example,
-		<code><Link class='ENUM' function='PlayerNumber' />[1]</code> would be the
+		<code>PlayerNumber[1]</code> would be the
 		string <code>'PlayerNumber_P1'</code>.<br />
-		The functions defined in the <code>Enum</code> namespace are valid member
+		The functions in this <code>Enum</code> namespace are valid member
 		functions of every <Link class='Enums'>Enum</Link> where the first argument is
-		omitted and the name of the <Link class='Enums'>Enum</Link> is used in place
-		of <code>Enum</code>. Instead of
-		<code><Link function='GetName'>Enum.GetName</Link>(
-		<Link class='ENUM' function='PlayerNumber' /> )</code> or
-		<code><Link function='Reverse'>Enum.Reverse</Link>(
-		<Link class='ENUM' function='PlayerNumber' /> )</code>, one can use
-		<code><Link class='ENUM' function='PlayerNumber' />:<!--
-		--><Link function='GetName'>GetName</Link>()</code> or
-		<code><Link class='ENUM' function='PlayerNumber' />:<!--
-		--><Link function='Reverse'>Reverse</Link>()</code>, respectively.
+		omitted and the name of the Enum is used in place
+		of <code>Enum</code>.<br />
+		For example:<br />
+		<code>Enum.GetName(PlayerNumber)</code> and
+		<code>Enum.Reverse(PlayerNumber)</code> can be used like<br />
+		<code>PlayerNumber:GetName()</code> and
+		<code>PlayerNumber:Reverse()</code>, respectively.
 	</Description>
 	<Function name='Compare' return='int' arguments='Enum e, string x, string y'>
 		Both <code>x</code> and <code>y</code> need to be elements of the enumerated
@@ -893,10 +898,12 @@ save yourself some time, copy this for undocumented things:
 		will return the string <code>'PlayerNumber'</code>.
 	</Function>
 	<Function name='Reverse' return='{int}' arguments='Enum e'>
-		Returns a reverse lookup table for the enumerated type <code>e</code>.  For
-		example: <br /><code>local r =
-		Enum.Reverse( <Link class='ENUM' function='PlayerNumber'/> );<br />
-		local n = r['PlayerNumber_P2'];</code><br />
+		Returns a reverse lookup table for the enumerated type <code>e</code>. For
+		example:
+<pre><code>
+local r = PlayerNumber:Reverse()
+local n = r['PlayerNumber_P2']
+</code></pre>
 		The value of <code>n</code> in this case would be <code>1</code> corresponding
 		to the 0-based indexing using in C++ and not <code>2</code> as might be
 		expected for the 1-based indexing used in Lua.
