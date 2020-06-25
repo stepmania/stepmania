@@ -974,6 +974,11 @@ save yourself some time, copy this for undocumented things:
 <!-- Classes -->
 <Classes>
 <Class name='Actor'>
+	<Description>
+		<em>Actor</em> is the base class containing common methods that all specialized actor classes inherit.
+		For example, <Link class='Actor' function='GetX'>GetX</Link> is a method belonging to <em>Actor</em>,
+		but <Link class='Sprite' />s, <Link class='BitmapText' />s, <Link class='Quad' />s, and so on can use <code>GetX()</code>.
+	</Description>
 	<Function name='AddWrapperState' return='ActorFrame' arguments=''>
 		This adds a wrapper state around the Actor, which is like wrapping the Actor in an ActorFrame, except that you can use it on any actor, and add or remove wrapper states in response to things that happen while the screen is being used. (wrapping an Actor in an ActorFrame normally requires setting it up before the screen starts)<br />
 		The ActorFrame that is returned is the wrapper state, for convenience.<br />
@@ -1034,19 +1039,20 @@ save yourself some time, copy this for undocumented things:
 		Sets Texture Filtering for an Actor to <code>b</code>.
 	</Function>
 	<Function name='accelerate' return='void' arguments='float fRate'>
-		Plays the commands that follow at an accelerated rate (<code>fRate</code> * <code>fRate</code>), where <code>fRate</code> is in seconds.
+		Plays the commands that follow at an accelerated rate (fRate²), where <code>fRate</code> is in seconds.<br />
+		<code>accelerate</code> is a basic tween command, along with <Link function='linear' />, <Link function='decelerate' />, <Link function='spring' />, and <Link function='tween' />.
 	</Function>
 	<Function name='addcommand' return='void' arguments='string sName, ActorCommand cmd'>
 		Adds a command to the Actor.
 	</Function>
 	<Function name='addrotationx' return='void' arguments='float rot'>
-		Adds <code>rot</code> to the Actor's current x rotation.
+		Adds <code>rot</code> degrees to the Actor's current X rotation.
 	</Function>
 	<Function name='addrotationy' return='void' arguments='float rot'>
-		Adds <code>rot</code> to the Actor's current y rotation.
+		Adds <code>rot</code> degrees to the Actor's current Y rotation.
 	</Function>
 	<Function name='addrotationz' return='void' arguments='float rot'>
-		Adds <code>rot</code> to the Actor's current z rotation.
+		Adds <code>rot</code> degrees to the Actor's current Z rotation.
 	</Function>
 	<Function name='addx' return='void' arguments='float xPos'>
 		Adds <code>xPos</code> to the Actor's current x position.
@@ -1073,13 +1079,13 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's base alpha to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
 	<Function name='baserotationx' return='void' arguments='float rot'>
-		Sets the Actor's base X rotation to <code>rot</code>.
+		Sets the Actor's base X rotation to <code>rot</code> degrees.
 	</Function>
 	<Function name='baserotationy' return='void' arguments='float rot'>
-		Sets the Actor's base Y rotation to <code>rot</code>.
+		Sets the Actor's base Y rotation to <code>rot</code> degrees.
 	</Function>
 	<Function name='baserotationz' return='void' arguments='float rot'>
-		Sets the Actor's base Z rotation to <code>rot</code>.
+		Sets the Actor's base Z rotation to <code>rot</code> degrees.
 	</Function>
 	<Function name='basezoom' return='void' arguments='float zoom'>
 		Sets the Actor's base zoom to <code>zoom</code>.
@@ -1109,13 +1115,16 @@ save yourself some time, copy this for undocumented things:
 		[02 Actor.lua]
 	</Function>
 	<Function name='Center' theme='_fallback' return='void' arguments=''>
-		[02 Actor.lua] Centers an Actor on the screen. (equivalent to <code>x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y</code>)
+		[02 Actor.lua] Centers an Actor on the screen.<br />
+		<code>self:Center()</code> is equivalent to <code>self:x(SCREEN_CENTER_X):y(SCREEN_CENTER_Y)</code>
 	</Function>
 	<Function name='CenterX' theme='_fallback' return='void' arguments=''>
-		[02 Actor.lua] Centers an Actor on the X axis. (equivalent to <code>x,SCREEN_CENTER_X</code>)
+		[02 Actor.lua] Centers an Actor on the X axis.<br />
+		<code>self:CenterX()</code> is equivalent to <code>self:x(SCREEN_CENTER_X)</code>
 	</Function>
 	<Function name='CenterY' theme='_fallback' return='void' arguments=''>
-		[02 Actor.lua] Centers an Actor on the y axis. (equivalent to <code>y,SCREEN_CENTER_Y</code>)
+		[02 Actor.lua] Centers an Actor on the y axis.<br />
+		<code>self:CenterY()</code> is equivalent to <code>self:y(SCREEN_CENTER_Y)</code>
 	</Function>
 	<Function name='clearzbuffer' return='void' arguments='bool bClear'>
 		Determines if the z-buffer should be cleared or not.
@@ -1138,10 +1147,11 @@ save yourself some time, copy this for undocumented things:
 		Crops <code>percent</code> of the Actor from the top, where <code>percent</code> is in the range 0..1.
 	</Function>
 	<Function name='cullmode' return='void' arguments='CullMode mode'>
-		Sets the Actor's cull mode to <code>mode</code>.
+		Sets the Actor's <Link class='ENUM' function='CullMode' /> to <code>mode</code>.
 	</Function>
 	<Function name='decelerate' return='void' arguments='float fRate'>
-		Plays the commands that follow at an decelerated rate (1 - (1-<code>fRate</code>) * (1-<code>fRate</code>)), where <code>fRate</code> is in seconds.
+		Plays the commands that follow at an decelerated rate (<code>1 - (1-fRate) * (1-fRate)</code>), where <code>fRate</code> is in seconds.<br />
+		<code>decelerate</code> is a basic tween command, along with <Link function='linear' />, <Link function='accelerate' />, <Link function='spring' />, and <Link function='tween' />.
 	</Function>
 	<Function name='diffuse' return='void' arguments='color c'>
 		Set the Actor's diffuse color to <code>c</code>.
@@ -1150,7 +1160,9 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
 	<Function name='diffuseblink' return='void' arguments=''>
-		Makes the Actor switch between two colors immediately.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor switch between two colors immediately.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='diffusebottomedge' return='void' arguments=''>
 		Sets the Actor's bottom edge color to <code>c</code>.
@@ -1168,13 +1180,17 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's lower right corner color to <code>c</code>.
 	</Function>
 	<Function name='diffuseramp' return='void' arguments=''>
-		Makes the Actor switch between two colors, jumping back to the first after reaching the second.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor switch between two colors, jumping back to the first after reaching the second.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='diffuserightedge' return='void' arguments='color c'>
 		Sets the Actor's right edge color to <code>c</code>.
 	</Function>
 	<Function name='diffuseshift' return='void' arguments=''>
-		Makes the Actor shift between two colors smoothly.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor shift between two colors smoothly.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='diffusetopedge' return='void' arguments='color c'>
 		Sets the Actor's top edge color to <code>c</code>.
@@ -1277,8 +1293,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetEffectDelta' return='float' arguments=''>
 		Returns the Actor's current effect delta.
 	</Function>
-	<Function name='geteffectmagnitude' return='float' arguments=''>
-		Returns the Actor's current effect magnitude as three floats (not one; I hate Lua.xsd).
+	<Function name='geteffectmagnitude' return='float, float, float' arguments=''>
+		Returns the Actor's current effect magnitude as three floats.
 	</Function>
 	<Function name='GetGlow' return='color' arguments=''>
 		Returns the Actor's current glow color.
@@ -1295,15 +1311,17 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetHeight' return='float' arguments=''>
 		Returns the Actor's current height.
 	</Function>
-	<!-- todo: GetRotation() returns three numbers, the x, y, and z -->
+	<Function name='getrotation' return='float, float, float' arguments=''>
+		Returns the Actor's current X, Y, and Z rotation in degrees as three separate floats.
+	</Function>
 	<Function name='GetRotationX' return='float' arguments=''>
-		Returns the Actor's current X rotation.
+		Returns the Actor's current X rotation in degrees.
 	</Function>
 	<Function name='GetRotationY' return='float' arguments=''>
-		Returns the Actor's current Y rotation.
+		Returns the Actor's current Y rotation in degrees.
 	</Function>
 	<Function name='GetRotationZ' return='float' arguments=''>
-		Returns the Actor's current Z rotation.
+		Returns the Actor's current Z rotation in degrees.
 	</Function>
 	<Function name='GetSecsIntoEffect' return='float' arguments=''>
 		Returns the number of seconds into the currently running effect (e.g. diffuseshift, bob).
@@ -1330,13 +1348,19 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's glow color.
 	</Function>
 	<Function name='glowblink' return='void' arguments=''>
-		Makes the Actor glow between two colors immediately.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor glow between two colors immediately.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='glowramp' return='void' arguments=''>
-		Makes the Actor glow between two colors smoothly, jumping back to the first at the end.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor glow between two colors smoothly, jumping back to the first at the end.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='glowshift' return='void' arguments=''>
-		Makes the Actor glow between two colors smoothly.  See Themerdocs/effect_colors.txt for an example.
+		Makes the Actor glow between two colors smoothly.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
+		for an example.
 	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
@@ -1360,7 +1384,8 @@ save yourself some time, copy this for undocumented things:
 		Hurries up an Actor's tweening by <code>factor</code>.
 	</Function>
 	<Function name='linear' return='void' arguments='float fRate'>
-		Plays the commands that follow at a normal rate, where <code>fRate</code> is in seconds.
+		Plays the commands that follow at a normal (linear) rate, where <code>fRate</code> is in seconds.<br />
+		<code>linear</code> is a basic tween command, along with <Link function='accelerate' />, <Link function='decelerate' />, <Link function='spring' />, and <Link function='tween' />.
 	</Function>
 	<Function name='LyricCommand' theme='_fallback' return='void' arguments='string side'>
 		[02 Lyrics.lua] Plays the lyric command for the specified <code>side</code> (<code>"Back"</code> or <code>"Front"</code>).
@@ -1399,13 +1424,13 @@ save yourself some time, copy this for undocumented things:
 		Sets the roll of this Actor to <code>fRoll</code>.
 	</Function>
 	<Function name='rotationx' return='void' arguments='float fRotation'>
-		Set the Actor's rotation on the X axis to <code>fAlign</code>.
+		Set the Actor's rotation on the X axis to <code>fRotation</code> degrees.
 	</Function>
 	<Function name='rotationy' return='void' arguments='float fRotation'>
-		Set the Actor's rotation on the Y axis to <code>fAlign</code>.
+		Set the Actor's rotation on the Y axis to <code>fRotation</code> degrees.
 	</Function>
 	<Function name='rotationz' return='void' arguments='float fRotation'>
-		Set the Actor's rotation on the Z axis to <code>fAlign</code>.
+		Set the Actor's rotation on the Z axis to <code>fRotation</code> degrees.
 	</Function>
 	<!-- RunCommandsRecursively -->
 	<Function name='scale_or_crop_alternative' theme="_fallback" return='void' arguments=''>
@@ -1465,7 +1490,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='spin' return='void' arguments=''>
 		Tells the Actor to spin. Can use <Link function='effectmagnitude' /> to define different spinning behavior.
 	</Function>
-	<!-- spring -->
+	<Function name='spring' return='' arguments=''>
+		<code>spring</code> is a basic tween command, along with <Link function='linear' />, <Link function='accelerate' />, <Link function='decelerate' />, and <Link function='tween' />.
+	</Function>
 	<Function name='stopeffect' return='void' arguments=''>
 		Stops any effect the Actor has.
 	</Function>
@@ -1482,8 +1509,11 @@ save yourself some time, copy this for undocumented things:
 		Determines if the Actor should use texture wrapping or not.
 	</Function>
 	<Function name='tween' return= '' arguments='float time, TweenType type, table params'>
-		Uses type to determine the tween to use.  The type must be one of the TweenType enum values.  If the type is note TweenType_Bezier, the params table is ignored.  If the type is TweenType_Bezier, then the params table must have 4 or 8 numbers.  4 numbers in the params creates a 1 dimensional bezier curve, 8 numbers creates a 2 dimensional bezier curve.<br />
-		It's usually more convenient to use Actor:linear, Actor:accelerate, and so on, rather than using Actor:tween directly.
+		Generic method for tweening an actor.<br />
+		<code>time</code> is in seconds.  <code>type</code> is a <Link class='ENUM' function='TweenType' /><br />
+		If the type is <code>TweenType_Bezier</code>, then the <code>params</code> table must have 4 or 8 numbers.  4 numbers creates a 1 dimensional bezier curve, 8 numbers creates a 2 dimensional bezier curve.<br />
+		If the type is not <code>TweenType_Bezier</code>, the <code>params</code> table is ignored.<br />
+		It's usually more convenient to use <Link function='linear' />, <Link function='accelerate' />, <Link function='decelerate' />, or <Link function='spring' /> rather than using Actor:tween() directly.
 	</Function>
 	<Function name='valign' return='void' arguments='float fAlign'>
 		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign" /> for the common case.
@@ -1575,6 +1605,66 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ActorFrame'>
+	<Description>
+		ActorFrames are containers that allow multiple children actors to be grouped and scripted together.<br />
+		In theming, the StepMania engine expects a screen layer (underlay, overlay, decorations, in, out, cancel)
+		file to return one actor, and it is common to return one ActorFrame that contains many actors of various
+		specialization.<br />
+		A common convention is to add children at the next index (current size of the table plus <code>1</code>).<br />
+		Basic example:
+<pre><code>
+-- in the context of a lua file as a screen layer
+-- this ActorFrame is a table
+local af = Def.ActorFrame{}
+
+-- add a Sprite at the next index
+af[#af+1] = Def.Sprite{
+	Texture="smilingsun.png"
+}
+
+-- add a BitmapText at the next index
+af[#af+1] = Def.BitmapText{
+	Font="Common normal",
+	Text="Yo!"
+}
+
+-- have the file return the ActorFrame
+-- for the StepMania engine to interpret
+return af
+</code></pre>
+	When actor commands like <Link class='Actor' function='xy' /> and <Link class='Actor' function='zoom' />
+	are used position and scale an ActorFrame, its children will position relative to the parent ActorFrame
+	and scale proportionally.<br />
+	For example, if you want to animate 50 actors moving 100px to the right in unison, it is easier to move the
+	parent ActorFrame than each actor individually.<br />
+	Basic example:
+<pre><code>
+local af = Def.ActorFrame{}
+
+-- move the ActorFrame +100px
+-- over a 2 second duration
+-- its children will move with it
+af.OnCommand=function(self)
+	self:linear(2):addx(100)
+end
+
+-- add various children actors
+-- to the parent ActorFrame
+af[#af+1] = Def.Sprite{
+	Texture="taro.png"
+}
+
+af[#af+1] = Def.Sprite{
+	Texture="laer.png"
+}
+
+-- etc.
+
+return af
+</code></pre>
+	ActorFrames can contain ActorFrames, and doing so is good design for sufficiently complex screens.
+	</Description>
+
 	<Function name='AddChildFromPath' return='bool' arguments='string sPath'>
 		Adds a child to the ActorFrame from the specified path.
 	</Function>
@@ -1582,14 +1672,14 @@ save yourself some time, copy this for undocumented things:
 		Sets the field of view for the ActorFrame.
 	</Function>
 	<Function name='GetChild' return='Actor' arguments='string sName'>
-		Returns the child with a name of <code>sName</code>.<br/>
-		If there are multiple children with that name, returns an array of those children.<br/>
+		Returns the child with a name of <code>sName</code>.<br />
+		If there are multiple children with that name, returns an array of those children.<br />
 		The table also acts as a pass through layer, function calls pass through to the last child of that name.
 	</Function>
 	<Function name='GetChildren' return='{Actor}' arguments=''>
-		Returns a table of all the children in the ActorFrame.<br/>
-		The table is indexed by the names of the children.<br/>
-		If there are multiple children with the same name, the entry for that name is an array of those children.<br/>
+		Returns a table of all the children in the ActorFrame.<br />
+		The table is indexed by the names of the children.<br />
+		If there are multiple children with the same name, the entry for that name is an array of those children.<br />
 		The table also acts as a pass through layer, function calls pass through to the last child of that name.
 	</Function>
 	<Function name='GetDrawFunction' return='LuaReference' arguments=''>
@@ -1800,17 +1890,19 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SetDrawState' return='void' arguments='table { Mode= mode, First= first, Num= num }'>
 		Sets the draw state variables to the values in the table.<br />
-		Mode must be a <Link class='ENUM' function='DrawMode'>DrawMode</Link>.<br />
-		First is the index of the first vertex to draw.<br />
-		Num is the number of vertices to draw.  -1 for Num means draw all verts after First.<br />
+		<code>Mode</code> must be a <Link class='ENUM' function='DrawMode'/>.<br />
+		<code>First</code> is the index of the first vertex to draw.<br />
+		<code>Num</code> is the number of vertices to draw.  -1 for <code>Num</code> means draw all verts after <code>First</code>.<br />
 		Any value not in the table defaults to the already set value.<br />
-		Examples:<br />
-		-- Sets all three parts of the draw state.<br />
-		self:SetDrawState{Mode="DrawMode_Quads", First= 1, Num= -1}<br />
-		-- Set only the draw mode.  First and Num remain unchanged from previous.<br />
-		self:SetDrawState{Mode="DrawMode_Quads"}<br />
-		-- Set the first and number to draw.  Draw mode remains unchanged.<br />
-		self:SetDrawState{First= 3, Num= 4}<br />
+		Examples:
+<pre><code>
+-- Sets all three parts of the draw state.
+self:SetDrawState{Mode="DrawMode_Quads", First= 1, Num= -1}
+-- Set only the draw mode.  First and Num remain unchanged from previous.
+self:SetDrawState{Mode="DrawMode_Quads"}
+-- Set the first and number to draw.  Draw mode remains unchanged.
+self:SetDrawState{First= 3, Num= 4}
+</code></pre>
 	</Function>
 	<Function name='GetDestDrawMode' return='DrawMode' arguments='void'>
 		Get the <Link class='ENUM' function='DrawMode'>DrawMode</Link> of the destination tween state.
@@ -1946,11 +2038,30 @@ save yourself some time, copy this for undocumented things:
 </Class>
 <Class name='ActorSound'>
 	<Description>
-		This Actor represents a playable sound.  Though the C++ class is ActorSound, it is accessible to Lua via <code>Def.Sound</code>.<br/>
-		There are three attributes that can be set as booleans on load:<br />
+		This actor represents a playable sound.  Though the C++ class is ActorSound, it is accessible to Lua via <code>Def.Sound</code>.<br />
+		You must provide <em>ActorSound</em>s with a filepath to the asset using their <code>File</code> attribute.
+<pre><code>
+Def.Sound{
+	File="./path/to/soundeffect.ogg",
+	OnCommand=function(self)
+		-- play this sound effect at the parent screen's OnCommand
+		self:play()
+	end
+}
+</code></pre>
+		 <em>ActorSound</em>s have three additional boolean attributes:<br />
 		• <code>SupportPan</code> - Let the sound pan from side to side.<br />
 		• <code>SupportRateChanging</code> - Let the sound change rate and pitch.<br />
-		• <code>IsAction</code> - If true, the sound is an action sound, and will be muted if the MuteActions preference is turned on.
+		• <code>IsAction</code> - If true, the sound is an action sound, and will be muted if the MuteActions preference is turned on.<br />
+		Basic example:
+<pre><code>
+Def.Sound{
+	File="./path/to/soundeffect.ogg",
+	SupportPan=true,
+	SupportRateChanging=true,
+	IsAction=false,
+}
+</code></pre>
 	</Description>
 	<Function name='get' return='RageSound' arguments=''>
 		Returns the <Link class='RageSound' /> that can be played by this Actor.
@@ -2012,10 +2123,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetPercentScrolling' return='float' arguments=''>
 		<!-- todo -->
 	</Function>
-	<Function name='LoadBackgroundFromUnlockEntry' return='void' arguments='UnlockEntry pUE'>
+	<Function name='LoadBackgroundFromUnlockEntry' return='void' arguments='UnlockEntry ue'>
 		Loads the background from an UnlockEntry.
 	</Function>
-	<Function name='LoadBannerFromUnlockEntry' return='void' arguments='UnlockEntry pUE'>
+	<Function name='LoadBannerFromUnlockEntry' return='void' arguments='UnlockEntry ue'>
 		Loads the banner from an UnlockEntry.
 	</Function>
 	<Function name='LoadCardFromCharacter' return='void' arguments='Character pCharacter'>
@@ -2050,6 +2161,40 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='BitmapText'>
+	<Description>
+		<em>BitmapText</em> actors are used to display text on-screen.<br />
+		The font can be specified using the <code>Font</code> attribute. It takes a font name a string,
+		pathed relative to the current theme's <code>./Fonts/</code> directory.<br />
+		StepMania expects fonts to be formatted as spritesheets with accompanying ini files.
+		These can be generated from ttf files using <em>Texture Font Generator.exe</em> in the
+		<code>./Program/</code> directory of packaged StepMania releases.<br />
+		The text displayed can be initially set using the <code>Text</code> attribute, and changed
+		later using <Link class='BitmapText' function='settext'>settext()</Link>.<br />
+		Basic usage example:
+<pre><code>
+Def.BitmapText{
+	Font="Common normal",
+	Text="Hello!",
+	OnCommand=function(self)
+		self:sleep(2):settext("Hey!")
+	end
+}
+</code></pre>
+<br />
+	The font can alternatively be specified with the <code>File</code> attribute,
+	which takes the path to the ini file as a string, relative to the root of StepMania.<br />
+	Basic example:
+<pre><code>
+-- use a custom font from a simfile
+local song_dir = GAMESTATE:GetCurrentSong():GetSongDir()
+local ini_path = "Fonts/courier/_courier 20px.ini"
+
+Def.BitmapText{
+	File=song_dir .. ini_path,
+	Text="Hello, World!"
+}
+</code></pre>
+	</Description>
 	<Function name='AddAttribute' return='void' arguments='int iPos, Attribute attr'>
 		Add the attribute <code>attr</code> to the string at position
 		<code>iPos</code>.<br />
@@ -2445,6 +2590,12 @@ save yourself some time, copy this for undocumented things:
 		Destroys the spline, freeing the memory allocated for it.  This can only be called on splines created with create_spline().
 	</Function>
 </Class>
+<Class name='DeviceList'>
+	<Description>
+		A newline-delimited list of available input devices.<br />
+		The list shown will the same as that returned by <Link class='RageInput' function='GetDescriptions'>INPUTMAN:GetDescriptions()</Link>, but with "MonkeyKeyboard" removed.
+	</Description>
+</Class>
 <Class name='DifficultyIcon'>
 	<Function name='SetFromDifficulty' return='void' arguments='Difficulty dc'>
 		Sets the DifficultyIcon's state from the difficulty passed in.
@@ -2657,7 +2808,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
 		Return the localized string representation of <code>st</code>.
 	</Function>
-	<Function name='GetEnabledGames' return='{string}'>
+	<Function name='GetEnabledGames' return='{string}' arguments=''>
 		Returns a table of all selectable games.
 	</Function>
 	<Function name='GetStylesForGame' return='{style}' arguments='string game'>
@@ -2726,15 +2877,17 @@ save yourself some time, copy this for undocumented things:
 		The second argument is optional. Apply the GameCommand represented by <code>sCommand</code>
 		for <code>pn</code>, if given. See <Link class='GameCommand' />.
 	</Function>
-	<Function name='CanSafelyEnterGameplay' return='bool,string' arguments=''>
-		Checks various things to determine whether the game will crash when gameplay starts.  Returns false and a string if gameplay cannot be entered safely.<br />
+	<Function name='CanSafelyEnterGameplay' return='bool, string' arguments=''>
+		Checks various things to determine whether the game will crash when gameplay starts.  Returns <code>false</code> and an error string if gameplay cannot be entered safely.<br />
 		Might not work in all cases, but will catch things like a player not having
 		steps set or no current song or style.  Mainly exists for people with a custom ScreenSelectMusic replacement.<br />
-		Example:<br />
-		local can, reason= GAMESTATE:CanSafelyEnterGameplay()<br />
-		if not can then<br />
-		lua.ReportScriptError("Cannot safely enter gameplay: " .. tostring(reason))<br />
-		end<br />
+		Example:
+<pre><code>
+local can, reason = GAMESTATE:CanSafelyEnterGameplay()
+if not can then
+	lua.ReportScriptError("Cannot safely enter gameplay: " .. tostring(reason))
+end
+</code></pre>
 	</Function>
 	<Function name='ClearStageModifiersIllegalForCourse' return='void' arguments=''>
 		Removes any stage modifiers that are illegal for course play.
@@ -2754,7 +2907,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCharacter' return='Character' arguments='PlayerNumber pn'>
 		Returns the current <Link class='Character' /> for the specified <Link class='ENUM' function='PlayerNumber' />.
 	</Function>
-	<Function name='GetCoinMode' return='CoinMode'>
+	<Function name='GetCoinMode' return='CoinMode' arguments=''>
 		Returns the current <Link class='ENUM' function='CoinMode' />.
 	</Function>
 	<Function name='GetCoins' return='int' arguments=''>
@@ -3229,6 +3382,11 @@ save yourself some time, copy this for undocumented things:
 		Returns the Y position of the mouse.
 	</Function>
 </Class>
+<Class name='InputList'>
+	<Description>
+		A newline-delimited list of inputs that are currently being pressed.  It will update as inputs are held and released.  Handy for custom TestInput screens.
+	</Description>
+</Class>
 <Class name='LifeMeter'>
 	<Function name='GetLife' return='float' arguments=''>
 		Returns the amount of life left in the LifeMeter as a float in the range 0..1.
@@ -3297,7 +3455,7 @@ save yourself some time, copy this for undocumented things:
 		Sets the MenuTimer's stealth setting to <code>bStealth</code>. If
 		<code>true</code>, the timer will be invisible and silent.
 	</Function>
-	<Function name='stop' return='void'>
+	<Function name='stop' return='void' arguments=''>
 		Stops the MenuTimer by setting it to 0 and pausing.
 	</Function>
 </Class>
@@ -3589,12 +3747,12 @@ save yourself some time, copy this for undocumented things:
 </Class>
 <Class name='PlayerOptions'>
 	<Description>
-		All these functions have an optional last argument:  If the last argument is the boolean value true, then instead of returning the previous settings as normal, they will instead return the PlayerOptions object.<br />
+		All these functions have an optional last argument:  If the last argument is the boolean value <code>true</code>, then instead of returning the previous settings as normal, they will instead return the PlayerOptions object.<br />
 		This allows you to chain them like this:<br />
-		player_options:Twirl(5, 1, true):Roll(5, true):Dizzy(true):Twirl()<br />
+		<code>player_options:Twirl(5, 1, true):Roll(5, true):Dizzy(true):Twirl()</code><br />
 		<br />
-		Special note:  Functions that take a bool as their arg must have true as the second arg to be used with chaining.<br />
-		"player_options:Backwards(true, true):Beat(5)" will chain, "player_options:Backwards(true):Beat(5)" will not chain.<br />
+		Functions that take a bool as their arg must have <code>true</code> as the second arg to be used with chaining.<br />
+		<code>player_options:Backwards(true, true):Beat(5)</code> will chain.  <code>player_options:Backwards(true):Beat(5)</code> will not chain.<br />
 		<br />
 		Most options fall into one of four types:  float, int, bool, or enum.<br />
 		Float type options have this interface:<br />
@@ -3603,15 +3761,25 @@ save yourself some time, copy this for undocumented things:
 		If approach_speed is a float, sets the speed of the transition to approach_speed.  Returns the previous values of both.<br />
 		approach_speed is in units of n per second.  value will be approached at the rate of approach_speed per second.<br />
 		Note that the value and the approach speed arguments are both independently optional.<br />
-		Example:<br />
-		a,b= options:Boost() -- Sets a to the current value and b to the current approach_speed.<br />
-		a,b= options:Boost(5, .5) -- Stores the previous values in a and b, NOT to 5 and .5.  Sets the value to 5 and the approach speed to .5.<br />
-		a,b= options:Boost(5) -- Sets a and b to the previous values, NOT to 5 and .5.  Sets the value to 5 and leaves the approach speed at whatever it was.<br />
+		Example:
+<pre><code>
+-- Sets a to the current value and b to the current approach_speed
+a,b = options:Boost()
+
+-- Stores the previous values in a and b, NOT to 5 and .5
+-- Sets the value to 5 and the approach speed to .5
+a,b = options:Boost(5, .5)
+
+-- Sets a and b to the previous values, NOT to 5 and .5
+-- Sets the value to 5 and leaves the approach speed at whatever it was
+a,b = options:Boost(5)
+</code></pre>
 		<br />
 		Setting the approach speed only matters when modifying the PlayerOptions from ModsLevel_Song.<br />
 		Int type options are similar to float in that they return and take a number, but they do not have an approach speed.<br />
 		Bool type options have an almost identical interface, the difference is that they can not have an approach speed.<br />
 		Enum type options are almost identical to bool type.  They take and return an enum value.<br />
+		<!-- FIXME: These should really all have explanations. -->
 		For brevity, the functions are only given a description if the option requires careful handling or does not follow the float or bool interfaces.<br />
 	</Description>
 	<Function name='Alternate' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -3766,7 +3934,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='Flip' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Floored' return='bool' arguments='bool value'> </Function>
-	<Function name='GetStepAttacks' return='bool' argument=''>
+	<Function name='GetStepAttacks' return='bool' arguments=''>
 		Returns true if step attacks or random attacks are enabled.
 	</Function>
 	<Function name='IsEasierForCourseAndTrail' return='bool' arguments='Course c, Trail t'>
@@ -3840,11 +4008,18 @@ save yourself some time, copy this for undocumented things:
 	<Function name='NoMines' return='bool' arguments='bool value'> </Function>
 	<Function name='NoRolls' return='bool' arguments='bool value'> </Function>
 	<Function name='NoteSkin' return='string, bool' arguments='string name'>
-		Sets the NoteSkin to the named noteskin, unless name is nil or the noteskin does not exist.  Returns the name of the previous noteskin and whether the set attempt succeeded.<br />
-		Changing the noteskin during a song is not supported.<br />
-		Example:<br />
-		note_name= options:NoteSkin() -- Sets note_name to the player's current noteskin.<br />
-		prev_note_name, succeeded= options:NoteSkin("cel") -- Sets prev_note_name to the noteskin the player had set, changes the current noteskin to "cel", sets succeeded to true if the "cel" noteskin exists.<br />
+		Sets the NoteSkin to the named noteskin, unless name is <code>nil</code> or the NoteSkin does not exist.  Returns the name of the previous NoteSkin and whether the set attempt succeeded.<br />
+		Changing the NoteSkin during gameplay is not supported.<br />
+		Example:
+<pre><code>
+-- Sets note_name to the player's current noteskin
+note_name = options:NoteSkin()
+
+-- Sets prev_note_name to the noteskin the player had set
+-- changes the current noteskin to "cel"
+-- sets succeeded to true if the "cel" noteskin exists.
+prev_note_name, succeeded = options:NoteSkin("cel")
+</code></pre>
 	</Function>
 	<Function name='Overhead' return='bool' arguments='bool'>
 		If the player is using Overhead (0 tilt, 0 skew), returns true.<br />
@@ -4107,8 +4282,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='IsDisqualified' return='bool' arguments=''>
 		Returns <code>true</code> if the player was disqualified from ranking.
 	</Function>
+	<Function name='SetCurMaxScore' return='void' arguments='int maxscore'>
+	</Function>
 	<Function name='SetDancePointLimits' return='void' arguments='int actual, int possible'>
 		Sets the Dance Point limits of the stage.
+	</Function>
+	<Function name='SetScore' return='void' arguments='int score'>
 	</Function>
 </Class>
 <Class name='PlayerState'>
@@ -4445,6 +4624,11 @@ save yourself some time, copy this for undocumented things:
 		Sets the current stats prefix.  The stats prefix is prepended to the Stats.xml file when loading or saving a profile.  SetStatsPrefix will reload all profiles from the Stats.xml that has the given prefix.  In general, score entries are the only thing not preserved when changing the stats prefix.  Profile::HandleStatsPrefixChange in Profile.cpp lists the fields that are preserved.
 	</Function>
 </Class>
+<Class name='Quad'>
+	<Description>
+	 Quads are rectangular actors that players can see.  A Quad can have color, size, position, etc.
+	</Description>
+</Class>
 <Class name='RadarValues'>
 	<Function name='GetValue' return='int' arguments='RadarCategory rc'>
 		Returns the value of <code>rc</code> from <Link class='Steps' function='GetRadarValues' />.
@@ -4580,7 +4764,7 @@ save yourself some time, copy this for undocumented things:
 		This singleton is accessible to Lua via <code>INPUTMAN</code>.
 	</Description>
 	<Function name='GetDescriptions' return='{string}' arguments=''>
-		Return an array of connected input device descriptions.
+		Returns an array of connected input device descriptions.
 	</Function>
 </Class>
 <Class name='RageQuadratic'>
@@ -4683,29 +4867,101 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='Screen'>
+	<Description>
+		<em>Screen</em> is the base screen class containing common methods that all specialized screens inherit.<br />
+		By itself, <em>Screen</em> does not have the layers (underlay, overlay, decorations, in, out, cancel) commonly
+		used in theming, so themers designing custom screens typically use <Link class='ScreenWithMenuElements' /> as
+		the screen class for such endeavors.
+	</Description>
 	<Function name='AddInputCallback' return='void' arguments='function callback'>
-		This adds the lua function "callback" to the list of functions the screen will pass input to.  Whenever an input event occurs, callback will be passed a table with the details of the event.  callback must return a bool to indicate whether the event was handled.  If callback returns true, the event will not be passed any further.<br/>
-		This should not be used to provide text input because that would not handle localization or different keyboard layouts.<br/>
-		The screen and the callbacks will both be passed input events, so be aware of what input the current screen responds to and consider the effects.<br/>
-		Details of the table containing the event data:<br/>
-		{<br/>
-		DeviceInput= { -- The raw details of the event.<br/>
-		device= string, -- The type of device.  The first half of the string will be "Device_", the second half will be from InputDeviceNames in RageInputDevice.cpp.<br/>
-		button= string, -- The button that was pressed.  the first half of the string will be "DeviceButton_", the second half will be from InitNames in RageInputDevice.cpp.<br/>
-		level= float, -- A floating point value for analog input.<br/>
-		z= float, -- Mousewheel input.<br/>
-		down= bool, -- Whether the button is down.  This is level with a threshold and debouncing applied.<br/>
-		ago= float, -- How long ago this input occurred, in seconds.<br/>
-		is_joystick= bool, -- True if the device is a joystick.<br/>
-		is_mouse= bool -- True if the device is a mouse.<br/>
-		}, -- This ends the list of things inside the DeviceInput part of the table.<br/>
-		controller= string, -- The game controller this event was mapped to.  "GameController_1" or "GameController_2", or nil if the event wasn't mapped to either controller.<br/>
-		button= string, -- The semi-raw button that was pressed.  This is what the button was mapped to by the keymap settings, but without the conversions that occur when OnlyDedicatedMenuButtons is true.  Will be empty if the button was not mapped.<br/>
-		type= string, -- The type of event.  "InputEventType_FirstPress", "InputEventType_Repeat", or "InputEventType_Release".<br/>
-		GameButton= string, -- The cooked button that was pressed.  This is button with mapping that occurs when OnlyDedicatedMenuButtons is true applied.  This is nil for unmapped buttons.<br/>
-		PlayerNumber= PlayerNumber, -- The player that the controller is mapped to, or nil.<br/>
-		MultiPlayer= string, -- Unknown purpose.<br/>
-		}
+		This adds the Lua function <code>callback</code> to the list of functions the screen will pass input to, giving Lua access to player input as it occurs.<br />
+		When an input event occurs, <code>callback</code> will be passed a table with the details of the event.  <code>callback</code> must return a bool to indicate whether the event was handled.  If <code>callback</code> returns <code>true</code>, the event will not be passed any further.<br />
+		This method does not handle localization or different keyboard layouts, so <Link class='ScreenTextEntry' /> is better suited to getting text input from players.<br />
+		Be aware that both the screen (as handled by the StepMania engine) and your Lua callbacks will be passed input events, and this can result in undesirable side effects.<br />
+		Basic usage example:
+<pre><code>
+local InputHandler = function( event )
+	-- do something cool with the event table in here :)
+	-- the details of the event table are documented below
+
+	-- example:
+	-- show the GameButton that was most recently pressed/held
+	if event.type ~= "InputEventType_Release" then
+		SCREENMAN:SystemMessage( event.GameButton )
+	end
+
+	return false
+end
+
+Def.ActorFrame{
+	OnCommand=function(self)
+		SCREENMAN:GetTopScreen():AddInputCallback( InputHandler )
+	end
+}
+</code></pre>
+
+Details of the <code>event</code> table:
+<pre><code>
+{
+	-- The "semi-raw" button that was pressed. This is what
+	-- the button was mapped to by the keymap settings, without
+	-- the conversions that occur when OnlyDedicatedMenuButtons
+	--  is true. Will be empty if the button was not mapped.
+	button = string,
+
+	-- "InputEventType_FirstPress", "InputEventType_Repeat",
+	-- or "InputEventType_Release".
+	type = string,
+
+	-- The "cooked" button that was pressed.  This is button with
+	-- mapping that occurs when OnlyDedicatedMenuButtons is true
+	-- applied.  This is nil for unmapped buttons.
+	GameButton = string,
+
+	-- The player that the controller is mapped to, or nil.
+	PlayerNumber = PlayerNumber,
+
+	-- The game controller this event was mapped to.
+	-- "GameController_1" or "GameController_2", or nil if the event
+	-- wasn't mapped to either controller.
+	controller = string,
+
+	-- The details of the event.
+	DeviceInput = {
+		-- The type of device.  The first half of the string will
+		-- be "Device_", the second half will be from InputDeviceNames
+		-- in RageInputDevice.cpp.
+		device = string,
+
+		-- The button that was pressed. The first half of the string
+		-- will be "DeviceButton_", the second half will be from InitNames
+		-- in RageInputDevice.cpp.
+		button = string,
+
+		-- A floating point value for analog input.
+		level = float,
+
+		-- Mousewheel input.
+		z = float,
+
+		-- Whether the button is down.  This is level with a threshold
+		-- and debouncing applied.
+		down = bool,
+
+		-- How long ago this input occurred, in seconds.
+		ago = float,
+
+		-- True if the device is a joystick.
+		is_joystick = bool,
+
+		-- True if the device is a mouse.
+		is_mouse = bool
+	},
+
+	-- Unknown purpose. SMOnline?
+	MultiPlayer = string
+}
+</code></pre>
 	</Function>
 	<Function name='GetNextScreenName' return='string' arguments=''>
 		Returns the name of the next Screen.
@@ -4737,6 +4993,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='String' theme='_fallback' return='string' arguments='string sName'>
 		[02 Other.lua] Gets a string from the current Screen in the current language.
 	</Function>
+</Class>
+<Class name='ScreenAttract'>
 </Class>
 <Class name='ScreenEdit'>
 	<Function name='GetEditState' return='EditState' arguments=''>
@@ -4777,19 +5035,19 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='HasteAddAmounts' return='{float}' arguments='{float}'>
 		This is part of the system for controlling how haste behaves. <br />
-		Read Docs/Themerdocs/haste.txt.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/haste.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/haste.txt</a>.
 	</Function>
 	<Function name='HasteLifeSwitchPoint' return='float' arguments='float'>
 		This is part of the system for controlling how haste behaves. <br />
-		Read Docs/Themerdocs/haste.txt.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/haste.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/haste.txt</a>.
 	</Function>
 	<Function name='HasteTimeBetweenUpdates' return='float' arguments='float'>
 		This is part of the system for controlling how haste behaves. <br />
-		Read Docs/Themerdocs/haste.txt.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/haste.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/haste.txt</a>.
 	</Function>
 	<Function name='HasteTurningPoints' return='{float}' arguments='{float}'>
 		This is part of the system for controlling how haste behaves. <br />
-		Read Docs/Themerdocs/haste.txt.
+		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/haste.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/haste.txt</a>.
 	</Function>
 	<Function name='SetNewScreen' return='void' arguments='string s'>
 		Sets the next Screen to be loaded.
@@ -4817,7 +5075,7 @@ save yourself some time, copy this for undocumented things:
 		Gets the screen at the top of the screen stack.
 	</Function>
 	<Function name='get_input_redirected' return='bool' arguments='PlayerNumber pn'>
-		Returns whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.
+		Returns whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to Lua input callbacks.
 	</Function>
 	<Function name='PlayInvalidSound' return='' arguments=''>
 		Plays the invalid sound.
@@ -4847,8 +5105,8 @@ save yourself some time, copy this for undocumented things:
 		Sets the next screen to <code>s</code>.
 	</Function>
 	<Function name='set_input_redirected' return='bool' arguments='PlayerNumber pn, bool redir'>
-		Sets whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.<br />
-		This can be useful when putting a custom menu on a screen, and you want to disable the built in actors while the menu is open.  Then you handle input through an input callback until the player closes the menu.
+		Sets whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to Lua input callbacks.<br />
+		This can be useful when putting a custom menu on a screen, and you want to disable the built in actors while the menu is open.  You can handle input through an <Link class='Screen' function='AddInputCallback'>input callback</Link> until the player closes the menu.
 	</Function>
 	<Function name='SystemMessage' return='void' arguments='string s'>
 		Broadcasts a system message.
@@ -4886,6 +5144,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetNumActivePlayers' return='int' arguments=''>
 		Returns the number of active players.
 	</Function>
+</Class>
+<Class name='ScreenNetRoom'>
+</Class>
+<Class name='ScreenNetSelectBase'>
+</Class>
+<Class name='ScreenNetSelectMusic'>
 </Class>
 <Class name='ScreenOptions'>
 	<Function name='AllAreOnLastRow' return='bool'  arguments=''>
@@ -4962,18 +5226,76 @@ save yourself some time, copy this for undocumented things:
 		Returns the profile index of the specified Player.
 	</Function>
 	<Function name='SetProfileIndex' return='bool' arguments='PlayerNumber pn, int iProfileIndex'>
-		Sets the profile index of Player <code>pn</code> to <code>iProfileIndex</code>.<br/>
-		The following values of <code>iProfileIndex</code> have special, hardcoded behavior:<br/>
-		• <code>-1</code>: join the player and play the theme's start sound effect<br/>
+		Sets the profile index of Player <code>pn</code> to <code>iProfileIndex</code>.<br />
+		The following values of <code>iProfileIndex</code> have special, hardcoded behavior:<br />
+		• <code>-1</code>: join the player and play the theme's start sound effect<br />
 		• <code>-2</code>: unjoin the player, unlock their MemoryCard, and unmount their MemoryCard
 	</Function>
 </Class>
 <Class name='ScreenTextEntry'>
 	<Description>
-		TextEntrySettings is implemented similar to the Attributes in BitmapText. Formatting issues prevent the sample from being properly shown here.<br />Please see docs/Themerdocs/ScreenTextEntry.txt for the TextEntrySettings format.
+		Using ScreenTextEntry is the preferred way to get text input from players.<br />
+		For theming, ScreenTextEntry is unique because it is typically added temporarily to the engine's
+		screen stack to be popped off the stack when the player is done entering text.<br />
+		As such, it is commonly styled to appear to players as an overlay or modal.<br />
+		Basic usage example:
+<pre><code>
+local args = {
+	Question="Do you like Waffles?",
+	InitialAnswer="Yeah, we like waffles!",
+	MaxInputLength=300,
+	OnOK=function(answer)
+		-- answer is what the player typed
+		local msg = "Your response was: " .. answer
+		SCREENMAN:SystemMessage(msg)
+	end
+}
+
+SCREENMAN:AddNewScreenToTop("ScreenTextEntry")
+SCREENMAN:GetTopScreen():Load( args )
+</code></pre>
 	</Description>
 	<Function name='Load' return='void' arguments='TextEntrySettings args'>
-		Sets up a ScreenTextEntry's values.
+		Sets up a ScreenTextEntry's values using <code>args</code>.<br />
+		TextEntrySettings is special struct for ScreenTextEntry, and
+		as a Lua table, it should contain specific attributes:
+<pre><code>
+local args = {
+	-- ScreenMessage to send on pop
+	-- optional, "SM_None" if omitted
+	SendOnPop = "",
+
+	-- the question text to display
+	Question = "",
+
+	-- initial answer text
+	InitialAnswer = "",
+
+	-- Maximum amount of characters
+	MaxInputLength = 0,
+
+	-- mask character input (optional)
+	Password = false,
+
+	-- validation function
+	-- must return boolean and string
+	Validate = function(answer, errorStr) end,
+
+	-- function called on ok
+	OnOK = function(answer) end,
+
+	-- function called on cancel
+	OnCancel = function() end,
+
+	-- Validate appending a character <!-- what does this mean? -quietly -->
+	-- must return boolean
+	ValidateAppend = function(answer, append) end,
+
+	-- Format answer for display
+	-- must return string
+	FormatAnswerForDisplay = function(answer) end
+}
+</code></pre>
 	</Function>
 </Class>
 <Class name='ScreenWithMenuElements'>
@@ -4990,26 +5312,32 @@ save yourself some time, copy this for undocumented things:
 		Sets whether the screen allows late joining.  This only works for screens that are just ScreenWithMenuElements, as most derived screens have their own hard coded function for whether late joining is allowed.
 	</Function>
 </Class>
+<Class name='ScreenWithMenuElementsSimple'>
+</Class>
 <Class name='Song'>
 	<Function name='GetAllSteps' return='{Steps}' arguments=''>
 		Returns an array of all the available <Link class='Steps' /> objects for a <Link class='Song' />.
 	</Function>
 	<Function name='GetBackgroundPath' return='string' arguments=''>
-		Returns the path to the song's background image.
+		Returns the path to the song's background image.<br />
+		If the stepartist did not provide a path for a background, this returns <code>nil</code>.
 	</Function>
 	<Function name='GetBannerPath' return='string' arguments=''>
-		Returns the path to the song's banner.
+		Returns the path to the song's banner.<br />
+		If the stepartist did not provide a path for a banner, this returns <code>nil</code>.
 	</Function>
 	<Function name='GetBGChanges' return='table' arguments=''>
 		Returns a table with all the data for the song's BGCHANGES line.<br />
 		Each element of the table is one change like this:<br />
-		{start_beat= 1.0, rate= 1.0, transition= "example", effect= "example", file1= "example", file2= "example", color1= "#FFFFFFFF", color2= "#FFFFFFFF"}
+		<code>{start_beat=1.0, rate=1.0, transition="example", effect="example", file1="example", file2="example", color1="#FFFFFFFF", color2="#FFFFFFFF"}</code>
 	</Function>
 	<Function name='GetCDImagePath' return='string' arguments=''>
-		Returns the path to the song's CD image.
+		Returns the path to the song's CD image.<br />
+		If the stepartist did not provide a path for a CDImage, this returns <code>nil</code>.
 	</Function>
 	<Function name='GetCDTitlePath' return='string' arguments=''>
-		Gets the path to the CDTitle.
+		Gets the path to the CDTitle.<br />
+		If the stepartist did not provide a path for a CDTitle, this returns <code>nil</code>.
 	</Function>
 	<Function name='GetDiscPath' return='string' arguments=''>
 		Returns the path to the song's disc image (different from CD, think Pump).
@@ -5021,13 +5349,17 @@ save yourself some time, copy this for undocumented things:
 		Returns a table of 2 floats containing the display BPMs.
 	</Function>
 	<Function name='GetDisplayFullTitle' return='string' arguments=''>
-		Returns the displayed full title of the song, including subtitle.
+		Returns the displayed full title of the song.<br />
+		The full title is, at minimum, the main title.
+		If the <Link class='Song' function='GetDisplaySubTitle'>subtitle</Link> is not an empty string,
+		the full title is main title + " " + subtitle.
 	</Function>
 	<Function name='GetDisplayMainTitle' return='string' arguments=''>
 		Returns the displayed main title of the song.
 	</Function>
 	<Function name='GetDisplaySubTitle' return='string' arguments=''>
-		Returns the displayed subtitle of the song.
+		Returns the displayed subtitle of the song.<br />
+		If the stepartist did not provide a subtitle, this returns an empty string.
 	</Function>
 	<Function name='GetFirstBeat' return='float' arguments=''>
 		Returns the first beat of the song.
@@ -5224,8 +5556,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCoursesInGroup' return='{Course}' arguments='string sGroup, bool bIncludeAutogen'>
 		Returns a table with all of the courses in the specified group.
 	</Function>
-	<Function name='GetExtraStageInfo' return='various' arguments='bool bExtra2, Style s'>
-		Returns the extra stage info (Song, Steps) for the specified Style <code>s</code>. (If <code>bExtra2</code> is true, it will use the second Extra Stage data instead of the first. Again, Lua.xsd sucks)
+	<Function name='GetExtraStageInfo' return='various' arguments='bool b2ndExtra, Style s'>
+		Returns the extra stage info (Song, Steps) for the specified Style <code>s</code>. If <code>b2ndExtra</code> is true, it will use the second Extra Stage data instead of the first.
 	</Function>
 	<Function name='GetNumAdditionalCourses' return='int' arguments=''>
 		Returns the number of courses loaded via Additional folders.
@@ -5370,6 +5702,25 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='Sprite'>
+	<Description>
+		<em>Sprite</em> actors can be used to display images and video.  If you want to load a png as part of your UI,
+		or animate a visual effect from a sprite sheet, or play a video file, <em>Sprite</em> is what you're looking for.<br />
+		<br />
+		You can initialize <em>Sprite</em>s with a filepath to the graphic asset using their <code>Texture</code> attribute.
+<pre><code>
+local spr = Def.Sprite{
+	Texture="path/to/mycoolimage.png"
+}
+</code></pre>
+	Frame-based animated sprites can be initialized with the <code>Frames</code> attribute.
+<pre><code>
+local spr = Def.Sprite{
+	Texture="path/to/Spikes 6x3.png",
+	Frames=Sprite.LinearFrames(18, 1)
+}
+</code></pre>
+
+	</Description>
 	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>
 		Returns the length of the animation in seconds.
 	</Function>
@@ -5386,7 +5737,8 @@ save yourself some time, copy this for undocumented things:
 		Returns the Sprite's texture.
 	</Function>
 	<Function name='LinearFrames' theme='_fallback' return='table' arguments='int iNumFrames, float fSeconds'>
-		[02 Sprite.lua] Returns a <code>Frames</code> table consisting of <code>iNumFrames</code> frames lasting for a total of <code>fSeconds</code> seconds. This function is not a member function and should be used as <code>Frames = Sprite.LinearFrames( 5, 2.6 )</code>.
+		[02 Sprite.lua] Returns a <code>Frames</code> table consisting of <code>iNumFrames</code> frames lasting for a total of <code>fSeconds</code> seconds.<br />
+		This function is not a member function and should be used as <code>Frames = Sprite.LinearFrames( 5, 2.6 )</code>.
 	</Function>
 	<Function name='Load' return='void' arguments='string sPath'>
 		If <code>sPath</code> is <code>nil</code>, then unload the texture. Otherwise, load the texture at path <code>sPath</code>.
@@ -5429,19 +5781,29 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetSecondsIntoAnimation' return='void' arguments='float fSeconds'>
 		Sets the number of seconds into the animation to <code>fSeconds</code>.
 	</Function>
-	<Function name='SetStateProperties' return= '' arguments='table properties'>
+	<Function name='SetStateProperties' return= 'void' arguments='table properties'>
 		Sets the properties of the states of the sprite.  The properties table is identical to the "Frames" table that can be put in the sprite when calling Def.Sprite.<br />
-		Example:<br />
-		{{Frame= 0, Delay= .016, {0, 0}, {.25, .25}},<br />
-		{Frame= 1, Delay= .016, {0, 0}, {.25, .25}},<br />
-		{Frame= 2, Delay= .016, {0, 0}, {.25, .25}},<br />
-		{Frame= 3, Delay= .016, {0, 0}, {.25, .25}},<br />
-		}<br />
-		Frame is optional, defaulting to 0.<br />
-		Delay is optional, defaulting to 0.<br />
+		Example:
+<pre><code>
+{
+	{ Frame=0, Delay=0.333, {0, 0}, {.25, .25} },
+	{ Frame=1, Delay=0.333, {0, 0}, {.25, .25} },
+	{ Frame=2, Delay=0.333, {0, 0}, {.25, .25} },
+	{ Frame=3, Delay=0.333, {0, 0}, {.25, .25} },
+}
+</code></pre>
+		<code>Frame</code> is optional, defaulting to 0.<br />
+		<code>Delay</code> is optional, defaulting to 0.<br />
 		The two tables are optional upper left and lower right corners of the fraction of the frame to use.  The example makes the sprite only use the upper left corner of each frame.<br />
-		Simpler example:<br />
-		{{Frame= 0, Delay= .016}, {Frame= 1, Delay= .016}, {Frame= 2, Delay= .016}, {Frame= 3, Delay= .016}}<br />
+		Simpler example:
+<pre><code>
+{
+	{Frame=0, Delay=0.333},
+	{Frame=1, Delay=0.333},
+	{Frame=2, Delay=0.333},
+	{Frame=3, Delay=0.333}
+}
+</code></pre>
 		This example makes the sprite use the whole of each frame.
 	</Function>
 	<Function name='SetTexture' return='void' arguments='RageTexture texture'>
@@ -5656,11 +6018,11 @@ save yourself some time, copy this for undocumented things:
 		Returns the StyleType for this Style.
 	</Function>
 	<Function name='GetColumnInfo' return='{int, int, string}' arguments='PlayerNumber pn, int column'>
-		Returns a table containing the <code>Track</code>, <code>XOffset</code>, and <code>Name</code> of the column.<br/>
+		Returns a table containing the <code>Track</code>, <code>XOffset</code>, and <code>Name</code> of the column.<br />
 		For example, calling <code>GAMESTATE:GetCurrentStyle():GetColumnInfo('PlayerNumber_P1', 2)</code> when the current
-		game is dance will return <code>{Track=2, XOffset=-32, Name="Down"}</code>.<br/>
+		game is dance will return <code>{Track=2, XOffset=-32, Name="Down"}</code>.<br />
 		Calling <code>GAMESTATE:GetCurrentStyle():GetColumnInfo('PlayerNumber_P1', 1)</code> when the current
-		game is pump will return <code>{Track=1, XOffset=-96, Name="DownLeft"}</code>.<br/>
+		game is pump will return <code>{Track=1, XOffset=-96, Name="DownLeft"}</code>.<br />
 	</Function>
 	<Function name='GetColumnDrawOrder' return='int' arguments='int column'>
 		Returns the draw order of the column.
@@ -5719,7 +6081,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='HoldNoteResult'>
-	<Function name='GetHoldNoteScore'>
+	<Function name='GetHoldNoteScore' return='HoldNoteScore' arguments=''>
 		Returns the <Link class='HoldNoteScore' /> of the Hold Note.
 	</Function>
 	<Function name='GetLife' return='float' arguments=''>
@@ -5795,8 +6157,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetPathG' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Graphics folder.
 	</Function>
-	<Function name='GetPathInfoB' return='string' arguments='string ClassName, string Element'>
-		returns three strings: BGAnimation ResolvedPath, MatchingMetricsGroup, MatchingElement. Used in <Link class='GLOBAL' function='LoadFallbackB'>LoadFallbackB</Link> in themes/_fallback/02 Other.lua. (Lua.xsd sucks)
+	<Function name='GetPathInfoB' return='string, string, string' arguments='string ClassName, string Element'>
+		Returns three strings: BGAnimation ResolvedPath, MatchingMetricsGroup, MatchingElement.<br />
+		Used in <Link class='GLOBAL' function='LoadFallbackB'>LoadFallbackB</Link> in themes/_fallback/02 Other.lua<br />
+		Example: <code>local path, metrics_group, element = THEME:GetPathInfoB("ScreenTitleJoin", "decorations")</code>
 	</Function>
 	<Function name='GetPathO' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Other folder.
@@ -5818,6 +6182,16 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetThemeDisplayName' return='string' arguments=''>
 		Returns the display name of the current theme.
+	</Function>
+	<Function name='get_theme_fallback_list' return='{ string }' arguments=''>
+		Returns a table of strings showing what themes the current theme falls back on.<br />
+		For example, if the current theme is in a folder named "Home", and the "Home" theme falls back on the "default" theme, which itself falls back on the "_fallback" theme, the table would be:
+<pre><code>
+{
+	[1]="Home",
+	[2]="default",
+	[3]="_fallback"
+}</code></pre>
 	</Function>
 	<Function name='HasMetric' return='bool' arguments='string section, string value'>
 		Returns <code>true</code> if the theme has the specified metric.
@@ -5843,19 +6217,24 @@ save yourself some time, copy this for undocumented things:
 <Class name='TimingData'>
 	<Description>
 		GetBPMsAndTimes, GetStops, GetDelays, GetLabels, GetWarps, GetCombos, GetTimeSignatures, GetTickcounts, GetFakes, GetScrolls, and GetSpeeds all have two different modes.<br />
-		If false (or nothing) is the argument to these functions, they return tables of strings.  The strings are numbers separated by '='.<br />
-		If the argument is true, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
-		The first form is kept around and is the default for compatibility with older themes.  The advantage of the second form is that you no longer need to have a bit of code in your theme to transform the string into a table of numbers before you can use it.<br />
-		Example:<br />
-		local bpmsand= timing_data:GetBPMsAndTimes()<br />
-		for i, s in ipairs(bpmsand) do<br />
-		local sand= split("=", s)<br />
-		bpmsand[i]= {tonumber(sand[1]), tonumber(sand[2])}<br />
-		end<br />
-		-- do something that looks at all the bpms and times. <br />
-		Becomes:<br />
-		local bpmsand= timing_data:GetBPMsAndTimes(true)<br />
-		-- do something that looks at all the bpms and times. <br />
+		If <code>false</code> (or nothing) is the argument to these functions, they return tables of strings.  The strings are numbers separated by '='.<br />
+		If the argument is <code>true</code>, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
+		The first form is kept as the default to maintain compatibility with older themes.  The second form can be convenient because there is no need to transform the string into a table of numbers before using it.<br />
+		Example of first form:
+<pre><code>
+local bpms_and_times = timing_data:GetBPMsAndTimes()
+for i, s in ipairs(bpms_and_times) do
+	local bpm_and_time = split("=", s)
+	bpms_and_times[i] = {tonumber(bpm_and_time[1]), tonumber(bpm_and_time[2])}
+end
+-- do something with the bpms and times now that they are numbers.
+</code></pre>
+		<br />
+		Example of second form:
+<pre><code>
+local bpms_and_times = timing_data:GetBPMsAndTimes(true)
+-- do something with the bpms and times because they are already numbers.
+</code></pre>
 	</Description>
 	<Function name='GetActualBPM' return='{float}' arguments=''>
 		Returns the minimum and maximum BPM of the song in a table (in that order).
@@ -6148,6 +6527,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 </Classes>
+
 <!-- Enums -->
 <Enums>
 <Description>
