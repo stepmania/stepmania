@@ -980,7 +980,7 @@ local n = r['PlayerNumber_P2']
 
 <!-- Classes -->
 <Classes>
-<Class name='Actor'>
+<Class name='Actor' grouping='Actor'>
 	<Description>
 		<em>Actor</em> is the base class containing common methods that all specialized actor classes inherit.
 		For example, <Link class='Actor' function='GetX'>GetX</Link> is a method belonging to <em>Actor</em>,
@@ -1611,7 +1611,7 @@ local n = r['PlayerNumber_P2']
 		Sets the x and y location of the Actor in one command.
 	</Function>
 </Class>
-<Class name='ActorFrame'>
+<Class name='ActorFrame' grouping='Actor'>
 	<Description>
 		ActorFrames are containers that allow multiple children actors to be grouped and scripted together.<br />
 		In theming, the StepMania engine expects a screen layer (underlay, overlay, decorations, in, out, cancel)
@@ -1756,7 +1756,7 @@ return af
 		Sets the vanishing point for the ActorFrame.
 	</Function>
 </Class>
-<Class name='ActorFrameTexture'>
+<Class name='ActorFrameTexture' grouping='Actor'>
 	<Function name='Create' return='void' arguments=''>
 		Creates the ActorFrameTexture.
 	</Function>
@@ -1779,7 +1779,7 @@ return af
 		Sets the Texture's name to <code>sName</code>.
 	</Function>
 </Class>
-<Class name='ActorMultiTexture'>
+<Class name='ActorMultiTexture' grouping='Actor'>
 	<Function name='AddTexture' return='int' arguments='RageTexture tex'>
 		Adds a texture to the ActorMultiTexture. Returns the number of texture units.
 	</Function>
@@ -1799,7 +1799,7 @@ return af
 		Sets a TextureMode on the specified index.
 	</Function>
 </Class>
-<Class name='ActorMultiVertex'>
+<Class name='ActorMultiVertex' grouping='Actor'>
 	<Function name='AddQuadState' return='' arguments='int offset'>
 		The list of quad states is used to determine which animation state is used for each quad.  The offset is added to the AMV's current state, and the resulting state is used.
 	</Function>
@@ -1948,7 +1948,7 @@ self:SetDrawState{First= 3, Num= 4}
 		Sets the texture at from the file path <code>path</code>.
 	</Function>
 </Class>
-<Class name='ActorProxy'>
+<Class name='ActorProxy' grouping='Actor'>
 	<Function name='GetTarget' return='Actor' arguments=''>
 		Returns the target of the ActorProxy.
 	</Function>
@@ -1956,7 +1956,7 @@ self:SetDrawState{First= 3, Num= 4}
 		Sets the ActorProxy target to <code>a</code>.
 	</Function>
 </Class>
-<Class name='ActorScroller'>
+<Class name='ActorScroller' grouping='Actor'>
 	<Function name='GetCurrentItem' return='float' arguments=''>
 		Returns the scroller's current item.
 	</Function>
@@ -2043,7 +2043,7 @@ self:SetDrawState{First= 3, Num= 4}
 		Sets the scroller's transform function from <code>fItemWidth</code>.
 	</Function>
 </Class>
-<Class name='ActorSound'>
+<Class name='ActorSound' grouping='Actor'>
 	<Description>
 		This actor represents a playable sound.  Though the C++ class is ActorSound, it is accessible to Lua via <code>Def.Sound</code>.<br />
 		You must provide <em>ActorSound</em>s with a filepath to the asset using their <code>File</code> attribute.
@@ -2123,7 +2123,7 @@ Def.Sound{
 		Returns the name of the architecture in use.
 	</Function>
 </Class>
-<Class name='Banner'>
+<Class name='Banner' grouping='Actor'>
 	<Function name='GetScrolling' return='bool' arguments=''>
 		Returns <code>true</code> if the Banner is currently scrolling.
 	</Function>
@@ -2167,7 +2167,7 @@ Def.Sound{
 		<!-- todo -->
 	</Function>
 </Class>
-<Class name='BitmapText'>
+<Class name='BitmapText' grouping='Actor'>
 	<Description>
 		<em>BitmapText</em> actors are used to display text on-screen.<br />
 		The font can be specified using the <code>Font</code> attribute. It takes a font name a string,
@@ -2288,7 +2288,7 @@ Def.BitmapText{
 		Wrap the unzoomed text at <code>iWidth</code> pixels. If you <Link class='Actor' function='zoom' /> or <Link class='Actor' function='zoomx' /> by <code>x</code> and you want the text wrapped at <code>width</code>, then you should use <code>wrapwidthpixels(width/x)</code>.
 	</Function>
 </Class>
-<Class name='BPMDisplay'>
+<Class name='BPMDisplay' grouping='Actor'>
 	<Function name='GetText' return='string' arguments=''>
 		Returns the text that is currently set at the exact moment you call it. This is likely only going to be useful in an Update command.
 	</Function>
@@ -2357,7 +2357,7 @@ Def.BitmapText{
 		Returns the number of characters available.
 	</Function>
 </Class>
-<Class name='ComboGraph'>
+<Class name='ComboGraph' grouping='Actor'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup'>
 		Loads the ComboGraph commands from the Metrics in group <code>sMetricsGroup</code>.
 	</Function>
@@ -2365,7 +2365,7 @@ Def.BitmapText{
 		Sets the values of the ComboGraph using the specified StageStats and PlayerStageStats.
 	</Function>
 </Class>
-<Class name='ControllerStateDisplay'>
+<Class name='ControllerStateDisplay' grouping='Actor'>
 	<Function name='LoadGameController' return='void' arguments='string sType, GameController gc'>
 		Loads the ControllerStateDisplay from the specified GameController.
 	</Function>
@@ -2459,7 +2459,7 @@ Def.BitmapText{
 		Returns <code>true</code> if the Course is a ranking course.
 	</Function>
 </Class>
-<Class name='CourseContentsList'>
+<Class name='CourseContentsList' grouping='Actor'>
 	<Function name='SetFromGameState' return='void' arguments=''>
 		Sets the CourseContentsList from the GameState.
 	</Function>
@@ -2597,13 +2597,13 @@ Def.BitmapText{
 		Destroys the spline, freeing the memory allocated for it.  This can only be called on splines created with create_spline().
 	</Function>
 </Class>
-<Class name='DeviceList'>
+<Class name='DeviceList' grouping='Actor'>
 	<Description>
 		A newline-delimited list of available input devices.<br />
 		The list shown will the same as that returned by <Link class='RageInput' function='GetDescriptions'>INPUTMAN:GetDescriptions()</Link>, but with "MonkeyKeyboard" removed.
 	</Description>
 </Class>
-<Class name='DifficultyIcon'>
+<Class name='DifficultyIcon' grouping='Actor'>
 	<Function name='SetFromDifficulty' return='void' arguments='Difficulty dc'>
 		Sets the DifficultyIcon's state from the difficulty passed in.
 	</Function>
@@ -2677,7 +2677,7 @@ Def.BitmapText{
 	<Function name='__tostring' return='string' arguments=''>
 	</Function>
 </Class>
-<Class name='FadingBanner'>
+<Class name='FadingBanner' grouping='Actor'>
 	<Function name='GetLatestIndex' return='int' arguments=''>
 		Returns the index of the last banner loaded.
 	</Function>
@@ -2718,7 +2718,7 @@ Def.BitmapText{
 		See <Link class='Sprite' function='scaletoclipped' />.
 	</Function>
 </Class>
-<Class name='StepsDisplayList'>
+<Class name='StepsDisplayList' grouping='Actor'>
 	<Function name='setfromgamestate' return='void' arguments=''>
 		Sets the StepsDisplayList from the GameState.
 	</Function>
@@ -3268,7 +3268,7 @@ end
 		Unjoins player <code>pn</code>.
 	</Function>
 </Class>
-<Class name='GradeDisplay'>
+<Class name='GradeDisplay' grouping='Actor'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup'>
 		Loads the GradeDisplay commands from the Metrics in group <code>sMetricsGroup</code>.
 	</Function>
@@ -3276,7 +3276,7 @@ end
 		Sets the GradeDisplay to show Grade <code>g</code>.
 	</Function>
 </Class>
-<Class name='GraphDisplay'>
+<Class name='GraphDisplay' grouping='Actor'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup'>
 		Loads the GraphDisplay commands from the Metrics in group <code>sMetricsGroup</code>.
 	</Function>
@@ -3284,7 +3284,7 @@ end
 		Sets the values of the GraphDisplay using the specified StageStats and PlayerStageStats.
 	</Function>
 </Class>
-<Class name='GrooveRadar'>
+<Class name='GrooveRadar' grouping='Actor'>
 	<Function name='SetEmpty' return='void' arguments='PlayerNumber pn'>
 		Sets the GrooveRadar values for Player <code>pn</code> to empty.
 	</Function>
@@ -3295,7 +3295,7 @@ end
 		Sets the GrooveRadar values for Player <code>pn</code> to the specified (floating point) values in the table.
 	</Function>
 </Class>
-<Class name='HelpDisplay'>
+<Class name='HelpDisplay' grouping='Actor'>
 	<Function name='gettips' return='{string}' arguments=''>
 		Returns two tables representing the tips and alternate tips in the HelpDisplay.
 	</Function>
@@ -3370,7 +3370,7 @@ end
 		Returns the rank of the highest score for name in the list.  Returns 0 if there is no score for name in the list.  (returns 1 if name has the top score, 2 if name has the second place score, and so on)
 	</Function>
 </Class>
-<Class name='HoldJudgment'>
+<Class name='HoldJudgment' grouping='Actor'>
 	<Function name='LoadFromMultiPlayer' return='void' arguments='MultiPlayer mp'>
 		Loads the HoldJudgment for the specified MultiPlayer.
 	</Function>
@@ -3389,7 +3389,7 @@ end
 		Returns the Y position of the mouse.
 	</Function>
 </Class>
-<Class name='InputList'>
+<Class name='InputList' grouping='Actor'>
 	<Description>
 		A newline-delimited list of inputs that are currently being pressed.  It will update as inputs are held and released.  Handy for custom TestInput screens.
 	</Description>
@@ -3479,12 +3479,12 @@ end
 		Sets whether logging of messages is enabled.  If log is true, all messages that pass through Broadcast (from the engine for from the theme or from anywhere else), will be logged with Trace.
 	</Function>
 </Class>
-<Class name='MeterDisplay'>
+<Class name='MeterDisplay' grouping='Actor'>
 	<Function name='SetStreamWidth' return='void' arguments='float fWidth'>
 		Sets the width of the MeterDisplay to <code>fWidth</code>.
 	</Function>
 </Class>
-<Class name='Model'>
+<Class name='Model' grouping='Actor'>
 	<Function name='GetDefaultAnimation' return='string' arguments=''>
 		Returns the model's default animation.
 	</Function>
@@ -3508,7 +3508,7 @@ end
 		Returns the number of states the Model has.
 	</Function>
 </Class>
-<Class name='ModIconRow'>
+<Class name='ModIconRow' grouping='Actor'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup, PlayerNumber pn'>
 		Loads the ModIconRow of Player <code>pn</code> from the Metrics in group <code>sMetricsGroup</code>.
 	</Function>
@@ -3716,12 +3716,12 @@ end
 		Returns <code>true</code> if this row forces one choice on all players.
 	</Function>
 </Class>
-<Class name='PaneDisplay'>
+<Class name='PaneDisplay' grouping='Actor'>
 	<Function name='SetFromGameState' return='void' arguments=''>
 		Sets the PaneDisplay from the GameState.
 	</Function>
 </Class>
-<Class name='PercentageDisplay'>
+<Class name='PercentageDisplay' grouping='Actor'>
 	<Function name='LoadFromStats' return='void' arguments='PlayerState pPlayerState, PlayerStageStats pPlayerStageStats'>
 		Sets the PercentageDisplay from the specified PlayerState and PlayerStageStats.
 	</Function>
@@ -4631,7 +4631,7 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		Sets the current stats prefix.  The stats prefix is prepended to the Stats.xml file when loading or saving a profile.  SetStatsPrefix will reload all profiles from the Stats.xml that has the given prefix.  In general, score entries are the only thing not preserved when changing the stats prefix.  Profile::HandleStatsPrefixChange in Profile.cpp lists the fields that are preserved.
 	</Function>
 </Class>
-<Class name='Quad'>
+<Class name='Quad' grouping='Actor'>
 	<Description>
 	 Quads are rectangular actors that players can see.  A Quad can have color, size, position, etc.
 	</Description>
@@ -4865,7 +4865,7 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		Reloads the texture.
 	</Function>
 </Class>
-<Class name='RollingNumbers'>
+<Class name='RollingNumbers' grouping='Actor'>
 	<Function name='Load' return='void' arguments='string sGroupName'>
 		Loads the metrics for this RollingNumbers from <code>sGroupName</code>.
 	</Function>
@@ -4873,7 +4873,7 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		Sets the target number to <code>f</code>.
 	</Function>
 </Class>
-<Class name='Screen'>
+<Class name='Screen' grouping='Screen'>
 	<Description>
 		<em>Screen</em> is the base screen class containing common methods that all specialized screens inherit.<br />
 		By itself, <em>Screen</em> does not have the layers (underlay, overlay, decorations, in, out, cancel) commonly
@@ -5001,19 +5001,19 @@ Details of the <code>event</code> table:
 		[02 Other.lua] Gets a string from the current Screen in the current language.
 	</Function>
 </Class>
-<Class name='ScreenAttract'>
+<Class name='ScreenAttract' grouping='Screen'>
 </Class>
-<Class name='ScreenEdit'>
+<Class name='ScreenEdit' grouping='Screen'>
 	<Function name='GetEditState' return='EditState' arguments=''>
 		Returns the current <Link class='ENUM' function='EditState' />.
 	</Function>
 </Class>
-<Class name='ScreenEvaluation'>
+<Class name='ScreenEvaluation' grouping='Screen'>
 	<Function name='GetStageStats' return='StageStats' arguments=''>
 		Returns the current StageStats.
 	</Function>
 </Class>
-<Class name='ScreenGameplay'>
+<Class name='ScreenGameplay' grouping='Screen'>
 	<Function name='begin_backing_out' return='' arguments=''>
 		This should behave identically to the normal back button behavior.  This function is for the pause menu to use when the player forfeits or restarts, so that a score isn't saved.
 	</Function>
@@ -5066,7 +5066,7 @@ Details of the <code>event</code> table:
 		Pauses or unpauses the game, depending on the value of <code>bPause</code>.
 	</Function>
 </Class>
-<Class name='ScreenHowToPlay'>
+<Class name='ScreenHowToPlay' grouping='Screen'>
 	<Function name='GetLifeMeter' return='LifeMeter' arguments=''>
 		Returns the LifeMeter.
 	</Function>
@@ -5119,7 +5119,7 @@ Details of the <code>event</code> table:
 		Broadcasts a system message.
 	</Function>
 </Class>
-<Class name='ScreenNameEntryTraditional'>
+<Class name='ScreenNameEntryTraditional' grouping='Screen'>
 	<Function name='Backspace' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if Player <code>pn</code> backspaced successfully.
 	</Function>
@@ -5147,18 +5147,18 @@ Details of the <code>event</code> table:
 		Gets the currently selected letter of Player <code>pn</code>.
 	</Function>
 </Class>
-<Class name='ScreenNetEvaluation'>
+<Class name='ScreenNetEvaluation' grouping='Screen'>
 	<Function name='GetNumActivePlayers' return='int' arguments=''>
 		Returns the number of active players.
 	</Function>
 </Class>
-<Class name='ScreenNetRoom'>
+<Class name='ScreenNetRoom' grouping='Screen'>
 </Class>
-<Class name='ScreenNetSelectBase'>
+<Class name='ScreenNetSelectBase' grouping='Screen'>
 </Class>
-<Class name='ScreenNetSelectMusic'>
+<Class name='ScreenNetSelectMusic' grouping='Screen'>
 </Class>
-<Class name='ScreenOptions'>
+<Class name='ScreenOptions' grouping='Screen'>
 	<Function name='AllAreOnLastRow' return='bool'  arguments=''>
 		Returns <code>true</code> if all active players are on the last options row.
 	</Function>
@@ -5175,12 +5175,12 @@ Details of the <code>event</code> table:
 		Returns the specified OptionRow.
 	</Function>
 </Class>
-<Class name='ScreenPlayerOptions'>
+<Class name='ScreenPlayerOptions' grouping='Screen'>
 	<Function name='GetGoToOptions' return='bool' arguments=''>
 		Returns <code>true</code> if we are going to PlayerOptions.
 	</Function>
 </Class>
-<Class name='ScreenProfileLoad'>
+<Class name='ScreenProfileLoad' grouping='Screen'>
 	<Function name='Continue' return='void' arguments=''>
 		Continues to the next screen.
 	</Function>
@@ -5188,7 +5188,7 @@ Details of the <code>event</code> table:
 		Returns <code>true</code> if there is a profile that can be loaded.
 	</Function>
 </Class>
-<Class name='ScreenProfileSave'>
+<Class name='ScreenProfileSave' grouping='Screen'>
 	<Function name='Continue' return='void' arguments=''>
 		Continues to the next screen.
 	</Function>
@@ -5196,12 +5196,12 @@ Details of the <code>event</code> table:
 		Returns <code>true</code> if there is a profile that can be saved.
 	</Function>
 </Class>
-<Class name='ScreenSelectMaster'>
+<Class name='ScreenSelectMaster' grouping='Screen'>
 	<Function name='GetSelectionIndex' return='int' arguments='PlayerNumber pn'>
 		Returns player <code>pn</code>'s current selected item as an integer.
 	</Function>
 </Class>
-<Class name='ScreenSelectMusic'>
+<Class name='ScreenSelectMusic' grouping='Screen'>
 	<Function name='CanOpenOptionsList' return='bool' arguments=''>
 		Returns false if the options list is already open or the UseOptionsList metric is false.
 	</Function>
@@ -5221,7 +5221,7 @@ Details of the <code>event</code> table:
 		[02 StageMods.lua] Sets up modifiers for non-course modes.
 	</Function>
 </Class>
-<Class name='ScreenSelectProfile'>
+<Class name='ScreenSelectProfile' grouping='Screen'>
 	<Function name='Cancel' return='void' arguments=''>
 		Tells the screen to go to the previous screen.
 	</Function>
@@ -5239,7 +5239,7 @@ Details of the <code>event</code> table:
 		• <code>-2</code>: unjoin the player, unlock their MemoryCard, and unmount their MemoryCard
 	</Function>
 </Class>
-<Class name='ScreenTextEntry'>
+<Class name='ScreenTextEntry' grouping='Screen'>
 	<Description>
 		Using ScreenTextEntry is the preferred way to get text input from players.<br />
 		For theming, ScreenTextEntry is unique because it is typically added temporarily to the engine's
@@ -5305,7 +5305,7 @@ local args = {
 </code></pre>
 	</Function>
 </Class>
-<Class name='ScreenWithMenuElements'>
+<Class name='ScreenWithMenuElements' grouping='Screen'>
 	<Function name='Cancel' return='void' arguments=''>
 		Tells the screen to go to the previous screen.
 	</Function>
@@ -5319,7 +5319,7 @@ local args = {
 		Sets whether the screen allows late joining.  This only works for screens that are just ScreenWithMenuElements, as most derived screens have their own hard coded function for whether late joining is allowed.
 	</Function>
 </Class>
-<Class name='ScreenWithMenuElementsSimple'>
+<Class name='ScreenWithMenuElementsSimple' grouping='Screen'>
 </Class>
 <Class name='Song'>
 	<Function name='GetAllSteps' return='{Steps}' arguments=''>
@@ -5708,7 +5708,7 @@ local args = {
 		Returns the warp destination length.
 	</Function>
 </Class>
-<Class name='Sprite'>
+<Class name='Sprite' grouping='Actor'>
 	<Description>
 		<em>Sprite</em> actors can be used to display images and video.  If you want to load a png as part of your UI,
 		or animate a visual effect from a sprite sheet, or play a video file, <em>Sprite</em> is what you're looking for.<br />
@@ -5994,7 +5994,7 @@ local spr = Def.Sprite{
 		Returns <code>true</code> if the Steps use different <code>TimingData</code> from the Song.
 	</Function>
 </Class>
-<Class name='StepsDisplay'>
+<Class name='StepsDisplay' grouping='Actor'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup'>
 		Loads the StepsDisplay commands from the Metrics in group <code>sMetricsGroup</code>.
 	</Function>
@@ -6113,7 +6113,7 @@ local spr = Def.Sprite{
 		Returns true if the note was initiated.
 	</Function>
 </Class>
-<Class name='TextBanner'>
+<Class name='TextBanner' grouping='Actor'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup'>
 		Loads the TextBanner from the specified metrics group.
 	</Function>
@@ -6525,7 +6525,7 @@ local bpms_and_times = timing_data:GetBPMsAndTimes(true)
 		A specific case where this is known to happen is commands that trigger on CurrentSongChanged because the music wheel clears the current song before it finishes loading if the current song is longer than the number of stages remaining.
 	</Function>
 </Class>
-<Class name='WorkoutGraph'>
+<Class name='WorkoutGraph' grouping='Actor'>
 	<Function name='SetFromCurrentWorkout' return='void' arguments=''>
 		Sets the WorkoutGraph from the current Workout.
 	</Function>
@@ -6583,4 +6583,59 @@ SCREENMAN:SystemMessage("hello from Lua!")
 </code></pre>
 </Description>
 </Singletons>
+
+<!--
+	put descriptions for "grouping"s down here
+	these aren't part of the spec in Lua.xsd, so they won't appear
+	when Lua.xml is viewed in a web browser, but can still be used
+	by external API doc applications until ExportLuaInformation
+	is fixed/expanded.
+ -->
+
+<!-- Actors -->
+<Actors>
+	<Description>
+		Actors are the basic building blocks used to script content for StepMania.  When the player
+		sees and interacts with something on-screen, like a menu system or a 3D model of a dancing
+		character, that <em>something</em> is an actor.<br />
+		<br />
+		Each of these actors is available to Lua as a function within the global <code>Def</code> table.<br />
+		<br />
+		As functions, each actor accepts a table as an argument, and that table contains attributes
+		and commands that define how the actor will behave when rendered by the StepMania engine.<br />
+		<br />
+		Basic examples:
+<pre><code>
+-- Sprite, Sound, and Quad are each Actors with unique specializations
+local spr = Def.Sprite{ Texture="./path/to/image.png" }
+local snd = Def.Sound{ File="./path/to/soundeffect.ogg" }
+local sqr = Def.Quad{ InitCommand=function(self) self:xy(80, 100) end }
+
+-- common convention is to not use () with actor
+-- functions, but syntax like this is also valid
+local args = { Texture="./path/to/image.png" }
+local spr  = Def.Sprite(args)
+</code></pre>
+	</Description>
+</Actors>
+
+<Screens>
+	<Description>
+		For players, screens are individual units of a game cycle that they interact with. Most players
+		understand there is a place where gameplay occurs (ScreenGameplay) that is different than the
+		place used to choose the next song (ScreenSelectMusic).<br />
+		<br />
+		For scripters, screens are collections of distinct actors wrapped up in a single
+		ActorFrame.  That ActorFrame is the "screen" that players interact with.<br />
+		<br />
+		To be available in a theme, screens must be defined in that theme's metrics.ini file with the
+		desired name between square brackets like <code>[ScreenTitleJoin]</code> or
+		<code>[ScreenPlayerOptions]</code>.<br />
+		<br />
+		The StepMania engine defines many, many classes of screens, each with unique specialization
+		not directly available to Lua. For now, the screens documented here are only those with methods
+		available to Lua.
+	</Description>
+</Screens>
+
 </Documentation>
