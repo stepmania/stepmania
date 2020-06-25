@@ -89,6 +89,7 @@
 			<xs:element name="Link" type="Link" />
 			<!-- HTML elements we want to let through. -->
 			<xs:element name="code" />
+			<xs:element name="pre" />
 			<xs:element name="br" />
 			<xs:element name="del" />
 		</xs:choice>
