@@ -185,7 +185,7 @@ else()
     list(APPEND SMDATA_ARCH_LOADING_HPP
                 "arch/LoadingWindow/LoadingWindow_MacOSX.h")
   elseif(LINUX)
-    if(GTK2_FOUND)
+    if(GTK3_FOUND)
       list(APPEND SMDATA_ARCH_LOADING_SRC
                   "arch/LoadingWindow/LoadingWindow_Gtk.cpp")
       list(APPEND SMDATA_ARCH_LOADING_HPP
@@ -231,14 +231,12 @@ if(NOT APPLE)
                   "arch/Lights/LightsDriver_Linux_PIUIO.cpp"
                   "arch/Lights/LightsDriver_Linux_PIUIO_Leds.cpp"
                   "arch/Lights/LightsDriver_Linux_ITGIO.cpp"
-                  "arch/Lights/LightsDriver_LinuxWeedTech.cpp"
-                  "arch/Lights/LightsDriver_LinuxParallel.cpp")
+                  "arch/Lights/LightsDriver_LinuxWeedTech.cpp")
       list(APPEND SMDATA_ARCH_LIGHTS_HPP
                   "arch/Lights/LightsDriver_Linux_PIUIO.h"
                   "arch/Lights/LightsDriver_Linux_PIUIO_Leds.h"
                   "arch/Lights/LightsDriver_Linux_ITGIO.h"
-                  "arch/Lights/LightsDriver_LinuxWeedTech.h"
-                  "arch/Lights/LightsDriver_LinuxParallel.h")
+                  "arch/Lights/LightsDriver_LinuxWeedTech.h")
       if(WITH_PARALLEL_PORT)
         list(APPEND SMDATA_ARCH_LIGHTS_SRC
                     "arch/Lights/LightsDriver_LinuxParallel.cpp")

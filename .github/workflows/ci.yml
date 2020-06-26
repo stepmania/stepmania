@@ -13,7 +13,7 @@ jobs:
           libasound2-dev
           libgl-dev
           libglew-dev
-          libgtk2.0-dev
+          libgtk-3-dev
           libjack-dev
           libmad0-dev
           libpulse-dev
@@ -40,10 +40,11 @@ jobs:
           libasound2-dev
           libgl-dev
           libglew-dev
-          libgtk2.0-dev
+          libgtk-3-dev
           libjack-dev
           libjsoncpp-dev
           libmad0-dev
+          libpng-dev
           libpulse-dev
           libtomcrypt-dev
           libtommath-dev
@@ -55,7 +56,6 @@ jobs:
           libxtst-dev
           ninja-build
       - name: Configure
-        # TODO: png: https://github.com/stepmania/stepmania/issues/1881
         run: cmake -G Ninja -B build
           -DWITH_SYSTEM_FFMPEG=ON
           -DWITH_SYSTEM_GLEW=ON
@@ -64,7 +64,7 @@ jobs:
           -DWITH_SYSTEM_MAD=ON
           -DWITH_SYSTEM_OGG=ON
           -DWITH_SYSTEM_PCRE=ON
-          -DWITH_SYSTEM_PNG=OFF
+          -DWITH_SYSTEM_PNG=ON
           -DWITH_SYSTEM_TOMCRYPT=ON
           -DWITH_SYSTEM_TOMMATH=ON
           -DWITH_SYSTEM_ZLIB=ON
