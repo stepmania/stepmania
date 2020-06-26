@@ -737,8 +737,8 @@ public:
 	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
 	DEFINE_METHOD( GetScore,					m_iScore )
 	DEFINE_METHOD( GetCurMaxScore,				m_iCurMaxScore )
-	DEFINE_METHOD( GetTapNoteScores,			m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
-	DEFINE_METHOD( GetHoldNoteScores,			m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
+	DEFINE_METHOD( GetTapNoteScore,			m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
+	DEFINE_METHOD( GetHoldNoteScore,			m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
 	DEFINE_METHOD( FullCombo,					FullCombo() )
 	DEFINE_METHOD( FullComboOfScore,			FullComboOfScore( Enum::Check<TapNoteScore>(L, 1) ) )
 	DEFINE_METHOD( MaxCombo,					GetMaxCombo().m_cnt )
@@ -898,8 +898,8 @@ public:
 		ADD_METHOD( GetCurrentScoreMultiplier );
 		ADD_METHOD( GetScore );
 		ADD_METHOD( GetCurMaxScore );
-		ADD_METHOD( GetTapNoteScores );
-		ADD_METHOD( GetHoldNoteScores );
+		ADD_METHOD( GetTapNoteScore );
+		ADD_METHOD( GetHoldNoteScore );
 		ADD_METHOD( FullCombo );
 		ADD_METHOD( FullComboOfScore );
 		ADD_METHOD( MaxCombo );
