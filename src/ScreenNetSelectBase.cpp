@@ -608,7 +608,7 @@ void ColorBitmapText::DrawPrimitives( )
 			RageColor c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = c;
+				m_aVertices[i].c = RageVColor(c);
 			DrawChars( true );
 
 			DISPLAY->PopMatrix();
@@ -630,7 +630,7 @@ void ColorBitmapText::DrawPrimitives( )
 				}
 			}
 			for( unsigned j=0; j<4; j++ )
-				m_aVertices[i+j].c = c;
+				m_aVertices[i+j].c = RageVColor(c);
 		}
 
 		DrawChars( false );
@@ -642,7 +642,7 @@ void ColorBitmapText::DrawPrimitives( )
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
 		for( unsigned i=0; i<m_aVertices.size(); i++ )
-			m_aVertices[i].c = m_pTempState->glow;
+			m_aVertices[i].c = RageVColor(m_pTempState->glow);
 		DrawChars( false );
 	}
 }

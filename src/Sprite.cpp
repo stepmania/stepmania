@@ -639,16 +639,16 @@ void Sprite::DrawTexture( const TweenState *state )
 			DISPLAY->TranslateWorld( m_fShadowLengthX, m_fShadowLengthY, 0 );	// shift by 5 units
 			RageColor c = m_ShadowColor;
 			c.a *= state->diffuse[0].a;
-			v[0].c = v[1].c = v[2].c = v[3].c = c;	// semi-transparent black
+			v[0].c = v[1].c = v[2].c = v[3].c = RageVColor(c);	// semi-transparent black
 			DISPLAY->DrawQuad( v );
 			DISPLAY->PopMatrix();
 		}
 
 		// render the diffuse pass
-		v[0].c = state->diffuse[0]; // top left
-		v[1].c = state->diffuse[2]; // bottom left
-		v[2].c = state->diffuse[3]; // bottom right
-		v[3].c = state->diffuse[1]; // top right
+		v[0].c = RageVColor(state->diffuse[0]); // top left
+		v[1].c = RageVColor(state->diffuse[2]); // bottom left
+		v[2].c = RageVColor(state->diffuse[3]); // bottom right
+		v[3].c = RageVColor(state->diffuse[1]); // top right
 		DISPLAY->DrawQuad( v );
 	}
 
@@ -656,7 +656,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	if( state->glow.a > 0.0001f )
 	{
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
-		v[0].c = v[1].c = v[2].c = v[3].c = state->glow;
+		v[0].c = v[1].c = v[2].c = v[3].c = RageVColor(state->glow);
 		DISPLAY->DrawQuad( v );
 	}
 	DISPLAY->SetEffectMode( EffectMode_Normal );

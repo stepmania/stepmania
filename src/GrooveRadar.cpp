@@ -161,8 +161,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	v[0].p = RageVector3( 0, 0, 0 );
 	RageColor midcolor = color;
 	midcolor.a = RADAR_CENTER_ALPHA;
-	v[0].c = midcolor;
-	v[1].c = color;
+	v[0].c = RageVColor(midcolor);
+	v[1].c = RageVColor(color);
 
 	for( int i=0; i<NUM_SHOWN_RADAR_CATEGORIES+1; i++ ) // do one extra to close the fan
 	{
@@ -190,7 +190,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
 
 		v[i].p = RageVector3( fX, fY, 0 );
-		v[i].c = this->m_pTempState->diffuse[0];
+		v[i].c = RageVColor(this->m_pTempState->diffuse[0]);
 	}
 
 	// TODO: Add this back in -Chris

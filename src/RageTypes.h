@@ -254,71 +254,13 @@ public:
 	float r, g, b, a;
 };
 
-/* Convert floating-point 0..1 value to integer 0..255 value. *
- *
- * As a test case,
- *
- * int cnts[1000]; memset(cnts, 0, sizeof(cnts));
- * for( float n = 0; n <= 1.0; n += 0.0001 ) cnts[FTOC(n)]++;
- * for( int i = 0; i < 256; ++i ) printf("%i ", cnts[i]);
- *
- * should output the same value (+-1) 256 times.  If this function is
- * incorrect, the first and/or last values may be biased. */
-#ifdef CPU_AARCH64
-inline unsigned char FTOC(float a)
+/* Color type used only in vertex lists. */
+struct RageVColor
 {
-	const float v = a < 0.0f ? 0.0f : (a > 1.0f ? 1.0f : a);
-	return static_cast<unsigned char>(v * 255.0f);
-}
-#else
-inline unsigned char FTOC(float a)
-{
-	//This value is 2^52 * 1.5.
-	const double INT_MANTISSA = 6755399441055744.0;
-
-	/* Be sure to truncate (not round) positive values. The highest value that
-	* should be converted to 1 is roughly(1 / 256 - 0.00001); if we don't
-	* truncate, values up to (1/256 + 0.5) will be converted to 1, which is
-	* wrong. */
-	double base = double(a * 256.f - 0.5f);
-
-	/* INT_MANTISSA is chosen such that, when added to a sufficiently small
-	* double, the mantissa bits of that double can be reinterpreted as that
-	* number rounded to an integer. This is done to improve performance. */
-	base += INT_MANTISSA;
-	int ret = reinterpret_cast<int&>(base);
-
-	/* Benchmarking shows that clamping here, as integers, is much faster than clamping
-	* before the conversion, as floats. */
-	if (ret < 0) {
-		return 0;
-	}
-	if (ret > 255) {
-		return 255;
-	}
-
-	return static_cast<unsigned char>(ret);
-}
-#endif
-
-/* Color type used only in vertex lists.  OpenGL expects colors in
- * r, g, b, a order, independent of endianness, so storing them this
- * way avoids endianness problems.  Don't try to manipulate this; only
- * manip RageColors. */
-/* Perhaps the math in RageColor could be moved to RageVColor.  We don't need the 
- * precision of a float for our calculations anyway.   -Chris */
-class RageVColor
-{
-public:
-	uint8_t b,g,r,a;	// specific ordering required by Direct3D
-
-	RageVColor(): b(0), g(0), r(0), a(0) { }
-	RageVColor(const RageColor &rc): b(0), g(0), r(0), a(0) { *this = rc; }
-	RageVColor &operator= (const RageColor &rc)
-	{
-		r = FTOC(rc.r); g = FTOC(rc.g); b = FTOC(rc.b); a = FTOC(rc.a);
-		return *this;
-	}
+	float r, g, b, a;
+	RageVColor(): r(0.0f), g(0.0f), b(0.0f), a(0.0f) { }
+	RageVColor(const RageColor &rc): r(rc.r), g(rc.g), b(rc.b), a(rc.a) { }
+	RageVColor &operator= (const RageColor &rc) = delete;
 };
 
 namespace StepMania

@@ -120,10 +120,10 @@ void ActorMultiTexture::DrawPrimitives()
 	v[2].t = RageVector2( pTexCoordRect->right, pTexCoordRect->bottom );	// bottom right
 	v[3].t = RageVector2( pTexCoordRect->right, pTexCoordRect->top );	// top right
 
-	v[0].c = m_pTempState->diffuse[0];	// top left
-	v[1].c = m_pTempState->diffuse[2];	// bottom left
-	v[2].c = m_pTempState->diffuse[3];	// bottom right
-	v[3].c = m_pTempState->diffuse[1];	// top right
+	v[0].c = RageVColor(m_pTempState->diffuse[0]);	// top left
+	v[1].c = RageVColor(m_pTempState->diffuse[2]);	// bottom left
+	v[2].c = RageVColor(m_pTempState->diffuse[3]);	// bottom right
+	v[3].c = RageVColor(m_pTempState->diffuse[1]);	// top right
 
 	DISPLAY->DrawQuad( v );
 

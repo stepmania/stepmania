@@ -32,9 +32,9 @@ public:
 		Actor::SetTextureRenderStates();
 
 		for( unsigned i = 0; i < m_Quads.size(); ++i )
-			m_Quads[i].c = this->m_pTempState->diffuse[0];
+			m_Quads[i].c = RageVColor(this->m_pTempState->diffuse[0]);
 		for( unsigned i = 0; i < m_pCircles.size(); ++i )
-			m_pCircles[i].c = this->m_pTempState->diffuse[0];
+			m_pCircles[i].c = RageVColor(this->m_pTempState->diffuse[0]);
 
 		DISPLAY->DrawQuads( &m_Quads[0], m_Quads.size() );
 
@@ -118,7 +118,7 @@ public:
 
 		for( int i = 0; i < 2*VALUE_RESOLUTION; ++i )
 		{
-			m_Slices[i].c = RageColor(1,1,1,1);
+			m_Slices[i].c = RageVColor(RageColor(1, 1, 1, 1));
 			m_Slices[i].t = RageVector2( 0,0 );
 		}
 	}
@@ -265,7 +265,7 @@ void GraphDisplay::UpdateVerts()
 		m_pGraphBody->m_Slices[i*2+1].t = RageVector2( fU, pRect->bottom );
 
 		LineStrip[i].p = RageVector3( fX, fY, 0 );
-		LineStrip[i].c = RageColor( 1,1,1,1 );
+		LineStrip[i].c = RageVColor(RageColor( 1, 1, 1, 1 ));
 		LineStrip[i].t = RageVector2( 0,0 );
 	}
 

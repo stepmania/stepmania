@@ -688,7 +688,7 @@ void BitmapText::DrawPrimitives()
 			RageColor c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = c;
+				m_aVertices[i].c = RageVColor(c);
 			DrawChars( false );
 
 			DISPLAY->PopMatrix();
@@ -700,7 +700,7 @@ void BitmapText::DrawPrimitives()
 		{
 			stroke_color.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = stroke_color;
+				m_aVertices[i].c = RageVColor(stroke_color);
 			DrawChars( true );
 		}
 
@@ -712,7 +712,7 @@ void BitmapText::DrawPrimitives()
 			{
 				const RageColor color = RAINBOW_COLORS[color_index];
 				for( unsigned j=i; j<i+4; j++ )
-					m_aVertices[j].c = color;
+					m_aVertices[j].c = RageVColor(color);
 
 				color_index = (color_index+1) % RAINBOW_COLORS.size();
 			}
@@ -728,10 +728,10 @@ void BitmapText::DrawPrimitives()
 				iEnd = min( iEnd, m_aVertices.size() );
 				for( ; i < iEnd; i += 4 )
 				{
-					m_aVertices[i+0].c = m_pTempState->diffuse[0];	// top left
-					m_aVertices[i+1].c = m_pTempState->diffuse[2];	// bottom left
-					m_aVertices[i+2].c = m_pTempState->diffuse[3];	// bottom right
-					m_aVertices[i+3].c = m_pTempState->diffuse[1];	// top right
+					m_aVertices[i+0].c = RageVColor(m_pTempState->diffuse[0]);	// top left
+					m_aVertices[i+1].c = RageVColor(m_pTempState->diffuse[2]);	// bottom left
+					m_aVertices[i+2].c = RageVColor(m_pTempState->diffuse[3]);	// bottom right
+					m_aVertices[i+3].c = RageVColor(m_pTempState->diffuse[1]);	// top right
 				}
 				if( iter == m_mAttributes.end() )
 					break;
@@ -754,10 +754,10 @@ void BitmapText::DrawPrimitives()
 				}
 				for( ; i < iEnd; i += 4 )
 				{
-					m_aVertices[i+0].c = temp_attr_diffuse[0];	// top left
-					m_aVertices[i+1].c = temp_attr_diffuse[2];	// bottom left
-					m_aVertices[i+2].c = temp_attr_diffuse[3];	// bottom right
-					m_aVertices[i+3].c = temp_attr_diffuse[1];	// top right
+					m_aVertices[i+0].c = RageVColor(temp_attr_diffuse[0]);	// top left
+					m_aVertices[i+1].c = RageVColor(temp_attr_diffuse[2]);	// bottom left
+					m_aVertices[i+2].c = RageVColor(temp_attr_diffuse[3]);	// bottom right
+					m_aVertices[i+3].c = RageVColor(temp_attr_diffuse[1]);	// top right
 				}
 			}
 		}
@@ -812,7 +812,7 @@ void BitmapText::DrawPrimitives()
 			size_t iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
 			iEnd = min( iEnd, m_aVertices.size() );
 			for( ; i < iEnd; ++i )
-				m_aVertices[i].c = m_pTempState->glow;
+				m_aVertices[i].c = RageVColor(m_pTempState->glow);
 			if( iter == m_mAttributes.end() )
 				break;
 			// Set the glow according to this attribute.
@@ -827,11 +827,11 @@ void BitmapText::DrawPrimitives()
 			{
 				if( m_internalGlow.a > 0 )
 				{
-					m_aVertices[i].c = attr.glow * m_internalGlow;
+					m_aVertices[i].c = RageVColor(attr.glow * m_internalGlow);
 				}
 				else
 				{
-					m_aVertices[i].c = attr.glow;
+					m_aVertices[i].c = RageVColor(attr.glow);
 				}
 			}
 		}
