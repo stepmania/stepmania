@@ -1,0 +1,5 @@
+#COURSE:Forced Modifiers 1;
+#SCRIPTER:Rhythm Lunatic;
+#DESCRIPTION:This course forces modifiers that persist for a song. Forced noteskins do not work currently.;
+#SONG:StepMania 5\Springtime:Medium:nodifficult,flip;
+#SONG:StepMania 5\MechaTribe Assault:Easy:nodifficult,invert;
