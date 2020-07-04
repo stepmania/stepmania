@@ -1,0 +1,7 @@
+#COURSE:Pick by meter;
+#SCRIPTER:Rhythm Lunatic;
+#DESCRIPTION:This course demonstrates picking steps by meter. This limits you to one gamemode and style, unless there are multiple steps with the specified level.;
+
+#SONG:StepMania 5\Springtime:21:nodifficult;
+
+#SONG:StepMania 5\MechaTribe Assault:19:nodifficult;

@@ -1,0 +1,6 @@
+#COURSE:Doubles Example;
+#STYLE:DOUBLE;
+#SCRIPTER:Rhythm Lunatic;
+#DESCRIPTION:This course uses the STYLE tag. When AutoSetStyle is enabled the music wheel will pick the Trail generated for doubles charts.;
+#SONG:*:1..20:nodifficult;
+#SONG:*:1..20:nodifficult;
