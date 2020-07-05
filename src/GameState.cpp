@@ -1915,6 +1915,12 @@ bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
 		return false;
 
 	const PlayerOptions &po = m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
+	const SongOptions &so = m_SongOptions.GetPreferred();
+
+	// Playing a song/course at a slower music rate should disqualify score. -x0rbl
+	if (so.m_fMusicRate < 1.0) {
+		return true;
+	}
 
 	// Check the stored player options for disqualify.  Don't disqualify because
 	// of mods that were forced.

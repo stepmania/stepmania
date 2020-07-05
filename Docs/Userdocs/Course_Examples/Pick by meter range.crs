@@ -1,0 +1,7 @@
+#COURSE:Pick by meter range;
+#SCRIPTER:Rhythm Lunatic;
+#DESCRIPTION:This course picks a random song and steps in the meter range of 5-10.;
+#SONG:*:5..10:;
+#SONG:*:5..10:;
+#SONG:*:5..10:;
+#SONG:*:5..10:;

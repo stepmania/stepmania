@@ -1,4 +1,4 @@
-if(NOT GTK2_FOUND)
+if(NOT GTK3_FOUND)
   return()
 endif()
 
@@ -8,10 +8,6 @@ add_library("GtkModule"
             "arch/LoadingWindow/LoadingWindow_GtkModule.h")
 
 sm_add_compile_flag("GtkModule" "-std=${SM_CPP_STANDARD}")
-if(CMAKE_CXX_COMPILER MATCHES "clang")
-  sm_add_compile_flag("GtkModule" "-stdlib=libc++")
-  set_target_properties("GtkModule" PROPERTIES LINK_FLAGS "-stdlib=libc++")
-endif()
 
 # It is normally not appropriate to set the prefix to the empty string. This is
 # to maintain compatibility with the current source. At some point, it may be
@@ -32,13 +28,13 @@ set_target_properties("GtkModule"
 set_target_properties("GtkModule"
                       PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO
                                  "${SM_ROOT_DIR}")
-target_link_libraries("GtkModule" ${GTK2_LIBRARIES})
+target_link_libraries("GtkModule" ${GTK3_LIBRARIES})
 set_property(TARGET "GtkModule" PROPERTY FOLDER "Internal Libraries")
 list(APPEND SM_GTK_INCLUDE_DIRS
             "${SM_SRC_DIR}"
             "${SM_SRC_DIR}/generated"
             "${SM_SRC_DIR}/arch/LoadingWindow"
-            "${GTK2_INCLUDE_DIRS}")
+            "${GTK3_INCLUDE_DIRS}")
 
 sm_add_compile_definition("GtkModule" CMAKE_POWERED)
 

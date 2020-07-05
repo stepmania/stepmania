@@ -8,9 +8,8 @@ class InputHandler_SextetStream: public InputHandler
 {
 public:
 	InputHandler_SextetStream();
-	virtual ~InputHandler_SextetStream();
-	//virtual void Update();
-	virtual void GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut);
+	~InputHandler_SextetStream();
+	void GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut);
 
 public:
 	class Impl;
@@ -36,12 +35,6 @@ public:
 	// couldn't get RageFile to work here, possibly because I haven't
 	// determined how to disable buffering on an input file.) 
 	InputHandler_SextetStreamFromFile();
-	InputHandler_SextetStreamFromFile(const RString& filename);
-
-	// The file object passed here must already be open and buffering should
-	// be disabled. The file object will be closed in the destructor.
-	InputHandler_SextetStreamFromFile(std::FILE * file);
-
 };
 
 #endif

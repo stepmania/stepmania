@@ -1,8 +1,6 @@
 if(WITH_SYSTEM_JSONCPP)
-  find_library(JSONCPP_LIBRARY jsoncpp)
-  if(JSONCPP_LIBRARY MATCHES "JSONCPP_LIBRARY-NOTFOUND")
-    message(FATAL_ERROR "Need jsoncpp.")
-  endif()
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(JSONCPP REQUIRED jsoncpp)
 else()
   list(APPEND JSON_SRC
               "jsoncpp/src/lib_json/json_reader.cpp"
@@ -40,8 +38,5 @@ else()
     sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
   else() # Unix/Linux
     sm_add_compile_flag("jsoncpp" "-std=gnu++11")
-    if(CMAKE_CXX_COMPILER MATCHES "clang")
-      sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
-    endif()
   endif()
 endif()

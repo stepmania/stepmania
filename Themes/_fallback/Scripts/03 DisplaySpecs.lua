@@ -94,14 +94,17 @@ end
 
 -- TODO: here, I'm replicating the AspectRatios table from "02 Utilities.lua",
 -- but in a friendly format
+-- name can optionally be provided as a user-facing string for ConfAspectRatio
 local winFracs = {
-	{n=3, d=4},
-	{n=1, d=1},
-	{n=5, d=4},
-	{n=4, d=3},
+	{n=3,  d=4},
+	{n=1,  d=1},
+	{n=5,  d=4},
+	{n=4,  d=3},
 	{n=16, d=10},
 	{n=16, d=9},
-	{n=8, d=3}
+	{n=8,  d=3},
+	{n=64, d=27, name="21:9"},
+	{n=9,  d=16},
 }
 -- Maximum distance between aspect ratios to be considered equivalent
 -- (approximately half the distance between 16:9 and 16:10)
@@ -243,7 +246,7 @@ function ConfAspectRatio()
 			local vals = {}
 			foreach_ordered(ratios, function(v, f)
 						vals[#vals + 1] = f.n/f.d
-						choices[#choices + 1] = tostring(f.n) .. ':' .. tostring(f.d)
+						choices[#choices + 1] = (type(f.name)=="string" and f.name) or ("%d:%d"):format(f.n, f.d)
 			end)
 			self.Choices = choices
 			self.ChoiceVals = vals

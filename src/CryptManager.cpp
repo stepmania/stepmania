@@ -1,4 +1,7 @@
 #include "global.h"
+
+#include <tomcrypt.h>
+
 #include "CryptManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -8,8 +11,6 @@
 #include "LuaBinding.h"
 #include "LuaReference.h"
 #include "LuaManager.h"
-
-#include "libtomcrypt/src/headers/tomcrypt.h"
 
 CryptManager*	CRYPTMAN	= nullptr;	// global and accessible from anywhere in our program
 

@@ -80,6 +80,8 @@ LinuxInputManager::LinuxInputManager()
 	// Sort devices for more consistent numbering.
 	std::sort(m_vsPendingEventDevices.begin(), m_vsPendingEventDevices.end(), cmpDevices);
 	std::sort(m_vsPendingJoystickDevices.begin(), m_vsPendingJoystickDevices.end(), cmpDevices);
+
+	closedir(sysClassInput);
 }
 
 void LinuxInputManager::InitDriver(InputHandler_Linux_Event* driver)

@@ -1,0 +1,9 @@
+#COURSE:Endless Course Example;
+#SCRIPTER:Rhythm Lunatic and quietly-turning;
+#DESCRIPTION:This is an example of an endless course using the REPEAT tag.;
+#METER:Challenge:10;
+#SONG:*:Hard;
+#SONG:*:Hard;
+#SONG:*:Hard;
+#SONG:*:Hard;
+#REPEAT:YES;

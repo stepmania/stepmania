@@ -3,6 +3,7 @@
 #include "BackgroundUtil.h"
 #include "GameManager.h"
 #include "MsdFile.h"
+#include "NoteDataUtil.h"
 #include "NoteTypes.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
@@ -974,28 +975,26 @@ bool SMLoader::LoadFromBGChangesVector( BackgroundChange &change, std::vector<RS
 	case 6:
 		// param 7 overrides this.
 		// Backward compatibility:
-		if( change.m_def.m_sEffect.empty() )
+		if( change.m_def.m_sEffect.empty() && !NoteDataUtil::StringInterpretsAs( aBGChangeValues[5], 0 ) )
 		{
-			bool bLoop = std::stoi( aBGChangeValues[5] ) != 0;
-			if( !bLoop )
-				change.m_def.m_sEffect = SBE_StretchNoLoop;
+			change.m_def.m_sEffect = SBE_StretchNoLoop;
 		}
 		// fall through
 	case 5:
 		// param 7 overrides this.
 		// Backward compatibility:
-		if( change.m_def.m_sEffect.empty() )
+		if( change.m_def.m_sEffect.empty() && !NoteDataUtil::StringInterpretsAs( aBGChangeValues[4], 0 ) )
 		{
-			bool bRewindMovie = std::stoi( aBGChangeValues[4] ) != 0;
-			if( bRewindMovie )
-				change.m_def.m_sEffect = SBE_StretchRewind;
+			change.m_def.m_sEffect = SBE_StretchRewind;
 		}
 		// fall through
 	case 4:
 		// param 9 overrides this.
 		// Backward compatibility:
-		if( change.m_sTransition.empty() )
-			change.m_sTransition = (std::stoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
+		if( change.m_sTransition.empty() && !NoteDataUtil::StringInterpretsAs( aBGChangeValues[3], 0 ) )
+		{
+			change.m_sTransition = SBT_CrossFade;
+		}
 		// fall through
 	case 3:
 		change.m_fRate = StringToFloat( aBGChangeValues[2] );

@@ -5,6 +5,7 @@ StepMania is an advanced cross-platform rhythm game for home and arcade use.
 
 Advanced cross-platform rhythm game for home and arcade use.
 
+[![Continuous integration](https://github.com/stepmania/stepmania/workflows/Continuous%20integration/badge.svg?branch=5_1-new)](https://github.com/stepmania/stepmania/actions?query=workflow%3A%22Continuous+integration%22+branch%3A5_1-new)
 [![Build Status](https://travis-ci.org/stepmania/stepmania.svg?branch=master)](https://travis-ci.org/stepmania/stepmania)
 [![Build status](https://ci.appveyor.com/api/projects/status/uvoplsnyoats81r2?svg=true)](https://ci.appveyor.com/project/Nickito12/stepmania)
 
@@ -23,9 +24,9 @@ StepMania can be compiled using [CMake](http://www.cmake.org/). More information
 
 ## Resources
 
-* Website: http://www.stepmania.com/
+* Website: https://www.stepmania.com/
 * IRC: irc.freenode.net/#stepmania-devs
-* Lua for SM5: https://dguzek.github.io/Lua-For-SM5/
+* Lua for SM5: https://quietly-turning.github.io/Lua-For-SM5/
 * Lua API Documentation can be found in the Docs folder.
 
 ## Licensing Terms
