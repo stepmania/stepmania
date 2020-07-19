@@ -244,7 +244,8 @@ InputHandler += arch/InputHandler/InputHandler_MonkeyKeyboard.cpp arch/InputHand
 
 Lights += arch/Lights/LightsDriver_Export.cpp arch/Lights/LightsDriver_Export.h \
 	arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h \
-	arch/Lights/LightsDriver_SextetStream.cpp arch/Lights/LightsDriver_SextetStream.h
+	arch/Lights/LightsDriver_SextetStream.cpp arch/Lights/LightsDriver_SextetStream.h \
+	arch/Lights/SextetUtils.h
 
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Null.h
 
@@ -394,6 +395,8 @@ if WINDOWS
 		arch/InputHandler/InputHandler_Win32_Para.cpp arch/InputHandler/InputHandler_Win32_Para.h \
 		arch/InputHandler/InputHandler_Win32_Pump.cpp arch/InputHandler/InputHandler_Win32_Pump.h \
 		arch/InputHandler/InputHandler_Win32_RTIO.cpp arch/InputHandler/InputHandler_Win32_RTIO.h
+
+ Lights += arch/Lights/LightsDriver_Win32Serial.cpp arch/Lights/LightsDriver_Win32Serial.h
 
  Sound += arch/Sound/RageSoundDriver_DSound_Software.cpp arch/Sound/RageSoundDriver_DSound_Software.h \
 	arch/Sound/DSoundHelpers.cpp arch/Sound/DSoundHelpers.h \
