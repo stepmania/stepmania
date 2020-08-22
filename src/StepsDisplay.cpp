@@ -225,8 +225,14 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		char on = char('1');
 		char off = '0';
 
+		if( params.iMeter > 0 )
+		{
+			on = params.iMeter >= m_iNumTicks ? char('3') : char('2');
+			off = params.iMeter >= m_iNumTicks ? char('2') : char('1');
+		}
+		
 		RString sNewText;
-		int iNumOn = min( (int)m_iMaxTicks, params.iMeter );
+		int iNumOn = min( (int)m_iMaxTicks, params.iMeter % m_iNumTicks );
 		sNewText.insert( sNewText.end(), iNumOn, on );
 		int iNumOff = max( 0, m_iNumTicks-iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
