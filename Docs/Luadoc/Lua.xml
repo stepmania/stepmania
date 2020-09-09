@@ -12,6 +12,7 @@
 		<Function name='BGFitChoiceExample'/>
 		<Function name='BGFitInputActor'/>
 		<Function name='Basename'/>
+		<Function name='BinaryToHex'/>
 		<Function name='BoostColor'/>
 		<Function name='Brightness'/>
 		<Function name='Center1Player'/>
@@ -757,6 +758,8 @@
 			<Function name='MD5String'/>
 			<Function name='SHA1File'/>
 			<Function name='SHA1String'/>
+			<Function name='SHA256File'/>
+			<Function name='SHA256String'/>
 		</Class>
 		<Class name='CubicSplineN'>
 			<Function name='solve'/>
