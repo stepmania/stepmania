@@ -27,6 +27,7 @@ addons:
       - libvorbis-dev
       - libxinerama-dev
       - libxrandr-dev
+      - libxtst-dev
       - yasm
 
 matrix:

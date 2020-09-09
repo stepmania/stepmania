@@ -5,16 +5,14 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
-#include <tomcrypt.h>
+#include "tomcrypt.h"
 
-/** 
+/**
    @file pkcs_5_2.c
    PKCS #5, Algorithm #2, Tom St Denis
 */
-#ifdef PKCS_5
+#ifdef LTC_PKCS_5
 
 /**
    Execute PKCS #5 v2
@@ -28,7 +26,7 @@
    @param outlen            [in/out] The max size and resulting size of the algorithm output
    @return CRYPT_OK if successful
 */
-int pkcs_5_alg2(const unsigned char *password, unsigned long password_len, 
+int pkcs_5_alg2(const unsigned char *password, unsigned long password_len,
                 const unsigned char *salt,     unsigned long salt_len,
                 int iteration_count,           int hash_idx,
                 unsigned char *out,            unsigned long *outlen)
@@ -69,13 +67,13 @@ int pkcs_5_alg2(const unsigned char *password, unsigned long password_len,
    while (left != 0) {
        /* process block number blkno */
        zeromem(buf[0], MAXBLOCKSIZE*2);
-       
+
        /* store current block number and increment for next pass */
        STORE32H(blkno, buf[1]);
        ++blkno;
 
        /* get PRF(P, S||int(blkno)) */
-       if ((err = hmac_init(hmac, hash_idx, password, password_len)) != CRYPT_OK) { 
+       if ((err = hmac_init(hmac, hash_idx, password, password_len)) != CRYPT_OK) {
           goto LBL_ERR;
        }
        if ((err = hmac_process(hmac, salt, salt_len)) != CRYPT_OK) {
@@ -124,6 +122,6 @@ LBL_ERR:
 #endif
 
 
-/* $Source$ */
-/* $Revision: 24838 $ */
-/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */
+/* ref:         HEAD -> master, tag: v1.18.2 */
+/* git commit:  7e7eb695d581782f04b24dc444cbfde86af59853 */
+/* commit time: 2018-07-01 22:49:01 +0200 */

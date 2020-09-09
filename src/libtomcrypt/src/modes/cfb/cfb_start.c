@@ -5,8 +5,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -21,14 +19,14 @@
 /**
    Initialize a CFB context
    @param cipher      The index of the cipher desired
-   @param IV          The initial vector
-   @param key         The secret key 
+   @param IV          The initialization vector
+   @param key         The secret key
    @param keylen      The length of the secret key (octets)
    @param num_rounds  Number of rounds in the cipher desired (0 for default)
    @param cfb         The CFB state to initialize
    @return CRYPT_OK if successful
 */
-int cfb_start(int cipher, const unsigned char *IV, const unsigned char *key, 
+int cfb_start(int cipher, const unsigned char *IV, const unsigned char *key,
               int keylen, int num_rounds, symmetric_CFB *cfb)
 {
    int x, err;
@@ -40,7 +38,7 @@ int cfb_start(int cipher, const unsigned char *IV, const unsigned char *key,
    if ((err = cipher_is_valid(cipher)) != CRYPT_OK) {
       return err;
    }
-   
+
 
    /* copy data */
    cfb->cipher = cipher;
@@ -60,6 +58,6 @@ int cfb_start(int cipher, const unsigned char *IV, const unsigned char *key,
 
 #endif
 
-/* $Source$ */
-/* $Revision: 24838 $ */
-/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */
+/* ref:         HEAD -> master, tag: v1.18.2 */
+/* git commit:  7e7eb695d581782f04b24dc444cbfde86af59853 */
+/* commit time: 2018-07-01 22:49:01 +0200 */

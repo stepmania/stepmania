@@ -5,12 +5,10 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
-#ifdef MPI
+#ifdef LTC_MPI
 #include <stdarg.h>
 
 int ltc_init_multi(void **a, ...)
@@ -32,13 +30,14 @@ int ltc_init_multi(void **a, ...)
               cur = va_arg(clean_list, void**);
           }
           va_end(clean_list);
+          va_end(args);
           return CRYPT_MEM;
        }
        ++np;
        cur = va_arg(args, void**);
    }
    va_end(args);
-   return CRYPT_OK;   
+   return CRYPT_OK;
 }
 
 void ltc_deinit_multi(void *a, ...)
@@ -54,8 +53,24 @@ void ltc_deinit_multi(void *a, ...)
    va_end(args);
 }
 
+void ltc_cleanup_multi(void **a, ...)
+{
+   void **cur = a;
+   va_list args;
+
+   va_start(args, a);
+   while (cur != NULL) {
+      if (*cur != NULL) {
+         mp_clear(*cur);
+         *cur = NULL;
+      }
+      cur = va_arg(args, void**);
+   }
+   va_end(args);
+}
+
 #endif
 
-/* $Source$ */
-/* $Revision: 24838 $ */
-/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */
+/* ref:         HEAD -> master, tag: v1.18.2 */
+/* git commit:  7e7eb695d581782f04b24dc444cbfde86af59853 */
+/* commit time: 2018-07-01 22:49:01 +0200 */

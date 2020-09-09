@@ -301,7 +301,9 @@ LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil
 	
 	m_CurrentParams.windowed = true; // We are essentially windowed to begin with.
 	SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
-	HOOKS->SetHasFocus( [NSApp isActive] );
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        HOOKS->SetHasFocus( [NSApp isActive] );;
+    });
 }
 
 LowLevelWindow_MacOSX::~LowLevelWindow_MacOSX()
@@ -382,9 +384,11 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 		}
 		
 		[m_WindowDelegate performSelectorOnMainThread:@selector(setParams:) withObject:[NSValue valueWithPointer:&p] waitUntilDone:YES];
-		[m_Context setView:[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView]];
-		[m_Context update];
-		[m_Context makeCurrentContext];
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [m_Context setView:[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView]];
+            [m_Context update];
+        });
+        [m_Context makeCurrentContext];
 		m_CurrentParams.windowed = true;
 		SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
 		m_CurrentParams.vsync = p.vsync; // hack
@@ -421,9 +425,10 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 			m_BGContext = nil;
 		}
 	}
-	
-	[m_Context setFullScreen];
-	[m_Context update];
+	dispatch_sync(dispatch_get_main_queue(), ^{
+        [m_Context setFullScreen];
+        [m_Context update];
+    });
 	[m_Context makeCurrentContext];
 	
 	if( bChangeVsync )
@@ -544,8 +549,11 @@ void LowLevelWindow_MacOSX::SetActualParamsFromMode( CFDictionaryRef mode )
 	}
 	else
 	{
-		NSSize size = [[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView] frame].size;
-		
+        __block NSSize size;
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            size = [[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView] frame].size;
+        });
+        
 		m_CurrentParams.width = int(size.width);
 		m_CurrentParams.height = int(size.height);
 	}
@@ -632,7 +640,10 @@ void LowLevelWindow_MacOSX::Update()
 	m_CurrentParams.width = g_iWidth;
 	m_CurrentParams.height = g_iHeight;
 	lock.Unlock(); // Unlock before calling ResolutionChanged().
-	[m_Context update];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [m_Context update];
+    });
+    
 	DISPLAY->ResolutionChanged();
 }
 

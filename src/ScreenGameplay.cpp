@@ -1452,6 +1452,27 @@ void ScreenGameplay::LoadLights()
 	NoteData TapNoteData1;
 	pSteps->GetNoteData( TapNoteData1 );
 
+	//taken from oitg, restores arrow -> marquee/bass light mapping.
+	if( asDifficulties.size() > 1 )
+	{
+		Difficulty d2 = StringToDifficulty( asDifficulties[1] );
+
+		Steps *pSteps2;
+
+		pSteps2 = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d2 );
+
+		if(pSteps2 != nullptr)
+		{
+			NoteData TapNoteData2;
+			pSteps2->GetNoteData( TapNoteData2 );
+
+			NoteDataUtil::LoadTransformedLightsFromTwo( TapNoteData1, TapNoteData2, m_CabinetLightsNoteData );
+			return;
+		}
+
+		/* fall through */
+	}
+
 	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GAMEMAN->GetStepsTypeInfo(StepsType_lights_cabinet).iNumTracks );
 }
 

@@ -1617,6 +1617,7 @@ void RageDisplay_Legacy::DrawLineStripInternal( const RageSpriteVertex v[], int 
 	/* Draw the line loop: */
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_LINE_STRIP, 0, iNumVerts );
+	StatsAddVerts(iNumVerts);
 
 	glDisable( GL_LINE_SMOOTH );
 
@@ -1642,6 +1643,7 @@ void RageDisplay_Legacy::DrawLineStripInternal( const RageSpriteVertex v[], int 
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_POINTS, 0, iNumVerts );
+	StatsAddVerts(iNumVerts);
 
 	glDisable( GL_POINT_SMOOTH );
 }

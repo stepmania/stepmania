@@ -5,8 +5,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -34,13 +32,13 @@ int ofb_encrypt(const unsigned char *pt, unsigned char *ct, unsigned long len, s
    if ((err = cipher_is_valid(ofb->cipher)) != CRYPT_OK) {
        return err;
    }
-   
+
    /* is blocklen/padlen valid? */
    if (ofb->blocklen < 0 || ofb->blocklen > (int)sizeof(ofb->IV) ||
        ofb->padlen   < 0 || ofb->padlen   > (int)sizeof(ofb->IV)) {
       return CRYPT_INVALID_ARG;
    }
-   
+
    while (len-- > 0) {
        if (ofb->padlen == ofb->blocklen) {
           if ((err = cipher_descriptor[ofb->cipher].ecb_encrypt(ofb->IV, ofb->IV, &ofb->key)) != CRYPT_OK) {
@@ -55,6 +53,6 @@ int ofb_encrypt(const unsigned char *pt, unsigned char *ct, unsigned long len, s
 
 #endif
 
-/* $Source$ */
-/* $Revision: 24838 $ */
-/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */
+/* ref:         HEAD -> master, tag: v1.18.2 */
+/* git commit:  7e7eb695d581782f04b24dc444cbfde86af59853 */
+/* commit time: 2018-07-01 22:49:01 +0200 */

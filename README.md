@@ -5,6 +5,7 @@ StepMania is an advanced cross-platform rhythm game for home and arcade use.
 
 Advanced cross-platform rhythm game for home and arcade use.
 
+[![Continuous integration](https://github.com/stepmania/stepmania/workflows/Continuous%20integration/badge.svg?branch=5_1-new)](https://github.com/stepmania/stepmania/actions?query=workflow%3A%22Continuous+integration%22+branch%3A5_1-new)
 [![Build Status](https://travis-ci.org/stepmania/stepmania.svg?branch=master)](https://travis-ci.org/stepmania/stepmania)
 [![Build status](https://ci.appveyor.com/api/projects/status/uvoplsnyoats81r2?svg=true)](https://ci.appveyor.com/project/Nickito12/stepmania)
 
@@ -13,7 +14,7 @@ Advanced cross-platform rhythm game for home and arcade use.
 
 For those that do not wish to compile the game on their own and use a binary right away, be aware of the following issues:
 
-* Windows users are expected to have installed the [Microsoft Visual C++ x86 Redistributable for Visual Studio 2015](http://www.microsoft.com/en-us/download/details.aspx?id=48145) prior to running the game. For those on a 64-bit operating system, grab the x64 redistributable as well. [DirectX End-User Runtimes (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=8109) is also required. Windows 7 is the minimum supported version.
+* Windows users are expected to have installed the [Microsoft Visual C++ x86 Redistributable for Visual Studio 2015](http://www.microsoft.com/en-us/download/details.aspx?id=48145) prior to running the game. For those on a 64-bit operating system, grab the x64 redistributable as well. Windows 7 is the minimum supported version.
 * Mac OS X users need to have Mac OS X 10.6.8 or higher to run StepMania.
 * Linux users should receive all they need from the package manager of their choice.
 
@@ -23,9 +24,9 @@ StepMania can be compiled using [CMake](http://www.cmake.org/). More information
 
 ## Resources
 
-* Website: http://www.stepmania.com/
+* Website: https://www.stepmania.com/
 * IRC: irc.freenode.net/#stepmania-devs
-* Lua for SM5: https://dguzek.github.io/Lua-For-SM5/
+* Lua for SM5: https://quietly-turning.github.io/Lua-For-SM5/
 * Lua API Documentation can be found in the Docs folder.
 
 ## Licensing Terms

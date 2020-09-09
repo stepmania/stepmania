@@ -264,6 +264,13 @@ public:
  *
  * should output the same value (+-1) 256 times.  If this function is
  * incorrect, the first and/or last values may be biased. */
+#ifdef CPU_AARCH64
+inline unsigned char FTOC(float a)
+{
+	const float v = a < 0.0f ? 0.0f : (a > 1.0f ? 1.0f : a);
+	return static_cast<unsigned char>(v * 255.0f);
+}
+#else
 inline unsigned char FTOC(float a)
 {
 	//This value is 2^52 * 1.5.
@@ -292,6 +299,7 @@ inline unsigned char FTOC(float a)
 
 	return static_cast<unsigned char>(ret);
 }
+#endif
 
 /* Color type used only in vertex lists.  OpenGL expects colors in
  * r, g, b, a order, independent of endianness, so storing them this

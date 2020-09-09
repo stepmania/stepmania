@@ -31,7 +31,9 @@ extern "C" const char *Init( int *argc, char ***argv )
 	//gtk_window_set_icon( GTK_WINDOW(window), );
 	gtk_widget_realize(window);
 
-	splash = gtk_image_new_from_file(splash_image_path);
+	splash = gtk_image_new_from_pixbuf(
+		gdk_pixbuf_new_from_file (splash_image_path, nullptr)
+	);
 
 	label = gtk_label_new(nullptr);
 	gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
@@ -41,7 +43,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 	progressBar = gtk_progress_bar_new();
 	gtk_progress_bar_set_fraction( GTK_PROGRESS_BAR(progressBar), 0.0 );
 
-	vbox = gtk_vbox_new(FALSE,0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add(GTK_CONTAINER(window),vbox);
 	gtk_box_pack_start(GTK_BOX(vbox),splash,FALSE,FALSE,0);
 	gtk_box_pack_end(GTK_BOX(vbox),progressBar,FALSE,FALSE,0);

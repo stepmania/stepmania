@@ -244,6 +244,9 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 	ctx->PC = (void *)ptrace( PTRACE_PEEKUSER, pid_t(ThreadID), (void *)(PT_NIP<<2), 0 );
 	if( errno )
 		return false;
+#elif defined(CPU_AARCH64)
+	// NYI
+	return false;
 #else
 #error GetThreadBacktraceContext: which arch?
 #endif

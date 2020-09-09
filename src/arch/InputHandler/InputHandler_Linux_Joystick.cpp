@@ -140,6 +140,15 @@ void InputHandler_Linux_Joystick::InputThread()
 
 			js_event event;
 			int ret = read(fds[i], &event, sizeof(event));
+
+			if(ret == -1)
+			{
+				LOG->Warn("Error reading from joystick %i: %s; disabled", i, strerror(errno));
+				close(fds[i]);
+				fds[i] = -1;
+				continue;
+			}
+
 			if(ret != sizeof(event))
 			{
 				LOG->Warn("Unexpected packet (size %i != %i) from joystick %i; disabled", ret, (int)sizeof(event), i);

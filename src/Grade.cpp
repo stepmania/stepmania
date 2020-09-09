@@ -33,7 +33,7 @@ RString GradeToLocalizedString( Grade g )
 RString GradeToOldString( Grade g )
 {
 	// string is meant to be human readable
-	switch( g )
+	switch( GradeToOldGrade(g) )
 	{
 	case Grade_Tier01:	return "AAAA";
 	case Grade_Tier02:	return "AAA";
@@ -47,6 +47,16 @@ RString GradeToOldString( Grade g )
 	default:		return "N";
 	}
 };
+
+Grade GradeToOldGrade( Grade g )
+{
+	// There used to be 7 grades (plus fail) but grades can now be defined by themes.
+	// So we need to re-scale the grade bands based on how many actual grades the theme defines.
+	if( g < NUM_GRADE_TIERS_USED )
+		g = (Grade)std::lround((double)g * Grade_Tier07 / (NUM_GRADE_TIERS_USED - 1));
+
+	return g;
+}
 
 Grade StringToGrade( const RString &sGrade )
 {

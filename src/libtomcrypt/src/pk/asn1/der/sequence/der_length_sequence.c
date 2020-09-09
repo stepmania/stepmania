@@ -5,8 +5,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -18,17 +16,24 @@
 #ifdef LTC_DER
 
 /**
-   Get the length of a DER sequence 
+   Get the length of a DER sequence
    @param list   The sequences of items in the SEQUENCE
    @param inlen  The number of items
-   @param outlen [out] The length required in octets to store it 
+   @param outlen [out] The length required in octets to store it
    @return CRYPT_OK on success
 */
 int der_length_sequence(ltc_asn1_list *list, unsigned long inlen,
-                        unsigned long *outlen) 
+                        unsigned long *outlen)
 {
-   int           err, type;
-   unsigned long size, x, y, i;
+   return der_length_sequence_ex(list, inlen, outlen, NULL);
+}
+
+int der_length_sequence_ex(ltc_asn1_list *list, unsigned long inlen,
+                           unsigned long *outlen, unsigned long *payloadlen)
+{
+   int           err;
+   ltc_asn1_type type;
+   unsigned long size, x, y, i, z;
    void          *data;
 
    LTC_ARGCHK(list    != NULL);
@@ -41,7 +46,7 @@ int der_length_sequence(ltc_asn1_list *list, unsigned long inlen,
        size = list[i].size;
        data = list[i].data;
 
-       if (type == LTC_ASN1_EOL) { 
+       if (type == LTC_ASN1_EOL) {
           break;
        }
 
@@ -52,7 +57,7 @@ int der_length_sequence(ltc_asn1_list *list, unsigned long inlen,
               }
               y += x;
               break;
-          
+
            case LTC_ASN1_INTEGER:
                if ((err = der_length_integer(data, &x)) != CRYPT_OK) {
                   goto LBL_ERR;
@@ -68,6 +73,7 @@ int der_length_sequence(ltc_asn1_list *list, unsigned long inlen,
                break;
 
            case LTC_ASN1_BIT_STRING:
+           case LTC_ASN1_RAW_BIT_STRING:
                if ((err = der_length_bit_string(size, &x)) != CRYPT_OK) {
                   goto LBL_ERR;
                }
@@ -99,6 +105,13 @@ int der_length_sequence(ltc_asn1_list *list, unsigned long inlen,
                y += x;
                break;
 
+           case LTC_ASN1_TELETEX_STRING:
+               if ((err = der_length_teletex_string(data, size, &x)) != CRYPT_OK) {
+                  goto LBL_ERR;
+               }
+               y += x;
+               break;
+
            case LTC_ASN1_PRINTABLE_STRING:
                if ((err = der_length_printable_string(data, size, &x)) != CRYPT_OK) {
                   goto LBL_ERR;
@@ -108,6 +121,13 @@ int der_length_sequence(ltc_asn1_list *list, unsigned long inlen,
 
            case LTC_ASN1_UTCTIME:
                if ((err = der_length_utctime(data, &x)) != CRYPT_OK) {
+                  goto LBL_ERR;
+               }
+               y += x;
+               break;
+
+           case LTC_ASN1_GENERALIZEDTIME:
+               if ((err = der_length_generalizedtime(data, &x)) != CRYPT_OK) {
                   goto LBL_ERR;
                }
                y += x;
@@ -129,14 +149,18 @@ int der_length_sequence(ltc_asn1_list *list, unsigned long inlen,
                y += x;
                break;
 
-          
-           default:
+
+           case LTC_ASN1_CHOICE:
+           case LTC_ASN1_CONSTRUCTED:
+           case LTC_ASN1_CONTEXT_SPECIFIC:
+           case LTC_ASN1_EOL:
                err = CRYPT_INVALID_ARG;
                goto LBL_ERR;
        }
    }
 
    /* calc header size */
+   z = y;
    if (y < 128) {
       y += 2;
    } else if (y < 256) {
@@ -154,6 +178,7 @@ int der_length_sequence(ltc_asn1_list *list, unsigned long inlen,
    }
 
    /* store size */
+   if (payloadlen) *payloadlen = z;
    *outlen = y;
    err     = CRYPT_OK;
 
@@ -163,6 +188,6 @@ LBL_ERR:
 
 #endif
 
-/* $Source$ */
-/* $Revision: 24838 $ */
-/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */
+/* ref:         HEAD -> master, tag: v1.18.2 */
+/* git commit:  7e7eb695d581782f04b24dc444cbfde86af59853 */
+/* commit time: 2018-07-01 22:49:01 +0200 */

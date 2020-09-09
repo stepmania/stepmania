@@ -14,6 +14,8 @@ namespace JsonUtil
 
 	bool WriteFile(const Json::Value &root, const RString &sFile, bool bMinified);
 
+	std::vector<RString> DeserializeArrayStrings(const Json::Value &array);
+
 	template<class T>
 	static void SerializeVectorObjects(const vector<T> &v, void fn(const T &, Json::Value &), Json::Value &root)
 	{
@@ -195,57 +197,6 @@ namespace JsonUtil
 		}
 	}
 
-	template<class T>
-	static void DeserializeArrayValues(vector<T> &v, const Json::Value &root)
-	{
-		v.clear();
-		for( unsigned i=0; i<root.size(); i++ )
-		{
-			T t;
-			if( root[i].TryGet( t ) )
-				v.push_back( t );
-		}
-	}
-
-	// don't pull in the set header here
-	template<typename S, typename T>
-	static void DeserializeArrayValuesIntoSet(S &s, const Json::Value &root)
-	{
-		s.clear();
-		for( unsigned i=0; i<root.size(); i++ )
-		{
-			T t;
-			if( root[i].TryGet( t ) )
-				s.insert( t );
-		}
-	}
-
-	template<typename T>
-	static void DeserializeArrayValuesIntoVector(vector<T> &v, const Json::Value &root)
-	{
-		v.clear();
-		for( unsigned i=0; i<root.size(); i++ )
-		{
-			T t;
-			if( root[i].TryGet( t ) )
-				v.push_back( t );
-		}
-	}
-
-	template <typename M>
-	static void DeserializeValueToValueMap(M &m, const Json::Value &root)
-	{
-		for( Json::Value::const_iterator iter = root.begin(); iter != root.end(); iter++ )
-			(*iter).TryGet( m[ iter.memberName() ] );
-	}
-
-	template <typename M, typename E, typename F>
-	static void DeserializeStringToValueMap(M &m, F fnToValue(E e), const Json::Value &root)
-	{
-		for( Json::Value::const_iterator iter = root.begin(); iter != root.end(); iter++ )
-			(*iter).TryGet( m[ fnToValue(iter.memberName()) ] );
-	}
-
 	template <typename M, typename E, typename F>
 	static void DeserializeStringToObjectMap(M &m, F fnToValue(E e), const Json::Value &root)
 	{
@@ -267,22 +218,6 @@ namespace JsonUtil
 				continue;
 			V v;
 			if( !v.Deserialize( (*iter)[sValueName] ) )
-				continue;
-			m[k] = v;
-		}
-	}
-
-	template <typename K, typename V>
-	static void DeserializeObjectToValueMapAsArray(map<K,V> &m, const RString &sKeyName, const RString &sValueName, const Json::Value &root)
-	{
-		for( unsigned i=0; i<root.size(); i++ )
-		{
-			const Json::Value &root2 = root[i];
-			K k;
-			if( !k.Deserialize( root2[sKeyName] ) )
-				continue;
-			V v;
-			if( !root2[sValueName].TryGet(v) )
 				continue;
 			m[k] = v;
 		}

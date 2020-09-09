@@ -1,0 +1,95 @@
+on: [push, pull_request]
+
+name: Continuous integration
+
+jobs:
+  ubuntu-build-bundled:
+    name: "Ubuntu: Build with bundled libraries"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y
+          libasound2-dev
+          libgl-dev
+          libglew-dev
+          libgtk-3-dev
+          libjack-dev
+          libmad0-dev
+          libpulse-dev
+          libva-dev
+          libvorbis-dev
+          libxinerama-dev
+          libx11-dev
+          libxrandr-dev
+          libxtst-dev
+          nasm
+      - name: Configure
+        run: cmake -B build
+      - name: Build
+        run: cmake --build build
+
+  ubuntu-build-system:
+    name: "Ubuntu: Build with system libraries"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y
+          ffmpeg
+          libasound2-dev
+          libgl-dev
+          libglew-dev
+          libgtk-3-dev
+          libjack-dev
+          libjsoncpp-dev
+          libmad0-dev
+          libpng-dev
+          libpulse-dev
+          libtomcrypt-dev
+          libtommath-dev
+          libva-dev
+          libvorbis-dev
+          libxinerama-dev
+          libx11-dev
+          libxrandr-dev
+          libxtst-dev
+          ninja-build
+      - name: Configure
+        run: cmake -G Ninja -B build
+          -DWITH_SYSTEM_FFMPEG=ON
+          -DWITH_SYSTEM_GLEW=ON
+          -DWITH_SYSTEM_JPEG=ON
+          -DWITH_SYSTEM_JSONCPP=ON
+          -DWITH_SYSTEM_MAD=ON
+          -DWITH_SYSTEM_OGG=ON
+          -DWITH_SYSTEM_PCRE=ON
+          -DWITH_SYSTEM_PNG=ON
+          -DWITH_SYSTEM_TOMCRYPT=ON
+          -DWITH_SYSTEM_TOMMATH=ON
+          -DWITH_SYSTEM_ZLIB=ON
+      - name: Build
+        run: cmake --build build
+
+  macos-build-bundled:
+    name: "macOS: Build with bundled libraries"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: brew install
+          nasm
+      - name: Configure
+        run: cmake -B build
+      - name: Build
+        run: cmake --build build
+
+  windows-build-bundled:
+    name: "Windows: Build with bundled libraries"
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure
+        run: cmake -B build
+      - name: Build
+        run: cmake --build build
