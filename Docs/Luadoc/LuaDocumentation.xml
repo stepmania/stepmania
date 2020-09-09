@@ -74,6 +74,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Basename' return='string' arguments='string path'>
 		Returns the last named component of <code>path</code>.  For example, passing in <code>"/path/to/file.txt"</code> will return <code>"file.txt"</code>, while <code>"/path/to/some/directory/"</code> will return <code>"directory"</code>.
 	</Function>
+	<Function name='BinaryToHex' return='string' arguments='string s'>
+		Converts a binary formatted string to hexadecimal format.
+		This can be useful in conjunction with <Link class="CryptManager" />'s MD5 and SHA functions.
+	</Function>
 	<Function name='BoostColor' theme='_fallback' return='color' arguments='color c, float fBoost'>
 		[02 Colors.lua] Returns the color that results from multiplying <code>c</code>'s R, G, and B values by <code>fBoost</code>.
 	</Function>
@@ -2509,6 +2513,14 @@ Def.BitmapText{
 	</Function>
 	<Function name='SHA1String' return='string' arguments='string s'>
 		Returns the SHA-1 hash for <code>s</code>.
+	</Function>
+	<Function name='SHA256File' return='string' arguments='string sPath'>
+		Returns the SHA-256 hash for the file at <code>sPath</code> as a binary formatted string.<br />
+		You can use <Link class='GLOBAL' function='BinaryToHex' /> to convert to hexadecimal format.
+	</Function>
+	<Function name='SHA256String' return='string' arguments='string s'>
+		Returns the SHA-256 hash for <code>s</code> as a binary formatted string.<br />
+		You can use <Link class='GLOBAL' function='BinaryToHex' /> to convert to hexadecimal format.
 	</Function>
 </Class>
 <Class name='CubicSplineN'>
