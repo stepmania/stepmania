@@ -39,7 +39,10 @@ LightsDriver_PacDrive::LightsDriver_PacDrive()
 	m_pacset = (PacSetLEDStates*)GetProcAddress(PachDLL, "PacSetLEDStates");
 	m_pacdone = (PacShutdown*)GetProcAddress(PachDLL, "PacShutdown");
 
-	int NumPacDrives = m_pacinit(); //initialize the pac drive
+	int NumPacDrives = 0;
+
+	if (m_pacinit)
+		NumPacDrives = m_pacinit(); //initialize the pac drive
 
 	if (NumPacDrives == 0)
 	{
@@ -60,9 +63,12 @@ LightsDriver_PacDrive::LightsDriver_PacDrive()
 
 LightsDriver_PacDrive::~LightsDriver_PacDrive()
 {
-	if (PacDriveConnected)
+	if (PacDriveConnected && m_pacset)
 		m_pacset(0, 0x0);  // clear all lights for device i
-	m_pacdone();
+
+	if (m_pacdone)
+		m_pacdone();
+
 	FreeLibrary(PachDLL);
 }
 
@@ -110,7 +116,10 @@ void LightsDriver_PacDrive::Set(const LightsState *ls)
 		if (ls->m_bGameButtonLights[GameController_2][GAME_BUTTON_START]) outb |= BIT(14);
 		break;
 	}
-	m_pacset(0, outb);
+
+	//ensure m_pacset function call was loaded.
+	if (m_pacset)
+		m_pacset(0, outb);
 }
 
 /* Modified 2015 Dave Barribeau for StepMania 5.09
