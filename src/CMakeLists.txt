@@ -631,8 +631,12 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
   if(PCRE_FOUND)
     list(APPEND SMDATA_LINK_LIB ${PCRE_LIBRARY})
   endif()
+  
+  if(LIBXTST_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${LIBXTST_LIBRARY})
+  endif()
 
-  list(APPEND SMDATA_LINK_LIB ${XRANDR_LIBRARIES} ${LIBXTST_LIBRARY} ${XINERAMA_LIBRARIES})
+  list(APPEND SMDATA_LINK_LIB ${XRANDR_LIBRARIES} ${XINERAMA_LIBRARIES})
 
   list(REMOVE_DUPLICATES SMDATA_LINK_LIB)
 endif()
