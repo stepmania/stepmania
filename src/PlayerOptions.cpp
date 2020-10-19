@@ -106,13 +106,15 @@ void PlayerOptions::Init()
 	ZERO( m_fTiny );		ONE( m_SpeedfTiny );
 	ZERO( m_fBumpy );		ONE( m_SpeedfBumpy );
 	ZERO( m_fReverse );		ONE( m_SpeedfReverse );
-	
+
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 {
+	const float fRateMult = PREFSMAN->m_bRateModsAffectTweens ? GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate : 1.0f;
+
 #define APPROACH( opt ) \
-	fapproach( m_ ## opt, other.m_ ## opt, fDeltaSeconds * other.m_Speed ## opt );
+	fapproach( m_ ## opt, other.m_ ## opt, fRateMult * fDeltaSeconds * other.m_Speed ## opt );
 #define DO_COPY( x ) \
 	x = other.x;
 
@@ -263,7 +265,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 		RString s = ssprintf( "C%.0f", m_fScrollBPM );
 		AddTo.push_back( s );
 	}
-	
+
 	switch(m_ModTimerType)
 	{
 		case ModTimerType_Game:
@@ -418,11 +420,11 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_bDizzyHolds,				"DizzyHolds");
 	AddPart( AddTo, m_bZBuffer,				"ZBuffer");
 	AddPart( AddTo, m_bCosecant,				"Cosecant");
-	
+
 	for( int i=0; i<16; i++)
 	{
 		RString s = ssprintf( "MoveX%d", i+1 );
-		
+
 		AddPart( AddTo, m_fMovesX[i],				s );
 		s = ssprintf( "MoveY%d", i+1 );
 		AddPart( AddTo, m_fMovesY[i],				s );
@@ -464,7 +466,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fModTimerOffset,	"ModTimerOffset" );
 	AddPart( AddTo, m_fDrawSize,		"DrawSize" );
 	AddPart( AddTo, m_fDrawSizeBack,	"DrawSizeBack" );
-	
+
 	AddPart( AddTo, m_fDark,	"Dark" );
 
 	AddPart( AddTo, m_fBlind,	"Blind" );
@@ -1068,7 +1070,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
 	}
 	else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
-	else if( sBit == "failarcade" || 
+	else if( sBit == "failarcade" ||
 		 sBit == "failimmediate" )			m_FailType = FailType_Immediate;
 	else if( sBit == "failendofsong" ||
 		 sBit == "failimmediatecontinue" )		m_FailType = FailType_ImmediateContinue;
@@ -1082,7 +1084,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
 	else if( sBit == "random" )				ChooseRandomModifiers();
-	
+
 	else if( sBit.find("move") != sBit.npos)
 	{
 	    if (sBit.find("x") != sBit.npos)
@@ -1552,7 +1554,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )
 		return true;
 
-	// Inserted holds can be really easy on some songs, and scores will be 
+	// Inserted holds can be really easy on some songs, and scores will be
 	// highly hold-weighted, and very little tap score weighted.
 	if( m_bTransforms[TRANSFORM_LITTLE] )	return true;
 	if( m_bTransforms[TRANSFORM_PLANTED] )	return true;
@@ -1561,13 +1563,13 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 
 	// This makes songs with sparse notes easier.
 	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
-	
+
 	// Removing attacks is easier in general.
 	if ((m_fNoAttack && pSteps->HasAttacks()) || m_fRandAttack)
 		return true;
-	
+
 	if( m_fCover )	return true;
-	
+
 	// M-mods make songs with indefinite BPMs easier because
 	// they ensure that the song has a scrollable speed.
 	if( m_fMaxScrollBPM != 0 )
@@ -1726,7 +1728,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 #include "LuaBinding.h"
 #include "OptionsBinding.h"
 
-/** @brief Allow Lua to have access to PlayerOptions. */ 
+/** @brief Allow Lua to have access to PlayerOptions. */
 class LunaPlayerOptions: public Luna<PlayerOptions>
 {
 public:
@@ -1914,7 +1916,7 @@ public:
 	FLOAT_INTERFACE(Tilt, PerspectiveTilt, true);
 	FLOAT_INTERFACE(Passmark, Passmark, true); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
 	FLOAT_INTERFACE(RandomSpeed, RandomSpeed, true);
-	
+
 	MULTICOL_FLOAT_INTERFACE(MoveX, MovesX, true);
 	MULTICOL_FLOAT_INTERFACE(MoveY, MovesY, true);
 	MULTICOL_FLOAT_INTERFACE(MoveZ, MovesZ, true);
@@ -1926,7 +1928,7 @@ public:
 	MULTICOL_FLOAT_INTERFACE(Tiny, Tiny, true);
 	MULTICOL_FLOAT_INTERFACE(Bumpy, Bumpy, true);
 	MULTICOL_FLOAT_INTERFACE(Reverse, Reverse, true);
-	
+
 	BOOL_INTERFACE(StealthType, StealthType);
 	BOOL_INTERFACE(StealthPastReceptors, StealthPastReceptors);
 	BOOL_INTERFACE(DizzyHolds, DizzyHolds);
@@ -2209,7 +2211,7 @@ public:
 		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
-	
+
 	static int Distant(T* p, lua_State* L)
 	{
 		int original_top= lua_gettop(L);
@@ -2472,7 +2474,7 @@ public:
 		ADD_METHOD(NoQuads);
 		ADD_METHOD(NoStretch);
 		ADD_METHOD(MuteOnError);
-		
+
 		ADD_MULTICOL_METHOD(MoveX);
 		ADD_MULTICOL_METHOD(MoveY);
 		ADD_MULTICOL_METHOD(MoveZ);
@@ -2484,7 +2486,7 @@ public:
 		ADD_MULTICOL_METHOD(Tiny);
 		ADD_MULTICOL_METHOD(Bumpy);
 		ADD_MULTICOL_METHOD(Reverse);
-		
+
 
 		ADD_METHOD(NoteSkin);
 		ADD_METHOD(FailSetting);
@@ -2515,7 +2517,7 @@ LUA_REGISTER_CLASS( PlayerOptions )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -2525,7 +2527,7 @@ LUA_REGISTER_CLASS( PlayerOptions )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
