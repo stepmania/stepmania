@@ -190,6 +190,7 @@ PrefsManager::PrefsManager() :
 
 	m_fLifeDifficultyScale		( "LifeDifficultyScale",	1.0f ),
 
+	m_bRateModsAffectTweens		( "RateModsAffectFGChanges",	false ),
 
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
 	m_iMaxRegenComboAfterMiss	( "MaxRegenComboAfterMiss",	5 ), // this was 10 by default in SM3.95 -dguzek
@@ -276,7 +277,7 @@ PrefsManager::PrefsManager() :
 	m_iRageSoundSampleCountClamp	("RageSoundSampleCountClamp", 0), //some sound drivers mask the sample location number, the most popular number for this is 2^27, this causes lockup after ~50 minutes at 44.1khz sample rate
 	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		0 ),
 	m_sLightsStepsDifficulty	( "LightsStepsDifficulty",		"hard,medium" ),
-	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ), 
+	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ),
 	m_bThreadedInput		( "ThreadedInput",			true ),
 	m_bThreadedMovieDecode		( "ThreadedMovieDecode",		true ),
 	m_sTestInitialScreen		( "TestInitialScreen",			"" ),
@@ -546,7 +547,7 @@ RString PrefsManager::GetPreferencesSection() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PrefsManager. */ 
+/** @brief Allow Lua to have access to the PrefsManager. */
 class LunaPrefsManager: public Luna<PrefsManager>
 {
 public:
@@ -607,9 +608,9 @@ public:
 		lua_pushboolean( L, true );
 		return 1;
 	}
-	
+
 	static int SavePreferences( T* p, lua_State *L ) { p->SavePrefsToDisk(); COMMON_RETURN_SELF; }
-	
+
 	LunaPrefsManager()
 	{
 		ADD_METHOD( GetPreference );
@@ -626,7 +627,7 @@ LUA_REGISTER_CLASS( PrefsManager )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -636,7 +637,7 @@ LUA_REGISTER_CLASS( PrefsManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
