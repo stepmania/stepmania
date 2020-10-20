@@ -729,7 +729,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	beat_info.elapsed_time= fCurrentTime;
 	pSong->m_SongTiming.GetBeatAndBPSFromElapsedTime(beat_info);
 
-	// Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it.
+	// Calls to Update() should *not* be scaled by music rate unless RateModsAffectFGChanges is enabled; fCurrentTime is. Undo it.
 	const float fRate = PREFSMAN->m_bRateModsAffectTweens ? 1.0f : GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 	// Find the BGSegment we're in
