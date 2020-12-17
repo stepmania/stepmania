@@ -349,6 +349,14 @@ void LightsManager::Update( float fDeltaTime )
 					{
 						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENULEFT] = true;
 						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENURIGHT] = true;
+						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENUUP] = true;
+						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENUDOWN] = true;
+					}
+					else
+					{
+						//flash select during evaluation screen to indicate
+						//that the button can be used for screenshots etc.
+						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_SELECT] = true;
 					}
 				}
 			}
