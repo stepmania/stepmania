@@ -1,20 +1,39 @@
-#ifndef LightsDriver_Linux_PIUIOBTN_Leds_H
-#define LightsDriver_Linux_PIUIOBTN_Leds_H
+/* LightsDriver_Linux_Leds: Control Linux system lights via /sys/class/leds */
 
-#include "arch/Lights/LightsDriver_Linux_Leds.h"
+#ifndef LightsDriver_Linux_Leds_H
+#define LightsDriver_Linux_Leds_H
 
-class LightsDriver_Linux_PIUIOBTN_Leds : public LightsDriver_Linux_Leds
+#include "arch/Lights/LightsDriver.h"
+
+class LightsDriver_Linux_Leds : public LightsDriver
 {
+private:
+	static const uint8_t LINUX_LED_STATE_ON = 255;
+	static const uint8_t LINUX_LED_STATE_OFF = 0;
+	static const int LINUX_LED_MAX_DIRECTORY_LENGTH = PATH_MAX;
+
+	const InputScheme *pInput;
+	RString sInputName;
+
+	bool WriteLight(const char *filename, bool state);
+
+protected:
+	LightsState previousLS;
+
+	bool IsDance();
+	bool IsPump();
+
+	void SetLight(const char *filename, bool previous, bool desired);
+
+	void SetCabinetLights(const char *stringArray[], const LightsState *ls);
+	void SetCabinetLights(const int intArray[], const LightsState *ls);
+
+	void SetGameControllerLights(GameController gc, const char *stringArray[], const LightsState *ls);
+	void SetGameControllerLights(GameController gc, const int intArray[], const LightsState *ls);
+
 public:
-	LightsDriver_Linux_PIUIOBTN_Leds() {}
-	virtual ~LightsDriver_Linux_PIUIOBTN_Leds() {}
-
-	virtual void Set(const LightsState *ls);
-
-	virtual const char *GetGameControllerLightFile()
-	{
-		return "/sys/class/leds/piuio::bboutput%d/brightness";
-	}
+	virtual void Set(const LightsState *ls) = 0;
+	virtual const char *GetGameControllerLightFile() = 0;
 };
 
 #endif

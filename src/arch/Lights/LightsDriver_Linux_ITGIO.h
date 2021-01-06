@@ -1,27 +1,26 @@
-/* LightsDriver_Linux_ITGIO: Control ITGIO lights via /sys/class/leds */
-
 #ifndef LightsDriver_Linux_ITGIO_H
 #define LightsDriver_Linux_ITGIO_H
 
-#include "arch/Lights/LightsDriver.h"
+#include "arch/Lights/LightsDriver_Linux_Leds.h"
 
-class LightsDriver_Linux_ITGIO : public LightsDriver
+class LightsDriver_Linux_ITGIO : public LightsDriver_Linux_Leds
 {
-private:
-	LightsState previousLS;
-	void SetGameControllerLight(const LightsState *ls, GameController c, GameButton gb);
-
 public:
-	LightsDriver_Linux_ITGIO();
-	virtual ~LightsDriver_Linux_ITGIO();
+	LightsDriver_Linux_ITGIO() {}
+	virtual ~LightsDriver_Linux_ITGIO() {}
 
-	virtual void Set( const LightsState *ls );
+	virtual void Set(const LightsState *ls);
+
+	virtual const char *GetGameControllerLightFile()
+	{
+		return "/sys/class/leds/itgio::output%d/brightness";
+	}
 };
 
 #endif
 
 /*
- * (c) 2020 StepMania team
+ * (c) 2020 din
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -43,4 +42,6 @@ public:
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
+ * 
+ * i love lamp
  */

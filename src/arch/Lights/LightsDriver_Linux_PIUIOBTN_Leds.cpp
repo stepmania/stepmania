@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #endif
 
+#include <errno.h>
 #include "LightsDriver_Linux_PIUIOBTN_Leds.h"
 #include "GameState.h"
 #include "Game.h"
@@ -17,75 +18,85 @@
 
 REGISTER_LIGHTS_DRIVER_CLASS2(PIUIOBTN_Leds, Linux_PIUIOBTN_Leds);
 
-namespace {
-	const char *game_btn_leds[NUM_GameController][NUM_GameButton] = {
-		{
-			"/sys/class/leds/piuio::bboutput6/brightness", //P1 GAME_BUTTON_MENULEFT
-			"/sys/class/leds/piuio::bboutput5/brightness", //P1 GAME_BUTTON_MENURIGHT
-			nullptr, nullptr,
-			"/sys/class/leds/piuio::bboutput4/brightness", //P1 GAME_BUTTON_START
-			"/sys/class/leds/piuio::bboutput7/brightness", //P1 GAME_BUTTON_SELECT
-		},
-		{
-			"/sys/class/leds/piuio::bboutput2/brightness", //P2 GAME_BUTTON_MENULEFT
-			"/sys/class/leds/piuio::bboutput1/brightness", //P2 GAME_BUTTON_MENURIGHT
-			nullptr, nullptr,
-			"/sys/class/leds/piuio::bboutput0/brightness", //P2 GAME_BUTTON_START
-			"/sys/class/leds/piuio::bboutput3/brightness", //P2 GAME_BUTTON_SELECT
-		},
+namespace
+{
+	const int player1_lights[NUM_GameButton] = {
+		6,	//GAME_BUTTON_MENULEFT
+		5,	//GAME_BUTTON_MENURIGHT
+		-1, //GAME_BUTTON_MENUUP
+		-1, //GAME_BUTTON_MENUDOWN
+		4,	//GAME_BUTTON_START
+		7,	//GAME_BUTTON_SELECT
+		-1, //GAME_BUTTON_BACK
+		-1, //GAME_BUTTON_COIN
+		-1, //GAME_BUTTON_OPERATOR
+		-1, //GAME_BUTTON_EFFECT_UP
+		-1, //GAME_BUTTON_EFFECT_DOWN
+		-1, //GAME_BUTTON_CUSTOM_01
+		-1, //GAME_BUTTON_CUSTOM_02
+		-1, //GAME_BUTTON_CUSTOM_03
+		-1, //GAME_BUTTON_CUSTOM_04
+		-1, //GAME_BUTTON_CUSTOM_05
+		-1, //GAME_BUTTON_CUSTOM_06
+		-1, //GAME_BUTTON_CUSTOM_07
+		-1, //GAME_BUTTON_CUSTOM_08
+		-1, //GAME_BUTTON_CUSTOM_09
+		-1, //GAME_BUTTON_CUSTOM_10
+		-1, //GAME_BUTTON_CUSTOM_11
+		-1, //GAME_BUTTON_CUSTOM_12
+		-1, //GAME_BUTTON_CUSTOM_13
+		-1, //GAME_BUTTON_CUSTOM_14
+		-1, //GAME_BUTTON_CUSTOM_15
+		-1, //GAME_BUTTON_CUSTOM_16
+		-1, //GAME_BUTTON_CUSTOM_17
+		-1, //GAME_BUTTON_CUSTOM_18
+		-1, //GAME_BUTTON_CUSTOM_19
 	};
 
-	bool SetLight(const char *filename, bool on)
-	{
-		if (filename == nullptr)
-			return true;
-		FILE *f = fopen(filename, "w");
-		if (f == nullptr)
-		{
-			return false;
-		}
-		fprintf(f, "%d", on ? 255 : 0);
-		fclose(f);
-		return true;
-	}
-}
+	const int player2_lights[NUM_GameButton] = {
+		2,	//GAME_BUTTON_MENULEFT
+		1,	//GAME_BUTTON_MENURIGHT
+		-1, //GAME_BUTTON_MENUUP
+		-1, //GAME_BUTTON_MENUDOWN
+		0,	//GAME_BUTTON_START
+		3,	//GAME_BUTTON_SELECT
+		-1, //GAME_BUTTON_BACK
+		-1, //GAME_BUTTON_COIN
+		-1, //GAME_BUTTON_OPERATOR
+		-1, //GAME_BUTTON_EFFECT_UP
+		-1, //GAME_BUTTON_EFFECT_DOWN
+		-1, //GAME_BUTTON_CUSTOM_01
+		-1, //GAME_BUTTON_CUSTOM_02
+		-1, //GAME_BUTTON_CUSTOM_03
+		-1, //GAME_BUTTON_CUSTOM_04
+		-1, //GAME_BUTTON_CUSTOM_05
+		-1, //GAME_BUTTON_CUSTOM_06
+		-1, //GAME_BUTTON_CUSTOM_07
+		-1, //GAME_BUTTON_CUSTOM_08
+		-1, //GAME_BUTTON_CUSTOM_09
+		-1, //GAME_BUTTON_CUSTOM_10
+		-1, //GAME_BUTTON_CUSTOM_11
+		-1, //GAME_BUTTON_CUSTOM_12
+		-1, //GAME_BUTTON_CUSTOM_13
+		-1, //GAME_BUTTON_CUSTOM_14
+		-1, //GAME_BUTTON_CUSTOM_15
+		-1, //GAME_BUTTON_CUSTOM_16
+		-1, //GAME_BUTTON_CUSTOM_17
+		-1, //GAME_BUTTON_CUSTOM_18
+		-1, //GAME_BUTTON_CUSTOM_19
+	};
+} // namespace
 
-LightsDriver_Linux_PIUIOBTN_Leds::LightsDriver_Linux_PIUIOBTN_Leds()
+void LightsDriver_Linux_PIUIOBTN_Leds::Set(const LightsState *ls)
 {
-}
-
-LightsDriver_Linux_PIUIOBTN_Leds::~LightsDriver_Linux_PIUIOBTN_Leds()
-{
-}
-
-void LightsDriver_Linux_PIUIOBTN_Leds::Set( const LightsState *ls )
-{
-	const InputScheme *pInput = &GAMESTATE->GetCurrentGame()->m_InputScheme;
-	RString sInputName = pInput->m_szName;
-
-	FOREACH_ENUM(GameController, c)
-	{
-		FOREACH_ENUM( GameButton, gb )
-		{
-			if (ls->m_bGameButtonLights[c][gb] == previousLS.m_bGameButtonLights[c][gb])
-			{
-				continue;
-			}
-
-			if (!SetLight(game_btn_leds[c][gb], ls->m_bGameButtonLights[c][gb]))
-			{
-				LOG->Warn("Error setting button light %s",
-						GameButtonToString(pInput, gb).c_str());
-				return;
-			}
-		}
-	}
+	SetGameControllerLights(GameController_1, player1_lights, ls);
+	SetGameControllerLights(GameController_2, player2_lights, ls);
 
 	previousLS = *ls;
 }
 
 /*
- * (c) 2020 StepMania team
+ * (c) 2020 din
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -107,4 +118,6 @@ void LightsDriver_Linux_PIUIOBTN_Leds::Set( const LightsState *ls )
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
+ * 
+ * i love lamp
  */
