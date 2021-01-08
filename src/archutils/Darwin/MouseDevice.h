@@ -18,7 +18,7 @@ struct Mouse
 class MouseDevice : public HIDDevice
 {
 private:
-	__gnu_cxx::hash_map<IOHIDElementCookie, DeviceButton> m_Mapping;
+	std::unordered_map<IOHIDElementCookie, DeviceButton> m_Mapping;
 	Mouse m_Mouse;
 
 protected:

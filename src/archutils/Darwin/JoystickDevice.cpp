@@ -2,7 +2,7 @@
 #include "JoystickDevice.h"
 #include "RageLog.h"
 
-using __gnu_cxx::hash_map;
+using std::unordered_map;
 
 Joystick::Joystick() :	id( InputDevice_Invalid ),
 			x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
@@ -134,7 +134,7 @@ void JoystickDevice::Open()
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
 		ADD( hat );
 #undef ADD
-		for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
+		for( unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
 			AddElementToQueue( j->first );
 	}
 }
@@ -231,7 +231,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		else
 		{
 			// hash_map<T,U>::operator[] is not const
-			hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
+			unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
 
 			iter = js.mapping.find( cookie );
 			if( iter != js.mapping.end() )

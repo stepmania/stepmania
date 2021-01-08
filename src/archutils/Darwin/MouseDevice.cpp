@@ -1,7 +1,7 @@
 #include "global.h"
 #include "MouseDevice.h"
 
-using __gnu_cxx::hash_map;
+using std::unordered_map;
 
 Mouse::Mouse() : id( InputDevice_Invalid ),
 				x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
@@ -94,7 +94,7 @@ void MouseDevice::Open()
 #define ADD(x) if( m.x ) AddElementToQueue( m.x )
 	ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
 #undef ADD
-	for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+	for( unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
 		AddElementToQueue( i->first );
 }
 
@@ -124,7 +124,7 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	}
 	else
 	{
-		hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+		unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
 		if( iter != m_Mapping.end() )
 			vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
 	}

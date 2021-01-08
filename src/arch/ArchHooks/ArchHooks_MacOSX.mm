@@ -135,6 +135,8 @@ RString ArchHooks_MacOSX::GetArchName() const
 	return "Mac OS X (i386)";
 #elif defined(__x86_64__)
 	return "Mac OS X (x86_64)";
+#elif defined(__aarch64__)
+	return "macOS (ARM64)";
 #else
 #error What arch?
 #endif
