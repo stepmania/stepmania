@@ -12,6 +12,7 @@ struct lua_State;
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "PrefsManager.h"
+#include "Style.h"
 
 enum LifeType
 {
@@ -363,18 +364,17 @@ public:
 	float	m_fModTimerOffset,		m_SpeedfModTimerOffset;
 	float	m_fDrawSize,			m_SpeedfDrawSize;
 	float	m_fDrawSizeBack,		m_SpeedfDrawSizeBack;
-	/* The maximum column number is 16.*/
-	float	m_fMovesX[16],			m_SpeedfMovesX[16];
-	float	m_fMovesY[16],			m_SpeedfMovesY[16];
-	float	m_fMovesZ[16],			m_SpeedfMovesZ[16];
-	float	m_fConfusionX[16],		m_SpeedfConfusionX[16];
-	float	m_fConfusionY[16],		m_SpeedfConfusionY[16];
-	float	m_fConfusionZ[16],		m_SpeedfConfusionZ[16];
-	float	m_fDarks[16],			m_SpeedfDarks[16];
-	float	m_fStealth[16],			m_SpeedfStealth[16];
-	float	m_fTiny[16],			m_SpeedfTiny[16];
-	float	m_fBumpy[16],			m_SpeedfBumpy[16];
-	float	m_fReverse[16],			m_SpeedfReverse[16];
+	float	m_fMovesX[MAX_COLS_PER_PLAYER],			m_SpeedfMovesX[MAX_COLS_PER_PLAYER];
+	float	m_fMovesY[MAX_COLS_PER_PLAYER],			m_SpeedfMovesY[MAX_COLS_PER_PLAYER];
+	float	m_fMovesZ[MAX_COLS_PER_PLAYER],			m_SpeedfMovesZ[MAX_COLS_PER_PLAYER];
+	float	m_fConfusionX[MAX_COLS_PER_PLAYER],		m_SpeedfConfusionX[MAX_COLS_PER_PLAYER];
+	float	m_fConfusionY[MAX_COLS_PER_PLAYER],		m_SpeedfConfusionY[MAX_COLS_PER_PLAYER];
+	float	m_fConfusionZ[MAX_COLS_PER_PLAYER],		m_SpeedfConfusionZ[MAX_COLS_PER_PLAYER];
+	float	m_fDarks[MAX_COLS_PER_PLAYER],			m_SpeedfDarks[MAX_COLS_PER_PLAYER];
+	float	m_fStealth[MAX_COLS_PER_PLAYER],			m_SpeedfStealth[MAX_COLS_PER_PLAYER];
+	float	m_fTiny[MAX_COLS_PER_PLAYER],			m_SpeedfTiny[MAX_COLS_PER_PLAYER];
+	float	m_fBumpy[MAX_COLS_PER_PLAYER],			m_SpeedfBumpy[MAX_COLS_PER_PLAYER];
+	float	m_fReverse[MAX_COLS_PER_PLAYER],			m_SpeedfReverse[MAX_COLS_PER_PLAYER];
 
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
@@ -434,7 +434,9 @@ public:
 	ADD_METHOD( method_name##13 ); \
 	ADD_METHOD( method_name##14 ); \
 	ADD_METHOD( method_name##15 ); \
-	ADD_METHOD( method_name##16 );
+	ADD_METHOD( method_name##16 ); \
+	ADD_METHOD( method_name##17 ); \
+	ADD_METHOD( method_name##18 );
 #define MULTICOL_FLOAT_INTERFACE(func_name, member, valid) \
 	FLOAT_INTERFACE(func_name##1, member[0], valid); \
 	FLOAT_INTERFACE(func_name##2, member[1], valid); \
@@ -451,7 +453,9 @@ public:
 	FLOAT_INTERFACE(func_name##13, member[12], valid); \
 	FLOAT_INTERFACE(func_name##14, member[13], valid); \
 	FLOAT_INTERFACE(func_name##15, member[14], valid); \
-	FLOAT_INTERFACE(func_name##16, member[15], valid);
+	FLOAT_INTERFACE(func_name##16, member[15], valid); \
+	FLOAT_INTERFACE(func_name##17, member[16], valid); \
+	FLOAT_INTERFACE(func_name##18, member[17], valid);
 
 #endif
 

@@ -84,7 +84,7 @@ ret.Redir = function(sButton, sElement)
 			if Var "Button" == "UpLeft" and not string.find(sElement, "Explosion") then sButton = "SoloUpLeft"; end
 			if Var "Button" == "UpRight" and not string.find(sElement, "Explosion") then sButton = "SoloUpRight"; end
 		end
-	elseif GAMESTATE:GetCurrentGame():GetName() == "techno" then
+	elseif GAMESTATE:GetCurrentGame():GetName() == "techno" or GAMESTATE:GetCurrentGame():GetName() == "horizon" then
 		-- See below for why two options.
 		if GAMESTATE:GetMasterPlayerNumber() == "PlayerNumber_P1" then
 			if Var "Button" == "Center" then sButton = "Centerp1"; end
