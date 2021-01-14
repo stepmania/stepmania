@@ -11,7 +11,7 @@
 #include <mach/mach_error.h>
 #include <vector>
 #include <utility>
-#include <ext/hash_map>
+#include <unordered_map>
 
 #include "RageLog.h"
 #include "RageInputDevice.h"

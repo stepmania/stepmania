@@ -1,0 +1,8 @@
+#COURSE:Forced Modifiers 2;
+#SCRIPTER:Rhythm Lunatic;
+#DESCRIPTION:This course uses the MODS tag for modifiers that can start and stop at different times. It is equivalent to ATTACKS in a simfile.;
+#MODS:TIME=0.00:LEN=60:MODS=Sudden;
+#MODS:TIME=60.00:LEN=60:MODS=Hidden;
+#SONG:StepMania 5\Springtime:Medium:nodifficult;
+#MODS:TIME=0.00:LEN=999:MODS=Dark;
+#SONG:StepMania 5\MechaTribe Assault:Easy:nodifficult;

@@ -264,7 +264,7 @@ bool NotesWriterSM::Write( RString sPath, Song &out, const vector<Steps*>& vpSte
 		return false;
 	}
 
-	Write( f, out, vpStepsToSave );
+	return Write( f, out, vpStepsToSave );
 }
 
 bool NotesWriterSM::Write( RageFileBasic &f, Song &out, const vector<Steps*>& vpStepsToSave )

@@ -405,7 +405,7 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 
 void HighScoreList::RemoveAllButOneOfEachName()
 {
-	for (vector<HighScore>::iterator i = vHighScores.begin(); i != vHighScores.end() - 1; ++i)
+	for (vector<HighScore>::iterator i = vHighScores.begin(); i != vHighScores.end(); ++i)
 	{
 		for( vector<HighScore>::iterator j = i+1; j != vHighScores.end(); j++ )
 		{

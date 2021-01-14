@@ -135,6 +135,8 @@ RString ArchHooks_MacOSX::GetArchName() const
 	return "Mac OS X (i386)";
 #elif defined(__x86_64__)
 	return "Mac OS X (x86_64)";
+#elif defined(__aarch64__) || defined(__arm64__)
+	return "macOS (ARM64)";
 #else
 #error What arch?
 #endif
@@ -261,7 +263,14 @@ RString ArchHooks::GetPreferredLanguage()
 		// MacRoman agrees with ASCII in the low-order 7 bits.
 		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
 		if( str )
+		{
 			ret = RString( str, 2 );
+			if (ret == "zh")
+			{
+				ret = RString(str, 7);
+				ret[2] = '-';
+			}
+		}
 		else
 			LOG->Warn( "Unable to determine system language. Using English." );
 	}
@@ -360,6 +369,25 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	// /Logs -> ~/Library/Logs/PRODUCT_ID
 	PathForFolderType( dir, kDomainLibraryFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
+    
+    NSString* resourcePath = [[NSBundle mainBundle] resourcePath];
+    if( resourcePath )
+    {
+        const char* resourcePathUTF8String = [resourcePath UTF8String];
+        FILEMAN->Mount( "dir", ssprintf("%s/Announcers", resourcePathUTF8String), "/Announcers" );
+        FILEMAN->Mount( "dir", ssprintf("%s/BGAnimations", resourcePathUTF8String), "/BGAnimations" );
+        FILEMAN->Mount( "dir", ssprintf("%s/BackgroundEffects", resourcePathUTF8String), "/BackgroundEffects" );
+        FILEMAN->Mount( "dir", ssprintf("%s/BackgroundTransitions", resourcePathUTF8String), "/BackgroundTransitions" );
+        FILEMAN->Mount( "dir", ssprintf("%s/CDTitles", resourcePathUTF8String), "/CDTitles" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Characters", resourcePathUTF8String), "/Characters" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Courses", resourcePathUTF8String), "/Courses" );
+        FILEMAN->Mount( "dir", ssprintf("%s/NoteSkins", resourcePathUTF8String), "/NoteSkins" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Packages", resourcePathUTF8String), "/" + SpecialFiles::USER_PACKAGES_DIR );
+        FILEMAN->Mount( "dir", ssprintf("%s/Songs", resourcePathUTF8String), "/Songs" );
+        FILEMAN->Mount( "dir", ssprintf("%s/RandomMovies", resourcePathUTF8String), "/RandomMovies" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Themes", resourcePathUTF8String), "/Themes" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Data", resourcePathUTF8String), "/Data" );
+    }
 
 	// /Desktop -> /Users/<user>/Desktop/PRODUCT_ID
 	// PathForFolderType( dir, kDesktopFolderType );

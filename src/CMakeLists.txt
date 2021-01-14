@@ -142,8 +142,12 @@ if(WITH_SSE2)
     if(SM_WIN32_ARCH MATCHES "x86")
       set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /arch:SSE2")
     endif()
-  else()
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86")
     set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} -msse2")
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+    set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} -mtune=cortex-a72")
+  else()
+    message("Unrecognized host processor type")
   endif()
 endif()
 
@@ -247,10 +251,27 @@ elseif(APPLE)
       "${SM_XCODE_DIR}/plistHelper.hpp"
       XCODE_ATTRIBUTE_GCC_PREFIX_HEADER
       "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
-      XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS
-      "NO"
       XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS
       "${SM_XCODE_DIR}/Libraries")
+      # XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS
+      # "${SM_XCODE_DIR}/StepMania.entitlements")
+      
+  set(APPLE_BUNDLE_RESOURCES
+    "${SM_ROOT_DIR}/Announcers"
+    "${SM_ROOT_DIR}/BackgroundEffects"
+    "${SM_ROOT_DIR}/BackgroundTransitions"
+    "${SM_ROOT_DIR}/BGAnimations"
+    "${SM_ROOT_DIR}/Characters"
+    "${SM_ROOT_DIR}/Courses"
+    "${SM_ROOT_DIR}/Data"
+    "${SM_ROOT_DIR}/NoteSkins"
+    "${SM_ROOT_DIR}/Scripts"
+    "${SM_ROOT_DIR}/Songs"
+    "${SM_ROOT_DIR}/Themes"
+  )
+  
+  target_sources("${SM_EXE_NAME}" PUBLIC ${APPLE_BUNDLE_RESOURCES})
+  set_source_files_properties(${APPLE_BUNDLE_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
   sm_add_compile_definition("${SM_EXE_NAME}" _XOPEN_SOURCE)
 
@@ -334,9 +355,14 @@ else() # Linux
     sm_add_compile_definition("${SM_EXE_NAME}" CRASH_HANDLER)
     if(LINUX)
       # used only in the ArchHooks_Unix.cpp file
-      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_X86_LINUX)
-      sm_add_compile_definition("${SM_EXE_NAME}"
+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86" OR CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+        sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_X86_LINUX)
+        sm_add_compile_definition("${SM_EXE_NAME}"
                                 BACKTRACE_METHOD_TEXT="x86 custom backtrace")
+      else()
+        sm_add_compile_definition("${SM_EXE_NAME}"
+                                BACKTRACE_METHOD_TEXT="no backtrace")
+      endif()
       sm_add_compile_definition(
         "${SM_EXE_NAME}" BACKTRACE_LOOKUP_METHOD_TEXT="backtrace_symbols")
       if(${DL_FOUND})
@@ -353,12 +379,15 @@ else() # Linux
 
     message("Host processor is ${CMAKE_SYSTEM_PROCESSOR}")
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-      message("Host processor is 64bit")
+      message("Host processor is 64bit X86")
       sm_add_compile_definition("${SM_EXE_NAME}" CPU_X86_64)
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86"
            OR CMAKE_SYSTEM_PROCESSOR MATCHES "i686")
-      message("Host processor is 32bit")
+      message("Host processor is 32bit X86")
       sm_add_compile_definition("${SM_EXE_NAME}" CPU_X86)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+      message("Host processor is 64bit ARM")
+      sm_add_compile_definition("${SM_EXE_NAME}" CPU_AARCH64)
     else()
       message("Unrecognized host processor type")
     endif()
@@ -380,7 +409,7 @@ else() # Linux
     sm_add_compile_definition("${SM_EXE_NAME}" BSD)
   endif()
 
-  if(GTK2_FOUND)
+  if(GTK3_FOUND)
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_GTK)
   endif()
 
@@ -390,12 +419,6 @@ else() # Linux
   endif()
 
   sm_add_compile_flag("${SM_EXE_NAME}" "-std=${SM_CPP_STANDARD}")
-  if(CMAKE_CXX_COMPILER MATCHES "clang")
-    sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
-    set_target_properties("${SM_EXE_NAME}"
-                          PROPERTIES LINK_FLAGS "-stdlib=libc++")
-    sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
-  endif()
 endif()
 
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
@@ -457,7 +480,7 @@ else()
 endif()
 
 if(WITH_SYSTEM_JSONCPP)
-  list(APPEND SMDATA_LINK_LIB ${JSONCPP_LIBRARY})
+  list(APPEND SMDATA_LINK_LIB ${JSONCPP_LIBRARIES})
 else()
   list(APPEND SMDATA_LINK_LIB "jsoncpp")
 endif()
@@ -567,8 +590,8 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
 
   list(APPEND SMDATA_LINK_LIB "${OPENGL_LIBRARY}")
 
-  if(GTK2_FOUND)
-    list(APPEND SMDATA_LINK_LIB "${GTK2_LIBRARIES}")
+  if(GTK3_FOUND)
+    list(APPEND SMDATA_LINK_LIB "${GTK3_LIBRARIES}")
   endif()
 
   list(APPEND SMDATA_LINK_LIB "${BZIP2_LIBRARIES}" "${CMAKE_THREAD_LIBS_INIT}")
@@ -608,8 +631,12 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
   if(PCRE_FOUND)
     list(APPEND SMDATA_LINK_LIB ${PCRE_LIBRARY})
   endif()
+  
+  if(LIBXTST_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${LIBXTST_LIBRARY})
+  endif()
 
-  list(APPEND SMDATA_LINK_LIB ${XRANDR_LIBRARIES} ${LIBXTST_LIBRARY} ${XINERAMA_LIBRARIES})
+  list(APPEND SMDATA_LINK_LIB ${XRANDR_LIBRARIES} ${XINERAMA_LIBRARIES})
 
   list(REMOVE_DUPLICATES SMDATA_LINK_LIB)
 endif()
@@ -620,10 +647,23 @@ list(APPEND SM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
             "${SM_SRC_DIR}/generated")
 list(APPEND SM_INCLUDE_DIRS "${JPEG_INCLUDE_DIR}")
 if(NOT APPLE)
-  list(APPEND SM_INCLUDE_DIRS
-              "${SM_EXTERN_DIR}/glew-1.5.8/include"
-              "${SM_EXTERN_DIR}/jsoncpp/include"
-              "${SM_EXTERN_DIR}/zlib")
+  if(NOT WITH_SYSTEM_GLEW)
+    list(APPEND SM_INCLUDE_DIRS
+                "${SM_EXTERN_DIR}/glew-1.5.8/include")
+  endif()
+
+  if(WITH_SYSTEM_JSONCPP)
+    list(APPEND SM_INCLUDE_DIRS ${JSONCPP_INCLUDE_DIRS})
+  else()
+    list(APPEND SM_INCLUDE_DIRS
+                "${SM_EXTERN_DIR}/jsoncpp/include")
+  endif()
+
+  if(NOT WITH_SYSTEM_ZLIB)
+    list(APPEND SM_INCLUDE_DIRS
+                "${SM_EXTERN_DIR}/zlib")
+  endif()
+
   if(MSVC)
     if(WITH_OGG)
       list(APPEND SM_INCLUDE_DIRS
@@ -633,7 +673,7 @@ if(NOT APPLE)
     endif()
     list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/ffmpeg/include")
   else()
-    if(WITH_OGG)
+    if(WITH_OGG AND NOT WITH_SYSTEM_OGG)
       list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/vorbis")
     endif()
     if(HAS_FFMPEG)
@@ -644,8 +684,8 @@ if(NOT APPLE)
         list(APPEND SM_INCLUDE_DIRS "${SM_FFMPEG_SRC_DIR}" "${SM_FFMPEG_ROOT}")
       endif()
     endif()
-    if(HAS_GTK2)
-      list(APPEND SM_INCLUDE_DIRS "${GTK2_INCLUDE_DIRS}")
+    if(HAS_GTK3)
+      list(APPEND SM_INCLUDE_DIRS "${GTK3_INCLUDE_DIRS}")
     endif()
     if(X11_FOUND)
       list(APPEND SM_INCLUDE_DIRS "${X11_INCLUDE_DIR}")
@@ -672,10 +712,15 @@ endif()
 if(WIN32)
   # FIXME: This makes no sense...
   #list(APPEND SM_INCLUDE_DIRS ${DIRECTX_INCLUDE_DIR})
-else()
-  list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/libpng/include")
 endif()
 
+if(NOT WITH_SYSTEM_PNG)
+  list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/libpng")
+endif()
+
+if(NOT WITH_SYSTEM_TOMCRYPT)
+  list(APPEND SM_INCLUDE_DIRS "${SM_SRC_DIR}/libtomcrypt/src/headers")
+endif()
 
 target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 

@@ -1,4 +1,7 @@
 #include "global.h"
+
+#include <tomcrypt.h>
+
 #include "CryptManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -8,8 +11,6 @@
 #include "LuaBinding.h"
 #include "LuaReference.h"
 #include "LuaManager.h"
-
-#include "libtomcrypt/src/headers/tomcrypt.h"
 
 CryptManager*	CRYPTMAN	= nullptr;	// global and accessible from anywhere in our program
 
@@ -419,6 +420,37 @@ RString CryptManager::GetSHA1ForFile( RString fn )
 	return RString( (const char *) digest, sizeof(digest) );
 }
 
+RString CryptManager::GetSHA256ForString( RString sData )
+{
+	unsigned char digest[32];
+
+	int iHash = register_hash( &sha256_desc );
+
+	hash_state hash;
+	hash_descriptor[iHash].init( &hash );
+	hash_descriptor[iHash].process( &hash, (const unsigned char *) sData.data(), sData.size() );
+	hash_descriptor[iHash].done( &hash, digest );
+
+	return RString( (const char *) digest, sizeof(digest) );
+}
+
+RString CryptManager::GetSHA256ForFile( RString fn )
+{
+	RageFile file;
+	if( !file.Open( fn, RageFile::READ ) )
+	{
+		LOG->Warn( "GetSHA256: Failed to open file '%s'", fn.c_str() );
+		return RString();
+	}
+	int iHash = register_hash( &sha256_desc );
+	ASSERT( iHash >= 0 );
+
+	unsigned char digest[32];
+	HashFile( file, digest, iHash );
+
+	return RString( (const char *) digest, sizeof(digest) );
+}
+
 RString CryptManager::GetPublicKeyFileName()
 {
 	return PUBLIC_KEY_PATH;
@@ -477,6 +509,20 @@ public:
 		lua_pushlstring(L, sha1fout, sha1fout.size());
 		return 1;
 	}
+	static int SHA256String( T* p, lua_State *L )
+	{
+		RString sha256out;
+		sha256out = p->GetSHA256ForString(SArg(1));
+		lua_pushlstring(L, sha256out, sha256out.size());
+		return 1;
+	}
+	static int SHA256File( T* p, lua_State *L )
+	{
+		RString sha256fout;
+		sha256fout = p->GetSHA256ForFile(SArg(1));
+		lua_pushlstring(L, sha256fout, sha256fout.size());
+		return 1;
+	}
 	static int GenerateRandomUUID( T* p, lua_State *L )
 	{
 		RString uuidOut;
@@ -491,6 +537,8 @@ public:
 		ADD_METHOD( MD5File );
 		ADD_METHOD( SHA1String );
 		ADD_METHOD( SHA1File );
+		ADD_METHOD( SHA256String );
+		ADD_METHOD( SHA256File );
 		ADD_METHOD( GenerateRandomUUID );
 	}
 };

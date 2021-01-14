@@ -55,6 +55,8 @@
     <string>Copyright 2001-2015</string>
     <key>NSPrincipalClass</key>
     <string>SMApplication</string>
+    <key>NSHighResolutionCapable</key>
+    <false />
   </dict>
 </plist>
 

@@ -236,8 +236,7 @@ static bool PointsToValidCall( const void *ptr )
 	int len = 7;
 	while( len )
 	{
-		int val = find_address( buf-len, g_ReadableBegin, g_ReadableEnd );
-		if( val != -1 )
+		if( IsExecutableAddress( buf - len ) )
 			break;
 		--len;
 	}
@@ -399,6 +398,12 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 	ctx->sp = (void *) uc->uc_mcontext.gregs[REG_RSP];
 	ctx->pid = GetCurrentThreadId();
 }
+#elif defined(CPU_AARCH64)
+void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
+{
+	// NYI
+}
+
 #else
 #error
 #endif
@@ -740,6 +745,11 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 
 #warning Undefined BACKTRACE_METHOD_*
 void InitializeBacktrace() { }
+
+void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
+{
+	// NYI
+}
 
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {

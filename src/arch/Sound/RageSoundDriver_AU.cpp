@@ -121,7 +121,7 @@ static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 
 RString RageSoundDriver_AU::Init()
 {
-	ComponentDescription desc;
+	AudioComponentDescription desc;
 	
 	desc.componentType = kAudioUnitType_Output;
 	desc.componentSubType = kAudioUnitSubType_DefaultOutput;
@@ -129,12 +129,13 @@ RString RageSoundDriver_AU::Init()
 	desc.componentFlags = 0;
 	desc.componentFlagsMask = 0;
 	
-	Component comp = FindNextComponent( NULL, &desc );
+	AudioComponent comp = AudioComponentFindNext(NULL, &desc);
+	//Component comp = FindNextComponent( NULL, &desc );
 	
 	if( comp == nullptr ) 
 		return "Failed to find the default output unit.";
 	
-	OSStatus error = OpenAComponent( comp, &m_OutputUnit );
+	OSStatus error = AudioComponentInstanceNew( comp, &m_OutputUnit );
 	
 	if( error != noErr || m_OutputUnit == nullptr )
 		return ERROR( "Could not open the default output unit", error );

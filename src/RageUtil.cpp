@@ -218,7 +218,7 @@ bool IsHexVal( const RString &s )
 		return false;
 
 	for( size_t i=0; i < s.size(); ++i )
-		if( !(s[i] >= '0' && s[i] <= '9') && 
+		if( !(s[i] >= '0' && s[i] <= '9') &&
 			!(toupper(s[i]) >= 'A' && toupper(s[i]) <= 'F'))
 			return false;
 
@@ -339,7 +339,7 @@ RString PrettyPercent( float fNumerator, float fDenominator)
 	return ssprintf("%0.2f%%",fNumerator/fDenominator*100);
 }
 
-RString Commify( int iNum ) 
+RString Commify( int iNum )
 {
 	RString sNum = ssprintf("%d",iNum);
 	return Commify( sNum );
@@ -494,7 +494,7 @@ RString vssprintf( const char *szFormat, va_list argList )
 			/* OK */
 			sStr.assign(buf, used);
 		}
-		
+
 		delete [] buf;
 		if (used != -1)
 		{
@@ -547,7 +547,6 @@ RString ConvertI64FormatString( const RString &sStr ) { return sStr; }
 #endif
 
 /* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
- * native forms: http://people.w3.org/rishida/names/languages.html
  * We don't use 3-letter codes, so we don't bother supporting them. */
 static const LanguageInfo g_langs[] =
 {
@@ -688,7 +687,8 @@ static const LanguageInfo g_langs[] =
 	{"xh", "Xhosa"},
 	{"yi", "Yiddish"},
 	{"yo", "Yoruba"},
-	{"zh", "Chinese"},
+	{"zh-Hans", "Chinese (Simplified)"},
+	{"zh-Hant", "Chinese (Traditional)"},
 	{"zu", "Zulu"},
 };
 
@@ -956,9 +956,9 @@ void splitpath( const RString &sPath, RString &sDir, RString &sFilename, RString
 	vector<RString> asMatches;
 
 	/*
-	 * One level of escapes for the regex, one for C. Ew. 
+	 * One level of escapes for the regex, one for C. Ew.
 	 * This is really:
-	 * ^(.*[\\/])?(.*)$ 
+	 * ^(.*[\\/])?(.*)$
 	 */
 	static Regex sep("^(.*[\\\\/])?(.*)$");
 	bool bCheck = sep.Compare( sPath, asMatches );
@@ -1248,10 +1248,10 @@ float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
 bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
                        float &fSlope, float &fIntercept, float &fError )
 {
-	if( vCoordinates.empty() ) 
+	if( vCoordinates.empty() )
 		return false;
 	float fSumXX = 0.0f, fSumXY = 0.0f, fSumX = 0.0f, fSumY = 0.0f;
-	for( unsigned i = 0; i < vCoordinates.size(); ++i ) 
+	for( unsigned i = 0; i < vCoordinates.size(); ++i )
 	{
 		fSumXX += vCoordinates[i].first * vCoordinates[i].first;
 		fSumXY += vCoordinates[i].first * vCoordinates[i].second;
@@ -1263,7 +1263,7 @@ bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
 	fIntercept = (fSumXX * fSumY - fSumX * fSumXY) / fDenominator;
 
 	fError = 0.0f;
-	for( unsigned i = 0; i < vCoordinates.size(); ++i ) 
+	for( unsigned i = 0; i < vCoordinates.size(); ++i )
 	{
 		const float fOneError = fIntercept + fSlope * vCoordinates[i].first - vCoordinates[i].second;
 		fError += fOneError * fOneError;
@@ -1877,34 +1877,20 @@ void MakeLower( wchar_t *p, size_t iLen )
 
 float StringToFloat( const RString &sString )
 {
-	RString toTrim = sString;
-	Trim(toTrim);
-	if (toTrim.size() == 0)
+	float fOut = std::strtof(sString, nullptr);
+	if (!isfinite(fOut))
 	{
-		return 0;
+		fOut = 0.0f;
 	}
-	try
-	{
-		return std::stof(toTrim);
-	}
-	catch( std::logic_error& )
-	{
-		return 0;
-	}
+	return fOut;
 }
 
 bool StringToFloat( const RString &sString, float &fOut )
 {
-	RString toTrim = sString;
-	Trim(toTrim);
-	if (toTrim.size() == 0)
-	{
-		return false;
-	}
-	char *endPtr;
+	char *endPtr = nullptr;
 
-	fOut = strtof( toTrim, &endPtr );
-	return *endPtr == '\0' && isfinite( fOut );
+	fOut = std::strtof(sString, &endPtr);
+	return sString.size() && *endPtr == '\0' && isfinite(fOut);
 }
 
 RString FloatToString( const float &num )
@@ -1930,7 +1916,7 @@ wstring RStringToWstring( const RString &s )
 			++start;
 			continue;
 		}
-		
+
 		wchar_t ch = L'\0';
 		if( !utf8_to_wchar( s.data(), s.size(), start, ch ) )
 			ch = INVALID_CHAR;
@@ -2163,13 +2149,13 @@ RString Dirname( const RString &dir )
 	return dir.substr(0, pos+1);
 }
 
-RString Capitalize( const RString &s )	
+RString Capitalize( const RString &s )
 {
 	if( s.empty() )
 		return RString();
 
 	char *buf = const_cast<char *>(s.c_str());
-	
+
 	UnicodeDoUpper( buf, s.size(), g_UpperCase );
 
 	return buf;
@@ -2299,7 +2285,7 @@ void CollapsePath( RString &sPath, bool bRemoveLeadingDot )
 
 		sOut.append( sPath, iPos, iNext-iPos );
 	}
-	
+
 	sOut.swap( sPath );
 }
 
@@ -2457,6 +2443,7 @@ LuaFunction( URLEncode, URLEncode( SArg(1) ) );
 LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );
 //LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
 LuaFunction( lerp, lerp(FArg(1), FArg(2), FArg(3)) );
+LuaFunction( BinaryToHex, BinaryToHex( SArg(1) ) );
 
 int LuaFunc_commify(lua_State* L);
 int LuaFunc_commify(lua_State* L)

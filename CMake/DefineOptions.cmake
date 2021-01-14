@@ -96,7 +96,7 @@ elseif(LINUX)
   option(WITH_TTY "Build with Linux TTY Input Support." OFF)
   option(WITH_PROFILING "Build with Profiling Support." OFF)
   option(WITH_GLES2 "Build with OpenGL ES 2.0 Support." ON)
-  option(WITH_GTK2 "Build with GTK2 Support." ON)
+  option(WITH_GTK3 "Build with GTK3 Support." ON)
   option(WITH_PARALLEL_PORT "Build with Parallel Lights I/O Support." OFF)
   option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
   option(WITH_XINERAMA
