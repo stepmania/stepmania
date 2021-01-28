@@ -578,7 +578,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			{
 				BackgroundChange change = bgc;
 				BackgroundDef &bd = change.m_def;
-				
+
 				bool bIsAlreadyLoaded = layer.m_BGAnimations.find(bd) != layer.m_BGAnimations.end();
 
 				if( bd.m_sFile1 != RANDOM_BACKGROUND_FILE  &&  !bIsAlreadyLoaded )
@@ -600,7 +600,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 						}
 					}
 				}
-			
+
 				if( !bd.IsEmpty() )
 					layer.m_aBGChanges.push_back( change );
 			}
@@ -729,8 +729,8 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	beat_info.elapsed_time= fCurrentTime;
 	pSong->m_SongTiming.GetBeatAndBPSFromElapsedTime(beat_info);
 
-	// Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it.
-	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+	// Calls to Update() should *not* be scaled by music rate unless RateModsAffectFGChanges is enabled; fCurrentTime is. Undo it.
+	const float fRate = PREFSMAN->m_bRateModsAffectTweens ? 1.0f : GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 	// Find the BGSegment we're in
 	const int i = FindBGSegmentForBeat(beat_info.beat);
@@ -773,7 +773,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 			if( m_pFadingBGA )
 			{
 				m_pFadingBGA->PlayCommand( "LoseFocus" );
-				
+
 				if( !change.m_sTransition.empty() )
 				{
 					map<RString,BackgroundTransition>::const_iterator lIter = mapNameToTransition.find( change.m_sTransition );
@@ -993,7 +993,7 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
 /*
  * (c) 2001-2004 Chris Danford, Ben Nordstrom
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1003,7 +1003,7 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

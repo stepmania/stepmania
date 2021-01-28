@@ -99,14 +99,14 @@ static Preference<bool> g_bEasterEggs( "EasterEggs", true );
 
 PlayerInfo::PlayerInfo(): m_pn(PLAYER_INVALID), m_mp(MultiPlayer_Invalid),
 	m_bIsDummy(false), m_iDummyIndex(0), m_iAddToDifficulty(0),
-	m_bPlayerEnabled(false), m_PlayerStateDummy(), 
+	m_bPlayerEnabled(false), m_PlayerStateDummy(),
 	m_PlayerStageStatsDummy(), m_SoundEffectControl(),
-	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(nullptr), 
+	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(nullptr),
 	m_ptextCourseSongNumber(nullptr), m_ptextStepsDescription(nullptr),
 	m_pPrimaryScoreDisplay(nullptr), m_pSecondaryScoreDisplay(nullptr),
 	m_pPrimaryScoreKeeper(nullptr), m_pSecondaryScoreKeeper(nullptr),
 	m_ptextPlayerOptions(nullptr), m_pActiveAttackList(nullptr),
-	m_NoteData(), m_pPlayer(nullptr), m_pInventory(nullptr), 
+	m_NoteData(), m_pPlayer(nullptr), m_pInventory(nullptr),
 	m_pStepsDisplay(nullptr), m_sprOniGameOver() {}
 
 void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
@@ -250,7 +250,7 @@ bool PlayerInfo::IsEnabled()
 	FAIL_M("Invalid non-dummy player.");
 }
 
-vector<PlayerInfo>::iterator 
+vector<PlayerInfo>::iterator
 GetNextEnabledPlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
 	for( ; iter != v.end(); ++iter )
@@ -262,7 +262,7 @@ GetNextEnabledPlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 	return iter;
 }
 
-vector<PlayerInfo>::iterator 
+vector<PlayerInfo>::iterator
 GetNextEnabledPlayerInfoNotDummy( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
 	for( ; iter != v.end(); iter++ )
@@ -423,7 +423,7 @@ void ScreenGameplay::Init()
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		unsigned int count = pi->m_vpStepsQueue.size();
-		
+
 		for (unsigned int i = 0; i < count; i++)
 		{
 			Steps *curSteps = pi->m_vpStepsQueue[i];
@@ -433,7 +433,7 @@ void ScreenGameplay::Init()
 				{
 					LOG->Trace("Notes should be loaded for player %d", player);
 				}
-				else 
+				else
 				{
 					LOG->Trace("Error loading notes for player %d", player);
 				}
@@ -441,7 +441,7 @@ void ScreenGameplay::Init()
 		}
 		player++;
 	}
-	
+
 	if(!GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox)
 	{
 		// fill in difficulty of CPU players with that of the first human player
@@ -582,7 +582,7 @@ void ScreenGameplay::Init()
 			right_marge= margins[PLAYER_2][1]; \
 			field_space= screen_space - left_marge - right_marge; \
 		}
-		// If pi->m_pn is set, then the player will be visible.  If not, then it's not 
+		// If pi->m_pn is set, then the player will be visible.  If not, then it's not
 		// visible and don't bother setting its position.
 		if(GAMESTATE->m_bMultiplayer && !pi->m_bIsDummy)
 		CENTER_PLAYER_BLOCK
@@ -650,7 +650,7 @@ void ScreenGameplay::Init()
 	// if you wait too long at the second checkpoint, you will
 	// appear dead when you begin your game.
 	if( !m_bForceNoNetwork )
-		NSMAN->StartRequest(0); 
+		NSMAN->StartRequest(0);
 
 
 	// Add individual life meter
@@ -861,16 +861,16 @@ void ScreenGameplay::Init()
 		RString sType = PLAYER_TYPE;
 		if( pi->m_bIsDummy )
 			sType += "Dummy";
-		pi->m_pPlayer->Init( 
+		pi->m_pPlayer->Init(
 			sType,
 			pi->GetPlayerState(),
 			pi->GetPlayerStageStats(),
-			pi->m_pLifeMeter, 
-			m_pCombinedLifeMeter, 
-			pi->m_pPrimaryScoreDisplay, 
-			pi->m_pSecondaryScoreDisplay, 
-			pi->m_pInventory, 
-			pi->m_pPrimaryScoreKeeper, 
+			pi->m_pLifeMeter,
+			m_pCombinedLifeMeter,
+			pi->m_pPrimaryScoreDisplay,
+			pi->m_pSecondaryScoreDisplay,
+			pi->m_pInventory,
+			pi->m_pPrimaryScoreKeeper,
 			pi->m_pSecondaryScoreKeeper );
 	}
 
@@ -914,7 +914,7 @@ bool ScreenGameplay::Center1Player() const
 	 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
 	 * but for now just ignore Center1Player when it's Battle or Rave
 	 * Mode. This doesn't begin to address two-player solo (6 arrows) */
-	return g_bCenter1Player && 
+	return g_bCenter1Player &&
 		(bool)ALLOW_CENTER_1_PLAYER &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
@@ -958,7 +958,7 @@ void ScreenGameplay::InitSongQueues()
 			// In a survival course, override stored mods
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL && SURVIVAL_MOD_OVERRIDE )
 			{
-				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, 
+				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage,
 										 "clearall,"
 										 + CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()
 										 + ","
@@ -975,7 +975,7 @@ void ScreenGameplay::InitSongQueues()
 			Steps *pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
 			pi->m_vpStepsQueue.push_back( pSteps );
 			const PlayerOptions &p = pi->GetPlayerState()->m_PlayerOptions.GetCurrent();
-			
+
 			if (p.m_fNoAttack == 0 && p.m_fRandAttack == 0 &&
 			    pSteps->m_Attacks.size() > 0 )
 			{
@@ -1072,7 +1072,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		Steps *pSteps = pi->m_vpStepsQueue[iSongIndex];
  		GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ].Set( pSteps );
 
-		/* Load new NoteData into Player. Do this before 
+		/* Load new NoteData into Player. Do this before
 		 * RebuildPlayerOptionsFromActiveAttacks or else transform mods will get
 		 * propagated to GAMESTATE->m_pPlayerOptions too early and be double-applied
 		 * to the NoteData:
@@ -1145,7 +1145,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			Attack a = pi->m_asModifiersQueue[iSongIndex][i];
 			if( a.fStartSecond == 0 )
 				a.fStartSecond = ATTACK_STARTS_NOW;	// now
-			
+
 			pi->GetPlayerState()->LaunchAttack( a );
 			GAMESTATE->m_SongOptions.FromString( ModsLevel_Song, a.sModifiers );
 		}
@@ -1273,7 +1273,7 @@ void ScreenGameplay::LoadNextSong()
 				else
 					pi->GetPlayerState()->m_PlayerController = GamePreferences::m_AutoPlay;
 			}
-		} 
+		}
 	}
 
 	bool bAllReverse = true;
@@ -1625,7 +1625,7 @@ void ScreenGameplay::BeginScreen()
 
 		float startOffset = g_fNetStartOffset;
 
-		NSMAN->StartRequest(1); 
+		NSMAN->StartRequest(1);
 
 		RageSoundParams p;
 		p.m_fSpeed = 1.0f;	// Force 1.0 playback speed
@@ -1701,7 +1701,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 	}
 	else
 	{
-		Screen::Update( fDeltaTime );
+		const float fRate = PREFSMAN->m_bRateModsAffectTweens ? GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate : 1.0f;
+		Screen::Update( fDeltaTime * fRate );
 	}
 
 	/* This happens if ScreenDemonstration::HandleScreenMessage sets a new screen when
@@ -1850,7 +1851,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 
 			// Update living players' alive time
-			// HACK: Don't scale alive time when using tab/tilde.  Instead of accumulating time from a timer, 
+			// HACK: Don't scale alive time when using tab/tilde.  Instead of accumulating time from a timer,
 			// this time should instead be tied to the music position.
 			float fUnscaledDeltaTime = m_timerGameplaySeconds.GetDeltaTime();
 
@@ -1862,7 +1863,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			STATSMAN->m_CurStageStats.m_fGameplaySeconds += fUnscaledDeltaTime;
 			float curBeat = GAMESTATE->m_Position.m_fSongBeat;
 			Song &s = *GAMESTATE->m_pCurSong;
-			
+
 			if( curBeat >= s.GetFirstBeat() && curBeat < s.GetLastBeat() )
 			{
 				STATSMAN->m_CurStageStats.m_fStepsSeconds += fUnscaledDeltaTime;
@@ -2949,7 +2950,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				if(course->GetCourseType() == COURSE_TYPE_SURVIVAL &&
 					SURVIVAL_MOD_OVERRIDE)
 				{
-					pi->GetPlayerState()->m_PlayerOptions.FromString(ModsLevel_Stage, 
+					pi->GetPlayerState()->m_PlayerOptions.FromString(ModsLevel_Stage,
 						"clearall," + CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() +
 						"," + CommonMetrics::DEFAULT_MODIFIERS.GetValue());
 					pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
@@ -3134,7 +3135,7 @@ void ScreenGameplay::HandleMessage( const Message &msg )
 
 	ScreenWithMenuElements::HandleMessage( msg );
 }
- 
+
 void ScreenGameplay::Cancel( ScreenMessage smSendWhenDone )
 {
 	m_pSoundMusic->Stop();
@@ -3257,7 +3258,7 @@ bool ScreenGameplay::LoadReplay()
 #include "LuaBinding.h"
 #include "OptionsBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenGameplay. */ 
+/** @brief Allow Lua to have access to the ScreenGameplay. */
 class LunaScreenGameplay: public Luna<ScreenGameplay>
 {
 public:
@@ -3344,7 +3345,7 @@ public:
 		lua_pushnumber(L, true_bps);
 		return 1;
 	}
-	
+
 	LunaScreenGameplay()
 	{
 		ADD_METHOD( GetNextCourseSong );
@@ -3368,7 +3369,7 @@ public:
 LUA_REGISTER_DERIVED_CLASS( ScreenGameplay, ScreenWithMenuElements )
 
 
-/** @brief Allow Lua to have access to the PlayerInfo. */ 
+/** @brief Allow Lua to have access to the PlayerInfo. */
 class LunaPlayerInfo: public Luna<PlayerInfo>
 {
 public:
@@ -3381,7 +3382,7 @@ public:
 		}
 		return 0;
 	}
-		
+
 	static int GetStepsQueueWrapped( T* p, lua_State *L )
 	{
 		int iIndex = IArg(1);
@@ -3404,7 +3405,7 @@ LUA_REGISTER_CLASS( PlayerInfo )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -3414,7 +3415,7 @@ LUA_REGISTER_CLASS( PlayerInfo )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
