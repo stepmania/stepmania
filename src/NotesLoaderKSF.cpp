@@ -130,7 +130,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		
 		else if( sValueName=="TICKCOUNT" )
 		{
-			iTickCount = std::stoi( sParams[1] );
+			iTickCount = StringToInt( sParams[1] );
 			if( iTickCount <= 0 )
 			{
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
@@ -141,7 +141,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		
 		else if( sValueName=="DIFFICULTY" )
 		{
-			out.SetMeter( max(std::stoi(sParams[1]), 1) );
+			out.SetMeter( max(StringToInt(sParams[1]), 1) );
 		}
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
@@ -515,7 +515,7 @@ static void ProcessTickcounts( const RString & value, int & ticks, TimingData & 
 	/* TICKCOUNT will be used below if there are DM compliant BPM changes
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */
-	ticks = std::stoi( value );
+	ticks = StringToInt( value );
 	CLAMP( ticks, 0, ROWS_PER_BEAT );
 
 	if( ticks == 0 )

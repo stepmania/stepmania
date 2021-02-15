@@ -430,7 +430,7 @@ static bool LoadFromDWITokens(
 	if( sNumFeet.empty() )
 		sNumFeet = "1";
 
-	out.SetMeter(std::stoi(sNumFeet));
+	out.SetMeter(StringToInt(sNumFeet));
 
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDescription) );
 
@@ -508,7 +508,7 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 				continue;
 			if (out.GetDifficulty() != DwiCompatibleStringToDifficulty(params[1]))
 				continue;
-			if (out.GetMeter() != std::stoi(params[2]))
+			if (out.GetMeter() != StringToInt(params[2]))
 				continue;
 			RString step1 = params[3];
 			RString step2 = (iNumParams==5) ? params[4] : RString("");
@@ -626,7 +626,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 
 		else if( sValueName.EqualsNoCase("GAP") )
 			// the units of GAP is 1/1000 second
-			out.m_SongTiming.m_fBeat0OffsetInSeconds = -std::stoi(sParams[1]) / 1000.0f;
+			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt(sParams[1]) / 1000.0f;
 
 		else if( sValueName.EqualsNoCase("SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);

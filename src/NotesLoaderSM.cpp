@@ -156,7 +156,7 @@ void SMSetSelectable(SMSongTagInfo& info)
 	 * used 3.9+ features are not excluded here */
 	else if((*info.params)[1].EqualsNoCase("ES") || (*info.params)[1].EqualsNoCase("OMES"))
 	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
-	else if(std::stoi((*info.params)[1]) > 0)
+	else if(StringToInt((*info.params)[1]) > 0)
 	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
 	else
 	{ LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str()); }
@@ -337,7 +337,7 @@ void SMLoader::LoadFromTokens(
 		// have a meter on certain steps. Make the meter 1 in these instances.
 		sMeter = "1";
 	}
-	out.SetMeter( std::stoi(sMeter) );
+	out.SetMeter( StringToInt(sMeter) );
 
 	out.SetSMNoteData( sNoteData );
 
@@ -786,8 +786,8 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 		}
 
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
-		const int iNumerator = std::stoi( vs2[1] );
-		const int iDenominator = std::stoi( vs2[2] );
+		const int iNumerator = StringToInt( vs2[1] );
+		const int iDenominator = StringToInt( vs2[2] );
 
 		if( fBeat < 0 )
 		{
@@ -879,7 +879,7 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 		const float fDelay = StringToFloat( vs2[2] );
 
 		// XXX: ugly...
-		int iUnit = std::stoi(vs2[3]);
+		int iUnit = StringToInt(vs2[3]);
 		SpeedSegment::BaseUnit unit = (iUnit == 0) ?
 			SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
 

@@ -452,13 +452,13 @@ void actor_template_t::load_frames_from_file(RString const& fname, RString const
 			RString field_type= attr->first.Left(5);
 			if(field_type == "Frame")
 			{
-				int id= std::stoi(attr->first.Right(attr->first.size()-5));
+				int id= StringToInt(attr->first.Right(attr->first.size()-5));
 				make_space_for_frame(id);
 				attr->second->GetValue(frames[id].frame);
 			}
 			else if(field_type == "Delay")
 			{
-				int id= std::stoi(attr->first.Right(attr->first.size()-5));
+				int id= StringToInt(attr->first.Right(attr->first.size()-5));
 				make_space_for_frame(id);
 				attr->second->GetValue(frames[id].delay);
 			}

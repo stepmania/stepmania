@@ -3679,7 +3679,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromDifficultyMeterChange )
 	{
-		int i = std::stoi( ScreenTextEntry::s_sLastAnswer );
+		int i = StringToInt( ScreenTextEntry::s_sLastAnswer );
 		GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(i);
 		SetDirty( true );
 	}
@@ -3733,7 +3733,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromTickcountChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		int iTick = std::stoi( ScreenTextEntry::s_sLastAnswer );
+		int iTick = StringToInt( ScreenTextEntry::s_sLastAnswer );
 
 		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
 			GetAppropriateTimingForUpdate().AddSegment( TickcountSegment( GetRow(), iTick) );
@@ -3798,7 +3798,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			int tmp = std::stoi(ScreenTextEntry::s_sLastAnswer );
+			int tmp = StringToInt(ScreenTextEntry::s_sLastAnswer );
 
 			SpeedSegment::BaseUnit unit = (tmp == 0 ) ?
 			  SpeedSegment::UNIT_BEATS : SpeedSegment::UNIT_SECONDS;
@@ -4571,7 +4571,7 @@ static void ChangeStepCredit( const RString &sNew )
 
 static void ChangeStepMeter( const RString &sNew )
 {
-	int diff = std::stoi(sNew);
+	int diff = StringToInt(sNew);
 	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(max(diff, 1));
 }
 
