@@ -377,12 +377,12 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "weight" )
 	{
-		m_iWeightPounds = std::stoi( sValue );
+		m_iWeightPounds = StringToInt( sValue );
 	}
 
 	else if( sName == "goalcalories" )
 	{
-		m_iGoalCalories = std::stoi( sValue );
+		m_iGoalCalories = StringToInt( sValue );
 	}
 
 	else if( sName == "goaltype" )

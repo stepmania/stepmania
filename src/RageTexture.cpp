@@ -52,8 +52,8 @@ void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWi
 		return;
 	}
 	// Check for nonsense values.  Some people might not intend the hint. -Kyz
-	int maybe_width= std::stoi(asMatch[0]);
-	int maybe_height= std::stoi(asMatch[1]);
+	int maybe_width= StringToInt(asMatch[0]);
+	int maybe_height= StringToInt(asMatch[1]);
 	if(maybe_width <= 0 || maybe_height <= 0)
 	{
 		*piFramesWide = *piFramesHigh = 1;

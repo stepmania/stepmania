@@ -27,8 +27,8 @@ static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight 
 		return;
 
 	// Check for nonsense values.  Some people might not intend the hint. -Kyz
-	int maybe_width= std::stoi(asMatches[0]);
-	int maybe_height= std::stoi(asMatches[1]);
+	int maybe_width= StringToInt(asMatches[0]);
+	int maybe_height= StringToInt(asMatches[1]);
 	if(maybe_width <= 0 || maybe_height <= 0)
 	{
 		return;

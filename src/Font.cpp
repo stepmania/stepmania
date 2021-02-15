@@ -488,7 +488,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 			// If val is an integer, it's a width, eg. "10=27".
 			if( IsAnInt(sName) )
 			{
-				cfg.m_mapGlyphWidths[std::stoi(sName)] = pValue->GetValue<int>();
+				cfg.m_mapGlyphWidths[StringToInt(sName)] = pValue->GetValue<int>();
 				continue;
 			}
 
@@ -603,7 +603,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 						row_str.c_str());
 					continue;
 				}
-				const int row = std::stoi(row_str);
+				const int row = StringToInt(row_str);
 				const int first_frame = row * num_frames_wide;
 
 				if(row >= num_frames_high)

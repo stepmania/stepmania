@@ -276,8 +276,8 @@ float HHMMSSToSeconds( const RString &sHHMMSS )
 		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
 
 	float fSeconds = 0;
-	fSeconds += std::stoi( arrayBits[0] ) * 60 * 60;
-	fSeconds += std::stoi( arrayBits[1] ) * 60;
+	fSeconds += StringToInt( arrayBits[0] ) * 60 * 60;
+	fSeconds += StringToInt( arrayBits[1] ) * 60;
 	fSeconds += StringToFloat( arrayBits[2] );
 
 	return fSeconds;
@@ -1900,6 +1900,51 @@ RString FloatToString( const float &num )
 	return ss.str();
 }
 
+int StringToInt( const std::string& str, std::size_t* pos, int base, int exceptVal )
+{
+  try
+  {
+    return std::stoi(str, pos, base);
+  }
+  catch (const std::invalid_argument & e) {
+    LOG->Warn( "stoi(%s): %s", str.c_str(), e.what() );
+  }
+  catch (const std::out_of_range & e) {
+    LOG->Warn( "stoi(%s): %s", str.c_str(), e.what() );
+  }
+  return exceptVal;
+}
+
+long StringToLong( const std::string& str, std::size_t* pos, int base, long exceptVal )
+{
+  try
+  {
+    return std::stol(str, pos, base);
+  }
+  catch (const std::invalid_argument & e) {
+    LOG->Warn( "stol(%s): %s", str.c_str(), e.what() );
+  }
+  catch (const std::out_of_range & e) {
+    LOG->Warn( "stol(%s): %s", str.c_str(), e.what() );
+  }
+  return exceptVal;
+}
+
+long long StringToLLong( const std::string& str, std::size_t* pos, int base, long long exceptVal )
+{
+  try
+  {
+    return std::stoll(str, pos, base);
+  }
+  catch (const std::invalid_argument & e) {
+    LOG->Warn( "stoll(%s): %s", str.c_str(), e.what() );
+  }
+  catch (const std::out_of_range & e) {
+    LOG->Warn( "stoll(%s): %s", str.c_str(), e.what() );
+  }
+  return exceptVal;
+}
+
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 
 wstring RStringToWstring( const RString &s )
@@ -2324,7 +2369,7 @@ namespace StringConversion
 		if( sValue.size() == 0 )
 			return false;
 
-		out = (std::stoi(sValue) != 0);
+		out = StringToInt(sValue) != 0;
 		return true;
 	}
 

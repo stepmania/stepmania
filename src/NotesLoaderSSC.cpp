@@ -199,7 +199,7 @@ void SetSelectable(SongTagInfo& info)
 	 * used 3.9+ features are not excluded here */
 	else if((*info.params)[1].EqualsNoCase("ES") || (*info.params)[1].EqualsNoCase("OMES"))
 	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
-	else if(std::stoi((*info.params)[1]) > 0)
+	else if(StringToInt((*info.params)[1]) > 0)
 	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
 	else
 	{ LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str()); }
@@ -298,12 +298,12 @@ void SetSongFilename(SongTagInfo& info)
 void SetHasMusic(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->m_bHasMusic = std::stoi((*info.params)[1]) != 0; }
+	{ info.song->m_bHasMusic = StringToInt((*info.params)[1]) != 0; }
 }
 void SetHasBanner(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->m_bHasBanner = std::stoi((*info.params)[1]) != 0; }
+	{ info.song->m_bHasBanner = StringToInt((*info.params)[1]) != 0; }
 }
 
 // Functions for steps tags go below this line. -Kyz
@@ -350,7 +350,7 @@ void SetDifficulty(StepsTagInfo& info)
 }
 void SetMeter(StepsTagInfo& info)
 {
-	info.steps->SetMeter(std::stoi((*info.params)[1]));
+	info.steps->SetMeter(StringToInt((*info.params)[1]));
 	info.ssc_format= true;
 }
 void SetRadarValues(StepsTagInfo& info)
@@ -797,8 +797,8 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 			continue;
 		}
 		const float fComboBeat = std::stof( arrayComboValues[0] );
-		const int iCombos = std::stoi( arrayComboValues[1] );
-		const int iMisses = (size == 2 ? iCombos : std::stoi(arrayComboValues[2]));
+		const int iCombos = StringToInt( arrayComboValues[1] );
+		const int iMisses = (size == 2 ? iCombos : StringToInt(arrayComboValues[2]));
 		out.AddSegment( ComboSegment( BeatToNoteRow(fComboBeat), iCombos, iMisses ) );
 	}
 }
@@ -905,7 +905,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 						{ tryingSteps = false; }
 						break;
 					case LNDID_meter:
-						if(out.GetMeter() != std::stoi(matcher))
+						if(out.GetMeter() != StringToInt(matcher))
 						{ tryingSteps = false; }
 						break;
 					case LNDID_credit:

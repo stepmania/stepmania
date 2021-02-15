@@ -87,7 +87,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		}
 		else if( sValueName.EqualsNoCase("LIVES") )
 		{
-			out.m_iLives = max( std::stoi(sParams[1]), 0 );
+			out.m_iLives = max( StringToInt(sParams[1]), 0 );
 		}
 		else if( sValueName.EqualsNoCase("GAINSECONDS") )
 		{
@@ -97,7 +97,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		{
 			if( sParams.params.size() == 2 )
 			{
-				out.m_iCustomMeter[Difficulty_Medium] = max( std::stoi(sParams[1]), 0 ); /* compat */
+				out.m_iCustomMeter[Difficulty_Medium] = max( StringToInt(sParams[1]), 0 ); /* compat */
 			}
 			else if( sParams.params.size() == 3 )
 			{
@@ -107,7 +107,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					LOG->UserLog( "Course file", sPath, "contains an invalid #METER string: \"%s\"", sParams[1].c_str() );
 					continue;
 				}
-				out.m_iCustomMeter[cd] = max( std::stoi(sParams[2]), 0 );
+				out.m_iCustomMeter[cd] = max( StringToInt(sParams[2]), 0 );
 			}
 		}
 
@@ -168,7 +168,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// most played
 			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{
-				int iChooseIndex = std::stoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -185,7 +185,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// least played
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
-				int iChooseIndex = std::stoi( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
+				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -202,14 +202,14 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// best grades
 			else if( sParams[1].Left(strlen("GRADEBEST")) == "GRADEBEST" )
 			{
-				new_entry.iChooseIndex = std::stoi( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_TopGrades;
 			}
 			// worst grades
 			else if( sParams[1].Left(strlen("GRADEWORST")) == "GRADEWORST" )
 			{
-				new_entry.iChooseIndex = std::stoi( sParams[1].Right(sParams[1].size()-strlen("GRADEWORST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEWORST")) ) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_LowestGrades;
 			}
@@ -308,7 +308,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					else if( !sMod.CompareNoCase("nodifficult") )
 						new_entry.bNoDifficult = true;
 					else if( sMod.length() > 5 && !sMod.Left(5).CompareNoCase("award") )
-						new_entry.iGainLives = std::stoi( sMod.substr(5) );
+						new_entry.iGainLives = StringToInt( sMod.substr(5) );
 					else
 						continue;
 					mods.erase( mods.begin() + j );
@@ -330,8 +330,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 		else if( bFromCache && !sValueName.EqualsNoCase("RADAR") )
 		{
-			StepsType st = (StepsType) std::stoi(sParams[1]);
-			CourseDifficulty cd = (CourseDifficulty) std::stoi( sParams[2] );
+			StepsType st = (StepsType) StringToInt(sParams[1]);
+			CourseDifficulty cd = (CourseDifficulty) StringToInt( sParams[2] );
 
 			RadarValues rv;
 			rv.FromString( sParams[3] );

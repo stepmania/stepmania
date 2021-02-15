@@ -33,11 +33,11 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 			continue;
 		}
 		const float fComboBeat = RowToBeat( arrayMultiplierValues[0], iRowsPerBeat );
-		const int iCombos = std::stoi( arrayMultiplierValues[1] ); // always true.
+		const int iCombos = StringToInt( arrayMultiplierValues[1] ); // always true.
 		// hoping I'm right here: SMA files can use 6 values after the row/beat.
 		const int iMisses = (size == 2 || size == 4 ?
 							 iCombos : 
-							 std::stoi(arrayMultiplierValues[2]));
+							 StringToInt(arrayMultiplierValues[2]));
 		out.AddSegment( ComboSegment(BeatToNoteRow(fComboBeat), iCombos, iMisses) );
 	}
 }
@@ -61,7 +61,7 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 			continue;
 		}
 		const float fBeat = StringToFloat( vs2[0] );
-		const int iNumerator = std::stoi( vs2[1] );
+		const int iNumerator = StringToInt( vs2[1] );
 
 		if( fBeat < 0 )
 		{
@@ -296,7 +296,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				
 				vector<RString> arrayBeatChangeValues;
 				split( arrayBeatChangeExpressions[0], "=", arrayBeatChangeValues );
-				iRowsPerBeat = std::stoi(arrayBeatChangeValues[1]);
+				iRowsPerBeat = StringToInt(arrayBeatChangeValues[1]);
 			}
 			else
 			{
@@ -328,7 +328,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			 * used 3.9+ features are not excluded here */
 			else if(sParams[1].EqualsNoCase("ES") || sParams[1].EqualsNoCase("OMES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if( std::stoi(sParams[1]) > 0 )
+			else if( StringToInt(sParams[1]) > 0 )
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else
 				LOG->UserLog("Song file",

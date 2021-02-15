@@ -402,16 +402,16 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		{
 			m_Type = TYPE_TILES;
 		}
-		else if( std::stoi(type) == 1 )
+		else if( StringToInt(type) == 1 )
 		{
 			m_Type = TYPE_SPRITE; 
 			bStretch = true; 
 		}
-		else if( std::stoi(type) == 2 )
+		else if( StringToInt(type) == 2 )
 		{
 			m_Type = TYPE_PARTICLES; 
 		}
-		else if( std::stoi(type) == 3 )
+		else if( StringToInt(type) == 3 )
 		{
 			m_Type = TYPE_TILES; 
 		}
