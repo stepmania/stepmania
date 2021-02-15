@@ -418,6 +418,12 @@ inline bool operator>>(const RString& lhs, T& rhs)
 	return !!(istringstream(lhs) >> rhs);
 }
 
+// Exception-safe wrappers around stoi and friends
+// Additional argument exceptVal will be returned if the conversion couldn't be performed
+int StringToInt( const std::string& str, std::size_t* pos = 0, int base = 10, int exceptVal = 0 );
+long StringToLong( const std::string& str, std::size_t* pos = 0, int base = 10, long exceptVal = 0 );
+long long StringToLLong( const std::string& str, std::size_t* pos = 0, int base = 10, long long exceptVal = 0 );
+
 RString WStringToRString( const wstring &sString );
 RString WcharToUTF8( wchar_t c );
 wstring RStringToWstring( const RString &sString );
