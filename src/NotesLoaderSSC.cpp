@@ -70,7 +70,7 @@ typedef void (*song_tag_func_t)(SongTagInfo& info);
 /****************************************************************/
 void SetVersion(SongTagInfo& info)
 {
-	info.song->m_fVersion = std::stof((*info.params)[1]);
+	info.song->m_fVersion = StringToFloat((*info.params)[1]);
 }
 void SetTitle(SongTagInfo& info)
 {
@@ -157,11 +157,11 @@ void SetInstrumentTrack(SongTagInfo& info)
 void SetMusicLength(SongTagInfo& info)
 {
 	if(info.from_cache)
-	info.song->m_fMusicLengthSeconds = std::stof((*info.params)[1]);
+	info.song->m_fMusicLengthSeconds = StringToFloat((*info.params)[1]);
 }
 void SetLastSecondHint(SongTagInfo& info)
 {
-	info.song->SetSpecifiedLastSecond(std::stof((*info.params)[1]));
+	info.song->SetSpecifiedLastSecond(StringToFloat((*info.params)[1]));
 }
 void SetSampleStart(SongTagInfo& info)
 {
@@ -179,11 +179,11 @@ void SetDisplayBPM(SongTagInfo& info)
 	else
 	{
 		info.song->m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
-		info.song->m_fSpecifiedBPMMin = std::stof((*info.params)[1]);
+		info.song->m_fSpecifiedBPMMin = StringToFloat((*info.params)[1]);
 		if((*info.params)[2].empty())
 		{ info.song->m_fSpecifiedBPMMax = info.song->m_fSpecifiedBPMMin; }
 		else
-		{ info.song->m_fSpecifiedBPMMax = std::stof((*info.params)[2]); }
+		{ info.song->m_fSpecifiedBPMMax = StringToFloat((*info.params)[2]); }
 	}
 }
 void SetSelectable(SongTagInfo& info)
@@ -234,7 +234,7 @@ void SetAttacks(SongTagInfo& info)
 }
 void SetOffset(SongTagInfo& info)
 {
-	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = std::stof((*info.params)[1]);
+	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
 }
 void SetSongStops(SongTagInfo& info)
 {
@@ -283,12 +283,12 @@ void SetSongFakes(SongTagInfo& info)
 void SetFirstSecond(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->SetFirstSecond(std::stof((*info.params)[1])); }
+	{ info.song->SetFirstSecond(StringToFloat((*info.params)[1])); }
 }
 void SetLastSecond(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->SetLastSecond(std::stof((*info.params)[1])); }
+	{ info.song->SetLastSecond(StringToFloat((*info.params)[1])); }
 }
 void SetSongFilename(SongTagInfo& info)
 {
@@ -310,7 +310,7 @@ void SetHasBanner(SongTagInfo& info)
 /****************************************************************/
 void SetStepsVersion(StepsTagInfo& info)
 {
-	info.song->m_fVersion = std::stof((*info.params)[1]);
+	info.song->m_fVersion = StringToFloat((*info.params)[1]);
 }
 void SetChartName(StepsTagInfo& info)
 {
@@ -368,7 +368,7 @@ void SetRadarValues(StepsTagInfo& info)
 		{
 			for(size_t i= 0; i < cats_per_player; ++i)
 			{
-				v[pn][i]= std::stof(values[pn * cats_per_player + i]);
+				v[pn][i]= StringToFloat(values[pn * cats_per_player + i]);
 			}
 		}
 		info.steps->SetCachedRadarValues(v);
@@ -499,7 +499,7 @@ void SetStepsOffset(StepsTagInfo& info)
 {
 	if(info.song->m_fVersion >= VERSION_SPLIT_TIMING || info.for_load_edit)
 	{
-		info.timing->m_fBeat0OffsetInSeconds = std::stof((*info.params)[1]);
+		info.timing->m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
 		info.has_own_timing = true;
 	}
 }
@@ -511,12 +511,12 @@ void SetStepsDisplayBPM(StepsTagInfo& info)
 	else
 	{
 		info.steps->SetDisplayBPM(DISPLAY_BPM_SPECIFIED);
-		float min = std::stof((*info.params)[1]);
+		float min = StringToFloat((*info.params)[1]);
 		info.steps->SetMinBPM(min);
 		if((*info.params)[2].empty())
 		{ info.steps->SetMaxBPM(min); }
 		else
-		{ info.steps->SetMaxBPM(std::stof((*info.params)[2])); }
+		{ info.steps->SetMaxBPM(StringToFloat((*info.params)[2])); }
 	}
 }
 
@@ -659,8 +659,8 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		const float fBeat = std::stof( arrayBPMValues[0] );
-		const float fNewBPM = std::stof( arrayBPMValues[1] );
+		const float fBeat = StringToFloat( arrayBPMValues[0] );
+		const float fNewBPM = StringToFloat( arrayBPMValues[1] );
 		if( fBeat >= 0 && fNewBPM > 0 )
 		{
 			out.AddSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
@@ -693,8 +693,8 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		const float fBeat = std::stof( arrayStopValues[0] );
-		const float fNewStop = std::stof( arrayStopValues[1] );
+		const float fBeat = StringToFloat( arrayStopValues[0] );
+		const float fNewStop = StringToFloat( arrayStopValues[1] );
 		if( fBeat >= 0 && fNewStop > 0 )
 			out.AddSegment( StopSegment(BeatToNoteRow(fBeat), fNewStop) );
 		else
@@ -725,8 +725,8 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 			continue;
 		}
 		
-		const float fBeat = std::stof( arrayWarpValues[0] );
-		const float fNewBeat = std::stof( arrayWarpValues[1] );
+		const float fBeat = StringToFloat( arrayWarpValues[0] );
+		const float fNewBeat = StringToFloat( arrayWarpValues[1] );
 		// Early versions were absolute in beats. They should be relative.
 		if( ( fVersion < VERSION_SPLIT_TIMING && fNewBeat > fBeat ) )
 		{
@@ -762,7 +762,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 			continue;
 		}
 		
-		const float fBeat = std::stof( arrayLabelValues[0] );
+		const float fBeat = StringToFloat( arrayLabelValues[0] );
 		RString sLabel = arrayLabelValues[1];
 		TrimRight(sLabel);
 		if( fBeat >= 0.0f )
@@ -796,7 +796,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 				     arrayComboExpressions[f].c_str() );
 			continue;
 		}
-		const float fComboBeat = std::stof( arrayComboValues[0] );
+		const float fComboBeat = StringToFloat( arrayComboValues[0] );
 		const int iCombos = StringToInt( arrayComboValues[1] );
 		const int iMisses = (size == 2 ? iCombos : StringToInt(arrayComboValues[2]));
 		out.AddSegment( ComboSegment( BeatToNoteRow(fComboBeat), iCombos, iMisses ) );
@@ -822,8 +822,8 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 			continue;
 		}
 
-		const float fBeat = std::stof( vs2[0] );
-		const float fRatio = std::stof( vs2[1] );
+		const float fBeat = StringToFloat( vs2[0] );
+		const float fRatio = StringToFloat( vs2[1] );
 
 		if( fBeat < 0 )
 		{
@@ -875,7 +875,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 					case LNDID_version:
 						// Note that version is in both switches.  Formerly, it was
 						// checked before the tryingSteps condition. -Kyz
-						storedVersion = std::stof(matcher);
+						storedVersion = StringToFloat(matcher);
 						break;
 					case LNDID_stepstype:
 						if(out.m_StepsType != GAMEMAN->StringToStepsType(matcher))
@@ -928,7 +928,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 					case LNDID_version:
 						// Note that version is in both switches.  Formerly, it was
 						// checked before the tryingSteps condition. -Kyz
-						storedVersion = std::stof(matcher);
+						storedVersion = StringToFloat(matcher);
 						break;
 					case LNDID_notedata:
 						tryingSteps = true;
