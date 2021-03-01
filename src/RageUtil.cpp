@@ -2369,8 +2369,15 @@ namespace StringConversion
 		if( sValue.size() == 0 )
 			return false;
 
-		out = StringToInt(sValue) != 0;
-		return true;
+		try
+		{
+			out = (std::stoi(sValue) != 0);
+			return true;
+		}
+		catch( std::logic_error& )
+		{
+			return false;
+		}
 	}
 
 	template<> RString ToString<int>( const int &value )
