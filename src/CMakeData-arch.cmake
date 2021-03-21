@@ -227,12 +227,14 @@ if(NOT APPLE)
     endif()
   else() # Unix/Linux TODO: Linux HAVE_PARALLEL_PORT
     if(LINUX)
+      list(APPEND SMDATA_LINK_LIB "udev")
       list(APPEND SMDATA_ARCH_LIGHTS_SRC
                   "arch/Lights/LightsDriver_Linux_Leds.cpp"
                   "arch/Lights/LightsDriver_Linux_PIUIO.cpp"
                   "arch/Lights/LightsDriver_Linux_PIUIO_Leds.cpp"
                   "arch/Lights/LightsDriver_Linux_PIUIOBTN_Leds.cpp"
                   "arch/Lights/LightsDriver_Linux_ITGIO.cpp"
+                  "arch/Lights/LightsDriver_Linux_stac.cpp"
                   "arch/Lights/LightsDriver_LinuxWeedTech.cpp")
       list(APPEND SMDATA_ARCH_LIGHTS_HPP
                   "arch/Lights/LightsDriver_Linux_Leds.h"
@@ -240,6 +242,7 @@ if(NOT APPLE)
                   "arch/Lights/LightsDriver_Linux_PIUIO_Leds.h"
                   "arch/Lights/LightsDriver_Linux_PIUIOBTN_Leds.h"
                   "arch/Lights/LightsDriver_Linux_ITGIO.h"
+                  "arch/Lights/LightsDriver_Linux_stac.h"
                   "arch/Lights/LightsDriver_LinuxWeedTech.h")
       if(WITH_PARALLEL_PORT)
         list(APPEND SMDATA_ARCH_LIGHTS_SRC
