@@ -18,121 +18,100 @@
 
 REGISTER_LIGHTS_DRIVER_CLASS2(ITGIO, Linux_ITGIO);
 
-//NOTE: light index 14 is not mapped, this is the coin drop "light"
+//NOTE: light index 14 is not mapped,
+//this is the coin drop "light" to increment the coin counter.
 
-namespace {
-	const char *cabinet_leds[NUM_CabinetLight] = {
-		//UL, UR, LL, LR, Bass L, Bass R
-		"/sys/class/leds/itgio::output8/brightness",
-		"/sys/class/leds/itgio::output10/brightness",
-		"/sys/class/leds/itgio::output9/brightness",
-		"/sys/class/leds/itgio::output11/brightness",
-		"/sys/class/leds/itgio::output15/brightness",
-		"/sys/class/leds/itgio::output15/brightness",
+namespace
+{
+	const int cabinet_lights[NUM_CabinetLight] = {
+		8,	//LIGHT_MARQUEE_UP_LEFT
+		10, //LIGHT_MARQUEE_UP_RIGHT
+		9,	//LIGHT_MARQUEE_LR_LEFT
+		11, //LIGHT_MARQUEE_LR_RIGHT
+		15, //LIGHT_BASS_LEFT
+		15, //LIGHT_BASS_RIGHT
 	};
 
-	const char *dance_leds[NUM_GameController][NUM_GameButton] = {
-		{
-			nullptr, nullptr, nullptr, nullptr,
-			//player start
-			"/sys/class/leds/itgio::output13/brightness",
-			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			//left right up down
-			"/sys/class/leds/itgio::output1/brightness",
-			"/sys/class/leds/itgio::output0/brightness",
-			"/sys/class/leds/itgio::output3/brightness",
-			"/sys/class/leds/itgio::output2/brightness",
-		},
-		{
-			nullptr, nullptr, nullptr, nullptr,
-			//player start
-			"/sys/class/leds/itgio::output12/brightness",
-			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			//left right up down
-			"/sys/class/leds/itgio::output5/brightness",
-			"/sys/class/leds/itgio::output4/brightness",
-			"/sys/class/leds/itgio::output7/brightness",
-			"/sys/class/leds/itgio::output6/brightness",
-		},
+	const int player1_lights[NUM_GameButton] = {
+		-1, //GAME_BUTTON_MENULEFT
+		-1, //GAME_BUTTON_MENURIGHT
+		-1, //GAME_BUTTON_MENUUP
+		-1, //GAME_BUTTON_MENUDOWN
+		13, //GAME_BUTTON_START
+		-1, //GAME_BUTTON_SELECT
+		-1, //GAME_BUTTON_BACK
+		-1, //GAME_BUTTON_COIN
+		-1, //GAME_BUTTON_OPERATOR
+		-1, //GAME_BUTTON_EFFECT_UP
+		-1, //GAME_BUTTON_EFFECT_DOWN
+		1,	//GAME_BUTTON_CUSTOM_01
+		0,	//GAME_BUTTON_CUSTOM_02
+		3,	//GAME_BUTTON_CUSTOM_03
+		2,	//GAME_BUTTON_CUSTOM_04
+		-1, //GAME_BUTTON_CUSTOM_05
+		-1, //GAME_BUTTON_CUSTOM_06
+		-1, //GAME_BUTTON_CUSTOM_07
+		-1, //GAME_BUTTON_CUSTOM_08
+		-1, //GAME_BUTTON_CUSTOM_09
+		-1, //GAME_BUTTON_CUSTOM_10
+		-1, //GAME_BUTTON_CUSTOM_11
+		-1, //GAME_BUTTON_CUSTOM_12
+		-1, //GAME_BUTTON_CUSTOM_13
+		-1, //GAME_BUTTON_CUSTOM_14
+		-1, //GAME_BUTTON_CUSTOM_15
+		-1, //GAME_BUTTON_CUSTOM_16
+		-1, //GAME_BUTTON_CUSTOM_17
+		-1, //GAME_BUTTON_CUSTOM_18
+		-1, //GAME_BUTTON_CUSTOM_19
 	};
 
-	bool SetLight(const char *filename, bool on)
-	{
-		if (filename == nullptr)
-			return true;
-		FILE *f = fopen(filename, "w");
-		if (f == nullptr)
-		{
-			return false;
-		}
-		fprintf(f, "%d", on ? 255 : 0);
-		fclose(f);
-		return true;
-	}
-}
+	const int player2_lights[NUM_GameButton] = {
+		-1, //GAME_BUTTON_MENULEFT
+		-1, //GAME_BUTTON_MENURIGHT
+		-1, //GAME_BUTTON_MENUUP
+		-1, //GAME_BUTTON_MENUDOWN
+		12, //GAME_BUTTON_START
+		-1, //GAME_BUTTON_SELECT
+		-1, //GAME_BUTTON_BACK
+		-1, //GAME_BUTTON_COIN
+		-1, //GAME_BUTTON_OPERATOR
+		-1, //GAME_BUTTON_EFFECT_UP
+		-1, //GAME_BUTTON_EFFECT_DOWN
+		5,	//GAME_BUTTON_CUSTOM_01
+		4,	//GAME_BUTTON_CUSTOM_02
+		7,	//GAME_BUTTON_CUSTOM_03
+		6,	//GAME_BUTTON_CUSTOM_04
+		-1, //GAME_BUTTON_CUSTOM_05
+		-1, //GAME_BUTTON_CUSTOM_06
+		-1, //GAME_BUTTON_CUSTOM_07
+		-1, //GAME_BUTTON_CUSTOM_08
+		-1, //GAME_BUTTON_CUSTOM_09
+		-1, //GAME_BUTTON_CUSTOM_10
+		-1, //GAME_BUTTON_CUSTOM_11
+		-1, //GAME_BUTTON_CUSTOM_12
+		-1, //GAME_BUTTON_CUSTOM_13
+		-1, //GAME_BUTTON_CUSTOM_14
+		-1, //GAME_BUTTON_CUSTOM_15
+		-1, //GAME_BUTTON_CUSTOM_16
+		-1, //GAME_BUTTON_CUSTOM_17
+		-1, //GAME_BUTTON_CUSTOM_18
+		-1, //GAME_BUTTON_CUSTOM_19
+	};
 
-LightsDriver_Linux_ITGIO::LightsDriver_Linux_ITGIO()
+} // namespace
+
+void LightsDriver_Linux_ITGIO::Set(const LightsState *ls)
 {
-}
+	SetCabinetLights(cabinet_lights, ls);
 
-LightsDriver_Linux_ITGIO::~LightsDriver_Linux_ITGIO()
-{
-}
-
-void LightsDriver_Linux_ITGIO::SetGameControllerLight(const LightsState *ls, GameController c, GameButton gb)
-{
-	//only push a change in the light iff it's an actual change.
-	if (ls->m_bGameButtonLights[c][gb] == previousLS.m_bGameButtonLights[c][gb])
-	{
-		return;
-	}
-
-	if (!SetLight(dance_leds[c][gb], ls->m_bGameButtonLights[c][gb]))
-	{
-		//grab the game info for a proper debug log.
-		const InputScheme *pInput = &GAMESTATE->GetCurrentGame()->m_InputScheme;
-		RString sInputName = pInput->m_szName;
-
-		LOG->Warn("Error setting button light %s", GameButtonToString(pInput, gb).c_str());
-	}
-}
-
-void LightsDriver_Linux_ITGIO::Set( const LightsState *ls )
-{
-	FOREACH_CabinetLight(light)
-	{
-		// Only SetLight if LightsState has changed since previous iteration.
-		// This reduces unncessary strain on udev.  -dguzek
-		if (ls->m_bCabinetLights[light] == previousLS.m_bCabinetLights[light] )
-		{
-			continue;
-		}
-
-		if (!SetLight(cabinet_leds[light], ls->m_bCabinetLights[light]))
-		{
-			LOG->Warn("Error setting cabinet light %s",
-					CabinetLightToString(light).c_str());
-			return;
-		}
-	}
-
-	FOREACH_ENUM(GameController, c)
-	{
-		//takes care of each of the player buttons (UDLR)
-		FOREACH_GameButton_Custom(gb)
-		{
-			SetGameControllerLight(ls, c, gb);
-		}
-
-		//Takes care of the cabinet based player lights.
-		SetGameControllerLight(ls, c, GAME_BUTTON_START);
-	}
+	SetGameControllerLights(GameController_1, player1_lights, ls);
+	SetGameControllerLights(GameController_2, player1_lights, ls);
 
 	previousLS = *ls;
 }
 
 /*
- * (c) 2020 StepMania team
+ * (c) 2020 din
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -154,4 +133,6 @@ void LightsDriver_Linux_ITGIO::Set( const LightsState *ls )
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
+ * 
+ * i love lamp
  */
