@@ -132,9 +132,14 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 
 	if( !BitIsSet(iABSMask, ABS_X) && !BitIsSet(iABSMask, ABS_THROTTLE) && !BitIsSet(iABSMask, ABS_WHEEL) )
 	{
-		LOG->Info( "    Not a joystick; ignored" );
-		Close();
-		return false;
+		LOG->Info( "    Not a joystick; ignoring [%s]",m_sName.c_str() );
+		if(m_sName.compare("RedOctane USB Pad") == 0)
+		{
+			LOG->Info("RedOctane USB Pad detected, making an exception.");
+		} else {
+			Close();
+			return false;
+		}
 	}
 
 	uint8_t iKeyMask[KEY_MAX/8 + 1];
