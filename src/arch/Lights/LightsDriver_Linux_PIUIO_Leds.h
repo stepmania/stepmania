@@ -1,26 +1,27 @@
-/* LightsDriver_Linux_PIUIO_Leds: Control PIUIO lights via /sys/class/leds */
-
 #ifndef LightsDriver_Linux_PIUIO_Leds_H
 #define LightsDriver_Linux_PIUIO_Leds_H
 
-#include "arch/Lights/LightsDriver.h"
+#include "arch/Lights/LightsDriver_Linux_Leds.h"
 
-class LightsDriver_Linux_PIUIO_Leds : public LightsDriver
+class LightsDriver_Linux_PIUIO_Leds : public LightsDriver_Linux_Leds
 {
-private:
-	LightsState previousLS;
-
 public:
-	LightsDriver_Linux_PIUIO_Leds();
-	virtual ~LightsDriver_Linux_PIUIO_Leds();
+	LightsDriver_Linux_PIUIO_Leds() {}
+	virtual ~LightsDriver_Linux_PIUIO_Leds() {}
 
-	virtual void Set( const LightsState *ls );
+	virtual void Set(const LightsState *ls);
+
+	virtual const char *GetGameControllerLightFile()
+	{
+
+		return "/sys/class/leds/piuio::output%d/brightness";
+	}
 };
 
 #endif
 
 /*
- * (c) 2014 StepMania team
+ * (c) 2020 din
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -42,4 +43,6 @@ public:
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
+ * 
+ * i love lamp
  */

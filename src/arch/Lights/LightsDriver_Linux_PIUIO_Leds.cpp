@@ -18,146 +18,178 @@
 
 REGISTER_LIGHTS_DRIVER_CLASS2(PIUIO_Leds, Linux_PIUIO_Leds);
 
-namespace {
-	const char *cabinet_leds[NUM_CabinetLight] = {
-		"/sys/class/leds/piuio::output23/brightness",
-		"/sys/class/leds/piuio::output26/brightness",
-		"/sys/class/leds/piuio::output25/brightness",
-		"/sys/class/leds/piuio::output24/brightness",
-		"/sys/class/leds/piuio::output10/brightness",
-		"/sys/class/leds/piuio::output10/brightness",
+//NOTE: front usb ports are off by default, index 27 enables them.
+//It is currently unmapped.
+
+namespace
+{
+	const int cabinet_lights[NUM_CabinetLight] = {
+		23, //LIGHT_MARQUEE_UP_LEFT
+		26, //LIGHT_MARQUEE_UP_RIGHT
+		25, //LIGHT_MARQUEE_LR_LEFT
+		24, //LIGHT_MARQUEE_LR_RIGHT
+		10, //LIGHT_BASS_LEFT
+		10, //LIGHT_BASS_RIGHT
 	};
 
-	const char *dance_leds[NUM_GameController][NUM_GameButton] = {
-		{
-			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			"/sys/class/leds/piuio::output20/brightness",
-			"/sys/class/leds/piuio::output21/brightness",
-			"/sys/class/leds/piuio::output18/brightness",
-			"/sys/class/leds/piuio::output19/brightness",
-		},
-		{
-			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			"/sys/class/leds/piuio::output4/brightness",
-			"/sys/class/leds/piuio::output5/brightness",
-			"/sys/class/leds/piuio::output2/brightness",
-			"/sys/class/leds/piuio::output3/brightness",
-		},
+	const int player1_dance_lights[NUM_GameButton] = {
+		-1, //GAME_BUTTON_MENULEFT
+		-1, //GAME_BUTTON_MENURIGHT
+		-1, //GAME_BUTTON_MENUUP
+		-1, //GAME_BUTTON_MENUDOWN
+		-1, //GAME_BUTTON_START
+		-1, //GAME_BUTTON_SELECT
+		-1, //GAME_BUTTON_BACK
+		-1, //GAME_BUTTON_COIN
+		-1, //GAME_BUTTON_OPERATOR
+		-1, //GAME_BUTTON_EFFECT_UP
+		-1, //GAME_BUTTON_EFFECT_DOWN
+		20, //GAME_BUTTON_CUSTOM_01
+		21, //GAME_BUTTON_CUSTOM_02
+		18, //GAME_BUTTON_CUSTOM_03
+		19, //GAME_BUTTON_CUSTOM_04
+		-1, //GAME_BUTTON_CUSTOM_05
+		-1, //GAME_BUTTON_CUSTOM_06
+		-1, //GAME_BUTTON_CUSTOM_07
+		-1, //GAME_BUTTON_CUSTOM_08
+		-1, //GAME_BUTTON_CUSTOM_09
+		-1, //GAME_BUTTON_CUSTOM_10
+		-1, //GAME_BUTTON_CUSTOM_11
+		-1, //GAME_BUTTON_CUSTOM_12
+		-1, //GAME_BUTTON_CUSTOM_13
+		-1, //GAME_BUTTON_CUSTOM_14
+		-1, //GAME_BUTTON_CUSTOM_15
+		-1, //GAME_BUTTON_CUSTOM_16
+		-1, //GAME_BUTTON_CUSTOM_17
+		-1, //GAME_BUTTON_CUSTOM_18
+		-1, //GAME_BUTTON_CUSTOM_19
 	};
 
-	const char *pump_leds[NUM_GameController][NUM_GameButton] = {
-		{
-			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			"/sys/class/leds/piuio::output2/brightness",
-			"/sys/class/leds/piuio::output3/brightness",
-			"/sys/class/leds/piuio::output4/brightness",
-			"/sys/class/leds/piuio::output5/brightness",
-			"/sys/class/leds/piuio::output6/brightness",
-		},
-		{
-			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			"/sys/class/leds/piuio::output18/brightness",
-			"/sys/class/leds/piuio::output19/brightness",
-			"/sys/class/leds/piuio::output20/brightness",
-			"/sys/class/leds/piuio::output21/brightness",
-			"/sys/class/leds/piuio::output22/brightness",
-		},
+	const int player2_dance_lights[NUM_GameButton] = {
+		-1, //GAME_BUTTON_MENULEFT
+		-1, //GAME_BUTTON_MENURIGHT
+		-1, //GAME_BUTTON_MENUUP
+		-1, //GAME_BUTTON_MENUDOWN
+		-1, //GAME_BUTTON_START
+		-1, //GAME_BUTTON_SELECT
+		-1, //GAME_BUTTON_BACK
+		-1, //GAME_BUTTON_COIN
+		-1, //GAME_BUTTON_OPERATOR
+		-1, //GAME_BUTTON_EFFECT_UP
+		-1, //GAME_BUTTON_EFFECT_DOWN
+		4,	//GAME_BUTTON_CUSTOM_01
+		5,	//GAME_BUTTON_CUSTOM_02
+		2,	//GAME_BUTTON_CUSTOM_03
+		3,	//GAME_BUTTON_CUSTOM_04
+		-1, //GAME_BUTTON_CUSTOM_05
+		-1, //GAME_BUTTON_CUSTOM_06
+		-1, //GAME_BUTTON_CUSTOM_07
+		-1, //GAME_BUTTON_CUSTOM_08
+		-1, //GAME_BUTTON_CUSTOM_09
+		-1, //GAME_BUTTON_CUSTOM_10
+		-1, //GAME_BUTTON_CUSTOM_11
+		-1, //GAME_BUTTON_CUSTOM_12
+		-1, //GAME_BUTTON_CUSTOM_13
+		-1, //GAME_BUTTON_CUSTOM_14
+		-1, //GAME_BUTTON_CUSTOM_15
+		-1, //GAME_BUTTON_CUSTOM_16
+		-1, //GAME_BUTTON_CUSTOM_17
+		-1, //GAME_BUTTON_CUSTOM_18
+		-1, //GAME_BUTTON_CUSTOM_19
 	};
 
-	bool SetLight(const char *filename, bool on)
-	{
-		if (filename == nullptr)
-			return true;
-		FILE *f = fopen(filename, "w");
-		if (f == nullptr)
-		{
-			return false;
-		}
-		fprintf(f, "%d", on ? 255 : 0);
-		fclose(f);
-		return true;
-	}
-}
+	const int player1_pump_lights[NUM_GameButton] = {
+		-1, //GAME_BUTTON_MENULEFT
+		-1, //GAME_BUTTON_MENURIGHT
+		-1, //GAME_BUTTON_MENUUP
+		-1, //GAME_BUTTON_MENUDOWN
+		-1, //GAME_BUTTON_START
+		-1, //GAME_BUTTON_SELECT
+		-1, //GAME_BUTTON_BACK
+		-1, //GAME_BUTTON_COIN
+		-1, //GAME_BUTTON_OPERATOR
+		-1, //GAME_BUTTON_EFFECT_UP
+		-1, //GAME_BUTTON_EFFECT_DOWN
+		2,	//GAME_BUTTON_CUSTOM_01
+		3,	//GAME_BUTTON_CUSTOM_02
+		4,	//GAME_BUTTON_CUSTOM_03
+		5,	//GAME_BUTTON_CUSTOM_04
+		6,	//GAME_BUTTON_CUSTOM_05
+		-1, //GAME_BUTTON_CUSTOM_06
+		-1, //GAME_BUTTON_CUSTOM_07
+		-1, //GAME_BUTTON_CUSTOM_08
+		-1, //GAME_BUTTON_CUSTOM_09
+		-1, //GAME_BUTTON_CUSTOM_10
+		-1, //GAME_BUTTON_CUSTOM_11
+		-1, //GAME_BUTTON_CUSTOM_12
+		-1, //GAME_BUTTON_CUSTOM_13
+		-1, //GAME_BUTTON_CUSTOM_14
+		-1, //GAME_BUTTON_CUSTOM_15
+		-1, //GAME_BUTTON_CUSTOM_16
+		-1, //GAME_BUTTON_CUSTOM_17
+		-1, //GAME_BUTTON_CUSTOM_18
+		-1, //GAME_BUTTON_CUSTOM_19
+	};
 
-LightsDriver_Linux_PIUIO_Leds::LightsDriver_Linux_PIUIO_Leds()
+	const int player2_pump_lights[NUM_GameButton] = {
+		-1, //GAME_BUTTON_MENULEFT
+		-1, //GAME_BUTTON_MENURIGHT
+		-1, //GAME_BUTTON_MENUUP
+		-1, //GAME_BUTTON_MENUDOWN
+		-1, //GAME_BUTTON_START
+		-1, //GAME_BUTTON_SELECT
+		-1, //GAME_BUTTON_BACK
+		-1, //GAME_BUTTON_COIN
+		-1, //GAME_BUTTON_OPERATOR
+		-1, //GAME_BUTTON_EFFECT_UP
+		-1, //GAME_BUTTON_EFFECT_DOWN
+		18, //GAME_BUTTON_CUSTOM_01
+		19, //GAME_BUTTON_CUSTOM_02
+		20, //GAME_BUTTON_CUSTOM_03
+		21, //GAME_BUTTON_CUSTOM_04
+		22, //GAME_BUTTON_CUSTOM_05
+		-1, //GAME_BUTTON_CUSTOM_06
+		-1, //GAME_BUTTON_CUSTOM_07
+		-1, //GAME_BUTTON_CUSTOM_08
+		-1, //GAME_BUTTON_CUSTOM_09
+		-1, //GAME_BUTTON_CUSTOM_10
+		-1, //GAME_BUTTON_CUSTOM_11
+		-1, //GAME_BUTTON_CUSTOM_12
+		-1, //GAME_BUTTON_CUSTOM_13
+		-1, //GAME_BUTTON_CUSTOM_14
+		-1, //GAME_BUTTON_CUSTOM_15
+		-1, //GAME_BUTTON_CUSTOM_16
+		-1, //GAME_BUTTON_CUSTOM_17
+		-1, //GAME_BUTTON_CUSTOM_18
+		-1, //GAME_BUTTON_CUSTOM_19
+	};
+
+} // namespace
+
+void LightsDriver_Linux_PIUIO_Leds::Set(const LightsState *ls)
 {
-}
+	SetCabinetLights(cabinet_lights, ls);
 
-LightsDriver_Linux_PIUIO_Leds::~LightsDriver_Linux_PIUIO_Leds()
-{
-}
-
-void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
-{
-	FOREACH_CabinetLight(light)
+	//gamemode is checked here as gamemode can change during runtime
+	//...although I'd be impressed if someone wanted to swap from pump to dance
+	//on a cabinet without shutting down first...
+	//...including swapping pads from your pump cabinet to your itg cabinet...
+	if (IsDance())
 	{
-		// Only SetLight if LightsState has changed since previous iteration.
-		// This reduces unncessary strain on udev.  -dguzek
-		if (ls->m_bCabinetLights[light] == previousLS.m_bCabinetLights[light] )
-		{
-			continue;
-		}
-
-		if (!SetLight(cabinet_leds[light], ls->m_bCabinetLights[light]))
-		{
-			LOG->Warn("Error setting cabinet light %s",
-					CabinetLightToString(light).c_str());
-			return;
-		}
+		SetGameControllerLights(GameController_1, player1_dance_lights, ls);
+		SetGameControllerLights(GameController_2, player1_dance_lights, ls);
 	}
-
-	const InputScheme *pInput = &GAMESTATE->GetCurrentGame()->m_InputScheme;
-	RString sInputName = pInput->m_szName;
-	if (sInputName.EqualsNoCase("dance"))
+	else if (IsPump())
 	{
-		FOREACH_ENUM(GameController, c)
-		{
-			FOREACH_GameButton_Custom(gb)
-			{
-				if (ls->m_bGameButtonLights[c][gb] == previousLS.m_bGameButtonLights[c][gb])
-				{
-					continue;
-				}
-
-				if (!SetLight(dance_leds[c][gb], ls->m_bGameButtonLights[c][gb]))
-				{
-					LOG->Warn("Error setting button light %s",
-							GameButtonToString(pInput, gb).c_str());
-					return;
-				}
-			}
-		}
-	}
-	else if (sInputName.EqualsNoCase("pump"))
-	{
-		FOREACH_ENUM(GameController, c)
-		{
-			FOREACH_GameButton_Custom(gb)
-			{
-				if (ls->m_bGameButtonLights[c][gb] == previousLS.m_bGameButtonLights[c][gb])
-				{
-					continue;
-				}
-
-				if (!SetLight(pump_leds[c][gb], ls->m_bGameButtonLights[c][gb]))
-				{
-					LOG->Warn("Error setting button light %s",
-							GameButtonToString(pInput, gb).c_str());
-					return;
-				}
-			}
-		}
-	}
-	else
-	{
-		return;
+		SetGameControllerLights(GameController_1, player1_pump_lights, ls);
+		SetGameControllerLights(GameController_2, player1_pump_lights, ls);
 	}
 
 	previousLS = *ls;
 }
 
 /*
- * (c) 2014 StepMania team
+ * (c) 2020 din
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -179,4 +211,6 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
+ * 
+ * i love lamp
  */
