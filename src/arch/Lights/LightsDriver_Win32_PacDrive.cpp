@@ -2,7 +2,7 @@
 // You need PacDrive32.dll in the StepMania directory to use this.
 
 #include "global.h"
-#include "LightsDriver_PacDrive.h"
+#include "LightsDriver_Win32_PacDrive.h"
 #include "windows.h"
 #include "RageUtil.h"
 #include "Preference.h"
