@@ -15,6 +15,7 @@ private:
 	int fd = -1;
 	uint8_t buffer[5];
 	uint16_t lastState = 0;
+	int iLightingOrder = 0;
 
 	void OpenPacDrive();
 	void ClosePacDrive();

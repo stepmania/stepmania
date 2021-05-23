@@ -15,10 +15,18 @@
 
 REGISTER_LIGHTS_DRIVER_CLASS(PacDrive);
 
+static Preference<RString> g_sPacDriveLightOrdering("PacDriveLightOrdering", "minimaid");
+
 LightsDriver_PacDrive::LightsDriver_PacDrive()
 {
 	OpenPacDrive();
 	WritePacDrive(0);
+
+	RString lightOrder = g_sPacDriveLightOrdering.Get();
+	if (lightOrder.CompareNoCase("lumenar") == 0 || lightOrder.CompareNoCase("openitg") == 0)
+	{
+		iLightingOrder = 1;
+	}
 }
 
 LightsDriver_PacDrive::~LightsDriver_PacDrive()
@@ -87,7 +95,7 @@ void LightsDriver_PacDrive::WritePacDrive(const uint16_t val)
 
 	memset(buffer, 0, sizeof(buffer));
 
-	// buffer[0] = 0; First byte is the descriptor number.
+	// buffer[0] = 0; First byte is the report number.
 
 	buffer[3] = (val & 0xff00) >> 8;
 	buffer[4] = (val & 0x00ff);
@@ -103,23 +111,47 @@ const uint16_t LightsDriver_PacDrive::MapLights(const LightsState *ls)
 {
 	uint16_t result = 0;
 
-	if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_LEFT])						result |= BIT(0);
-	if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_RIGHT])  					result |= BIT(1);
-	if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_UP])     					result |= BIT(2);
-	if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_DOWN])   					result |= BIT(3);
-	if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_LEFT]) 						result |= BIT(4);
-	if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_RIGHT]) 						result |= BIT(5);
-	if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_UP]) 						result |= BIT(6);
-	if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_DOWN]) 						result |= BIT(7);
-	if (ls->m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]) 										result |= BIT(8);
-	if (ls->m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT]) 										result |= BIT(9);
-	if (ls->m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]) 										result |= BIT(10);
-	if (ls->m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT]) 										result |= BIT(11);
-	if (ls->m_bGameButtonLights[GameController_1][GAME_BUTTON_START]) 						result |= BIT(12);
-	if (ls->m_bGameButtonLights[GameController_2][GAME_BUTTON_START]) 						result |= BIT(13);
-	if (ls->m_bCabinetLights[LIGHT_BASS_LEFT] || ls->m_bCabinetLights[LIGHT_BASS_RIGHT])	result |= BIT(14);
+	switch (iLightingOrder)
+	{
+		case 1:
+			// Sets the cabinet light values to follow LumenAR/OpenITG wiring standards
+			if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_LEFT])						result |= BIT(0);
+			if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_RIGHT])  					result |= BIT(1);
+			if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_UP])     					result |= BIT(2);
+			if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_DOWN])   					result |= BIT(3);
+			if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_LEFT]) 						result |= BIT(4);
+			if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_RIGHT]) 						result |= BIT(5);
+			if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_UP]) 						result |= BIT(6);
+			if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_DOWN]) 						result |= BIT(7);
+			if (ls->m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]) 										result |= BIT(8);
+			if (ls->m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT]) 										result |= BIT(9);
+			if (ls->m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]) 										result |= BIT(10);
+			if (ls->m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT]) 										result |= BIT(11);
+			if (ls->m_bGameButtonLights[GameController_1][GAME_BUTTON_START]) 						result |= BIT(12);
+			if (ls->m_bGameButtonLights[GameController_2][GAME_BUTTON_START]) 						result |= BIT(13);
+			if (ls->m_bCabinetLights[LIGHT_BASS_LEFT] || ls->m_bCabinetLights[LIGHT_BASS_RIGHT])	result |= BIT(14);
+			return result;
 
-	return result;
+		case 0:
+		default:
+			// Minimaid order
+			if (ls->m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]) 										result |= BIT(0);
+			if (ls->m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT]) 										result |= BIT(1);
+			if (ls->m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]) 										result |= BIT(2);
+			if (ls->m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT]) 										result |= BIT(3);
+			if (ls->m_bCabinetLights[LIGHT_BASS_LEFT] || ls->m_bCabinetLights[LIGHT_BASS_RIGHT]) 	result |= BIT(4);
+			if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_LEFT]) 						result |= BIT(5);
+			if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_RIGHT]) 						result |= BIT(6);
+			if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_UP]) 						result |= BIT(7);
+			if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_DOWN]) 						result |= BIT(8);
+			if (ls->m_bGameButtonLights[GameController_1][GAME_BUTTON_START]) 						result |= BIT(9);
+			if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_LEFT]) 						result |= BIT(10);
+			if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_RIGHT]) 						result |= BIT(11);
+			if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_UP]) 						result |= BIT(12);
+			if (ls->m_bGameButtonLights[GameController_2][DANCE_BUTTON_DOWN]) 						result |= BIT(13);
+			if (ls->m_bGameButtonLights[GameController_2][GAME_BUTTON_START]) 						result |= BIT(14);
+			return result;
+	}
 }
 
 /*
