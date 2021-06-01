@@ -177,12 +177,12 @@ void LightsDriver_Linux_PIUIO_Leds::Set(const LightsState *ls)
 	if (IsDance())
 	{
 		SetGameControllerLights(GameController_1, player1_dance_lights, ls);
-		SetGameControllerLights(GameController_2, player1_dance_lights, ls);
+		SetGameControllerLights(GameController_2, player2_dance_lights, ls);
 	}
 	else if (IsPump())
 	{
 		SetGameControllerLights(GameController_1, player1_pump_lights, ls);
-		SetGameControllerLights(GameController_2, player1_pump_lights, ls);
+		SetGameControllerLights(GameController_2, player2_pump_lights, ls);
 	}
 
 	previousLS = *ls;
