@@ -105,7 +105,7 @@ void LightsDriver_Linux_ITGIO::Set(const LightsState *ls)
 	SetCabinetLights(cabinet_lights, ls);
 
 	SetGameControllerLights(GameController_1, player1_lights, ls);
-	SetGameControllerLights(GameController_2, player1_lights, ls);
+	SetGameControllerLights(GameController_2, player2_lights, ls);
 
 	previousLS = *ls;
 }
