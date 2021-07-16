@@ -80,7 +80,7 @@ IniFile =
 			--ignore comments.
 			if not str:find("^%s*#") then
 				-- is this a section?
-				local sec = str:match( "%[(.+)%]" )
+				local sec = str:match( "^%[(.+)%]" )
 
 				-- if so, set focus there; otherwise, try to
 				-- read a key/value pair (ignore blank lines)
