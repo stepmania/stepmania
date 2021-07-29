@@ -456,6 +456,12 @@ static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption 
 	}
 }
 
+static void MaxNumCredits( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	int const mapping[]= {20, 40, 60, 80, 100};
+	MoveMap(sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping));
+}
+
 static void JointPremium( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const Premium mapping[] = { Premium_DoubleFor1Credit, Premium_2PlayersFor1Credit };
@@ -848,6 +854,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Pay","Free Play" ) );
 	g_ConfOptions.back().m_sPrefName = "CoinMode";
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
+	ADD( ConfOption( "MaxNumCredits",		MaxNumCredits,		"|20","|40","|60","|80","|100" ) );
 
 	ADD( ConfOption( "SongsPerPlay",		SongsPerPlay,		"|1","|2","|3","|4","|5" ) );
 	ADD( ConfOption( "SongsPerPlayOrEvent",		SongsPerPlayOrEventMode,"|1","|2","|3","|4","|5","Event" ) );
@@ -862,6 +869,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "DefaultFailType", DefaultFailType, DefaultFailChoices ) );
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
+	ADD( ConfOption( "MaxNumCredits",		MaxNumCredits,		"|20","|40","|60","|80","|100" ) );
 	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","2 Players for 1 Credit" ) );
 	ADD( ConfOption( "JointPremium",		JointPremium,		"Off","2 Players for 1 Credit" ) );
 	g_ConfOptions.back().m_sPrefName = "Premium";

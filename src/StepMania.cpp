@@ -1287,10 +1287,10 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	}
 	
 	int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
-	bool bMaxCredits = iCredits >= MAX_NUM_CREDITS;
+	bool bMaxCredits = iCredits >= PREFSMAN->m_iMaxNumCredits;
 	if( bMaxCredits )
 	{
-		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
+		GAMESTATE->m_iCoins.Set( PREFSMAN->m_iMaxNumCredits * PREFSMAN->m_iCoinsPerCredit );
 	}
 
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
