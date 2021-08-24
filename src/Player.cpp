@@ -1064,7 +1064,10 @@ void Player::Update( float fDeltaTime )
 		/* We want to send the crossed row message exactly when we cross the row--not
 		 * .5 before the row. Use a very slow song (around 2 BPM) as a test case: without
 		 * rounding, autoplay steps early. -glenn */
-		const int iRowNow = BeatToNoteRowNotRounded( m_pPlayerState->m_Position.m_fSongBeat );
+		const float fPositionSeconds = m_pPlayerState->m_Position.m_fMusicSeconds - PREFSMAN->m_fPadStickSeconds;
+		const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->m_SongTiming.GetBeatFromElapsedTime( fPositionSeconds ) : 0;
+		const int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+
 		if( iRowNow >= 0 )
 		{
 			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
@@ -1808,13 +1811,8 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 	if( iPrevIndex == -1 )
 		return iNextIndex;
 
-	// Get the current time, previous time, and next time.
-	float fNoteTime = m_pPlayerState->m_Position.m_fMusicSeconds	;
-	float fNextTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iNextIndex));
-	float fPrevTime = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(iPrevIndex));
-
 	/* Figure out which row is closer. */
-	if( fabsf(fNoteTime-fNextTime) > fabsf(fNoteTime-fPrevTime) )
+	if( abs(iNoteRow-iNextIndex) > abs(iNoteRow-iPrevIndex) )
 		return iPrevIndex;
 	else
 		return iNextIndex;
@@ -2186,10 +2184,10 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			{
 			case TapNoteType_Mine:
 				// Stepped too close to mine?
-				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
-				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
-				   m_Timing->IsJudgableAtRow(iSongRow))
-					score = TNS_HitMine;   
+				if(!bRelease &&
+					(!REQUIRE_STEP_ON_MINES || REQUIRE_STEP_ON_MINES == !bHeld ) &&
+					fSecondsFromExact <= GetWindowSeconds(TW_Mine))
+					score = TNS_HitMine;
 				break;
 			case TapNoteType_Attack:
 				if( !bRelease && fSecondsFromExact <= GetWindowSeconds(TW_Attack) && !pTN->result.bHidden )
@@ -3067,6 +3065,11 @@ float Player::GetMaxStepDistanceSeconds()
 	fMax = max( fMax, GetWindowSeconds(TW_W3) );
 	fMax = max( fMax, GetWindowSeconds(TW_W2) );
 	fMax = max( fMax, GetWindowSeconds(TW_W1) );
+	fMax = max( fMax, GetWindowSeconds(TW_Mine) );
+	fMax = max( fMax, GetWindowSeconds(TW_Hold) );
+	fMax = max( fMax, GetWindowSeconds(TW_Roll) );
+	fMax = max( fMax, GetWindowSeconds(TW_Attack) );
+	fMax = max( fMax, GetWindowSeconds(TW_Checkpoint) );
 	float f = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * fMax;
 	return f + m_fMaxInputLatencySeconds;
 }
