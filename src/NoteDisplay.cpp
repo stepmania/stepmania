@@ -471,8 +471,8 @@ bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
 	const vector<NoteData::TrackMap::const_iterator>& tap_set)
 {
 	bool any_upcoming = false;
-	for(vector<NoteData::TrackMap::const_iterator>::const_reverse_iterator tapit=
-		tap_set.rbegin(); tapit != tap_set.rend(); ++tapit)
+	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
+		tap_set.begin(); tapit != tap_set.end(); ++tapit)
 	{
 		const TapNote& tn= (*tapit)->second;
 		const HoldNoteResult& result= tn.HoldResult;
@@ -538,8 +538,8 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 {
 	bool any_upcoming= false;
 	// draw notes from furthest to closest
-	for(vector<NoteData::TrackMap::const_iterator>::const_reverse_iterator tapit=
-		tap_set.rbegin(); tapit != tap_set.rend(); ++tapit)
+	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
+		tap_set.begin(); tapit != tap_set.end(); ++tapit)
 	{
 		int tap_row= (*tapit)->first;
 		const TapNote& tn= (*tapit)->second;
@@ -613,7 +613,6 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 		any_upcoming |= NoteRowToBeat(tap_row) >
 			m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
 
-		// TODO: change to Z Bias, remove clear
 		if(!PREFSMAN->m_FastNoteRendering)
 		{
 			DISPLAY->ClearZBuffer();
