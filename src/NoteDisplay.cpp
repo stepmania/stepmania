@@ -1,20 +1,24 @@
-#include "global.h"
 #include "NoteDisplay.h"
+
+#include "global.h"
+#include "ActorUtil.h"
+#include "ArrowEffects.h"
 #include "GameState.h"
 #include "GhostArrowRow.h"
+#include "LuaBinding.h"
 #include "NoteData.h"
 #include "NoteSkinManager.h"
-#include "ArrowEffects.h"
-#include "RageLog.h"
-#include "RageDisplay.h"
-#include "ReceptorArrowRow.h"
-#include "ActorUtil.h"
-#include "Style.h"
-#include "PlayerState.h"
-#include "Sprite.h"
 #include "NoteTypes.h"
-#include "LuaBinding.h"
+#include "PlayerState.h"
+#include "Preference.h"
+#include "RageDisplay.h"
+#include "RageLog.h"
 #include "RageMath.h"
+#include "ReceptorArrowRow.h"
+#include "Sprite.h"
+#include "Style.h"
+
+static Preference<bool> g_bRenderEarlierNotesOnTop( "RenderEarlierNotesOnTop", false );
 
 static const double PI_180= PI / 180.0;
 static const double PI_180R= 180.0 / PI;
@@ -537,12 +541,11 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 	const vector<NoteData::TrackMap::const_iterator>& tap_set)
 {
 	bool any_upcoming= false;
-	// draw notes from furthest to closest
-	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
-		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+
+	auto loop_body = [this, &field_args, &column_args, &any_upcoming](const NoteData::TrackMap::const_iterator& tapit)
 	{
-		int tap_row= (*tapit)->first;
-		const TapNote& tn= (*tapit)->second;
+		int tap_row= tapit->first;
+		const TapNote& tn= tapit->second;
 
 		// TRICKY: If boomerang is on, then all notes in the range
 		// [first_row,last_row] aren't necessarily visible.
@@ -550,7 +553,7 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 		if(!IsOnScreen(NoteRowToBeat(tap_row), column_args.column,
 				field_args.draw_pixels_after_targets, field_args.draw_pixels_before_targets))
 		{
-			continue; // skip
+			return; // skip
 		}
 
 		// Hm, this assert used to pass the first and last rows to draw, when it
@@ -617,7 +620,19 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 		{
 			DISPLAY->ClearZBuffer();
 		}
+	};
+
+	if (g_bRenderEarlierNotesOnTop.Get())
+	{
+		// draw notes from closest to furthest
+		std::for_each(tap_set.rbegin(), tap_set.rend(), loop_body);
 	}
+	else
+	{
+		// draw notes from furthest to closest
+		std::for_each(tap_set.begin(), tap_set.end(), loop_body);
+	}
+
 	return any_upcoming;
 }
 
