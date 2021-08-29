@@ -1,6 +1,7 @@
+#include "global.h"
+
 #include "NoteDisplay.h"
 
-#include "global.h"
 #include "ActorUtil.h"
 #include "ArrowEffects.h"
 #include "GameState.h"
