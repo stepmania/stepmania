@@ -17,6 +17,7 @@ jobs:
           libjack-dev
           libmad0-dev
           libpulse-dev
+          libudev-dev
           libva-dev
           libvorbis-dev
           libxinerama-dev
@@ -48,6 +49,7 @@ jobs:
           libpulse-dev
           libtomcrypt-dev
           libtommath-dev
+          libudev-dev
           libva-dev
           libvorbis-dev
           libxinerama-dev
