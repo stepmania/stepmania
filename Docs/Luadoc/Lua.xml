@@ -2027,6 +2027,7 @@
 			<Function name='GetTapNoteScore'/>
 			<Function name='GetTapNoteOffset'/>
 			<Function name='GetHidden'/>
+			<Function name='GetHeld'/>
 		</Class>
 		<Class name='HoldNoteResult'>
 			<Function name='GetHoldNoteScore'/>

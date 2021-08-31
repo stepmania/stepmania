@@ -993,6 +993,72 @@ void Player::Update( float fDeltaTime )
 		}
 	}
 
+	// Track held misses
+	//
+	// In order to track held misses we have to check whether a note was
+	// held any time during the judgment window before it is judged a miss.
+	// Note: at this point we don't actually know yet whether a note will
+	// be a miss or a hit, so we have to track for all notes whether they
+	// were held at some point before getting judged.
+	{
+		float largestWindow = 0.0f;
+		largestWindow = max(largestWindow, GetWindowSeconds(TW_W1));
+		largestWindow = max(largestWindow, GetWindowSeconds(TW_W2));
+		largestWindow = max(largestWindow, GetWindowSeconds(TW_W3));
+		largestWindow = max(largestWindow, GetWindowSeconds(TW_W4));
+		largestWindow = max(largestWindow, GetWindowSeconds(TW_W5));
+
+		// We have to check the unjudged notes that are within the
+		// timing window. Let's find the cutoff point! (lastCheckRow)
+		const float rate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+		const SongPosition songPosition = m_pPlayerState->m_Position;
+		const float musicPosition = songPosition.m_fMusicSeconds + (songPosition.m_LastBeatUpdate.Ago() * rate);
+		// We have to add 1 here, because GetBeatFromElapsedTime() can round down.
+		const int lastCheckRow = BeatToNoteRow(m_Timing->GetBeatFromElapsedTime(musicPosition + (largestWindow * rate)) + 1);
+
+		// The button being held only counts for the first unjudged
+		// note on a track (== column/arrow direction), so we have to
+		// keep track for which tracks we have already seen an unjudged
+		// note.
+		vector<bool> seenTracks(m_NoteData.GetNumTracks(), false);
+
+		for(auto iter = *m_pIterNeedsTapJudging; !iter.IsAtEnd() && iter.Row() <= lastCheckRow; ++iter)
+		{
+			TapNote &tn = *iter;
+			const int row = iter.Row();
+			const int track = iter.Track();
+
+			// Skip over warp and fake segments
+			if (!m_Timing->IsJudgableAtRow(row))
+				continue;
+
+			// Held misses only apply to tap notes
+			if (tn.type != TapNoteType_Tap && tn.type != TapNoteType_HoldHead)
+				continue;
+
+			const float notePosition = m_Timing->GetElapsedTimeFromBeat(NoteRowToBeat(row));
+			const float offset = fabsf((notePosition - musicPosition) / rate);
+
+			// Skip if we are outside of the largest timing window
+			if (offset > largestWindow)
+				continue;
+
+			// Skip the note if there is an earlier note on the same track that still awaits judgement
+			if (seenTracks[track])
+			    continue;
+
+			seenTracks[track] = true;
+
+			if (!tn.result.bHeld)
+			{
+				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+				vector<GameInput> input;
+				GAMESTATE->GetCurrentStyle(pn)->StyleInputToGameInput(track, pn, input);
+
+				tn.result.bHeld = INPUTMAPPER->IsBeingPressed(input, m_pPlayerState->m_mp);
+			}
+		}
+	}
 
 	// update HoldNotes logic
 	{
@@ -3119,6 +3185,9 @@ void Player::SetJudgment( int iRow, int iTrack, const TapNote &tn, TapNoteScore 
 		msg.SetParam( "TapNoteScore", tns );
 		msg.SetParam( "Early", fTapNoteOffset < 0.0f );
 		msg.SetParam( "TapNoteOffset", tn.result.fTapNoteOffset );
+
+		if ( tns == TNS_Miss )
+			msg.SetParam( "HeldMiss", tn.result.bHeld );
 
 		Lua* L= LUA->Get();
 		lua_createtable( L, 0, m_NoteData.GetNumTracks() ); // TapNotes this row
