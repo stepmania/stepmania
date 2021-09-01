@@ -42,3 +42,13 @@ For specific information/legalese:
 * All of our source code is under the [MIT license](http://opensource.org/licenses/MIT).
 * Any songs that are included within this repository are under the [<abbr title="Creative Commons Non-Commercial">CC-NC</abbr> license](https://creativecommons.org/).
 * The [MAD library](http://www.underbit.com/products/mad/) and [FFmpeg codecs](https://www.ffmpeg.org/) when built with our code use the [GPL license](http://www.gnu.org).
+
+
+## Changes to StepMania 5.1
+
+- The mine fix
+- Track held misses for pad debugging
+- New preference to control note render ordering
+- Fixed hold note rendering
+- Increased the Stats.xml file size limit to 100MB
+- Changed the default binding for P2/back from hyphen to backslash
