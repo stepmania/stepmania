@@ -225,11 +225,11 @@ bool IsHexVal( const RString &s )
 	return true;
 }
 
-RString BinaryToHex( const void *pData_, int iNumBytes )
+RString BinaryToHex( const void *pData_, size_t iNumBytes )
 {
 	const unsigned char *pData = (const unsigned char *) pData_;
 	RString s;
-	for( int i=0; i<iNumBytes; i++ )
+	for( size_t i=0; i<iNumBytes; i++ )
 	{
 		unsigned val = pData[i];
 		s += ssprintf( "%02x", val );
@@ -2481,7 +2481,19 @@ LuaFunction( URLEncode, URLEncode( SArg(1) ) );
 LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );
 //LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
 LuaFunction( lerp, lerp(FArg(1), FArg(2), FArg(3)) );
-LuaFunction( BinaryToHex, BinaryToHex( SArg(1) ) );
+
+int LuaFunc_BinaryToHex(lua_State* L);
+int LuaFunc_BinaryToHex(lua_State* L)
+{
+	size_t l;
+	const char *s = luaL_checklstring(L, 1, &l);
+
+	RString hex = BinaryToHex(s, l);
+
+	LuaHelpers::Push(L, hex);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(BinaryToHex);
 
 int LuaFunc_commify(lua_State* L);
 int LuaFunc_commify(lua_State* L)
