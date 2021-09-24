@@ -62,11 +62,14 @@ end
 local function ResolveTable( pref )
 	-- check the section for this theme
 	local name = GetThemeName()
-	local val = PrefsTable[name][pref]
-
-	if val ~= nil then
-		--Trace( ("ResolveTable(%s): found in %s"):format(pref,name) )
-		return PrefsTable[name]
+	local val = nil
+	
+	if PrefsTable[name] then
+		val = PrefsTable[name][pref]
+		if val ~= nil then
+			--Trace( ("ResolveTable(%s): found in %s"):format(pref,name) )
+			return PrefsTable[name]
+		end
 	end
 
 	-- not in the current theme; check the fallback if it exists
