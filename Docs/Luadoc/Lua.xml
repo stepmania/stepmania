@@ -108,6 +108,8 @@
 		<Function name='IsRoutine'/>
 		<Function name='IsSMOnlineLoggedIn'/>
 		<Function name='IsUsingWideScreen'/>
+		<Function name='JsonDecode'/>
+		<Function name='JsonEncode'/>
 		<Function name='JudgmentLineToColor'/>
 		<Function name='JudgmentLineToLocalizedString'/>
 		<Function name='JudgmentLineToStrokeColor'/>
