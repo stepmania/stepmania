@@ -411,6 +411,13 @@ save yourself some time, copy this for undocumented things:
 	<Function name='join' theme='_fallback' return='string' arguments='string delimiter, table list'>
 		[02 Utilities.lua] Joins a table, splitting each item with <code>delimiter</code>, returning a string of the results.
 	</Function>
+	<Function name='JsonDecode' return='various' arguments='string data'>
+		Decodes JSON encoded <code>data</code> and returns the result.
+	</Function>
+	<Function name='JsonEncode' return='string' arguments='various data, bool minify'>
+		Returns <code>data</code> as JSON. Empty tables are represented as arrays in the output.<br />
+		<code>minify</code> is optional and defaults to <code>false</code>. If <code>true</code>, all unnecessary whitespace is omitted from the output.
+	</Function>
 	<Function name='JudgmentLineToColor' theme='_fallback' return='color' arguments='JudgmentLine jl'>
 		[02 Colors.lua]
 	</Function>
