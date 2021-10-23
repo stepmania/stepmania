@@ -611,7 +611,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		{
 			// Strip off the "ms" before parsing.
 			RString ms_value = s.substr( s.size()-2 );
-			level = StringToFlot( ms_value );
+			level = StringToFloat( ms_value );
 		}
 		else if( isdigit(s[0]) || s[0] == '-' )
 		{
