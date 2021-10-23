@@ -34,7 +34,7 @@ public:
 	float		m_fSongBeatVisible;
 
 	void Reset();
-	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
+	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer, float fAdditionalVisualDelay = 0.0f );
 
 	// Lua
 	void PushSelf( lua_State *L );
