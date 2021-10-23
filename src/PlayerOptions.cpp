@@ -562,7 +562,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	{
 		// Format the string to be something like "10ms VisualDelay".
 		// Note that we don't process sub-millisecond visual delay.
-		AddTo.push_back( ssprintf("%ldms VisualDelay") );
+		AddTo.push_back( ssprintf("%.0fms VisualDelay", m_fVisualDelay) );
 	}
 }
 
