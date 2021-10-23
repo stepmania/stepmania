@@ -611,7 +611,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		else if ( EndsWith(s, "ms") )
 		{
 			// Strip off the "ms" before parsing.
-			RString ms_value = s.substr( s.size()-2 );
+			RString ms_value = s.substr(0, s.size()-2 );
 			level = StringToFloat( ms_value );
 		}
 		else if( isdigit(s[0]) || s[0] == '-' )
@@ -1141,7 +1141,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sBit == "zbuffer" )				m_bZBuffer = on;
 	else if( sBit == "cosecant" )				m_bCosecant = on;
-	else if( sBit == "visualdelay" )			m_fVisualDelay = level * 1.0f;
+	else if( sBit == "visualdelay" )			m_fVisualDelay = level;
 	// deprecated mods/left in for compatibility
 	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 	// end of the list

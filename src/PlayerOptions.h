@@ -396,7 +396,7 @@ public:
 	RString		m_sNoteSkin;
 
 	/** @brief The Visual Delay additionally applied on a per-player basis in ms. */
-	int	m_fVisualDelay;
+	float	m_fVisualDelay;
 
 	void NextAccel();
 	void NextEffect();
