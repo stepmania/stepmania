@@ -196,8 +196,9 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 
 const SongPosition &PlayerState::GetDisplayedPosition() const
 {
-	// Player state should always use its own timing because of custom Visual Delay options.
-	return m_Position;
+	if( GAMESTATE->m_bIsUsingStepTiming )
+		return m_Position;
+	return GAMESTATE->m_Position;
 }
 
 const TimingData &PlayerState::GetDisplayedTiming() const
