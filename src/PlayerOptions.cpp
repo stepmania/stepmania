@@ -95,6 +95,7 @@ void PlayerOptions::Init()
 	m_bZBuffer = false;
 	m_bCosecant = false;
 	m_sNoteSkin = "";
+	m_fVisualDelay = 0.0f;
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
 	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
@@ -185,6 +186,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
+	DO_COPY( m_fVisualDelay );
 #undef APPROACH
 #undef DO_COPY
 }
@@ -555,6 +557,12 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 		Capitalize( s );
 		AddTo.push_back( s );
 	}
+
+	if ( fabsf(m_fVisualDelay) > 0.0001f ) {
+		// Format the string to be something like "10ms VisualDelay".
+		// Note that we don't process sub-millisecond visual delay.
+		AddTo.push_back( ssprintf("%ldms VisualDelay")) );
+	}
 }
 
 /* Options are added to the current settings; call Init() beforehand if
@@ -598,6 +606,12 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		if( s == "no" )
 		{
 			level = 0;
+		}
+		else if ( EndsWith(s, "ms") )
+		{
+			// Strip off the "ms" before parsing.
+			RString ms_value = s.substr( s.size()-2 );
+			level = StringToFlot( ms_value );
 		}
 		else if( isdigit(s[0]) || s[0] == '-' )
 		{
@@ -1126,6 +1140,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sBit == "zbuffer" )				m_bZBuffer = on;
 	else if( sBit == "cosecant" )				m_bCosecant = on;
+	else if( sBit == "visualdelay" )			m_fVisualDelay = level * 1.0f;
 	// deprecated mods/left in for compatibility
 	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 	// end of the list
@@ -1378,6 +1393,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	{
 		return false;
 	}
+	COMPARE(m_fVisualDelay);
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 		COMPARE(m_fAccels[i]);
 	for( int i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
@@ -1443,6 +1459,7 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
 	CPY(m_bCosecant);
+	CPY(m_fVisualDelay);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1674,6 +1691,7 @@ RString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_bTransforms[TRANSFORM_NOFAKES] );
 	SAVE( m_bMuteOnError );
 	SAVE( m_sNoteSkin );
+	SAVE( m_fVisualDelay );
 #undef SAVE
 	return po_prefs.GetString();
 }
@@ -1721,6 +1739,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY( m_bTransforms[TRANSFORM_NOFAKES] );
 	// Don't clear this.
 	// CPY( m_sNoteSkin );
+	CPY(m_fVisualDelay);
 #undef CPY
 }
 
@@ -1968,6 +1987,8 @@ public:
 	BOOL_INTERFACE(MuteOnError, MuteOnError);
 	ENUM_INTERFACE(FailSetting, FailType, FailType);
 	ENUM_INTERFACE(MinTNSToHideNotes, MinTNSToHideNotes, TapNoteScore);
+
+	FLOAT_NO_SPEED_INTERFACE(VisualDelay, VisualDelay, true);
 
 	// NoteSkins
 	static int NoteSkin(T* p, lua_State* L)

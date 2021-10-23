@@ -87,6 +87,7 @@ public:
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
 		m_sNoteSkin = "";
+		m_fVisualDelay = 0.0f;
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
 		ZERO( m_fEffects );	ONE( m_SpeedfEffects );
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
@@ -393,6 +394,9 @@ public:
 	 *
 	 * If an empty string, it means to not change from the default. */
 	RString		m_sNoteSkin;
+
+	/** @brief The Visual Delay additionally applied on a per-player basis in ms. */
+	int	m_fVisualDelay;
 
 	void NextAccel();
 	void NextEffect();
