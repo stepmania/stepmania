@@ -488,7 +488,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( curr_options->m_fTimeSpacing != 0.0f )
 	{
-		float fSongSeconds = GAMESTATE->m_Position.m_fMusicSecondsVisible;
+		float fSongSeconds = pPlayerState->m_Position.m_fMusicSecondsVisible;
 		float fNoteSeconds = pCurSteps->GetTimingData()->GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
 		float fBPM = curr_options->m_fScrollBPM;

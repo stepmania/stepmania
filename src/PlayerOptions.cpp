@@ -562,7 +562,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	{
 		// Format the string to be something like "10ms VisualDelay".
 		// Note that we don't process sub-millisecond visual delay.
-		AddTo.push_back( ssprintf("%.0fms VisualDelay", m_fVisualDelay) );
+		AddTo.push_back( ssprintf("%.0fms VisualDelay", m_fVisualDelay * 1000.0f) );
 	}
 }
 
@@ -608,17 +608,17 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		{
 			level = 0;
 		}
-		else if ( EndsWith(s, "ms") )
-		{
-			// Strip off the "ms" before parsing.
-			RString ms_value = s.substr(0, s.size()-2 );
-			level = StringToFloat( ms_value );
-		}
 		else if( isdigit(s[0]) || s[0] == '-' )
 		{
+			if ( EndsWith(s, "ms") )
+			{
+				// Strip off the "ms" before parsing and convert to seconds.
+				RString ms_value = s.substr(0, s.size()-2 );
+				level = StringToFloat( ms_value ) / 1000.0f;
+			}
 			/* If the last character is a *, they probably said "123*" when
 			 * they meant "*123". */
-			if( s.Right(1) == "*" )
+			else if( s.Right(1) == "*" )
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris
