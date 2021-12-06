@@ -2513,6 +2513,7 @@ public:
 		ADD_METHOD(NoteSkin);
 		ADD_METHOD(FailSetting);
 		ADD_METHOD(MinTNSToHideNotes);
+		ADD_METHOD(VisualDelay);
 
 		// Speed
 		ADD_METHOD( CMod );
