@@ -284,6 +284,9 @@ else()
 endif()
 
 if(WIN32)
+  include_directories(${SM_EXTERN_DIR}/discord-rpc-2.0.1/include)
+  link_libraries(${SM_EXTERN_DIR}/discord-rpc-2.0.1/lib/discord-rpc.lib)
+
   if(MINGW AND WITH_FFMPEG AND NOT WITH_SYSTEM_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
     set(HAS_FFMPEG TRUE)

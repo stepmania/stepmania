@@ -12,6 +12,7 @@
 #include "SongOptions.h"
 #include "SongPosition.h"
 #include "Preference.h"
+#include "discord-rpc.h"
 
 #include <map>
 #include <deque>
@@ -408,6 +409,16 @@ public:
 	bool IsGoalComplete( PlayerNumber pn )	{ return GetGoalPercentComplete( pn ) >= 1; }
 
 	bool m_bDopefish;
+
+	// Discord Rich Presence
+	// All of the method names are temporary, and will likely change to be more
+	// intuitive -CrashCringle
+	void discordInit();
+	void updateDiscordPresence(const std::string& largeImageText, const std::string& details, const std::string& state, const int64_t startTime);
+	void updateDiscordMenu( const std::string& largeImageText );
+	void updateDiscordPresenceLargeImageKey(const std::string& largeImageText, const RString imageKey, const std::string& details, const std::string& state, const int64_t startTime);
+	void updateDiscordFullPresence(const std::string& largeImageText, const std::string& smallImageText, const RString largeImageKey, const RString smallImageKey, const std::string& details, const std::string& state, const int64_t startTime, const int64_t endTime);
+	void updateDiscordPresenceDetails(const std::string& largeImageText, const std::string& smallImageText, const RString largeImageKey, const RString smallImageKey, const std::string& details, const std::string& state, const int64_t startTime);
 
 	// Autogen stuff.  This should probably be moved to its own singleton or
 	// something when autogen is generalized and more customizable. -Kyz
