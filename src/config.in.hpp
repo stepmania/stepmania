@@ -120,7 +120,8 @@ typedef unsigned long size_t;
 /* Provide a fallback if ssize_t is not defined. */
 #cmakedefine HAVE_SIZEOF_SSIZE_T 1
 #if !defined(HAVE_SIZEOF_SSIZE_T)
-typedef long ssize_t;
+#include <type_traits>
+typedef std::make_signed<size_t>::type ssize_t;
 #endif
 
 /* Defined to 1 if the underlying system uses little endian. */
