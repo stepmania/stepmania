@@ -1,5 +1,5 @@
 /*
-** $Id: loslib.c 23036 2006-09-25 07:35:34Z gmaynard $
+** $Id: loslib.c,v 1.19.1.3 2008/01/18 16:38:18 roberto Exp $
 ** Standard Operating System library
 ** See Copyright Notice in lua.h
 */
@@ -146,11 +146,22 @@ static int os_date (lua_State *L) {
     setboolfield(L, "isdst", stm->tm_isdst);
   }
   else {
-    char b[256];
-    if (strftime(b, sizeof(b), s, stm))
-      lua_pushstring(L, b);
-    else
-      return luaL_error(L, LUA_QL("date") " format too long");
+    char cc[3];
+    luaL_Buffer b;
+    cc[0] = '%'; cc[2] = '\0';
+    luaL_buffinit(L, &b);
+    for (; *s; s++) {
+      if (*s != '%' || *(s + 1) == '\0')  /* no conversion specifier? */
+        luaL_addchar(&b, *s);
+      else {
+        size_t reslen;
+        char buff[200];  /* should be big enough for any conversion result */
+        cc[1] = *(++s);
+        reslen = strftime(buff, sizeof(buff), cc, stm);
+        luaL_addlstring(&b, buff, reslen);
+      }
+    }
+    luaL_pushresult(&b);
   }
   return 1;
 }
@@ -204,7 +215,6 @@ static int os_setlocale (lua_State *L) {
 
 static int os_exit (lua_State *L) {
   exit(luaL_optint(L, 1, EXIT_SUCCESS));
-  return 0;  /* to avoid warnings */
 }
 
 static const luaL_Reg syslib[] = {

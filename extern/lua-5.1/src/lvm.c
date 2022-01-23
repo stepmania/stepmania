@@ -1,5 +1,5 @@
 /*
-** $Id: lvm.c 23036 2006-09-25 07:35:34Z gmaynard $
+** $Id: lvm.c,v 2.63.1.5 2011/08/17 20:43:11 roberto Exp $
 ** Lua virtual machine
 ** See Copyright Notice in lua.h
 */
@@ -61,11 +61,9 @@ static void traceexec (lua_State *L, const Instruction *pc) {
   lu_byte mask = L->hookmask;
   const Instruction *oldpc = L->savedpc;
   L->savedpc = pc;
-  if (mask > LUA_MASKLINE) {  /* instruction-hook set? */
-    if (L->hookcount == 0) {
-      resethookcount(L);
-      luaD_callhook(L, LUA_HOOKCOUNT, -1);
-    }
+  if ((mask & LUA_MASKCOUNT) && L->hookcount == 0) {
+    resethookcount(L);
+    luaD_callhook(L, LUA_HOOKCOUNT, -1);
   }
   if (mask & LUA_MASKLINE) {
     Proto *p = ci_func(L->ci)->l.p;
@@ -135,6 +133,7 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
 
 void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
   int loop;
+  TValue temp;
   for (loop = 0; loop < MAXTAGLOOP; loop++) {
     const TValue *tm;
     if (ttistable(t)) {  /* `t' is a table? */
@@ -143,6 +142,7 @@ void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       if (!ttisnil(oldval) ||  /* result is no nil? */
           (tm = fasttm(L, h->metatable, TM_NEWINDEX)) == NULL) { /* or no TM? */
         setobj2t(L, oldval, val);
+        h->flags = 0;
         luaC_barriert(L, h, val);
         return;
       }
@@ -154,7 +154,9 @@ void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       callTM(L, tm, t, key, val);
       return;
     }
-    t = tm;  /* else repeat with `tm' */ 
+    /* else repeat with `tm' */
+    setobj(L, &temp, tm);  /* avoid pointing inside table (may rehash) */
+    t = &temp;
   }
   luaG_runerror(L, "loop in settable");
 }
@@ -165,7 +167,7 @@ static int call_binTM (lua_State *L, const TValue *p1, const TValue *p2,
   const TValue *tm = luaT_gettmbyobj(L, p1, event);  /* try first operand */
   if (ttisnil(tm))
     tm = luaT_gettmbyobj(L, p2, event);  /* try second operand */
-  if (!ttisfunction(tm)) return 0;
+  if (ttisnil(tm)) return 0;
   callTMres(L, res, tm, p1, p2);
   return 1;
 }
@@ -281,10 +283,12 @@ void luaV_concat (lua_State *L, int total, int last) {
   do {
     StkId top = L->base + last + 1;
     int n = 2;  /* number of elements handled in this pass (at least 2) */
-    if (!tostring(L, top-2) || !tostring(L, top-1)) {
+    if (!(ttisstring(top-2) || ttisnumber(top-2)) || !tostring(L, top-1)) {
       if (!call_binTM(L, top-2, top-1, top-2, TM_CONCAT))
         luaG_concaterror(L, top-2, top-1);
-    } else if (tsvalue(top-1)->len > 0) {  /* if len=0, do nothing */
+    } else if (tsvalue(top-1)->len == 0)  /* second op is empty? */
+      (void)tostring(L, top - 2);  /* result is first op (as string) */
+    else {
       /* at least two string values; get as many as possible */
       size_t tl = tsvalue(top-1)->len;
       char *buffer;
