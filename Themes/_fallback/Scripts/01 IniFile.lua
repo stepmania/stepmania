@@ -107,7 +107,7 @@ IniFile =
 		local file = RageFileUtil.CreateRageFile()
 
 		if not file:Open(file_path, RageFile.WRITE) then
-			Warn( string.format("WriteFile(%s): %s",file_path.file:GetError()) )
+			Warn( string.format("WriteFile(%s): %s",file_path,file:GetError()) )
 			file:destroy()
 			return false
 		end

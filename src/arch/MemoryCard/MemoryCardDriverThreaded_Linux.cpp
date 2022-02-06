@@ -2,7 +2,6 @@
 #include "MemoryCardDriverThreaded_Linux.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "RageFile.h"
 #include "RageTimer.h"
 
 #include <cerrno>
@@ -14,8 +13,11 @@
 #include <dirent.h>
 #endif
 
+#include <cstring>
+#include <fstream>
 #include <limits.h>
 #include <stdlib.h>
+#include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -286,29 +288,31 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 		// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
 		// /dev/sdb1               /mnt/flash2             auto    noauto,owner 0 0
 		// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
-		
-		RString fn = "/rootfs/etc/fstab";
-		RageFile f;
-		if( !f.Open(fn) )
+
+		std::ifstream f("/etc/fstab");
+		if (f.fail())
 		{
-			LOG->Warn( "can't open '%s': %s", fn.c_str(), f.GetError().c_str() );
+			LOG->Warn( "can't open '/etc/fstab': %s", strerror(errno) );
 			return;
 		}
-		
-		RString sLine;
-		while( !f.AtEOF() )
+
+		std::string line;
+		while( !f.eof() )
 		{
-			switch( f.GetLine(sLine) )
+			std::getline(f, line);
+			if (f.eof())
 			{
-			case 0: continue; /* eof */
-			case -1:
-				LOG->Warn( "error reading '%s': %s", fn.c_str(), f.GetError().c_str() );
+				continue;
+			}
+			else if (f.fail())
+			{
+				LOG->Warn( "error reading '/etc/fstab': %s", strerror(errno) );
 				return;
 			}
 
 			char szScsiDevice[1024];
 			char szMountPoint[1024];
-			int iRet = sscanf( sLine, "%s %s", szScsiDevice, szMountPoint );
+			int iRet = sscanf( line.c_str(), "%s %s", szScsiDevice, szMountPoint );
 			if( iRet != 2 || szScsiDevice[0] == '#')
 				continue;	// don't process this line
 
