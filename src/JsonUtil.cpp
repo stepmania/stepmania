@@ -4,8 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
-#include "json/reader.h"
-#include "json/writer.h"
+#include "json/json.h"
 
 bool JsonUtil::LoadFromString(Json::Value &root, RString sData, RString &sErrorOut)
 {
@@ -13,7 +12,7 @@ bool JsonUtil::LoadFromString(Json::Value &root, RString sData, RString &sErrorO
 	bool parsingSuccessful = reader.parse(sData, root);
 	if (!parsingSuccessful)
 	{
-		RString err = reader.getFormatedErrorMessages();
+		RString err = reader.getFormattedErrorMessages();
 		LOG->Warn("JSON: LoadFromFileShowErrors failed: %s", err.c_str());
 		return false;
 	}
