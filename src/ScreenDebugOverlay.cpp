@@ -1238,7 +1238,7 @@ class DebugLinePullBackCamera : public IDebugLine
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		if( g_fImageScaleDestination == 1 )
-			g_fImageScaleDestination = 0.5f;
+			g_fImageScaleDestination = 0.8f;
 		else
 			g_fImageScaleDestination = 1;
 		IDebugLine::DoAndLog( sMessageOut );
