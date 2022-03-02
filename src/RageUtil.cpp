@@ -2582,7 +2582,7 @@ int LuaFunc_JsonEncode(lua_State* L)
 				Json::Value array(Json::arrayValue);
 				array.resize(len);
 
-				for (size_t i = 0; i < len; i++)
+				for (int i = 0; i < len; i++)
 				{
 					lua_rawgeti(L, index, i + 1);
 					array[i] = convert(-1);
@@ -2662,7 +2662,7 @@ int LuaFunc_JsonDecode(lua_State* L)
 	bool ok = reader.parse(std::string(data, datalen), root, true);
 	if (!ok)
 	{
-		std::string error = reader.getFormatedErrorMessages();
+		std::string error = reader.getFormattedErrorMessages();
 		luaL_error(L, "failed to parse JSON: %s", error.c_str());
 	}
 
