@@ -580,10 +580,6 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ReportStyle' return='void' arguments=''>
 		Sends the current style to the server.
 	</Function>
-	<Function name='require' return='void' arguments='string modname'>
-		Loads the specified module.<br />
-		<code>require</code> is a core function of Lua's basic library; see the Lua manual for more details.
-	</Function>
 	<Function name='round' theme='_fallback' return='int' arguments='float val, int decimal'>
 		[02 Utilities.lua] Round a number.
 	</Function>

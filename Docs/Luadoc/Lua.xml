@@ -271,7 +271,6 @@
 		<Function name='rec_count_children'/>
 		<Function name='rec_print_children'/>
 		<Function name='rec_print_table'/>
-		<Function name='require'/>
 		<Function name='round'/>
 		<Function name='scale'/>
 		<Function name='scale_to_fit'/>
