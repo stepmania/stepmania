@@ -5883,6 +5883,9 @@ local spr = Def.Sprite{
 	<Function name='AllFailed' return='bool' arguments=''>
 		Returns <code>true</code> if everyone failed.
 	</Function>
+	<Function name='GaveUp' return='bool' arguments=''>
+		Returns <code>true</code> if any player has given up on the song.
+	</Function>
 	<Function name='GetEarnedExtraStage' return='EarnedExtraStage' arguments=''>
 		Returns the <Link class="ENUM" function="EarnedExtraStage">EarnedExtraStage</Link> value.
 	</Function>
