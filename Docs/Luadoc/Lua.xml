@@ -1945,6 +1945,7 @@
 		</Class>
 		<Class name='StageStats'>
 			<Function name='AllFailed'/>
+			<Function name='GaveUp'/>
 			<Function name='GetEarnedExtraStage'/>
 			<Function name='GetGameplaySeconds'/>
 			<Function name='GetMultiPlayerStageStats'/>

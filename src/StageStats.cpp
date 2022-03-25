@@ -380,6 +380,7 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD( GetEarnedExtraStage,			m_EarnedExtraStage )
+	static int GaveUp( T* p, lua_State *L )		{ LuaHelpers::Push( L, p->m_bGaveUp ); return 1; }
 
 	LunaStageStats()
 	{
@@ -391,6 +392,7 @@ public:
 		ADD_METHOD( OnePassed );
 		ADD_METHOD( AllFailed );
 		ADD_METHOD( GetStage );
+		ADD_METHOD( GaveUp );
 		ADD_METHOD( GetStageIndex );
 		ADD_METHOD( GetStepsSeconds );
 		ADD_METHOD( PlayerHasHighScore );
