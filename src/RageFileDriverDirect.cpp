@@ -99,6 +99,12 @@ static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iErr
 
 RageFileBasic *RageFileDriverDirect::Open( const RString &sPath_, int iMode, int &iError )
 {
+	if( m_sRoot == "(empty)" )
+	{
+		iError = (iMode & RageFile::WRITE) ? EROFS : ENOENT;
+		return nullptr;
+	}
+
 	RString sPath = sPath_;
 	ASSERT( sPath.size() && sPath[0] == '/' );
 
@@ -119,6 +125,11 @@ RageFileBasic *RageFileDriverDirect::Open( const RString &sPath_, int iMode, int
 
 bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPath_ )
 {
+	if( m_sRoot == "(empty)" )
+	{
+		return false;
+	}
+
 	RString sOldPath = sOldPath_;
 	RString sNewPath = sNewPath_;
 	FDB->ResolvePath( sOldPath );
@@ -147,6 +158,11 @@ bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPa
 
 bool RageFileDriverDirect::Remove( const RString &sPath_ )
 {
+	if( m_sRoot == "(empty)" )
+	{
+		return false;
+	}
+
 	RString sPath = sPath_;
 	FDB->ResolvePath( sPath );
 	RageFileManager::FileType type = this->GetFileType(sPath);
@@ -199,7 +215,10 @@ bool RageFileDriverDirect::Remount( const RString &sPath )
 	((DirectFilenameDB *) FDB)->SetRoot( sPath );
 
 	/* If the root path doesn't exist, create it. */
-	CreateDirectories( m_sRoot );
+	if( m_sRoot != "(empty)" )
+	{
+		CreateDirectories( m_sRoot );
+	}
 
 	return true;
 }

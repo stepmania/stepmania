@@ -287,7 +287,7 @@ MemoryCardManager::MemoryCardManager()
 	 * until it's mounted, anyway. */
 	FOREACH_PlayerNumber( pn )
 	{
-		FILEMAN->Mount( "dir", "/", MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
+		FILEMAN->Mount( "dir", "(empty)", MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 		FILEMAN->Mount( "timeout", MEM_CARD_MOUNT_POINT_INTERNAL[pn], MEM_CARD_MOUNT_POINT[pn] );
 	}
 }
