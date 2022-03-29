@@ -26,6 +26,7 @@ void SnapDisplay::Load()
 
 	m_sprIndicators[0].SetX( -ARROW_SIZE * (m_iNumCols/2 + 0.5f) );
 	m_sprIndicators[1].SetX(  ARROW_SIZE * (m_iNumCols/2 + 0.5f) );
+	m_sprIndicators[1].SetBaseZoomX( -1 );
 }
 
 bool SnapDisplay::PrevSnapMode()
