@@ -4,6 +4,10 @@
 
 #include "arch/arch_default.h"
 
+//We explicitly load these drivers as they should always be available.
+#include "arch/Lights/LightsDriver_SystemMessage.h"
+#include "arch/Lights/LightsDriver_Export.h"
+
 DriverList LightsDriver::m_pDriverList;
 
 void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
@@ -28,6 +32,11 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 		LOG->Info( "Lights driver: %s", Driver.c_str() );
 		Add.push_back( pDriver );
 	}
+
+	//ensure these are always available to use for debugging
+	//or if InputHandlers that want lighting state.
+	Add.push_back(new LightsDriver_SystemMessage);
+	Add.push_back(new LightsDriver_Export);
 }
 
 void LightsDriver::Reset()
