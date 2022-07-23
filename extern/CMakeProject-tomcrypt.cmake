@@ -841,6 +841,7 @@ else()
   sm_add_compile_definition("tomcrypt" LTC_CTR_MODE)
   sm_add_compile_definition("tomcrypt" LTC_NO_HASHES)
   sm_add_compile_definition("tomcrypt" LTC_NO_MACS) # no MAC (message authentication code) support
+  sm_add_compile_definition("tomcrypt" LTC_HMAC)
   sm_add_compile_definition("tomcrypt" LTC_NO_PRNGS)
   sm_add_compile_definition("tomcrypt" LTC_RNG_GET_BYTES)
   sm_add_compile_definition("tomcrypt" LTC_RNG_MAKE_PRNG)
