@@ -377,6 +377,9 @@ RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput
 // Used under MIT license from http://inquisitivecocoa.com/2009/04/05/key-code-translator/
 static wchar_t KeyCodeToChar(CGKeyCode keyCode, unsigned int modifierFlags)
 {
+	if(keyCode == 0)
+		return 0;
+
 	TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
 	CFDataRef uchr = (CFDataRef)TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
 	const UCKeyboardLayout *keyboardLayout = uchr ? (const UCKeyboardLayout*)CFDataGetBytePtr(uchr) : nullptr;
