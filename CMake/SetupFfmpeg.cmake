@@ -40,6 +40,9 @@ if(MACOSX)
   find_program(FFMPEG_YASM_EXECUTABLE yasm
                PATHS /usr/bin /usr/local/bin /opt/local/bin)
   list(APPEND FFMPEG_CONFIGURE "--yasmexe=${FFMPEG_YASM_EXECUTABLE}")
+  list(APPEND FFMPEG_PATCH_COMMAND "rm")
+  list(APPEND FFMPEG_PATCH_COMMAND "-f")
+  list(APPEND FFMPEG_PATCH_COMMAND "${SM_FFMPEG_SRC_DIR}/VERSION")
 endif()
 
 if(WITH_GPL_LIBS)
@@ -72,7 +75,9 @@ if(IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
                       INSTALL_COMMAND
                       ""
                       TEST_COMMAND
-                      "")
+                      ""
+                      PATCH_COMMAND
+                      ${FFMPEG_PATCH_COMMAND})
 else()
   # --shlibdir=$our_installdir/stepmania-$VERSION
   externalproject_add("ffmpeg"
@@ -94,7 +99,9 @@ else()
                       INSTALL_COMMAND
                       ""
                       TEST_COMMAND
-                      "")
+                      ""
+                      PATCH_COMMAND
+                      ${FFMPEG_PATCH_COMMAND})
 endif()
 
 externalproject_get_property("ffmpeg" BINARY_DIR)

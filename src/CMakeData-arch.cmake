@@ -208,10 +208,10 @@ list(APPEND SMDATA_ARCH_LIGHTS_SRC "arch/Lights/LightsDriver_SextetStream.cpp")
 list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver_SextetStream.h")
 list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/SextetUtils.h")
 
-# TODO: Confirm if Apple can use the export.
+list(APPEND SMDATA_ARCH_LIGHTS_SRC "arch/Lights/LightsDriver_Export.cpp")
+list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver_Export.h")
+
 if(NOT APPLE)
-  list(APPEND SMDATA_ARCH_LIGHTS_SRC "arch/Lights/LightsDriver_Export.cpp")
-  list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver_Export.h")
 
   if(WIN32)
     list(APPEND SMDATA_ARCH_LIGHTS_SRC
