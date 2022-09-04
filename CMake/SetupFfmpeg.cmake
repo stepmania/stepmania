@@ -83,7 +83,7 @@ else()
                       "n${SM_FFMPEG_VERSION}"
                       "--depth"
                       "1"
-                      "git://github.com/stepmania/ffmpeg.git"
+                      "https://github.com/stepmania/ffmpeg.git"
                       "${SM_FFMPEG_SRC_DIR}"
                       CONFIGURE_COMMAND
                       "${FFMPEG_CONFIGURE}"
