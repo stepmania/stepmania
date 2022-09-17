@@ -2735,7 +2735,7 @@ void GameState::updateDiscordFullPresence(const std::string& largeImageText,
 	discordPresence.details = details.c_str();
 	discordPresence.state = state.c_str();
 	discordPresence.startTimestamp = startTime;
-	discordPresence.startTimestamp = endTime;
+	discordPresence.endTimestamp = endTime;
 	discordPresence.smallImageKey = smallImageKey.c_str();
 	discordPresence.smallImageText = smallImageText.c_str();
 	discordPresence.largeImageKey = largeImageKey.c_str();
