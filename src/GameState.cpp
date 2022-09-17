@@ -2664,7 +2664,7 @@ void GameState::discordInit()
 {
 		DiscordEventHandlers handlers;
 		memset(&handlers, 0, sizeof(handlers));
-		Discord_Initialize("801552531850264577", &handlers, 1, nullptr);
+		Discord_Initialize("1020524035597144085", &handlers, 1, nullptr);
 
 }
 
