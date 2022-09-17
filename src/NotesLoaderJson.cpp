@@ -1,6 +1,6 @@
 #include "global.h"
 #include "NotesLoaderJson.h"
-#include "json/value.h"
+#include "json/json.h"
 #include "TimingData.h"
 #include "RageUtil.h"
 #include "JsonUtil.h"

@@ -685,6 +685,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 					case SORT_PREFERRED:
 					case SORT_TOP_GRADES:
 					case SORT_BPM:
+					case SORT_LENGTH:
 						break;	// don't sort by section
 					default:
 						SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);

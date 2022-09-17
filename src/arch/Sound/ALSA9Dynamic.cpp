@@ -1,6 +1,7 @@
 #include "global.h"
 
 #include <dlfcn.h>
+#include <sys/stat.h>
 
 #define ALSA_PCM_NEW_HW_PARAMS_API
 #define ALSA_PCM_NEW_SW_PARAMS_API
@@ -28,7 +29,8 @@ RString LoadALSA()
 	 * on use, and this would prevent that from happening.  I don't know if anyone actually
 	 * does that, though: they're often configured to load snd (the core module) if ALSA
 	 * devices are accessed, but hardware drivers are typically loaded on boot. */
-	if( !IsADirectory("/rootfs/proc/asound/") )
+	struct stat st;
+	if (stat("/proc/asound/", &st) == -1 || !(st.st_mode & S_IFDIR))
 		return "/proc/asound/ does not exist";
 
 	ASSERT( Handle == nullptr );

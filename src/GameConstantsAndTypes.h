@@ -181,7 +181,7 @@ enum SortOrder
 	SORT_NONSTOP_COURSES, /**< View only the nonstop courses. */
 	SORT_ONI_COURSES, /**< View only the oni/survival courses. */
 	SORT_ENDLESS_COURSES, /**< View only the endless courses. */
-	SORT_LENGTH, /**< Sort the courses by how long they would last. */
+	SORT_LENGTH, /**< Sort the songs/courses by how long they would last. */
 	SORT_ROULETTE,
 	SORT_RECENT,
 	NUM_SortOrder,
@@ -213,7 +213,7 @@ LuaDeclareType( SortOrder );
  *
  * This function is mainly used for saving sort order to the profile. -aj
  */
-inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_DOUBLE_CHALLENGE_METER; }
+inline bool IsSongSort( SortOrder so ) { return (so >= SORT_PREFERRED && so <= SORT_DOUBLE_CHALLENGE_METER) || so == SORT_LENGTH; }
 
 /** @brief The list of tap note scores available during play. */
 enum TapNoteScore { 

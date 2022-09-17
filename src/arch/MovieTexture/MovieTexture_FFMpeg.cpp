@@ -109,6 +109,9 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 {
 	FixLilEndian();
 
+	m_swsctx = NULL;
+	m_avioContext = NULL;
+	m_buffer = NULL;
 	m_fctx = nullptr;
 	m_pStream = nullptr;
 	m_iCurrentPacketOffset = -1;
@@ -119,16 +122,37 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 
 MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 {
+	Init();
+}
+
+void MovieDecoder_FFMpeg::Init()
+{
 	if( m_iCurrentPacketOffset != -1 )
 	{
 		avcodec::av_free_packet( &m_Packet );
 		m_iCurrentPacketOffset = -1;
 	}
+
+	m_iEOF = 0;
+	m_fTimestamp = 0;
+	m_fLastFrameDelay = 0;
+	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
+	m_fTimestampOffset = 0;
+	m_fLastFrame = 0;
 	if (m_swsctx)
 	{
 		avcodec::sws_freeContext(m_swsctx);
 		m_swsctx = nullptr;
 	}
+	m_swsctx = NULL;
+	// Note: m_avioContext->buffer refers to m_buffer, but ffmpeg sometimes
+	// reallocates the buffer to change the size, and in that case our m_buffer
+	// pointer is freed already, so we instead check m_avioContext->buffer
+	// to free m_buffer
+	if (m_avioContext && m_avioContext->buffer != NULL) {
+		avcodec::av_free(m_avioContext->buffer);
+	}
+	m_buffer = NULL;
     if (m_avioContext != nullptr )
     {
         RageFile *file = (RageFile *)m_avioContext->opaque;
@@ -136,35 +160,13 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
         delete file;
         avcodec::av_free(m_avioContext);
     }
-    if ( m_buffer != nullptr )
-    {
-        avcodec::av_free(m_buffer);
-    }
+	m_avioContext = NULL;
 #if LIBAVCODEC_VERSION_MAJOR >= 58
 	if ( m_pStreamCodec != nullptr)
 	{
 		avcodec::avcodec_free_context(&m_pStreamCodec);
 	}
 #endif
-}
-
-void MovieDecoder_FFMpeg::Init()
-{
-	m_iEOF = 0;
-	m_fTimestamp = 0;
-	m_fLastFrameDelay = 0;
-	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
-	m_fTimestampOffset = 0;
-	m_fLastFrame = 0;
-	m_swsctx = nullptr;
-	m_avioContext = nullptr;
-	m_buffer = nullptr;
-
-	if( m_iCurrentPacketOffset != -1 )
-	{
-		avcodec::av_free_packet( &m_Packet );
-		m_iCurrentPacketOffset = -1;
-	}
 }
 
 /* Read until we get a frame, EOF or error.  Return -1 on error, 0 on EOF, 1 if we have a frame. */
@@ -434,6 +436,8 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 {
 	MovieTexture_FFMpeg::RegisterProtocols();
 
+	Close();
+
 	m_fctx = avcodec::avformat_alloc_context();
 	if( !m_fctx )
 		return "AVCodec: Couldn't allocate context";
@@ -488,7 +492,17 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 
 RString MovieDecoder_FFMpeg::OpenCodec()
 {
-	Init();
+	if (m_iCurrentPacketOffset != -1) {
+		avcodec::av_free_packet(&m_Packet);
+		m_iCurrentPacketOffset = -1;
+	}
+
+	m_iEOF = 0;
+	m_fTimestamp = 0;
+	m_fLastFrameDelay = 0;
+	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
+	m_fTimestampOffset = 0;
+	m_fLastFrame = 0;
 
 	ASSERT( m_pStream != nullptr );
 	if( m_pStreamCodec->codec )

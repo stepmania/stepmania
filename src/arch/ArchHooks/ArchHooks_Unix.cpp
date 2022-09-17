@@ -386,16 +386,6 @@ RString ArchHooks_Unix::GetClipboard()
 static LocalizedString COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
-#if defined(UNIX)
-	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
-	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
-	FILEMAN->Mount( "dir", "/", "/rootfs" );
-
-	/* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it.
-	 * (Deprecated; use rootfs.) */
-	FILEMAN->Mount( "dir", "/proc", "/proc" );
-#endif
-
 	RString Root;
 	struct stat st;
 	if( !stat(sDirOfExecutable + "/Packages", &st) && st.st_mode&S_IFDIR )

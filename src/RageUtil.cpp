@@ -9,6 +9,8 @@
 #include "LuaManager.h"
 #include <float.h>
 
+#include <json/json.h>
+
 #include <numeric>
 #include <ctime>
 #include <sstream>
@@ -2515,7 +2517,205 @@ int LuaFunc_commify(lua_State* L)
 }
 LUAFUNC_REGISTER_COMMON(commify);
 
-void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, const float mult);
+int LuaFunc_JsonEncode(lua_State* L);
+int LuaFunc_JsonEncode(lua_State* L)
+{
+	int argc = lua_gettop(L);
+	bool minified = false;
+
+	if (argc < 1 || argc > 2)
+	{
+		luaL_error(L, "JsonEncode must be called with one or two arguments");
+	}
+
+	if (argc == 2)
+	{
+		minified = lua_toboolean(L, 2);
+	}
+
+	std::function<Json::Value(int)> convert = [&L, &convert](int index) -> Json::Value
+	{
+		if (lua_isboolean(L, index))
+		{
+			return Json::Value(static_cast<bool>(lua_toboolean(L, index)));
+		}
+		else if (lua_isnil(L, index))
+		{
+			return Json::Value(Json::nullValue);
+		}
+		else if (lua_isnumber(L, index))
+		{
+			double val = lua_tonumber(L, index);
+
+			if (val == static_cast<Json::UInt>(val))
+			{
+				return Json::Value(static_cast<Json::UInt>(val));
+			}
+			else if (val == static_cast<Json::Int>(val))
+			{
+				return Json::Value(static_cast<Json::Int>(val));
+			}
+			return Json::Value(val);
+		}
+		else if (lua_isstring(L, index))
+		{
+			size_t len;
+			const char *s = lua_tolstring(L, index, &len);
+
+			return Json::Value(std::string(s, len));
+		}
+		else if (lua_istable(L, index))
+		{
+			// if the index is relative to the top of the stack,
+			// then calculate the absolute index, so we have a
+			// stable reference
+			if (index < 0)
+			{
+				index = lua_gettop(L) + index + 1;
+			}
+
+			size_t len = lua_objlen(L, index);
+
+			if (len > 0)
+			{
+				// array
+				Json::Value array(Json::arrayValue);
+				array.resize(len);
+
+				for (int i = 0; i < len; i++)
+				{
+					lua_rawgeti(L, index, i + 1);
+					array[i] = convert(-1);
+					lua_pop(L, 1);
+				}
+
+				return array;
+			}
+			else
+			{
+				// object
+				Json::Value obj(Json::objectValue);
+
+				lua_pushnil(L);
+				while (lua_next(L, index) != 0)
+				{
+					if (!lua_isstring(L, -2))
+					{
+						luaL_error(L, "object keys must be strings");
+					}
+
+					size_t keylen;
+					const char *key = lua_tolstring(L, -2, &keylen);
+					obj[std::string(key, keylen)] = convert(-1);
+					lua_pop(L, 1);
+				}
+
+				if (obj.size() < 1)
+				{
+					return Json::Value(Json::arrayValue);
+				}
+				return obj;
+			}
+
+		}
+
+		int tp = lua_type(L, index);
+		luaL_error(L, "%s is not JSON serializable", lua_typename(L, tp));
+		return Json::Value(Json::nullValue);	/* not reached */
+	};
+
+	Json::Value root = convert(1);
+
+	std::string data;
+	if(!minified)
+	{
+		Json::StyledWriter writer;
+		data = writer.write(root);
+	}
+	else
+	{
+		Json::FastWriter writer;
+		data = writer.write(root);
+	}
+
+	lua_pushlstring(L, data.c_str(), data.length());
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(JsonEncode);
+
+int LuaFunc_JsonDecode(lua_State* L);
+int LuaFunc_JsonDecode(lua_State* L)
+{
+	int argc = lua_gettop(L);
+
+	if (argc < 1)
+	{
+		luaL_error(L, "JsonDecode requires an argument");
+	}
+
+	size_t datalen;
+	const char *data = lua_tolstring(L, 1, &datalen);
+
+	Json::Reader reader;
+	Json::Value root;
+
+	bool ok = reader.parse(std::string(data, datalen), root, true);
+	if (!ok)
+	{
+		std::string error = reader.getFormattedErrorMessages();
+		luaL_error(L, "failed to parse JSON: %s", error.c_str());
+	}
+
+	std::function<void(const Json::Value&)> convert = [&L, &convert](const Json::Value& val)
+	{
+		if (val.isNull())
+		{
+			lua_pushnil(L);
+		}
+		else if (val.isInt() || val.isUInt() || val.isDouble())
+		{
+			lua_pushnumber(L, val.asDouble());
+		}
+		else if (val.isString())
+		{
+			std::string s = val.asString();
+			lua_pushlstring(L, s.c_str(), s.length());
+		}
+		else if (val.isBool())
+		{
+			lua_pushboolean(L, val.asBool());
+		}
+		else if (val.isArray())
+		{
+			lua_createtable(L, val.size(), 0);
+			for (int i = 0; i < val.size(); i++)
+			{
+				convert(val[i]);
+				lua_rawseti(L, -2, i + 1);
+			}
+		}
+		else if (val.isObject())
+		{
+			lua_createtable(L, 0, val.size());
+			for (const std::string& member : val.getMemberNames())
+			{
+				lua_pushlstring(L, member.c_str(), member.length());
+				convert(val[member]);
+				lua_rawset(L, -3);
+			}
+		}
+		else
+		{
+			luaL_error(L, "failed to parse JSON: invalid type");
+		}
+	};
+
+	convert(root);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(JsonDecode);
+
+void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, const float mult, int process_index);
 void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, const float mult, int process_index)
 {
 #define TONUMBER_NICE(dest, num_name, index) \

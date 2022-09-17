@@ -1,5 +1,5 @@
 /*
-** $Id: lobject.h 25893 2007-04-21 20:08:12Z stevecheckoway $
+** $Id: lobject.h,v 2.20.1.2 2008/08/06 13:29:48 roberto Exp $
 ** Type definitions for Lua objects
 ** See Copyright Notice in lua.h
 */
@@ -208,7 +208,7 @@ typedef union TString {
 
 
 #define getstr(ts)	cast(const char *, (ts) + 1)
-#define svalue(o)       getstr(tsvalue(o))
+#define svalue(o)       getstr(rawtsvalue(o))
 
 
 

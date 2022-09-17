@@ -108,6 +108,8 @@
 		<Function name='IsRoutine'/>
 		<Function name='IsSMOnlineLoggedIn'/>
 		<Function name='IsUsingWideScreen'/>
+		<Function name='JsonDecode'/>
+		<Function name='JsonEncode'/>
 		<Function name='JudgmentLineToColor'/>
 		<Function name='JudgmentLineToLocalizedString'/>
 		<Function name='JudgmentLineToStrokeColor'/>
@@ -1943,6 +1945,7 @@
 		</Class>
 		<Class name='StageStats'>
 			<Function name='AllFailed'/>
+			<Function name='GaveUp'/>
 			<Function name='GetEarnedExtraStage'/>
 			<Function name='GetGameplaySeconds'/>
 			<Function name='GetMultiPlayerStageStats'/>
@@ -2984,6 +2987,6 @@
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>StepMania5.1-git-89229ed915</Version>
-	<Date>2020-06-25</Date>
+	<Version>StepMania5.1-git-2a699fb215</Version>
+	<Date>2022-06-15</Date>
 </Lua>

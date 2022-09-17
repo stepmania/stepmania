@@ -32,7 +32,7 @@ save yourself some time, copy this for undocumented things:
 		Many global functions are available when scripting with Lua for StepMania.<br />
 		Some, like <Link class='GLOBAL' function='collectgarbage' />, are core functions of Lua 5.1's <a href="https://www.lua.org/manual/5.1/manual.html#5.1" target="_blank" rel="noopener noreferrer">basic Library</a>.<br />
 		Others, like <Link class='GLOBAL' function='Basename' />, are defined in the StepMania engine's C++ but made available to Lua.<br />
-	  And others, like <Link class='GLOBAL' function='DeepCopy' />, are defined in the _fallback theme's Lua files.<br />
+		And others, like <Link class='GLOBAL' function='DeepCopy' />, are defined in the _fallback theme's Lua files.<br />
 		When scripting with StepMania, keep in mind that if you do not scope your functions (and variables) using the <code>local</code> keyword, they will be global.
 	</Description>
 	<Function name='AllowOptionsMenu' theme='_fallback' return='bool' arguments=''>
@@ -76,7 +76,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='BinaryToHex' return='string' arguments='string s'>
 		Converts a binary formatted string to hexadecimal format.
-		This can be useful in conjunction with <Link class="CryptManager" />'s MD5 and SHA functions.
+		This can be useful in conjunction with <Link class='CryptManager' />'s MD5 and SHA functions.
 	</Function>
 	<Function name='BoostColor' theme='_fallback' return='color' arguments='color c, float fBoost'>
 		[02 Colors.lua] Returns the color that results from multiplying <code>c</code>'s R, G, and B values by <code>fBoost</code>.
@@ -85,7 +85,8 @@ save yourself some time, copy this for undocumented things:
 		[02 Colors.lua] Modifies the brightness of the specified color.
 	</Function>
 	<Function name='Center1Player' theme='_fallback' return='bool' arguments=''>
-		[02 Utilities.lua] Returns <code>true</code> if Center 1P is being used.
+		[02 Utilities.lua] Returns <code>true</code> if the <code>Center1Player</code> preference is enabled during single style.   Returns <code>true</code> when the style is double or routine, regardless of the <code>Center1Player</code> preference.<br />
+		Returns <code>false</code> otherwise.
 	</Function>
 	<Function name='CheckpointsTapsSeparateJudgment' theme='_fallback' return='bool' arguments=''>
 		[03 Gameplay.lua] Returns <code>true</code> if checkpoint judgments and tap judgments
@@ -162,7 +163,7 @@ save yourself some time, copy this for undocumented things:
 		Creates a RageBezier2D for you to use.  Make sure you destroy the RageBezier2D when you're done with it, or you will have a memory leak.
 	</Function>
 	<Function name='create_spline' return='CubicSplineN' arguments=''>
-		Creates a CubicSplineN for you to use.  Make sure you destroy the CubicSplineN when you're done with it, or you will have a memory leak.
+		Creates a CubicSplineN for you to use.  Make sure you <Link class='CubicSplineN' function='destroy'>destroy</Link> the CubicSplineN when you're done with it, or you will have a memory leak.
 	</Function>
 	<Function name='CustomDifficultyToColor' theme='_fallback' return='color' arguments='string cd'>
 		[02 Colors.lua]
@@ -187,7 +188,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='dofile' theme='_fallback' return='chunk' arguments='string sFilePath'>
 		<code>dofile</code> is normally a core function of Lua's basic library.  StepMania overrides this in
-		[01 base.lua] to use <Link function="loadfile">loadfile</Link>, which itself has been overridden.
+		[01 base.lua] to use <Link function='loadfile'>loadfile</Link>, which itself has been overridden.
 	</Function>
 	<Function name='EvalUsesCheckpointsWithJudgments' theme='_fallback' return='bool' arguments=''>
 		[03 Gameplay.lua]
@@ -271,10 +272,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetRandomSongBackground' theme='_fallback' return='string' arguments=''>
 		[02 Utilities.lua] Returns a path to a random song background.
 	</Function>
-	<Function name='GetReal' theme="_fallback" return='float' arguments=''>
+	<Function name='GetReal' theme='_fallback' return='float' arguments=''>
 		[02 Actor.lua]
 	</Function>
-	<Function name='GetRealInverse' theme="_fallback" return='float' arguments=''>
+	<Function name='GetRealInverse' theme='_fallback' return='float' arguments=''>
 		[02 Actor.lua]
 	</Function>
 	<Function name='GetScreenAspectRatio' return='float' arguments=''>
@@ -371,20 +372,20 @@ save yourself some time, copy this for undocumented things:
 		will iterate over the pairs (1,t[1]), (2,t[2]), ···, up to the first integer key absent from the table.<br />
 		<code>ipairs</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
-	<Function name='IsArcade' theme="_fallback" return='bool' arguments=''>
+	<Function name='IsArcade' theme='_fallback' return='bool' arguments=''>
 		[02 Utilities.lua] Returns <code>true</code> if the coin mode is not set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
 	</Function>
-	<Function name='IsCourse' theme="_fallback" return='bool' arguments=''>
+	<Function name='IsCourse' theme='_fallback' return='bool' arguments=''>
 		Returns <code>true</code> if the current <Link class='ENUM' function='PlayMode' /> is Nonstop, Oni, or Endless.<br />
 		This is effectively the same as <Link class='GameState' function='IsCourseMode' />.
 	</Function>
-	<Function name='IsFreePlay' theme="_fallback" return='bool' arguments=''>
+	<Function name='IsFreePlay' theme='_fallback' return='bool' arguments=''>
 		[02 Utilities.lua] Returns <code>true</code> if <Link function='IsArcade'>IsArcade()</Link> and the coin mode is <Link class='ENUM' function='CoinMode'>CoinMode_Free</Link>.
 	</Function>
 	<Function name='IsGame' theme='_fallback' return='bool' arguments='string sGame'>
 		[03 Gameplay.lua] Returns <code>true</code> if the current game is <code>sGame</code>.
 	</Function>
-	<Function name='IsHome' theme="_fallback" return='bool' arguments=''>
+	<Function name='IsHome' theme='_fallback' return='bool' arguments=''>
 		[02 Utilities.lua] Returns <code>true</code> if the coin mode is set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
 	</Function>
 	<Function name='IsNetConnected' return='bool' arguments=''>
@@ -410,6 +411,13 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='join' theme='_fallback' return='string' arguments='string delimiter, table list'>
 		[02 Utilities.lua] Joins a table, splitting each item with <code>delimiter</code>, returning a string of the results.
+	</Function>
+	<Function name='JsonDecode' return='various' arguments='string data'>
+		Decodes JSON encoded <code>data</code> and returns the result.
+	</Function>
+	<Function name='JsonEncode' return='string' arguments='various data, bool minify'>
+		Returns <code>data</code> as JSON. Empty tables are represented as arrays in the output.<br />
+		<code>minify</code> is optional and defaults to <code>false</code>. If <code>true</code>, all unnecessary whitespace is omitted from the output.
 	</Function>
 	<Function name='JudgmentLineToColor' theme='_fallback' return='color' arguments='JudgmentLine jl'>
 		[02 Colors.lua]
@@ -437,7 +445,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='loadfile' theme='_fallback' return='chunk' arguments='string sFilePath'>
 		<code>loadfile</code> is normally a core function of Lua's basic library.  StepMania overrides this in
-		[01 base.lua] to use <Link class="lua" function="ReadFile">lua.ReadFile</Link>.
+		[01 base.lua] to use <Link class='lua' function='ReadFile'>lua.ReadFile</Link>.
 	</Function>
 	<Function name='LoadFallbackB' theme='_fallback' return='ActorDef' arguments=''>
 		[02 ActorDef.lua] Load the fallback BGA for the element that is currently being loaded.
@@ -689,6 +697,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='StandardDecorationFromFileOptional' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
 		[02 ActorDef.lua]
 	</Function>
+	<Function name='StringToBlend' theme='_fallback' return='string' arguments='string s'>
+		[01 Alias.lua] Given the short form of a <Link class='ENUM' function='BlendMode' /> string, returns the full version of the string.<br />
+		Returns <code>nil</code> if the string passed in does not match any valid BlendModes.
+<pre><code>
+local b = StringToBlend("AlphaMask")
+Trace(b)  -- "BlendMode_AlphaMask"
+</code></pre>
+	</Function>
 	<Function name='tableshuffle' theme='_fallback' return='table' arguments='table t'>
 		[02 Utilities.lua] Returns a shuffled version of <code>t</code>.
 	</Function>
@@ -745,7 +761,7 @@ save yourself some time, copy this for undocumented things:
 		This way, a theme can implement a custom interactive screen for adjusting those preferences.
 	</Function>
 	<Function name='Var' theme='_fallback' return='ThreadVariable' arguments=''>
-		[01 base.lua] Alias for <Link class="lua" function="GetThreadVariable">lua.GetThreadVariable</Link>.
+		[01 base.lua] Alias for <Link class='lua' function='GetThreadVariable'>lua.GetThreadVariable</Link>.
 	</Function>
 	<Function name='VersionDate' return='string' arguments=''>
 		Returns the current version's build date, formatted as YYYYMMDD.
@@ -823,7 +839,7 @@ local playable_steps = SongUtil.GetPlayableSteps(song)
 		Returns the Y Offset of a note in column <code>iCol</code> at beat <code>fNoteBeat</code> for the provided PlayerState. Y Offset is affected by Speed mods and Accel mods, and impacts most other arrow effects.
 	</Function>
 	<Function name='GetYPos' return='float' arguments='PlayerState ps, int iCol, float fYOffset, float fYReverseOffsetPixels'>
-		Returns the Y position of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br/>
+		Returns the Y position of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br />
 		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code>
 	</Function>
 	<Function name='GetYOffsetFromYPos' return='float' arguments='PlayerState ps, int iCol, float fYPos, float fYReverseOffsetPixels'>
@@ -883,10 +899,15 @@ local playable_steps = SongUtil.GetPlayableSteps(song)
 		omitted and the name of the Enum is used in place
 		of <code>Enum</code>.<br />
 		For example:<br />
-		<code>Enum.GetName(PlayerNumber)</code> and
-		<code>Enum.Reverse(PlayerNumber)</code> can be used like<br />
-		<code>PlayerNumber:GetName()</code> and
-		<code>PlayerNumber:Reverse()</code>, respectively.
+<pre><code>
+Enum.GetName(PlayerNumber)
+Enum.Reverse(PlayerNumber)
+</code></pre>
+		can be condensed like<br />
+<pre><code>
+PlayerNumber:GetName()
+PlayerNumber:Reverse()
+</code></pre>
 	</Description>
 	<Function name='Compare' return='int' arguments='Enum e, string x, string y'>
 		Both <code>x</code> and <code>y</code> need to be elements of the enumerated
@@ -905,12 +926,13 @@ local playable_steps = SongUtil.GetPlayableSteps(song)
 		Returns a reverse lookup table for the enumerated type <code>e</code>. For
 		example:
 <pre><code>
-local r = PlayerNumber:Reverse()
-local n = r['PlayerNumber_P2']
+local pn1 = PlayerNumber:Reverse()['PlayerNumber_P1']
+local pn2 = PlayerNumber:Reverse()['PlayerNumber_P2']
+-- pn1 is 0
+-- pn2 is 1
 </code></pre>
-		The value of <code>n</code> in this case would be <code>1</code> corresponding
-		to the 0-based indexing using in C++ and not <code>2</code> as might be
-		expected for the 1-based indexing used in Lua.
+		Note that the values returned from <code>Reverse()</code> will correspond
+		to the 0-based indexing from C++ and not 1-based indexing conventional to Lua.
 	</Function>
 </Namespace>
 <Namespace name='lua'>
@@ -953,7 +975,11 @@ local n = r['PlayerNumber_P2']
 </Namespace>
 <Namespace name='RageFileUtil'>
 	<Function name='CreateRageFile' return='RageFile' arguments=''>
-		Creates a RageFile handle with which one can use the commands in <Link class='RageFile' />.
+		Creates a RageFile handle with which one can use the commands in <Link class='RageFile' />.<br />
+		Example:
+<pre><code>
+local file = RageFileUtil.CreateRageFile()
+</code></pre>
 	</Function>
 </Namespace>
 <Namespace name='ScreenSystemLayerHelpers'>
@@ -1111,7 +1137,7 @@ local n = r['PlayerNumber_P2']
 		Sets the Actor's base Z zoom to <code>zoom</code>.
 	</Function>
 	<Function name='blend' return='void' arguments='BlendMode mode'>
-		Sets the Actor to use the specified blend mode.
+		Sets the Actor to use the specified <Link class='ENUM' function='BlendMode' />.
 	</Function>
 	<Function name='bob' return='void' arguments=''>
 		Makes the Actor bob up and down. Can use <Link function='effectmagnitude' /> to define different bobbing behavior.
@@ -1175,7 +1201,7 @@ local n = r['PlayerNumber_P2']
 		See <a href="https://github.com/stepmania/stepmania/blob/HEAD/Docs/Themerdocs/effect_colors.txt" target="_blank" rel="noopener noreferrer">Docs/Themerdocs/effect_colors.txt</a>
 		for an example.
 	</Function>
-	<Function name='diffusebottomedge' return='void' arguments=''>
+	<Function name='diffusebottomedge' return='void' arguments='color c'>
 		Sets the Actor's bottom edge color to <code>c</code>.
 	</Function>
 	<Function name='diffusecolor' return='void' arguments='color c'>
@@ -1243,12 +1269,9 @@ local n = r['PlayerNumber_P2']
 		Set the Actor's effect period to <code>fTime</code>.
 	</Function>
 	<Function name='effecttiming' return='void' arguments='float ramp_to_half, float hold_at_half, float ramp_to_full, float hold_at_zero, float hold_at_full'>
-		Set the Actor's effect timing.<br />
-		hold_at_zero is before hold_at_full in the argument list for compatibility.  A future version will probably swap them because it makes more sense to have hold_at_full come before hold_at_zero.<br />
+		Set the Actor's effect timing.  The effect timing controls how long it takes an effect to cycle and how long it spends in each phase.<br />
 		All effect timings must be greater than or equal to zero, at least one of them must be greater than zero.<br />
-		The effect timing controls how long it takes an effect to cycle and how long it spends in each phase.<br />
 		Depending on the effect clock, the actor's time into effect is updated every frame.  That time is then translated into a percent_through_effect using the parameters to this function.<br />
-		<br />
 		ramp_to_half is the amount of time for percent_through_effect to reach 0.5.<br />
 		hold_at_half is the amount of time percent_through_effect will stay at 0.5.<br />
 		ramp_to_full is the amount of time percent_through_effect will take to go from 0.5 to 1.0.<br />
@@ -1256,8 +1279,8 @@ local n = r['PlayerNumber_P2']
 		After reaching the end of hold_at_full, percent_through_effect stays at 0 until hold_at_zero is over.<br />
 		<br />
 		The different effects use percent_through_effect in different ways.  Some use it to calculate percent_between_colors with this sine wave:  sin((percent_through_effect + 0.25f) * 2 * PI ) / 2 + 0.5f<br />
-		Some effects check the internal bool blink_on.  blink_on is true if percent_through_effect is greater than 0.5 and false if percent_through_effect is less than or equal to 0.5.<br />
-		Check the effect functions for individual explanations:  diffuseblink, diffuseshift, glowblink, glowshift, glowramp, rainbow, wag, bounce, bob, pulse, spin, vibrate.
+		Some effects check the internal bool blink_on.  blink_on is true if percent_through_effect is greater than 0.5 and false if percent_through_effect is less than or equal to 0.5.<br /><br />
+		Check the effect functions for individual explanations:  <Link  function='diffuseblink' />, <Link  function='diffuseshift' />, <Link  function='glowblink' />, <Link  function='glowshift' />, <Link  function='glowramp' />, <Link  function='rainbow' />, <Link  function='wag' />, <Link  function='bounce' />, <Link  function='bob' />, <Link  function='pulse' />, <Link  function='spin' />, <Link  function='vibrate' />.
 	</Function>
 	<Function name='effect_hold_at_full' return='void' arguments='float hold_at_full'>
 		Set the hold_at_full part of the effect timing while leaving the others unchanged.
@@ -1374,7 +1397,8 @@ local n = r['PlayerNumber_P2']
 		for an example.
 	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
-		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
+		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left-aligned while an alignment of 1 is right-aligned.<br />
+		Use <Link function='horizalign' /> for the common case.
 	</Function>
 	<Function name='heading' return='void' arguments='float fHeading'>
 		Sets the heading of this Actor to <code>fHeading</code>.
@@ -1389,7 +1413,14 @@ local n = r['PlayerNumber_P2']
 		[02 Actor.lua] "Hide if <code>b</code> is <code>true</code>, but don't unhide if <code>b</code> is <code>false</code>."
 	</Function>
 	<Function name='horizalign' return='void' arguments='HorizAlign align'>
-		Set the horizontal alignment of the Actor according to <code>align</code>. See <Link function='halign' /> for fractional alignment.
+		Set the <Link class='ENUM' function='HorizAlign'/> of the Actor according to <code>align</code>.<br />
+<pre><code>
+local spr = LoadActor('awesome.png')
+spr.InitCommand=function(self)
+	self:horizalign('HorizAlign_Left')
+end
+</code></pre>
+		Use <Link function='halign' /> for fractional alignment.
 	</Function>
 	<Function name='hurrytweening' return='void' arguments='float factor'>
 		Hurries up an Actor's tweening by <code>factor</code>.
@@ -1443,11 +1474,34 @@ local n = r['PlayerNumber_P2']
 	<Function name='rotationz' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the Z axis to <code>fRotation</code> degrees.
 	</Function>
-	<!-- RunCommandsRecursively -->
-	<Function name='scale_or_crop_alternative' theme="_fallback" return='void' arguments=''>
+	<Function name='RunCommandsRecursively' return='void' arguments='LuaReference cmds'>
+		Recursively runs the commands in <code>cmds</code> on the Actor's children, as well as the Actor itself.<br />
+		Since <code>RunCommandsRecursively</code> belongs to StepMania's base <code>Actor</code> class, it is available to all specialized actors.  Calling it from an ActorFrame or ActorFrameTexture can be helpful, as those specialized actors can contain children actors.<br />
+		See <Link class='ActorFrame' function='RunCommandsOnChildren' /> and <Link class='ActorFrame' function='runcommandsonleaves' /> for related needs.<br />
+		Example:
+<pre><code>
+Def.ActorFrame{
+	Name="AF",
+	
+	Def.Sprite{ Name="sun", Texture="sun.png" },
+	
+	Def.ActorFrame{
+		Name="AF2",
+		InitCommand=function(self)
+			-- bounce() will be applied to AF2, airhorn, and catchphrase
+			self:RunCommandsRecursively( function(actor) actor:bounce() end )
+		end,
+		
+		Def.Sprite{ Name="airhorn", Texture="airhorn.png" },
+		Def.BitmapText{ Name="catchphrase", Font="Common Normal", Text="Yo!" }
+	}
+}
+</code></pre>
+	</Function>
+	<Function name='scale_or_crop_alternative' theme='_fallback' return='void' arguments=''>
 		[02 Actor.lua] An alternative version of <Link function='scale_or_crop_background' />.
 	</Function>
-	<Function name='scale_or_crop_background' theme="_fallback" return='void' arguments=''>
+	<Function name='scale_or_crop_background' theme='_fallback' return='void' arguments=''>
 		[02 Actor.lua]
 	</Function>
 	<Function name='scaletocover' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
@@ -1527,10 +1581,18 @@ local n = r['PlayerNumber_P2']
 		It's usually more convenient to use <Link function='linear' />, <Link function='accelerate' />, <Link function='decelerate' />, or <Link function='spring' /> rather than using Actor:tween() directly.
 	</Function>
 	<Function name='valign' return='void' arguments='float fAlign'>
-		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign" /> for the common case.
+		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top-aligned while an alignment of 1 is bottom-aligned.<br />
+		Use <Link function='vertalign' /> for the common case.
 	</Function>
 	<Function name='vertalign' return='void' arguments='VertAlign align'>
-		Set the vertical alignment of the Actor according to <code>align</code>. See <Link function="valign" /> for fractional alignment.
+		Set the <Link class='ENUM' function='VertAlign' /> of the Actor according to <code>align</code>.<br />
+<pre><code>
+local spr = LoadActor('awesome.png')
+spr.InitCommand=function(self)
+	self:vertalign('VertAlign_Bottom')
+end
+</code></pre>
+		See <Link function='valign' /> for fractional alignment.
 	</Function>
 	<Function name='vibrate' return='void' arguments=''>
 		Makes the Actor vibrate violently. Can use <Link function='effectmagnitude' /> to define different vibration behavior.
@@ -1624,8 +1686,8 @@ local n = r['PlayerNumber_P2']
 		A common convention is to add children at the next index (current size of the table plus <code>1</code>).<br />
 		Basic example:
 <pre><code>
--- in the context of a lua file as a screen layer
--- this ActorFrame is a table
+-- in the context of a .lua file as a screen layer
+-- this ActorFrame can be thought of as a Lua table
 local af = Def.ActorFrame{}
 
 -- add a Sprite at the next index
@@ -1644,7 +1706,7 @@ af[#af+1] = Def.BitmapText{
 return af
 </code></pre>
 	When actor commands like <Link class='Actor' function='xy' /> and <Link class='Actor' function='zoom' />
-	are used position and scale an ActorFrame, its children will position relative to the parent ActorFrame
+	are used to position and scale an ActorFrame, its children will position relative to the parent ActorFrame
 	and scale proportionally.<br />
 	For example, if you want to animate 50 actors moving 100px to the right in unison, it is easier to move the
 	parent ActorFrame than each actor individually.<br />
@@ -1673,6 +1735,8 @@ af[#af+1] = Def.Sprite{
 
 return af
 </code></pre>
+	Likewise, if you stop drawing an ActorFrame by applying <code>visible(false)</code> to it, its children
+	will stop drawing with it.<br />
 	ActorFrames can contain ActorFrames, and doing so is good design for sufficiently complex screens.
 	</Description>
 
@@ -1721,10 +1785,48 @@ return af
 		Removes the specified child from the ActorFrame.
 	</Function>
 	<Function name='RunCommandsOnChildren' return='void' arguments='LuaReference cmds'>
-		Runs the commands in <code>cmds</code> on the ActorFrame's children.
+		Runs the commands in <code>cmds</code> on the ActorFrame's immediate children. <br />
+		See <Link class='Actor' function='RunCommandsRecursively' /> and <Link function='runcommandsonleaves' /> for related needs.<br />
+		Example:
+<pre><code>
+Def.ActorFrame{
+	Name="AF",
+	InitCommand=function(self)
+		-- bounce() will be applied to sun and AF2
+		self:RunCommandsOnChildren( function(child) child:bounce() end )
+	end,
+	
+	Def.Sprite{ Name="sun", Texture="sun.png" },
+	
+	Def.ActorFrame{
+		Name="AF2",
+		Def.Sprite{ Name="airhorn", Texture="airhorn.png" },
+		Def.BitmapText{ Name="catchphrase", Font="Common Normal", Text="Yo!" }
+	}
+}
+</code></pre>
 	</Function>
 	<Function name='runcommandsonleaves' return='void' arguments='LuaReference cmds'>
-		Runs the commands in <code>cmds</code> on the ActorFrame's leaves.
+		Runs the commands in <code>cmds</code> on the ActorFrame's leaves.  Leaves are nodes in the ActorFrame tree that have no further child nodes.<br />
+		See <Link function='RunCommandsOnChildren' /> and <Link class='Actor' function='RunCommandsRecursively' /> for related needs.<br />
+		Example:
+<pre><code>
+Def.ActorFrame{
+	Name="AF",
+	InitCommand=function(self)
+		-- bounce() will be applied to sun, airhorn, and catchphrase
+		self:runcommandsonleaves( function(leaf) leaf:bounce() end )
+	end,
+	
+	Def.Sprite{ Name="sun", Texture="sun.png" },
+	
+	Def.ActorFrame{
+		Name="AF2",
+		Def.Sprite{ Name="airhorn", Texture="airhorn.png" },
+		Def.BitmapText{ Name="catchphrase", Font="Common Normal", Text="Yo!" }
+	}
+}
+</code></pre>
 	</Function>
 	<Function name='SetAmbientLightColor' return='void' arguments='Color c'>
 		Sets the ActorFrame's ambient light color to <code>c</code>.
@@ -1791,7 +1893,7 @@ return af
 		Clears all the textures from the ActorMultiTexture.
 	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode em'>
-		Sets the EffectMode on the ActorMultiTexture.
+		Sets the <Link class='ENUM' function='EffectMode' /> on the ActorMultiTexture.
 	</Function>
 	<Function name='SetSizeFromTexture' return='void' arguments='RageTexture tex'>
 		Sets the size of the ActorMultiTexture from the specified texture.
@@ -1800,7 +1902,7 @@ return af
 		Sets the coordinates of the ActorMultiTexture.
 	</Function>
 	<Function name='SetTextureMode' return='void' arguments='int iIndex, TextureMode tm'>
-		Sets a TextureMode on the specified index.
+		Sets a <Link class='ENUM' function='TextureMode' /> on the specified index.
 	</Function>
 </Class>
 <Class name='ActorMultiVertex' grouping='Actor'>
@@ -1937,10 +2039,10 @@ self:SetDrawState{First= 3, Num= 4}
 		Returns the ActorMultiVertex's texture.
 	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode em'>
-		Sets the <Link class='ENUM' function='EffectMode'>EffectMode</Link> of the ActorMultiVertex.
+		Sets the <Link class='ENUM' function='EffectMode' /> of the ActorMultiVertex.
 	</Function>
 	<Function name='SetTextureMode' return='void' arguments='TextureMode tm'>
-		Sets the <Link class='ENUM' function='TextureMode'>TextureMode</Link> of the ActorMultiVertex.
+		Sets the <Link class='ENUM' function='TextureMode' /> of the ActorMultiVertex.
 	</Function>
 	<Function name='SetLineWidth' return='void' arguments='float width'>
 		Sets the width of the line for DrawMode_LineStrip.
@@ -2174,7 +2276,7 @@ Def.Sound{
 <Class name='BitmapText' grouping='Actor'>
 	<Description>
 		<em>BitmapText</em> actors are used to display text on-screen.<br />
-		The font can be specified using the <code>Font</code> attribute. It takes a font name a string,
+		The font can be specified using the <code>Font</code> attribute. It takes a font name as a string,
 		pathed relative to the current theme's <code>./Fonts/</code> directory.<br />
 		StepMania expects fonts to be formatted as spritesheets with accompanying ini files.
 		These can be generated from ttf files using <em>Texture Font Generator.exe</em> in the
@@ -2606,7 +2708,7 @@ Def.BitmapText{
 		Returns whether the spline is currently dirty.
 	</Function>
 	<Function name='destroy' return='' arguments=''>
-		Destroys the spline, freeing the memory allocated for it.  This can only be called on splines created with create_spline().
+		Destroys the spline, freeing the memory allocated for it.  This can only be called on splines created with <Link class='GLOBAL' function='create_spline'>create_spline()</Link>.
 	</Function>
 </Class>
 <Class name='DeviceList' grouping='Actor'>
@@ -3529,20 +3631,23 @@ end
 	<Function name='ChangeSort' return='bool' arguments='SortOrder so'>
 		Changes the sort order of the wheel.  Returns <code>true</code> if the order was changed.
 	</Function>
+	<Function name='GetCurrentSections' return='{string}' arguments=''>
+		Returns a string array of the currently displayed sections in the MusicWheel.
+	</Function>
 	<Function name='GetSelectedSection' return='string' arguments=''>
 		Returns the name of the currently selected section.
 	</Function>
 	<Function name='IsRouletting' return='bool' arguments=''>
 		Returns <code>true</code> if the MusicWheel is currently handling Roulette selection.
 	</Function>
-	<Function name='SelectSong' return='bool' arguments='Song sSong'>
-		Selects a song. Returns <code>false</code> on failure.
+	<Function name='Move' return='void' arguments='int n'>
+		Moves the wheel by <code>n</code>.
 	</Function>
 	<Function name='SelectCourse' return='bool' arguments='Course cCourse'>
 		Selects a course. Returns <code>false</code> on failure.
 	</Function>
-	<Function name='GetCurrentSections' return='{string}' arguments=''>
-		Returns a string array of the currently displayed sections in the MusicWheel.
+	<Function name='SelectSong' return='bool' arguments='Song sSong'>
+		Selects a song. Returns <code>false</code> on failure.
 	</Function>
 </Class>
 <Class name='NoteSkinManager'>
@@ -4601,10 +4706,11 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		Returns the profile for player <code>pn</code>.
 	</Function>
 	<Function name='GetProfileDir' return='string' arguments='ProfileSlot slot'>
-		Returns the profile directory of the specified <code>ProfileSlot</code>.
+		Returns the profile directory for the provided <Link class='ENUM' function='ProfileSlot'>ProfileSlot</Link>, formatted like <code>/Save/LocalProfiles/00000001/</code>.<br />
+		Returns an empty string if the the provided <Link class='ENUM' function='ProfileSlot'>ProfileSlot</Link> does not have a <Link class='Profile' /> loaded.
 	</Function>
 	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s, ProfileSlot ps'>
-		Returns the number of times Song s has been played with the specified ProfileSlot.
+		Returns the number of times Song <code>s</code> has been played with the specified <Link class='ENUM' function='ProfileSlot'>ProfileSlot</Link>.
 	</Function>
 	<Function name='GetStatsPrefix' return='string' arguments=''>
 		Returns the current stats prefix.
@@ -5030,7 +5136,10 @@ Details of the <code>event</code> table:
 		This should behave identically to the normal back button behavior.  This function is for the pause menu to use when the player forfeits or restarts, so that a score isn't saved.
 	</Function>
 	<Function name='Center1Player' return='bool' arguments=''>
-		Returns <code>true</code> if a single <Link class='Player' /> has its NoteField centered.
+		Returns <code>true</code> if a single <Link class='Player' /> has its NoteField centered using the <code>Center1Player</code> preference.<br />
+		Will return <code>false</code> if the current theme has <code>AllowCenter1Player=false</code> under <code>[ScreenGameplay]</code>.<br />
+		Notably, this can return <code>false</code> when the player's NoteField is visually centered, as is convention in <Link class='ENUM' function='StyleType'>double style</Link> or <Link class='ENUM' function='StepsType'>Techno_Single8</Link>.<br />
+		Refer to the global function <Link class='GLOBAL' function='Center1Player' /> for a somewhat more robust check.
 	</Function>
 	<Function name='GetDummyPlayerInfo' return='PlayerInfo' arguments='int index'>
 		Returns a dummy PlayerInfo for the specified index.
@@ -5147,7 +5256,7 @@ Details of the <code>event</code> table:
 	</Function>
 	<Function name='GetAnyStillEntering' return='bool' arguments=''>
 		Returns <code>true</code> if anyone is still entering their name.<br />
-		(As opposed to those who are Finalized; see <Link function="GetFinalized" />)
+		(As opposed to those who are Finalized; see <Link function='GetFinalized' />)
 	</Function>
 	<Function name='GetEnteringName' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if Player <code>pn</code> is entering their name.
@@ -5876,8 +5985,11 @@ local spr = Def.Sprite{
 	<Function name='AllFailed' return='bool' arguments=''>
 		Returns <code>true</code> if everyone failed.
 	</Function>
+	<Function name='GaveUp' return='bool' arguments=''>
+		Returns <code>true</code> if any player has given up on the song.
+	</Function>
 	<Function name='GetEarnedExtraStage' return='EarnedExtraStage' arguments=''>
-		Returns the <Link class="ENUM" function="EarnedExtraStage">EarnedExtraStage</Link> value.
+		Returns the <Link class='ENUM' function='EarnedExtraStage'>EarnedExtraStage</Link> value.
 	</Function>
 	<Function name='GetGameplaySeconds' return='float' arguments=''>
 		Returns the number of seconds played.
@@ -5891,7 +6003,7 @@ local spr = Def.Sprite{
 	</Function>
 	<Function name='GetPossibleSongs' return='{Song}' arguments='' />
 	<Function name='GetStage' return='Stage' arguments=''>
-		Returns the <Link class="ENUM" function="Stage">Stage</Link> value.
+		Returns the <Link class='ENUM' function='Stage'>Stage</Link> value.
 	</Function>
 	<Function name='GetStageIndex' return='int' arguments=''>
 		Returns the stage index.
@@ -5918,6 +6030,9 @@ local spr = Def.Sprite{
 	</Function>
 	<Function name='GetCurStageStats' return='StageStats' arguments=''>
 		Returns the current StageStats.
+	</Function>
+	<Function name='GetFinalEvalStageStats' return='Grade' arguments='PlayerNumber pn'>
+		Returns player <code>pn</code>'s final grade.
 	</Function>
 	<Function name='GetFinalGrade' return='Grade' arguments='PlayerNumber pn'>
 		Returns player <code>pn</code>'s final grade.
@@ -6552,7 +6667,7 @@ local bpms_and_times = timing_data:GetBPMsAndTimes(true)
 <Description>
 	StepMania's enums are exposed to Lua as global tables.  Note that although the enum values start at 0, these global Lua tables are indexed starting at 1.<br />
 	Functions that require enums as arguments will accept either the string constant or number value.<br />
-	For example, <Link class='GameState' function='SetPreferredDifficulty' /> accepts a <code>PlayerNumber</code> and <code>Difficulty</code> as arguments.
+	For example, <Link class='GameState' function='SetPreferredDifficulty' /> accepts a <Link class='ENUM' function='PlayerNumber' /> and <Link class='ENUM' function='Difficulty' /> as arguments.
 	Each of these is valid way to set P1's preferred difficulty to hard:<br />
 <pre><code>
 -- using strings
@@ -6561,6 +6676,24 @@ GAMESTATE:SetPreferredDifficulty( "PlayerNumber_P1", "Difficulty_Hard" )
 GAMESTATE:SetPreferredDifficulty( 0, 3 )
 -- using global Lua tables
 GAMESTATE:SetPreferredDifficulty( PlayerNumber[1], Difficulty[4] )
+</code></pre>
+	These enums can be iterated over using <Link class='GLOBAL' function='ipairs' /> or <Link class='GLOBAL' function='ivalues' />.  This can be handy when you want to perform some action on every value in an enum; for example, displaying a graphic for each Difficulty.
+<pre><code>
+-- Difficulty is a global Lua table that corresponds with
+-- the StepMania engine's Difficulty enum
+for i, diff in ipairs(Difficulty) do
+
+	-- append a file extension to create a string like
+	-- "Difficulty_Beginner.png"
+	local filename = diff .. ".png"
+
+	-- load files like "Difficulty_Beginner.png",
+	-- "Difficulty_Easy.png", etc. from the directory 
+	-- where this code is run, and offset each vertically
+	af[#af+1] = LoadActor( filename )..{
+		InitCommand=function(self) self:y( i * 100 ) end
+	}
+end
 </code></pre>
 </Description>
 <Enum name='BlendMode'>
