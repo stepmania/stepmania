@@ -112,6 +112,7 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 	m_swsctx = NULL;
 	m_avioContext = NULL;
 	m_buffer = NULL;
+	m_pStreamCodec = NULL;
 	m_fctx = nullptr;
 	m_pStream = nullptr;
 	m_iCurrentPacketOffset = -1;
@@ -166,6 +167,7 @@ void MovieDecoder_FFMpeg::Init()
 	{
 		avcodec::avcodec_free_context(&m_pStreamCodec);
 	}
+	m_pStreamCodec = NULL;
 #endif
 }
 
