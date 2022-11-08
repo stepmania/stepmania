@@ -112,6 +112,7 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 	m_swsctx = NULL;
 	m_avioContext = NULL;
 	m_buffer = NULL;
+	m_pStreamCodec = NULL;
 	m_fctx = nullptr;
 	m_pStream = nullptr;
 	m_iCurrentPacketOffset = -1;
@@ -166,6 +167,7 @@ void MovieDecoder_FFMpeg::Init()
 	{
 		avcodec::avcodec_free_context(&m_pStreamCodec);
 	}
+	m_pStreamCodec = NULL;
 #endif
 }
 
@@ -414,7 +416,8 @@ void MovieTexture_FFMpeg::RegisterProtocols()
 static int AVIORageFile_ReadPacket( void *opaque, uint8_t *buf, int buf_size )
 {
     RageFile *f = (RageFile *)opaque;
-    return f->Read( buf, buf_size );
+    int n = f->Read( buf, buf_size );
+    return n ? n : AVERROR_EOF;
 }
 
 static int64_t AVIORageFile_Seek( void *opaque, int64_t offset, int whence )
