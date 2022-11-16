@@ -10,6 +10,7 @@
 #include "CommonMetrics.h"
 #include "Course.h"
 #include "CryptManager.h"
+#include "discord-rpc.h"
 #include "Game.h"
 #include "GameCommand.h"
 #include "GameConstantsAndTypes.h"
@@ -1177,6 +1178,8 @@ void GameState::SetCurGame( const Game *pGame )
 	m_pCurGame.Set( pGame );
 	RString sGame = pGame ? RString(pGame->m_szName) : RString();
 	PREFSMAN->SetCurrentGame( sGame );
+	discordInit();
+	updateDiscordMenu("Just Starting...");
 }
 
 const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
@@ -2657,6 +2660,102 @@ MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp )
 	return MultiPlayer_Invalid;
 }
 
+void GameState::discordInit()
+{
+		DiscordEventHandlers handlers;
+		memset(&handlers, 0, sizeof(handlers));
+		Discord_Initialize("1020524035597144085", &handlers, 1, nullptr);
+
+}
+
+void GameState::updateDiscordPresence(const std::string& largeImageText,
+								 const std::string& details,
+								 const std::string& state,
+								 const int64_t startTime)
+{
+	DiscordRichPresence discordPresence;
+	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.details = details.c_str();
+	discordPresence.state = state.c_str();
+	discordPresence.startTimestamp = startTime;
+	discordPresence.largeImageKey = "default";
+	discordPresence.largeImageText = largeImageText.c_str();
+	Discord_RunCallbacks();
+	Discord_UpdatePresence(&discordPresence);
+}
+
+void GameState::updateDiscordPresenceLargeImageKey(const std::string& largeImageText,
+								 const RString imageKey,
+								 const std::string& details,
+								 const std::string& state,
+								 const int64_t startTime)
+{
+	DiscordRichPresence discordPresence;
+	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.details = details.c_str();
+	discordPresence.state = state.c_str();
+	discordPresence.startTimestamp = startTime;
+	discordPresence.largeImageKey = imageKey.c_str();
+	discordPresence.largeImageText = largeImageText.c_str();
+	Discord_RunCallbacks();
+	Discord_UpdatePresence(&discordPresence);
+}
+void GameState::updateDiscordPresenceDetails(const std::string& largeImageText,
+								 const std::string& smallImageText,
+								 const RString largeImageKey,
+								 const RString smallImageKey,
+								 const std::string& details,
+								 const std::string& state,
+								 const int64_t startTime)
+{
+	DiscordRichPresence discordPresence;
+	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.details = details.c_str();
+	discordPresence.state = state.c_str();
+	discordPresence.startTimestamp = startTime;
+	discordPresence.smallImageKey = smallImageKey.c_str();
+	discordPresence.smallImageText = smallImageText.c_str();
+	discordPresence.largeImageKey = largeImageKey.c_str();
+	discordPresence.largeImageText = largeImageText.c_str();
+	Discord_RunCallbacks();
+	Discord_UpdatePresence(&discordPresence);
+}
+
+void GameState::updateDiscordFullPresence(const std::string& largeImageText,
+								 const std::string& smallImageText,
+								 const RString largeImageKey,
+								 const RString smallImageKey,
+								 const std::string& details,
+								 const std::string& state,
+								 const int64_t startTime,
+								 const int64_t endTime)
+{
+	DiscordRichPresence discordPresence;
+	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.details = details.c_str();
+	discordPresence.state = state.c_str();
+	discordPresence.startTimestamp = startTime;
+	discordPresence.endTimestamp = endTime;
+	discordPresence.smallImageKey = smallImageKey.c_str();
+	discordPresence.smallImageText = smallImageText.c_str();
+	discordPresence.largeImageKey = largeImageKey.c_str();
+	discordPresence.largeImageText = largeImageText.c_str();
+	Discord_RunCallbacks();
+	Discord_UpdatePresence(&discordPresence);
+}
+
+void GameState::updateDiscordMenu(const std::string& largeImageText)
+{
+	DiscordRichPresence discordPresence;
+	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.state = "Getting Started";
+	discordPresence.details = "In the Menus";
+	discordPresence.largeImageKey = "default";
+	discordPresence.largeImageText = largeImageText.c_str();
+	Discord_RunCallbacks();
+	Discord_UpdatePresence(&discordPresence);
+}
+
 
 
 // lua start
@@ -3296,6 +3395,36 @@ public:
 		return 1;
 	}
 
+	static int UpdateDiscordMenu(T* p, lua_State* L) {
+		p->updateDiscordMenu(SArg(1));
+		return 1;
+	}
+
+	static int UpdateDiscordFullPresence(T* p, lua_State* L) {
+		p->updateDiscordFullPresence(SArg(1), SArg(2), SArg(3), SArg(4), SArg(5), SArg(6), IArg(7), IArg(8));
+		return 1;
+	}
+
+	static int UpdateDiscordPresenceDetails(T* p, lua_State* L) {
+		p->updateDiscordPresenceDetails(SArg(1), SArg(2), SArg(3), SArg(4), SArg(5), SArg(6), IArg(7));
+		return 1;
+	}
+
+	static int UpdateDiscordPresenceLargeImageKey(T* p, lua_State* L) {
+		p->updateDiscordPresenceLargeImageKey(SArg(1), SArg(2), SArg(3), SArg(4), IArg(5));
+		return 1;
+	}
+
+	static int UpdateDiscordPresence(T* p, lua_State* L) {
+		p->updateDiscordPresence(SArg(1), SArg(2), SArg(3), IArg(4));
+		return 1;
+	}
+
+	// static int UpdateDiscordPresenceTime(T* p, lua_State* L) {
+	// 	p->updateDiscordPresenceTime(IArg(1), IArg(2));
+	// 	return 1;
+	// }
+
 	LunaGameState()
 	{
 		ADD_METHOD( IsPlayerEnabled );
@@ -3423,6 +3552,11 @@ public:
 		ADD_METHOD( GetAutoGenFarg );
 		ADD_METHOD( SetAutoGenFarg );
 		ADD_METHOD(prepare_song_for_gameplay);
+		ADD_METHOD( UpdateDiscordMenu );
+		ADD_METHOD( UpdateDiscordPresence );
+		ADD_METHOD( UpdateDiscordFullPresence );
+		ADD_METHOD( UpdateDiscordPresenceDetails );
+		ADD_METHOD( UpdateDiscordPresenceLargeImageKey);
 	}
 };
 

@@ -331,6 +331,7 @@ void ShutdownGame()
 	SAFE_DELETE( FILEMAN );
 	SAFE_DELETE( LUA );
 	SAFE_DELETE( HOOKS );
+	Discord_Shutdown();
 }
 
 static void HandleException( const RString &sError )
