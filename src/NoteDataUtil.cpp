@@ -11,17 +11,6 @@
 #include "TimingData.h"
 #include <utility>
 
-bool NoteDataUtil::StringInterpretsAs( const std::string& str, int integer ) {
-	try
-	{
-		return std::stoi( str ) == integer;
-	}
-	catch ( const std::invalid_argument & )
-	{
-		return false;
-	}
-}
-
 // TODO: Remove these constants that aren't time signature-aware
 static const int BEATS_PER_MEASURE = 4;
 static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;

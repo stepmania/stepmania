@@ -49,11 +49,7 @@ static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
 #define GUID_SIZE_BYTES 8
 
 #define MAX_EDITABLE_INI_SIZE_BYTES			2*1024		// 2KB
-#define MAX_PLAYER_STATS_XML_SIZE_BYTES	\
-	400 /* Songs */						\
-	* 5 /* Steps per Song */			\
-	* 5 /* HighScores per Steps */		\
-	* 1024 /* size in bytes of a HighScores XNode */
+#define MAX_PLAYER_STATS_XML_SIZE_BYTES                 100*1024*1024   // 100MB
 
 const int DEFAULT_WEIGHT_POUNDS	= 120;
 const float DEFAULT_BIRTH_YEAR= 1995;

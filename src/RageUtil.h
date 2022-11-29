@@ -352,7 +352,7 @@ float fmodfp( float x, float y );
 int power_of_two( int input );
 bool IsAnInt( const RString &s );
 bool IsHexVal( const RString &s );
-RString BinaryToHex( const void *pData_, int iNumBytes );
+RString BinaryToHex( const void *pData_, size_t iNumBytes );
 RString BinaryToHex( const RString &sString );
 bool HexToBinary( const RString &s, unsigned char *stringOut );
 bool HexToBinary( const RString &s, RString *sOut );

@@ -63,7 +63,7 @@ static const AutoMappings g_DefaultKeyMappings = AutoMappings(
 	AutoMappingEntry( 0, KEY_KP_C2,	GAME_BUTTON_MENUDOWN,	true ),
 	AutoMappingEntry( 0, KEY_KP_ENTER,	GAME_BUTTON_START,	true ),
 	AutoMappingEntry( 0, KEY_KP_C0,	GAME_BUTTON_SELECT,	true ),
-	AutoMappingEntry( 0, KEY_HYPHEN,	GAME_BUTTON_BACK,	true ), // laptop keyboards.
+	AutoMappingEntry( 0, KEY_BACKSLASH,	GAME_BUTTON_BACK,	true ), // laptop keyboards.
 	AutoMappingEntry( 0, KEY_F1,	GAME_BUTTON_COIN,	false ),
 	AutoMappingEntry( 0, KEY_SCRLLOCK,	GAME_BUTTON_OPERATOR,	false )
 );
@@ -484,6 +484,35 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_23,     GAME_BUTTON_EFFECT_DOWN, false ),
 		AutoMappingEntry( 0, JOY_BUTTON_24,     GAME_BUTTON_EFFECT_UP,   false )
        ),
+	   AutoMappings(
+	       "dance",
+	       "ddrio",
+	       "ddrio",
+	       AutoMappingEntry(0, JOY_BUTTON_1, GAME_BUTTON_MENUUP, false),
+	       AutoMappingEntry(0, JOY_BUTTON_2, GAME_BUTTON_MENUDOWN, false),
+	       AutoMappingEntry(0, JOY_BUTTON_3, GAME_BUTTON_MENUUP, true),
+	       AutoMappingEntry(0, JOY_BUTTON_4, GAME_BUTTON_MENUDOWN, true),
+	       AutoMappingEntry(0, JOY_BUTTON_5, GAME_BUTTON_OPERATOR, false),
+	       AutoMappingEntry(0, JOY_BUTTON_6, GAME_BUTTON_COIN, false),
+	       AutoMappingEntry(0, JOY_BUTTON_7, GAME_BUTTON_OPERATOR, false),
+	       //AutoMappingEntry(0, JOY_BUTTON_8, GameButton_Invalid, false),
+	       AutoMappingEntry(0, JOY_BUTTON_9, GAME_BUTTON_START, true),
+	       AutoMappingEntry(0, JOY_BUTTON_10, DANCE_BUTTON_UP, true),
+	       AutoMappingEntry(0, JOY_BUTTON_11, DANCE_BUTTON_DOWN, true),
+	       AutoMappingEntry(0, JOY_BUTTON_12, DANCE_BUTTON_LEFT, true),
+	       AutoMappingEntry(0, JOY_BUTTON_13, DANCE_BUTTON_RIGHT, true),
+	       //AutoMappingEntry(0, JOY_BUTTON_14, GameButton_Invalid, true),
+	       AutoMappingEntry(0, JOY_BUTTON_15, GAME_BUTTON_MENULEFT, true),
+	       AutoMappingEntry(0, JOY_BUTTON_16, GAME_BUTTON_MENURIGHT, true),
+	       AutoMappingEntry(0, JOY_BUTTON_17, GAME_BUTTON_START, false),
+	       AutoMappingEntry(0, JOY_BUTTON_18, DANCE_BUTTON_UP, false),
+	       AutoMappingEntry(0, JOY_BUTTON_19, DANCE_BUTTON_DOWN, false),
+	       AutoMappingEntry(0, JOY_BUTTON_20, DANCE_BUTTON_LEFT, false),
+	       AutoMappingEntry(0, JOY_BUTTON_21, DANCE_BUTTON_RIGHT, false),
+	       //AutoMappingEntry(0, JOY_BUTTON_22, GameButton_Invalid, false),
+	       AutoMappingEntry(0, JOY_BUTTON_23, GAME_BUTTON_MENULEFT, false),
+	       AutoMappingEntry(0, JOY_BUTTON_24, GAME_BUTTON_MENURIGHT, false)
+	   ),
 	   AutoMappings(
 		"pump",
 		"Pump USB",

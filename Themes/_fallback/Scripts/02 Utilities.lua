@@ -209,11 +209,11 @@ end
 
 function Center1Player()
 	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
-	-- always center in OnePlayerTwoSides ( Doubles ) or TwoPlayersSharedSides ( Couples )
+	-- always center in OnePlayerTwoSides ( Double, HalfDouble ) or TwoPlayersSharedSides ( Routine )
 	if styleType == "StyleType_OnePlayerTwoSides" or styleType == "StyleType_TwoPlayersSharedSides" then
 		return true
 	-- only Center1P if Pref enabled and OnePlayerOneSide.
-	-- (implicitly excludes Rave, Battle, Versus, Routine)
+	-- (implicitly excludes Rave, Battle, Versus, Couple)
 	elseif PREFSMAN:GetPreference("Center1Player") then
 		return styleType == "StyleType_OnePlayerOneSide"
 	else
