@@ -6213,6 +6213,11 @@ local spr = Def.Sprite{
 	<Function name='GetHidden' return='bool' arguments=''>
 		Returns true if the Tap Note was judged with a result that would stop it from drawing.
 	</Function>
+	<Function name='GetHeld' return='bool' arguments=''>
+		Returns whether the input for the Tap Note was ever held during
+		the judgment interval. Useful to distinguish a normal miss from
+		a held miss.
+	</Function>
 </Class>
 <Class name='HoldNoteResult'>
 	<Function name='GetHoldNoteScore' return='HoldNoteScore' arguments=''>
