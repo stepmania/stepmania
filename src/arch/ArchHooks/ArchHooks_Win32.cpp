@@ -238,6 +238,24 @@ RString ArchHooks_Win32::GetClipboard()
 	return ret;
 }
 
+unsigned long ArchHooks::GetSystemAvailRam()
+{
+	MEMORYSTATUSEX statex;
+	statex.dwLength = sizeof(statex);
+
+	// grab system info.
+	GlobalMemoryStatusEx(&statex);
+
+	// grab memory currently in use by the process
+	// taken from RyTak
+	PROCESS_MEMORY_COUNTERS pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
+    SIZE_T MemUse = pmc.PagefileUsage / (1024 * 1024) - 32;
+
+	// return difference between total ram on the system and the memory currently in use.
+	return (statex.ullAvailPhys / (1024 * 1024)) - MemUse;
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.

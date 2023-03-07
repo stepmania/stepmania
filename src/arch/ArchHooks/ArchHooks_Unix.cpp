@@ -17,6 +17,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/sysinfo.h>
 
 #if defined(CRASH_HANDLER)
 #include "archutils/Unix/CrashHandler.h"
@@ -423,6 +424,37 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sUserDataPath + "/Songs", "/Songs" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/RandomMovies", "/RandomMovies" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Themes", "/Themes" );
+}
+
+unsigned long ArchHooks::GetSystemAvailRam()
+{
+	// find out how much memory the system is using
+	// modified from MrThatKid
+	unsigned long MemAvail = 0;
+	FILE* fp = nullptr;
+
+    if ((fp = fopen("/proc/meminfo", "r")) != nullptr)
+	{
+		size_t bufsize = 1024 * sizeof(char);
+		char* buf = (char*)malloc( bufsize );
+
+		while ( getline( &buf, &bufsize, fp ) >= 0 )
+		{
+			// lookg for how much memory is left on the system
+			if ( strncmp( buf, "MemAvailable", 12 ) != 0 )
+				continue;
+
+			sscanf( buf, "%*s%lu", &MemAvail );
+
+			break;
+		}
+
+		fclose( fp );
+		free( (void*)buf );
+	}
+
+	// /proc/MemAvailable is in kB, so let's convert to mB
+	return (MemAvail / 1024);
 }
 
 /*

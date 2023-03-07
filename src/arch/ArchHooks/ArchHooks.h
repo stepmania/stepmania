@@ -127,6 +127,9 @@ public:
 	void PushSelf( lua_State *L );
 	void RegisterWithLua();
 
+	// Check on system memory status
+	static unsigned long GetSystemAvailRam();
+
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer
 	 * that may loop or move backwards. */
