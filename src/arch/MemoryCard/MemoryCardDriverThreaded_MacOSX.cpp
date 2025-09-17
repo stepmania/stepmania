@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-#include <Carbon/Carbon.h>
+#include <AvailabilityMacros.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/storage/IOMedia.h>
 #include <IOKit/usb/USBSpec.h>
@@ -21,33 +21,17 @@
 class MemoryCardDriverThreaded_MacOSX::Helper
 {
 public:
-	Helper( MemoryCardDriverThreaded_MacOSX *driver )
-	{
-		m_HandlerUPP = NewEventHandlerUPP( VolumesChanged );
-		EventTypeSpec types[] = { { kEventClassVolume, kEventVolumeMounted },
-					  { kEventClassVolume, kEventVolumeUnmounted } };
-		UInt32 numTypes = sizeof(types)/sizeof(types[0]);
-		OSStatus ret = InstallApplicationEventHandler( m_HandlerUPP, numTypes, types, driver, &m_Handler );
-		ASSERT( ret == noErr );
-	}
+	Helper( MemoryCardDriverThreaded_MacOSX *driver ) : m_Driver(driver) {}
+	~Helper() {}
 
-	~Helper()
+	void MarkChanged()
 	{
-		RemoveEventHandler( m_Handler );
-		DisposeEventHandlerUPP( m_HandlerUPP );
+		LockMut( m_Driver->m_ChangedLock );
+		m_Driver->m_bChanged = true;
 	}
 
 private:
-	static OSStatus VolumesChanged( EventHandlerCallRef ref, EventRef event, void *p )
-	{
-		MemoryCardDriverThreaded_MacOSX *driver = (MemoryCardDriverThreaded_MacOSX *)p;
-		LockMut( driver->m_ChangedLock );
-		driver->m_bChanged = true;
-		return eventNotHandledErr; // let others do something
-	}
-
-	EventHandlerUPP m_HandlerUPP;
-	EventHandlerRef m_Handler;
+	MemoryCardDriverThreaded_MacOSX *m_Driver;
 };
 
 MemoryCardDriverThreaded_MacOSX::MemoryCardDriverThreaded_MacOSX() : m_ChangedLock( "MC changed lock" )
@@ -68,26 +52,16 @@ void MemoryCardDriverThreaded_MacOSX::Unmount( UsbStorageDevice *pDevice )
 	if( sync_volume_np( pDevice->sOsMountDir.c_str(), SYNC_VOLUME_FULLSYNC | SYNC_VOLUME_WAIT ) != 0 )
 		LOG->Warn( "Failed to flush the memory card." );
 #else
-	ParamBlockRec pb;
-	Str255 name; // A pascal string.
-	const RString& base = Basename( pDevice->sOsMountDir );
-	
-	memset( &pb, 0, sizeof(pb) );
-	name[0] = min( base.length(), size_t(255) );
-	strncpy( (char *)&name[1], base, name[0] );
-	pb.volumeParam.ioNamePtr = name;
-	pb.volumeParam.ioVolIndex = -1; // Use ioNamePtr to find the volume.
-	
-	if( PBFlushVolSync(&pb) != noErr )
-		LOG->Warn( "Failed to flush the memory card." );
+	// Carbon PBFlushVolSync is unavailable on 64-bit; skip explicit flush
+	LOG->Warn( "PBFlushVolSync unavailable; skipping volume flush." );
 	
 #endif
 }
 
 bool MemoryCardDriverThreaded_MacOSX::USBStorageDevicesChanged()
 {
-	LockMut( m_ChangedLock );
-	return m_bChanged;
+	// Without Carbon volume events on modern macOS, poll each request
+	return true;
 }
 
 static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )

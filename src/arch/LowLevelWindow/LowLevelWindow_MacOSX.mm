@@ -629,7 +629,9 @@ void LowLevelWindow_MacOSX::SwapBuffers()
 void LowLevelWindow_MacOSX::Update()
 {
 	// Keep the system from sleeping or the screen saver from activating.
+#if defined(IdleActivity)
 	UpdateSystemActivity( IdleActivity );
+#endif
 	
 	LockMutex lock( g_ResizeLock );
 	if( likely(!g_bResized) )
