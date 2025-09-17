@@ -540,7 +540,6 @@ elseif(APPLE)
   list(INSERT SMDATA_LINK_LIB
               0
               ${MAC_FRAME_ACCELERATE}
-              ${MAC_FRAME_CARBON}
               ${MAC_FRAME_COCOA}
               ${MAC_FRAME_IOKIT}
               ${MAC_FRAME_OPENGL}

@@ -339,7 +339,6 @@ elseif(MACOSX)
   find_library(MAC_FRAME_AUDIOTOOLBOX AudioToolbox
                ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
   find_library(MAC_FRAME_AUDIOUNIT AudioUnit ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
-  find_library(MAC_FRAME_CARBON Carbon ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
   find_library(MAC_FRAME_COCOA Cocoa ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
   find_library(MAC_FRAME_COREAUDIO CoreAudio ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
   find_library(MAC_FRAME_COREFOUNDATION CoreFoundation
@@ -355,7 +354,6 @@ elseif(MACOSX)
                    MAC_FRAME_APPKIT
                    MAC_FRAME_AUDIOTOOLBOX
                    MAC_FRAME_AUDIOUNIT
-                   MAC_FRAME_CARBON
                    MAC_FRAME_COCOA
                    MAC_FRAME_COREAUDIO
                    MAC_FRAME_COREFOUNDATION
