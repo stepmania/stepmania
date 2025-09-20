@@ -349,6 +349,8 @@ elseif(MACOSX)
   find_library(MAC_FRAME_IOKIT IOKit ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
   find_library(MAC_FRAME_OPENGL OpenGL ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
   find_library(MAC_FRAME_SYSTEM System ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
+  find_library(MAC_FRAME_HITOOLBOX HIToolbox ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_CARBON Carbon ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
 
   mark_as_advanced(MAC_FRAME_ACCELERATE
                    MAC_FRAME_APPKIT
@@ -361,7 +363,9 @@ elseif(MACOSX)
                    MAC_FRAME_FOUNDATION
                    MAC_FRAME_IOKIT
                    MAC_FRAME_OPENGL
-                   MAC_FRAME_SYSTEM)
+                   MAC_FRAME_SYSTEM
+                   MAC_FRAME_HITOOLBOX
+                   MAC_FRAME_CARBON)
 elseif(LINUX)
   if(WITH_GTK3)
     find_package("GTK3" 2.0)

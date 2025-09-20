@@ -258,7 +258,7 @@ elseif(APPLE)
       "${SM_XCODE_DIR}/Libraries")
       # XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS
       # "${SM_XCODE_DIR}/StepMania.entitlements")
-      
+
   set(APPLE_BUNDLE_RESOURCES
     "${SM_ROOT_DIR}/Announcers"
     "${SM_ROOT_DIR}/BackgroundEffects"
@@ -272,7 +272,7 @@ elseif(APPLE)
     "${SM_ROOT_DIR}/Songs"
     "${SM_ROOT_DIR}/Themes"
   )
-  
+
   target_sources("${SM_EXE_NAME}" PUBLIC ${APPLE_BUNDLE_RESOURCES})
   set_source_files_properties(${APPLE_BUNDLE_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
@@ -544,6 +544,7 @@ elseif(APPLE)
               ${MAC_FRAME_IOKIT}
               ${MAC_FRAME_OPENGL}
               ${MAC_FRAME_COREFOUNDATION}
+              ${MAC_FRAME_CARBON}
               ${MAC_FRAME_AUDIOTOOLBOX}
               ${MAC_FRAME_AUDIOUNIT}
               ${MAC_FRAME_COREAUDIO}
@@ -552,6 +553,10 @@ elseif(APPLE)
   list(APPEND SMDATA_LINK_LIB
               "${BZIP2_LIBRARY_RELEASE}"
               "${ICONV_LIBRARIES}")
+
+  if(MAC_FRAME_HITOOLBOX)
+    list(APPEND SMDATA_LINK_LIB ${MAC_FRAME_HITOOLBOX})
+  endif()
 
   if(HAS_FFMPEG)
     list(APPEND SMDATA_LINK_LIB
@@ -633,7 +638,7 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
   if(PCRE_FOUND)
     list(APPEND SMDATA_LINK_LIB ${PCRE_LIBRARY})
   endif()
-  
+
   if(LIBXTST_FOUND)
     list(APPEND SMDATA_LINK_LIB ${LIBXTST_LIBRARY})
   endif()

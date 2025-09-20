@@ -51,4 +51,8 @@ else()
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/libpng>
     $<INSTALL_INTERFACE:libpng>
   )
+  # On Apple Silicon/macOS, avoid unresolved ARM NEON hooks in libpng by disabling NEON opts
+  if(APPLE)
+    target_compile_definitions("png" PRIVATE PNG_ARM_NEON_OPT=0)
+  endif()
 endif()
