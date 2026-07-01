@@ -41,6 +41,8 @@
 #include "PrefsManager.h"
 #include "Song.h"
 #include "SongManager.h"
+#include "SongUtil.h"
+#include "Steps.h"
 #include "CharacterManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
@@ -381,6 +383,106 @@ ThemeMetric<RString>	SELECT_MUSIC_SCREEN	("Common","SelectMusicScreen");
 RString StepMania::GetSelectMusicScreen()
 {
 	return SELECT_MUSIC_SCREEN.GetValue();
+}
+
+static Song *GetPipelineSongFromDir( const RString &sSongDir )
+{
+	if( sSongDir.empty() )
+		return nullptr;
+
+	vector<RString> vCandidates;
+	vCandidates.push_back( sSongDir );
+	if( sSongDir.Left(1) != "/" )
+		vCandidates.push_back( "/" + sSongDir );
+	if( !BeginsWith( sSongDir, "/Songs/" ) )
+		vCandidates.push_back( "/Songs/" + sSongDir );
+
+	for( RString sCandidate : vCandidates )
+	{
+		Song *pSong = SONGMAN->GetSongFromDir( sCandidate );
+		if( pSong != nullptr )
+			return pSong;
+	}
+
+	return nullptr;
+}
+
+static Steps *GetPipelineSteps( Song *pSong, const RString &sDifficulty )
+{
+	if( pSong == nullptr )
+		return nullptr;
+
+	vector<Steps*> vpSteps;
+	SongUtil::GetPlayableSteps( pSong, vpSteps );
+	if( vpSteps.empty() )
+		return nullptr;
+
+	if( !sDifficulty.empty() )
+	{
+		Difficulty dc = StringToDifficulty( sDifficulty );
+		for( Steps *pSteps : vpSteps )
+			if( pSteps->GetDifficulty() == dc )
+				return pSteps;
+		LOG->Warn( "Pipeline launch: difficulty '%s' was not found for %s; using first playable steps.",
+			sDifficulty.c_str(), pSong->GetSongDir().c_str() );
+	}
+
+	return vpSteps[0];
+}
+
+static RString ApplyPipelineLaunchSeam()
+{
+	RString sSongDir;
+	if( !GetCommandlineArgument( "pipeline-song-dir", &sSongDir ) )
+		return StepMania::GetInitialScreen();
+
+	Song *pSong = GetPipelineSongFromDir( sSongDir );
+	if( pSong == nullptr )
+	{
+		LOG->Warn( "Pipeline launch: song dir not found: %s", sSongDir.c_str() );
+		return StepMania::GetInitialScreen();
+	}
+
+	RString sDifficulty;
+	GetCommandlineArgument( "pipeline-difficulty", &sDifficulty );
+	Steps *pSteps = GetPipelineSteps( pSong, sDifficulty );
+	if( pSteps == nullptr )
+	{
+		LOG->Warn( "Pipeline launch: no playable steps found for %s", pSong->GetSongDir().c_str() );
+		return StepMania::GetInitialScreen();
+	}
+
+	vector<const Style*> vpStyle;
+	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vpStyle, false );
+	if( vpStyle.empty() )
+	{
+		LOG->Warn( "Pipeline launch: no playable styles found for game %s", GAMESTATE->m_pCurGame->m_szName );
+		return StepMania::GetInitialScreen();
+	}
+
+	GAMESTATE->JoinPlayer( PLAYER_1 );
+	GAMESTATE->SetMasterPlayerNumber( PLAYER_1 );
+	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
+	GAMESTATE->SetCurrentStyle( vpStyle[0], PLAYER_1 );
+	GAMESTATE->m_pCurSong.Set( pSong );
+	GAMESTATE->m_pPreferredSong = pSong;
+	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
+	GAMESTATE->m_PreferredDifficulty[PLAYER_1].Set( pSteps->GetDifficulty() );
+
+	if( GetCommandlineArgument( "pipeline-autoplay" ) )
+		GAMESTATE->ApplyGameCommand( "mod,playerautoplay", PLAYER_1 );
+
+	RString sScreen = "select-music";
+	GetCommandlineArgument( "pipeline-screen", &sScreen );
+	sScreen.MakeLower();
+	if( sScreen == "gameplay" )
+	{
+		LOG->Info( "Pipeline launch: starting gameplay for %s", pSong->GetSongDir().c_str() );
+		return "ScreenGameplay";
+	}
+
+	LOG->Info( "Pipeline launch: preselecting %s on select music", pSong->GetSongDir().c_str() );
+	return StepMania::GetSelectMusicScreen();
 }
 
 #if defined(WIN32)
@@ -1180,6 +1282,18 @@ int sm_main(int argc, char* argv[])
 	// Initialize which courses are ranking courses here.
 	SONGMAN->UpdateRankingCourses();
 
+	if( GetCommandlineArgument("scan-songs") )
+	{
+		const vector<Song*> &songs = SONGMAN->GetAllSongs();
+		LOG->Info( "Song scan: %d total songs", (int)songs.size() );
+		for( const Song *song : songs )
+		{
+			LOG->Info( "Song scan: %s | %s", song->GetDisplayFullTitle().c_str(), song->GetSongDir().c_str() );
+		}
+		ShutdownGame();
+		return 0;
+	}
+
 	SAFE_DELETE( pLoadingWindow ); // destroy this before init'ing Display
 
 	/* If the user has tried to quit during the loading, do it before creating
@@ -1210,7 +1324,7 @@ int sm_main(int argc, char* argv[])
 	/* Now that GAMESTATE is reset, tell SCREENMAN to update the theme (load
 	 * overlay screens and global sounds), and load the initial screen. */
 	SCREENMAN->ThemeChanged();
-	SCREENMAN->SetNewScreen( StepMania::GetInitialScreen() );
+	SCREENMAN->SetNewScreen( ApplyPipelineLaunchSeam() );
 
 	// Do this after ThemeChanged so that we can show a system message
 	RString sMessage;

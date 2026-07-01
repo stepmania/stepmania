@@ -1,0 +1,294 @@
+{
+  "report_version": "standards-scan/v1",
+  "scan_version": "1.0.0",
+  "generated_at": "2026-06-23T17:09:54.970299+00:00",
+  "scan_roots": [],
+  "focus_roots": [],
+  "repos_scanned": 1,
+  "repos_skipped": 0,
+  "strict": {
+    "enabled": false,
+    "open_cards_max": -1,
+    "failures": 0
+  },
+  "repository_count": 1,
+  "summary": {
+    "total": 1,
+    "ok": 0,
+    "warn": 1,
+    "missing": 0,
+    "open_cards_total": 0,
+    "actionable": 1,
+    "strict_failures": 0
+  },
+  "repos": [
+    {
+      "path": "/mnt/data/lancer1977/code/stepmania",
+      "exists": true,
+      "readable": true,
+      "signature": "b1ab46990c9f38469499ec9c6f62155de9ed8cd609a17fc7b4e6bb06f7838c01",
+      "status": "warn",
+      "required": {
+        "ok": false,
+        "found": [
+          "README.md"
+        ],
+        "missing": [
+          "AGENTS.md",
+          "DEV_STUDIO.md",
+          "00_agile",
+          "00_agile/planning",
+          "00_agile/backlog",
+          "00_agile/spec",
+          "00_agile/doing",
+          "00_agile/review",
+          "00_agile/done",
+          "docs",
+          "workflows"
+        ]
+      },
+      "recommended": {
+        "ok": false,
+        "found": [],
+        "missing": [
+          "templates",
+          "runtime",
+          ".env.example",
+          "memory"
+        ]
+      },
+      "open_cards": {
+        "planning": 0,
+        "backlog": 0,
+        "spec": 0,
+        "doing": 0,
+        "review": 0,
+        "done": 0,
+        "total_open": 0
+      },
+      "doc_health": {
+        "status": "warn",
+        "score": 1,
+        "details": {
+          "readme_exists": true,
+          "readme_size": 2571,
+          "agents_exists": false,
+          "agents_size": 0,
+          "docs_root_exists": false,
+          "docs_root_entries": 0,
+          "workflows_exists": false,
+          "workflows_entries": 0,
+          "required_missing": [
+            "AGENTS.md",
+            "DEV_STUDIO.md",
+            "00_agile",
+            "00_agile/planning",
+            "00_agile/backlog",
+            "00_agile/spec",
+            "00_agile/doing",
+            "00_agile/review",
+            "00_agile/done",
+            "docs",
+            "workflows"
+          ]
+        }
+      },
+      "test_health": {
+        "status": "warn",
+        "signals": 1,
+        "details": {
+          "has_ci": true,
+          "ci_workflows": 1,
+          "has_test_dir": false,
+          "has_pytest_hint": false,
+          "has_js_test_script": false,
+          "has_dotnet_test_project": false
+        }
+      },
+      "ci_health": {
+        "status": "ok",
+        "workflows": [
+          ".github/workflows/ci.yml"
+        ],
+        "recommendations": []
+      },
+      "branch_health": {
+        "status": "ok",
+        "branch": "5_1-new",
+        "head": "a2e18aad1ad769312300f8151c12896ef07f3986",
+        "head_age_days": 21,
+        "stale": false,
+        "detached": false,
+        "recommendations": []
+      },
+      "dirty_worktree": {
+        "status": "warn",
+        "dirty": true,
+        "changes": 2,
+        "untracked": 0,
+        "artifact_changes": 0,
+        "artifact_paths": [],
+        "recommendations": [
+          "Commit, stash, or clean the worktree before starting the next slice."
+        ]
+      },
+      "strict_violations": [],
+      "issues": [
+        "missing_required:AGENTS.md",
+        "missing_required:DEV_STUDIO.md",
+        "missing_required:00_agile",
+        "missing_required:00_agile/planning",
+        "missing_required:00_agile/backlog",
+        "missing_required:00_agile/spec",
+        "missing_required:00_agile/doing",
+        "missing_required:00_agile/review",
+        "missing_required:00_agile/done",
+        "missing_required:docs",
+        "missing_required:workflows",
+        "missing_recommended:templates",
+        "missing_recommended:runtime",
+        "missing_recommended:.env.example",
+        "doc_health:warn",
+        "test_health:warn",
+        "dirty_worktree:warn"
+      ]
+    }
+  ],
+  "preparedness": {
+    "version": "preparedness/v1",
+    "scan_version": "1.0.0",
+    "generated_at": "2026-06-23T17:09:54.970290+00:00",
+    "repository_count": 1,
+    "overall": {
+      "readiness_score": 20,
+      "delta_readiness_score": 0,
+      "by_readiness": {
+        "ready": 0,
+        "in_progress": 0,
+        "needs_work": 1
+      },
+      "by_status": {
+        "ok": 0,
+        "warn": 1,
+        "missing": 0
+      },
+      "ci_attention": 0,
+      "branch_attention": 0,
+      "dirty_attention": 1
+    },
+    "open_cards": {
+      "total": 0,
+      "delta_total": 0,
+      "by_stage": {
+        "planning": 0,
+        "backlog": 0,
+        "spec": 0,
+        "doing": 0,
+        "review": 0,
+        "done": 0
+      }
+    },
+    "baseline_comparison": {
+      "available": false,
+      "baseline_path": ".devstudio/runtime/standards-scan/preparedness-baseline.json",
+      "generated_at": null,
+      "readiness_score": null,
+      "delta_readiness_score": null,
+      "open_cards": {
+        "total": null,
+        "delta_total": null
+      },
+      "regressions": []
+    },
+    "class_thresholds": {
+      "apps": 70,
+      "tooling": 60,
+      "library": 65,
+      "docs-only": 45
+    },
+    "alerts": {
+      "enabled": false,
+      "alert_count": 0,
+      "readiness_drop": []
+    },
+    "repositories": [
+      {
+        "path": "/mnt/data/lancer1977/code/stepmania",
+        "readiness": "needs_work",
+        "readiness_score": 20,
+        "delta_readiness_score": 0,
+        "status": "warn",
+        "open_cards_total": 0,
+        "delta_open_cards_total": 0,
+        "repo_class": "library",
+        "repo_class_threshold": 65,
+        "repo_class_delta": -45,
+        "meets_repo_class_threshold": false,
+        "required_missing": [
+          "AGENTS.md",
+          "DEV_STUDIO.md",
+          "00_agile",
+          "00_agile/planning",
+          "00_agile/backlog",
+          "00_agile/spec",
+          "00_agile/doing",
+          "00_agile/review",
+          "00_agile/done",
+          "docs",
+          "workflows"
+        ],
+        "doc_health": "warn",
+        "doc_health_score": 1,
+        "test_health": "warn",
+        "test_health_signals": 1,
+        "ci_health": {
+          "status": "ok",
+          "workflows": [
+            ".github/workflows/ci.yml"
+          ],
+          "recommendations": []
+        },
+        "branch_health": {
+          "status": "ok",
+          "branch": "5_1-new",
+          "head": "a2e18aad1ad769312300f8151c12896ef07f3986",
+          "head_age_days": 21,
+          "stale": false,
+          "detached": false,
+          "recommendations": []
+        },
+        "dirty_worktree": {
+          "status": "warn",
+          "dirty": true,
+          "changes": 2,
+          "untracked": 0,
+          "artifact_changes": 0,
+          "artifact_paths": [],
+          "recommendations": [
+            "Commit, stash, or clean the worktree before starting the next slice."
+          ]
+        },
+        "issues": [
+          "dirty_worktree:warn",
+          "doc_health:warn",
+          "missing_recommended:.env.example"
+        ]
+      }
+    ],
+    "top_action_items": [
+      {
+        "path": "/mnt/data/lancer1977/code/stepmania",
+        "readiness": "needs_work",
+        "readiness_score": 20,
+        "open_cards_total": 0,
+        "repo_class": "library",
+        "repo_class_threshold": 65,
+        "issues": [
+          "dirty_worktree:warn",
+          "doc_health:warn",
+          "missing_recommended:.env.example"
+        ]
+      }
+    ]
+  }
+}

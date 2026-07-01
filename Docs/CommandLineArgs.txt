@@ -44,6 +44,26 @@ Sets the current theme.
 usage: --language=en
 Sets the current language.
 
+* pipeline-song-dir
+usage: --pipeline-song-dir="/Songs/StepMania 5/Goin' Under/"
+Preselects a loaded song directory for local automation. Relative values are
+also tried under /Songs/. Intended for launch/test pipelines.
+
+* pipeline-difficulty
+usage: --pipeline-difficulty=Hard
+When --pipeline-song-dir is set, chooses a matching playable chart difficulty.
+If omitted or unavailable, the first playable chart is used.
+
+* pipeline-screen
+usage: --pipeline-screen=select-music | --pipeline-screen=gameplay
+When --pipeline-song-dir is set, selects where the pipeline launch starts.
+Defaults to select-music. gameplay jumps directly to ScreenGameplay after the
+song, player, style, and steps have been initialized.
+
+* pipeline-autoplay
+usage: --pipeline-autoplay
+When --pipeline-song-dir is set, applies player autoplay for P1.
+
 * version
 usage: --version
 Displays version information.

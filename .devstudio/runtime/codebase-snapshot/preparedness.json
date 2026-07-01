@@ -1,0 +1,137 @@
+{
+  "version": "preparedness/v1",
+  "scan_version": "1.0.0",
+  "generated_at": "2026-06-23T17:09:54.970290+00:00",
+  "repository_count": 1,
+  "overall": {
+    "readiness_score": 20,
+    "delta_readiness_score": 0,
+    "by_readiness": {
+      "ready": 0,
+      "in_progress": 0,
+      "needs_work": 1
+    },
+    "by_status": {
+      "ok": 0,
+      "warn": 1,
+      "missing": 0
+    },
+    "ci_attention": 0,
+    "branch_attention": 0,
+    "dirty_attention": 1
+  },
+  "open_cards": {
+    "total": 0,
+    "delta_total": 0,
+    "by_stage": {
+      "planning": 0,
+      "backlog": 0,
+      "spec": 0,
+      "doing": 0,
+      "review": 0,
+      "done": 0
+    }
+  },
+  "baseline_comparison": {
+    "available": false,
+    "baseline_path": ".devstudio/runtime/standards-scan/preparedness-baseline.json",
+    "generated_at": null,
+    "readiness_score": null,
+    "delta_readiness_score": null,
+    "open_cards": {
+      "total": null,
+      "delta_total": null
+    },
+    "regressions": []
+  },
+  "class_thresholds": {
+    "apps": 70,
+    "tooling": 60,
+    "library": 65,
+    "docs-only": 45
+  },
+  "alerts": {
+    "enabled": false,
+    "alert_count": 0,
+    "readiness_drop": []
+  },
+  "repositories": [
+    {
+      "path": "/mnt/data/lancer1977/code/stepmania",
+      "readiness": "needs_work",
+      "readiness_score": 20,
+      "delta_readiness_score": 0,
+      "status": "warn",
+      "open_cards_total": 0,
+      "delta_open_cards_total": 0,
+      "repo_class": "library",
+      "repo_class_threshold": 65,
+      "repo_class_delta": -45,
+      "meets_repo_class_threshold": false,
+      "required_missing": [
+        "AGENTS.md",
+        "DEV_STUDIO.md",
+        "00_agile",
+        "00_agile/planning",
+        "00_agile/backlog",
+        "00_agile/spec",
+        "00_agile/doing",
+        "00_agile/review",
+        "00_agile/done",
+        "docs",
+        "workflows"
+      ],
+      "doc_health": "warn",
+      "doc_health_score": 1,
+      "test_health": "warn",
+      "test_health_signals": 1,
+      "ci_health": {
+        "status": "ok",
+        "workflows": [
+          ".github/workflows/ci.yml"
+        ],
+        "recommendations": []
+      },
+      "branch_health": {
+        "status": "ok",
+        "branch": "5_1-new",
+        "head": "a2e18aad1ad769312300f8151c12896ef07f3986",
+        "head_age_days": 21,
+        "stale": false,
+        "detached": false,
+        "recommendations": []
+      },
+      "dirty_worktree": {
+        "status": "warn",
+        "dirty": true,
+        "changes": 2,
+        "untracked": 0,
+        "artifact_changes": 0,
+        "artifact_paths": [],
+        "recommendations": [
+          "Commit, stash, or clean the worktree before starting the next slice."
+        ]
+      },
+      "issues": [
+        "dirty_worktree:warn",
+        "doc_health:warn",
+        "missing_recommended:.env.example"
+      ]
+    }
+  ],
+  "top_action_items": [
+    {
+      "path": "/mnt/data/lancer1977/code/stepmania",
+      "readiness": "needs_work",
+      "readiness_score": 20,
+      "open_cards_total": 0,
+      "repo_class": "library",
+      "repo_class_threshold": 65,
+      "issues": [
+        "dirty_worktree:warn",
+        "doc_health:warn",
+        "missing_recommended:.env.example"
+      ]
+    }
+  ]
+}
