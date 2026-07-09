@@ -1,0 +1,25 @@
+UseTab: ForIndentation
+IndentWidth: 3
+TabWidth: 3
+ColumnLimit: 120
+ContinuationIndentWidth: 3
+AlignOperands: DontAlign
+AlignAfterOpenBracket: BlockIndent
+
+# AlignAfterOpenBracket: DontAlign
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  BeforeElse: true
+InsertBraces: true
+
+# Never collapse code into a single line
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+SortIncludes: Never

@@ -20,6 +20,13 @@ else()
       "libpng/pngwtran.c"
       "libpng/pngwutil.c")
 
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm64|aarch64)")
+    list(APPEND PNG_SRC
+        "libpng/arm/arm_init.c"
+        "libpng/arm/filter_neon_intrinsics.c"
+        "libpng/arm/palette_neon_intrinsics.c")
+  endif()
+
   configure_file("libpng/scripts/pnglibconf.h.prebuilt"
                  "libpng/pnglibconf.h"
                  COPYONLY)

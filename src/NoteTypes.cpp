@@ -210,12 +210,14 @@ public:
 	DEFINE_METHOD(GetTapNoteScore, tns);
 	DEFINE_METHOD(GetTapNoteOffset, fTapNoteOffset);
 	DEFINE_METHOD(GetHidden, bHidden);
+	DEFINE_METHOD(GetHeld, bHeld);
 
 	LunaTapNoteResult()
 	{
 		ADD_METHOD( GetTapNoteScore );
 		ADD_METHOD( GetTapNoteOffset );
 		ADD_METHOD( GetHidden );
+		ADD_METHOD( GetHeld );
 	}
 };
 LUA_REGISTER_CLASS( TapNoteResult )

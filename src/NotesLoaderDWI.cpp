@@ -244,120 +244,177 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 		
 		double fCurrentBeat = 0;
 		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
-		
-		for( size_t i=0; i<sStepData.size(); )
+		// new and less insane .dwi parse code.
+		// first initialize flags before the loop.
+		bool jump = false;        // moved here to init properly to avoid loop inside of loop
+		bool in_a_series = false; // this is just so we can carp about malformed dwi files with overlapping series sections. they will still play back same as DWI does it.
+
+
+		for (size_t i = 0; i < sStepData.size();++i )
 		{
-			char c = sStepData[i++];
-			switch( c )
+			char c = sStepData[i];
+			switch (c)
 			{
-					// begins a series
+				// begins a series
 				case '(':
-					fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
-					break;
+					if (in_a_series) // shouldn't happen.
+					{
+						LOG->UserLog(
+							"Song file", path,
+							"has overlapping series, cutting off existing one."); // log it
+					}
+					fCurrentIncrementer = 1.0 / 16 * BEATS_PER_MEASURE;
+					in_a_series = true;
+					break; // next character
 				case '[':
-					fCurrentIncrementer = 1.0/24 * BEATS_PER_MEASURE;
-					break;
+					if (in_a_series) // shouldn't happen.
+					{
+						LOG->UserLog(
+							"Song file", path,
+							"has overlapping series, cutting off existing one."); // log it
+					}
+					fCurrentIncrementer = 1.0 / 24 * BEATS_PER_MEASURE;
+					in_a_series = true;
+					break; // next character
 				case '{':
-					fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
-					break;
+					if (in_a_series) // shouldn't happen.
+					{
+						LOG->UserLog(
+							"Song file", path,
+							"has overlapping series, cutting off existing one."); // log it
+					}
+					fCurrentIncrementer = 1.0 / 64 * BEATS_PER_MEASURE;
+					in_a_series = true;
+					break; // next character
 				case '`':
-					fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
-					break;
-					
-					// ends a series
+					if (in_a_series) // shouldn't happen.
+					{
+						LOG->UserLog(
+							"Song file", path,
+							"has overlapping series, cutting off existing one."); // log it
+					}
+					fCurrentIncrementer = 1.0 / 192 * BEATS_PER_MEASURE;
+					in_a_series = true;
+					break; // next character
+				case '<':
+					if (Is192(sStepData, i))
+					{
+						if (in_a_series) // shouldn't happen.
+						{
+							LOG->UserLog(
+								"Song file", path,
+								"has overlapping series, cutting off existing one."); // log it
+						}
+						fCurrentIncrementer = 1.0 / 192 * BEATS_PER_MEASURE;
+						in_a_series = true;
+					}
+					else
+					{
+						/* It's a jump. Set the jump flag
+						 * We need to keep reading notes until we hit a >. */
+						jump = true;
+					}
+					break; // next character, either way.
+				// ends a series
 				case ')':
 				case ']':
 				case '}':
 				case '\'':
+					if (in_a_series)
+					{
+						fCurrentIncrementer = 1.0 / 8 * BEATS_PER_MEASURE;
+						in_a_series=false;
+					}
+					else // shooudn't happen
+					{
+							LOG->UserLog(
+								"Song file", path,
+								"has extra series ender, ignoring."); // log it
+					}
+					break; // either way go to next character
+				// handle >
 				case '>':
-					fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
-					break;
-					
-				default:	// this is a note character
+					if (!jump)
+					{
+						// was 192nd notes from old pre 2.01.10 DWI file, change back to 8th notes.
+						fCurrentIncrementer = 1.0 / 8 * BEATS_PER_MEASURE;
+						// test if we are in a series, for logging purposes
+						if (!in_a_series)
+						{
+							LOG->UserLog(
+								"Song file", path,
+								"has extra series ender, ignoring."); // log it
+						}
+						// eiter way, turn off the flag.
+						in_a_series = false; 
+						break; // and go to next character
+					}
+					else
+					{
+						jump = false; // turn off jump. at this point we have to fall through, because there might be a ! after the jump.
+					}
+				default:	// this is a note character, OR end of a jump
 				{
-					if( c == '!' )
+					// sanity check #1
+					// this can't be a ! unless it's following closing a jump. if it's anywhere else valid, it would have been passed by already.
+					if (c == '!') 
 					{
 						LOG->UserLog(
-							     "Song file",
-							     path,
-							     "has an unexpected character: '!'." );
-						continue;
+							"Song file", path,
+							"has an unexpected character: '!'."); // log it
+						break;										// and skip past
 					}
-					
-					bool jump = false;
-					if( c == '<' )
+					// since it's not a !, it's either a note or a >.  everything else has been caught already.
+					const int iIndex = BeatToNoteRow((float)fCurrentBeat);
+					int iCol1, iCol2;
+					if (c != '>')  // if it's not a >
 					{
-						/* Arr.  Is this a jump or a 1/192 marker? */
-						if( Is192( sStepData, i ) )
-						{
-							fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
-							break;
-						}
-						
-						/* It's a jump.
-						 * We need to keep reading notes until we hit a >. */
-						jump = true;
-						i++;
+						// then it's a note, get the columns for it.
+						DWIcharToNoteCol(c,(GameController)pad,iCol1,iCol2,path);
+						if (iCol1 != -1)
+							newNoteData.SetTapNote(iCol1,iIndex,TAP_ORIGINAL_TAP);
+						if (iCol2 != -1)
+							newNoteData.SetTapNote(iCol2,iIndex,TAP_ORIGINAL_TAP);
 					}
-					
-					const int iIndex = BeatToNoteRow( (float)fCurrentBeat );
-					i--;
-					do {
-						c = sStepData[i++];
-						
-						if( jump && c == '>' )
-							break;
-						
-						int iCol1, iCol2;
-						DWIcharToNoteCol(
-								 c,
-								 (GameController)pad,
-								 iCol1,
-								 iCol2,
-								 path );
-						
-						if( iCol1 != -1 )
-							newNoteData.SetTapNote(iCol1,
-									       iIndex,
-									       TAP_ORIGINAL_TAP);
-						if( iCol2 != -1 )
-							newNoteData.SetTapNote(iCol2,
-									       iIndex,
-									       TAP_ORIGINAL_TAP);
-						
-						if(i>=sStepData.length())
+
+					// look for hold. to do this, we must peek ahead.
+					// since there must be a character after the !, check to see if there are at least two left before looking for the !.
+					if ((i + 2) < sStepData.length()) // make sure i+1 won't blow past the end
+					{
+						// then we can check for !. peeking at i+1 is safe if i+2 < length
+						if (sStepData[i + 1] == '!')
 						{
-							break;
-							//we ran out of data
-							//while looking for the ending > mark
-						}
-						
-						if( sStepData[i] == '!' )
-						{
-							i++;
-							const char holdChar = sStepData[i++];
-							
+							++i; // move onto the !
+							++i; // move onto the note after
+							const char holdChar = sStepData[i]; // and read that character.
+							// by testing in Dance WIth Intensity, this cannot be a <.
+							// and if it's not, it will be properly logged as invalid.
+							// multipanel holds must be placed entirely inside a <> and use multiple !s
+							// tested in DWI
 							DWIcharToNoteCol(holdChar,
-									 (GameController)pad,
-									 iCol1,
-									 iCol2,
-									 path );
-							
-							if( iCol1 != -1 )
+								(GameController)pad,
+								iCol1,
+								iCol2,
+								path);
+							// place hold start markers. 
+							if (iCol1 != -1)
 								newNoteData.SetTapNote(iCol1,
-										       iIndex,
-										       TAP_ORIGINAL_HOLD_HEAD);
-							if( iCol2 != -1 )
+									iIndex,
+									TAP_ORIGINAL_HOLD_HEAD);
+							if (iCol2 != -1)
 								newNoteData.SetTapNote(iCol2,
-										       iIndex,
-										       TAP_ORIGINAL_HOLD_HEAD);
-						}
+									iIndex,
+									TAP_ORIGINAL_HOLD_HEAD);
+						}						
 					}
-					while( jump );
-					fCurrentBeat += fCurrentIncrementer;
+					// we are only here if we have placed at least one note or hold start
+					if (!jump) // if we aren't in a jump
+					{
+						fCurrentBeat += fCurrentIncrementer; // advance the beat. 
+					}
 				}
-					break;
 			}
+			
 		}
 	}
 	

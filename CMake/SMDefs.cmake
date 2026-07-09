@@ -10,23 +10,22 @@ execute_process(COMMAND git rev-parse --short HEAD
                 OUTPUT_VARIABLE SM_VERSION_GIT_HASH
                 RESULT_VARIABLE ret
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-if(NOT (ret STREQUAL "0"))
-  message(
-    WARNING
-      "git was not found on your path. If you collect bug reports, please add git to your path and rerun cmake."
-    )
-  set(SM_VERSION_GIT_HASH "UNKNOWN")
+if(WITH_FULL_RELEASE)
   set(SM_VERSION_FULL
-      "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
+      "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
   set(SM_VERSION_GIT
-      "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
+      "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
 else()
-  if(WITH_FULL_RELEASE)
+  if(NOT (ret STREQUAL "0"))
+    message(
+      WARNING
+        "git was not found on your path. If you collect bug reports, please add git to your path and rerun cmake."
+      )
+    set(SM_VERSION_GIT_HASH "UNKNOWN")
     set(SM_VERSION_FULL
-        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
+        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
     set(SM_VERSION_GIT
-        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
+        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
   else()
     set(SM_VERSION_FULL
         "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")

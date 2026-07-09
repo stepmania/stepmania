@@ -13,7 +13,7 @@ class XNode;
 struct TapNoteResult
 {
 	/** @brief Set up the TapNoteResult with default values. */
-	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f), bHidden(false) { }
+	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f), bHidden(false), bHeld(false) { }
 	/** @brief The TapNoteScore that was achieved by the player. */
 	TapNoteScore	tns;
 
@@ -27,6 +27,9 @@ struct TapNoteResult
 
 	/** @brief If the whole row has been judged, all taps on the row will be set to hidden. */
 	bool		bHidden;
+
+	/** @brief Track if the note was held. Used to track held misses. */
+	bool		bHeld;
 
 	// XML
 	XNode* CreateNode() const;
