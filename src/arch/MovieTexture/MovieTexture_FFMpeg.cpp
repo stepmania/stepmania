@@ -407,7 +407,7 @@ void MovieTexture_FFMpeg::RegisterProtocols()
 		return;
 	Done = true;
 
-#if !FF_API_NEXT
+#if LIBAVCODEC_VERSION_MAJOR < 58
 	avcodec::avcodec_register_all();
 	avcodec::av_register_all();
 #endif
@@ -511,7 +511,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 	if( m_pStreamCodec->codec )
 		avcodec::avcodec_close( m_pStreamCodec );
 
-	avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStreamCodec->codec_id );
+	const avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStreamCodec->codec_id );
 	if( pCodec == nullptr )
 		return ssprintf( "Couldn't find decoder %i", m_pStreamCodec->codec_id );
 

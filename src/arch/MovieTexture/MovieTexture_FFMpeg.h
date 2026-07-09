@@ -13,6 +13,7 @@ namespace avcodec
 		#include <libavformat/avformat.h>
 		#include <libswscale/swscale.h>
 		#include <libavutil/pixdesc.h>
+		#include <libavcodec/avcodec.h>
 
 		#if LIBAVCODEC_VERSION_MAJOR >= 58
 		#define av_free_packet av_packet_unref
