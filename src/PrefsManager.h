@@ -210,6 +210,7 @@ public:
 	Preference<AllowW1>	m_AllowW1; // this should almost always be on, given use cases. -aj
 	Preference<bool>	m_bEventMode;
 	Preference<int>	m_iCoinsPerCredit;
+	Preference<int>	m_iMaxNumCredits; // Should be able to change max number of credits, why cap? - CrashCringle
 	Preference<int>	m_iSongsPerPlay;
 	Preference<bool>	m_bDelayedCreditsReconcile; // zuh?
 	Preference<bool>	m_bComboContinuesBetweenSongs;
