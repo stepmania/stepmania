@@ -1,5 +1,9 @@
 The following is a list of known issues with StepMania 5.
 
+* Tracked follow-ups:
+ * PlayerNumber ownership cleanup: https://github.com/stepmania/stepmania/issues/2315
+ * OpenGL texture-stage API cleanup: https://github.com/stepmania/stepmania/issues/2316
+
 * The course editor is not working. (It could stand to be rewritten.)
 
 * The scoring system needs to be made global for the game instead

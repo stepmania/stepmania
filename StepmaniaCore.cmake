@@ -16,7 +16,8 @@ set(SM_SRC_DIR "${CMAKE_CURRENT_LIST_DIR}/src")
 set(SM_DOC_DIR "${CMAKE_CURRENT_LIST_DIR}/Docs")
 set(SM_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
-# TODO: Reconsile the OS dependent naming scheme.
+# Keep the logical product name stable; platform-specific output names are
+# assigned below.
 set(SM_EXE_NAME "StepMania")
 
 # Some OS specific helpers.

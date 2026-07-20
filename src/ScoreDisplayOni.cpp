@@ -2,9 +2,7 @@
 #include "ScoreDisplayOni.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "GameState.h"
 #include "ThemeManager.h"
-#include "StatsManager.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
 #include "ActorUtil.h"
@@ -34,12 +32,9 @@ void ScoreDisplayOni::Update( float fDelta )
 {
 	ScoreDisplay::Update( fDelta );
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 	float fSecsIntoPlay = 0;
-	if( GAMESTATE->IsPlayerEnabled(pn) )
-		fSecsIntoPlay = STATSMAN->m_CurStageStats.m_player[pn].m_fAliveSeconds;
+	if( m_pPlayerStageStats != nullptr && m_pPlayerStageStats->m_bJoined )
+		fSecsIntoPlay = m_pPlayerStageStats->m_fAliveSeconds;
 
 	m_text.SetText( SecondsToMMSSMsMs(fSecsIntoPlay) );
 }

@@ -1662,13 +1662,16 @@ static bool SetTextureUnit( TextureUnit tu )
 
 void RageDisplay_Legacy::ClearAllTextures()
 {
+	GLint previousTexture = 0;
+	if (GLEW_ARB_multitexture)
+		glGetIntegerv(GL_ACTIVE_TEXTURE_ARB, &previousTexture);
+
 	FOREACH_ENUM( TextureUnit, i )
 		SetTexture( i, 0 );
 
-	// HACK:  Reset the active texture to 0.
-	// TODO:  Change all texture functions to take a stage number.
+	// Restore the active texture unit so this cleanup doesn't leak state.
 	if (GLEW_ARB_multitexture)
-		glActiveTextureARB(GL_TEXTURE0_ARB);
+		glActiveTextureARB( GLenum(previousTexture) );
 }
 
 int RageDisplay_Legacy::GetNumTextureUnits()
@@ -2853,4 +2856,3 @@ void RageDisplay_Legacy::SetCelShaded( int stage )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-

@@ -23,15 +23,18 @@ test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused-parameter -Wno-sw
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused-parameter -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
-# If on Windows, grab the prebuilts
-if test "$host_os" = "mingw32"; then
+# If on Windows, grab the prebuilts.  The bundled dependencies are still
+# 32-bit only, but all MinGW targets should share the same include/lib setup.
+case "$host_os" in
+mingw*)
 	CPPFLAGS="$CPPFLAGS -I$PWD/extern/for_mingw/include"
 	LDFLAGS="$LDFLAGS -L$PWD/extern/for_mingw/lib"
 	# HACK: The prebuilts are 32bit only. Force the issue.
 	CFLAGS="$CFLAGS -m32"
 	CXXFLAGS="$CXXFLAGS -m32"
 	RESFLAGS="$RESFLAGS --target=pe-i386 -I$PWD/src/archutils/Win32/mingw"
-fi
+	;;
+esac
 
 AM_CONDITIONAL(WITH_TTY, test "$with_tty" = "yes")
 AC_ARG_WITH(linux-tty, AS_HELP_STRING([--with-linux-tty], [Enable Linux TTY input]), with_tty=yes, with_tty=no)
