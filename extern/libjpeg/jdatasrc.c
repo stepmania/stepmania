@@ -2,7 +2,7 @@
  * jdatasrc.c
  *
  * Copyright (C) 1994-1996, Thomas G. Lane.
- * Modified 2009-2010 by Guido Vollbeding.
+ * Modified 2009-2019 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -121,16 +121,17 @@ fill_input_buffer (j_decompress_ptr cinfo)
 METHODDEF(boolean)
 fill_mem_input_buffer (j_decompress_ptr cinfo)
 {
-  static JOCTET mybuffer[4];
+  static const JOCTET mybuffer[4] = {
+    (JOCTET) 0xFF, (JOCTET) JPEG_EOI, 0, 0
+  };
 
   /* The whole JPEG data is expected to reside in the supplied memory
    * buffer, so any request for more data beyond the given buffer size
    * is treated as an error.
    */
   WARNMS(cinfo, JWRN_JPEG_EOF);
+
   /* Insert a fake EOI marker */
-  mybuffer[0] = (JOCTET) 0xFF;
-  mybuffer[1] = (JOCTET) JPEG_EOI;
 
   cinfo->src->next_input_byte = mybuffer;
   cinfo->src->bytes_in_buffer = 2;
@@ -155,21 +156,23 @@ METHODDEF(void)
 skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
   struct jpeg_source_mgr * src = cinfo->src;
+  size_t nbytes;
 
   /* Just a dumb implementation for now.  Could use fseek() except
    * it doesn't work on pipes.  Not clear that being smart is worth
    * any trouble anyway --- large skips are infrequent.
    */
   if (num_bytes > 0) {
-    while (num_bytes > (long) src->bytes_in_buffer) {
-      num_bytes -= (long) src->bytes_in_buffer;
+    nbytes = (size_t) num_bytes;
+    while (nbytes > src->bytes_in_buffer) {
+      nbytes -= src->bytes_in_buffer;
       (void) (*src->fill_input_buffer) (cinfo);
       /* note we assume that fill_input_buffer will never return FALSE,
        * so suspension need not be handled.
        */
     }
-    src->next_input_byte += (size_t) num_bytes;
-    src->bytes_in_buffer -= (size_t) num_bytes;
+    src->next_input_byte += nbytes;
+    src->bytes_in_buffer -= nbytes;
   }
 }
 
@@ -218,13 +221,11 @@ jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
    * manager serially with the same JPEG object.  Caveat programmer.
    */
   if (cinfo->src == NULL) {	/* first time for this JPEG object? */
-    cinfo->src = (struct jpeg_source_mgr *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-				  SIZEOF(my_source_mgr));
+    cinfo->src = (struct jpeg_source_mgr *) (*cinfo->mem->alloc_small)
+      ((j_common_ptr) cinfo, JPOOL_PERMANENT, SIZEOF(my_source_mgr));
     src = (my_src_ptr) cinfo->src;
-    src->buffer = (JOCTET *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-				  INPUT_BUF_SIZE * SIZEOF(JOCTET));
+    src->buffer = (JOCTET *) (*cinfo->mem->alloc_small)
+      ((j_common_ptr) cinfo, JPOOL_PERMANENT, INPUT_BUF_SIZE * SIZEOF(JOCTET));
   }
 
   src = (my_src_ptr) cinfo->src;
@@ -246,7 +247,7 @@ jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
 
 GLOBAL(void)
 jpeg_mem_src (j_decompress_ptr cinfo,
-	      unsigned char * inbuffer, unsigned long insize)
+	      const unsigned char * inbuffer, size_t insize)
 {
   struct jpeg_source_mgr * src;
 
@@ -258,9 +259,8 @@ jpeg_mem_src (j_decompress_ptr cinfo,
    * the first one.
    */
   if (cinfo->src == NULL) {	/* first time for this JPEG object? */
-    cinfo->src = (struct jpeg_source_mgr *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-				  SIZEOF(struct jpeg_source_mgr));
+    cinfo->src = (struct jpeg_source_mgr *) (*cinfo->mem->alloc_small)
+      ((j_common_ptr) cinfo, JPOOL_PERMANENT, SIZEOF(struct jpeg_source_mgr));
   }
 
   src = cinfo->src;
@@ -269,6 +269,6 @@ jpeg_mem_src (j_decompress_ptr cinfo,
   src->skip_input_data = skip_input_data;
   src->resync_to_restart = jpeg_resync_to_restart; /* use default method */
   src->term_source = term_source;
-  src->bytes_in_buffer = (size_t) insize;
-  src->next_input_byte = (JOCTET *) inbuffer;
+  src->bytes_in_buffer = insize;
+  src->next_input_byte = (const JOCTET *) inbuffer;
 }

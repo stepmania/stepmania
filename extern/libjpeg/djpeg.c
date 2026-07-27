@@ -2,7 +2,7 @@
  * djpeg.c
  *
  * Copyright (C) 1991-1997, Thomas G. Lane.
- * Modified 2009 by Guido Vollbeding.
+ * Modified 2009-2019 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -59,7 +59,8 @@ static const char * const cdjpeg_message_table[] = {
 
 typedef enum {
 	FMT_BMP,		/* BMP format (Windows flavor) */
-	FMT_GIF,		/* GIF format */
+	FMT_GIF,		/* GIF format (LZW compressed) */
+	FMT_GIF0,		/* GIF format (uncompressed) */
 	FMT_OS2,		/* BMP format (OS/2 flavor) */
 	FMT_PPM,		/* PPM/PGM (PBMPLUS formats) */
 	FMT_RLE,		/* RLE format */
@@ -102,6 +103,7 @@ usage (void)
   fprintf(stderr, "  -colors N      Reduce image to no more than N colors\n");
   fprintf(stderr, "  -fast          Fast, low-quality processing\n");
   fprintf(stderr, "  -grayscale     Force grayscale output\n");
+  fprintf(stderr, "  -rgb           Force RGB output\n");
 #ifdef IDCT_SCALING_SUPPORTED
   fprintf(stderr, "  -scale M/N     Scale output image by fraction M/N, eg, 1/8\n");
 #endif
@@ -110,8 +112,10 @@ usage (void)
 	  (DEFAULT_FMT == FMT_BMP ? " (default)" : ""));
 #endif
 #ifdef GIF_SUPPORTED
-  fprintf(stderr, "  -gif           Select GIF output format%s\n",
+  fprintf(stderr, "  -gif           Select GIF output format (LZW compressed)%s\n",
 	  (DEFAULT_FMT == FMT_GIF ? " (default)" : ""));
+  fprintf(stderr, "  -gif0          Select GIF output format (uncompressed)%s\n",
+	  (DEFAULT_FMT == FMT_GIF0 ? " (default)" : ""));
 #endif
 #ifdef BMP_SUPPORTED
   fprintf(stderr, "  -os2           Select BMP output format (OS/2 style)%s\n",
@@ -194,7 +198,7 @@ parse_switches (j_decompress_ptr cinfo, int argc, char **argv,
     arg++;			/* advance past switch marker character */
 
     if (keymatch(arg, "bmp", 1)) {
-      /* BMP output format. */
+      /* BMP output format (Windows flavor). */
       requested_fmt = FMT_BMP;
 
     } else if (keymatch(arg, "colors", 1) || keymatch(arg, "colours", 1) ||
@@ -257,12 +261,20 @@ parse_switches (j_decompress_ptr cinfo, int argc, char **argv,
       cinfo->do_fancy_upsampling = FALSE;
 
     } else if (keymatch(arg, "gif", 1)) {
-      /* GIF output format. */
+      /* GIF output format (LZW compressed). */
       requested_fmt = FMT_GIF;
+
+    } else if (keymatch(arg, "gif0", 4)) {
+      /* GIF output format (uncompressed). */
+      requested_fmt = FMT_GIF0;
 
     } else if (keymatch(arg, "grayscale", 2) || keymatch(arg, "greyscale",2)) {
       /* Force monochrome output. */
       cinfo->out_color_space = JCS_GRAYSCALE;
+
+    } else if (keymatch(arg, "rgb", 3)) {
+      /* Force RGB output. */
+      cinfo->out_color_space = JCS_RGB;
 
     } else if (keymatch(arg, "map", 3)) {
       /* Quantize to a color map taken from an input file. */
@@ -298,7 +310,7 @@ parse_switches (j_decompress_ptr cinfo, int argc, char **argv,
       cinfo->mem->max_memory_to_use = lval * 1000L;
 
     } else if (keymatch(arg, "nosmooth", 3)) {
-      /* Suppress fancy upsampling */
+      /* Suppress fancy upsampling. */
       cinfo->do_fancy_upsampling = FALSE;
 
     } else if (keymatch(arg, "onepass", 3)) {
@@ -327,7 +339,7 @@ parse_switches (j_decompress_ptr cinfo, int argc, char **argv,
       /* Scale the output image by a fraction M/N. */
       if (++argn >= argc)	/* advance to next argument */
 	usage();
-      if (sscanf(argv[argn], "%d/%d",
+      if (sscanf(argv[argn], "%u/%u",
 		 &cinfo->scale_num, &cinfo->scale_denom) < 1)
 	usage();
 
@@ -456,7 +468,7 @@ main (int argc, char **argv)
    * APP12 is used by some digital camera makers for textual info,
    * so we provide the ability to display it as text.
    * If you like, additional APPn marker types can be selected for display,
-   * but don't try to override APP0 or APP14 this way (see libjpeg.doc).
+   * but don't try to override APP0 or APP14 this way (see libjpeg.txt).
    */
   jpeg_set_marker_processor(&cinfo, JPEG_COM, print_text_marker);
   jpeg_set_marker_processor(&cinfo, JPEG_APP0+12, print_text_marker);
@@ -549,7 +561,10 @@ main (int argc, char **argv)
 #endif
 #ifdef GIF_SUPPORTED
   case FMT_GIF:
-    dest_mgr = jinit_write_gif(&cinfo);
+    dest_mgr = jinit_write_gif(&cinfo, TRUE);
+    break;
+  case FMT_GIF0:
+    dest_mgr = jinit_write_gif(&cinfo, FALSE);
     break;
 #endif
 #ifdef PPM_SUPPORTED
@@ -569,7 +584,6 @@ main (int argc, char **argv)
 #endif
   default:
     ERREXIT(&cinfo, JERR_UNSUPPORTED_FORMAT);
-    break;
   }
   dest_mgr->output_file = output_file;
 
