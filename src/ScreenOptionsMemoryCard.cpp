@@ -9,6 +9,10 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
+#include <cstddef>
+#include <vector>
+
+
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
 
 void ScreenOptionsMemoryCard::Init()
@@ -25,12 +29,12 @@ void ScreenOptionsMemoryCard::Init()
 
 bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()
 {
-	vector<UsbStorageDevice> aOldDevices = m_CurrentUsbStorageDevices;
+	std::vector<UsbStorageDevice> aOldDevices = m_CurrentUsbStorageDevices;
 
-	const vector<UsbStorageDevice> &aNewDevices = MEMCARDMAN->GetStorageDevices();
+	const std::vector<UsbStorageDevice> &aNewDevices = MEMCARDMAN->GetStorageDevices();
 
 	m_CurrentUsbStorageDevices.clear();
-	for( size_t i = 0; i < aNewDevices.size(); ++i )
+	for( std::size_t i = 0; i < aNewDevices.size(); ++i )
 	{
 		const UsbStorageDevice &dev = aNewDevices[i];
 		if( dev.m_State == UsbStorageDevice::STATE_CHECKING )
@@ -46,11 +50,11 @@ static LocalizedString SIZE_UNKNOWN ("ScreenOptionsMemoryCard", "size ???" );
 static LocalizedString VOLUME_SIZE ("ScreenOptionsMemoryCard", "%dMB" );
 void ScreenOptionsMemoryCard::CreateMenu()
 {
-	vector<OptionRowHandler*> vHands;
+	std::vector<OptionRowHandler*> vHands;
 
 	for (UsbStorageDevice const &iter : m_CurrentUsbStorageDevices)
 	{
-		vector<RString> vs;
+		std::vector<RString> vs;
 		if( iter.sVolumeLabel.empty() )
 			vs.push_back( NO_LABEL );
 		else
@@ -81,7 +85,7 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		def.m_bAllowThemeTitle = true;
 		def.m_bOneChoiceForAllPlayers = true;
 	}
-	
+
 	InitMenu( vHands );
 }
 
@@ -123,7 +127,7 @@ void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 		if( !m_Out.IsTransitioning() )
 		{
 			/* Remember the old mountpoint. */
-			const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+			const std::vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 			int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 			RString sOldMountPoint;
 			if( iRow < int(v.size()) )
@@ -147,12 +151,12 @@ void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 	ScreenOptions::HandleMessage( msg );
 }
 
-void ScreenOptionsMemoryCard::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsMemoryCard::ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
 {
 
 }
 
-void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsMemoryCard::ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
 {
 	OptionRow &row = *m_pRows[iRow];
 	if( row.GetRowType() == OptionRow::RowType_Exit )
@@ -161,7 +165,7 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 	PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
 	if( m_iCurrentRow[pn] == iRow )
 	{
-		const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+		const std::vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 		if( iRow < int(v.size()) )
 		{
 			const UsbStorageDevice &dev = v[iRow];
@@ -175,7 +179,7 @@ void ScreenOptionsMemoryCard::SelectRowWithMemoryCard( const RString &sOsMountPo
 	if( sOsMountPoint.empty() )
 		return;
 
-	const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+	const std::vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 	for( unsigned i=0; i<v.size(); i++ )
 	{
 		if( v[i].sOsMountDir == sOsMountPoint )
@@ -194,11 +198,11 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 
 	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
-	const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+	const std::vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 	if( iCurRow < int(v.size()) )	// a card
 	{
 		// Why is this statement in twice? Doubt it would change right after the if. -Wolfman2000
-		const vector<UsbStorageDevice> &vUSB = m_CurrentUsbStorageDevices;
+		const std::vector<UsbStorageDevice> &vUSB = m_CurrentUsbStorageDevices;
 		const UsbStorageDevice &dev = vUSB[iCurRow];
 		MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
 
@@ -224,7 +228,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 /*
  * (c) 2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -234,7 +238,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

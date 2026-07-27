@@ -11,6 +11,8 @@
 #include "RageTextureRenderTarget.h"
 #include "Sprite.h"
 
+#include <cstdint>
+
 /* Making an OpenGL call doesn't also flush the error state; if we happen
  * to have an error from a previous call, then the assert below will fail.
  * Flush it. */
@@ -53,23 +55,23 @@ public:
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsPerVertexMatrixScale();
-	uintptr_t CreateTexture(
+	std::uintptr_t CreateTexture(
 		RagePixelFormat pixfmt,
 		RageSurface* img,
 		bool bGenerateMipMaps );
 	void UpdateTexture(
-		uintptr_t iTexHandle,
+		std::uintptr_t iTexHandle,
 		RageSurface* img,
 		int xoffset, int yoffset, int width, int height
 		);
-	void DeleteTexture( uintptr_t iTexHandle );
+	void DeleteTexture( std::uintptr_t iTexHandle );
 	bool UseOffscreenRenderTarget();
-	RageSurface *GetTexture( uintptr_t iTexture );
+	RageSurface *GetTexture( std::uintptr_t iTexture );
 	RageTextureLock *CreateTextureLock();
 
 	void ClearAllTextures();
 	int GetNumTextureUnits();
-	void SetTexture( TextureUnit tu, uintptr_t iTexture );
+	void SetTexture( TextureUnit tu, std::uintptr_t iTexture );
 	void SetTextureMode( TextureUnit tu, TextureMode tm );
 	void SetTextureWrapping( TextureUnit tu, bool b );
 	int GetMaxTextureSize() const;
@@ -78,9 +80,9 @@ public:
 	bool IsEffectModeSupported( EffectMode effect );
 	bool SupportsRenderToTexture() const;
 	bool SupportsFullscreenBorderlessWindow() const;
-	uintptr_t CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	uintptr_t GetRenderTarget();
-	void SetRenderTarget( uintptr_t iHandle, bool bPreserveTexture );
+	std::uintptr_t CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
+	std::uintptr_t GetRenderTarget();
+	void SetRenderTarget( std::uintptr_t iHandle, bool bPreserveTexture );
 	bool IsZWriteEnabled() const;
 	bool IsZTestEnabled() const;
 	void SetZWrite( bool b );
@@ -98,11 +100,11 @@ public:
 		);
 	void SetLighting( bool b );
 	void SetLightOff( int index );
-	void SetLightDirectional( 
-		int index, 
-		const RageColor &ambient, 
-		const RageColor &diffuse, 
-		const RageColor &specular, 
+	void SetLightDirectional(
+		int index,
+		const RageColor &ambient,
+		const RageColor &diffuse,
+		const RageColor &specular,
 		const RageVector3 &dir );
 
 	void SetSphereEnvironmentMapping( TextureUnit tu, bool b );
@@ -115,7 +117,7 @@ public:
 	virtual void SetPolygonMode( PolygonMode pm );
 	virtual void SetLineWidth( float fWidth );
 
-	RString GetTextureDiagnostics( unsigned id ) const;
+	RString GetTextureDiagnostics( std::uintptr_t id ) const;
 
 protected:
 	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts );
@@ -131,7 +133,7 @@ protected:
 	RageSurface* CreateScreenshot();
 	RagePixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture );
 	bool SupportsSurfaceFormat( RagePixelFormat pixfmt );
-	
+
 	void SendCurrentMatrices();
 
 private:

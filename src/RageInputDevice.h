@@ -5,6 +5,9 @@
 #include "RageTimer.h"
 #include "EnumHelper.h"
 
+#include <vector>
+
+
 const int NUM_JOYSTICKS = 32;
 const int NUM_PUMPS = 2;
 
@@ -63,7 +66,7 @@ struct InputDeviceInfo
 {
 	InputDeviceInfo( InputDevice id_, RString sDesc_ ):
 		id(id_), sDesc(sDesc_) {}
-	
+
 	InputDevice id;
 	RString sDesc;
 };
@@ -93,7 +96,7 @@ const RString& InputDeviceStateToString( InputDeviceState ids );
  * internationalized keyboards, only keys that we might actually want to test
  * for programmatically. Any other keys are mapped to KEY_OTHER_0 and up. (If we
  * want to support real international input, stick a wchar_t in DeviceInput.)  */
- 
+
 enum DeviceButton
 {
 	KEY_SPACE	= 32,
@@ -226,7 +229,7 @@ enum DeviceButton
 	KEY_LSUPER,
 	KEY_RSUPER,
 	KEY_MENU,
-	
+
 	KEY_FN, // Laptop function keys.
 
 	KEY_NUMLOCK,
@@ -279,7 +282,7 @@ enum DeviceButton
 
 	JOY_Z_UP, JOY_Z_DOWN,
 	JOY_ROT_UP, JOY_ROT_DOWN, JOY_ROT_LEFT, JOY_ROT_RIGHT, JOY_ROT_Z_UP, JOY_ROT_Z_DOWN,
-	JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
+	JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN,
 	JOY_AUX_1, JOY_AUX_2, JOY_AUX_3, JOY_AUX_4,
 
 	// Buttons:
@@ -384,7 +387,7 @@ inline bool operator>=(DeviceInput const &lhs, DeviceInput const &rhs)
 	return !operator<(lhs, rhs);
 }
 
-typedef vector<DeviceInput> DeviceInputList;
+typedef std::vector<DeviceInput> DeviceInputList;
 
 #endif
 /*

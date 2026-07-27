@@ -4,8 +4,11 @@
 #include "RageUtil.h"
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
-#include "SpecialFiles.h"
 #include "ProductInfo.h"
+
+#include <cstddef>
+#include <cstdint>
+
 #include <CoreServices/CoreServices.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include <sys/types.h>
@@ -21,6 +24,7 @@ extern "C" {
 #include <IOKit/network/IONetworkInterface.h>
 #include <IOKit/network/IOEthernetController.h>
 
+#import <AppKit/NSScreen.h>
 #import <Foundation/Foundation.h>
 
 static bool IsFatalSignal( int signal )
@@ -131,12 +135,10 @@ void ArchHooks_MacOSX::Init()
 
 RString ArchHooks_MacOSX::GetArchName() const
 {
-#if defined(__i386__)
-	return "Mac OS X (i386)";
-#elif defined(__x86_64__)
-	return "Mac OS X (x86_64)";
+#if defined(__x86_64__)
+	return "macOS (x86_64)";
 #elif defined(__aarch64__) || defined(__arm64__)
-	return "macOS (ARM64)";
+	return "macOS (arm64)";
 #else
 #error What arch?
 #endif
@@ -149,28 +151,21 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	{
 		// http://stackoverflow.com/a/891336
 		NSDictionary *version = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
-		NSString *productVersion = [version objectForKey:@"ProductVersion"];
-		SystemVersion = ssprintf("Mac OS X %s", [productVersion cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+		NSString *productVersion = version[@"ProductVersion"];
+		SystemVersion = ssprintf("macOS %s", [productVersion cStringUsingEncoding:[NSString defaultCStringEncoding]]);
 	}
 
-	size_t size;
+	std::size_t size;
 #define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, nil, 0) )
 	// Get memory
 	float fRam;
 	char ramPower;
 	{
-		uint64_t iRam = 0;
+		std::uint64_t iRam = 0;
 		GET_PARAM( "hw.memsize", iRam );
-		if( iRam >= 1073741824 )
-		{
-			fRam = float( double(iRam) / 1073741824.0 );
-			ramPower = 'G';
-		}
-		else
-		{
-			fRam = float( double(iRam) / 1048576.0 );
-			ramPower = 'M';
-		}
+
+		fRam = float( double(iRam) / 1073741824.0 );
+		ramPower = 'G';
 	}
 
 	// Get processor information
@@ -178,58 +173,32 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	int iCPUs = 0;
 	float fFreq;
 	char freqPower;
-	RString sModel;
+	RString sModel("Unknown");
 	do {
 		char szModel[128];
-		uint64_t iFreq;
+		std::uint64_t iFreq;
 
 		GET_PARAM( "hw.logicalcpu_max", iMaxCPUs );
 		GET_PARAM( "hw.logicalcpu", iCPUs );
 		GET_PARAM( "hw.cpufrequency", iFreq );
 
-		if( iFreq >= 1000000000 )
-		{
-			fFreq = float( double(iFreq) / 1000000000.0 );
-			freqPower = 'G';
-		}
-		else
-		{
-			fFreq = float( double(iFreq) / 1000000.0 );
-			freqPower = 'M';
-		}
+		fFreq = float( double(iFreq) / 1000000000.0 );
+		freqPower = 'G';
 
-		if( GET_PARAM("hw.model", szModel) )
-		{
-			sModel = "Unknown";
+		if( GET_PARAM("hw.model", szModel) != 0 )
 			break;
-		}
+
 		sModel = szModel;
-		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), nil, nil);
 
-		if( urlRef == nil)
+		NSURL* url = [NSURL fileURLWithPath:@"//System/Library/PrivateFrameworks/ServerInformation.framework/Versions/A/Resources/en.lproj/SIMachineAttributes.plist"];
+		NSDictionary* machineAttributes = [NSDictionary dictionaryWithContentsOfURL:url];
+		if (machineAttributes == nil)
 			break;
-		CFDataRef dataRef = nil;
-		SInt32 error;
-		CFURLCreateDataAndPropertiesFromResource( nil, urlRef, &dataRef, nil, nil, &error );
-		CFRelease( urlRef );
-		if( dataRef == nil)
-			break;
-		// This also works with binary property lists for some reason.
-		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( nil, dataRef, kCFPropertyListImmutable, nil);
-		CFRelease( dataRef );
-		if( plRef == nil)
-			break;
-		if( CFGetTypeID(plRef) != CFDictionaryGetTypeID() )
-		{
-			CFRelease( plRef );
-			break;
-		}
-		CFStringRef keyRef = CFStringCreateWithCStringNoCopy( nil, szModel, kCFStringEncodingMacRoman, kCFAllocatorNull );
-		CFStringRef modelRef = (CFStringRef)CFDictionaryGetValue( (CFDictionaryRef)plRef, keyRef );
-		if( modelRef )
-			sModel = CFStringGetCStringPtr( modelRef, kCFStringEncodingMacRoman );
-		CFRelease( keyRef );
-		CFRelease( plRef );
+
+		NSString* key = [NSString stringWithUTF8String:szModel];
+		NSString* val = machineAttributes[key][@"_LOCALIZABLE_"][@"marketingModel"];
+		if (val != nil)
+			sModel = [val UTF8String];
 	} while( false );
 #undef GET_PARAM
 
@@ -289,7 +258,7 @@ bool ArchHooks_MacOSX::GoToURL( RString sUrl )
 	return result == 0;
 }
 
-int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+std::int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	// http://developer.apple.com/qa/qa2004/qa1398.html
 	static double factor = 0.0;
@@ -301,30 +270,41 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 		mach_timebase_info( &timeBase );
 		factor = timeBase.numer / ( 1000.0 * timeBase.denom );
 	}
-	return int64_t( mach_absolute_time() * factor );
+	return std::int64_t( mach_absolute_time() * factor );
 }
 
 #include "RageFileManager.h"
 
-static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
-{
-	FSRef fs;
-
-	if( FSFindFolder(kUserDomain, folderType, kDontCreateFolder, &fs) )
-		FAIL_M( ssprintf("FSFindFolder(%lu) failed.", folderType) );
-	if( FSRefMakePath(&fs, (UInt8 *)dir, PATH_MAX) )
-		FAIL_M( "FSRefMakePath() failed." );
-}
-
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
-	char dir[PATH_MAX];
+	FILEMAN->Mount("dirro", sDirOfExecutable, "/");
+
+	bool portable = DoesFileExist("/Portable.ini");
+
+	NSString* resourcePath = [[NSBundle mainBundle] resourcePath];
+	if( resourcePath )
+	{
+		const char* resourcePathUTF8String = [resourcePath UTF8String];
+		FILEMAN->Mount( "dirro", ssprintf("%s/Announcers", resourcePathUTF8String), "/Announcers" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/BGAnimations", resourcePathUTF8String), "/BGAnimations" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/BackgroundEffects", resourcePathUTF8String), "/BackgroundEffects" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/BackgroundTransitions", resourcePathUTF8String), "/BackgroundTransitions" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/CDTitles", resourcePathUTF8String), "/CDTitles" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Characters", resourcePathUTF8String), "/Characters" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Courses", resourcePathUTF8String), "/Courses" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/NoteSkins", resourcePathUTF8String), "/NoteSkins" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Packages", resourcePathUTF8String), "/Packages" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Songs", resourcePathUTF8String), "/Songs" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/RandomMovies", resourcePathUTF8String), "/RandomMovies" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Themes", resourcePathUTF8String), "/Themes" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Data", resourcePathUTF8String), "/Data" );
+	}
+
 	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nil);
-
-	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
-
 	if( dataUrl )
 	{
+		char dir[PATH_MAX];
+
 		CFStringRef dataPath = CFURLCopyFileSystemPath( dataUrl, kCFURLPOSIXPathStyle );
 		CFStringGetCString( dataPath, dir, PATH_MAX, kCFStringEncodingUTF8 );
 
@@ -333,65 +313,71 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 		CFRelease( dataPath );
 		CFRelease( dataUrl );
 	}
+
+	if (portable)
+	{
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Announcers", "/Announcers");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/BGAnimations", "/BGAnimations");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/BackgroundEffects", "/BackgroundEffects");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/BackgroundTransitions", "/BackgroundTransitions");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Cache", "/Cache");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/CDTitles", "/CDTitles");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Characters", "/Characters");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Courses", "/Courses");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Downloads", "/Downloads");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Logs", "/Logs");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/NoteSkins", "/NoteSkins");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Packages", "/Packages");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Save", "/Save");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Screenshots", "/Screenshots");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Songs", "/Songs");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/RandomMovies", "/RandomMovies");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Themes", "/Themes");
+	}
+}
+
+static std::string PathForDirectory( NSSearchPathDirectory directory )
+{
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	NSURL *url = [fileManager URLForDirectory:directory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+	if (url == nil)
+		FAIL_M( "URLForDirectory() failed." );
+
+	return [url fileSystemRepresentation];
 }
 
 void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 {
-	char dir[PATH_MAX];
-
 	// /Save -> ~/Library/Preferences/PRODUCT_ID
-	PathForFolderType( dir, kPreferencesFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Save" );
+	std::string libraryDir = PathForDirectory(NSLibraryDirectory);
+	FILEMAN->Mount( "dir", libraryDir + "/Preferences/" PRODUCT_ID, "/Save" );
 
 	// Other stuff -> ~/Library/Application Support/PRODUCT_ID/*
-	PathForFolderType( dir, kApplicationSupportFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Announcers", dir), "/Announcers" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/BGAnimations", dir), "/BGAnimations" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/BackgroundEffects", dir), "/BackgroundEffects" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/BackgroundTransitions", dir), "/BackgroundTransitions" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/CDTitles", dir), "/CDTitles" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Characters", dir), "/Characters" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Courses", dir), "/Courses" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/NoteSkins", dir), "/NoteSkins" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Packages", dir), "/" + SpecialFiles::USER_PACKAGES_DIR );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Songs", dir), "/Songs" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/RandomMovies", dir), "/RandomMovies" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Themes", dir), "/Themes" );
+	std::string appSupportDir = PathForDirectory(NSApplicationSupportDirectory);
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Announcers", "/Announcers" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/BGAnimations", "/BGAnimations" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/BackgroundEffects", "/BackgroundEffects" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/BackgroundTransitions", "/BackgroundTransitions" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/CDTitles", "/CDTitles" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Characters", "/Characters" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Courses", "/Courses" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Downloads", "/Downloads" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/NoteSkins", "/NoteSkins" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Packages", "/Packages" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Songs", "/Songs" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/RandomMovies", "/RandomMovies" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Themes", "/Themes" );
 
 	// /Screenshots -> ~/Pictures/PRODUCT_ID Screenshots
-	PathForFolderType( dir, kPictureDocumentsFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID " Screenshots", dir), "/Screenshots" );
+	std::string picturesDir = PathForDirectory(NSCachesDirectory);
+	FILEMAN->Mount( "dir", picturesDir + "/" PRODUCT_ID " Screenshots", "/Screenshots" );
 
 	// /Cache -> ~/Library/Caches/PRODUCT_ID
-	PathForFolderType( dir, kCachedDataFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Cache" );
+	std::string cachesDir = PathForDirectory(NSCachesDirectory);
+	FILEMAN->Mount( "dir", cachesDir + "/" PRODUCT_ID, "/Cache" );
 
 	// /Logs -> ~/Library/Logs/PRODUCT_ID
-	PathForFolderType( dir, kDomainLibraryFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
-    
-    NSString* resourcePath = [[NSBundle mainBundle] resourcePath];
-    if( resourcePath )
-    {
-        const char* resourcePathUTF8String = [resourcePath UTF8String];
-        FILEMAN->Mount( "dir", ssprintf("%s/Announcers", resourcePathUTF8String), "/Announcers" );
-        FILEMAN->Mount( "dir", ssprintf("%s/BGAnimations", resourcePathUTF8String), "/BGAnimations" );
-        FILEMAN->Mount( "dir", ssprintf("%s/BackgroundEffects", resourcePathUTF8String), "/BackgroundEffects" );
-        FILEMAN->Mount( "dir", ssprintf("%s/BackgroundTransitions", resourcePathUTF8String), "/BackgroundTransitions" );
-        FILEMAN->Mount( "dir", ssprintf("%s/CDTitles", resourcePathUTF8String), "/CDTitles" );
-        FILEMAN->Mount( "dir", ssprintf("%s/Characters", resourcePathUTF8String), "/Characters" );
-        FILEMAN->Mount( "dir", ssprintf("%s/Courses", resourcePathUTF8String), "/Courses" );
-        FILEMAN->Mount( "dir", ssprintf("%s/NoteSkins", resourcePathUTF8String), "/NoteSkins" );
-        FILEMAN->Mount( "dir", ssprintf("%s/Packages", resourcePathUTF8String), "/" + SpecialFiles::USER_PACKAGES_DIR );
-        FILEMAN->Mount( "dir", ssprintf("%s/Songs", resourcePathUTF8String), "/Songs" );
-        FILEMAN->Mount( "dir", ssprintf("%s/RandomMovies", resourcePathUTF8String), "/RandomMovies" );
-        FILEMAN->Mount( "dir", ssprintf("%s/Themes", resourcePathUTF8String), "/Themes" );
-        FILEMAN->Mount( "dir", ssprintf("%s/Data", resourcePathUTF8String), "/Data" );
-    }
-
-	// /Desktop -> /Users/<user>/Desktop/PRODUCT_ID
-	// PathForFolderType( dir, kDesktopFolderType );
-	// FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Desktop" );
+	FILEMAN->Mount( "dir", libraryDir + "/Logs/" PRODUCT_ID, "/Logs" );
 }
 
 static inline int GetIntValue( CFTypeRef r )
@@ -406,16 +392,8 @@ static inline int GetIntValue( CFTypeRef r )
 
 float ArchHooks_MacOSX::GetDisplayAspectRatio()
 {
-	io_connect_t displayPort = CGDisplayIOServicePort( CGMainDisplayID() );
-	CFDictionaryRef dict = IODisplayCreateInfoDictionary( displayPort, 0 );
-	int width = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayHorizontalImageSize)) );
-	int height = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayVerticalImageSize)) );
-
-	CFRelease( dict );
-
-	if( width && height )
-		return float(width)/height;
-	return 4/3.f;
+	NSScreen *screen = [NSScreen mainScreen];
+	return screen.frame.size.width / screen.frame.size.height;
 }
 
 /*

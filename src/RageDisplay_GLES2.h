@@ -1,6 +1,8 @@
 #ifndef RAGE_DISPLAY_GLES2_H
 #define RAGE_DISPLAY_GLES2_H
 
+#include <cstdint>
+
 class RageDisplay_GLES2: public RageDisplay
 {
 public:
@@ -18,18 +20,18 @@ public:
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsPerVertexMatrixScale();
-	uintptr_t CreateTexture(
+	std::uintptr_t CreateTexture(
 		RagePixelFormat pixfmt,
 		RageSurface* img,
 		bool bGenerateMipMaps );
 	void UpdateTexture(
-		uintptr_t iTexHandle,
+		std::uintptr_t iTexHandle,
 		RageSurface* img,
 		int xoffset, int yoffset, int width, int height );
-	void DeleteTexture( uintptr_t iTexHandle );
+	void DeleteTexture( std::uintptr_t iTexHandle );
 	void ClearAllTextures();
 	int GetNumTextureUnits();
-	void SetTexture( TextureUnit tu, uintptr_t iTexture );
+	void SetTexture( TextureUnit tu, std::uintptr_t iTexture );
 	void SetTextureMode( TextureUnit tu, TextureMode tm );
 	void SetTextureWrapping( TextureUnit tu, bool b );
 	int GetMaxTextureSize() const;
@@ -51,11 +53,11 @@ public:
 		);
 	void SetLighting( bool b );
 	void SetLightOff( int index );
-	void SetLightDirectional( 
-		int index, 
-		const RageColor &ambient, 
-		const RageColor &diffuse, 
-		const RageColor &specular, 
+	void SetLightDirectional(
+		int index,
+		const RageColor &ambient,
+		const RageColor &diffuse,
+		const RageColor &specular,
 		const RageVector3 &dir );
 
 	void SetSphereEnvironmentMapping( TextureUnit tu, bool b );
@@ -79,7 +81,7 @@ protected:
 
 	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
-	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
+	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf );
 	bool SupportsSurfaceFormat( RagePixelFormat pixfmt );
 	bool SupportsRenderToTexture() const { return true; }
 };

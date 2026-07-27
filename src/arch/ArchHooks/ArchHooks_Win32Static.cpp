@@ -5,7 +5,9 @@
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageFileManager.h"
-#include "SpecialFiles.h"
+
+#include <cstdint>
+#include <vector>
 
 // for timeGetTime
 #include <windows.h>
@@ -26,18 +28,18 @@ static void InitTimer()
 	timeBeginPeriod( 1 );
 }
 
-int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+std::int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	if( !g_bTimerInitialized )
 		InitTimer();
 
-	int64_t ret = timeGetTime() * int64_t(1000);
+	std::int64_t ret = timeGetTime() * std::int64_t(1000);
 	if( bAccurate )
 	{
 		ret = FixupTimeIfLooped( ret );
 		ret = FixupTimeIfBackwards( ret );
 	}
-	
+
 	return ret;
 }
 
@@ -45,7 +47,7 @@ static RString GetMountDir( const RString &sDirOfExecutable )
 {
 	/* All Windows data goes in the directory one level above the executable. */
 	CHECKPOINT_M( ssprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
-	vector<RString> asParts;
+	std::vector<RString> asParts;
 	split( sDirOfExecutable, "/", asParts );
 	CHECKPOINT_M( ssprintf( "... %i asParts", asParts.size()) );
 	ASSERT_M( asParts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
@@ -56,8 +58,29 @@ static RString GetMountDir( const RString &sDirOfExecutable )
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	RString sDir = GetMountDir( sDirOfExecutable );
-	
-	FILEMAN->Mount( "dir", sDir, "/" );
+	FILEMAN->Mount("dirro", sDir, "/");
+
+	bool portable = DoesFileExist("/Portable.ini");
+	if (portable)
+	{
+		FILEMAN->Mount("dir", sDir + "/Announcers", "/Announcers");
+		FILEMAN->Mount("dir", sDir + "/BGAnimations", "/BGAnimations");
+		FILEMAN->Mount("dir", sDir + "/BackgroundEffects", "/BackgroundEffects");
+		FILEMAN->Mount("dir", sDir + "/BackgroundTransitions", "/BackgroundTransitions");
+		FILEMAN->Mount("dir", sDir + "/Cache", "/Cache");
+		FILEMAN->Mount("dir", sDir + "/CDTitles", "/CDTitles");
+		FILEMAN->Mount("dir", sDir + "/Characters", "/Characters");
+		FILEMAN->Mount("dir", sDir + "/Courses", "/Courses");
+		FILEMAN->Mount("dir", sDir + "/Downloads", "/Downloads");
+		FILEMAN->Mount("dir", sDir + "/Logs", "/Logs");
+		FILEMAN->Mount("dir", sDir + "/NoteSkins", "/NoteSkins");
+		FILEMAN->Mount("dir", sDir + "/Packages", "/Packages");
+		FILEMAN->Mount("dir", sDir + "/Save", "/Save");
+		FILEMAN->Mount("dir", sDir + "/Screenshots", "/Screenshots");
+		FILEMAN->Mount("dir", sDir + "/Songs", "/Songs");
+		FILEMAN->Mount("dir", sDir + "/RandomMovies", "/RandomMovies");
+		FILEMAN->Mount("dir", sDir + "/Themes", "/Themes");
+	}
 }
 
 void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
@@ -82,9 +105,10 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sAppDataDir + "/CDTitles", "/CDTitles" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Characters", "/Characters" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Courses", "/Courses" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Downloads", "/Downloads" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/NoteSkins", "/NoteSkins" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/Packages" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Screenshots", "/Screenshots" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Songs", "/Songs" );
@@ -200,7 +224,7 @@ RString ArchHooks::GetPreferredLanguage()
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -210,7 +234,7 @@ RString ArchHooks::GetPreferredLanguage()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

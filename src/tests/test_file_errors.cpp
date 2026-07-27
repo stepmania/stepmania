@@ -7,6 +7,7 @@
 #include "RageUtil_FileDB.h"
 #include "test_misc.h"
 
+#include <cstddef>
 #include <errno.h>
 
 static RString g_TestFile;
@@ -57,7 +58,7 @@ protected:
 		f.hash = GetHashForString( g_TestFile );
 		fs.files.insert(f);
 	}
-	
+
 	RString root;
 
 public:
@@ -75,13 +76,13 @@ class RageFileObjTest: public RageFileObj
 public:
 	RageFileObjTest( const RString &path );
 	RageFileObjTest( const RageFileObjTest &cpy );
-	int ReadInternal(void *buffer, size_t bytes);
-	int WriteInternal(const void *buffer, size_t bytes);
+	int ReadInternal(void *buffer, std::size_t bytes);
+	int WriteInternal(const void *buffer, std::size_t bytes);
 	int Flush();
 	void Rewind() { pos = 0; }
 	int Seek( int offset )
 	{
-		pos = min( offset, (int) g_TestFile.size() );
+		pos = std::min( offset, (int) g_TestFile.size() );
 		return pos;
 	}
 	RageFileObj *Copy() const;
@@ -132,9 +133,9 @@ RageFileObjTest::RageFileObjTest( const RString &path_ )
 	pos = 0;
 }
 
-int RageFileObjTest::ReadInternal( void *buf, size_t bytes )
+int RageFileObjTest::ReadInternal( void *buf, std::size_t bytes )
 {
-	bytes = min( bytes, g_TestFile.size()-pos );
+	bytes = std::min( bytes, g_TestFile.size()-pos );
 
 	if( g_BytesUntilError != -1 )
 	{
@@ -144,8 +145,8 @@ int RageFileObjTest::ReadInternal( void *buf, size_t bytes )
 			g_BytesUntilError = -1;
 			return -1;
 		}
-		
-		g_BytesUntilError -= min( g_BytesUntilError, (int) bytes );
+
+		g_BytesUntilError -= std::min( g_BytesUntilError, (int) bytes );
 	}
 
 	memcpy( buf, g_TestFile.data()+pos, bytes );
@@ -153,7 +154,7 @@ int RageFileObjTest::ReadInternal( void *buf, size_t bytes )
 	return bytes;
 }
 
-int RageFileObjTest::WriteInternal( const void *buf, size_t bytes )
+int RageFileObjTest::WriteInternal( const void *buf, std::size_t bytes )
 {
 	if( g_BytesUntilError != -1 )
 	{
@@ -164,7 +165,7 @@ int RageFileObjTest::WriteInternal( const void *buf, size_t bytes )
 			return -1;
 		}
 
-		g_BytesUntilError -= min( g_BytesUntilError, (int) bytes );
+		g_BytesUntilError -= std::min( g_BytesUntilError, (int) bytes );
 	}
 
 	return bytes;
@@ -240,7 +241,7 @@ void SanityCheck()
 		if( test.GetError() != "Fake error" )
 			Fail( "Sanity check 2 GetError(): expected \"Fake error\", got \"%s\"", test.GetError().c_str() );
 	} while(false);
-	
+
 	/* Write error sanity check. */
 	do {
 		g_TestFilename = "file";
@@ -273,7 +274,7 @@ void IniTest()
 		g_TestFile =
 			"[test]\n"
 			"abc=def";
-	
+
 		g_BytesUntilError = -1;
 
 		IniFile test;
@@ -292,7 +293,7 @@ void IniTest()
 		g_TestFile =
 			"[test]\n"
 			"abc=def";
-	
+
 		g_BytesUntilError = 5;
 
 		IniFile test;
@@ -325,7 +326,7 @@ void MsdTest()
 	/* Read check. */
 	do {
 		g_TestFile = "#FOO;";
-	
+
 		g_BytesUntilError = -1;
 
 		MsdFile test;

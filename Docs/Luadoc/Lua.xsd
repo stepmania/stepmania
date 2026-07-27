@@ -144,10 +144,10 @@
 <xs:complexType name="Function" mixed="true">
 	<xs:group ref="DocumentationGroup" minOccurs="0" maxOccurs="unbounded" />
 	<xs:attribute name="name" type="Identifier" use="required" />
-	<xs:attribute name="renamed" type="Identifier" use="optional" />
 	<xs:attribute name="theme" type="Identifier" use="optional" />
 	<xs:attribute name="return" type="IdentifierOrTable" use="optional" />
 	<xs:attribute name="arguments" type="ArgumentList" use="optional" />
+	<xs:attribute name="since" type="xs:string" use="optional" />
 </xs:complexType>
 
 <xs:complexType name="Link" mixed="true">

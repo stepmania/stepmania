@@ -1,10 +1,12 @@
 #ifndef BACKTRACE_NAMES_H
 #define BACKTRACE_NAMES_H
 
+#include <cstdint>
+
 struct BacktraceNames
 {
 	RString Symbol, File;
-	intptr_t Address;
+	std::intptr_t Address;
 	int Offset;
 	void FromAddr( void * const p );
 	void FromString( RString str );

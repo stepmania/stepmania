@@ -1,6 +1,10 @@
 #include "global.h"
 #include "KeyboardDevice.h"
 
+#include <cstddef>
+#include <vector>
+
+
 using namespace __gnu_cxx;
 
 bool KeyboardDevice::AddLogicalDevice( int usagePage, int usage )
@@ -162,16 +166,16 @@ void KeyboardDevice::AddElement( int usagePage, int usage, IOHIDElementCookie co
 
 void KeyboardDevice::Open()
 {
-	for( unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+	for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
 	{
 		//LOG->Trace( "Adding %s to queue, cookie %p", DeviceButtonToString(i->second).c_str(), i->first );
 		AddElementToQueue( i->first );
 	}
 }
 
-void KeyboardDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
+void KeyboardDevice::GetButtonPresses( std::vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
-	unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+	std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
 
 	if( iter != m_Mapping.end() )
 	{
@@ -180,7 +184,7 @@ void KeyboardDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 	}
 }
 
-void KeyboardDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
+void KeyboardDevice::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevices ) const
 {
 	if( vDevices.size() && vDevices[0].id == DEVICE_KEYBOARD )
 		return;
@@ -477,12 +481,19 @@ bool KeyboardDevice::DeviceButtonToMacVirtualKey( DeviceButton button, UInt8 &iM
 		for( int iUsbKey = 0; iUsbKey < 256; ++iUsbKey )
 		{
 			DeviceButton button2;
-			if( UsbKeyToDeviceButton(iUsbKey, button2) && size_t(button2) < sizeof(g_iDeviceButtonToMacVirtualKey) )
+			if( UsbKeyToDeviceButton(iUsbKey, button2) && std::size_t(button2) < sizeof(g_iDeviceButtonToMacVirtualKey) )
 				g_iDeviceButtonToMacVirtualKey[button2] = g_iUsbKeyToMacVirtualKey[iUsbKey];
 		}
 		bInited = true;
 	}
-	iMacVKOut = g_iDeviceButtonToMacVirtualKey[button];
+	if (button < sizeof(g_iDeviceButtonToMacVirtualKey))
+	{
+		iMacVKOut = g_iDeviceButtonToMacVirtualKey[button];
+	}
+	else
+	{
+		iMacVKOut = 0xFF;
+	}
 	return iMacVKOut != 0xFF;
 }
 

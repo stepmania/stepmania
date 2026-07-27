@@ -7,6 +7,9 @@
 #include "RageUtil.h"
 #include "LuaBinding.h"
 
+#include <cmath>
+#include <cstddef>
+
 DynamicActorScroller *DynamicActorScroller::Copy() const { return new DynamicActorScroller(*this); }
 
 void DynamicActorScroller::LoadFromNode( const XNode *pNode )
@@ -21,7 +24,7 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 	{
 		LuaHelpers::ReportScriptErrorFmt("%s: DynamicActorScroller: loaded %i nodes; require exactly one", ActorUtil::GetWhere(pNode).c_str(), (int)m_SubActors.size());
 		// Remove all but one.
-		for( size_t i=1; i<m_SubActors.size(); i++ )
+		for( std::size_t i=1; i<m_SubActors.size(); i++ )
 		{
 			delete m_SubActors[i];
 		}
@@ -84,7 +87,7 @@ void DynamicActorScroller::ShiftSubActors( int iDist )
 		 * reconfigures much fewer actors. */
 		int iWrapped = iDist;
 		wrap( iWrapped, m_iNumItems );
-		if( abs(iWrapped) < abs(iDist) )
+		if( std::abs(iWrapped) < std::abs(iDist) )
 			iDist = iWrapped;
 	}
 
@@ -137,7 +140,7 @@ REGISTER_ACTOR_CLASS_WITH_NAME( DynamicActorScrollerAutoDeleteChildren, DynamicA
 /*
  * (c) 2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -147,7 +150,7 @@ REGISTER_ACTOR_CLASS_WITH_NAME( DynamicActorScrollerAutoDeleteChildren, DynamicA
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

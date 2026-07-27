@@ -10,7 +10,10 @@
 #include "Steps.h"
 #include "GameManager.h"
 
-void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+#include <vector>
+
+
+void NotesLoaderJson::GetApplicableFiles( const RString &sPath, std::vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.json"), out );
 }
@@ -47,8 +50,8 @@ static void Deserialize(StopSegment &seg, const Json::Value &root)
 
 static void Deserialize(TimingData &td, const Json::Value &root)
 {
-	vector<BPMSegment*> vBPMs;
-	vector<StopSegment*> vStops;
+	std::vector<BPMSegment*> vBPMs;
+	std::vector<StopSegment*> vStops;
 	JsonUtil::DeserializeVectorPointers( vBPMs, Deserialize, root["BpmSegments"] );
 	JsonUtil::DeserializeVectorPointers( vStops, Deserialize, root["StopSegments"] );
 
@@ -89,22 +92,18 @@ static void Deserialize(BackgroundChange &o, const Json::Value &root )
 
 static void Deserialize( TapNote &o, const Json::Value &root )
 {
-	//if( o.type != TapNoteType_Tap )
-	if( root.isInt() )
+	if( root.isInt() ) {
 		o.type = (TapNoteType)root["Type"].asInt();
-	//if( o.type == TapNoteType_HoldHead )
-		o.subType = (TapNoteSubType)root["SubType"].asInt();
-	//root["Source"] = (int)source;
-	//if( !o.sAttackModifiers.empty() )
-		o.sAttackModifiers = root["AttackModifiers"].asString();
-	//if( o.fAttackDurationSeconds > 0 )
-		o.fAttackDurationSeconds = (float)root["AttackDurationSeconds"].asDouble();
-	//if( o.bKeysound )
-		o.iKeysoundIndex = root["KeysoundIndex"].asInt();
-	//if( o.iDuration > 0 )
-		o.iDuration = root["Duration"].asInt();
-	//if( o.pn != PLAYER_INVALID )
-		o.pn = (PlayerNumber)root["PlayerNumber"].asInt();
+	}
+
+	// TODO should all of this also be within the if statement?
+	// It was not in the if statement previously, but that may have been unintentional.
+	o.subType = (TapNoteSubType)root["SubType"].asInt();
+	o.sAttackModifiers = root["AttackModifiers"].asString();
+	o.fAttackDurationSeconds = (float)root["AttackDurationSeconds"].asDouble();
+	o.iKeysoundIndex = root["KeysoundIndex"].asInt();
+	o.iDuration = root["Duration"].asInt();
+	o.pn = (PlayerNumber)root["PlayerNumber"].asInt();
 }
 
 static void Deserialize( StepsType st, NoteData &nd, const Json::Value &root )
@@ -204,20 +203,20 @@ static void Deserialize( Song &out, const Json::Value &root )
 		FOREACH_BackgroundLayer( bl )
 		{
 			const Json::Value &root3 = root2[bl];
-			vector<BackgroundChange> &vBgc = out.GetBackgroundChanges(bl);
+			std::vector<BackgroundChange> &vBgc = out.GetBackgroundChanges(bl);
 			JsonUtil::DeserializeVectorObjects( vBgc, Deserialize, root3 );
 		}
 	}
 
 	{
-		vector<BackgroundChange> &vBgc = out.GetForegroundChanges();
+		std::vector<BackgroundChange> &vBgc = out.GetForegroundChanges();
 		JsonUtil::DeserializeVectorObjects( vBgc, Deserialize, root["ForegroundChanges"] );
 	}
 
 	out.m_vsKeysoundFile = JsonUtil::DeserializeArrayStrings(root["KeySounds"]);
 
 	{
-		vector<Steps*> vpSteps;
+		std::vector<Steps*> vpSteps;
 		JsonUtil::DeserializeVectorPointersParam<Steps,Song*>( vpSteps, Deserialize, root["Charts"], &out );
 		for (Steps *step : vpSteps)
 			out.AddSteps( step );
@@ -243,7 +242,7 @@ bool NotesLoaderJson::LoadFromDir( const RString &sPath, Song &out )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -253,7 +252,7 @@ bool NotesLoaderJson::LoadFromDir( const RString &sPath, Song &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

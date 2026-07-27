@@ -8,6 +8,10 @@
 #include "arch/Dialog/Dialog.h"
 #include "LuaManager.h"
 
+#include <cstddef>
+#include <vector>
+
+
 bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 {
 	RString sError;
@@ -49,8 +53,8 @@ static const char chXMLTagPre			= '/';
 static const char chXMLExclamation	= '!';
 static const char chXMLDash			= '-';
 
-static map<RString,RString> g_mapEntitiesToChars;
-static map<char,RString> g_mapCharsToEntities;
+static std::map<RString, RString> g_mapEntitiesToChars;
+static std::map<char, RString> g_mapCharsToEntities;
 
 static void InitEntities()
 {
@@ -68,7 +72,7 @@ static void InitEntities()
 		{ '\"', "quot", },
 		{ '\'', "apos", },
 		{ '<',  "lt", },
-		{ '>',  "gt", } 
+		{ '>',  "gt", }
 	};
 
 	for( unsigned i = 0; i < ARRAYLEN(EntityTable); ++i )
@@ -126,12 +130,12 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 
 		// XML Attr Name
 		RString::size_type iEnd = xml.find_first_of( " =", iOffset );
-		if( iEnd == xml.npos ) 
+		if( iEnd == xml.npos )
 		{
 			// error
-			if( sErrorOut.empty() ) 
+			if( sErrorOut.empty() )
 				sErrorOut = ssprintf( "<%s> attribute has error ", pNode->GetName().c_str() );
-			return string::npos;
+			return std::string::npos;
 		}
 
 		// XML Attr Name
@@ -170,12 +174,12 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 				iEnd = xml.find_first_of( " >", iOffset );
 			}
 
-			if( iEnd == xml.npos ) 
+			if( iEnd == xml.npos )
 			{
 				// error
-				if( sErrorOut.empty() ) 
+				if( sErrorOut.empty() )
 					sErrorOut = ssprintf( "<%s> attribute text: couldn't find matching quote", sName.c_str() );
-				return string::npos;
+				return std::string::npos;
 			}
 
 			RString sValue;
@@ -190,7 +194,7 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 	}
 
 	// not well-formed tag
-	return string::npos;
+	return std::string::npos;
 }
 
 // <TAG attr1="value1" attr2='value2' attr3=value3 >
@@ -208,8 +212,8 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 
 	// <
 	iOffset = xml.find( chXMLTagOpen, iOffset );
-	if( iOffset == string::npos )
-		return string::npos;
+	if( iOffset == std::string::npos )
+		return std::string::npos;
 
 	// </
 	if( xml[iOffset+1] == chXMLTagPre )
@@ -222,12 +226,12 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 
 		// Find the close tag.
 		RString::size_type iEnd = xml.find( "-->", iOffset );
-		if( iEnd == string::npos )
+		if( iEnd == std::string::npos )
 		{
-			if( sErrorOut.empty() ) 
+			if( sErrorOut.empty() )
 				sErrorOut = "Unterminated comment";
 
-			return string::npos;
+			return std::string::npos;
 		}
 
 		// Skip -->.
@@ -246,10 +250,10 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 
 	// Generate XML Attribute List
 	iOffset = LoadAttributes( pNode, xml, sErrorOut, iOffset );
-	if( iOffset == string::npos )
-		return string::npos;
+	if( iOffset == std::string::npos )
+		return std::string::npos;
 
-	// alone tag <TAG ... /> or <?TAG ... ?> or <!-- ... --> 
+	// alone tag <TAG ... /> or <?TAG ... ?> or <!-- ... -->
 	// current pointer:   ^               ^              ^
 
 	if( iOffset < xml.size() && (xml[iOffset] == chXMLTagPre || xml[iOffset] == chXMLQuestion || xml[iOffset] == chXMLDash) )
@@ -263,18 +267,18 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 		if( iOffset == xml.size() || xml[iOffset] != chXMLTagClose )
 		{
 			// error: <TAG ... / >
-			if( sErrorOut.empty() ) 
+			if( sErrorOut.empty() )
 				sErrorOut = "Element must be closed.";
 
 			// ill-formed tag
-			return string::npos;
+			return std::string::npos;
 		}
 
 		// well-formed tag
 		++iOffset;
 
-		// UGLY: We want to ignore all XML meta tags.  So, since the Node we 
-		// just loaded is a meta tag, then Load ourself again using the rest 
+		// UGLY: We want to ignore all XML meta tags.  So, since the Node we
+		// just loaded is a meta tag, then Load ourself again using the rest
 		// of the file until we reach a non-meta tag.
 		if( !pNode->GetName().empty() && (pNode->GetName()[0] == chXMLQuestion || pNode->GetName()[0] == chXMLExclamation) )
 			iOffset = LoadInternal( pNode, xml, sErrorOut, iOffset );
@@ -286,15 +290,15 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 	//                        ^- current pointer
 	if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == nullptr )
 	{
-		// Text Value 
+		// Text Value
 		++iOffset;
 		RString::size_type iEnd = xml.find( chXMLTagOpen, iOffset );
-		if( iEnd == string::npos )
+		if( iEnd == std::string::npos )
 		{
-			if( sErrorOut.empty() ) 
+			if( sErrorOut.empty() )
 				sErrorOut = ssprintf( "%s must be closed with </%s>", pNode->GetName().c_str(), pNode->GetName().c_str() );
 			// error cos not exist CloseTag </TAG>
-			return string::npos;
+			return std::string::npos;
 		}
 
 		RString sValue;
@@ -312,7 +316,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 		XNode *node = new XNode;
 
 		iOffset = LoadInternal( node, xml, sErrorOut, iOffset );
-		if( iOffset == string::npos )
+		if( iOffset == std::string::npos )
 		{
 			delete node;
 			return iOffset;
@@ -340,12 +344,12 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 				continue;
 
 			RString::size_type iEnd = xml.find_first_of( " >", iOffset );
-			if( iEnd == string::npos )
+			if( iEnd == std::string::npos )
 			{
-				if( sErrorOut.empty() ) 
+				if( sErrorOut.empty() )
 					sErrorOut = ssprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
 				// error
-				return string::npos;
+				return std::string::npos;
 			}
 
 			RString closename;
@@ -360,23 +364,23 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 			else
 			{
 				// not welformed open/close
-				if( sErrorOut.empty() ) 
+				if( sErrorOut.empty() )
 					sErrorOut = ssprintf( "'<%s> ... </%s>' is not well-formed.", pNode->GetName().c_str(), closename.c_str() );
-				return string::npos;
+				return std::string::npos;
 			}
 		}
 		else	// Alone child Tag Loaded
 		{
 			if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == nullptr && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
 			{
-				// Text Value 
+				// Text Value
 				RString::size_type iEnd = xml.find( chXMLTagOpen, iOffset );
-				if( iEnd == string::npos ) 
+				if( iEnd == std::string::npos )
 				{
 					// error cos not exist CloseTag </TAG>
-					if( sErrorOut.empty() )  
+					if( sErrorOut.empty() )
 						sErrorOut = ssprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
-					return string::npos;
+					return std::string::npos;
 				}
 
 				RString sValue;
@@ -405,7 +409,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 	WRITE( "<" );
 	WRITE( pNode->GetName() );
 
-	// <TAG Attr1="Val1" 
+	// <TAG Attr1="Val1"
 	FOREACH_CONST_Attr( pNode, p )
 	{
 		if( p->first == XNode::TEXT_ATTRIBUTE )
@@ -421,7 +425,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 
 	if( pNode->ChildrenEmpty() && pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == nullptr )
 	{
-		// <TAG Attr1="Val1"/> alone tag 
+		// <TAG Attr1="Val1"/> alone tag
 		WRITE( "/>" );
 	}
 	else
@@ -601,7 +605,7 @@ void XmlFileUtil::AnnotateXNodeTree( XNode *pNode, const RString &sFile )
 {
 	RString sDir = Dirname( sFile );
 
-	vector<XNode *> queue;
+	std::vector<XNode*> queue;
 	queue.push_back( pNode );
 	while( !queue.empty() )
 	{
@@ -623,7 +627,7 @@ void XmlFileUtil::AnnotateXNodeTree( XNode *pNode, const RString &sFile )
 
 void XmlFileUtil::CompileXNodeTree( XNode *pNode, const RString &sFile )
 {
-	vector<XNode *> aToCompile;
+	std::vector<XNode*> aToCompile;
 	aToCompile.push_back( pNode );
 
 	Lua *L = LUA->Get();
@@ -660,8 +664,8 @@ namespace
 		}
 
 		// Iterate over the table, pulling out attributes and tables to process.
-		vector<RString> NodeNamesToAdd;
-		vector<LuaReference> NodesToAdd;
+		std::vector<RString> NodeNamesToAdd;
+		std::vector<LuaReference> NodesToAdd;
 
 		/* Add array elements first, in array order, so iterating over the XNode
 		 * keeps the array in order. */
@@ -710,7 +714,7 @@ namespace
 		lua_pop( L, 1 );
 
 		// Recursively process tables.
-		for( size_t i = 0; i < NodesToAdd.size(); ++i )
+		for( std::size_t i = 0; i < NodesToAdd.size(); ++i )
 		{
 			const RString &sNodeName = NodeNamesToAdd[i];
 			LuaReference &NodeToAdd = NodesToAdd[i];
@@ -776,7 +780,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 {
 	/* Batch up nodes to move, and do them all at once, to deal sanely
 	 * with the possibility of duplicate child names. */
-	vector<XNodes::iterator> aToMove;
+	std::vector<XNodes::iterator> aToMove;
 
 	// Iterate over each section in pFrom.
 	XNodes::iterator it = pFrom->GetChildrenBegin();
@@ -817,7 +821,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 /*
  * (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -827,7 +831,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -4,12 +4,15 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "InputEventPlus.h"
 
+#include <vector>
+
+
 REGISTER_SCREEN_CLASS( ScreenSelectLanguage );
 
 void ScreenSelectLanguage::Init()
 {
 	// fill m_aGameCommands before calling Init()
-	vector<RString> vs;
+	std::vector<RString> vs;
 	THEME->GetLanguages( vs );
 	SortRStringArray( vs, true );
 
@@ -64,7 +67,7 @@ bool ScreenSelectLanguage::MenuBack( const InputEventPlus &input )
 /*
  * (c) 2006 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -74,7 +77,7 @@ bool ScreenSelectLanguage::MenuBack( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

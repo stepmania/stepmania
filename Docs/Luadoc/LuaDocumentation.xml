@@ -96,8 +96,8 @@ save yourself some time, copy this for undocumented things:
 		CLAMP is an all-female Japanese mangaka group that formed in the mid 1980s.
 		Erm, I mean... Clamps <code>fValue</code> between <code>fLow</code> and <code>fHigh</code>.
 	</Function>
-	<Function name='CloseConnection' return='void' arguments=''>
-		Closes any connection to an online server.
+	<Function name='CloseConnection' return='bool' arguments=''>
+		[Deprecated] Always returns <code>false</code>.
 	</Function>
 	<Function name='collectgarbage' return='void' arguments='string opt, float arg'>
 		A generic interface to Lua's garbage collector. Performs different functions based on the value of <code>opt</code>.<br />
@@ -144,7 +144,7 @@ save yourself some time, copy this for undocumented things:
 		The <code>comma</code> and <code>dot</code> arguments are provided to ease compliance with locales or languages that do not use comma and dot in numbers the way English does.
 	</Function>
 	<Function name='ConnectToServer' return='bool' arguments='string sAddress'>
-		Tries to connect to the server at <code>sAddress</code>.
+		[Deprecated] Always returns <code>false</code>.
 	</Function>
 	<Function name='CourseDifficultyToLocalizedString' return='string' arguments='Difficulty d'>
 		Returns <Link class='ENUM' function='Difficulty' /> <code>d</code> localized for the current language using strings defined under <code>[CourseDifficulty]</code>.
@@ -282,7 +282,7 @@ save yourself some time, copy this for undocumented things:
 		Returns the screen display aspect ratio (i.e. the <code>DisplayAspectRatio</code> preference).
 	</Function>
 	<Function name='GetServerName' return='string' arguments=''>
-		Returns the name of the currently connected server.
+		[Deprecated] Always returns <code>""</code>.
 	</Function>
 	<Function name='GetSongBackground' theme='_fallback' return='string' arguments=''>
 		[02 Utilities.lua] Returns a path to the current songs background.
@@ -389,13 +389,13 @@ save yourself some time, copy this for undocumented things:
 		[02 Utilities.lua] Returns <code>true</code> if the coin mode is set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
 	</Function>
 	<Function name='IsNetConnected' return='bool' arguments=''>
-		Returns <code>true</code> if connected to the Internet.
+		[Deprecated] Always returns <code>false</code>.
 	</Function>
 	<Function name='IsNetSMOnline' return='bool' arguments=''>
-		Returns <code>true</code> if connected to StepMania Online.
+		[Deprecated] Always returns <code>false</code>.
 	</Function>
 	<Function name='IsSMOnlineLoggedIn' return='bool' arguments='PlayerNumber pn'>
-		Returns <code>true</code> if Player <code>pn</code> is logged on to a SMOnline server.
+		[Deprecated] Always returns <code>false</code>.
 	</Function>
 	<Function name='IsW1Allowed' theme='_fallback' return='bool' arguments='TapNoteScore tns'>
 		[04 Scoring.lua] Returns <code>true</code> if W1 is allowed (and <code>tns == 'TapNoteScore_W2'</code>)
@@ -412,10 +412,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='join' theme='_fallback' return='string' arguments='string delimiter, table list'>
 		[02 Utilities.lua] Joins a table, splitting each item with <code>delimiter</code>, returning a string of the results.
 	</Function>
-	<Function name='JsonDecode' return='various' arguments='string data'>
+	<Function name='JsonDecode' return='various' arguments='string data' >
 		Decodes JSON encoded <code>data</code> and returns the result.
 	</Function>
-	<Function name='JsonEncode' return='string' arguments='various data, bool minify'>
+	<Function name='JsonEncode' return='string' arguments='various data, bool minify' >
 		Returns <code>data</code> as JSON. Empty tables are represented as arrays in the output.<br />
 		<code>minify</code> is optional and defaults to <code>false</code>. If <code>true</code>, all unnecessary whitespace is omitted from the output.
 	</Function>
@@ -467,10 +467,6 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='MissCombo' theme='_fallback' return='int' arguments=''>
 		[03 Gameplay.lua] Returns the value to start showing the miss combo at.
-	</Function>
-	<Function name='module' return='void' arguments='string name, ...'>
-		Creates a module.<br />
-		<code>module</code> is a core function of Lua's basic library; see the Lua manual for more details.
 	</Function>
 	<Function name='MonthOfYear' return='int' arguments=''>
 		Returns the current month of the year in the range <code>0</code>-<code>11</code>.
@@ -540,7 +536,7 @@ save yourself some time, copy this for undocumented things:
 		Returns the product family. (e.g. "StepMania")
 	</Function>
 	<Function name='ProductID' return='string' arguments=''>
-		Returns the product ID. (e.g. "StepMania 5")
+		Returns the product ID. (e.g. "StepMania")
 	</Function>
 	<Function name='ProductVersion' return='string' arguments=''>
 		Returns the product version. (e.g. "5.0.11" or "5.1.0" or "5.2-git-96f9771")
@@ -579,7 +575,7 @@ save yourself some time, copy this for undocumented things:
 		<code>indent</code> is an optional argument that will be prepended to every line.
 	</Function>
 	<Function name='ReportStyle' return='void' arguments=''>
-		Sends the current style to the server.
+		[Deprecated] Always returns <code>false</code>.
 	</Function>
 	<Function name='round' theme='_fallback' return='int' arguments='float val, int decimal'>
 		[02 Utilities.lua] Round a number.
@@ -839,7 +835,7 @@ local playable_steps = SongUtil.GetPlayableSteps(song)
 		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code>
 	</Function>
 	<Function name='GetYOffsetFromYPos' return='float' arguments='PlayerState ps, int iCol, float fYPos, float fYReverseOffsetPixels'>
-		Returns the Y offset of a note in column <code>iCol</code> with a Y position of <code>fYPos</code> for the provided PlayerState.<br/>
+		Returns the Y offset of a note in column <code>iCol</code> with a Y position of <code>fYPos</code> for the provided PlayerState.<br />
 		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code>
 	</Function>
 	<Function name='GetXPos' return='float' arguments='PlayerState ps, int iCol, float fYOffset'>
@@ -855,18 +851,18 @@ local playable_steps = SongUtil.GetPlayableSteps(song)
 		Returns the Y rotation of a note with a Y offset of <code>fYOffset</code> for the provided PlayerState.
 	</Function>
 	<Function name='GetRotationZ' return='float' arguments='PlayerState ps, float fNoteBeat, bool bIsHoldHead'>
-		Returns the Z rotation of a note at beat <code>fNoteBeat</code> for the provided PlayerState.<br/>
+		Returns the Z rotation of a note at beat <code>fNoteBeat</code> for the provided PlayerState.<br />
 		<code>bIsHoldHead</code> is an optional argument which defaults to false. If true, this function will return <code>0</code> if the [PlayerOptions] modifier <code>DizzyHolds</code> is off.
 	</Function>
 	<Function name='ReceptorGetRotationZ' return='float' arguments='PlayerState ps'>
 		Returns the Z rotation of the receptors for the provided PlayerState.
 	</Function>
 	<Function name='GetAlpha' return='float' arguments='PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar'>
-		Returns the Alpha of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br/>
-		<code>fPercentFadeToFail</code> is optional and defaults to -1.<br/>
-		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code><br/>
-		<code>fDrawDistanceBeforeTargetsPixels</code> is optional and will pull defaults from the <code>[Player]</code> metric <code>DrawDistanceBeforeTargetsPixels</code><br/>
-		<code>fFadeInPercentOfDrawFar</code> is optional and will pull defaults from the <code>[NoteField]</code> metric <code>FadeBeforeTargetsPercent</code><br/>
+		Returns the Alpha of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br />
+		<code>fPercentFadeToFail</code> is optional and defaults to -1.<br />
+		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code><br />
+		<code>fDrawDistanceBeforeTargetsPixels</code> is optional and will pull defaults from the <code>[Player]</code> metric <code>DrawDistanceBeforeTargetsPixels</code><br />
+		<code>fFadeInPercentOfDrawFar</code> is optional and will pull defaults from the <code>[NoteField]</code> metric <code>FadeBeforeTargetsPercent</code><br />
 	</Function>
 	<Function name='GetGlow' return='float' arguments='PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar'>
 		Returns the Glow of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState. The arguments are the same as for GetAlpha.
@@ -881,7 +877,8 @@ local playable_steps = SongUtil.GetPlayableSteps(song)
 		Returns the zoom of a note for the provided PlayerState.
 	</Function>
 	<Function name='GetFrameWidthScale' return='float' arguments='PlayerState ps, float fYOffset, float fOverlappedTime'>
-		Returns the FrameWidthScale of a hold part with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br/> <code>fOverlappedTime</code> is optional and will default to 0.
+		Returns the FrameWidthScale of a hold part with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br />
+		<code>fOverlappedTime</code> is optional and will default to 0.
 	</Function>
 </Namespace>
 <Namespace name='Enum'>
@@ -944,12 +941,12 @@ local pn2 = PlayerNumber:Reverse()['PlayerNumber_P2']
 		If unsuccessful, it returns two values: <code>nil</code> and <code>"error"</code>.
 	</Function>
 	<Function name='ReportScriptError' return='void' arguments='string error, string error_type'>
-		Reports the error through the error reporting system.<br/>
-		<code>error</code> is optional and defaults to "Script error occurred.".<br/>
+		Reports the error through the error reporting system.<br />
+		<code>error</code> is optional and defaults to "Script error occurred.".<br />
 		<code>error_type</code> is optional and defaults to "LUA_ERROR".  Errors of type "LUA_ERROR" will be shown in-game if the <code>ShowThemeErrors</code> preference is enabled. A dialog will not appear for an <code>error_type</code> the user has chosen to ignore.
 	</Function>
 	<Function name='RunWithThreadVariables' return='int' arguments='function func, table t, ...'>
-		Calls <code>func(...)</code> with LuaThreadVariables set according to the keys and values of <code>t</code>, and returns the return values of <code>func()</code>.<br/>
+		Calls <code>func(...)</code> with LuaThreadVariables set according to the keys and values of <code>t</code>, and returns the return values of <code>func()</code>.<br />
 		For example, if <code>t</code> is <code>{x=12}</code>, calling <code>Var "x"</code> from <code>func</code> will return 12.
 	</Function>
 	<Function name='Trace' return='void' arguments='string sString'>
@@ -1265,7 +1262,7 @@ local file = RageFileUtil.CreateRageFile()
 		Set the Actor's effect period to <code>fTime</code>.
 	</Function>
 	<Function name='effecttiming' return='void' arguments='float ramp_to_half, float hold_at_half, float ramp_to_full, float hold_at_zero, float hold_at_full'>
-		Set the Actor's effect timing.  The effect timing controls how long it takes an effect to cycle and how long it spends in each phase.<br />
+		Set the Actor's effect timing.  The effect timing controls how long it takes an effect to cycle and how long it spends in each phase.<br /><br />
 		All effect timings must be greater than or equal to zero, at least one of them must be greater than zero.<br />
 		Depending on the effect clock, the actor's time into effect is updated every frame.  That time is then translated into a percent_through_effect using the parameters to this function.<br />
 		ramp_to_half is the amount of time for percent_through_effect to reach 0.5.<br />
@@ -1478,16 +1475,16 @@ end
 <pre><code>
 Def.ActorFrame{
 	Name="AF",
-	
+
 	Def.Sprite{ Name="sun", Texture="sun.png" },
-	
+
 	Def.ActorFrame{
 		Name="AF2",
 		InitCommand=function(self)
 			-- bounce() will be applied to AF2, airhorn, and catchphrase
 			self:RunCommandsRecursively( function(actor) actor:bounce() end )
 		end,
-		
+
 		Def.Sprite{ Name="airhorn", Texture="airhorn.png" },
 		Def.BitmapText{ Name="catchphrase", Font="Common Normal", Text="Yo!" }
 	}
@@ -1588,7 +1585,7 @@ spr.InitCommand=function(self)
 	self:vertalign('VertAlign_Bottom')
 end
 </code></pre>
-		See <Link function='valign' /> for fractional alignment.
+		Use <Link function='valign' /> for fractional alignment.
 	</Function>
 	<Function name='vibrate' return='void' arguments=''>
 		Makes the Actor vibrate violently. Can use <Link function='effectmagnitude' /> to define different vibration behavior.
@@ -1791,9 +1788,9 @@ Def.ActorFrame{
 		-- bounce() will be applied to sun and AF2
 		self:RunCommandsOnChildren( function(child) child:bounce() end )
 	end,
-	
+
 	Def.Sprite{ Name="sun", Texture="sun.png" },
-	
+
 	Def.ActorFrame{
 		Name="AF2",
 		Def.Sprite{ Name="airhorn", Texture="airhorn.png" },
@@ -1813,9 +1810,9 @@ Def.ActorFrame{
 		-- bounce() will be applied to sun, airhorn, and catchphrase
 		self:runcommandsonleaves( function(leaf) leaf:bounce() end )
 	end,
-	
+
 	Def.Sprite{ Name="sun", Texture="sun.png" },
-	
+
 	Def.ActorFrame{
 		Name="AF2",
 		Def.Sprite{ Name="airhorn", Texture="airhorn.png" },
@@ -2074,7 +2071,7 @@ self:SetDrawState{First= 3, Num= 4}
 	<Function name='GetSecondsPauseBetweenItems' return='float' arguments=''>
 		Returns the number of seconds the scroller pauses between items.
 	</Function>
-	<Function name='GetSecondsToDestination' renamed='true' return='float' arguments=''>
+	<Function name='GetSecondsToDestination' return='float' arguments=''>
 		Returns the number of seconds until the scroller reaches its destination.
 	</Function>
 	<Function name='getsecondtodestination' theme='_fallback' return='float' arguments=''>
@@ -2083,13 +2080,13 @@ self:SetDrawState{First= 3, Num= 4}
 	<Function name='PositionItems' return='void' arguments=''>
 		Positions the scroller items.
 	</Function>
-	<Function name='ScrollThroughAllItems' renamed='true' return='void' arguments=''>
+	<Function name='ScrollThroughAllItems' return='void' arguments=''>
 		Scrolls through all the items in the scroller.
 	</Function>
 	<Function name='scrollthroughallitems' theme='_fallback' return='void' arguments=''>
 		Compatibility alias for <Link function='ScrollThroughAllItems' />.
 	</Function>
-	<Function name='ScrollWithPadding' renamed='true' return='void' arguments='float fItemPaddingStart, float fItemPaddingEnd'>
+	<Function name='ScrollWithPadding' return='void' arguments='float fItemPaddingStart, float fItemPaddingEnd'>
 		Scrolls through all the items in the scroller with padding at the beginning and end.
 	</Function>
 	<Function name='scrollwithpadding' theme='_fallback' return='void' arguments='float fItemPaddingStart, float fItemPaddingEnd'>
@@ -2101,7 +2098,7 @@ self:SetDrawState{First= 3, Num= 4}
 	<Function name='SetDestinationItem' return='void' arguments='float fItemIndex'>
 		Sets the item the scroller should scroll to next.
 	</Function>
-	<Function name='SetFastCatchup' renamed='true' return='void' arguments='bool bOn'>
+	<Function name='SetFastCatchup' return='void' arguments='bool bOn'>
 		Sets if the scroller should catch up fast.
 	</Function>
 	<Function name='setfastcatchup' theme='_fallback' return='void' arguments='bool bOn'>
@@ -2116,7 +2113,7 @@ self:SetDrawState{First= 3, Num= 4}
 	<Function name='SetNumItemsToDraw' return='void' arguments='float fNumItems'>
 		Sets the scroller to draw <code>fNumItems</code> items.
 	</Function>
-	<Function name='SetNumSubdivisions' renamed='true' return='void' arguments='int iNumSubdivisions'>
+	<Function name='SetNumSubdivisions' return='void' arguments='int iNumSubdivisions'>
 		Sets the number of subdivisions in the scroller.
 	</Function>
 	<Function name='setnumsubdivisions' theme='_fallback' return='void' arguments='int iNumSubdivisions'>
@@ -2128,7 +2125,7 @@ self:SetDrawState{First= 3, Num= 4}
 	<Function name='SetSecondsPauseBetweenItems' return='void' arguments='float fSeconds'>
 		Sets the scroller's pause between items to <code>fSeconds</code>.
 	</Function>
-	<Function name='SetSecondsPerItem' renamed='true' return='void' arguments='float fSeconds'>
+	<Function name='SetSecondsPerItem' return='void' arguments='float fSeconds'>
 		Sets how many seconds the scroller should spend on each item.<br />
 		A value of <code>0</code> means the scroller will not scroll.
 	</Function>
@@ -2497,7 +2494,7 @@ Def.BitmapText{
 	<Function name='GetCourseEntry' return='CourseEntry' arguments='int iIndex'>
 		Gets the CourseEntry at <code>iIndex</code> from the Course.
 	</Function>
-	<Function name='GetCourseType' renamed='true' return='CourseType' arguments=''>
+	<Function name='GetCourseType' return='CourseType' arguments=''>
 		Returns the Course's <Link class='ENUM' function='CourseType' />.
 	</Function>
 	<Function name='GetDescription' return='string' arguments=''>
@@ -2515,7 +2512,7 @@ Def.BitmapText{
 	<Function name='GetGroupName' return='string' arguments=''>
 		Returns the Course's group name.
 	</Function>
-	<Function name='GetPlayMode' renamed='true' return='PlayMode' arguments=''>
+	<Function name='GetPlayMode' return='PlayMode' arguments=''>
 		Returns the Course's <Link class='ENUM' function='PlayMode' />.
 	</Function>
 	<Function name='GetScripter' return='string' arguments=''>
@@ -3646,6 +3643,128 @@ end
 		Selects a song. Returns <code>false</code> on failure.
 	</Function>
 </Class>
+<Class name='NetworkManager'>
+	<Description>
+		This singleton is accessible to Lua via <code>NETWORK</code>.<br />
+		By default, access to the network is disabled for all target hosts. It can be enabled by setting <code>HttpEnabled=1</code> in the preferences. Individual hosts have to be added to <code>HttpAllowHosts</code> as a comma separated list to allow access.
+	</Description>
+	<Function name='IsUrlAllowed' return='bool' arguments='string url' >
+		Returns true if access to <code>url</code> is allowed.
+	</Function>
+	<Function name='HttpRequest' return='HttpRequestFuture' arguments='table params' >
+		Performs an HTTP request.<br />
+		Usage example:
+<pre><code>
+NETWORK:HttpRequest{
+	url="https://api.example.com",
+	method="GET",                                   -- default: "GET"
+	body="",                                        -- default: ""
+	multipartBoundary="",                           -- default: ""
+	headers={                                       -- default: {}
+		["Accept-Language"]="en-US",
+		["Cookie"]="sessionId=42",
+	},
+	connectTimeout=3,                               -- default: 60
+	transferTimeout=10,                             -- default: 1800
+	downloadFile="",                                -- default: no download file
+	onProgress=function(currentBytes, totalBytes)   -- default: no callback
+		...
+	end,
+	onResponse=function(response)                   -- default: no callback
+		...
+	end,
+}
+</code></pre>
+		Everything but <code>url</code> is optional. Supported methods are <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code> and <code>HEAD</code>.<br />
+		A response looks like this:
+<pre><code>
+{
+	statusCode=200,
+	headers={
+		["Content-Type"]="application/json",
+		["Cache-Control"]="max-age=172800",
+		["Server"]="Apache",
+	},
+	body="{...}"
+	uploadSize=204,
+	downloadSize=216,
+}
+</code></pre>
+		In case of an error the callback is called with a structure like this:
+<pre><code>
+{
+	error="HttpErrorCode_Blocked",
+	errorMessage="access to https://api.example.com is not allowed",
+}
+</code></pre>
+		If the <code>downloadFile</code> parameter is set, the response body is not accumulated in memory, but written to <code>/Downloads/${downloadFile}</code>.
+		The file is available in the <code>onResponse</code> callback where it can be unzipped/copied to another location using <code>FILEMAN:Unzip()</code>/<code>FILEMAN:Copy()</code> respectively.
+		The file is deleted once the callback returns.
+	</Function>
+	<Function name='WebSocket' return='WebSocketHandle' arguments='table params' >
+		Open a WebSocket connection.<br />
+		Usage example:
+<pre><code>
+NETWORK:WebSocket{
+	url="wss://api.example.com/chat",
+	headers={                                       -- default: {}
+		["Accept-Language"]="en-US",
+		["Cookie"]="sessionId=42",
+	},
+	handshakeTimeout=3,                             -- default: 60 seconds
+	pingInterval=10,                                -- default: disabled
+	automaticReconnect=false,                       -- default: true
+	onMessage=function(message)                     -- default: no callback
+		...
+	end,
+}
+</code></pre>
+		Everything but <code>url</code> is optional.<br />
+		Messages look like this:
+<pre><code>
+-- Data
+{
+	type="WebSocketMessageType_Message",
+	data="some data",
+	binary=false,
+}
+
+-- Open
+{
+	type="WebSocketMessageType_Open",
+	uri="/chat",
+	headers={
+		["Date"]="Fri, 27 May 2022 18:50:47 GMT",
+	},
+	protocol="",
+}
+
+-- Close
+{
+	type="WebSocketMessageType_Close",
+	reason="Normal closure",
+	remote=false,
+}
+
+-- Error
+{
+	type="WebSocketMessageType_Error",
+	retries=1,
+	waitTime=100,
+	httpStatusCode=404,
+	reason="Expecting status 101 (Switching Protocol), got 404",
+	decompressionError=false,
+
+}
+</code></pre>
+	</Function>
+	<Function name='UrlEncode' return='string' arguments='string value' >
+		Returns the URL encoded representation of <code>value</code>.
+	</Function>
+	<Function name='EncodeQueryParameters' return='string' arguments='table query' >
+		Returns the <code>query</code> encoded as a query string. Keys and values are automatically URL encoded.
+	</Function>
+</Class>
 <Class name='NoteSkinManager'>
 	<Description>
 		This singleton is accessible to Lua via <code>NOTESKIN</code>.
@@ -3758,6 +3877,7 @@ end
 <Class name='NoteField'>
 	<Description>
 		All functions in this class have camel case equivalents, use whichever naming style you prefer.<br />
+		Camel case functions do not have snake case equivalents, though.<br />
 	</Description>
 	<Function name='did_hold_note' return='' arguments='int column, TapNoteScore tns, bool bright'>
 		Makes the NoteField act as if a hold note was hit in the column, with the given score and bright setting. <br />
@@ -3767,8 +3887,18 @@ end
 		Makes the NoteField act as if a tap note was hit in the column, with the given score and bright setting. <br />
 		The callback for did_tap_note will not be called.
 	</Function>
+	<Function name='GetBeatBars' return='bool' arguments='' since='StepMania 0.8.0'>
+		Returns whether beat bars are enabled on this NoteField.
+	</Function>
 	<Function name='get_column_actors' return='{NoteColumnRenderer}' arguments=''>
 		Returns a table of the actors for the columns.  This means that each column is an actor, so you can move it around or animate it like an actor.  See the NoteColumnRenderer class for a list of special functions for the column's actor.
+	</Function>
+	<Function name='SetBeatBars' return='bool' arguments='bool enabled' since='StepMania 0.8.0'>
+		Sets whether beat bars are enabled on this NoteField.
+	</Function>
+	<Function name='SetBeatBarsAlpha' return='bool' arguments='float measure, float fourth, float eighth, float sixteenth' since='StepMania 0.8.0'>
+		Sets the alpha for the beat bars on this NoteField.
+		Specify the alpha for the measure, fourth, eighth, and sixteenth beat bars at the same time.
 	</Function>
 	<Function name='set_did_hold_note_callback' return= '' arguments='function callback'>
 		Same as SetDidTapNoteCallback, but for hold notes.  Uses HoldNoteScore instead of TapNoteScore.
@@ -4009,6 +4139,10 @@ a,b = options:Boost(5)
 	</Function>
 	<Function name='Dizzy' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='DizzyHolds' return='bool' arguments='bool value'> </Function>
+	<Function name='DisableTimingWindow' return='' arguments='TimingWindow tw' >
+		Selectively disable specific timing windows for a player. <br />
+		Valid values are <code>W1</code> to <code>W5</code> as defined in the <Link class='ENUM' function='TimingWindow' /> enum.
+	</Function>
 	<Function name='Distant' return='float, float' arguments='float value, float approach_speed'>
 		If the player is using Distant (zero skew and positive tilt), returns the value of tilt and its approach_speed.<br />
 		Returns nil otherwise.<br />
@@ -4054,6 +4188,9 @@ a,b = options:Boost(5)
 	</Function>
 	<Function name='Flip' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Floored' return='bool' arguments='bool value'> </Function>
+	<Function name='GetDisabledTimingWindows' return='{TimingWindow}' arguments='' >
+		Returns a table of the currently disabled <Link class='ENUM' function='TimingWindow' />s for the player.
+	</Function>
 	<Function name='GetStepAttacks' return='bool' arguments=''>
 		Returns true if step attacks or random attacks are enabled.
 	</Function>
@@ -4073,6 +4210,7 @@ a,b = options:Boost(5)
 	<Function name='Hidden' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='HiddenOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='HoldRolls' return='bool' arguments='bool value'> </Function>
+	<Function name='HyperShuffle' return='bool' arguments='bool value'> </Function>
 	<Function name='Incoming' return='float, float' arguments='float value, float approach_speed'>
 		If the player is using Incoming ((positive skew and negative tilt) or (negative skew and positive tilt)), returns the value of skew and its approach_speed.<br />
 		Returns nil otherwise.<br />
@@ -4159,6 +4297,9 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 	<Function name='RandAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='RandomSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='RandomVanish' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ResetDisabledTimingWindows' return='' arguments='' >
+		Re-enable all <Link class='ENUM' function='TimingWindow' />s that may have previously been disabled.
+	</Function>
 	<Function name='Reverse' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='Reversen' return= 'float, float' arguments='float value, float approach_speed'>
 		Use 1-16 in place of 'n' to apply Reverse on a specific column.
@@ -4258,6 +4399,11 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 	<Function name='Twister' return='bool' arguments='bool value'> </Function>
 	<Function name='UsingReverse' return='bool' arguments=''>
 		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1.0</code>)
+	</Function>
+	<Function name='VisualDelay' return='' arguments='float' >
+		The time in seconds to adjust a player's visual delay by.<br />
+		Negative values will shift the arrows up, while positive values will push them down.<br />
+		Sub-millisecond visual delay values are not saved and are instead rounded to the closest millisecond.
 	</Function>
 	<Function name='Wave' return='float, float' arguments='float value, float approach_speed'> </Function>
 	<Function name='WavePeriod' return='float, float' arguments='float value, float approach_speed'> </Function>
@@ -4429,7 +4575,7 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 	<Function name='GetPlayerNumber' return='PlayerNumber' arguments=''>
 		Returns the player number for this PlayerState.
 	</Function>
-	<Function name='GetPlayerOptions' renamed='true' return='PlayerOptions' arguments='ModsLevel ml'>
+	<Function name='GetPlayerOptions' return='PlayerOptions' arguments='ModsLevel ml'>
 		Returns a PlayerOptions object for the specified ModsLevel.
 	</Function>
 	<Function name='GetPlayerOptionsString' return='string' arguments='ModsLevel ml'>
@@ -4612,7 +4758,8 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 		Returns the number of trails with the specified StepsType and Difficulty that you've scored a certain Grade <code>g</code> on.
 	</Function>
 	<Function name='GetType' return='ProfileType' arguments=''>
-		Returns the type of the profile.  The type of the profile is only used to determine where the profile shows up in the list of profiles, and that problem is already handled by ProfileManager, so if you're reading this, this function only exists so you can make your theme color this profile's list entry based on the type or something like that.
+		Returns the type of the profile.  The StepMania engine uses ProfileType to sort the list of profiles, with <code>Guest</code> profiles appearing first, then <code>Normal</code>, then <code>Test</code>.<br />
+		Additional subsorting can be configured with <Link class='ENUM' function='ProfileSortOrder' />.
 	</Function>
 	<Function name='GetUserTable' return='table' arguments=''>
 		Returns the user table for this Profile.
@@ -4703,7 +4850,7 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 	</Function>
 	<Function name='GetProfileDir' return='string' arguments='ProfileSlot slot'>
 		Returns the profile directory for the provided <Link class='ENUM' function='ProfileSlot'>ProfileSlot</Link>, formatted like <code>/Save/LocalProfiles/00000001/</code>.<br />
-		Returns an empty string if the the provided <Link class='ENUM' function='ProfileSlot'>ProfileSlot</Link> does not have a <Link class='Profile' /> loaded.
+		Returns an empty string if the provided <Link class='ENUM' function='ProfileSlot'>ProfileSlot</Link> does not have a <Link class='Profile' /> loaded.
 	</Function>
 	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s, ProfileSlot ps'>
 		Returns the number of times Song <code>s</code> has been played with the specified <Link class='ENUM' function='ProfileSlot'>ProfileSlot</Link>.
@@ -4867,6 +5014,10 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 	<Description>
 		This singleton is accessible to Lua via <code>FILEMAN</code>.
 	</Description>
+	<Function name='Copy' return='bool' arguments='string fromPath, string toPath' >
+		Copies a file from <code>fromPath</code> to <code>toPath</code>.
+		Returns <code>true</code> if the file was copied successfully.
+	</Function>
 	<Function name='DoesFileExist' return='bool' arguments='string sPath'>
 		Returns <code>true</code> if a file exists at <code>sPath</code>.
 	</Function>
@@ -4878,6 +5029,12 @@ prev_note_name, succeeded = options:NoteSkin("cel")
 	</Function>
 	<Function name='GetHashForFile' return='int' arguments='string sPath'>
 		Returns the hash of the file at <code>sPath</code>.
+	</Function>
+	<Function name='Unzip' return='bool' arguments='string zipPath, string targetPath, int strip' >
+		Unzips zip file at <code>zipPath</code> to <code>targetPath</code>.<br />
+		<code>strip</code> is optional and defaults to <code>0</code>.
+		If set to a number larger than <code>0</code>, that many components are removed from the paths of the extracted files. e.g. <code>a/b/c</code> is replaced with <code>b/c</code> when stripping one component or just <code>c</code> when stripping two.<br />
+		Returns <code>true</code> if all files were extracted successfully.
 	</Function>
 </Class>
 <Class name='RageInput'>
@@ -5264,17 +5421,6 @@ Details of the <code>event</code> table:
 		Gets the currently selected letter of Player <code>pn</code>.
 	</Function>
 </Class>
-<Class name='ScreenNetEvaluation' grouping='Screen'>
-	<Function name='GetNumActivePlayers' return='int' arguments=''>
-		Returns the number of active players.
-	</Function>
-</Class>
-<Class name='ScreenNetRoom' grouping='Screen'>
-</Class>
-<Class name='ScreenNetSelectBase' grouping='Screen'>
-</Class>
-<Class name='ScreenNetSelectMusic' grouping='Screen'>
-</Class>
 <Class name='ScreenOptions' grouping='Screen'>
 	<Function name='AllAreOnLastRow' return='bool'  arguments=''>
 		Returns <code>true</code> if all active players are on the last options row.
@@ -5282,7 +5428,7 @@ Details of the <code>event</code> table:
 	<Function name='FocusedItemEndsScreen' return='bool'  arguments='PlayerNumber pn'>
 		Returns <code>true</code> if the specified player is on an items that ends the screen.
 	</Function>
-	<Function name='GetCurrentRowIndex' renamed='true' return='int' arguments='PlayerNumber pn'>
+	<Function name='GetCurrentRowIndex' return='int' arguments='PlayerNumber pn'>
 		Returns the current row that player <code>pn</code> is on. (Was previously <code>GetCurrentRow</code>.)
 	</Function>
 	<Function name='GetNumRows' return='int' arguments=''>
@@ -5353,7 +5499,8 @@ Details of the <code>event</code> table:
 		Sets the profile index of Player <code>pn</code> to <code>iProfileIndex</code>.<br />
 		The following values of <code>iProfileIndex</code> have special, hardcoded behavior:<br />
 		• <code>-1</code>: join the player and play the theme's start sound effect<br />
-		• <code>-2</code>: unjoin the player, unlock their MemoryCard, and unmount their MemoryCard
+		• <code>-2</code>: unjoin the player, unlock their MemoryCard, and unmount their MemoryCard<br />
+		• <code>-3</code>: allow the user to play without a local or USB profile (as a guest)
 	</Function>
 </Class>
 <Class name='ScreenTextEntry' grouping='Screen'>
@@ -5684,10 +5831,10 @@ local args = {
 		Returns the extra stage info (Song, Steps) for the specified Style <code>s</code>. If <code>b2ndExtra</code> is true, it will use the second Extra Stage data instead of the first.
 	</Function>
 	<Function name='GetNumAdditionalCourses' return='int' arguments=''>
-		Returns the number of courses loaded via Additional folders.
+		[Deprecated] Always returns <code>0</code>.
 	</Function>
 	<Function name='GetNumAdditionalSongs' return='int' arguments=''>
-		Returns the number of songs loaded via Additional folders.
+		[Deprecated] Always returns <code>0</code>.
 	</Function>
 	<Function name='GetNumCourseGroups' return='int' arguments=''>
 		Returns the number of course groups.
@@ -5752,20 +5899,27 @@ local args = {
 	<Function name='ShortenGroupName' return='string' arguments='string sGroupName'>
 		Returns the shortened group name (based on entries in Translations.xml).
 	</Function>
-	<Function name='SetPreferredCourses' return='void' arguments='string sListName'>
-		Loads preferred courses from <code>{theme}/Other/SongManager sListName.txt</code>.
+	<Function name='SetPreferredCourses' return='void' arguments='string sListName, bool bIsAbsolute'>
+		By default, loads preferred courses from <code>{theme}/Other/SongManager sListName.txt</code>.
+		(New since StepMania 0.6.0) If the optional argument <code>bIsAbsolute</code> is set, instead treats
+		sListName as an absolute path instead of loading it from the Theme's <code>Other</code> directory.
 	</Function>
-	<Function name='SetPreferredSongs' return='void' arguments='string sListName'>
-		Loads preferred songs from <code>{theme}/Other/SongManager sListName.txt</code>.
+	<Function name='SetPreferredSongs' return='void' arguments='string sListName, bool bIsAbsolute'>
+		By default, loads preferred songs from <code>{theme}/Other/SongManager sListName.txt</code>.
+		(New since StepMania 0.6.0) If the optional argument <code>bIsAbsolute</code> is set, instead treats
+		sListName as an absolute path instead of loading it from the Theme's <code>Other</code> directory.
 	</Function>
 	<Function name='SongToPreferredSortSectionName' return='string' arguments='Song s'>
 		Returns the preferred sort section name for the specified Song.
 	</Function>
+	<Function name='GetPreferredSortSongsBySectionName' return='{Song}' arguments='string sSectionName' since='StepMania 0.8.0'>
+		Returns a table containing all songs in the specified preferred sort section.
+	</Function>
 	<Function name='WasLoadedFromAdditionalCourses' return='bool' arguments='Course c'>
-		Returns <code>true</code> if the specified course was loaded from AdditionalCourses.
+		[Deprecated] Always returns <code>false</code>.
 	</Function>
 	<Function name='WasLoadedFromAdditionalSongs' return='bool' arguments='Song s'>
-		Returns <code>true</code> if the specified song was loaded from AdditionalSongs.
+		[Deprecated] Always returns <code>false</code>.
 	</Function>
 </Class>
 <Class name='SongOptions'>
@@ -6164,7 +6318,7 @@ local spr = Def.Sprite{
 		Returns <code>true</code> if this style locks the difficulty for both players.
 	</Function>
 	<Function name='NeedsZoomOutWith2Players' return='bool' arguments=''>
-		Deprecated.  Always returns false.
+		[Deprecated] Always returns <code>false</code>.
 	</Function>
 </Class>
 <Class name='TapNote'>
@@ -6209,7 +6363,7 @@ local spr = Def.Sprite{
 	<Function name='GetHidden' return='bool' arguments=''>
 		Returns true if the Tap Note was judged with a result that would stop it from drawing.
 	</Function>
-	<Function name='GetHeld' return='bool' arguments=''>
+	<Function name='GetHeld' return='bool' arguments='' >
 		Returns whether the input for the Tap Note was ever held during
 		the judgment interval. Useful to distinguish a normal miss from
 		a held miss.
@@ -6239,6 +6393,12 @@ local spr = Def.Sprite{
 	</Function>
 	<Function name='GetActive' return='bool' arguments=''>
 		Returns true if the note was initiated.
+	</Function>
+</Class>
+<Class name='HttpRequestFuture'>
+	<Function name='Cancel' return='void' arguments='' >
+                Cancels the running HTTP request. Does nothing if the request
+                has already completed.
 	</Function>
 </Class>
 <Class name='TextBanner' grouping='Actor'>
@@ -6612,6 +6772,16 @@ local bpms_and_times = timing_data:GetBPMsAndTimes(true)
 		how the song is locked.
 	</Function>
 </Class>
+<Class name='WebSocketHandle'>
+	<Function name='Close' return='void' arguments='' >
+                Closes the WebSocket connection. No further reconnections will be attempted.
+	</Function>
+	<Function name='Send' return='bool' arguments='string data, bool binary' >
+		Sends a message containing <code>data</code>.
+		If the optional <code>binary</code> argument is set to <code>true</code>, the message is marked as binary.<br />
+		Returns whether the message was sent successfully.
+	</Function>
+</Class>
 <Class name='WheelBase'>
 	<Function name='GetCurrentIndex' return='int' arguments=''>
 		Returns the wheel's current index.
@@ -6678,7 +6848,7 @@ GAMESTATE:SetPreferredDifficulty( 0, 3 )
 -- using global Lua tables
 GAMESTATE:SetPreferredDifficulty( PlayerNumber[1], Difficulty[4] )
 </code></pre>
-	These enums can be iterated over using <Link class='GLOBAL' function='ipairs' /> or <Link class='GLOBAL' function='ivalues' />.  This can be handy when you want to perform some action on every value in an enum; for example, displaying a graphic for each Difficulty.
+	It's worth pointing out that, as tables, these enums can be iterated over using <Link class='GLOBAL' function='ipairs' /> or <Link class='GLOBAL' function='ivalues' />.  This can be handy when you want to perform some action on every value in an enum; for example, displaying a graphic for each Difficulty.
 <pre><code>
 -- Difficulty is a global Lua table that corresponds with
 -- the StepMania engine's Difficulty enum
@@ -6689,7 +6859,7 @@ for i, diff in ipairs(Difficulty) do
 	local filename = diff .. ".png"
 
 	-- load files like "Difficulty_Beginner.png",
-	-- "Difficulty_Easy.png", etc. from the directory 
+	-- "Difficulty_Easy.png", etc. from the directory
 	-- where this code is run, and offset each vertically
 	af[#af+1] = LoadActor( filename )..{
 		InitCommand=function(self) self:y( i * 100 ) end
@@ -6705,6 +6875,13 @@ end
 <Enum name='HorizAlign'>
 	<Description>
 		Horizontal alignment. See <Link class='Actor' function='horizalign' />.
+	</Description>
+</Enum>
+<Enum name='ProfileSortOrder'>
+	<Description>
+		Possible values for the <code>ProfileSortOrder</code> preference.  The engine initially sorts profiles based on their <Link class='ENUM' function='ProfileType' />, showing <code>Guest</code> profiles first, then <code>Normal</code>, then <code>Test</code>.  <code>ProfileSortOrder</code> allows additional subsorts to be configured.<br />
+		<code>Priority</code> allows users to manually sort profiles using the <code>Priority=</code> key in each profile's Type.ini file.  New profiles are created with <code>Priority=0</code>.  A profile with <code>Priority=0</code> will appear before any profiles with <code>Priority=1</code> which will appear before any profiles with <code>Priority=2</code> and so on.<br />
+		<code>Recent</code> automatically sorts profiles in the order they are used, with the most recently used profile appearing first.
 	</Description>
 </Enum>
 <Enum name='VertAlign'>

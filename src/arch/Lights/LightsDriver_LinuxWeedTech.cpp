@@ -1,4 +1,5 @@
 #include "global.h"
+#include <cstddef>
 #include <stdio.h>
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
@@ -28,7 +29,7 @@ static inline void SerialClose()
 	fd = -1;
 }
 
-static inline void SerialOut( const char *str, size_t len )
+static inline void SerialOut( const char *str, std::size_t len )
 {
 	if( fd ==-1 )
 		return;
@@ -214,7 +215,7 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 					if(gb == DANCE_BUTTON_LEFT)		{str[0] = 'A'; str[2] = 'M';}
 					if(gb == DANCE_BUTTON_RIGHT)		{str[0] = 'A'; str[2] = 'N';}
 					if(gb == DANCE_BUTTON_UP)			{str[0] = 'B'; str[2] = 'A';}
-					if(gb == DANCE_BUTTON_DOWN)		{str[0] = 'B'; str[2] = 'B';}					
+					if(gb == DANCE_BUTTON_DOWN)		{str[0] = 'B'; str[2] = 'B';}
 					if(gb == GAME_BUTTON_START)		{str[0] = 'A'; str[2] = 'F';}
 				}
 
@@ -234,7 +235,7 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 /*
  * (c) 2003-2004 Kevin Slaughter
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -244,7 +245,7 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

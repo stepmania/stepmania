@@ -18,8 +18,8 @@ public:
 
 	void Load( const RString &sMetricsGroup, bool bLoadCanGos );
 
-	void StopTweening();
-	void BeginTweening( float fSecs );
+	void StopTweening() override;
+	void BeginTweening( float fSecs, TweenType tt = TWEEN_LINEAR ) override;
 	void SetBarWidth( int iWidth );
 	int GetBarWidth() const;
 	void SetCanGo( bool bCanGoLeft, bool bCanGoRight );

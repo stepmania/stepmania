@@ -35,7 +35,7 @@ int RageSoundReader_PostBuffering::Read( float *pBuf, int iFrames )
 	// Square the master so lower volumes are more sensitive.
 	// This lines up better with perceived volume.
 	float fVolume = m_fVolume * g_fMasterVolume * g_fMasterVolume;
-	fVolume = clamp( fVolume, 0, 1 );
+	fVolume = std::clamp( fVolume, 0.0f, 1.0f );
 	g_Mutex.Unlock();
 
 	if( fVolume != 1.0f )

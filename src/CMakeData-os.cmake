@@ -1,6 +1,6 @@
 if(APPLE)
   list(APPEND SMDATA_OS_DARWIN_SRC
-              "archutils/Darwin/Crash.cpp"
+              "archutils/Darwin/Crash.mm"
               "archutils/Darwin/DarwinThreadHelpers.cpp"
               "archutils/Darwin/HIDDevice.cpp"
               "archutils/Darwin/JoystickDevice.cpp"
@@ -8,8 +8,7 @@ if(APPLE)
               "archutils/Darwin/MouseDevice.cpp"
               "archutils/Darwin/PumpDevice.cpp"
               "archutils/Darwin/SMMain.mm"
-              "archutils/Darwin/SpecialDirs.cpp"
-              "archutils/Darwin/VectorHelper.cpp")
+              "archutils/Darwin/SpecialDirs.mm")
   list(APPEND SMDATA_OS_DARWIN_HPP
               "archutils/Darwin/arch_setup.h"
               "archutils/Darwin/Crash.h"
@@ -20,8 +19,7 @@ if(APPLE)
               "archutils/Darwin/MouseDevice.h"
               "archutils/Darwin/PumpDevice.h"
               "archutils/Darwin/SpecialDirs.h"
-              "archutils/Darwin/StepMania.pch" # precompiled header.
-              "archutils/Darwin/VectorHelper.h")
+              "archutils/Darwin/StepMania.pch")
 
   source_group("OS Specific\\\\Darwin"
                FILES
@@ -32,6 +30,13 @@ if(APPLE)
   list(APPEND SMDATA_OS_HPP ${SMDATA_OS_DARWIN_HPP})
 else()
   if(WIN32)
+    configure_file("${SM_SRC_DIR}/archutils/Win32/StepMania.in.manifest"
+                   "${SM_GENERATED_SRC_DIR}/archutils/Win32/StepMania.manifest")
+    configure_file("${SM_SRC_DIR}/archutils/Win32/WindowsResources.in.rc"
+                   "${SM_GENERATED_SRC_DIR}/archutils/Win32/WindowsResources.rc")
+
+    set(CMAKE_RC_STANDARD_INCLUDE_DIRECTORIES "${SM_SRC_DIR}/archutils/Win32")
+
     list(APPEND SMDATA_OS_SRC
                 "archutils/Win32/AppInstance.cpp"
                 "archutils/Win32/arch_setup.cpp"
@@ -56,7 +61,8 @@ else()
                 "archutils/Win32/VideoDriverInfo.cpp"
                 "archutils/Win32/WindowIcon.cpp"
                 "archutils/Win32/WindowsDialogBox.cpp"
-                "archutils/Win32/WindowsResources.rc")
+                "${SM_GENERATED_SRC_DIR}/archutils/Win32/StepMania.manifest"
+                "${SM_GENERATED_SRC_DIR}/archutils/Win32/WindowsResources.rc")
 
     list(APPEND SMDATA_OS_HPP
                 "archutils/Win32/AppInstance.h"
@@ -97,8 +103,7 @@ else()
                 "archutils/Unix/GetSysInfo.h"
                 "archutils/Unix/RunningUnderValgrind.h"
                 "archutils/Unix/SignalHandler.h"
-                "archutils/Unix/SpecialDirs.h"
-                "archutils/Common/gcc_byte_swaps.h")
+                "archutils/Unix/SpecialDirs.h")
     if(X11_FOUND)
       list(APPEND SMDATA_OS_SRC "archutils/Unix/X11Helper.cpp")
       list(APPEND SMDATA_OS_HPP "archutils/Unix/X11Helper.h")

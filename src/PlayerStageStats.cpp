@@ -3,7 +3,6 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "LuaManager.h"
-#include <float.h>
 #include "GameState.h"
 #include "Course.h"
 #include "Steps.h"
@@ -11,6 +10,9 @@
 #include "PrefsManager.h"
 #include "CommonMetrics.h"
 
+#include <cfloat>
+#include <cmath>
+#include <cstddef>
 #include <numeric>
 
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
@@ -126,7 +128,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	const float fOtherLastSecond = other.m_fLastSecond + m_fLastSecond + 1.0f;
 	m_fLastSecond = fOtherLastSecond;
 
-	map<float,float>::const_iterator it;
+	std::map<float, float>::const_iterator it;
 	for( it = other.m_fLifeRecord.begin(); it != other.m_fLifeRecord.end(); ++it )
 	{
 		const float pos = it->first;
@@ -151,7 +153,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 		Combo_t &combo = m_ComboList[i];
 		const float PrevComboEnd = prevcombo.m_fStartSecond + prevcombo.m_fSizeSeconds;
 		const float ThisComboStart = combo.m_fStartSecond;
-		if( fabsf(PrevComboEnd - ThisComboStart) > 0.001 )
+		if( std::abs(PrevComboEnd - ThisComboStart) > 0.001 )
 			continue;
 
 		// These are really the same combo.
@@ -221,21 +223,21 @@ Grade PlayerStageStats::GetGrade() const
 		if( FullComboOfScore(TNS_W2) )
 			return Grade_Tier02;
 
-		grade = max( grade, Grade_Tier03 );
+		grade = std::max( grade, Grade_Tier03 );
 	}
 
 	if( GRADE_TIER01_IS_ALL_W2S )
 	{
 		if( FullComboOfScore(TNS_W2) )
 			return Grade_Tier01;
-		grade = max( grade, Grade_Tier02 );
+		grade = std::max( grade, Grade_Tier02 );
 	}
 
 	if( GRADE_TIER02_IS_FULL_COMBO )
 	{
 		if( FullComboOfScore(g_MinScoreToMaintainCombo) )
 			return Grade_Tier02;
-		grade = max( grade, Grade_Tier03 );
+		grade = std::max( grade, Grade_Tier03 );
 	}
 
 	return grade;
@@ -255,13 +257,13 @@ float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 	float fPercent =  iActual / (float)iPossible;
 
 	// don't allow negative
-	fPercent = max( 0, fPercent );
+	fPercent = std::max(0.0f, fPercent);
 
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
 
 	// TRICKY: printf will round, but we want to truncate. Otherwise, we may display
 	// a percent score that's too high and doesn't match up with the calculated grade.
-	float fTruncInterval = powf( 0.1f, (float)iPercentTotalDigits-1 );
+	float fTruncInterval = std::pow( 0.1f, (float)iPercentTotalDigits-1 );
 
 	// TRICKY: ftruncf is rounding 1.0000000 to 0.99990004. Give a little boost
 	// to fPercentDancePoints to correct for this.
@@ -275,7 +277,7 @@ RString PlayerStageStats::FormatPercentScore( float fPercentDancePoints )
 {
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
 
-	RString s = ssprintf( "%*.*f%%", iPercentTotalDigits, 
+	RString s = ssprintf( "%*.*f%%", iPercentTotalDigits,
 			     (int)CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES,
 			     fPercentDancePoints*100 );
 	return s;
@@ -338,7 +340,7 @@ int PlayerStageStats::GetLessonScoreNeeded() const
 {
 	float fScore = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f,
 		[](float total, Steps const *steps) { return total + steps->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds]; });
-	return lrintf( fScore * LESSON_PASS_THRESHOLD );
+	return std::lrint( fScore * LESSON_PASS_THRESHOLD );
 }
 
 void PlayerStageStats::ResetScoreForLesson()
@@ -366,8 +368,8 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	if( fStepsSecond < 0 )
 		return;
 
-	m_fFirstSecond = min( fStepsSecond, m_fFirstSecond );
-	m_fLastSecond = max( fStepsSecond, m_fLastSecond );
+	m_fFirstSecond = std::min( fStepsSecond, m_fFirstSecond );
+	m_fLastSecond = std::max( fStepsSecond, m_fLastSecond );
 	//LOG->Trace( "fLastSecond = %f", m_fLastSecond );
 
 	// fStepsSecond will usually be greater than any value already in the map,
@@ -380,7 +382,7 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	// entry.  Then the second call of the frame occurs and sets the life for
 	// the current time to a lower value.
 	// -Kyz
-	map<float,float>::iterator curr= m_fLifeRecord.find(fStepsSecond);
+	std::map<float, float>::iterator curr= m_fLifeRecord.find(fStepsSecond);
 	if(curr != m_fLifeRecord.end())
 	{
 		if(curr->second != fLife)
@@ -391,27 +393,27 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	}
 	m_fLifeRecord[fStepsSecond] = fLife;
 
-	Message msg(static_cast<MessageID>(Message_LifeMeterChangedP1+m_player_number));
+	Message msg(static_cast<MessageID>(Message_LifeMeterChangedP1+Enum::to_integral(m_player_number)));
 	msg.SetParam("Life", fLife);
 	msg.SetParam("StepsSecond", fStepsSecond);
 	MESSAGEMAN->Broadcast(msg);
 
 	// Memory optimization:
 	// If we have three consecutive records A, B, and C all with the same fLife,
-	// we can eliminate record B without losing data. Only check the last three 
-	// records in the map since we're only inserting at the end, and we know all 
+	// we can eliminate record B without losing data. Only check the last three
+	// records in the map since we're only inserting at the end, and we know all
 	// earlier redundant records have already been removed.
-	map<float,float>::iterator C = m_fLifeRecord.end();
+	std::map<float, float>::iterator C = m_fLifeRecord.end();
 	--C;
 	if( C == m_fLifeRecord.begin() ) // no earlier records left
 		return;
 
-	map<float,float>::iterator B = C;
+	std::map<float, float>::iterator B = C;
 	--B;
 	if( B == m_fLifeRecord.begin() ) // no earlier records left
 		return;
 
-	map<float,float>::iterator A = B;
+	std::map<float, float>::iterator A = B;
 	--A;
 
 	if( A->second == B->second && B->second == C->second )
@@ -424,7 +426,7 @@ float PlayerStageStats::GetLifeRecordAt( float fStepsSecond ) const
 		return 0;
 
 	// Find the first element whose key is greater than k.
-	map<float,float>::const_iterator it = m_fLifeRecord.upper_bound( fStepsSecond );
+	std::map<float, float>::const_iterator it = m_fLifeRecord.upper_bound( fStepsSecond );
 
 	// Find the last element whose key is less than or equal to k.
 	if( it != m_fLifeRecord.begin() )
@@ -440,10 +442,10 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fStepsSecond ) const
 		return 0;
 
 	// Find the first element whose key is greater than k.
-	map<float,float>::const_iterator later = m_fLifeRecord.upper_bound( fStepsSecond );
+	std::map<float, float>::const_iterator later = m_fLifeRecord.upper_bound( fStepsSecond );
 
 	// Find the last element whose key is less than or equal to k.
-	map<float,float>::const_iterator earlier = later;
+	std::map<float, float>::const_iterator earlier = later;
 	if( earlier != m_fLifeRecord.begin() )
 		--earlier;
 
@@ -470,8 +472,8 @@ float PlayerStageStats::GetCurrentLife() const
 {
 	if( m_fLifeRecord.empty() )
 		return 0;
-	map<float,float>::const_iterator iter = m_fLifeRecord.end();
-	--iter; 
+	std::map<float, float>::const_iterator iter = m_fLifeRecord.end();
+	--iter;
 	return iter->second;
 }
 
@@ -488,8 +490,8 @@ void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 
 	if( !bRollover )
 	{
-		m_fFirstSecond = min( fSecond, m_fFirstSecond );
-		m_fLastSecond = max( fSecond, m_fLastSecond );
+		m_fFirstSecond = std::min( fSecond, m_fFirstSecond );
+		m_fLastSecond = std::max( fSecond, m_fLastSecond );
 		//LOG->Trace( "fLastSecond = %f", fLastSecond );
 	}
 
@@ -557,7 +559,7 @@ bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) con
 {
 	ASSERT( tnsAllGreaterOrEqual >= TNS_W5 );
 	ASSERT( tnsAllGreaterOrEqual <= TNS_W1 );
-   
+
   //if we've set MissCombo to anything besides 0, it's not a full combo
   if( !m_bPlayerCanAchieveFullCombo )
     return false;
@@ -644,7 +646,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	if( bGaveUp || bUsedAutoplay )
 		return;
 
-	deque<StageAward> &vPdas = GAMESTATE->m_vLastStageAwards[p];
+	std::deque<StageAward> &vPdas = GAMESTATE->m_vLastStageAwards[p];
 
 	//LOG->Trace( "per difficulty awards" );
 
@@ -724,7 +726,7 @@ LuaFunction( FormatPercentScore,	PlayerStageStats::FormatPercentScore( FArg(1) )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PlayerStageStats. */ 
+/** @brief Allow Lua to have access to the PlayerStageStats. */
 class LunaPlayerStageStats: public Luna<PlayerStageStats>
 {
 public:
@@ -771,7 +773,7 @@ public:
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
 		lua_newtable(L);
-		for( int i = 0; i < (int) min(p->m_iStepsPlayed, (int) p->m_vpPossibleSteps.size()); ++i )
+		for( int i = 0; i < (int) std::min(p->m_iStepsPlayed, (int) p->m_vpPossibleSteps.size()); ++i )
 		{
 			p->m_vpPossibleSteps[i]->PushSelf(L);
 			lua_rawseti( L, -2, i+1 );
@@ -791,7 +793,7 @@ public:
 	static int GetComboList( T* p, lua_State *L )
 	{
 		lua_createtable(L, p->m_ComboList.size(), 0);
-		for( size_t i= 0; i < p->m_ComboList.size(); ++i)
+		for( std::size_t i= 0; i < p->m_ComboList.size(); ++i)
 		{
 			lua_createtable(L, 0, 6);
 			lua_pushstring(L, "StartSecond");
@@ -843,13 +845,13 @@ public:
 
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
-	static int SetScore( T* p, lua_State *L )                
-	{ 
+	static int SetScore( T* p, lua_State *L )
+	{
 		if( IArg(1) >= 0 )
-		{ 
-			p->m_iScore = IArg(1); 
-			return 1; 
-		} 
+		{
+			p->m_iScore = IArg(1);
+			return 1;
+		}
 		COMMON_RETURN_SELF;
 	}
 	static int SetCurMaxScore( T* p, lua_State *L )
@@ -880,7 +882,7 @@ public:
 		}
 		COMMON_RETURN_SELF;
 	}
-  
+
 	static int FailPlayer( T* p, lua_State *L )
 	{
 		p->m_bFailed = true;
@@ -943,7 +945,7 @@ LUA_REGISTER_CLASS( PlayerStageStats )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -953,7 +955,7 @@ LUA_REGISTER_CLASS( PlayerStageStats )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

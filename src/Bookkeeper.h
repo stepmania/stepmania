@@ -58,10 +58,10 @@ private:
 		bool operator<( const Date &rhs ) const;
 	};
 	int GetNumCoins( Date beginning, Date ending ) const;
-	int GetNumCoinsInRange( map<Date,int>::const_iterator begin, map<Date,int>::const_iterator end ) const;
+	int GetNumCoinsInRange( std::map<Date,int>::const_iterator begin, std::map<Date,int>::const_iterator end ) const;
 
 	int m_iLastSeenTime;
-	map<Date,int> m_mapCoinsForHour;
+	std::map<Date,int> m_mapCoinsForHour;
 };
 
 extern Bookkeeper*	BOOKKEEPER;	// global and accessible from anywhere in our program

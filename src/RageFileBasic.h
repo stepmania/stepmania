@@ -5,6 +5,9 @@
 
 #include "global.h"
 
+#include <cstddef>
+#include <cstdint>
+
 /* This is a simple file I/O interface.  Although most of these operations
  * are straightforward, there are several of them; most of the time, you'll
  * only want to implement RageFileObj. */
@@ -28,14 +31,14 @@ public:
 	 * 0 on end of stream, or -1 on error.  Note that reading less than iSize
 	 * does not necessarily mean that the end of the stream has been reached;
 	 * keep reading until 0 is returned. */
-	virtual int Read( void *pBuffer, size_t iBytes ) = 0;
+	virtual int Read( void *pBuffer, std::size_t iBytes ) = 0;
 	virtual int Read( RString &buffer, int bytes = -1 ) = 0;
-	virtual int Read( void *buffer, size_t bytes, int nmemb ) = 0;
+	virtual int Read( void *buffer, std::size_t bytes, int nmemb ) = 0;
 
 	/* Write iSize bytes of data from pBuf.  Return 0 on success, -1 on error. */
-	virtual int Write( const void *pBuffer, size_t iBytes ) = 0;
+	virtual int Write( const void *pBuffer, std::size_t iBytes ) = 0;
 	virtual int Write( const RString &sString ) = 0;
-	virtual int Write( const void *buffer, size_t bytes, int nmemb ) = 0;
+	virtual int Write( const void *buffer, std::size_t bytes, int nmemb ) = 0;
 
 	/* Due to buffering, writing may not happen by the end of a Write() call, so not
 	 * all errors may be returned by it.  Data will be flushed when the stream (or its
@@ -52,7 +55,7 @@ public:
 	virtual int PutLine( const RString &str ) = 0;
 
 	virtual void EnableCRC32( bool on=true ) = 0;
-	virtual bool GetCRC32( uint32_t *iRet ) = 0;
+	virtual bool GetCRC32( std::uint32_t *iRet ) = 0;
 
 	virtual int GetFileSize() const = 0;
 
@@ -71,20 +74,20 @@ public:
 
 	virtual RString GetError() const { return m_sError; }
 	virtual void ClearError() { SetError(""); }
-	
+
 	bool AtEOF() const { return m_bEOF; }
 
 	int Seek( int iOffset );
 	int Seek( int offset, int whence );
 	int Tell() const { return m_iFilePos; }
 
-	int Read( void *pBuffer, size_t iBytes );
+	int Read( void *pBuffer, std::size_t iBytes );
 	int Read( RString &buffer, int bytes = -1 );
-	int Read( void *buffer, size_t bytes, int nmemb );
+	int Read( void *buffer, std::size_t bytes, int nmemb );
 
-	int Write( const void *pBuffer, size_t iBytes );
+	int Write( const void *pBuffer, std::size_t iBytes );
 	int Write( const RString &sString ) { return Write( sString.data(), sString.size() ); }
-	int Write( const void *buffer, size_t bytes, int nmemb );
+	int Write( const void *buffer, std::size_t bytes, int nmemb );
 
 	int Flush();
 
@@ -92,7 +95,7 @@ public:
 	int PutLine( const RString &str );
 
 	void EnableCRC32( bool on=true );
-	bool GetCRC32( uint32_t *iRet );
+	bool GetCRC32( std::uint32_t *iRet );
 
 	virtual int GetFileSize() const = 0;
 	virtual int GetFD() { return -1; }
@@ -101,8 +104,8 @@ public:
 
 protected:
 	virtual int SeekInternal( int /* iOffset */ ) { FAIL_M( "Seeking unimplemented" ); }
-	virtual int ReadInternal( void *pBuffer, size_t iBytes ) = 0;
-	virtual int WriteInternal( const void *pBuffer, size_t iBytes ) = 0;
+	virtual int ReadInternal( void *pBuffer, std::size_t iBytes ) = 0;
+	virtual int WriteInternal( const void *pBuffer, std::size_t iBytes ) = 0;
 	virtual int FlushInternal() { return 0; }
 
 	void EnableReadBuffering();
@@ -153,8 +156,8 @@ private:
 	 * This is only meaningful if EnableCRC32() is called at the very start of the
 	 * file, and no seeking is performed. */
 	bool m_bCRC32Enabled;
-	uint32_t m_iCRC32;
-	
+	std::uint32_t m_iCRC32;
+
 	// Swallow up warnings. If they must be used, define them.
 	RageFileObj& operator=(const RageFileObj& rhs);
 };

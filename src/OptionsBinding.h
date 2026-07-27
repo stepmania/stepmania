@@ -5,6 +5,9 @@
 
 #ifndef OptionsBinding_H
 #define OptionsBinding_H
+
+#include <cstddef>
+
 	// Functions are designed to combine Get and Set into one, to be less clumsy to use. -Kyz
 	// If a valid arg is passed, the value is set.
 	// The previous value is returned.
@@ -103,19 +106,19 @@
 	{ \
 		int original_top= lua_gettop(L); \
 		lua_createtable(L, p->m_ ## member.size(), 0); \
-		for(size_t n= 0; n < p->m_ ## member.size(); ++n) \
+		for(std::size_t n= 0; n < p->m_ ## member.size(); ++n) \
 		{ \
 			lua_pushnumber(L, p->m_ ## member[n]); \
 			lua_rawseti(L, -2, n+1); \
 		} \
 		if(lua_istable(L, 1) && original_top >= 1) \
 		{ \
-			size_t size= lua_objlen(L, 1); \
+			std::size_t size= lua_objlen(L, 1); \
 			if(valid(L, 1)) \
 			{ \
 				p->m_ ## member.clear(); \
 				p->m_ ## member.reserve(size); \
-				for(size_t n= 1; n <= size; ++n) \
+				for(std::size_t n= 1; n <= size; ++n) \
 				{ \
 					lua_pushnumber(L, n); \
 					lua_gettable(L, 1); \
@@ -134,7 +137,7 @@
 /*
  * (c) 2014 Eric Reese
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -144,7 +147,7 @@
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -3,6 +3,8 @@
 #ifndef RAGE_DISPLAY_NULL_H
 #define RAGE_DISPLAY_NULL_H
 
+#include <cstdint>
+
 class RageDisplay_Null: public RageDisplay
 {
 public:
@@ -19,19 +21,19 @@ public:
 	void SetBlendMode( BlendMode ) { }
 	bool SupportsTextureFormat( RagePixelFormat, bool /* realtime */ =false ) { return true; }
 	bool SupportsPerVertexMatrixScale() { return false; }
-	uintptr_t CreateTexture(
+	std::uintptr_t CreateTexture(
 		RagePixelFormat,
 		RageSurface* /* img */,
 		bool /* bGenerateMipMaps */ ) { return 1; }
 	void UpdateTexture(
-		uintptr_t /* iTexHandle */,
+		std::uintptr_t /* iTexHandle */,
 		RageSurface* /* img */,
 		int /* xoffset */, int /* yoffset */, int /* width */, int /* height */
 		) { }
-	void DeleteTexture( uintptr_t /* iTexHandle */ ) { }
+	void DeleteTexture( std::uintptr_t /* iTexHandle */ ) { }
 	void ClearAllTextures() { }
 	int GetNumTextureUnits() { return 1; }
-	void SetTexture( TextureUnit, uintptr_t /* iTexture */ ) { }
+	void SetTexture( TextureUnit, std::uintptr_t /* iTexture */ ) { }
 	void SetTextureMode( TextureUnit, TextureMode ) { }
 	void SetTextureWrapping( TextureUnit, bool ) { }
 	int GetMaxTextureSize() const { return 2048; }
@@ -53,11 +55,11 @@ public:
 		) { }
 	void SetLighting( bool ) { }
 	void SetLightOff( int /* index */ ) { }
-	void SetLightDirectional( 
-		int /* index */, 
-		const RageColor & /* unreferenced: ambient */, 
-		const RageColor & /* unreferenced: diffuse */, 
-		const RageColor & /* unreferenced: specular */, 
+	void SetLightDirectional(
+		int /* index */,
+		const RageColor & /* unreferenced: ambient */,
+		const RageColor & /* unreferenced: diffuse */,
+		const RageColor & /* unreferenced: specular */,
 		const RageVector3 & /* unreferenced: dir */ ) { }
 
 	void SetSphereEnvironmentMapping( TextureUnit /* tu */, bool /* b */ ) { }
@@ -79,7 +81,7 @@ protected:
 	VideoModeParams m_Params;
 	RString TryVideoMode( const VideoModeParams &p, bool & /* bNewDeviceOut */ ) { m_Params = p; return RString(); }
 	RageSurface* CreateScreenshot();
-	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
+	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf );
 	bool SupportsSurfaceFormat( RagePixelFormat ) { return true; }
 };
 

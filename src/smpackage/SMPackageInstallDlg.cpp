@@ -20,6 +20,8 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageFileDriverDirect.h"
 
+#include <vector>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -70,16 +72,16 @@ static bool CompareStringNoCase( const RString &s1, const RString &s2 )
 	return s1.CompareNoCase( s2 ) < 0;
 }
 
-void GetSmzipFilesToExtract( RageFileDriver &zip, vector<RString> &vsOut )
+void GetSmzipFilesToExtract( RageFileDriver &zip, std::vector<RString> &vsOut )
 {
 	GetDirListingRecursive( &zip, "/", "*", vsOut );
-	SMPackageUtil::StripIgnoredSmzipFiles( vsOut );	
+	SMPackageUtil::StripIgnoredSmzipFiles( vsOut );
 }
 
 
 static LocalizedString COULD_NOT_OPEN_FILE		( "CSMPackageInstallDlg", "Could not open file '%s'." );
 static LocalizedString IS_NOT_A_VALID_ZIP		( "CSMPackageInstallDlg", "'%s' is not a valid zip archive." );
-BOOL CSMPackageInstallDlg::OnInitDialog() 
+BOOL CSMPackageInstallDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -119,7 +121,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	// Set the text of the second Edit box
 	//
 	{
-		vector<RString> vs;
+		std::vector<RString> vs;
 		GetSmzipFilesToExtract( zip, vs );
 		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
 		RString sText = "\t" + join( "\r\n\t", vs );
@@ -134,7 +136,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 }
 
 
-void CSMPackageInstallDlg::OnPaint() 
+void CSMPackageInstallDlg::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -183,7 +185,7 @@ static bool CheckPackages( RageFileDriverZip &fileDriver )
 	int cnt = 0;
 	ini.GetValue( "Packages", "NumPackages", cnt );
 
-	vector<RString> vsDirectories;
+	std::vector<RString> vsDirectories;
 	for( int i = 0; i < cnt; ++i )
 	{
 		RString path;
@@ -196,7 +198,7 @@ static bool CheckPackages( RageFileDriverZip &fileDriver )
 
 		if( !SMPackageUtil::IsValidPackageDirectory(path) )
 			continue;
-		
+
 		vsDirectories.push_back(path);
 	}
 
@@ -238,7 +240,7 @@ static LocalizedString ERROR_OPENING_SOURCE_FILE	("CSMPackageInstallDlg", "Error
 static LocalizedString ERROR_OPENING_DESTINATION_FILE	("CSMPackageInstallDlg", "Error opening destination file '%s': %s");
 static LocalizedString ERROR_COPYING_FILE		("CSMPackageInstallDlg", "Error copying file '%s': %s");
 static LocalizedString PACKAGE_INSTALLED_SUCCESSFULLY	("CSMPackageInstallDlg","Package installed successfully!");
-void CSMPackageInstallDlg::OnOK() 
+void CSMPackageInstallDlg::OnOK()
 {
 	// TODO: Add extra validation here
 
@@ -305,7 +307,7 @@ void CSMPackageInstallDlg::OnOK()
 
 
 	// Unzip the SMzip package into the installation folder
-	vector<RString> vs;
+	std::vector<RString> vs;
 	GetSmzipFilesToExtract( zip, vs );
 	for( unsigned i=0; i<vs.size(); i++ )
 	{
@@ -395,7 +397,7 @@ show_error:
 }
 
 
-void CSMPackageInstallDlg::OnButtonEdit() 
+void CSMPackageInstallDlg::OnButtonEdit()
 {
 	// TODO: Add your control notification handler code here
 	EditInsallations dlg;
@@ -407,11 +409,11 @@ void CSMPackageInstallDlg::OnButtonEdit()
 }
 
 
-void CSMPackageInstallDlg::RefreshInstallationList() 
+void CSMPackageInstallDlg::RefreshInstallationList()
 {
 	m_comboDir.ResetContent();
 
-	vector<RString> asInstallDirs;
+	std::vector<RString> asInstallDirs;
 	SMPackageUtil::GetGameInstallDirs( asInstallDirs );
 	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 		m_comboDir.AddString( asInstallDirs[i] );
@@ -427,7 +429,7 @@ HBRUSH CSMPackageInstallDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	{
 	case IDC_STATIC_HEADER_TEXT:
 	case IDC_STATIC_ICON:
-		hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+		hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH);
 		pDC->SetBkMode(OPAQUE);
 		pDC->SetBkColor( RGB(255,255,255) );
 		break;
@@ -440,7 +442,7 @@ HBRUSH CSMPackageInstallDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 /*
  * (c) 2002-2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -450,7 +452,7 @@ HBRUSH CSMPackageInstallDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

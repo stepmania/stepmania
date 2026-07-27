@@ -30,7 +30,7 @@
 
 - (void)sendEvent:(NSEvent *)event
 {
-	if( [event type] == NSKeyDown )
+	if( [event type] == NSEventTypeKeyDown )
 		[[self mainMenu] performKeyEquivalent:event];
 	else
 		[super sendEvent:event];
@@ -172,7 +172,7 @@ static void SetupMenus( void )
 	NSMenu *windowMenu = [[[NSMenu alloc] initWithTitle:sWindow] autorelease];
 	NSMenuItem *hideOthers = MenuItem( sHideOthers, @selector(hideOtherApplications:), @"h" );
 
-	[hideOthers setKeyEquivalentModifierMask:NSAlternateKeyMask | NSCommandKeyMask ];
+	[hideOthers setKeyEquivalentModifierMask:NSEventModifierFlagOption | NSEventModifierFlagCommand ];
 
 	[appMenu addItem:MenuItem( sAbout, @selector(orderFrontStandardAboutPanel:), @"" )];
 	[appMenu addItem:[NSMenuItem separatorItem]];
@@ -188,7 +188,7 @@ static void SetupMenus( void )
 	// Add a Full Screen item.
 	NSMenuItem *item = MenuItem( sEnterFullScreen, @selector(fullscreen:), @"\n" );
 
-	[item setKeyEquivalentModifierMask:NSAlternateKeyMask]; // opt-enter
+	[item setKeyEquivalentModifierMask:NSEventModifierFlagOption]; // opt-enter
 	[windowMenu addItem:item];
 
 	[[mainMenu addItemWithTitle:[appMenu title] action:nil keyEquivalent:@""] setSubmenu:appMenu];

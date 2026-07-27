@@ -2,6 +2,10 @@
 #define RAGE_SOUND_READER_MERGE
 
 #include "RageSoundReader.h"
+
+#include <vector>
+
+
 /** @brief Chain different sounds together. */
 class RageSoundReader_Merge: public RageSoundReader
 {
@@ -25,7 +29,7 @@ public:
 	void AddSound( RageSoundReader *pSound );
 
 	/**
-	 * @brief Finish adding sounds. 
+	 * @brief Finish adding sounds.
 	 * @param iPreferredSampleRate the sample rate for the sounds. */
 	void Finish( int iPreferredSampleRate );
 
@@ -35,7 +39,7 @@ private:
 	int m_iSampleRate;
 	unsigned m_iChannels;
 
-	vector<RageSoundReader *> m_aSounds;
+	std::vector<RageSoundReader *> m_aSounds;
 
 	/* Read state: */
 	int m_iNextSourceFrame;

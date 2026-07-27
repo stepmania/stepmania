@@ -4,6 +4,10 @@
 #include "ScreenWithMenuElements.h"
 #include "GameCommand.h"
 #include "ThemeMetric.h"
+
+#include <vector>
+
+
 /** @brief Base class for Style, Difficulty, and Mode selection screens. */
 class ScreenSelect : public ScreenWithMenuElements
 {
@@ -27,9 +31,9 @@ protected:
 	 * @brief The game commands available.
 	 *
 	 * Derived classes should look here for the choices. */
-	vector<GameCommand>	m_aGameCommands;
+	std::vector<GameCommand>	m_aGameCommands;
 
-	vector<RString>		m_asSubscribedMessages;
+	std::vector<RString>		m_asSubscribedMessages;
 
 	/** @brief Count up to the time between idle comment announcer sounds. */
 	RageTimer		m_timerIdleComment;
@@ -48,7 +52,7 @@ protected:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -58,7 +62,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

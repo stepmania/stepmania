@@ -5,6 +5,9 @@
 
 #include "EnumHelper.h"
 
+#include <array>
+#include <cstdint>
+
 enum BlendMode
 {
 	BLEND_NORMAL,
@@ -104,25 +107,25 @@ public:
 	RageVector2(): x(0), y(0) {}
 	RageVector2( const float * f ): x(f[0]), y(f[1]) {}
 	RageVector2( float x1, float y1 ): x(x1), y(y1) {}
-	
+
 	// casting
 	operator float* ()			{ return &x; };
 	operator const float* () const		{ return &x; };
-	
+
 	// assignment operators
 	RageVector2& operator += ( const RageVector2& other )	{ x+=other.x; y+=other.y; return *this; }
 	RageVector2& operator -= ( const RageVector2& other )	{ x-=other.x; y-=other.y; return *this; }
 	RageVector2& operator *= ( float f )			{ x*=f; y*=f; return *this; }
 	RageVector2& operator /= ( float f )			{ x/=f; y/=f; return *this; }
-	
+
 	// binary operators
 	RageVector2 operator + ( const RageVector2& other ) const	{ return RageVector2( x+other.x, y+other.y ); }
 	RageVector2 operator - ( const RageVector2& other ) const	{ return RageVector2( x-other.x, y-other.y ); }
 	RageVector2 operator * ( float f ) const			{ return RageVector2( x*f, y*f ); }
 	RageVector2 operator / ( float f ) const			{ return RageVector2( x/f, y/f ); }
-	
+
 	friend RageVector2 operator * ( float f, const RageVector2& other )	{ return other*f; }
-	
+
 	float x, y;
 };
 
@@ -133,25 +136,25 @@ public:
 	RageVector3(): x(0), y(0), z(0) {}
 	RageVector3( const float * f ):	x(f[0]), y(f[1]), z(f[2]) {}
 	RageVector3( float x1, float y1, float z1 ): x(x1), y(y1), z(z1) {}
-	
+
 	// casting
 	operator float* ()				{ return &x; };
 	operator const float* () const			{ return &x; };
-	
+
 	// assignment operators
 	RageVector3& operator += ( const RageVector3& other )	{ x+=other.x; y+=other.y; z+=other.z; return *this; }
 	RageVector3& operator -= ( const RageVector3& other )	{ x-=other.x; y-=other.y; z-=other.z; return *this; }
 	RageVector3& operator *= ( float f )			{ x*=f; y*=f; z*=f; return *this; }
 	RageVector3& operator /= ( float f )			{ x/=f; y/=f; z/=f; return *this; }
-	
+
 	// binary operators
 	RageVector3 operator + ( const RageVector3& other ) const	{ return RageVector3( x+other.x, y+other.y, z+other.z ); }
 	RageVector3 operator - ( const RageVector3& other ) const	{ return RageVector3( x-other.x, y-other.y, z-other.z ); }
 	RageVector3 operator * ( float f ) const			{ return RageVector3( x*f, y*f, z*f ); }
 	RageVector3 operator / ( float f ) const			{ return RageVector3( x/f, y/f, z/f ); }
-	
+
 	friend RageVector3 operator * ( float f, const RageVector3& other )	{ return other*f; }
-	
+
 	float x, y, z;
 };
 
@@ -162,25 +165,25 @@ public:
 	RageVector4(): x(0), y(0), z(0), w(0) {}
 	RageVector4( const float * f ): x(f[0]), y(f[1]), z(f[2]), w(f[3]) {}
 	RageVector4( float x1, float y1, float z1, float w1 ): x(x1), y(y1), z(z1), w(w1) {}
-	
+
 	// casting
 	operator float* ()					{ return &x; };
 	operator const float* () const				{ return &x; };
-	
+
 	// assignment operators
 	RageVector4& operator += ( const RageVector4& other )	{ x+=other.x; y+=other.y; z+=other.z; w+=other.w; return *this; }
 	RageVector4& operator -= ( const RageVector4& other )	{ x-=other.x; y-=other.y; z-=other.z; w-=other.w; return *this; }
 	RageVector4& operator *= ( float f )			{ x*=f; y*=f; z*=f; w*=f; return *this; }
 	RageVector4& operator /= ( float f )			{ x/=f; y/=f; z/=f; w/=f; return *this; }
-	
+
 	// binary operators
 	RageVector4 operator + ( const RageVector4& other ) const	{ return RageVector4( x+other.x, y+other.y, z+other.z, w+other.w ); }
 	RageVector4 operator - ( const RageVector4& other ) const	{ return RageVector4( x-other.x, y-other.y, z-other.z, w-other.w ); }
 	RageVector4 operator * ( float f ) const			{ return RageVector4( x*f, y*f, z*f, w*f ); }
 	RageVector4 operator / ( float f ) const			{ return RageVector4( x/f, y/f, z/f, w/f ); }
-	
+
 	friend RageVector4 operator * ( float f, const RageVector4& other )	{ return other*f; }
-	
+
 	float x, y, z, w;
 };
 
@@ -190,11 +193,19 @@ public:
 	RageColor(): r(0), g(0), b(0), a(0) {}
 	explicit RageColor( const float * f ): r(f[0]), g(f[1]), b(f[2]), a(f[3]) {}
 	RageColor( float r1, float g1, float b1, float a1 ): r(r1), g(g1), b(b1), a(a1) {}
-	
+
+	RageColor& operator=( const RageVector4& rv4 ) {
+		r = rv4.x;
+		g = rv4.y;
+		b = rv4.z;
+		a = rv4.w;
+		return *this;
+	}
+
 	// casting
 	operator float* ()					{ return &r; };
 	operator const float* () const				{ return &r; };
-	
+
 	// assignment operators
 	RageColor& operator += ( const RageColor& other )	{ r+=other.r; g+=other.g; b+=other.b; a+=other.a; return *this; }
 	RageColor& operator -= ( const RageColor& other )	{ r-=other.r; g-=other.g; b-=other.b; a-=other.a; return *this; }
@@ -203,7 +214,7 @@ public:
 	/* Divide is rarely useful: you can always use multiplication, and you don't have to
 		* worry about div/0. */
 	//    RageColor& operator /= ( float f )		{ r/=f; g/=f; b/=f; a/=f; return *this; }
-	
+
 	// binary operators
 	RageColor operator + ( const RageColor& other ) const	{ return RageColor( r+other.r, g+other.g, b+other.b, a+other.a ); }
 	RageColor operator - ( const RageColor& other ) const	{ return RageColor( r-other.r, g-other.g, b-other.b, a-other.a ); }
@@ -211,12 +222,12 @@ public:
 	RageColor operator * ( float f ) const			{ return RageColor( r*f, g*f, b*f, a*f ); }
 	// Divide is useful for using with the SCALE macro
 	RageColor operator / ( float f ) const			{ return RageColor( r/f, g/f, b/f, a/f ); }
-	
+
 	friend RageColor operator * ( float f, const RageColor& other )	{ return other*f; } // What is this for?  Did I add this?  -Chris
-	
+
 	bool operator == ( const RageColor& other ) const	{ return r==other.r && g==other.g && b==other.b && a==other.a; }
 	bool operator != ( const RageColor& other ) const	{ return !operator==(other); }
-	
+
 	bool FromString( const RString &str )
 	{
 		int result = sscanf( str, "%f,%f,%f,%f", &r, &g, &b, &a );
@@ -227,8 +238,8 @@ public:
 		}
 		if( result == 4 )
 			return true;
-		
-		int ir=255, ib=255, ig=255, ia=255;
+
+		unsigned int ir=255, ib=255, ig=255, ia=255;
 		result = sscanf( str, "#%2x%2x%2x%2x", &ir, &ig, &ib, &ia );
 		if( result >= 3 )
 		{
@@ -239,7 +250,7 @@ public:
 				a = 1;
 			return true;
 		}
-		
+
 		r=1; b=1; g=1; a=1;
 		return false;
 	}
@@ -264,53 +275,22 @@ public:
  *
  * should output the same value (+-1) 256 times.  If this function is
  * incorrect, the first and/or last values may be biased. */
-#ifdef CPU_AARCH64
 inline unsigned char FTOC(float a)
 {
-	const float v = a < 0.0f ? 0.0f : (a > 1.0f ? 1.0f : a);
-	return static_cast<unsigned char>(v * 255.0f);
+	int value = static_cast<int>(a * 256.0f);
+	return static_cast<unsigned char>(std::clamp(value, 0, 255));
 }
-#else
-inline unsigned char FTOC(float a)
-{
-	//This value is 2^52 * 1.5.
-	const double INT_MANTISSA = 6755399441055744.0;
-
-	/* Be sure to truncate (not round) positive values. The highest value that
-	* should be converted to 1 is roughly(1 / 256 - 0.00001); if we don't
-	* truncate, values up to (1/256 + 0.5) will be converted to 1, which is
-	* wrong. */
-	double base = double(a * 256.f - 0.5f);
-
-	/* INT_MANTISSA is chosen such that, when added to a sufficiently small
-	* double, the mantissa bits of that double can be reinterpreted as that
-	* number rounded to an integer. This is done to improve performance. */
-	base += INT_MANTISSA;
-	int ret = reinterpret_cast<int&>(base);
-
-	/* Benchmarking shows that clamping here, as integers, is much faster than clamping
-	* before the conversion, as floats. */
-	if (ret < 0) {
-		return 0;
-	}
-	if (ret > 255) {
-		return 255;
-	}
-
-	return static_cast<unsigned char>(ret);
-}
-#endif
 
 /* Color type used only in vertex lists.  OpenGL expects colors in
  * r, g, b, a order, independent of endianness, so storing them this
  * way avoids endianness problems.  Don't try to manipulate this; only
  * manip RageColors. */
-/* Perhaps the math in RageColor could be moved to RageVColor.  We don't need the 
+/* Perhaps the math in RageColor could be moved to RageVColor.  We don't need the
  * precision of a float for our calculations anyway.   -Chris */
 class RageVColor
 {
 public:
-	uint8_t b,g,r,a;	// specific ordering required by Direct3D
+	std::uint8_t b,g,r,a;	// specific ordering required by Direct3D
 
 	RageVColor(): b(0), g(0), r(0), a(0) { }
 	RageVColor(const RageColor &rc): b(0), g(0), r(0), a(0) { *this = rc; }
@@ -329,12 +309,12 @@ namespace StepMania
 public:
 		Rect(): left(0), top(0), right(0), bottom(0) {}
 		Rect(T l, T t, T r, T b): left(l), top(t), right(r), bottom(b) {}
-		
+
 		T GetWidth() const	{ return right-left; };
 		T GetHeight() const	{ return bottom-top;  };
 		T GetCenterX() const	{ return (left+right)/2; };
 		T GetCenterY() const	{ return (top+bottom)/2; };
-		
+
 		bool operator==( const Rect &other ) const
 		{
 #define COMPARE( x )	if( x != other.x ) return false
@@ -346,14 +326,14 @@ public:
 			return true;
 		}
 		bool operator!=( const Rect &other ) const { return !operator==(other); }
-		
+
 		T left, top, right, bottom;
 	};
 }
 typedef StepMania::Rect<int> RectI;
 typedef StepMania::Rect<float> RectF;
 
-/* Structure for our custom vertex type.  Note that these data structes 
+/* Structure for our custom vertex type.  Note that these data structes
  * have the same layout that D3D expects. */
 struct RageSpriteVertex	// has color
 {
@@ -380,7 +360,7 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
 	RageVector3 p;	// position
 	RageVector3 n;	// normal
 	RageVector2 t;	// texture coordinates
-	int8_t      bone;
+	std::int8_t bone;
 	RageVector2 TextureMatrixScale; // usually 1,1
 };
 
@@ -394,9 +374,8 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
 struct RageMatrix
 {
 public:
-	RageMatrix() {};
+	RageMatrix() = default;
 	RageMatrix( const float *f )	{ for(int i=0; i<4; i++) for(int j=0; j<4; j++) m[j][i]=f[j*4+i]; }
-	RageMatrix( const RageMatrix& other )	{ for(int i=0; i<4; i++) for(int j=0; j<4; j++) m[j][i]=other.m[j][i]; }
 	RageMatrix( float v00, float v01, float v02, float v03,
                 float v10, float v11, float v12, float v13,
                 float v20, float v21, float v22, float v23,
@@ -407,12 +386,12 @@ public:
 	float  operator () ( int iRow, int iCol ) const { return m[iCol][iRow]; }
 
 	// casting operators
-	operator float* ()				{ return m[0]; }
-	operator const float* () const			{ return m[0]; }
+	operator float* ()				{ return m[0].data(); }
+	operator const float* () const			{ return m[0].data(); }
 
 	RageMatrix GetTranspose() const;
 
-	float m[4][4];
+	std::array<std::array<float, 4>, 4> m{};
 };
 
 #endif

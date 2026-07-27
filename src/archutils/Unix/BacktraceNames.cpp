@@ -3,14 +3,16 @@
 #include "global.h"
 #include "BacktraceNames.h"
 
+#include <cerrno>
+#include <cstdarg>
+#include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
-#include <cstdarg>
+#include <cstring>
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
-#include <cstring>
-#include <cerrno>
 
 #include "RageUtil.h"
 
@@ -79,7 +81,7 @@ RString BacktraceNames::Format() const
 	if( ShortenedPath != "" )
 	{
 		/* Abbreviate the module name. */
-		size_t slash = ShortenedPath.rfind('/');
+		std::size_t slash = ShortenedPath.rfind('/');
 		if( slash != ShortenedPath.npos )
 			ShortenedPath = ShortenedPath.substr(slash+1);
 		ShortenedPath = RString("(") + ShortenedPath + ")";
@@ -99,7 +101,7 @@ RString BacktraceNames::Format() const
 #include <dlfcn.h>
 void BacktraceNames::FromAddr( void * const p )
 {
-    Address = (intptr_t) p;
+    Address = (std::intptr_t) p;
 
     /*
      * When calling a function that doesn't return, gcc will truncate a function.
@@ -224,7 +226,7 @@ static const char *osx_find_link_edit( const struct mach_header *header )
 
 void BacktraceNames::FromAddr( void * const p )
 {
-	Address = (intptr_t) p;
+	Address = (std::intptr_t) p;
 
 	/* Find the image with the given pointer. */
 	int index = osx_find_image( p );
@@ -296,7 +298,7 @@ void BacktraceNames::FromAddr( void * const p )
 #include <execinfo.h>
 void BacktraceNames::FromAddr( void * const p )
 {
-    Address = (intptr_t) p;
+    Address = (std::intptr_t) p;
 
     char **foo = backtrace_symbols(&p, 1);
     if( foo == nullptr )
@@ -324,7 +326,7 @@ void BacktraceNames::FromString( RString s )
 
     if( MangledAndOffset != "" )
     {
-        size_t plus = MangledAndOffset.rfind('+');
+        std::size_t plus = MangledAndOffset.rfind('+');
 
         if(plus == MangledAndOffset.npos)
         {
@@ -344,7 +346,7 @@ void BacktraceNames::FromString( RString s )
 #warning Undefined BACKTRACE_LOOKUP_METHOD_*
 void BacktraceNames::FromAddr( void * const p )
 {
-    Address = intptr_t(p);
+    Address = std::intptr_t(p);
     Offset = 0;
     Symbol = "";
     File = "";

@@ -37,12 +37,6 @@ set_property(TARGET "TextureFontGenerator" PROPERTY FOLDER "Internal Libraries")
 
 disable_project_warnings("TextureFontGenerator")
 
-if(NOT WITH_STATIC_LINKING)
-  sm_add_compile_definition("TextureFontGenerator" _AFXDLL)
-endif()
-
-sm_add_compile_definition("TextureFontGenerator" CMAKE_POWERED)
-
 list(APPEND TEXTURE_LINK_LIB "zlib" "png")
 
 target_link_libraries("TextureFontGenerator" ${TEXTURE_LINK_LIB})
@@ -50,17 +44,7 @@ target_link_libraries("TextureFontGenerator" ${TEXTURE_LINK_LIB})
 list(APPEND TEXTURE_INCLUDE_DIRS
             "${TEXTURE_DIR}"
             "${TEXTURE_DIR}/res"
-            "${SM_SRC_DIR}/generated")
-
-if(NOT WITH_SYSTEM_ZLIB)
-  list(APPEND TEXTURE_INCLUDE_DIRS
-              "${SM_EXTERN_DIR}/zlib")
-endif()
-
-if(NOT WITH_SYSTEM_PNG)
-  list(APPEND TEXTURE_INCLUDE_DIRS
-              "${SM_EXTERN_DIR}/libpng")
-endif()
+            "${SM_GENERATED_SRC_DIR}")
 
 target_include_directories("TextureFontGenerator"
                            PUBLIC ${TEXTURE_INCLUDE_DIRS})

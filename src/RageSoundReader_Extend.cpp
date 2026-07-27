@@ -4,6 +4,8 @@
 #include "RageSoundUtil.h"
 #include "RageUtil.h"
 
+#include <cmath>
+
 /*
  * Add support for negative seeks (adding a delay), extending a sound
  * beyond its end (m_LengthSeconds and M_CONTINUE), looping and fading.
@@ -31,7 +33,7 @@ int RageSoundReader_Extend::SetPosition( int iFrame )
 	m_bIgnoreFadeInFrames = false;
 
 	m_iPositionFrames = iFrame;
-	int iRet = m_pSource->SetPosition( max(iFrame, 0) );
+	int iRet = m_pSource->SetPosition( std::max(iFrame, 0) );
 	if( iRet < 0 )
 		return iRet;
 
@@ -59,8 +61,8 @@ int RageSoundReader_Extend::GetData( float *pBuffer, int iFrames )
 	if( m_iLengthFrames != -1 )
 	{
 		int iFramesLeft = GetEndFrame() - m_iPositionFrames;
-		iFramesLeft = max( 0, iFramesLeft );
-		iFramesToRead = min( iFramesToRead, iFramesLeft );
+		iFramesLeft = std::max( 0, iFramesLeft );
+		iFramesToRead = std::min( iFramesToRead, iFramesLeft );
 	}
 
 	if( iFrames && !iFramesToRead )
@@ -68,7 +70,7 @@ int RageSoundReader_Extend::GetData( float *pBuffer, int iFrames )
 
 	if( m_iPositionFrames < 0 )
 	{
-		iFramesToRead = min( iFramesToRead, -m_iPositionFrames );
+		iFramesToRead = std::min( iFramesToRead, -m_iPositionFrames );
 		memset( pBuffer, 0, iFramesToRead * sizeof(float) * this->GetNumChannels() );
 		return iFramesToRead;
 	}
@@ -93,7 +95,7 @@ int RageSoundReader_Extend::Read( float *pBuffer, int iFrames )
 		{
 			iFramesRead = iFrames;
 			if( m_StopMode != M_CONTINUE )
-				iFramesRead = min( GetEndFrame() - m_iPositionFrames, iFramesRead );
+				iFramesRead = std::min( GetEndFrame() - m_iPositionFrames, iFramesRead );
 			memset( pBuffer, 0, iFramesRead * sizeof(float) * this->GetNumChannels() );
 		}
 	}
@@ -153,7 +155,7 @@ bool RageSoundReader_Extend::SetProperty( const RString &sProperty, float fValue
 {
 	if( sProperty == "StartSecond" )
 	{
-		m_iStartFrames = lrintf( fValue * this->GetSampleRate() );
+		m_iStartFrames = static_cast<int>((fValue * this->GetSampleRate()) + 0.5);
 		return true;
 	}
 
@@ -162,7 +164,7 @@ bool RageSoundReader_Extend::SetProperty( const RString &sProperty, float fValue
 		if( fValue == -1 )
 			m_iLengthFrames = -1;
 		else
-			m_iLengthFrames = lrintf( fValue * this->GetSampleRate() );
+			m_iLengthFrames = static_cast<int>((fValue * this->GetSampleRate()) + 0.5);
 		return true;
 	}
 
@@ -186,13 +188,13 @@ bool RageSoundReader_Extend::SetProperty( const RString &sProperty, float fValue
 
 	if( sProperty == "FadeInSeconds" )
 	{
-		m_iFadeInFrames = lrintf( fValue * this->GetSampleRate() );
+		m_iFadeInFrames = static_cast<int>((fValue * this->GetSampleRate()) + 0.5);
 		return true;
 	}
 
 	if( sProperty == "FadeSeconds" || sProperty == "FadeOutSeconds" )
 	{
-		m_iFadeOutFrames = lrintf( fValue * this->GetSampleRate() );
+		m_iFadeOutFrames = static_cast<int>((fValue * this->GetSampleRate()) + 0.5);
 		return true;
 	}
 

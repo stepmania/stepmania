@@ -17,8 +17,11 @@
 #include "RageSurfaceUtils_Dither.h"
 #include "RageSurfaceUtils_Zoom.h"
 #include "SpecialFiles.h"
-
 #include "Banner.h"
+
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
 
 static Preference<bool> g_bPalettedImageCache( "PalettedImageCache", false );
 
@@ -49,7 +52,7 @@ static Preference<bool> g_bPalettedImageCache( "PalettedImageCache", false );
 ImageCache *IMAGECACHE; // global and accessible from anywhere in our program
 
 
-static map<RString,RageSurface *> g_ImagePathToImage;
+static std::map<RString, RageSurface*> g_ImagePathToImage;
 static int g_iDemandRefcount = 0;
 
 RString ImageCache::GetImageCachePath( RString sImageDir ,RString sImagePath )
@@ -65,7 +68,7 @@ void ImageCache::Demand( RString sImageDir )
 	++g_iDemandRefcount;
 	if( g_iDemandRefcount > 1 )
 		return;
-	
+
 	if( PREFSMAN->m_ImageCache != IMGCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
@@ -93,7 +96,7 @@ void ImageCache::Undemand( RString sImageDir )
 	--g_iDemandRefcount;
 	if( g_iDemandRefcount != 0 )
 		return;
-	
+
 	if( PREFSMAN->m_ImageCache != IMGCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
@@ -186,8 +189,8 @@ void ImageCache::ReadFromDisk()
 
 struct ImageTexture: public RageTexture
 {
-	uintptr_t m_uTexHandle;
-	uintptr_t GetTexHandle() const { return m_uTexHandle; };	// accessed by RageDisplay
+	std::uintptr_t m_uTexHandle;
+	std::uintptr_t GetTexHandle() const { return m_uTexHandle; };	// accessed by RageDisplay
 	/* This is a reference to a pointer in g_ImagePathToImage. */
 	RageSurface *&m_pImage;
 	int m_iWidth, m_iHeight;
@@ -199,10 +202,10 @@ struct ImageTexture: public RageTexture
 	}
 
 	~ImageTexture()
-	{ 
+	{
 		Destroy();
 	}
-	
+
 	void Create()
 	{
 		ASSERT( m_pImage != nullptr );
@@ -213,15 +216,15 @@ struct ImageTexture: public RageTexture
 		m_iSourceWidth = m_iWidth;
 		m_iSourceHeight = m_iHeight;
 
-		/* The image width (within the texture) is always the entire texture. 
+		/* The image width (within the texture) is always the entire texture.
 		 * Only resize if the max texture size requires it; since these images
 		 * are already scaled down, this shouldn't happen often. */
-		if( m_pImage->w > DISPLAY->GetMaxTextureSize() || 
+		if( m_pImage->w > DISPLAY->GetMaxTextureSize() ||
 			m_pImage->h > DISPLAY->GetMaxTextureSize() )
 		{
 			LOG->Warn( "Converted %s at runtime", GetID().filename.c_str() );
-			int iWidth = min( m_pImage->w, DISPLAY->GetMaxTextureSize() );
-			int iHeight = min( m_pImage->h, DISPLAY->GetMaxTextureSize() );
+			int iWidth = std::min( m_pImage->w, DISPLAY->GetMaxTextureSize() );
+			int iHeight = std::min( m_pImage->h, DISPLAY->GetMaxTextureSize() );
 			RageSurfaceUtils::Zoom( m_pImage, iWidth, iHeight );
 		}
 
@@ -271,7 +274,7 @@ RageTextureID ImageCache::LoadCachedImage( RString sImageDir, RString sImagePath
 {
 	RageTextureID ID( GetImageCachePath(sImageDir,sImagePath) );
 
-	size_t Found = sImagePath.find("_blank");
+	std::size_t Found = sImagePath.find("_blank");
 	if( sImagePath == "" || Found!=RString::npos )
 		return ID;
 
@@ -325,7 +328,7 @@ RageTextureID ImageCache::LoadCachedImage( RString sImageDir, RString sImagePath
 
 static inline int closest( int num, int n1, int n2 )
 {
-	if( abs(num - n1) > abs(num - n2) )
+	if( std::abs(num - n1) > std::abs(num - n2) )
 		return n2;
 	return n1;
 }
@@ -392,8 +395,8 @@ void ImageCache::CacheImageInternal( RString sImageDir, RString sImagePath )
 
 	/* Don't resize the image to less than 32 pixels in either dimension or the next
 	 * power of two of the source (whichever is smaller); it's already very low res. */
-	iWidth = max( iWidth, min(32, power_of_two(iSourceWidth)) );
-	iHeight = max( iHeight, min(32, power_of_two(iSourceHeight)) );
+	iWidth = std::max( iWidth, std::min(32, power_of_two(iSourceWidth)) );
+	iHeight = std::max( iHeight, std::min(32, power_of_two(iSourceHeight)) );
 
 	//RageSurfaceUtils::ApplyHotPinkColorKey( pImage );
 
@@ -471,7 +474,7 @@ void ImageCache::WriteToDisk()
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -481,7 +484,7 @@ void ImageCache::WriteToDisk()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -3,16 +3,18 @@
 #ifndef GET_FILE_INFORMATION_H
 #define GET_FILE_INFORMATION_H
 
+#include <cstdint>
+
 bool GetFileVersion( RString fsFile, RString &sOut );
 RString FindSystemFile( RString sFile );
-bool GetProcessFileName( uint32_t iProcessID, RString &sName );
+bool GetProcessFileName( std::uint32_t iProcessID, RString &sName );
 
 #endif
 
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -22,7 +24,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

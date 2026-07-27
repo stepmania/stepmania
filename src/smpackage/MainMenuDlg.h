@@ -1,9 +1,9 @@
 #if !defined(AFX_MAINMENUDLG_H__3CED6142_18E5_4267_B678_BE5B63735C6C__INCLUDED_)
 #define AFX_MAINMENUDLG_H__3CED6142_18E5_4267_B678_BE5B63735C6C__INCLUDED_
 
-#if _MSC_VER > 1000
+#if defined(_MSC_VER)
 #pragma once
-#endif // _MSC_VER > 1000
+#endif
 // MainMenuDlg.h : header file
 
 /////////////////////////////////////////////////////////////////////////////

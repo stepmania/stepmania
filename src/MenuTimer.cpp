@@ -9,7 +9,10 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 
-RString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("Warning%dCommand",int(i)); }
+#include <cmath>
+#include <cstddef>
+
+RString WARNING_COMMAND_NAME( std::size_t i ) { return ssprintf("Warning%dCommand",int(i)); }
 
 static const float TIMER_PAUSE_SECONDS = 99.99f;
 
@@ -73,8 +76,8 @@ void MenuTimer::EnableStealth( bool bStealth )
 	}
 }
 
-void MenuTimer::Update( float fDeltaTime ) 
-{ 
+void MenuTimer::Update( float fDeltaTime )
+{
 	ActorFrame::Update( fDeltaTime );
 
 	if( m_bPaused )
@@ -82,13 +85,13 @@ void MenuTimer::Update( float fDeltaTime )
 
 	// run down the stall time if any
 	if( m_fStallSeconds > 0 )
-		m_fStallSeconds = max( m_fStallSeconds - fDeltaTime, 0 );
+		m_fStallSeconds = std::max( m_fStallSeconds - fDeltaTime, 0.0f );
 	if( m_fStallSeconds > 0 )
 		return;
 
 	const float fOldSecondsLeft = m_fSecondsLeft;
 	m_fSecondsLeft -= fDeltaTime;
-	m_fSecondsLeft = max( 0, m_fSecondsLeft );
+	m_fSecondsLeft = std::max( 0.0f, m_fSecondsLeft );
 	const float fNewSecondsLeft = m_fSecondsLeft;
 
 	SetText( fNewSecondsLeft );
@@ -100,7 +103,7 @@ void MenuTimer::Update( float fDeltaTime )
 		SOUND->PlayOnceFromAnnouncer( "hurry up" );
 
 
-	int iCrossed = (int)floorf(fOldSecondsLeft);
+	int iCrossed = std::floor(fOldSecondsLeft);
 	if( fOldSecondsLeft > iCrossed && fNewSecondsLeft < iCrossed )	// crossed
 	{
 		if( iCrossed <= WARNING_START )
@@ -145,7 +148,7 @@ void MenuTimer::Disable()
 void MenuTimer::Stall()
 {
 	// Max amount of stall time we'll use:
-	const float Amt = min( 0.5f, m_fStallSecondsLeft );
+	const float Amt = std::min( 0.5f, m_fStallSecondsLeft );
 
 	// Amount of stall time to add:
 	const float ToAdd = Amt - m_fStallSeconds;
@@ -183,9 +186,8 @@ void MenuTimer::SetText( float fSeconds )
 		LuaHelpers::Push( L, fSeconds );
 
 		// call function with 1 argument and 1 result
-		RString Error= "Error running Text" + (i+1);
-		Error+= "FormatFunction: ";
-		LuaHelpers::RunScriptOnStack(L, Error, 1, 1, true);
+		RString errorMessage = ssprintf("Error running Text%dFormatFunction: ", i+1);
+		LuaHelpers::RunScriptOnStack(L, errorMessage, 1, 1, true);
 
 		RString sText;
 		LuaHelpers::Pop( L, sText );
@@ -199,7 +201,7 @@ void MenuTimer::SetText( float fSeconds )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the MenuTimer. */ 
+/** @brief Allow Lua to have access to the MenuTimer. */
 class LunaMenuTimer: public Luna<MenuTimer>
 {
 public:
@@ -231,7 +233,7 @@ LUA_REGISTER_DERIVED_CLASS( MenuTimer, ActorFrame )
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -241,7 +243,7 @@ LUA_REGISTER_DERIVED_CLASS( MenuTimer, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

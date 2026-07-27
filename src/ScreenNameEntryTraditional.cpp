@@ -14,6 +14,9 @@
 #include "RageLog.h"
 #include "CommonMetrics.h"
 
+#include <vector>
+
+
 REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
 
 void ScreenNameEntryTraditional::Init()
@@ -28,7 +31,7 @@ void ScreenNameEntryTraditional::Init()
 		for( int z = 0; z < 3; ++z )
 		{
 			StageStats ss;
-			const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
+			const std::vector<Song*> &apSongs = SONGMAN->GetAllSongs();
 			ss.m_vpPlayedSongs.push_back( apSongs[rand()%apSongs.size()] );
 			ss.m_vpPossibleSongs = ss.m_vpPlayedSongs;
 			ss.m_playMode = GAMESTATE->m_PlayMode;
@@ -77,11 +80,11 @@ void ScreenNameEntryTraditional::BeginScreen()
 	/* Find out if players are entering their name. */
 	FOREACH_PlayerNumber( pn )
 	{
-		vector<GameState::RankingFeat> aFeats;
+		std::vector<GameState::RankingFeat> aFeats;
 		GAMESTATE->GetRankingFeats( pn, aFeats );
 
 		bool bNoStagesLeft = GAMESTATE->m_iPlayerStageTokens[pn] <= 0;
-		m_bEnteringName[pn] = ( aFeats.size() > 0 || 
+		m_bEnteringName[pn] = ( aFeats.size() > 0 ||
 				       PROFILEMAN->ProfileFromMemoryCardIsNew(pn) ) && bNoStagesLeft;
 		m_bFinalized[pn] = !m_bEnteringName[pn];
 	}
@@ -184,7 +187,7 @@ bool ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 
 void ScreenNameEntryTraditional::UpdateSelectionText( PlayerNumber pn )
 {
-	wstring sText = m_sSelection[pn];
+	std::wstring sText = m_sSelection[pn];
 	if( !m_bFinalized[pn] && (int) sText.size() < MAX_RANKING_NAME_LENGTH )
 		sText += L"_";
 
@@ -239,7 +242,7 @@ bool ScreenNameEntryTraditional::Backspace( PlayerNumber pn )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenNameEntryTraditional. */ 
+/** @brief Allow Lua to have access to the ScreenNameEntryTraditional. */
 class LunaScreenNameEntryTraditional: public Luna<ScreenNameEntryTraditional>
 {
 public:
@@ -320,7 +323,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenNameEntryTraditional, ScreenWithMenuElements )
 /*
  * (c) 2001-2007 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -330,7 +333,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenNameEntryTraditional, ScreenWithMenuElements )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

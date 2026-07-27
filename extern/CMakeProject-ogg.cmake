@@ -1,11 +1,9 @@
-set(OGG_DIR "${SM_EXTERN_DIR}/newogg")
+set(OGG_SRC "ogg/src/bitwise.c"
+            "ogg/src/framing.c")
 
-list(APPEND OGG_SRC "${OGG_DIR}/src/bitwise.c" "${OGG_DIR}/src/framing.c")
-
-list(APPEND OGG_HPP
-            "${OGG_DIR}/include/ogg/config_types.h"
-            "${OGG_DIR}/include/ogg/ogg.h"
-            "${OGG_DIR}/include/ogg/os_types.h")
+set(OGG_HPP "ogg/ogg/config_types.h"
+            "ogg/include/ogg/ogg.h"
+            "ogg/include/ogg/os_types.h")
 
 source_group("Source Files" FILES ${OGG_SRC})
 source_group("Header Files" FILES ${OGG_HPP})
@@ -16,7 +14,9 @@ set_property(TARGET "ogg" PROPERTY FOLDER "External Libraries")
 
 disable_project_warnings("ogg")
 
-target_include_directories("ogg" PUBLIC "${OGG_DIR}/include")
+target_include_directories("ogg" PUBLIC
+  "ogg/include"
+  "${CMAKE_CURRENT_BINARY_DIR}/ogg"
+)
 
-configure_file("${SM_EXTERN_DIR}/config.ogg.types.in.h"
-               "${OGG_DIR}/include/ogg/config_types.h")
+configure_file("config.ogg.types.in.h" "ogg/ogg/config_types.h")

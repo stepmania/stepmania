@@ -11,10 +11,12 @@
 #include "LightsDriver.h"
 #include "SextetUtils.h"
 
+#include <cstdint>
+
 class LightsDriver_Win32Serial : public LightsDriver
 {
 protected:
-	uint8_t lastOutput[FULL_SEXTET_COUNT];
+	std::uint8_t lastOutput[FULL_SEXTET_COUNT];
 public:
 	LightsDriver_Win32Serial();
 	virtual ~LightsDriver_Win32Serial();

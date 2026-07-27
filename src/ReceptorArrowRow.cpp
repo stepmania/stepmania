@@ -7,6 +7,10 @@
 #include "PlayerState.h"
 #include "Style.h"
 
+#include <cstddef>
+#include <vector>
+
+
 ReceptorArrowRow::ReceptorArrowRow()
 {
 	m_pPlayerState = nullptr;
@@ -22,7 +26,7 @@ void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOff
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber);
 
-	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
+	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ )
 	{
 		m_ReceptorArrow.push_back( new ReceptorArrow );
 		m_ReceptorArrow[c]->SetName( "ReceptorArrow" );
@@ -31,10 +35,10 @@ void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOff
 	}
 }
 
-void ReceptorArrowRow::SetColumnRenderers(vector<NoteColumnRenderer>& renderers)
+void ReceptorArrowRow::SetColumnRenderers(std::vector<NoteColumnRenderer>& renderers)
 {
 	ASSERT_M(renderers.size() == m_ReceptorArrow.size(), "Notefield has different number of columns than receptor row.");
-	for(size_t c= 0; c < m_ReceptorArrow.size(); ++c)
+	for(std::size_t c= 0; c < m_ReceptorArrow.size(); ++c)
 	{
 		m_ReceptorArrow[c]->SetFakeParent(&(renderers[c]));
 	}
@@ -119,7 +123,7 @@ void ReceptorArrowRow::SetNoteUpcoming( int iCol, bool b )
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -129,7 +133,7 @@ void ReceptorArrowRow::SetNoteUpcoming( int iCol, bool b )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

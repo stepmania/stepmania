@@ -14,6 +14,9 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 
+#include <vector>
+
+
 static const char *BookkeepingViewNames[] = {
 	"SongPlays",
 	"LastDays",
@@ -100,7 +103,7 @@ bool ScreenBookkeeping::MenuStart( const InputEventPlus &input )
 		return false;
 
 	SCREENMAN->PlayStartSound();
-	StartTransitioningScreen( SM_GoToNextScreen );		
+	StartTransitioningScreen( SM_GoToNextScreen );
 	return true;
 }
 
@@ -110,7 +113,7 @@ bool ScreenBookkeeping::MenuBack( const InputEventPlus &input )
 		return false;
 
 	SCREENMAN->PlayStartSound();
-	StartTransitioningScreen( SM_GoToPrevScreen );		
+	StartTransitioningScreen( SM_GoToPrevScreen );
 	return true;
 }
 
@@ -145,7 +148,7 @@ void ScreenBookkeeping::UpdateView()
 		{
 			Profile *pProfile = PROFILEMAN->GetMachineProfile();
 
-			vector<Song*> vpSongs;
+			std::vector<Song*> vpSongs;
 			int iCount = 0;
 			for (Song *pSong : SONGMAN->GetAllSongs())
 			{
@@ -158,7 +161,7 @@ void ScreenBookkeeping::UpdateView()
 			SongUtil::SortSongPointerArrayByNumPlays( vpSongs, pProfile, true );
 
 			const int iSongPerCol = 15;
-			
+
 			int iSongIndex = 0;
 			for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 			{
@@ -188,7 +191,7 @@ void ScreenBookkeeping::UpdateView()
 			int coins[NUM_LAST_DAYS];
 			BOOKKEEPER->GetCoinsLastDays( coins );
 			int iTotalLast = 0;
-			
+
 			RString sTitle, sData;
 			for( int i=0; i<NUM_LAST_DAYS; i++ )
 			{
@@ -199,7 +202,7 @@ void ScreenBookkeeping::UpdateView()
 
 			sTitle += ALL_TIME.GetValue()+"\n";
 			sData += ssprintf("%i\n", iTotalLast);
-			
+
 			m_textData[0].SetText( "" );
 			m_textData[1].SetHorizAlign( align_left );
 			m_textData[1].SetText( sTitle );
@@ -243,7 +246,7 @@ void ScreenBookkeeping::UpdateView()
 				sTitle += DayOfWeekToString(i) + "\n";
 				sData += ssprintf("%d",coins[i]) + "\n";
 			}
-			
+
 			m_textData[0].SetText( "" );
 			m_textData[1].SetHorizAlign( align_left );
 			m_textData[1].SetText( sTitle );
@@ -265,14 +268,14 @@ void ScreenBookkeeping::UpdateView()
 				sTitle1 += HourInDayToLocalizedString(i) + "\n";
 				sData1 += ssprintf("%d",coins[i]) + "\n";
 			}
-			
+
 			RString sTitle2, sData2;
 			for( int i=(HOURS_IN_DAY/2); i<HOURS_IN_DAY; i++ )
 			{
 				sTitle2 += HourInDayToLocalizedString(i) + "\n";
 				sData2 += ssprintf("%d",coins[i]) + "\n";
 			}
-			
+
 			m_textData[0].SetHorizAlign( align_left );
 			m_textData[0].SetText( sTitle1 );
 			m_textData[1].SetHorizAlign( align_right );
@@ -291,7 +294,7 @@ void ScreenBookkeeping::UpdateView()
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -301,7 +304,7 @@ void ScreenBookkeeping::UpdateView()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

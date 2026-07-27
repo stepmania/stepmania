@@ -4,6 +4,9 @@
 #include "GameConstantsAndTypes.h"
 #include "NoteTypes.h"
 
+#include <vector>
+
+
 class PlayerOptions;
 struct RadarValues;
 class NoteData;
@@ -13,13 +16,13 @@ class TimingData;
 
 void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap );
 int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow );
-void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> &aiTracks );
+void LightTransformHelper( const NoteData &in, NoteData &out, const std::vector<int> &aiTracks );
 
 /**
  * @brief Utility functions that deal with NoteData.
  *
  * Things should go in here if they can be (cleanly and efficiently)
- * implemented using only NoteData's primitives; this improves abstraction 
+ * implemented using only NoteData's primitives; this improves abstraction
  * and makes it much easier to change NoteData internally in the future. */
 namespace NoteDataUtil
 {
@@ -27,8 +30,8 @@ namespace NoteDataUtil
 	NoteType GetSmallestNoteTypeInRange( const NoteData &nd, int iStartIndex, int iEndIndex );
 	void LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData, bool bComposite );
 	void GetSMNoteDataString( const NoteData &in, RString &notes_out );
-	void SplitCompositeNoteData( const NoteData &in, vector<NoteData> &out );
-	void CombineCompositeNoteData( NoteData &out, const vector<NoteData> &in );
+	void SplitCompositeNoteData( const NoteData &in, std::vector<NoteData> &out );
+	void CombineCompositeNoteData( NoteData &out, const std::vector<NoteData> &in );
 	/**
 	 * @brief Autogenerate notes from one type to another.
 	 *
@@ -102,11 +105,14 @@ namespace NoteDataUtil
 		left, /**< The NoteData is arranged as if the player was facing to the left. */
 		right, /**< The NoteData is arranged as if the player was facing to the right. */
 		mirror, /**< The NoteData is arranged as if facing a straight mirror. */
+		lrmirror, /**< The NoteData is arranged so that the left and right columns are flipped. */
+		udmirror, /**< The NoteData is arranged so that the up and down columns are flipped. */
 		backwards, /**< The NoteData is arranged as if the player was facing backwards.
 					This is NOT always the same as mirror. */
 		shuffle,
 		soft_shuffle,
 		super_shuffle,
+		hyper_shuffle,
 		stomp,
 		swap_up_down,
 		NUM_TRACK_MAPPINGS
@@ -118,12 +124,12 @@ namespace NoteDataUtil
 	void Quick( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void BMRize( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void Skippy( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
-	void InsertIntelligentTaps( 
-		NoteData &in, 
+	void InsertIntelligentTaps(
+		NoteData &in,
 		int iWindowSizeRows,
 		int iInsertOffsetRows,
 		int iWindowStrideRows,
-		bool bSkippy, 
+		bool bSkippy,
 		int iStartIndex = 0,
 		int iEndIndex = MAX_NOTE_ROW );
 	void AddMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
@@ -184,7 +190,7 @@ namespace NoteDataUtil
 
 	bool GetNextEditorPosition( const NoteData& in, int &rowInOut );
 	bool GetPrevEditorPosition( const NoteData& in, int &rowInOut );
-	
+
 	/** @brief Count the number of hold ticks that will fire, assuming that tickholds are on.
 	  * @param td The TimingData from the relevant Steps. */
 	unsigned int GetTotalHoldTicks( NoteData* nd, const TimingData* td );
@@ -197,7 +203,7 @@ namespace NoteDataUtil
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -207,7 +213,7 @@ namespace NoteDataUtil
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

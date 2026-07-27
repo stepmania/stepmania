@@ -16,7 +16,9 @@
 #include "Steps.h"
 #include "Course.h"
 
-static RString LIFE_PERCENT_CHANGE_NAME( size_t i )   { return "LifePercentChange" + ScoreEventToString( (ScoreEvent)i ); }
+#include <cstddef>
+
+static RString LIFE_PERCENT_CHANGE_NAME( std::size_t i )   { return "LifePercentChange" + ScoreEventToString( (ScoreEvent)i ); }
 
 LifeMeterBar::LifeMeterBar()
 {
@@ -97,8 +99,8 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 	}
 
 	// Change life difficulty to really easy if merciful beginner on
-	m_bMercifulBeginnerInEffect = 
-		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR  &&  
+	m_bMercifulBeginnerInEffect =
+		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR  &&
 		GAMESTATE->IsPlayerEnabled( pPlayerState )  &&
 		GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == Difficulty_Beginner  &&
 		PREFSMAN->m_bMercifulBeginner;
@@ -126,7 +128,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 
 	// this was previously if( IsHot()  &&  score < TNS_GOOD ) in 3.9... -freem
 	if(PREFSMAN->m_HarshHotLifePenalty && IsHot()  &&  fDeltaLife < 0)
-		fDeltaLife = min( fDeltaLife, -0.10f );		// make it take a while to get back to "hot"
+		fDeltaLife = std::min( fDeltaLife, -0.10f );		// make it take a while to get back to "hot"
 
 	switch(m_pPlayerState->m_PlayerOptions.GetSong().m_DrainType)
 	{
@@ -134,7 +136,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case DrainType_Normal:
 		break;
 	case DrainType_NoRecover:
-		fDeltaLife = min( fDeltaLife, 0 );
+		fDeltaLife = std::min( fDeltaLife, 0.0f );
 		break;
 	case DrainType_SuddenDeath:
 		if( score < MIN_STAY_ALIVE )
@@ -202,7 +204,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	if( fDeltaLife >= 0 )
 	{
 		m_iMissCombo = 0;
-		m_iComboToRegainLife = max( m_iComboToRegainLife-1, 0 );
+		m_iComboToRegainLife = std::max( m_iComboToRegainLife-1, 0 );
 		if ( m_iComboToRegainLife > 0 )
 			fDeltaLife = 0.0f;
 	}
@@ -213,11 +215,11 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 		m_iMissCombo++;
 		/* Increase by m_iRegenComboAfterMiss; never push it beyond m_iMaxRegenComboAfterMiss
 		 * but don't reduce it if it's already past. */
-		const int NewComboToRegainLife = min(
+		const int NewComboToRegainLife = std::min(
 			 (int)PREFSMAN->m_iMaxRegenComboAfterMiss,
 			 m_iComboToRegainLife + PREFSMAN->m_iRegenComboAfterMiss );
 
-		m_iComboToRegainLife = max( m_iComboToRegainLife, NewComboToRegainLife );
+		m_iComboToRegainLife = std::max( m_iComboToRegainLife, NewComboToRegainLife );
 	}
 
 	// If we've already failed, there's no point in letting them fill up the bar again.
@@ -274,17 +276,17 @@ void LifeMeterBar::AfterLifeChanged()
 }
 
 bool LifeMeterBar::IsHot() const
-{ 
-	return m_fLifePercentage >= HOT_VALUE; 
+{
+	return m_fLifePercentage >= HOT_VALUE;
 }
 
 bool LifeMeterBar::IsInDanger() const
-{ 
-	return m_fLifePercentage < DANGER_THRESHOLD; 
+{
+	return m_fLifePercentage < DANGER_THRESHOLD;
 }
 
 bool LifeMeterBar::IsFailing() const
-{ 
+{
 	return m_fLifePercentage <= m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPassmark;
 }
 
@@ -384,7 +386,7 @@ void LifeMeterBar::UpdateNonstopLifebar()
 	int iLifeDifficulty = int( (1.8f - m_fLifeDifficulty)/0.2f );
 
 	// first eight values don't matter
-	float fDifficultyValues[16] = {0,0,0,0,0,0,0,0, 
+	float fDifficultyValues[16] = {0,0,0,0,0,0,0,0,
 		0.3f, 0.25f, 0.2f, 0.16f, 0.14f, 0.12f, 0.10f, 0.08f};
 
 	if( iLifeDifficulty >= 16 )
@@ -413,7 +415,7 @@ void LifeMeterBar::FillForHowToPlay( int NumW2s, int NumMisses )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -423,7 +425,7 @@ void LifeMeterBar::FillForHowToPlay( int NumW2s, int NumMisses )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

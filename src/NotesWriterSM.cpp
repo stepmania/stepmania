@@ -16,6 +16,9 @@
 #include "Steps.h"
 #include "ThemeMetric.h"
 
+#include <vector>
+
+
 ThemeMetric<bool> USE_CREDIT	( "NotesWriterSM", "DescriptionUsesCreditField" );
 
 /**
@@ -77,7 +80,7 @@ static void WriteGlobalTags( RageFileBasic &f, Song &out )
 
 
 	f.Write( "#BPMS:" );
-	const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
+	const std::vector<TimingSegment*> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
 	for( unsigned i=0; i<bpms.size(); i++ )
 	{
 		const BPMSegment *bs = ToBPM(bpms[i]);
@@ -88,11 +91,11 @@ static void WriteGlobalTags( RageFileBasic &f, Song &out )
 	}
 	f.PutLine( ";" );
 
-	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
-	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
+	const std::vector<TimingSegment*> &stops = timing.GetTimingSegments(SEGMENT_STOP);
+	const std::vector<TimingSegment*> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
 
-	map<float, float> allPauses;
-	const vector<TimingSegment *> &warps = timing.GetTimingSegments(SEGMENT_WARP);
+	std::map<float, float> allPauses;
+	const std::vector<TimingSegment*> &warps = timing.GetTimingSegments(SEGMENT_WARP);
 	unsigned wSize = warps.size();
 	if( wSize > 0 )
 	{
@@ -111,14 +114,14 @@ static void WriteGlobalTags( RageFileBasic &f, Song &out )
 		const StopSegment *fs = ToStop( stops[i] );
 		// Handle warps on the same row by summing the values.  Not sure this
 		// plays out the same. -Kyz
-		map<float, float>::iterator already_exists= allPauses.find(fs->GetBeat());
+		std::map<float, float>::iterator already_exists= allPauses.find(fs->GetBeat());
 		if(already_exists != allPauses.end())
 		{
 			already_exists->second+= fs->GetPause();
 		}
 		else
 		{
-			allPauses.insert(pair<float, float>(fs->GetBeat(), fs->GetPause()));
+			allPauses.insert(std::pair<float, float>(fs->GetBeat(), fs->GetPause()));
 		}
 	}
 	// Delays can't be negative: thus, no effect.
@@ -126,19 +129,19 @@ static void WriteGlobalTags( RageFileBasic &f, Song &out )
 	{
 		float fBeat = NoteRowToBeat( ss->GetRow()-1 );
 		float fPause = ToDelay(ss)->GetPause();
-		map<float, float>::iterator already_exists= allPauses.find(fBeat);
+		std::map<float, float>::iterator already_exists= allPauses.find(fBeat);
 		if(already_exists != allPauses.end())
 		{
 			already_exists->second+= fPause;
 		}
 		else
 		{
-			allPauses.insert(pair<float,float>(fBeat, fPause));
+			allPauses.insert(std::pair<float, float>(fBeat, fPause));
 		}
 	}
 
 	f.Write( "#STOPS:" );
-	vector<RString> stopLines;
+	std::vector<RString> stopLines;
 	for (std::pair<float const &, float const &> ap : allPauses)
 	{
 		stopLines.push_back(ssprintf("%.6f=%.6f", ap.first, ap.second));
@@ -194,7 +197,7 @@ static void WriteGlobalTags( RageFileBasic &f, Song &out )
  * @brief Turn a vector of lines into a single line joined by newline characters.
  * @param lines the list of lines to join.
  * @return the joined lines. */
-static RString JoinLineList( vector<RString> &lines )
+static RString JoinLineList( std::vector<RString> &lines )
 {
 	for( unsigned i = 0; i < lines.size(); ++i )
 		TrimRight( lines[i] );
@@ -214,7 +217,7 @@ static RString JoinLineList( vector<RString> &lines )
  * @return the #NOTES tag. */
 static RString GetSMNotesTag( const Song &song, const Steps &in )
 {
-	vector<RString> lines;
+	std::vector<RString> lines;
 
 	lines.push_back( "" );
 	// Escape to prevent some clown from making a comment of "\r\n;"
@@ -227,7 +230,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 
-	vector<RString> asRadarValues;
+	std::vector<RString> asRadarValues;
 	// OpenITG simfiles use 11 radar categories.
 	int categories = 11;
 	FOREACH_PlayerNumber( pn )
@@ -251,7 +254,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write( RString sPath, Song &out, const vector<Steps*>& vpStepsToSave )
+bool NotesWriterSM::Write( RString sPath, Song &out, const std::vector<Steps*>& vpStepsToSave )
 {
 	int flags = RageFile::WRITE;
 
@@ -267,7 +270,7 @@ bool NotesWriterSM::Write( RString sPath, Song &out, const vector<Steps*>& vpSte
 	return Write( f, out, vpStepsToSave );
 }
 
-bool NotesWriterSM::Write( RageFileBasic &f, Song &out, const vector<Steps*>& vpStepsToSave )
+bool NotesWriterSM::Write( RageFileBasic &f, Song &out, const std::vector<Steps*>& vpStepsToSave )
 {
 	WriteGlobalTags( f, out );
 
@@ -288,7 +291,7 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 	RString sDir = pSong->GetSongDir();
 
 	// "Songs/foo/bar"; strip off "Songs/".
-	vector<RString> asParts;
+	std::vector<RString> asParts;
 	split( sDir, "/", asParts );
 	if( asParts.size() )
 		sDir = join( "/", asParts.begin()+1, asParts.end() );

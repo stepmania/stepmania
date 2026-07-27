@@ -2,20 +2,24 @@
  * This provides an interface to open files in RageFileManager's namespace
  * This is just a simple RageFileBasic wrapper on top of another RageFileBasic;
  * when a file is open, is acts like the underlying RageFileBasic, except that
- * a few extra sanity checks are made to check file modes.  
+ * a few extra sanity checks are made to check file modes.
  */
 
 #include "global.h"
 #include "RageFileBasic.h"
 #include "RageFile.h"
+#include "RageLog.h"
 #include "RageUtil.h"
 #include "RageFileDriver.h"
+
+#include <cstddef>
+#include <cstdint>
 
 RageFile::RageFile()
 {
 	m_File = nullptr;
 }
-	
+
 RageFile::RageFile( const RageFile &cpy ):
 	RageFileBasic( cpy )
 {
@@ -107,7 +111,7 @@ void RageFile::EnableCRC32( bool on )
 	m_File->EnableCRC32( on );
 }
 
-bool RageFile::GetCRC32( uint32_t *iRet )
+bool RageFile::GetCRC32( std::uint32_t *iRet )
 {
 	ASSERT_OPEN;
 	return m_File->GetCRC32( iRet );
@@ -142,7 +146,7 @@ void RageFile::SetError( const RString &err )
 	m_sError = err;
 }
 
-int RageFile::Read( void *pBuffer, size_t iBytes )
+int RageFile::Read( void *pBuffer, std::size_t iBytes )
 {
 	ASSERT_READ;
 	return m_File->Read( pBuffer, iBytes );
@@ -178,14 +182,14 @@ int RageFile::Read( RString &buffer, int bytes )
 	return m_File->Read( buffer, bytes );
 }
 
-int RageFile::Write( const void *buffer, size_t bytes )
+int RageFile::Write( const void *buffer, std::size_t bytes )
 {
 	ASSERT_WRITE;
 	return m_File->Write( buffer, bytes );
 }
 
 
-int RageFile::Write( const void *buffer, size_t bytes, int nmemb )
+int RageFile::Write( const void *buffer, std::size_t bytes, int nmemb )
 {
 	ASSERT_WRITE;
 	return m_File->Write( buffer, bytes, nmemb );
@@ -202,7 +206,7 @@ int RageFile::Flush()
 	return m_File->Flush();
 }
 
-int RageFile::Read( void *buffer, size_t bytes, int nmemb )
+int RageFile::Read( void *buffer, std::size_t bytes, int nmemb )
 {
 	ASSERT_READ;
 	return m_File->Read( buffer, bytes, nmemb );
@@ -263,50 +267,50 @@ void FileReading::Seek( RageFileBasic &f, int iOffset, RString &sError )
 		sError = "Unexpected end of file";
 }
 
-uint8_t FileReading::read_8( RageFileBasic &f, RString &sError )
+std::uint8_t FileReading::read_8( RageFileBasic &f, RString &sError )
 {
-	uint8_t val;
-	ReadBytes( f, &val, sizeof(uint8_t), sError );
+	std::uint8_t val;
+	ReadBytes( f, &val, sizeof(std::uint8_t), sError );
 	if( sError.size() == 0 )
 		return val;
 	else
 		return 0;
 }
 
-uint16_t FileReading::read_u16_le( RageFileBasic &f, RString &sError )
+std::uint16_t FileReading::read_u16_le( RageFileBasic &f, RString &sError )
 {
-	uint16_t val;
-	ReadBytes( f, &val, sizeof(uint16_t), sError );
+	std::uint16_t val;
+	ReadBytes( f, &val, sizeof(std::uint16_t), sError );
 	if( sError.size() == 0 )
 		return Swap16LE( val );
 	else
 		return 0;
 }
 
-int16_t FileReading::read_16_le( RageFileBasic &f, RString &sError )
+std::int16_t FileReading::read_16_le( RageFileBasic &f, RString &sError )
 {
-	int16_t val;
-	ReadBytes( f, &val, sizeof(int16_t), sError );
+	std::int16_t val;
+	ReadBytes( f, &val, sizeof(std::int16_t), sError );
 	if( sError.size() == 0 )
 		return Swap16LE( val );
 	else
 		return 0;
 }
 
-uint32_t FileReading::read_u32_le( RageFileBasic &f, RString &sError )
+std::uint32_t FileReading::read_u32_le( RageFileBasic &f, RString &sError )
 {
-	uint32_t val;
-	ReadBytes( f, &val, sizeof(uint32_t), sError );
+	std::uint32_t val;
+	ReadBytes( f, &val, sizeof(std::uint32_t), sError );
 	if( sError.size() == 0 )
 		return Swap32LE( val );
 	else
 		return 0;
 }
 
-int32_t FileReading::read_32_le( RageFileBasic &f, RString &sError )
+std::int32_t FileReading::read_32_le( RageFileBasic &f, RString &sError )
 {
-	int32_t val;
-	ReadBytes( f, &val, sizeof(int32_t), sError );
+	std::int32_t val;
+	ReadBytes( f, &val, sizeof(std::int32_t), sError );
 	if( sError.size() == 0 )
 		return Swap32LE( val );
 	else
@@ -316,7 +320,7 @@ int32_t FileReading::read_32_le( RageFileBasic &f, RString &sError )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the RageFile. */ 
+/** @brief Allow Lua to have access to the RageFile. */
 class LunaRageFile: public Luna<RageFile>
 {
 public:
@@ -351,7 +355,17 @@ public:
 
 	static int Open( T* p, lua_State *L )
 	{
-		lua_pushboolean( L, p->Open( SArg(1), IArg(2) ) );
+		const RString path = SArg(1);
+		int mode = IArg(2);
+
+		if ((mode & RageFile::WRITE) && FILEMAN->IsPathProtected(path))
+		{
+			LOG->Warn("Writing to %s is not allowed", path.c_str());
+			lua_pushboolean(L, false);
+			return 1;
+		}
+
+		lua_pushboolean( L, p->Open(path, mode) );
 		return 1;
 	}
 
@@ -382,7 +396,7 @@ public:
 		lua_pushstring( L, string );
 		return 1;
 	}
-	
+
 	static int ReadBytes( T* p, lua_State *L )
 	{
 		can_safely_read(p, L);
@@ -421,7 +435,7 @@ public:
 		lua_pushinteger( L, p->PutLine( SArg(1) ) );
 		return 1;
 	}
-	
+
 	static int GetError( T* p, lua_State *L )
 	{
 		RString error;
@@ -429,13 +443,13 @@ public:
 		lua_pushstring( L, error );
 		return 1;
 	}
-	
+
 	static int ClearError( T* p, lua_State *L )
 	{
 		p->ClearError();
 		return 1;
 	}
-	
+
 	static int AtEOF( T* p, lua_State *L )
 	{
 		can_safely_read(p, L);
@@ -443,7 +457,7 @@ public:
 		return 1;
 	}
 
-	LunaRageFile() 
+	LunaRageFile()
 	{
 		ADD_METHOD( Open );
 		ADD_METHOD( Close );

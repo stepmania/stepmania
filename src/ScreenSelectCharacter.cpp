@@ -13,6 +13,8 @@
 #include "CharacterManager.h"
 #include "InputEventPlus.h"
 
+#include <vector>
+
 
 #define TITLE_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("TitleP%dOnCommand",p+1))
 #define TITLE_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("TitleP%dOffCommand",p+1))
@@ -51,8 +53,8 @@ REGISTER_SCREEN_CLASS( ScreenSelectCharacter );
 void ScreenSelectCharacter::Init()
 {
 	ScreenWithMenuElements::Init();
-	
-	vector<Character*> apCharacters;
+
+	std::vector<Character*> apCharacters;
 	CHARMAN->GetCharacters( apCharacters );
 	if( apCharacters.empty() )
 	{
@@ -118,8 +120,8 @@ void ScreenSelectCharacter::Init()
 			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 				{
-					float fX = ATTACK_ICONS_START_X(p) + ATTACK_ICONS_SPACING_X*j; 
-					float fY = ATTACK_ICONS_START_Y(p) + ATTACK_ICONS_SPACING_Y*i; 
+					float fX = ATTACK_ICONS_START_X(p) + ATTACK_ICONS_SPACING_X*j;
+					float fY = ATTACK_ICONS_START_Y(p) + ATTACK_ICONS_SPACING_Y*i;
 					m_AttackIcons[p][i][j].SetXY( fX, fY );
 					m_AttackIcons[p][i][j].RunCommands( ATTACK_ICONS_ON_COMMAND(p) );
 					this->AddChild( &m_AttackIcons[p][i][j] );
@@ -234,7 +236,7 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
 		{
-			vector<Character*> apCharacters;
+			std::vector<Character*> apCharacters;
 			CHARMAN->GetCharacters( apCharacters );
 			Character* pChar = apCharacters[ m_iSelectedCharacter[pnAffected] ];
 			m_sprCard[pnAffected].UnloadTexture();
@@ -304,7 +306,7 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 		case CHOOSING_CPU_CHARACTER:
 		case CHOOSING_HUMAN_CHARACTER:
 		{
-			vector<Character*> apCharacters;
+			std::vector<Character*> apCharacters;
 			CHARMAN->GetCharacters( apCharacters );
 			m_iSelectedCharacter[pnAffected] += deltaValue;
 			wrap( m_iSelectedCharacter[pnAffected], apCharacters.size() );
@@ -356,7 +358,7 @@ void ScreenSelectCharacter::MakeSelection( PlayerNumber pn )
 	{
 		FOREACH_PlayerNumber( p )
 		{
-			vector<Character*> apCharacters;
+			std::vector<Character*> apCharacters;
 			CHARMAN->GetCharacters( apCharacters );
 			Character* pChar = apCharacters[ m_iSelectedCharacter[p] ];
 			GAMESTATE->m_pCurCharacters[p] = pChar;
@@ -398,7 +400,7 @@ void ScreenSelectCharacter::TweenOffScreen()
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -408,7 +410,7 @@ void ScreenSelectCharacter::TweenOffScreen()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

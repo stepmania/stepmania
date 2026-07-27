@@ -1,7 +1,9 @@
 #ifndef DSOUND_HELPERS
 #define DSOUND_HELPERS 1
 
-#if defined(_WINDOWS)
+#include <cstdint>
+
+#if defined(_WIN32)
 #include <windows.h>
 #include <wtypes.h>
 #endif
@@ -36,7 +38,7 @@ public:
 	enum { DYNAMIC_SAMPLERATE = -1 };
 
 	DSoundBuf();
-	RString Init( DSound &ds, hw hardware, 
+	RString Init( DSound &ds, hw hardware,
 		int iChannels, int iSampleRate, int iSampleBits, int iWriteAhead );
 
 	bool get_output_buf( char **pBuffer, unsigned *iBuffersize, int iChunksize );
@@ -49,8 +51,8 @@ public:
 	int GetSampleRate() const { return m_iSampleRate; }
 
 	~DSoundBuf();
-	int64_t GetPosition() const;
-	int64_t GetOutputPosition() const { return m_iWriteCursorPos; }
+	std::int64_t GetPosition() const;
+	std::int64_t GetOutputPosition() const { return m_iWriteCursorPos; }
 
 private:
 	int buffersize_frames() const { return m_iBufferSize / bytes_per_frame(); }
@@ -65,11 +67,11 @@ private:
 	int m_iVolume;
 
 	int m_iBufferSize;
-	
+
 	int m_iWriteCursor, m_iBufferBytesFilled; /* bytes */
 	int m_iExtraWriteahead;
-	int64_t m_iWriteCursorPos; /* frames */
-	mutable int64_t m_iLastPosition;
+	std::int64_t m_iWriteCursorPos; /* frames */
+	mutable std::int64_t m_iLastPosition;
 	bool m_bPlaying;
 
 	bool m_bBufferLocked;
@@ -85,7 +87,7 @@ private:
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -95,7 +97,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

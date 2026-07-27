@@ -13,6 +13,10 @@
 #include "arch/Dialog/Dialog.h"
 #include "StepMania.h"
 
+#include <cmath>
+#include <vector>
+
+
 static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight )
 {
 	/* Match:
@@ -22,7 +26,7 @@ static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight 
 	 * Be careful that this doesn't get mixed up with frame dimensions. */
 	static Regex re( "\\([^\\)]*res ([0-9]+)x([0-9]+).*\\)" );
 
-	vector<RString> asMatches;
+	std::vector<RString> asMatches;
 	if( !re.Compare(sPath, asMatches) )
 		return;
 
@@ -110,21 +114,21 @@ void RageBitmapTexture::Create()
 	RString sHintString = GetID().filename + actualID.AdditionalTextureHints;
 	sHintString.MakeLower();
 
-	if( sHintString.find("32bpp") != string::npos )			actualID.iColorDepth = 32;
-	else if( sHintString.find("16bpp") != string::npos )		actualID.iColorDepth = 16;
-	if( sHintString.find("dither") != string::npos )		actualID.bDither = true;
-	if( sHintString.find("stretch") != string::npos )		actualID.bStretch = true;
-	if( sHintString.find("mipmaps") != string::npos )		actualID.bMipMaps = true;
-	if( sHintString.find("nomipmaps") != string::npos )		actualID.bMipMaps = false;	// check for "nomipmaps" after "mipmaps"
+	if( sHintString.find("32bpp") != std::string::npos )			actualID.iColorDepth = 32;
+	else if( sHintString.find("16bpp") != std::string::npos )		actualID.iColorDepth = 16;
+	if( sHintString.find("dither") != std::string::npos )		actualID.bDither = true;
+	if( sHintString.find("stretch") != std::string::npos )		actualID.bStretch = true;
+	if( sHintString.find("mipmaps") != std::string::npos )		actualID.bMipMaps = true;
+	if( sHintString.find("nomipmaps") != std::string::npos )		actualID.bMipMaps = false;	// check for "nomipmaps" after "mipmaps"
 
 	/* If the image is marked grayscale, then use all bits not used for alpha
 	 * for the intensity.  This way, if an image has no alpha, you get an 8-bit
 	 * grayscale; if it only has boolean transparency, you get a 7-bit grayscale. */
-	if( sHintString.find("grayscale") != string::npos )		actualID.iGrayscaleBits = 8-actualID.iAlphaBits;
+	if( sHintString.find("grayscale") != std::string::npos )		actualID.iGrayscaleBits = 8-actualID.iAlphaBits;
 
 	/* This indicates that the only component in the texture is alpha; assume all
 	 * color is white. */
-	if( sHintString.find("alphamap") != string::npos )		actualID.iGrayscaleBits = 0;
+	if( sHintString.find("alphamap") != std::string::npos )		actualID.iGrayscaleBits = 0;
 
 	/* No iGrayscaleBits for images that are already paletted.  We don't support
 	 * that; and that hint is intended for use on images that are already grayscale,
@@ -133,7 +137,7 @@ void RageBitmapTexture::Create()
 		actualID.iGrayscaleBits = -1;
 
 	/* Cap the max texture size to the hardware max. */
-	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
+	actualID.iMaxSize = std::min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
 
 	/* Save information about the source. */
 	m_iSourceWidth = pImg->w;
@@ -144,7 +148,7 @@ void RageBitmapTexture::Create()
 	m_iImageHeight = m_iSourceHeight;
 
 	/* if "doubleres" (high resolution) and we're not allowing high res textures, then image dimensions are half of the source */
-	if( sHintString.find("doubleres") != string::npos )
+	if( sHintString.find("doubleres") != std::string::npos )
 	{
 		if( !StepMania::GetHighResolutionTextures() )
 		{
@@ -154,8 +158,8 @@ void RageBitmapTexture::Create()
 	}
 
 	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iImageWidth, actualID.iMaxSize );
-	m_iImageHeight = min( m_iImageHeight, actualID.iMaxSize );
+	m_iImageWidth = std::min( m_iImageWidth, actualID.iMaxSize );
+	m_iImageHeight = std::min( m_iImageHeight, actualID.iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);
@@ -165,8 +169,8 @@ void RageBitmapTexture::Create()
 	if( m_iTextureWidth < 8 || m_iTextureHeight < 8 )
 	{
 		actualID.bStretch = true;
-		m_iTextureWidth = max( 8, m_iTextureWidth );
-		m_iTextureHeight = max( 8, m_iTextureHeight );
+		m_iTextureWidth = std::max( 8, m_iTextureWidth );
+		m_iTextureHeight = std::max( 8, m_iTextureHeight );
 	}
 
 	ASSERT_M( m_iTextureWidth <= actualID.iMaxSize, ssprintf("w %i, %i", m_iTextureWidth, actualID.iMaxSize) );
@@ -180,7 +184,7 @@ void RageBitmapTexture::Create()
 		m_iImageHeight = m_iTextureHeight;
 	}
 
-	if( pImg->w != m_iImageWidth || pImg->h != m_iImageHeight ) 
+	if( pImg->w != m_iImageWidth || pImg->h != m_iImageHeight )
 		RageSurfaceUtils::Zoom( pImg, m_iImageWidth, m_iImageHeight );
 
 	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(RagePixelFormat_PAL) )
@@ -210,7 +214,7 @@ void RageBitmapTexture::Create()
 				int iSourceAlphaBits = 8 - pImg->format->Loss[3];
 
 				// Don't use more than we were hinted to.
-				iSourceAlphaBits = min( actualID.iAlphaBits, iSourceAlphaBits );
+				iSourceAlphaBits = std::min( actualID.iAlphaBits, iSourceAlphaBits );
 
 				switch( iSourceAlphaBits )
 				{
@@ -244,7 +248,7 @@ void RageBitmapTexture::Create()
 	 * We actually want to dither only if the destination has greater color depth
 	 * on at least one color channel than the source. For example, it doesn't
 	 * make sense to do this when pixfmt is RGBA5551 if the image is only RGBA555. */
-	if( actualID.bDither && 
+	if( actualID.bDither &&
 		(pixfmt==RagePixelFormat_RGBA4 || pixfmt==RagePixelFormat_RGB5A1) )
 	{
 		// Dither down to the destination format.
@@ -265,7 +269,7 @@ void RageBitmapTexture::Create()
 	/* Scale up to the texture size, if needed. */
 	RageSurfaceUtils::ConvertSurface( pImg, m_iTextureWidth, m_iTextureHeight,
 		pImg->fmt.BitsPerPixel, pImg->fmt.Mask[0], pImg->fmt.Mask[1], pImg->fmt.Mask[2], pImg->fmt.Mask[3] );
-	
+
 	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, pImg, actualID.bMipMaps );
 
 	CreateFrameRects();
@@ -276,7 +280,7 @@ void RageBitmapTexture::Create()
 		// Otherwise, pixel/texel alignment will be off.
 		int iDimensionMultiple = 2;
 
-		if( sHintString.find("doubleres") != string::npos )
+		if( sHintString.find("doubleres") != std::string::npos )
 		{
 			iDimensionMultiple = 4;
 		}
@@ -302,25 +306,10 @@ void RageBitmapTexture::Create()
 		{
 			float fFrameWidth = this->GetSourceWidth() / (float)this->GetFramesWide();
 			float fFrameHeight = this->GetSourceHeight() / (float)this->GetFramesHigh();
-			float fBetterFrameWidth = ceilf(fFrameWidth/iDimensionMultiple) * iDimensionMultiple;
-			float fBetterFrameHeight = ceilf(fFrameHeight/iDimensionMultiple) * iDimensionMultiple;
+			float fBetterFrameWidth = std::ceil(fFrameWidth/iDimensionMultiple) * iDimensionMultiple;
+			float fBetterFrameHeight = std::ceil(fFrameHeight/iDimensionMultiple) * iDimensionMultiple;
 			float fBetterSourceWidth = this->GetFramesWide() * fBetterFrameWidth;
 			float fBetterSourceHeight = this->GetFramesHigh() * fBetterFrameHeight;
-			if( fFrameWidth!=fBetterFrameWidth || fFrameHeight!=fBetterFrameHeight )
-			{
-				RString sWarning = ssprintf(
-					"The graphic '%s' has frame dimensions that aren't a multiple of %d.\n"
-					"The entire image is %dx%d and frame size is %.1fx%.1f.\n"
-					"Image quality will be much improved if you resize the graphic to %.0fx%.0f, which is a frame size of %.0fx%.0f.", 
-					actualID.filename.c_str(), 
-					iDimensionMultiple,
-					this->GetSourceWidth(), this->GetSourceHeight(), 
-					fFrameWidth, fFrameHeight,
-					fBetterSourceWidth, fBetterSourceHeight,
-					fBetterFrameWidth, fBetterFrameHeight );
-				LOG->Warn( "%s", sWarning.c_str() );
-				Dialog::OK( sWarning, "FRAME_DIMENSIONS_WARNING" );
-			}
 		}
 	}
 
@@ -334,7 +323,7 @@ void RageBitmapTexture::Create()
 	 * with dimensions 1/2 of the source. So, cut down the source dimension here
 	 * after everything above is finished operating with the real image
 	 * source dimensions. */
-	if( sHintString.find("doubleres") != string::npos )
+	if( sHintString.find("doubleres") != std::string::npos )
 	{
 		m_iSourceWidth = m_iSourceWidth / 2;
 		m_iSourceHeight = m_iSourceHeight / 2;
@@ -362,7 +351,7 @@ void RageBitmapTexture::Destroy()
 /*
  * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -372,7 +361,7 @@ void RageBitmapTexture::Destroy()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -382,4 +371,4 @@ void RageBitmapTexture::Destroy()
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
- */ 
+ */

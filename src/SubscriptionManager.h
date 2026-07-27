@@ -18,23 +18,23 @@ public:
 	// collection ourself on first use.  SubscriptionHandler itself is
 	// a POD type, so a static SubscriptionHandler will always have
 	// m_pSubscribers == nullptr (before any static constructors are called).
-	set<T*>* m_pSubscribers;
+	std::set<T*>* m_pSubscribers;
 
 	// Use this to access m_pSubscribers, so you don't have to worry about
 	// it being nullptr.
-	set<T*> &Get()
+	std::set<T*> &Get()
 	{
 		if( m_pSubscribers == nullptr )
-			m_pSubscribers = new set<T*>;
+			m_pSubscribers = new std::set<T*>;
 		return *m_pSubscribers;
 	}
 
 	void Subscribe( T* p )
 	{
 		if( m_pSubscribers == nullptr )
-			m_pSubscribers = new set<T*>;
+			m_pSubscribers = new std::set<T*>;
 #ifdef DEBUG
-		typename set<T*>::iterator iter = m_pSubscribers->find( p );
+		typename std::set<T*>::iterator iter = m_pSubscribers->find( p );
 		ASSERT_M( iter == m_pSubscribers->end(), "already subscribed" );
 #endif
 		m_pSubscribers->insert( p );
@@ -42,7 +42,7 @@ public:
 
 	void Unsubscribe( T* p )
 	{
-		typename set<T*>::iterator iter = m_pSubscribers->find( p );
+		typename std::set<T*>::iterator iter = m_pSubscribers->find( p );
 		ASSERT( iter != m_pSubscribers->end() );
 		m_pSubscribers->erase( iter );
 	}

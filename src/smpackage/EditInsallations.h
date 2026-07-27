@@ -1,9 +1,9 @@
 #if !defined(AFX_EDITINSALLATIONS_H__CD328CB4_8E35_4B12_BCD1_ADF5CE7EABC7__INCLUDED_)
 #define AFX_EDITINSALLATIONS_H__CD328CB4_8E35_4B12_BCD1_ADF5CE7EABC7__INCLUDED_
 
-#if _MSC_VER > 1000
+#if defined(_MSC_VER)
 #pragma once
-#endif // _MSC_VER > 1000
+#endif
 // EditInsallations.h : header file
 
 /////////////////////////////////////////////////////////////////////////////

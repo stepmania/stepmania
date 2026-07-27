@@ -8,6 +8,9 @@
 #include "RadarValues.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <vector>
+
 
 ThemeMetric<RString> EMPTY_NAME("HighScore","EmptyName");
 
@@ -41,7 +44,7 @@ struct HighScoreImpl
 	bool operator!=( const HighScoreImpl& other ) const { return !(*this == other); }
 };
 
-bool HighScoreImpl::operator==( const HighScoreImpl& other ) const 
+bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 {
 #define COMPARE(x)	if( x!=other.x )	return false;
 	COMPARE( sName );
@@ -160,7 +163,7 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "Disqualified",		bDisqualified);
 
 	// Validate input.
-	grade = clamp( grade, Grade_Tier01, Grade_Failed );
+	grade = std::clamp( grade, Grade_Tier01, Grade_Failed );
 }
 
 REGISTER_CLASS_TRAITS( HighScoreImpl, new HighScoreImpl(*pCopy) )
@@ -265,7 +268,7 @@ bool HighScore::operator>=( const HighScore& other ) const
 	return !operator<(other);
 }
 
-bool HighScore::operator==( const HighScore& other ) const 
+bool HighScore::operator==( const HighScore& other ) const
 {
 	return *m_Impl == *other.m_Impl;
 }
@@ -280,7 +283,7 @@ XNode* HighScore::CreateNode() const
 	return m_Impl->CreateNode();
 }
 
-void HighScore::LoadFromNode( const XNode* pNode ) 
+void HighScore::LoadFromNode( const XNode* pNode )
 {
 	m_Impl->LoadFromNode( pNode );
 }
@@ -309,8 +312,8 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 		if( hs >= vHighScores[i] )
 			break;
 	}
-	const int iMaxScores = bIsMachine ? 
-		PREFSMAN->m_iMaxHighScoresPerListForMachine : 
+	const int iMaxScores = bIsMachine ?
+		PREFSMAN->m_iMaxHighScoresPerListForMachine :
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
 	if( i < iMaxScores )
 	{
@@ -318,13 +321,13 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 		iIndexOut = i;
 
 		// Delete extra machine high scores in RemoveAllButOneOfEachNameAndClampSize
-		// and not here so that we don't end up with less than iMaxScores after 
+		// and not here so that we don't end up with less than iMaxScores after
 		// removing HighScores with duplicate names.
 		//
 		if( !bIsMachine )
 			ClampSize( bIsMachine );
 	}
-	HighGrade = min( hs.GetGrade(), HighGrade );
+	HighGrade = std::min( hs.GetGrade(), HighGrade );
 }
 
 void HighScoreList::IncrementPlayCount( DateTime _dtLastPlayed )
@@ -394,20 +397,16 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 			vHighScores.resize( vHighScores.size()+1 );
 			vHighScores.back().LoadFromNode( p );
 
-			// ignore all high scores that are 0
-			if( vHighScores.back().GetScore() == 0 )
-				vHighScores.pop_back();
-			else
-				HighGrade = min( vHighScores.back().GetGrade(), HighGrade );
+			HighGrade = std::min( vHighScores.back().GetGrade(), HighGrade );
 		}
 	}
 }
 
 void HighScoreList::RemoveAllButOneOfEachName()
 {
-	for (vector<HighScore>::iterator i = vHighScores.begin(); i != vHighScores.end(); ++i)
+	for (std::vector<HighScore>::iterator i = vHighScores.begin(); i != vHighScores.end(); ++i)
 	{
-		for( vector<HighScore>::iterator j = i+1; j != vHighScores.end(); j++ )
+		for( std::vector<HighScore>::iterator j = i+1; j != vHighScores.end(); j++ )
 		{
 			if( i->GetName() == j->GetName() )
 			{
@@ -420,8 +419,8 @@ void HighScoreList::RemoveAllButOneOfEachName()
 
 void HighScoreList::ClampSize( bool bIsMachine )
 {
-	const int iMaxScores = bIsMachine ? 
-		PREFSMAN->m_iMaxHighScoresPerListForMachine : 
+	const int iMaxScores = bIsMachine ?
+		PREFSMAN->m_iMaxHighScoresPerListForMachine :
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
 	if( vHighScores.size() > unsigned(iMaxScores) )
 		vHighScores.erase( vHighScores.begin()+iMaxScores, vHighScores.end() );
@@ -437,11 +436,17 @@ void HighScoreList::MergeFromOtherHSL(HighScoreList& other, bool is_machine)
 	std::sort(vHighScores.begin(), vHighScores.end());
 	// Remove non-unique scores because they probably come from an accidental
 	// repeated merge. -Kyz
-	vector<HighScore>::iterator unique_end=
+	std::vector<HighScore>::iterator unique_end=
 		std::unique(vHighScores.begin(), vHighScores.end());
 	vHighScores.erase(unique_end, vHighScores.end());
 	// Reverse it because sort moved the lesser scores to the top.
 	std::reverse(vHighScores.begin(), vHighScores.end());
+	
+	if (!PREFSMAN->m_bAllowMultipleHighScoreWithSameName)
+	{
+		// erase all but the highest score for each name
+		RemoveAllButOneOfEachName();
+	}
 	ClampSize(is_machine);
 }
 
@@ -457,7 +462,7 @@ XNode* Screenshot::CreateNode() const
 	return pNode;
 }
 
-void Screenshot::LoadFromNode( const XNode* pNode ) 
+void Screenshot::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "Screenshot" );
 
@@ -542,7 +547,7 @@ public:
 	static int GetHighestScoreOfName( T* p, lua_State *L )
 	{
 		RString name= SArg(1);
-		for(size_t i= 0; i < p->vHighScores.size(); ++i)
+		for(std::size_t i= 0; i < p->vHighScores.size(); ++i)
 		{
 			if(name == p->vHighScores[i].GetName())
 			{
@@ -557,8 +562,8 @@ public:
 	static int GetRankOfName( T* p, lua_State *L )
 	{
 		RString name= SArg(1);
-		size_t rank= 0;
-		for(size_t i= 0; i < p->vHighScores.size(); ++i)
+		std::size_t rank= 0;
+		for(std::size_t i= 0; i < p->vHighScores.size(); ++i)
 		{
 			if(name == p->vHighScores[i].GetName())
 			{
@@ -586,7 +591,7 @@ LUA_REGISTER_CLASS( HighScoreList )
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -596,7 +601,7 @@ LUA_REGISTER_CLASS( HighScoreList )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -12,6 +12,8 @@
 #include "PlayerState.h"
 #include "MessageManager.h"
 
+#include <cstddef>
+
 const float FULL_LIFE_SECONDS = 1.5f*60;
 
 static ThemeMetric<float> METER_WIDTH		("LifeMeterTime","MeterWidth");
@@ -35,9 +37,9 @@ static const float g_fTimeMeterSecondsChangeInit[] =
 	-4.0f, // SE_LetGo
 	-0.0f, // SE_Missed
 };
-COMPILE_ASSERT( ARRAYLEN(g_fTimeMeterSecondsChangeInit) == NUM_ScoreEvent );
+static_assert( ARRAYLEN(g_fTimeMeterSecondsChangeInit) == NUM_ScoreEvent );
 
-static void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+static void TimeMeterSecondsChangeInit( std::size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "TimeMeterSecondsChange" + ScoreEventToString( (ScoreEvent)i );
 	defaultValueOut = g_fTimeMeterSecondsChangeInit[i];
@@ -228,9 +230,9 @@ void LifeMeterTime::Update( float fDeltaTime )
 {
 	// update current stage stats so ScoreDisplayLifeTime can show the right thing
 	float fSecs = GetLifeSeconds();
-	fSecs = max( 0, fSecs );
+	fSecs = std::max( 0.0f, fSecs );
 	m_pPlayerStageStats->m_fLifeRemainingSeconds = fSecs;
-	
+
 	LifeMeter::Update( fDeltaTime );
 
 	m_pStream->SetPercent( GetLife() );
@@ -259,7 +261,7 @@ float LifeMeterTime::GetLifeSeconds() const
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -269,7 +271,7 @@ float LifeMeterTime::GetLifeSeconds() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

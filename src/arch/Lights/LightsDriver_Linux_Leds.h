@@ -5,11 +5,13 @@
 
 #include "arch/Lights/LightsDriver.h"
 
+#include <cstdint>
+
 class LightsDriver_Linux_Leds : public LightsDriver
 {
 private:
-	static const uint8_t LINUX_LED_STATE_ON = 255;
-	static const uint8_t LINUX_LED_STATE_OFF = 0;
+	static const std::uint8_t LINUX_LED_STATE_ON = 255;
+	static const std::uint8_t LINUX_LED_STATE_OFF = 0;
 	static const int LINUX_LED_MAX_DIRECTORY_LENGTH = PATH_MAX;
 
 	const InputScheme *pInput;
@@ -61,6 +63,6 @@ public:
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
- * 
+ *
  * i love lamp
  */

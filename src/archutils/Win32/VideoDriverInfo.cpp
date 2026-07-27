@@ -3,7 +3,10 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RegistryAccess.h"
+
+#include <vector>
 #include <windows.h>
+
 
 // this will not work on 95 and NT because of EnumDisplayDevices
 RString GetPrimaryVideoName()
@@ -13,8 +16,8 @@ RString GetPrimaryVideoName()
 	HINSTANCE hInstUser32;
 
 	hInstUser32 = LoadLibrary( "User32.DLL" );
-	if( !hInstUser32 ) 
-		return RString();  
+	if( !hInstUser32 )
+		return RString();
 
 	// VC6 don't have a stub to static link with, so link dynamically.
 	EnumDisplayDevices = (pfnEnumDisplayDevices)GetProcAddress(hInstUser32,"EnumDisplayDevicesA");
@@ -23,7 +26,7 @@ RString GetPrimaryVideoName()
 		FreeLibrary(hInstUser32);
 		return RString();
 	}
-	
+
 	RString sPrimaryDeviceName;
 	for( int i=0; true; ++i )
 	{
@@ -49,7 +52,7 @@ RString GetPrimaryVideoDriverName()
 	RString sPrimaryDeviceName = GetPrimaryVideoName();
 	if( sPrimaryDeviceName != "" )
 		return sPrimaryDeviceName;
-	
+
 	LOG->Warn("GetPrimaryVideoName failed; renderer selection may be wrong");
 
 	VideoDriverInfo info;
@@ -62,19 +65,13 @@ RString GetPrimaryVideoDriverName()
 /* Get info for the given card number.  Return false if that card doesn't exist. */
 bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 {
-	OSVERSIONINFO version;
-	version.dwOSVersionInfoSize = sizeof(version);
-	GetVersionEx(&version);
-	const bool bIsWin9x = version.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS;
-
 	static bool bInitialized=false;
-	static vector<RString> lst;
+	static std::vector<RString> lst;
 	if( !bInitialized )
 	{
 		bInitialized = true;
 
-		const RString sTopKey = bIsWin9x?
-			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Class\\Display":
+		const RString sTopKey =
 			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}";
 
 		RegistryAccess::GetRegSubKeys( sTopKey, lst, ".*", false );
@@ -113,7 +110,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 		RegistryAccess::GetRegValue( sKey, "DriverDate", info.sDate );
 		RegistryAccess::GetRegValue( sKey, "MatchingDeviceId", info.sDeviceID );
 		RegistryAccess::GetRegValue( sKey, "ProviderName", info.sProvider );
-		RegistryAccess::GetRegValue( sKey, bIsWin9x? "Ver":"DriverVersion", info.sVersion );
+		RegistryAccess::GetRegValue( sKey, "DriverVersion", info.sVersion );
 
 		return true;
 	}
@@ -124,7 +121,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 /*
  * (c) 2002-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -134,7 +131,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

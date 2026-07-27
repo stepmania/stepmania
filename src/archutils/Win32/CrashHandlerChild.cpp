@@ -1,16 +1,6 @@
 #include "global.h"
 #include "CrashHandlerInternal.h"
 #include "Crash.h"
-#include <errno.h>
-
-#include <windows.h>
-#include <commctrl.h>
-#include "archutils/Win32/ddk/dbghelp.h"
-#include <io.h>
-#if defined(HAVE_FCNTL_H)
-#include <fcntl.h>
-#endif
-#include <shellapi.h>
 
 #include "arch/ArchHooks/ArchHooks.h"
 #include "archutils/Win32/WindowsResources.h"
@@ -29,9 +19,21 @@
 #include "RageFileDriverDeflate.h"
 #include "ver.h"
 
-#if defined(_MSC_VER)
-#pragma comment(lib, "dbghelp.lib")
+#include <cerrno>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+#include <windows.h>
+#include <commctrl.h>
+#include "dbghelp.h"
+#include <io.h>
+#if defined(HAVE_FCNTL_H)
+#include <fcntl.h>
 #endif
+#include <shellapi.h>
+
+#pragma comment(lib, "dbghelp.lib")
 
 // XXX: What happens when we *don't* have version info? Does that ever actually happen?
 #include "ver.h"
@@ -54,10 +56,10 @@ namespace VDDebugInfo
 		int nBuildNumber;
 
 		const unsigned char *pRVAHeap;
-		uintptr_t nFirstRVA;
+		std::uintptr_t nFirstRVA;
 
 		const char *pFuncNameHeap;
-		const uintptr_t (*pSegments)[2];
+		const std::uintptr_t (*pSegments)[2];
 		int nSegments;
 		char sFilename[1024];
 		RString sError;
@@ -105,16 +107,16 @@ namespace VDDebugInfo
 
 		src += 64;
 		const int* pVer = reinterpret_cast<const int*>(src);
-		const size_t* pRVASize = reinterpret_cast<const size_t*>(src + sizeof(int));
-		const size_t* pFNamSize = reinterpret_cast<const size_t*>(src + sizeof(int) + sizeof(size_t));
-		const int* pSegCnt = reinterpret_cast<const int*>(src + sizeof(int) + 2 * sizeof(size_t));
-		src += 2 * (sizeof(int) + sizeof(size_t));
+		const std::size_t* pRVASize = reinterpret_cast<const std::size_t*>(src + sizeof(int));
+		const std::size_t* pFNamSize = reinterpret_cast<const std::size_t*>(src + sizeof(int) + sizeof(std::size_t));
+		const int* pSegCnt = reinterpret_cast<const int*>(src + sizeof(int) + 2 * sizeof(std::size_t));
+		src += 2 * (sizeof(int) + sizeof(std::size_t));
 
 		pctx->nBuildNumber		= *pVer;
-		pctx->pRVAHeap			= reinterpret_cast<const unsigned char*>(src + sizeof(uintptr_t));
-		pctx->nFirstRVA			= *reinterpret_cast<const uintptr_t*>(src);
+		pctx->pRVAHeap			= reinterpret_cast<const unsigned char*>(src + sizeof(std::uintptr_t));
+		pctx->nFirstRVA			= *reinterpret_cast<const std::uintptr_t*>(src);
 		pctx->pFuncNameHeap		= reinterpret_cast<const char*>(src + *pRVASize);
-		pctx->pSegments			= reinterpret_cast<const uintptr_t(*)[2]>(src + *pRVASize + *pFNamSize);
+		pctx->pSegments			= reinterpret_cast<const std::uintptr_t(*)[2]>(src + *pRVASize + *pFNamSize);
 		pctx->nSegments			= *pSegCnt;
 
 		return true;
@@ -148,7 +150,7 @@ namespace VDDebugInfo
 			if( dwFileSize == INVALID_FILE_SIZE )
 				break;
 
-			char *buffer = new char[static_cast<size_t>(dwFileSize) + 1];
+			char *buffer = new char[static_cast<std::size_t>(dwFileSize) + 1];
 			std::fill(buffer, buffer + dwFileSize + 1, '\0' );
 
 			DWORD dwActual;
@@ -168,7 +170,7 @@ namespace VDDebugInfo
 		return false;
 	}
 
-	static bool PointerIsInAnySegment( const Context *pctx, uintptr_t rva )
+	static bool PointerIsInAnySegment( const Context *pctx, std::uintptr_t rva )
 	{
 		for( int i=0; i<pctx->nSegments; ++i )
 		{
@@ -179,7 +181,7 @@ namespace VDDebugInfo
 		return false;
 	}
 
-	static const char *GetNameFromHeap(const char *heap, size_t idx)
+	static const char *GetNameFromHeap(const char *heap, std::size_t idx)
 	{
 		while(idx--)
 			while(*heap++);
@@ -187,25 +189,25 @@ namespace VDDebugInfo
 		return heap;
 	}
 
-	intptr_t VDDebugInfoLookupRVA( const Context *pctx, uintptr_t rva, char *buf, int buflen )
+	std::intptr_t VDDebugInfoLookupRVA( const Context *pctx, std::uintptr_t rva, char *buf, int buflen )
 	{
 		if( !PointerIsInAnySegment(pctx, rva) )
 			return -1;
 
 		const unsigned char *pr = pctx->pRVAHeap;
 		const unsigned char *pr_limit = (const unsigned char *)pctx->pFuncNameHeap;
-		size_t idx = 0;
+		std::size_t idx = 0;
 
 		// Linearly unpack RVA deltas and find lower_bound
 		rva -= pctx->nFirstRVA;
 
-		if( static_cast<intptr_t>(rva) < 0 )
+		if( static_cast<std::intptr_t>(rva) < 0 )
 			return -1;
 
 		while( pr < pr_limit )
 		{
 			unsigned char c;
-			uintptr_t diff = 0;
+			std::uintptr_t diff = 0;
 
 			do
 			{
@@ -216,7 +218,7 @@ namespace VDDebugInfo
 
 			rva -= diff;
 
-			if (static_cast<intptr_t>(rva) < 0) {
+			if (static_cast<std::intptr_t>(rva) < 0) {
 				rva += diff;
 				break;
 			}
@@ -235,7 +237,7 @@ namespace VDDebugInfo
 		strncpy( buf, fn_name, buflen );
 		buf[buflen-1] = 0;
 
-		return static_cast<intptr_t>(rva);
+		return static_cast<std::intptr_t>(rva);
 	}
 }
 
@@ -288,7 +290,7 @@ namespace SymbolLookup
 		return true;
 	}
 
-	SYMBOL_INFO *GetSym( uintptr_t ptr, DWORD64 &disp )
+	SYMBOL_INFO *GetSym( std::uintptr_t ptr, DWORD64 &disp )
 	{
 		InitDbghelp();
 
@@ -315,7 +317,7 @@ namespace SymbolLookup
 			| UNDNAME_NO_CV_THISTYPE
 			| UNDNAME_NO_ALLOCATION_MODEL
 			| UNDNAME_NO_ACCESS_SPECIFIERS // no public:
-			| UNDNAME_NO_MS_KEYWORDS // no __cdecl 
+			| UNDNAME_NO_MS_KEYWORDS // no __cdecl
 			| UNDNAME_NO_MEMBER_TYPE // no virtual, static
 			) )
 		{
@@ -342,7 +344,7 @@ namespace SymbolLookup
 			return "???";
 		}
 		RString sName;
-		char *buffer = new char[static_cast<size_t>(iSize) + 1];
+		char *buffer = new char[static_cast<std::size_t>(iSize) + 1];
 		std::fill(buffer, buffer + iSize + 1, '\0');
 		if (!ReadFromParent(iFD, buffer, iSize))
 		{
@@ -368,12 +370,12 @@ namespace SymbolLookup
 		VirtualQueryEx( g_hParent, ptr, &meminfo, sizeof meminfo );
 
 		char tmp[512];
-		intptr_t iAddress = VDDebugInfo::VDDebugInfoLookupRVA(pctx, reinterpret_cast<uintptr_t>(ptr), tmp, sizeof(tmp));
+		std::intptr_t iAddress = VDDebugInfo::VDDebugInfoLookupRVA(pctx, reinterpret_cast<std::uintptr_t>(ptr), tmp, sizeof(tmp));
 		if( iAddress >= 0 )
 		{
-			wsprintf( buf, "%" ADDRESS_ZEROS "Ix: %s [%" ADDRESS_ZEROS "Ix+%Ix+%Ix]", reinterpret_cast<uintptr_t>(ptr), Demangle(tmp),
+			wsprintf( buf, "%" ADDRESS_ZEROS "Ix: %s [%" ADDRESS_ZEROS "Ix+%Ix+%Ix]", reinterpret_cast<std::uintptr_t>(ptr), Demangle(tmp),
 				pctx->nFirstRVA,
-				reinterpret_cast<uintptr_t>(ptr) - pctx->nFirstRVA - iAddress,
+				reinterpret_cast<std::uintptr_t>(ptr) - pctx->nFirstRVA - iAddress,
 				iAddress );
 			return;
 		}
@@ -381,21 +383,21 @@ namespace SymbolLookup
 		RString sName = CrashChildGetModuleBaseName( (HMODULE)meminfo.AllocationBase );
 
 		DWORD64 disp;
-		SYMBOL_INFO *pSymbol = GetSym( reinterpret_cast<uintptr_t>(ptr), disp );
+		SYMBOL_INFO *pSymbol = GetSym( reinterpret_cast<std::uintptr_t>(ptr), disp );
 
 		if( pSymbol )
 		{
 			wsprintf( buf, "%" ADDRESS_ZEROS "Ix: %s!%s [%" ADDRESS_ZEROS "Ix+%Ix+%Ix]",
-				reinterpret_cast<uintptr_t>(ptr), sName.c_str(), pSymbol->Name,
-				reinterpret_cast<uintptr_t>(meminfo.AllocationBase),
-				static_cast<uintptr_t>(pSymbol->Address) - reinterpret_cast<uintptr_t>(meminfo.AllocationBase),
+				reinterpret_cast<std::uintptr_t>(ptr), sName.c_str(), pSymbol->Name,
+				reinterpret_cast<std::uintptr_t>(meminfo.AllocationBase),
+				static_cast<std::uintptr_t>(pSymbol->Address) - reinterpret_cast<std::uintptr_t>(meminfo.AllocationBase),
 				static_cast<ULONG_PTR>(disp));
 			return;
 		}
 
 		wsprintf( buf, "%" ADDRESS_ZEROS "Ix: %s!%" ADDRESS_ZEROS "Ix",
-			reinterpret_cast<uintptr_t>(ptr), sName.c_str(), 
-			reinterpret_cast<uintptr_t>(meminfo.AllocationBase) );
+			reinterpret_cast<std::uintptr_t>(ptr), sName.c_str(),
+			reinterpret_cast<std::uintptr_t>(meminfo.AllocationBase) );
 	}
 }
 
@@ -448,8 +450,8 @@ struct CompleteCrashData
 	RString m_sInfo;
 	RString m_sAdditionalLog;
 	RString m_sCrashedThread;
-	vector<RString> m_asRecent;
-	vector<RString> m_asCheckpoints;
+	std::vector<RString> m_asRecent;
+	std::vector<RString> m_asCheckpoints;
 };
 
 static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
@@ -457,7 +459,7 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 	sOut += ssprintf(
 			"%s crash report (build %s, %s @ %s)\n"
 			"--------------------------------------\n\n",
-			(string(PRODUCT_FAMILY) + product_version).c_str(), ::sm_version_git_hash, version_date, version_time );
+			(std::string(PRODUCT_FAMILY) + product_version).c_str(), ::sm_version_git_hash, version_date, version_time );
 
 	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
 	sOut += ssprintf( "\n" );
@@ -489,7 +491,7 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 	sOut += ssprintf( "\n" );
 
 	sOut += ssprintf( "Partial log:\n" );
-	for( size_t  i = 0; i < Data.m_asRecent.size(); ++i )
+	for( std::size_t  i = 0; i < Data.m_asRecent.size(); ++i )
 		sOut += ssprintf( "%s\n", Data.m_asRecent[i].c_str() );
 	sOut += ssprintf( "\n" );
 
@@ -529,7 +531,7 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
-	char *buffer = new char[static_cast<size_t>(iSize) + 1];
+	char *buffer = new char[static_cast<std::size_t>(iSize) + 1];
 	std::fill(buffer, buffer + iSize + 1, '\0');
 	bool wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
 	RString tmp = buffer;
@@ -710,7 +712,7 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			{
 			case IDC_STATIC_HEADER_TEXT:
 			case IDC_STATIC_ICON:
-				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH);
 				SetBkMode( hdc, OPAQUE );
 				SetBkColor( hdc, RGB(255,255,255) );
 				break;
@@ -820,7 +822,6 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				XNode xml;
 				if( sError.empty() )
 				{
-					RString sError;
 					XmlFileUtil::Load( &xml, sResult, sError );
 					if( !sError.empty() )
 					{
@@ -910,7 +911,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
 /*
  * (c) 2003-2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -920,7 +921,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

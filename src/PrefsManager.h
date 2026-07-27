@@ -112,6 +112,18 @@ enum BackgroundFitMode
 	BackgroundFitMode_Invalid
 };
 
+// Profile sort orders exist for sorting the list of profiles.
+// Regardless of sort order, Guest profiles are always at the top of the list
+// and Test profiles are always at the bottom of the list.
+enum ProfileSortOrder
+{
+	ProfileSortOrder_Priority,  // Sort based on the Priority defined in a profile's Type.ini
+	ProfileSortOrder_Recent,  // Sorts profiles by most recently used.
+	ProfileSortOrder_Alphabetical,  // Sorts profiles alphabetically.
+	NUM_ProfileSortOrder,
+	ProfileSortOrder_Invalid
+};
+
 /** @brief Holds user-chosen preferences that are saved between sessions. */
 class PrefsManager
 {
@@ -143,7 +155,7 @@ protected:
 		RString m_sTheme;
 		RString	m_sDefaultModifiers;
 	};
-	map<RString, GamePrefs> m_mapGameNameToGamePrefs;
+	std::map<RString, GamePrefs> m_mapGameNameToGamePrefs;
 
 public:
 	Preference<bool>	m_bWindowed;
@@ -174,7 +186,6 @@ public:
 	Preference<bool>	m_bDelayedModelDelete;
 	Preference<ImageCacheMode>		m_ImageCache;
 	Preference<bool>	m_bFastLoad;
-	Preference<bool>	m_bFastLoadAdditionalSongs;
 	Preference<RString> m_NeverCacheList;
 
 	Preference<bool>	m_bOnlyDedicatedMenuButtons;
@@ -210,6 +221,7 @@ public:
 	Preference<AllowW1>	m_AllowW1; // this should almost always be on, given use cases. -aj
 	Preference<bool>	m_bEventMode;
 	Preference<int>	m_iCoinsPerCredit;
+	Preference<int>	m_iMaxNumCredits;
 	Preference<int>	m_iSongsPerPlay;
 	Preference<bool>	m_bDelayedCreditsReconcile; // zuh?
 	Preference<bool>	m_bComboContinuesBetweenSongs;
@@ -271,14 +283,24 @@ public:
 	// profile's data will be discarded.
 	Preference<bool>	m_bSignProfileData;
 
+	// Used to control the ordering of the player profiles.
+	// See the the definition of ProfileSortOrder above about the available sort options.
+	Preference<ProfileSortOrder>	m_ProfileSortOrder;
+
+	// Determines whether the ProfileSortOrder is in ascending order (true) or descending order (false).
+	Preference<bool>	m_bProfileSortOrderAscending;
+
 	// course ranking
 	Preference<CourseSortOrders>	m_CourseSortOrder;
 	Preference<bool>	m_bSubSortByNumSteps;
 	Preference<GetRankingName>	m_GetRankingName;
 
-	Preference<RString>	m_sAdditionalSongFolders;
-	Preference<RString>	m_sAdditionalCourseFolders;
-	Preference<RString>	m_sAdditionalFolders;
+	Preference<RString>	m_sAdditionalSongFoldersReadOnly;
+	Preference<RString>	m_sAdditionalSongFoldersWritable;
+	Preference<RString>	m_sAdditionalCourseFoldersReadOnly;
+	Preference<RString>	m_sAdditionalCourseFoldersWritable;
+	Preference<RString>	m_sAdditionalFoldersReadOnly;
+	Preference<RString>	m_sAdditionalFoldersWritable;
 
 	// failsafe
 	Preference<RString>	m_sDefaultTheme;
@@ -291,6 +313,7 @@ public:
 	Preference<int> m_iRageSoundSampleCountClamp;
 	Preference<int>	m_iSoundPreferredSampleRate;
 	Preference<RString>	m_sLightsStepsDifficulty;
+	Preference<bool>	m_bLightsSimplifyBass;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
 	Preference<bool>	m_bThreadedInput;
 	Preference<bool>	m_bThreadedMovieDecode;
@@ -321,20 +344,6 @@ public:
 	Preference<bool>	m_bPseudoLocalize;
 	Preference<bool>	m_show_theme_errors;
 
-#if !defined(WITHOUT_NETWORKING)
-	Preference<bool>	m_bEnableScoreboard;  //Alows disabling of scoreboard in network play
-
-	// Check for Updates code
-	Preference<bool>	m_bUpdateCheckEnable;
-	// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
-	//Preference<int>				m_iUpdateCheckIntervalSeconds;
-	//Preference<int>				m_iUpdateCheckLastCheckedSecond;
-
-	// TODO - Aldo_MX: Write helpers in LuaManager.cpp to treat unsigned int/long like LUA Numbers
-	//Preference<unsigned long>	m_uUpdateCheckLastCheckedBuild;
-
-#endif
-
 	void ReadPrefsFromIni( const IniFile &ini, const RString &sSection, bool bIsStatic );
 	void ReadGamePrefsFromIni( const RString &sIni );
 	void ReadDefaultsFromIni( const IniFile &ini, const RString &sSection );
@@ -353,6 +362,11 @@ public:
 protected:
 	void ReadPrefsFromFile( const RString &sIni, const RString &sSection, bool bIsStatic );
 	void ReadDefaultsFromFile( const RString &sIni, const RString &sSection );
+	void TranslateDeprecatedFlags();
+
+	Preference<RString>	m_sAdditionalSongFolders;	// deprecated
+	Preference<RString>	m_sAdditionalCourseFolders;	// deprecated
+	Preference<RString>	m_sAdditionalFolders;		// deprecated
 };
 
 /* This is global, because it can be accessed by crash handlers and error handlers

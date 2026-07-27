@@ -41,7 +41,7 @@ protected:
 			return iItemIndex < other.iItemIndex;
 		}
 	};
-	mutable map<PositionOffsetAndItemIndex,Actor::TweenState> m_mapPositionToTweenStateCache;
+	mutable std::map<PositionOffsetAndItemIndex,Actor::TweenState> m_mapPositionToTweenStateCache;
 };
 
 #endif

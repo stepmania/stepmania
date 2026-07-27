@@ -9,6 +9,8 @@
 #include "InputMapper.h"
 #include "Game.h"
 
+#include <cmath>
+
 // xxx: don't hardcode the port address. -aj
 static const int PORT_ADDRESS = 0x378;
 static const bool SCREEN_DEBUG = false;
@@ -46,7 +48,7 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 	{
 		s += ls->m_bCabinetLights[cl] ? '1' : '0';
 		if ( ls->m_bCabinetLights[cl] )
-			output += (unsigned char)pow((double)2,i);
+			output += std::pow((double)2,i);
 		i++;
 	}
 	s += "\n";
@@ -74,7 +76,7 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 /*
  * (c) 2004 Hugo Hromic M. <hhromic@udec.cl>
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -84,7 +86,7 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

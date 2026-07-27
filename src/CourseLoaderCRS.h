@@ -4,8 +4,12 @@
 #define COURSE_LOADER_CRS_H
 
 #include "GameConstantsAndTypes.h"
+#include "MsdFile.h"
+#include "Course.h"
+
 class Course;
-class MsdFile;
+class CourseEntry;
+struct AttackArray;
 
 /** @brief The Course Loader handles parsing the .crs files. */
 namespace CourseLoaderCRS
@@ -49,6 +53,65 @@ namespace CourseLoaderCRS
 	 * @return its success or failure.
 	 */
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sPath, ProfileSlot slot );
+
+	/**
+	 * @brief Parse the list of parameters from a `#MODS` tag.
+	 * @param sParams the list of params, as retrieved from msd.GetValue()
+	 * @param attacks the destination AttackArray, where parsed attacks are added
+	 * @param sPath the course filepath (used for logging purposes)
+	 * @return its success or failure
+	*/
+	bool ParseCourseMods( const MsdFile::value_t &sParams, AttackArray &attacks, const RString &sPath );
+	
+	/**
+	 * @brief Parse the list of parameters from a `#SONG` tag.
+	 * @param sParams the list of params, as retrieved from msd.GetValue()
+	 * @param new_entry the destination CourseEntry
+	 * @param sPath the course filepath (used for logging purposes)
+	 * @return its success or failure
+	*/
+	bool ParseCourseSong( const MsdFile::value_t &sParams, CourseEntry &new_entry, const RString &sPath );
+	
+	/**
+	 * @brief Parse the list of parameters from a `#SONGSELECT` tag.
+	 * @param sParams the list of params, as retrieved from msd.GetValue()
+	 * @param new_entry the destination CourseEntry
+	 * @param sPath the course filepath (used for logging purposes)
+	 * @return its success or failure
+	*/
+	bool ParseCourseSongSelect(const MsdFile::value_t &sParams, CourseEntry &new_entry, const RString &sPath);
+
+	/**
+	 * @brief Parse a param string as a comma-separated list into a vector of strings
+	 * @param sParamValue the param to be parsed (eg `Thing1,Thing2,Thing3`)
+	 * @param dest the destination vector for the individual items
+	 * @param sParamName the parameter name (used for logging purposes)
+	 * @param sPath the course filepath (used for logging purposes)
+	 * @return its success or failure
+	*/
+	bool ParseCommaSeparatedList(const RString &sParamValue, std::vector<RString> &dest, const RString &sParamName, const RString &sPath);
+
+	/**
+	 * @brief Parses a param string as a ranged value of type T numbers. 
+	 * A valid sParamValue is either a single number, or two numbers separated by a hyphen.
+	 * @param sParamValue the param to be parsed (eg `5-10`, or just `5`)
+	 * @param minValue the destination of the first value of the range
+	 * @param maxValue the destination of the second value of the range
+	 * @param sParamName the parameter name (used for logging purposes)
+	 * @param sPath the course filepath (used for logging purposes)
+	 * @return its success or failure
+	*/
+	template <typename T>
+	bool ParseRangedValue(const RString &sParamValue, T &minValue, T &maxValue, const RString &sParamName, const RString &sPath);
+	/**
+	 * @brief Performs some basic sanity checking and sets the song sort of the new_entry
+	 * @param new_entry the destination CourseEntry
+	 * @param sort the sort type to be set
+	 * @param index of the index to choose for the given sort (if sort == SongSort_Randomize, this value is ignored)
+	 * @param sPath the course filepath (used for logging purposes)
+	 * @return its success or failure
+	 */
+	bool SetCourseSongSort(CourseEntry &new_entry, SongSort sort, int index, const RString &sPath);
 }
 
 #endif

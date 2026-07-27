@@ -1,5 +1,8 @@
 #include "global.h"
 #include "GotoURL.h"
+
+#include <cstdint>
+
 #include <windows.h>
 #include <shellapi.h>
 
@@ -25,7 +28,7 @@ static LONG GetRegKey( HKEY key, RString subkey, LPTSTR retdata )
 bool GotoURL( RString sUrl )
 {
 	// First try ShellExecute()
-	intptr_t iRet = reinterpret_cast<intptr_t>(ShellExecute( nullptr, "open", sUrl, nullptr, nullptr, SW_SHOWDEFAULT ));
+	std::intptr_t iRet = reinterpret_cast<std::intptr_t>(ShellExecute( nullptr, "open", sUrl, nullptr, nullptr, SW_SHOWDEFAULT ));
 
 	// If it failed, get the .htm regkey and lookup the program
 	if( iRet > 32 )

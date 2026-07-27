@@ -5,6 +5,8 @@
 
 #include "RageTexture.h"
 
+#include <cstddef>
+
 class RageBitmapTexture : public RageTexture
 {
 public:
@@ -13,12 +15,12 @@ public:
 	/* only called by RageTextureManager::InvalidateTextures */
 	virtual void Invalidate() { m_uTexHandle = 0; /* don't Destroy() */}
 	virtual void Reload();
-	virtual uintptr_t GetTexHandle() const { return m_uTexHandle; };	// accessed by RageDisplay
+	virtual std::uintptr_t GetTexHandle() const { return m_uTexHandle; };	// accessed by RageDisplay
 
 private:
 	void Create();	// called by constructor and Reload
 	void Destroy();
-	uintptr_t m_uTexHandle;	// treat as unsigned in OpenGL, IDirect3DTexture9* for D3D
+	std::uintptr_t m_uTexHandle;	// treat as unsigned in OpenGL, IDirect3DTexture9* for D3D
 };
 
 #endif

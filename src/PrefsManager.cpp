@@ -10,10 +10,6 @@
 #include "RageLog.h"
 #include "SpecialFiles.h"
 
-#if !defined(WITHOUT_NETWORKING)
-#include "ver.h"
-#endif
-
 //DEFAULTS_INI_PATH	= "Data/Defaults.ini";		// these can be overridden
 //PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
 //STATIC_INI_PATH	= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
@@ -129,6 +125,15 @@ XToString( BackgroundFitMode );
 StringToX( BackgroundFitMode );
 LuaXType( BackgroundFitMode );
 
+static const char* ProfileSortOrderNames[] = {
+	"Priority",
+	"Recent",
+	"Alphabetical"
+};
+XToString(ProfileSortOrder);
+StringToX(ProfileSortOrder);
+LuaXType(ProfileSortOrder);
+
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 # define TRUE_IF_DEBUG true
@@ -180,9 +185,8 @@ PrefsManager::PrefsManager() :
 	m_bPAL				( "PAL",			false ),
 	m_bDelayedTextureDelete		( "DelayedTextureDelete",	false ),
 	m_bDelayedModelDelete		( "DelayedModelDelete",		false ),
-	m_ImageCache			( "ImageCache",		IMGCACHE_LOW_RES_PRELOAD ),
+	m_ImageCache			( "ImageCache",			IMGCACHE_LOW_RES_PRELOAD ),
 	m_bFastLoad			( "FastLoad",			true ),
-	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    true ),
 	m_NeverCacheList		( "NeverCacheList", ""),
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
@@ -202,7 +206,7 @@ PrefsManager::PrefsManager() :
 	m_bMercifulBeginner		( "MercifulBeginner",		false ),
 	m_bMercifulSuperMeter		( "MercifulSuperMeter",		true ),
 	m_bDelayedBack			( "DelayedBack",		true ),
-	m_AllowHoldForOptions("AllowHoldForOptions", true),
+	m_AllowHoldForOptions		( "AllowHoldForOptions",	true ),
 	m_bShowInstructions		( "ShowInstructions",		true ),
 	m_bShowCaution			( "ShowCaution",		true ),
 	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),
@@ -213,13 +217,14 @@ PrefsManager::PrefsManager() :
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
 	m_bEventMode			( "EventMode",			true ),
 	m_iCoinsPerCredit		( "CoinsPerCredit",		1 ),
+	m_iMaxNumCredits		( "MaxNumCredits",		20 ),
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
 	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
 	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
-	m_AllowMultipleToasties		("AllowMultipleToasties",	true ),
-	m_MinTNSToHideNotes		("MinTNSToHideNotes",		TNS_W3 ),
+	m_AllowMultipleToasties		( "AllowMultipleToasties",	true ),
+	m_MinTNSToHideNotes		( "MinTNSToHideNotes",		TNS_W3 ),
 	m_ShowSongOptions		( "ShowSongOptions",		Maybe_NO ),
-	m_bPercentageScoring		( "PercentageScoring",		false ),
+	m_bPercentageScoring		( "PercentageScoring",		true ),
 	// Wow, these preference names are *seriously* long -Colby
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.0001f ), // This is for home, who cares how bad you do?
 	m_fMinPercentageForMachineCourseHighScore	( "MinPercentageForMachineCourseHighScore",	0.0001f ), // don't save course scores with 0 percentage
@@ -228,7 +233,7 @@ PrefsManager::PrefsManager() :
 	m_bAutogenGroupCourses		( "AutogenGroupCourses",		true ),
 	m_bOnlyPreferredDifficulties	( "OnlyPreferredDifficulties",		false ),
 	m_bBreakComboToGetItem		( "BreakComboToGetItem",		false ),
-	m_bLockCourseDifficulties	( "LockCourseDifficulties",		true ),
+	m_bLockCourseDifficulties	( "LockCourseDifficulties",		false ),
 	m_ShowDancingCharacters		( "ShowDancingCharacters",		SDC_Random ),
 	m_bUseUnlockSystem		( "UseUnlockSystem",			false ),
 	m_fGlobalOffsetSeconds		( "GlobalOffsetSeconds",		-0.008f ),
@@ -262,21 +267,27 @@ PrefsManager::PrefsManager() :
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),
 
 	m_bSignProfileData		( "SignProfileData",			false ),
+	m_ProfileSortOrder		( "ProfileSortOrder",			ProfileSortOrder_Priority ),
+	m_bProfileSortOrderAscending		( "ProfileSortOrderAscending",			true ),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),
-	m_sAdditionalSongFolders	( "AdditionalSongFolders",		"" ),
-	m_sAdditionalCourseFolders	( "AdditionalCourseFolders",		"" ),
-	m_sAdditionalFolders		( "AdditionalFolders",			"" ),
+	m_sAdditionalSongFoldersReadOnly( "AdditionalSongFoldersReadOnly",	"", nullptr, PreferenceType::Immutable ),
+	m_sAdditionalSongFoldersWritable( "AdditionalSongFoldersWritable",	"", nullptr, PreferenceType::Immutable ),
+	m_sAdditionalCourseFoldersReadOnly( "AdditionalCourseFoldersReadOnly",	"", nullptr, PreferenceType::Immutable ),
+	m_sAdditionalCourseFoldersWritable( "AdditionalCourseFoldersWritable",	"", nullptr, PreferenceType::Immutable ),
+	m_sAdditionalFoldersReadOnly	( "AdditionalFoldersReadOnly",		"", nullptr, PreferenceType::Immutable ),
+	m_sAdditionalFoldersWritable	( "AdditionalFoldersWritable",		"", nullptr, PreferenceType::Immutable ),
 	m_sDefaultTheme			( "DefaultTheme",			"default" ),
 	m_sLastSeenVideoDriver		( "LastSeenVideoDriver",		"" ),
 	m_sVideoRenderers		( "VideoRenderers",			"" ),	// StepMania.cpp sets these on first run:
-	m_bSmoothLines			( "SmoothLines",			false ),
+	m_bSmoothLines			( "SmoothLines",			true ),
 	m_iSoundWriteAhead		( "SoundWriteAhead",			0 ),
 	m_iSoundDevice			( "SoundDevice",			"" ),
 	m_iRageSoundSampleCountClamp	("RageSoundSampleCountClamp", 0), //some sound drivers mask the sample location number, the most popular number for this is 2^27, this causes lockup after ~50 minutes at 44.1khz sample rate
 	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		0 ),
 	m_sLightsStepsDifficulty	( "LightsStepsDifficulty",		"hard,medium" ),
+	m_bLightsSimplifyBass		( "LightsSimplifyBass",		false),
 	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ),
 	m_bThreadedInput		( "ThreadedInput",			true ),
 	m_bThreadedMovieDecode		( "ThreadedMovieDecode",		true ),
@@ -309,22 +320,10 @@ PrefsManager::PrefsManager() :
 	m_bLogCheckpoints		( "LogCheckpoints",	false ),
 	m_bShowLoadingWindow		( "ShowLoadingWindow",	true ),
 	m_bPseudoLocalize		( "PseudoLocalize",	false ),
-	m_show_theme_errors("ShowThemeErrors", false)
-
-#if !defined(WITHOUT_NETWORKING)
-	,
-	m_bEnableScoreboard		( "EnableScoreboard",	true )
-	,
-	m_bUpdateCheckEnable			( "UpdateCheckEnable",				true )
-	// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
-	//,
-	//m_iUpdateCheckIntervalSeconds	( "UpdateCheckIntervalSeconds",		86400 ),	// 24 hours
-	//m_iUpdateCheckLastCheckedSecond	( "UpdateCheckLastCheckSecond",		0 )
-	// TODO - Aldo_MX: Write helpers in LuaManager.cpp to treat unsigned int/long like LUA Numbers
-	//,
-	//m_uUpdateCheckLastCheckedBuild	( "UpdateCheckLastCheckedBuild",	version_num )
-#endif
-
+	m_show_theme_errors		( "ShowThemeErrors",	false ),
+	m_sAdditionalSongFolders	( "AdditionalSongFolders",		"", nullptr, PreferenceType::Deprecated ),
+	m_sAdditionalCourseFolders	( "AdditionalCourseFolders",		"", nullptr, PreferenceType::Deprecated ),
+	m_sAdditionalFolders		( "AdditionalFolders",			"", nullptr, PreferenceType::Deprecated )
 {
 	Init();
 	ReadPrefsFromDisk();
@@ -383,12 +382,12 @@ void PrefsManager::RestoreGamePrefs()
 
 	// load prefs
 	GamePrefs gp;
-	map<RString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
+	std::map<RString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
 	if( iter != m_mapGameNameToGamePrefs.end() )
 		gp = iter->second;
 
 	m_sAnnouncer		.Set( gp.m_sAnnouncer );
-	m_sTheme			.Set( gp.m_sTheme );
+	m_sTheme		.Set( gp.m_sTheme );
 	m_sDefaultModifiers	.Set( gp.m_sDefaultModifiers );
 
 	// give Static.ini a chance to clobber the saved game prefs
@@ -406,6 +405,8 @@ void PrefsManager::ReadPrefsFromDisk()
 	ReadGamePrefsFromIni( SpecialFiles::PREFERENCES_INI_PATH );
 	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection(), true );
 
+	TranslateDeprecatedFlags();
+
 	if( !m_sCurrentGame.Get().empty() )
 		RestoreGamePrefs();
 }
@@ -416,6 +417,8 @@ void PrefsManager::ResetToFactoryDefaults()
 	Init();
 	IPreference::LoadAllDefaults();
 	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection(), true );
+
+	TranslateDeprecatedFlags();
 
 	SavePrefsToDisk();
 }
@@ -476,7 +479,7 @@ void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
 
 		// todo: read more prefs here? -aj
 		ini.GetValue(section_name, "Announcer",		gp.m_sAnnouncer);
-		ini.GetValue(section_name, "Theme",			gp.m_sTheme);
+		ini.GetValue(section_name, "Theme",		gp.m_sTheme);
 		ini.GetValue(section_name, "DefaultModifiers",	gp.m_sDefaultModifiers);
 	}
 }
@@ -499,6 +502,16 @@ void PrefsManager::ReadDefaultsFromIni( const IniFile &ini, const RString &sSect
 		ReadDefaultsFromIni( ini, sFallback );
 
 	IPreference::ReadAllDefaultsFromNode( ini.GetChild(sSection) );
+}
+
+void PrefsManager::TranslateDeprecatedFlags()
+{
+	if(!m_sAdditionalFolders.Get().empty())
+		m_sAdditionalFoldersWritable.Set(m_sAdditionalFolders.Get());
+	if(!m_sAdditionalSongFolders.Get().empty())
+		m_sAdditionalSongFoldersWritable.Set(m_sAdditionalSongFolders.Get());
+	if(!m_sAdditionalCourseFolders.Get().empty())
+		m_sAdditionalCourseFoldersWritable.Set(m_sAdditionalCourseFolders.Get());
 }
 
 void PrefsManager::SavePrefsToDisk()
@@ -575,6 +588,11 @@ public:
 			LuaHelpers::ReportScriptErrorFmt( "SetPreference: unknown preference \"%s\"", sName.c_str() );
 			COMMON_RETURN_SELF;
 		}
+		else if (pPref->IsImmutable())
+		{
+			LuaHelpers::ReportScriptErrorFmt( "SetPreference: preference \"%s\" is immutable", sName.c_str() );
+			COMMON_RETURN_SELF;
+		}
 
 		lua_pushvalue( L, 2 );
 		pPref->SetFromStack( L );
@@ -588,6 +606,11 @@ public:
 		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
+			COMMON_RETURN_SELF;
+		}
+		else if (pPref->IsImmutable())
+		{
+			LuaHelpers::ReportScriptErrorFmt( "SetPreference: preference \"%s\" is immutable", sName.c_str() );
 			COMMON_RETURN_SELF;
 		}
 

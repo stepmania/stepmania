@@ -42,9 +42,6 @@ The following is a list of known issues with StepMania 5.
 
 * VBR MP3's don't seek correctly in the editor, which botches sync.
 
-* There is no make install target for linux systems - this is important for
-  packaging purposes in particular (it would be great to release .debs!)
-
 * LuaDriver works well, but without threading it has latency issues.
 
 * Survival courses crash if you set a noteskin in the player options

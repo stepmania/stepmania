@@ -8,6 +8,8 @@
 #include "PlayerState.h"
 #include "ActorUtil.h"
 
+#include <vector>
+
 #define ITEM_X( i )				THEME->GetMetricF("ScoreDisplayBattle",ssprintf("Item%dX",i+1))
 #define ITEM_Y( i )				THEME->GetMetricF("ScoreDisplayBattle",ssprintf("Item%dY",i+1))
 
@@ -25,7 +27,7 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 		this->AddChild( &m_ItemIcon[i] );
 	}
 
-	vector<RString> asIconPaths;
+	std::vector<RString> asIconPaths;
 	GetDirListing( THEME->GetCurThemeDir()+"Graphic/ScoreDisplayBattle icon*", asIconPaths );
 	for( unsigned j=0; j<asIconPaths.size(); j++ )
 		m_TexturePreload.Load( asIconPaths[j] );
@@ -75,7 +77,7 @@ void ScoreDisplayBattle::Update( float fDelta )
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -85,7 +87,7 @@ void ScoreDisplayBattle::Update( float fDelta )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

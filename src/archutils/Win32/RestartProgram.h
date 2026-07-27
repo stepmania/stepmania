@@ -1,6 +1,7 @@
 #ifndef RESTART_PROGRAM_H
 #define RESTART_PROGRAM_H
 
+[[noreturn]]
 void Win32RestartProgram();
 
 #endif
@@ -8,7 +9,7 @@ void Win32RestartProgram();
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -18,7 +19,7 @@ void Win32RestartProgram();
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

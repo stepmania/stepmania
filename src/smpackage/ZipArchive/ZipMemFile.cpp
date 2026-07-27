@@ -10,7 +10,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // For the licensing details see the file License.txt
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -18,17 +18,19 @@
 #include "ZipMemFile.h"
 #include "ZipException.h"
 
+#include <cstddef>
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-void CZipMemFile::Grow(size_t nGrowTo)
+void CZipMemFile::Grow(std::size_t nGrowTo)
 {
 	if (m_nBufSize < (UINT)nGrowTo)
 	{
 		if (m_nGrowBy == 0)
 			CZipException::Throw(CZipException::memError);
-		size_t nNewSize = m_nBufSize;
+		std::size_t nNewSize = m_nBufSize;
 		while (nNewSize < nGrowTo)
 			nNewSize += m_nGrowBy;
 		BYTE* lpNew;
@@ -42,15 +44,15 @@ void CZipMemFile::Grow(size_t nGrowTo)
 		m_nBufSize = nNewSize;
 		m_lpBuf = lpNew;
 	}
-} 
+}
 
 void CZipMemFile::SetLength(ZIP_ULONGLONG nNewLen)
 {
 	if (m_nBufSize < (UINT)nNewLen)
-		Grow((size_t)nNewLen);
+		Grow((std::size_t)nNewLen);
 	else
-		m_nPos = (size_t)nNewLen;
-	m_nDataSize = (size_t)nNewLen;
+		m_nPos = (std::size_t)nNewLen;
+	m_nDataSize = (std::size_t)nNewLen;
 }
 
 UINT CZipMemFile::Read(void *lpBuf, UINT nCount)
@@ -93,6 +95,6 @@ ZIP_ULONGLONG CZipMemFile::Seek(ZIP_LONGLONG lOff, int nFrom)
 	if (lNew< 0)
 		CZipException::Throw(CZipException::memError);
 
-	m_nPos = (size_t)lNew;
+	m_nPos = (std::size_t)lNew;
 	return lNew;
 }

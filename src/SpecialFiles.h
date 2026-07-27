@@ -4,16 +4,6 @@
 /** @brief The listing of the special files and directories in use. */
 namespace SpecialFiles
 {
-	/**
-	 * @brief The user packages directory.
-	 *
-	 * This should be separate from system packages so that
-	 * we can write to it (installing a package).
-	 */
-	extern const RString USER_PACKAGES_DIR;
-	/** @brief The system packages directory.
-	 *
-	 * This is not the user packages directory. */
 	extern const RString PACKAGES_DIR;
 	extern const RString KEYMAPS_PATH;
 	/** @brief Edit Mode keymaps are separate from standard keymaps because
@@ -33,6 +23,7 @@ namespace SpecialFiles
 	extern const RString DEFAULTS_INI_PATH;
 	extern const RString STATIC_INI_PATH;
 	extern const RString TYPE_TXT_FILE;
+	extern const RString CA_BUNDLE_PATH;
 	/** @brief The default Songs directory. */
 	extern const RString SONGS_DIR;
 	/** @brief The default courses directory. */

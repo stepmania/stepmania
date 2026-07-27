@@ -3,10 +3,11 @@
 #include "InputHandler_Linux_Event.h"
 #include "InputHandler_Linux_Joystick.h"
 
-#include "RageInput.h" // g_sInputDrivers
+#include "RageInput.h" // g_sInputDrivers g_sInputDeviceOrder
 #include "RageLog.h"
 
 #include <string> // std::string::npos
+#include <vector>
 
 #if defined(HAVE_DIRENT_H)
 #include <dirent.h>
@@ -104,6 +105,11 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Event* driver)
 void LinuxInputManager::InitDriver(InputHandler_Linux_Joystick* driver)
 {
 	m_JoystickDriver = driver;
+	// Discard all the joystick devices if they were assigned manually via 
+	// 	InputDeviceOrder
+	if( g_sInputDeviceOrder.Get() != "" ) {
+		m_vsPendingJoystickDevices.clear();
+	}
 
 	for (RString &dev : m_vsPendingJoystickDevices)
 	{
@@ -112,8 +118,15 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Joystick* driver)
 		
 		driver->TryDevice(devFile);
 	}
-	
-	m_vsPendingJoystickDevices.clear();
+
+	// If any, add the manually specified devices via InputDeviceOrder
+	std::vector<RString> fixedDevices;
+	split( g_sInputDeviceOrder, ",", fixedDevices, true );
+
+	for (RString dev : fixedDevices) {
+		RString devFile = dev;
+		driver->TryDevice(devFile);
+	}
 }
 
 LinuxInputManager* LINUXINPUT = nullptr; // global and accessible anywhere in our program

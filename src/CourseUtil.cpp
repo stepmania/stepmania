@@ -16,6 +16,9 @@
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
 
+#include <vector>
+
+
 // Sorting stuff
 static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {
@@ -87,19 +90,19 @@ static bool CompareCoursePointersByRanking( const Course* pCourse1, const Course
 	return iNum1 < iNum2;
 }
 
-void CourseUtil::SortCoursePointerArrayByDifficulty( vector<Course*> &vpCoursesInOut )
+void CourseUtil::SortCoursePointerArrayByDifficulty( std::vector<Course*> &vpCoursesInOut )
 {
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByDifficulty );
 }
 
-void CourseUtil::SortCoursePointerArrayByRanking( vector<Course*> &vpCoursesInOut )
+void CourseUtil::SortCoursePointerArrayByRanking( std::vector<Course*> &vpCoursesInOut )
 {
 	for( unsigned i=0; i<vpCoursesInOut.size(); i++ )
 		vpCoursesInOut[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType );
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByRanking );
 }
 
-void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCoursesInOut )
+void CourseUtil::SortCoursePointerArrayByTotalDifficulty( std::vector<Course*> &vpCoursesInOut )
 {
 	for( unsigned i=0; i<vpCoursesInOut.size(); i++ )
 		vpCoursesInOut[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType );
@@ -115,7 +118,7 @@ RString GetSectionNameFromCourseAndSort( const Course *pCourse, SortOrder so )
 	// more code here
 }
 
-void SortCoursePointerArrayBySectionName( vector<Course*> &vpCoursesInOut, SortOrder so )
+void SortCoursePointerArrayBySectionName( std::vector<Course*> &vpCoursesInOut, SortOrder so )
 {
 	RString sOther = SORT_OTHER.GetValue();
 	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
@@ -138,17 +141,17 @@ static bool CompareCoursePointersByType( const Course* pCourse1, const Course* p
 	return pCourse1->GetPlayMode() < pCourse2->GetPlayMode();
 }
 
-void CourseUtil::SortCoursePointerArrayByType( vector<Course*> &vpCoursesInOut )
+void CourseUtil::SortCoursePointerArrayByType( std::vector<Course*> &vpCoursesInOut )
 {
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByType );
 }
 
-void CourseUtil::MoveRandomToEnd( vector<Course*> &vpCoursesInOut )
+void CourseUtil::MoveRandomToEnd( std::vector<Course*> &vpCoursesInOut )
 {
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareRandom );
 }
 
-static map<const Course*, RString> course_sort_val;
+static std::map<const Course*, RString> course_sort_val;
 
 bool CompareCoursePointersBySortValueAscending( const Course *pSong1, const Course *pSong2 )
 {
@@ -165,12 +168,12 @@ bool CompareCoursePointersByTitle( const Course *pCourse1, const Course *pCourse
 	return CompareCoursePointersByName( pCourse1, pCourse2 );
 }
 
-void CourseUtil::SortCoursePointerArrayByTitle( vector<Course*> &vpCoursesInOut )
+void CourseUtil::SortCoursePointerArrayByTitle( std::vector<Course*> &vpCoursesInOut )
 {
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTitle );
 }
 
-void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCoursesInOut )
+void CourseUtil::SortCoursePointerArrayByAvgDifficulty( std::vector<Course*> &vpCoursesInOut )
 {
 	RageTimer foo;
 	course_sort_val.clear();
@@ -185,7 +188,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), MovePlayersBestToEnd );
 }
 
-void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, ProfileSlot slot, bool bDescending )
+void CourseUtil::SortCoursePointerArrayByNumPlays( std::vector<Course*> &vpCoursesInOut, ProfileSlot slot, bool bDescending )
 {
 	if( !PROFILEMAN->IsPersistentProfile(slot) )
 		return;	// nothing to do since we don't have data
@@ -193,7 +196,7 @@ void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInO
 	SortCoursePointerArrayByNumPlays( vpCoursesInOut, pProfile, bDescending );
 }
 
-void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending )
+void CourseUtil::SortCoursePointerArrayByNumPlays( std::vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending )
 {
 	ASSERT( pProfile != nullptr );
 	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
@@ -202,14 +205,14 @@ void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInO
 	course_sort_val.clear();
 }
 
-void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesInOut )
+void CourseUtil::SortByMostRecentlyPlayedForMachine( std::vector<Course*> &vpCoursesInOut )
 {
 	Profile *pProfile = PROFILEMAN->GetMachineProfile();
 
 	for (Course const * c: vpCoursesInOut)
 	{
 		int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed( c );
-		RString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(c).GetString() : "9999999999999";
+		RString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(c).GetString() : RString("9999999999999");
 		course_sort_val[c] = val;
 	}
 
@@ -252,7 +255,7 @@ void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, Difficulty 
 	// gameplay. (We might still get a repeat at the repeat boundary,
 	// but that'd be rare.) -glenn
 	CourseEntry e;
-	e.songCriteria.m_sGroupName = sGroupName;
+	e.songCriteria.m_vsGroupNames.push_back(sGroupName);
 	e.stepsCriteria.m_difficulty = diff;
 	e.bSecret = true;
 
@@ -266,7 +269,7 @@ void CourseUtil::AutogenNonstopFromGroup( const RString &sGroupName, Difficulty 
 
 	out.m_bRepeat = false;
 
-	out.m_sMainTitle += " Random";	
+	out.m_sMainTitle += " Random";
 
 	// resize to 4
 	while( out.m_vEntries.size() < 4 )
@@ -275,7 +278,7 @@ void CourseUtil::AutogenNonstopFromGroup( const RString &sGroupName, Difficulty 
 		out.m_vEntries.pop_back();
 }
 
-void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc, Course &out )
+void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArtistNameTranslit, std::vector<Song*> aSongs, Difficulty dc, Course &out )
 {
 	out.m_bIsAutogen = true;
 	out.m_bRepeat = false;
@@ -304,7 +307,7 @@ void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArti
 	 * song set changes. */
 	{
 		RandomGen rng( GetHashForString( sArtistName ) + aSongs.size() );
-		random_shuffle( aSongs.begin(), aSongs.end(), rng );
+		std::shuffle( aSongs.begin(), aSongs.end(), rng );
 	}
 
 	// Only use up to four songs.
@@ -325,7 +328,7 @@ void CourseUtil::WarnOnInvalidMods( RString sMods )
 {
 	PlayerOptions po;
 	SongOptions so;
-	vector<RString> vs;
+	std::vector<RString> vs;
 	split( sMods, ",", vs, true );
 	for (RString const &s : vs)
 	{
@@ -429,7 +432,7 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 	}
 
 	// Check for name conflicts
-	vector<Course*> vpCourses;
+	std::vector<Course*> vpCourses;
 	EditCourseUtil::GetAllEditCourses( vpCourses );
 	for (Course const *p : vpCourses)
 	{
@@ -467,9 +470,9 @@ void EditCourseUtil::PrepareForPlay()
 	PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_iGoalSeconds = static_cast<int>(pCourse->m_fGoalSeconds);
 }
 
-void EditCourseUtil::GetAllEditCourses( vector<Course*> &vpCoursesOut )
+void EditCourseUtil::GetAllEditCourses( std::vector<Course*> &vpCoursesOut )
 {
-	vector<Course*> vpCoursesTemp;
+	std::vector<Course*> vpCoursesTemp;
 	SONGMAN->GetAllCourses( vpCoursesTemp, false );
 	for (Course *c : vpCoursesTemp)
 	{
@@ -489,15 +492,15 @@ void EditCourseUtil::LoadDefaults( Course &out )
 	for( int i=0; i<10000; i++ )
 	{
 		out.m_sMainTitle = ssprintf("Workout %d", i+1);
-		
-		vector<Course*> vpCourses;
+
+		std::vector<Course*> vpCourses;
 		EditCourseUtil::GetAllEditCourses( vpCourses );
 
 		if (std::any_of(vpCourses.begin(), vpCourses.end(), [&](Course const *p) { return out.m_sMainTitle == p->m_sMainTitle; }))
 			break;
 	}
 
-	vector<Song*> vpSongs;
+	std::vector<Song*> vpSongs;
 	SONGMAN->GetPreferredSortSongs( vpSongs );
 	for( int i=0; i<(int)vpSongs.size() && i<6; i++ )
 	{
@@ -537,17 +540,11 @@ void CourseID::FromCourse( const Course *p )
 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
 	if( sPath.Left(1) == "/" )
 		sPath.erase( sPath.begin() );
-
-	m_Cache.Unset();
 }
 
 Course *CourseID::ToCourse() const
 {
 	Course *pCourse = nullptr;
-	if(m_Cache.Get(&pCourse))
-	{
-		return pCourse;
-	}
 	if(!sPath.empty())
 	{
 		// HACK for backwards compatibility:
@@ -558,17 +555,13 @@ Course *CourseID::ToCourse() const
 			slash_path = "/" + slash_path;
 		}
 
-		if(pCourse == nullptr)
-		{
-			pCourse = SONGMAN->GetCourseFromPath(slash_path);
-		}
+		pCourse = SONGMAN->GetCourseFromPath(slash_path);
 	}
 
 	if( pCourse == nullptr && !sFullTitle.empty() )
 	{
 		pCourse = SONGMAN->GetCourseFromName( sFullTitle );
 	}
-	m_Cache.Set( pCourse );
 
 	return pCourse;
 }
@@ -585,14 +578,17 @@ XNode* CourseID::CreateNode() const
 	return pNode;
 }
 
-void CourseID::LoadFromNode( const XNode* pNode ) 
+void CourseID::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "Course" );
 	sFullTitle = RString();
 	sPath = RString();
 	if( !pNode->GetAttrValue("Path", sPath) )
 		pNode->GetAttrValue( "FullTitle", sFullTitle );
-	m_Cache.Unset();
+
+	// HACK for backwards compatibility: /AdditionalCourses has been merged into /Courses
+	if (sPath.Left(18) == "AdditionalCourses/")
+		sPath.replace(0, 18, "Courses/");
 }
 
 RString CourseID::ToString() const
@@ -612,7 +608,7 @@ bool CourseID::IsValid() const
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -622,7 +618,7 @@ bool CourseID::IsValid() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

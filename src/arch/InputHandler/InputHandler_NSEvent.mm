@@ -7,8 +7,11 @@
 
 #include "InputHandler_NSEvent.hpp"
 
+#include <vector>
+
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
+
 
 DeviceButton NSKeyCodeMap[0x100];
 
@@ -45,7 +48,7 @@ void InitKeyCodeMap()
     NSKeyCodeMap[kVK_ANSI_X] = KEY_Cx;
     NSKeyCodeMap[kVK_ANSI_Y] = KEY_Cy;
     NSKeyCodeMap[kVK_ANSI_Z] = KEY_Cz;
-    
+
     NSKeyCodeMap[kVK_ANSI_0] = KEY_C0;
     NSKeyCodeMap[kVK_ANSI_1] = KEY_C1;
     NSKeyCodeMap[kVK_ANSI_2] = KEY_C2;
@@ -56,7 +59,7 @@ void InitKeyCodeMap()
     NSKeyCodeMap[kVK_ANSI_7] = KEY_C7;
     NSKeyCodeMap[kVK_ANSI_8] = KEY_C8;
     NSKeyCodeMap[kVK_ANSI_9] = KEY_C9;
-    
+
     NSKeyCodeMap[kVK_ANSI_Keypad0] = KEY_KP_C0;
     NSKeyCodeMap[kVK_ANSI_Keypad1] = KEY_KP_C1;
     NSKeyCodeMap[kVK_ANSI_Keypad2] = KEY_KP_C2;
@@ -67,7 +70,7 @@ void InitKeyCodeMap()
     NSKeyCodeMap[kVK_ANSI_Keypad7] = KEY_KP_C7;
     NSKeyCodeMap[kVK_ANSI_Keypad8] = KEY_KP_C8;
     NSKeyCodeMap[kVK_ANSI_Keypad9] = KEY_KP_C9;
-    
+
     NSKeyCodeMap[kVK_ANSI_KeypadDivide] = KEY_KP_SLASH;
     NSKeyCodeMap[kVK_ANSI_KeypadMultiply] = KEY_KP_ASTERISK;
     NSKeyCodeMap[kVK_ANSI_KeypadEnter] = KEY_KP_ENTER;
@@ -75,7 +78,7 @@ void InitKeyCodeMap()
     NSKeyCodeMap[kVK_ANSI_KeypadMinus] = KEY_KP_HYPHEN;
     NSKeyCodeMap[kVK_ANSI_KeypadPlus] = KEY_KP_PLUS;
     NSKeyCodeMap[kVK_ANSI_KeypadDecimal] = KEY_KP_PERIOD;
-    
+
     NSKeyCodeMap[kVK_Home] = KEY_HOME;
     NSKeyCodeMap[kVK_End] = KEY_END;
     NSKeyCodeMap[kVK_PageDown] = KEY_PGDN;
@@ -97,7 +100,7 @@ void InitKeyCodeMap()
     NSKeyCodeMap[kVK_F14] = KEY_F14;
     NSKeyCodeMap[kVK_F15] = KEY_F15;
     NSKeyCodeMap[kVK_F16] = KEY_F16;
-    
+
     NSKeyCodeMap[kVK_ANSI_Quote] = KEY_QUOTE;
     NSKeyCodeMap[kVK_ANSI_Backslash] = KEY_BACKSLASH;
     NSKeyCodeMap[kVK_CapsLock] = KEY_CAPSLOCK;
@@ -105,7 +108,7 @@ void InitKeyCodeMap()
     NSKeyCodeMap[kVK_ForwardDelete] = KEY_DEL;
     NSKeyCodeMap[kVK_Delete] = KEY_BACK;
     NSKeyCodeMap[kVK_ANSI_Equal] = KEY_EQUAL;
-    
+
     NSKeyCodeMap[kVK_Escape] = KEY_ESC;
     NSKeyCodeMap[kVK_ANSI_LeftBracket] = KEY_LBRACKET;
     NSKeyCodeMap[kVK_ANSI_Minus] = KEY_HYPHEN;
@@ -115,7 +118,7 @@ void InitKeyCodeMap()
     NSKeyCodeMap[kVK_ANSI_Semicolon] = KEY_SEMICOLON;
     NSKeyCodeMap[kVK_Space] = KEY_SPACE;
     NSKeyCodeMap[kVK_Tab] = KEY_TAB;
-    
+
     NSKeyCodeMap[kVK_Command] = KEY_LMETA;
     NSKeyCodeMap[kVK_RightCommand] = KEY_RMETA;
     NSKeyCodeMap[kVK_Control] = KEY_LCTRL;
@@ -125,7 +128,7 @@ void InitKeyCodeMap()
     NSKeyCodeMap[kVK_RightOption] = KEY_RALT;
     NSKeyCodeMap[kVK_Shift] = KEY_LSHIFT;
     NSKeyCodeMap[kVK_RightShift] = KEY_RSHIFT;
-    
+
     NSKeyCodeMap[kVK_DownArrow] = KEY_DOWN;
     NSKeyCodeMap[kVK_LeftArrow] = KEY_LEFT;
     NSKeyCodeMap[kVK_RightArrow] = KEY_RIGHT;
@@ -146,10 +149,10 @@ void InitKeyCodeMap()
 InputHandler_NSEvent::InputHandler_NSEvent()
 {
     InitKeyCodeMap();
-    
+
     [NSEvent addLocalMonitorForEventsMatchingMask:(NSEventMaskKeyDown | NSEventMaskKeyUp | NSEventMaskFlagsChanged) handler:^(NSEvent* e) {
         unsigned short keyCode = [e keyCode];
-        
+
         if([e type] == NSEventTypeKeyUp)
         {
             ButtonPressed(DeviceInput(DEVICE_KEYBOARD, NSKeyCodeMap[keyCode], 1));
@@ -184,7 +187,7 @@ InputHandler_NSEvent::InputHandler_NSEvent()
                 break;
             }
         }
-        
+
         return e;
     }];
 }
@@ -193,7 +196,7 @@ InputHandler_NSEvent::~InputHandler_NSEvent()
 {
 }
 
-void InputHandler_NSEvent::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
+void InputHandler_NSEvent::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut )
 {
     vDevicesOut.push_back(InputDeviceInfo(DEVICE_KEYBOARD, "NSEventKeyboard"));
 }

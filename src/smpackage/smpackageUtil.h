@@ -1,12 +1,15 @@
 #ifndef SMPackageUtil_H
 #define SMPackageUtil_H
 
+#include <vector>
+
+
 struct LanguageInfo;
 
 namespace SMPackageUtil
 {
-	void WriteGameInstallDirs( const vector<RString>& asInstallDirsToWrite );
-	void GetGameInstallDirs( vector<RString>& asInstallDirsOut );
+	void WriteGameInstallDirs( const std::vector<RString>& asInstallDirsToWrite );
+	void GetGameInstallDirs( std::vector<RString>& asInstallDirsOut );
 	void AddGameInstallDir( const RString &sNewInstallDir );
 	void SetDefaultInstallDir( int iInstallDirIndex );
 	void SetDefaultInstallDir( const RString &sInstallDir );
@@ -23,11 +26,11 @@ namespace SMPackageUtil
 	RString GetLanguageDisplayString( const RString &sIsoCode );
 	RString GetLanguageCodeFromDisplayString( const RString &sDisplayString );
 
-	void StripIgnoredSmzipFiles( vector<RString> &vsFilesInOut );
+	void StripIgnoredSmzipFiles( std::vector<RString> &vsFilesInOut );
 
 	bool GetFileContentsOsAbsolute( const RString &sAbsoluteOsFile, RString &sOut );
 
-	bool DoesOsAbsoluteFileExist( const RString &sOsAbsoluteFile ); 
+	bool DoesOsAbsoluteFileExist( const RString &sOsAbsoluteFile );
 }
 
 #include "RageFile.h"
@@ -46,7 +49,7 @@ private:
 /*
  * (c) 2002-2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -56,7 +59,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

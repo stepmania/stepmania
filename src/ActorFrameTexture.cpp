@@ -5,6 +5,8 @@
 #include "RageLog.h"
 #include "ActorUtil.h"
 
+#include <cstdint>
+
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameTextureAutoDeleteChildren, ActorFrameTexture );
 ActorFrameTexture *ActorFrameTexture::Copy() const { return new ActorFrameTexture(*this); }
 
@@ -14,7 +16,7 @@ ActorFrameTexture::ActorFrameTexture()
 	m_bAlphaBuffer = false;
 	m_bFloat = false;
 	m_bPreserveTexture = false;
-	static uint64_t i = 0;
+	static std::uint64_t i = 0;
 	++i;
 	m_sTextureName = ssprintf( ConvertI64FormatString("ActorFrameTexture %lli"), i );
 
@@ -84,7 +86,7 @@ void ActorFrameTexture::DrawPrimitives()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ActorFrameTexture. */ 
+/** @brief Allow Lua to have access to the ActorFrameTexture. */
 class LunaActorFrameTexture : public Luna<ActorFrameTexture>
 {
 public:
@@ -107,7 +109,7 @@ public:
 		}
 		return 1;
 	}
-	
+
 	LunaActorFrameTexture()
 	{
 		ADD_METHOD( Create );
@@ -126,7 +128,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorFrameTexture, ActorFrame )
 /*
  * (c) 2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -136,7 +138,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorFrameTexture, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

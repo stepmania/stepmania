@@ -10,6 +10,10 @@
 #include "Style.h"
 #include "ActorUtil.h"
 
+#include <cstddef>
+#include <vector>
+
+
 void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
 {
 	m_pPlayerState = pPlayerState;
@@ -20,11 +24,11 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	NOTESKIN->SetPlayerNumber( pn );
 
 	// init arrows
-	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
+	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ )
 	{
 		const RString &sButton = GAMESTATE->GetCurrentStyle(pn)->ColToButtonName( c );
 
-		vector<GameInput> GameI;
+		std::vector<GameInput> GameI;
 		GAMESTATE->GetCurrentStyle(pn)->StyleInputToGameInput( c, pn, GameI );
 		NOTESKIN->SetGameController( GameI[0].controller );
 
@@ -36,10 +40,10 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	}
 }
 
-void GhostArrowRow::SetColumnRenderers(vector<NoteColumnRenderer>& renderers)
+void GhostArrowRow::SetColumnRenderers(std::vector<NoteColumnRenderer>& renderers)
 {
 	ASSERT_M(renderers.size() == m_Ghost.size(), "Notefield has different number of columns than ghost row.");
-	for(size_t c= 0; c < m_Ghost.size(); ++c)
+	for(std::size_t c= 0; c < m_Ghost.size(); ++c)
 	{
 		m_Ghost[c]->SetFakeParent(&(renderers[c]));
 	}
@@ -147,7 +151,7 @@ void GhostArrowRow::SetHoldShowing( int iCol, const TapNote &tn )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -157,7 +161,7 @@ void GhostArrowRow::SetHoldShowing( int iCol, const TapNote &tn )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

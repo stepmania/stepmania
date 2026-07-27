@@ -29,7 +29,7 @@ public:
 	/** @brief How long can the name be for ranking purposes? */
 	ThemeMetric<int>	MAX_RANKING_NAME_LENGTH;
 
-	wstring			m_sSelection[NUM_PLAYERS];
+	std::wstring			m_sSelection[NUM_PLAYERS];
 	bool			m_bEnteringName[NUM_PLAYERS];
 	bool			m_bFinalized[NUM_PLAYERS];
 };

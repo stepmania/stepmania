@@ -4,13 +4,16 @@
 #include "RageUtil.h"
 #include "archutils/Win32/ErrorStrings.h"
 
+#include <cstddef>
+#include <vector>
 #include <windows.h>
+
 
 /* Given "HKEY_LOCAL_MACHINE\hardware\foo", return "hardware\foo", and place
  * the HKEY_LOCAL_MACHINE constant in key. */
 static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
 {
-	size_t iBackslash = sIn.find( '\\' );
+	std::size_t iBackslash = sIn.find( '\\' );
 	if( iBackslash == sIn.npos )
 	{
 		LOG->Warn( "Invalid registry key: \"%s\" ", sIn.c_str() );
@@ -94,9 +97,9 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int
 	DWORD iType;
 	LONG iRet = RegQueryValueEx( hKey, sName, nullptr, &iType, (LPBYTE) &iValue, &iSize );
 	RegCloseKey( hKey );
-	if( iRet != ERROR_SUCCESS ) 
+	if( iRet != ERROR_SUCCESS )
 		return false;
-	
+
 	if( iType != REG_DWORD )
 		return false; /* type mismatch */
 
@@ -112,7 +115,7 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, boo
 	return b;
 }
 
-bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, const RString &regex, bool bReturnPathToo )
+bool RegistryAccess::GetRegSubKeys( const RString &sKey, std::vector<RString> &lst, const RString &regex, bool bReturnPathToo )
 {
 	HKEY hKey = OpenRegKey( sKey, READ );
 	if( hKey == nullptr )
@@ -160,14 +163,14 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, con
 
 	bool bSuccess = true;
 	TCHAR sz[255];
-	
+
 	if( sVal.size() > 254 )
 		return false;
 
 	strcpy( sz, sVal.c_str() );
-	
+
 	LONG lResult = ::RegSetValueEx(hKey, LPCTSTR(sName), 0, REG_SZ, (LPBYTE)sz, strlen(sz) + 1);
-	if( lResult != ERROR_SUCCESS ) 
+	if( lResult != ERROR_SUCCESS )
 		 bSuccess = false;
 
 	::RegCloseKey(hKey);
@@ -181,10 +184,10 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, boo
 		return false;
 
 	bool bSuccess = true;
-	
+
 	if (::RegSetValueEx(hKey, LPCTSTR(sName), 0,
 		REG_BINARY, (LPBYTE)&bVal, sizeof(bVal))
-		 != ERROR_SUCCESS) 
+		 != ERROR_SUCCESS)
 		 bSuccess = false;
 
 	::RegCloseKey(hKey);
@@ -196,18 +199,18 @@ bool RegistryAccess::CreateKey( const RString &sKey )
 	RString sSubkey;
 	HKEY hType;
 	if( !GetRegKeyType(sKey, sSubkey, hType) )
-		return nullptr;
+		return false;
 
 	HKEY hKey;
 	DWORD dwDisposition = 0;
 	if( ::RegCreateKeyEx(
-		hType, 
-		sSubkey, 
-		0, 
+		hType,
+		sSubkey,
+		0,
 		nullptr,
-		REG_OPTION_NON_VOLATILE, 
-		KEY_ALL_ACCESS, 
-		nullptr, 
+		REG_OPTION_NON_VOLATILE,
+		KEY_ALL_ACCESS,
+		nullptr,
 		&hKey,
 		&dwDisposition ) != ERROR_SUCCESS )
 	{
@@ -220,7 +223,7 @@ bool RegistryAccess::CreateKey( const RString &sKey )
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -230,7 +233,7 @@ bool RegistryAccess::CreateKey( const RString &sKey )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

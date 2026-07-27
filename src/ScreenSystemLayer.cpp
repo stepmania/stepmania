@@ -116,7 +116,7 @@ namespace
 					sCredits += ssprintf("  %d", iCredits);
 				if( PREFSMAN->m_iCoinsPerCredit > 1 )
 					sCredits += ssprintf("  %d/%d", iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
-				if( iCredits >= MAX_NUM_CREDITS )
+				if( iCredits >= PREFSMAN->m_iMaxNumCredits )
 					sCredits += "  " + CREDITS_MAX.GetValue();
 				return sCredits;
 			}

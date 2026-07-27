@@ -249,7 +249,7 @@ RString HourInDayToLocalizedString( int iHourIndex )
 tm AddDays( tm start, int iDaysToMove )
 {
 	/*
-	 * This causes problems on OS X, which doesn't correctly handle range that are below
+	 * This causes problems on macOS, which doesn't correctly handle range that are below
 	 * their normal values (eg. mday = 0).  According to the manpage, it should adjust them:
 	 *
 	 * "If structure members are outside their legal interval, they will be normalized (so
@@ -263,7 +263,7 @@ tm AddDays( tm start, int iDaysToMove )
 	 *
 	 * Note "Log starting 2004-03-07 03:50:42"; mday is 7, and PrintCaloriesBurned calls us
 	 * with iDaysToMove = -7, resulting in an out-of-range value 0.  This seems legal, but
-	 * OS X chokes on it.
+	 * macOS chokes on it.
 	 */
 /*	start.tm_mday += iDaysToMove;
 	time_t seconds = mktime( &start );
@@ -302,7 +302,7 @@ tm GetNextSunday( tm start )
 tm GetDayInYearAndYear( int iDayInYearIndex, int iYear )
 {
 	/* If iDayInYearIndex is 200, set the date to Jan 200th, and let mktime
-	 * round it.  This shouldn't suffer from the OSX mktime() issue described
+	 * round it.  This shouldn't suffer from the macOS mktime() issue described
 	 * above, since we're not giving it negative values. */
 	tm when;
 	ZERO( when );

@@ -6,9 +6,9 @@
 #if !defined(AFX_STDAFX_H__D450D5ED_5C49_4A8B_B887_076F62424F1F__INCLUDED_)
 #define AFX_STDAFX_H__D450D5ED_5C49_4A8B_B887_076F62424F1F__INCLUDED_
 
-#if _MSC_VER > 1000
+#if defined(_MSC_VER)
 #pragma once
-#endif // _MSC_VER > 1000
+#endif
 
 #pragma warning (disable : 4786) // turn off broken debugger warning
 
@@ -32,9 +32,6 @@
 #define _DEBUG
 #endif
 
-#include <vector>
-using namespace std;
-
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
@@ -43,7 +40,7 @@ using namespace std;
 /*
  * (c) 2002-2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -53,7 +50,7 @@ using namespace std;
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

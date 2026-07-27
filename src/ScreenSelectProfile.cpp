@@ -44,7 +44,7 @@ bool ScreenSelectProfile::MenuLeft( const InputEventPlus &input )
 			return false;
 	}
 	m_TrackingRepeatingInput = input.MenuI;
-	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+pn) );
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+Enum::to_integral(pn)) );
 	return true;
 }
 
@@ -65,7 +65,7 @@ bool ScreenSelectProfile::MenuRight( const InputEventPlus &input )
 			return false;
 	}
 	m_TrackingRepeatingInput = input.MenuI;
-	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuRightP1+pn) );
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuRightP1+Enum::to_integral(pn)) );
 	return true;
 }
 
@@ -86,7 +86,7 @@ bool ScreenSelectProfile::MenuUp( const InputEventPlus &input )
 			return false;
 	}
 	m_TrackingRepeatingInput = input.MenuI;
-	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+pn) );
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+Enum::to_integral(pn)) );
 	return true;
 }
 
@@ -107,7 +107,7 @@ bool ScreenSelectProfile::MenuDown( const InputEventPlus &input )
 			return false;
 	}
 	m_TrackingRepeatingInput = input.MenuI;
-	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuDownP1+pn) );
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuDownP1+Enum::to_integral(pn)) );
 	return true;
 }
 
@@ -128,7 +128,7 @@ bool ScreenSelectProfile::SetProfileIndex( PlayerNumber pn, int iProfileIndex )
 		return false;
 
 	// wrong selection
-	if( iProfileIndex < -2 )
+	if( iProfileIndex < -3 )
 		return false;
 
 	// unload player
@@ -160,7 +160,7 @@ bool ScreenSelectProfile::Finish(){
 
 	FOREACH_PlayerNumber( p )
 	{
-		// not all players has made their choices
+		// not all players have made their choices
 		if( GAMESTATE->IsHumanPlayer( p ) && ( m_iSelectedProfiles[p] == -1 ) )
 			iUnselectedProfiles++;
 
@@ -181,13 +181,18 @@ bool ScreenSelectProfile::Finish(){
 	if( iUnselectedProfiles && iUsedLocalProfiles < PROFILEMAN->GetNumLocalProfiles() )
 		return false;
 
-	// all ok - load profiles and go to next screen
+	// unload all profiles, so we don't end up in a situation where two
+	// players might have the same profile assigned
 	FOREACH_PlayerNumber( p )
 	{
 		MEMCARDMAN->UnlockCard( p );
 		MEMCARDMAN->UnmountCard( p );
 		PROFILEMAN->UnloadProfile( p );
+	}
 
+	// all ok - load profiles and go to next screen
+	FOREACH_PlayerNumber( p )
+	{
 		if( m_iSelectedProfiles[p] > 0 )
 		{
 			PROFILEMAN->m_sDefaultLocalProfileID[p].Set( PROFILEMAN->GetLocalProfileIDFromIndex( m_iSelectedProfiles[p] - 1 ) );
@@ -209,7 +214,16 @@ bool ScreenSelectProfile::Finish(){
 				MEMCARDMAN->LockCard( p );
 			}
 		}
+
+		// If the player picked a profile (>= 0) or chose to play as a guest (-3),
+		// broadcast a message
+		if( m_iSelectedProfiles[p] >= 0 || m_iSelectedProfiles[p] == -3 ) {
+			Message msg( MessageIDToString(Message_PlayerProfileSet) );
+			msg.SetParam( "Player", p );
+			MESSAGEMAN->Broadcast( msg );
+		}
 	}
+
 	StartTransitioningScreen( SM_GoToNextScreen );
 	return true;
 }

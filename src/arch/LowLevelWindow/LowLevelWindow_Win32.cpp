@@ -11,6 +11,8 @@
 #include "RageDisplay_OGL_Helpers.h"
 #include "RageDisplay_OGL.h"
 
+#include <cstdint>
+
 #include <GL/glew.h>
 
 static PIXELFORMATDESCRIPTOR g_CurrentPixelFormat;
@@ -129,7 +131,7 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	//LOG->Warn( "LowLevelWindow_Win32::TryVideoMode" );
-	
+
 	ASSERT_M( p.bpp == 16 || p.bpp == 32, ssprintf("%i", p.bpp) );
 
 	bNewDeviceOut = false;
@@ -323,10 +325,10 @@ public:
 	virtual ~RenderTarget_Win32();
 
 	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	uintptr_t GetTexture() const { return static_cast<uintptr_t>(m_texHandle); }
+	std::uintptr_t GetTexture() const { return static_cast<std::uintptr_t>(m_texHandle); }
 	void StartRenderingTo();
 	void FinishRenderingTo();
-	
+
 	virtual bool InvertY() const { return true; }
 
 private:
@@ -415,7 +417,7 @@ void RenderTarget_Win32::FinishRenderingTo()
 
 	BOOL successful = wglMakeCurrent(m_hOldDeviceContext, m_hOldRenderContext);
 	ASSERT_M( successful == TRUE, "wglMakeCurrent failed in RenderTarget_Win32::FinishRenderingTo()" );
-	
+
 	m_hOldDeviceContext = 0;
 	m_hOldRenderContext = 0;
 }
@@ -428,7 +430,7 @@ RenderTarget* LowLevelWindow_Win32::CreateRenderTarget()
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -438,7 +440,7 @@ RenderTarget* LowLevelWindow_Win32::CreateRenderTarget()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -10,7 +10,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // For the licensing details see the file License.txt
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,9 +28,10 @@
         #include <utime.h>
 #endif
 
+#include <cstddef>
 #include <direct.h>
 #include <io.h>
-#include <time.h> 
+#include <time.h>
 #include "ZipPathComponent.h"
 #include "ZipCompatibility.h"
 
@@ -38,7 +39,7 @@ const TCHAR CZipPathComponent::m_cSeparator = _T('\\');
 
 
 #ifndef _UTIMBUF_DEFINED
-#define _utimbuf utimbuf 
+#define _utimbuf utimbuf
 #endif
 
 DWORD ZipPlatform::GetDeviceFreeSpace(LPCTSTR lpszPath)
@@ -60,7 +61,7 @@ DWORD ZipPlatform::GetDeviceFreeSpace(LPCTSTR lpszPath)
 			&BytesPerSector,
 			&NumberOfFreeClusters,
 			&TotalNumberOfClusters))
-		
+
 				return 0;
 	}
 	__int64 total = SectorsPerCluster * BytesPerSector * NumberOfFreeClusters;
@@ -69,7 +70,7 @@ DWORD ZipPlatform::GetDeviceFreeSpace(LPCTSTR lpszPath)
 
 bool ZipPlatform::GetFileSize(LPCTSTR lpszFileName, DWORD& dSize)
 {
-	HANDLE f = CreateFile(lpszFileName, GENERIC_READ, FILE_SHARE_READ, 
+	HANDLE f = CreateFile(lpszFileName, GENERIC_READ, FILE_SHARE_READ,
 		NULL, OPEN_EXISTING, 0, NULL);
 	if (!f)
 		return false;
@@ -98,7 +99,7 @@ CZipString ZipPlatform::GetTmpFileName(LPCTSTR lpszPath, DWORD iSizeNeeded)
 			DWORD size = GetTempPath(0, NULL);
 			if (size == 0)
 				return empty;
-		
+
 			GetTempPath(size, tempPath.GetBuffer(size));
 			tempPath.ReleaseBuffer();
 			if (GetDeviceFreeSpace(tempPath) < iSizeNeeded)
@@ -143,7 +144,7 @@ bool ZipPlatform::GetFileAttr(LPCTSTR lpFileName, DWORD& uAttr)
 		return false;
 	uAttr = temp;
 	return true;
-	
+
 }
 
 bool ZipPlatform::GetFileModTime(LPCTSTR lpFileName, time_t & ttime)
@@ -214,7 +215,7 @@ ZIPINLINE  bool ZipPlatform::RemoveFile(LPCTSTR lpszFileName, bool bThrow)
 	if (!::DeleteFile((LPTSTR)lpszFileName))
 		if (bThrow)
 			CZipException::Throw(CZipException::notRemoved, lpszFileName);
-		else 
+		else
 			return false;
 	return true;
 
@@ -224,7 +225,7 @@ ZIPINLINE  bool ZipPlatform::RenameFile( LPCTSTR lpszOldName, LPCTSTR lpszNewNam
 	if (!::MoveFile((LPTSTR)lpszOldName, (LPTSTR)lpszNewName))
 		if (bThrow)
 			CZipException::Throw(CZipException::notRenamed, lpszOldName);
-		else 
+		else
 			return false;
 	return true;
 
@@ -258,10 +259,10 @@ ZIPINLINE bool ZipPlatform::GetSystemCaseSensitivity()
 	return false;
 }
 
-#ifdef _UNICODE	
+#ifdef _UNICODE
 int ZipPlatform::WideToSingle(LPCTSTR lpWide, CZipAutoBuffer &szSingle)
 {
-	size_t wideLen = wcslen(lpWide);
+	std::size_t wideLen = wcslen(lpWide);
 	if (wideLen == 0)
 	{
 		szSingle.Release();
@@ -269,12 +270,12 @@ int ZipPlatform::WideToSingle(LPCTSTR lpWide, CZipAutoBuffer &szSingle)
 	}
 
 	// iLen does not include terminating character
-	int iLen = WideCharToMultiByte(CP_ACP,0, lpWide, wideLen, szSingle, 
+	int iLen = WideCharToMultiByte(CP_ACP,0, lpWide, wideLen, szSingle,
 		0, NULL, NULL);
 	if (iLen > 0)
 	{
 		szSingle.Allocate(iLen, true);
-		iLen = WideCharToMultiByte(CP_ACP,0, lpWide , wideLen, szSingle, 
+		iLen = WideCharToMultiByte(CP_ACP,0, lpWide , wideLen, szSingle,
 			iLen, NULL, NULL);
 		ASSERT(iLen != 0);
 	}
@@ -293,7 +294,7 @@ int ZipPlatform::SingleToWide(const CZipAutoBuffer &szSingle, CZipString& szWide
 	int iLen = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szSingle.GetBuffer(), singleLen, NULL, 0);
 	if (iLen > 0)
 	{
-		iLen = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szSingle.GetBuffer(), singleLen, 
+		iLen = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szSingle.GetBuffer(), singleLen,
 			szWide.GetBuffer(iLen) , iLen);
 		szWide.ReleaseBuffer(iLen);
 		ASSERT(iLen != 0);

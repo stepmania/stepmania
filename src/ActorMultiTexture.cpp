@@ -1,6 +1,4 @@
 #include "global.h"
-#include <cassert>
-
 #include "ActorMultiTexture.h"
 #include "RageTextureManager.h"
 #include "XmlFile.h"
@@ -9,9 +7,11 @@
 #include "RageTexture.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-
 #include "LuaBinding.h"
 #include "LuaManager.h"
+
+#include <cassert>
+#include <cstddef>
 
 REGISTER_ACTOR_CLASS( ActorMultiTexture );
 
@@ -98,7 +98,7 @@ void ActorMultiTexture::DrawPrimitives()
 	quadVerticies.bottom = +m_size.y/2.0f;
 
 	DISPLAY->ClearAllTextures();
-	for( size_t i = 0; i < m_aTextureUnits.size(); ++i )
+	for( std::size_t i = 0; i < m_aTextureUnits.size(); ++i )
 	{
 		TextureUnit tu = enum_add2(TextureUnit_1, i);
 		DISPLAY->SetTexture( tu, m_aTextureUnits[i].m_pTexture->GetTexHandle() );
@@ -127,7 +127,7 @@ void ActorMultiTexture::DrawPrimitives()
 
 	DISPLAY->DrawQuad( v );
 
-	for( size_t i = 0; i < m_aTextureUnits.size(); ++i )
+	for( std::size_t i = 0; i < m_aTextureUnits.size(); ++i )
 		DISPLAY->SetTexture( enum_add2(TextureUnit_1, i), 0 );
 
 	DISPLAY->SetEffectMode( EffectMode_Normal );
@@ -142,7 +142,7 @@ bool ActorMultiTexture::EarlyAbortDraw() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ActorMultiTexture. */ 
+/** @brief Allow Lua to have access to the ActorMultiTexture. */
 class LunaActorMultiTexture: public Luna<ActorMultiTexture>
 {
 public:
@@ -200,7 +200,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorMultiTexture, Actor )
 /*
  * (c) 2001-2007 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -210,7 +210,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorMultiTexture, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

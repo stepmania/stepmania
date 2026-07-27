@@ -1,6 +1,7 @@
 #ifndef ARCH_HOOKS_H
 #define ARCH_HOOKS_H
 
+#include <cstdint>
 #include <ctime>
 
 struct lua_State;
@@ -12,7 +13,7 @@ public:
 	virtual ~ArchHooks() { }
 	virtual void Init() { }
 	/*
-	 * Return the general name of the architecture, eg. "Windows", "OS X", "Unix".
+	 * Return the general name of the architecture, eg. "Windows", "macOS", "Unix".
 	 */
 	virtual RString GetArchName() const { return "generic"; }
 
@@ -86,7 +87,7 @@ public:
 	 * underlying timers may be 32-bit, but implementations should try to avoid
 	 * wrapping if possible.
 	 */
-	static int64_t GetMicrosecondsSinceStart( bool bAccurate );
+	static std::int64_t GetMicrosecondsSinceStart( bool bAccurate );
 
 	/*
 	 * Add file search paths, higher priority first.
@@ -130,8 +131,8 @@ public:
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer
 	 * that may loop or move backwards. */
-	static int64_t FixupTimeIfLooped( int64_t usecs );
-	static int64_t FixupTimeIfBackwards( int64_t usecs );
+	static std::int64_t FixupTimeIfLooped( std::int64_t usecs );
+	static std::int64_t FixupTimeIfBackwards( std::int64_t usecs );
 
 	static bool g_bQuitting;
 	static bool g_bToggleWindowed;

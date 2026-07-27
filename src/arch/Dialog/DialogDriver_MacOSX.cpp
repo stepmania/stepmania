@@ -4,7 +4,11 @@
 #include "RageThreads.h"
 #include "ProductInfo.h"
 #include "InputFilter.h"
+
+#include <vector>
+
 #include <CoreFoundation/CoreFoundation.h>
+
 
 REGISTER_DIALOG_DRIVER_CLASS( MacOSX );
 
@@ -28,7 +32,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 	// Flush all input that's accumulated while the dialog box was up.
 	if( INPUTFILTER )
 	{
-		vector<InputEvent> dummy;
+		std::vector<InputEvent> dummy;
 		INPUTFILTER->Reset();
 		INPUTFILTER->GetInputEvents( dummy );
 	}
@@ -146,7 +150,7 @@ Dialog::Result DialogDriver_MacOSX::YesNo( RString sMessage, RString sID )
 /*
  * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -156,7 +160,7 @@ Dialog::Result DialogDriver_MacOSX::YesNo( RString sMessage, RString sID )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

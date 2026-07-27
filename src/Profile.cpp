@@ -27,6 +27,10 @@
 #include "Character.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
 
 const RString STATS_XML            = "Stats.xml";
 const RString STATS_XML_GZ         = "Stats.xml.gz";
@@ -42,6 +46,7 @@ const RString EDIT_STEPS_SUBDIR    = "Edits/";
 const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 //const RString UPLOAD_SUBDIR         = "Upload/";
 const RString RIVAL_SUBDIR         = "Rivals/";
+const RString SONGS_SUBDIR         = "Songs/";
 
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
@@ -81,7 +86,7 @@ void Profile::ClearSongs()
 		return;
 	}
 	Song* gamestate_curr_song= GAMESTATE->m_pCurSong;
-	for(size_t i= 0; i < m_songs.size(); ++i)
+	for(std::size_t i= 0; i < m_songs.size(); ++i)
 	{
 		Song* curr_song= m_songs[i];
 		if(curr_song == gamestate_curr_song)
@@ -96,7 +101,7 @@ void Profile::ClearSongs()
 int Profile::HighScoresForASong::GetNumTimesPlayed() const
 {
 	int iCount = 0;
-	for (std::pair<StepsID, HighScoresForASteps> const &i : m_StepsHighScores)
+	for (const std::pair<const StepsID, HighScoresForASteps>& i : m_StepsHighScores)
 	{
 		iCount += i.second.hsl.GetNumTimesPlayed();
 	}
@@ -106,7 +111,7 @@ int Profile::HighScoresForASong::GetNumTimesPlayed() const
 int Profile::HighScoresForACourse::GetNumTimesPlayed() const
 {
 	int iCount = 0;
-	for (std::pair<TrailID const, HighScoresForATrail> const &i : m_TrailHighScores)
+	for (const std::pair<const TrailID, HighScoresForATrail>& i : m_TrailHighScores)
 	{
 		iCount += i.second.hsl.GetNumTimesPlayed();
 	}
@@ -231,7 +236,7 @@ RString Profile::GetDisplayNameOrHighScoreName() const
 
 Character *Profile::GetCharacter() const
 {
-	vector<Character*> vpCharacters;
+	std::vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
 	for (Character *c : vpCharacters)
 	{
@@ -256,7 +261,7 @@ int Profile::GetCalculatedWeightPounds() const
 {
 	if( m_iWeightPounds == 0 )	// weight not entered
 		return DEFAULT_WEIGHT_POUNDS;
-	else 
+	else
 		return m_iWeightPounds;
 }
 
@@ -328,7 +333,7 @@ int Profile::GetTotalTrailsWithTopGrade( StepsType st, CourseDifficulty d, Grade
 	int iCount = 0;
 
 	// add course high scores
-	vector<Course*> vCourses;
+	std::vector<Course*> vCourses;
 	SONGMAN->GetAllCourses( vCourses, false );
 	for (Course const *pCourse : vCourses)
 	{
@@ -336,7 +341,7 @@ int Profile::GetTotalTrailsWithTopGrade( StepsType st, CourseDifficulty d, Grade
 		if( !pCourse->AllSongsAreFixed() )
 			continue;
 
-		vector<Trail*> vTrails;
+		std::vector<Trail*> vTrails;
 		Trail* pTrail = pCourse->GetTrail( st, d );
 		if( pTrail == nullptr )
 			continue;
@@ -357,19 +362,19 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 	int iTotalSteps = 0;
 
 	// add steps high scores
-	const vector<Song*> &vSongs = SONGMAN->GetAllSongs();
+	const std::vector<Song*> &vSongs = SONGMAN->GetAllSongs();
 	for( unsigned i=0; i<vSongs.size(); i++ )
 	{
 		Song* pSong = vSongs[i];
-		
+
 		if( !pSong->NormallyDisplayed() )
 			continue;	// skip
 
-		vector<Steps*> vSteps = pSong->GetAllSteps();
+		std::vector<Steps*> vSteps = pSong->GetAllSteps();
 		for( unsigned j=0; j<vSteps.size(); j++ )
 		{
 			Steps* pSteps = vSteps[j];
-			
+
 			if( pSteps->m_StepsType != st )
 				continue;	// skip
 
@@ -394,9 +399,9 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 	{
 		Song* pSong = id.first.ToSong();
 
-		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: %p", pSong) );
+		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: %p", static_cast<void*>(pSong)) );
 
-		// If the Song isn't loaded on the current machine, then we can't 
+		// If the Song isn't loaded on the current machine, then we can't
 		// get radar values to compute dance points.
 		if( pSong == nullptr )
 			continue;
@@ -411,9 +416,9 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 		{
 			const StepsID &sid = j.first;
 			Steps* pSteps = sid.ToSteps( pSong, true );
-			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %p, steps %p", pSong, pSteps) );
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %p, steps %p", static_cast<void*>(pSong), static_cast<void*>(pSteps)) );
 
-			// If the Steps isn't loaded on the current machine, then we can't 
+			// If the Steps isn't loaded on the current machine, then we can't
 			// get radar values to compute dance points.
 			if( pSteps == nullptr )
 				continue;
@@ -421,12 +426,12 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 			if( pSteps->m_StepsType != st )
 				continue;
 
-			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s = %p", sid.ToString().c_str(), pSteps) );
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s = %p", sid.ToString().c_str(), static_cast<void*>(pSteps)) );
 			if( pSteps->GetDifficulty() != dc )
 			{
 				continue;	// skip
 			}
-			
+
 			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: difficulty %s is correct", DifficultyToString(dc).c_str()));
 
 			const HighScoresForASteps& h = j.second;
@@ -444,11 +449,11 @@ float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
 	return GetSongsActual(st,dc) / GetSongsPossible(st,dc);
 }
 
-static void GetHighScoreCourses( vector<Course*> &vpCoursesOut )
+static void GetHighScoreCourses( std::vector<Course*> &vpCoursesOut )
 {
 	vpCoursesOut.clear();
 
-	vector<Course*> vpCourses;
+	std::vector<Course*> vpCourses;
 	SONGMAN->GetAllCourses( vpCourses, false );
 
 	for (Course *c : vpCourses)
@@ -463,7 +468,7 @@ static void GetHighScoreCourses( vector<Course*> &vpCoursesOut )
 
 float Profile::GetCoursesPossible( StepsType st, CourseDifficulty cd ) const
 {
-	vector<Course*> vpCourses;
+	std::vector<Course*> vpCourses;
 	GetHighScoreCourses( vpCourses );
 	return std::count_if(vpCourses.begin(), vpCourses.end(), [&](Course const *c) {
 		return c->GetTrail(st, cd) != nullptr;
@@ -474,7 +479,7 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 {
 	float fTotalPercents = 0;
 
-	vector<Course*> vpCourses;
+	std::vector<Course*> vpCourses;
 	GetHighScoreCourses( vpCourses );
 	for (Course const *c : vpCourses)
 	{
@@ -545,7 +550,7 @@ int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
  */
 bool Profile::GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut ) const
 {
-	map<RString,RString>::const_iterator it;
+	std::map<RString, RString>::const_iterator it;
 	it = m_sDefaultModifiers.find( pGameType->m_szName );
 	if( it == m_sDefaultModifiers.end() )
 		return false;
@@ -793,7 +798,7 @@ void Profile::GetAllUsedHighScoreNames(std::set<RString>& names)
 					main_entry->second.sub_member.begin(); \
 				sub_entry != main_entry->second.sub_member.end(); ++sub_entry) \
 		{ \
-			for(vector<HighScore>::iterator high_score= \
+			for(std::vector<HighScore>::iterator high_score= \
 						sub_entry->second.hsl.vHighScores.begin(); \
 					high_score != sub_entry->second.hsl.vHighScores.end(); \
 					++high_score) \
@@ -859,11 +864,11 @@ void Profile::MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
 			MERGE_FIELD(m_iNumStagesPassedByGrade[i]);
 		}
 #undef MERGE_FIELD
-		for(map<DateTime, Calories>::iterator other_cal=
+		for(std::map<DateTime, Calories>::iterator other_cal=
 					other->m_mapDayToCaloriesBurned.begin();
 				other_cal != other->m_mapDayToCaloriesBurned.end(); ++other_cal)
 		{
-			map<DateTime, Calories>::iterator this_cal=
+			std::map<DateTime, Calories>::iterator this_cal=
 				m_mapDayToCaloriesBurned.find(other_cal->first);
 			if(this_cal == m_mapDayToCaloriesBurned.end())
 			{
@@ -920,10 +925,10 @@ void Profile::MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
 	{
 		// The old screenshot count is stored so we know where to start in the
 		// list when copying the screenshot images.
-		size_t old_count= m_vScreenshots.size();
+		std::size_t old_count= m_vScreenshots.size();
 		m_vScreenshots.insert(m_vScreenshots.end(),
 			other->m_vScreenshots.begin(), other->m_vScreenshots.end());
-		for(size_t sid= old_count; sid < m_vScreenshots.size(); ++sid)
+		for(std::size_t sid= old_count; sid < m_vScreenshots.size(); ++sid)
 		{
 			RString old_path= from_dir + "Screenshots/" + m_vScreenshots[sid].sFileName;
 			RString new_path= to_dir + "Screenshots/" + m_vScreenshots[sid].sFileName;
@@ -938,7 +943,7 @@ void Profile::MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
 		// duplicates are removed because they come from the user mistakenly
 		// merging a second time. -Kyz
 		std::sort(m_vScreenshots.begin(), m_vScreenshots.end());
-		vector<Screenshot>::iterator unique_end=
+		std::vector<Screenshot>::iterator unique_end=
 			std::unique(m_vScreenshots.begin(), m_vScreenshots.end());
 		m_vScreenshots.erase(unique_end, m_vScreenshots.end());
 	}
@@ -1100,7 +1105,7 @@ void Profile::HandleStatsPrefixChange(RString dir, bool require_signature)
 	ProfileType type= m_Type;
 	int priority= m_ListPriority;
 	RString guid= m_sGuid;
-	map<RString, RString> default_mods= m_sDefaultModifiers;
+	std::map<RString, RString> default_mods= m_sDefaultModifiers;
 	SortOrder sort_order= m_SortOrder;
 	Difficulty last_diff= m_LastDifficulty;
 	CourseDifficulty last_course_diff= m_LastCourseDifficulty;
@@ -1149,7 +1154,7 @@ void Profile::HandleStatsPrefixChange(RString dir, bool require_signature)
 		SaveAllToDir(dir, require_signature);
 	}
 }
-	
+
 ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature )
 {
 	LOG->Trace( "Profile::LoadAllFromDir( %s )", sDir.c_str() );
@@ -1186,7 +1191,7 @@ void Profile::LoadSongsFromDir(RString const& dir, ProfileSlot prof_slot)
 	if(FILEMAN->DoesFileExist(songs_folder))
 	{
 		LOG->Trace("Found songs folder in profile.");
-		vector<RString> song_folders;
+		std::vector<RString> song_folders;
 		RageTimer song_load_start_time;
 		song_load_start_time.Touch();
 		FILEMAN->GetDirListing(songs_folder + "/*", song_folders, true, true);
@@ -1194,7 +1199,7 @@ void Profile::LoadSongsFromDir(RString const& dir, ProfileSlot prof_slot)
 		StripMacResourceForks(song_folders);
 		LOG->Trace("Found %i songs in profile.", int(song_folders.size()));
 		// Only songs that are successfully loaded count towards the limit. -Kyz
-		for(size_t song_index= 0; song_index < song_folders.size()
+		for(std::size_t song_index= 0; song_index < song_folders.size()
 					&& m_songs.size() < PREFSMAN->m_custom_songs_max_count;
 				++song_index)
 		{
@@ -1243,7 +1248,7 @@ ProfileLoadResult Profile::LoadStatsFromDir(RString dir, bool require_signature)
 	}
 
 	int iError;
-	unique_ptr<RageFileBasic> pFile(FILEMAN->Open(fn, RageFile::READ, iError));
+	std::unique_ptr<RageFileBasic> pFile(FILEMAN->Open(fn, RageFile::READ, iError));
 	if(pFile.get() == nullptr)
 	{
 		LOG->Trace("Error opening %s: %s", fn.c_str(), strerror(iError));
@@ -1253,7 +1258,7 @@ ProfileLoadResult Profile::LoadStatsFromDir(RString dir, bool require_signature)
 	if(compressed)
 	{
 		RString sError;
-		uint32_t iCRC32;
+		std::uint32_t iCRC32;
 		RageFileObjInflate *pInflate = GunzipFile(pFile.release(), sError, &iCRC32);
 		if(pInflate == nullptr)
 		{
@@ -1276,7 +1281,7 @@ ProfileLoadResult Profile::LoadStatsFromDir(RString dir, bool require_signature)
 	}
 
 	if(require_signature)
-	{ 
+	{
 		RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 		RString sDontShareFile = dir + DONT_SHARE_SIG;
 
@@ -1331,6 +1336,11 @@ void Profile::LoadTypeFromDir(RString dir)
 					}
 				}
 				data->GetAttrValue("Priority", m_ListPriority);
+				RString date_str;
+				if (data->GetAttrValue("LastPlayedDate", date_str))
+				{
+					m_LastPlayedDate.FromString(date_str);
+				}
 			}
 		}
 	}
@@ -1399,6 +1409,8 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 		FILEMAN->CreateDir( sDir + EDIT_STEPS_SUBDIR );
 	if( ProfileManager::m_bProfileCourseEdits )
 		FILEMAN->CreateDir( sDir + EDIT_COURSES_SUBDIR );
+	if (PREFSMAN->m_custom_songs_enable)
+		FILEMAN->CreateDir( sDir + SONGS_SUBDIR );
 	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 	FILEMAN->CreateDir( sDir + RIVAL_SUBDIR );
 
@@ -1443,7 +1455,7 @@ XNode *Profile::SaveStatsXmlCreateNode() const
 bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 {
 	LOG->Trace( "SaveStatsXmlToDir: %s", sDir.c_str() );
-	unique_ptr<XNode> xml( SaveStatsXmlCreateNode() );
+	std::unique_ptr<XNode> xml( SaveStatsXmlCreateNode() );
 
 	sDir= sDir + PROFILEMAN->GetStatsPrefix();
 	// Save stats.xml
@@ -1501,6 +1513,7 @@ void Profile::SaveTypeToDir(RString dir) const
 	IniFile ini;
 	ini.SetValue("ListPosition", "Type", ProfileTypeToString(m_Type));
 	ini.SetValue("ListPosition", "Priority", m_ListPriority);
+	ini.SetValue("ListPosition", "LastPlayedDate", DateTime::GetNowDateTime().GetString());
 	ini.WriteFile(dir + TYPE_INI);
 }
 
@@ -1525,7 +1538,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	XNode* pGeneralDataNode = new XNode( "GeneralData" );
 
 	// TRICKY: These are write-only elements that are normally never read again.
-	// This data is required by other apps (like internet ranking), but is 
+	// This data is required by other apps (like internet ranking), but is
 	// redundant to the game app.
 	pGeneralDataNode->AppendChild( "DisplayName",			GetDisplayNameOrHighScoreName() );
 	pGeneralDataNode->AppendChild( "CharacterID",			m_sCharacterID );
@@ -1568,7 +1581,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalHands",			m_iTotalHands );
 	pGeneralDataNode->AppendChild( "TotalLifts",			m_iTotalLifts );
 
-	// Keep declared variables in a very local scope so they aren't 
+	// Keep declared variables in a very local scope so they aren't
 	// accidentally used where they're not intended.  There's a lot of
 	// copying and pasting in this code.
 
@@ -1605,7 +1618,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pNumSongsPlayedByStyle = pGeneralDataNode->AppendChild("NumSongsPlayedByStyle");
-		for (std::pair<StyleID const, int> const iter : m_iNumSongsPlayedByStyle)
+		for (const std::pair<StyleID const, int>& iter : m_iNumSongsPlayedByStyle)
 		{
 			const StyleID &s = iter.first;
 			int iNumPlays = iter.second;
@@ -1704,7 +1717,7 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( RString sDir )
 	ini.GetValue( "Editable", "IsMale", m_IsMale );
 
 	// This is data that the user can change, so we have to validate it.
-	wstring wstr = RStringToWstring(m_sDisplayName);
+	std::wstring wstr = RStringToWstring(m_sDisplayName);
 	if( wstr.size() > PROFILE_MAX_DISPLAY_NAME_LENGTH )
 		wstr = wstr.substr(0, PROFILE_MAX_DISPLAY_NAME_LENGTH);
 	m_sDisplayName = WStringToRString(wstr);
@@ -1912,9 +1925,9 @@ float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
 		Female: ((-20.4022 + (0.4472 x HR) - (0.1263 x W) + (0.074 x A))/4.184) x T
 		where
 
-		HR = Heart rate (in beats/minute) 
-		W = Weight (in kilograms) 
-		A = Age (in years) 
+		HR = Heart rate (in beats/minute)
+		W = Weight (in kilograms)
+		A = Age (in years)
 		T = Exercise duration time (in minutes)
 
 		Equations for Determination of Calorie Burn if VO2max is Known
@@ -1923,10 +1936,10 @@ float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
 		Female: ((-59.3954 + (0.45 x HR) + (0.380 x VO2max) + (0.103 x W) + (0.274 x A))/4.184) x T
 		where
 
-		HR = Heart rate (in beats/minute) 
-		VO2max = Maximal oxygen consumption (in mL•kg-1•min-1) 
-		W = Weight (in kilograms) 
-		A = Age (in years) 
+		HR = Heart rate (in beats/minute)
+		VO2max = Maximal oxygen consumption (in mL•kg-1•min-1)
+		W = Weight (in kilograms)
+		A = Age (in years)
 		T = Exercise duration time (in minutes)
 	*/
 	// Duration passed in is in seconds.  Convert it to minutes to make the code
@@ -2048,7 +2061,7 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 			const XNode *pHighScoreListNode = pSteps->GetChild("HighScoreList");
 			if( pHighScoreListNode == nullptr )
 				WARN_AND_CONTINUE;
-			
+
 			HighScoreList &hsl = m_SongHighScores[songID].m_StepsHighScores[stepsID].hsl;
 			hsl.LoadFromNode( pHighScoreListNode );
 		}
@@ -2102,7 +2115,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 
 	ASSERT( pCourseScores->GetName() == "CourseScores" );
 
-	vector<Course*> vpAllCourses;
+	std::vector<Course*> vpAllCourses;
 	SONGMAN->GetAllCourses( vpAllCourses, true );
 
 	FOREACH_CONST_Child( pCourseScores, pCourse )
@@ -2118,9 +2131,9 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 		//	WARN_AND_CONTINUE;
 
 
-		// Backward compatability hack to fix importing scores of old style 
+		// Backward compatability hack to fix importing scores of old style
 		// courses that weren't in group folder but have now been moved into
-		// a group folder: 
+		// a group folder:
 		// If the courseID doesn't resolve, then take the file name part of sPath
 		// and search for matches of just the file name.
 		{
@@ -2150,7 +2163,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 		{
 			if( pTrail->GetName() != "Trail" )
 				continue;
-			
+
 			TrailID trailID;
 			trailID.LoadFromNode( pTrail );
 			if( !trailID.IsValid() )
@@ -2159,7 +2172,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 			const XNode *pHighScoreListNode = pTrail->GetChild("HighScoreList");
 			if( pHighScoreListNode == nullptr )
 				WARN_AND_CONTINUE;
-			
+
 			HighScoreList &hsl = m_CourseHighScores[courseID].m_TrailHighScores[trailID].hsl;
 			hsl.LoadFromNode( pHighScoreListNode );
 		}
@@ -2234,7 +2247,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 			const XNode *pHighScoreListNode = pRadarCategory->GetChild("HighScoreList");
 			if( pHighScoreListNode == nullptr )
 				WARN_AND_CONTINUE;
-			
+
 			HighScoreList &hsl = this->GetCategoryHighScoreList( st, rc );
 			hsl.LoadFromNode( pHighScoreListNode );
 		}
@@ -2313,7 +2326,7 @@ void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 		pCaloriesBurned->GetTextValue(fCaloriesBurned);
 
 		m_mapDayToCaloriesBurned[date].fCals = fCaloriesBurned;
-	}	
+	}
 }
 
 XNode* Profile::SaveCalorieDataCreateNode() const
@@ -2338,7 +2351,7 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 float Profile::GetCaloriesBurnedForDay( DateTime day ) const
 {
 	day.StripTime();
-	map<DateTime,Calories>::const_iterator i = m_mapDayToCaloriesBurned.find( day );
+	std::map<DateTime,Calories>::const_iterator i = m_mapDayToCaloriesBurned.find( day );
 	if( i == m_mapDayToCaloriesBurned.end() )
 		return 0;
 	else
@@ -2380,7 +2393,7 @@ void Profile::SaveStepsRecentScore( const Song* pSong, const Steps* pSteps, High
 	ASSERT( h.stepsID.IsValid() );
 	h.hs = hs;
 
-	unique_ptr<XNode> xml( new XNode("Stats") );
+	std::unique_ptr<XNode> xml( new XNode("Stats") );
 	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 	XNode *recent = xml->AppendChild( new XNode("RecentSongScores") );
 	recent->AppendChild( h.CreateNode() );
@@ -2407,7 +2420,7 @@ void Profile::SaveCourseRecentScore( const Course* pCourse, const Trail* pTrail,
 	h.trailID.FromTrail( pTrail );
 	h.hs = hs;
 
-	unique_ptr<XNode> xml( new XNode("Stats") );
+	std::unique_ptr<XNode> xml( new XNode("Stats") );
 	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 	XNode *recent = xml->AppendChild( new XNode("RecentCourseScores") );
 	recent->AppendChild( h.CreateNode() );
@@ -2416,7 +2429,7 @@ void Profile::SaveCourseRecentScore( const Course* pCourse, const Trail* pTrail,
 */
 const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID& songID ) const
 {
-	map<SongID,HighScoresForASong>::const_iterator it;
+	std::map<SongID, HighScoresForASong>::const_iterator it;
 	it = m_SongHighScores.find( songID );
 	if( it == m_SongHighScores.end() )
 		return nullptr;
@@ -2425,7 +2438,7 @@ const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID&
 
 const Profile::HighScoresForACourse *Profile::GetHighScoresForACourse( const CourseID& courseID ) const
 {
-	map<CourseID,HighScoresForACourse>::const_iterator it;
+	std::map<CourseID, HighScoresForACourse>::const_iterator it;
 	it = m_CourseHighScores.find( courseID );
 	if( it == m_CourseHighScores.end() )
 		return nullptr;
@@ -2505,7 +2518,7 @@ RString Profile::MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameB
 {
 	FILEMAN->FlushDirCache( sDir );
 	// Find a file name for the screenshot
-	vector<RString> files;
+	std::vector<RString> files;
 	GetDirListing( sDir + sFileNameBeginning+"*", files, false, false );
 	sort( files.begin(), files.end() );
 
@@ -2514,7 +2527,7 @@ RString Profile::MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameB
 	for( int i = files.size()-1; i >= 0; --i )
 	{
 		static Regex re( "^" + sFileNameBeginning + "([0-9]{5})\\....$" );
-		vector<RString> matches;
+		std::vector<RString> matches;
 		if( !re.Compare( files[i], matches ) )
 			continue;
 
@@ -2534,7 +2547,7 @@ RString Profile::MakeFileNameNoExtension( RString sFileNameBeginning, int iIndex
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Profile. */ 
+/** @brief Allow Lua to have access to the Profile. */
 class LunaProfile: public Luna<Profile>
 {
 public:
@@ -2774,7 +2787,7 @@ public:
 	{
 		lua_createtable(L, p->m_songs.size(), 0);
 		int song_tab= lua_gettop(L);
-		for(size_t i= 0; i < p->m_songs.size(); ++i)
+		for(std::size_t i= 0; i < p->m_songs.size(); ++i)
 		{
 			p->m_songs[i]->PushSelf(L);
 			lua_rawseti(L, song_tab, i+1);
@@ -2861,7 +2874,7 @@ LUA_REGISTER_CLASS( Profile )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -2871,7 +2884,7 @@ LUA_REGISTER_CLASS( Profile )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

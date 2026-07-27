@@ -1,7 +1,10 @@
 #include "global.h"
 #include "LightsDriver_Win32Serial.h"
+#define WIN32_LEAN_AND_MEAN
 #include "windows.h"
 #include "RageUtil.h"
+
+#include <cstdint>
 
 REGISTER_LIGHTS_DRIVER_CLASS(Win32Serial);
 
@@ -68,7 +71,7 @@ LightsDriver_Win32Serial::~LightsDriver_Win32Serial()
 void LightsDriver_Win32Serial::Set(const LightsState* ls)
 {
 	if (serialPort != INVALID_HANDLE_VALUE) {
-		uint8_t buffer[FULL_SEXTET_COUNT];
+		std::uint8_t buffer[FULL_SEXTET_COUNT];
 
 		packLine(buffer, ls);
 

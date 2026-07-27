@@ -24,6 +24,9 @@
 #include "Character.h"
 #include "CharacterManager.h"
 
+#include <cstddef>
+#include <vector>
+
 
 ProfileManager*	PROFILEMAN = nullptr;	// global and accessible from anywhere in our program
 
@@ -31,7 +34,7 @@ ProfileManager*	PROFILEMAN = nullptr;	// global and accessible from anywhere in 
 #define ID_DIGITS_STR "8"
 #define MAX_ID 99999999
 
-static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
+static void DefaultLocalProfileIDInit( std::size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
 {
 	sNameOut = ssprintf( "DefaultLocalProfileIDP%d", int(i+1) );
 	defaultValueOut = "";
@@ -49,7 +52,7 @@ const RString LAST_GOOD_SUBDIR	=	"LastGood/";
 
 // Directories to search for a profile if m_sMemoryCardProfileSubdir doesn't
 // exist, separated by ";":
-static Preference<RString> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfileImportSubdirs", "" );
+static Preference<RString> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfileImportSubdirs", "StepMania 5.1;StepMania 5;In The Groove 2" );
 
 static RString LocalProfileIDToDir( const RString &sProfileID ) { return USER_PROFILES_DIR + sProfileID + "/"; }
 static RString LocalProfileDirToID( const RString &sDir ) { return Basename( sDir ); }
@@ -64,7 +67,7 @@ struct DirAndProfile
 		profile.swap(other.profile);
 	}
 };
-static vector<DirAndProfile> g_vLocalProfile;
+static std::vector<DirAndProfile> g_vLocalProfile;
 
 
 static ThemeMetric<bool>	FIXED_PROFILES		( "ProfileManager", "FixedProfiles" );
@@ -119,7 +122,7 @@ void ProfileManager::Init()
 		// resize to the fixed number
 		if( (int)g_vLocalProfile.size() > NUM_FIXED_PROFILES )
 			g_vLocalProfile.erase( g_vLocalProfile.begin()+NUM_FIXED_PROFILES, g_vLocalProfile.end() );
-		
+
 		for( int i=g_vLocalProfile.size(); i<NUM_FIXED_PROFILES; i++ )
 		{
 			RString sCharacterID = FIXED_PROFILE_CHARACTER_ID( i );
@@ -212,6 +215,16 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 		return false;
 	}
 
+	// Make sure the profile is currently not in use by another player
+	FOREACH_HumanPlayer( pl )
+	{
+		if( PROFILEMAN->IsPersistentProfile(pl) && PROFILEMAN->GetProfile(pl) == PROFILEMAN->GetLocalProfile(sProfileID) )
+		{
+			m_sProfileDir[pn] = "";
+			return false;
+		}
+	}
+
 	m_sProfileDir[pn] = LocalProfileIDToDir( sProfileID );
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
@@ -223,11 +236,11 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 	}
 
 	GetProfile(pn)->LoadCustomFunction(m_sProfileDir[pn], pn);
-	
+
 	return true;
 }
 
-void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDirsToTry )
+void ProfileManager::GetMemoryCardProfileDirectoriesToTry( std::vector<RString> &asDirsToTry )
 {
 	/* Try to load the preferred profile. */
 	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir.Get() );
@@ -244,7 +257,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits
 	if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
 		return false;
 
-	vector<RString> asDirsToTry;
+	std::vector<RString> asDirsToTry;
 	GetMemoryCardProfileDirectoriesToTry( asDirsToTry );
 	m_bNewProfile[pn] = true;
 
@@ -308,14 +321,14 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn, bool bLoadEdits
 
 	if( LoadLocalProfileFromMachine(pn) )
 		return true;
-	
+
 	return false;
 }
 
 
 bool ProfileManager::FastLoadProfileNameFromMemoryCard( RString sRootDir, RString &sName ) const
 {
-	vector<RString> asDirsToTry;
+	std::vector<RString> asDirsToTry;
 	GetMemoryCardProfileDirectoriesToTry( asDirsToTry );
 
 	for( unsigned i = 0; i < asDirsToTry.size(); ++i )
@@ -420,7 +433,7 @@ void ProfileManager::UnloadAllLocalProfiles()
 	g_vLocalProfile.clear();
 }
 
-static void add_category_to_global_list(vector<DirAndProfile>& cat)
+static void add_category_to_global_list(std::vector<DirAndProfile>& cat)
 {
 	g_vLocalProfile.insert(g_vLocalProfile.end(), cat.begin(), cat.end());
 }
@@ -429,7 +442,23 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 {
 	UnloadAllLocalProfiles();
 
-	vector<RString> profile_ids;
+	switch(PREFSMAN->m_ProfileSortOrder)
+	{
+		case ProfileSortOrder_Alphabetical:
+			LoadLocalProfilesByName();
+			break;
+		case ProfileSortOrder_Recent:
+			LoadLocalProfilesByRecent();
+			break;
+		default:
+			LoadLocalProfilesByPriority();
+			break;
+	}
+}
+
+void ProfileManager::LoadLocalProfilesByPriority()
+{
+	std::vector<RString> profile_ids;
 	GetDirListing(USER_PROFILES_DIR + "*", profile_ids, true, true);
 	// Profiles have 3 types:
 	// 1.  Guest profiles:
@@ -440,7 +469,7 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 	//   Meant for use when testing things, listed last.
 	// If the user renames a profile directory manually, that should not be a
 	// problem. -Kyz
-	map<ProfileType, vector<DirAndProfile> > categorized_profiles;
+	std::map<ProfileType, std::vector<DirAndProfile>> categorized_profiles;
 	// The type data for a profile is in its own file so that loading isn't
 	// slowed down by copying temporary profiles around to make sure the list
 	// is sorted.  The profiles are loaded at the end. -Kyz
@@ -449,7 +478,7 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 		DirAndProfile derp;
 		derp.sDir= id + "/";
 		derp.profile.LoadTypeFromDir(derp.sDir);
-		map<ProfileType, vector<DirAndProfile> >::iterator category=
+		std::map<ProfileType, std::vector<DirAndProfile>>::iterator category=
 			categorized_profiles.find(derp.profile.m_Type);
 		if(category == categorized_profiles.end())
 		{
@@ -480,7 +509,136 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 	{
 		curr.profile.LoadAllFromDir(curr.sDir, PREFSMAN->m_bSignProfileData);
 	}
- }
+}
+
+void ProfileManager::LoadLocalProfilesByName()
+{
+	std::vector<RString> profile_ids;
+	GetDirListing(USER_PROFILES_DIR + "*", profile_ids, true, true);
+
+	// Create separate vectors for each profile type
+	std::vector<DirAndProfile> guestProfiles;
+	std::vector<DirAndProfile> normalProfiles;
+	std::vector<DirAndProfile> testProfiles;
+
+	for (RString const &id : profile_ids)
+	{
+		DirAndProfile derp;
+		derp.sDir= id + "/";
+		derp.profile.LoadEditableDataFromDir(derp.sDir);
+		derp.profile.LoadTypeFromDir(derp.sDir);
+		// insert profile into the appropriate vector based on profile type
+		switch(derp.profile.m_Type)
+		{
+			case ProfileType_Guest:
+				guestProfiles.push_back(derp);
+				break;
+			case ProfileType_Normal:
+				normalProfiles.push_back(derp);
+				break;
+			case ProfileType_Test:
+				testProfiles.push_back(derp);
+				break;
+			default:
+				break;
+		}
+	}
+
+	// Sort each vector by display name
+	if (PREFSMAN->m_bProfileSortOrderAscending) {
+		auto displayNameAscending = [](const DirAndProfile &a, const DirAndProfile &b)
+		{
+			return a.profile.m_sDisplayName.CompareNoCase(b.profile.m_sDisplayName) < 0;
+		};
+		std::sort(guestProfiles.begin(), guestProfiles.end(), displayNameAscending);
+		std::sort(normalProfiles.begin(), normalProfiles.end(), displayNameAscending);
+		std::sort(testProfiles.begin(), testProfiles.end(), displayNameAscending);
+	} else {
+		auto displayNameDescending = [](const DirAndProfile &a, const DirAndProfile &b)
+		{
+			return a.profile.m_sDisplayName.CompareNoCase(b.profile.m_sDisplayName) > 0;
+		};
+		std::sort(guestProfiles.begin(), guestProfiles.end(), displayNameDescending);
+		std::sort(normalProfiles.begin(), normalProfiles.end(), displayNameDescending);
+		std::sort(testProfiles.begin(), testProfiles.end(), displayNameDescending);
+	}
+
+	add_category_to_global_list(guestProfiles);
+	add_category_to_global_list(normalProfiles);
+	add_category_to_global_list(testProfiles);
+
+	for (DirAndProfile &curr : g_vLocalProfile)
+	{
+		curr.profile.LoadAllFromDir(curr.sDir, PREFSMAN->m_bSignProfileData);
+	}
+
+}
+
+// This function is used within RefreshLocalProfilesFromDisk() to sort the profiles by date.
+void ProfileManager::LoadLocalProfilesByRecent()
+{
+
+	std::vector<RString> profile_ids;
+	GetDirListing(USER_PROFILES_DIR + "*", profile_ids, true, true);
+
+	// Create separate vectors for each profile type
+	std::vector<DirAndProfile> guestProfiles;
+	std::vector<DirAndProfile> normalProfiles;
+	std::vector<DirAndProfile> testProfiles;
+
+	// The type data for a profile is in its own file so that loading isn't
+	// slowed down by copying temporary profiles around to make sure the list
+	// is sorted.	The profiles are loaded at the end. -Kyz
+	for (RString const &id : profile_ids)
+	{
+		DirAndProfile derp;
+		derp.sDir= id + "/";
+		derp.profile.LoadTypeFromDir(derp.sDir);
+		// insert profile into the appropriate vector based on profile type
+		switch(derp.profile.m_Type)
+		{
+			case ProfileType_Guest:
+				guestProfiles.push_back(derp);
+				break;
+			case ProfileType_Normal:
+				normalProfiles.push_back(derp);
+				break;
+			case ProfileType_Test:
+				testProfiles.push_back(derp);
+				break;
+			default:
+				break;
+		}
+	}
+
+	// Sort each vector by date
+	if (PREFSMAN->m_bProfileSortOrderAscending) {
+		auto lastPlayedAscending = [](const DirAndProfile &a, const DirAndProfile &b)
+		{
+			return a.profile.m_LastPlayedDate > b.profile.m_LastPlayedDate;
+		};
+		std::sort(guestProfiles.begin(), guestProfiles.end(), lastPlayedAscending);
+		std::sort(normalProfiles.begin(), normalProfiles.end(), lastPlayedAscending);
+		std::sort(testProfiles.begin(), testProfiles.end(), lastPlayedAscending);
+	} else {
+		auto lastPlayedDescending = [](const DirAndProfile &a, const DirAndProfile &b)
+		{
+			return a.profile.m_LastPlayedDate < b.profile.m_LastPlayedDate;
+		};
+		std::sort(guestProfiles.begin(), guestProfiles.end(), lastPlayedDescending);
+		std::sort(normalProfiles.begin(), normalProfiles.end(), lastPlayedDescending);
+		std::sort(testProfiles.begin(), testProfiles.end(), lastPlayedDescending);
+	}
+
+	add_category_to_global_list(guestProfiles);
+	add_category_to_global_list(normalProfiles);
+	add_category_to_global_list(testProfiles);
+
+	for (DirAndProfile &curr : g_vLocalProfile)
+	{
+		curr.profile.LoadAllFromDir(curr.sDir, PREFSMAN->m_bSignProfileData);
+	}
+}
 
 const Profile *ProfileManager::GetLocalProfile( const RString &sProfileID ) const
 {
@@ -499,7 +657,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 {
 	ASSERT( !sName.empty() );
 
-	// Find a directory directory name that's a number greater than all 
+	// Find a directory directory name that's a number greater than all
 	// existing numbers.  This preserves the "order by create date".
 	// Profile IDs are actually the directory names, so they can be any string,
 	// and we have to handle the case where the user renames one.
@@ -508,7 +666,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	// handled. -Kyz
 	int max_profile_number= -1;
 	int first_free_number= 0;
-	vector<RString> profile_ids;
+	std::vector<RString> profile_ids;
 	GetLocalProfileIDs(profile_ids);
 	for (std::vector<RString>::const_iterator id = profile_ids.begin(); id != profile_ids.end(); ++id)
 	{
@@ -521,7 +679,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 			{
 				++first_free_number;
 			}
-			max_profile_number= max(tmp, max_profile_number);
+			max_profile_number= std::max(tmp, max_profile_number);
 		}
 	}
 
@@ -562,15 +720,17 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 
 static void InsertProfileIntoList(DirAndProfile& derp)
 {
-	bool inserted= false;
-	derp.profile.m_ListPriority= 0;
+	bool inserted = false;
+	derp.profile.m_ListPriority = 0;
+	int index = -1;
 	for (auto curr = g_vLocalProfile.begin(); curr != g_vLocalProfile.end(); ++curr)
 	{
+		++index;
 		if(curr->profile.m_Type > derp.profile.m_Type)
 		{
 			derp.profile.SaveTypeToDir(derp.sDir);
 			g_vLocalProfile.insert(curr, derp);
-			inserted= true;
+			inserted = true;
 			break;
 		}
 		else if(curr->profile.m_Type == derp.profile.m_Type)
@@ -578,10 +738,25 @@ static void InsertProfileIntoList(DirAndProfile& derp)
 			++derp.profile.m_ListPriority;
 		}
 	}
+
 	if(!inserted)
 	{
 		derp.profile.SaveTypeToDir(derp.sDir);
 		g_vLocalProfile.push_back(derp);
+	}
+
+	// The above should run regardless of profile sort in case the user decides to change
+	// back to priority sorting. If we're using Recent sorting, move the new profile to
+	// the top, if we're using alphabetical find where it belongs.
+	switch (PREFSMAN->m_ProfileSortOrder) {
+		case ProfileSortOrder_Recent:
+			PROFILEMAN->MoveProfileTopBottom(index, PREFSMAN->m_bProfileSortOrderAscending);
+			break;
+		case ProfileSortOrder_Alphabetical:
+			PROFILEMAN->MoveProfileSorted(index, PREFSMAN->m_bProfileSortOrderAscending);
+			break;
+		default:
+			break;
 	}
 }
 
@@ -619,7 +794,7 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 	// flush directory cache in an attempt to get this working
 	FILEMAN->FlushDirCache( sProfileDir );
 
-	for (vector<DirAndProfile>::iterator i = g_vLocalProfile.begin(); i != g_vLocalProfile.end(); ++i)
+	for (std::vector<DirAndProfile>::iterator i = g_vLocalProfile.begin(); i != g_vLocalProfile.end(); ++i)
 	{
 		if( i->sDir == sProfileDir )
 		{
@@ -638,7 +813,7 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 			else
 			{
 				LOG->Warn("[ProfileManager::DeleteLocalProfile] DeleteRecursive(%s) failed",
-						  sProfileID.c_str() );
+					sProfileID.c_str() );
 				return false;
 			}
 		}
@@ -651,7 +826,7 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 void ProfileManager::SaveMachineProfile() const
 {
 	// If the machine name has changed, make sure we use the new name.
-	// It's important that this name be applied before the Player profiles 
+	// It's important that this name be applied before the Player profiles
 	// are saved, so that the Player's profiles show the right machine name.
 	const_cast<ProfileManager *> (this)->m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName;
 
@@ -767,7 +942,7 @@ void ProfileManager::MergeLocalProfileIntoMachine(RString const& from_id, bool s
 
 void ProfileManager::ChangeProfileType(int index, ProfileType new_type)
 {
-	if(index < 0 || static_cast<size_t>(index) >= g_vLocalProfile.size())
+	if(index < 0 || static_cast<std::size_t>(index) >= g_vLocalProfile.size())
 	{ return; }
 	if(new_type == g_vLocalProfile[index].profile.m_Type)
 	{ return; }
@@ -777,9 +952,93 @@ void ProfileManager::ChangeProfileType(int index, ProfileType new_type)
 	InsertProfileIntoList(derp);
 }
 
+void ProfileManager::MoveProfileTopBottom(int index, bool top)
+{
+	if (index < 0 || static_cast<std::size_t>(index) >= g_vLocalProfile.size())
+	{
+		return;
+	}
+
+	int swindex = 0;
+	// There may be guest profiles at the top of the list, so we need to skip over them if moving to the top.
+	// If we're moving the profile to the bottom we should stop once we find the first test profile.
+	for (std::size_t i= 0; i < g_vLocalProfile.size(); ++i)
+	{
+		ProfileType type= g_vLocalProfile[i].profile.m_Type;
+		if (!top)
+		{
+			if (type == ProfileType_Test)
+			{
+				break;
+			}
+		}
+		else
+		{
+			if (type != ProfileType_Guest)
+			{
+				break;
+			}
+		}
+		swindex++;
+	}
+	if ((top && index < swindex) || (!top && index > swindex))
+	{
+		return;
+	}
+
+	// Save the profile to move
+	DirAndProfile profile = g_vLocalProfile[index];
+	// Remove the profile from its current position
+	g_vLocalProfile.erase(g_vLocalProfile.begin() + index);
+	// Insert the profile at the beginning of the list
+	g_vLocalProfile.insert(g_vLocalProfile.begin() + swindex, profile);
+}
+
+void ProfileManager::MoveProfileSorted(int index, bool bAscending) {
+
+	if (index < 0 || static_cast<std::size_t>(index) >= g_vLocalProfile.size())
+	{
+		return;
+	}
+
+	int swindex = 0;
+	// There may be guest profiles at the top of the list, so we need to skip over them.
+	for (std::size_t i= 0; i < g_vLocalProfile.size(); ++i)
+	{
+		ProfileType type= g_vLocalProfile[i].profile.m_Type;
+		if (type != ProfileType_Guest)
+		{
+			break;
+		}
+		swindex++;
+	}
+
+	if (index < swindex)
+	{
+		return;
+	}
+
+	// Copy the profile to be moved
+	DirAndProfile temp = g_vLocalProfile[index];
+
+	// Remove the profile from the list
+	g_vLocalProfile.erase(g_vLocalProfile.begin()+index);
+
+	// Find the correct location to insert the profile
+	auto it = std::lower_bound(g_vLocalProfile.begin()+swindex, g_vLocalProfile.end(), temp,
+		[bAscending](const DirAndProfile &a, const DirAndProfile &b)
+		{
+			if (bAscending)
+				return a.profile.m_sDisplayName < b.profile.m_sDisplayName;
+			else
+				return a.profile.m_sDisplayName > b.profile.m_sDisplayName;
+		});
+	g_vLocalProfile.insert(it, temp);
+}
+
 void ProfileManager::MoveProfilePriority(int index, bool up)
 {
-	if(index < 0 || static_cast<size_t>(index) >= g_vLocalProfile.size())
+	if(index < 0 || static_cast<std::size_t>(index) >= g_vLocalProfile.size())
 	{ return; }
 	// Changing the priority is complicated a bit because the profiles might
 	// all have the same priority.  So this function has to assign priorities
@@ -788,7 +1047,7 @@ void ProfileManager::MoveProfilePriority(int index, bool up)
 	int swindex= index + ((up * -2) + 1);
 	ProfileType type= g_vLocalProfile[index].profile.m_Type;
 	int priority= 0;
-	for(size_t i= 0; i < g_vLocalProfile.size(); ++i)
+	for(std::size_t i= 0; i < g_vLocalProfile.size(); ++i)
 	{
 		DirAndProfile* curr= &g_vLocalProfile[i];
 		if(curr->profile.m_Type == type)
@@ -796,7 +1055,7 @@ void ProfileManager::MoveProfilePriority(int index, bool up)
 			if(curr->profile.m_ListPriority != priority)
 			{
 				curr->profile.m_ListPriority= priority;
-				if(i != static_cast<size_t>(index) && i != static_cast<size_t>(swindex))
+				if(i != static_cast<std::size_t>(index) && i != static_cast<std::size_t>(swindex))
 				{
 					curr->profile.SaveTypeToDir(curr->sDir);
 				}
@@ -809,7 +1068,7 @@ void ProfileManager::MoveProfilePriority(int index, bool up)
 		}
 	}
 	// Only swap if both indices are valid and the types match.
-	if(swindex >= 0 && static_cast<size_t>(swindex) < g_vLocalProfile.size() &&
+	if(swindex >= 0 && static_cast<std::size_t>(swindex) < g_vLocalProfile.size() &&
 		g_vLocalProfile[swindex].profile.m_Type ==
 		g_vLocalProfile[index].profile.m_Type)
 	{
@@ -845,7 +1104,7 @@ int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot )
 void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	HighScore hs = hs_;
-	hs.SetPercentDP( max(0, hs.GetPercentDP()) ); // bump up negative scores
+	hs.SetPercentDP( std::max(0.0f, hs.GetPercentDP()) ); // bump up negative scores
 
 	iPersonalIndexOut = -1;
 	iMachineIndexOut = -1;
@@ -866,7 +1125,7 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	}
 
 	//
-	// save high score	
+	// save high score
 	//
 	if( IsPersistentProfile(pn) )
 		GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
@@ -899,7 +1158,7 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	HighScore hs = hs_;
-	hs.SetPercentDP(max( 0, hs.GetPercentDP()) ); // bump up negative scores
+	hs.SetPercentDP(std::max( 0.0f, hs.GetPercentDP()) ); // bump up negative scores
 
 	iPersonalIndexOut = -1;
 	iMachineIndexOut = -1;
@@ -964,7 +1223,7 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 	{
 	case ProfileSlot_Player1:
 	case ProfileSlot_Player2:
-		return GAMESTATE->IsHumanPlayer((PlayerNumber)slot) && !m_sProfileDir[slot].empty(); 
+		return GAMESTATE->IsHumanPlayer((PlayerNumber)slot) && !m_sProfileDir[slot].empty();
 	case ProfileSlot_Machine:
 		return true;
 	default:
@@ -972,7 +1231,7 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 	}
 }
 
-void ProfileManager::GetLocalProfileIDs( vector<RString> &vsProfileIDsOut ) const
+void ProfileManager::GetLocalProfileIDs( std::vector<RString> &vsProfileIDsOut ) const
 {
 	vsProfileIDsOut.clear();
 	for (DirAndProfile const &i : g_vLocalProfile)
@@ -982,7 +1241,7 @@ void ProfileManager::GetLocalProfileIDs( vector<RString> &vsProfileIDsOut ) cons
 	}
 }
 
-void ProfileManager::GetLocalProfileDisplayNames( vector<RString> &vsProfileDisplayNamesOut ) const
+void ProfileManager::GetLocalProfileDisplayNames( std::vector<RString> &vsProfileDisplayNamesOut ) const
 {
 	vsProfileDisplayNamesOut.clear();
 	for (DirAndProfile const &i : g_vLocalProfile)
@@ -1021,7 +1280,7 @@ int ProfileManager::GetNumLocalProfiles() const
 void ProfileManager::SetStatsPrefix(RString const& prefix)
 {
 	m_stats_prefix= prefix;
-	for(size_t i= 0; i < g_vLocalProfile.size(); ++i)
+	for(std::size_t i= 0; i < g_vLocalProfile.size(); ++i)
 	{
 		g_vLocalProfile[i].profile.HandleStatsPrefixChange(g_vLocalProfile[i].sDir, PREFSMAN->m_bSignProfileData);
 	}
@@ -1039,7 +1298,7 @@ void ProfileManager::SetStatsPrefix(RString const& prefix)
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ProfileManager. */ 
+/** @brief Allow Lua to have access to the ProfileManager. */
 class LunaProfileManager: public Luna<ProfileManager>
 {
 public:
@@ -1061,7 +1320,7 @@ public:
 	static int GetLocalProfile( T* p, lua_State *L )
 	{
 		Profile *pProfile = p->GetLocalProfile(SArg(1));
-		if( pProfile ) 
+		if( pProfile )
 			pProfile->PushSelf(L);
 		else
 			lua_pushnil(L);
@@ -1116,14 +1375,14 @@ public:
 	}
 	static int GetLocalProfileIDs( T* p, lua_State *L )
 	{
-		vector<RString> vsProfileIDs;
+		std::vector<RString> vsProfileIDs;
 		p->GetLocalProfileIDs(vsProfileIDs);
 		LuaHelpers::CreateTableFromArray<RString>( vsProfileIDs, L );
 		return 1;
 	}
 	static int GetLocalProfileDisplayNames( T* p, lua_State *L )
 	{
-		vector<RString> vsProfileNames;
+		std::vector<RString> vsProfileNames;
 		p->GetLocalProfileDisplayNames(vsProfileNames);
 		LuaHelpers::CreateTableFromArray<RString>( vsProfileNames, L );
 		return 1;
@@ -1164,7 +1423,7 @@ LUA_REGISTER_CLASS( ProfileManager )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1174,7 +1433,7 @@ LUA_REGISTER_CLASS( ProfileManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

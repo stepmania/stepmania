@@ -12,6 +12,9 @@
 #include "InputEventPlus.h"
 #include "TimingData.h"
 
+#include <vector>
+
+
 class ScoreDisplay;
 class LifeMeter;
 class CombinedLifeMeter;
@@ -76,23 +79,23 @@ public:
 		int iRow;
 		TapNote *pTN;
 	};
-	void UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTapNote> &vTN );
+	void UpdateHoldNotes( int iSongRow, float fDeltaTime, std::vector<TrackRowTapNote> &vTN );
 
-	void Init( 
+	void Init(
 		const RString &sType,
-		PlayerState* pPlayerState, 
+		PlayerState* pPlayerState,
 		PlayerStageStats* pPlayerStageStats,
-		LifeMeter* pLM, 
-		CombinedLifeMeter* pCombinedLM, 
-		ScoreDisplay* pScoreDisplay, 
-		ScoreDisplay* pSecondaryScoreDisplay, 
-		Inventory* pInventory, 
-		ScoreKeeper* pPrimaryScoreKeeper, 
+		LifeMeter* pLM,
+		CombinedLifeMeter* pCombinedLM,
+		ScoreDisplay* pScoreDisplay,
+		ScoreDisplay* pSecondaryScoreDisplay,
+		Inventory* pInventory,
+		ScoreKeeper* pPrimaryScoreKeeper,
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
 	bool IsOniDead() const;
-	
+
 	/**
 	 * @brief Retrieve the Player's TimingData.
 	 *
@@ -132,7 +135,7 @@ public:
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
-	
+
 	PlayerState * GetPlayerState() { return this->m_pPlayerState; }
 	void ChangeLife(float delta);
 	void SetLife(float value);
@@ -144,14 +147,14 @@ protected:
 	void FlashGhostRow( int iRow );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( const TapNote &tn );
-	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold );
+	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const std::vector<int> &viColsWithHold );
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 	void SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo );
 	void PlayKeysound( const TapNote &tn, TapNoteScore score );
 
 	void SetMineJudgment( TapNoteScore tns , int iTrack );
-	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn ) { SetJudgment( iRow, iFirstTrack, tn, tn.result.tns, tn.result.fTapNoteOffset ); }	
+	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn ) { SetJudgment( iRow, iFirstTrack, tn, tn.result.tns, tn.result.fTapNoteOffset ); }
 	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn, TapNoteScore tns, float fTapNoteOffset );	// -1 if no track as in TNS_Miss
 	void SetHoldJudgment( TapNote &tn, int iTrack );
 	void SetCombo( unsigned int iCombo, unsigned int iMisses );
@@ -192,7 +195,7 @@ protected:
 	NoteData		&m_NoteData;
 	NoteField		*m_pNoteField;
 
-	vector<HoldJudgment*>	m_vpHoldJudgment;
+	std::vector<HoldJudgment*>	m_vpHoldJudgment;
 
 	AutoActor		m_sprJudgment;
 	AutoActor		m_sprCombo;
@@ -226,9 +229,9 @@ protected:
 
 	float			m_fActiveRandomAttackStart;
 
-	vector<bool>	m_vbFretIsDown;
+	std::vector<bool>	m_vbFretIsDown;
 
-	vector<RageSound>	m_vKeysounds;
+	std::vector<RageSound>	m_vKeysounds;
 
 	ThemeMetric<float>	GRAY_ARROWS_Y_STANDARD;
 	ThemeMetric<float>	GRAY_ARROWS_Y_REVERSE;
@@ -274,7 +277,7 @@ public:
 /*
  * (c) 2001-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -284,7 +287,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

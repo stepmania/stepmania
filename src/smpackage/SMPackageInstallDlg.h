@@ -1,9 +1,9 @@
 #if !defined(AFX_SMPACKAGEINSTALLDLG_H__5E362C4C_CA11_4071_A8AB_A0231E985DAF__INCLUDED_)
 #define AFX_SMPACKAGEINSTALLDLG_H__5E362C4C_CA11_4071_A8AB_A0231E985DAF__INCLUDED_
 
-#if _MSC_VER > 1000
+#if defined(_MSC_VER)
 #pragma once
-#endif // _MSC_VER > 1000
+#endif
 // SMPackageInstallDlg.h : header file
 
 /////////////////////////////////////////////////////////////////////////////

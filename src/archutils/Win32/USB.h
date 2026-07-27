@@ -17,7 +17,7 @@ public:
 	/* Nonblocking read.  size must always be the same.  Returns the number of bytes
 	 * read, or 0. */
 	int read( void *p );
-	static int read_several( const vector<WindowsFileIO *> &sources, void *p, int &actual, float timeout );
+	static int read_several( const std::vector<WindowsFileIO *> &sources, void *p, int &actual, float timeout );
 
 private:
 	void queue_read();

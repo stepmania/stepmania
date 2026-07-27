@@ -4,17 +4,18 @@
 #include "RageSurfaceUtils.h"
 #include "RageUtil.h"
 
+#include <cmath>
+#include <cstdint>
 #include <vector>
-using namespace std;
 
 /* Coordinate 0x0 represents the exact top-left corner of a bitmap.  .5x.5
  * represents the center of the top-left pixel; 1x1 is the center of the top
- * square of pixels.  
+ * square of pixels.
  *
  * (Look at a grid: map coordinates to the lines, not the squares between the
  * lines.) */
 
-static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &percent, int src, int dst )
+static void InitVectors( std::vector<int> &s0, std::vector<int> &s1, std::vector<std::uint32_t> &percent, int src, int dst )
 {
 	if( src >= dst )
 	{
@@ -51,7 +52,7 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &per
 				/* sax is somewhere between the centers of both sampled
 				 * pixels; find the percentage: */
 				const float p = (1.0f - (sax - fleft) / xdist) * 16777216.0f;
-				percent.push_back( uint32_t(p) );
+				percent.push_back( std::uint32_t(p) );
 			}
 		}
 	}
@@ -70,11 +71,11 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &per
 			const float sax = sx*x;
 
 			// source x coordinates of left and right pixels to sample
-			s0.push_back( clamp(int(sax), 0, src-1));
-			s1.push_back( clamp(int(sax+1), 0, src-1) );
+			s0.push_back( std::clamp(int(sax), 0, src-1));
+			s1.push_back( std::clamp(int(sax+1), 0, src-1) );
 
-			const float p = (1.0f - (sax - floorf(sax))) * 16777216.0f;
-			percent.push_back( uint32_t(p) );
+			const float p = (1.0f - (sax - std::floor(sax))) * 16777216.0f;
+			percent.push_back( std::uint32_t(p) );
 		}
 	}
 }
@@ -83,43 +84,43 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 {
 	/* For each destination coordinate, two source rows, two source columns
 	 * and the percentage of the first row and first column: */
-	vector<int> esx0, esx1, esy0, esy1;
-	vector<uint32_t> ex0, ey0;
+	std::vector<int> esx0, esx1, esy0, esy1;
+	std::vector<std::uint32_t> ex0, ey0;
 
 	InitVectors( esx0, esx1, ex0, src->w, dst->w );
 	InitVectors( esy0, esy1, ey0, src->h, dst->h );
 
 	// This is where all of the real work is done.
-	const uint8_t *sp = (uint8_t *) src->pixels;
+	const std::uint8_t *sp = (std::uint8_t *) src->pixels;
 	const int height = dst->h;
 	const int width = dst->w;
 	for( int y = 0; y < height; y++ )
 	{
-		uint8_t *dp = (uint8_t *) (dst->pixels + dst->pitch*y);
-		/* current source pointer and next source pointer (first and second 
+		std::uint8_t *dp = (std::uint8_t *) (dst->pixels + dst->pitch*y);
+		/* current source pointer and next source pointer (first and second
 		 * rows sampled for this row): */
-		const uint8_t *csp = sp + esy0[y] * src->pitch;
-		const uint8_t *ncsp = sp + esy1[y] * src->pitch;
+		const std::uint8_t *csp = sp + esy0[y] * src->pitch;
+		const std::uint8_t *ncsp = sp + esy1[y] * src->pitch;
 
 		for( int x = 0; x < width; x++ )
 		{
 			// Grab pointers to the sampled pixels:
-			const uint8_t *c00 = csp + esx0[x]*4;
-			const uint8_t *c01 = csp + esx1[x]*4;
-			const uint8_t *c10 = ncsp + esx0[x]*4;
-			const uint8_t *c11 = ncsp + esx1[x]*4;
+			const std::uint8_t *c00 = csp + esx0[x]*4;
+			const std::uint8_t *c01 = csp + esx1[x]*4;
+			const std::uint8_t *c10 = ncsp + esx0[x]*4;
+			const std::uint8_t *c11 = ncsp + esx1[x]*4;
 
 			for( int c = 0; c < 4; ++c )
 			{
-				uint32_t x0 = uint32_t(c00[c]) * ex0[x];
-				x0 += uint32_t(c01[c]) * (16777216 - ex0[x]);
+				std::uint32_t x0 = std::uint32_t(c00[c]) * ex0[x];
+				x0 += std::uint32_t(c01[c]) * (16777216 - ex0[x]);
 				x0 >>= 24;
-				uint32_t x1 = uint32_t(c10[c]) * ex0[x];
-				x1 += uint32_t(c11[c]) * (16777216 - ex0[x]);
+				std::uint32_t x1 = std::uint32_t(c10[c]) * ex0[x];
+				x1 += std::uint32_t(c11[c]) * (16777216 - ex0[x]);
 				x1 >>= 24;
-				
-				const uint32_t res = ((x0 * ey0[y]) + (x1 * (16777216-ey0[y])) + 8388608) >> 24;
-				dp[c] = uint8_t(res);
+
+				const std::uint32_t res = ((x0 * ey0[y]) + (x1 * (16777216-ey0[y])) + 8388608) >> 24;
+				dp[c] = std::uint8_t(res);
 			}
 
 			// Advance destination pointer.
@@ -154,11 +155,11 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 		/* Our filter is a simple linear filter, so it can't scale to less than
 		 * 1:2 or more than 2:1 very well. If we need to go beyond that, do it
 		 * iteratively. */
-		xscale = clamp( xscale, .5f, 2.0f );
-		yscale = clamp( yscale, .5f, 2.0f );
+		xscale = std::clamp( xscale, .5f, 2.0f );
+		yscale = std::clamp( yscale, .5f, 2.0f );
 
-		int target_width = lrintf( src->w*xscale );
-		int target_height = lrintf( src->h*yscale );
+		int target_width = std::lrint( src->w*xscale );
+		int target_height = std::lrint( src->h*yscale );
 
 		RageSurface *dst =
 			CreateSurface(target_width, target_height, 32,
@@ -173,10 +174,10 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 	}
 }
 
-/*  
+/*
  * (c) A. Schiffler, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -186,7 +187,7 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -196,7 +197,7 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
- * 
+ *
  * This is based on code from SDL_rotozoom, under the above license with
  * permission from Andreas Schiffler.
  */

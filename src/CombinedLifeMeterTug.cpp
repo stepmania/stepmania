@@ -6,9 +6,11 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 
+#include <cstddef>
+
 ThemeMetric<float> METER_WIDTH		("CombinedLifeMeterTug","MeterWidth");
 
-static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+static void TugMeterPercentChangeInit( std::size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "TugMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
@@ -32,7 +34,7 @@ static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOu
 
 static Preference1D<float> g_fTugMeterPercentChange( TugMeterPercentChangeInit, NUM_ScoreEvent );
 
-CombinedLifeMeterTug::CombinedLifeMeterTug() 
+CombinedLifeMeterTug::CombinedLifeMeterTug()
 {
 	FOREACH_PlayerNumber( p )
 	{
@@ -92,7 +94,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 
 void CombinedLifeMeterTug::HandleTapScoreNone( PlayerNumber pn )
 {
-	
+
 }
 
 void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, TapNoteScore tscore )
@@ -124,7 +126,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 		}
 
 		/* Clamp the life meter only for calculating the multiplier. */
-		fLifePercentage = clamp( fLifePercentage, 0.0f, 1.0f );
+		fLifePercentage = std::clamp( fLifePercentage, 0.0f, 1.0f );
 		fPercentToMove *= SCALE( fLifePercentage, 0.f, 1.f, 0.2f, 1.f);
 	}
 
@@ -155,7 +157,7 @@ void CombinedLifeMeterTug::SetLife(PlayerNumber pn, float value)
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -165,7 +167,7 @@ void CombinedLifeMeterTug::SetLife(PlayerNumber pn, float value)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

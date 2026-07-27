@@ -7,16 +7,21 @@
 #include "archutils/win32/WindowIcon.h"
 #include "archutils/win32/ErrorStrings.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "CommCtrl.h"
 #include "RageSurface_Load.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "RageSurfaceUtils_Zoom.h"
 #include "RageLog.h"
 #include "ProductInfo.h"
 #include "LocalizedString.h"
 
-#include "RageSurfaceUtils_Zoom.h"
+#include <cmath>
+#include <vector>
+
+
 static HBITMAP g_hBitmap = nullptr;
 
 /* Load a RageSurface into a GDI surface. */
@@ -34,7 +39,7 @@ static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 
 		int iWidth = r.right;
 		float fRatio = (float) iWidth / s->w;
-		int iHeight = lrintf( s->h * fRatio );
+		int iHeight = std::lrint( s->h * fRatio );
 
 		RageSurfaceUtils::Zoom( s, iWidth, iHeight );
 	}
@@ -55,7 +60,7 @@ static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 		for( int x = 0; x < s->w; ++x )
 		{
 			unsigned const char *data = line + (x*s->format->BytesPerPixel);
-			
+
 			SetPixelV( BitmapDC, x, y, RGB( data[3], data[2], data[1] ) );
 		}
 	}
@@ -87,17 +92,17 @@ INT_PTR CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wPara
 	{
 	case WM_INITDIALOG:
 		{
-			vector<RString> vs;
+			std::vector<RString> vs;
 			GetDirListing( "Data/splash*.png", vs, false, true );
 			if( !vs.empty() )
 				g_hBitmap = LoadWin32Surface( vs[0], hWnd );
 		}
 		if( g_hBitmap == nullptr )
 			g_hBitmap = LoadWin32Surface( "Data/splash.bmp", hWnd );
-		SendMessage( 
-			GetDlgItem(hWnd,IDC_SPLASH), 
-			STM_SETIMAGE, 
-			(WPARAM) IMAGE_BITMAP, 
+		SendMessage(
+			GetDlgItem(hWnd,IDC_SPLASH),
+			STM_SETIMAGE,
+			(WPARAM) IMAGE_BITMAP,
 			(LPARAM) (HANDLE) g_hBitmap );
 		SetWindowTextA( hWnd, PRODUCT_ID );
 		break;
@@ -176,7 +181,7 @@ void LoadingWindow_Win32::Paint()
 
 void LoadingWindow_Win32::SetText( RString sText )
 {
-	vector<RString> asMessageLines;
+	std::vector<RString> asMessageLines;
 	split( sText, "\n", asMessageLines, false );
 	while( asMessageLines.size() < 3 )
 		asMessageLines.push_back( "" );
@@ -226,7 +231,7 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate)
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -236,7 +241,7 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

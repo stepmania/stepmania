@@ -4,6 +4,8 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 
+#include <cstdint>
+
 #define DitherMatDim 4
 
 // Fractions, 0/16 to 15/16:
@@ -18,7 +20,7 @@ static const int DitherMat[DitherMatDim][DitherMatDim] =
 static int DitherMatCalc[DitherMatDim][DitherMatDim];
 
 // conv is the ratio from the input to the output.
-static uint8_t DitherPixel(int x, int y, int intensity,  int conv)
+static std::uint8_t DitherPixel(int x, int y, int intensity,  int conv)
 {
 	// The intensity matrix wraps. This assumes the matrix dims are a power of 2.
 	x &= DitherMatDim-1;
@@ -41,7 +43,7 @@ static uint8_t DitherPixel(int x, int y, int intensity,  int conv)
 	out_intensity += DitherMatCalc[y][x];
 
 	// Truncate, and add e to make sure a value of 14.999998 -> 15.
-	return uint8_t((out_intensity + 1) >> 16);
+	return std::uint8_t((out_intensity + 1) >> 16);
 }
 
 void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
@@ -59,14 +61,14 @@ void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 				DitherMatCalc[i][j] = DitherMat[i][j] * 65536 / 16;
 			}
 		}
-			
+
 		DitherMatCalc_initted = true;
 	}
 
 	// We can't dither to paletted surfaces.
 	ASSERT( dst->format->BytesPerPixel > 1 );
 
-	uint32_t src_cbits[4], dst_cbits[4];
+	std::uint32_t src_cbits[4], dst_cbits[4];
 	RageSurfaceUtils::GetBitsPerChannel( src->format, src_cbits );
 	RageSurfaceUtils::GetBitsPerChannel( dst->format, dst_cbits );
 
@@ -84,18 +86,18 @@ void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 	}
 
 	// Max alpha value; used when there's no alpha source.
-	const uint8_t alpha_max = uint8_t((1 << dst_cbits[3]) - 1);
+	const std::uint8_t alpha_max = std::uint8_t((1 << dst_cbits[3]) - 1);
 
 	// For each row:
 	for( int row = 0; row < src->h; ++row )
 	{
-		const uint8_t *srcp = src->pixels + row * src->pitch;
-		uint8_t *dstp = dst->pixels + row * dst->pitch;
+		const std::uint8_t *srcp = src->pixels + row * src->pitch;
+		std::uint8_t *dstp = dst->pixels + row * dst->pitch;
 
 		// For each pixel:
 		for( int col = 0; col < src->w; ++col )
 		{
-			uint8_t colors[4];
+			std::uint8_t colors[4];
 			RageSurfaceUtils::GetRawRGBAV( srcp, src->fmt, colors );
 
 			// Note that we don't dither the alpha channel.
@@ -115,9 +117,9 @@ void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 				/* Same as DitherPixel, except it doesn't actually dither;
 				 * dithering looks bad on the alpha channel. */
 				int out_intensity = colors[3] * conv[3];
-	
+
 				// Round:
-				colors[3] = uint8_t((out_intensity + 32767) >> 16);
+				colors[3] = std::uint8_t((out_intensity + 32767) >> 16);
 			}
 
 			// Raw value -> int -> pixel
@@ -130,7 +132,7 @@ void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 }
 
 
-static uint8_t EDDitherPixel( int x, int y, int intensity, int conv, int32_t &accumError )
+static std::uint8_t EDDitherPixel( int x, int y, int intensity, int conv, std::int32_t &accumError )
 {
 	// Convert the number to the destination range.
 	int out_intensity = intensity * conv;
@@ -145,11 +147,11 @@ static uint8_t EDDitherPixel( int x, int y, int intensity, int conv, int32_t &ac
 	 * To store it, we have to clamp it (prevent overflow) and shift it
 	 * from fixed-point to [0,255].  The error introduced in that calculation
 	 * becomes the new accumError. */
-	int clamped_intensity = clamp( out_intensity, 0, 0xFFFFFF );
+	int clamped_intensity = std::clamp( out_intensity, 0, 0xFFFFFF );
 	clamped_intensity &= 0xFF0000;
 
 	// Truncate.
-	uint8_t ret = uint8_t(clamped_intensity >> 16);
+	std::uint8_t ret = std::uint8_t(clamped_intensity >> 16);
 
 	accumError = out_intensity - clamped_intensity;
 
@@ -170,7 +172,7 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
 	// We can't dither to paletted surfaces.
 	ASSERT( dst->format->BytesPerPixel > 1 );
 
-	uint32_t src_cbits[4], dst_cbits[4];
+	std::uint32_t src_cbits[4], dst_cbits[4];
 	RageSurfaceUtils::GetBitsPerChannel( src->format, src_cbits );
 	RageSurfaceUtils::GetBitsPerChannel( dst->format, dst_cbits );
 
@@ -188,20 +190,20 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
 	}
 
 	// Max alpha value; used when there's no alpha source.
-	const uint8_t alpha_max = uint8_t((1 << dst_cbits[3]) - 1);
+	const std::uint8_t alpha_max = std::uint8_t((1 << dst_cbits[3]) - 1);
 
 	// For each row:
-	for(int row = 0; row < src->h; ++row) 
+	for(int row = 0; row < src->h; ++row)
 	{
-		int32_t accumError[4] = { 0, 0, 0, 0 }; // accum error values are reset every row
+		std::int32_t accumError[4] = { 0, 0, 0, 0 }; // accum error values are reset every row
 
-		const uint8_t *srcp = src->pixels + row * src->pitch;
-		uint8_t *dstp = dst->pixels + row * dst->pitch;
+		const std::uint8_t *srcp = src->pixels + row * src->pitch;
+		std::uint8_t *dstp = dst->pixels + row * dst->pitch;
 
 		// For each pixel in row:
 		for( int col = 0; col < src->w; ++col )
 		{
-			uint8_t colors[4];
+			std::uint8_t colors[4];
 			RageSurfaceUtils::GetRawRGBAV( srcp, src->fmt, colors );
 
 			for( int c = 0; c < 3; ++c )
@@ -221,7 +223,7 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
 				int out_intensity = colors[3] * conv[3];
 
 				// Round:
-				colors[3] = uint8_t((out_intensity + 32767) >> 16);
+				colors[3] = std::uint8_t((out_intensity + 32767) >> 16);
 			}
 
 			RageSurfaceUtils::SetRawRGBAV( dstp, dst, colors );
@@ -235,7 +237,7 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
 /*
  * (c) 2002-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -245,7 +247,7 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

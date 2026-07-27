@@ -10,6 +10,9 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
+#include <cstddef>
+#include <vector>
+
 AutoScreenMessage(SM_DoSaveAndExit);
 #define BUTTONS_TO_MAP			THEME->GetMetric ( m_sName, "ButtonsToMap" )
 static LocalizedString INVALID_BUTTON   ( "ScreenMapControllers", "InvalidButton" );
@@ -32,7 +35,7 @@ ScreenMapControllers::ScreenMapControllers()
 
 ScreenMapControllers::~ScreenMapControllers()
 {
-	for(size_t i= 0; i < m_Line.size(); ++i)
+	for(std::size_t i= 0; i < m_Line.size(); ++i)
 	{
 		SAFE_DELETE(m_Line[i]);
 	}
@@ -73,7 +76,7 @@ void ScreenMapControllers::Init()
 	else
 	{
 		/* Map the specified buttons. */
-		vector<RString> asBits;
+		std::vector<RString> asBits;
 		split( sButtons, ",", asBits );
 		for( unsigned i=0; i<asBits.size(); ++i )
 		{
@@ -154,7 +157,7 @@ void ScreenMapControllers::Init()
 
 		FOREACH_ENUM( GameController,  c )
 		{
-			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
+			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ )
 			{
 				pKey->m_textMappedTo[c][s] = new BitmapText;
 				pKey->m_textMappedTo[c][s]->SetName( "MappedTo" );
@@ -274,21 +277,21 @@ void ScreenMapControllers::Update( float fDeltaTime )
 			m_SanityMessage->PlayCommand("TweenOff");
 		}
 	}
-	
+
 	//
 	// Update devices text
 	//
 	m_textDevices.SetText( INPUTMAN->GetDisplayDevicesString() );
 
 	if( !m_WaitingForPress.IsZero() && m_DeviceIToMap.IsValid() ) // we're going to map an input
-	{	
+	{
 		if( m_WaitingForPress.PeekDeltaTime() < g_fSecondsToWaitForInput )
 			return; /* keep waiting */
 		m_WaitingForPress.SetZero();
 
 		ASSERT(CursorOnKey());
 		const KeyToMap *pKey = &m_KeysToMap[CurKeyIndex()];
-		
+
 		GameInput curGameI( (GameController)m_CurController, pKey->m_GameButton );
 
 		INPUTMAPPER->SetInputMap( m_DeviceIToMap, curGameI, m_CurSlot );
@@ -328,13 +331,13 @@ static bool IsAxis( const DeviceInput& DeviceI )
 	if( !DeviceI.IsJoystick() )
 		return false;
 
-	static int axes[] = 
+	static int axes[] =
 	{
 		JOY_LEFT, JOY_RIGHT, JOY_UP, JOY_DOWN,
 		JOY_LEFT_2, JOY_RIGHT_2, JOY_UP_2, JOY_DOWN_2,
 		JOY_Z_UP, JOY_Z_DOWN,
 		JOY_ROT_UP, JOY_ROT_DOWN, JOY_ROT_LEFT, JOY_ROT_RIGHT, JOY_ROT_Z_UP, JOY_ROT_Z_DOWN,
-		JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
+		JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN,
 		JOY_AUX_1, JOY_AUX_2, JOY_AUX_3, JOY_AUX_4,
 		-1
 	};
@@ -388,7 +391,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 		}
 		return false;
 	}
-	
+
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 	{
 		return false;	// ignore
@@ -399,7 +402,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 	}
 
 	// Whoever wants it can uncomment this log spew, I don't think it's necessary. -Kyz
-	// LOG->Trace( "ScreenMapControllers::Input():  device: %d, button: %d", 
+	// LOG->Trace( "ScreenMapControllers::Input():  device: %d, button: %d",
 	// 	input.DeviceI.device, input.DeviceI.button );
 
 	int button = input.DeviceI.button;
@@ -410,7 +413,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 	 * because presses of buttons aren't mutually exclusive and presses of axes
 	 * are (e.g. can't read presses of both Left and Right simultaneously). So,
 	 * when the user presses a button, we'll wait until the next Update before
-	 * adding a mapping so that we get a chance to see all input events the 
+	 * adding a mapping so that we get a chance to see all input events the
 	 * user's press of a panel. Prefer non-axis events over axis events. */
 	if( !m_WaitingForPress.IsZero() )
 	{
@@ -532,7 +535,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			if(CursorOnKey())
 			{
 				SetListEntry to_add(SetListEntry(CurKeyIndex(), m_CurController, m_CurSlot));
-				set<SetListEntry>::iterator found= m_SetList.find(to_add);
+				std::set<SetListEntry>::iterator found= m_SetList.find(to_add);
 				if(found == m_SetList.end())
 				{
 					m_SetList.insert(to_add);
@@ -608,7 +611,7 @@ void ScreenMapControllers::Refresh()
 		for( unsigned b=0; b<m_KeysToMap.size(); b++ )
 		{
 			const KeyToMap *pKey = &m_KeysToMap[b];
-			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
+			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ )
 			{
 				BitmapText *pText = pKey->m_textMappedTo[p][s];
 				GameInput cur_gi( p, pKey->m_GameButton );
@@ -622,7 +625,7 @@ void ScreenMapControllers::Refresh()
 	}
 
 	m_LineScroller.SetDestinationItem(
-		static_cast<float>(min(m_CurButton, m_MaxDestItem)));
+		static_cast<float>(std::min(m_CurButton, m_MaxDestItem)));
 }
 
 void ScreenMapControllers::DismissWarning()
@@ -791,7 +794,7 @@ void ScreenMapControllers::ExitAction()
 
 bool ScreenMapControllers::SanityCheckWrapper()
 {
-	vector<RString> reasons_not_sane;
+	std::vector<RString> reasons_not_sane;
 	INPUTMAPPER->SanityCheckMappings(reasons_not_sane);
 	if(reasons_not_sane.empty())
 	{
@@ -838,7 +841,7 @@ void ScreenMapControllers::ActionRow::Load(RString const& scr_name,
  * (c) 2001-2005 Chris Danford, Glenn Maynard
  * 2014 Eric Reese
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -848,7 +851,7 @@ void ScreenMapControllers::ActionRow::Load(RString const& scr_name,
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

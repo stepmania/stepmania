@@ -5,6 +5,9 @@
 #include "InputEventPlus.h"
 #include "InputMapper.h"
 
+#include <vector>
+
+
 InputQueue*	INPUTQUEUE = nullptr;	// global and accessible from anywhere in our program
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 32;
@@ -68,7 +71,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 
 	// iterate newest to oldest
 	int iSequenceIndex = m_aPresses.size()-1;	// count down
-	const vector<InputEventPlus> &aQueue = INPUTQUEUE->GetQueue( controller );
+	const std::vector<InputEventPlus> &aQueue = INPUTQUEUE->GetQueue( controller );
 	int iQueueIndex = aQueue.size()-1;
 	while( iQueueIndex >= 0 )
 	{
@@ -130,7 +133,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 			}
 			if( !bAllHeldButtonsOK )
 				continue;
-			iMinSearchIndexUsed = min( iMinSearchIndexUsed, iQueueSearchIndex );
+			iMinSearchIndexUsed = std::min( iMinSearchIndexUsed, iQueueSearchIndex );
 			if( b == (int) Press.m_aButtonsToPress.size()-1 )
 				bMatched = true;
 		}
@@ -164,11 +167,11 @@ bool InputQueueCode::Load( RString sButtonsNames )
 {
 	m_aPresses.clear();
 
-	vector<RString> asPresses;
+	std::vector<RString> asPresses;
 	split( sButtonsNames, ",", asPresses, false );
 	for (RString &sPress : asPresses)
 	{
-		vector<RString> asButtonNames;
+		std::vector<RString> asButtonNames;
 
 		split( sPress, "-", asButtonNames, false );
 
@@ -243,7 +246,7 @@ bool InputQueueCode::Load( RString sButtonsNames )
 /*
  * (c) 2001-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -253,7 +256,7 @@ bool InputQueueCode::Load( RString sButtonsNames )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

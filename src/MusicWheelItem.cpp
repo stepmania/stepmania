@@ -118,6 +118,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	this->SubscribeToMessage( Message_CurrentTrailP2Changed );
 	this->SubscribeToMessage( Message_PreferredDifficultyP1Changed );
 	this->SubscribeToMessage( Message_PreferredDifficultyP2Changed );
+	this->SubscribeToMessage( Message_PlayerProfileSet );
 }
 
 MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
@@ -382,7 +383,8 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 	    msg == Message_CurrentTrailP1Changed ||
 	    msg == Message_CurrentTrailP2Changed ||
 	    msg == Message_PreferredDifficultyP1Changed ||
-	    msg == Message_PreferredDifficultyP2Changed )
+	    msg == Message_PreferredDifficultyP2Changed ||
+	    msg == Message_PlayerProfileSet )
 	{
 		const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
 		MusicWheelItemType type = MusicWheelItemType_Invalid;
@@ -422,14 +424,14 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 				break;
 		}
 
-		Message msg( "Set" );
-		msg.SetParam( "Song", pWID->m_pSong );
-		msg.SetParam( "Course", pWID->m_pCourse );
-		msg.SetParam( "Text", pWID->m_sText );
-		msg.SetParam( "Type", MusicWheelItemTypeToString(type) );
-		msg.SetParam( "Color", pWID->m_color );
-		msg.SetParam( "Label", pWID->m_sLabel );
-		this->HandleMessage( msg );
+		Message setMsg( "Set" );
+		setMsg.SetParam( "Song", pWID->m_pSong );
+		setMsg.SetParam( "Course", pWID->m_pCourse );
+		setMsg.SetParam( "Text", pWID->m_sText );
+		setMsg.SetParam( "Type", MusicWheelItemTypeToString(type) );
+		setMsg.SetParam( "Color", pWID->m_color );
+		setMsg.SetParam( "Label", pWID->m_sLabel );
+		this->HandleMessage( setMsg );
 		
 		RefreshGrades();
 	}

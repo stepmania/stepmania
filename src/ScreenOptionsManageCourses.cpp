@@ -19,6 +19,10 @@
 #include "RageFileManager.h"
 #include "PrefsManager.h"
 
+#include <cstddef>
+#include <vector>
+
+
 REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 
 struct StepsTypeAndDifficulty
@@ -40,7 +44,7 @@ inline bool operator!=(StepsTypeAndDifficulty const &lhs, StepsTypeAndDifficulty
 
 static void SetNextCombination()
 {
-	vector<StepsTypeAndDifficulty> v;
+	std::vector<StepsTypeAndDifficulty> v;
 	{
 		for (StepsType const &st : CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue())
 		{
@@ -50,7 +54,7 @@ static void SetNextCombination()
 	}
 
 	StepsTypeAndDifficulty curVal( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
-	vector<StepsTypeAndDifficulty>::const_iterator iter = find( v.begin(), v.end(), curVal );
+	std::vector<StepsTypeAndDifficulty>::const_iterator iter = find( v.begin(), v.end(), curVal );
 	if( iter == v.end() || ++iter == v.end() )
 		iter = v.begin();
 
@@ -76,7 +80,7 @@ void ScreenOptionsManageCourses::Init()
 
 void ScreenOptionsManageCourses::BeginScreen()
 {
-	vector<const Style*> vpStyles;
+	std::vector<const Style*> vpStyles;
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vpStyles );
 	const Style *pStyle = vpStyles[0];
 	GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
@@ -92,7 +96,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 	CourseID cidLast;
 	cidLast.FromCourse( GAMESTATE->m_pCurCourse );
 
-	vector<OptionRowHandler*> vHands;
+	std::vector<OptionRowHandler*> vHands;
 
 	int iIndex = 0;
 
@@ -148,7 +152,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 	if( GAMESTATE->m_pCurCourse )
 	{
 		EditCourseUtil::UpdateAndSetTrail();
-		vector<Course*>::const_iterator iter = find( m_vpCourses.begin(), m_vpCourses.end(), GAMESTATE->m_pCurCourse );
+		std::vector<Course*>::const_iterator iter = find( m_vpCourses.begin(), m_vpCourses.end(), GAMESTATE->m_pCurCourse );
 		if( iter != m_vpCourses.end() )
 		{
 			iIndex = iter - m_vpCourses.begin();
@@ -232,9 +236,9 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus & )
 
 	if( iCurRow == 0 )	// "create new"
 	{
-		vector<Course*> vpCourses;
+		std::vector<Course*> vpCourses;
 		EditCourseUtil::GetAllEditCourses( vpCourses );
-		if( vpCourses.size() >= (size_t)EditCourseUtil::MAX_PER_PROFILE )
+		if( vpCourses.size() >= (std::size_t)EditCourseUtil::MAX_PER_PROFILE )
 		{
 			RString s = ssprintf( YOU_HAVE_MAX.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), EditCourseUtil::MAX_PER_PROFILE );
 			ScreenPrompt::Prompt( SM_None, s );
@@ -257,12 +261,12 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus & )
 	}
 }
 
-void ScreenOptionsManageCourses::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsManageCourses::ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
 {
 
 }
 
-void ScreenOptionsManageCourses::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsManageCourses::ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
 {
 
 }
@@ -283,7 +287,7 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -293,7 +297,7 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

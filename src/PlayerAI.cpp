@@ -141,7 +141,21 @@ TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 
 	TapScoreDistribution& distribution = g_Distributions[iCpuSkill];
 
-	return distribution.GetTapNoteScore();
+	TapNoteScore score = distribution.GetTapNoteScore();
+
+	const auto& disabledWindows = pPlayerState->m_PlayerOptions.GetCurrent().m_twDisabledWindows;
+	// Downgrade the TapNoteScore if that specific window is disabled.
+	if (score == TNS_W1 && disabledWindows[TW_W1])
+		score = TNS_W2;
+	if (score == TNS_W2 && disabledWindows[TW_W2])
+		score = TNS_W3;
+	if (score == TNS_W3 && disabledWindows[TW_W3])
+		score = TNS_W4;
+	if (score == TNS_W4 && disabledWindows[TW_W4])
+		score = TNS_W5;
+	if (score == TNS_W5 && disabledWindows[TW_W5])
+		score = TNS_None;
+	return score;
 }
 
 /*

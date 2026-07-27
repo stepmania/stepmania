@@ -29,7 +29,7 @@ public:
 	}
 };
 /** @brief The collection of DisplayResolutions available within the program. */
-typedef set<DisplayResolution> DisplayResolutions;
+typedef std::set<DisplayResolution> DisplayResolutions;
 
 #endif
 

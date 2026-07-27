@@ -3,12 +3,11 @@
 
 #include <vector>
 #include <map>
-using namespace std;
 
 struct FontPageDescription
 {
 	CString name;
-	vector<wchar_t> chars;
+	std::vector<wchar_t> chars;
 };
 
 struct FontPage
@@ -34,12 +33,12 @@ public:
 	TextureFont();
 	~TextureFont();
 
-	vector<FontPageDescription> m_PagesToGenerate;
+	std::vector<FontPageDescription> m_PagesToGenerate;
 	void FormatFontPage( int iPage, HDC hDC );
 	void FormatFontPages();
 	void Save( CString sPath, CString sBitmapAppendBeforeExtension, bool bSaveMetrics, bool bSaveBitmaps, bool bExportStrokeTemplates );
 
-	map<wchar_t, HBITMAP> m_Characters;
+	std::map<wchar_t, HBITMAP> m_Characters;
 
 	/* Font generation properties: */
 	bool m_bBold;				/* whether font is bold */
@@ -55,7 +54,7 @@ public:
 
 	RECT m_BoundingRect;
 
-	vector<FontPage *> m_apPages;
+	std::vector<FontPage *> m_apPages;
 
 	CString m_sError, m_sWarnings;
 
@@ -63,9 +62,9 @@ private:
 	int GetTopPadding() const;
 
 	/* Bounds of each character, according to MeasureCharacterRanges. */
-	map<wchar_t, RECT> m_RealBounds;
+	std::map<wchar_t, RECT> m_RealBounds;
 
-	map<wchar_t, ABC> m_ABC;
+	std::map<wchar_t, ABC> m_ABC;
 	void FormatCharacter( wchar_t c, HDC hDC );
 };
 

@@ -4,6 +4,9 @@
 #include "Actor.h"
 #include "RageTextureID.h"
 
+#include <vector>
+
+
 void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect );
 
 class RageTexture;
@@ -27,14 +30,14 @@ public:
 	// See explanation in source.
 	static Sprite* NewBlankSprite();
 
-	virtual void InitState();
+	virtual void InitState() override;
 
-	void LoadFromNode( const XNode* pNode );
-	virtual Sprite *Copy() const;
+	void LoadFromNode( const XNode* pNode ) override;
+	virtual Sprite *Copy() const override;
 
-	virtual bool EarlyAbortDraw() const;
-	virtual void DrawPrimitives();
-	virtual void Update( float fDeltaTime );
+	virtual bool EarlyAbortDraw() const override;
+	virtual void DrawPrimitives() override;
+	virtual void Update( float fDeltaTime ) override;
 
 	void UpdateAnimationState();	// take m_fSecondsIntoState, and move to a new state
 
@@ -50,16 +53,16 @@ public:
 	void UnloadTexture();
 	RageTexture* GetTexture() { return m_pTexture; };
 
-	virtual void EnableAnimation( bool bEnable );
+	virtual void EnableAnimation( bool bEnable ) override;
 
-	virtual int GetNumStates() const;
-	virtual void SetState( int iNewState );
+	virtual int GetNumStates() const override;
+	virtual void SetState( int iNewState ) override;
 	int GetState() { return m_iCurState; }
-	virtual float GetAnimationLengthSeconds() const
+	virtual float GetAnimationLengthSeconds() const override
 	{ return m_animation_length_seconds; }
 	virtual void RecalcAnimationLengthSeconds();
-	virtual void SetSecondsIntoAnimation( float fSeconds );
-	void SetStateProperties(const vector<State>& new_states)
+	virtual void SetSecondsIntoAnimation( float fSeconds ) override;
+	void SetStateProperties(const std::vector<State>& new_states)
 	{ m_States= new_states; RecalcAnimationLengthSeconds(); SetState(0); }
 
 	RString	GetTexturePath() const;
@@ -79,7 +82,7 @@ public:
 	void SetEffectMode( EffectMode em ) { m_EffectMode = em; }
 
 	void LoadFromCached( const RString &sDir, const RString &sPath );
-	
+
 	void SetTexCoordVelocity(float fVelX, float fVelY);
 	/**
 	 * @brief Scale the Sprite while maintaining the aspect ratio.
@@ -91,7 +94,7 @@ public:
 	void CropTo( float fWidth, float fHeight );
 
 	// Commands
-	virtual void PushSelf( lua_State *L );
+	virtual void PushSelf( lua_State *L ) override;
 
 	void SetAllStateDelays(float fDelay);
 
@@ -109,7 +112,7 @@ private:
 
 	RageTexture* m_pTexture;
 
-	vector<State> m_States;
+	std::vector<State> m_States;
 	int		m_iCurState;
 	/** @brief The number of seconds that have elapsed since we switched to this frame. */
 	float	m_fSecsIntoState;
@@ -152,7 +155,7 @@ private:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -162,7 +165,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

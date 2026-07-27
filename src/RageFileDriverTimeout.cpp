@@ -28,7 +28,7 @@
  * an operation times out, we'll refuse all further access until all operations have
  * finished and exited.  (Load a separate driver for each device, so if one device fails,
  * others continue to function.)
- * 
+ *
  * All operations must run in the thread, including retrieving directory lists, Open()
  * and deleting file objects.  Read/write operations are copied through an intermediate
  * buffer, so we don't clobber stuff if the operation times out, the call returns and the
@@ -47,7 +47,11 @@
 #include "RageUtil_FileDB.h"
 #include "RageUtil_WorkerThread.h"
 #include "RageLog.h"
-#include <errno.h>
+
+#include <cerrno>
+#include <cstddef>
+#include <vector>
+
 
 enum ThreadRequest
 {
@@ -101,7 +105,7 @@ private:
 	RageFileDriver *m_pChildDriver;
 
 	/* List of files to delete: */
-	vector<RageFileBasic *> m_apDeletedFiles;
+	std::vector<RageFileBasic *> m_apDeletedFiles;
 	RageMutex m_DeletedFilesLock;
 
 	/* REQ_OPEN, REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE, REQ_REMOVE, REQ_MOVE: */
@@ -139,7 +143,7 @@ private:
 	char *m_pRequestBuffer; /* in */
 };
 
-static vector<ThreadedFileWorker *> g_apWorkers;
+static std::vector<ThreadedFileWorker *> g_apWorkers;
 static RageMutex g_apWorkersMutex("WorkersMutex");
 
 /* Set the timeout length, and reset the timer. */
@@ -197,7 +201,7 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 {
 	{
 		m_DeletedFilesLock.Lock();
-		vector<RageFileBasic *> apDeletedFiles = m_apDeletedFiles;
+		std::vector<RageFileBasic *> apDeletedFiles = m_apDeletedFiles;
 		m_apDeletedFiles.clear();
 		m_DeletedFilesLock.Unlock();
 
@@ -354,7 +358,7 @@ void ThreadedFileWorker::Close( RageFileBasic *pFile )
 int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
-	
+
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
 	{
@@ -382,7 +386,7 @@ int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 int ThreadedFileWorker::GetFD( RageFileBasic *&pFile )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
-	
+
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
 	{
@@ -778,7 +782,7 @@ protected:
 	}
 
 
-	int ReadInternal( void *pBuffer, size_t iBytes )
+	int ReadInternal( void *pBuffer, std::size_t iBytes )
 	{
 		RString sError;
 		int iRet = m_pWorker->Read( m_pFile, pBuffer, iBytes, sError );
@@ -795,7 +799,7 @@ protected:
 		return iRet;
 	}
 
-	int WriteInternal( const void *pBuffer, size_t iBytes )
+	int WriteInternal( const void *pBuffer, std::size_t iBytes )
 	{
 		RString sError;
 		int iRet = m_pWorker->Write( m_pFile, pBuffer, iBytes, sError );
@@ -916,7 +920,7 @@ bool RageFileDriverTimeout::Move( const RString &sOldPath, const RString &sNewPa
 
 	return true;
 }
-	
+
 bool RageFileDriverTimeout::Remove( const RString &sPath )
 {
 	int iRet = m_pWorker->Remove( sPath );

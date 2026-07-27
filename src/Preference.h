@@ -6,13 +6,35 @@
 #include "EnumHelper.h"
 #include "LuaManager.h"
 #include "RageUtil.h"
+
+#include <cstddef>
+#include <vector>
+
+
 class XNode;
+
+enum class PreferenceType
+{
+	// Allow reading and writing of the preference through Lua.
+	// This is the default behavior.
+	Mutable,
+
+	// Mark the preference as read-only i.e. don't allow setting of the
+	// preference through Lua.
+	Immutable,
+
+	// The preference is deprecated.
+	// This deprecated flag will not be written to the Preferences file.
+	// If this preference was deprecated in favor of a new one, see
+	// TranslateDeprecatedFlags() to see the what it was deprecated in favor of.
+	Deprecated,
+};
 
 struct lua_State;
 class IPreference
 {
 public:
-	IPreference( const RString& sName );
+	IPreference( const RString& sName, PreferenceType type );
 	virtual ~IPreference();
 	void ReadFrom( const XNode* pNode, bool bIsStatic );
 	void WriteTo( XNode* pNode ) const;
@@ -36,10 +58,11 @@ public:
 	static void ReadAllDefaultsFromNode( const XNode* pNode );
 
 	RString GetName() { return m_sName; }
-	void SetStatic( bool b ) { m_bIsStatic = b; }
+	bool IsImmutable() { return m_bImmutable; }
 private:
 	RString	m_sName;
-	bool m_bIsStatic;	// loaded from Static.ini?  If so, don't write to Preferences.ini
+	bool m_bDoNotWrite;
+	bool m_bImmutable;
 };
 
 void BroadcastPreferenceChanged( const RString& sPreferenceName );
@@ -48,8 +71,8 @@ template <class T>
 class Preference : public IPreference
 {
 public:
-	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = nullptr ):
-		IPreference( sName ),
+	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = nullptr, PreferenceType type = PreferenceType::Mutable ):
+		IPreference( sName, type ),
 		m_currentValue( defaultValue ),
 		m_defaultValue( defaultValue ),
 		m_pfnValidate( pfnValidate )
@@ -62,7 +85,7 @@ public:
 	{
 		if( !StringConversion::FromString<T>(s, m_currentValue) )
 			m_currentValue = m_defaultValue;
-		if( m_pfnValidate ) 
+		if( m_pfnValidate )
 			m_pfnValidate( m_currentValue );
 	}
 	void SetFromStack( lua_State *L )
@@ -91,7 +114,7 @@ public:
 	{
 		return m_currentValue;
 	}
-	
+
 	const T &GetDefault() const
 	{
 		return m_defaultValue;
@@ -101,7 +124,7 @@ public:
 	{
 		return Get();
 	}
-	
+
 	void Set( const T& other )
 	{
 		m_currentValue = other;
@@ -129,29 +152,29 @@ class Preference1D
 {
 public:
 	typedef Preference<T> PreferenceT;
-	vector<PreferenceT*> m_v;
-	
-	Preference1D( void pfn(size_t i, RString &sNameOut, T &defaultValueOut ), size_t N )
+	std::vector<PreferenceT*> m_v;
+
+	Preference1D( void pfn(std::size_t i, RString &sNameOut, T &defaultValueOut ), std::size_t N, PreferenceType type = PreferenceType::Mutable )
 	{
-		for( size_t i=0; i<N; ++i )
+		for( std::size_t i=0; i<N; ++i )
 		{
 			RString sName;
 			T defaultValue;
 			pfn( i, sName, defaultValue );
-			m_v.push_back( new Preference<T>(sName, defaultValue) );
+			m_v.push_back( new Preference<T>(sName, defaultValue, nullptr, type) );
 		}
 	}
 
 	~Preference1D()
 	{
-		for( size_t i=0; i<m_v.size(); ++i )
+		for( std::size_t i=0; i<m_v.size(); ++i )
 			SAFE_DELETE( m_v[i] );
 	}
-	const Preference<T>& operator[]( size_t i ) const
+	const Preference<T>& operator[]( std::size_t i ) const
 	{
 		return *m_v[i];
 	}
-	Preference<T>& operator[]( size_t i )
+	Preference<T>& operator[]( std::size_t i )
 	{
 		return *m_v[i];
 	}
@@ -162,7 +185,7 @@ public:
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -172,7 +195,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

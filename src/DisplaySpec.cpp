@@ -3,6 +3,9 @@
 #include "LuaBinding.h"
 #include "RageLog.h"
 
+#include <vector>
+
+
 class LunaDisplayMode: public Luna<DisplayMode>
 {
 public:

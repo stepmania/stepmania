@@ -2,14 +2,17 @@
 #define INPUT_HANDLER_SEXTETSTREAM
 
 #include "InputHandler.h"
+
 #include <cstdio>
+#include <vector>
+
 
 class InputHandler_SextetStream: public InputHandler
 {
 public:
 	InputHandler_SextetStream();
 	~InputHandler_SextetStream();
-	void GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut);
+	void GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut);
 
 public:
 	class Impl;
@@ -33,7 +36,7 @@ public:
 	// passed to fopen(), not a RageFile ctor, so specify the file to be
 	// opened on the actual filesystem instead of the mapped filesystem. (I
 	// couldn't get RageFile to work here, possibly because I haven't
-	// determined how to disable buffering on an input file.) 
+	// determined how to disable buffering on an input file.)
 	InputHandler_SextetStreamFromFile();
 };
 

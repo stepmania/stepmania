@@ -8,8 +8,3 @@ Once I create smaller test inputs, I'll commit them; the current set is about
 files you have.
 
 This is only compiled in the Unix build environment.
-
-test_vector is for testing VectorHelper against the reference scalar
-code. It can be compiled using:
-g++ -g -I.. ../archutils/Darwin/VectorHelper.cpp test_vector.cpp -faltivec
-You can replace -faltivec with -msse2 on intel. Might requires -O3 to inline.

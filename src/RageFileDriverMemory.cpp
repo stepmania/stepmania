@@ -3,7 +3,11 @@
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
-#include <errno.h>
+
+#include <cerrno>
+#include <cstddef>
+#include <vector>
+
 
 struct RageFileObjMemFile
 {
@@ -49,12 +53,12 @@ RageFileObjMem::~RageFileObjMem()
 	RageFileObjMemFile::ReleaseReference( m_pFile );
 }
 
-int RageFileObjMem::ReadInternal( void *buffer, size_t bytes )
+int RageFileObjMem::ReadInternal( void *buffer, std::size_t bytes )
 {
 	LockMut(m_pFile->m_Mutex);
 
-	m_iFilePos = min( m_iFilePos, GetFileSize() );
-	bytes = min( bytes, (size_t) GetFileSize() - m_iFilePos );
+	m_iFilePos = std::min( m_iFilePos, GetFileSize() );
+	bytes = std::min( bytes, (std::size_t) GetFileSize() - m_iFilePos );
 	if( bytes == 0 )
 		return 0;
 	memcpy( buffer, &m_pFile->m_sBuf[m_iFilePos], bytes );
@@ -63,7 +67,7 @@ int RageFileObjMem::ReadInternal( void *buffer, size_t bytes )
 	return bytes;
 }
 
-int RageFileObjMem::WriteInternal( const void *buffer, size_t bytes )
+int RageFileObjMem::WriteInternal( const void *buffer, std::size_t bytes )
 {
 	m_pFile->m_Mutex.Lock();
 	m_pFile->m_sBuf.replace( m_iFilePos, bytes, (const char *) buffer, bytes );
@@ -75,7 +79,7 @@ int RageFileObjMem::WriteInternal( const void *buffer, size_t bytes )
 
 int RageFileObjMem::SeekInternal( int offset )
 {
-	m_iFilePos = clamp( offset, 0, GetFileSize() );
+	m_iFilePos = std::clamp( offset, 0, GetFileSize() );
 	return m_iFilePos;
 }
 
@@ -166,7 +170,7 @@ bool RageFileDriverMem::Remove( const RString &sPath )
 
 	/* Unregister the file. */
 	FDB->DelFile( sPath );
-	vector<RageFileObjMemFile *>::iterator it = find( m_Files.begin(), m_Files.end(), pFile );
+	std::vector<RageFileObjMemFile*>::iterator it = find( m_Files.begin(), m_Files.end(), pFile );
 	ASSERT( it != m_Files.end() );
 	m_Files.erase( it );
 
@@ -184,7 +188,7 @@ static struct FileDriverEntry_MEM: public FileDriverEntry
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -194,7 +198,7 @@ static struct FileDriverEntry_MEM: public FileDriverEntry
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

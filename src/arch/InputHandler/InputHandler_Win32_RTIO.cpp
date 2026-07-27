@@ -3,29 +3,30 @@
 
 #include "global.h"
 #include "InputHandler_Win32_RTIO.h"
-
-#include <algorithm>
-
 #include "RageLog.h"
 #include "RageInputDevice.h"
+
+#include <algorithm>
+#include <vector>
+
 
 // The coin counter won't accept an increment command immediately after acking
 // an older increment command. This delay is the minimum amount of time to wait
 // between receiving an ack for an increment command and sending a new
 // increment command.
-const static float COUNTER_MINIMUM_SEND_DELAY = 0.15;
+inline constexpr float COUNTER_MINIMUM_SEND_DELAY = 0.15f;
 
 // The longest amount of time to wait for an ack to the increment command
 // before moving on with the coin counter increment sequence.
-const static float COUNTER_MAXIMUM_RECV_DELAY = 3.0;
+inline constexpr float COUNTER_MAXIMUM_RECV_DELAY = 3.0f;
 
 // If RTIO does not initialize within this amount of time, exit the RTIO input
 // loop to free resources.
-const static float RTIO_INIT_TIME_MAX = 10.0;
+inline constexpr float RTIO_INIT_TIME_MAX = 10.0f;
 
 // If there are this many failures, something has most likely gone very wrong,
 // so just exit the RTIO input loop.
-const static int RTIO_MAX_READ_FAILURES = 50;
+inline constexpr int RTIO_MAX_READ_FAILURES = 50;
 
 REGISTER_INPUT_HANDLER_CLASS2(Rtio, Win32_RTIO);
 
@@ -54,7 +55,7 @@ InputHandler_Win32_RTIO::~InputHandler_Win32_RTIO()
 	rtio_.Disconnect();
 }
 
-void InputHandler_Win32_RTIO::GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut)
+void InputHandler_Win32_RTIO::GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut)
 {
 	// We use a joystick device so we can get automatic input mapping
 	vDevicesOut.push_back(InputDeviceInfo(InputDevice(DEVICE_JOY1), "Raw Thrills I/O"));
@@ -404,7 +405,7 @@ void InputHandler_Win32_RTIO::HandleCounterAck(const std::string &msg)
 
 	if (ack_num == 0 && counter_state_ == COUNTER_STATE_RECV_2) {
 		counter_state_ = COUNTER_STATE_SEND_1;
-		counter_cycles_pending_ = max(counter_cycles_pending_ - 1, 0);
+		counter_cycles_pending_ = std::max(counter_cycles_pending_ - 1, 0);
 		return;
 	}
 
@@ -658,8 +659,8 @@ int SerialDevice::Read(char *buffer, int buffer_size)
 
 	ResetOverlapped(&read_overlapped_);
 
-	DWORD read_size = min(stat.cbInQue, (DWORD)read_buffer_size_);
-	read_size = min(read_size, (DWORD)buffer_size);
+	DWORD read_size = std::min(stat.cbInQue, (DWORD)read_buffer_size_);
+	read_size = std::min(read_size, (DWORD)buffer_size);
 
 	DWORD bytes_transferred;
 	if (!ReadFile(com_handle_, buffer, read_size, &bytes_transferred, &read_overlapped_)) {
@@ -682,7 +683,7 @@ int SerialDevice::Read(char *buffer, int buffer_size)
 int SerialDevice::Write(const char *buffer, int buffer_size)
 {
 	DWORD bytes_transferred;
-	DWORD write_size = min((DWORD)buffer_size, (DWORD)write_buffer_size_);
+	DWORD write_size = std::min((DWORD) buffer_size, (DWORD) write_buffer_size_);
 
 	ResetOverlapped(&write_overlapped_);
 

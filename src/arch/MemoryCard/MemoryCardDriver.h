@@ -1,36 +1,23 @@
 #ifndef MEMORY_CARD_DRIVER_H
 #define MEMORY_CARD_DRIVER_H
 
+#include <vector>
+
+
 struct UsbStorageDevice
 {
-	UsbStorageDevice() { MakeBlank(); }
-	
-	void MakeBlank()
-	{
-		// -1 means "don't know"
-		iBus = -1;
-		iPort = -1;
-		iLevel = -1;
-		sDevice = "";
-		sSerial = "<none>"; // be different than a card with no serial
-		sOsMountDir = "";
-		m_State = STATE_NONE;
-		bIsNameAvailable = false;
-		sName = "";
-		idVendor = 0;
-		idProduct = 0;
-		sVendor = "";
-		sProduct = "";
-		sVolumeLabel = "";
-		iVolumeSizeMB = 0;
-	};
-	int iBus;
-	int iPort;
-	int iLevel;
-	RString sSerial;
-	RString sDevice;
-	RString	sOsMountDir;	// WITHOUT trailing slash
-	RString sSysPath;   // Linux: /sys/block name
+	UsbStorageDevice() = default;
+
+	void MakeBlank() { *this = {}; };
+
+	// -1 means "don't know"
+	int iBus{-1};
+	int iPort{-1};
+	int iLevel{-1};
+	RString sSerial{"none"}; // be different than a card with no serial
+	RString sDevice{};
+	RString	sOsMountDir{};	// WITHOUT trailing slash
+	RString sSysPath{};   // Linux: /sys/block name
 	enum State
 	{
 		/* Empty device.  This is used only by MemoryCardManager. */
@@ -52,19 +39,19 @@ struct UsbStorageDevice
 		NUM_State,
 		State_INVALID
 	};
-	State m_State;
-	RString m_sError;
+	State m_State{STATE_NONE};
+	RString m_sError{};
 
 	void SetError( const RString &sError ) { m_State = STATE_ERROR; m_sError = sError; }
 
-	bool bIsNameAvailable;  // Name in the profile on the memory card.
-	RString sName;  // Name in the profile on the memory card.
-	int idVendor;
-	int idProduct;
-	RString sVendor;
-	RString sProduct;
-	RString sVolumeLabel;
-	int iVolumeSizeMB;
+	bool bIsNameAvailable{false};  // Name in the profile on the memory card.
+	RString sName{};  // Name in the profile on the memory card.
+	unsigned int idVendor{0};
+	unsigned int idProduct{0};
+	RString sVendor{};
+	RString sProduct{};
+	RString sVolumeLabel{};
+	int iVolumeSizeMB{0};
 
 	bool IsBlank() const { return m_State == STATE_NONE; }
 	void SetOsMountDir( const RString &s );
@@ -87,19 +74,19 @@ public:
 
 	/* Poll for memory card changes.  If anything has changed, fill in vStorageDevicesOut
 	 * and return true. */
-	bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut );
+	bool DoOneUpdate( bool bMount, std::vector<UsbStorageDevice>& vStorageDevicesOut );
 
 protected:
 	/* This may be called before GetUSBStorageDevices; return false if the results of
 	 * GetUSBStorageDevices have not changed.  (This is an optimization.) */
 	virtual bool USBStorageDevicesChanged() { return true; }
-	virtual void GetUSBStorageDevices( vector<UsbStorageDevice>& /* vDevicesOut */ ) { }
+	virtual void GetUSBStorageDevices( std::vector<UsbStorageDevice>& /* vDevicesOut */ ) { }
 
 	/* Test the device.  On failure, call pDevice->SetError() appropriately, and return false. */
 	virtual bool TestWrite( UsbStorageDevice* ) { return true; }
 
 private:
-	vector<UsbStorageDevice> m_vDevicesLastSeen;
+	std::vector<UsbStorageDevice> m_vDevicesLastSeen;
 	bool NeedUpdate( bool bMount );
 };
 
@@ -108,7 +95,7 @@ private:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -118,7 +105,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

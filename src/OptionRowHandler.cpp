@@ -23,6 +23,8 @@
 #include "ScreenMiniMenu.h"	// for MenuRowDef
 #include "FontCharAliases.h"
 
+#include <vector>
+
 #define ENTRY(s)		THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
@@ -91,7 +93,7 @@ void OptionRowHandler::GetIconTextAndGameCommand( int iFirstSelection, RString &
 	gcOut.Init();
 }
 
-void OptionRowHandlerUtil::SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
+void OptionRowHandlerUtil::SelectExactlyOne( int iSelection, std::vector<bool> &vbSelectedOut )
 {
 	ASSERT_M( iSelection >= 0  &&  iSelection < (int) vbSelectedOut.size(),
 			  ssprintf("%d/%u",iSelection, unsigned(vbSelectedOut.size())) );
@@ -99,7 +101,7 @@ void OptionRowHandlerUtil::SelectExactlyOne( int iSelection, vector<bool> &vbSel
 		vbSelectedOut[i] = i==iSelection;
 }
 
-int OptionRowHandlerUtil::GetOneSelection( const vector<bool> &vbSelected )
+int OptionRowHandlerUtil::GetOneSelection( const std::vector<bool> &vbSelected )
 {
 	int iRet = -1;
 	for( unsigned i=0; i<vbSelected.size(); i++ )
@@ -132,10 +134,10 @@ static LocalizedString OFF ( "OptionRowHandler", "Off" );
 class OptionRowHandlerList : public OptionRowHandler
 {
 public:
-	vector<GameCommand> m_aListEntries;
+	std::vector<GameCommand> m_aListEntries;
 	GameCommand m_Default;
 	bool m_bUseModNameForIcon;
-	vector<RString> m_vsBroadcastOnExport;
+	std::vector<RString> m_vsBroadcastOnExport;
 
 	OptionRowHandlerList() { Init(); }
 	virtual void Init()
@@ -244,11 +246,11 @@ public:
 		}
 		return true;
 	}
-	void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	void ImportOption( OptionRow *pRow, const std::vector<PlayerNumber> &vpns, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		for (PlayerNumber const &p : vpns)
 		{
-			vector<bool> &vbSelOut = vbSelectedOut[p];
+			std::vector<bool> &vbSelOut = vbSelectedOut[p];
 
 			bool bUseFallbackOption = true;
 
@@ -309,12 +311,12 @@ public:
 		}
 	}
 
-	int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	int ExportOption( const std::vector<PlayerNumber> &vpns, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		for (PlayerNumber const &p : vpns)
 		{
-			const vector<bool> &vbSel = vbSelected[p];
-		
+			const std::vector<bool> &vbSel = vbSelected[p];
+
 			m_Default.Apply( p );
 			for( unsigned i=0; i<vbSel.size(); i++ )
 			{
@@ -341,7 +343,7 @@ public:
 		gcOut = m_aListEntries[iFirstSelection];
 	}
 	virtual RString GetScreen( int iChoice ) const
-	{ 
+	{
 		const GameCommand &gc = m_aListEntries[iChoice];
 		return gc.m_sScreen;
 	}
@@ -356,15 +358,15 @@ public:
 	}
 };
 
-static void SortNoteSkins( vector<RString> &asSkinNames )
+static void SortNoteSkins( std::vector<RString> &asSkinNames )
 {
-	set<RString> setSkinNames;
+	std::set<RString> setSkinNames;
 	setSkinNames.insert( asSkinNames.begin(), asSkinNames.end() );
 
-	vector<RString> asSorted;
+	std::vector<RString> asSorted;
 	split( NOTE_SKIN_SORT_ORDER, ",", asSorted );
 
-	set<RString> setUnusedSkinNames( setSkinNames );
+	std::set<RString> setUnusedSkinNames( setSkinNames );
 	asSkinNames.clear();
 
 	for (RString const &sSkin : asSorted)
@@ -386,7 +388,7 @@ class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 		m_Def.m_bOneChoiceForAllPlayers = false;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 
-		vector<RString> arraySkinNames;
+		std::vector<RString> arraySkinNames;
 		NOTESKIN->GetNoteSkinNames( arraySkinNames );
 		SortNoteSkins( arraySkinNames );
 
@@ -438,7 +440,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 			m_Def.m_bOneChoiceForAllPlayers = (bool)PREFSMAN->m_bLockCourseDifficulties;
 			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
 
-			vector<Trail*> vTrails;
+			std::vector<Trail*> vTrails;
 			GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 			for( unsigned i=0; i<vTrails.size(); i++ )
 			{
@@ -456,7 +458,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 		{
 			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
 
-			vector<Steps*> vpSteps;
+			std::vector<Steps*> vpSteps;
 			Song *pSong = GAMESTATE->m_pCurSong;
 			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 			StepsUtil::RemoveLockedSteps( pSong, vpSteps );
@@ -517,8 +519,8 @@ public:
 	BroadcastOnChangePtr<Steps> *m_ppStepsToFill;
 	BroadcastOnChange<Difficulty> *m_pDifficultyToFill;
 	const BroadcastOnChange<StepsType> *m_pst;
-	vector<Steps*> m_vSteps;
-	vector<Difficulty> m_vDifficulties;
+	std::vector<Steps*> m_vSteps;
+	std::vector<Difficulty> m_vDifficulties;
 
 	OptionRowHandlerSteps() { Init(); }
 	void Init()
@@ -556,7 +558,7 @@ public:
 		{
 			ROW_INVALID_IF(true, "Invalid StepsType param \"" + sParam + "\".", false);
 		}
-		
+
 		m_Def.m_sName = sParam;
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
@@ -618,16 +620,16 @@ public:
 		m_ppStepsToFill->Set( m_vSteps[0] );
 		return true;
 	}
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const std::vector<PlayerNumber> &vpns, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		for (PlayerNumber const &p : vpns)
 		{
-			vector<bool> &vbSelOut = vbSelectedOut[p];
+			std::vector<bool> &vbSelOut = vbSelectedOut[p];
 
 			ASSERT( m_vSteps.size() == vbSelOut.size() );
 
 			// look for matching steps
-			vector<Steps*>::const_iterator iter = find( m_vSteps.begin(), m_vSteps.end(), m_ppStepsToFill->Get() );
+			std::vector<Steps*>::const_iterator iter = find( m_vSteps.begin(), m_vSteps.end(), m_ppStepsToFill->Get() );
 			if( iter != m_vSteps.end() )
 			{
 				unsigned i = iter - m_vSteps.begin();
@@ -639,14 +641,14 @@ public:
 			if( m_pDifficultyToFill )
 			{
 				// use the old style for now.
-				for (vector<Difficulty>::const_iterator d = m_vDifficulties.begin(); d != m_vDifficulties.end(); ++d)
+				for (std::vector<Difficulty>::const_iterator d = m_vDifficulties.begin(); d != m_vDifficulties.end(); ++d)
 				{
 					unsigned i = d - m_vDifficulties.begin();
 					if( *d == GAMESTATE->m_PreferredDifficulty[p] )
 					{
 						vbSelOut[i] = true;
 						matched= true;
-						vector<PlayerNumber> v;
+						std::vector<PlayerNumber> v;
 						v.push_back( p );
 						ExportOption( v, vbSelectedOut );	// current steps changed
 						break;
@@ -660,11 +662,11 @@ public:
 			}
 		}
 	}
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const std::vector<PlayerNumber> &vpns, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		for (PlayerNumber const &p : vpns)
 		{
-			const vector<bool> &vbSel = vbSelected[p];
+			const std::vector<bool> &vbSel = vbSelected[p];
 
 			int index = OptionRowHandlerUtil::GetOneSelection( vbSel );
 			Difficulty dc = m_vDifficulties[index];
@@ -695,7 +697,7 @@ class OptionRowHandlerListCharacters: public OptionRowHandlerList
 			m_aListEntries.push_back( mc );
 		}
 
-		vector<Character*> vpCharacters;
+		std::vector<Character*> vpCharacters;
 		CHARMAN->GetCharacters( vpCharacters );
 		for( unsigned i=0; i<vpCharacters.size(); i++ )
 		{
@@ -703,7 +705,7 @@ class OptionRowHandlerListCharacters: public OptionRowHandlerList
 			RString s = pCharacter->GetDisplayName();
 			s.MakeUpper();
 
-			m_Def.m_vsChoices.push_back( s ); 
+			m_Def.m_vsChoices.push_back( s );
 			GameCommand mc;
 			mc.m_pCharacter = pCharacter;
 			m_aListEntries.push_back( mc );
@@ -720,12 +722,12 @@ class OptionRowHandlerListStyles: public OptionRowHandlerList
 		m_Def.m_sName = "Style";
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 
-		vector<const Style*> vStyles;
+		std::vector<const Style*> vStyles;
 		GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
 		ASSERT( vStyles.size() != 0 );
 		for (Style const *s : vStyles)
 		{
-			m_Def.m_vsChoices.push_back( GAMEMAN->StyleToLocalizedString(s) ); 
+			m_Def.m_vsChoices.push_back( GAMEMAN->StyleToLocalizedString(s) );
 			GameCommand mc;
 			mc.m_pStyle = s;
 			m_aListEntries.push_back( mc );
@@ -745,7 +747,7 @@ class OptionRowHandlerListGroups: public OptionRowHandlerList
 		m_Def.m_sName = "Group";
 		m_Default.m_sSongGroup = GROUP_ALL;
 
-		vector<RString> vSongGroups;
+		std::vector<RString> vSongGroups;
 		SONGMAN->GetSongGroupNames( vSongGroups );
 		ASSERT( vSongGroups.size() != 0 );
 
@@ -758,7 +760,7 @@ class OptionRowHandlerListGroups: public OptionRowHandlerList
 
 		for (RString const &g : vSongGroups)
 		{
-			m_Def.m_vsChoices.push_back( g ); 
+			m_Def.m_vsChoices.push_back( g );
 			GameCommand mc;
 			mc.m_sSongGroup = g;
 			m_aListEntries.push_back( mc );
@@ -789,7 +791,7 @@ class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 			StepsType st = GAMEMAN->GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;
 			RString s = CustomDifficultyToLocalizedString( GetCustomDifficulty(st, d, CourseType_Invalid) );
 
-			m_Def.m_vsChoices.push_back( s ); 
+			m_Def.m_vsChoices.push_back( s );
 			GameCommand mc;
 			mc.m_dc = d;
 			m_aListEntries.push_back( mc );
@@ -803,7 +805,7 @@ class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 {
 	virtual bool LoadInternal( const Commands & )
 	{
-		const vector<Song*> &vpSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
+		const std::vector<Song*> &vpSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
 		if( GAMESTATE->m_pCurSong == nullptr )
 			GAMESTATE->m_pCurSong.Set( vpSongs[0] );
@@ -815,7 +817,7 @@ class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 
 		for (Song *p : vpSongs)
 		{
-			m_Def.m_vsChoices.push_back( p->GetTranslitFullTitle() ); 
+			m_Def.m_vsChoices.push_back( p->GetTranslitFullTitle() );
 			GameCommand mc;
 			mc.m_pSong = p;
 			m_aListEntries.push_back( mc );
@@ -1061,7 +1063,7 @@ public:
 		m_GoToFirstOnStart = lua_toboolean(L, -1) > 0;
 		lua_pop(L, 1);
 
-		lua_getfield(L, -1, "OneChoiceForAllPlayers"); 
+		lua_getfield(L, -1, "OneChoiceForAllPlayers");
 		m_Def.m_bOneChoiceForAllPlayers = lua_toboolean( L, -1 ) > 0;
 		lua_pop( L, 1 );
 
@@ -1161,7 +1163,7 @@ public:
 		return effect;
 	}
 
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const std::vector<PlayerNumber> &vpns, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		if(!m_TableIsSane)
 		{
@@ -1173,7 +1175,7 @@ public:
 
 		for (PlayerNumber const &p : vpns)
 		{
-			vector<bool> &vbSelOut = vbSelectedOut[p];
+			std::vector<bool> &vbSelOut = vbSelectedOut[p];
 
 			/* Evaluate the LoadSelections(self,array,pn) function, where
 			 * array is a table representing vbSelectedOut. */
@@ -1218,7 +1220,7 @@ public:
 
 		LUA->Release(L);
 	}
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const std::vector<PlayerNumber> &vpns, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		if(!m_TableIsSane)
 		{
@@ -1231,12 +1233,12 @@ public:
 		int effects = 0;
 		for (PlayerNumber const &p : vpns)
 		{
-			const vector<bool> &vbSel = vbSelected[p];
+			const std::vector<bool> &vbSel = vbSelected[p];
 
 			/* Evaluate SaveSelections(self,array,pn) function, where array is
 			 * a table representing vbSelectedOut. */
 
-			vector<bool> vbSelectedCopy = vbSel;
+			std::vector<bool> vbSelectedCopy = vbSel;
 
 			// Create the vbSelectedOut table.
 			LuaHelpers::CreateTableFromArrayB( L, vbSelectedCopy );
@@ -1361,23 +1363,23 @@ public:
 		m_Def.m_sName = m_pOpt->name;
 		return true;
 	}
-	virtual void ImportOption( OptionRow *, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *, const std::vector<PlayerNumber> &vpns, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		for (PlayerNumber const &p : vpns)
 		{
-			vector<bool> &vbSelOut = vbSelectedOut[p];
+			std::vector<bool> &vbSelOut = vbSelectedOut[p];
 
 			int iSelection = m_pOpt->Get();
 			OptionRowHandlerUtil::SelectExactlyOne( iSelection, vbSelOut );
 		}
 	}
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const std::vector<PlayerNumber> &vpns, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		bool bChanged = false;
 
 		for (PlayerNumber const &p : vpns)
 		{
-			const vector<bool> &vbSel = vbSelected[p];
+			const std::vector<bool> &vbSel = vbSelected[p];
 
 			int iSel = OptionRowHandlerUtil::GetOneSelection(vbSel);
 
@@ -1403,7 +1405,7 @@ class OptionRowHandlerStepsType : public OptionRowHandler
 {
 public:
 	BroadcastOnChange<StepsType> *m_pstToFill;
-	vector<StepsType> m_vStepsTypesToShow;
+	std::vector<StepsType> m_vStepsTypesToShow;
 
 	OptionRowHandlerStepsType() { Init(); }
 	void Init()
@@ -1458,16 +1460,16 @@ public:
 		return true;
 	}
 
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const std::vector<PlayerNumber> &vpns, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		for (PlayerNumber const &p : vpns)
 		{
-			vector<bool> &vbSelOut = vbSelectedOut[p];
+			std::vector<bool> &vbSelOut = vbSelectedOut[p];
 
 			if( GAMESTATE->m_pCurSteps[0] )
 			{
 				StepsType st = GAMESTATE->m_pCurSteps[0]->m_StepsType;
-				vector<StepsType>::const_iterator iter = find( m_vStepsTypesToShow.begin(), m_vStepsTypesToShow.end(), st );
+				std::vector<StepsType>::const_iterator iter = find( m_vStepsTypesToShow.begin(), m_vStepsTypesToShow.end(), st );
 				if( iter != m_vStepsTypesToShow.end() )
 				{
 					unsigned i = iter - m_vStepsTypesToShow.begin();
@@ -1478,11 +1480,11 @@ public:
 			vbSelOut[0] = true;
 		}
 	}
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const std::vector<PlayerNumber> &vpns, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		for (PlayerNumber const &p : vpns)
 		{
-			const vector<bool> &vbSel = vbSelected[p];
+			const std::vector<bool> &vbSel = vbSelected[p];
 
 			int index = OptionRowHandlerUtil::GetOneSelection( vbSel );
 			m_pstToFill->Set( m_vStepsTypesToShow[index] );
@@ -1520,10 +1522,10 @@ public:
 		m_Def.m_vsChoices.push_back( "" );
 		return true;
 	}
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const std::vector<PlayerNumber> &vpns, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 	}
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const std::vector<PlayerNumber> &vpns, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		if( vbSelected[PLAYER_1][0] || vbSelected[PLAYER_2][0] )
 			m_gc.ApplyToAllPlayers();
@@ -1535,7 +1537,7 @@ public:
 		gcOut = m_gc;
 	}
 	virtual RString GetScreen( int iChoice ) const
-	{ 
+	{
 		return m_gc.m_sScreen;
 	}
 };
@@ -1572,7 +1574,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
 		else if( sParam.CompareNoCase("StepsLocked")==0 )
 		{
-			MAKE( OptionRowHandlerListSteps ); 
+			MAKE( OptionRowHandlerListSteps );
 			pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		}
 		else if( sParam.CompareNoCase("Characters")==0 )	MAKE( OptionRowHandlerListCharacters )
@@ -1661,7 +1663,7 @@ LuaXType( ReloadChanged );
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1671,7 +1673,7 @@ LuaXType( ReloadChanged );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

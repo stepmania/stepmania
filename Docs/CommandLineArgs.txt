@@ -1,4 +1,4 @@
-StepMania 5 Command Line Arguments
+StepMania Command Line Arguments
 ================================================================================
 Pass all arguments with --. For example, version would be entered as --version.
 stepmania --version
@@ -16,21 +16,12 @@ desired. However, SM5 does not support more than two players, so don't go past 2
 usage: --mode=
 Applys a GameCommand to all players if valid.
 --------------------------------------------------------------------------------
-[NetworkSyncManager]
-* netip
-usage: --netip=localhost
-Connects to a server for online play.
---------------------------------------------------------------------------------
 [PrefsManager]
 * Type
 usage: --Type=arcade
 Reads preferences from [Preferences-{Type}], usually from the metrics.
 --------------------------------------------------------------------------------
 [StepMania]
-* ExportNsisStrings
-usage: --ExportNsisStrings
-Exports strings for the installer.
-
 * ExportLuaInformation
 usage: --ExportLuaInformation
 Exports Lua.xml using the current theme (and anything it falls back on)

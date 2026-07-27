@@ -71,22 +71,6 @@ SM_SongChanged
 SM_SortOrderChanging	
 SM_SortOrderChanged		
 
-[NetworkSyncManager]
-SM_AddToChat		
-SM_ChangeSong		
-SM_GotEval			
-SM_UsersUpdate		
-SM_SMOnlinePack		
-
-[RoomInfoDisplay]
-SM_RoomInfoRetract		
-SM_RoomInfoDeploy		
-
-[RoomWheel]
-SM_BackFromRoomName		
-SM_RoomInfoRetract		
-SM_RoomInfoDeploy		
-
 [ScreenEdit]
 SM_UpdateTextInfo							
 SM_BackFromMainMenu							
@@ -121,36 +105,6 @@ SM_AddBonus
 SM_GoToOK			
 SM_GoToCancel		
 
-[ScreenNetEvaluation]
-SM_GotEval	
-
-[ScreenNetRoom]
-SM_SMOnlinePack			
-SM_BackFromRoomName		
-SM_BackFromRoomDesc		
-SM_BackFromRoomPass		
-SM_BackFromReqPass		
-SM_RoomInfoRetract		
-SM_RoomInfoDeploy		
-
-[ScreenNetSelectBase]
-SM_AddToChat		
-SM_UsersUpdate		
-SM_SMOnlinePack		
-
-[ScreenNetSelectMusic]
-SM_NoSongs					
-SM_ChangeSong				
-SM_SMOnlinePack				
-SM_SetWheelSong				
-SM_RefreshWheelLocation		
-SM_SongChanged				
-SM_UsersUpdate				
-SM_BackFromPlayerOptions	
-
-[ScreenNetworkOptions]
-SM_DoneConnecting	
-
 [ScreenOptionsEditCourse]
 SM_BackFromContextMenu	
 
@@ -178,8 +132,6 @@ SM_BackFromContextMenu
 
 [ScreenOptionsReviewWorkout]
 
-[ScreenPackages]
-
 [ScreenRanking]
 
 [ScreenSelectMaster]
@@ -189,12 +141,6 @@ SM_AllowOptionsMenuRepeat
 SM_SongChanged				
 SM_SortOrderChanging		
 SM_SortOrderChanged			
-
-[ScreenSMOnlineLogin]
-SM_SMOnlinePack			
-SM_PasswordDone			
-SM_NoProfilesDefined	
-SM_GoToNextScreen		
 
 [ScreenSplash]
 SM_PrepScreen		

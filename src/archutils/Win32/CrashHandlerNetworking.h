@@ -30,7 +30,7 @@ public:
 	RString GetResult() const { return m_sResult; }
 
 private:
-	static void CreateMimeData( const map<RString,RString> &mapNameToData, RString &sOut, RString &sMimeBoundaryOut );
+	static void CreateMimeData( const std::map<RString, RString> &mapNameToData, RString &sOut, RString &sMimeBoundaryOut );
 	void SetProgress( float fProgress );
 
 	RageThread m_Thread;
@@ -42,7 +42,7 @@ private:
 	float m_fProgress;
 
 	// When the thread exists, it owns the rest of the data, regardless of m_Mutex.
-	map<RString, RString> m_Data;
+	std::map<RString, RString> m_Data;
 
 	bool m_bFinished;
 	RString m_sHost;

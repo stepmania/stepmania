@@ -14,6 +14,10 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+#include <cstddef>
+#include <vector>
+
+
 // Everything from this line to the creation of parser_helper exists to
 // speed up parsing by allowing the use of std::map.  All these functions
 // are put into a map of function pointers which is used when loading.
@@ -70,7 +74,7 @@ typedef void (*song_tag_func_t)(SongTagInfo& info);
 /****************************************************************/
 void SetVersion(SongTagInfo& info)
 {
-	info.song->m_fVersion = std::stof((*info.params)[1]);
+	info.song->m_fVersion = StringToFloat((*info.params)[1]);
 }
 void SetTitle(SongTagInfo& info)
 {
@@ -157,11 +161,11 @@ void SetInstrumentTrack(SongTagInfo& info)
 void SetMusicLength(SongTagInfo& info)
 {
 	if(info.from_cache)
-	info.song->m_fMusicLengthSeconds = std::stof((*info.params)[1]);
+	info.song->m_fMusicLengthSeconds = StringToFloat((*info.params)[1]);
 }
 void SetLastSecondHint(SongTagInfo& info)
 {
-	info.song->SetSpecifiedLastSecond(std::stof((*info.params)[1]));
+	info.song->SetSpecifiedLastSecond(StringToFloat((*info.params)[1]));
 }
 void SetSampleStart(SongTagInfo& info)
 {
@@ -179,11 +183,11 @@ void SetDisplayBPM(SongTagInfo& info)
 	else
 	{
 		info.song->m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
-		info.song->m_fSpecifiedBPMMin = std::stof((*info.params)[1]);
+		info.song->m_fSpecifiedBPMMin = StringToFloat((*info.params)[1]);
 		if((*info.params)[2].empty())
 		{ info.song->m_fSpecifiedBPMMax = info.song->m_fSpecifiedBPMMin; }
 		else
-		{ info.song->m_fSpecifiedBPMMax = std::stof((*info.params)[2]); }
+		{ info.song->m_fSpecifiedBPMMax = StringToFloat((*info.params)[2]); }
 	}
 }
 void SetSelectable(SongTagInfo& info)
@@ -234,7 +238,7 @@ void SetAttacks(SongTagInfo& info)
 }
 void SetOffset(SongTagInfo& info)
 {
-	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = std::stof((*info.params)[1]);
+	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
 }
 void SetSongStops(SongTagInfo& info)
 {
@@ -283,12 +287,12 @@ void SetSongFakes(SongTagInfo& info)
 void SetFirstSecond(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->SetFirstSecond(std::stof((*info.params)[1])); }
+	{ info.song->SetFirstSecond(StringToFloat((*info.params)[1])); }
 }
 void SetLastSecond(SongTagInfo& info)
 {
 	if(info.from_cache)
-	{ info.song->SetLastSecond(std::stof((*info.params)[1])); }
+	{ info.song->SetLastSecond(StringToFloat((*info.params)[1])); }
 }
 void SetSongFilename(SongTagInfo& info)
 {
@@ -310,7 +314,7 @@ void SetHasBanner(SongTagInfo& info)
 /****************************************************************/
 void SetStepsVersion(StepsTagInfo& info)
 {
-	info.song->m_fVersion = std::stof((*info.params)[1]);
+	info.song->m_fVersion = StringToFloat((*info.params)[1]);
 }
 void SetChartName(StepsTagInfo& info)
 {
@@ -357,18 +361,18 @@ void SetRadarValues(StepsTagInfo& info)
 {
 	if(info.from_cache || info.for_load_edit)
 	{
-		vector<RString> values;
+		std::vector<RString> values;
 		split((*info.params)[1], ",", values, true);
 		// Instead of trying to use the version to figure out how many
 		// categories to expect, look at the number of values and split them
 		// evenly. -Kyz
-		size_t cats_per_player= values.size() / NUM_PlayerNumber;
+		std::size_t cats_per_player= values.size() / NUM_PlayerNumber;
 		RadarValues v[NUM_PLAYERS];
 		FOREACH_PlayerNumber(pn)
 		{
-			for(size_t i= 0; i < cats_per_player; ++i)
+			for(std::size_t i= 0; i < cats_per_player; ++i)
 			{
-				v[pn][i]= std::stof(values[pn * cats_per_player + i]);
+				v[pn][i]= StringToFloat(values[pn * cats_per_player + i]);
 			}
 		}
 		info.steps->SetCachedRadarValues(v);
@@ -499,7 +503,7 @@ void SetStepsOffset(StepsTagInfo& info)
 {
 	if(info.song->m_fVersion >= VERSION_SPLIT_TIMING || info.for_load_edit)
 	{
-		info.timing->m_fBeat0OffsetInSeconds = std::stof((*info.params)[1]);
+		info.timing->m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
 		info.has_own_timing = true;
 	}
 }
@@ -508,15 +512,15 @@ void SetStepsDisplayBPM(StepsTagInfo& info)
 	// #DISPLAYBPM:[xxx][xxx:xxx]|[*];
 	if((*info.params)[1] == "*")
 	{ info.steps->SetDisplayBPM(DISPLAY_BPM_RANDOM); }
-	else
+	else if((*info.params)[1] != "")
 	{
 		info.steps->SetDisplayBPM(DISPLAY_BPM_SPECIFIED);
-		float min = std::stof((*info.params)[1]);
+		float min = StringToFloat((*info.params)[1]);
 		info.steps->SetMinBPM(min);
 		if((*info.params)[2].empty())
 		{ info.steps->SetMaxBPM(min); }
 		else
-		{ info.steps->SetMaxBPM(std::stof((*info.params)[2])); }
+		{ info.steps->SetMaxBPM(StringToFloat((*info.params)[2])); }
 	}
 }
 
@@ -643,12 +647,12 @@ ssc_parser_helper_t parser_helper;
 
 void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 {
-	vector<RString> arrayBPMExpressions;
+	std::vector<RString> arrayBPMExpressions;
 	split( sParam, ",", arrayBPMExpressions );
-	
+
 	for( unsigned b=0; b<arrayBPMExpressions.size(); b++ )
 	{
-		vector<RString> arrayBPMValues;
+		std::vector<RString> arrayBPMValues;
 		split( arrayBPMExpressions[b], "=", arrayBPMValues );
 		if( arrayBPMValues.size() != 2 )
 		{
@@ -658,9 +662,9 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 				     arrayBPMExpressions[b].c_str() );
 			continue;
 		}
-		
-		const float fBeat = std::stof( arrayBPMValues[0] );
-		const float fNewBPM = std::stof( arrayBPMValues[1] );
+
+		const float fBeat = StringToFloat( arrayBPMValues[0] );
+		const float fNewBPM = StringToFloat( arrayBPMValues[1] );
 		if( fBeat >= 0 && fNewBPM > 0 )
 		{
 			out.AddSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
@@ -677,12 +681,12 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 
 void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 {
-	vector<RString> arrayStopExpressions;
+	std::vector<RString> arrayStopExpressions;
 	split( sParam, ",", arrayStopExpressions );
-	
+
 	for( unsigned b=0; b<arrayStopExpressions.size(); b++ )
 	{
-		vector<RString> arrayStopValues;
+		std::vector<RString> arrayStopValues;
 		split( arrayStopExpressions[b], "=", arrayStopValues );
 		if( arrayStopValues.size() != 2 )
 		{
@@ -692,9 +696,9 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 				     arrayStopExpressions[b].c_str() );
 			continue;
 		}
-		
-		const float fBeat = std::stof( arrayStopValues[0] );
-		const float fNewStop = std::stof( arrayStopValues[1] );
+
+		const float fBeat = StringToFloat( arrayStopValues[0] );
+		const float fNewStop = StringToFloat( arrayStopValues[1] );
 		if( fBeat >= 0 && fNewStop > 0 )
 			out.AddSegment( StopSegment(BeatToNoteRow(fBeat), fNewStop) );
 		else
@@ -709,12 +713,12 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 
 void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float fVersion )
 {
-	vector<RString> arrayWarpExpressions;
+	std::vector<RString> arrayWarpExpressions;
 	split( sParam, ",", arrayWarpExpressions );
-	
+
 	for( unsigned b=0; b<arrayWarpExpressions.size(); b++ )
 	{
-		vector<RString> arrayWarpValues;
+		std::vector<RString> arrayWarpValues;
 		split( arrayWarpExpressions[b], "=", arrayWarpValues );
 		if( arrayWarpValues.size() != 2 )
 		{
@@ -724,9 +728,9 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 				     arrayWarpExpressions[b].c_str() );
 			continue;
 		}
-		
-		const float fBeat = std::stof( arrayWarpValues[0] );
-		const float fNewBeat = std::stof( arrayWarpValues[1] );
+
+		const float fBeat = StringToFloat( arrayWarpValues[0] );
+		const float fNewBeat = StringToFloat( arrayWarpValues[1] );
 		// Early versions were absolute in beats. They should be relative.
 		if( ( fVersion < VERSION_SPLIT_TIMING && fNewBeat > fBeat ) )
 		{
@@ -746,12 +750,12 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 
 void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 {
-	vector<RString> arrayLabelExpressions;
+	std::vector<RString> arrayLabelExpressions;
 	split( sParam, ",", arrayLabelExpressions );
-	
+
 	for( unsigned b=0; b<arrayLabelExpressions.size(); b++ )
 	{
-		vector<RString> arrayLabelValues;
+		std::vector<RString> arrayLabelValues;
 		split( arrayLabelExpressions[b], "=", arrayLabelValues );
 		if( arrayLabelValues.size() != 2 )
 		{
@@ -761,31 +765,31 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 				     arrayLabelExpressions[b].c_str() );
 			continue;
 		}
-		
-		const float fBeat = std::stof( arrayLabelValues[0] );
+
+		const float fBeat = StringToFloat( arrayLabelValues[0] );
 		RString sLabel = arrayLabelValues[1];
 		TrimRight(sLabel);
 		if( fBeat >= 0.0f )
 			out.AddSegment( LabelSegment(BeatToNoteRow(fBeat), sLabel) );
-		else 
+		else
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid Label at beat %f called %s.",
 				     fBeat, sLabel.c_str() );
 		}
-		
+
 	}
 }
 
 void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> arrayComboExpressions;
+	std::vector<RString> arrayComboExpressions;
 	split( line, ",", arrayComboExpressions );
-	
+
 	for( unsigned f=0; f<arrayComboExpressions.size(); f++ )
 	{
-		vector<RString> arrayComboValues;
+		std::vector<RString> arrayComboValues;
 		split( arrayComboExpressions[f], "=", arrayComboValues );
 		unsigned size = arrayComboValues.size();
 		if( size < 2 )
@@ -796,7 +800,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 				     arrayComboExpressions[f].c_str() );
 			continue;
 		}
-		const float fComboBeat = std::stof( arrayComboValues[0] );
+		const float fComboBeat = StringToFloat( arrayComboValues[0] );
 		const int iCombos = StringToInt( arrayComboValues[1] );
 		const int iMisses = (size == 2 ? iCombos : StringToInt(arrayComboValues[2]));
 		out.AddSegment( ComboSegment( BeatToNoteRow(fComboBeat), iCombos, iMisses ) );
@@ -805,14 +809,14 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 
 void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 {
-	vector<RString> vs1;
+	std::vector<RString> vs1;
 	split( sParam, ",", vs1 );
-	
+
 	for (RString const &s1 : vs1)
 	{
-		vector<RString> vs2;
+		std::vector<RString> vs2;
 		split( s1, "=", vs2 );
-		
+
 		if( vs2.size() < 2 )
 		{
 			LOG->UserLog("Song file",
@@ -822,8 +826,8 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 			continue;
 		}
 
-		const float fBeat = std::stof( vs2[0] );
-		const float fRatio = std::stof( vs2[1] );
+		const float fBeat = StringToFloat( vs2[0] );
+		const float fRatio = StringToFloat( vs2[1] );
 
 		if( fBeat < 0 )
 		{
@@ -841,7 +845,7 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 {
 	LOG->Trace( "Loading notes from %s", cachePath.c_str() );
-	
+
 	MsdFile msd;
 	if (!msd.ReadFile(cachePath, true))
 	{
@@ -851,11 +855,11 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 			     msd.GetError().c_str());
 		return false;
 	}
-	
+
 	bool tryingSteps = false;
 	float storedVersion = 0;
 	const unsigned values = msd.GetNumValues();
-	
+
 	for (unsigned i = 0; i < values; i++)
 	{
 		const MsdFile::value_t &params = msd.GetValue(i);
@@ -875,7 +879,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 					case LNDID_version:
 						// Note that version is in both switches.  Formerly, it was
 						// checked before the tryingSteps condition. -Kyz
-						storedVersion = std::stof(matcher);
+						storedVersion = StringToFloat(matcher);
 						break;
 					case LNDID_stepstype:
 						if(out.m_StepsType != GAMEMAN->StringToStepsType(matcher))
@@ -928,7 +932,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 					case LNDID_version:
 						// Note that version is in both switches.  Formerly, it was
 						// checked before the tryingSteps condition. -Kyz
-						storedVersion = std::stof(matcher);
+						storedVersion = StringToFloat(matcher);
 						break;
 					case LNDID_notedata:
 						tryingSteps = true;
@@ -1222,7 +1226,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 /*
  * (c) 2011 Jason Felds
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1232,7 +1236,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

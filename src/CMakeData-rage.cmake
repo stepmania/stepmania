@@ -3,7 +3,6 @@
 list(APPEND SMDATA_RAGE_UTILS_SRC
             "RageUtil.cpp"
             "RageUtil_BackgroundLoader.cpp"
-            "RageUtil_CachedObject.cpp"
             "RageUtil_CharConversions.cpp"
             "RageUtil_FileDB.cpp"
             "RageUtil_WorkerThread.cpp")
@@ -13,7 +12,6 @@ list(APPEND SMDATA_RAGE_UTILS_HPP
             "RageUtil_AutoPtr.h" # TODO: Remove the need for this and replace
                                  # with c++11 smart pointers
             "RageUtil_BackgroundLoader.h"
-            "RageUtil_CachedObject.h"
             "RageUtil_CharConversions.h"
             "RageUtil_CircularBuffer.h"
             "RageUtil_FileDB.h"
@@ -75,6 +73,7 @@ list(APPEND SMDATA_RAGE_GRAPHICS_SRC
             "RageTextureManager.cpp"
             "RageTexturePreloader.cpp"
             "RageTextureRenderTarget.cpp")
+
 list(APPEND SMDATA_RAGE_GRAPHICS_HPP
             "RageBitmapTexture.h"
             "RageDisplay.h"
@@ -162,6 +161,7 @@ list(APPEND SMDATA_RAGE_SOUND_SRC
             "RageSoundReader_ChannelSplit.cpp"
             "RageSoundReader_Extend.cpp"
             "RageSoundReader_FileReader.cpp"
+            "RageSoundReader_MP3.cpp"
             "RageSoundReader_Merge.cpp"
             "RageSoundReader_Pan.cpp"
             "RageSoundReader_PitchChange.cpp"
@@ -170,8 +170,10 @@ list(APPEND SMDATA_RAGE_SOUND_SRC
             "RageSoundReader_Resample_Good.cpp"
             "RageSoundReader_SpeedChange.cpp"
             "RageSoundReader_ThreadedBuffer.cpp"
+            "RageSoundReader_Vorbisfile.cpp"
             "RageSoundReader_WAV.cpp"
             "RageSoundUtil.cpp")
+
 list(APPEND SMDATA_RAGE_SOUND_HPP
             "RageSound.h"
             "RageSoundManager.h"
@@ -183,6 +185,7 @@ list(APPEND SMDATA_RAGE_SOUND_HPP
             "RageSoundReader_Extend.h"
             "RageSoundReader_FileReader.h"
             "RageSoundReader_Filter.h"
+            "RageSoundReader_MP3.h"
             "RageSoundReader_Merge.h"
             "RageSoundReader_Pan.h"
             "RageSoundReader_PitchChange.h"
@@ -191,18 +194,9 @@ list(APPEND SMDATA_RAGE_SOUND_HPP
             "RageSoundReader_Resample_Good.h"
             "RageSoundReader_SpeedChange.h"
             "RageSoundReader_ThreadedBuffer.h"
+            "RageSoundReader_Vorbisfile.h"
             "RageSoundReader_WAV.h"
             "RageSoundUtil.h")
-
-if(HAS_OGG)
-  list(APPEND SMDATA_RAGE_SOUND_SRC "RageSoundReader_Vorbisfile.cpp")
-  list(APPEND SMDATA_RAGE_SOUND_HPP "RageSoundReader_Vorbisfile.h")
-endif()
-
-if(HAS_MP3)
-  list(APPEND SMDATA_RAGE_SOUND_SRC "RageSoundReader_MP3.cpp")
-  list(APPEND SMDATA_RAGE_SOUND_HPP "RageSoundReader_MP3.h")
-endif()
 
 source_group("Rage\\\\Sound"
              FILES

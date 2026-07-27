@@ -20,6 +20,8 @@ public:
 	virtual bool SupportsRenderToTexture() const { return true; }
 	virtual RenderTarget *CreateRenderTarget();
 
+	bool SupportsFullscreenBorderlessWindow() const { return true; }
+
 	const ActualVideoModeParams GetActualVideoModeParams() const;
 };
 

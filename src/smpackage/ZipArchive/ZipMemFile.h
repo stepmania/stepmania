@@ -10,7 +10,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // For the licensing details see the file License.txt
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -29,6 +29,8 @@
 #include "ZipString.h"
 #include "ZipExport.h"
 
+#include <cstddef>
+
 /**
 	A memory buffer which behaves like a physical file.
 	Automatically grows when necessary
@@ -36,8 +38,8 @@
 class ZIP_API CZipMemFile : public CZipAbstractFile
 {
 protected:
-	size_t m_nGrowBy, m_nPos;
-	size_t m_nBufSize, m_nDataSize;
+	std::size_t m_nGrowBy, m_nPos;
+	std::size_t m_nBufSize, m_nDataSize;
 	BYTE* m_lpBuf;
 	bool m_bAutoDelete;
 	void Free()
@@ -55,7 +57,7 @@ protected:
 		m_lpBuf = NULL;
 
 	}
-	void Grow(size_t nBytes);
+	void Grow(std::size_t nBytes);
 public:
 	bool IsClosed() const { return m_lpBuf == NULL;}
 	void Flush(){}
@@ -65,7 +67,7 @@ public:
 	void Write(const void* lpBuf, UINT nCount);
 	UINT Read(void* lpBuf, UINT nCount);
 	void SetLength(ZIP_ULONGLONG nNewLen);
-	CZipString GetFilePath() const  {return _T("");} 	
+	CZipString GetFilePath() const  {return _T("");}
 	CZipMemFile(long nGrowBy = 1024)
 	{
 		Init();

@@ -3,6 +3,10 @@
 
 #include "RageFileDriver.h"
 #include "RageThreads.h"
+
+#include <vector>
+
+
 /** @brief A read-only file driver for ZIPs. */
 class RageFileDriverZip: public RageFileDriver
 {
@@ -42,7 +46,7 @@ private:
 	bool m_bFileOwned;
 
 	RageFileBasic *m_pZip;
-	vector<FileInfo *> m_pFiles;
+	std::vector<FileInfo *> m_pFiles;
 
 	RString m_sPath;
 	RString m_sComment;

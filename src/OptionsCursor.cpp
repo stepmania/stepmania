@@ -4,6 +4,8 @@
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 
+#include <cmath>
+
 OptionsCursor::OptionsCursor()
 {
 	m_iOriginalLeftX = 0;
@@ -91,7 +93,7 @@ void OptionsCursor::StopTweening()
 	}
 }
 
-void OptionsCursor::BeginTweening( float fSecs )
+void OptionsCursor::BeginTweening( float fSecs, TweenType tt )
 {
 	ActorFrame::BeginTweening( fSecs );
 
@@ -108,7 +110,7 @@ void OptionsCursor::BeginTweening( float fSecs )
 
 void OptionsCursor::SetBarWidth( int iWidth )
 {
-	float fWidth = ceilf(iWidth/2.0f)*2.0f; // round up to nearest even number
+	float fWidth = std::ceil(iWidth/2.0f)*2.0f; // round up to nearest even number
 
 	m_sprMiddle->ZoomToWidth( fWidth );
 
@@ -130,7 +132,7 @@ int OptionsCursor::GetBarWidth() const
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -140,7 +142,7 @@ int OptionsCursor::GetBarWidth() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

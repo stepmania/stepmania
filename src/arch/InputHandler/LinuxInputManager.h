@@ -2,7 +2,6 @@
 #define LINUX_INPUT_MANAGER 1
 
 #include <vector>
-using namespace std;
 
 #include "global.h"
 class InputHandler_Linux_Joystick;
@@ -21,11 +20,11 @@ public:
 private:
 	bool m_bEventEnabled;
 	InputHandler_Linux_Event* m_EventDriver;
-	vector<RString> m_vsPendingEventDevices;
+	std::vector<RString> m_vsPendingEventDevices;
 	
 	bool m_bJoystickEnabled;
 	InputHandler_Linux_Joystick* m_JoystickDriver;
-	vector<RString> m_vsPendingJoystickDevices;
+	std::vector<RString> m_vsPendingJoystickDevices;
 };
 
 extern LinuxInputManager* LINUXINPUT; // global and accessible from anywhere in our program

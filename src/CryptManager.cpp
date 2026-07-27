@@ -1,6 +1,10 @@
 #include "global.h"
 
+// tomcrypt_cfg.h redefines malloc, realloc, calloc
+#pragma warning( push )
+#pragma warning( disable : 4565 )
 #include <tomcrypt.h>
+#pragma warning ( pop )
 
 #include "CryptManager.h"
 #include "RageUtil.h"
@@ -11,6 +15,10 @@
 #include "LuaBinding.h"
 #include "LuaReference.h"
 #include "LuaManager.h"
+
+#include <cstdint>
+#include <vector>
+
 
 CryptManager*	CRYPTMAN	= nullptr;	// global and accessible from anywhere in our program
 
@@ -58,9 +66,9 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
 
 void CryptManager::GetRandomBytes( void *pData, int iBytes )
 {
-	uint8_t *pBuf = (uint8_t *) pData;
+	std::uint8_t *pBuf = (std::uint8_t *) pData;
 	while( iBytes-- )
-		*pBuf++ = (uint8_t) RandomInt( 256 );
+		*pBuf++ = (std::uint8_t) RandomInt( 256 );
 }
 
 #else
@@ -274,7 +282,7 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
 	if( VerifyFileWithFile(sPath, sSignatureFile, PUBLIC_KEY_PATH) )
 		return true;
 
-	vector<RString> asKeys;
+	std::vector<RString> asKeys;
 	GetDirListing( ALTERNATE_PUBLIC_KEY_DIR, asKeys, false, true );
 	for( unsigned i = 0; i < asKeys.size(); ++i )
 	{
@@ -459,7 +467,7 @@ RString CryptManager::GetPublicKeyFileName()
 /* Generate a version 4 random UUID. */
 RString CryptManager::GenerateRandomUUID()
 {
-	uint32_t buf[4];
+	std::uint32_t buf[4];
 	CryptManager::GetRandomBytes( buf, sizeof(buf) );
 
 	buf[1] &= 0xFFFF0FFF;

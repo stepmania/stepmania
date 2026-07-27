@@ -1,6 +1,9 @@
 #ifndef NOTES_WRITER_SM_H
 #define NOTES_WRITER_SM_H
 
+#include <vector>
+
+
 class Song;
 class Steps;
 class RageFileBasic;
@@ -12,8 +15,8 @@ namespace NotesWriterSM
 	 * @param sPath the path to write the file.
 	 * @param out the Song to be written out.
 	 * @return its success or failure. */
-	bool Write( RageFileBasic &file, Song &out, const vector<Steps*>& vpStepsToSave );
-	bool Write( RString sPath, Song &out, const vector<Steps*>& vpStepsToSave );
+	bool Write( RageFileBasic &file, Song &out, const std::vector<Steps*>& vpStepsToSave );
+	bool Write( RString sPath, Song &out, const std::vector<Steps*>& vpStepsToSave );
 	/**
 	 * @brief Get some contents about the edit file first.
 	 * @param pSong the Song in question.

@@ -3,24 +3,27 @@
 
 #include "LightsDriver.h"
 
+#include <cstddef>
+#include <cstdint>
+
 /*
  * Utility functions that both `LightsDriver_Win32Serial` and `LightsDriver_SextetStream`
  * take advantage of, in order to encode the lights data into a common format.
  */
 
  // Number of printable characters used to encode lights
-static const size_t CABINET_SEXTET_COUNT = 1;
-static const size_t CONTROLLER_SEXTET_COUNT = 6;
+static const std::size_t CABINET_SEXTET_COUNT = 1;
+static const std::size_t CONTROLLER_SEXTET_COUNT = 6;
 
 // Number of bytes to contain the full pack and a trailing LF
-static const size_t FULL_SEXTET_COUNT = CABINET_SEXTET_COUNT + (NUM_GameController * CONTROLLER_SEXTET_COUNT) + 1;
+static const std::size_t FULL_SEXTET_COUNT = CABINET_SEXTET_COUNT + (NUM_GameController * CONTROLLER_SEXTET_COUNT) + 1;
 
 // Serialization routines
 
 // Encodes the low 6 bits of a byte as a printable, non-space ASCII
 // character (i.e., within the range 0x21-0x7E) such that the low 6 bits of
 // the character are the same as the input.
-inline uint8_t printableSextet(uint8_t data)
+inline std::uint8_t printableSextet(std::uint8_t data)
 {
 	// Maps the 6-bit value into the range 0x30-0x6F, wrapped in such a way
 	// that the low 6 bits of the result are the same as the data (so
@@ -35,13 +38,13 @@ inline uint8_t printableSextet(uint8_t data)
 	// the top two bits T of the input like so:
 	// 	H = ((T + 1) mod 4) + 3
 
-	return ((data + (uint8_t)0x10) & (uint8_t)0x3F) + (uint8_t)0x30;
+	return ((data + (std::uint8_t)0x10) & (std::uint8_t)0x3F) + (std::uint8_t)0x30;
 }
 
 // Packs 6 booleans into a 6-bit value
-inline uint8_t packPlainSextet(bool b0, bool b1, bool b2, bool b3, bool b4, bool b5)
+inline std::uint8_t packPlainSextet(bool b0, bool b1, bool b2, bool b3, bool b4, bool b5)
 {
-	return (uint8_t)(
+	return (std::uint8_t)(
 		(b0 ? 0x01 : 0) |
 		(b1 ? 0x02 : 0) |
 		(b2 ? 0x04 : 0) |
@@ -51,13 +54,13 @@ inline uint8_t packPlainSextet(bool b0, bool b1, bool b2, bool b3, bool b4, bool
 }
 
 // Packs 6 booleans into a printable sextet
-inline uint8_t packPrintableSextet(bool b0, bool b1, bool b2, bool b3, bool b4, bool b5)
+inline std::uint8_t packPrintableSextet(bool b0, bool b1, bool b2, bool b3, bool b4, bool b5)
 {
 	return printableSextet(packPlainSextet(b0, b1, b2, b3, b4, b5));
 }
 
 // Packs the cabinet lights into a printable sextet and adds it to a buffer
-inline size_t packCabinetLights(const LightsState* ls, uint8_t* buffer)
+inline std::size_t packCabinetLights(const LightsState* ls, std::uint8_t* buffer)
 {
 	buffer[0] = packPrintableSextet(
 		ls->m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT],
@@ -71,7 +74,7 @@ inline size_t packCabinetLights(const LightsState* ls, uint8_t* buffer)
 
 // Packs the button lights for a controller into 6 printable sextets and
 // adds them to a buffer
-inline size_t packControllerLights(const LightsState* ls, GameController gc, uint8_t* buffer)
+inline std::size_t packControllerLights(const LightsState* ls, GameController gc, std::uint8_t* buffer)
 {
 	// Menu buttons
 	buffer[0] = packPrintableSextet(
@@ -124,9 +127,9 @@ inline size_t packControllerLights(const LightsState* ls, GameController gc, uin
 	return CONTROLLER_SEXTET_COUNT;
 }
 
-inline size_t packLine(uint8_t* buffer, const LightsState* ls)
+inline std::size_t packLine(std::uint8_t* buffer, const LightsState* ls)
 {
-	size_t index = 0;
+	std::size_t index = 0;
 
 	index += packCabinetLights(ls, &(buffer[index]));
 

@@ -43,7 +43,6 @@ void Banner::Load( RageTextureID ID, bool bIsBanner )
 	m_bScrolling = false;
 
 	TEXTUREMAN->DisableOddDimensionWarning();
-	TEXTUREMAN->VolatileTexture( ID );
 	Sprite::Load( ID );
 	TEXTUREMAN->EnableOddDimensionWarning();
 };

@@ -1,6 +1,8 @@
 #ifndef THREADS_H
 #define THREADS_H
 
+#include <cstdint>
+
 /* This is the low-level implementation; you probably want RageThreads. */
 class RageMutex;
 class RageTimer;
@@ -16,7 +18,7 @@ public:
 	 * implementation-defined, except that each thread has exactly one ID
 	 * and each ID corresponds to one thread. (This means that Win32
 	 * thread handles are not acceptable as ThreadIds.) */
-	virtual uint64_t GetThreadId() const = 0;
+	virtual std::uint64_t GetThreadId() const = 0;
 
 	virtual int Wait() = 0;
 };
@@ -69,23 +71,23 @@ public:
 };
 
 // These functions must be implemented by the thread implementation.
-ThreadImpl *MakeThread( int (*fn)(void *), void *data, uint64_t *piThreadID );
+ThreadImpl *MakeThread( int (*fn)(void *), void *data, std::uint64_t *piThreadID );
 ThreadImpl *MakeThisThread();
 MutexImpl *MakeMutex( RageMutex *pParent );
 EventImpl *MakeEvent( MutexImpl *pMutex );
 SemaImpl *MakeSemaphore( int iInitialValue );
-uint64_t GetThisThreadId();
+std::uint64_t GetThisThreadId();
 
 /* Since ThreadId is implementation-defined, we can't define a universal
  * invalid value. Return the invalid value for this implementation. */
-uint64_t GetInvalidThreadId();
+std::uint64_t GetInvalidThreadId();
 
 #endif
 
 /*
  * (c) 2001-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -95,7 +97,7 @@ uint64_t GetInvalidThreadId();
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

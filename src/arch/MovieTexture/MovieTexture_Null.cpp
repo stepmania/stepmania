@@ -6,12 +6,14 @@
 #include "MovieTexture_Null.h"
 #include "RageSurface.h"
 
+#include <cstdint>
+
 class MovieTexture_Null : public RageMovieTexture {
 public:
 	MovieTexture_Null(RageTextureID ID);
 	virtual ~MovieTexture_Null();
 	void Invalidate() { texHandle = 0; }
-	uintptr_t GetTexHandle() const { return texHandle; }
+	std::uintptr_t GetTexHandle() const { return texHandle; }
 	void Update(float /* delta */) { }
 	void Reload() { }
 	void SetPosition(float /* seconds */) { }
@@ -21,7 +23,7 @@ public:
 private:
 	bool playing;
 	bool loop;
-	uintptr_t texHandle;
+	std::uintptr_t texHandle;
 };
 
 MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
@@ -74,7 +76,7 @@ RageMovieTexture *RageMovieTextureDriver_Null::Create( RageTextureID ID, RString
 /*
  * (c) 2003 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -84,7 +86,7 @@ RageMovieTexture *RageMovieTextureDriver_Null::Create( RageTextureID ID, RString
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

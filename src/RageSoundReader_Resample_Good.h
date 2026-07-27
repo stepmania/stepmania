@@ -5,6 +5,9 @@
 
 #include "RageSoundReader_Filter.h"
 
+#include <vector>
+
+
 class RageSoundResampler_Polyphase;
 
 /** @brief This class changes the sampling rate of a sound. */
@@ -39,7 +42,7 @@ private:
 	void ReopenResampler();
 	void GetFactors( int &iDownFactor, int &iUpFactor ) const;
 
-	vector<RageSoundResampler_Polyphase *> m_apResamplers; /* one per channel */
+	std::vector<RageSoundResampler_Polyphase*> m_apResamplers; /* one per channel */
 
 	int m_iSampleRate;
 	float m_fRate;

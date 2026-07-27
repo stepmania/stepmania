@@ -4,6 +4,8 @@
 #include "EnumHelper.h"
 #include "RageTimer.h"
 
+#include <cstddef>
+
 enum ModsLevel
 {
 	ModsLevel_Preferred,	// user-chosen player options.  Does not include any forced mods.
@@ -56,7 +58,7 @@ public:
 	}
 
 	template<typename U, int n>
-	inline void Assign_n( ModsLevel level, U (T::*member)[n], size_t index, const U &val )
+	inline void Assign_n( ModsLevel level, U (T::*member)[n], std::size_t index, const U &val )
 	{
 		DEBUG_ASSERT( index < n );
 		if( level != ModsLevel_Song )
@@ -111,7 +113,7 @@ public:
 /*
  * (c) 2006 Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -121,7 +123,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

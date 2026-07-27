@@ -5,11 +5,13 @@
 #include "LuaManager.h"
 #include "ThemeMetric.h"
 
+#include <cmath>
+
 static ThemeMetric<float> THEME_SCREEN_WIDTH("Common","ScreenWidth");
 static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
 
 /* The theme's logical resolution specifies the minimum screen width and
- * the minimum screen height with a 4:3 aspect ratio. Scale just one 
+ * the minimum screen height with a 4:3 aspect ratio. Scale just one
  * of the dimensions up to meet the requested aspect ratio. */
 
 /* The theme resolution isn't necessarily 4:3; a natively widescreen
@@ -24,8 +26,8 @@ float ScreenDimensions::GetThemeAspectRatio()
 	return THEME_NATIVE_ASPECT;
 }
 
-/* ceilf was originally lrintf. However, lrintf causes odd resolutions like
- * 639x480 (4:3) and 853x480 (16:9). ceilf gives the correct values of 640x480
+/* ceil was originally lrint. However, lrint causes odd resolutions like
+ * 639x480 (4:3) and 853x480 (16:9). ceil gives the correct values of 640x480
  * and 854x480 (should really be 852 so that SCREEN_CENTER_X == 426 and not 427)
  * respectively. -aj */
 float ScreenDimensions::GetScreenWidth()
@@ -35,9 +37,9 @@ float ScreenDimensions::GetScreenWidth()
 	if( fAspect > THEME_NATIVE_ASPECT )
 		fScale = fAspect / THEME_NATIVE_ASPECT;
 	ASSERT( fScale >= 1 );
-	// ceilf causes the width to come out odd when it shouldn't.
+	// ceil causes the width to come out odd when it shouldn't.
 	// 576 * 1.7778 = 1024.0128, which is rounded to 1025. -Kyz
-	int width= (int)ceilf(THEME_SCREEN_WIDTH * fScale);
+	int width= std::ceil(THEME_SCREEN_WIDTH * fScale);
 	width-= width % 2;
 	return (float)width;
 }
@@ -49,7 +51,7 @@ float ScreenDimensions::GetScreenHeight()
 	if( fAspect < THEME_NATIVE_ASPECT )
 		fScale = THEME_NATIVE_ASPECT / fAspect;
 	ASSERT( fScale >= 1 );
-	return (float) ceilf(THEME_SCREEN_HEIGHT * fScale);
+	return std::ceil(THEME_SCREEN_HEIGHT * fScale);
 }
 
 void ScreenDimensions::ReloadScreenDimensions()
@@ -77,7 +79,7 @@ LuaFunction( GetThemeAspectRatio,	ScreenDimensions::GetThemeAspectRatio() );
 /*
  * (c) 2001-2002 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -87,7 +89,7 @@ LuaFunction( GetThemeAspectRatio,	ScreenDimensions::GetThemeAspectRatio() );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

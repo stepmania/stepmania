@@ -1,9 +1,9 @@
 #if !defined(AFX_CHANGEGAMESETTINGS_H__BFA59E6F_E70A_49A7_90A6_F04D3C321CA6__INCLUDED_)
 #define AFX_CHANGEGAMESETTINGS_H__BFA59E6F_E70A_49A7_90A6_F04D3C321CA6__INCLUDED_
 
-#if _MSC_VER > 1000
+#if defined(_MSC_VER)
 #pragma once
-#endif // _MSC_VER > 1000
+#endif
 // ChangeGameSettings.h : header file
 //
 

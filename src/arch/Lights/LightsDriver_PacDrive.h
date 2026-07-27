@@ -15,7 +15,7 @@ class LightsDriver_PacDrive : public LightsDriver
 	public:
 	LightsDriver_PacDrive();
 	virtual ~LightsDriver_PacDrive();
-	
+
 	virtual void Set( const LightsState *ls );
 };
 

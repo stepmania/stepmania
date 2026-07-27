@@ -15,6 +15,10 @@
 #include "ThemeMetric.h"
 #include "ScreenDimensions.h"
 
+#include <cmath>
+#include <vector>
+
+
 const int MAX_WHEEL_SOUND_SPEED = 15;
 AutoScreenMessage( SM_SongChanged ); // TODO: Replace this with a Message and MESSAGEMAN
 
@@ -41,7 +45,7 @@ WheelBase::~WheelBase()
 	m_LastSelection = nullptr;
 }
 
-void WheelBase::Load( RString sType ) 
+void WheelBase::Load( RString sType )
 {
 	LOG->Trace( "WheelBase::Load('%s')", sType.c_str() );
 	ASSERT( this->GetNumChildren() == 0 ); // only load once
@@ -87,7 +91,7 @@ void WheelBase::Load( RString sType )
 	ActorUtil::LoadAllCommands( *m_sprHighlight, m_sName );
 
 	m_ScrollBar.SetName( "ScrollBar" );
-	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
+	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
 	this->AddChild( &m_ScrollBar );
 	ActorUtil::LoadAllCommands( m_ScrollBar, m_sName );
 
@@ -137,7 +141,7 @@ void WheelBase::SetPositions()
 	{
 		WheelItemBase *pDisplay = m_WheelBaseItems[i];
 		const float fOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
-		if( fabsf(fOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
+		if( std::abs(fOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
 			pDisplay->SetVisible( false );
 		else
 			pDisplay->SetVisible( true );
@@ -170,7 +174,7 @@ void WheelBase::Update( float fDeltaTime )
 	if( m_Moving )
 	{
 		m_TimeBeforeMovingBegins -= fDeltaTime;
-		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
+		m_TimeBeforeMovingBegins = std::max(m_TimeBeforeMovingBegins, 0.0f);
 	}
 
 	// update wheel state
@@ -185,10 +189,10 @@ void WheelBase::Update( float fDeltaTime )
 		float fTime = fDeltaTime;
 		while( fTime > 0 )
 		{
-			float t = min( fTime, 0.1f );
+			float t = std::min( fTime, 0.1f );
 			fTime -= t;
 
-			m_fPositionOffsetFromSelection = clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );
+			m_fPositionOffsetFromSelection = std::clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );
 
 			float fSpringForce = - m_fPositionOffsetFromSelection * LOCKED_INITIAL_VELOCITY;
 			m_fLockedWheelVelocity += fSpringForce;
@@ -198,7 +202,7 @@ void WheelBase::Update( float fDeltaTime )
 
 			m_fPositionOffsetFromSelection  += m_fLockedWheelVelocity*t;
 
-			if( fabsf(m_fPositionOffsetFromSelection) < 0.01f  &&  fabsf(m_fLockedWheelVelocity) < 0.01f )
+			if( std::abs(m_fPositionOffsetFromSelection) < 0.01f  &&  std::abs(m_fLockedWheelVelocity) < 0.01f )
 			{
 				m_fPositionOffsetFromSelection = 0;
 				m_fLockedWheelVelocity = 0;
@@ -214,7 +218,7 @@ void WheelBase::Update( float fDeltaTime )
 
 		/* Make sure that we don't go further than 1 away, in case the speed is
 		 * very high or we miss a lot of frames. */
-		m_fPositionOffsetFromSelection  = clamp(m_fPositionOffsetFromSelection, -1.0f, 1.0f);
+		m_fPositionOffsetFromSelection  = std::clamp(m_fPositionOffsetFromSelection, -1.0f, 1.0f);
 
 		// If it passed the selection, move again.
 		if((m_Moving == -1 && m_fPositionOffsetFromSelection >= 0) ||
@@ -236,7 +240,7 @@ void WheelBase::Update( float fDeltaTime )
 	else
 	{
 		// "rotate" wheel toward selected song
-		float fSpinSpeed = 0.2f + fabsf( m_fPositionOffsetFromSelection ) / SWITCH_SECONDS;
+		float fSpinSpeed = 0.2f + std::abs( m_fPositionOffsetFromSelection ) / SWITCH_SECONDS;
 
 		if( m_fPositionOffsetFromSelection > 0 )
 		{
@@ -284,6 +288,9 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 	case WheelItemDataType_Section:
 		{
 			RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
+			// Keep track of the open section so that we can restore it
+			// when navigating back to ScreenSelectMusic.
+			GAMESTATE->sLastOpenSection = sThisItemSectionName;
 			if( m_sExpandedSectionName == sThisItemSectionName ) // already expanded
 			{
 				SetOpenSection( "" ); // collapse it
@@ -345,7 +352,7 @@ void WheelBase::ChangeMusicUnlessLocked( int n )
 	{
 		if(n)
 		{
-			int iSign = n/abs(n);
+			int iSign = n / std::abs(n);
 			m_fLockedWheelVelocity = iSign*LOCKED_INITIAL_VELOCITY;
 			m_soundLocked.Play(true);
 		}
@@ -364,7 +371,7 @@ void WheelBase::Move(int n)
 	{
 		if(n)
 		{
-			int iSign = n/abs(n);
+			int iSign = n / std::abs(n);
 			m_fLockedWheelVelocity = iSign*LOCKED_INITIAL_VELOCITY;
 			m_soundLocked.Play(true);
 		}
@@ -386,8 +393,8 @@ bool WheelBase::MoveSpecific( int n )
 {
 	/* If we're not selecting, discard this.  We won't ignore it; we'll
 	 * get called again every time the key is repeated. */
-	/* Still process Move(0) so we sometimes continue moving immediate 
-	 * after the sort change finished and before the repeat event causes a 
+	/* Still process Move(0) so we sometimes continue moving immediate
+	 * after the sort change finished and before the repeat event causes a
 	 * Move(0). -Chris */
 	switch( m_WheelState )
 	{
@@ -407,7 +414,7 @@ bool WheelBase::MoveSpecific( int n )
 		/* We were moving, and now we're stopping.  If we're really close to
 		 * the selection, move to the next one, so we have a chance to spin down
 		 * smoothly. */
-		if(fabsf(m_fPositionOffsetFromSelection) < 0.25f )
+		if(std::abs(m_fPositionOffsetFromSelection) < 0.25f )
 			ChangeMusic(m_Moving);
 
 		/* Make sure the user always gets an SM_SongChanged when
@@ -436,8 +443,8 @@ void WheelBase::ChangeMusic( int iDist )
 
 void WheelBase::RebuildWheelItems( int iDist )
 {
-	const vector<WheelItemBaseData *> &data = m_CurWheelItemData;
-	vector<WheelItemBase *> &items = m_WheelBaseItems;
+	const std::vector<WheelItemBaseData*> &data = m_CurWheelItemData;
+	std::vector<WheelItemBase*> &items = m_WheelBaseItems;
 
 	// rewind to first index that will be displayed;
 	int iFirstVisibleIndex = m_iSelection;
@@ -500,7 +507,7 @@ int WheelBase::FirstVisibleIndex()
 	int iFirstVisibleIndex = m_iSelection;
 	if( m_iSelection >= int(m_CurWheelItemData.size()) )
 		m_iSelection = 0;
-	
+
 	// find the first wheel item shown
 	iFirstVisibleIndex -= NUM_WHEEL_ITEMS/2;
 
@@ -511,7 +518,7 @@ int WheelBase::FirstVisibleIndex()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the WheelBase. */ 
+/** @brief Allow Lua to have access to the WheelBase. */
 class LunaWheelBase: public Luna<WheelBase>
 {
 public:
@@ -562,7 +569,7 @@ LUA_REGISTER_DERIVED_CLASS( WheelBase, ActorFrame )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -572,7 +579,7 @@ LUA_REGISTER_DERIVED_CLASS( WheelBase, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

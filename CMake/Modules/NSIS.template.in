@@ -6,7 +6,6 @@
   !define VERSION "@CPACK_PACKAGE_VERSION@"
   !define PATCH  "@CPACK_PACKAGE_VERSION_PATCH@"
   !define INST_DIR "@CPACK_TEMPORARY_DIRECTORY@"
-  !define NSIS_SOURCE_PATH "@CPACK_SM_NSIS_ROOT_DIR@"
 
 ;--------------------------------
 ;Variables
@@ -35,43 +34,21 @@
   Name "@CPACK_NSIS_PACKAGE_NAME@"
   OutFile "@CPACK_TOPLEVEL_DIRECTORY@/@CPACK_OUTPUT_FILE_NAME@"
 
-  ;Captions for the process.
-  Caption "@CPACK_NSIS_PACKAGE_NAME@ | install"
-  UninstallCaption "@CPACK_NSIS_PACKAGE_NAME@ | uninstall"
-
   ;Set compression
   SetCompressor @CPACK_NSIS_COMPRESSOR@
-
-  ;Allow for optimized blocks. This can be off.
-  SetDatablockOptimize on
-
-  ;Utilize a checksum for safety.
-  CRCCheck on
 
   ;Require administrator access
   RequestExecutionLevel admin
 
 @CPACK_NSIS_DEFINES@
+@CPACK_NSIS_MANIFEST_DPI_AWARE_CODE@
+@CPACK_NSIS_BRANDING_TEXT_CODE@
 
   ; Some additional version information.
   VIProductVersion "@CPACK_SM_NSIS_PRODUCT_VERSION@"
   VIAddVersionKey "ProductName" "@CPACK_SM_NSIS_PRODUCT_ID@"
   VIAddVersionKey "FileVersion" "@CPACK_SM_NSIS_GIT_VERSION@"
   VIAddVersionKey "FileDescription" "@CPACK_SM_NSIS_PRODUCT_ID@ Installer"
-
-  ; Have the window close automatically at the end.
-  AutoCloseWindow true
-
-  ; Allow for restoring files to their original date.
-  SetDateSave on
-
-  ; Attempt to register an entry in the registry.
-  InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\@CPACK_SM_NSIS_PRODUCT_ID@" ""
-
-  DirText "@CPACK_NSIS_PACKAGE_NAME@"
-
-  ; Allow for smooth progress bars.
-  InstProgressFlags smooth
 
   !include Sections.nsh
 
@@ -186,17 +163,7 @@ Var AR_RegFlags
 ;Interface Settings
 
   !define MUI_HEADERIMAGE
-  ; The following two MUST use backslashes on Windows for some gosh-awful reason.
-  !define MUI_HEADERIMAGE_BITMAP "@CPACK_SM_NSIS_HEADER_BITMAP@"
-  !define MUI_WELCOMEFINISHPAGE_BITMAP "@CPACK_SM_NSIS_WELCOME_BITMAP@"
   !define MUI_ABORTWARNING
-
-;--------------------------------
-; path functions
-
-!verbose 3
-!include "WinMessages.NSH"
-!verbose 4
 
 ;----------------------------------------
 ; based upon a script of "Written by KiCHiK 2003-01-18 05:57:02"
@@ -565,25 +532,20 @@ FunctionEnd
 !endif
 
 ;--------------------------------
-; Installation types
-@CPACK_NSIS_INSTALLATION_TYPES@
-
-;--------------------------------
-; Component sections
-@CPACK_NSIS_COMPONENT_SECTIONS@
-
-;--------------------------------
 ; Define some macro setting for the gui
 @CPACK_NSIS_INSTALLER_MUI_ICON_CODE@
 @CPACK_NSIS_INSTALLER_ICON_CODE@
-@CPACK_NSIS_INSTALLER_MUI_COMPONENTS_DESC@
+@CPACK_NSIS_INSTALLER_MUI_WELCOMEFINISH_CODE@
+@CPACK_NSIS_INSTALLER_MUI_UNWELCOMEFINISH_CODE@
 @CPACK_NSIS_INSTALLER_MUI_FINISHPAGE_RUN_CODE@
 
 ;--------------------------------
 ;Pages
+  @CPACK_NSIS_INSTALLER_WELCOME_TITLE_CODE@
+  @CPACK_NSIS_INSTALLER_WELCOME_TITLE_3LINES_CODE@
   !insertmacro MUI_PAGE_WELCOME
 
-  !insertmacro MUI_PAGE_LICENSE "@CPACK_RESOURCE_FILE_LICENSE@"
+  @CPACK_NSIS_LICENSE_PAGE@
   Page custom InstallOptionsPage
   !insertmacro MUI_PAGE_DIRECTORY
 
@@ -591,15 +553,16 @@ FunctionEnd
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX"
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@"
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "@CPACK_SM_NSIS_PRODUCT_ID@"
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
   @CPACK_NSIS_PAGE_COMPONENTS@
 
   !insertmacro MUI_PAGE_INSTFILES
+  @CPACK_NSIS_INSTALLER_FINISH_TITLE_CODE@
+  @CPACK_NSIS_INSTALLER_FINISH_TITLE_3LINES_CODE@
   
   ; Modify the settings for MUI_PAGE_FINISH here.
-  !define MUI_FINISHPAGE_NOAUTOCLOSE
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\Program\StepMania.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_RUN_TEXT "Launch StepMania"
   
@@ -612,21 +575,27 @@ FunctionEnd
 ;Languages
 
   !insertmacro MUI_LANGUAGE "English" ;first language is the default language
+  !insertmacro MUI_LANGUAGE "Afrikaans"
   !insertmacro MUI_LANGUAGE "Albanian"
   !insertmacro MUI_LANGUAGE "Arabic"
+  !insertmacro MUI_LANGUAGE "Asturian"
   !insertmacro MUI_LANGUAGE "Basque"
   !insertmacro MUI_LANGUAGE "Belarusian"
   !insertmacro MUI_LANGUAGE "Bosnian"
   !insertmacro MUI_LANGUAGE "Breton"
   !insertmacro MUI_LANGUAGE "Bulgarian"
+  !insertmacro MUI_LANGUAGE "Catalan"
+  !insertmacro MUI_LANGUAGE "Corsican"
   !insertmacro MUI_LANGUAGE "Croatian"
   !insertmacro MUI_LANGUAGE "Czech"
   !insertmacro MUI_LANGUAGE "Danish"
   !insertmacro MUI_LANGUAGE "Dutch"
+  !insertmacro MUI_LANGUAGE "Esperanto"
   !insertmacro MUI_LANGUAGE "Estonian"
   !insertmacro MUI_LANGUAGE "Farsi"
   !insertmacro MUI_LANGUAGE "Finnish"
   !insertmacro MUI_LANGUAGE "French"
+  !insertmacro MUI_LANGUAGE "Galician"
   !insertmacro MUI_LANGUAGE "German"
   !insertmacro MUI_LANGUAGE "Greek"
   !insertmacro MUI_LANGUAGE "Hebrew"
@@ -645,24 +614,30 @@ FunctionEnd
   !insertmacro MUI_LANGUAGE "Malay"
   !insertmacro MUI_LANGUAGE "Mongolian"
   !insertmacro MUI_LANGUAGE "Norwegian"
+  !insertmacro MUI_LANGUAGE "NorwegianNynorsk"
+  !insertmacro MUI_LANGUAGE "Pashto"
   !insertmacro MUI_LANGUAGE "Polish"
   !insertmacro MUI_LANGUAGE "Portuguese"
   !insertmacro MUI_LANGUAGE "PortugueseBR"
   !insertmacro MUI_LANGUAGE "Romanian"
   !insertmacro MUI_LANGUAGE "Russian"
+  !insertmacro MUI_LANGUAGE "ScotsGaelic"
   !insertmacro MUI_LANGUAGE "Serbian"
   !insertmacro MUI_LANGUAGE "SerbianLatin"
   !insertmacro MUI_LANGUAGE "SimpChinese"
   !insertmacro MUI_LANGUAGE "Slovak"
   !insertmacro MUI_LANGUAGE "Slovenian"
   !insertmacro MUI_LANGUAGE "Spanish"
+  !insertmacro MUI_LANGUAGE "SpanishInternational"
   !insertmacro MUI_LANGUAGE "Swedish"
+  !insertmacro MUI_LANGUAGE "Tatar"
   !insertmacro MUI_LANGUAGE "Thai"
   !insertmacro MUI_LANGUAGE "TradChinese"
   !insertmacro MUI_LANGUAGE "Turkish"
   !insertmacro MUI_LANGUAGE "Ukrainian"
+  !insertmacro MUI_LANGUAGE "Uzbek"
+  !insertmacro MUI_LANGUAGE "Vietnamese"
   !insertmacro MUI_LANGUAGE "Welsh"
-
 
 ;--------------------------------
 ;Reserve Files
@@ -674,6 +649,17 @@ FunctionEnd
   ReserveFile "NSIS.InstallOptions.ini"
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
+  ; for UserInfo::GetName and UserInfo::GetAccountType
+  ReserveFile /plugin 'UserInfo.dll'
+
+;--------------------------------
+; Installation types
+@CPACK_NSIS_INSTALLATION_TYPES@
+
+;--------------------------------
+; Component sections
+@CPACK_NSIS_COMPONENT_SECTIONS@
+@CPACK_NSIS_INSTALLER_MUI_COMPONENTS_DESC@
 ;--------------------------------
 ;Installer Sections
 
@@ -688,27 +674,18 @@ Section "-Core installation"
   WriteRegStr SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "" $INSTDIR
 
   ;Create uninstaller
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
+  WriteUninstaller "$INSTDIR\@CPACK_NSIS_UNINSTALL_NAME@.exe"
   Push "DisplayName"
   Push "@CPACK_NSIS_DISPLAY_NAME@"
   Call ConditionalAddToRegisty
   Push "DisplayVersion"
   Push "@CPACK_PACKAGE_VERSION@"
   Call ConditionalAddToRegisty
-  Push "Comments"
-  Push "StepMania @CPACK_PACKAGE_VERSION_MAJOR@ is a rhythm game simulator."
-  Call ConditionalAddToRegisty
   Push "Publisher"
   Push "@CPACK_PACKAGE_VENDOR@"
   Call ConditionalAddToRegisty
-  Push "URLInfoAbout"
-  Push "@CPACK_NSIS_URL_INFO_ABOUT@"
-  Call ConditionalAddToRegisty
-  Push "URLUpdateInfo"
-  Push "@CPACK_SM_NSIS_REPOSITORY@"
-  Call ConditionalAddToRegisty
   Push "UninstallString"
-  Push "$INSTDIR\Uninstall.exe"
+  Push "$\"$INSTDIR\@CPACK_NSIS_UNINSTALL_NAME@.exe$\""
   Call ConditionalAddToRegisty
   Push "NoRepair"
   Push "1"
@@ -732,6 +709,9 @@ Section "-Core installation"
   Push "HelpLink"
   Push "@CPACK_NSIS_HELP_LINK@"
   Call ConditionalAddToRegisty
+  Push "URLInfoAbout"
+  Push "@CPACK_NSIS_URL_INFO_ABOUT@"
+  Call ConditionalAddToRegisty
   Push "Contact"
   Push "@CPACK_NSIS_CONTACT@"
   Call ConditionalAddToRegisty
@@ -742,12 +722,6 @@ Section "-Core installation"
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\StepMania.exe" "%1"'
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
   
-  ; Associate SMURL protocol.
-  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania" "" "StepMania protocol handler"
-  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania" "URL Protocol" ""
-  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania\DefaultIcon" "" "$INSTDIR\Program\StepMania.exe"
-  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania\shell\open\command" "" '"$INSTDIR\Program\StepMania.exe" "%1"'
-  
   !insertmacro MUI_INSTALLOPTIONS_READ $INSTALL_DESKTOP "NSIS.InstallOptions.ini" "Field 5" "State"
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
@@ -755,7 +729,7 @@ Section "-Core installation"
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
 @CPACK_NSIS_CREATE_ICONS@
 @CPACK_NSIS_CREATE_ICONS_EXTRA@
-  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\@CPACK_NSIS_UNINSTALL_NAME@.exe"
 
   ;Read a value from an InstallOptions INI file
   !insertmacro MUI_INSTALLOPTIONS_READ $DO_NOT_ADD_TO_PATH "NSIS.InstallOptions.ini" "Field 2" "State"
@@ -894,7 +868,7 @@ Section "Uninstall"
 !endif
 
   ;Remove the uninstaller itself.
-  Delete "$INSTDIR\Uninstall.exe"
+  Delete "$INSTDIR\@CPACK_NSIS_UNINSTALL_NAME@.exe"
   DeleteRegKey SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@"
 
   ;Remove the installation directory if it is empty.
@@ -912,7 +886,7 @@ Section "Uninstall"
 @CPACK_NSIS_DELETE_ICONS@
 @CPACK_NSIS_DELETE_ICONS_EXTRA@
 
-  ;Delete empty start menu parent diretories
+  ;Delete empty start menu parent directories
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
 
   startMenuDeleteLoop:
@@ -931,7 +905,7 @@ Section "Uninstall"
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
 @CPACK_NSIS_DELETE_ICONS_EXTRA@
 
-  ;Delete empty start menu parent diretories
+  ;Delete empty start menu parent directories
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
 
   secondStartMenuDeleteLoop:
@@ -970,15 +944,17 @@ Function .onInit
 
   MessageBox MB_YESNOCANCEL|MB_ICONEXCLAMATION \
   "@CPACK_NSIS_PACKAGE_NAME@ is already installed. $\n$\nDo you want to uninstall the old version before installing the new one?" \
-  IDYES uninst IDNO inst
+  /SD IDYES IDYES uninst IDNO inst
   Abort
 
 ;Run the uninstaller
 uninst:
   ClearErrors
-  StrLen $2 "\Uninstall.exe"
-  StrCpy $3 $0 -$2 # remove "\Uninstall.exe" from UninstallString to get path
-  ExecWait '$0 _?=$3' ;Do not copy the uninstaller to a temp file
+  StrCpy $2 $0 1
+  StrCmp '"' $2 0 +3 ; checks if string is quoted (CPack before v3.20.6 did not quote it)
+  ExecWait '$0 /S'
+  Goto +2
+  ExecWait '"$0" /S'
 
   IfErrors uninst_failed inst
 uninst_failed:

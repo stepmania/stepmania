@@ -123,7 +123,7 @@ private:
 
 	void UpdateAnswerText();
 
-	wstring		m_sAnswer;
+	std::wstring		m_sAnswer;
 	bool		m_bShowAnswerCaret;
 	// todo: allow Left/Right to change caret location -aj
 	//int			m_iCaretLocation;

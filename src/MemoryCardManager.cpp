@@ -12,27 +12,31 @@
 #include "arch/MemoryCard/MemoryCardDriver_Null.h"
 #include "LuaManager.h"
 
+#include <cstddef>
+#include <vector>
+
+
 MemoryCardManager*	MEMCARDMAN = nullptr;	// global and accessible from anywhere in our program
 
-static void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
+static void MemoryCardOsMountPointInit( std::size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
 {
 	sNameOut = ssprintf( "MemoryCardOsMountPointP%d", int(i+1) );
 	defaultValueOut = "";
 }
 
-static void MemoryCardUsbBusInit( size_t /*PlayerNumber*/ i, RString &sNameOut, int &defaultValueOut )
+static void MemoryCardUsbBusInit( std::size_t /*PlayerNumber*/ i, RString &sNameOut, int &defaultValueOut )
 {
 	sNameOut = ssprintf( "MemoryCardUsbBusP%d", int(i+1) );
 	defaultValueOut = -1;
 }
 
-static void MemoryCardUsbPortInit( size_t /*PlayerNumber*/ i, RString &sNameOut, int &defaultValueOut )
+static void MemoryCardUsbPortInit( std::size_t /*PlayerNumber*/ i, RString &sNameOut, int &defaultValueOut )
 {
 	sNameOut = ssprintf( "MemoryCardUsbPortP%d",int(i+1) );
 	defaultValueOut = -1;
 }
 
-static void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, RString &sNameOut, int &defaultValueOut )
+static void MemoryCardUsbLevelInit( std::size_t /*PlayerNumber*/ i, RString &sNameOut, int &defaultValueOut )
 {
 	sNameOut = ssprintf( "MemoryCardUsbLevelP%d", int(i+1) );
 	defaultValueOut = -1;
@@ -42,14 +46,14 @@ static Preference<bool>	g_bMemoryCards( "MemoryCards", false );
 static Preference<bool>	g_bMemoryCardProfiles( "MemoryCardProfiles", true );
 
 // if set, always use the device that mounts to this point
-Preference1D<RString>		MemoryCardManager::m_sMemoryCardOsMountPoint( MemoryCardOsMountPointInit,	NUM_PLAYERS );
+Preference1D<RString>	MemoryCardManager::m_sMemoryCardOsMountPoint( MemoryCardOsMountPointInit, NUM_PLAYERS, PreferenceType::Immutable );
 
 // Look for this level, bus, port when assigning cards. -1 = match any
-Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbBus( MemoryCardUsbBusInit,			NUM_PLAYERS );
-Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbPort( MemoryCardUsbPortInit,			NUM_PLAYERS );
-Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbLevel( MemoryCardUsbLevelInit,		NUM_PLAYERS );
+Preference1D<int>	MemoryCardManager::m_iMemoryCardUsbBus( MemoryCardUsbBusInit, NUM_PLAYERS, PreferenceType::Immutable );
+Preference1D<int>	MemoryCardManager::m_iMemoryCardUsbPort( MemoryCardUsbPortInit, NUM_PLAYERS, PreferenceType::Immutable );
+Preference1D<int>	MemoryCardManager::m_iMemoryCardUsbLevel( MemoryCardUsbLevelInit, NUM_PLAYERS, PreferenceType::Immutable );
 
-Preference<RString>		MemoryCardManager::m_sEditorMemoryCardOsMountPoint( "EditorMemoryCardOsMountPoint",	"" );
+Preference<RString>	MemoryCardManager::m_sEditorMemoryCardOsMountPoint( "EditorMemoryCardOsMountPoint", "", nullptr, PreferenceType::Immutable );
 
 const RString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
 {
@@ -72,7 +76,7 @@ public:
 	ThreadedMemoryCardWorker();
 	~ThreadedMemoryCardWorker();
 
-	enum MountThreadState 
+	enum MountThreadState
 	{
 		detect_and_mount,
 		detect_and_dont_mount,
@@ -85,7 +89,7 @@ public:
 	bool Unmount( const UsbStorageDevice *pDevice );
 
 	// This function will not time out.
-	bool StorageDevicesChanged( vector<UsbStorageDevice> &aOut );
+	bool StorageDevicesChanged( std::vector<UsbStorageDevice> &aOut );
 
 protected:
 	void HandleRequest( int iRequest );
@@ -105,9 +109,9 @@ private:
 
 	RageMutex UsbStorageDevicesMutex;
 	bool m_bUsbStorageDevicesChanged;
-	vector<UsbStorageDevice> m_aUsbStorageDevices;
+	std::vector<UsbStorageDevice> m_aUsbStorageDevices;
 
-	vector<UsbStorageDevice> m_aMountedDevices;
+	std::vector<UsbStorageDevice> m_aMountedDevices;
 
 	enum
 	{
@@ -116,7 +120,7 @@ private:
 	};
 };
 
-bool ThreadedMemoryCardWorker::StorageDevicesChanged( vector<UsbStorageDevice> &aOut )
+bool ThreadedMemoryCardWorker::StorageDevicesChanged( std::vector<UsbStorageDevice> &aOut )
 {
 	UsbStorageDevicesMutex.Lock();
 	if( !m_bUsbStorageDevicesChanged )
@@ -181,7 +185,7 @@ void ThreadedMemoryCardWorker::HandleRequest( int iRequest )
 		case REQ_UNMOUNT:
 		{
 			m_pDriver->Unmount( &m_RequestDevice );
-			vector<UsbStorageDevice>::iterator it = 
+			std::vector<UsbStorageDevice>::iterator it =
 				find( m_aMountedDevices.begin(), m_aMountedDevices.end(), m_RequestDevice );
 			if( it == m_aMountedDevices.end() )
 				LOG->Warn( "Unmounted a device that wasn't mounted" );
@@ -211,7 +215,7 @@ void ThreadedMemoryCardWorker::DoHeartbeat()
 	// If true, detect and mount. If false, only detect.
 	bool bMount = (m_MountThreadState == detect_and_mount);
 
-	vector<UsbStorageDevice> aStorageDevices;
+	std::vector<UsbStorageDevice> aStorageDevices;
 	//LOG->Trace("update");
 	if( !m_pDriver->DoOneUpdate( bMount, aStorageDevices ) )
 		return;
@@ -275,7 +279,7 @@ MemoryCardManager::MemoryCardManager()
 		m_bMounted[p] = false;
 		m_State[p] = MemoryCardState_NoCard;
 	}
-	
+
 	/* These can play at any time.  Preload them, so we don't cause a skip in gameplay. */
 	m_soundReady.Load( THEME->GetPathS("MemoryCardManager","ready"), true );
 	m_soundError.Load( THEME->GetPathS("MemoryCardManager","error"), true );
@@ -309,8 +313,8 @@ MemoryCardManager::~MemoryCardManager()
 
 void MemoryCardManager::Update()
 {
-	vector<UsbStorageDevice> vOld;
-	
+	std::vector<UsbStorageDevice> vOld;
+
 	vOld = m_vStorageDevices;	// copy
 	if( !g_pWorker->StorageDevicesChanged( m_vStorageDevices ) )
 		return;
@@ -327,7 +331,7 @@ void MemoryCardManager::UpdateAssignments()
 		return;
 
 	// make a list of unassigned
-	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices; // copy
+	std::vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices; // copy
 
 	// remove cards that are already assigned
 	FOREACH_PlayerNumber( p )
@@ -336,7 +340,7 @@ void MemoryCardManager::UpdateAssignments()
 		if( assigned_device.IsBlank() )     // no card assigned to this player
 			continue;
 
-		for (vector<UsbStorageDevice>::iterator d = vUnassignedDevices.begin(); d != vUnassignedDevices.end(); ++d)
+		for (std::vector<UsbStorageDevice>::iterator d = vUnassignedDevices.begin(); d != vUnassignedDevices.end(); ++d)
 		{
 			if( *d == assigned_device )
 			{
@@ -354,7 +358,7 @@ void MemoryCardManager::UpdateAssignments()
 		if( !assigned_device.IsBlank() )
 		{
 			// The player has a card assigned. If it's been removed, clear it.
-			vector<UsbStorageDevice>::iterator it = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), assigned_device );
+			std::vector<UsbStorageDevice>::iterator it = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), assigned_device );
 			if( it != m_vStorageDevices.end() )
 			{
 				/* The player has a card, and it's still plugged in. Update any
@@ -371,27 +375,27 @@ void MemoryCardManager::UpdateAssignments()
 		}
 
 		LOG->Trace( "Looking for a card for Player %d", p+1 );
-		
-		for (vector<UsbStorageDevice>::iterator d = vUnassignedDevices.begin(); d != vUnassignedDevices.end(); ++d)
+
+		for (std::vector<UsbStorageDevice>::iterator d = vUnassignedDevices.begin(); d != vUnassignedDevices.end(); ++d)
 		{
 			// search for card dir match
 			if( !m_sMemoryCardOsMountPoint[p].Get().empty() &&
 				d->sOsMountDir.CompareNoCase(m_sMemoryCardOsMountPoint[p].Get()) )
 				continue; // not a match
-			
+
 			// search for USB bus match
 			if( m_iMemoryCardUsbBus[p] != -1 &&
 				m_iMemoryCardUsbBus[p] != d->iBus )
 				continue; // not a match
-			
+
 			if( m_iMemoryCardUsbPort[p] != -1 &&
 				m_iMemoryCardUsbPort[p] != d->iPort )
 				continue; // not a match
-			
+
 			if( m_iMemoryCardUsbLevel[p] != -1 &&
 				m_iMemoryCardUsbLevel[p] != d->iLevel )
 				continue;// not a match
-			
+
 			LOG->Trace( "Player %i: matched %s", p+1, d->sDevice.c_str() );
 
 			assigned_device = *d; // save a copy
@@ -481,7 +485,7 @@ void MemoryCardManager::CheckStateChanges()
 					if( LastState == MemoryCardState_Ready )
 					{
 						m_soundDisconnect.Play(true, &params);
-						MESSAGEMAN->Broadcast( (MessageID)(Message_CardRemovedP1+p) );
+						MESSAGEMAN->Broadcast( (MessageID)(Message_CardRemovedP1+Enum::to_integral(p)) );
 					}
 					break;
 				case MemoryCardState_Ready:
@@ -714,7 +718,7 @@ void MemoryCardManager::UnPauseMountingThread()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the MemoryCardManager. */ 
+/** @brief Allow Lua to have access to the MemoryCardManager. */
 class LunaMemoryCardManager: public Luna<MemoryCardManager>
 {
 public:
@@ -745,7 +749,7 @@ LUA_REGISTER_CLASS( MemoryCardManager )
 /*
  * (c) 2003-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -755,7 +759,7 @@ LUA_REGISTER_CLASS( MemoryCardManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

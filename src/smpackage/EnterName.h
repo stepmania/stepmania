@@ -1,9 +1,9 @@
 #if !defined(AFX_ENTERNAME_H__0AB99274_EB79_4A25_B95C_627E0A99C6BA__INCLUDED_)
 #define AFX_ENTERNAME_H__0AB99274_EB79_4A25_B95C_627E0A99C6BA__INCLUDED_
 
-#if _MSC_VER > 1000
+#if defined(_MSC_VER)
 #pragma once
-#endif // _MSC_VER > 1000
+#endif
 // EnterName.h : header file
 
 /////////////////////////////////////////////////////////////////////////////

@@ -30,6 +30,10 @@
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
 
+#include <cmath>
+#include <cstddef>
+#include <vector>
+
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
 #define BANNER_HEIGHT			THEME->GetMetricF(m_sName,"BannerHeight")
@@ -129,7 +133,7 @@ void ScreenEvaluation::Init()
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
 			if( GAMESTATE->m_pCurCourse )
 			{
-				vector<Trail*> apTrails;
+				std::vector<Trail*> apTrails;
 				GAMESTATE->m_pCurCourse->GetAllTrails( apTrails );
 				if( apTrails.size() )
 					GAMESTATE->m_pCurTrail[p].Set( apTrails[0] );
@@ -143,7 +147,7 @@ void ScreenEvaluation::Init()
 
 		for( float f = 0; f < 100.0f; f += 1.0f )
 		{
-			float fP1 = fmodf(f/100*4+.3f,1);
+			float fP1 = std::fmod(f/100*4+.3f,1);
 			ss.m_player[PLAYER_1].SetLifeRecordAt( fP1, f );
 			ss.m_player[PLAYER_2].SetLifeRecordAt( 1-fP1, f );
 		}
@@ -263,7 +267,7 @@ void ScreenEvaluation::Init()
 	{
 		if( SUMMARY )
 		{
-			for( size_t i=0; i<m_pStageStats->m_vpPlayedSongs.size()
+			for( std::size_t i=0; i<m_pStageStats->m_vpPlayedSongs.size()
 						 && i < MAX_SONGS_TO_SHOW; i++ )
 			{
 				Song *pSong = m_pStageStats->m_vpPlayedSongs[i];
@@ -311,7 +315,7 @@ void ScreenEvaluation::Init()
 				m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
 				ActorUtil::LoadAllCommands( m_textPlayerOptions[p], m_sName );
 				SET_XY( m_textPlayerOptions[p] );
-				vector<RString> v;
+				std::vector<RString> v;
 				PlayerOptions po = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetPreferred();
 				if( PLAYER_OPTIONS_HIDE_FAIL_TYPE )
 					po.m_FailType = (FailType)0;	// blank out the fail type so that it won't show in the mods list
@@ -581,8 +585,8 @@ void ScreenEvaluation::Init()
 					RadarCategory_Hands, RadarCategory_Rolls, RadarCategory_Lifts, RadarCategory_Fakes
 				};
 				const int ind = indices[l];
-				const int iActual = lrintf(m_pStageStats->m_player[p].m_radarActual[ind]);
-				const int iPossible = lrintf(m_pStageStats->m_player[p].m_radarPossible[ind]);
+				const int iActual = std::lrint(m_pStageStats->m_player[p].m_radarActual[ind]);
+				const int iPossible = std::lrint(m_pStageStats->m_player[p].m_radarPossible[ind]);
 
 				// todo: check if format string is valid
 				// (two integer values in DETAILLINE_FORMAT) -aj
@@ -666,7 +670,7 @@ void ScreenEvaluation::Init()
 
 	Grade best_grade = Grade_NoData;
 	FOREACH_PlayerNumber( p )
-		best_grade = min( best_grade, grade[p] );
+		best_grade = std::min( best_grade, grade[p] );
 
 	if( m_pStageStats->m_EarnedExtraStage != EarnedExtraStage_No )
 	{
@@ -724,6 +728,13 @@ bool ScreenEvaluation::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return false;
+
+	if (input.MenuI == GAME_BUTTON_RESTART && input.type == IET_FIRST_PRESS &&
+		GAMESTATE->IsEventMode() && !GAMESTATE->IsCourseMode())
+	{
+		return MenuRestart(input);
+	}
+
 
 	if( input.GameI.IsValid() )
 	{
@@ -788,6 +799,16 @@ bool ScreenEvaluation::MenuStart( const InputEventPlus &input )
 	m_soundStart.Play(true);
 
 	HandleMenuStart();
+	return true;
+}
+
+bool ScreenEvaluation::MenuRestart( const InputEventPlus &input )
+{
+	if( IsTransitioning() )
+		return false;
+
+	SCREENMAN->GetTopScreen()->SetNextScreenName("ScreenGameplay");
+	StartTransitioningScreen( SM_GoToNextScreen );
 	return true;
 }
 

@@ -8,15 +8,18 @@
 #include "arch/Lights/LightsDriver_SystemMessage.h"
 #include "arch/Lights/LightsDriver_Export.h"
 
+#include <vector>
+
+
 DriverList LightsDriver::m_pDriverList;
 
-void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
+void LightsDriver::Create( const RString &sDrivers, std::vector<LightsDriver *> &Add )
 {
 	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
 
-	vector<RString> asDriversToTry;
+	std::vector<RString> asDriversToTry;
 	split( sDrivers, ",", asDriversToTry, true );
-	
+
 	for (RString const &Driver : asDriversToTry)
 	{
 		RageDriver *pRet = m_pDriverList.Create( Driver );
@@ -51,7 +54,7 @@ void LightsDriver::Reset()
 /*
  * (c) 2002-2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -61,7 +64,7 @@ void LightsDriver::Reset()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

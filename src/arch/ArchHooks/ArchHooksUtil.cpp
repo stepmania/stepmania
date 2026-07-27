@@ -1,6 +1,8 @@
 #include "global.h"
 #include "ArchHooks.h"
 
+#include <cstdint>
+
 /*
  * This is a helper for GetMicrosecondsSinceStart on systems with a system
  * timer that may loop or move backwards.
@@ -25,15 +27,15 @@
  * bAccurate == false.
  */
 
-int64_t ArchHooks::FixupTimeIfLooped( int64_t usecs )
+std::int64_t ArchHooks::FixupTimeIfLooped( std::int64_t usecs )
 {
-	static int64_t last = 0;
-	static int64_t offset_us = 0;
+	static std::int64_t last = 0;
+	static std::int64_t offset_us = 0;
 
 	/* The time has wrapped if the last time was very high and the current time is very low. */
-	const int64_t i32BitMaxMs = uint64_t(1) << 32;
-	const int64_t i32BitMaxUs = i32BitMaxMs*1000;
-	const int64_t one_day = uint64_t(24*60*60)*1000000;
+	const std::int64_t i32BitMaxMs = std::uint64_t(1) << 32;
+	const std::int64_t i32BitMaxUs = i32BitMaxMs*1000;
+	const std::int64_t one_day = std::uint64_t(24*60*60)*1000000;
 	if( last > (i32BitMaxUs-one_day) && usecs < one_day )
 		offset_us += i32BitMaxUs;
 
@@ -42,10 +44,10 @@ int64_t ArchHooks::FixupTimeIfLooped( int64_t usecs )
 	return usecs + offset_us;
 }
 
-int64_t ArchHooks::FixupTimeIfBackwards( int64_t usecs )
+std::int64_t ArchHooks::FixupTimeIfBackwards( std::int64_t usecs )
 {
-	static int64_t last = 0;
-	static int64_t offset_us = 0;
+	static std::int64_t last = 0;
+	static std::int64_t offset_us = 0;
 
 	if( usecs < last )
 	{
@@ -61,7 +63,7 @@ int64_t ArchHooks::FixupTimeIfBackwards( int64_t usecs )
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -71,7 +73,7 @@ int64_t ArchHooks::FixupTimeIfBackwards( int64_t usecs )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

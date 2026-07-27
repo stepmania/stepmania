@@ -1,7 +1,7 @@
 /* Auto-generated config.h file powered by cmake. */
 
 /* Defined to 1 if the compiler supports prototype functions. */
-#cmakedefine HAVE_PROTOTYPES 1
+#define HAVE_PROTOTYPES 1
 
 /* Defined to 1 if we have access to stddef.h */
 #cmakedefine HAVE_STDDEF_H 1
@@ -17,16 +17,10 @@
 #endif
 
 /* Defined to 1 if we have an unsigned char type. */
-#cmakedefine HAVE_SIZEOF_UNSIGNED_CHAR 1
-#if defined(HAVE_SIZEOF_UNSIGNED_CHAR)
 #define HAVE_UNSIGNED_CHAR 1
-#endif
 
 /* Defined to 1 if we have an unsigned short type. */
-#cmakedefine HAVE_SIZEOF_UNSIGNED_SHORT 1
-#if defined(HAVE_SIZEOF_UNSIGNED_SHORT)
 #define HAVE_UNSIGNED_SHORT 1
-#endif
 
 /* At some point, allow for defining CHAR_IS_UNSIGNED. */
 
@@ -42,12 +36,3 @@
 
 /* Defined to 1 if incomplete types are broken. */
 #cmakedefine INCOMPLETE_TYPES_BROKEN 1
-
-/* Windows gets a special definition of boolean for some reason. */
-#if defined(WIN32)
-#if !defined(__RPCNDR_H__)
-typedef unsigned char boolean;
-#endif
-#define HAVE_BOOLEAN
-#endif
-

@@ -1,0 +1,30 @@
+[submodule "extern/IXWebSocket"]
+	path = extern/IXWebSocket
+	url = https://github.com/machinezone/IXWebSocket
+[submodule "extern/ffmpeg"]
+	path = extern/ffmpeg
+	url = https://github.com/FFmpeg/FFmpeg
+[submodule "extern/hidapi"]
+	path = extern/hidapi
+	url = https://github.com/libusb/hidapi
+[submodule "extern/ogg"]
+	path = extern/ogg
+	url = https://github.com/xiph/ogg
+[submodule "extern/mbedtls"]
+	path = extern/mbedtls
+	url = https://github.com/Mbed-TLS/mbedtls
+[submodule "extern/libusb"]
+	path = extern/libusb
+	url = https://github.com/libusb/libusb-cmake
+[submodule "extern/libtommath"]
+	path = extern/libtommath
+	url = https://github.com/libtom/libtommath
+[submodule "extern/libtomcrypt"]
+	path = extern/libtomcrypt
+	url = https://github.com/libtom/libtomcrypt
+[submodule "extern/vorbis"]
+	path = extern/vorbis
+	url = https://github.com/xiph/vorbis
+[submodule "extern/zlib"]
+	path = extern/zlib
+	url = https://github.com/madler/zlib

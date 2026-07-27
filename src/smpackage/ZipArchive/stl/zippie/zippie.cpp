@@ -123,10 +123,10 @@ protected:
 };
 
 
-typedef list<CZipString> FILELIST;
-typedef list<CZipString>::iterator FILELISTIT;
-typedef list<struct CZipAddFileInfo> FILELISTADD;
-typedef list<struct CZipAddFileInfo>::iterator FILELISTADDIT;
+typedef std::list<CZipString> FILELIST;
+typedef std::list<CZipString>::iterator FILELISTIT;
+typedef std::list<struct CZipAddFileInfo> FILELISTADD;
+typedef std::list<struct CZipAddFileInfo>::iterator FILELISTADDIT;
 
 struct AddDirectoryInfo
 {

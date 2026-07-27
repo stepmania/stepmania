@@ -1,6 +1,6 @@
 The following license applies to most of the sm-ssc additions:
 
-sm-ssc is copyright © AJ Kelly, Midiman, shakesoda (referred to as
+sm-ssc is copyright Â© AJ Kelly, Midiman, shakesoda (referred to as
 "the spinal shark collective" hereafter), and other contributors.
 All rights reserved.
 
@@ -49,6 +49,43 @@ OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
 OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
+
+******************************************************************************
+
+Some code from ITGmania (while it was MIT licensed) has been merged back
+into the StepMania codebase. The relevant code spans from the beginning
+of ITGmania (https://github.com/itgmania/itgmania/tree/v0.5.1) to
+9737482f7c50dccd52ea36aecad7127fbbf942f4 (September 2024).
+
+These following people made this possible:
+https://github.com/natano
+https://github.com/jenxness
+https://github.com/teejusb
+https://github.com/dinsfire64
+https://github.com/JeffreyATW
+https://github.com/zachwalton
+https://github.com/telperion
+https://github.com/tertu-m
+https://github.com/quietly-turning
+https://github.com/jsirex
+https://github.com/bphlipot
+https://github.com/Alhetus
+https://github.com/geefr
+https://github.com/SheepyChris
+https://github.com/CrashCringle12
+https://github.com/bkirz
+https://github.com/ScottBrenner
+https://github.com/sergioperez
+https://github.com/mjvotaw
+https://github.com/SugoiFactory
+https://github.com/aeubanks
+https://github.com/x0rbl
+https://github.com/48productions
+https://github.com/glitchybear
+https://github.com/phantom10111
+https://github.com/florczakraf
+https://github.com/Pete-Lawrence
+https://github.com/sukibaby
 
 ******************************************************************************
 

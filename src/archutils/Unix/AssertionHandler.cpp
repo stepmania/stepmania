@@ -72,7 +72,7 @@ void UnexpectedExceptionHandler()
 
 void InstallExceptionHandler()
 {
-	set_terminate( UnexpectedExceptionHandler );
+	std::set_terminate( UnexpectedExceptionHandler );
 }
 
 /*

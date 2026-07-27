@@ -24,7 +24,7 @@ bool DifficultyIcon::Load( RString sPath )
 	Sprite::Load( sPath );
 	int iStates = GetNumStates();
 	bool bWarn = iStates != NUM_Difficulty  &&  iStates != NUM_Difficulty*2;
-	if( sPath.find("_blank") != string::npos )
+	if( sPath.find("_blank") != std::string::npos )
 		bWarn = false;
 	if( bWarn )
 	{

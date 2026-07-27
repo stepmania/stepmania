@@ -2,6 +2,8 @@
 #include "RageTypes.h"
 #include "LuaManager.h"
 
+#include <cmath>
+
 void RageColor::PushTable( lua_State *L ) const
 {
 	lua_newtable( L );
@@ -53,10 +55,10 @@ void RageColor::FromStackCompat( lua_State *L, int iPos )
 
 RString RageColor::ToString() const
 {
-	int iR = clamp( (int) lrintf(r * 255), 0, 255 );
-	int iG = clamp( (int) lrintf(g * 255), 0, 255 );
-	int iB = clamp( (int) lrintf(b * 255), 0, 255 );
-	int iA = clamp( (int) lrintf(a * 255), 0, 255 );
+	int iR = std::clamp( static_cast<int>(std::lrint(r * 255)), 0, 255 );
+	int iG = std::clamp( static_cast<int>(std::lrint(g * 255)), 0, 255 );
+	int iB = std::clamp( static_cast<int>(std::lrint(b * 255)), 0, 255 );
+	int iA = std::clamp( static_cast<int>(std::lrint(a * 255)), 0, 255 );
 
 	if( iA == 255 )
 		return ssprintf( "#%02X%02X%02X", iR, iG, iB );

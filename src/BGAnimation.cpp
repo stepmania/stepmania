@@ -8,6 +8,9 @@
 #include "LuaManager.h"
 #include "PrefsManager.h"
 
+#include <vector>
+
+
 REGISTER_ACTOR_CLASS(BGAnimation);
 
 BGAnimation::BGAnimation()
@@ -36,7 +39,7 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 	const RString& sAniDir = _sAniDir;
 
 	{
-		vector<RString> vsLayerNames;
+		std::vector<RString> vsLayerNames;
 		FOREACH_CONST_Child( pNode, pLayer )
 		{
 			if( strncmp(pLayer->GetName(), "Layer", 5) == 0 )
@@ -107,14 +110,14 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 			// This is a 3.9-style BGAnimation (using .ini)
 			IniFile ini;
 			ini.ReadFile( sPathToIni );
-			
+
 			AddLayersFromAniDir( sAniDir, &ini ); // TODO: Check for circular load
-			
+
 			XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 			XNode dummy( "BGAnimation" );
 			if( pBGAnimation == nullptr )
 				pBGAnimation = &dummy;
-			
+
 			LoadFromNode( pBGAnimation );
 		}
 		else // We don't officially support .ini files anymore.
@@ -129,7 +132,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		// This is an 3.0 and before-style BGAnimation (not using .ini)
 
 		// loading a directory of layers
-		vector<RString> asImagePaths;
+		std::vector<RString> asImagePaths;
 		ASSERT( sAniDir != "" );
 
 		GetDirListing( sAniDir+"*.png", asImagePaths, false, true );
@@ -180,7 +183,7 @@ void BGAnimation::LoadFromNode( const XNode* pNode )
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -190,7 +193,7 @@ void BGAnimation::LoadFromNode( const XNode* pNode )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

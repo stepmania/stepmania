@@ -25,7 +25,7 @@ RString werr_ssprintf( int err, const char *fmt, ... )
 	return s += ssprintf( " (%s)", text.c_str() );
 }
 
-RString ConvertWstringToCodepage( wstring s, int iCodePage )
+RString ConvertWstringToCodepage( std::wstring s, int iCodePage )
 {
 	if( s.empty() )
 		return RString();
@@ -48,17 +48,17 @@ RString ConvertUTF8ToACP( const RString &s )
 	return ConvertWstringToCodepage( RStringToWstring(s), CP_ACP );
 }
 
-wstring ConvertCodepageToWString( RString s, int iCodePage )
+std::wstring ConvertCodepageToWString( RString s, int iCodePage )
 {
 	if( s.empty() )
-		return wstring();
+		return std::wstring();
 
 	int iBytes = MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), nullptr, 0 );
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "MultiByteToWideChar" ).c_str() );
 
 	wchar_t *pTemp = new wchar_t[iBytes];
 	MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), pTemp, iBytes );
-	wstring sRet( pTemp, iBytes );
+	std::wstring sRet( pTemp, iBytes );
 	delete [] pTemp;
 
 	return sRet;

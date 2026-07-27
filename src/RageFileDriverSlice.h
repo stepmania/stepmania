@@ -5,6 +5,8 @@
 
 #include "RageFileBasic.h"
 
+#include <cstddef>
+
 class RageFileDriverSlice: public RageFileObj
 {
 public:
@@ -16,8 +18,8 @@ public:
 
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 
-	int ReadInternal( void *pBuffer, size_t iBytes );
-	int WriteInternal( const void * /* pBuffer */, size_t /* iBytes */ ) { SetError( "Not implemented" ); return -1; }
+	int ReadInternal( void *pBuffer, std::size_t iBytes );
+	int WriteInternal( const void * /* pBuffer */, std::size_t /* iBytes */ ) { SetError( "Not implemented" ); return -1; }
 	int SeekInternal( int iOffset );
 	int GetFileSize() const { return m_iFileSize; }
 	int GetFD() { return m_pFile->GetFD(); }

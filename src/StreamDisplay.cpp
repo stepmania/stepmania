@@ -1,10 +1,12 @@
 #include "global.h"
 #include "StreamDisplay.h"
 #include "GameState.h"
-#include <float.h>
 #include "RageDisplay.h"
 #include "ThemeManager.h"
 #include "EnumHelper.h"
+
+#include <cfloat>
+#include <cmath>
 
 static const char *StreamTypeNames[] = {
 	"Normal",
@@ -75,10 +77,10 @@ void StreamDisplay::Update( float fDeltaSecs )
 		// Just move straight to either full or empty.
 		if( m_fPercent <= 0 || m_fPercent >= 1 )
 		{
-			if( fabsf(fDelta) < 0.00001f )
+			if( std::abs(fDelta) < 0.00001f )
 				m_fVelocity = 0; // prevent div/0
 			else
-				m_fVelocity = (fDelta / fabsf(fDelta)) * VELOCITY_MULTIPLIER;
+				m_fVelocity = (fDelta / std::abs(fDelta)) * VELOCITY_MULTIPLIER;
 		}
 		else
 		{
@@ -141,12 +143,12 @@ void StreamDisplay::SetPercent( float fPercent )
 	float fLifeMultiplier = THEME->GetMetricF("LifeMeterBar","LifeMultiplier");
 #endif
 	DEBUG_ASSERT( fPercent >= 0.0f && fPercent <= 1.0f * fLifeMultiplier );
-	if( isnan(fPercent) )
+	if( std::isnan(fPercent) )
 	{
 		DEBUG_ASSERT_M( 0, "fPercent is NaN" );
 		fPercent = 1;
 	}
-	if( !isfinite(fPercent) )
+	if( !std::isfinite(fPercent) )
 	{
 		DEBUG_ASSERT_M( 0, "fPercent is infinite" );
 		fPercent = 1;
@@ -161,7 +163,7 @@ void StreamDisplay::SetPercent( float fPercent )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -171,7 +173,7 @@ void StreamDisplay::SetPercent( float fPercent )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

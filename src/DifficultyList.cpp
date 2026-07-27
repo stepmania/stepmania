@@ -7,14 +7,17 @@
 #include "StepsDisplay.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
-
 #include "SongUtil.h"
 #include "XmlFile.h"
+
+#include <cstddef>
+#include <vector>
+
 
 /** @brief Specifies the max number of charts available for a song.
  *
  * This includes autogenned charts. */
-#define MAX_METERS (NUM_Difficulty * NUM_StepsType) + MAX_EDITS_PER_SONG
+inline constexpr int MAX_METERS = (Enum::to_integral(NUM_Difficulty) * Enum::to_integral(NUM_StepsType)) + MAX_EDITS_PER_SONG;
 
 REGISTER_ACTOR_CLASS( StepsDisplayList );
 
@@ -24,8 +27,8 @@ StepsDisplayList::StepsDisplayList()
 
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
-		SubscribeToMessage( (MessageID)(Message_CurrentStepsP1Changed+pn) );
-		SubscribeToMessage( (MessageID)(Message_CurrentTrailP1Changed+pn) );
+		SubscribeToMessage( (MessageID)(Message_CurrentStepsP1Changed+Enum::to_integral(pn)) );
+		SubscribeToMessage( (MessageID)(Message_CurrentTrailP1Changed+Enum::to_integral(pn)) );
 	}
 }
 
@@ -133,36 +136,36 @@ void StepsDisplayList::UpdatePositions()
 	int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? iCurrentRow[PLAYER_1]: GAMESTATE->IsHumanPlayer(PLAYER_2)? iCurrentRow[PLAYER_2]: 0;
 	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? iCurrentRow[PLAYER_2]: GAMESTATE->IsHumanPlayer(PLAYER_1)? iCurrentRow[PLAYER_1]: 0;
 
-	vector<Row> &Rows = m_Rows;
+	std::vector<Row> &Rows = m_Rows;
 
 	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
 	if( !BothPlayersActivated )
 	{
 		// Simply center the cursor.
-		first_start = max( P1Choice - halfsize, 0 );
+		first_start = std::max( P1Choice - halfsize, 0 );
 		first_end = first_start + total;
 		second_start = second_end = first_end;
 	}
 	else
 	{
 		// First half:
-		const int earliest = min( P1Choice, P2Choice );
-		first_start = max( earliest - halfsize/2, 0 );
+		const int earliest = std::min( P1Choice, P2Choice );
+		first_start = std::max( earliest - halfsize/2, 0 );
 		first_end = first_start + halfsize;
 
 		// Second half:
-		const int latest = max( P1Choice, P2Choice );
+		const int latest = std::max( P1Choice, P2Choice );
 
-		second_start = max( latest - halfsize/2, 0 );
+		second_start = std::max( latest - halfsize/2, 0 );
 
 		// Don't overlap.
-		second_start = max( second_start, first_end );
+		second_start = std::max( second_start, first_end );
 
 		second_end = second_start + halfsize;
 	}
 
-	first_end = min( first_end, (int) Rows.size() );
-	second_end = min( second_end, (int) Rows.size() );
+	first_end = std::min( first_end, (int) Rows.size() );
+	second_end = std::min( second_end, (int) Rows.size() );
 
 	/* If less than total (and Rows.size()) are displayed, fill in the empty
 	 * space intelligently. */
@@ -213,13 +216,13 @@ void StepsDisplayList::UpdatePositions()
 
 void StepsDisplayList::PositionItems()
 {
-	for( int i = 0; i < MAX_METERS; ++i )
+	for( std::size_t i = 0; i < MAX_METERS; ++i )
 	{
-		bool bUnused = ( i >= (int)m_Rows.size() );
+		bool bUnused = ( i >= m_Rows.size() );
 		m_Lines[i].m_Meter.SetVisible( !bUnused );
 	}
 
-	for( int m = 0; m < (int)m_Rows.size(); ++m )
+	for( std::size_t m = 0; m < m_Rows.size(); ++m )
 	{
 		Row &row = m_Rows[m];
 		bool bHidden = row.m_bHidden;
@@ -237,10 +240,10 @@ void StepsDisplayList::PositionItems()
 		m_Lines[m].m_Meter.SetY( row.m_fY );
 	}
 
-	for( int m=0; m < MAX_METERS; ++m )
+	for( std::size_t m=0; m < MAX_METERS; ++m )
 	{
 		bool bHidden = true;
-		if( m_bShown && m < (int)m_Rows.size() )
+		if( m_bShown && m < m_Rows.size() )
 			bHidden = m_Rows[m].m_bHidden;
 
 		float fDiffuseAlpha = bHidden?0.0f:1.0f;
@@ -270,9 +273,9 @@ void StepsDisplayList::SetFromGameState()
 	if( pSong == nullptr )
 	{
 		// FIXME: This clamps to between the min and the max difficulty, but
-		// it really should round to the nearest difficulty that's in 
+		// it really should round to the nearest difficulty that's in
 		// DIFFICULTIES_TO_SHOW.
-		const vector<Difficulty>& difficulties = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
+		const std::vector<Difficulty>& difficulties = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
 		m_Rows.resize( difficulties.size() );
 		for (Difficulty const &d : difficulties)
 		{
@@ -283,7 +286,7 @@ void StepsDisplayList::SetFromGameState()
 	}
 	else
 	{
-		vector<Steps*>	vpSteps;
+		std::vector<Steps*>	vpSteps;
 		SongUtil::GetPlayableSteps( pSong, vpSteps );
 		// Should match the sort in ScreenSelectMusic::AfterMusicChange.
 
@@ -303,7 +306,7 @@ void StepsDisplayList::SetFromGameState()
 	UpdatePositions();
 	PositionItems();
 
-	for( int m = 0; m < MAX_METERS; ++m )
+	for( std::size_t m = 0; m < MAX_METERS; ++m )
 		m_Lines[m].m_Meter.FinishTweening();
 }
 
@@ -323,7 +326,7 @@ void StepsDisplayList::TweenOnScreen()
 	FOREACH_HumanPlayer( pn )
 		ON_COMMAND( m_Cursors[pn] );
 
-	for( int m = 0; m < MAX_METERS; ++m )
+	for( std::size_t m = 0; m < MAX_METERS; ++m )
 		ON_COMMAND( m_Lines[m].m_Meter );
 
 	this->SetHibernate( 0.5f );
@@ -373,8 +376,8 @@ void StepsDisplayList::HandleMessage( const Message &msg )
 {
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
-		if( msg.GetName() == MessageIDToString((MessageID)(Message_CurrentStepsP1Changed+pn))  ||
-			msg.GetName() == MessageIDToString((MessageID)(Message_CurrentTrailP1Changed+pn)) ) 
+		if( msg.GetName() == MessageIDToString((MessageID)(Message_CurrentStepsP1Changed+Enum::to_integral(pn)))  ||
+			msg.GetName() == MessageIDToString((MessageID)(Message_CurrentTrailP1Changed+Enum::to_integral(pn))) )
 		SetFromGameState();
 	}
 
@@ -385,7 +388,7 @@ void StepsDisplayList::HandleMessage( const Message &msg )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StepsDisplayList. */ 
+/** @brief Allow Lua to have access to the StepsDisplayList. */
 class LunaStepsDisplayList: public Luna<StepsDisplayList>
 {
 public:
@@ -403,7 +406,7 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplayList, ActorFrame )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -413,7 +416,7 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplayList, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

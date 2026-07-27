@@ -24,6 +24,9 @@ namespace X11Helper
 	// The Window used by LowLevelWindow_X11 as the main window.
 	extern Window Win;
 
+	// Set to true when fatal error has occured and no further X11 calls should be made.
+	extern bool FatalError;
+
 	// (Re)create the Window win.
 	bool MakeWindow( Window &win, int screenNum, int depth, Visual *visual,
 			 int width, int height, bool overrideRedirect );

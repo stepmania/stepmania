@@ -4,7 +4,6 @@
 #define INIFILE_H
 
 #include "XmlFile.h"
-using namespace std;
 
 class RageFileBasic;
 /** @brief The functions to read and write .INI files. */

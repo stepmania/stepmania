@@ -19,7 +19,11 @@ using namespace RageDisplay_Legacy_Helpers;
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <set>
+#include <vector>
 
 #if defined(WINDOWS)
 #include <GL/wglew.h>
@@ -62,7 +66,7 @@ static const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 /* If we support texture matrix scaling, a handle to the vertex program: */
 static GLhandleARB g_bTextureMatrixShader = 0;
 
-static std::map<uintptr_t, RenderTarget *> g_mapRenderTargets;
+static std::map<std::uintptr_t, RenderTarget *> g_mapRenderTargets;
 static RenderTarget *g_pCurrentRenderTarget = nullptr;
 
 static LowLevelWindow *g_pWind;
@@ -213,7 +217,10 @@ struct GLPixFmtInfo_t {
 
 static void FixLittleEndian()
 {
-#if defined(ENDIAN_LITTLE)
+	if constexpr (!Endian::little) {
+		return;
+	}
+
 	static bool bInitialized = false;
 	if (bInitialized)
 		return;
@@ -241,7 +248,6 @@ static void FixLittleEndian()
 			pf.masks[mask] = m;
 		}
 	}
-#endif
 }
 
 static void TurnOffHardwareVBO()
@@ -281,7 +287,7 @@ RString GetInfoLog( GLhandleARB h )
 	return sRet;
 }
 
-GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
+GLhandleARB CompileShader( GLenum ShaderType, RString sFile, std::vector<RString> asDefines )
 {
 	/* XXX: This would not be necessary if it wasn't for the special case for Cel. */
 	if (ShaderType == GL_FRAGMENT_SHADER_ARB && !glewIsSupported("GL_VERSION_2_0"))
@@ -289,7 +295,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 		LOG->Warn("Fragment shaders not supported by driver. Some effects will not be available.");
 		return 0;
 	}
-		
+
 	RString sBuffer;
 	{
 		RageFile file;
@@ -298,7 +304,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 			LOG->Warn( "Error compiling shader %s: %s", sFile.c_str(), file.GetError().c_str() );
 			return 0;
 		}
-		
+
 		if (file.Read(sBuffer, file.GetFileSize()) == -1)
 		{
 			LOG->Warn( "Error compiling shader %s: %s", sFile.c_str(), file.GetError().c_str() );
@@ -308,8 +314,8 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 
 	LOG->Trace( "Compiling shader %s", sFile.c_str() );
 	GLhandleARB hShader = glCreateShaderObjectARB( ShaderType );
-	vector<const GLcharARB *> apData;
-	vector<GLint> aiLength;
+	std::vector<const GLcharARB *> apData;
+	std::vector<GLint> aiLength;
 	for (RString &s : asDefines)
 	{
 		s = ssprintf( "#define %s\n", s.c_str() );
@@ -342,7 +348,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 	return hShader;
 }
 
-GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
+GLhandleARB LoadShader( GLenum ShaderType, RString sFile, std::vector<RString> asDefines )
 {
 	/* Vertex shaders are supported by more hardware than fragment shaders.
 	 * If this causes any trouble I will have to up the requirement for both
@@ -365,14 +371,14 @@ GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefi
 		secondaryShader = CompileShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Shell.frag", asDefines);
 	else if (sFile == "Data/Shaders/GLSL/Distance field.vert")
 		secondaryShader = CompileShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Distance field.frag", asDefines);
-	
+
 	GLhandleARB hShader = CompileShader( ShaderType, sFile, asDefines );
 	if (hShader == 0)
 		return 0;
 
 	GLhandleARB hProgram = glCreateProgramObjectARB();
 	glAttachObjectARB( hProgram, hShader );
-	
+
 	if (secondaryShader)
 	{
 		glAttachObjectARB( hProgram, secondaryShader );
@@ -413,16 +419,16 @@ void InitShaders()
 	// xxx: replace this with a ShaderManager or something that reads in
 	// the shaders and determines shader type by file extension. -aj
 	// argh shaders in stepmania are painful -colby
-	vector<RString> asDefines;
-	
+	std::vector<RString> asDefines;
+
 	// used for scrolling textures (I think)
 	g_bTextureMatrixShader = LoadShader(	GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Texture matrix scaling.vert", asDefines );
-	
+
 	// these two are for dancing characters and are both actually shader pairs
 	g_gShellShader = LoadShader(			GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Shell.vert", asDefines );
 	g_gCelShader = LoadShader(			GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Cel.vert", asDefines );
 	g_gDistanceFieldShader	= LoadShader( GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Distance field.vert", asDefines );
-	
+
 	// effects
 	g_bUnpremultiplyShader	= LoadShader(	GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Unpremultiply.frag", asDefines );
 	g_bColorBurnShader	= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color burn.frag", asDefines );
@@ -432,7 +438,7 @@ void InitShaders()
 	g_hOverlayShader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Overlay.frag", asDefines );
 	g_hScreenShader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Screen.frag", asDefines );
 	g_hYUYV422Shader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/YUYV422.frag", asDefines );
-	
+
 	// Bind attributes.
 	if (g_bTextureMatrixShader)
 	{
@@ -478,28 +484,27 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 
 	// Log driver details
 	g_pWind->LogDebugInformation();
-	LOG->Info( "OGL Vendor: %s", glGetString(GL_VENDOR) );
-	LOG->Info( "OGL Renderer: %s", glGetString(GL_RENDERER) );
-	LOG->Info( "OGL Version: %s", glGetString(GL_VERSION) );
-	LOG->Info( "OGL Max texture size: %i", GetMaxTextureSize() );
-	LOG->Info( "OGL Texture units: %i", g_iMaxTextureUnits );
-	LOG->Info( "GLU Version: %s", gluGetString(GLU_VERSION) );
+	LOG->Info("OGL Vendor: %s", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+	LOG->Info("OGL Renderer: %s", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+	LOG->Info("OGL Version: %s", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+	LOG->Info("OGL Max texture size: %i", GetMaxTextureSize());
+	LOG->Info("OGL Texture units: %i", g_iMaxTextureUnits);
 
 	/* Pretty-print the extension string: */
 	LOG->Info( "OGL Extensions:" );
 	{
 		const char *szExtensionString = (const char *) glGetString(GL_EXTENSIONS);
-		vector<RString> asExtensions;
+		std::vector<RString> asExtensions;
 		split( szExtensionString, " ", asExtensions );
 		sort( asExtensions.begin(), asExtensions.end() );
-		size_t iNextToPrint = 0;
+		std::size_t iNextToPrint = 0;
 		while( iNextToPrint < asExtensions.size() )
 		{
-			size_t iLastToPrint = iNextToPrint;
+			std::size_t iLastToPrint = iNextToPrint;
 			RString sType;
-			for( size_t i = iNextToPrint; i<asExtensions.size(); ++i )
+			for( std::size_t i = iNextToPrint; i<asExtensions.size(); ++i )
 			{
-				vector<RString> asBits;
+				std::vector<RString> asBits;
 				split( asExtensions[i], "_", asBits );
 				RString sThisType;
 				if (asBits.size() > 2)
@@ -520,7 +525,7 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 			RString sList = ssprintf( "  %s: ", sType.c_str() );
 			while( iNextToPrint <= iLastToPrint )
 			{
-				vector<RString> asBits;
+				std::vector<RString> asBits;
 				split( asExtensions[iNextToPrint], "_", asBits );
 				RString sShortExt = join( "_", asBits.begin()+2, asBits.end() );
 				sList += sShortExt;
@@ -543,7 +548,7 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 		LOG->Warn( "Low-performance OpenGL renderer: %s", sError.c_str() );
 	}
 
-#if defined(_WINDOWS)
+#if defined(_WIN32)
 	/* GLDirect is a Direct3D wrapper for OpenGL.  It's rather buggy; and if in
 	 * any case GLDirect can successfully render us, we should be able to do so
 	 * too using Direct3D directly.  (If we can't, it's a bug that we can work
@@ -600,7 +605,7 @@ static void CheckPalettedTextures()
 }
 
 		glTexImage2D( GL_PROXY_TEXTURE_2D,
-				0, glTexFormat, 
+				0, glTexFormat,
 				16, 16, 0,
 				glImageFormat, glImageType, nullptr );
 		GL_CHECK_ERROR( "glTexImage2D" );
@@ -664,7 +669,7 @@ static void CheckReversePackedPixels()
 	/* Try to create a texture. */
 	FlushGLErrors();
 	glTexImage2D( GL_PROXY_TEXTURE_2D,
-				0, GL_RGBA, 
+				0, GL_RGBA,
 				16, 16, 0,
 				GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV, nullptr );
 
@@ -684,15 +689,15 @@ static void CheckReversePackedPixels()
 void SetupExtensions()
 {
 	const float fGLVersion = StringToFloat( (const char *) glGetString(GL_VERSION) );
-	g_glVersion = lrintf( fGLVersion * 10 );
+	g_glVersion = std::lrint( fGLVersion * 10 );
 
 	const float fGLUVersion = StringToFloat( (const char *) gluGetString(GLU_VERSION) );
-	g_gluVersion = lrintf( fGLUVersion * 10 );
+	g_gluVersion = std::lrint( fGLUVersion * 10 );
 
 #ifndef HAVE_X11 // LLW_X11 needs to init GLEW early for GLX exts
 	glewInit();
 #endif
-	
+
 	g_iMaxTextureUnits = 1;
 	if (GLEW_ARB_multitexture)
 		glGetIntegerv( GL_MAX_TEXTURE_UNITS_ARB, (GLint *) &g_iMaxTextureUnits );
@@ -795,7 +800,7 @@ RString RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		/* Delete all render targets.  They may have associated resources other than
 		 * the texture itself. */
-		for (std::pair<uintptr_t const, RenderTarget *> &rt : g_mapRenderTargets)
+		for (std::pair<std::uintptr_t const, RenderTarget *> &rt : g_mapRenderTargets)
 			delete rt.second;
 		g_mapRenderTargets.clear();
 
@@ -814,7 +819,7 @@ RString RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	else
 		return RString("The WGL_EXT_swap_control extension is not supported on your computer.");
 #endif
-	
+
 	ResolutionChanged();
 
 	return RString();	// successfully set mode
@@ -911,7 +916,7 @@ RageSurface* RageDisplay_Legacy::CreateScreenshot()
 		//TODO: revisit for MacOS, where backbuffer size can be less than window size
 		glReadBuffer( GL_FRONT );
 		DebugAssertNoGLError();
-	
+
 		glReadPixels( 0, 0, g_pWind->GetActualVideoModeParams().width, g_pWind->GetActualVideoModeParams().height, GL_RGBA,
 					  GL_UNSIGNED_BYTE, image->pixels );
 		DebugAssertNoGLError();
@@ -922,7 +927,7 @@ RageSurface* RageDisplay_Legacy::CreateScreenshot()
 	return image;
 }
 
-RageSurface *RageDisplay_Legacy::GetTexture( uintptr_t iTexture )
+RageSurface *RageDisplay_Legacy::GetTexture( std::uintptr_t iTexture )
 {
 	if (iTexture == 0)
 		return nullptr; // XXX
@@ -953,7 +958,7 @@ ActualVideoModeParams RageDisplay_Legacy::GetActualVideoModeParams() const
 
 static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 {
-	static float *Vertex, *Texture, *Normal;	
+	static float *Vertex, *Texture, *Normal;
 	static GLubyte *Color;
 	static int Size = 0;
 	if (iNumVerts > Size)
@@ -995,10 +1000,10 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 
 	if (GLEW_ARB_multitexture)
 	{
-		glClientActiveTextureARB( GL_TEXTURE1_ARB ); 
+		glClientActiveTextureARB( GL_TEXTURE1_ARB );
 		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 		glTexCoordPointer( 2, GL_FLOAT, 0, Texture );
-		glClientActiveTextureARB( GL_TEXTURE0_ARB ); 
+		glClientActiveTextureARB( GL_TEXTURE0_ARB );
 	}
 
 	glEnableClientState( GL_NORMAL_ARRAY );
@@ -1032,24 +1037,27 @@ void RageDisplay_Legacy::SendCurrentMatrices()
 class RageCompiledGeometrySWOGL : public RageCompiledGeometry
 {
 public:
-	
-	void Allocate( const vector<msMesh> &vMeshes )
+
+	void Allocate( const std::vector<msMesh> &vMeshes )
 	{
 		/* Always allocate at least 1 entry, so &x[0] is valid. */
-		m_vPosition.resize( max(1u, GetTotalVertices()) );
-		m_vTexture.resize( max(1u, GetTotalVertices()) );
-		m_vNormal.resize( max(1u, GetTotalVertices()) );
-		m_vTexMatrixScale.resize( max(1u, GetTotalVertices()) );
-		m_vTriangles.resize( max(1u, GetTotalTriangles()) );
+		const unsigned int verticesCount = std::max<unsigned int>(1u, GetTotalVertices());
+		const unsigned int trianglesCount = std::max<unsigned int>(1u, GetTotalTriangles());
+
+		m_vPosition.resize(verticesCount);
+		m_vTexture.resize(verticesCount);
+		m_vNormal.resize(verticesCount);
+		m_vTexMatrixScale.resize(verticesCount);
+		m_vTriangles.resize(trianglesCount);
 	}
-	void Change( const vector<msMesh> &vMeshes )
+	void Change( const std::vector<msMesh> &vMeshes )
 	{
 		for( unsigned i=0; i<vMeshes.size(); i++ )
 		{
 			const MeshInfo& meshInfo = m_vMeshInfo[i];
 			const msMesh& mesh = vMeshes[i];
-			const vector<RageModelVertex> &Vertices = mesh.Vertices;
-			const vector<msTriangle> &Triangles = mesh.Triangles;
+			const std::vector<RageModelVertex> &Vertices = mesh.Vertices;
+			const std::vector<msTriangle> &Triangles = mesh.Triangles;
 
 			for( unsigned j=0; j<Vertices.size(); j++ )
 			{
@@ -1063,7 +1071,7 @@ public:
 				for( unsigned k=0; k<3; k++ )
 				{
 					int iVertexIndexInVBO = meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
-					m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (uint16_t) iVertexIndexInVBO;
+					m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (std::uint16_t) iVertexIndexInVBO;
 				}
 		}
 	}
@@ -1109,23 +1117,23 @@ public:
 			glLoadMatrixf( (const float*)mat );
 		}
 
-		glDrawElements( 
-			GL_TRIANGLES, 
-			meshInfo.iTriangleCount*3, 
-			GL_UNSIGNED_SHORT, 
+		glDrawElements(
+			GL_TRIANGLES,
+			meshInfo.iTriangleCount*3,
+			GL_UNSIGNED_SHORT,
 			&m_vTriangles[0]+meshInfo.iTriangleStart );
 	}
 
 protected:
-	vector<RageVector3> m_vPosition;
-	vector<RageVector2> m_vTexture;
-	vector<RageVector3> m_vNormal;
-	vector<msTriangle>	m_vTriangles;
-	vector<RageVector2>	m_vTexMatrixScale;
+	std::vector<RageVector3> m_vPosition;
+	std::vector<RageVector2> m_vTexture;
+	std::vector<RageVector3> m_vNormal;
+	std::vector<msTriangle>	m_vTriangles;
+	std::vector<RageVector2>	m_vTexMatrixScale;
 };
 
 class InvalidateObject;
-static set<InvalidateObject *> g_InvalidateList;
+static std::set<InvalidateObject*> g_InvalidateList;
 class InvalidateObject
 {
 public:
@@ -1159,9 +1167,9 @@ public:
 
 	/* This is called when our OpenGL context is invalidated. */
 	void Invalidate();
-	
-	void Allocate( const vector<msMesh> &vMeshes );
-	void Change( const vector<msMesh> &vMeshes );
+
+	void Allocate( const std::vector<msMesh> &vMeshes );
+	void Change( const std::vector<msMesh> &vMeshes );
 	void Draw( int iMeshIndex ) const;
 };
 
@@ -1293,57 +1301,57 @@ void RageCompiledGeometryHWOGL::Invalidate()
 	UploadData();
 }
 
-void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
+void RageCompiledGeometryHWOGL::Allocate( const std::vector<msMesh> &vMeshes )
 {
 	DebugFlushGLErrors();
 
 	RageCompiledGeometrySWOGL::Allocate( vMeshes );
 	glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 	DebugAssertNoGLError();
-	glBufferDataARB( 
-		GL_ARRAY_BUFFER_ARB, 
-		GetTotalVertices()*sizeof(RageVector3), 
-		nullptr, 
+	glBufferDataARB(
+		GL_ARRAY_BUFFER_ARB,
+		GetTotalVertices()*sizeof(RageVector3),
+		nullptr,
 		GL_STATIC_DRAW_ARB );
 	DebugAssertNoGLError();
 
 	glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
 	DebugAssertNoGLError();
-	glBufferDataARB( 
-		GL_ARRAY_BUFFER_ARB, 
-		GetTotalVertices()*sizeof(RageVector2), 
-		nullptr, 
+	glBufferDataARB(
+		GL_ARRAY_BUFFER_ARB,
+		GetTotalVertices()*sizeof(RageVector2),
+		nullptr,
 		GL_STATIC_DRAW_ARB );
 	DebugAssertNoGLError();
 
 	glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
 	DebugAssertNoGLError();
-	glBufferDataARB( 
-		GL_ARRAY_BUFFER_ARB, 
-		GetTotalVertices()*sizeof(RageVector3), 
-		nullptr, 
+	glBufferDataARB(
+		GL_ARRAY_BUFFER_ARB,
+		GetTotalVertices()*sizeof(RageVector3),
+		nullptr,
 		GL_STATIC_DRAW_ARB );
 	DebugAssertNoGLError();
 
 	glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
 	DebugAssertNoGLError();
-	glBufferDataARB( 
-		GL_ELEMENT_ARRAY_BUFFER_ARB, 
-		GetTotalTriangles()*sizeof(msTriangle), 
-		nullptr, 
+	glBufferDataARB(
+		GL_ELEMENT_ARRAY_BUFFER_ARB,
+		GetTotalTriangles()*sizeof(msTriangle),
+		nullptr,
 		GL_STATIC_DRAW_ARB );
 	DebugAssertNoGLError();
 
 	glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
 	DebugAssertNoGLError();
-	glBufferDataARB( 
-		GL_ARRAY_BUFFER_ARB, 
-		GetTotalVertices()*sizeof(RageVector2), 
+	glBufferDataARB(
+		GL_ARRAY_BUFFER_ARB,
+		GetTotalVertices()*sizeof(RageVector2),
 		nullptr,
 		GL_STATIC_DRAW_ARB );
 }
 
-void RageCompiledGeometryHWOGL::Change( const vector<msMesh> &vMeshes )
+void RageCompiledGeometryHWOGL::Change( const std::vector<msMesh> &vMeshes )
 {
 	RageCompiledGeometrySWOGL::Change( vMeshes );
 
@@ -1375,7 +1383,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
 	DebugAssertNoGLError();
 
-	// TRICKY:  Don't bind and send normals if lighting is disabled.  This 
+	// TRICKY:  Don't bind and send normals if lighting is disabled.  This
 	// will save some effort transforming these values.
 	// XXX: We should keep track of these ourself and avoid glGet*()
 	GLboolean bLighting;
@@ -1384,7 +1392,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	glGetBooleanv( GL_TEXTURE_GEN_S, &bTextureGenS );
 	GLboolean bTextureGenT;
 	glGetBooleanv( GL_TEXTURE_GEN_T, &bTextureGenT );
-	
+
 	if (bLighting || bTextureGenS || bTextureGenT)
 	{
 		glEnableClientState(GL_NORMAL_ARRAY);
@@ -1450,8 +1458,8 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 #define BUFFER_OFFSET(o) ((char*)(o))
 
 	ASSERT( glDrawRangeElements != nullptr );
-	glDrawRangeElements( 
-		GL_TRIANGLES, 
+	glDrawRangeElements(
+		GL_TRIANGLES,
 		meshInfo.iVertexStart,	// minimum array index contained in indices
 		meshInfo.iVertexStart+meshInfo.iVertexCount-1,
 					// maximum array index contained in indices
@@ -1505,11 +1513,11 @@ void RageDisplay_Legacy::DrawSymmetricQuadStripInternal( const RageSpriteVertex 
 	int iNumIndices = iNumTriangles*3;
 
 	// make a temporary index buffer
-	static vector<uint16_t> vIndices;
+	static std::vector<std::uint16_t> vIndices;
 	unsigned uOldSize = vIndices.size();
-	unsigned uNewSize = max(uOldSize,(unsigned)iNumIndices);
+	unsigned uNewSize = std::max(uOldSize,(unsigned)iNumIndices);
 	vIndices.resize( uNewSize );
-	for( uint16_t i=(uint16_t)uOldSize/12; i<(uint16_t)iNumPieces; i++ )
+	for( std::uint16_t i=(std::uint16_t)uOldSize/12; i<(std::uint16_t)iNumPieces; i++ )
 	{
 		// { 1, 3, 0 } { 1, 4, 3 } { 1, 5, 4 } { 1, 2, 5 }
 		vIndices[i*12+0] = i*3+1;
@@ -1530,10 +1538,10 @@ void RageDisplay_Legacy::DrawSymmetricQuadStripInternal( const RageSpriteVertex 
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
-	glDrawElements( 
-		GL_TRIANGLES, 
+	glDrawElements(
+		GL_TRIANGLES,
 		iNumIndices,
-		GL_UNSIGNED_SHORT, 
+		GL_UNSIGNED_SHORT,
 		&vIndices[0] );
 }
 
@@ -1605,8 +1613,8 @@ void RageDisplay_Legacy::DrawLineStripInternal( const RageSpriteVertex v[], int 
 
 	/* Clamp the width to the hardware max for both lines and points (whichever
 	 * is more restrictive). */
-	fLineWidth = clamp( fLineWidth, g_line_range[0], g_line_range[1] );
-	fLineWidth = clamp( fLineWidth, g_point_range[0], g_point_range[1] );
+	fLineWidth = std::clamp( fLineWidth, g_line_range[0], g_line_range[1] );
+	fLineWidth = std::clamp( fLineWidth, g_point_range[0], g_point_range[1] );
 
 	/* Hmm.  The granularity of lines and points might be different; for example,
 	 * if lines are .5 and points are .25, we might want to snap the width to the
@@ -1679,7 +1687,7 @@ int RageDisplay_Legacy::GetNumTextureUnits()
 		return g_iMaxTextureUnits;
 }
 
-void RageDisplay_Legacy::SetTexture( TextureUnit tu, uintptr_t iTexture )
+void RageDisplay_Legacy::SetTexture( TextureUnit tu, std::uintptr_t iTexture )
 {
 	if (!SetTextureUnit( tu ))
 		return;
@@ -1739,7 +1747,7 @@ void RageDisplay_Legacy::SetTextureMode( TextureUnit tu, TextureMode tm )
 void RageDisplay_Legacy::SetTextureFiltering( TextureUnit tu, bool b )
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b ? GL_LINEAR : GL_NEAREST);
-	
+
 	GLint iMinFilter;
 	if (b)
 	{
@@ -1979,13 +1987,13 @@ void RageDisplay_Legacy::SetTextureWrapping( TextureUnit tu, bool b )
 	 * so we'll behave incorrectly if the same texture is used in more than one texture
 	 * unit simultaneously with different wrapping. */
 	SetTextureUnit( tu );
-	
+
 	GLenum mode = b ? GL_REPEAT : GL_CLAMP_TO_EDGE;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode );
 }
 
-void RageDisplay_Legacy::SetMaterial( 
+void RageDisplay_Legacy::SetMaterial(
 	const RageColor &emissive,
 	const RageColor &ambient,
 	const RageColor &diffuse,
@@ -1993,7 +2001,7 @@ void RageDisplay_Legacy::SetMaterial(
 	float shininess
 	)
 {
-	// TRICKY:  If lighting is off, then setting the material 
+	// TRICKY:  If lighting is off, then setting the material
 	// will have no effect.  Even if lighting is off, we still
 	// want Models to have basic color and transparency.
 	// We can do this fake lighting by setting the vertex color.
@@ -2032,11 +2040,11 @@ void RageDisplay_Legacy::SetLightOff( int index )
 	glDisable( GL_LIGHT0+index );
 }
 
-void RageDisplay_Legacy::SetLightDirectional( 
-	int index, 
-	const RageColor &ambient, 
-	const RageColor &diffuse, 
-	const RageColor &specular, 
+void RageDisplay_Legacy::SetLightDirectional(
+	int index,
+	const RageColor &ambient,
+	const RageColor &diffuse,
+	const RageColor &specular,
 	const RageVector3 &dir )
 {
 	// Light coordinates are transformed by the modelview matrix, but
@@ -2106,7 +2114,7 @@ void RageDisplay_Legacy::EndConcurrentRendering()
 	g_pWind->EndConcurrentRendering();
 }
 
-void RageDisplay_Legacy::DeleteTexture( uintptr_t iTexture )
+void RageDisplay_Legacy::DeleteTexture( std::uintptr_t iTexture )
 {
 	if (iTexture == 0)
 		return;
@@ -2127,7 +2135,7 @@ void RageDisplay_Legacy::DeleteTexture( uintptr_t iTexture )
 RagePixelFormat RageDisplay_Legacy::GetImgPixelFormat( RageSurface* &img, bool &bFreeImg, int width, int height, bool bPalettedTexture )
 {
 	RagePixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
-	
+
 	/* If img is paletted, we're setting up a non-paletted texture, and color indexes
 	 * are too small, depalettize. */
 	bool bSupported = true;
@@ -2191,7 +2199,7 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	DebugAssertNoGLError();
 }
 
-uintptr_t RageDisplay_Legacy::CreateTexture( 
+std::uintptr_t RageDisplay_Legacy::CreateTexture(
 	RagePixelFormat pixfmt,
 	RageSurface* pImg,
 	bool bGenerateMipMaps )
@@ -2210,7 +2218,7 @@ uintptr_t RageDisplay_Legacy::CreateTexture(
 
 	/* If the image is paletted, but we're not sending it to a paletted image,
 	 * set up glPixelMap. */
-	SetPixelMapForSurface( glImageFormat, glTexFormat, pImg->format->palette );
+	SetPixelMapForSurface( glImageFormat, glTexFormat, pImg->format->palette.get() );
 
 	// HACK:  OpenGL 1.2 types aren't available in GLU 1.3.  Don't call GLU for mip
 	// mapping if we're using an OGL 1.2 type and don't have >= GLU 1.3.
@@ -2236,10 +2244,10 @@ uintptr_t RageDisplay_Legacy::CreateTexture(
 	SetTextureUnit( TextureUnit_1 );
 
 	// allocate OpenGL texture resource
-	uintptr_t iTexHandle;
+	std::uintptr_t iTexHandle;
 	glGenTextures( 1, reinterpret_cast<GLuint*>(&iTexHandle) );
 	ASSERT( iTexHandle != 0 );
-	
+
 	glBindTexture( GL_TEXTURE_2D, static_cast<GLuint>(iTexHandle) );
 
 	if (g_pWind->GetActualVideoModeParams().bAnisotropicFiltering &&
@@ -2279,38 +2287,30 @@ uintptr_t RageDisplay_Legacy::CreateTexture(
 		ASSERT( iRealFormat == GL_RGBA8 );
 	}
 
-	LOG->Trace( "%s (format %s, %ix%i, format %s, type %s, pixfmt %i, imgpixfmt %i)",
-		bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D",
+	LOG->Trace("%s (format %s, %ix%i, format %s, type %s, pixfmt %i, imgpixfmt %i)",
+		"glTexImage2D",
 		GLToString(glTexFormat).c_str(),
 		pImg->w, pImg->h,
 		GLToString(glImageFormat).c_str(),
-		GLToString(glImageType).c_str(), pixfmt, SurfacePixFmt );
+		GLToString(glImageType).c_str(), pixfmt, SurfacePixFmt);
 
 	DebugFlushGLErrors();
 
-	if (bGenerateMipMaps)
-	{
-		GLenum error = gluBuild2DMipmaps(
-			GL_TEXTURE_2D, glTexFormat, 
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, glTexFormat,
+		power_of_two(pImg->w), power_of_two(pImg->h), 0,
+		glImageFormat, glImageType, nullptr );
+	if (pImg->pixels)
+		glTexSubImage2D( GL_TEXTURE_2D, 0,
+			0, 0,
 			pImg->w, pImg->h,
 			glImageFormat, glImageType, pImg->pixels );
-		ASSERT_M( error == 0, (char *) gluErrorString(error) );
-	}
-	else
-	{
-		glTexImage2D(
-			GL_TEXTURE_2D, 0, glTexFormat, 
-			power_of_two(pImg->w), power_of_two(pImg->h), 0,
-			glImageFormat, glImageType, nullptr );
-		if (pImg->pixels)
-			glTexSubImage2D( GL_TEXTURE_2D, 0,
-				0, 0,
-				pImg->w, pImg->h,
-				glImageFormat, glImageType, pImg->pixels );
-		
-		DebugAssertNoGLError();
+
+	if (bGenerateMipMaps) {
+		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
+	DebugAssertNoGLError();
 
 	/* Sanity check: */
 	if (pixfmt == RagePixelFormat_PAL)
@@ -2352,7 +2352,7 @@ public:
 		m_iTexHandle = 0;
 	}
 
-	void Lock( uintptr_t iTexHandle, RageSurface *pSurface )
+	void Lock( std::uintptr_t iTexHandle, RageSurface *pSurface )
 	{
 		ASSERT( m_iTexHandle == 0 );
 		ASSERT( pSurface->pixels == nullptr );
@@ -2366,7 +2366,7 @@ public:
 		glBufferDataARB( GL_PIXEL_UNPACK_BUFFER_ARB, iSize, nullptr, GL_STREAM_DRAW );
 
 		void *pSurfaceMemory = glMapBufferARB( GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY );
-		pSurface->pixels = (uint8_t *) pSurfaceMemory;
+		pSurface->pixels = (std::uint8_t *) pSurfaceMemory;
 		pSurface->pixels_owned = false;
 	}
 
@@ -2374,7 +2374,7 @@ public:
 	{
 		glUnmapBufferARB( GL_PIXEL_UNPACK_BUFFER_ARB );
 
-		pSurface->pixels = (uint8_t *) BUFFER_OFFSET(0);
+		pSurface->pixels = (std::uint8_t *) BUFFER_OFFSET(0);
 
 		if (bChanged)
 			DISPLAY->UpdateTexture( m_iTexHandle, pSurface, 0, 0, pSurface->w, pSurface->h );
@@ -2398,7 +2398,7 @@ private:
 
 	GLuint m_iBuffer;
 
-	uintptr_t m_iTexHandle;
+	std::uintptr_t m_iTexHandle;
 };
 
 RageTextureLock *RageDisplay_Legacy::CreateTextureLock()
@@ -2409,8 +2409,8 @@ RageTextureLock *RageDisplay_Legacy::CreateTextureLock()
 	return new RageTextureLock_OGL;
 }
 
-void RageDisplay_Legacy::UpdateTexture( 
-	uintptr_t iTexHandle, 
+void RageDisplay_Legacy::UpdateTexture(
+	std::uintptr_t iTexHandle,
 	RageSurface* pImg,
 	int iXOffset, int iYOffset, int iWidth, int iHeight )
 {
@@ -2430,7 +2430,7 @@ void RageDisplay_Legacy::UpdateTexture(
 	{
 		GLenum glTexFormat = 0;
 		glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INTERNAL_FORMAT), (GLint *) &glTexFormat );
-		SetPixelMapForSurface( glImageFormat, glTexFormat, pImg->format->palette );
+		SetPixelMapForSurface( glImageFormat, glTexFormat, pImg->format->palette.get() );
 	}
 
 	glTexSubImage2D( GL_TEXTURE_2D, 0,
@@ -2452,16 +2452,16 @@ public:
 	RenderTarget_FramebufferObject();
 	~RenderTarget_FramebufferObject();
 	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	uintptr_t GetTexture() const { return m_iTexHandle; }
+	std::uintptr_t GetTexture() const { return m_iTexHandle; }
 	void StartRenderingTo();
 	void FinishRenderingTo();
-	
+
 	virtual bool InvertY() const { return true; }
 
 private:
-	uintptr_t m_iFrameBufferHandle;
-	uintptr_t m_iTexHandle;
-	uintptr_t m_iDepthBufferHandle;
+	std::uintptr_t m_iFrameBufferHandle;
+	std::uintptr_t m_iTexHandle;
+	std::uintptr_t m_iDepthBufferHandle;
 };
 
 RenderTarget_FramebufferObject::RenderTarget_FramebufferObject()
@@ -2486,7 +2486,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 	m_Param = param;
 
 	DebugFlushGLErrors();
-	
+
 	// Allocate OpenGL texture resource
 	glGenTextures( 1, reinterpret_cast<GLuint*>(&m_iTexHandle) );
 	ASSERT( m_iTexHandle != 0 );
@@ -2504,7 +2504,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 		internalformat = param.bWithAlpha? GL_RGBA16F_ARB:GL_RGB16F_ARB;
 	else
 		internalformat = param.bWithAlpha? GL_RGBA8:GL_RGB8;
-	
+
 	glTexImage2D( GL_TEXTURE_2D, 0, internalformat,
 			iTextureWidth, iTextureHeight, 0, type, GL_UNSIGNED_BYTE, nullptr );
 	DebugAssertNoGLError();
@@ -2584,7 +2584,7 @@ bool RageDisplay_Legacy::SupportsFullscreenBorderlessWindow() const
  * particularly GeForce 2, but is simpler and faster when available.
  */
 
-uintptr_t RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
+std::uintptr_t RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
 	RenderTarget *pTarget;
 	if (GLEW_EXT_framebuffer_object)
@@ -2594,28 +2594,28 @@ uintptr_t RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param
 
 	pTarget->Create( param, iTextureWidthOut, iTextureHeightOut );
 
-	uintptr_t iTexture = pTarget->GetTexture();
+	std::uintptr_t iTexture = pTarget->GetTexture();
 
 	ASSERT( g_mapRenderTargets.find(iTexture) == g_mapRenderTargets.end() );
 	g_mapRenderTargets[iTexture] = pTarget;
 	return iTexture;
 }
 
-uintptr_t RageDisplay_Legacy::GetRenderTarget()
+std::uintptr_t RageDisplay_Legacy::GetRenderTarget()
 {
-	for( map<uintptr_t, RenderTarget*>::const_iterator it = g_mapRenderTargets.begin(); it != g_mapRenderTargets.end(); ++it )
+	for( std::map<std::uintptr_t, RenderTarget*>::const_iterator it = g_mapRenderTargets.begin(); it != g_mapRenderTargets.end(); ++it )
 	if( it->second == g_pCurrentRenderTarget )
 		return it->first;
 	return 0;
 }
 
-void RageDisplay_Legacy::SetRenderTarget( uintptr_t iTexture, bool bPreserveTexture )
+void RageDisplay_Legacy::SetRenderTarget( std::uintptr_t iTexture, bool bPreserveTexture )
 {
 	if (iTexture == 0)
 	{
 		g_bInvertY = false;
 		glFrontFace( GL_CCW );
-		
+
 		/* Pop matrixes affected by SetDefaultRenderStates. */
 		DISPLAY->CameraPopMatrix();
 
@@ -2688,7 +2688,7 @@ void RageDisplay_Legacy::SetLineWidth(float fWidth)
 	glLineWidth(fWidth);
 }
 
-RString RageDisplay_Legacy::GetTextureDiagnostics(unsigned iTexture) const
+RString RageDisplay_Legacy::GetTextureDiagnostics(std::uintptr_t iTexture) const
 {
 	/*
 		s << (bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D");
@@ -2748,7 +2748,7 @@ void RageDisplay_Legacy::SetAlphaTest(bool b)
  * everything supports packed pixels.
  *
  * Another case of this is incomplete packed pixels support.  Some implementations
- * neglect GL_UNSIGNED_SHORT_*_REV. 
+ * neglect GL_UNSIGNED_SHORT_*_REV.
  */
 bool RageDisplay_Legacy::SupportsSurfaceFormat(RagePixelFormat pixfmt)
 {

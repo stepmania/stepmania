@@ -89,14 +89,15 @@ public:
 	}
 
 	// Create a specification for a display supporting a single (and currently active) mode
-	DisplaySpec(std::string id, std::string name, DisplayMode mode) : m_sId( id ), m_sName( name ), m_bIsVirtual( false ),
-		m_bCurModeActive( true ), m_CurMode( mode )
+	DisplaySpec(std::string id, std::string name, DisplayMode mode) : m_sId( id ), m_sName( name ),
+		m_bCurModeActive( true ), m_CurMode( mode ), m_bIsVirtual( false )
 	{
 		m_sModes.insert( mode );
 		m_rectBounds = RectI( 0, 0, mode.width, mode.height );
 	}
 
 	DisplaySpec( const DisplaySpec &other ) = default;
+	DisplaySpec& operator=(const DisplaySpec& other) = default;
 
 	std::string name() const
 	{

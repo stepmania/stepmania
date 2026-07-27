@@ -20,9 +20,12 @@
 #pragma comment(lib, "xinput.lib")
 #endif
 
+#include <cmath>
 #include <XInput.h>
 #include <WbemIdl.h>
 #include <OleAuto.h>
+#include <limits>
+#include <vector>
 
 // this may not be defined if we are using an older Windows SDK. (for instance, toolsetversion v140_xp does not define it)
 // the number was taken from the documentation
@@ -32,13 +35,22 @@
 
 REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
 
-static vector<DIDevice> Devices;
-static vector<XIDevice> XDevices;
+static std::vector<DIDevice> Devices;
+static std::vector<XIDevice> XDevices;
 
 // Number of joysticks found:
 static int g_iNumJoysticks;
 
-#define SAFE_RELEASE(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
+template<typename T>
+inline void SafeRelease(T*& p)
+{
+    if (p)
+    {
+        p->Release();
+        p = nullptr;
+    }
+}
+
 static BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 {
 	IWbemLocator*           pIWbemLocator = nullptr;
@@ -71,13 +83,13 @@ static BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 	bstrClassName = SysAllocString(L"Win32_PNPEntity");   if (bstrClassName == nullptr) goto LCleanup;
 	bstrDeviceID = SysAllocString(L"DeviceID");          if (bstrDeviceID == nullptr)  goto LCleanup;
 
-	// Connect to WMI 
+	// Connect to WMI
 	hr = pIWbemLocator->ConnectServer(bstrNamespace, nullptr, nullptr, 0L,
 		0L, nullptr, nullptr, &pIWbemServices);
 	if (FAILED(hr) || pIWbemServices == nullptr)
 		goto LCleanup;
 
-	// Switch security level to IMPERSONATE. 
+	// Switch security level to IMPERSONATE.
 	CoSetProxyBlanket(pIWbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr,
 		RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE);
 
@@ -102,7 +114,7 @@ static BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 			if (SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != nullptr)
 			{
 				// Check if the device ID contains "IG_".  If it does, then it's an XInput device
-				// This information can not be found from DirectInput 
+				// This information can not be found from DirectInput
 				if (wcsstr(var.bstrVal, L"IG_"))
 				{
 					// If it does, then get the VID/PID from var.bstrVal
@@ -123,7 +135,7 @@ static BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 					}
 				}
 			}
-			SAFE_RELEASE(pDevices[iDevice]);
+			SafeRelease(pDevices[iDevice]);
 		}
 	}
 
@@ -135,10 +147,10 @@ LCleanup:
 	if (bstrClassName)
 		SysFreeString(bstrClassName);
 	for (iDevice = 0; iDevice<20; iDevice++)
-		SAFE_RELEASE(pDevices[iDevice]);
-	SAFE_RELEASE(pEnumDevices);
-	SAFE_RELEASE(pIWbemLocator);
-	SAFE_RELEASE(pIWbemServices);
+		SafeRelease(pDevices[iDevice]);
+	SafeRelease(pEnumDevices);
+	SafeRelease(pIWbemLocator);
+	SafeRelease(pIWbemServices);
 
 	if (bCleanupCOM)
 		CoUninitialize();
@@ -498,15 +510,15 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 							{ neg = JOY_AUX_1; pos = JOY_AUX_2;	val = state.rglSlider[0]; }
 						else if( in.ofs == DIJOFS_SLIDER(1) )
 							{ neg = JOY_AUX_3; pos = JOY_AUX_4;	val = state.rglSlider[1]; }
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 											"Controller '%s' is returning an unknown joystick offset, %i",
 											device.m_sName.c_str(), in.ofs );
 
 						if( neg != DeviceButton_Invalid )
 						{
 							float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
-							ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
-							ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
+							ButtonPressed( DeviceInput(dev, neg, std::max(-l, 0.0f), tm) );
+							ButtonPressed( DeviceInput(dev, pos, std::max(+l, 0.0f), tm) );
 						}
 
 						break;
@@ -585,7 +597,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 							ButtonPressed( DeviceInput(dev, pos, 0, tm) );
 						}
 					}
-					else LOG->MapLog( "unknown input", 
+					else LOG->MapLog( "unknown input",
 											"Mouse '%s' is returning an unknown mouse offset, %i",
 											device.m_sName.c_str(), in.ofs );
 					break;
@@ -623,10 +635,8 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 	}
 
 	// reset mousewheel
-	DeviceInput diUp = DeviceInput(device.dev, MOUSE_WHEELUP, 0.0f, tm);
-	ButtonPressed( diUp );
-	DeviceInput diDown = DeviceInput(device.dev, MOUSE_WHEELDOWN, 0.0f, tm);
-	ButtonPressed( diDown );
+	ButtonPressed( DeviceInput(device.dev, MOUSE_WHEELUP, 0.0f, tm) );
+	ButtonPressed( DeviceInput(device.dev, MOUSE_WHEELDOWN, 0.0f, tm) );
 
 	for( int i = 0; i < (int) numevents; ++i )
 	{
@@ -652,7 +662,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						if( in.ofs == DIMOFS_BUTTON0 ) mouseInput = MOUSE_LEFT;
 						else if( in.ofs == DIMOFS_BUTTON1 ) mouseInput = MOUSE_RIGHT;
 						else if( in.ofs == DIMOFS_BUTTON2 ) mouseInput = MOUSE_MIDDLE;
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 								 "Mouse '%s' is returning an unknown mouse offset [button], %i",
 								 device.m_sName.c_str(), in.ofs );
 						ButtonPressed( DeviceInput(dev, mouseInput, !!evtbuf[i].dwData, tm) );
@@ -724,7 +734,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								}
 							}
 						}
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 										 "Mouse '%s' is returning an unknown mouse offset [axis], %i",
 										 device.m_sName.c_str(), in.ofs );
 					}
@@ -739,10 +749,10 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						else if( in.ofs == DIJOFS_RZ ) { up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; }
 						else if( in.ofs == DIJOFS_SLIDER(0) ) { up = JOY_AUX_1; down = JOY_AUX_2; }
 						else if( in.ofs == DIJOFS_SLIDER(1) ) { up = JOY_AUX_3; down = JOY_AUX_4; }
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 										 "Controller '%s' is returning an unknown joystick offset, %i",
 										 device.m_sName.c_str(), in.ofs );
-						
+
 						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
 						if(GamePreferences::m_AxisFix)
 						{
@@ -752,8 +762,8 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						}
 						else
 						{
-						  ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
-						  ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) ); 
+						  ButtonPressed( DeviceInput(dev, up, std::max(-l, 0.0f), tm) );
+						  ButtonPressed( DeviceInput(dev, down, std::max(+l, 0.0f), tm) );
 						}
 					}
 					break;
@@ -772,13 +782,11 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 	}
 }
 
-const short XINPUT_GAMEPAD_THUMB_MIN = MINSHORT;
-const short XINPUT_GAMEPAD_THUMB_MAX = MAXSHORT;
+inline constexpr short XINPUT_GAMEPAD_THUMB_MIN = std::numeric_limits<short>::min();
+inline constexpr short XINPUT_GAMEPAD_THUMB_MAX = std::numeric_limits<short>::max();
 
 void InputHandler_DInput::UpdateXInput( XIDevice &device, const RageTimer &tm )
 {
-	using std::max;
-
 	XINPUT_STATE state;
 	ZeroMemory(&state, sizeof(XINPUT_STATE));
 	if (XInputGetState(device.m_dwXInputSlot, &state) == ERROR_SUCCESS)
@@ -786,27 +794,27 @@ void InputHandler_DInput::UpdateXInput( XIDevice &device, const RageTimer &tm )
 		// map joysticks
 		float lx = 0.f;
 		float ly = 0.f;
-		if (sqrt(pow(state.Gamepad.sThumbLX, 2) + pow(state.Gamepad.sThumbLY, 2)) > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+		if (std::sqrt(std::pow(state.Gamepad.sThumbLX, 2) + std::pow(state.Gamepad.sThumbLY, 2)) > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
 		{
 			lx = SCALE(state.Gamepad.sThumbLX + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
 			ly = SCALE(state.Gamepad.sThumbLY + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
 		}
-		ButtonPressed(DeviceInput(device.dev, JOY_LEFT, max(-lx, 0.f), tm));
-		ButtonPressed(DeviceInput(device.dev, JOY_RIGHT, max(+lx, 0.f), tm));
-		ButtonPressed(DeviceInput(device.dev, JOY_UP, max(+ly, 0.f), tm));
-		ButtonPressed(DeviceInput(device.dev, JOY_DOWN, max(-ly, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_LEFT, std::max(-lx, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_RIGHT, std::max(+lx, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_UP, std::max(+ly, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_DOWN, std::max(-ly, 0.f), tm));
 
 		float rx = 0.f;
 		float ry = 0.f;
-		if (sqrt(pow(state.Gamepad.sThumbRX, 2) + pow(state.Gamepad.sThumbRY, 2)) > XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
+		if (std::sqrt(std::pow(state.Gamepad.sThumbRX, 2) + std::pow(state.Gamepad.sThumbRY, 2)) > XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
 		{
 			rx = SCALE(state.Gamepad.sThumbRX + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
 			ry = SCALE(state.Gamepad.sThumbRY + 0.f, XINPUT_GAMEPAD_THUMB_MIN + 0.f, XINPUT_GAMEPAD_THUMB_MAX + 0.f, -1.0f, 1.0f);
 		}
-		ButtonPressed(DeviceInput(device.dev, JOY_LEFT_2, max(-rx, 0.f), tm));
-		ButtonPressed(DeviceInput(device.dev, JOY_RIGHT_2, max(+rx, 0.f), tm));
-		ButtonPressed(DeviceInput(device.dev, JOY_UP_2, max(+ry, 0.f), tm));
-		ButtonPressed(DeviceInput(device.dev, JOY_DOWN_2, max(-ry, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_LEFT_2, std::max(-rx, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_RIGHT_2, std::max(+rx, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_UP_2, std::max(+ry, 0.f), tm));
+		ButtonPressed(DeviceInput(device.dev, JOY_DOWN_2, std::max(-ry, 0.f), tm));
 
 		// map buttons
 		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_1, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_A), tm));
@@ -819,7 +827,7 @@ void InputHandler_DInput::UpdateXInput( XIDevice &device, const RageTimer &tm )
 		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_8, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB), tm));
 		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_9, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER), tm));
 		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_10, !!(state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER), tm));
-		
+
 		// map triggers to buttons
 		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_11, !!(state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD), tm));
 		ButtonPressed(DeviceInput(device.dev, JOY_BUTTON_12, !!(state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD), tm));
@@ -944,7 +952,7 @@ void InputHandler_DInput::InputThreadMain()
 	// Enable priority boosting.
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
-	vector<DIDevice*> BufferedDevices;
+	std::vector<DIDevice*> BufferedDevices;
 	HANDLE Handle = CreateEvent( nullptr, FALSE, FALSE, nullptr );
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
@@ -1002,7 +1010,7 @@ void InputHandler_DInput::InputThreadMain()
 	CloseHandle(Handle);
 }
 
-void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
+void InputHandler_DInput::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut )
 {
 	for( unsigned i=0; i < XDevices.size(); ++i )
 		vDevicesOut.push_back( InputDeviceInfo(XDevices[i].dev, XDevices[i].m_sName ) );
@@ -1090,7 +1098,7 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1100,7 +1108,7 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

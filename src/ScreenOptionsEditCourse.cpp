@@ -14,7 +14,10 @@
 #include "Style.h"
 #include "Steps.h"
 
-static void GetStepsForSong( Song *pSong, vector<Steps*> &vpStepsOut )
+#include <vector>
+
+
+static void GetStepsForSong( Song *pSong, std::vector<Steps*> &vpStepsOut )
 {
 	SongUtil::GetSteps( pSong, vpStepsOut, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 	// xxx: If the StepsType isn't valid for the current game, this will cause
@@ -63,7 +66,7 @@ public:
 
 		return RELOAD_CHANGED_ALL;
 	}
-	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const 
+	virtual void ImportOption( OptionRow *pRow, const std::vector<PlayerNumber> &vpns, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
 		Steps *pSteps;
@@ -73,7 +76,7 @@ public:
 				pSteps = pTrail->m_vEntries[ m_iEntryIndex ].pSteps;
 		}
 
-		vector<Steps*>::const_iterator iter = find( m_vpSteps.begin(), m_vpSteps.end(), pSteps );
+		std::vector<Steps*>::const_iterator iter = find( m_vpSteps.begin(), m_vpSteps.end(), pSteps );
 		if( iter == m_vpSteps.end() )
 		{
 			pRow->SetOneSharedSelection( 0 );
@@ -85,7 +88,7 @@ public:
 		}
 
 	}
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const 
+	virtual int ExportOption( const std::vector<PlayerNumber> &vpns, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		return 0;
 	}
@@ -96,7 +99,7 @@ public:
 
 protected:
 	int	m_iEntryIndex;
-	vector<Steps*> m_vpSteps;
+	std::vector<Steps*> m_vpSteps;
 };
 
 
@@ -113,10 +116,10 @@ enum EditCourseRow
 
 enum RowType
 {
-	RowType_Song, 
-	RowType_Steps, 
+	RowType_Song,
+	RowType_Steps,
 	NUM_RowType,
-	RowType_Invalid, 
+	RowType_Invalid,
 };
 static int RowToEntryIndex( int iRow )
 {
@@ -150,7 +153,7 @@ void ScreenOptionsEditCourse::Init()
 	SongUtil::SortSongPointerArrayByTitle( m_vpSongs );
 }
 
-const MenuRowDef g_MenuRows[] = 
+const MenuRowDef g_MenuRows[] =
 {
 	MenuRowDef( -1,	"Max Minutes",	true, EditMode_Practice, true, false, 0, nullptr ),
 };
@@ -169,16 +172,16 @@ static RString MakeMinutesString( int mins )
 
 void ScreenOptionsEditCourse::BeginScreen()
 {
-	vector<OptionRowHandler*> vHands;
+	std::vector<OptionRowHandler*> vHands;
 
 	FOREACH_ENUM( EditCourseRow, rowIndex )
 	{
 		const MenuRowDef &mr = g_MenuRows[rowIndex];
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeSimple( mr );
-	
+
 		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		pHand->m_Def.m_vsChoices.clear();
-	
+
 		switch( rowIndex )
 		{
 		DEFAULT_FAIL(rowIndex);
@@ -211,7 +214,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 			pHand->m_Def.m_bExportOnChange = true;
 			vHands.push_back( pHand );
 		}
-		
+
 		{
 			EditCourseOptionRowHandlerSteps *pHand = new EditCourseOptionRowHandlerSteps;
 			pHand->Load( i );
@@ -252,7 +255,7 @@ ScreenOptionsEditCourse::~ScreenOptionsEditCourse()
 
 }
 
-void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsEditCourse::ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
 {
 	OptionRow &row = *m_pRows[iRow];
 	if( row.GetRowType() == OptionRow::RowType_Exit )
@@ -278,7 +281,7 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 					if( iEntryIndex < (int)GAMESTATE->m_pCurCourse->m_vEntries.size() )
 						pSong = GAMESTATE->m_pCurCourse->m_vEntries[iEntryIndex].songID.ToSong();
 
-					vector<Song*>::iterator iter = find( m_vpSongs.begin(), m_vpSongs.end(), pSong );
+					std::vector<Song*>::iterator iter = find( m_vpSongs.begin(), m_vpSongs.end(), pSong );
 					if( iter == m_vpSongs.end() )
 						row.SetOneSharedSelection( 0 );
 					else
@@ -294,7 +297,7 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 	}
 }
 
-void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsEditCourse::ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
 {
 	FOREACH_ENUM( EditCourseRow, i )
 	{
@@ -439,7 +442,7 @@ Steps *ScreenOptionsEditCourse::GetStepsForEntry( int iEntryIndex )
 	OptionRow &row = *m_pRows[iRow];
 	int index = row.GetOneSharedSelection();
 	Song *pSong = GetSongForEntry( iEntryIndex );
-	vector<Steps*> vpSteps;
+	std::vector<Steps*> vpSteps;
 	GetStepsForSong( pSong, vpSteps );
 	return vpSteps[index];
 }
@@ -505,7 +508,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -515,7 +518,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

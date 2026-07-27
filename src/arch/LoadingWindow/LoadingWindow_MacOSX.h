@@ -3,7 +3,7 @@
 
 #include "LoadingWindow.h"
 #include "global.h"
-/** @brief Loading window for Mac OS X. */
+/** @brief Loading window for macOS. */
 class LoadingWindow_MacOSX : public LoadingWindow
 {
 public:

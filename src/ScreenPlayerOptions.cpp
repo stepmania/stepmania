@@ -11,8 +11,10 @@
 #include "CodeDetector.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
-
 #include "InputEventPlus.h"
+
+#include <vector>
+
 
 REGISTER_SCREEN_CLASS( ScreenPlayerOptions );
 
@@ -85,7 +87,7 @@ bool ScreenPlayerOptions::Input( const InputEventPlus &input )
 
 		for( unsigned r=0; r<m_pRows.size(); r++ )
 		{
-			vector<PlayerNumber> v;
+			std::vector<PlayerNumber> v;
 			v.push_back( pn );
 			int iOldFocus = m_pRows[r]->GetChoiceInRowWithFocus( pn );
 			this->ImportOptions( r, v );
@@ -124,13 +126,13 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 {
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
-	// save original player options 
+	// save original player options
 	PlayerOptions poOrig = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
 
 	// Find out if the current row when exported causes disqualification.
 	// Exporting the row will fill GAMESTATE->m_PlayerOptions.
 	PO_GROUP_CALL( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, Init );
-	vector<PlayerNumber> v;
+	std::vector<PlayerNumber> v;
 	v.push_back( pn );
 	ExportOptions( row, v );
 	bool bRowCausesDisqualified = GAMESTATE->CurrentOptionsDisqualifyPlayer( pn );
@@ -148,7 +150,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenPlayerOptions. */ 
+/** @brief Allow Lua to have access to the ScreenPlayerOptions. */
 class LunaScreenPlayerOptions: public Luna<ScreenPlayerOptions>
 {
 public:
@@ -166,7 +168,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenPlayerOptions, ScreenOptions )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -176,7 +178,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenPlayerOptions, ScreenOptions )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

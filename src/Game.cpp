@@ -24,6 +24,7 @@ static const Game::PerButtonInfo g_CommonButtonInfo[] =
 	{ GameButtonType_Menu }, // GAME_BUTTON_START
 	{ GameButtonType_Menu }, // GAME_BUTTON_SELECT
 	{ GameButtonType_Menu }, // GAME_BUTTON_BACK
+	{ GameButtonType_Menu }, // GAME_BUTTON_RESTART
 	{ GameButtonType_Menu }, // GAME_BUTTON_COIN
 	{ GameButtonType_Menu }, // GAME_BUTTON_OPERATOR
 	{ GameButtonType_Menu }, // GAME_BUTTON_EFFECT_UP
@@ -32,7 +33,7 @@ static const Game::PerButtonInfo g_CommonButtonInfo[] =
 
 const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const
 {
-	COMPILE_ASSERT( GAME_BUTTON_NEXT == ARRAYLEN(g_CommonButtonInfo) );
+	static_assert( GAME_BUTTON_NEXT == ARRAYLEN(g_CommonButtonInfo) );
 	if( gb < GAME_BUTTON_NEXT )
 		return &g_CommonButtonInfo[gb];
 	else
@@ -44,7 +45,7 @@ TapNoteScore Game::GetMapJudgmentTo( TapNoteScore tns ) const
 	switch(tns)
 	{
 		case TNS_W1: return m_mapW1To;
-		case TNS_W2: return m_mapW2To; 
+		case TNS_W2: return m_mapW2To;
 		case TNS_W3: return m_mapW3To;
 		case TNS_W4: return m_mapW4To;
 		case TNS_W5: return m_mapW5To;
@@ -55,7 +56,7 @@ TapNoteScore Game::GetMapJudgmentTo( TapNoteScore tns ) const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Game. */ 
+/** @brief Allow Lua to have access to the Game. */
 class LunaGame: public Luna<Game>
 {
 public:
@@ -79,7 +80,7 @@ LUA_REGISTER_CLASS( Game )
 /*
  * (c) 2001-2002 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -89,7 +90,7 @@ LUA_REGISTER_CLASS( Game )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

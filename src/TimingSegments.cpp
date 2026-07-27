@@ -2,6 +2,9 @@
 #include "TimingSegments.h"
 #include "EnumHelper.h"
 
+#include <vector>
+
+
 const double TimingSegment::EPSILON = 1e-6;
 
 static const char *TimingSegmentTypeNames[] = {
@@ -170,9 +173,9 @@ RString ComboSegment::ToString(int dec) const
 	return ssprintf(str.c_str(), GetBeat(), GetCombo(), GetMissCombo());
 }
 
-vector<float> ComboSegment::GetValues() const
+std::vector<float> ComboSegment::GetValues() const
 {
-	vector<float> ret;
+	std::vector<float> ret;
 	ret.push_back(GetCombo());
 	ret.push_back(GetMissCombo());
 	return ret;
@@ -197,9 +200,9 @@ RString TimeSignatureSegment::ToString(int dec) const
 	return ssprintf(str.c_str(), GetBeat(), GetNum(), GetDen());
 }
 
-vector<float> TimeSignatureSegment::GetValues() const
+std::vector<float> TimeSignatureSegment::GetValues() const
 {
-	vector<float> ret;
+	std::vector<float> ret;
 	ret.push_back(GetNum());
 	ret.push_back(GetDen());
 	return ret;
@@ -214,9 +217,9 @@ RString SpeedSegment::ToString(int dec) const
 		GetDelay(), static_cast<unsigned int>(GetUnit()));
 }
 
-vector<float> SpeedSegment::GetValues() const
+std::vector<float> SpeedSegment::GetValues() const
 {
-	vector<float> ret;
+	std::vector<float> ret;
 	ret.push_back(GetRatio());
 	ret.push_back(GetDelay());
 	ret.push_back(GetUnit());
@@ -269,7 +272,7 @@ RString DelaySegment::ToString(int dec) const
  * @author Jason Felds (c) 2011
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -279,7 +282,7 @@ RString DelaySegment::ToString(int dec) const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

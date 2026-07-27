@@ -3,17 +3,19 @@
 #include "RageLog.h"
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
-#include <memory>
 
 #if defined(HAVE_LIBPTHREAD)
 #include "archutils/Common/PthreadHelpers.h"
 #endif
 
+#include <cerrno>
+#include <memory>
+#include <vector>
+
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
 #include <sys/mman.h>
-#include <cerrno>
 
 #if defined(MACOSX)
 extern "C" int sigaltstack(const stack_t * __restrict, stack_t * __restrict);
@@ -31,8 +33,8 @@ extern "C" int sigaltstack(const stack_t * __restrict, stack_t * __restrict);
 static int find_stack_direction2( char *p ) NOINLINE;
 static int find_stack_direction() NOINLINE;
 
-static vector<SignalHandler::handler> handlers;
-unique_ptr<SaveSignals> saved_sigs;
+static std::vector<SignalHandler::handler> handlers;
+std::unique_ptr<SaveSignals> saved_sigs;
 
 static int signals[] =
 {
@@ -175,7 +177,7 @@ void SignalHandler::OnClose( handler h )
 				p = nullptr; /* no SA_ONSTACK */
 			}
 		}
-		
+
 		struct sigaction sa;
 
 		sa.sa_flags = 0;
@@ -200,7 +202,7 @@ void SignalHandler::OnClose( handler h )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -210,7 +212,7 @@ void SignalHandler::OnClose( handler h )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

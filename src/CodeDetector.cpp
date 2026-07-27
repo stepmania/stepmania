@@ -11,6 +11,7 @@
 #include "InputEventPlus.h"
 #include "OptionRowHandler.h"
 
+
 const char *CodeNames[] = {
 	"PrevSteps1",
 	"PrevSteps2",
@@ -167,13 +168,13 @@ void CodeDetector::ChangeScrollSpeed( GameController controller, bool bIncrement
 	RString sTitleOut;
 	ScreenOptionsMaster::SetList( row, hand, "Speed", sTitleOut );
 
-	vector<ModeChoice>& entries = hand.ListEntries;
+	std::vector<ModeChoice>& entries = hand.ListEntries;
 
 	RString sScrollSpeed = po.GetScrollSpeedAsString();
 	if (sScrollSpeed.empty())
 		sScrollSpeed = "1x";
 
-	for ( vector<ModeChoice>::iterator it = entries.begin(); it != entries.end(); ++it )
+	for ( std::vector<ModeChoice>::iterator it = entries.begin(); it != entries.end(); ++it )
 	{
 		ModeChoice& modeChoice = *it;
 		if ( modeChoice.m_sModifiers == sScrollSpeed ) {
@@ -253,7 +254,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -263,7 +264,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

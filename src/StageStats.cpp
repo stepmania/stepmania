@@ -10,7 +10,10 @@
 #include "Profile.h"
 #include "ProfileManager.h"
 
-/* Arcade:	for the current stage (one song).  
+#include <vector>
+
+
+/* Arcade:	for the current stage (one song).
  * Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
  */
 
@@ -143,7 +146,7 @@ static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState
 	hs.SetStageAward( pss.m_StageAward );
 	hs.SetPeakComboAward( pss.m_PeakComboAward );
 
-	vector<RString> asModifiers;
+	std::vector<RString> asModifiers;
 	{
 		RString sPlayerOptions = ps.m_PlayerOptions.GetStage().GetString();
 		if( !sPlayerOptions.empty() )
@@ -228,7 +231,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		if( bSummary )
 		{
 			// don't save scores if any stage was failed
-			if( m_player[p].m_bFailed ) 
+			if( m_player[p].m_bFailed )
 				continue;
 
 			int iAverageMeter = GetAverageMeter(p);
@@ -257,7 +260,7 @@ void StageStats::FinalizeScores( bool bSummary )
 	}
 
 	// If both players get a machine high score in the same HighScoreList,
-	// then one player's score may have bumped the other player. Look in 
+	// then one player's score may have bumped the other player. Look in
 	// the HighScoreList and re-get the high score index.
 	FOREACH_HumanPlayer( p )
 	{
@@ -288,7 +291,7 @@ void StageStats::FinalizeScores( bool bSummary )
 			pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
 		}
 
-		vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );
+		std::vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );
 		if( iter == pHSL->vHighScores.end() )
 			m_player[p].m_iMachineHighScoreIndex = -1;
 		else
@@ -309,18 +312,18 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 	if( pSong->IsTutorial() == Song::SHOW_NEVER )
 		return false;
 
-	const HighScoreList &hsl = 
+	const HighScoreList &hsl =
 		GAMESTATE->IsCourseMode() ?
 		PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, pTrail) :
 		PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong, pSteps);
 
-	int iScore = m_player[pn].m_iScore;
+	const unsigned int iScore = m_player[pn].m_iScore;
 	float fPercentDP = m_player[pn].GetPercentDancePoints();
 	for( int h=0; h<(int)hsl.vHighScores.size() && h<PREFSMAN->m_iMaxHighScoresPerListForMachine; ++h )
 	{
 		const HighScore &hs = hsl.vHighScores[h];
 		if( hs.GetName() == RANKING_TO_FILL_IN_MARKER[pn]  &&
-			hs.GetPercentDP() == fPercentDP  && 
+			hs.GetPercentDP() == fPercentDP  &&
 			hs.GetScore() == iScore )
 		{
 			return true;
@@ -334,14 +337,14 @@ unsigned int StageStats::GetMinimumMissCombo() const
 {
 	unsigned int iMin = INT_MAX;
 	FOREACH_HumanPlayer( p )
-		iMin = min( iMin, m_player[p].m_iCurMissCombo );
+		iMin = std::min( iMin, m_player[p].m_iCurMissCombo );
 	return iMin;
 }
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StageStats. */ 
+/** @brief Allow Lua to have access to the StageStats. */
 class LunaStageStats: public Luna<StageStats>
 {
 public:
@@ -407,7 +410,7 @@ LUA_REGISTER_CLASS( StageStats )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -417,7 +420,7 @@ LUA_REGISTER_CLASS( StageStats )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

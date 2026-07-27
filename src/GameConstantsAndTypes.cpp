@@ -9,18 +9,22 @@
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "PlayerNumber.h"
-#include <float.h>
+
+#include <cfloat>
+#include <cmath>
+#include <vector>
+
 
 RString StepsTypeToString( StepsType st );
 
-static vector<RString> GenerateRankingToFillInMarker()
+static std::vector<RString> GenerateRankingToFillInMarker()
 {
-	vector<RString> vRankings;
+	std::vector<RString> vRankings;
 	FOREACH_ENUM( PlayerNumber, pn )
 		vRankings.push_back( ssprintf("#P%d#", pn+1) );
 	return vRankings;
 }
-extern const vector<RString> RANKING_TO_FILL_IN_MARKER( GenerateRankingToFillInMarker() );
+extern const std::vector<RString> RANKING_TO_FILL_IN_MARKER( GenerateRankingToFillInMarker() );
 
 extern const RString GROUP_ALL = "---Group All---";
 
@@ -162,8 +166,11 @@ static const char *SortOrderNames[] = {
 	"BPM",
 	"Popularity",
 	"TopGrades",
+	"TopP1Grades",
+	"TopP2Grades",
 	"Artist",
 	"Genre",
+	"Meter",
 	"BeginnerMeter",
 	"EasyMeter",
 	"MediumMeter",
@@ -283,6 +290,8 @@ static const char *TimingWindowNames[] = {
 	"Checkpoint"
 };
 XToString( TimingWindow );
+LuaXType( TimingWindow );
+StringToX( TimingWindow );
 
 static const char *ScoreEventNames[] = {
 	"CheckpointHit",
@@ -344,9 +353,9 @@ StringToX( StageAward );
 LuaFunction( StageAwardToLocalizedString, StageAwardToLocalizedString(Enum::Check<StageAward>(L, 1)) );
 LuaXType( StageAward );
 
-// Numbers are intentionally not at the front of these strings so that the 
+// Numbers are intentionally not at the front of these strings so that the
 // strings can be used as XML entity names.
-// Numbers are intentionally not at the back so that "1000" and "10000" don't 
+// Numbers are intentionally not at the back so that "1000" and "10000" don't
 // conflict when searching for theme elements.
 static const char *PeakComboAwardNames[] = {
 	"1000",
@@ -378,7 +387,7 @@ float DisplayBpms::GetMin() const
 	for (float const &f : vfBpms)
 	{
 		if( f != -1 )
-			fMin = min( fMin, f );
+			fMin = std::min( fMin, f );
 	}
 	if( fMin == FLT_MAX )
 		return 0;
@@ -397,14 +406,14 @@ float DisplayBpms::GetMaxWithin(float highest) const
 	for (float const &f : vfBpms)
 	{
 		if( f != -1 )
-			fMax = clamp(max( fMax, f ), 0, highest);
+			fMax = std::clamp(std::max( fMax, f ), 0.0f, highest);
 	}
 	return fMax;
 }
 
 bool DisplayBpms::BpmIsConstant() const
 {
-	return fabsf( GetMin() - GetMax() ) < 0.001f;
+	return std::abs( GetMin() - GetMax() ) < 0.001f;
 }
 
 bool DisplayBpms::IsSecret() const
@@ -516,7 +525,7 @@ LuaXType( FailType );
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -526,7 +535,7 @@ LuaXType( FailType );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -3,9 +3,9 @@
 #if !defined(AFX_SMPACKAGE_H__FBCA9E6C_86A9_4271_8304_83CC34A31687__INCLUDED_)
 #define AFX_SMPACKAGE_H__FBCA9E6C_86A9_4271_8304_83CC34A31687__INCLUDED_
 
-#if _MSC_VER > 1000
+#if defined(_MSC_VER)
 #pragma once
-#endif // _MSC_VER > 1000
+#endif
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH

@@ -275,7 +275,8 @@ void DancingCharacters::Update( float fDelta )
 		int iCurBeat = (int)GAMESTATE->m_Position.m_fSongBeat;
 		// Need to convert it to a int, otherwise it complains.
 		int NewBeatToSet = (int)AMM_BEATS_TIL_NEXTCAMERA;
-		iCurBeat -= iCurBeat % NewBeatToSet;
+		if (NewBeatToSet != 0)
+			iCurBeat -= iCurBeat % NewBeatToSet;
 
 		m_fThisCameraStartBeat = (float)iCurBeat;
 		m_fThisCameraEndBeat = float(iCurBeat + AMM_BEATS_TIL_NEXTCAMERA);

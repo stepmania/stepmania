@@ -13,6 +13,8 @@
 #include "ScreenDimensions.h"
 
 #include <set>
+#include <vector>
+
 
 static const char *InputEventTypeNames[] = {
 	"FirstPress",
@@ -80,7 +82,7 @@ namespace
 	 * optimize InputFilter::Update, so we don't have to process every button
 	 * we know about when most of them aren't in use. This set is protected
 	 * by queuemutex. */
-	typedef map<DeviceButtonPair, ButtonState> ButtonStateMap;
+	typedef std::map<DeviceButtonPair, ButtonState> ButtonStateMap;
 	ButtonStateMap g_ButtonStates;
 	ButtonState &GetButtonState( const DeviceInput &di )
 	{
@@ -92,7 +94,7 @@ namespace
 	}
 
 	DeviceInputList g_CurrentState;
-	set<DeviceInput> g_DisableRepeat;
+	std::set<DeviceInput> g_DisableRepeat;
 }
 
 /* Some input devices require debouncing. Do this on both press and release.
@@ -245,7 +247,7 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 {
 	if( bs.m_BeingHeld == bs.m_bLastReportedHeld )
 		return;
-	
+
 	GameInput gi;
 
 	/* Possibly apply debounce,
@@ -264,7 +266,7 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 			return;
 		}
 	}
-	
+
 	bs.m_LastReportTime = now;
 	bs.m_bLastReportedHeld = bs.m_BeingHeld;
 	bs.m_fSecsHeld = 0;
@@ -296,7 +298,7 @@ void InputFilter::ReportButtonChange( const DeviceInput &di, InputEventType t )
 	ie.m_ButtonState = g_CurrentState;
 }
 
-void InputFilter::MakeButtonStateList( vector<DeviceInput> &aInputOut ) const
+void InputFilter::MakeButtonStateList( std::vector<DeviceInput> &aInputOut ) const
 {
 	aInputOut.clear();
 	aInputOut.reserve( g_ButtonStates.size() );
@@ -323,9 +325,9 @@ void InputFilter::Update( float fDeltaTime )
 
 	MakeButtonStateList( g_CurrentState );
 
-	vector<ButtonStateMap::iterator> ButtonsToErase;
+	std::vector<ButtonStateMap::iterator> ButtonsToErase;
 
-	for( map<DeviceButtonPair, ButtonState>::iterator b = g_ButtonStates.begin(); b != g_ButtonStates.end(); ++b )
+	for( std::map<DeviceButtonPair, ButtonState>::iterator b = g_ButtonStates.begin(); b != g_ButtonStates.end(); ++b )
 	{
 		di.device = b->first.device;
 		di.button = b->first.button;
@@ -448,14 +450,14 @@ void InputFilter::RepeatStopKey( const DeviceInput &di )
 	g_DisableRepeat.insert( di );
 }
 
-void InputFilter::GetInputEvents( vector<InputEvent> &array )
+void InputFilter::GetInputEvents( std::vector<InputEvent> &array )
 {
 	array.clear();
 	LockMut(*queuemutex);
 	array.swap( queue );
 }
 
-void InputFilter::GetPressedButtons( vector<DeviceInput> &array ) const
+void InputFilter::GetPressedButtons( std::vector<DeviceInput> &array ) const
 {
 	LockMut(*queuemutex);
 	array = g_CurrentState;
@@ -475,7 +477,7 @@ void InputFilter::UpdateMouseWheel(float _fZ)
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to InputFilter. */ 
+/** @brief Allow Lua to have access to InputFilter. */
 class LunaInputFilter: public Luna<InputFilter>
 {
 public:
@@ -515,7 +517,7 @@ LUA_REGISTER_CLASS( InputFilter )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -525,7 +527,7 @@ LUA_REGISTER_CLASS( InputFilter )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -12,7 +12,10 @@
 #include "PrefsManager.h"
 #include "Difficulty.h"
 
+#include <cstddef>
 #include <map>
+#include <vector>
+
 
 Difficulty DwiCompatibleStringToDifficulty( const RString& sDC );
 
@@ -71,7 +74,7 @@ static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Ou
 	case 'K':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
 	case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
 	case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
-	default:	
+	default:
 			LOG->UserLog( "Song file", sPath, "has an invalid DWI note character '%c'.", c );
 			note1Out = DANCE_NOTE_NONE;		note2Out = DANCE_NOTE_NONE;		break;
 	}
@@ -122,12 +125,12 @@ static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2O
  * point, <...> was changed to indicate jumps, and `' was used for
  * 1/192nds.  So, we have to do a check to figure out what it really
  * means.  If it contains 0s, it's most likely 192nds; otherwise,
- * it's most likely a jump.  Search for a 0 before the next >: 
+ * it's most likely a jump.  Search for a 0 before the next >:
  * @param sStepData the step data.
  * @param pos the position of the step data.
  * @return true if it's a 192nd note, false otherwise.
  */
-static bool Is192( const RString &sStepData, size_t pos )
+static bool Is192( const RString &sStepData, std::size_t pos )
 {
 	while( pos < sStepData.size() )
 	{
@@ -137,7 +140,7 @@ static bool Is192( const RString &sStepData, size_t pos )
 			return true;
 		++pos;
 	}
-	
+
 	return false;
 }
 /** @brief All DWI files use 4 beats per measure. */
@@ -187,6 +190,12 @@ static StepsType GetTypeFromMode(const RString &mode)
 static NoteData ParseNoteData(RString &step1, RString &step2,
 			      Steps &out, const RString &path)
 {
+	if (step1.size() < 2 && step2.size() < 2)
+	{
+		LOG->Warn("Didn't get enough data when attempting to load a DWI file");
+		// Handle the error by returning an empty NoteData object
+		return NoteData();
+	}
 	g_mapDanceNoteToNoteDataColumn.clear();
 	switch( out.m_StepsType )
 	{
@@ -217,10 +226,10 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 			break;
 			DEFAULT_FAIL( out.m_StepsType );
 	}
-	
+
 	NoteData newNoteData;
 	newNoteData.SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
-	
+
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
 		RString sStepData;
@@ -236,188 +245,135 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				break;
 				DEFAULT_FAIL( pad );
 		}
-		
+
 		sStepData.Replace("\n", "");
 		sStepData.Replace("\r", "");
 		sStepData.Replace("\t", "");
 		sStepData.Replace(" ", "");
-		
+
 		double fCurrentBeat = 0;
 		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
-		// new and less insane .dwi parse code.
-		// first initialize flags before the loop.
-		bool jump = false;        // moved here to init properly to avoid loop inside of loop
-		bool in_a_series = false; // this is just so we can carp about malformed dwi files with overlapping series sections. they will still play back same as DWI does it.
 
-
-		for (size_t i = 0; i < sStepData.size();++i )
+		for( std::size_t i=0; i<sStepData.size(); )
 		{
-			char c = sStepData[i];
-			switch (c)
+			char c = sStepData[i++];
+			switch( c )
 			{
-				// begins a series
+					// begins a series
 				case '(':
-					if (in_a_series) // shouldn't happen.
-					{
-						LOG->UserLog(
-							"Song file", path,
-							"has overlapping series, cutting off existing one."); // log it
-					}
-					fCurrentIncrementer = 1.0 / 16 * BEATS_PER_MEASURE;
-					in_a_series = true;
-					break; // next character
+					fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
+					break;
 				case '[':
-					if (in_a_series) // shouldn't happen.
-					{
-						LOG->UserLog(
-							"Song file", path,
-							"has overlapping series, cutting off existing one."); // log it
-					}
-					fCurrentIncrementer = 1.0 / 24 * BEATS_PER_MEASURE;
-					in_a_series = true;
-					break; // next character
+					fCurrentIncrementer = 1.0/24 * BEATS_PER_MEASURE;
+					break;
 				case '{':
-					if (in_a_series) // shouldn't happen.
-					{
-						LOG->UserLog(
-							"Song file", path,
-							"has overlapping series, cutting off existing one."); // log it
-					}
-					fCurrentIncrementer = 1.0 / 64 * BEATS_PER_MEASURE;
-					in_a_series = true;
-					break; // next character
+					fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
+					break;
 				case '`':
-					if (in_a_series) // shouldn't happen.
-					{
-						LOG->UserLog(
-							"Song file", path,
-							"has overlapping series, cutting off existing one."); // log it
-					}
-					fCurrentIncrementer = 1.0 / 192 * BEATS_PER_MEASURE;
-					in_a_series = true;
-					break; // next character
-				case '<':
-					if (Is192(sStepData, i))
-					{
-						if (in_a_series) // shouldn't happen.
-						{
-							LOG->UserLog(
-								"Song file", path,
-								"has overlapping series, cutting off existing one."); // log it
-						}
-						fCurrentIncrementer = 1.0 / 192 * BEATS_PER_MEASURE;
-						in_a_series = true;
-					}
-					else
-					{
-						/* It's a jump. Set the jump flag
-						 * We need to keep reading notes until we hit a >. */
-						jump = true;
-					}
-					break; // next character, either way.
-				// ends a series
+					fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
+					break;
+
+					// ends a series
 				case ')':
 				case ']':
 				case '}':
 				case '\'':
-					if (in_a_series)
-					{
-						fCurrentIncrementer = 1.0 / 8 * BEATS_PER_MEASURE;
-						in_a_series=false;
-					}
-					else // shooudn't happen
-					{
-							LOG->UserLog(
-								"Song file", path,
-								"has extra series ender, ignoring."); // log it
-					}
-					break; // either way go to next character
-				// handle >
 				case '>':
-					if (!jump)
-					{
-						// was 192nd notes from old pre 2.01.10 DWI file, change back to 8th notes.
-						fCurrentIncrementer = 1.0 / 8 * BEATS_PER_MEASURE;
-						// test if we are in a series, for logging purposes
-						if (!in_a_series)
-						{
-							LOG->UserLog(
-								"Song file", path,
-								"has extra series ender, ignoring."); // log it
-						}
-						// eiter way, turn off the flag.
-						in_a_series = false; 
-						break; // and go to next character
-					}
-					else
-					{
-						jump = false; // turn off jump. at this point we have to fall through, because there might be a ! after the jump.
-					}
-				default:	// this is a note character, OR end of a jump
+					fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
+					break;
+
+				default:	// this is a note character
 				{
-					// sanity check #1
-					// this can't be a ! unless it's following closing a jump. if it's anywhere else valid, it would have been passed by already.
-					if (c == '!') 
+					if( c == '!' )
 					{
 						LOG->UserLog(
-							"Song file", path,
-							"has an unexpected character: '!'."); // log it
-						break;										// and skip past
-					}
-					// since it's not a !, it's either a note or a >.  everything else has been caught already.
-					const int iIndex = BeatToNoteRow((float)fCurrentBeat);
-					int iCol1, iCol2;
-					if (c != '>')  // if it's not a >
-					{
-						// then it's a note, get the columns for it.
-						DWIcharToNoteCol(c,(GameController)pad,iCol1,iCol2,path);
-						if (iCol1 != -1)
-							newNoteData.SetTapNote(iCol1,iIndex,TAP_ORIGINAL_TAP);
-						if (iCol2 != -1)
-							newNoteData.SetTapNote(iCol2,iIndex,TAP_ORIGINAL_TAP);
+							     "Song file",
+							     path,
+							     "has an unexpected character: '!'." );
+						continue;
 					}
 
-					// look for hold. to do this, we must peek ahead.
-					// since there must be a character after the !, check to see if there are at least two left before looking for the !.
-					if ((i + 2) < sStepData.length()) // make sure i+1 won't blow past the end
+					bool jump = false;
+					if( c == '<' )
 					{
-						// then we can check for !. peeking at i+1 is safe if i+2 < length
-						if (sStepData[i + 1] == '!')
+						/* Arr.  Is this a jump or a 1/192 marker? */
+						if( Is192( sStepData, i ) )
 						{
-							++i; // move onto the !
-							++i; // move onto the note after
-							const char holdChar = sStepData[i]; // and read that character.
-							// by testing in Dance WIth Intensity, this cannot be a <.
-							// and if it's not, it will be properly logged as invalid.
-							// multipanel holds must be placed entirely inside a <> and use multiple !s
-							// tested in DWI
+							fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
+							break;
+						}
+
+						/* It's a jump.
+						 * We need to keep reading notes until we hit a >. */
+						jump = true;
+						c = sStepData[i++];
+					}
+
+					const int iIndex = BeatToNoteRow( (float)fCurrentBeat );
+					i--;
+					do {
+						c = sStepData[i++];
+
+						if( jump && c == '>' )
+							break;
+
+						int iCol1, iCol2;
+						DWIcharToNoteCol(
+								 c,
+								 (GameController)pad,
+								 iCol1,
+								 iCol2,
+								 path );
+
+						if( iCol1 != -1 )
+							newNoteData.SetTapNote(iCol1,
+									       iIndex,
+									       TAP_ORIGINAL_TAP);
+						if( iCol2 != -1 )
+							newNoteData.SetTapNote(iCol2,
+									       iIndex,
+									       TAP_ORIGINAL_TAP);
+
+						if(i>=sStepData.length())
+						{
+							break;
+							//we ran out of data
+							//while looking for the ending > mark
+						}
+
+						if( sStepData[i] == '!' )
+						{
+							i++;
+							const char holdChar = sStepData[i++];
+
 							DWIcharToNoteCol(holdChar,
-								(GameController)pad,
-								iCol1,
-								iCol2,
-								path);
-							// place hold start markers. 
-							if (iCol1 != -1)
+									 (GameController)pad,
+									 iCol1,
+									 iCol2,
+									 path );
+
+							if( iCol1 != -1 )
 								newNoteData.SetTapNote(iCol1,
-									iIndex,
-									TAP_ORIGINAL_HOLD_HEAD);
-							if (iCol2 != -1)
+										       iIndex,
+										       TAP_ORIGINAL_HOLD_HEAD);
+							if( iCol2 != -1 )
 								newNoteData.SetTapNote(iCol2,
-									iIndex,
-									TAP_ORIGINAL_HOLD_HEAD);
-						}						
+										       iIndex,
+										       TAP_ORIGINAL_HOLD_HEAD);
+						}
+
+						if (jump && i < sStepData.size()) {
+							c = sStepData[i++];
+						}
 					}
-					// we are only here if we have placed at least one note or hold start
-					if (!jump) // if we aren't in a jump
-					{
-						fCurrentBeat += fCurrentIncrementer; // advance the beat. 
-					}
+					while( jump );
+					fCurrentBeat += fCurrentIncrementer;
 				}
+					break;
 			}
-			
 		}
 	}
-	
+
 	/* Fill in iDuration. */
 	for( int t=0; t<newNoteData.GetNumTracks(); ++t )
 	{
@@ -426,7 +382,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 			TapNote tn = newNoteData.GetTapNote( t, iHeadRow  );
 			if( tn.type != TapNoteType_HoldHead )
 				continue;
-			
+
 			int iTailRow = iHeadRow;
 			bool bFound = false;
 			while( !bFound && newNoteData.GetNextTapNoteRowForTrack(t, iTailRow) )
@@ -440,21 +396,21 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				newNoteData.SetTapNote( t, iHeadRow, tn );
 				bFound = true;
 			}
-			
+
 			if( !bFound )
 			{
 				/* The hold was never closed.  */
 				LOG->UserLog("Song file",
 					     path,
-					     "failed to close a hold note in \"%s\" on track %i", 
+					     "failed to close a hold note in \"%s\" on track %i",
 					     DifficultyToString(out.GetDifficulty()).c_str(),
 					     t);
-				
+
 				newNoteData.SetTapNote( t, iHeadRow, TAP_EMPTY );
 			}
 		}
 	}
-	
+
 	ASSERT( newNoteData.GetNumTracks() > 0 );
 	return newNoteData;
 }
@@ -470,11 +426,11 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
  * @param sPath the path to the file.
  * @return the success or failure of the operation.
  */
-static bool LoadFromDWITokens( 
-	RString sMode, 
+static bool LoadFromDWITokens(
+	RString sMode,
 	RString sDescription,
 	RString sNumFeet,
-	RString sStepData1, 
+	RString sStepData1,
 	RString sStepData2,
 	Steps &out,
 	const RString &sPath )
@@ -533,7 +489,7 @@ static float ParseBrokenDWITimestamp( const RString &arg1, const RString &arg2, 
 }
 
 
-void DWILoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+void DWILoader::GetApplicableFiles( const RString &sPath, std::vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.dwi"), out );
 }
@@ -549,16 +505,16 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			     msd.GetError().c_str() );
 		return false;
 	}
-	
+
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &params = msd.GetValue(i);
 		RString valueName = params[0];
-		
-		if(valueName.EqualsNoCase("SINGLE")  || 
+
+		if(valueName.EqualsNoCase("SINGLE")  ||
 		   valueName.EqualsNoCase("DOUBLE")  ||
-		   valueName.EqualsNoCase("COUPLE")  || 
+		   valueName.EqualsNoCase("COUPLE")  ||
 		   valueName.EqualsNoCase("SOLO") )
 		{
 			if (out.m_StepsType != GetTypeFromMode(valueName))
@@ -576,9 +532,9 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	return false;
 }
 
-bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &BlacklistedImages )
+bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString> &BlacklistedImages )
 {
-	vector<RString> aFileNames;
+	std::vector<RString> aFileNames;
 	GetApplicableFiles( sPath_, aFileNames );
 
 	if( aFileNames.size() > 1 )
@@ -633,7 +589,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			out.m_sArtist = sParams[1];
 			ConvertString( out.m_sArtist, "utf-8,english" );
 		}
-		
+
 		else if( sValueName.EqualsNoCase("GENRE") )
 		{
 			out.m_sGenre = sParams[1];
@@ -701,12 +657,12 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 
 		else if( sValueName.EqualsNoCase("FREEZE") )
 		{
-			vector<RString> arrayFreezeExpressions;
+			std::vector<RString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
 
 			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 			{
-				vector<RString> arrayFreezeValues;
+				std::vector<RString> arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 				if( arrayFreezeValues.size() != 2 )
 				{
@@ -723,12 +679,12 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 
 		else if( sValueName.EqualsNoCase("CHANGEBPM")  || sValueName.EqualsNoCase("BPMCHANGE") )
 		{
-			vector<RString> arrayBPMChangeExpressions;
+			std::vector<RString> arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
 
 			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 			{
-				vector<RString> arrayBPMChangeValues;
+				std::vector<RString> arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				if( arrayBPMChangeValues.size() != 2 )
 				{
@@ -746,17 +702,17 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("SINGLE")  || 
+		else if( sValueName.EqualsNoCase("SINGLE")  ||
 			 sValueName.EqualsNoCase("DOUBLE")  ||
-			 sValueName.EqualsNoCase("COUPLE")  || 
+			 sValueName.EqualsNoCase("COUPLE")  ||
 			 sValueName.EqualsNoCase("SOLO") )
 		{
 			Steps* pNewNotes = out.CreateSteps();
-			LoadFromDWITokens( 
-				sParams[0], 
-				sParams[1], 
-				sParams[2], 
-				sParams[3], 
+			LoadFromDWITokens(
+				sParams[0],
+				sParams[1],
+				sParams[2],
+				sParams[3],
 				(iNumParams==5) ? sParams[4] : RString(""),
 				*pNewNotes,
 				sPath
@@ -776,14 +732,14 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			 * to pick up images used here as song images (eg. banners). */
 			RString param = sParams[1];
 			/* "{foo} ... {foo2}" */
-			size_t pos = 0;
+			std::size_t pos = 0;
 			while( pos < RString::npos )
 			{
 
-				size_t startpos = param.find('{', pos);
+				std::size_t startpos = param.find('{', pos);
 				if( startpos == RString::npos )
 					break;
-				size_t endpos = param.find('}', startpos);
+				std::size_t endpos = param.find('}', startpos);
 				if( endpos == RString::npos )
 					break;
 
@@ -807,7 +763,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -817,7 +773,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

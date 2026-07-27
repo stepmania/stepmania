@@ -1,15 +1,17 @@
-﻿#include "global.h"
+#include "global.h"
 #include "MemoryCardDriverThreaded_Folder.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "PlayerNumber.h"
 #include "MemoryCardManager.h"
 
-#include <limits.h>
-#include <stdlib.h>
+#include <bitset>
+#include <climits>
+#include <cstdlib>
+#include <vector>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <bitset>
+
 
 static int g_currentSerial = 0;
 
@@ -74,7 +76,7 @@ bool MemoryCardDriverThreaded_Folder::USBStorageDevicesChanged()
 	return GetActivePlayerMask() != m_LastDevices;
 }
 
-void MemoryCardDriverThreaded_Folder::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
+void MemoryCardDriverThreaded_Folder::GetUSBStorageDevices( std::vector<UsbStorageDevice>& vDevicesOut )
 {
 	LOG->Trace( "GetUSBStorageDevices" );
 
@@ -107,7 +109,7 @@ void MemoryCardDriverThreaded_Folder::Unmount( UsbStorageDevice* pDevice )
 /*
  * (c) 2018-2019 Electromuis
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -117,7 +119,7 @@ void MemoryCardDriverThreaded_Folder::Unmount( UsbStorageDevice* pDevice )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

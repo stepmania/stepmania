@@ -2,9 +2,10 @@
 #include "TextureFont.h"
 #include "Utils.h"
 
-#include <fstream>
-#include <math.h>
 #include <cassert>
+#include <cmath>
+#include <fstream>
+#include <vector>
 
 TextureFont::TextureFont()
 {
@@ -25,7 +26,7 @@ void TextureFont::FormatFontPages()
 	for( unsigned i = 0; i < m_apPages.size(); ++i )
 		delete m_apPages[i];
 	m_apPages.clear();
-	for( map<wchar_t, HBITMAP>::iterator i = m_Characters.begin(); i != m_Characters.end(); ++i )
+	for( std::map<wchar_t, HBITMAP>::iterator i = m_Characters.begin(); i != m_Characters.end(); ++i )
 	{
 		if( i->second == NULL )
 			continue;
@@ -33,7 +34,7 @@ void TextureFont::FormatFontPages()
 		ASSERT( b );
 	}
 	m_Characters.clear();
-	
+
 	m_sError = m_sWarnings = "";
 
 	/*
@@ -151,9 +152,9 @@ void TextureFont::FormatCharacter( wchar_t c, HDC hDC )
 		ABCFLOAT abcf;
 		GetCharABCWidthsFloatW( hDC, c, c, &abcf );
 
-		abc.abcA = lrintf( abcf.abcfA );
-		abc.abcB = lrintf( abcf.abcfB );
-		abc.abcC = lrintf( abcf.abcfC );
+		abc.abcA = std::lrint( abcf.abcfA );
+		abc.abcB = std::lrint( abcf.abcfB );
+		abc.abcC = std::lrint( abcf.abcfC );
 	}
 
 	/*
@@ -247,16 +248,16 @@ void TextureFont::FormatCharacter( wchar_t c, HDC hDC )
 
 	if( realbounds.left != realbounds.right && realbounds.top != realbounds.bottom )
 	{
-		m_BoundingRect.top = min( m_BoundingRect.top, (LONG) realbounds.top );
-		m_BoundingRect.left = min( m_BoundingRect.left, (LONG) realbounds.left );
-		m_BoundingRect.right = max( m_BoundingRect.right, (LONG) realbounds.right );
-		m_BoundingRect.bottom = max( m_BoundingRect.bottom, (LONG) realbounds.bottom );
+		m_BoundingRect.top = std::min( m_BoundingRect.top, (LONG) realbounds.top );
+		m_BoundingRect.left = std::min( m_BoundingRect.left, (LONG) realbounds.left );
+		m_BoundingRect.right = std::max( m_BoundingRect.right, (LONG) realbounds.right );
+		m_BoundingRect.bottom = std::max( m_BoundingRect.bottom, (LONG) realbounds.bottom );
 		if( m_BoundingRect.left == m_BoundingRect.right && m_BoundingRect.top == m_BoundingRect.bottom )
 			m_BoundingRect = realbounds;
 	}
 
-	m_iCharLeftOverlap = max( m_iCharLeftOverlap, -int(abc.abcA) );
-	m_iCharRightOverlap = max( m_iCharRightOverlap, int(abc.abcC) - int(abc.abcB) );
+	m_iCharLeftOverlap = std::max( m_iCharLeftOverlap, -int(abc.abcA) );
+	m_iCharRightOverlap = std::max( m_iCharRightOverlap, int(abc.abcC) - int(abc.abcB) );
 
 //	const SolidBrush solidBrush(Color(128, 255, 0, 255));
 //	Pen pen(&solidBrush, 1);
@@ -289,14 +290,14 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 	pPage->m_iFrameWidth = (m_BoundingRect.right - m_BoundingRect.left) + m_iPadding;
 	pPage->m_iFrameHeight = (m_BoundingRect.bottom - m_BoundingRect.top) + m_iPadding;
 	int iDimensionMultiple = 4;	// TODO: This only needs to be 4 for doubleres textures.  It could be 2 otherwise and use less space
-	pPage->m_iFrameWidth = (int)ceil( pPage->m_iFrameWidth /(double)iDimensionMultiple ) * iDimensionMultiple;
-	pPage->m_iFrameHeight = (int)ceil( pPage->m_iFrameHeight /(double)iDimensionMultiple ) * iDimensionMultiple;
+	pPage->m_iFrameWidth = std::ceil( pPage->m_iFrameWidth /(double)iDimensionMultiple ) * iDimensionMultiple;
+	pPage->m_iFrameHeight = std::ceil( pPage->m_iFrameHeight /(double)iDimensionMultiple ) * iDimensionMultiple;
 
-	pPage->m_iNumFramesX = (int) ceil( powf( (float) Desc.chars.size(), 0.5f ) );
-	pPage->m_iNumFramesY = (int) ceil( (float) Desc.chars.size() / pPage->m_iNumFramesX );
+	pPage->m_iNumFramesX = std::ceil( std::pow( (float) Desc.chars.size(), 0.5f ) );
+	pPage->m_iNumFramesY = std::ceil( (float) Desc.chars.size() / pPage->m_iNumFramesX );
 
 	pPage->Create( pPage->m_iNumFramesX*pPage->m_iFrameWidth, pPage->m_iNumFramesY*pPage->m_iFrameHeight );
-	
+
 	HGDIOBJ hOldBitmap = SelectObject( hDC, pPage->m_hPage );
 
 	HDC hSrcDC = CreateCompatibleDC( NULL );
@@ -306,7 +307,7 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 	{
 		const wchar_t c = Desc.chars[CurChar];
 		const ABC &abc = m_ABC[c];
-		
+
 		/* The current frame is at fOffsetX/fOffsetY.  Center the character
 		 * horizontally in the frame.  We can align it however we want
 		 * vertically, as long as we align the baselines. */
@@ -347,7 +348,7 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 }
 
 /* UTF-8 encode ch and append to out. */
-void wchar_to_utf8( wchar_t ch, string &out )
+void wchar_to_utf8( wchar_t ch, std::string &out )
 {
 	if( ch < 0x80 ) { out.append( 1, (char) ch ); return; }
 
@@ -385,7 +386,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 
 	const CString inipath = sBasePath + ".ini";
 
-	ofstream f;
+	std::ofstream f;
 
 	if( bSaveMetrics )
 	{
@@ -421,12 +422,12 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 				unsigned iLine = 0;
 				while( iChar < desc.chars.size() )
 				{
-					f << "Line "  << setw(iWidth) << iLine << "=";
-					f << setw(1);
+					f << "Line "  << std::setw(iWidth) << iLine << "=";
+					f << std::setw(1);
 					for( int iX = 0; iX < page.m_iNumFramesX && iChar < desc.chars.size(); ++iX, ++iChar )
 					{
 						const wchar_t c = desc.chars[iChar];
-						string sUTF8;
+						std::string sUTF8;
 						wchar_to_utf8( c, sUTF8 );
 						f << sUTF8.c_str();
 					}
@@ -439,7 +440,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 
 
 			/* export character widths.  "numbers" page has fixed with for all number characters. */
-			vector<int> viCharWidth;
+			std::vector<int> viCharWidth;
 			int iMaxNumberCharWidth = 0;
 			for( unsigned j = 0; j < desc.chars.size(); ++j )
 			{
@@ -451,7 +452,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 				viCharWidth.push_back( iCharWidth );
 
 				if( IsNumberChar( c ) )
-					iMaxNumberCharWidth = max( iMaxNumberCharWidth, iCharWidth );
+					iMaxNumberCharWidth = std::max( iMaxNumberCharWidth, iCharWidth );
 			}
 			for( unsigned j = 0; j < desc.chars.size(); ++j )
 			{
@@ -505,7 +506,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 
 
 FontPage::FontPage()
-{ 
+{
 	m_hPage = NULL;
 	m_iFrameWidth = 0;
 	m_iFrameHeight = 0;

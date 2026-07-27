@@ -5,6 +5,8 @@
 #include "RageTimer.h"
 #include "archutils/Win32/ErrorStrings.h"
 
+#include <cstdint>
+
 const int MAX_THREADS=128;
 
 static MutexImpl_Win32 *g_pThreadIdMutex = nullptr;
@@ -15,10 +17,10 @@ static void InitThreadIdMutex()
 	g_pThreadIdMutex = new MutexImpl_Win32(nullptr);
 }
 
-static uint64_t g_ThreadIds[MAX_THREADS];
+static std::uint64_t g_ThreadIds[MAX_THREADS];
 static HANDLE g_ThreadHandles[MAX_THREADS];
 
-HANDLE Win32ThreadIdToHandle( uint64_t iID )
+HANDLE Win32ThreadIdToHandle( std::uint64_t iID )
 {
 	for( int i = 0; i < MAX_THREADS; ++i )
 	{
@@ -42,9 +44,9 @@ void ThreadImpl_Win32::Resume()
 	ResumeThread( ThreadHandle );
 }
 
-uint64_t ThreadImpl_Win32::GetThreadId() const
+std::uint64_t ThreadImpl_Win32::GetThreadId() const
 {
-	return (uint64_t) ThreadId;
+	return (std::uint64_t) ThreadId;
 }
 
 int ThreadImpl_Win32::Wait()
@@ -73,28 +75,29 @@ typedef struct tagTHREADNAME_INFO
 
 static void SetThreadName( DWORD dwThreadID, LPCTSTR szThreadName )
 {
+#if defined(_MSC_VER)
 	THREADNAME_INFO info;
 	info.dwType = 0x1000;
 	info.szName = szThreadName;
 	info.dwThreadID = dwThreadID;
 	info.dwFlags = 0;
 
-	// FIXME: Need to find a GCC/GDB-friendly way to do this.
-#if defined(_MSC_VER)
 	__try {
 		RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(DWORD), (ULONG_PTR *)&info);
 	} __except (EXCEPTION_CONTINUE_EXECUTION) {
 	}
+#elif defined(__GNUC__)
+	pthread_setname_np(pthread_self(), szThreadName);
 #endif
 }
 
 static DWORD WINAPI StartThread( LPVOID pData )
 {
-	ThreadImpl_Win32 *pThis = (ThreadImpl_Win32 *) pData;
+	ThreadImpl_Win32 *pThis = static_cast<ThreadImpl_Win32 *>(pData);
 
 	SetThreadName( GetCurrentThreadId(), RageThread::GetCurrentThreadName() );
 
-	DWORD ret = (DWORD) pThis->m_pFunc( pThis->m_pData );
+	DWORD ret = static_cast<DWORD>(pThis->m_pFunc(pThis->m_pData));
 
 	for( int i = 0; i < MAX_THREADS; ++i )
 	{
@@ -109,7 +112,7 @@ static DWORD WINAPI StartThread( LPVOID pData )
 	return ret;
 }
 
-static int GetOpenSlot( uint64_t iID )
+static int GetOpenSlot( std::uint64_t iID )
 {
 	InitThreadIdMutex();
 
@@ -135,7 +138,7 @@ ThreadImpl *MakeThisThread()
 	SetThreadName( GetCurrentThreadId(), RageThread::GetCurrentThreadName() );
 
 	const HANDLE CurProc = GetCurrentProcess();
-	int ret = DuplicateHandle( CurProc, GetCurrentThread(), CurProc, 
+	int ret = DuplicateHandle( CurProc, GetCurrentThread(), CurProc,
 		&thread->ThreadHandle, 0, false, DUPLICATE_SAME_ACCESS );
 
 	if( !ret )
@@ -154,14 +157,14 @@ ThreadImpl *MakeThisThread()
 	return thread;
 }
 
-ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThreadID )
+ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, std::uint64_t *piThreadID )
 {
 	ThreadImpl_Win32 *thread = new ThreadImpl_Win32;
 	thread->m_pFunc = pFunc;
 	thread->m_pData = pData;
 
 	thread->ThreadHandle = CreateThread( nullptr, 0, &StartThread, thread, CREATE_SUSPENDED, &thread->ThreadId );
-	*piThreadID = (uint64_t) thread->ThreadId;
+	*piThreadID = (std::uint64_t) thread->ThreadId;
 	ASSERT_M( thread->ThreadHandle != nullptr, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread").c_str() ) );
 
 	int slot = GetOpenSlot( thread->ThreadId );
@@ -212,25 +215,23 @@ static bool SimpleWaitForSingleObject( HANDLE h, DWORD ms )
 }
 
 bool MutexImpl_Win32::Lock()
-{
-	int len = 15000;
-	int tries = 5;
-
-	while( tries-- )
 	{
-		// Wait for fifteen seconds. If it takes longer than that, we're probably deadlocked.
-		if( SimpleWaitForSingleObject( mutex, len ) )
+		DWORD dwWaitResult = WaitForSingleObject(mutex, INFINITE);
+		switch (dwWaitResult)
+		{
+		case WAIT_OBJECT_0:
 			return true;
+	
+		case WAIT_TIMEOUT:
+			return false;
 
-		/* Timed out; probably deadlocked. Try a couple more times, with
-		 * a smaller timeout, just in case we're debugging and happened
-		 * to stop while waiting on the mutex. */
-		len = 1000;
+		case WAIT_ABANDONED:
+			return false;
+
+		default:
+			FAIL_M( "WaitForSingleObject failed in a way that shouldn't have been possible" );
+		}
 	}
-
-	return false;
-}
-
 
 bool MutexImpl_Win32::TryLock()
 {
@@ -247,12 +248,12 @@ void MutexImpl_Win32::Unlock()
 		sm_crash( werr_ssprintf( GetLastError(), "ReleaseMutex failed" ) );
 }
 
-uint64_t GetThisThreadId()
+std::uint64_t GetThisThreadId()
 {
 	return GetCurrentThreadId();
 }
 
-uint64_t GetInvalidThreadId()
+std::uint64_t GetInvalidThreadId()
 {
 	return 0;
 }
@@ -281,46 +282,8 @@ EventImpl_Win32::~EventImpl_Win32()
 	CloseHandle( m_WaitersDone );
 }
 
-/* SignalObjectAndWait is atomic, which leads to more fair event handling.
- * However, we don't guarantee or depend upon fair events, and
- * SignalObjectAndWait is only available in NT. I also can't find a single
- * function to signal an object like SignalObjectAndWait, so we need to
- * know if the object is a mutex or an event. */
 static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectToWaitOn, bool bFirstParamIsMutex, unsigned iMilliseconds = INFINITE )
 {
-	static bool bSignalObjectAndWaitUnavailable = false;
-	// Watch out: SignalObjectAndWait doesn't work when iMilliseconds is zero.
-	if( !bSignalObjectAndWaitUnavailable && iMilliseconds != 0 )
-	{
-		DWORD ret = SignalObjectAndWait( hObjectToSignal, hObjectToWaitOn, iMilliseconds, false );
-		switch( ret )
-		{
-		case WAIT_OBJECT_0:
-			return true;
-
-		case WAIT_ABANDONED:
-			// The docs aren't particular about what this does, but it should never happen.
-			FAIL_M( "WAIT_ABANDONED" );
-
-		case 1: // bogus Win98 return value
-		case WAIT_FAILED:
-			if( GetLastError() == ERROR_CALL_NOT_IMPLEMENTED )
-			{
-				// We're probably on 9x.
-				bSignalObjectAndWaitUnavailable = true;
-				break;
-			}
-
-			FAIL_M( werr_ssprintf(GetLastError(), "SignalObjectAndWait") );
-
-		case WAIT_TIMEOUT:
-			return false;
-
-		default:
-			FAIL_M( ssprintf("Unexpected code from SignalObjectAndWait: %d",ret ));
-		}
-	}
-
 	if( bFirstParamIsMutex )
 	{
 		const bool bRet = !!ReleaseMutex( hObjectToSignal );
@@ -328,7 +291,9 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 			sm_crash( werr_ssprintf( GetLastError(), "ReleaseMutex failed" ) );
 	}
 	else
+	{
 		SetEvent( hObjectToSignal );
+	}
 
 	DWORD ret = WaitForSingleObject( hObjectToWaitOn, iMilliseconds );
 	switch( ret )
@@ -359,7 +324,7 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 	if( pTimeout != nullptr )
 	{
 		float fSecondsInFuture = -pTimeout->Ago();
-		iMilliseconds = (unsigned) max( 0, int( fSecondsInFuture * 1000 ) );
+		iMilliseconds = static_cast<unsigned>(std::max(0, static_cast<int>(fSecondsInFuture * 1000)));
 	}
 
 	// Unlock the mutex and wait for a signal.
@@ -452,12 +417,12 @@ void SemaImpl_Win32::Post()
 
 bool SemaImpl_Win32::Wait()
 {
-	int len = 15000; 
+	int len = 15000;
 	int tries = 5;
 
 	while( tries-- )
 	{
-		/* Wait for 15 seconds. If it takes longer than that, we're 
+		/* Wait for 15 seconds. If it takes longer than that, we're
 		 * probably deadlocked. */
 		if( SimpleWaitForSingleObject( sem, len ) )
 		{
@@ -491,7 +456,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
 /*
  * (c) 2001-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -501,7 +466,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

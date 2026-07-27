@@ -32,7 +32,7 @@ int RageSoundReader_Pan::Read( float *pBuf, int iFrames )
 
 unsigned RageSoundReader_Pan::GetNumChannels() const
 {
-	return max( 2u, RageSoundReader_Filter::GetNumChannels() );
+	return std::max( 2u, RageSoundReader_Filter::GetNumChannels() );
 }
 
 bool RageSoundReader_Pan::SetProperty( const RString &sProperty, float fValue )

@@ -10,6 +10,9 @@
 #include "OptionRowHandler.h"
 #include "PrefsManager.h"
 
+#include <vector>
+
+
 void PrepareToLoadScreen( const RString &sScreenName );
 void FinishedLoadingScreen();
 
@@ -18,7 +21,7 @@ AutoScreenMessage( SM_GoToCancel );
 
 bool ScreenMiniMenu::s_bCancelled = false;
 int	ScreenMiniMenu::s_iLastRowCode = -1;
-vector<int>	ScreenMiniMenu::s_viLastAnswers;
+std::vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
 // Hooks for profiling
 void PrepareToLoadScreen( const RString &sScreenName ) {}
@@ -79,8 +82,8 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 	m_vMenuRows = pDef->rows;
 
 	s_viLastAnswers.resize( m_vMenuRows.size() );
-	// Convert from m_vMenuRows to vector<OptionRowDefinition>
-	vector<OptionRowHandler*> vHands;
+	// Convert from m_vMenuRows to std::vector<OptionRowDefinition>
+	std::vector<OptionRowHandler*> vHands;
 	for( unsigned r=0; r<m_vMenuRows.size(); r++ )
 	{
 		const MenuRowDef &mr = m_vMenuRows[r];
@@ -95,7 +98,7 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 {
 	ScreenOptions::AfterChangeValueOrRow( pn );
 
-	vector<PlayerNumber> vpns;
+	std::vector<PlayerNumber> vpns;
 	FOREACH_PlayerNumber( p )
 		vpns.push_back( p );
 	for( unsigned i=0; i<m_pRows.size(); i++ )
@@ -116,7 +119,7 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 	}
 }
 
-void ScreenMiniMenu::ImportOptions( int r, const vector<PlayerNumber> &vpns )
+void ScreenMiniMenu::ImportOptions( int r, const std::vector<PlayerNumber> &vpns )
 {
 	OptionRow &optrow = *m_pRows[r];
 	const MenuRowDef &mr = m_vMenuRows[r];
@@ -124,7 +127,7 @@ void ScreenMiniMenu::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 		optrow.SetOneSharedSelection( mr.iDefaultChoice );
 }
 
-void ScreenMiniMenu::ExportOptions( int r, const vector<PlayerNumber> &vpns )
+void ScreenMiniMenu::ExportOptions( int r, const std::vector<PlayerNumber> &vpns )
 {
 	if( r == GetCurrentRow() )
 		s_iLastRowCode = m_vMenuRows[r].iRowCode;
@@ -159,7 +162,7 @@ bool ScreenMiniMenu::FocusedItemEndsScreen( PlayerNumber pn ) const
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -169,7 +172,7 @@ bool ScreenMiniMenu::FocusedItemEndsScreen( PlayerNumber pn ) const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

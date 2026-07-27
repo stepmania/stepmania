@@ -4,12 +4,16 @@
 #define RAGE_FILE_H
 
 #include "RageFileBasic.h"
+
+#include <cstddef>
+#include <cstdint>
+
 struct lua_State;
 
 /**
  * @brief High-level file access.
  *
- * This is the high-level interface, which interfaces with RageFileObj 
+ * This is the high-level interface, which interfaces with RageFileObj
  * implementations and RageFileManager. */
 class RageFile: public RageFileBasic
 {
@@ -58,15 +62,15 @@ public:
 	int GetFD();
 
 	/* Raw I/O: */
-	int Read( void *buffer, size_t bytes );
+	int Read( void *buffer, std::size_t bytes );
 	int Read( RString &buffer, int bytes = -1 );
-	int Write( const void *buffer, size_t bytes );
+	int Write( const void *buffer, std::size_t bytes );
 	int Write( const RString& string ) { return Write( string.data(), string.size() ); }
 	int Flush();
 
 	/* These are just here to make wrappers (eg. vorbisfile, SDL_rwops) easier. */
-	int Write( const void *buffer, size_t bytes, int nmemb );
-	int Read( void *buffer, size_t bytes, int nmemb );
+	int Write( const void *buffer, std::size_t bytes, int nmemb );
+	int Read( void *buffer, std::size_t bytes, int nmemb );
 	int Seek( int offset, int whence );
 
 	/* Line-based I/O: */
@@ -74,18 +78,18 @@ public:
 	int PutLine( const RString &str );
 
 	void EnableCRC32( bool on=true );
-	bool GetCRC32( uint32_t *iRet );
+	bool GetCRC32( std::uint32_t *iRet );
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
 private:
 	void SetError( const RString &err );
-	
+
 	RageFileBasic *m_File;
 	RString	m_Path;
 	RString	m_sError;
 	int		m_Mode;
-	
+
 	// Swallow up warnings. If they must be used, define them.
 	RageFile& operator=(const RageFile& rhs);
 };
@@ -99,11 +103,11 @@ namespace FileReading
 	void SkipBytes( RageFileBasic &f, int size, RString &sError );
 	void Seek( RageFileBasic &f, int iOffset, RString &sError );
 	RString ReadString( RageFileBasic &f, int size, RString &sError );
-	uint8_t read_8( RageFileBasic &f, RString &sError );
-	int16_t read_16_le( RageFileBasic &f, RString &sError );
-	uint16_t read_u16_le( RageFileBasic &f, RString &sError );
-	int32_t read_32_le( RageFileBasic &f, RString &sError );
-	uint32_t read_u32_le( RageFileBasic &f, RString &sError );
+	std::uint8_t read_8( RageFileBasic &f, RString &sError );
+	std::int16_t read_16_le( RageFileBasic &f, RString &sError );
+	std::uint16_t read_u16_le( RageFileBasic &f, RString &sError );
+	std::int32_t read_32_le( RageFileBasic &f, RString &sError );
+	std::uint32_t read_u32_le( RageFileBasic &f, RString &sError );
 };
 
 #endif

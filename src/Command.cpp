@@ -4,9 +4,12 @@
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
 
+#include <cstddef>
 #include <numeric>
+#include <vector>
 
-RString Command::GetName() const 
+
+RString Command::GetName() const
 {
 	if( m_vsArgs.empty() )
 		return RString();
@@ -34,16 +37,16 @@ RString Command::GetOriginalCommandString() const
 	return join( ",", m_vsArgs );
 }
 
-static void SplitWithQuotes( const RString sSource, const char Delimitor, vector<RString> &asOut, const bool bIgnoreEmpty )
+static void SplitWithQuotes( const RString sSource, const char Delimitor, std::vector<RString> &asOut, const bool bIgnoreEmpty )
 {
 	/* Short-circuit if the source is empty; we want to return an empty vector if
 	 * the string is empty, even if bIgnoreEmpty is true. */
 	if( sSource.empty() )
 		return;
 
-	size_t startpos = 0;
+	std::size_t startpos = 0;
 	do {
-		size_t pos = startpos;
+		std::size_t pos = startpos;
 		while( pos < sSource.size() )
 		{
 			if( sSource[pos] == Delimitor )
@@ -53,7 +56,7 @@ static void SplitWithQuotes( const RString sSource, const char Delimitor, vector
 			{
 				/* We've found a quote.  Search for the close. */
 				pos = sSource.find( sSource[pos], pos+1 );
-				if( pos == string::npos )
+				if( pos == std::string::npos )
 					pos = sSource.size();
 				else
 					++pos;
@@ -81,12 +84,12 @@ static void SplitWithQuotes( const RString sSource, const char Delimitor, vector
 
 RString Commands::GetOriginalCommandString() const
 {
-	return std::accumulate(v.begin(), v.end(), RString(), [](RString &res, Command const &c) { return res + c.GetOriginalCommandString(); });
+	return std::accumulate(v.begin(), v.end(), RString(), [](RString const &res, Command const &c) { return res + c.GetOriginalCommandString(); });
 }
 
 void ParseCommands( const RString &sCommands, Commands &vCommandsOut, bool bLegacy )
 {
-	vector<RString> vsCommands;
+	std::vector<RString> vsCommands;
 	if( bLegacy )
 		split( sCommands, ";", vsCommands, true );
 	else
@@ -110,7 +113,7 @@ Commands ParseCommands( const RString &sCommands )
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -120,7 +123,7 @@ Commands ParseCommands( const RString &sCommands )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

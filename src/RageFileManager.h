@@ -1,9 +1,13 @@
 #ifndef RAGE_FILE_MANAGER_H
 #define RAGE_FILE_MANAGER_H
+
+#include <unordered_set>
+#include <vector>
+
+
 /** @brief Constants for working with the RageFileManager. */
 namespace RageFileManagerUtil
 {
-	extern RString sInitialWorkingDirectory;
 	extern RString sDirOfExecutable;
 }
 
@@ -23,15 +27,16 @@ public:
 	void MountInitialFilesystems();
 	void MountUserFilesystems();
 
-	void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListing( const RString &sPath, std::vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	void GetDirListingWithMultipleExtensions(const RString &sPath,
-		vector<RString> const& ExtensionList, vector<RString> &AddTo,
+		std::vector<RString> const& ExtensionList, std::vector<RString> &AddTo,
 		bool bOnlyDirs= false, bool bReturnPathToo= false);
-	bool Move( const RString &sOldPath, const RString &sNewPath );
+	bool Move( const RString &fromPath, const RString &toPath );
+	bool Copy( const std::string &fromPath, const std::string &toPath );
 	bool Remove( const RString &sPath );
 	bool DeleteRecursive( const RString &sPath );
 	void CreateDir( const RString &sDir );
-	
+
 	enum FileType { TYPE_FILE, TYPE_DIR, TYPE_NONE };
 	FileType GetFileType( const RString &sPath );
 
@@ -41,15 +46,14 @@ public:
 
 	int GetFileSizeInBytes( const RString &sPath );
 	int GetFileHash( const RString &sPath );
-	
+
 	/**
 	 * @brief Get the absolte path from the VPS.
 	 * @param path the VPS path.
 	 * @return the absolute path. */
 	RString ResolvePath(const RString &path);
 
-	bool Mount( const RString &sType, const RString &sRealPath, const RString &sMountPoint, bool bAddToEnd = true );
-	void Mount( RageFileDriver *pDriver, const RString &sMountPoint, bool bAddToEnd = true );
+	bool Mount( const RString &sType, const RString &sRealPath, const RString &sMountPoint );
 	void Unmount( const RString &sType, const RString &sRoot, const RString &sMountPoint );
 
 	/* Change the root of a filesystem.  Only a couple drivers support this; it's
@@ -61,7 +65,7 @@ public:
 	{
 		RString Type, Root, MountPoint;
 	};
-	void GetLoadedDrivers( vector<DriverLocation> &asMounts );
+	void GetLoadedDrivers( std::vector<DriverLocation> &asMounts );
 
 	void FlushDirCache( const RString &sPath = RString() );
 
@@ -73,12 +77,20 @@ public:
 	RageFileDriver *GetFileDriver( RString sMountpoint );
 	void ReleaseFileDriver( RageFileDriver *pDriver );
 
+	bool Unzip(const std::string &zipPath, std::string targetPath, int strip);
+
+	// path protection
+	void ProtectPath(const std::string& path);
+	bool IsPathProtected(const std::string& path);
+
 	// Lua
 	void PushSelf( lua_State *L );
 
 private:
 	RageFileBasic *OpenForReading( const RString &sPath, int iMode, int &iError );
 	RageFileBasic *OpenForWriting( const RString &sPath, int iMode, int &iError );
+
+	std::unordered_set<std::string> m_protectedPaths;
 };
 
 extern RageFileManager *FILEMAN;

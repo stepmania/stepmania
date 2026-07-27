@@ -2,7 +2,11 @@
 #define BITMAP_TEXT_H
 
 #include "Actor.h"
+
+#include <cstddef>
 #include <map>
+#include <vector>
+
 
 class RageTexture;
 class Font;
@@ -16,8 +20,8 @@ public:
 	BitmapText &operator=(const BitmapText &cpy);
 	virtual ~BitmapText();
 
-	virtual void LoadFromNode( const XNode* pNode );
-	virtual BitmapText *Copy() const;
+	virtual void LoadFromNode( const XNode* pNode ) override;
+	virtual BitmapText *Copy() const override;
 
 	struct BMT_TweenState
 	{
@@ -43,16 +47,16 @@ public:
 	}
 	BMT_TweenState const& BMT_DestTweenState() const { return const_cast<BitmapText*>(this)->BMT_DestTweenState(); }
 
-	virtual void SetCurrentTweenStart();
-	virtual void EraseHeadTween();
-	virtual void UpdatePercentThroughTween(float between);
-	virtual void BeginTweening(float time, ITween* interp);
+	virtual void SetCurrentTweenStart() override;
+	virtual void EraseHeadTween() override;
+	virtual void UpdatePercentThroughTween(float between) override;
+	virtual void BeginTweening(float time, ITween* interp) override;
 	// This function exists because the compiler tried to connect a call of
 	// "BeginTweening(1.2f)" to the function above. -Kyz
-	virtual void BeginTweening(float time, TweenType tt = TWEEN_LINEAR)
+	virtual void BeginTweening(float time, TweenType tt = TWEEN_LINEAR) override
 	{ Actor::BeginTweening(time, tt); }
-	virtual void StopTweening();
-	virtual void FinishTweening();
+	virtual void StopTweening() override;
+	virtual void FinishTweening() override;
 
 	bool LoadFromFont( const RString& sFontName );
 	bool LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars );
@@ -62,11 +66,11 @@ public:
 	void SetMaxHeight( float fMaxHeight );
 	void SetMaxDimUseZoom(bool use);
 	void SetWrapWidthPixels( int iWrapWidthPixels );
-	void CropLineToWidth(size_t l, int width);
+	void CropLineToWidth(std::size_t l, int width);
 	void CropToWidth(int width);
 
-	virtual bool EarlyAbortDraw() const;
-	virtual void DrawPrimitives();
+	virtual bool EarlyAbortDraw() const override;
+	virtual void DrawPrimitives() override;
 
 	void SetUppercase( bool b );
 	void SetRainbowScroll( bool b )	{ m_bRainbowScroll = b; }
@@ -76,7 +80,7 @@ public:
 	void set_mult_attrs_with_diffuse(bool m);
 	bool get_mult_attrs_with_diffuse();
 
-	void SetHorizAlign( float f );
+	void SetHorizAlign( float f ) override;
 
 	void SetStrokeColor(RageColor c) { BMT_DestTweenState().SetStrokeColor(c); }
 	RageColor const& GetStrokeColor()		{ return BMT_DestTweenState().GetStrokeColor(); }
@@ -85,8 +89,8 @@ public:
 
 	void SetTextGlowMode( TextGlowMode tgm )	{ m_TextGlowMode = tgm; }
 
-	void GetLines( vector<wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
-	const vector<wstring> &GetLines() const { return m_wTextLines; }
+	void GetLines( std::vector<std::wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
+	const std::vector<std::wstring> &GetLines() const { return m_wTextLines; }
 
 	RString GetText() const { return m_sText; }
 	// Return true if the string 's' will use an alternate string, if available.
@@ -103,18 +107,18 @@ public:
 	};
 
 	Attribute GetDefaultAttribute() const;
-	void AddAttribute( size_t iPos, const Attribute &attr );
+	void AddAttribute( std::size_t iPos, const Attribute &attr );
 	void ClearAttributes();
 
 	// Commands
-	virtual void PushSelf( lua_State *L );
+	virtual void PushSelf( lua_State *L ) override;
 
 protected:
 	Font		*m_pFont;
 	bool		m_bUppercase;
 	RString		m_sText;
-	vector<wstring>		m_wTextLines;
-	vector<int>		m_iLineWidths;	// in source pixels
+	std::vector<std::wstring>		m_wTextLines;
+	std::vector<int>		m_iLineWidths;	// in source pixels
 	int			m_iWrapWidthPixels;		// -1 = no wrap
 	float		m_fMaxWidth;			// 0 = no max
 	float		m_fMaxHeight;			// 0 = no max
@@ -126,11 +130,11 @@ protected:
 	float		m_fDistortion;
 	int			m_iVertSpacing;
 
-	vector<RageSpriteVertex>	m_aVertices;
+	std::vector<RageSpriteVertex>	m_aVertices;
 
-	vector<FontPageTextures*>	m_vpFontPageTextures;
-	map<size_t, Attribute>		m_mAttributes;
-	bool				m_bHasGlowAttribute;
+	std::vector<FontPageTextures*>		m_vpFontPageTextures;
+	std::map<std::size_t, Attribute>	m_mAttributes;
+	bool								m_bHasGlowAttribute;
 
 	TextGlowMode	m_TextGlowMode;
 
@@ -141,7 +145,7 @@ protected:
 
 private:
 	void SetTextInternal();
-	vector<BMT_TweenState> BMT_Tweens;
+	std::vector<BMT_TweenState> BMT_Tweens;
 	BMT_TweenState BMT_current;
 	BMT_TweenState BMT_start;
 };
@@ -153,7 +157,7 @@ private:
  * @author Chris Danford, Charles Lohr, Steve Checkoway (c) 2001-2007
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -163,7 +167,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

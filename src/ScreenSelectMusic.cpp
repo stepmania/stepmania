@@ -32,6 +32,10 @@
 #include "OptionsList.h"
 #include "RageFileManager.h"
 
+#include <cmath>
+#include <vector>
+
+
 static const char *SelectionStateNames[] = {
 	"SelectingSong",
 	"SelectingSteps",
@@ -137,6 +141,7 @@ void ScreenSelectMusic::Init()
 	ScreenWithMenuElements::Init();
 
 	this->SubscribeToMessage( Message_PlayerJoined );
+	this->SubscribeToMessage( Message_PlayerProfileSet );
 
 	// Cache these values
 	// Marking for change -- Midiman (why? -aj)
@@ -238,7 +243,7 @@ void ScreenSelectMusic::BeginScreen()
 	{
 		LuaHelpers::ReportScriptError("The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic.");
 		// Instead of crashing, set the first compatible style.
-		vector<StepsType> vst;
+		std::vector<StepsType> vst;
 		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
 		if(pStyle == nullptr)
@@ -412,7 +417,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		if (input.DeviceI == DeviceInput( DEVICE_MOUSE, (DeviceButton)i ))
 			mouse_evt = true;
 	}
-	if (mouse_evt)	
+	if (mouse_evt)
 	{
 		return ScreenWithMenuElements::Input(input);
 	}
@@ -425,7 +430,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 	// I just like being able to see untransliterated titles occasionally.
 	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )
 	{
-		if( input.type != IET_FIRST_PRESS ) 
+		if( input.type != IET_FIRST_PRESS )
 			return false;
 		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
 		MESSAGEMAN->Broadcast( "DisplayLanguageChanged" );
@@ -435,7 +440,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	if( !IsTransitioning() && m_SelectionState != SelectionState_Finalized )
 	{
-		bool bHoldingCtrl = 
+		bool bHoldingCtrl =
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
 
@@ -487,7 +492,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		{
 			// Keyboard shortcut to delete a song from disk (ctrl + backspace)
 			Song* songToDelete = m_MusicWheel.GetSelectedSong();
-			if ( songToDelete && PREFSMAN->m_bAllowSongDeletion.Get() ) 
+			if ( songToDelete && PREFSMAN->m_bAllowSongDeletion.Get() )
 			{
 				m_pSongAwaitingDeletionConfirmation = songToDelete;
 				ScreenPrompt::Prompt(SM_ConfirmDeleteSong, ssprintf(PERMANENTLY_DELETE.GetValue(), songToDelete->m_sMainTitle.c_str(), songToDelete->GetSongDir().c_str()), PROMPT_YES_NO);
@@ -694,7 +699,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			}
 
 			// Reset the repeat timer when the button is released.
-			// This fixes jumping when you release Left and Right after entering the sort 
+			// This fixes jumping when you release Left and Right after entering the sort
 			// code at the same if L & R aren't released at the exact same time.
 			if( input.type == IET_RELEASE )
 			{
@@ -1056,7 +1061,7 @@ void ScreenSelectMusic::ChangeSteps( PlayerNumber pn, int dir )
 			return;
 	}
 
-	vector<PlayerNumber> vpns;
+	std::vector<PlayerNumber> vpns;
 	FOREACH_HumanPlayer( p )
 	{
 		if( pn == p || GAMESTATE->DifficultiesLocked() )
@@ -1271,7 +1276,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			bool bIsRepeat = false;
 			int i = 0;
 			if( GAMESTATE->IsEventMode() )
-				i = max( 0, int(STATSMAN->m_vPlayedStageStats.size())-5 );
+				i = std::max( 0, int(STATSMAN->m_vPlayedStageStats.size())-5 );
 			for( ; i < (int)STATSMAN->m_vPlayedStageStats.size(); ++i )
 				if( STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs.back() == m_MusicWheel.GetSelectedSong() )
 					bIsRepeat = true;
@@ -1289,7 +1294,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			else
 				SOUND->PlayOnceFromAnnouncer( "select music comment general" );
 
-			/* If we're in event mode, we may have just played a course (putting 
+			/* If we're in event mode, we may have just played a course (putting
 			 * us in course mode). Make sure we're in a single song mode. */
 			if( GAMESTATE->IsCourseMode() )
 				GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
@@ -1514,7 +1519,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			}
 
 			StartTransitioningScreen( SM_None );
-			float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );
+			float fTime = std::max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );
 			this->PostScreenMessage( SM_BeginFadingOut, fTime );
 		}
 		else
@@ -1563,7 +1568,7 @@ bool ScreenSelectMusic::MenuBack( const InputEventPlus & /* input */ )
 	return true;
 }
 
-void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpns )
+void ScreenSelectMusic::AfterStepsOrTrailChange( const std::vector<PlayerNumber> &vpns )
 {
 	if(TWO_PART_CONFIRMS_ONLY && m_SelectionState == SelectionState_SelectingSteps)
 	{
@@ -1643,10 +1648,10 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 
 				if( GAMESTATE->m_PreferredDifficulty[pn] != Difficulty_Invalid  )
 				{
-					int iDifficultyDifference = abs( s->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
+					int iDifficultyDifference = std::abs( s->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
 					int iStepsTypeDifference = 0;
 					if( GAMESTATE->m_PreferredStepsType != StepsType_Invalid )
-						iStepsTypeDifference = abs( s->m_StepsType - GAMESTATE->m_PreferredStepsType );
+						iStepsTypeDifference = std::abs( s->m_StepsType - GAMESTATE->m_PreferredStepsType );
 					int iTotalDifference = iStepsTypeDifference * NUM_Difficulty + iDifficultyDifference;
 
 					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
@@ -1680,8 +1685,8 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 
 				if( GAMESTATE->m_PreferredCourseDifficulty[pn] != Difficulty_Invalid  &&  GAMESTATE->m_PreferredStepsType != StepsType_Invalid  )
 				{
-					int iDifficultyDifference = abs( t->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn] );
-					int iStepsTypeDifference = abs( t->m_StepsType - GAMESTATE->m_PreferredStepsType );
+					int iDifficultyDifference = std::abs( t->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn] );
+					int iStepsTypeDifference = std::abs( t->m_StepsType - GAMESTATE->m_PreferredStepsType );
 					int iTotalDifference = iStepsTypeDifference * NUM_CourseDifficulty + iDifficultyDifference;
 
 					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
@@ -1724,7 +1729,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
-	vector<RString> m_Artists, m_AltArtists;
+	std::vector<RString> m_Artists, m_AltArtists;
 
 	if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 	{
@@ -1849,7 +1854,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				// we want to load the sample music, but we don't want to
 				// actually play it. fall through. -aj
 			case SampleMusicPreviewMode_Normal:
-			case SampleMusicPreviewMode_LastSong: // fall through
+			case SampleMusicPreviewMode_LastSong:
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetPreviewMusicPath();
 				if(!m_sSampleMusicToPlay.empty() && ActorUtil::GetFileType(m_sSampleMusicToPlay) != FT_Sound)
@@ -1890,7 +1895,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			if(pStyle == nullptr)
 			{
 				lCourse->GetAllTrails(m_vpTrails);
-				vector<Trail*>::iterator tra= m_vpTrails.begin();
+				std::vector<Trail*>::iterator tra= m_vpTrails.begin();
 				Game const* cur_game= GAMESTATE->GetCurrentGame();
 				int num_players= GAMESTATE->GetNumPlayersEnabled();
 				while(tra != m_vpTrails.end())
@@ -1977,7 +1982,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	g_StartedLoadingAt.Touch();
 
-	vector<PlayerNumber> vpns;
+	std::vector<PlayerNumber> vpns;
 	FOREACH_HumanPlayer( p )
 		vpns.push_back( p );
 
@@ -2041,7 +2046,7 @@ bool ScreenSelectMusic::can_open_options_list(PlayerNumber pn)
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenSelectMusic. */ 
+/** @brief Allow Lua to have access to the ScreenSelectMusic. */
 class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
 {
 public:
@@ -2081,7 +2086,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenSelectMusic, ScreenWithMenuElements )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -2091,7 +2096,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenSelectMusic, ScreenWithMenuElements )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

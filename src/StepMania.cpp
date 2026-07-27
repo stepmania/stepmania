@@ -17,7 +17,6 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
-#include <ctime>
 
 #include "ProductInfo.h"
 
@@ -61,7 +60,7 @@
 #include "LightsManager.h"
 #include "ModelManager.h"
 #include "CryptManager.h"
-#include "NetworkSyncManager.h"
+#include "NetworkManager.h"
 #include "MessageManager.h"
 #include "StatsManager.h"
 #include "GameLoop.h"
@@ -70,7 +69,12 @@
 #include "ActorUtil.h"
 #include "ver.h"
 
-#if defined(WIN32)
+#include <cmath>
+#include <ctime>
+#include <vector>
+
+#if defined(_WIN32)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 
@@ -88,8 +92,8 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	{
 		//float fRatio = PREFSMAN->m_iDisplayHeight;
 		//iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
-		iWidth = static_cast<int>(ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio));
-		// ceilf causes the width to come out odd when it shouldn't.
+		iWidth = std::ceil(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio);
+		// ceil causes the width to come out odd when it shouldn't.
 		// 576 * 1.7778 = 1024.0128, which is rounded to 1025. -Kyz
 		iWidth-= iWidth % 2;
 	}
@@ -297,7 +301,7 @@ void ShutdownGame()
 	SAFE_DELETE( SCREENMAN );
 	SAFE_DELETE( STATSMAN );
 	SAFE_DELETE( MESSAGEMAN );
-	SAFE_DELETE( NSMAN );
+	SAFE_DELETE( NETWORK );
 	/* Delete INPUTMAN before the other INPUTFILTER handlers, or an input
 	 * driver may try to send a message to INPUTFILTER after we delete it. */
 	SAFE_DELETE( INPUTMAN );
@@ -383,13 +387,13 @@ RString StepMania::GetSelectMusicScreen()
 	return SELECT_MUSIC_SCREEN.GetValue();
 }
 
-#if defined(WIN32)
+#if defined(_WIN32)
 static Preference<int> g_iLastSeenMemory( "LastSeenMemory", 0 );
 #endif
 
 static void AdjustForChangedSystemCapabilities()
 {
-#if defined(WIN32)
+#if defined(_WIN32)
 	// Has the amount of memory changed?
 	MEMORYSTATUS mem;
 	GlobalMemoryStatus(&mem);
@@ -426,7 +430,7 @@ static void AdjustForChangedSystemCapabilities()
 #endif
 }
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #include "RageDisplay_D3D.h"
 #include "archutils/Win32/VideoDriverInfo.h"
 #endif
@@ -479,164 +483,33 @@ struct VideoCardDefaults
 	}
 } const g_VideoCardDefaults[] =
 {
+	// These lines correspond to the struct defined above.
 	VideoCardDefaults(
-		"Voodoo *5",
-		"d3d,opengl",	// received 3 reports of opengl crashing. -Chris
-		640,480,
-		32,32,32,
-		2048,
-		true	// accelerated
+		"OpenGL",       // Video card name (generic Mac/Linux)
+		"opengl",       // Available renderers
+		1280,720,       // Default resolution
+		32,             // Display color
+		32,             // Texture color
+		32,             // Movie color
+		2048,           // Texture size
+		true            // Smooth lines
 	),
 	VideoCardDefaults(
-		"Voodoo|3dfx", // all other Voodoos: some drivers don't identify which one
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		256,
-		false	// broken, causes black screen
-	),
-	VideoCardDefaults(
-		"Radeon.* 7|Wonder 7500|ArcadeVGA",	// Radeon 7xxx, RADEON Mobility 7500
-		"d3d,opengl",	// movie texture performance is terrible in OpenGL, but fine in D3D.
-		640,480,
-		16,16,16,
-		2048,
-		true	// accelerated
-	),
-	VideoCardDefaults(
-		"GeForce|Radeon|Wonder 9|Quadro",
-		"opengl,d3d",
-		640,480,
-		32,32,32,	// 32 bit textures are faster to load
-		2048,
-		true	// hardware accelerated
-	),
-	VideoCardDefaults(
-		"TNT|Vanta|M64",
-		"opengl,d3d",
-		640,480,
-		16,16,16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
-		2048,
-		true	// hardware accelerated
-	),
-	VideoCardDefaults(
-		"G200|G250|G400",
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		2048,
-		false	// broken, causes black screen
-	),
-	VideoCardDefaults(
-		"Savage",
-		"d3d",
-			// OpenGL is unusable on my Savage IV with even the latest drivers.
-			// It draws 30 frames of gibberish then crashes. This happens even with
-			// simple NeHe demos. -Chris
-		640,480,
-		16,16,16,
-		2048,
-		false
-	),
-	VideoCardDefaults(
-		"XPERT@PLAY|IIC|RAGE PRO|RAGE LT PRO",	// Rage Pro chip, Rage IIC chip
-		"d3d",
-			// OpenGL is not hardware accelerated, despite the fact that the
-			// drivers come with an ICD.  Also, the WinXP driver performance
-			// is terrible and supports only 640. The ATI driver is usable.
-			// -Chris
-		320,240,	// lower resolution for 60fps. In-box WinXP driver doesn't support 400x300.
-		16,16,16,
-		256,
-		false
-	),
-	VideoCardDefaults(
-		"RAGE MOBILITY-M1",
-		"d3d,opengl",	// Vertex alpha is broken in OpenGL, but not D3D. -Chris
-		400,300,	// lower resolution for 60fps
-		16,16,16,
-		256,
-		false
-	),
-	VideoCardDefaults(
-		"Mobility M3",	// ATI Rage Mobility 128 (AKA "M3")
-		"d3d,opengl",	// bad movie texture performance in opengl
-		640,480,
-		16,16,16,
-		1024,
-		false
-	),
-	VideoCardDefaults(
-		"Intel.*82810|Intel.*82815",
-		"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
-		512,384,	// lower resolution for 60fps
-		16,16,16,
-		512,
-		false
-	),
-	VideoCardDefaults(
-		"Intel*Extreme Graphics",
-		"d3d",	// OpenGL blue screens w/ XP drivers from 6-21-2002
-		640,480,
-		16,16,16,	// slow at 32bpp
-		1024,
-		false
-	),
-	VideoCardDefaults(
-		"Intel.*", /* fallback: all unknown Intel cards to D3D, since Intel is notoriously bad at OpenGL */
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		2048,
-		false
-	),
-	VideoCardDefaults(
-		// Cards that have problems with OpenGL:
-		// ASSERT fail somewhere in RageDisplay_OpenGL "Trident Video Accelerator CyberBlade"
-		// bug 764499: ASSERT fail after glDeleteTextures for "SiS 650_651_740"
-		// bug 764830: ASSERT fail after glDeleteTextures for "VIA Tech VT8361/VT8601 Graphics Controller"
-		// bug 791950: AV in glsis630!DrvSwapBuffers for "SiS 630/730"
-		"Trident Video Accelerator CyberBlade|VIA.*VT|SiS 6*",
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		2048,
-		false
-	),
-	VideoCardDefaults(
-		/* Unconfirmed texture problems on this; let's try D3D, since it's
-		 * a VIA/S3 chipset. */
-		"VIA/S3G KM400/KN400",
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		2048,
-		false
-	),
-	VideoCardDefaults(
-		"OpenGL",	// This matches all drivers in Mac and Linux. -Chris
-		"opengl",
-		640,480,
-		16,16,16,
-		2048,
-		true // Right now, they've got to have NVidia or ATi Cards anyway..
-	),
-	VideoCardDefaults(
-		// Default graphics settings used for all cards that don't match above.
-		// This must be the very last entry!
-		"",
-		"opengl,d3d",
-		640,480,
-		32,32,32,
-		2048,
-		false  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
+		"",             // Video card name (generic Windows)
+		"opengl,d3d",   // Available renderers
+		1280,720,       // Default resolution
+		32,             // Display color
+		32,             // Texture color
+		32,             // Movie color
+		2048,           // Texture size
+		true            // Smooth lines
 	),
 };
 
 
 static RString GetVideoDriverName()
 {
-#if defined(_WINDOWS)
+#if defined(_WIN32)
 	return GetPrimaryVideoDriverName();
 #else
 	return "OpenGL";
@@ -753,7 +626,7 @@ RageDisplay *CreateDisplay()
 		VIDEO_TROUBLESHOOTING_URL "\n\n"+
 		ssprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
 
-	vector<RString> asRenderers;
+	std::vector<RString> asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
 
 	if( asRenderers.empty() )
@@ -864,7 +737,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 			GAMESTATE->SetCurGame(new_game);
 		}
 	}
-	
+
 	// It doesn't matter if sTheme is blank or invalid, THEME->STAL will set
 	// a selectable theme for us. -Kyz
 
@@ -900,7 +773,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 
 static void MountTreeOfZips( const RString &dir )
 {
-	vector<RString> dirs;
+	std::vector<RString> dirs;
 	dirs.push_back( dir );
 
 	while( dirs.size() )
@@ -911,20 +784,31 @@ static void MountTreeOfZips( const RString &dir )
 		if( !IsADirectory(path) )
 			continue;
 
-		vector<RString> zips;
+		std::vector<RString> zips;
 		GetDirListing( path + "/*.zip", zips, false, true );
 		GetDirListing( path + "/*.smzip", zips, false, true );
 
-		for( unsigned i = 0; i < zips.size(); ++i )
+		for (const auto& zip : zips)
 		{
-			if( !IsAFile(zips[i]) )
+			if( !IsAFile(zip) )
 				continue;
 
-			LOG->Trace( "VFS: found %s", zips[i].c_str() );
-			FILEMAN->Mount( "zip", zips[i], "/" );
+			LOG->Trace( "VFS: found %s", zip.c_str() );
+			FILEMAN->Mount( "zip", zip, "/" );
 		}
 
 		GetDirListing( path + "/*", dirs, true, true );
+	}
+}
+
+static void MountFolders(const RString &type, const RString &realPathList, const RString &mountPoint)
+{
+	if (!realPathList.empty())
+	{
+		std::vector<RString> dirs;
+		split(realPathList, ",", dirs, true);
+		for (const auto& dir : dirs)
+			FILEMAN->Mount(type, dir, mountPoint);
 	}
 }
 
@@ -991,9 +875,12 @@ int sm_main(int argc, char* argv[])
 
 	// Almost everything uses this to read and write files.  Load this early.
 	FILEMAN = new RageFileManager( argv[0] );
+	FILEMAN->ProtectPath(SpecialFiles::DEFAULTS_INI_PATH);
+	FILEMAN->ProtectPath(SpecialFiles::STATIC_INI_PATH);
+	FILEMAN->ProtectPath(SpecialFiles::PREFERENCES_INI_PATH);
 	FILEMAN->MountInitialFilesystems();
 
-	bool bPortable = DoesFileExist("Portable.ini");
+	bool bPortable = DoesFileExist("/Portable.ini");
 	if( !bPortable )
 		FILEMAN->MountUserFilesystems();
 
@@ -1020,30 +907,14 @@ int sm_main(int argc, char* argv[])
 	WriteLogHeader();
 
 	// Set up alternative filesystem trees.
-	if( PREFSMAN->m_sAdditionalFolders.Get() != "" )
-	{
-		vector<RString> dirs;
-		split( PREFSMAN->m_sAdditionalFolders, ",", dirs, true );
-		for( unsigned i=0; i < dirs.size(); i++)
-			FILEMAN->Mount( "dir", dirs[i], "/" );
-	}
-	if( PREFSMAN->m_sAdditionalSongFolders.Get() != "" )
-	{
-		vector<RString> dirs;
-		split( PREFSMAN->m_sAdditionalSongFolders, ",", dirs, true );
-		for( unsigned i=0; i < dirs.size(); i++)
-			FILEMAN->Mount( "dir", dirs[i], "/AdditionalSongs" );
-	}
-	if( PREFSMAN->m_sAdditionalCourseFolders.Get() != "" )
-	{
-		vector<RString> dirs;
-		split( PREFSMAN->m_sAdditionalCourseFolders, ",", dirs, true );
-		for( unsigned i=0; i < dirs.size(); i++)
-			FILEMAN->Mount( "dir", dirs[i], "/AdditionalCourses" );
-	}
+	MountFolders("dirro", PREFSMAN->m_sAdditionalFoldersReadOnly.Get(), "/");
+	MountFolders("dir", PREFSMAN->m_sAdditionalFoldersWritable.Get(), "/");
+	MountFolders("dirro", PREFSMAN->m_sAdditionalSongFoldersReadOnly.Get(), "/Songs");
+	MountFolders("dir", PREFSMAN->m_sAdditionalSongFoldersWritable.Get(), "/Songs");
+	MountFolders("dirro", PREFSMAN->m_sAdditionalCourseFoldersReadOnly.Get(), "/Courses");
+	MountFolders("dir", PREFSMAN->m_sAdditionalCourseFoldersWritable.Get(), "/Courses");
 
 	MountTreeOfZips( SpecialFiles::PACKAGES_DIR );
-	MountTreeOfZips( SpecialFiles::USER_PACKAGES_DIR );
 
 	/* One of the above filesystems might contain files that affect preferences
 	 * (e.g. Data/Static.ini). Re-read preferences. */
@@ -1088,44 +959,6 @@ int sm_main(int argc, char* argv[])
 
 	CommandLineActions::Handle(pLoadingWindow);
 
-	// Aldo: Check for updates here!
-#if 0
-	if( /* PREFSMAN->m_bUpdateCheckEnable (do this later) */ 0 )
-	{
-		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
-		unsigned long current_version = NetworkSyncManager::GetCurrentSMBuild( pLoadingWindow );
-		if( current_version )
-		{
-			if( current_version > version_num )
-			{
-				switch( Dialog::YesNo( "A new version of " PRODUCT_ID " is available. Do you want to download it?", "UpdateCheck" ) )
-				{
-				case Dialog::yes:
-					//PREFSMAN->SavePrefsToDisk();
-					// TODO: GoToURL for Linux
-					if( !HOOKS->GoToURL( SM_DOWNLOAD_URL ) )
-					{
-						Dialog::Error( "Please go to the following URL to download the latest version of " PRODUCT_ID ":\n\n" SM_DOWNLOAD_URL, "UpdateCheckConfirm" );
-					}
-					ShutdownGame();
-					return 0;
-				case Dialog::no:
-					break;
-				default:
-					FAIL_M("Invalid response to Yes/No dialog");
-				}
-			}
-			else if( version_num < current_version )
-			{
-				LOG->Info( "The current version is more recent than the public one, double check you downloaded it from " SM_DOWNLOAD_URL );
-			}
-		}
-		else
-		{
-			LOG->Info( "Unable to check for updates. The server might be offline." );
-		}
-	}
-#endif
 	if( GetCommandlineArgument("dopefish") )
 		GAMESTATE->m_bDopefish = true;
 
@@ -1163,7 +996,7 @@ int sm_main(int argc, char* argv[])
 
 	// depends on SONGINDEX:
 	SONGMAN		= new SongManager;
-	SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
+	SONGMAN->InitAll( pLoadingWindow, /*onlyAdditions=*/false );	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
@@ -1174,7 +1007,7 @@ int sm_main(int argc, char* argv[])
 	UNLOCKMAN	= new UnlockManager;
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
-	NSMAN 		= new NetworkSyncManager( pLoadingWindow );
+	NETWORK		= new NetworkManager;
 	STATSMAN	= new StatsManager;
 
 	// Initialize which courses are ranking courses here.
@@ -1218,9 +1051,6 @@ int sm_main(int argc, char* argv[])
 		SCREENMAN->SystemMessage( sMessage );
 
 	CodeDetector::RefreshCacheItems();
-
-	if( GetCommandlineArgument("netip") )
-		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
 
 	// Run the main loop.
 	GameLoop::RunGameLoop();
@@ -1285,12 +1115,12 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	{
 		GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins + iNum );
 	}
-	
+
 	int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
-	bool bMaxCredits = iCredits >= MAX_NUM_CREDITS;
+	bool bMaxCredits = iCredits >= PREFSMAN->m_iMaxNumCredits;
 	if( bMaxCredits )
 	{
-		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
+		GAMESTATE->m_iCoins.Set( PREFSMAN->m_iMaxNumCredits * PREFSMAN->m_iCoinsPerCredit );
 	}
 
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
@@ -1497,7 +1327,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList)) )
 	{
 		// alt-enter
-		/* In OS X, this is a menu item and will be handled as such. This will
+		/* In macOS, this is a menu item and will be handled as such. This will
 		 * happen first and then the lower priority GUI thread will happen second,
 		 * causing the window to toggle twice. Another solution would be to put
 		 * a timer in ArchHooks::SetToggleWindowed() and just not set the bool
@@ -1523,7 +1353,7 @@ void HandleInputEvents(float fDeltaTime)
 	if( SCREENMAN->GetTopScreen()->IsFirstUpdate() )
 		return;
 
-	vector<InputEvent> ieArray;
+	std::vector<InputEvent> ieArray;
 	INPUTFILTER->GetInputEvents( ieArray );
 
 	// If we don't have focus, discard input.

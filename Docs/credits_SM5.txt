@@ -1,0 +1,183 @@
+StepMania 5 credits (in no particular order)
+--------------------------------------------
+If you have any corrections to this list, let us know (via forums or IRC).
+
+==StepMania Team==
+Chris Danford, Glenn Maynard, Steve Checkoway, et al
+ ( see credits_old_Stepmania_Team for full list )
+ * Keeping StepMania 5 alive with changes, and providing a nice codebase for
+   us to work with.
+
+==the spinal shark collective==
+AJ Kelly as freem
+ * (sm-ssc) Project Coordinator/Leader
+ * Main programming
+ * Various Lua scripts
+ * Some small theme edits here and there
+ * Noteskins (retro, retrobar*)
+ * Windows project file maintainer (mostly)
+
+Midiman
+ * Did most of the work on _fallback and default themes
+ * Some programming
+ * Noteskins (midi-*)
+
+shakesoda
+ * Programming
+ * Noteskins (delta, gamma, port of orbital to kb7)
+ * Theme edits
+ * Mac OS X primary maintainer
+
+==sm-ssc Team==
+(in no particular order)
+
+Aldo_MX
+ * Code (Pump it Up delays, among others), ideas, and support.
+
+cerbo
+ * [SongManager] SetPreferredSongs() and SetPreferredCourses() Lua bindings
+
+Daisuke Master
+ * Programming
+ * Pump/simple and Pump/complex noteskins
+ * /Docs/Themerdocs/Noteskin elements Reference.txt
+ * Taking advantage of sm-ssc's new features :)
+
+FSX
+ * Various fixes. (see Changelogs for more details)
+
+Nicole Reid (okeeblow)
+ * Tested building sm-ssc on FreeBSD, provided fixes.
+ (fixes that still need to get implemented)
+
+Thai Pangsakulyanont (theDtTvB)
+ * Changes to BMS loading/playback behavior to make things work better.
+
+Jason Felds (Wolfman2000)
+ * [Player] PercentUntilColorCombo metric
+ * Mac OS X maintainer
+ * Various fixes/changes. (see Changelogs for more details)
+
+Devin J. Pohly (djpohly)
+ * Various patches/fixes
+
+==other contributors==
+(in no particular order)
+
+1a2a3a2a1a
+ * Various beat mode fixes
+
+Kaox
+ * Pump/default noteskin
+
+cesarmades
+ * Pump/cmd-* noteskins
+
+David Santamar�a Rogado (howl)
+ * Various patches (see Changelogs for more details and links)
+
+Kita K./D. Trucks
+ * default theme music
+
+kurisu
+ * Dance-threepanel gametype code (3.9; re-adapted for sm-ssc)
+
+v1toko
+ * Lead coder of StepNXA, which is where we got the original XMode code from.
+
+Macgravel
+ * Orbular noteskin (the default kb7 noteskin)
+
+hanubeki (@803832, formerly sy567)
+ * Small beginner helper fix
+ (http://old.stepmania.com/forums/showpost.php?p=158721&postcount=12)
+ * Lots of code changes from hanubeki-modified-sm-ssc:
+ http://code.google.com/r/hanubeki-modified-sm-ssc/
+
+galopin
+ * Pump it Up Exceed PlayStation 2 USB dance mat support patch
+ (stepmania-devs mailing list 20091213 11:27 -0800 [Pacific Standard Time])
+
+Henke37
+ * [MovieTexture_FFMpeg] Stutter fix
+ (http://www.pasteall.org/11353/diff)
+
+corec
+ * [ArchHooks_Unix, MovieTexture_FFMpeg] Make sm-ssc work with system's FFMpeg.
+ (http://github.com/corec/cc-overlay/blob/master/games-arcade/sm-ssc/files/sm-ssc-ffmpeg-fixes-01.patch)
+ * [InputMapper] Enabling upper diagonal keys for Positive Gaming Impact dance mat
+ (http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=137)
+
+gholms
+ * Make autogen.sh look for automake 1.11
+ (http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=140)
+
+juanelote
+ * [SongManager] GetSongGroupByIndex function
+ * [MusicWheel] JumpToNextGroup/JumpToPrevGroup logic modifications
+
+NitroX72
+ * Pump/frame noteskin
+
+Tatsh
+ * A patch to fix building with system ffmpeg
+ (http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=218)
+
+A.C (@waiei)
+ * Hybrid scoring mode + scoring fixes
+ * Various patches/fixes/bug reporting
+
+John_Reactor
+ * Polish translation
+
+DHalens
+ * Spanish translation
+
+桜為小鳩/Sakurana-Kobato (@sakuraponila)
+ * Scoring fixes
+
+@Niler_jp
+ * Japanese translation
+ 
+Deamon007
+ * Dutch translation
+
+cvpcs
+ * Updated ffmpeg support to v0.10
+
+Alfred Sorenson
+ * Various small additions
+
+==the beta testers==
+[SSC Beta Testing Team]
+KeithD
+tweak/tweak62
+
+[Friends of the Devs]
+And4713
+HankPeters
+okeeblow
+kdaymea
+taiyal
+
+[Members of Team Step Masters (http://www.team-stepmasters.net/foro/)]
+Daisuke Master
+Nueel/emmanuel virus
+Fye
+Bijou
+Nek0
+Jib
+Robe
+Urqui
+h4m573r
+Torta
+
+[Private Beta Wave 1.x Testers]
+FSX
+Sniper257
+Wolfman2000
+NitroX72
+Wanny
+Tio
+Cerbo
+Daisuke Master

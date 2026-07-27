@@ -9,6 +9,9 @@
 
 #include "arch/arch_default.h"
 
+#include <vector>
+
+
 void ForceToAscii( RString &str )
 {
 	for( unsigned i=0; i<str.size(); ++i )
@@ -50,7 +53,7 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 	if( file.Read((char *)type.c_str(), 4) != 4 )
 		HANDLE_ERROR("Could not read.");
 	ForceToAscii( type );
-	
+
 	if( file.Seek(0xBC) != 0xBC )
 		HANDLE_ERROR("Could not seek.");
 	handler = "    ";
@@ -70,7 +73,7 @@ static void DumpAVIDebugInfo( const RString& fn )
 	RString type, handler;
 	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
 		return;
-	
+
 	LOG->Trace( "Movie %s has handler '%s', type '%s'", fn.c_str(), handler.c_str(), type.c_str() );
 }
 
@@ -81,31 +84,31 @@ static LocalizedString COULDNT_CREATE_MOVIE_DRIVER	( "Arch", "Couldn't create a 
 RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
-	
+
 	RString sDrivers = g_sMovieDrivers;
 	if( sDrivers.empty() )
 		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
-	
-	vector<RString> DriversToTry;
+
+	std::vector<RString> DriversToTry;
 	split( sDrivers, ",", DriversToTry, true );
-	
+
 	if( DriversToTry.empty() )
 		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
-	
+
 	RageMovieTexture *ret = nullptr;
-	
+
 	for (RString const &Driver : DriversToTry)
 	{
 		char const * driverString = Driver.c_str();
 		LOG->Trace( "Initializing driver: %s", driverString );
 		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( Driver );
-		
+
 		if( pDriverBase == nullptr )
 		{
 			LOG->Trace( "Unknown movie driver name: %s", driverString );
 			continue;
 		}
-		
+
 		RageMovieTextureDriver *pDriver = dynamic_cast<RageMovieTextureDriver *>( pDriverBase );
 		ASSERT( pDriver != nullptr );
 
@@ -125,7 +128,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 	}
 	if ( !ret )
 		RageException::Throw( "%s", COULDNT_CREATE_MOVIE_DRIVER.GetValue().c_str() );
-	
+
 	return ret;
 }
 
@@ -133,7 +136,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -143,7 +146,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

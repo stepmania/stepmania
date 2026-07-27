@@ -1,7 +1,8 @@
 #include "global.h"
 #include "MouseDevice.h"
 
-using std::unordered_map;
+#include <vector>
+
 
 Mouse::Mouse() : id( InputDevice_Invalid ),
 				x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
@@ -94,11 +95,11 @@ void MouseDevice::Open()
 #define ADD(x) if( m.x ) AddElementToQueue( m.x )
 	ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
 #undef ADD
-	for( unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+	for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
 		AddElementToQueue( i->first );
 }
 
-void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
+void MouseDevice::GetButtonPresses( std::vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
 	// todo: add mouse axis stuff -aj
 	const Mouse& m = m_Mouse;
@@ -119,18 +120,18 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	else if( m.z_axis == cookie )
 	{
 		float level = SCALE( value, m.z_min, m.z_max, -1.0f, 1.0f );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-level,0), now) );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+level,0), now) );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, std::max(-level, 0.0f), now) );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, std::max(+level, 0.0f), now) );
 	}
 	else
 	{
-		unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+		std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
 		if( iter != m_Mapping.end() )
 			vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
 	}
 }
 
-void MouseDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
+void MouseDevice::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevices ) const
 {
 	vDevices.push_back( InputDeviceInfo(DEVICE_MOUSE, "Mouse") );
 }

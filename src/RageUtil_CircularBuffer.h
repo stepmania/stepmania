@@ -131,7 +131,8 @@ public:
 
 	void clear()
 	{
-		read_pos = write_pos = 0;
+		read_pos = 0;
+		write_pos = 0;
 	}
 
 	/* Indicate that n elements have been written. */
@@ -234,10 +235,10 @@ public:
 		if( buffer_size > sizes[0] + sizes[1] )
 			return false;
 		
-		const int from_first = min( buffer_size, sizes[0] );
+		const int from_first = std::min( buffer_size, sizes[0] );
 		memcpy( p[0], buffer, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memcpy( p[1], buffer+from_first, max(buffer_size-sizes[0], 0u)*sizeof(T) );
+			memcpy( p[1], buffer+from_first, (buffer_size-sizes[0])*sizeof(T) );
 
 		advance_write_pointer( buffer_size );
 
@@ -256,16 +257,16 @@ public:
 		if( buffer_size > sizes[0] + sizes[1] )
 			return false;
 
-		const int from_first = min( buffer_size, sizes[0] );
+		const int from_first = std::min( buffer_size, sizes[0] );
 		memcpy( buffer, p[0], from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memcpy( buffer+from_first, p[1], max(buffer_size-sizes[0], 0u)*sizeof(T) );
+			memcpy( buffer+from_first, p[1], (buffer_size-sizes[0])*sizeof(T) );
 
 		/* Set the data that we just read to 0xFF.  This way, if we're passing pointesr
 		 * through, we can tell if we accidentally get a stale pointer. */
 		memset( p[0], 0xFF, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memset( p[1], 0xFF, max(buffer_size-sizes[0], 0u)*sizeof(T) );
+			memset( p[1], 0xFF, (buffer_size-sizes[0])*sizeof(T) );
 
 		advance_read_pointer( buffer_size );
 		return true;

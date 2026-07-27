@@ -10,12 +10,15 @@
 #include "RageUtil.h"
 #include "RageSurface.h"
 #include "RageTextureManager.h"
-
 #include "DisplaySpec.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
 #include <GL/glew.h>
+
+#include <cstddef>
+#include <cstdint>
+#include <vector>
 
 #ifdef NO_GL_FLUSH
 #define glFlush()
@@ -169,7 +172,10 @@ namespace
 
 	void FixLittleEndian()
 	{
-#if defined(ENDIAN_LITTLE)
+		if constexpr (!Endian::little) {
+			return;
+		}
+
 		static bool bInitialized = false;
 		if (bInitialized)
 			return;
@@ -197,7 +203,6 @@ namespace
 				pf.masks[mask] = m;
 			}
 		}
-#endif
 	}
 	namespace Caps
 	{
@@ -251,7 +256,7 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 		// glGetString(GL_EXTENSIONS) doesn't work for GL3 core profiles.
 		// this will be useful in the future.
 #if 0
-		vector<string> extensions;
+		std::vector<string> extensions;
 		const char *ext = 0;
 		for (int i = 0; (ext = (const char*)glGetStringi(GL_EXTENSIONS, i)); i++)
 		{
@@ -259,14 +264,14 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 		}
 
 		sort( extensions.begin(), extensions.end() );
-		size_t next = 0;
+		std::size_t next = 0;
 		while( next < extensions.size() )
 		{
-			size_t last = next;
+			std::size_t last = next;
 			string type;
-			for( size_t i = next; i<extensions.size(); ++i )
+			for( std::size_t i = next; i<extensions.size(); ++i )
 			{
-				vector<string> segments;
+				std::vector<string> segments;
 				split(extensions[i], '_', segments);
 				string this_type;
 				if (segments.size() > 2)
@@ -287,7 +292,7 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 			string sList = ssprintf( "  %s: ", type.c_str() );
 			while( next <= last )
 			{
-				vector<string> segments;
+				std::vector<string> segments;
 				split( extensions[next], '_', segments );
 				string ext_short = join( "_", segments.begin()+2, segments.end() );
 				sList += ext_short;
@@ -303,17 +308,17 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 		}
 #else
 		const char *szExtensionString = (const char *) glGetString(GL_EXTENSIONS);
-		vector<RString> asExtensions;
+		std::vector<RString> asExtensions;
 		split( szExtensionString, " ", asExtensions );
 		sort( asExtensions.begin(), asExtensions.end() );
-		size_t iNextToPrint = 0;
+		std::size_t iNextToPrint = 0;
 		while( iNextToPrint < asExtensions.size() )
 		{
-			size_t iLastToPrint = iNextToPrint;
+			std::size_t iLastToPrint = iNextToPrint;
 			RString sType;
-			for( size_t i = iNextToPrint; i<asExtensions.size(); ++i )
+			for( std::size_t i = iNextToPrint; i<asExtensions.size(); ++i )
 			{
-				vector<RString> asBits;
+				std::vector<RString> asBits;
 				split( asExtensions[i], "_", asBits );
 				RString sThisType;
 				if (asBits.size() > 2)
@@ -334,7 +339,7 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 			RString sList = ssprintf( "  %s: ", sType.c_str() );
 			while( iNextToPrint <= iLastToPrint )
 			{
-				vector<RString> asBits;
+				std::vector<RString> asBits;
 				split( asExtensions[iNextToPrint], "_", asBits );
 				RString sShortExt = join( "_", asBits.begin()+2, asBits.end() );
 				sList += sShortExt;
@@ -484,12 +489,12 @@ RageDisplay_GLES2::GetOrthoMatrix( float l, float r, float b, float t, float zn,
 class RageCompiledGeometryGLES2 : public RageCompiledGeometry
 {
 public:
-	
-	void Allocate( const vector<msMesh> &vMeshes )
+
+	void Allocate( const std::vector<msMesh> &vMeshes )
 	{
 		// TODO
 	}
-	void Change( const vector<msMesh> &vMeshes )
+	void Change( const std::vector<msMesh> &vMeshes )
 	{
 		// TODO
 	}
@@ -559,7 +564,7 @@ RageDisplay_GLES2::SupportsPerVertexMatrixScale()
 	return true;
 }
 
-uintptr_t
+std::uintptr_t
 RageDisplay_GLES2::CreateTexture(
 	RagePixelFormat pixfmt,
 	RageSurface* img,
@@ -571,17 +576,17 @@ RageDisplay_GLES2::CreateTexture(
 }
 
 void
-RageDisplay_GLES2::UpdateTexture( 
-	uintptr_t iTexHandle, 
+RageDisplay_GLES2::UpdateTexture(
+	std::uintptr_t iTexHandle,
 	RageSurface* img,
-	int xoffset, int yoffset, int width, int height 
+	int xoffset, int yoffset, int width, int height
 	)
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DeleteTexture( uintptr_t iTexHandle )
+RageDisplay_GLES2::DeleteTexture( std::uintptr_t iTexHandle )
 {
 	// TODO
 }
@@ -613,7 +618,7 @@ SetTextureUnit( TextureUnit tu )
 }
 
 void
-RageDisplay_GLES2::SetTexture( TextureUnit tu, uintptr_t iTexture )
+RageDisplay_GLES2::SetTexture( TextureUnit tu, std::uintptr_t iTexture )
 {
 	if (!SetTextureUnit( tu ))
 		return;
@@ -629,7 +634,7 @@ RageDisplay_GLES2::SetTexture( TextureUnit tu, uintptr_t iTexture )
 	}
 }
 
-void 
+void
 RageDisplay_GLES2::SetTextureMode( TextureUnit tu, TextureMode tm )
 {
 	// TODO
@@ -645,7 +650,7 @@ void
 RageDisplay_GLES2::SetTextureFiltering( TextureUnit tu, bool b )
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b ? GL_LINEAR : GL_NEAREST);
-	
+
 	GLint iMinFilter = 0;
 	if (b)
 	{
@@ -849,7 +854,7 @@ RageDisplay_GLES2::SetAlphaTest( bool b )
 }
 
 void
-RageDisplay_GLES2::SetMaterial( 
+RageDisplay_GLES2::SetMaterial(
 	const RageColor &emissive,
 	const RageColor &ambient,
 	const RageColor &diffuse,
@@ -893,11 +898,11 @@ RageDisplay_GLES2::SetLightOff( int index )
 }
 
 void
-RageDisplay_GLES2::SetLightDirectional( 
-	int index, 
-	const RageColor &ambient, 
-	const RageColor &diffuse, 
-	const RageColor &specular, 
+RageDisplay_GLES2::SetLightDirectional(
+	int index,
+	const RageColor &ambient,
+	const RageColor &diffuse,
+	const RageColor &specular,
 	const RageVector3 &dir )
 {
 	// TODO
@@ -946,7 +951,7 @@ RageDisplay_GLES2::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVe
 }
 
 void
-RageDisplay_GLES2::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int 
+RageDisplay_GLES2::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int
 	iMeshIndex )
 {
 	// TODO

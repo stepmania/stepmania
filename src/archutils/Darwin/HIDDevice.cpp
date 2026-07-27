@@ -144,7 +144,7 @@ bool HIDDevice::Open( io_object_t device )
 	return true;
 }
 
-void HIDDevice::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon )
+void HIDDevice::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target )
 {
 	CFRunLoopSourceRef runLoopSource;
 	// This creates a run loop source. It is released in the dtor.
@@ -159,7 +159,7 @@ void HIDDevice::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback
 	if( !CFRunLoopContainsSource(loopRef, runLoopSource, kCFRunLoopDefaultMode) )
 		CFRunLoopAddSource( loopRef, runLoopSource, kCFRunLoopDefaultMode );
 
-	ret = CALL( m_Queue, setEventCallout, callback, target, (void *)refCon );
+	ret = CALL( m_Queue, setEventCallout, callback, target, this );
 
 	if( ret != kIOReturnSuccess )
 	{

@@ -12,57 +12,23 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
-#include "FileDownload.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "Preference.h"
 #include "JsonUtil.h"
 #include "ScreenInstallOverlay.h"
 #include "ver.h"
 
+#include <vector>
+
 // only used for Version()
-#if defined(_WINDOWS)
+#if defined(_WIN32)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <conio.h>
 #endif
 
-/** @brief The directory where languages should be installed. */
-const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
+std::vector<CommandLineActions::CommandLineArgs> CommandLineActions::ToProcess;
 
-vector<CommandLineActions::CommandLineArgs> CommandLineActions::ToProcess;
-
-static void Nsis()
-{
-	RageFile out;
-	if(!out.Open("nsis_strings_temp.inc", RageFile::WRITE))
-		RageException::Throw("Error opening file for write.");
-
-	vector<RString> vs;
-	GetDirListing(INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false);
-	for (RString const &s : vs)
-	{
-		RString sThrowAway, sLangCode;
-		splitpath(s, sThrowAway, sLangCode, sThrowAway);
-		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
-
-		RString sLangNameUpper = pLI->szEnglishName;
-		sLangNameUpper.MakeUpper();
-
-		IniFile ini;
-		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + s))
-			RageException::Throw("Error opening file for read.");
-		FOREACH_CONST_Child(&ini, child)
-		{
-			FOREACH_CONST_Attr(child, attr)
-			{
-				RString sName = attr->first;
-				RString sValue = attr->second->GetValue<RString>();
-				sValue.Replace("\\n", "$\\n");
-				RString sLine = ssprintf("LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str());
-				out.PutLine(sLine);
-			}
-		}
-	}
-}
 static void LuaInformation()
 {
 	XNode *pNode = LuaHelpers::GetLuaInformation();
@@ -70,7 +36,7 @@ static void LuaInformation()
 	pNode->AppendAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 	pNode->AppendAttr("xsi:schemaLocation", "http://www.stepmania.com Lua.xsd");
 
-	pNode->AppendChild("Version", string(PRODUCT_FAMILY) + product_version);
+	pNode->AppendChild("Version", std::string(PRODUCT_FAMILY) + product_version);
 	pNode->AppendChild("Date", DateTime::GetNowDate().GetString());
 
 	XmlFileUtil::SaveToFile(pNode, "Lua.xml", "Lua.xsl");
@@ -82,12 +48,12 @@ static void LuaInformation()
  * @brief Print out version information.
  *
  * HACK: This function is primarily needed for Windows users.
- * Mac OS X and Linux print out version information on the command line
+ * macOS and Linux print out version information on the command line
  * regardless of any preferences (tested by shakesoda on Mac). -aj */
 static void Version()
 {
-	#if defined(WIN32)
-		RString sProductID = ssprintf("%s", (string(PRODUCT_FAMILY) + product_version).c_str() );
+	#if defined(_WIN32)
+		RString sProductID = ssprintf("%s", (std::string(PRODUCT_FAMILY) + product_version).c_str() );
 		RString sVersion = ssprintf("build %s\nCompile Date: %s @ %s", ::sm_version_git_hash, version_date, version_time);
 
 		AllocConsole();
@@ -108,11 +74,6 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
 	ToProcess.push_back(args);
 
 	bool bExitAfter = false;
-	if( GetCommandlineArgument("ExportNsisStrings") )
-	{
-		Nsis();
-		bExitAfter = true;
-	}
 	if( GetCommandlineArgument("ExportLuaInformation") )
 	{
 		LuaInformation();
@@ -130,7 +91,7 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
 /*
  * (c) 2006 Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -140,7 +101,7 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

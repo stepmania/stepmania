@@ -1,13 +1,6 @@
 #define __USE_GNU
 #include "global.h"
 
-#include <cstdio>
-#include <cstring>
-#include <cerrno>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/select.h>
-
 #include "Backtrace.h"
 #include "BacktraceNames.h"
 
@@ -23,6 +16,14 @@
 #endif
 
 #include "ver.h"
+
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
+#include <vector>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/select.h>
 
 bool child_read( int fd, void *p, int size );
 
@@ -134,7 +135,7 @@ static void child_process()
 	if( !child_read(3, temp, size) )
 		return;
 
-	vector<RString> Checkpoints;
+	std::vector<RString> Checkpoints;
 	split(temp, "$$", Checkpoints);
 	delete [] temp;
 
@@ -230,6 +231,7 @@ static void child_process()
 			}
 			break;
 		}
+		[[fallthrough]];
 	}
 	case CrashData::FORCE_CRASH:
 		crash.reason[sizeof(crash.reason)-1] = 0;

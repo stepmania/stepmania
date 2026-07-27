@@ -7,7 +7,7 @@ class Steps;
 class Trail;
 
 // Player number stuff
-enum Difficulty 
+enum Difficulty
 {
 	Difficulty_Beginner,
 	Difficulty_Easy,

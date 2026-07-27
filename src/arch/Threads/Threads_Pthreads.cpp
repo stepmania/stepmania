@@ -4,8 +4,11 @@
 #include "RageTimer.h"
 #include "RageThreads.h"
 #include "RageUtil.h"
+
+#include <cerrno>
+#include <cstddef>
+#include <cstdint>
 #include <sys/time.h>
-#include <errno.h>
 
 #if defined(UNIX)
 #include "archutils/Unix/RunningUnderValgrind.h"
@@ -35,7 +38,7 @@ void ThreadImpl_Pthreads::Resume()
 	ResumeThread( threadHandle );
 }
 
-uint64_t ThreadImpl_Pthreads::GetThreadId() const
+std::uint64_t ThreadImpl_Pthreads::GetThreadId() const
 {
 	return threadHandle;
 }
@@ -76,7 +79,7 @@ static void *StartThread( void *pData )
 	return new int(iRet);
 }
 
-ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThreadID )
+ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, std::uint64_t *piThreadID )
 {
 	ThreadImpl_Pthreads *thread = new ThreadImpl_Pthreads;
 	thread->m_pFunc = pFunc;
@@ -94,7 +97,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	// Copy the thread name.
 	const char *rawname = RageThread::GetThreadNameByID( *piThreadID );
-	const size_t maxNameLen = sizeof( thread->name );
+	const std::size_t maxNameLen = sizeof( thread->name );
 	if (strlen(rawname) < maxNameLen) {
 		// If it fits, I sits^H^H^H^Hcopy.
 		strncpy( thread->name, rawname, maxNameLen );
@@ -224,12 +227,12 @@ void MutexImpl_Pthreads::Unlock()
 	pthread_mutex_unlock( &mutex );
 }
 
-uint64_t GetThisThreadId()
+std::uint64_t GetThisThreadId()
 {
 	return GetCurrentThreadId();
 }
 
-uint64_t GetInvalidThreadId()
+std::uint64_t GetInvalidThreadId()
 {
 	return 0;
 }
@@ -244,7 +247,7 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
-#endif // On MinGW clockid_t is defined in pthread.h
+#endif
 namespace
 {
 	typedef int (* CONDATTR_SET_CLOCK)( pthread_condattr_t *attr, clockid_t clock_id );
@@ -457,7 +460,7 @@ bool SemaImpl_Pthreads::TryWait()
 	return true;
 }
 #else
-// Use conditions, to work around OS X "forgetting" to implement semaphores.
+// Use conditions, to work around macOS "forgetting" to implement semaphores.
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
 	int ret = pthread_cond_init( &m_Cond, nullptr );

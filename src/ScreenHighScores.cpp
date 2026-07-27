@@ -6,8 +6,12 @@
 #include "RageLog.h"
 #include "UnlockManager.h"
 
-RString COLUMN_DIFFICULTY_NAME( size_t i );
-RString COLUMN_STEPS_TYPE_NAME( size_t i );
+#include <cstddef>
+#include <vector>
+
+
+RString COLUMN_DIFFICULTY_NAME( std::size_t i );
+RString COLUMN_STEPS_TYPE_NAME( std::size_t i );
 
 static const char *HighScoresTypeNames[] = {
 	"AllSteps",
@@ -21,7 +25,7 @@ LuaXType( HighScoresType );
 
 REGISTER_SCREEN_CLASS( ScreenHighScores );
 
-static void GetAllSongsToShow( vector<Song*> &vpOut, int iNumMostRecentScoresToShow )
+static void GetAllSongsToShow( std::vector<Song*> &vpOut, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
 	for (Song *s : SONGMAN->GetAllSongs())
@@ -42,10 +46,10 @@ static void GetAllSongsToShow( vector<Song*> &vpOut, int iNumMostRecentScoresToS
 	}
 }
 
-static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, int iNumMostRecentScoresToShow )
+static void GetAllCoursesToShow( std::vector<Course*> &vpOut, CourseType ct, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
-	vector<Course*> vpCourses;
+	std::vector<Course*> vpCourses;
 	if( ct == CourseType_Invalid )
 		SONGMAN->GetAllCourses( vpCourses, false );
 	else
@@ -75,7 +79,7 @@ ScoreScroller::ScoreScroller()
 	this->DeleteChildrenWhenDone();
 }
 
-void ScoreScroller::SetDisplay( const vector<DifficultyAndStepsType> &DifficultiesToShow )
+void ScoreScroller::SetDisplay( const std::vector<DifficultyAndStepsType> &DifficultiesToShow )
 {
 	m_DifficultiesToShow = DifficultiesToShow;
 	ShiftSubActors( INT_MAX );
@@ -161,7 +165,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 
 void ScoreScroller::LoadSongs( int iNumRecentScores )
 {
-	vector<Song*> vpSongs;
+	std::vector<Song*> vpSongs;
 	GetAllSongsToShow( vpSongs, iNumRecentScores );
 	m_vScoreRowItemData.resize( vpSongs.size() );
 	for( unsigned i=0; i<m_vScoreRowItemData.size(); ++i )
@@ -170,7 +174,7 @@ void ScoreScroller::LoadSongs( int iNumRecentScores )
 
 void ScoreScroller::LoadCourses( CourseType ct, int iNumRecentScores )
 {
-	vector<Course*> vpCourses;
+	std::vector<Course*> vpCourses;
 	GetAllCoursesToShow( vpCourses, ct, iNumRecentScores );
 	m_vScoreRowItemData.resize( vpCourses.size() );
 	for( unsigned i=0; i<m_vScoreRowItemData.size(); ++i )
@@ -181,7 +185,7 @@ void ScoreScroller::Load( RString sMetricsGroup )
 {
 	SCROLLER_ITEMS_TO_DRAW.Load(sMetricsGroup, "ScrollerItemsToDraw");
 	SCROLLER_SECONDS_PER_ITEM.Load(sMetricsGroup, "ScrollerSecondsPerItem");
-	
+
 
 	int iNumCopies = SCROLLER_ITEMS_TO_DRAW+1;
 	for( int i=0; i<iNumCopies; ++i )
@@ -201,8 +205,8 @@ void ScoreScroller::Load( RString sMetricsGroup )
 
 /////////////////////////////////////////////
 
-RString COLUMN_DIFFICULTY_NAME( size_t i ) { return ssprintf("ColumnDifficulty%d",int(i+1)); }
-RString COLUMN_STEPS_TYPE_NAME( size_t i ) { return ssprintf("ColumnStepsType%d",int(i+1)); }
+RString COLUMN_DIFFICULTY_NAME( std::size_t i ) { return ssprintf("ColumnDifficulty%d",int(i+1)); }
+RString COLUMN_STEPS_TYPE_NAME( std::size_t i ) { return ssprintf("ColumnStepsType%d",int(i+1)); }
 
 void ScreenHighScores::Init()
 {
@@ -253,7 +257,7 @@ void ScreenHighScores::BeginScreen()
 {
 	ScreenAttract::BeginScreen();
 
-	vector<DifficultyAndStepsType> vdast;
+	std::vector<DifficultyAndStepsType> vdast;
 	for( int i=0; i<NUM_COLUMNS; i++ )
 	{
 		DifficultyAndStepsType dast( COLUMN_DIFFICULTY.GetValue(i), COLUMN_STEPS_TYPE.GetValue(i) );
@@ -329,7 +333,7 @@ void ScreenHighScores::DoScroll( int iDir )
 /*
  * (c) 2001-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -339,7 +343,7 @@ void ScreenHighScores::DoScroll( int iDir )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

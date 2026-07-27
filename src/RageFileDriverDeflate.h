@@ -5,6 +5,9 @@
 
 #include "RageFileBasic.h"
 
+#include <cstddef>
+#include <cstdint>
+
 typedef struct z_stream_s z_stream;
 
 class RageFileObjInflate: public RageFileObj
@@ -15,8 +18,8 @@ public:
 	RageFileObjInflate( RageFileBasic *pFile, int iUncompressedSize );
 	RageFileObjInflate( const RageFileObjInflate &cpy );
 	~RageFileObjInflate();
-	int ReadInternal( void *pBuffer, size_t iBytes );
-	int WriteInternal( const void * /* pBuffer */, size_t /* iBytes */ ) { SetError( "Not implemented" ); return -1; }
+	int ReadInternal( void *pBuffer, std::size_t iBytes );
+	int WriteInternal( const void * /* pBuffer */, std::size_t /* iBytes */ ) { SetError( "Not implemented" ); return -1; }
 	int SeekInternal( int iOffset );
 	int GetFileSize() const { return m_iUncompressedSize; }
 	int GetFD() { return m_pFile->GetFD(); }
@@ -47,10 +50,10 @@ public:
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 
 protected:
-	int ReadInternal( void * /* pBuffer */, size_t /* iBytes */ ) { SetError( "Not implemented" ); return -1; }
-	int WriteInternal( const void *pBuffer, size_t iBytes );
+	int ReadInternal( void * /* pBuffer */, std::size_t /* iBytes */ ) { SetError( "Not implemented" ); return -1; }
+	int WriteInternal( const void *pBuffer, std::size_t iBytes );
 	int FlushInternal();
-	
+
 	RageFileBasic *m_pFile;
 	z_stream *m_pDeflate;
 	bool m_bFileOwned;
@@ -67,7 +70,7 @@ private:
 	int m_iDataStartOffset;
 };
 
-RageFileObjInflate *GunzipFile( RageFileBasic *pFile, RString &sError, uint32_t *iCRC32 );
+RageFileObjInflate *GunzipFile( RageFileBasic *pFile, RString &sError, std::uint32_t *iCRC32 );
 
 /* Quick helpers: */
 void GzipString( const RString &sIn, RString &sOut );

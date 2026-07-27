@@ -7,6 +7,8 @@
 #include "Course.h"
 #include "ActorUtil.h"
 
+#include <cmath>
+
 LifeMeterBattery::LifeMeterBattery()
 {
 	m_iLivesLeft= 4;
@@ -104,7 +106,7 @@ void LifeMeterBattery::OnSongEnded()
 			lua_settop(L, 0);
 			LUA->Release(L);
 		}
-		m_iLivesLeft = min( m_iLivesLeft, m_pPlayerState->m_PlayerOptions.GetSong().m_BatteryLives );
+		m_iLivesLeft = std::min( m_iLivesLeft, m_pPlayerState->m_PlayerOptions.GetSong().m_BatteryLives );
 
 		if( m_iTrailingLivesLeft < m_iLivesLeft )
 			m_soundGainLife.Play(false);
@@ -144,7 +146,7 @@ void LifeMeterBattery::AddLives( int iLives )
 void LifeMeterBattery::ChangeLives(int iLifeDiff)
 {
 	if( iLifeDiff < 0 )
-		SubtractLives( abs(iLifeDiff) );
+		SubtractLives( std::abs(iLifeDiff) );
 	else if( iLifeDiff > 0 )
 		AddLives(iLifeDiff);
 }
@@ -268,7 +270,7 @@ void LifeMeterBattery::Update( float fDeltaTime )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the LifeMeterBattery. */ 
+/** @brief Allow Lua to have access to the LifeMeterBattery. */
 class LunaLifeMeterBattery: public Luna<LifeMeterBattery>
 {
 public:
@@ -289,7 +291,7 @@ LUA_REGISTER_DERIVED_CLASS( LifeMeterBattery, LifeMeter )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -299,7 +301,7 @@ LUA_REGISTER_DERIVED_CLASS( LifeMeterBattery, LifeMeter )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -8,6 +8,9 @@
 #include "RageLog.h"
 #include "RageThreads.h"
 
+#include <vector>
+
+
 #if !defined(SMPACKAGE)
 static Preference<RString> g_sIgnoredDialogs( "IgnoredDialogs", "" );
 #endif
@@ -15,7 +18,7 @@ static Preference<RString> g_sIgnoredDialogs( "IgnoredDialogs", "" );
 DialogDriver *MakeDialogDriver()
 {
 	RString sDrivers = "win32,cocoa,null";
-	vector<RString> asDriversToTry;
+	std::vector<RString> asDriversToTry;
 	split( sDrivers, ",", asDriversToTry, true );
 
 	ASSERT( asDriversToTry.size() != 0 );
@@ -83,7 +86,7 @@ void Dialog::Shutdown()
 static bool MessageIsIgnored( RString sID )
 {
 #if !defined(SMPACKAGE)
-	vector<RString> asList;
+	std::vector<RString> asList;
 	split( g_sIgnoredDialogs, ",", asList );
 	for( unsigned i = 0; i < asList.size(); ++i )
 		if( !sID.CompareNoCase(asList[i]) )
@@ -99,7 +102,7 @@ void Dialog::IgnoreMessage( RString sID )
 	if( PREFSMAN == nullptr )
 	{
 		if( sID != "" && LOG )
-			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", sID.c_str() );		
+			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", sID.c_str() );
 		return;
 	}
 
@@ -109,7 +112,7 @@ void Dialog::IgnoreMessage( RString sID )
 	if( MessageIsIgnored(sID) )
 		return;
 
-	vector<RString> asList;
+	std::vector<RString> asList;
 	split( g_sIgnoredDialogs, ",", asList );
 	asList.push_back( sID );
 	g_sIgnoredDialogs.Set( join(",",asList) );
@@ -128,9 +131,9 @@ void Dialog::Error( RString sMessage, RString sID )
 		return;
 
 	RageThread::SetIsShowingDialog( true );
-	
+
 	g_pImpl->Error( sMessage, sID );
-	
+
 	RageThread::SetIsShowingDialog( false );
 }
 
@@ -150,13 +153,13 @@ void Dialog::OK( RString sMessage, RString sID )
 		return;
 
 	RageThread::SetIsShowingDialog( true );
-	
+
 	// only show Dialog if windowed
 	if( DialogsEnabled() )
 		g_pImpl->OK( sMessage, sID );	// call derived version
 	else
 		g_NullDriver.OK( sMessage, sID );
-	
+
 	RageThread::SetIsShowingDialog( false );
 }
 
@@ -195,14 +198,14 @@ Dialog::Result Dialog::AbortRetryIgnore( RString sMessage, RString sID )
 		return g_NullDriver.AbortRetryIgnore( sMessage, sID );
 
 	RageThread::SetIsShowingDialog( true );
-	
+
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( DialogsEnabled() )
 		ret = g_pImpl->AbortRetryIgnore( sMessage, sID );	// call derived version
 	else
 		ret = g_NullDriver.AbortRetryIgnore( sMessage, sID );
-	
+
 	RageThread::SetIsShowingDialog( false );
 
 	return ret;
@@ -226,7 +229,7 @@ Dialog::Result Dialog::AbortRetry( RString sMessage, RString sID )
 		ret = g_pImpl->AbortRetry( sMessage, sID );	// call derived version
 	else
 		ret = g_NullDriver.AbortRetry( sMessage, sID );
-	
+
 	RageThread::SetIsShowingDialog( false );
 
 	return ret;
@@ -250,7 +253,7 @@ Dialog::Result Dialog::YesNo( RString sMessage, RString sID )
 		ret = g_pImpl->YesNo( sMessage, sID );	// call derived version
 	else
 		ret = g_NullDriver.YesNo( sMessage, sID );
-	
+
 	RageThread::SetIsShowingDialog( false );
 
 	return ret;
@@ -259,7 +262,7 @@ Dialog::Result Dialog::YesNo( RString sMessage, RString sID )
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -269,7 +272,7 @@ Dialog::Result Dialog::YesNo( RString sMessage, RString sID )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

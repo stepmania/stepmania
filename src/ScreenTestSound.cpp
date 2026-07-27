@@ -7,6 +7,9 @@
 #include "RageUtil.h"
 #include "InputEventPlus.h"
 
+#include <vector>
+
+
 REGISTER_SCREEN_CLASS( ScreenTestSound );
 
 void ScreenTestSound::Init()
@@ -69,7 +72,7 @@ ScreenTestSound::~ScreenTestSound()
 	for( int i = 0; i < nsounds; ++i )
 	{
 		/* Delete copied sounds. */
-		vector<RageSound *> &snds = m_sSoundCopies[i];
+		std::vector<RageSound *> &snds = m_sSoundCopies[i];
 		for( unsigned j = 0; j < snds.size(); ++j )
 			delete snds[j];
 	}
@@ -79,7 +82,7 @@ void ScreenTestSound::UpdateText(int n)
 {
 	RString fn = Basename( s[n].s.GetLoadedFilePath() );
 
-	vector<RageSound *> &snds = m_sSoundCopies[n];
+	std::vector<RageSound *> &snds = m_sSoundCopies[n];
 
 	RString pos;
 	for(unsigned p = 0; p < snds.size(); ++p)
@@ -115,7 +118,7 @@ void ScreenTestSound::Update(float f)
 		UpdateText(i);
 
 		/* Delete copied sounds that have finished playing. */
-		vector<RageSound *> &snds = m_sSoundCopies[i];
+		std::vector<RageSound *> &snds = m_sSoundCopies[i];
 		for( unsigned j = 0; j < snds.size(); ++j )
 		{
 			if( snds[j]->IsPlaying() )
@@ -157,7 +160,7 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
 				for( int i = 0; i < nsounds; ++i )
 				{
 					/* Stop copied sounds. */
-					vector<RageSound *> &snds = m_sSoundCopies[i];
+					std::vector<RageSound *> &snds = m_sSoundCopies[i];
 					for( unsigned j = 0; j < snds.size(); ++j )
 						snds[j]->Stop();
 				}
@@ -198,18 +201,19 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
 				break;
 */
 			default:
-				return false;
+				break;
 		}
-		default:
-			return false;
+	default:
+		break;
 	}
-	return true;
+
+	return false;
 }
 
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -219,7 +223,7 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

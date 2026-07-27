@@ -1,8 +1,9 @@
 // LightsDriver_PacDrive for use with a PacDrive hooked up with LEDs
-// You need PacDrive32.dll in the StepMania directory to use this.
+// You need PacDrive64.dll in the StepMania directory to use this.
 
 #include "global.h"
 #include "LightsDriver_PacDrive.h"
+#define WIN32_LEAN_AND_MEAN
 #include "windows.h"
 #include "RageUtil.h"
 #include "Preference.h"
@@ -21,16 +22,16 @@ PacSetLEDStates* m_pacset = nullptr;
 int iLightingOrder = 0;
 
 //Adds new preference to allow for different light wiring setups
-static Preference<RString> g_sPacDriveLightOrdering("PacDriveLightOrdering", "minimaid");
+static Preference<RString> g_sPacDriveLightOrdering("PacDriveLightOrdering", "lumenar");
 
 
 LightsDriver_PacDrive::LightsDriver_PacDrive()
 {
 	// init io.dll
-	PachDLL = LoadLibrary("pacdrive32.dll");
+	PachDLL = LoadLibrary("pacdrive64.dll");
 	if(PachDLL == nullptr)
 	{
-		MessageBox(nullptr, "Could not LoadLibrary( pacdrive32.dll ).", "ERROR", MB_OK );
+		MessageBox(nullptr, "Could not LoadLibrary( pacdrive64.dll ).", "ERROR", MB_OK );
 		return;
 	}
 

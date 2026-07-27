@@ -5,6 +5,7 @@
 #include "ALSA9Dynamic.h"
 #include "PrefsManager.h"
 
+#include <cstdint>
 #include <fstream>
 #include <string>
 
@@ -90,7 +91,7 @@ bool Alsa9Buf::SetSWParams()
 	/* If this fails, we might have bound dsnd_pcm_sw_params_set_avail_min to
 	 * the old SW API. */
 //	ASSERT( err <= 0 );
-	
+
 	/* Disable SND_PCM_STATE_XRUN. */
 	snd_pcm_uframes_t boundary = 0;
 	err = dsnd_pcm_sw_params_get_boundary( swparams, &boundary );
@@ -138,7 +139,7 @@ static RString DeviceName()
 
 void Alsa9Buf::GetSoundCardDebugInfo()
 {
-	static bool done = false;	
+	static bool done = false;
 	if( done )
 		return;
 	done = true;
@@ -204,7 +205,7 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 
 	if( card == 0 )
 		LOG->Info( "No ALSA sound cards were found.");
-	
+
 	if( !PREFSMAN->m_iSoundDevice.Get().empty() )
 		LOG->Info( "ALSA device overridden to \"%s\"", PREFSMAN->m_iSoundDevice.Get().c_str() );
 }
@@ -231,11 +232,11 @@ RString Alsa9Buf::Init( int channels_,
 		samplerate = 44100;
 	else
 		samplerate = iSampleRate;
-	
+
 	GetSoundCardDebugInfo();
-		
+
 	InitializeErrorHandler();
-	
+
 	/* Open the device. */
 	int err;
 	err = dsnd_pcm_open( &pcm, DeviceName(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
@@ -274,10 +275,10 @@ int Alsa9Buf::GetNumFramesToFill()
 {
 	/* Make sure we can write ahead at least two chunks.  Otherwise, we'll only
 	 * fill one chunk ahead, and underrun. */
-	int ActualWriteahead = max( writeahead, chunksize*2 );
+	int ActualWriteahead = std::max( writeahead, chunksize*2 );
 
 	snd_pcm_sframes_t avail_frames = dsnd_pcm_avail_update(pcm);
-	
+
 	int total_frames = writeahead;
 	if( avail_frames > total_frames )
 	{
@@ -297,7 +298,7 @@ int Alsa9Buf::GetNumFramesToFill()
 			dsnd_pcm_forward( pcm, size );
 		}
 	}
-	
+
 	if( avail_frames < 0 )
 		avail_frames = dsnd_pcm_avail_update(pcm);
 
@@ -308,10 +309,10 @@ int Alsa9Buf::GetNumFramesToFill()
 	}
 
 	/* Number of frames that have data: */
-	const snd_pcm_sframes_t filled_frames = max( 0l, total_frames - avail_frames );
+	const snd_pcm_sframes_t filled_frames = std::max( 0l, total_frames - avail_frames );
 
 	/* Number of frames that don't have data, that are within the writeahead: */
-	snd_pcm_sframes_t unfilled_frames = clamp( ActualWriteahead - filled_frames, 0l, (snd_pcm_sframes_t)ActualWriteahead );
+	snd_pcm_sframes_t unfilled_frames = std::clamp( ActualWriteahead - filled_frames, 0l, (snd_pcm_sframes_t)ActualWriteahead );
 
 //	LOG->Trace( "total_fr: %i; avail_fr: %i; filled_fr: %i; ActualWr %i; chunksize %i; unfilled_frames %i ",
 //			total_frames, avail_frames, filled_frames, ActualWriteahead, chunksize, unfilled_frames );
@@ -336,7 +337,7 @@ bool Alsa9Buf::WaitUntilFramesCanBeFilled( int timeout_ms )
 	return err == 1;
 }
 
-void Alsa9Buf::Write( const int16_t *buffer, int frames )
+void Alsa9Buf::Write( const std::int16_t *buffer, int frames )
 {
 	/* We should be able to write it all.  If we don't, treat it as an error. */
 	int wrote;
@@ -387,7 +388,7 @@ bool Alsa9Buf::Recover( int r )
 	return false;
 }
 
-int64_t Alsa9Buf::GetPosition() const
+std::int64_t Alsa9Buf::GetPosition() const
 {
 	if( dsnd_pcm_state(pcm) == SND_PCM_STATE_PREPARED )
 		return last_cursor_pos;
@@ -420,7 +421,7 @@ RString Alsa9Buf::GetHardwareID( RString name )
 
 	if( name.empty() )
 		name = DeviceName();
-	
+
 	snd_ctl_t *handle;
 	int err;
 	err = dsnd_ctl_open( &handle, name, 0 );
@@ -443,7 +444,7 @@ RString Alsa9Buf::GetHardwareID( RString name )
 /*
  * (c) 2002-2004 Glenn Maynard, Aaron VonderHaar
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -453,7 +454,7 @@ RString Alsa9Buf::GetHardwareID( RString name )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

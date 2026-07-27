@@ -4,6 +4,9 @@
 #include "InputEventPlus.h"
 #include "MessageManager.h"
 
+#include <vector>
+
+
 #define CODE_NAMES		THEME->GetMetric (sType,"CodeNames")
 #define CODE( s )		THEME->GetMetric (sType,ssprintf("Code%s",s.c_str()))
 void InputQueueCodeSet::Load( const RString &sType )
@@ -15,7 +18,7 @@ void InputQueueCodeSet::Load( const RString &sType )
 
 	for( unsigned c=0; c<m_asCodeNames.size(); c++ )
 	{
-		vector<RString> asBits;
+		std::vector<RString> asBits;
 		split( m_asCodeNames[c], "=", asBits, true );
 		RString sCodeName = asBits[0];
 		if( asBits.size() > 1 )
@@ -56,7 +59,7 @@ bool InputQueueCodeSet::InputMessage( const InputEventPlus &input, Message &msg 
 /*
  * (c) 2007 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -66,7 +69,7 @@ bool InputQueueCodeSet::InputMessage( const InputEventPlus &input, Message &msg 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

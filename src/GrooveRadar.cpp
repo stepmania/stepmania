@@ -13,6 +13,9 @@
 // I feel weird about this coupling, but it has to be done. -aj
 #include "GameState.h"
 
+#include <vector>
+
+
 REGISTER_ACTOR_CLASS(GrooveRadar);
 
 static const ThemeMetric<float>	RADAR_EDGE_WIDTH	("GrooveRadar","EdgeWidth");
@@ -78,7 +81,7 @@ void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // nullptr mean
 	m_GrooveRadarValueMap[pn].SetFromSteps( rv );
 }
 
-void GrooveRadar::SetFromValues( PlayerNumber pn, vector<float> vals )
+void GrooveRadar::SetFromValues( PlayerNumber pn, std::vector<float> vals )
 {
 	m_GrooveRadarValueMap[pn].SetFromValues(vals);
 }
@@ -107,7 +110,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
 	{
 		const float fValueCurrent = m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew;
 		m_fValuesOld[c] = fValueCurrent;
-		m_fValuesNew[c] = clamp(rv[c], 0.0, 1.0);
+		m_fValuesNew[c] = std::clamp(rv[c], 0.0f, 1.0f);
 	}
 
 	if( !m_bValuesVisible ) // the values WERE invisible
@@ -116,7 +119,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
 		m_PercentTowardNew = 0;
 }
 
-void GrooveRadar::GrooveRadarValueMap::SetFromValues( vector<float> vals )
+void GrooveRadar::GrooveRadarValueMap::SetFromValues( std::vector<float> vals )
 {
 	m_bValuesVisible = true;
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
@@ -136,7 +139,7 @@ void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	m_PercentTowardNew = min( m_PercentTowardNew+4.0f*fDeltaTime, 1 );
+	m_PercentTowardNew = std::min( m_PercentTowardNew + 4.0f * fDeltaTime, 1.0f );
 }
 
 void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
@@ -167,11 +170,11 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	for( int i=0; i<NUM_SHOWN_RADAR_CATEGORIES+1; i++ ) // do one extra to close the fan
 	{
 		const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
-		const float fDistFromCenter = 
+		const float fDistFromCenter =
 			( m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew + 0.07f ) * fRadius;
 		const float fRotation = RADAR_VALUE_ROTATION(i);
-		const float fX = RageFastCos(fRotation) * fDistFromCenter;
-		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
+		const float fX = std::cos(fRotation) * fDistFromCenter;
+		const float fY = -std::sin(fRotation) * fDistFromCenter;
 
 		v[1+i].p = RageVector3( fX, fY, 0 );
 		v[1+i].c = v[1].c;
@@ -183,11 +186,11 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	for( int i=0; i<=NUM_SHOWN_RADAR_CATEGORIES; i++ )
 	{
 		const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
-		const float fDistFromCenter = 
+		const float fDistFromCenter =
 			( m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew + 0.07f ) * fRadius;
 		const float fRotation = RADAR_VALUE_ROTATION(i);
-		const float fX = RageFastCos(fRotation) * fDistFromCenter;
-		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
+		const float fX = std::cos(fRotation) * fDistFromCenter;
+		const float fY = -std::sin(fRotation) * fDistFromCenter;
 
 		v[i].p = RageVector3( fX, fY, 0 );
 		v[i].c = this->m_pTempState->diffuse[0];
@@ -208,12 +211,12 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the GrooveRadar. */ 
+/** @brief Allow Lua to have access to the GrooveRadar. */
 class LunaGrooveRadar: public Luna<GrooveRadar>
 {
 public:
 	static int SetFromRadarValues( T* p, lua_State *L )
-	{ 
+	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )
 		{
@@ -235,7 +238,7 @@ public:
 		}
 		else
 		{
-			vector<float> vals;
+			std::vector<float> vals;
 			LuaHelpers::ReadArrayFromTable( vals, L );
 			p->SetFromValues(pn, vals);
 		}
@@ -257,7 +260,7 @@ LUA_REGISTER_DERIVED_CLASS( GrooveRadar, ActorFrame )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -267,7 +270,7 @@ LUA_REGISTER_DERIVED_CLASS( GrooveRadar, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

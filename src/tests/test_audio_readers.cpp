@@ -7,6 +7,9 @@
 #include "RageSoundReader_Resample_Good.h"
 
 #include "test_misc.h"
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -22,7 +25,7 @@ void ReadData( RageSoundReader *pReader,
 	int got = pReader->Read( pBuf, iFrames );
 	ASSERT_M( got == iFrames, ssprintf("%i, %i", got, iFrames) );
 }
-	       
+
 void find( const char *haystack, int hs, const char *needle, int ns )
 {
 	for( int i = 0; i <= hs-ns; ++i )
@@ -43,7 +46,7 @@ void dump_bin( const char *fn, const char *buf, int size )
 	close( fd );
 }
 
-void dump( const char *fn, const int16_t *buf, int samples )
+void dump( const char *fn, const std::int16_t *buf, int samples )
 {
 	FILE *f = fopen( fn, "w+");
 	ASSERT( f );
@@ -69,7 +72,7 @@ void dump( const char *buf, int size )
 	printf("\n\n");
 }
 
-void dump( const int16_t *buf, int samples )
+void dump( const std::int16_t *buf, int samples )
 {
 	for( int i = 0; i < samples; ++i )
 		printf( "0x%04hx,", buf[i] );
@@ -79,15 +82,15 @@ void dump( const int16_t *buf, int samples )
 void dump( const float *buf, int samples )
 {
 	for( int i = 0; i < samples; ++i )
-		printf( "0x%04lx,", lrintf(buf[i]*32768) );
+		printf( "0x%04lx,", std::lrint(buf[i]*32768) );
 	printf( "\n" );
 }
 
-bool compare( const float *m1, const int16_t *m2, int iSamples )
+bool compare( const float *m1, const std::int16_t *m2, int iSamples )
 {
 	for( int i = 0; i < iSamples; ++i )
 	{
-		int16_t iSample1 = lrintf(m1[i]*32768);
+		std::int16_t iSample1 = std::lrint(m1[i]*32768);
 		if( iSample1 != m2[i] )
 			return false;
 	}
@@ -96,7 +99,7 @@ bool compare( const float *m1, const int16_t *m2, int iSamples )
 }
 
 
-void compare_buffers( const int16_t *expect, const int16_t *got, int frames,
+void compare_buffers( const std::int16_t *expect, const std::int16_t *got, int frames,
 		int &NumInaccurateSamplesAtStart,
 		int &NumInaccurateSamples )
 {
@@ -104,10 +107,10 @@ void compare_buffers( const int16_t *expect, const int16_t *got, int frames,
 
 	NumInaccurateSamplesAtStart = 0;
 	NumInaccurateSamples = 0;
-		
+
 	for( int i = 0; i < frames; ++i )
 	{
-		int diff = abs( expect[i] - got[i] );
+		int diff = std::abs( expect[i] - got[i] );
 		if( diff > 200 )
 		{
 			printf("%i\n", diff);
@@ -122,12 +125,12 @@ void compare_buffers( const int16_t *expect, const int16_t *got, int frames,
 
 }
 
-bool compare_buffers( const int16_t *expect, const int16_t *got, int frames, int channels )
+bool compare_buffers( const std::int16_t *expect, const std::int16_t *got, int frames, int channels )
 {
 	/*
 	 * Compare each channel separately.  Try to figure out if
-	 * the data is exactly the same, 
-	 * 
+	 * the data is exactly the same,
+	 *
 	 * 2: either the source or dest data starts out around 0 and converges quickly
 	 *    on the other; this happens with resamplers after a seek, since they're missing
 	 *    data before the seeked position (could be fixed)
@@ -140,10 +143,10 @@ bool compare_buffers( const int16_t *expect, const int16_t *got, int frames, int
 	 * converges.
 	 *
 	 * Determine if data is identical, but offset.
-	 * 
+	 *
 	 */
 
-	
+
 
 	int NumInaccurateSamples;
 	int NumInaccurateSamplesAtStart;
@@ -162,20 +165,20 @@ bool test_read( RageSoundReader *snd, float *expected_data, int frames )
 	int got = snd->Read( buf, frames );
 	ASSERT( got == frames );
 
-	//compare_buffers( (const int16_t *) expected_data,
-	//		 (const int16_t *) buf,
+	//compare_buffers( (const std::int16_t *) expected_data,
+	//		 (const std::int16_t *) buf,
 	//		 bytes/2,
 	//		 2 );
-	
+
 	bool bMatches = true;
 	for( int i = 0; i < samples; ++i )
-		if( fabsf(buf[i] - expected_data[i]) > 0.00001f )
+		if( std::abs(buf[i] - expected_data[i]) > 0.00001f )
 			bMatches = false;
 	if( bMatches )
 		return true;
 
-	dump( expected_data, min(100, samples) );
-	dump( buf, min(100, samples) );
+	dump( expected_data, std::min(100, samples) );
+	dump( buf, std::min(100, samples) );
 	return false;
 }
 
@@ -205,7 +208,7 @@ RageSoundReader *ApplyFilters( RageSoundReader *s, int filters )
 			delete r;
 		}
 	}
-	
+
 	if( filters & FILTER_RESAMPLE_FAST )
 	{
 		RageSoundReader_Resample_Good *r = new RageSoundReader_Resample_Good( s, 10000 );
@@ -242,7 +245,7 @@ int FramesOfSilence( const float *data, int frames, int iChannels )
 	while( SilentFrames < frames )
 	{
 		for( int c = 0; c < iChannels; ++c )
-			if( fabsf(*data++) > (1/65536.0f) )
+			if( std::abs(*data++) > (1/65536.0f) )
 				return SilentFrames;
 		++SilentFrames;
 	}
@@ -254,8 +257,8 @@ const int TestDataSize = 2;
 
 /* Find "haystack" in "needle".  Start looking at "expect" and move outward; find
  * the closest. */
-void *xmemsearch( const float *haystack, size_t iHaystackSamples,
-		const int16_t *needle, size_t iNeedleSamples,
+void *xmemsearch( const float *haystack, std::size_t iHaystackSamples,
+		const std::int16_t *needle, std::size_t iNeedleSamples,
 		int expect )
 {
 	if( !iNeedleSamples )
@@ -298,10 +301,10 @@ struct TestFile
 	int SilentFrames;
 
 	/* The first two frames (four samples): */
-	int16_t initial[TestDataSize*2];
+	std::int16_t initial[TestDataSize*2];
 
 	/* Frames of data half a second in: */
-	int16_t later[TestDataSize*2];
+	std::int16_t later[TestDataSize*2];
 };
 const int channels = 2;
 
@@ -331,7 +334,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	{
 		/* Find out how many frames of silence we have. */
 		int SilentFrames = FramesOfSilence( sdata, one_second_frames, snd->GetNumChannels() );
-		
+
 		const float *InitialData = sdata + SilentFrames*snd->GetNumChannels();
 		const int InitialDataSize = one_second_frames - SilentFrames;
 
@@ -340,14 +343,14 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 			LOG->Warn( "Not enough (%i<%i) data to check after %i frames of silence", InitialDataSize, sizeof(tf.initial), SilentFrames );
 			return false;
 		}
-		
+
 		bool bFailed = false;
 		if( SilentFrames != tf.SilentFrames  )
 		{
 			LOG->Trace( "Expected %i silence, got %i (%i too high)", tf.SilentFrames, SilentFrames, SilentFrames-tf.SilentFrames );
 			bFailed = true;
 		}
-		
+
 		bool Identical = !compare( InitialData, tf.initial, sizeof(tf.initial) );
 		if( !Identical )
 		{
@@ -356,11 +359,11 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 			LOG->Trace(" ");
 			bFailed = true;
 		}
-			
+
 		if( bFailed )
 		{
 			LOG->Trace("Got data:");
-			dump( InitialData, min( 16, 2*InitialDataSize ) );
+			dump( InitialData, std::min( 16, 2*InitialDataSize ) );
 		}
 
 		const int LaterOffsetFrames = one_second_frames/2; /* half second */
@@ -375,7 +378,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 			dump( LaterData, 16 );
 
 			/* See if we can find the half second data. */
-			float *p = (float *) xmemsearch( sdata, one_second_bytes, tf.later, sizeof(tf.later), LaterOffsetSamples*sizeof(int16_t) );
+			float *p = (float *) xmemsearch( sdata, one_second_bytes, tf.later, sizeof(tf.later), LaterOffsetSamples*sizeof(std::int16_t) );
 			if( p )
 			{
 				int SamplesOff = p-sdata;
@@ -384,7 +387,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 						FramesOff, LaterOffsetFrames, FramesOff-LaterOffsetFrames );
 			}
 //			else
-//				dump( "foo", sdata, one_second/sizeof(int16_t) );
+//				dump( "foo", sdata, one_second/sizeof(std::int16_t) );
 		}
 	}
 
@@ -401,7 +404,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 				bAll42=false;
 
 		}
-		
+
 		if( bAllNull || bAll42 )
 		{
 			LOG->Warn( "'%s': sanity check failed (%i %i)", fn, bAllNull, bAll42 );
@@ -418,7 +421,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 			break;
 		ASSERT( got >= 0 );
 	}
-	
+
 	/* Now, make sure reading after an EOF returns another EOF. */
 	if( !must_be_eof(snd) )
 	{
@@ -436,7 +439,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	{
 		const char *szMode = i == 0? "accurate":"fast";
 		snd->SetProperty( "AccurateSync", i == 0? true:false );
-		
+
 		/* SetPosition(0) must always reset properly.   */
 		int iRet = snd->SetPosition(0);
 		if( iRet != 1 )
@@ -467,7 +470,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 			return false;
 		}
 	}
-	
+
 	/* Seek to 1ms and make sure it gives us the correct data. */
 	snd->SetProperty( "AccurateSync", true );
 	int iFrame = snd->GetSampleRate() * 1 / 1000; // 1ms
@@ -488,12 +491,12 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 bool test_file( const TestFile &tf, int filters )
 {
 	const char *fn = tf.fn;
-			
+
 	LOG->Trace("Testing: %s", fn );
 	RString error;
 	RageSoundReader *s = SoundReader_FileReader::OpenFile( fn, error );
 	s = ApplyFilters( s, filters );
-	
+
 	if( s == NULL )
 	{
 		LOG->Trace( "File '%s' failed to open: %s", fn, error.c_str() );
@@ -509,15 +512,15 @@ bool test_file( const TestFile &tf, int filters )
 
 	/*
 	 * Check SetPosition consistency:
-	 * 
+	 *
 	 * Reopen the file from scratch, seek to 100ms, read some data, do some
 	 * operations that would result in the internal TOC being filled (seek
 	 * to the end), then re-read the data at 100ms and make sure it's the same.
 	 */
-	
+
 	snd = SoundReader_FileReader::OpenFile( fn, error );
 	snd = ApplyFilters( snd, filters );
-	
+
 	if( snd == NULL )
 	{
 		LOG->Trace( "File '%s' failed to open: %s", fn, error.c_str() );
@@ -572,7 +575,7 @@ int main( int argc, char *argv[] )
 		{ "test BASS 44100 stereo VBR (XING, LAME, ID3V1, ID3V2).wav", 622, {0xffff,0x0000,0xffff,0x0000}, {0xef6c,0x0cb8,0xef10,0x0bd2} },
 		{ NULL,							0, {0,0,0,0}, {0,0,0,0} }
 	};
-	
+
 	for( int i = 0; files[i].fn; ++i )
 	{
 		if( !test_file( files[i], 0 ) )

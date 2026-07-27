@@ -31,6 +31,8 @@
 #include "RageLog.h"
 #include "RageSoundReader_FileReader.h"
 
+#include <vector>
+
 
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {
@@ -67,7 +69,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				 * This leads to failure later on.
 				 * We need a better way to prevent this. */
 				if( m_ndAutoKeysoundsOnly[pn].GetNextTapNoteRowForTrack( t, iNextRowForPlayer ) )
-					iNextRow = min( iNextRow, iNextRowForPlayer );
+					iNextRow = std::min( iNextRow, iNextRowForPlayer );
 			}
 
 			if( iNextRow == INT_MAX )
@@ -111,7 +113,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	pPlayer2 = nullptr;
 	pShared = nullptr;
 
-	vector<RString> vsMusicFile;
+	std::vector<RString> vsMusicFile;
 	const RString sMusicPath = GAMESTATE->m_pCurSteps[GAMESTATE->GetMasterPlayerNumber()]->GetMusicPath();
 
 	if( !sMusicPath.empty() )
@@ -126,7 +128,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	}
 
 
-	vector<RageSoundReader *> vpSounds;
+	std::vector<RageSoundReader *> vpSounds;
 	for (RString const &s : vsMusicFile)
 	{
 		RString sError;
@@ -239,7 +241,7 @@ void AutoKeysounds::FinishLoading()
 
 	Song* pSong = GAMESTATE->m_pCurSong;
 
-	vector<RageSoundReader *> apSounds;
+	std::vector<RageSoundReader *> apSounds;
 	LoadTracks( pSong, m_pSharedSound, m_pPlayerSounds[0], m_pPlayerSounds[1] );
 
 	// Load autoplay sounds, if any.
@@ -287,7 +289,7 @@ void AutoKeysounds::FinishLoading()
 	}
 
 	if( GAMESTATE->GetNumPlayersEnabled() == 1 && GAMESTATE->GetMasterPlayerNumber() == PLAYER_2 )
-		swap( m_pPlayerSounds[PLAYER_1], m_pPlayerSounds[PLAYER_2] );
+		std::swap( m_pPlayerSounds[PLAYER_1], m_pPlayerSounds[PLAYER_2] );
 
 	if( apSounds.size() > 1 )
 	{
@@ -319,11 +321,11 @@ void AutoKeysounds::Update( float fDelta )
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-		iRowNow = max( 0, iRowNow );
+		iRowNow = std::max( 0, iRowNow );
 		static int iRowLastCrossed = 0;
 
-		float fBeatLast = roundf(NoteRowToBeat(iRowLastCrossed));
-		float fBeatNow = roundf(NoteRowToBeat(iRowNow));
+		float fBeatLast = std::round(NoteRowToBeat(iRowLastCrossed));
+		float fBeatNow = std::round(NoteRowToBeat(iRowNow));
 
 		bCrossedABeat = fBeatLast != fBeatNow;
 

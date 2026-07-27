@@ -8,6 +8,9 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 
+#include <vector>
+
+
 /** @brief Each style can have a maximum amount of columns to work with. */
 const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
 /** @brief Provide a default value for an invalid column. */
@@ -37,7 +40,7 @@ public:
 
 	/**
 	 * @brief Steps format used for each player.
-	 * 
+	 *
 	 * For example, "dance versus" reads the Steps with the tag "dance-single". */
 	StepsType		m_StepsType;
 
@@ -50,8 +53,8 @@ public:
 	 * As an example, 4 is expected for ITG style versus, but 8 for ITG style double. */
 	int			m_iColsPerPlayer;
 	/** @brief Some general column infromation */
-	struct ColumnInfo 
-	{ 
+	struct ColumnInfo
+	{
 		int   track;		/**< Take note data from this track. */
 		float fXOffset;		/**< This is the x position of the column relative to the player's center. */
 		const char *pzName;	/**< The name of the column, or nullptr to use the button name mapped to it. */
@@ -74,13 +77,13 @@ public:
 	//bool		m_bNeedsZoomOutWith2Players;
 	/** @brief Can this style use the BeginnerHelper for assisting new people to the game? */
 	bool		m_bCanUseBeginnerHelper;
-	/** 
+	/**
 	 * @brief Should difficulty selection be locked when using this style?
 	 *
 	 * This is primarily for Couple and Routine styles. */
 	bool		m_bLockDifficulties;
 
-	void StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>& ret ) const;
+	void StyleInputToGameInput( int iCol, PlayerNumber pn, std::vector<GameInput>& ret ) const;
 	/**
 	 * @brief Retrieve the column based on the game input.
 	 * @param GameI the game input.
@@ -106,7 +109,7 @@ public:
  * @author Chris Danford (c) 2001-2002
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -116,7 +119,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

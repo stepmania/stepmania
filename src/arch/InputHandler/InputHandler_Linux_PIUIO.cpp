@@ -3,8 +3,12 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#include <stdio.h>
-#include <string.h>
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
+#include <set>
+#include <vector>
+
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
@@ -12,11 +16,9 @@
 #include <fcntl.h>
 #endif
 
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <set>
 
 REGISTER_INPUT_HANDLER_CLASS2( PIUIO, Linux_PIUIO );
 
@@ -132,7 +134,7 @@ void InputHandler_Linux_PIUIO::InputThread()
 	InputHandler::UpdateTimer();
 }
 
-void InputHandler_Linux_PIUIO::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
+void InputHandler_Linux_PIUIO::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut )
 {
 	vDevicesOut.push_back( InputDeviceInfo(InputDevice(DEVICE_PIUIO), "PIUIO") );
 }
@@ -143,7 +145,7 @@ void InputHandler_Linux_PIUIO::GetDevicesAndDescriptions( vector<InputDeviceInfo
  *
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -153,7 +155,7 @@ void InputHandler_Linux_PIUIO::GetDevicesAndDescriptions( vector<InputDeviceInfo
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

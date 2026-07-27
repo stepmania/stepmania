@@ -35,7 +35,7 @@ const Actor::TweenState &LuaExpressionTransform::GetTransformCached( float fPosi
 {
 	PositionOffsetAndItemIndex key = { fPositionOffsetFromCenter, iItemIndex };
 
-	map<PositionOffsetAndItemIndex,Actor::TweenState>::const_iterator iter = m_mapPositionToTweenStateCache.find( key );
+	std::map<PositionOffsetAndItemIndex,Actor::TweenState>::const_iterator iter = m_mapPositionToTweenStateCache.find( key );
 	if( iter != m_mapPositionToTweenStateCache.end() )
 		return iter->second;
 

@@ -7,6 +7,8 @@
 #include "PlayerNumber.h"
 #include "RageLog.h"
 
+#include <cmath>
+
 class XNode;
 
 /** @brief The result of hitting (or missing) a tap note. */
@@ -16,14 +18,25 @@ struct TapNoteResult
 	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f), bHidden(false), bHeld(false) { }
 	/** @brief The TapNoteScore that was achieved by the player. */
 	TapNoteScore	tns;
+	/** @brief The TapNoteScore of any early hits of this tap note. */
+	TapNoteScore	earlyTns;
 
 	/**
 	 * @brief Offset, in seconds, for a tap grade.
 	 *
-	 * Negative numbers mean the note was hit early; positive numbers mean 
+	 * Negative numbers mean the note was hit early; positive numbers mean
 	 * it was hit late. These values are only meaningful for graded taps
 	 * (tns >= TNS_W5). */
 	float		fTapNoteOffset;
+
+	/**
+	 * @brief Offset, in seconds, for the early tap grade.
+	 *
+	 * Negative numbers mean the note was hit early; positive numbers mean
+	 * it was hit late. These values are only meaningful for graded taps
+	 * (tns >= TNS_W5). */
+	float		fEarlyTapNoteOffset;
+
 
 	/** @brief If the whole row has been judged, all taps on the row will be set to hidden. */
 	bool		bHidden;
@@ -48,11 +61,11 @@ struct HoldNoteResult
 
 	/**
 	 * @brief the current life of the hold.
-	 * 
+	 *
 	 * 1.0 means this HoldNote has full life.
-	 * 
+	 *
 	 * 0.0 means this HoldNote is dead.
-	 * 
+	 *
 	 * When this value hits 0.0 for the first time, m_HoldScore becomes HNS_LetGo.
 	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HNS_Held. */
 	float	fLife;
@@ -152,7 +165,7 @@ struct TapNote
 	// also used for hold_head only:
 	int		iDuration;
 	HoldNoteResult	HoldResult;
-	
+
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
@@ -161,22 +174,22 @@ struct TapNote
 	void PushSelf( lua_State *L );
 
 	TapNote(): type(TapNoteType_Empty), subType(TapNoteSubType_Invalid),
-		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID),  sAttackModifiers(""), 
+		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID),  sAttackModifiers(""),
 		fAttackDurationSeconds(0), iKeysoundIndex(-1), iDuration(0), HoldResult() {}
 	void Init()
 	{
 		type = TapNoteType_Empty;
-		subType = TapNoteSubType_Invalid; 
-		source = TapNoteSource_Original; 
-		pn = PLAYER_INVALID, 
-		fAttackDurationSeconds = 0.f; 
+		subType = TapNoteSubType_Invalid;
+		source = TapNoteSource_Original;
+		pn = PLAYER_INVALID,
+		fAttackDurationSeconds = 0.f;
 		iKeysoundIndex = -1;
 		iDuration = 0;
 	}
-	TapNote( 
+	TapNote(
 		TapNoteType type_,
 		TapNoteSubType subType_,
-		TapNoteSource source_, 
+		TapNoteSource source_,
 		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
 		int iKeysoundIndex_ ):
@@ -251,8 +264,8 @@ const int ROWS_PER_BEAT	= 48;
 const int MAX_NOTE_ROW = (1<<30);
 
 /** @brief The list of quantized note types allowed at present. */
-enum NoteType 
-{ 
+enum NoteType
+{
 	NOTE_TYPE_4TH,	/**< quarter note */
 	NOTE_TYPE_8TH,	/**< eighth note */
 	NOTE_TYPE_12TH,	/**< quarter note triplet */
@@ -280,16 +293,16 @@ bool IsNoteOfType( int row, NoteType t );
 /*
 inline int   BeatToNoteRow( float fBeatNum )
 {
-	float fraction = fBeatNum - truncf(fBeatNum);
+	float fraction = fBeatNum - std::trunc(fBeatNum);
 	int integer = int(fBeatNum) * ROWS_PER_BEAT;
-	return integer + lrintf(fraction * ROWS_PER_BEAT);
+	return integer + std::lrint(fraction * ROWS_PER_BEAT);
 }
 */
 /**
  * @brief Convert the beat into a note row.
  * @param fBeatNum the beat to convert.
  * @return the note row. */
-inline int   BeatToNoteRow( float fBeatNum )		{ return lrintf( fBeatNum * ROWS_PER_BEAT ); }	// round
+inline int   BeatToNoteRow( float fBeatNum )		{ return std::lrint( fBeatNum * ROWS_PER_BEAT ); }	// round
 /**
  * @brief Convert the beat into a note row without rounding.
  * @param fBeatNum the beat to convert.
@@ -353,7 +366,7 @@ inline T ScalePosition( T start, T length, T newLength, T position )
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -363,7 +376,7 @@ inline T ScalePosition( T start, T length, T newLength, T position )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -5,14 +5,19 @@
 
 #include "RageTypes.h"
 #include "ModelTypes.h"
+
+#include <cstddef>
+#include <cstdint>
 #include <set>
+#include <vector>
+
 
 class DisplaySpec;
 typedef std::set<DisplaySpec> DisplaySpecs;
 
 const int REFRESH_DEFAULT = 0;
 struct RageSurface;
-enum TextureUnit 
+enum TextureUnit
 {
 	TextureUnit_1,
 	TextureUnit_2,
@@ -21,22 +26,22 @@ enum TextureUnit
 	NUM_TextureUnit
 };
 
-// RageCompiledGeometry holds vertex data in a format that is most efficient 
+// RageCompiledGeometry holds vertex data in a format that is most efficient
 // for the graphics API.
 class RageCompiledGeometry
 {
 public:
 	virtual ~RageCompiledGeometry();
 
-	void Set( const vector<msMesh> &vMeshes, bool bNeedsNormals );
+	void Set( const std::vector<msMesh> &vMeshes, bool bNeedsNormals );
 
-	virtual void Allocate( const vector<msMesh> &vMeshes ) = 0;	// allocate space
-	virtual void Change( const vector<msMesh> &vMeshes ) = 0;	// new data must be the same size as was passed to Set()
+	virtual void Allocate( const std::vector<msMesh> &vMeshes ) = 0;	// allocate space
+	virtual void Change( const std::vector<msMesh> &vMeshes ) = 0;	// new data must be the same size as was passed to Set()
 	virtual void Draw( int iMeshIndex ) const = 0;
 
 protected:
-	size_t GetTotalVertices() const { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iVertexStart + m_vMeshInfo.back().iVertexCount; }
-	size_t GetTotalTriangles() const { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iTriangleStart + m_vMeshInfo.back().iTriangleCount; }
+	std::size_t GetTotalVertices() const { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iVertexStart + m_vMeshInfo.back().iVertexCount; }
+	std::size_t GetTotalTriangles() const { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iTriangleStart + m_vMeshInfo.back().iTriangleCount; }
 
 	struct MeshInfo
 	{
@@ -46,7 +51,7 @@ protected:
 		int iTriangleCount;
 		bool m_bNeedsTextureMatrixScale;
 	};
-	vector<MeshInfo>	m_vMeshInfo;
+	std::vector<MeshInfo>	m_vMeshInfo;
 	bool m_bNeedsNormals;
 	bool m_bAnyNeedsTextureMatrixScale;
 };
@@ -77,7 +82,7 @@ class VideoModeParams
 public:
 	// Initialize with a constructor so to guarantee all paramters
 	// are filled (in case new params are added).
-	VideoModeParams( 
+	VideoModeParams(
 		bool windowed_,
 		RString sDisplayId_,
 		int width_,
@@ -112,27 +117,18 @@ public:
 		PAL(PAL_),
 		fDisplayAspectRatio(fDisplayAspectRatio_) {}
 
-	VideoModeParams(const VideoModeParams &other):
-	windowed(other.windowed), sDisplayId(other.sDisplayId),
-	width(other.width), height(other.height),
-	bpp(other.bpp), rate(other.rate),
-	vsync(other.vsync), interlaced(other.interlaced),
-	bSmoothLines(other.bSmoothLines), bTrilinearFiltering(other.bTrilinearFiltering),
-	bAnisotropicFiltering(other.bAnisotropicFiltering), bWindowIsFullscreenBorderless(other.bWindowIsFullscreenBorderless),
-	sWindowTitle(other.sWindowTitle), sIconFile(other.sIconFile),
-	PAL(other.PAL), fDisplayAspectRatio(other.fDisplayAspectRatio)
-	{}
+	VideoModeParams(const VideoModeParams &other) = default;
 
 	VideoModeParams(): windowed(false), width(0), height(0),
-					   bpp(0), rate(0), vsync(false), interlaced(false),
-					   bSmoothLines(false), bTrilinearFiltering(false),
-					   bAnisotropicFiltering(false), bWindowIsFullscreenBorderless(false),
-					   sWindowTitle(RString()), sIconFile(RString()),
-					   PAL(false), fDisplayAspectRatio(0.0f) {}
+					bpp(0), rate(0), vsync(false), interlaced(false),
+					bSmoothLines(false), bTrilinearFiltering(false),
+					bAnisotropicFiltering(false), bWindowIsFullscreenBorderless(false),
+					sWindowTitle(RString()), sIconFile(RString()),
+					PAL(false), fDisplayAspectRatio(0.0f) {}
 
 	// Subclassing VideoModeParams in ActualVideoModeParams. Make destructor virtual just in case
 	// someone tries to delete one of those through a pointer to base...
-	virtual ~VideoModeParams() {}
+	virtual ~VideoModeParams() = default;
 
 	bool windowed;
 	RString sDisplayId;
@@ -171,6 +167,8 @@ public:
 		renderOffscreen( renderOffscreen )
 	{ }
 	ActualVideoModeParams (const ActualVideoModeParams &other) = default;
+	ActualVideoModeParams& operator=(const ActualVideoModeParams& other) = default;
+
 
 	// If bWindowIsFullscreenBorderless is true,
 	// then these properties will differ from width/height (which describe the
@@ -205,7 +203,7 @@ struct RageTextureLock
 
 	/* Given a surface with a format and no pixel data, lock the texture into the
 	 * surface. The data is write-only. */
-	virtual void Lock( uintptr_t iTexHandle, RageSurface *pSurface ) = 0;
+	virtual void Lock( std::uintptr_t iTexHandle, RageSurface *pSurface ) = 0;
 
 	/* Unlock and update the texture. If bChanged is false, the texture update
 	 * may be omitted. */
@@ -259,25 +257,25 @@ public:
 	virtual void BeginConcurrentRendering();
 	virtual void EndConcurrentRendering() { }
 
-	/* return 0 if failed or internal texture resource handle 
+	/* return 0 if failed or internal texture resource handle
 	 * (unsigned in OpenGL, texture pointer in D3D) */
-	virtual uintptr_t CreateTexture( 
+	virtual std::uintptr_t CreateTexture(
 		RagePixelFormat pixfmt,		// format of img and of texture in video mem
 		RageSurface* img,		// must be in pixfmt
 		bool bGenerateMipMaps
 		) = 0;
-	virtual void UpdateTexture( 
-		uintptr_t iTexHandle, 
+	virtual void UpdateTexture(
+		std::uintptr_t iTexHandle,
 		RageSurface* img,
-		int xoffset, int yoffset, int width, int height 
+		int xoffset, int yoffset, int width, int height
 		) = 0;
-	virtual void DeleteTexture( uintptr_t iTexHandle ) = 0;
+	virtual void DeleteTexture( std::uintptr_t iTexHandle ) = 0;
 	/* Return an object to lock pixels for streaming. If not supported, returns nullptr.
 	 * Delete the object normally. */
 	virtual RageTextureLock *CreateTextureLock() { return nullptr; }
 	virtual void ClearAllTextures() = 0;
 	virtual int GetNumTextureUnits() = 0;
-	virtual void SetTexture( TextureUnit, uintptr_t /* iTexture */ ) = 0;
+	virtual void SetTexture( TextureUnit, std::uintptr_t /* iTexture */ ) = 0;
 	virtual void SetTextureMode( TextureUnit, TextureMode ) = 0;
 	virtual void SetTextureWrapping( TextureUnit, bool ) = 0;
 	virtual int GetMaxTextureSize() const = 0;
@@ -293,9 +291,9 @@ public:
 	 * DeleteTexture. (UpdateTexture is not permitted.) Returns 0 if render-to-
 	 * texture is unsupported.
 	 */
-	virtual uintptr_t CreateRenderTarget( const RenderTargetParam &, int & /* iTextureWidthOut */, int & /* iTextureHeightOut */ ) { return 0; }
+	virtual std::uintptr_t CreateRenderTarget( const RenderTargetParam &, int & /* iTextureWidthOut */, int & /* iTextureHeightOut */ ) { return 0; }
 
-	virtual uintptr_t GetRenderTarget()	{ return 0; }
+	virtual std::uintptr_t GetRenderTarget()	{ return 0; }
 
 	/* Set the render target, or 0 to resume rendering to the framebuffer. An active render
 	 * target may not be used as a texture. If bPreserveTexture is true, the contents
@@ -303,7 +301,7 @@ public:
 	 * bPreserveTexture is true the first time a render target is used, behave as if
 	 * bPreserveTexture was false.
 	 */
-	virtual void SetRenderTarget( uintptr_t /* iHandle */, bool /* bPreserveTexture */ = true ) { }
+	virtual void SetRenderTarget( std::uintptr_t /* iHandle */, bool /* bPreserveTexture */ = true ) { }
 
 	virtual bool IsZTestEnabled() const = 0;
 	virtual bool IsZWriteEnabled() const = 0;
@@ -316,7 +314,7 @@ public:
 
 	virtual void SetAlphaTest( bool b ) = 0;
 
-	virtual void SetMaterial( 
+	virtual void SetMaterial(
 		const RageColor &emissive,
 		const RageColor &ambient,
 		const RageColor &diffuse,
@@ -326,11 +324,11 @@ public:
 
 	virtual void SetLighting( bool b ) = 0;
 	virtual void SetLightOff( int index ) = 0;
-	virtual void SetLightDirectional( 
-		int index, 
-		const RageColor &ambient, 
-		const RageColor &diffuse, 
-		const RageColor &specular, 
+	virtual void SetLightDirectional(
+		int index,
+		const RageColor &ambient,
+		const RageColor &diffuse,
+		const RageColor &specular,
 		const RageVector3 &dir ) = 0;
 
 	virtual void SetSphereEnvironmentMapping( TextureUnit tu, bool b ) = 0;
@@ -344,7 +342,7 @@ public:
 	void DrawFan( const RageSpriteVertex v[], int iNumVerts );
 	void DrawStrip( const RageSpriteVertex v[], int iNumVerts );
 	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts );
-	void DrawCompiledGeometry( const RageCompiledGeometry *p, int iMeshIndex, const vector<msMesh> &vMeshes );
+	void DrawCompiledGeometry( const RageCompiledGeometry *p, int iMeshIndex, const std::vector<msMesh> &vMeshes );
 	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 	void DrawSymmetricQuadStrip( const RageSpriteVertex v[], int iNumVerts );
 	void DrawCircle( const RageSpriteVertex &v, float radius );
@@ -364,9 +362,9 @@ public:
 	};
 	bool SaveScreenshot( RString sPath, GraphicsFileFormat format );
 
-	virtual RString GetTextureDiagnostics( uintptr_t /* id */ ) const { return RString(); }
+	virtual RString GetTextureDiagnostics( std::uintptr_t /* id */ ) const { return RString(); }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
-	virtual RageSurface *GetTexture( uintptr_t /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
+	virtual RageSurface *GetTexture( std::uintptr_t /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
 
 protected:
 	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
@@ -419,7 +417,7 @@ public:
 	void TexturePushMatrix();
 	void TexturePopMatrix();
 	void TextureTranslate( float x, float y );
-	void TextureTranslate( const RageVector2 &v ) { this->TextureTranslate( v.x, v.y ); }	
+	void TextureTranslate( const RageVector2 &v ) { this->TextureTranslate( v.x, v.y ); }
 
 	// Projection and View matrix stack functions.
 	void CameraPushMatrix();
@@ -442,8 +440,8 @@ protected:
 	RageMatrix GetPerspectiveMatrix( float fovy, float aspect, float zNear, float zFar );
 
 	// Different for D3D and OpenGL. Not sure why they're not compatible. -Chris
-	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
-	virtual RageMatrix GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf ); 
+	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf );
+	virtual RageMatrix GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf );
 
 	// Matrix that adjusts position and scale of image on the screen
 	RageMatrix GetCenteringMatrix( float fTranslateX, float fTranslateY, float fAddWidth, float fAddHeight ) const;

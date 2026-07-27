@@ -5,6 +5,9 @@
 
 #include "RageSoundReader_Filter.h"
 
+#include <vector>
+
+
 class RageSoundReader_SpeedChange: public RageSoundReader_Filter
 {
 public:
@@ -40,11 +43,11 @@ protected:
 	int m_iDataBufferAvailFrames;
 	struct ChannelInfo
 	{
-		vector<float> m_DataBuffer;
+		std::vector<float> m_DataBuffer;
 		int m_iCorrelatedPos;
 		int m_iLastCorrelatedPos;
 	};
-	vector<ChannelInfo> m_Channels;
+	std::vector<ChannelInfo> m_Channels;
 
 	int m_iUncorrelatedPos;
 	int m_iPos;

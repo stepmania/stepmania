@@ -1,7 +1,7 @@
 Don't try to change the way keys are mapped in edit mode unless you have a good reason.  It's complicated and easy to mess up.
 If you do make a mistake, you can go back to the default edit mode keymapping just by removing the "User Data Folder/Save/EditMode_Keymaps.ini" file.
 
-Edit Mode loads key mapping settings from "User Data Folder/Save/EditMode_Keymaps.ini".  "User Data Folder" is a special name that means the folder where all your user data for stepmania is stored, the name depends on what OS you're on.  See Docs/Userdocs/sm5_beginner.txt and search for "User Data Folder" to learn where it is on your OS.
+Edit Mode loads key mapping settings from "User Data Folder/Save/EditMode_Keymaps.ini".  "User Data Folder" is a special name that means the folder where all your user data for stepmania is stored, the name depends on what OS you're on.  See Docs/Userdocs/beginner.txt and search for "User Data Folder" to learn where it is on your OS.
 
 Entries in EditMode_Keymaps.ini set which what keys trigger an action.  Any function that doesn't have an entry in EditMode_Keymaps.ini will use the default mapping.  Be careful when choosing a key for a function to make sure that same key isn't already mapped to something else either in the default mapping or in the mapping you are creating.
 If you hold F3, you can use the Debug Menu to reload the screen while in Edit Mode, which will reload the key mapping, so you can adjust the mapping while stepmania is running.
@@ -264,7 +264,7 @@ RECORD_SELECTION=Key_r
 INSERT=Key_insert:Key_\
 DELETE=Key_delete
 ADJUST_FINE=Key_right alt:Key_left alt
-# Hold Ctrl or Cmd (OS X) for SAVE.
+# Hold Ctrl or Cmd (on macOS) for SAVE.
 SAVE=Key_s
 UNDO=Key_u
 SWITCH_PLAYERS=Key_/

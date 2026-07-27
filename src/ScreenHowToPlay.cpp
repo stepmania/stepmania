@@ -19,6 +19,9 @@
 #include "Character.h"
 #include "LifeMeterBar.h"
 
+#include <vector>
+
+
 static const ThemeMetric<int>		NUM_W2S		("ScreenHowToPlay","NumW2s");
 static const ThemeMetric<int>		NUM_MISSES	("ScreenHowToPlay","NumMisses");
 static const ThemeMetric<bool>	USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
@@ -89,7 +92,7 @@ void ScreenHowToPlay::Init()
 	}
 
 	// Display a character
-	vector<Character*> vpCharacters;
+	std::vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
 	if( (bool)USE_CHARACTER && vpCharacters.size() && HaveAllCharAnimations() )
 	{
@@ -306,7 +309,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenHowToPlay. */ 
+/** @brief Allow Lua to have access to the ScreenHowToPlay. */
 class LunaScreenHowToPlay: public Luna<ScreenHowToPlay>
 {
 public:
@@ -330,7 +333,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenHowToPlay, ScreenAttract )
 /*
  * (c) 2001-2004 Chris Danford, Tracy Ward
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -340,7 +343,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenHowToPlay, ScreenAttract )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

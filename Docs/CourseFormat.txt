@@ -86,13 +86,156 @@ Complete Course Template
 -- Finally, award*, where * is a number, allows you to control how many lives
 -- the player gains from successfully completing a course in Oni mode.
 
+
+
+#SONGSELECT:GROUP=Stepmania 5:BPMRANGE=120-160:Difficulty=Medium:MODS=2x;
+-- #SONGSELECT is a new alternative to the #SONG tag, which will (hopefully)
+-- be easier to use and understand. Instead of relying on values input in a
+-- very specific and poorly-documented order, this tag is composed of 
+-- a series of PARAM=VALUE statements, separated by :'s. 
+
+-- The following parameters are available for selecting a song:
+-- TITLE, GROUP, ARTIST, GENRE, DIFFICULTY, METER, BPMRANGE, DURATION, SORT
+-- These can be used in any combination and order.
+-- If none are specified, then a song and difficulty will be chosen completely at random.
+-- If a combination is specified that results in no possible songs to select,
+-- then that #SONGSELECT entry is skipped.
+
+-- Parameter Desciptions:
+--  TITLE= A list of one or more song titles, separated by commas.
+--  Notes: 
+--  - The "title" here can be either the name of the song directory,
+--    the #TITLE, or the #TITLETRANSLIT.
+--  - Titles must be an *exact match*.
+--  - Unlike the #SONG tag, this will not take into account group names.
+--    If you want to specify a specific song from a specific group, use
+--    this along with the GROUP parameter.
+--  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used, 
+--    but they must be escaped (like `\#`, `\,`, etc).
+--  Example: 
+#SONGSELECT:TITLE=Goin' Under,Springtime;  
+#SONGSELECT:TITLE=thank u\, next;
+
+--  GROUP= A list of one or more song groups, separated by commas.
+--  Notes:
+--  - The "group" refers to the directory name of the song group.
+--  - Group names must be an *exact match*.
+--  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used, 
+--    but they must be escaped (like `\#`, `\,`, etc).
+--  Example: 
+#SONGSELECT:GROUP=Stepmania 5,In The Groove;
+  
+--  ARTIST= A list of one or more artist names, separated by commas.
+--  Notes:
+--  - The "artist" refers to either the #ARTIST or #ARTISTTRANSLIT value
+--    of the simfile.
+--  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used, 
+--    but they must be escaped (like `\#`, `\,`, etc).
+-- Example:
+#SONGSELECT:ARTIST=Kommisar,NegaRen;
+
+--  GENRE= A list of one or more song genres, separated by commas.
+--  Notes:
+--  - The "genre" refers to the #GENRE tag of a song.
+--  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used, 
+--    but they must be escaped (like `\#`, `\,`, etc).
+--  - Most songs don't actually have a #GENRE defined, which unfortunately
+--    makes this parameter not terribly useful at this time.
+-- Example:
+#SONGSELECT:GENRE=J-Pop,Black Metal;
+
+--  DIFFICULTY= A list of one or more difficulties, separated by commas.
+--  Notes:
+--  - There are a number of acceptable values for this, but for the sake
+--    of consistency, please try to use:
+--    Beginner,Easy,Medium,Hard,Challenge,Edit
+--    (if you really want to use whacky value names, you can find the rest
+--     defined in Diffiulty.cpp)
+--  Example:
+#SONGSELECT:DIFFICULTY=Medium,Hard;
+
+--  METER= A minimum and maximum value of a song's difficulty meter,
+--  separated by a dash `-`.
+--  Notes:
+--  - This is independent of the DIFFICULTY parameter, which can be used
+--    along with METER to further refine a specific song hardness.
+--  - If DIFFICULTY is not specified, then any difficulty may be picked from
+--    a song that matches the given range.
+--  - These values must be whole numbers.
+--  - These values are inclusive, meaning that song with a meter that is exactly
+--    the value of minimum or maximum can be chosen.
+--  Example:
+#SONGSELECT:METER=8-12;
+
+--  BPMRANGE= A minimum and maximum value of a song's bpm, 
+--  separated by a dash `-`.
+--  Notes:
+--  - The "bpm" values refer to the displayed bpm value/range of a song.
+--    This means that a song may be chosen if its #DISPLAYBPM matches the 
+      given range, even though it's true bpm might not.
+--  - These values should only whole numbers (no decimal places).
+--  - If a song has a displayed bpm range, both the min and max values must
+--    be within the specified range.
+--  - This range is inclusive, meaning that a song with a bpm that is exactly
+--    the value of the lower or upper range can also be chosen. 
+--  - This also means that if you want to choose songs of a very specific bpm,
+--    like songs that are exactly 120 bpm, you can specify BPMRANGE=120-120
+-- Example:
+#SONGSELECT:BPMRANGE=120-150;
+
+--  DURATION= A minimum and maximum value, in seconds, for the length of a song,
+--  separated by a dash `-`.
+--  Notes:
+--  - The "duration" values refers to either the song file's actual length, or
+--    The simfile's #MUSICLENGTH value, if specified.
+--  - These values should only be whole numbers (no decimal places).
+--  - This range is inclusive.
+--  Example:
+#SONGSELECT:DURATION=90-125;
+
+--  SORT= A set of two values that specify a sort type and a number, separated
+--  by a comma. For example, SORT=MostPlays,1 selects the #1 most played song on
+--  the machine, SORT=LowestGrades,10 selects the song that you've gotten your 10th
+--  worst score on.
+--  One possible use for this would be to create a course to force you to play songs 
+--  from certain groups that you likely haven't played before, by combining this with
+--  the GROUP parameter, eg "#SONGSELECT:GROUP=In the Groove:SORT=FewestPlays,1;"
+--  
+--  Notes:
+--  - Like DIFFICULTY, there are several acceptable values that are equivalent to each other.
+--    The old style values are Best, Worst, GradeBest, or GradeWorst. 
+--    For the sake of consistency and clarity, please consider using:
+--    MostPlays, FewestPlays, TopGrades, or LowestGrades.
+--  - The number value can be between 1 and 500.
+--  - As of right now, the results from using this parameter aren't exactly accurate.
+--    I can't quite work out how/why it makes the choices that it does.
+-- Example:
+#SONGSELECT:SORT=MostPlays,4;
+
+-- Besides the selection parameters, there are a few more parameters added to make sure that
+-- this can be a complete replacement for the #SONG tag.
+-- These parameters are:
+-- MODS, GAINSECONDS, GAINLIVES
+
+--  MODS= A list of modifiers that are applied to the entire song.
+--  Notes:
+--  - This does *NOT* replace the #MODS tag for specifying timed mods/attacks.
+--  - At ths time, I don't actually know what all can be specified as a modifier.
+
+--  GAINSECONDS= The number of seconds gained before starting a song.
+--  This is exactly the same as if specifying the #GAINSECONDS tag.
+
+--  GAINLIVES= The number of lives gained for completing this song. 
+--  This is equivalent to the 'award*' modifier for #SONG. 
+
 Finally, here's an example course:
+
 #COURSE:My Awesome Course - The Revenge;
 #METER:Medium:8;
 
 #MODS:
 	TIME:1.00:END:50.00:MODS:C150;
-#SONG:In The Groove/Dawn:Overhead;
-#SONG:In The Groove/Mouth:;
-#SONG:In The Groove 2/Funk Factory:;
-#SONG:In The Groove 3/Disconnected Zeo:;
+#SONGSELECT:GROUP=Stepmania 5:MODS=Overhead;
+#SONGSELECT:ARTIST=Kommisar:MODS=2x;
+#SONGSELECT:GROUP=In The Groove:TITLE=Mouth;
+#SONGSELECT:BPMRANGE=110-160:DIFFICULTY=Medium;

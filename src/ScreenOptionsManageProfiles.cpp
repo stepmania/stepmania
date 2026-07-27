@@ -13,6 +13,9 @@
 #include "OptionRowHandler.h"
 #include "LocalizedString.h"
 
+#include <vector>
+
+
 static LocalizedString NEW_PROFILE_DEFAULT_NAME( "ScreenOptionsManageProfiles", "NewProfileDefaultName" );
 
 #define SHOW_CREATE_NEW (!PROFILEMAN->FixedProfiles())
@@ -82,7 +85,7 @@ static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut
 	if( pProfile != nullptr && sAnswer == pProfile->m_sDisplayName )
 		return true; // unchanged
 
-	vector<RString> vsProfileNames;
+	std::vector<RString> vsProfileNames;
 	PROFILEMAN->GetLocalProfileDisplayNames( vsProfileNames );
 	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
 	if( bAlreadyAProfileWithThisName )
@@ -108,7 +111,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 {
 	// FIXME
 	// int iIndex = 0;
-	vector<OptionRowHandler*> OptionRowHandlers;
+	std::vector<OptionRowHandler*> OptionRowHandlers;
 
 	if( SHOW_CREATE_NEW )
 	{
@@ -163,7 +166,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	// select the last chosen profile
 	if( !sEditLocalProfileID.empty() )
 	{
-		vector<RString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), sEditLocalProfileID );
+		std::vector<RString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), sEditLocalProfileID );
 		if( iter != m_vsLocalProfileID.end() )
 		{
 			int iIndex = iter - m_vsLocalProfileID.begin();
@@ -241,10 +244,15 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-		
+
 			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sEditLocalProfileID, sNewName );
-
+			if (PREFSMAN->m_ProfileSortOrder == ProfileSortOrder_Alphabetical)
+			{
+				PROFILEMAN->MoveProfileSorted(
+					GetLocalProfileIndexWithFocus(),
+					PREFSMAN->m_bProfileSortOrderAscending);
+			}
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
@@ -254,7 +262,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		{
 			// Select the profile nearest to the one that was just deleted.
 			int iIndex = -1;
-			vector<RString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), GAMESTATE->m_sEditLocalProfileID.Get() );
+			std::vector<RString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), GAMESTATE->m_sEditLocalProfileID.Get() );
 			if( iter != m_vsLocalProfileID.end() )
 				iIndex = iter - m_vsLocalProfileID.begin();
 			CLAMP( iIndex, 0, m_vsLocalProfileID.size()-1 );
@@ -294,7 +302,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 
 					PlayerNumber pn = (PlayerNumber)(ScreenMiniMenu::s_iLastRowCode - ProfileAction_SetDefaultP1);
 					ProfileManager::m_sDefaultLocalProfileID[pn].Set( GetLocalProfileIDWithFocus() );
-		
+
 					SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				}
 				break;
@@ -307,11 +315,11 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case ProfileAction_Rename:
 				{
-					ScreenTextEntry::TextEntry( 
-						SM_BackFromRename, 
-						ENTER_PROFILE_NAME, 
-						pProfile->m_sDisplayName, 
-						PROFILE_MAX_DISPLAY_NAME_LENGTH, 
+					ScreenTextEntry::TextEntry(
+						SM_BackFromRename,
+						ENTER_PROFILE_NAME,
+						pProfile->m_sDisplayName,
+						PROFILE_MAX_DISPLAY_NAME_LENGTH,
 						ValidateLocalProfileName );
 				}
 				break;
@@ -397,10 +405,10 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 
 	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	OptionRow &row = *m_pRows[iCurRow];
-	
+
 	if( SHOW_CREATE_NEW && iCurRow == 0 )	// "create new"
 	{
-		vector<RString> vsUsedNames;
+		std::vector<RString> vsUsedNames;
 		PROFILEMAN->GetLocalProfileDisplayNames( vsUsedNames );
 
 		RString sPotentialName;
@@ -411,11 +419,11 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 			if( !bNameIsUsed )
 				break;
 		}
-		ScreenTextEntry::TextEntry( 
-			SM_BackFromEnterNameForNew, 
-			ENTER_PROFILE_NAME, 
-			sPotentialName, 
-			PROFILE_MAX_DISPLAY_NAME_LENGTH, 
+		ScreenTextEntry::TextEntry(
+			SM_BackFromEnterNameForNew,
+			ENTER_PROFILE_NAME,
+			sPotentialName,
+			PROFILE_MAX_DISPLAY_NAME_LENGTH,
 			ValidateLocalProfileName );
 	}
 	else if( row.GetRowType() == OptionRow::RowType_Exit )
@@ -449,8 +457,14 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 			ADD_ACTION( ProfileAction_ChangeToGuest );
 			ADD_ACTION( ProfileAction_ChangeToNormal );
 			ADD_ACTION( ProfileAction_ChangeToTest );
-			ADD_ACTION( ProfileAction_MoveUp );
-			ADD_ACTION( ProfileAction_MoveDown );
+			// There technically isn't an issue keeping these enabled for other ProfileSorts,
+			// but it's not really useful as it would be overwritten.
+			if (PREFSMAN->m_ProfileSortOrder == ProfileSortOrder_Priority)
+			{
+				ADD_ACTION( ProfileAction_MoveUp );
+				ADD_ACTION( ProfileAction_MoveDown );
+			}
+
 		}
 
 		int iWidth, iX, iY;
@@ -460,12 +474,12 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 	}
 }
 
-void ScreenOptionsManageProfiles::ImportOptions( int /* iRow */, const vector<PlayerNumber> & /* vpns */ )
+void ScreenOptionsManageProfiles::ImportOptions( int /* iRow */, const std::vector<PlayerNumber> & /* vpns */ )
 {
 
 }
 
-void ScreenOptionsManageProfiles::ExportOptions( int /* iRow */, const vector<PlayerNumber> & /* vpns */ )
+void ScreenOptionsManageProfiles::ExportOptions( int /* iRow */, const std::vector<PlayerNumber> & /* vpns */ )
 {
 
 }
@@ -496,7 +510,7 @@ RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -506,7 +520,7 @@ RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

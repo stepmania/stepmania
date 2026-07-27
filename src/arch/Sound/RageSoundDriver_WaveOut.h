@@ -3,6 +3,9 @@
 
 #include "RageSoundDriver.h"
 #include "RageThreads.h"
+
+#include <cstdint>
+
 #include <windows.h>
 #include <mmsystem.h>
 
@@ -12,11 +15,10 @@ public:
 	RageSoundDriver_WaveOut();
 	~RageSoundDriver_WaveOut();
 	RString Init();
-
-	int64_t GetPosition() const;
+	std::int64_t GetPosition() const;
 	float GetPlayLatency() const;
 	int GetSampleRate() const { return m_iSampleRate; }
-
+	static const int NUM_BUFFERS = 32;
 private:
 	static int MixerThread_start( void *p );
 	void MixerThread();
@@ -26,10 +28,11 @@ private:
 
 	HWAVEOUT m_hWaveOut;
 	HANDLE m_hSoundEvent;
-	WAVEHDR m_aBuffers[8];
+	WAVEHDR m_aBuffers[NUM_BUFFERS];
 	int m_iSampleRate;
 	bool m_bShutdown;
 	int m_iLastCursorPos;
+	bool b_InitSuccess;
 };
 
 #endif
@@ -37,7 +40,7 @@ private:
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -47,7 +50,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

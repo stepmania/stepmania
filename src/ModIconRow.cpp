@@ -9,6 +9,9 @@
 #include "XmlFile.h"
 #include "LuaManager.h"
 
+#include <vector>
+
+
 int OptionToPreferredColumn( RString sOptionText );
 
 REGISTER_ACTOR_CLASS( ModIconRow );
@@ -95,6 +98,8 @@ static const OptionColumnEntry g_OptionColumnEntries[] =
 	{"RandomVanish",2},
 	//--------------------//
 	{"Mirror",		3},
+	{"LRMirror",	3},
+	{"UDMirror",	3},
 	{"Left",		3},
 	{"Right",		3},
 	{"Shuffle",		3},
@@ -141,24 +146,21 @@ void ModIconRow::SetFromGameState()
 	PlayerNumber pn = m_pn;
 
 	RString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().GetString();
-	vector<RString> vsOptions;
+	std::vector<RString> vsOptions;
 	split( sOptions, ", ", vsOptions, true );
 
-	vector<RString> vsText;	// fill these with what will be displayed on the tabs
+	std::vector<RString> vsText;	// fill these with what will be displayed on the tabs
 	vsText.resize( m_vpModIcon.size() );
 
 	// for each option, look for the best column to place it in
 	for( unsigned i=0; i<vsOptions.size(); i++ )
 	{
 		RString sOption = vsOptions[i];
-		int iPerferredCol = OptionToPreferredColumn( sOption );
-		clamp( iPerferredCol, 0, (int)m_vpModIcon.size()-1 );
-
-		if( iPerferredCol == -1 )
-			continue;	// skip
+		int iPreferredCol = OptionToPreferredColumn( sOption );
+		iPreferredCol = std::clamp( iPreferredCol, 0, (int)m_vpModIcon.size()-1 );
 
 		// search for a vacant spot
-		for( int j=iPerferredCol; j<NUM_OPTION_ICONS; j++ )
+		for( int j=iPreferredCol; j<NUM_OPTION_ICONS; j++ )
 		{
 			if( vsText[j] != "" )
 			{
@@ -179,7 +181,7 @@ void ModIconRow::SetFromGameState()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ModIconRow. */ 
+/** @brief Allow Lua to have access to the ModIconRow. */
 class LunaModIconRow: public Luna<ModIconRow>
 {
 public:
@@ -198,7 +200,7 @@ LUA_REGISTER_DERIVED_CLASS( ModIconRow, ActorFrame )
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -208,7 +210,7 @@ LUA_REGISTER_DERIVED_CLASS( ModIconRow, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

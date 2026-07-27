@@ -124,12 +124,12 @@ TODO: Supply example Arduino/PIC/... firmware.
 TODO: Supply example of full-duplex in cooperation with the SextetStream
 lights driver.
 
-### Mac OS X
+### macOS
 
 FIXME: *This has not been tested at all.* The following is a guess at a
 synopsis of how it should work if you're lucky enough for everything to
 have fallen into place just so. (Please amend this message if you manage
-to get this running consistently on Mac OS X.)
+to get this running consistently on macOS.)
 
 Follow the instructions for Linux, but change the `InputDrivers` setting
 to:

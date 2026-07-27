@@ -2,6 +2,10 @@
 #define MessageManager_H
 
 #include "LuaManager.h"
+
+#include <vector>
+
+
 struct lua_State;
 class LuaTable;
 class LuaReference;
@@ -53,6 +57,7 @@ enum MessageID
 	Message_MenuSelectionChanged,
 	Message_PlayerJoined,
 	Message_PlayerUnjoined,
+	Message_PlayerProfileSet,
 	Message_AutosyncChanged,
 	Message_PreferredSongGroupChanged,
 	Message_PreferredCourseGroupChanged,
@@ -127,7 +132,7 @@ struct Message
 	}
 
 	template<typename T>
-	void SetParam( const RString &sName, const vector<T> &val )
+	void SetParam( const RString &sName, const std::vector<T> &val )
 	{
 		Lua *L = LUA->Get();
 		LuaHelpers::CreateTableFromArray( val, L );
@@ -179,7 +184,7 @@ public:
 	void UnsubscribeAll();
 
 private:
-	vector<RString> m_vsSubscribedTo;
+	std::vector<RString> m_vsSubscribedTo;
 };
 
 /** @brief Deliver messages to any part of the program as needed. */
@@ -227,10 +232,10 @@ public:
 /** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
-	template<class T> void Push( lua_State *L, const BroadcastOnChange<T> &Object ) 
-	{ 
+	template<class T> void Push( lua_State *L, const BroadcastOnChange<T> &Object )
+	{
 		LuaHelpers::Push<T>( L, Object.Get() );
-	} 
+	}
 }
 
 template<class T, int N>
@@ -238,7 +243,7 @@ class BroadcastOnChange1D
 {
 private:
 	typedef BroadcastOnChange<T> MyType;
-	vector<MyType> val;
+	std::vector<MyType> val;
 public:
 	explicit BroadcastOnChange1D( MessageID m )
 	{
@@ -272,7 +277,7 @@ class BroadcastOnChangePtr1D
 {
 private:
 	typedef BroadcastOnChangePtr<T> MyType;
-	vector<MyType> val;
+	std::vector<MyType> val;
 public:
 	explicit BroadcastOnChangePtr1D( MessageID m )
 	{
@@ -288,7 +293,7 @@ public:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -298,7 +303,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

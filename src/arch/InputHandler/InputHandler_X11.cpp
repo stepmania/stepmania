@@ -6,8 +6,11 @@
 #include "InputFilter.h"
 #include "archutils/Unix/X11Helper.h"
 
+#include <vector>
+
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
+
 
 using namespace X11Helper;
 
@@ -53,7 +56,7 @@ static DeviceButton XSymToDeviceButton( int key )
 	/* XK_KP_0 ... XK_KP_9 to KEY_KP_C0 ... KEY_KP_C9 */
 	if( key >= XK_KP_0 && key <= XK_KP_9 )
 		return enum_add2(KEY_KP_C0, key - XK_KP_0);
-	
+
 	switch( key )
 	{
 	/* These are needed because of the way X registers the keypad. */
@@ -135,7 +138,7 @@ static DeviceButton XSymToDeviceButton( int key )
 
 InputHandler_X11::InputHandler_X11()
 {
-	if( Dpy == nullptr  || Win == None )
+	if( Dpy == nullptr || Win == None )
 		return;
 	XWindowAttributes winAttrib;
 
@@ -151,7 +154,7 @@ InputHandler_X11::InputHandler_X11()
 
 InputHandler_X11::~InputHandler_X11()
 {
-	if( Dpy == nullptr || Win == None )
+	if( Dpy == nullptr || Win == None || FatalError )
 		return;
 	// TODO: Determine if we even need to set this back (or is the window
 	// destroyed just after this?)
@@ -247,7 +250,7 @@ void InputHandler_X11::Update()
 }
 
 
-void InputHandler_X11::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
+void InputHandler_X11::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut )
 {
 	if( Dpy && Win )
 	{

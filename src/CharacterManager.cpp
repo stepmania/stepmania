@@ -5,6 +5,9 @@
 
 #include "LuaManager.h"
 
+#include <vector>
+
+
 #define CHARACTERS_DIR "/Characters/"
 
 CharacterManager*	CHARMAN = nullptr;	// global object accessible from anywhere in the program
@@ -24,7 +27,7 @@ CharacterManager::CharacterManager()
 		SAFE_DELETE( m_pCharacters[i] );
 	m_pCharacters.clear();
 
-	vector<RString> as;
+	std::vector<RString> as;
 	GetDirListing( CHARACTERS_DIR "*", as, true, true );
 	StripCvsAndSvn( as );
 	StripMacResourceForks( as );
@@ -45,7 +48,7 @@ CharacterManager::CharacterManager()
 		else
 			delete pChar;
 	}
-	
+
 	if( !FoundDefault )
 		RageException::Throw( "'Characters/default' is missing." );
 
@@ -63,7 +66,7 @@ CharacterManager::~CharacterManager()
 	LUA->UnsetGlobal( "CHARMAN" );
 }
 
-void CharacterManager::GetCharacters( vector<Character*> &apCharactersOut )
+void CharacterManager::GetCharacters( std::vector<Character*> &apCharactersOut )
 {
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
 		if( !m_pCharacters[i]->IsDefaultCharacter() )
@@ -72,7 +75,7 @@ void CharacterManager::GetCharacters( vector<Character*> &apCharactersOut )
 
 Character* CharacterManager::GetRandomCharacter()
 {
-	vector<Character*> apCharacters;
+	std::vector<Character*> apCharacters;
 	GetCharacters( apCharacters );
 	if( apCharacters.size() )
 		return apCharacters[RandomInt(apCharacters.size())];
@@ -90,7 +93,6 @@ Character* CharacterManager::GetDefaultCharacter()
 
 	/* We always have the default character. */
 	FAIL_M("There must be a default character available!");
-	return nullptr;
 }
 
 void CharacterManager::DemandGraphics()
@@ -120,7 +122,7 @@ Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the CharacterManager. */ 
+/** @brief Allow Lua to have access to the CharacterManager. */
 class LunaCharacterManager: public Luna<CharacterManager>
 {
 public:
@@ -146,7 +148,7 @@ public:
 	}
 	static int GetAllCharacters( T* p, lua_State *L )
 	{
-		vector<Character*> vChars;
+		std::vector<Character*> vChars;
 		p->GetCharacters(vChars);
 
 		LuaHelpers::CreateTableFromArray(vChars, L);
@@ -154,7 +156,7 @@ public:
 	}
 	static int GetCharacterCount(T* p, lua_State *L)
 	{
-		vector<Character*> chars;
+		std::vector<Character*> chars;
 		p->GetCharacters(chars);
 		lua_pushnumber(L, chars.size());
 		return 1;
@@ -177,7 +179,7 @@ LUA_REGISTER_CLASS( CharacterManager )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -187,7 +189,7 @@ LUA_REGISTER_CLASS( CharacterManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

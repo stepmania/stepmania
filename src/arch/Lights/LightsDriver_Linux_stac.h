@@ -4,21 +4,23 @@
 #define LightsDriver_Linux_stac_H
 
 /*
- * -------------------------- NOTE -------------------------- 
- * 
+ * -------------------------- NOTE --------------------------
+ *
  * This driver needs user read/write access to the icedragon.io stac.
  * This can be achieved by using a udev rule like this:
- * 
+ *
  * (player 1 then player 2)
  * SUBSYSTEMS=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5b", OWNER="dance", GROUP="dance", MODE="0660"
  * SUBSYSTEMS=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5a", OWNER="dance", GROUP="dance", MODE="0660"
- * 
+ *
  * Refer to your distrobution's documentation on how to properly apply a udev rule.
- * 
- * -------------------------- NOTE -------------------------- 
+ *
+ * -------------------------- NOTE --------------------------
  */
 
 #include "arch/Lights/LightsDriver.h"
+
+#include <cstdint>
 
 //static information about the device(s) in question.
 #define STAC_VID "04d8"
@@ -50,12 +52,12 @@ public:
     const char *devicePath;
     int fd = -1;
 
-    uint8_t playerNumber = 0;
+    std::uint8_t playerNumber = 0;
     bool newState = false;
 
-    uint8_t outputBuffer[STAC_HIDREPORT_SIZE];
+    std::uint8_t outputBuffer[STAC_HIDREPORT_SIZE];
 
-    StacDevice(uint8_t pn);
+    StacDevice(std::uint8_t pn);
 
     void FindDevice();
     void Connect();

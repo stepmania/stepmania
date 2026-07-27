@@ -4,6 +4,9 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageSurface.h"
+
+#include <cstdint>
+
 using namespace FileReading;
 
 /* Tested with http://entropymine.com/jason/bmpsuite/. */
@@ -38,10 +41,10 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 
 	read_u32_le( f, sError ); /* file size */
 	read_u32_le( f, sError ); /* unused */
-	uint32_t iDataOffset = read_u32_le( f, sError );
-	uint32_t iHeaderSize = read_u32_le( f, sError );
+	std::uint32_t iDataOffset = read_u32_le( f, sError );
+	std::uint32_t iHeaderSize = read_u32_le( f, sError );
 
-	uint32_t iWidth, iHeight, iPlanes, iBPP, iCompression = COMP_BI_RGB, iColors = 0;
+	std::uint32_t iWidth, iHeight, iPlanes, iBPP, iCompression = COMP_BI_RGB, iColors = 0;
 	if( iHeaderSize == 12 )
 	{
 		/* OS/2 format */
@@ -79,7 +82,7 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 		FATAL_ERROR( ssprintf( "BI_BITFIELDS unexpected with bpp %u", iBPP ) );
 
 	int iFileBPP = iBPP;
-	iBPP = max( iBPP, 8u );
+	iBPP = std::max( iBPP, 8u );
 
 	int Rmask = 0, Gmask = 0, Bmask = 0, Amask = 0;
 	switch( iBPP )
@@ -154,7 +157,7 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 
 	for( int y = (int) iHeight-1; y >= 0; --y )
 	{
-		uint8_t *pRow = img->pixels + img->pitch*y;
+		std::uint8_t *pRow = img->pixels + img->pitch*y;
 		RString buf;
 
 		f.Read( buf, iFilePitch );

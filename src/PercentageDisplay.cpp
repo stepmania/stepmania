@@ -154,7 +154,7 @@ void PercentageDisplay::Refresh()
 
 	if( ShowDancePointsNotPercentage() )
 	{
-		sNumToDisplay = ssprintf( "%*d", m_iDancePointsDigits, max( 0, iActualDancePoints ) );
+		sNumToDisplay = ssprintf( "%*d", m_iDancePointsDigits, std::max( 0, iActualDancePoints ) );
 	}
 	else
 	{

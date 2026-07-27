@@ -36,7 +36,8 @@
 #include "RageSoundReader_FileReader.h"
 #include "RageSoundReader_ThreadedBuffer.h"
 
-#define samplerate() m_pSource->GetSampleRate()
+#include <cmath>
+#include <cstdint>
 
 RageSoundParams::RageSoundParams():
 	m_StartSecond(0), m_LengthSeconds(-1), m_fFadeInSeconds(0),
@@ -48,7 +49,7 @@ RageSoundLoadParams::RageSoundLoadParams():
 	m_bSupportRateChanging(false), m_bSupportPan(false) {}
 
 RageSound::RageSound():
-	m_Mutex( "RageSound" ), m_pSource(nullptr), 
+	m_Mutex( "RageSound" ), m_pSource(nullptr),
 	m_sFilePath(""), m_Param(), m_iStreamFrame(0),
 	m_iStoppedSourceFrame(0), m_bPlaying(false),
 	m_bDeleteWhenFinished(false), m_sError("")
@@ -63,11 +64,10 @@ RageSound::~RageSound()
 
 RageSound::RageSound( const RageSound &cpy ):
 	RageSoundBase( cpy ),
-	m_Mutex( "RageSound" )
+	m_Mutex( "RageSound" ),
+	m_pSource( nullptr )
 {
 	ASSERT(SOUNDMAN != nullptr);
-
-	m_pSource = nullptr;
 
 	*this = cpy;
 }
@@ -112,7 +112,7 @@ void RageSound::Unload()
 		delete m_pSource;
 	}
 	m_pSource = nullptr;
-	
+
 	m_sFilePath = "";
 }
 
@@ -263,15 +263,15 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
  *
  * On underrun, if no data was read, returns WOULD_BLOCK.  On end of file, if no
  * data was read, returns END_OF_FILE.  If any data is read, it is returned; these
- * conditions are masked and will be seen on the next call.  Otherwise, the requested 
+ * conditions are masked and will be seen on the next call.  Otherwise, the requested
  * number of frames will always be returned.
  */
-int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame, int &iFramesStored )
+int RageSound::GetDataToPlay( float *pBuffer, int iFrames, std::int64_t &iStreamFrame, int &iFramesStored )
 {
 	/* We only update m_iStreamFrame; only take a shared lock, so we don't block the main thread. */
 //	LockMut(m_Mutex);
 
-	ASSERT_M( m_bPlaying, ssprintf("%p", this) );
+	ASSERT_M( m_bPlaying, ssprintf("%p", static_cast<void*>(this)) );
 	ASSERT( m_pSource != nullptr );
 
 	iFramesStored = 0;
@@ -280,7 +280,7 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 	while( iFrames > 0 )
 	{
 		float fRate = 1.0f;
-		int iSourceFrame;
+		int iSourceFrame = 0;
 
 		/* Read data from our source. */
 		int iGotFrames = m_pSource->RetriedRead( pBuffer + (iFramesStored * m_pSource->GetNumChannels()), iFrames, &iSourceFrame, &fRate );
@@ -288,6 +288,7 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 		if( iGotFrames == RageSoundReader::ERROR )
 		{
 			m_sError = m_pSource->GetError();
+			// This error probably indicates an I/O error, rather than a decoding error.
 			LOG->Warn( "Decoding %s failed: %s", GetLoadedFilePath().c_str(), m_sError.c_str() );
 		}
 
@@ -315,7 +316,7 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 }
 
 /* Indicate that a block of audio data has been written to the device. */
-void RageSound::CommitPlayingPosition( int64_t iHardwareFrame, int64_t iStreamFrame, int iGotFrames )
+void RageSound::CommitPlayingPosition( std::int64_t iHardwareFrame, std::int64_t iStreamFrame, int iGotFrames )
 {
 	m_Mutex.Lock();
 	m_HardwareToStreamMap.Insert( iHardwareFrame, iGotFrames, iStreamFrame );
@@ -328,7 +329,7 @@ void RageSound::StartPlaying()
 	ASSERT( !m_bPlaying );
 
 	// Move to the start position.
-	SetPositionFrames( lrintf(m_Param.m_StartSecond * samplerate()) );
+	SetPositionFrames(static_cast<int>(m_Param.m_StartSecond * m_pSource->GetSampleRate() + 0.5));
 
 	/* If m_StartTime is in the past, then we probably set a start time but took too
 	 * long loading.  We don't want that; log it, since it can be unobvious. */
@@ -370,7 +371,7 @@ void RageSound::SoundIsFinishedPlaying()
 		return;
 
 	/* Get our current hardware position. */
-	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition(nullptr);
+	std::int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition(nullptr);
 
 	m_Mutex.Lock();
 
@@ -382,10 +383,10 @@ void RageSound::SoundIsFinishedPlaying()
 		return;
 	}
 
-	/* Lock the mutex after calling SOUNDMAN->GetPosition().  We must not make driver
-	 * calls with our mutex locked (driver mutex < sound mutex). */
-	if( !m_HardwareToStreamMap.IsEmpty() && !m_StreamToSourceMap.IsEmpty() )
-		m_iStoppedSourceFrame = (int) GetSourceFrameFromHardwareFrame( iCurrentHardwareFrame );
+	// Update the stopped source frame using the current hardware frame,
+	// but only if the hardware-to-stream and stream-to-source maps are not empty
+	if (!m_HardwareToStreamMap.IsEmpty() && !m_StreamToSourceMap.IsEmpty())
+		m_iStoppedSourceFrame = static_cast<int>(GetSourceFrameFromHardwareFrame(iCurrentHardwareFrame));
 
 //	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	m_bPlaying = false;
@@ -472,19 +473,16 @@ float RageSound::GetLengthSeconds()
 	return iLength / 1000.f; // ms -> secs
 }
 
-int RageSound::GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate ) const
+int RageSound::GetSourceFrameFromHardwareFrame( std::int64_t iHardwareFrame, bool *bApproximate ) const
 {
 	if( m_HardwareToStreamMap.IsEmpty() || m_StreamToSourceMap.IsEmpty() )
 		return 0;
 
-	bool bApprox;
-	int64_t iStreamFrame = m_HardwareToStreamMap.Search( iHardwareFrame, &bApprox );
-	if( bApproximate && bApprox )
-		*bApproximate = true;
-	int64_t iSourceFrame = m_StreamToSourceMap.Search( iStreamFrame, &bApprox );
-	if( bApproximate && bApprox )
-		*bApproximate = true;
-	return (int) iSourceFrame;
+	// TODO(sukibaby): The nullptrs passed to the functions below are part of a gradual
+	// procedure to remove bApproximate from the code base. Until it's fully removed,
+	// this will remain nullptr for now. In the future, these nullptr's should be removed.
+	std::int64_t iStreamFrame = m_HardwareToStreamMap.Search( iHardwareFrame, nullptr );
+	return static_cast<int>(m_StreamToSourceMap.Search( iStreamFrame, nullptr ));
 }
 
 /* If non-nullptr, approximate is set to true if the returned time is approximated because of
@@ -496,32 +494,28 @@ int RageSound::GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bA
  */
 float RageSound::GetPositionSeconds( bool *bApproximate, RageTimer *pTimestamp ) const
 {
-	/* Get our current hardware position. */
-	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( pTimestamp );
+	// Get our current hardware position.
+	std::int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition(pTimestamp);
 
-	/* Lock the mutex after calling SOUNDMAN->GetPosition().  We must not make driver
-	 * calls with our mutex locked (driver mutex < sound mutex). */
-	LockMut( m_Mutex );
+	// Lock the mutex after calling SOUNDMAN->GetPosition().
+	LockMut(m_Mutex);
 
-	if( bApproximate )
-		*bApproximate = false;
+	// cast the sample rate to be used for the remainder of the function.
+	float fSampleRate = static_cast<float>(m_pSource->GetSampleRate());
 
 	/* If we're not playing, just report the static position. */
 	if( !IsPlaying() )
-		return m_iStoppedSourceFrame / float(samplerate());
+		return static_cast<float>(m_iStoppedSourceFrame) / fSampleRate;
 
 	/* If we don't yet have any position data, CommitPlayingPosition hasn't yet been called at all,
 	 * so guess what we think the real time is. */
 	if( m_HardwareToStreamMap.IsEmpty() || m_StreamToSourceMap.IsEmpty() )
 	{
-		// LOG->Trace( "no data yet; %i", m_iStoppedSourceFrame );
-		if( bApproximate )
-			*bApproximate = true;
-		return m_iStoppedSourceFrame / float(samplerate());
+		return static_cast<float>(m_iStoppedSourceFrame) / fSampleRate;
 	}
 
 	int iSourceFrame = GetSourceFrameFromHardwareFrame( iCurrentHardwareFrame, bApproximate );
-	return iSourceFrame / float(samplerate());
+	return static_cast<float>(iSourceFrame) / fSampleRate;
 }
 
 
@@ -536,16 +530,17 @@ bool RageSound::SetPositionFrames( int iFrames )
 	}
 
 	int iRet = m_pSource->SetPosition( iFrames );
+	RString filePath = GetLoadedFilePath();
 	if( iRet == -1 )
 	{
 		m_sError = m_pSource->GetError();
-		LOG->Warn( "SetPositionFrames: seek %s failed: %s", GetLoadedFilePath().c_str(), m_sError.c_str() );
+		LOG->Warn( "SetPositionFrames: seek %s failed: %s", filePath.c_str(), m_sError.c_str() );
 	}
 	else if( iRet == 0 )
 	{
 		/* Seeked past EOF. */
 		LOG->Warn( "SetPositionFrames: %i samples is beyond EOF in %s",
-			iFrames, GetLoadedFilePath().c_str() );
+			iFrames, filePath.c_str() );
 	}
 	else
 	{
@@ -613,7 +608,7 @@ RageSoundParams::StopMode_t RageSound::GetStopMode() const
 	if( m_Param.StopMode != RageSoundParams::M_AUTO )
 		return m_Param.StopMode;
 
-	if( m_sFilePath.find("loop") != string::npos )
+	if( m_sFilePath.find("loop") != std::string::npos )
 		return RageSoundParams::M_LOOP;
 	else
 		return RageSoundParams::M_STOP;
@@ -621,25 +616,25 @@ RageSoundParams::StopMode_t RageSound::GetStopMode() const
 
 void RageSound::SetStopModeFromString( const RString &sStopMode )
 {
-	if( sStopMode.find("stop") != string::npos )
+	if( sStopMode.find("stop") != std::string::npos )
 	{
 		m_Param.StopMode = RageSoundParams::M_STOP;
 	}
-	else if( sStopMode.find("loop") != string::npos )
+	else if( sStopMode.find("loop") != std::string::npos )
 	{
 		m_Param.StopMode = RageSoundParams::M_LOOP;
 	}
-	else if( sStopMode.find("continue") != string::npos )
+	else if( sStopMode.find("continue") != std::string::npos )
 	{
 		m_Param.StopMode = RageSoundParams::M_CONTINUE;
 	}
-	else if( sStopMode.find("auto") != string::npos )
+	else if( sStopMode.find("auto") != std::string::npos )
 	{
 		m_Param.StopMode = RageSoundParams::M_AUTO;
 	}
 	else
 	{
-		// error
+		LOG->Warn("Invalid stop mode \"%s\" for sound \"%s\"", sStopMode.c_str(), m_sFilePath.c_str());
 	}
 }
 
@@ -647,7 +642,7 @@ void RageSound::SetStopModeFromString( const RString &sStopMode )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the RageSound. */ 
+/** @brief Allow Lua to have access to the RageSound. */
 class LunaRageSound: public Luna<RageSound>
 {
 public:

@@ -1,4 +1,4 @@
-﻿#include "global.h"
+#include "global.h"
 #include "StatsManager.h"
 #include "RageFileManager.h"
 #include "GameState.h"
@@ -18,6 +18,11 @@
 #include "PlayerOptions.h"
 #include "PlayerState.h"
 #include "Player.h"
+
+#include <cmath>
+#include <cstddef>
+#include <vector>
+
 
 StatsManager*	STATSMAN = nullptr;	// global object accessible from anywhere in the program
 
@@ -52,7 +57,7 @@ void StatsManager::Reset()
 	CalcAccumPlayedStageStats();
 }
 
-static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
+static StageStats AccumPlayedStageStats( const std::vector<StageStats>& vss )
 {
 	StageStats ssreturn;
 
@@ -95,8 +100,8 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 void StatsManager::GetFinalEvalStageStats( StageStats& statsOut ) const
 {
 	statsOut.Init();
-	vector<StageStats> vssToCount;
-	for(size_t i= 0; i < m_vPlayedStageStats.size(); ++i)
+	std::vector<StageStats> vssToCount;
+	for(std::size_t i= 0; i < m_vPlayedStageStats.size(); ++i)
 	{
 		vssToCount.push_back(m_vPlayedStageStats[i]);
 	}
@@ -126,7 +131,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 		pProfile->m_iNumSongsPlayedByStyle[sID] ++;
 		pProfile->m_iNumSongsPlayedByDifficulty[pSteps->GetDifficulty()] ++;
 
-		int iMeter = clamp( pSteps->GetMeter(), 0, MAX_METER );
+		int iMeter = std::clamp( pSteps->GetMeter(), 0, MAX_METER );
 		pProfile->m_iNumSongsPlayedByMeter[iMeter] ++;
 	}
 
@@ -209,7 +214,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 	// Update profile stats
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
-	int iGameplaySeconds = (int)truncf(pSS->m_fGameplaySeconds);
+	int iGameplaySeconds = std::trunc(pSS->m_fGameplaySeconds);
 
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iNumTotalSongsPlayed += pSS->m_vpPlayedSongs.size();
@@ -252,7 +257,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 void StatsManager::SaveUploadFile( const StageStats *pSS )
 {
 	// Save recent scores
-	unique_ptr<XNode> xml( new XNode("Stats") );
+	std::unique_ptr<XNode> xml( new XNode("Stats") );
 	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 
 	XNode *recent = nullptr;
@@ -331,7 +336,7 @@ void StatsManager::SavePadmissScore( const StageStats *pSS, PlayerNumber pn )
 	stepdata->AppendChild( "StepArtist", steps->GetCredit() );
 	stepdata->AppendChild( "StepsType", steps->m_StepsTypeStr );
 	RageFileObjMem f;
-	vector<Steps*> stepv;
+	std::vector<Steps*> stepv;
 	stepv.push_back(steps);
 	NotesWriterSM::Write( f, *song, stepv );
 	stepdata->AppendChild( "StepData", f.GetString() );
@@ -354,6 +359,8 @@ void StatsManager::SavePadmissScore( const StageStats *pSS, PlayerNumber pn )
 
 	XNode *turns = mods->AppendChild( "Turns" );
 	ADD_BOOLEAN_OPTION( turns, TURN_MIRROR, opts.m_bTurns );
+	ADD_BOOLEAN_OPTION( turns, TURN_LRMIRROR, opts.m_bTurns );
+	ADD_BOOLEAN_OPTION( turns, TURN_UDMIRROR, opts.m_bTurns );
 	ADD_BOOLEAN_OPTION( turns, TURN_BACKWARDS, opts.m_bTurns );
 	ADD_BOOLEAN_OPTION( turns, TURN_LEFT, opts.m_bTurns );
 	ADD_BOOLEAN_OPTION( turns, TURN_RIGHT, opts.m_bTurns );
@@ -492,7 +499,7 @@ void StatsManager::UnjoinPlayer( PlayerNumber pn )
 	}
 }
 
-void StatsManager::GetStepsInUse( set<Steps*> &apInUseOut ) const
+void StatsManager::GetStepsInUse( std::set<Steps*> &apInUseOut ) const
 {
 	for( int i = 0; i < (int) m_vPlayedStageStats.size(); ++i )
 	{
@@ -557,7 +564,7 @@ public:
 	{
 		Grade g = NUM_Grade;
 		FOREACH_EnabledPlayer( pn )
-			g = min( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+			g = std::min( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
 		lua_pushnumber( L, g );
 		return 1;
 	}
@@ -566,7 +573,7 @@ public:
 	{
 		Grade g = Grade_Tier01;
 		FOREACH_EnabledPlayer( pn )
-			g = max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+			g = std::max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
 		lua_pushnumber( L, g );
 		return 1;
 	}
@@ -583,7 +590,7 @@ public:
 				[&](StageStats const &ss) { return ss.m_player[p].m_bFailed; }))
 				continue;
 
-			top_grade = min( top_grade, stats.m_player[p].GetGrade() );
+			top_grade = std::min( top_grade, stats.m_player[p].GetGrade() );
 		}
 
 		Enum::Push( L, top_grade );

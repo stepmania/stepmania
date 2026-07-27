@@ -3,6 +3,8 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 
+#include <cmath>
+
 
 ScrollBar::ScrollBar()
 {
@@ -52,7 +54,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 	/* Set tick thumb */
 	{
 		float fY = SCALE( fCenterPercent, 0.0f, 1.0f, -iBarContentHeight/2.0f, iBarContentHeight/2.0f );
-		fY = roundf( fY );
+		fY = std::round( fY );
 		m_sprScrollTickThumb->SetY( fY );
 	}
 
@@ -61,25 +63,25 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 	float fEndPercent = fCenterPercent + fSizePercent;
 
 	// make sure the percent numbers are between 0 and 1
-	fStartPercent	= fmodf( fStartPercent+1, 1 );
-	fEndPercent	= fmodf( fEndPercent+1, 1 );
+	fStartPercent	= std::fmod( fStartPercent+1, 1 );
+	fEndPercent	= std::fmod( fEndPercent+1, 1 );
 
 	CHECKPOINT_M("Percentages set.");
 	float fPartTopY[2], fPartBottomY[2];
 
 	if( fStartPercent < fEndPercent )	// we only need to one 1 stretch thumb part
 	{
-		fPartTopY[0]	= SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartBottomY[0]	= SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartTopY[1]	= 0; 
-		fPartBottomY[1]	= 0; 
+		fPartTopY[0]	= SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartBottomY[0]	= SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartTopY[1]	= 0;
+		fPartBottomY[1]	= 0;
 	}
 	else	// we need two stretch thumb parts
 	{
-		fPartTopY[0]	= SCALE( 0.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartBottomY[0]	= SCALE( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartTopY[1]	= SCALE( fStartPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPartBottomY[1]	= SCALE( 1.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPartTopY[0]	= SCALE( 0.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartBottomY[0]	= SCALE( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartTopY[1]	= SCALE( fStartPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartBottomY[1]	= SCALE( 1.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
 	}
 
 	for( unsigned i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
@@ -97,7 +99,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -107,7 +109,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,6 +1,6 @@
 #if defined(ANDROID)
 #include "Android/SpecialDirs.h"
-#elif defined(_WINDOWS)
+#elif defined(_WIN32)
 #include "Win32/SpecialDirs.h"
 #elif defined(MACOSX)
 #include "Darwin/SpecialDirs.h"

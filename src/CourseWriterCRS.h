@@ -4,6 +4,7 @@
 #define COURSE_WRITER_CRS_H
 
 class Course;
+class CourseEntry;
 class RageFileBasic;
 
 /** @brief The Course Writer handles writing the .crs files. */
@@ -36,6 +37,10 @@ namespace CourseWriterCRS
 	 * @param pCourse the course file.
 	 */
 	void WriteEditFileToMachine( const Course *pCourse );
+
+	bool WriteCourseEntry( const CourseEntry &entry, RageFileBasic &f );
+
+	bool WriteSongSelectCourseEntry( const CourseEntry &entry, RageFileBasic &f );
 }
 
 #endif

@@ -3,6 +3,9 @@
 
 #include "HIDDevice.h"
 
+#include <vector>
+
+
 struct Joystick
 {
 	InputDevice id;
@@ -23,7 +26,7 @@ struct Joystick
 class JoystickDevice : public HIDDevice
 {
 private:
-	vector<Joystick> m_vSticks;
+	std::vector<Joystick> m_vSticks;
 
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
@@ -32,9 +35,9 @@ protected:
 	bool InitDevice( int vid, int pid );
 
 public:
-	void GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const;
+	void GetButtonPresses( std::vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const;
 	int AssignIDs( InputDevice startID );
-	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const;
+	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevices ) const;
 };
 
 #endif
@@ -42,7 +45,7 @@ public:
 /*
  * (c) 2005-2006 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -52,7 +55,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

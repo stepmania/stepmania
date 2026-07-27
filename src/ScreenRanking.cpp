@@ -7,6 +7,9 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 
+#include <cstddef>
+#include <vector>
+
 
 static const char *RankingTypeNames[] = {
 	"Category",
@@ -31,7 +34,7 @@ REGISTER_SCREEN_CLASS( ScreenRanking );
 #define TIME_X(row)	(TIME_START_X+ROW_SPACING_X*row)
 #define TIME_Y(row)	(TIME_START_Y+ROW_SPACING_Y*row)
 
-static RString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
+static RString STEPS_TYPE_COLOR_NAME( std::size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
 void ScreenRanking::Init()
 {
@@ -82,7 +85,7 @@ void ScreenRanking::Init()
 				pts.colorIndex = i;
 				pts.category = (RankingCategory)c;
 				StepsType st = STEPS_TYPES_TO_SHOW.GetValue()[i];
-				pts.aTypes.push_back( make_pair(Difficulty_Invalid, st) );
+				pts.aTypes.push_back( std::make_pair(Difficulty_Invalid, st) );
 				m_vPagesToShow.push_back( pts );
 			}
 		}
@@ -100,7 +103,7 @@ void ScreenRanking::Init()
 		this->AddChild( &m_textCourseTitle );
 		LOAD_ALL_COMMANDS( m_textCourseTitle );
 
-		vector<RString> asCoursePaths;
+		std::vector<RString> asCoursePaths;
 		split( COURSES_TO_SHOW, ",", asCoursePaths, true );
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 		{
@@ -109,7 +112,7 @@ void ScreenRanking::Init()
 				PageToShow pts;
 				pts.colorIndex = i;
 				StepsType st = STEPS_TYPES_TO_SHOW.GetValue()[i];
-				pts.aTypes.push_back( make_pair(Difficulty_Invalid, st) );
+				pts.aTypes.push_back( std::make_pair(Difficulty_Invalid, st) );
 				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
 				if( pts.pCourse == nullptr )
 					continue;
@@ -151,7 +154,7 @@ void ScreenRanking::Init()
 		m_textPoints[l].SetXY( POINTS_X(l), POINTS_Y(l) );
 		ActorUtil::LoadAllCommands( m_textPoints[l], m_sName );
 		this->AddChild( &m_textPoints[l] );
-		
+
 		m_textTime[l].SetName( ssprintf("Time%d",l+1) );
 		m_textTime[l].LoadFromFont( THEME->GetPathF(m_sName,"time") );
 		m_textTime[l].SetVisible( false );
@@ -230,10 +233,10 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 
 		m_textScores[l].SetVisible( bShowScores );
 		m_textScores[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-		
+
 		m_textPoints[l].SetVisible( bShowPoints );
 		m_textPoints[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-		
+
 		m_textTime[l].SetVisible( bShowTime );
 		m_textTime[l].SetDiffuseColor( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 	}
@@ -340,7 +343,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 /*
  * (c) 2001-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -350,7 +353,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

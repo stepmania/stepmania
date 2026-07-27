@@ -8,6 +8,7 @@
 #include "GameState.h"
 #include "ScreenManager.h"
 #include "SongManager.h"
+#include "ProfileManager.h"
 #include "PrefsManager.h"
 #include "StepMania.h"
 #include "RageSoundManager.h"
@@ -15,6 +16,8 @@
 #include "ScreenOptionsMasterPrefs.h"
 #include "CommonMetrics.h"
 #include "GameLoop.h"
+
+#include <vector>
 
 #define LINE_NAMES			THEME->GetMetric (m_sName,"LineNames")
 #define LINE(sLineName)		THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
@@ -26,7 +29,7 @@ REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 
 void ScreenOptionsMaster::Init()
 {
-	vector<RString> asLineNames;
+	std::vector<RString> asLineNames;
 	split( LINE_NAMES, ",", asLineNames );
 	if( asLineNames.empty() )
 	{
@@ -49,12 +52,12 @@ void ScreenOptionsMaster::Init()
 	// Call this after enabling players, if any.
 	ScreenOptions::Init();
 
-	vector<OptionRowHandler*> OptionRowHandlers;
+	std::vector<OptionRowHandler*> OptionRowHandlers;
 	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
 		RString sLineName = asLineNames[i];
 		RString sRowCommands = LINE(sLineName);
-		
+
 		Commands cmds;
 		ParseCommands( sRowCommands, cmds, false );
 
@@ -71,7 +74,7 @@ void ScreenOptionsMaster::Init()
 	InitMenu( OptionRowHandlers );
 }
 
-void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns )
+void ScreenOptionsMaster::ImportOptions( int r, const std::vector<PlayerNumber> &vpns )
 {
 	for (PlayerNumber const &pn : vpns)
 	{
@@ -81,7 +84,7 @@ void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns
 	row.ImportOptions( vpns );
 }
 
-void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns )
+void ScreenOptionsMaster::ExportOptions( int r, const std::vector<PlayerNumber> &vpns )
 {
 	CHECKPOINT_M( ssprintf("%i/%i", r, int(m_pRows.size())) );
 
@@ -105,11 +108,17 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 
 		CHECKPOINT_M("Starting the export handling.");
 
-		vector<PlayerNumber> vpns;
+		std::vector<PlayerNumber> vpns;
 		FOREACH_OptionsPlayer( p )
 			vpns.push_back( p );
 		for( unsigned r=0; r<m_pRows.size(); r++ ) // foreach row
 			ExportOptions( r, vpns );
+
+		if (m_iChangeMask & OPT_APPLY_PROFILES)
+		{
+			// If we're changing profile settings such as sort order, we need to reload them
+			PROFILEMAN->RefreshLocalProfilesFromDisk();
+		}
 
 		if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
 		{
@@ -121,7 +130,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		/* If the theme changes, we need to reset RageDisplay to apply the new window
 		 * title and icon. If the aspect ratio changes, we need to reset RageDisplay
 		 * so that the projection matrix is re-created using the new screen dimensions. */
-		if( (m_iChangeMask & OPT_APPLY_THEME) || 
+		if( (m_iChangeMask & OPT_APPLY_THEME) ||
 			(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
 			(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
 		{
@@ -147,7 +156,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		{
 			SOUNDMAN->SetMixVolume();
 		}
-		
+
 		if( m_iChangeMask & OPT_APPLY_SONG )
 			SONGMAN->SetPreferences();
 
@@ -162,7 +171,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -172,7 +181,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

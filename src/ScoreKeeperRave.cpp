@@ -10,9 +10,11 @@
 #include "PlayerState.h"
 #include "NoteTypes.h"
 
+#include <cstddef>
+
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
-static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+static void SuperMeterPercentChangeInit( std::size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
 	ScoreEvent ci = (ScoreEvent)i;
 	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( ci );
@@ -36,7 +38,7 @@ static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sName
 
 static Preference1D<float> g_fSuperMeterPercentChange( SuperMeterPercentChangeInit, NUM_ScoreEvent );
 
-ScoreKeeperRave::ScoreKeeperRave( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ) : 
+ScoreKeeperRave::ScoreKeeperRave( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ) :
 	ScoreKeeper(pPlayerState, pPlayerStageStats)
 {
 }
@@ -116,7 +118,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 {
 	if( PREFSMAN->m_bMercifulDrain  &&  fUnscaledPercentChange<0 )
 	{
-		float fSuperPercentage = m_pPlayerState->m_fSuperMeter / NUM_ATTACK_LEVELS;
+		float fSuperPercentage = m_pPlayerState->m_fSuperMeter / Enum::to_integral(NUM_ATTACK_LEVELS);
 		fUnscaledPercentChange *= SCALE( fSuperPercentage, 0.f, 1.f, 0.5f, 1.f);
 	}
 
@@ -181,7 +183,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	RString* asAttacks = GAMESTATE->m_pCurCharacters[pn]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
 	RString sAttackToGive;
 
-	if (GAMESTATE->m_pCurCharacters[pn] != nullptr)		
+	if (GAMESTATE->m_pCurCharacters[pn] != nullptr)
 		sAttackToGive = asAttacks[ RandomInt(NUM_ATTACKS_PER_LEVEL) ];
 	else
 	{
@@ -211,7 +213,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -221,7 +223,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

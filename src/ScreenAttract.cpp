@@ -72,7 +72,7 @@ void ScreenAttract::Cancel( ScreenMessage smSendWhenDone )
 
 bool ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen )
 {
-	if( input.type != IET_FIRST_PRESS ) 
+	if( input.type != IET_FIRST_PRESS )
 		return false; // don't care
 
 	switch( input.MenuI )
@@ -80,7 +80,7 @@ bool ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 		case GAME_BUTTON_BACK:
 			if( !BACK_GOES_TO_START_SCREEN )
 				break;
-			// fall through
+			[[fallthrough]];
 		case GAME_BUTTON_START:
 		case GAME_BUTTON_COIN:
 			// If we're not in a game and there aren't enough credits to start,
@@ -161,7 +161,7 @@ void ScreenAttract::GoToStartScreen( RString sScreenName )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenAttract. */ 
+/** @brief Allow Lua to have access to the ScreenAttract. */
 class LunaScreenAttract: public Luna<ScreenAttract>
 {
 public:
@@ -177,7 +177,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenAttract, ScreenWithMenuElements )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -187,7 +187,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenAttract, ScreenWithMenuElements )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

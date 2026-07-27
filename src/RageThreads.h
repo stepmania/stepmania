@@ -1,6 +1,8 @@
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
 
+#include <cstdint>
+
 struct ThreadSlot;
 class RageTimer;
 /** @brief Thread, mutex, semaphore, and event classes. */
@@ -19,17 +21,17 @@ public:
 	void Resume();
 
 	/* For crash handlers: kill or suspend all threads (except for
-	 * the running one) immediately. */ 
+	 * the running one) immediately. */
 	static void HaltAllThreads( bool Kill=false );
 
 	/* If HaltAllThreads was called (with Kill==false), resume. */
 	static void ResumeAllThreads();
 
-	static uint64_t GetCurrentThreadID();
+	static std::uint64_t GetCurrentThreadID();
 
 	static const char *GetCurrentThreadName();
-	static const char *GetThreadNameByID( uint64_t iID );
-	static bool EnumThreadIDs( int n, uint64_t &iID );
+	static const char *GetThreadNameByID( std::uint64_t iID );
+	static bool EnumThreadIDs( int n, std::uint64_t &iID );
 	int Wait();
 	bool IsCreated() const { return m_pSlot != nullptr; }
 
@@ -41,7 +43,7 @@ public:
 
 	static bool GetIsShowingDialog() { return s_bIsShowingDialog; }
 	static void SetIsShowingDialog( bool b ) { s_bIsShowingDialog = b; }
-	static uint64_t GetInvalidThreadID();
+	static std::uint64_t GetInvalidThreadID();
 
 private:
 	ThreadSlot *m_pSlot;
@@ -49,14 +51,14 @@ private:
 
 	static bool s_bSystemSupportsTLS;
 	static bool s_bIsShowingDialog;
-	
+
 	// Swallow up warnings. If they must be used, define them.
 	RageThread& operator=(const RageThread& rhs);
 };
 
 /**
  * @brief Register a thread created outside of RageThread.
- * 
+ *
  * This gives it a name for RageThread::GetCurrentThreadName,
  * and allocates a slot for checkpoints. */
 class RageThreadRegister
@@ -105,8 +107,8 @@ protected:
 	RString m_sName;
 
 	int m_UniqueID;
-	
-	uint64_t m_LockedBy;
+
+	std::uint64_t m_LockedBy;
 	int m_LockCnt;
 
 	void MarkLockedMutex();
@@ -156,7 +158,7 @@ public:
 
 	/*
 	 * If pTimeout is non-nullptr, the event will be automatically signalled at the given
-	 * time.  Note that implementing this timeout is optional; not all archs support it. 
+	 * time.  Note that implementing this timeout is optional; not all archs support it.
 	 * If false is returned, the wait timed out (and the mutex is locked, as if the
 	 * event had been signalled).
 	 */
@@ -188,7 +190,7 @@ public:
 private:
 	SemaImpl *m_pSema;
 	RString m_sName;
-	
+
 	// Swallow up warnings. If they must be used, define them.
 	RageSemaphore& operator=(const RageSemaphore& rhs);
 	RageSemaphore(const RageSemaphore& rhs);

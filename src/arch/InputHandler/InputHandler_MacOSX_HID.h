@@ -12,12 +12,12 @@ class HIDDevice;
 class InputHandler_MacOSX_HID : public InputHandler
 {
 private:
-	vector<HIDDevice *> m_vDevices;
+	std::vector<HIDDevice *> m_vDevices;
 	RageThread m_InputThread;
 	RageSemaphore m_Sem;
 	CFRunLoopRef m_LoopRef;
 	CFRunLoopSourceRef m_SourceRef;
-	vector<io_iterator_t> m_vIters; // We don't really care about these but they need to stick around
+	std::vector<io_iterator_t> m_vIters; // We don't really care about these but they need to stick around
 	IONotificationPortRef m_NotifyPort;
 	RageMutex m_ChangeLock;
 	bool m_bChanged;
@@ -33,7 +33,7 @@ public:
 	~InputHandler_MacOSX_HID();
 
 	bool DevicesChanged() { LockMut( m_ChangeLock ); return m_bChanged; }
-	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
+	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut );
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
 	wchar_t DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers );
 	static void QueueCallback( void *target, int result, void *refcon, void *sender );

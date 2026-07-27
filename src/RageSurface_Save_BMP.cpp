@@ -5,6 +5,8 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 
+#include <cstdint>
+
 static void WriteBytes( RageFile &f, RString &sError, const void *buf, int size )
 {
 	if( sError.size() != 0 )
@@ -15,16 +17,16 @@ static void WriteBytes( RageFile &f, RString &sError, const void *buf, int size 
 		sError = f.GetError();
 }
 
-static void write_le16( RageFile &f, RString &sError, uint16_t val )
+static void write_le16( RageFile &f, RString &sError, std::uint16_t val )
 {
 	val = Swap16LE( val );
-	WriteBytes( f, sError, &val, sizeof(uint16_t) );
+	WriteBytes( f, sError, &val, sizeof(std::uint16_t) );
 }
 
-static void write_le32( RageFile &f, RString &sError, uint32_t val )
+static void write_le32( RageFile &f, RString &sError, std::uint32_t val )
 {
 	val = Swap32LE( val );
-	WriteBytes( f, sError, &val, sizeof(uint32_t) );
+	WriteBytes( f, sError, &val, sizeof(std::uint32_t) );
 }
 
 bool RageSurfaceUtils::SaveBMP( RageSurface *surface, RageFile &f )
@@ -51,7 +53,7 @@ bool RageSurfaceUtils::SaveBMP( RageSurface *surface, RageFile &f )
 	write_le32( f, sError, surface->w ); // width (offset 0x14)
 	write_le32( f, sError, surface->h ); // height (offset 0x18)
 	write_le16( f, sError, 1 ); // planes (offset 0x1A)
-	write_le16( f, sError, (uint16_t) converted_surface->fmt.BytesPerPixel*8 ); // bpp (offset 0x1C)
+	write_le16( f, sError, (std::uint16_t) converted_surface->fmt.BytesPerPixel*8 ); // bpp (offset 0x1C)
 	write_le32( f, sError, 0 ); // compression (offset 0x1E)
 	write_le32( f, sError, iDataSize ); // bitmap size (offset 0x22)
 	write_le32( f, sError, 0 ); // horiz resolution (offset 0x26)
@@ -61,11 +63,11 @@ bool RageSurfaceUtils::SaveBMP( RageSurface *surface, RageFile &f )
 
 	for( int y = converted_surface->h-1; y >= 0; --y )
 	{
-		const uint8_t *pRow = converted_surface->pixels + converted_surface->pitch*y;
+		const std::uint8_t *pRow = converted_surface->pixels + converted_surface->pitch*y;
 		WriteBytes( f, sError, pRow, converted_surface->pitch );
 
 		/* Pad the row to the pitch. */
-		uint8_t padding[4] = { 0,0,0,0 };
+		std::uint8_t padding[4] = { 0,0,0,0 };
 		WriteBytes( f, sError, padding, iFilePitch-converted_surface->pitch );
 	}
 
@@ -83,7 +85,7 @@ bool RageSurfaceUtils::SaveBMP( RageSurface *surface, RageFile &f )
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -93,7 +95,7 @@ bool RageSurfaceUtils::SaveBMP( RageSurface *surface, RageFile &f )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

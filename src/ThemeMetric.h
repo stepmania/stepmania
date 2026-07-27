@@ -4,10 +4,13 @@
 #define THEME_METRIC_H
 
 #include "ThemeManager.h"
-#include <map>
-
 #include "LuaManager.h"
 #include "RageUtil.h"
+
+#include <cstddef>
+#include <map>
+#include <vector>
+
 
 /** @brief The general interface for reading ThemeMetrics. */
 class IThemeMetric
@@ -179,16 +182,16 @@ public:
 	bool operator == ( const T& input ) const { return GetValue() == input; }
 };
 
-typedef RString (*MetricName1D)(size_t N);
+typedef RString (*MetricName1D)(std::size_t N);
 
 template <class T>
 class ThemeMetric1D : public IThemeMetric
 {
 	typedef ThemeMetric<T> ThemeMetricT;
-	vector<ThemeMetricT> m_metric;
+	std::vector<ThemeMetricT> m_metric;
 
 public:
-	ThemeMetric1D( const RString& sGroup, MetricName1D pfn, size_t N )
+	ThemeMetric1D( const RString& sGroup, MetricName1D pfn, std::size_t N )
 	{
 		Load( sGroup, pfn, N );
 	}
@@ -196,7 +199,7 @@ public:
 	{
 		Load( RString(), nullptr, 0 );
 	}
-	void Load( const RString& sGroup, MetricName1D pfn, size_t N )
+	void Load( const RString& sGroup, MetricName1D pfn, std::size_t N )
 	{
 		m_metric.resize( N );
 		for( unsigned i=0; i<N; i++ )
@@ -212,27 +215,27 @@ public:
 		for( unsigned i=0; i<m_metric.size(); i++ )
 			m_metric[i].Clear();
 	}
-	const T& GetValue( size_t i ) const
+	const T& GetValue( std::size_t i ) const
 	{
 		return m_metric[i].GetValue();
 	}
 };
 
-typedef RString (*MetricName2D)(size_t N, size_t M);
+typedef RString (*MetricName2D)(std::size_t N, std::size_t M);
 
 template <class T>
 class ThemeMetric2D : public IThemeMetric
 {
 	typedef ThemeMetric<T> ThemeMetricT;
-	typedef vector<ThemeMetricT> ThemeMetricTVector;
-	vector<ThemeMetricTVector> m_metric;
+	typedef std::vector<ThemeMetricT> ThemeMetricTVector;
+	std::vector<ThemeMetricTVector> m_metric;
 
 public:
-	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = nullptr, size_t N = 0, size_t M = 0 )
+	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = nullptr, std::size_t N = 0, std::size_t M = 0 )
 	{
 		Load( sGroup, pfn, N, M );
 	}
-	void Load( const RString& sGroup, MetricName2D pfn, size_t N, size_t M )
+	void Load( const RString& sGroup, MetricName2D pfn, std::size_t N, std::size_t M )
 	{
 		m_metric.resize( N );
 		for( unsigned i=0; i<N; i++ )
@@ -254,7 +257,7 @@ public:
 			for( unsigned j=0; j<m_metric[i].size(); j++ )
 				m_metric[i][j].Clear();
 	}
-	const T& GetValue( size_t i, size_t j ) const
+	const T& GetValue( std::size_t i, std::size_t j ) const
 	{
 		return m_metric[i][j].GetValue();
 	}
@@ -266,14 +269,14 @@ template <class T>
 class ThemeMetricMap : public IThemeMetric
 {
 	typedef ThemeMetric<T> ThemeMetricT;
-	map<RString,ThemeMetricT> m_metric;
+	std::map<RString,ThemeMetricT> m_metric;
 
 public:
-	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = nullptr, const vector<RString> vsValueNames = vector<RString>() )
+	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = nullptr, const std::vector<RString> vsValueNames = std::vector<RString>() )
 	{
 		Load( sGroup, pfn, vsValueNames );
 	}
-	void Load( const RString& sGroup, MetricNameMap pfn, const vector<RString> vsValueNames )
+	void Load( const RString& sGroup, MetricNameMap pfn, const std::vector<RString> vsValueNames )
 	{
 		m_metric.clear();
 		for (RString const &s : vsValueNames)
@@ -283,19 +286,19 @@ public:
 	{
 		// HACK: GCC (3.4) takes this and pretty much nothing else.
 		// I don't know why.
-		for( typename map<RString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
+		for( typename std::map<RString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
 			m->second.Read();
 	}
 	void Clear()
 	{
-		for( typename map<RString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
+		for( typename std::map<RString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
 			m->second.Clear();
 	}
 	const T& GetValue( RString s ) const
 	{
 		// HACK: GCC (3.4) takes this and pretty much nothing else.
 		// I don't know why.
-		typename map<RString,ThemeMetric<T> >::const_iterator iter = m_metric.find(s);
+		typename std::map<RString,ThemeMetric<T> >::const_iterator iter = m_metric.find(s);
 		ASSERT( iter != m_metric.end() );
 		return iter->second.GetValue();
 	}
@@ -308,7 +311,7 @@ public:
  * @author Chris Danford, Chris Gomez (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -318,7 +321,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

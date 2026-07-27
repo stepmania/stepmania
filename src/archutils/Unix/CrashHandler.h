@@ -2,6 +2,8 @@
 #define CRASH_HANDLER_H
 
 #include <csignal>
+#include <cstdint>
+
 #include <ucontext.h>
 
 namespace CrashHandler
@@ -10,7 +12,7 @@ namespace CrashHandler
 	void InitializeCrashHandler();
 	void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc );
 	void ForceCrash( const char *reason );
-	void ForceDeadlock( RString reason, uint64_t CrashHandle );
+	void ForceDeadlock( RString reason, std::uint64_t CrashHandle );
 }
 
 #endif
@@ -18,7 +20,7 @@ namespace CrashHandler
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -28,7 +30,7 @@ namespace CrashHandler
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -9,14 +9,18 @@
 #include "ModIcon.h"
 #include "ThemeMetric.h"
 #include "AutoActor.h"
+
 #include <array>
+#include <cstddef>
+#include <vector>
+
 
 class OptionRowHandler;
 class GameCommand;
 struct OptionRowDefinition;
 
-RString ITEMS_LONG_ROW_X_NAME( size_t p );
-RString MOD_ICON_X_NAME( size_t p );
+RString ITEMS_LONG_ROW_X_NAME( std::size_t p );
+RString MOD_ICON_X_NAME( std::size_t p );
 
 class OptionRowType
 {
@@ -63,8 +67,8 @@ public:
 
 	void SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &gc );
 
-	void ImportOptions( const vector<PlayerNumber> &vpns );
-	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
+	void ImportOptions( const std::vector<PlayerNumber> &vpns );
+	int ExportOptions( const std::vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
 
 	enum RowType
 	{
@@ -134,8 +138,8 @@ protected:
 
 	ActorFrame m_Frame;
 
-	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
-	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
+	std::vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
+	std::vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 
 	Actor		*m_sprFrame;
 	BitmapText	*m_textTitle;
@@ -146,7 +150,7 @@ protected:
 
 	int			m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
 	// Only one will true at a time if m_pHand->m_Def.bMultiSelect
-	vector<bool>		m_vbSelected[NUM_PLAYERS];	// size = m_pHand->m_Def.choices.size()
+	std::vector<bool>		m_vbSelected[NUM_PLAYERS];	// size = m_pHand->m_Def.choices.size()
 	Actor::TweenState	m_tsDestination;	// this should approach m_tsDestination.
 
 public:
@@ -158,7 +162,7 @@ public:
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -168,7 +172,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

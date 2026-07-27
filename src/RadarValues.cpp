@@ -5,6 +5,9 @@
 #include "XmlFile.h"
 #include "ThemeManager.h"
 
+#include <vector>
+
+
 ThemeMetric<bool> RadarValues::WRITE_SIMPLE_VALIES( "RadarValues", "WriteSimpleValues" );
 ThemeMetric<bool> RadarValues::WRITE_COMPLEX_VALIES( "RadarValues", "WriteComplexValues" );
 
@@ -55,7 +58,7 @@ XNode* RadarValues::CreateNode( bool bIncludeSimpleValues, bool bIncludeComplexV
 	return pNode;
 }
 
-void RadarValues::LoadFromNode( const XNode* pNode ) 
+void RadarValues::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "RadarValues" );
 
@@ -73,9 +76,9 @@ RString RadarValues::ToString( int iMaxValues ) const
 {
 	if( iMaxValues == -1 )
 		iMaxValues = NUM_RadarCategory;
-	iMaxValues = min( iMaxValues, (int)NUM_RadarCategory );
+	iMaxValues = std::min( iMaxValues, (int)NUM_RadarCategory );
 
-	vector<RString> asRadarValues;
+	std::vector<RString> asRadarValues;
 	for( int r=0; r < iMaxValues; r++ )
 	{
 		asRadarValues.push_back(ssprintf("%.3f", (*this)[r]));
@@ -86,7 +89,7 @@ RString RadarValues::ToString( int iMaxValues ) const
 
 void RadarValues::FromString( RString sRadarValues )
 {
-	vector<RString> saValues;
+	std::vector<RString> saValues;
 	split( sRadarValues, ",", saValues, true );
 
 	if( saValues.size() != NUM_RadarCategory )
@@ -99,13 +102,13 @@ void RadarValues::FromString( RString sRadarValues )
 	{
 		(*this)[rc] = StringToFloat(saValues[rc]);
 	}
-    
+
 }
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the RadarValues. */ 
+/** @brief Allow Lua to have access to the RadarValues. */
 class LunaRadarValues: public Luna<RadarValues>
 {
 public:
@@ -123,7 +126,7 @@ LUA_REGISTER_CLASS( RadarValues )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -133,7 +136,7 @@ LUA_REGISTER_CLASS( RadarValues )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

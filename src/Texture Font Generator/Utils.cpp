@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Utils.h"
 
+#include <cstddef>
+
 Surface::Surface( const Surface &cpy )
 {
 	iWidth = cpy.iWidth;
@@ -32,14 +34,14 @@ void BitmapToSurface( HBITMAP hBitmap, Surface *pSurf )
 	pSurf->pRGBA = (unsigned char *) new unsigned char[pSurf->iWidth * pSurf->iHeight * 4];
 
 	bi.bmiHeader.biHeight = -bi.bmiHeader.biHeight;
-	bi.bmiHeader.biPlanes = 1; 
-	bi.bmiHeader.biBitCount = 32; 
-	bi.bmiHeader.biCompression = BI_RGB; 
+	bi.bmiHeader.biPlanes = 1;
+	bi.bmiHeader.biBitCount = 32;
+	bi.bmiHeader.biCompression = BI_RGB;
 	bi.bmiHeader.biSizeImage = pSurf->iHeight * pSurf->iWidth * 4;
-//LONG   biXPelsPerMeter; 
-//LONG   biYPelsPerMeter; 
-// DWORD  biClrUsed; 
-// DWORD  biClrImportant; 
+//LONG   biXPelsPerMeter;
+//LONG   biYPelsPerMeter;
+// DWORD  biClrUsed;
+// DWORD  biClrImportant;
 
 	if( !GetDIBits(hDC, hBitmap, 0, pSurf->iHeight, pSurf->pRGBA, &bi, DIB_RGB_COLORS) )
 	{
@@ -82,10 +84,10 @@ void GetBounds( const Surface *pSurf, RECT *out )
 			if( (pixel & 0xFFFFFF) == 0 )
 				continue; /* black */
 
-			FirstCol = min(FirstCol, col);
-			LastCol = max(LastCol, col);
-			FirstRow = min(FirstRow, row);
-			LastRow = max(LastRow, row);
+			FirstCol = std::min(FirstCol, col);
+			LastCol = std::max(LastCol, col);
+			FirstRow = std::min(FirstRow, row);
+			LastRow = std::max(LastRow, row);
 		}
 		p += pSurf->iPitch;
 	}
@@ -109,7 +111,7 @@ void GetBounds( const Surface *pSurf, RECT *out )
 static void File_png_write( png_struct *pPng, png_byte *pData, png_size_t iSize )
 {
 	FILE *f = (FILE *) png_get_io_ptr(pPng);
-	size_t iGot = fwrite( pData, (int) iSize, 1, f );
+	std::size_t iGot = fwrite( pData, (int) iSize, 1, f );
 	if( iGot == 0 )
 		png_error( pPng, strerror(errno) );
 }

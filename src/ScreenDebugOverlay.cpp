@@ -31,6 +31,9 @@
 #include "ThemeMetric.h"
 #include "XmlToLua.h"
 
+#include <vector>
+
+
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
 static bool g_bIsHalt = false;
@@ -57,14 +60,14 @@ static LocalizedString MUTE_ACTIONS_ON ("ScreenDebugOverlay", "Mute actions on")
 static LocalizedString MUTE_ACTIONS_OFF ("ScreenDebugOverlay", "Mute actions off");
 
 class IDebugLine;
-static vector<IDebugLine*> *g_pvpSubscribers = nullptr;
+static std::vector<IDebugLine*> *g_pvpSubscribers = nullptr;
 class IDebugLine
 {
 public:
 	IDebugLine()
-	{ 
+	{
 		if( g_pvpSubscribers == nullptr )
-			g_pvpSubscribers = new vector<IDebugLine*>;
+			g_pvpSubscribers = new std::vector<IDebugLine*>;
 		g_pvpSubscribers->push_back( this );
 	}
 	virtual ~IDebugLine() { }
@@ -125,7 +128,7 @@ struct MapDebugToDI
 	DeviceInput toggleMute;
 	DeviceInput debugButton[MAX_DEBUG_LINES];
 	DeviceInput gameplayButton[MAX_DEBUG_LINES];
-	map<DeviceInput, int> pageButton;
+	std::map<DeviceInput, int> pageButton;
 	void Clear()
 	{
 		holdForDebug1.MakeInvalid();
@@ -160,9 +163,9 @@ static RString GetDebugButtonName( const IDebugLine *pLine )
 }
 
 template<typename U, typename V>
-static bool GetKeyFromMap( const map<U, V> &m, const V &val, U &key )
+static bool GetKeyFromMap( const std::map<U, V> &m, const V &val, U &key )
 {
-	for( typename map<U,V>::const_iterator iter = m.begin(); iter != m.end(); ++iter )
+	for( typename std::map<U, V>::const_iterator iter = m.begin(); iter != m.end(); ++iter )
 	{
 		if( iter->second == val )
 		{
@@ -227,7 +230,7 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F8)] = 3;
 	}
 
-	map<RString,int> iNextDebugButton;
+	std::map<RString, int> iNextDebugButton;
 	int iNextGameplayButton = 0;
 	for (IDebugLine *p : *g_pvpSubscribers)
 	{
@@ -265,7 +268,7 @@ void ScreenDebugOverlay::Init()
 	this->AddChild( &m_textHeader );
 
 	auto start = m_asPages.begin();
-	for (vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
+	for (std::vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
 		int iPage = s - start;
 
@@ -342,7 +345,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 	if( bCenteringNeedsUpdate )
 	{
 		DISPLAY->ChangeCentering(
-			PREFSMAN->m_iCenterImageTranslateX, 
+			PREFSMAN->m_iCenterImageTranslateX,
 			PREFSMAN->m_iCenterImageTranslateY,
 			PREFSMAN->m_fCenterImageAddWidth - (int)SCREEN_WIDTH + (int)(g_fImageScaleCurrent*SCREEN_WIDTH),
 			PREFSMAN->m_fCenterImageAddHeight - (int)SCREEN_HEIGHT + (int)(g_fImageScaleCurrent*SCREEN_HEIGHT) );
@@ -360,7 +363,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 void ScreenDebugOverlay::UpdateText()
 {
 	auto start = m_asPages.begin();
-	for (vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
+	for (std::vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
 		int iPage = s - start;
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
@@ -369,7 +372,7 @@ void ScreenDebugOverlay::UpdateText()
 	// todo: allow changing of various spacing/location things -aj
 	int iOffset = 0;
 	auto subStart = g_pvpSubscribers->begin();
-	for (vector<IDebugLine *>::const_iterator p = subStart; p != g_pvpSubscribers->end(); ++p)
+	for (std::vector<IDebugLine*>::const_iterator p = subStart; p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
 
@@ -425,9 +428,9 @@ void ScreenDebugOverlay::UpdateText()
 }
 
 template<typename U, typename V>
-static bool GetValueFromMap( const map<U, V> &m, const U &key, V &val )
+static bool GetValueFromMap( const std::map<U, V> &m, const U &key, V &val )
 {
-	typename map<U, V>::const_iterator it = m.find(key);
+	typename std::map<U, V>::const_iterator it = m.find(key);
 	if( it == m.end() )
 		return false;
 	val = it->second;
@@ -436,7 +439,7 @@ static bool GetValueFromMap( const map<U, V> &m, const U &key, V &val )
 
 bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 {
-	if( input.DeviceI == g_Mappings.holdForDebug1 || 
+	if( input.DeviceI == g_Mappings.holdForDebug1 ||
 		input.DeviceI == g_Mappings.holdForDebug2 )
 	{
 		bool bHoldingNeither =
@@ -470,7 +473,7 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 	}
 
 	auto start = g_pvpSubscribers->begin();
-	for (vector<IDebugLine *>::const_iterator p = start; p != g_pvpSubscribers->end(); ++p)
+	for (std::vector<IDebugLine*>::const_iterator p = start; p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
 
@@ -617,8 +620,8 @@ class DebugLineAutoplay : public IDebugLine
 	{
 		ASSERT( GAMESTATE->GetMasterPlayerNumber() != PLAYER_INVALID );
 		PlayerController pc = GAMESTATE->m_pPlayerState[GAMESTATE->GetMasterPlayerNumber()]->m_PlayerController;
-		bool bHoldingShift = 
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) || 
+		bool bHoldingShift =
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) ||
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) );
 		if( bHoldingShift )
 			pc = (pc==PC_CPU) ? PC_HUMAN : PC_CPU;
@@ -630,12 +633,6 @@ class DebugLineAutoplay : public IDebugLine
 		FOREACH_MultiPlayer(p)
 			GAMESTATE->m_pMultiPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
 
-		// Hide Autoplay if Alt is held down
-		bool bHoldingAlt = 
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT) ) || 
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT) );
-		ScreenSyncOverlay::SetShowAutoplay( !bHoldingAlt );
-
 		IDebugLine::DoAndLog( sMessageOut );
 	}
 };
@@ -644,7 +641,7 @@ class DebugLineAssist : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return ASSIST.GetValue(); }
 	virtual Type GetType() const { return gameplay_only; }
-	virtual RString GetDisplayValue() { 
+	virtual RString GetDisplayValue() {
 		SongOptions so;
 		so.m_bAssistClap = GAMESTATE->m_SongOptions.GetSong().m_bAssistClap;
 		so.m_bAssistMetronome = GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome;
@@ -676,7 +673,7 @@ class DebugLineAutosync : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return AUTOSYNC.GetValue(); }
 	virtual RString GetDisplayValue()
-	{ 
+	{
 		AutosyncType type = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType;
 		switch( type )
 		{
@@ -694,7 +691,7 @@ class DebugLineAutosync : public IDebugLine
 	{
 		int as = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType + 1;
 		bool bAllowSongAutosync = !GAMESTATE->IsCourseMode();
-		if( !bAllowSongAutosync  && 
+		if( !bAllowSongAutosync  &&
 		  ( as == AutosyncType_Song || as == AutosyncType_Tempo ) )
 			as = AutosyncType_Machine;
 		wrap( as, NUM_AutosyncType );
@@ -902,7 +899,7 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 
 static void FillProfileStats( Profile *pProfile )
 {
-	pProfile->InitSongScores(); 
+	pProfile->InitSongScores();
 	pProfile->InitCourseScores();
 
 	static int s_iCount = 0;
@@ -912,14 +909,14 @@ static void FillProfileStats( Profile *pProfile )
 	s_iCount = (s_iCount+1)%2;
 
 
-	int iCount = pProfile->IsMachine()? 
+	int iCount = pProfile->IsMachine()?
 		PREFSMAN->m_iMaxHighScoresPerListForMachine.Get():
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer.Get();
 
-	vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
+	std::vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
 	for (Song const *pSong : vpAllSongs)
 	{
-		vector<Steps*> vpAllSteps = pSong->GetAllSteps();
+		std::vector<Steps*> vpAllSteps = pSong->GetAllSteps();
 		for (Steps const *pSteps : vpAllSteps)
 		{
 			if( rand() % 5 )
@@ -932,11 +929,11 @@ static void FillProfileStats( Profile *pProfile )
 		}
 	}
 
-	vector<Course*> vpAllCourses;
+	std::vector<Course*> vpAllCourses;
 	SONGMAN->GetAllCourses( vpAllCourses, true );
 	for (Course const *pCourse : vpAllCourses)
 	{
-		vector<Trail*> vpAllTrails;
+		std::vector<Trail*> vpAllTrails;
 		pCourse->GetAllTrails( vpAllTrails );
 		for (Trail const *pTrail : vpAllTrails)
 		{
@@ -1378,7 +1375,7 @@ DECLARE_ONE( DebugLineMuteActions );
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1388,7 +1385,7 @@ DECLARE_ONE( DebugLineMuteActions );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -5,6 +5,9 @@
 #include "RageMath.h"
 #include "RageDisplay.h"
 
+#include <cstdint>
+#include <vector>
+
 #define MS_MAX_NAME	32
 
 RageModelGeometry::RageModelGeometry ()
@@ -29,7 +32,7 @@ void RageModelGeometry::OptimizeBones()
 
 		// check to see if all vertices have the same bone index
 		bool bAllVertsUseSameBone = true;
-		
+
 		char iBoneIndex	= mesh.Vertices[0].bone;
 
 		for (unsigned j = 1; j < mesh.Vertices.size(); j++)
@@ -69,8 +72,8 @@ void RageModelGeometry::MergeMeshes( int iFromIndex, int iToIndex )
 	{
 		for( int j=0; j<3; j++ )
 		{
-			uint16_t &iIndex = meshTo.Triangles[i].nVertexIndices[j];
-			iIndex = uint16_t(iIndex + iShiftTriangleVertexIndicesBy);
+			std::uint16_t &iIndex = meshTo.Triangles[i].nVertexIndices[j];
+			iIndex = std::uint16_t(iIndex + iShiftTriangleVertexIndicesBy);
 		}
 	}
 }
@@ -135,8 +138,8 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 			for( int i = 0; i < nNumMeshes; i++ )
 			{
 				msMesh &mesh = m_Meshes[i];
-				vector<RageModelVertex> &Vertices = mesh.Vertices;
-				vector<msTriangle> &Triangles = mesh.Triangles;
+				std::vector<RageModelVertex> &Vertices = mesh.Vertices;
+				std::vector<msTriangle> &Triangles = mesh.Triangles;
 
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
@@ -147,7 +150,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 
 				mesh.sName = szName;
 				// mesh.nFlags = nFlags;
-				mesh.nMaterialIndex = (uint8_t) nIndex;
+				mesh.nMaterialIndex = (std::uint8_t) nIndex;
 
 				mesh.m_iBoneIndex = -1;
 
@@ -190,7 +193,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 						v.t[0] = v.p[0] / v.t[0];
 						v.t[1] = v.p[1] / v.t[1];
 					}
-					v.bone = (uint8_t) nIndex;
+					v.bone = (std::uint8_t) nIndex;
 					RageVec3AddToBounds( v.p, m_vMins, m_vMaxs );
 				}
 
@@ -205,7 +208,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 				if( sscanf(sLine, "%d", &nNumNormals) != 1 )
 					THROW;
 
-				vector<RageVector3> Normals;
+				std::vector<RageVector3> Normals;
 				Normals.resize( nNumNormals );
 				for( int j = 0; j < nNumNormals; j++ )
 				{
@@ -237,9 +240,9 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					if( f.GetLine( sLine ) <= 0 )
 						THROW;
 
-					uint16_t nIndices[3];
-					uint16_t nNormalIndices[3];
-					if( sscanf (sLine, "%d %hd %hd %hd %hd %hd %hd %d",
+					std::uint16_t nIndices[3];
+					std::uint16_t nNormalIndices[3];
+					if( sscanf (sLine, "%d %hu %hu %hu %hu %hu %hu %d",
 								&nFlags,
 								&nIndices[0], &nIndices[1], &nIndices[2],
 								&nNormalIndices[0], &nNormalIndices[1], &nNormalIndices[2],

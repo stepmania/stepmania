@@ -6,12 +6,15 @@
 #include "RageUtil_AutoPtr.h"
 #include "LuaReference.h"
 #include "EnumHelper.h"
-#include <map>
 class XNode;
 struct lua_State;
 class LuaClass;
 #include "MessageManager.h"
 #include "Tween.h"
+
+#include <cstddef>
+#include <map>
+#include <vector>
 
 typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
@@ -275,8 +278,8 @@ public:
 	virtual void DrawPrimitives() {};
 	/** @brief Pop the transform from the world matrix stack. */
 	virtual void EndDraw();
-	
-	// TODO: make Update non virtual and change all classes to override UpdateInternal 
+
+	// TODO: make Update non virtual and change all classes to override UpdateInternal
 	// instead.
 	bool IsFirstUpdate() const;
 	virtual void Update( float fDeltaTime );		// this can short circuit UpdateInternal
@@ -315,9 +318,9 @@ public:
 	Actor* GetFakeParent() { return m_FakeParent; }
 
 	void AddWrapperState();
-	void RemoveWrapperState(size_t i);
-	Actor* GetWrapperState(size_t i);
-	size_t GetNumWrapperStates() const { return m_WrapperStates.size(); }
+	void RemoveWrapperState(std::size_t i);
+	Actor* GetWrapperState(std::size_t i);
+	std::size_t GetNumWrapperStates() const { return m_WrapperStates.size(); }
 
 	/**
 	 * @brief Retrieve the Actor's x position.
@@ -397,9 +400,9 @@ public:
 	 * @brief Set the zoom factor for all dimensions of the Actor.
 	 * @param zoom the zoom factor for all dimensions. */
 	void  SetZoom( float zoom )
-	{ 
-		DestTweenState().scale.x = zoom; 
-		DestTweenState().scale.y = zoom; 
+	{
+		DestTweenState().scale.x = zoom;
+		DestTweenState().scale.y = zoom;
 		DestTweenState().scale.z = zoom;
 	}
 	/**
@@ -477,7 +480,7 @@ public:
 	float GetAux() const				{ return m_current.aux; }
 
 	virtual void BeginTweening( float time, ITween *pInterp );
-	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
+	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	virtual void StopTweening();
 	void Sleep( float time );
 	void QueueCommand( const RString& sCommandName );
@@ -497,7 +500,7 @@ public:
 
 	/** @brief How do we handle stretching the Actor? */
 	enum StretchType
-	{ 
+	{
 		fit_inside, /**< Have the Actor fit inside its parent, using the smaller zoom. */
 		cover /**< Have the Actor cover its parent, using the larger zoom. */
 	};
@@ -579,16 +582,16 @@ public:
 	void StopAnimating()				{ this->EnableAnimation(false); }
 
 	// render states
-	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
+	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; }
 	void SetTextureTranslate( float x, float y )	{ m_texTranslate.x = x; m_texTranslate.y = y; }
-	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
-	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; } 
-	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; } 
-	void SetUseZBuffer( bool b ) 				{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
-	virtual void SetZTestMode( ZTestMode mode )	{ m_ZTestMode = mode; } 
-	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
+	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; }
+	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; }
+	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; }
+	void SetUseZBuffer( bool b ) 				{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); }
+	virtual void SetZTestMode( ZTestMode mode )	{ m_ZTestMode = mode; }
+	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; }
 	void SetZBias( float f )					{ m_fZBias = f; }
-	virtual void SetCullMode( CullMode mode ) { m_CullMode = mode; } 
+	virtual void SetCullMode( CullMode mode ) { m_CullMode = mode; }
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
@@ -632,7 +635,7 @@ protected:
 	Actor* m_FakeParent;
 	// WrapperStates provides a way to wrap the actor inside ActorFrames,
 	// applicable to any actor, not just ones the theme creates.
-	vector<Actor*> m_WrapperStates;
+	std::vector<Actor*> m_WrapperStates;
 
 	/** @brief Some general information about the Tween. */
 	struct TweenInfo
@@ -667,7 +670,7 @@ protected:
 		TweenState state;
 		TweenInfo info;
 	};
-	vector<TweenStateAndInfo *>	m_Tweens;
+	std::vector<TweenStateAndInfo *>	m_Tweens;
 
 	/** @brief Temporary variables that are filled just before drawing */
 	TweenState *m_pTempState;
@@ -686,7 +689,7 @@ protected:
 
 	// Stuff for effects
 #if defined(SSC_FUTURES) // be able to stack effects
-	vector<Effect> m_Effects;
+	std::vector<Effect> m_Effects;
 #else // compatibility
 	Effect m_Effect;
 #endif
@@ -746,12 +749,12 @@ protected:
 	// global state
 	static float g_fCurrentBGMTime, g_fCurrentBGMBeat;
 	static float g_fCurrentBGMTimeNoOffset, g_fCurrentBGMBeatNoOffset;
-	static vector<float> g_vfCurrentBGMBeatPlayer;
-	static vector<float> g_vfCurrentBGMBeatPlayerNoOffset;
+	static std::vector<float> g_vfCurrentBGMBeatPlayer;
+	static std::vector<float> g_vfCurrentBGMBeatPlayerNoOffset;
 
 private:
 	// commands
-	map<RString, apActorCommands> m_mapNameToCommands;
+	std::map<RString, apActorCommands> m_mapNameToCommands;
 };
 
 #endif
@@ -761,7 +764,7 @@ private:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -771,7 +774,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

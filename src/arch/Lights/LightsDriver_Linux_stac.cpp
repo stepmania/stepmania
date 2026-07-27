@@ -1,5 +1,13 @@
 #include "global.h"
-#include <stdio.h>
+#include "LightsDriver_Linux_stac.h"
+#include "GameState.h"
+#include "Game.h"
+#include "RageLog.h"
+
+#include <cerrno>
+#include <cstdint>
+#include <cstdio>
+
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
@@ -10,12 +18,6 @@
 #include <fcntl.h>
 #endif
 
-#include <errno.h>
-#include "LightsDriver_Linux_stac.h"
-#include "GameState.h"
-#include "Game.h"
-#include "RageLog.h"
-
 #include <libudev.h>
 #include <fcntl.h>
 #include <linux/hidraw.h>
@@ -23,7 +25,7 @@
 
 REGISTER_LIGHTS_DRIVER_CLASS2(stac, Linux_stac);
 
-StacDevice::StacDevice(uint8_t pn)
+StacDevice::StacDevice(std::uint8_t pn)
 {
     memset(outputBuffer, 0x00, sizeof(outputBuffer));
 
@@ -175,11 +177,11 @@ void StacDevice::Close()
 void StacDevice::SetInBuffer(int index, bool lightState)
 {
     //the first byte is the report ID, so we offset it here to adjust.
-    uint8_t index_offset = index + 1;
+    std::uint8_t index_offset = index + 1;
 
     //each index in the array represents a single light,
     //the light will turn on for any value that isn't 0x00
-    uint8_t val = lightState ? 0xFF : 0x00;
+    std::uint8_t val = lightState ? 0xFF : 0x00;
 
     //ensure the index is valid and the light value has changed.
     if (index_offset < STAC_HIDREPORT_SIZE && outputBuffer[index_offset] != val)

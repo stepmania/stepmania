@@ -2,8 +2,10 @@
 #include "MemoryCardDriver.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-
 #include "ProfileManager.h"
+
+#include <vector>
+
 
 static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
@@ -22,7 +24,7 @@ XToString(MemoryCardDriverType);
 StringToX(MemoryCardDriverType);
 LuaXType(MemoryCardDriverType);
 
-Preference<MemoryCardDriverType> g_MemoryCardDriver("MemoryCardDriver", MemoryCardDriverType_Usb);
+Preference<MemoryCardDriverType> g_MemoryCardDriver("MemoryCardDriver", MemoryCardDriverType_Usb, nullptr, PreferenceType::Immutable);
 
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 {
@@ -59,18 +61,18 @@ bool MemoryCardDriver::NeedUpdate( bool bMount )
 	return USBStorageDevicesChanged();
 }
 
-bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut )
+bool MemoryCardDriver::DoOneUpdate( bool bMount, std::vector<UsbStorageDevice>& vStorageDevicesOut )
 {
 	if( !NeedUpdate(bMount) )
 		return false;
 
-	vector<UsbStorageDevice> vOld = m_vDevicesLastSeen; // copy
+	std::vector<UsbStorageDevice> vOld = m_vDevicesLastSeen; // copy
 	GetUSBStorageDevices( vStorageDevicesOut );
 
 	// log connects
 	for (UsbStorageDevice &newd : vStorageDevicesOut)
 	{
-		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), newd );
+		std::vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), newd );
 		if( iter == vOld.end() )    // didn't find
 			LOG->Trace( "New device connected: %s", newd.sDevice.c_str() );
 	}
@@ -85,7 +87,7 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 		/* If this device was just connected (it wasn't here last time), set it to
 		 * CHECKING and return it, to let the main thread know about the device before
 		 * we start checking. */
-		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), d );
+		std::vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), d );
 		if( iter == vOld.end() )    // didn't find
 		{
 			LOG->Trace( "New device entering CHECKING: %s", d.sDevice.c_str() );
@@ -121,10 +123,10 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 				 * profile name (by mounting a temporary, private mountpoint),
 				 * and then unmount it until Mount() is called. */
 				d.m_State = UsbStorageDevice::STATE_READY;
-			
-				FILEMAN->Mount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
+
+				FILEMAN->Mount( "dirro", d.sOsMountDir, TEMP_MOUNT_POINT );
 				d.bIsNameAvailable = PROFILEMAN->FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, d.sName );
-				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
+				FILEMAN->Unmount( "dirro", d.sOsMountDir, TEMP_MOUNT_POINT );
 			}
 
 			this->Unmount( &d );
@@ -153,6 +155,8 @@ MemoryCardDriver *MemoryCardDriver::Create()
 			ret = new ARCH_MEMORY_CARD_DRIVER;
 #endif
 			break;
+		default:
+			break;
 	}
 
 	if( !ret )
@@ -165,7 +169,7 @@ MemoryCardDriver *MemoryCardDriver::Create()
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -175,7 +179,7 @@ MemoryCardDriver *MemoryCardDriver::Create()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

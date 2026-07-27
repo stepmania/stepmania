@@ -38,6 +38,9 @@ private:
 
 	bool m_bWasWindowed;
 	ActualVideoModeParams CurrentParams;
+
+	float m_lastScreensaverInterrupt = 0.0f;
+	float m_screensaverInterruptInterval = 60.0f;
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW

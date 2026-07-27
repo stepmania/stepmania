@@ -4,109 +4,158 @@
 #define RAGE_MOVIE_TEXTURE_FFMPEG_H
 
 #include "MovieTexture_Generic.h"
+
+#include <cstdint>
+#include <mutex>
+
 struct RageSurface;
 
 namespace avcodec
 {
 	extern "C"
 	{
-		#include <libavformat/avformat.h>
-		#include <libswscale/swscale.h>
-		#include <libavutil/pixdesc.h>
-
-		#if LIBAVCODEC_VERSION_MAJOR >= 58
-		#define av_free_packet av_packet_unref
-		#define PixelFormat AVPixelFormat
-		#define PIX_FMT_YUYV422 AV_PIX_FMT_YUYV422
-		#define PIX_FMT_BGRA    AV_PIX_FMT_BGRA
-		#define PIX_FMT_ARGB	AV_PIX_FMT_ARGB
-		#define PIX_FMT_ABGR	AV_PIX_FMT_ABGR
-		#define PIX_FMT_RGBA	AV_PIX_FMT_RGBA
-		#define PIX_FMT_RGB24	AV_PIX_FMT_RGB24
-		#define PIX_FMT_BGR24	AV_PIX_FMT_BGR24
-		#define PIX_FMT_RGB555	AV_PIX_FMT_RGB555
-		#define PIX_FMT_NB		AV_PIX_FMT_NB
-		#define CODEC_ID_NONE   AV_CODEC_ID_NONE
-		#endif
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
+#include <libavutil/pixdesc.h>
 	}
 };
 
 #define STEPMANIA_FFMPEG_BUFFER_SIZE 4096
-static const int sws_flags = SWS_BICUBIC; // XXX: Reasonable default?
+static const int kSwsFlags = SWS_BICUBIC; // XXX: Reasonable default?
 
-class MovieTexture_FFMpeg: public MovieTexture_Generic
-{
-public:
-	MovieTexture_FFMpeg( RageTextureID ID );
+struct FrameHolder {
+	avcodec::AVFrame* frame = avcodec::av_frame_alloc();
+	avcodec::AVPacket* packet = avcodec::av_packet_alloc();
+	float frame_timestamp = 0;
+	float frame_delay = 0;
+	bool decoded = false;
+	bool skip = false;
+	std::mutex lock; // Protects the frame as it's being initialized.
 
-	static void RegisterProtocols();
-	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt, MovieDecoderPixelFormatYCbCr &fmtout );
+	FrameHolder() = default;
+
+	FrameHolder(const FrameHolder& fh) {
+		avcodec::av_frame_ref(frame, fh.frame);
+		avcodec::av_packet_ref(packet, fh.packet);
+		frame_timestamp = fh.frame_timestamp;
+		frame_delay = fh.frame_delay;
+		decoded = fh.decoded;
+		skip = fh.skip;
+	}
+
+	~FrameHolder() {
+		if (packet != nullptr) {
+			avcodec::av_packet_free(&packet);
+		}
+		if (frame != nullptr) {
+			avcodec::av_frame_free(&frame);
+		}
+	}
 };
 
-class RageMovieTextureDriver_FFMpeg: public RageMovieTextureDriver
+class MovieTexture_FFMpeg : public MovieTexture_Generic
 {
 public:
-	virtual RageMovieTexture *Create( RageTextureID ID, RString &sError );
-	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt, MovieDecoderPixelFormatYCbCr &fmtout );
+	MovieTexture_FFMpeg(RageTextureID ID);
+
+	static RageSurface* AVCodecCreateCompatibleSurface(int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int& iAVTexfmt, MovieDecoderPixelFormatYCbCr& fmtout);
 };
 
-class MovieDecoder_FFMpeg: public MovieDecoder
+class RageMovieTextureDriver_FFMpeg : public RageMovieTextureDriver
+{
+public:
+	virtual RageMovieTexture* Create(RageTextureID ID, RString& sError);
+	static RageSurface* AVCodecCreateCompatibleSurface(int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int& iAVTexfmt, MovieDecoderPixelFormatYCbCr& fmtout);
+};
+
+class MovieDecoder_FFMpeg : public MovieDecoder
 {
 public:
 	MovieDecoder_FFMpeg();
 	~MovieDecoder_FFMpeg();
 
-	RString Open( RString sFile );
+	RString Open(RString sFile);
 	void Close();
 	void Rewind();
 
-	void GetFrame( RageSurface *pOut );
-	int DecodeFrame( float fTargetTime );
+	// This draws a frame from the buffer onto the provided RageSurface.
+	// Returns true if returning the last frame in the movie.
+	bool GetFrame(RageSurface* pOut);
+	int DecodeFrame(float fTargetTime);
 
-	int GetWidth() const { return m_pStreamCodec->width; }
-	int GetHeight() const { return m_pStreamCodec->height; }
+	// Decode a single frame.  Return -2 on cancel, -1 on error, 0 on EOF, 1 if we have a frame.
+	int DecodeNextFrame();
 
-	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout );
+	// Decode the entire movie.
+	// If we let this decode as fast as possible, it could come at the expense
+	// of gameplay performance. Since dropping frames is undesirable, an
+	// artificial rate limit is introduced.
+	//
+	// Given that most movies will display at 30fps or 60fps, decoding at a
+	// speed of 1000fps should be more than sufficient to ensure we never
+	// run behind. This rate limiting is only needed in case stepmania is
+	// running on a low performance machine, or the movie is REALLY long.
+	//
+	// Returns 0 on success, -1 on fatal error, -2 on cancel.
+	int DecodeMovie();
+	bool IsCurrentFrameReady();
+
+	int GetWidth() const { return av_stream_codec_->width; }
+	int GetHeight() const { return av_stream_codec_->height; }
+
+	RageSurface* CreateCompatibleSurface(int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr& fmtout);
 
 	float GetTimestamp() const;
-	float GetFrameDuration() const;
+
+	void Cancel() { cancel_ = true; };
+
+	// If the next frame to display had an issue decoding, skip it.
+	bool SkipNextFrame();
 
 private:
 	void Init();
 	RString OpenCodec();
-	int ReadPacket();
-	int DecodePacket( float fTargetTime );
 
-	avcodec::AVStream *m_pStream;
-	avcodec::AVFrame *m_Frame;
-	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
-	avcodec::SwsContext *m_swsctx;
-	avcodec::AVCodecContext *m_pStreamCodec;
+	// Read a packet and send it to our frame data buffer.
+	// Returns -2 on cancel, -1 on error, 0 on EOF, 1 on OK.
+	int SendPacketToBuffer();
 
-	avcodec::AVFormatContext *m_fctx;
-	float m_fTimestamp;
-	float m_fTimestampOffset;
-	float m_fLastFrameDelay;
-	int m_iFrameNumber;
+	// Decode frame data from the packet in the buffer.
+	// Returns -2 on cancel, -1 on error, 0 if the packet is finished.
+	int DecodePacketInBuffer();
 
-	unsigned char *m_buffer;
-	avcodec::AVIOContext *m_avioContext;
+	avcodec::AVStream* av_stream_;
+	avcodec::AVPixelFormat av_pixel_format_;	/* pixel format of output surface */
+	avcodec::SwsContext* av_sws_context_;
+	avcodec::AVCodecContext* av_stream_codec_;
 
-	avcodec::AVPacket m_Packet;
-	int m_iCurrentPacketOffset;
-	float m_fLastFrame;
+	avcodec::AVFormatContext* av_format_context_;
+	int display_frame_num_;
+	int total_frames_; // Total number of frames in the movie.
 
-	/* 0 = no EOF
-	 * 1 = EOF from ReadPacket
-	 * 2 = EOF from ReadPacket and DecodePacket */
-	int m_iEOF;
+	unsigned char* av_buffer_;
+	avcodec::AVIOContext* av_io_context_;
+
+	// The movie buffer.
+	std::vector<std::unique_ptr<FrameHolder>> frame_buffer_;
+
+	int current_packet_offset_;
+
+	// 0 = no EOF
+	// 1 = EOF while decoding
+	int end_of_file_;
+
+	// If true, received a cancel signal from the MovieTexture.
+	bool cancel_ = false;
+	bool first_frame_ = true;
 };
 
 static struct AVPixelFormat_t
 {
 	int bpp;
-	uint32_t masks[4];
-	avcodec::PixelFormat pf;
+	std::uint32_t masks[4];
+	avcodec::AVPixelFormat pf;
 	bool bHighColor;
 	bool bByteSwapOnLittleEndian;
 	MovieDecoderPixelFormatYCbCr YUV;
@@ -117,7 +166,7 @@ static struct AVPixelFormat_t
 		  0x00FF0000,
 		  0x0000FF00,
 		  0x000000FF },
-		avcodec::PIX_FMT_YUYV422,
+		avcodec::AV_PIX_FMT_YUYV422,
 		false, /* N/A */
 		true,
 		PixelFormatYCbCr_YUYV422,
@@ -128,7 +177,7 @@ static struct AVPixelFormat_t
 		  0x00FF0000,
 		  0xFF000000,
 		  0x000000FF },
-		avcodec::PIX_FMT_BGRA,
+		avcodec::AV_PIX_FMT_BGRA,
 		true,
 		true,
 		PixelFormatYCbCr_Invalid,
@@ -139,41 +188,18 @@ static struct AVPixelFormat_t
 		  0x0000FF00,
 		  0x000000FF,
 		  0xFF000000 },
-		avcodec::PIX_FMT_ARGB,
+		avcodec::AV_PIX_FMT_ARGB,
 		true,
 		true,
 		PixelFormatYCbCr_Invalid,
 	},
-	/*
-	{
-		32,
-		{ 0x000000FF,
-		  0x0000FF00,
-		  0x00FF0000,
-		  0xFF000000 },
-		avcodec::PIX_FMT_ABGR,
-		true,
-		true,
-		PixelFormatYCbCr_Invalid,
-	},
-	{
-		32,
-		{ 0xFF000000,
-		  0x00FF0000,
-		  0x0000FF00,
-		  0x000000FF },
-		avcodec::PIX_FMT_RGBA,
-		true,
-		true,
-		PixelFormatYCbCr_Invalid,
-	}, */
 	{
 		24,
 		{ 0xFF0000,
 		  0x00FF00,
 		  0x0000FF,
 		  0x000000 },
-		avcodec::PIX_FMT_RGB24,
+		avcodec::AV_PIX_FMT_RGB24,
 		true,
 		true,
 		PixelFormatYCbCr_Invalid,
@@ -184,7 +210,7 @@ static struct AVPixelFormat_t
 		  0x00FF00,
 		  0xFF0000,
 		  0x000000 },
-		avcodec::PIX_FMT_BGR24,
+		avcodec::AV_PIX_FMT_BGR24,
 		true,
 		true,
 		PixelFormatYCbCr_Invalid,
@@ -195,12 +221,12 @@ static struct AVPixelFormat_t
 		  0x03E0,
 		  0x001F,
 		  0x0000 },
-		avcodec::PIX_FMT_RGB555,
+		avcodec::AV_PIX_FMT_RGB555,
 		false,
 		false,
 		PixelFormatYCbCr_Invalid,
 	},
-	{ 0, { 0,0,0,0 }, avcodec::PIX_FMT_NB, true, false, PixelFormatYCbCr_Invalid }
+	{ 0, { 0,0,0,0 }, avcodec::AV_PIX_FMT_NB, true, false, PixelFormatYCbCr_Invalid }
 };
 
 #endif

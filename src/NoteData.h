@@ -2,9 +2,12 @@
 #define NOTE_DATA_H
 
 #include "NoteTypes.h"
+
 #include <map>
 #include <set>
 #include <iterator>
+#include <vector>
+
 
 /** @brief Act on each non empty row in the specific track. */
 #define FOREACH_NONEMPTY_ROW_IN_TRACK( nd, track, row ) \
@@ -27,11 +30,11 @@
 class NoteData
 {
 public:
-	typedef map<int,TapNote> TrackMap;
-	typedef map<int,TapNote>::iterator iterator;
-	typedef map<int,TapNote>::const_iterator const_iterator;
-	typedef map<int,TapNote>::reverse_iterator reverse_iterator;
-	typedef map<int,TapNote>::const_reverse_iterator const_reverse_iterator;
+	typedef std::map<int,TapNote> TrackMap;
+	typedef std::map<int,TapNote>::iterator iterator;
+	typedef std::map<int,TapNote>::const_iterator const_iterator;
+	typedef std::map<int,TapNote>::reverse_iterator reverse_iterator;
+	typedef std::map<int,TapNote>::const_reverse_iterator const_reverse_iterator;
 
 	NoteData(): m_TapNotes() {}
 
@@ -60,19 +63,19 @@ public:
 	class _all_tracks_iterator
 	{
 		ND		*m_pNoteData;
-		vector<iter>	m_vBeginIters;
+		std::vector<iter>	m_vBeginIters;
 
 		/* There isn't a "past the beginning" iterator so this is hard to make a true bidirectional iterator.
 		* Use the "past the end" iterator in place of the "past the beginning" iterator when in reverse. */
-		vector<iter>	m_vCurrentIters;
+		std::vector<iter>	m_vCurrentIters;
 
-		vector<iter>	m_vEndIters;
+		std::vector<iter>	m_vEndIters;
 		int		m_iTrack;
 		bool		m_bReverse;
 
 		// These exist so that the iterator can be revalidated if the NoteData is
 		// transformed during this iterator's lifetime.
-		vector<int> m_PrevCurrentRows;
+		std::vector<int> m_PrevCurrentRows;
 		bool m_Inclusive;
 		int m_StartRow;
 		int m_EndRow;
@@ -82,6 +85,7 @@ public:
 		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, bool bInclusive );
 		_all_tracks_iterator( const _all_tracks_iterator &other );
 		~_all_tracks_iterator();
+		_all_tracks_iterator &operator=( const _all_tracks_iterator &other );
 		_all_tracks_iterator &operator++();		// preincrement
 		_all_tracks_iterator operator++( int dummy );	// postincrement
 		//_all_tracks_iterator &operator--();		// predecrement
@@ -95,7 +99,7 @@ public:
 		inline const TN &operator*() const	{ DEBUG_ASSERT( !IsAtEnd() ); return m_vCurrentIters[m_iTrack]->second; }
 		inline const TN *operator->() const	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vCurrentIters[m_iTrack]->second; }
 		// Use when transforming the NoteData.
-		void Revalidate(ND* notedata, vector<int> const& added_or_removed_tracks, bool added);
+		void Revalidate(ND* notedata, std::vector<int> const& added_or_removed_tracks, bool added);
 	};
 	typedef _all_tracks_iterator<NoteData, NoteData::iterator, TapNote> 			all_tracks_iterator;
 	typedef _all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote>	all_tracks_const_iterator;
@@ -106,7 +110,7 @@ public:
 private:
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
-	vector<TrackMap>	m_TapNotes;
+	std::vector<TrackMap>	m_TapNotes;
 
 	/**
 	 * @brief Determine whether this note is for Player 1 or Player 2.
@@ -143,14 +147,14 @@ private:
 	 * @return true if it's a fake, false otherwise. */
 	bool IsFake(const TapNote &tn, const int row) const;
 
-	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
+	std::pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
 														   int startRow = 0,
 														   int endRow = MAX_NOTE_ROW) const;
 
 	// These exist so that they can be revalidated when something that transforms
 	// the NoteData occurs. -Kyz
-	mutable set<all_tracks_iterator*> m_atis;
-	mutable set<all_tracks_const_iterator*> m_const_atis;
+	mutable std::set<all_tracks_iterator*> m_atis;
+	mutable std::set<all_tracks_const_iterator*> m_const_atis;
 
 	void AddATIToList(all_tracks_iterator* iter) const;
 	void AddATIToList(all_tracks_const_iterator* iter) const;
@@ -231,7 +235,7 @@ public:
 	}
 
 	// Call this after using any transform that changes the NoteData.
-	void RevalidateATIs(vector<int> const& added_or_removed_tracks, bool added);
+	void RevalidateATIs(std::vector<int> const& added_or_removed_tracks, bool added);
 	void TransferATIs(NoteData& to);
 
 	/* Return an iterator range include iStartRow to iEndRow.  Extend the range to include
@@ -278,7 +282,7 @@ public:
 	bool IsRowEmpty( int row ) const;
 	bool IsRangeEmpty( int track, int rowBegin, int rowEnd ) const;
 	int GetNumTapNonEmptyTracks( int row ) const;
-	void GetTapNonEmptyTracks( int row, set<int>& addTo ) const;
+	void GetTapNonEmptyTracks( int row, std::set<int>& addTo ) const;
 	bool GetTapFirstNonEmptyTrack( int row, int &iNonEmptyTrackOut ) const;	// return false if no non-empty tracks at row
 	bool GetTapFirstEmptyTrack( int row, int &iEmptyTrackOut ) const;	// return false if no non-empty tracks at row
 	bool GetTapLastEmptyTrack( int row, int &iEmptyTrackOut ) const;	// return false if no empty tracks at row
@@ -290,7 +294,7 @@ public:
 
 	inline bool IsThereATapAtRow( int row ) const			{ return GetFirstTrackWithTap( row ) != -1; }
 	inline bool IsThereATapOrHoldHeadAtRow( int row ) const		{ return GetFirstTrackWithTapOrHoldHead( row ) != -1; }
-	void GetTracksHeldAtRow( int row, set<int>& addTo );
+	void GetTracksHeldAtRow( int row, std::set<int>& addTo );
 	int GetNumTracksHeldAtRow( int row );
 
 	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = nullptr ) const;
@@ -342,31 +346,31 @@ public:
 	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 
 	// the couple/routine style variants of the above.
-	pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0,
+	std::pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0,
 										   int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0,
+	std::pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0,
 										int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumHandsTwoPlayer(int startRow = 0,
+	std::pair<int, int> GetNumHandsTwoPlayer(int startRow = 0,
 										int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0,
+	std::pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0,
 										int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0,
+	std::pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0,
 											int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumMinesTwoPlayer(int startRow = 0,
+	std::pair<int, int> GetNumMinesTwoPlayer(int startRow = 0,
 										int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumRollsTwoPlayer(int startRow = 0,
+	std::pair<int, int> GetNumRollsTwoPlayer(int startRow = 0,
 										int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0,
+	std::pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0,
 										int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumFakesTwoPlayer(int startRow = 0,
+	std::pair<int, int> GetNumFakesTwoPlayer(int startRow = 0,
 										int endRow = MAX_NOTE_ROW) const;
 
 	// Transformations
@@ -382,10 +386,7 @@ public:
 /** @brief Allow a quick way to swap notedata. */
 namespace std
 {
-	template<> inline void swap<NoteData>( NoteData &nd1, NoteData &nd2 )
-#if !defined(_MSC_VER)
-	noexcept(is_nothrow_move_constructible<NoteData>::value && is_nothrow_move_assignable<NoteData>::value)
-#endif
+	template<> inline void swap<NoteData>( NoteData &nd1, NoteData &nd2 ) noexcept
 	{
 		nd1.swap( nd2 );
 	}

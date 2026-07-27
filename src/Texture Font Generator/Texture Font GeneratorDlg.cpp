@@ -4,12 +4,10 @@
 #include "TextureFont.h"
 #include "Utils.h"
 
-#include <vector>
+#include <cmath>
 #include <fstream>
 #include <set>
-using namespace std;
-
-#include <math.h>
+#include <vector>
 
 static TextureFont *g_pTextureFont = NULL;
 
@@ -107,9 +105,9 @@ static const wchar_t map_iso_8859_2[] = {
  *  :x,
  */
 static const wchar_t map_numbers[] = {
-	0x0030, 0x0031, 0x0032, 0x0033, 
-	0x0034, 0x0035, 0x0036, 0x0037, 
-	0x0038, 0x0039, 0x0025, 0x002E, 
+	0x0030, 0x0031, 0x0032, 0x0033,
+	0x0034, 0x0035, 0x0036, 0x0037,
+	0x0038, 0x0039, 0x0025, 0x002E,
 	0x0020, 0x003A, 0x0078, 0x002C,
 	0
 };
@@ -559,12 +557,12 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 	CString sText;
 	m_FamilyList.GetWindowText( sText );
 	g_pTextureFont->m_sFamily = sText;
-	
+
 	m_FontSize.GetWindowText(sText);
 	g_pTextureFont->m_fFontSizePixels = (float) atof(sText);
 	if( bSavingDoubleRes )
 		g_pTextureFont->m_fFontSizePixels *= 2;
-	
+
 	m_Padding.GetWindowText(sText);
 	g_pTextureFont->m_iPadding = atoi(sText);
 	if( bSavingDoubleRes )
@@ -690,7 +688,7 @@ void CTextureFontGeneratorDlg::UpdateCloseUp()
 
 	hPen = CreatePen( PS_SOLID, 1, RGB(255, 255, 50) );
 	hOldPen = SelectObject( hZoomDC, hPen );
-	
+
 	/* Align the line with the bottom of the unit, so, when correct, the line
 	 * "sits" on the font. */
 	iY = iZoomFactor*g_pTextureFont->m_iCharTop - 1;
@@ -710,7 +708,7 @@ void CTextureFontGeneratorDlg::UpdateCloseUp()
 int CALLBACK CTextureFontGeneratorDlg::EnumFontFamiliesCallback( const LOGFONTA *pLogicalFontData, const TEXTMETRICA *pPhysicalFontData, DWORD FontType, LPARAM lParam )
 {
 	CTextureFontGeneratorDlg *pThis = (CTextureFontGeneratorDlg *) lParam;
-	set<CString> *pSet = (set<CString> *) lParam;
+	std::set<CString> *pSet = (std::set<CString> *) lParam;
 	pSet->insert( pLogicalFontData->lfFaceName );
 	return 1;
 }
@@ -732,9 +730,9 @@ BOOL CTextureFontGeneratorDlg::OnInitDialog()
 		memset( &font, 0, sizeof(font) );
 		font.lfCharSet = DEFAULT_CHARSET;
 		CPaintDC dc(this);
-		set<CString> setFamilies;
+		std::set<CString> setFamilies;
 		EnumFontFamiliesEx( dc.GetSafeHdc(), &font, EnumFontFamiliesCallback, (LPARAM) &setFamilies, 0 );
-		for( set<CString>::const_iterator it = setFamilies.begin(); it != setFamilies.end(); ++it )
+		for( std::set<CString>::const_iterator it = setFamilies.begin(); it != setFamilies.end(); ++it )
 			m_FamilyList.AddString( *it );
 		m_FamilyList.SetCurSel( 0 );
 	}
@@ -782,11 +780,11 @@ void CTextureFontGeneratorDlg::UpdateFontViewAndCloseUp()
 
 	HBITMAP hBitmap = g_pTextureFont->m_apPages[iSelectedPage]->m_hPage;
 	m_FontView.SetBitmap( hBitmap );
-	
+
 	UpdateCloseUp();
 
 	CString sStr;
-	sStr.Format("Overlap: %i, %i\nMaximum size: %ix%i", 
+	sStr.Format("Overlap: %i, %i\nMaximum size: %ix%i",
 		g_pTextureFont->m_iCharLeftOverlap, g_pTextureFont->m_iCharRightOverlap,
 		g_pTextureFont->m_BoundingRect.right - g_pTextureFont->m_BoundingRect.left,
 		g_pTextureFont->m_BoundingRect.bottom - g_pTextureFont->m_BoundingRect.top
@@ -800,7 +798,7 @@ void CTextureFontGeneratorDlg::OnDestroy()
 	CDialog::OnDestroy();
 }
 
-void CTextureFontGeneratorDlg::OnPaint() 
+void CTextureFontGeneratorDlg::OnPaint()
 {
 	if( IsIconic() )
 	{
@@ -841,19 +839,19 @@ HCURSOR CTextureFontGeneratorDlg::OnQueryDragIcon()
 }
 
 
-void CTextureFontGeneratorDlg::OnClose() 
+void CTextureFontGeneratorDlg::OnClose()
 {
 	if( CanExit() )
 		CDialog::OnClose();
 }
 
-void CTextureFontGeneratorDlg::OnOK() 
+void CTextureFontGeneratorDlg::OnOK()
 {
 	if( CanExit() )
 		CDialog::OnOK();
 }
 
-void CTextureFontGeneratorDlg::OnCancel() 
+void CTextureFontGeneratorDlg::OnCancel()
 {
 	if (CanExit())
 		CDialog::OnCancel();
@@ -872,9 +870,9 @@ BOOL CTextureFontGeneratorDlg::OnMouseWheel( UINT nFlags, short zDelta, CPoint p
 		int i = atoi( sText );
 		i += zDelta / WHEEL_DELTA;
 		if( pFocus == &m_Padding )
-			i = max( i, 0 );
+			i = std::max( i, 0 );
 		else if( pFocus == &m_FontSize )
-			i = max( i, 1 );
+			i = std::max( i, 1 );
 
 		sText.Format( "%i", i );
 		pFocusedEdit->SetWindowText( sText );
@@ -1006,8 +1004,8 @@ void CTextureFontGeneratorDlg::OnFileSave()
 	{
 		CString sName = g_pTextureFont->m_sFamily;
 		sName.MakeLower();
-		_snprintf( szFile, 1023, "_%s%s %gpx", 
-			(const char *) sName, 
+		_snprintf( szFile, 1023, "_%s%s %gpx",
+			(const char *) sName,
 			g_pTextureFont->m_bBold ? " Bold" : "",
 			g_pTextureFont->m_fFontSizePixels );
 	}
@@ -1028,7 +1026,7 @@ void CTextureFontGeneratorDlg::OnFileSave()
 
 
 /*	{
-		vector<CString> asOldFiles;
+		std::vector<CString> asOldFiles;
 		WIN32_FIND_DATA fd;
 
 		CString sPath = szFile;

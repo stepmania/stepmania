@@ -4,6 +4,7 @@
 #define LOADING_WINDOW_WIN32_H
 
 #include "LoadingWindow.h"
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "archutils/Win32/AppInstance.h"
 

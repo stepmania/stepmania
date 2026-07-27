@@ -1,12 +1,14 @@
 #include "global.h"
 
-#include <png.h>
-
 #include "RageSurface_Load_PNG.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageSurface.h"
+
+#include <cstdint>
+
+#include <png.h>
 
 #if defined(_MSC_VER)
 #if defined(_BINARY_PNG)
@@ -55,7 +57,6 @@ void PNG_Error( png_struct *png, const char *error )
 
 void PNG_Warning( png_struct *png, const char *warning )
 {
-	// FIXME: Mismatched libpng headers vs. library causes a segfault here on MinGW
 	CHECKPOINT_M(ssprintf("PNG warning during processing: %s", warning));
 	error_info *info = (error_info *) png_get_io_ptr(png);
 	LOG->Trace( "loading \"%s\": warning: %s", info->fn, warning );
@@ -92,7 +93,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	// Throwing an exception in the error callback would make the exception
 	// pass through C code, which is undefined behavior.  Works fine on Linux,
-	// and on OS X with C++11, but does not work on OS X without C++11. -Kyz
+	// and on macOS with C++11, but does not work on macOS without C++11. -Kyz
 	if(setjmp(png_jmpbuf(png)))
 	{
 		png_destroy_read_struct(&png, &info_ptr, nullptr);
@@ -143,7 +144,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		/* Fake PNG_COLOR_TYPE_GRAY. */
 		for( int i = 0; i < 256; ++i )
 		{
-			colors[i].r = colors[i].g = colors[i].b = (int8_t) i;
+			colors[i].r = colors[i].g = colors[i].b = (std::int8_t) i;
 			colors[i].a = 0xFF;
 		}
 
@@ -237,7 +238,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	ASSERT( img != nullptr );
 
 	row_pointers = new png_byte*[height];
-	CHECKPOINT_M( ssprintf("%p",row_pointers) );
+	CHECKPOINT_M( ssprintf("%p",static_cast<void*>(row_pointers)) );
 
 	for( unsigned y = 0; y < height; ++y )
 	{

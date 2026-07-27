@@ -7,6 +7,8 @@
 #include "RageTimer.h"
 #include "RageSoundPosMap.h"
 
+#include <cstdint>
+
 class RageSoundReader;
 struct lua_State;
 
@@ -16,8 +18,8 @@ class RageSoundBase
 public:
 	virtual ~RageSoundBase() { }
 	virtual void SoundIsFinishedPlaying() = 0;
-	virtual int GetDataToPlay( float *buffer, int size, int64_t &iStreamFrame, int &got_bytes ) = 0;
-	virtual void CommitPlayingPosition( int64_t iFrameno, int64_t iPosition, int iBytesRead ) = 0;
+	virtual int GetDataToPlay( float *buffer, int size, std::int64_t &iStreamFrame, int &got_bytes ) = 0;
+	virtual void CommitPlayingPosition( std::int64_t iFrameno, std::int64_t iPosition, int iBytesRead ) = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
 	virtual RString GetLoadedFilePath() const = 0;
 };
@@ -92,7 +94,7 @@ public:
 	 *
 	 * If cache == false, we'll always stream the sound on demand, which
 	 * makes loads much faster.
-	 * 
+	 *
 	 * If the file failed to load, false is returned, Error() is set
 	 * and a null sample will be loaded.  This makes failed loads nonfatal;
 	 * they can be ignored most of the time, so we continue to work if a file
@@ -100,7 +102,7 @@ public:
 	 */
 	bool Load( RString sFile, bool bPrecache, const RageSoundLoadParams *pParams = nullptr );
 
-	/* Using this version means the "don't care" about caching. Currently, 
+	/* Using this version means the "don't care" about caching. Currently,
 	 * this always will not cache the sound; this may become a preference. */
 	bool Load( RString sFile );
 
@@ -159,12 +161,12 @@ private:
 
 	/* Current position of the output sound, in frames. If < 0, nothing will play
 	 * until it becomes positive. */
-	int64_t m_iStreamFrame;
+	std::int64_t m_iStreamFrame;
 
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position
 	 * when we stop (too slow), but we want to be able to report the position we
-	 * were at when we stopped without jumping to the last position we buffered. 
+	 * were at when we stopped without jumping to the last position we buffered.
 	 * Keep track of the position after a seek or stop, so we can return a sane
 	 * position when stopped, and when playing but pos_map hasn't yet been filled. */
 	int m_iStoppedSourceFrame;
@@ -173,7 +175,7 @@ private:
 
 	RString m_sError;
 
-	int GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate = nullptr ) const;
+	int GetSourceFrameFromHardwareFrame( std::int64_t iHardwareFrame, bool *bApproximate = nullptr ) const;
 
 	bool SetPositionFrames( int frames = -1 );
 	RageSoundParams::StopMode_t GetStopMode() const; // resolves M_AUTO
@@ -187,8 +189,8 @@ public:
 	 * it signals the stream to stop; once it's flushed, SoundStopped will be
 	 * called. Until then, SOUNDMAN->GetPosition can still be called; the sound
 	 * is still playing. */
-	int GetDataToPlay( float *pBuffer, int iSize, int64_t &iStreamFrame, int &iBytesRead );
-	void CommitPlayingPosition( int64_t iHardwareFrame, int64_t iStreamFrame, int iGotFrames );
+	int GetDataToPlay( float *pBuffer, int iSize, std::int64_t &iStreamFrame, int &iBytesRead );
+	void CommitPlayingPosition( std::int64_t iHardwareFrame, std::int64_t iStreamFrame, int iGotFrames );
 };
 
 #endif

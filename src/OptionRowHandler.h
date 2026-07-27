@@ -4,7 +4,12 @@
 #include "GameCommand.h"
 #include "LuaReference.h"
 #include "RageUtil.h"
+
+#include <cstddef>
 #include <set>
+#include <vector>
+
+
 struct MenuRowDef;
 class OptionRow;
 struct ConfOption;
@@ -50,8 +55,8 @@ struct OptionRowDefinition
 	bool m_bOneChoiceForAllPlayers;
 	SelectType m_selectType;
 	LayoutType m_layoutType;
-	vector<RString> m_vsChoices;
-	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
+	std::vector<RString> m_vsChoices;
+	std::set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	int m_iDefault;
 	bool	m_bExportOnChange;
 	/**
@@ -77,21 +82,21 @@ struct OptionRowDefinition
 	 * @brief Is this option enabled for the Player?
 	 * @param pn the Player the PlayerNumber represents.
 	 * @return true if the option is enabled, false otherwise. */
-	bool IsEnabledForPlayer( PlayerNumber pn ) const 
+	bool IsEnabledForPlayer( PlayerNumber pn ) const
 	{
-		return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end(); 
+		return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end();
 	}
 
 	OptionRowDefinition(): m_sName(""), m_sExplanationName(""),
 		m_bOneChoiceForAllPlayers(false), m_selectType(SELECT_ONE),
-		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(), 
+		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(),
 		m_vEnabledForPlayers(), m_iDefault(-1),
 		m_bExportOnChange(false), m_bAllowThemeItems(true),
 		m_bAllowThemeTitle(true), m_bAllowExplanation(true),
 		m_bShowChoicesListOnSelect(false)
 	{
 		FOREACH_PlayerNumber( pn )
-			m_vEnabledForPlayers.insert( pn ); 
+			m_vEnabledForPlayers.insert( pn );
 	}
 	void Init()
 	{
@@ -112,20 +117,20 @@ struct OptionRowDefinition
 		m_bShowChoicesListOnSelect = false;
 	}
 
-	OptionRowDefinition( const char *n, bool b, const char *c0=nullptr, 
-			    const char *c1=nullptr, const char *c2=nullptr, 
-			    const char *c3=nullptr, const char *c4=nullptr, 
-			    const char *c5=nullptr, const char *c6=nullptr, 
-			    const char *c7=nullptr, const char *c8=nullptr, 
-			    const char *c9=nullptr, const char *c10=nullptr, 
-			    const char *c11=nullptr, const char *c12=nullptr, 
-			    const char *c13=nullptr, const char *c14=nullptr, 
-			    const char *c15=nullptr, const char *c16=nullptr, 
-			    const char *c17=nullptr, const char *c18=nullptr, 
+	OptionRowDefinition( const char *n, bool b, const char *c0=nullptr,
+			    const char *c1=nullptr, const char *c2=nullptr,
+			    const char *c3=nullptr, const char *c4=nullptr,
+			    const char *c5=nullptr, const char *c6=nullptr,
+			    const char *c7=nullptr, const char *c8=nullptr,
+			    const char *c9=nullptr, const char *c10=nullptr,
+			    const char *c11=nullptr, const char *c12=nullptr,
+			    const char *c13=nullptr, const char *c14=nullptr,
+			    const char *c15=nullptr, const char *c16=nullptr,
+			    const char *c17=nullptr, const char *c18=nullptr,
 			    const char *c19=nullptr ): m_sName(n),
 		m_sExplanationName(""), m_bOneChoiceForAllPlayers(b),
 		m_selectType(SELECT_ONE),
-		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(), 
+		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(),
 		m_vEnabledForPlayers(), m_iDefault(-1),
 		m_bExportOnChange(false), m_bAllowThemeItems(true),
 		m_bAllowThemeTitle(true), m_bAllowExplanation(true),
@@ -133,7 +138,7 @@ struct OptionRowDefinition
 	{
 		FOREACH_PlayerNumber( pn )
 			m_vEnabledForPlayers.insert( pn );
-		
+
 #define PUSH( c )	if(c) m_vsChoices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);
 		PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);
@@ -148,7 +153,7 @@ class OptionRowHandler
 {
 public:
 	OptionRowDefinition m_Def;
-	vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
+	std::vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
 
 	OptionRowHandler(): m_Def(), m_vsReloadRowMessages() { }
 	virtual ~OptionRowHandler() { }
@@ -179,9 +184,9 @@ public:
 	virtual ReloadChanged Reload() { return RELOAD_CHANGED_NONE; }
 
 	virtual int GetDefaultOption() const { return -1; }
-	virtual void ImportOption( OptionRow *, const vector<PlayerNumber> &, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
+	virtual void ImportOption( OptionRow *, const std::vector<PlayerNumber> &, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
 	// Returns an OPT mask.
-	virtual int ExportOption( const vector<PlayerNumber> &, const vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
+	virtual int ExportOption( const std::vector<PlayerNumber> &, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const;
 	virtual RString GetScreen( int /* iChoice */ ) const { return RString(); }
 	// Exists so that a lua function can act on the selection.  Returns true if the choices should be reloaded.
@@ -196,16 +201,16 @@ namespace OptionRowHandlerUtil
 	OptionRowHandler* MakeNull();
 	OptionRowHandler* MakeSimple( const MenuRowDef &mrd );
 
-	void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut );
-	int GetOneSelection( const vector<bool> &vbSelected );
+	void SelectExactlyOne( int iSelection, std::vector<bool> &vbSelectedOut );
+	int GetOneSelection( const std::vector<bool> &vbSelected );
 }
 
-inline void VerifySelected(SelectType st, vector<bool> &selected, const RString &sName)
+inline void VerifySelected(SelectType st, std::vector<bool> &selected, const RString &sName)
 {
 	int num_selected = 0;
 	if( st == SELECT_ONE )
 	{
-		int first_selected= -1;
+		std::size_t first_selected= std::numeric_limits<std::size_t>::max();
 		if(selected.empty())
 		{
 			LuaHelpers::ReportScriptErrorFmt("Option row %s requires only one "
@@ -213,14 +218,14 @@ inline void VerifySelected(SelectType st, vector<bool> &selected, const RString 
 				"elements.", sName.c_str());
 			return;
 		}
-		for(unsigned int e= 0; e < selected.size(); ++e)
+		for(std::size_t e= 0; e < selected.size(); ++e)
 		{
 			if(selected[e])
 			{
 				num_selected++;
-				if(first_selected == -1)
+				if(first_selected == std::numeric_limits<std::size_t>::max())
 				{
-					first_selected= static_cast<int>(e);
+					first_selected= e;
 				}
 			}
 		}
@@ -229,7 +234,7 @@ inline void VerifySelected(SelectType st, vector<bool> &selected, const RString 
 			LuaHelpers::ReportScriptErrorFmt("Option row %s requires only one "
 				"thing to be selected, but %i out of %i things are selected.",
 				sName.c_str(), num_selected, static_cast<int>(selected.size()));
-			for(unsigned int e= 0; e < selected.size(); ++e)
+			for(std::size_t e= 0; e < selected.size(); ++e)
 			{
 				if(selected[e] && e != first_selected)
 				{
@@ -252,7 +257,7 @@ inline void VerifySelected(SelectType st, vector<bool> &selected, const RString 
  * @author Chris Danford (c) 2002-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -262,7 +267,7 @@ inline void VerifySelected(SelectType st, vector<bool> &selected, const RString 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

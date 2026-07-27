@@ -8,15 +8,18 @@
 #include "archutils/Win32/ErrorStrings.h"
 #include "archutils/Win32/USB.h"
 
+#include <vector>
+
+
 REGISTER_INPUT_HANDLER_CLASS2( Pump, Win32_Pump );
 
 InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 {
 	m_bShutdown = false;
 	const int pump_usb_vid = 0x0d2f;
-	const int pump_usb_pids[2] = { 
-		0x0001 /* older model */, 
-		0x0003 /* shipped with Exceed */ 
+	const int pump_usb_pids[2] = {
+		0x0001 /* older model */,
+		0x0003 /* shipped with Exceed */
 	};
 
 	m_pDevice = new USBDevice[NUM_PUMPS];
@@ -71,7 +74,7 @@ void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 	for( int iButton = 0; iButton < ARRAYLEN(bits); ++iButton )
 	{
 		DeviceInput di( id, enum_add2(JOY_BUTTON_1, iButton), !(iEvent & bits[iButton]) );
-		
+
 		/* If we're in a thread, our timestamp is accurate. */
 		if( InputThread.IsCreated() )
 			di.ts.Touch();
@@ -100,7 +103,7 @@ RString InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput
 	return InputHandler::GetDeviceSpecificInputString( di );
 }
 
-void InputHandler_Win32_Pump::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
+void InputHandler_Win32_Pump::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut )
 {
 	for(int i = 0; i < NUM_PUMPS; ++i)
 	{
@@ -125,7 +128,7 @@ void InputHandler_Win32_Pump::InputThreadMain()
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
-	vector<WindowsFileIO *> apSources;
+	std::vector<WindowsFileIO *> apSources;
 	for( int i = 0; i < NUM_PUMPS; ++i )
 	{
 		if( m_pDevice[i].m_IO.IsOpen() )
@@ -168,7 +171,7 @@ void InputHandler_Win32_Pump::Update()
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -178,7 +181,7 @@ void InputHandler_Win32_Pump::Update()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

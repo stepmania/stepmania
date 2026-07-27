@@ -20,6 +20,8 @@
 #include "CommonMetrics.h"
 #include "InputEventPlus.h"
 
+#include <cmath>
+
 
 REGISTER_SCREEN_CLASS( ScreenEnding );
 ScreenEnding::ScreenEnding()
@@ -51,11 +53,11 @@ ScreenEnding::ScreenEnding()
 
 		for( float f = 0; f < 100.0f; f += 1.0f )
 		{
-			float fP1 = fmodf(f/100*4+.3f,1);
+			float fP1 = std::fmod(f/100*4+.3f,1);
 			STATSMAN->m_CurStageStats.m_player[PLAYER_1].SetLifeRecordAt( fP1, f );
 			STATSMAN->m_CurStageStats.m_player[PLAYER_2].SetLifeRecordAt( 1-fP1, f );
 		}
-	
+
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iActualDancePoints = RandomInt( 3 );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iPossibleDancePoints = 2;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iActualDancePoints = RandomInt( 2 );
@@ -88,7 +90,7 @@ void ScreenEnding::Init()
 	{
 		if( !PROFILEMAN->IsPersistentProfile(p) )
 			continue;
-	
+
 		m_sprRemoveMemoryCard[p].SetName( ssprintf("RemoveCardP%d",p+1) );
 		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",ssprintf("remove card P%d",p+1)) );
 		switch( MEMCARDMAN->GetCardState(p) )
@@ -130,7 +132,7 @@ bool ScreenEnding::Input( const InputEventPlus &input )
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -140,7 +142,7 @@ bool ScreenEnding::Input( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

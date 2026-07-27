@@ -21,6 +21,8 @@
 
 #include "arch/Sound/RageSoundDriver.h"
 
+#include <cstdint>
+
 /*
  * The lock ordering requirements are:
  * RageSound::Lock before g_SoundManMutex
@@ -98,7 +100,7 @@ bool RageSoundManager::Pause( RageSoundBase *pSound, bool bPause )
 		return m_pDriver->PauseMixing( pSound, bPause );
 }
 
-int64_t RageSoundManager::GetPosition( RageTimer *pTimer ) const
+std::int64_t RageSoundManager::GetPosition( RageTimer *pTimer ) const
 {
 	if( m_pDriver == nullptr )
 		return 0;
@@ -110,20 +112,18 @@ void RageSoundManager::Update()
 	/* Scan m_mapPreloadedSounds for sounds that are no longer loaded, and delete them. */
 	g_SoundManMutex.Lock(); /* lock for access to m_mapPreloadedSounds, owned_sounds */
 	{
-		map<RString, RageSoundReader_Preload *>::iterator it, next;
-		it = m_mapPreloadedSounds.begin();
-		
-		while( it != m_mapPreloadedSounds.end() )
+		for( auto it = m_mapPreloadedSounds.begin(); it != m_mapPreloadedSounds.end(); )
 		{
-			next = it; ++next;
 			if( it->second->GetReferenceCount() == 1 )
 			{
 				LOG->Trace( "Deleted old sound \"%s\"", it->first.c_str() );
 				delete it->second;
-				m_mapPreloadedSounds.erase( it );
+				it = m_mapPreloadedSounds.erase(it);
 			}
-
-			it = next;
+			else
+			{
+				++it;
+			}
 		}
 	}
 
@@ -157,7 +157,7 @@ RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 
 	RString sPath(sPath_);
 	sPath.MakeLower();
-	map<RString, RageSoundReader_Preload *>::const_iterator it;
+	std::map<RString, RageSoundReader_Preload*>::const_iterator it;
 	it = m_mapPreloadedSounds.find( sPath );
 	if( it == m_mapPreloadedSounds.end() )
 		return nullptr;
@@ -176,10 +176,10 @@ void RageSoundManager::AddLoadedSound( const RString &sPath_, RageSoundReader_Pr
 	 * used in GetLoadedSound. */
 	RString sPath(sPath_);
 	sPath.MakeLower();
-	map<RString, RageSoundReader_Preload *>::const_iterator it;
+	std::map<RString, RageSoundReader_Preload*>::const_iterator it;
 	it = m_mapPreloadedSounds.find( sPath );
 	ASSERT_M( it == m_mapPreloadedSounds.end(), sPath );
-	
+
 	m_mapPreloadedSounds[sPath] = pSound->Copy();
 }
 

@@ -1,16 +1,19 @@
 #include "global.h"
 #include "ArchHooks_Unix.h"
 #include "ProductInfo.h"
+#include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "LocalizedString.h"
-#include "SpecialFiles.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Common/PthreadHelpers.h"
 #include "archutils/Unix/EmergencyShutdown.h"
 #include "archutils/Unix/AssertionHandler.h"
+
+#include <cstdint>
+
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
@@ -25,12 +28,10 @@
 #endif
 #endif
 
-#if defined(HAVE_FFMPEG)
 extern "C"
 {
 	#include <libavcodec/avcodec.h>
 }
-#endif
 
 #if defined(HAVE_X11)
 #include "archutils/Unix/X11Helper.h"
@@ -88,7 +89,7 @@ static bool EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	/* We didn't run the crash handler.  Run the default handler, so we can dump core. */
 	return false;
 }
-	
+
 #if defined(HAVE_TLS)
 static thread_local int g_iTestTLS = 0;
 
@@ -124,14 +125,14 @@ static void TestTLS()
 namespace
 {
 	clockid_t g_Clock = CLOCK_REALTIME;
- 
+
 	void OpenGetTime()
 	{
 		static bool bInitialized = false;
 		if( bInitialized )
 			return;
 		bInitialized = true;
- 
+
 		/* Check whether the clock is actually supported. */
 		timespec ts;
 		if( clock_getres(CLOCK_MONOTONIC, &ts) == -1 )
@@ -140,7 +141,7 @@ namespace
 		/* If the resolution is worse than a millisecond, fall back on CLOCK_REALTIME. */
 		if( ts.tv_sec > 0 || ts.tv_nsec > 1000000 )
 			return;
-		
+
 		g_Clock = CLOCK_MONOTONIC;
 	}
 };
@@ -151,25 +152,25 @@ clockid_t ArchHooks_Unix::GetClock()
 	return g_Clock;
 }
 
-int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+std::int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	OpenGetTime();
 
 	timespec ts;
 	clock_gettime( g_Clock, &ts );
 
-	int64_t iRet = int64_t(ts.tv_sec) * 1000000 + int64_t(ts.tv_nsec)/1000;
+	std::int64_t iRet = std::int64_t(ts.tv_sec) * 1000000 + std::int64_t(ts.tv_nsec)/1000;
 	if( g_Clock != CLOCK_MONOTONIC )
 		iRet = ArchHooks::FixupTimeIfBackwards( iRet );
 	return iRet;
 }
 #else
-int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+std::int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	struct timeval tv;
 	gettimeofday( &tv, nullptr );
 
-	int64_t iRet = int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
+	std::int64_t iRet = std::int64_t(tv.tv_sec) * 1000000 + std::int64_t(tv.tv_usec);
 	ret = FixupTimeIfBackwards( ret );
 	return iRet;
 }
@@ -222,7 +223,7 @@ void ArchHooks_Unix::Init()
 	SignalHandler::OnClose( EmergencyShutdown );
 
 	InstallExceptionHandler();
-	
+
 #if defined(HAVE_TLS) && !defined(BSD)
 	TestTLS();
 #endif
@@ -258,7 +259,7 @@ bool ArchHooks_Unix::GoToURL( RString sUrl )
 #endif
 
 static RString LibcVersion()
-{	
+{
 	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBC_VERSION, buf, sizeof(buf) );
 	if( ret == -1 )
@@ -284,9 +285,7 @@ void ArchHooks_Unix::DumpDebugInfo()
 
 	LOG->Info( "Runtime library: %s", LibcVersion().c_str() );
 	LOG->Info( "Threads library: %s", ThreadsVersion().c_str() );
-#if defined(HAVE_FFMPEG)
 	LOG->Info( "libavcodec: %#x (%u)", avcodec_version(), avcodec_version() );
-#endif
 }
 
 void ArchHooks_Unix::SetTime( tm newtime )
@@ -299,7 +298,7 @@ void ArchHooks_Unix::SetTime( tm newtime )
 		newtime.tm_year+1900,
 		newtime.tm_sec );
 
-	LOG->Trace( "executing '%s'", sCommand.c_str() ); 
+	LOG->Trace( "executing '%s'", sCommand.c_str() );
 	int ret = system( sCommand );
 	if( ret == -1 || ret == 127 || !WIFEXITED(ret) || WEXITSTATUS(ret) )
 		LOG->Trace( "'%s' failed", sCommand.c_str() );
@@ -345,7 +344,7 @@ RString ArchHooks_Unix::GetClipboard()
 	// property on YOUR window.
 	XConvertSelection( Dpy, XA_CLIPBOARD, XA_STRING, XA_PRIMARY, Win, CurrentTime );
 	// XXX: This seems to always return 1 even when it works. (Success == 0)
-	
+
 	// Now we must wait for the clipboard owner to cough it up.
 	// HACK: What we SHOULD do is XSelectInput() for SelectionNotify before
 	// calling XConvertSelection and then block on XWindowEvent(), but that
@@ -380,24 +379,31 @@ RString ArchHooks_Unix::GetClipboard()
 #endif
 }
 
-#include "RageFileManager.h"
-#include <sys/stat.h>
-
-static LocalizedString COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
-	RString Root;
-	struct stat st;
-	if( !stat(sDirOfExecutable + "/Packages", &st) && st.st_mode&S_IFDIR )
-		Root = sDirOfExecutable;
-	else if( !stat(sDirOfExecutable + "/Songs", &st) && st.st_mode&S_IFDIR )
-		Root = sDirOfExecutable;
-	else if( !stat(RageFileManagerUtil::sInitialWorkingDirectory + "/Songs", &st) && st.st_mode&S_IFDIR )
-		Root = RageFileManagerUtil::sInitialWorkingDirectory;
-	else
-		RageException::Throw( "%s", COULDNT_FIND_SONGS.GetValue().c_str() );
+	FILEMAN->Mount("dirro", sDirOfExecutable, "/");
 
-	FILEMAN->Mount( "dir", Root, "/" );
+	bool portable = DoesFileExist("/Portable.ini");
+	if (portable)
+	{
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Announcers", "/Announcers");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/BGAnimations", "/BGAnimations");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/BackgroundEffects", "/BackgroundEffects");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/BackgroundTransitions", "/BackgroundTransitions");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Cache", "/Cache");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/CDTitles", "/CDTitles");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Characters", "/Characters");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Courses", "/Courses");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Downloads", "/Downloads");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Logs", "/Logs");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/NoteSkins", "/NoteSkins");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Packages", "/Packages");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Save", "/Save");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Screenshots", "/Screenshots");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Songs", "/Songs");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/RandomMovies", "/RandomMovies");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Themes", "/Themes");
+	}
 }
 
 void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
@@ -415,9 +421,10 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sUserDataPath + "/CDTitles", "/CDTitles" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Characters", "/Characters" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Courses", "/Courses" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Downloads", "/Downloads" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/NoteSkins", "/NoteSkins" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Packages", "/Packages" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Songs", "/Songs" );
@@ -428,7 +435,7 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -438,7 +445,7 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

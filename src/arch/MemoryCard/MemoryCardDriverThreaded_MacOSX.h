@@ -4,6 +4,9 @@
 #include "MemoryCardDriver.h"
 #include "RageThreads.h"
 
+#include <vector>
+
+
 class MemoryCardDriverThreaded_MacOSX : public MemoryCardDriver
 {
 public:
@@ -11,12 +14,12 @@ public:
 	~MemoryCardDriverThreaded_MacOSX();
 	bool Mount( UsbStorageDevice *pDevice ) { return true; }
 	void Unmount( UsbStorageDevice *pDevice );
-	
+
 protected:
 	bool USBStorageDevicesChanged();
-	void GetUSBStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut );
+	void GetUSBStorageDevices( std::vector<UsbStorageDevice>& vStorageDevicesOut );
 	bool TestWrite( UsbStorageDevice *pDevice );
-	
+
 private:
 	MemoryCardDriverThreaded_MacOSX( const MemoryCardDriverThreaded_MacOSX &m );
 	MemoryCardDriverThreaded_MacOSX &operator=( const MemoryCardDriverThreaded_MacOSX &m );
@@ -38,7 +41,7 @@ private:
 /*
  * (c) 2005-2006, 2008 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -48,7 +51,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -136,8 +136,8 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const RString &sPath, RageSur
 					imageCount, imageCount > 1 ? "s" : "");
 				return RageSurfaceUtils::OPEN_FATAL_ERROR;
 			}
+			[[fallthrough]];
 		}
-
 		case '!':
 		{
 			/* Extension */

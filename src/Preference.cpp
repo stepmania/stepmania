@@ -9,9 +9,10 @@
 
 static SubscriptionManager<IPreference> m_Subscribers;
 
-IPreference::IPreference( const RString& sName ):
+IPreference::IPreference( const RString& sName, PreferenceType type ):
 	m_sName( sName ),
-	m_bIsStatic( false )
+	m_bDoNotWrite( type == PreferenceType::Deprecated ),
+	m_bImmutable( type == PreferenceType::Immutable )
 {
 	m_Subscribers.Subscribe( this );
 }
@@ -81,14 +82,17 @@ void IPreference::ReadFrom( const XNode* pNode, bool bIsStatic )
 	if( pNode->GetAttrValue(m_sName, sVal) )
 	{
 		FromString( sVal );
-		m_bIsStatic = bIsStatic;
+		if (bIsStatic)
+			m_bDoNotWrite = true;
 	}
 }
 
 void IPreference::WriteTo( XNode* pNode ) const
 {
-	if( !m_bIsStatic )
-		pNode->AppendAttr( m_sName, ToString() );
+	if (m_bDoNotWrite)
+		return;
+
+	pNode->AppendAttr( m_sName, ToString() );
 }
 
 /* Load our value from the node, and make it the new default. */

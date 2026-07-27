@@ -13,6 +13,8 @@
 #include "RageUtil.h"
 #include "arch/Dialog/Dialog.h"
 
+#include <vector>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -54,14 +56,14 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // EditInsallations message handlers
 
-BOOL EditInsallations::OnInitDialog() 
+BOOL EditInsallations::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	// TODO: Add extra initialization here
-	DialogUtil::LocalizeDialogAndContents( *this );	
+	DialogUtil::LocalizeDialogAndContents( *this );
 
-	vector<RString> vs;
+	std::vector<RString> vs;
 	SMPackageUtil::GetGameInstallDirs( vs );
 	for( unsigned i=0; i<vs.size(); i++ )
 		m_list.AddString( vs[i] );
@@ -70,7 +72,7 @@ BOOL EditInsallations::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void EditInsallations::OnButtonRemove() 
+void EditInsallations::OnButtonRemove()
 {
 	// TODO: Add your control notification handler code here
 	ASSERT( m_list.GetCount() > 1 );	// cannot remove the list item in the list
@@ -80,7 +82,7 @@ void EditInsallations::OnButtonRemove()
 	OnLbnSelchangeList();
 }
 
-void EditInsallations::OnButtonMakeDefault() 
+void EditInsallations::OnButtonMakeDefault()
 {
 	// TODO: Add your control notification handler code here
 	ASSERT( m_list.GetCurSel() != LB_ERR );
@@ -94,7 +96,7 @@ void EditInsallations::OnButtonMakeDefault()
 
 static LocalizedString YOU_MUST_TYPE_IN			("EditInstallations","You must type a program directory before clicking Add.");
 static LocalizedString NOT_A_VALID_INSTALLATION_DIR	("EditInstallations","'%s' is not a valid installation directory.");
-void EditInsallations::OnButtonAdd() 
+void EditInsallations::OnButtonAdd()
 {
 	// TODO: Add your control notification handler code here
 	RString sNewDir;
@@ -128,9 +130,9 @@ void EditInsallations::OnButtonAdd()
 	m_list.AddString( sNewDir );
 }
 
-void EditInsallations::OnOK() 
+void EditInsallations::OnOK()
 {
-	vector<RString> vs;
+	std::vector<RString> vs;
 
 	for( int i=0; i<m_list.GetCount(); i++ )
 	{
@@ -142,7 +144,7 @@ void EditInsallations::OnOK()
 	SMPackageUtil::WriteGameInstallDirs( vs );
 
 	// set the new default
-	vector<RString> asInstallDirs;
+	std::vector<RString> asInstallDirs;
 	SMPackageUtil::GetGameInstallDirs( asInstallDirs );
 	FILEMAN->Remount( "/", asInstallDirs[0] );
 
@@ -162,7 +164,7 @@ void EditInsallations::OnLbnSelchangeList()
 /*
  * (c) 2002-2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -172,7 +174,7 @@ void EditInsallations::OnLbnSelchangeList()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -9,7 +9,12 @@
 #include "ThemeManager.h"
 #include "Style.h"
 #include "CommonMetrics.h"
-#include <float.h>
+
+#include <cfloat>
+#include <cmath>
+#include <sstream>
+#include <vector>
+
 
 static const char *LifeTypeNames[] = {
 	"Bar",
@@ -95,6 +100,8 @@ void PlayerOptions::Init()
 	m_bZBuffer = false;
 	m_bCosecant = false;
 	m_sNoteSkin = "";
+	m_fVisualDelay = 0.0f;
+	m_twDisabledWindows.reset();
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
 	ZERO( m_fMovesZ );		ONE( m_SpeedfMovesZ );
@@ -185,28 +192,30 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
+	DO_COPY( m_fVisualDelay );
+	DO_COPY( m_twDisabledWindows );
 #undef APPROACH
 #undef DO_COPY
 }
 
-static void AddPart( vector<RString> &AddTo, float level, RString name )
+static void AddPart( std::vector<RString> &AddTo, float level, RString name )
 {
 	if( level == 0 )
 		return;
 
-	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", lrintf(level*100) );
+	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
 
 RString PlayerOptions::GetString( bool bForceNoteSkin ) const
 {
-	vector<RString> v;
+	std::vector<RString> v;
 	GetMods( v, bForceNoteSkin );
 	return join( ", ", v );
 }
 
-void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
+void PlayerOptions::GetMods( std::vector<RString> &AddTo, bool bForceNoteSkin ) const
 {
 	//RString sReturn;
 
@@ -481,12 +490,15 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fRandomSpeed,	"RandomSpeed" );
 
 	if( m_bTurns[TURN_MIRROR] )		AddTo.push_back( "Mirror" );
+	if( m_bTurns[TURN_LRMIRROR] )		AddTo.push_back( "LRMirror" );
+	if( m_bTurns[TURN_UDMIRROR] )		AddTo.push_back( "UDMirror" );
 	if( m_bTurns[TURN_BACKWARDS] )		AddTo.push_back( "Backwards" );
 	if( m_bTurns[TURN_LEFT] )			AddTo.push_back( "Left" );
 	if( m_bTurns[TURN_RIGHT] )			AddTo.push_back( "Right" );
 	if( m_bTurns[TURN_SHUFFLE] )		AddTo.push_back( "Shuffle" );
 	if( m_bTurns[TURN_SOFT_SHUFFLE] )	AddTo.push_back( "SoftShuffle" );
 	if( m_bTurns[TURN_SUPER_SHUFFLE] )	AddTo.push_back( "SuperShuffle" );
+	if( m_bTurns[TURN_HYPER_SHUFFLE] )	AddTo.push_back( "HyperShuffle" );
 
 	if( m_bTransforms[TRANSFORM_NOHOLDS] )	AddTo.push_back( "NoHolds" );
 	if( m_bTransforms[TRANSFORM_NOROLLS] )	AddTo.push_back( "NoRolls" );
@@ -534,11 +546,11 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 		else
 			AddPart( AddTo, -m_fPerspectiveTilt, "Hallway" );
 	}
-	else if( fabsf(m_fSkew-m_fPerspectiveTilt) < 0.0001f )
+	else if( std::abs(m_fSkew-m_fPerspectiveTilt) < 0.0001f )
 	{
 		AddPart( AddTo, m_fSkew, "Space" );
 	}
-	else if( fabsf(m_fSkew+m_fPerspectiveTilt) < 0.0001f )
+	else if( std::abs(m_fSkew+m_fPerspectiveTilt) < 0.0001f )
 	{
 		AddPart( AddTo, m_fSkew, "Incoming" );
 	}
@@ -555,6 +567,32 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 		Capitalize( s );
 		AddTo.push_back( s );
 	}
+
+	if ( std::abs(m_fVisualDelay) > 0.0001f )
+	{
+		// Format the string to be something like "10ms VisualDelay".
+		// Note that we don't process sub-millisecond visual delay.
+		AddTo.push_back( ssprintf("%.0fms VisualDelay", m_fVisualDelay * 1000.0f) );
+	}
+
+	if (m_twDisabledWindows.count() != 0) {
+		std::stringstream ss;
+		bool is_first = true;
+		ss << "No ";
+		for (int i=TW_W1; i <= TW_W5; ++i) {
+			if (m_twDisabledWindows[i]) {
+				if (!is_first) {
+					ss << "/";
+				} else {
+					is_first = false;
+				}
+				ss << TimingWindowToString(static_cast<TimingWindow>(i)).c_str();
+			}
+		}
+
+		// Final string will be something like "No W4/W5"
+		AddTo.push_back(ss.str());
+	}
 }
 
 /* Options are added to the current settings; call Init() beforehand if
@@ -562,7 +600,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 void PlayerOptions::FromString( const RString &sMultipleMods )
 {
 	RString sTemp = sMultipleMods;
-	vector<RString> vs;
+	std::vector<RString> vs;
 	split( sTemp, ",", vs, true );
 	RString sThrowAway;
 	for (RString &s : vs)
@@ -590,7 +628,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 
 	float level = 1;
 	float speed = 1;
-	vector<RString> asParts;
+	std::vector<RString> asParts;
 	split( sBit, " ", asParts, true );
 
 	for (RString const &s : asParts)
@@ -601,9 +639,15 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		}
 		else if( isdigit(s[0]) || s[0] == '-' )
 		{
+			if ( EndsWith(s, "ms") )
+			{
+				// Strip off the "ms" before parsing and convert to seconds.
+				RString ms_value = s.substr(0, s.size()-2 );
+				level = StringToFloat( ms_value ) / 1000.0f;
+			}
 			/* If the last character is a *, they probably said "123*" when
 			 * they meant "*123". */
-			if( s.Right(1) == "*" )
+			else if( s.Right(1) == "*" )
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris
@@ -618,7 +662,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		else if( s[0]=='*' )
 		{
 			sscanf( s, "*%f", &speed );
-			if( !isfinite(speed) )
+			if( !std::isfinite(speed) )
 				speed = 1.0f;
 		}
 	}
@@ -629,7 +673,8 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	const bool on = (level > 0.5f);
 
 	static Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
-	vector<RString> matches;
+	static Regex disabledWindows("(w[1-5])");
+	std::vector<RString> matches;
 	if( mult.Compare(sBit, matches) )
 	{
 		StringConversion::FromString( matches[0], level );
@@ -640,7 +685,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sscanf( sBit, "c%f", &level ) == 1 )
 	{
-		if( !isfinite(level) || level <= 0.0f )
+		if( !std::isfinite(level) || level <= 0.0f )
 			level = CMOD_DEFAULT;
 		SET_FLOAT( fScrollBPM )
 		SET_FLOAT( fTimeSpacing )
@@ -652,7 +697,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	{
 		// OpenITG doesn't have this block:
 		/*
-		if( !isfinite(level) || level <= 0.0f )
+		if( !std::isfinite(level) || level <= 0.0f )
 			level = CMOD_DEFAULT;
 		*/
 		SET_FLOAT( fMaxScrollBPM )
@@ -983,12 +1028,15 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "randomvanish" )			SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
 	else if( sBit == "turn" && !on )			ZERO( m_bTurns ); /* "no turn" */
 	else if( sBit == "mirror" )				m_bTurns[TURN_MIRROR] = on;
+	else if( sBit == "lrmirror" )				m_bTurns[TURN_LRMIRROR] = on;
+	else if( sBit == "udmirror" )				m_bTurns[TURN_UDMIRROR] = on;
 	else if( sBit == "backwards" )			m_bTurns[TURN_BACKWARDS] = on;
 	else if( sBit == "left" )				m_bTurns[TURN_LEFT] = on;
 	else if( sBit == "right" )				m_bTurns[TURN_RIGHT] = on;
 	else if( sBit == "shuffle" )				m_bTurns[TURN_SHUFFLE] = on;
 	else if( sBit == "softshuffle" )				m_bTurns[TURN_SOFT_SHUFFLE] = on;
 	else if( sBit == "supershuffle" )			m_bTurns[TURN_SUPER_SHUFFLE] = on;
+	else if( sBit == "hypershuffle" )			m_bTurns[TURN_HYPER_SHUFFLE] = on;
 	else if( sBit == "little" )				m_bTransforms[TRANSFORM_LITTLE] = on;
 	else if( sBit == "wide" )				m_bTransforms[TRANSFORM_WIDE] = on;
 	else if( sBit == "big" )				m_bTransforms[TRANSFORM_BIG] = on;
@@ -1089,43 +1137,64 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	{
 	    if (sBit.find("x") != sBit.npos)
 	    {
-		for (int i=0; i<16; i++)
-		{
-		    sMod = ssprintf( "movex%d", i+1 );
-		    if( sBit == sMod)
-		    {
-			SET_FLOAT( fMovesX[i] )
-			break;
-		    }
-		}
+			for (int i=0; i<16; i++)
+			{
+				sMod = ssprintf( "movex%d", i+1 );
+				if( sBit == sMod)
+				{
+				SET_FLOAT( fMovesX[i] )
+				break;
+				}
+			}
 	    }
 	    else if (sBit.find("y") != sBit.npos)
 	    {
-		for (int i=0; i<16; i++)
-		{
-		    sMod = ssprintf( "movey%d", i+1 );
-		    if( sBit == sMod)
-		    {
-			SET_FLOAT( fMovesY[i] )
-			break;
-		    }
-		}
+			for (int i=0; i<16; i++)
+			{
+				sMod = ssprintf( "movey%d", i+1 );
+				if( sBit == sMod)
+				{
+				SET_FLOAT( fMovesY[i] )
+				break;
+				}
+			}
 	    }
 	    else if (sBit.find("z") != sBit.npos)
 	    {
-		for (int i=0; i<16; i++)
-		{
-		    sMod = ssprintf( "movez%d", i+1 );
-		    if( sBit == sMod)
-		    {
-			SET_FLOAT( fMovesZ[i] )
-			break;
-		    }
-		}
+			for (int i=0; i<16; i++)
+			{
+				sMod = ssprintf( "movez%d", i+1 );
+				if( sBit == sMod)
+				{
+				SET_FLOAT( fMovesZ[i] )
+				break;
+				}
+			}
 	    }
 	}
 	else if( sBit == "zbuffer" )				m_bZBuffer = on;
 	else if( sBit == "cosecant" )				m_bCosecant = on;
+	else if( sBit == "visualdelay" )			m_fVisualDelay = level;
+	else if( level == 0 && disabledWindows.Compare(sBit)) // "No w1" etc.
+	{
+		// We come into this condition if there is at least a single window present but there may be more.
+		// To get all of the windows, we go through in a loop to extract all of them.
+		static Regex allDisabledWindows("(w[1-5])(.*)$");
+		RString input = sBit;
+		while (true)
+		{
+			if (!allDisabledWindows.Compare(input, matches))
+				break;
+
+			TimingWindow tw;
+			bool ret = StringConversion::FromString(matches[0].MakeUpper(), tw);
+			if (ret && TW_W1 <= tw && tw <= TW_W5)
+			{
+				m_twDisabledWindows.set(tw);
+			}
+			input = matches[1];
+		}
+	}
 	// deprecated mods/left in for compatibility
 	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 	// end of the list
@@ -1332,7 +1401,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 		f += m_fScrolls[SCROLL_CROSS];
 
 	if( f > 2 )
-		f = fmodf( f, 2 );
+		f = std::fmod( f, 2 );
 	if( f > 1 )
 		f = SCALE( f, 1.f, 2.f, 1.f, 0.f );
 	return f;
@@ -1378,6 +1447,8 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	{
 		return false;
 	}
+	COMPARE(m_fVisualDelay);
+	COMPARE(m_twDisabledWindows); // != is defined correctly for ordered sets.
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 		COMPARE(m_fAccels[i]);
 	for( int i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
@@ -1443,6 +1514,8 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
 	CPY(m_bCosecant);
+	CPY(m_fVisualDelay);
+	CPY(m_twDisabledWindows);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1608,15 +1681,15 @@ bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) 
 	});
 }
 
-void PlayerOptions::GetLocalizedMods( vector<RString> &AddTo ) const
+void PlayerOptions::GetLocalizedMods( std::vector<RString> &AddTo ) const
 {
-	vector<RString> vMods;
+	std::vector<RString> vMods;
 	GetMods( vMods );
 	for (RString const &sOneMod : vMods)
 	{
 		ASSERT( !sOneMod.empty() );
 
-		vector<RString> asTokens;
+		std::vector<RString> asTokens;
 		split( sOneMod, " ", asTokens );
 
 		if( asTokens.empty() )
@@ -1674,6 +1747,8 @@ RString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_bTransforms[TRANSFORM_NOFAKES] );
 	SAVE( m_bMuteOnError );
 	SAVE( m_sNoteSkin );
+	SAVE( m_fVisualDelay );
+	SAVE( m_twDisabledWindows );
 #undef SAVE
 	return po_prefs.GetString();
 }
@@ -1721,6 +1796,8 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY( m_bTransforms[TRANSFORM_NOFAKES] );
 	// Don't clear this.
 	// CPY( m_sNoteSkin );
+	CPY(m_fVisualDelay);
+	CPY(m_twDisabledWindows);
 #undef CPY
 }
 
@@ -1936,12 +2013,15 @@ public:
 	BOOL_INTERFACE(Cosecant, Cosecant);
 	BOOL_INTERFACE(TurnNone, Turns[PlayerOptions::TURN_NONE]);
 	BOOL_INTERFACE(Mirror, Turns[PlayerOptions::TURN_MIRROR]);
+	BOOL_INTERFACE(LRMirror, Turns[PlayerOptions::TURN_LRMIRROR]);
+	BOOL_INTERFACE(UDMirror, Turns[PlayerOptions::TURN_UDMIRROR]);
 	BOOL_INTERFACE(Backwards, Turns[PlayerOptions::TURN_BACKWARDS]);
 	BOOL_INTERFACE(Left, Turns[PlayerOptions::TURN_LEFT]);
 	BOOL_INTERFACE(Right, Turns[PlayerOptions::TURN_RIGHT]);
 	BOOL_INTERFACE(Shuffle, Turns[PlayerOptions::TURN_SHUFFLE]);
 	BOOL_INTERFACE(SoftShuffle, Turns[PlayerOptions::TURN_SOFT_SHUFFLE]);
 	BOOL_INTERFACE(SuperShuffle, Turns[PlayerOptions::TURN_SUPER_SHUFFLE]);
+	BOOL_INTERFACE(HyperShuffle, Turns[PlayerOptions::TURN_HYPER_SHUFFLE]);
 	BOOL_INTERFACE(NoHolds, Transforms[PlayerOptions::TRANSFORM_NOHOLDS]);
 	BOOL_INTERFACE(NoRolls, Transforms[PlayerOptions::TRANSFORM_NOROLLS]);
 	BOOL_INTERFACE(NoMines, Transforms[PlayerOptions::TRANSFORM_NOMINES]);
@@ -1968,6 +2048,43 @@ public:
 	BOOL_INTERFACE(MuteOnError, MuteOnError);
 	ENUM_INTERFACE(FailSetting, FailType, FailType);
 	ENUM_INTERFACE(MinTNSToHideNotes, MinTNSToHideNotes, TapNoteScore);
+
+	FLOAT_NO_SPEED_INTERFACE(VisualDelay, VisualDelay, true);
+
+	static int DisableTimingWindow(T* p, lua_State* L)
+	{
+		int original_top= lua_gettop(L);
+		if (original_top >= 1 && !lua_isnil(L, 1))
+		{
+			// Insert the specified TimingWindow into the disabled windows set.
+			p->m_twDisabledWindows.set(Enum::Check<TimingWindow>(L, 1));
+		}
+		OPTIONAL_RETURN_SELF(original_top);
+		return 1;
+	}
+
+	static int ResetDisabledTimingWindows(T* p, lua_State* L)
+	{
+		int original_top= lua_gettop(L);
+		p->m_twDisabledWindows.reset();
+		OPTIONAL_RETURN_SELF(original_top);
+		return 1;
+	}
+
+	static int GetDisabledTimingWindows(T* p, lua_State* L)
+	{
+		int original_top= lua_gettop(L);
+		lua_newtable( L );
+		int j = 0;
+		for (int i=TW_W1; i <= TW_W5; ++i) {
+			if (p->m_twDisabledWindows[i]) {
+				Enum::Push(L, static_cast<TimingWindow>(i));
+				lua_rawseti( L, -2, j+1 );
+				++j;
+			}
+		}
+		return 1;
+	}
 
 	// NoteSkins
 	static int NoteSkin(T* p, lua_State* L)
@@ -2029,7 +2146,7 @@ public:
 		if(original_top >= 1 && lua_isnumber(L, 1))
 		{
 			float speed= FArg(1);
-			if(!isfinite(speed) || speed <= 0.0f)
+			if(!std::isfinite(speed) || speed <= 0.0f)
 			{
 				luaL_error(L, "CMod speed must be finite and greater than 0.");
 			}
@@ -2090,7 +2207,7 @@ public:
 		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			float speed= FArg(1);
-			if(!isfinite(speed) || speed <= 0.0f)
+			if(!std::isfinite(speed) || speed <= 0.0f)
 			{
 				luaL_error(L, "MMod speed must be finite and greater than 0.");
 			}
@@ -2444,12 +2561,15 @@ public:
 		ADD_METHOD(RandomSpeed);
 		ADD_METHOD(TurnNone);
 		ADD_METHOD(Mirror);
+		ADD_METHOD(LRMirror);
+		ADD_METHOD(UDMirror);
 		ADD_METHOD(Backwards);
 		ADD_METHOD(Left);
 		ADD_METHOD(Right);
 		ADD_METHOD(Shuffle);
 		ADD_METHOD(SoftShuffle);
 		ADD_METHOD(SuperShuffle);
+		ADD_METHOD(HyperShuffle);
 		ADD_METHOD(NoHolds);
 		ADD_METHOD(NoRolls);
 		ADD_METHOD(NoMines);
@@ -2487,10 +2607,14 @@ public:
 		ADD_MULTICOL_METHOD(Bumpy);
 		ADD_MULTICOL_METHOD(Reverse);
 
-
 		ADD_METHOD(NoteSkin);
 		ADD_METHOD(FailSetting);
 		ADD_METHOD(MinTNSToHideNotes);
+		ADD_METHOD(VisualDelay);
+
+		ADD_METHOD(DisableTimingWindow);
+		ADD_METHOD(ResetDisabledTimingWindows);
+		ADD_METHOD(GetDisabledTimingWindows);
 
 		// Speed
 		ADD_METHOD( CMod );

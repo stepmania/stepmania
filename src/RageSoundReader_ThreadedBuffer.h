@@ -56,7 +56,7 @@ private:
 		Mapping(): iFramesBuffered(0), iPositionOfFirstFrame(0),
 			fRate(1.0f) {}
 	};
-	list<Mapping> m_StreamPosition;
+	std::list<Mapping> m_StreamPosition;
 
 	bool m_bEOF;
 
@@ -70,7 +70,12 @@ private:
 
 	RageThread m_Thread;
 	bool m_bShutdownThread;
-	static int StartBufferingThread( void *p ) { ((RageSoundReader_ThreadedBuffer *) p)->BufferingThread(); return 0; }
+	static int StartBufferingThread(void* p)
+	{
+		((RageSoundReader_ThreadedBuffer*)p)->BufferingThread();
+		return 0;
+	}
+
 	void BufferingThread();
 };
 

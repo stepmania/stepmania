@@ -18,6 +18,9 @@
 #include "SpecialFiles.h"
 #include "RageLog.h"
 
+#include <vector>
+
+
 using namespace StringConversion;
 
 static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
@@ -28,7 +31,7 @@ static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 
 static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
 {
-	vector<RString> as;
+	std::vector<RString> as;
 #define remove_empty_back() if(as.back() == "") { as.pop_back(); }
 	as.push_back(po.GetString());
 	remove_empty_back();
@@ -53,7 +56,17 @@ int FindClosestEntry( T value, const U *mapping, unsigned cnt )
 
 	for( unsigned i = 0; i < cnt; ++i )
 	{
-		const U val = mapping[i];
+		// Need to use if constexpr here so the compiler doesn't even
+		// attempt to parse the else branch for enums
+		const T val = [&]{
+				if constexpr (std::is_enum<U>::value) {
+					return Enum::to_integral(mapping[i]);
+				}
+				else {
+					return mapping[i];
+				}
+			}();
+
 		float dist = value < val? (float)(val-value):(float)(value-val);
 		if( have_best && best_dist < dist )
 			continue;
@@ -64,10 +77,7 @@ int FindClosestEntry( T value, const U *mapping, unsigned cnt )
 		iBestIndex = i;
 	}
 
-	if( have_best )
-		return iBestIndex;
-	else
-		return 0;
+	return iBestIndex;
 }
 
 template <class T>
@@ -160,9 +170,9 @@ static void MoveNop( int &iSel, bool bToSel, const ConfOption *pConfOption )
 
 // TODO: Write GenerateValueList() function that can use ints and floats. -aj
 
-static void GameChoices( vector<RString> &out )
+static void GameChoices( std::vector<RString> &out )
 {
-	vector<const Game*> aGames;
+	std::vector<const Game*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
 	for (Game const *g : aGames)
 	{
@@ -173,7 +183,7 @@ static void GameChoices( vector<RString> &out )
 
 static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	std::vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -185,15 +195,15 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 			if( !strcasecmp(choices[i], sCurGameName) )
 				sel = i;
 	} else {
-		vector<const Game*> aGames;
+		std::vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
 		PREFSMAN->SetCurrentGame(aGames[sel]->m_szName);
 	}
 }
 
-static void LanguageChoices( vector<RString> &out )
+static void LanguageChoices( std::vector<RString> &out )
 {
-	vector<RString> vs;
+	std::vector<RString> vs;
 	THEME->GetLanguages( vs );
 	SortRStringArray( vs, true );
 
@@ -209,7 +219,7 @@ static void LanguageChoices( vector<RString> &out )
 
 static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> vs;
+	std::vector<RString> vs;
 	THEME->GetLanguages( vs );
 	SortRStringArray( vs, true );
 
@@ -240,7 +250,7 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void ThemeChoices( vector<RString> &out )
+static void ThemeChoices( std::vector<RString> &out )
 {
 	THEME->GetSelectableThemeNames( out );
 	for (RString &s : out)
@@ -256,7 +266,7 @@ static void cache_display_specs()
 	}
 }
 
-static void DisplayResolutionChoices( vector<RString> &out )
+static void DisplayResolutionChoices( std::vector<RString> &out )
 {
 	cache_display_specs();
 	for (DisplaySpec const &iter : display_specs)
@@ -271,10 +281,10 @@ static void DisplayResolutionChoices( vector<RString> &out )
 
 static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	std::vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
-	vector<RString> vsThemeNames;
+	std::vector<RString> vsThemeNames;
 	THEME->GetSelectableThemeNames( vsThemeNames );
 
 	if( ToSel )
@@ -292,7 +302,7 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 }
 
 static LocalizedString OFF ("ScreenOptionsMasterPrefs","Off");
-static void AnnouncerChoices( vector<RString> &out )
+static void AnnouncerChoices( std::vector<RString> &out )
 {
 	ANNOUNCER->GetAnnouncerNames( out );
 	out.insert( out.begin(), OFF );
@@ -300,7 +310,7 @@ static void AnnouncerChoices( vector<RString> &out )
 
 static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	std::vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -318,14 +328,14 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void DefaultNoteSkinChoices( vector<RString> &out )
+static void DefaultNoteSkinChoices( std::vector<RString> &out )
 {
 	NOTESKIN->GetNoteSkinNames( out );
 }
 
 static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	std::vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -347,7 +357,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	}
 }
 
-static void DefaultFailChoices(vector<RString>& out)
+static void DefaultFailChoices(std::vector<RString>& out)
 {
 	out.push_back("Immediate");
 	out.push_back("ImmediateContinue");
@@ -435,7 +445,7 @@ static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption 
 		else
 			sel = 1;
 	}
-	else 
+	else
 	{
 		int tmp = sel + 1;
 		MovePref<CoinMode>( tmp, ToSel, pConfOption );
@@ -454,6 +464,12 @@ static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption 
 		int tmp = sel + 1;
 		MovePref<int>( tmp, ToSel, pConfOption );
 	}
+}
+
+static void MaxNumCredits( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	int const mapping[]= {20, 40, 60, 80, 100};
+	MoveMap(sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping));
 }
 
 static void JointPremium( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -523,7 +539,7 @@ static void MaxHighScoresPerListForPlayer(int& sel, bool to_sel, ConfOption cons
 static int GetTimingDifficulty()
 {
 	int iTimingDifficulty = 0;
-	TimingWindowScale( iTimingDifficulty, true, ConfOption::Find("TimingWindowScale") );	
+	TimingWindowScale( iTimingDifficulty, true, ConfOption::Find("TimingWindowScale") );
 	iTimingDifficulty++; // TimingDifficulty returns an index
 	return iTimingDifficulty;
 }
@@ -531,7 +547,7 @@ LuaFunction( GetTimingDifficulty, GetTimingDifficulty() );
 static int GetLifeDifficulty()
 {
 	int iLifeDifficulty = 0;
-	LifeDifficulty( iLifeDifficulty, true, ConfOption::Find("LifeDifficulty") );	
+	LifeDifficulty( iLifeDifficulty, true, ConfOption::Find("LifeDifficulty") );
 	iLifeDifficulty++; // LifeDifficulty returns an index
 	return iLifeDifficulty;
 }
@@ -544,7 +560,7 @@ struct res_t
 	int w, h;
 	res_t(): w(0), h(0) { }
 	res_t( int w_, int h_ ): w(w_), h(h_) { }
-	
+
 	res_t& operator-=( res_t const &rhs) {
 		w -= rhs.w;
 		h -= rhs.h;
@@ -560,7 +576,7 @@ inline bool operator<(res_t const &lhs, res_t const &rhs)
 	if( lhs.w != rhs.w )
 	{
 		return lhs.w < rhs.w;
-	
+
 	}
 	return lhs.h < rhs.h;
 }
@@ -585,7 +601,7 @@ inline res_t operator-(res_t lhs, res_t const &rhs)
 
 static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	static vector<res_t> res_choices;
+	static std::vector<res_t> res_choices;
 
 	if( res_choices.empty() )
 	{
@@ -733,7 +749,7 @@ static void CustomSongsMaxMegabytes(int& sel, bool to_sel, const ConfOption* con
 	int mapping[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 1000};
 	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
 }
-static vector<ConfOption> g_ConfOptions;
+static std::vector<ConfOption> g_ConfOptions;
 static void InitializeConfOptions()
 {
 	if( !g_ConfOptions.empty() )
@@ -780,7 +796,6 @@ static void InitializeConfOptions()
 
 	ADD( ConfOption( "AutogenGroupCourses",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "FastLoad",			MovePref<bool>,		"Off","On" ) );
-	ADD( ConfOption( "FastLoadAdditionalSongs",			MovePref<bool>,		"Off","On" ) );
 	{
 		ConfOption c("EditRecordModeLeadIn", EditRecordModeLeadIn);
 		for(int i= 0; i < 32; ++i)
@@ -840,7 +855,7 @@ static void InitializeConfOptions()
 	ADD(ConfOption("CustomSongsMaxCount", CustomSongsCount, "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "1000"));
 	ADD(ConfOption("CustomSongsLoadTimeout", CustomSongsLoadTimeout, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "20", "30", "1000"));
 	ADD(ConfOption("CustomSongsMaxSeconds", CustomSongsMaxSeconds, "60", "90", "120", "150", "180", "210", "240", "10000"));
-	ADD(ConfOption("CustomSongsMaxMegabytes", CustomSongsLoadTimeout, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "20", "30", "1000"));
+	ADD(ConfOption("CustomSongsMaxMegabytes", CustomSongsMaxMegabytes, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "20", "30", "1000"));
 
 	// Machine options
 	ADD( ConfOption( "MenuTimer",			MovePref<bool>,		"Off","On" ) );
@@ -848,6 +863,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Pay","Free Play" ) );
 	g_ConfOptions.back().m_sPrefName = "CoinMode";
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
+	ADD( ConfOption( "MaxNumCredits",		MaxNumCredits,		"|20","|40","|60","|80","|100" ) );
 
 	ADD( ConfOption( "SongsPerPlay",		SongsPerPlay,		"|1","|2","|3","|4","|5" ) );
 	ADD( ConfOption( "SongsPerPlayOrEvent",		SongsPerPlayOrEventMode,"|1","|2","|3","|4","|5","Event" ) );
@@ -862,6 +878,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "DefaultFailType", DefaultFailType, DefaultFailChoices ) );
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
+	ADD( ConfOption( "MaxNumCredits",		MaxNumCredits,		"|20","|40","|60","|80","|100" ) );
 	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","2 Players for 1 Credit" ) );
 	ADD( ConfOption( "JointPremium",		JointPremium,		"Off","2 Players for 1 Credit" ) );
 	g_ConfOptions.back().m_sPrefName = "Premium";
@@ -871,7 +888,11 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "MaxHighScoresPerListForMachine", MaxHighScoresPerListForMachine, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") );
 	ADD( ConfOption( "MaxHighScoresPerListForPlayer", MaxHighScoresPerListForPlayer, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") );
 	ADD( ConfOption( "MinTNSToHideNotes", MovePref<TapNoteScore>, "TNS_None", "TNS_HitMine", "TNS_AvoidMine", "TNS_CheckpointMiss", "TNS_Miss", "TNS_W5", "TNS_W4", "TNS_W3", "TNS_W2", "TNS_W1", "TNS_CheckpointHit"));
-
+	ADD( ConfOption( "ProfileSortOrderAscending", MovePref<bool>, "No", "Yes") );
+	g_ConfOptions.back().m_iEffects = OPT_APPLY_PROFILES;
+	ADD( ConfOption( "ProfileSortOrder", MovePref<ProfileSortOrder>, "Priority", "Recent", "Alphabetical") );
+	g_ConfOptions.back().m_sPrefName = "ProfileSortOrder";
+	g_ConfOptions.back().m_iEffects = OPT_APPLY_PROFILES;
 
 	// Graphic options
 	ADD( ConfOption( "Windowed",			MovePref<bool>,		"Full Screen", "Windowed" ) );
@@ -922,6 +943,7 @@ static void InitializeConfOptions()
 	}
 	ADD( ConfOption( "EnableAttackSounds",		MovePref<bool>,		"No","Yes" ) );
 	ADD( ConfOption( "EnableMineHitSound",		MovePref<bool>,		"No","Yes" ) );
+	ADD( ConfOption( "RateModPreservesPitch",		MovePref<bool>,		"No","Yes") );
 
 	// Editor options
 	ADD( ConfOption( "EditorShowBGChangesPlay",	MovePref<bool>,		"Hide","Show") );
@@ -959,7 +981,7 @@ void ConfOption::UpdateAvailableOptions()
 	}
 }
 
-void ConfOption::MakeOptionsList( vector<RString> &out ) const
+void ConfOption::MakeOptionsList( std::vector<RString> &out ) const
 {
 	out = names;
 }
@@ -971,7 +993,8 @@ static const char *OptEffectNames[] = {
 	"ChangeGame",
 	"ApplySound",
 	"ApplySong",
-	"ApplyAspectRatio"
+	"ApplyAspectRatio",
+	"ApplyProfiles"
 };
 XToString( OptEffect );
 StringToX( OptEffect );
@@ -982,7 +1005,7 @@ LuaXType( OptEffect );
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -992,7 +1015,7 @@ LuaXType( OptEffect );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -6,10 +6,11 @@
 #include "RageUtil.h"
 
 #include <cerrno>
+#include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
-
-using namespace std;
+#include <vector>
 
 // In so many words, ceil(n/6).
 #define NUMBER_OF_SEXTETS_FOR_BIT_COUNT(n) (((n) + 5) / 6)
@@ -36,7 +37,7 @@ namespace
 		private:
 			// The buffer size isn't critical; the RString will simply be
 			// extended until the line is done.
-			static const size_t BUFFER_SIZE = 64;
+			static const std::size_t BUFFER_SIZE = 64;
 			char buffer[BUFFER_SIZE];
 			std::FILE * file;
 			int timeout_ms;
@@ -99,7 +100,7 @@ namespace
 			bool ReadLine(RString& line)
 			{
 				bool afterFirst = false;
-				size_t len;
+				std::size_t len;
 
 				line = "";
 
@@ -131,8 +132,8 @@ class InputHandler_SextetStream::Impl
 			handler->ButtonPressed(di);
 		}
 
-		uint8_t stateBuffer[STATE_BUFFER_SIZE];
-		size_t timeout_ms;
+		std::uint8_t stateBuffer[STATE_BUFFER_SIZE];
+		std::size_t timeout_ms;
 		RageThread inputThread;
 		bool continueInputThread;
 
@@ -180,7 +181,7 @@ class InputHandler_SextetStream::Impl
 			}
 		}
 
-		void GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut)
+		void GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut)
 		{
 			vDevicesOut.push_back(InputDeviceInfo(FIRST_DEVICE, "SextetStream"));
 		}
@@ -191,10 +192,10 @@ class InputHandler_SextetStream::Impl
 			return 0;
 		}
 
-		inline void GetNewState(uint8_t * buffer, RString& line)
+		inline void GetNewState(std::uint8_t * buffer, RString& line)
 		{
-			size_t lineLen = line.length();
-			size_t i, cursor;
+			std::size_t lineLen = line.length();
+			std::size_t i, cursor;
 			cursor = 0;
 			memset(buffer, 0, STATE_BUFFER_SIZE);
 
@@ -214,7 +215,7 @@ class InputHandler_SextetStream::Impl
 			}
 		}
 
-		inline DeviceButton ButtonAtIndex(size_t index)
+		inline DeviceButton ButtonAtIndex(std::size_t index)
 		{
 			if(index < COUNT_JOY_BUTTON) {
 				return enum_add2(FIRST_JOY_BUTTON, index);
@@ -227,21 +228,21 @@ class InputHandler_SextetStream::Impl
 			}
 		}
 
-		inline void ReactToChanges(const uint8_t * newStateBuffer)
+		inline void ReactToChanges(const std::uint8_t * newStateBuffer)
 		{
 			InputDevice id = InputDevice(FIRST_DEVICE);
-			uint8_t changes[STATE_BUFFER_SIZE];
+			std::uint8_t changes[STATE_BUFFER_SIZE];
 			RageTimer now;
 
 			// XOR to find differences
-			for(size_t i = 0; i < STATE_BUFFER_SIZE; ++i) {
+			for(std::size_t i = 0; i < STATE_BUFFER_SIZE; ++i) {
 				changes[i] = stateBuffer[i] ^ newStateBuffer[i];
 			}
 
 			// Report on changes
-			for(size_t m = 0; m < STATE_BUFFER_SIZE; ++m) {
-				for(size_t n = 0; n < 6; ++n) {
-					size_t bi = (m * 6) + n;
+			for(std::size_t m = 0; m < STATE_BUFFER_SIZE; ++m) {
+				for(std::size_t n = 0; n < 6; ++n) {
+					std::size_t bi = (m * 6) + n;
 					if(bi < BUTTON_COUNT) {
 						if(changes[m] & (1 << n)) {
 							bool value = newStateBuffer[m] & (1 << n);
@@ -275,7 +276,7 @@ class InputHandler_SextetStream::Impl
 					if(linereader->ReadLine(line)) {
 						LOG->Trace("Got line: '%s'", line.c_str());
 						if(line.length() > 0) {
-							uint8_t newStateBuffer[STATE_BUFFER_SIZE];
+							std::uint8_t newStateBuffer[STATE_BUFFER_SIZE];
 							GetNewState(newStateBuffer, line);
 							ReactToChanges(newStateBuffer);
 						}
@@ -292,7 +293,7 @@ class InputHandler_SextetStream::Impl
 		}
 };
 
-void InputHandler_SextetStream::GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut)
+void InputHandler_SextetStream::GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut)
 {
 	if(_impl != nullptr) {
 		_impl->GetDevicesAndDescriptions(vDevicesOut);
@@ -315,7 +316,7 @@ InputHandler_SextetStream::~InputHandler_SextetStream()
 
 REGISTER_INPUT_HANDLER_CLASS (SextetStreamFromFile);
 
-#if defined(_WINDOWS)
+#if defined(_WIN32)
 	#define DEFAULT_INPUT_FILENAME "\\\\.\\pipe\\StepMania-Input-SextetStream"
 #else
 	#define DEFAULT_INPUT_FILENAME "Data/StepMania-Input-SextetStream.in"

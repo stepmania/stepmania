@@ -13,9 +13,12 @@
 #include "SongPosition.h"
 #include "Preference.h"
 
-#include <map>
+#include <cstddef>
 #include <deque>
+#include <map>
 #include <set>
+#include <vector>
+
 
 class Character;
 class Course;
@@ -104,7 +107,7 @@ public:
 	/**
 	 * @brief The number of coins presently in the machine.
 	 *
-	 * Note that coins are not "credits". One may have to put in two coins 
+	 * Note that coins are not "credits". One may have to put in two coins
 	 * to get one credit, only to have to put in another four coins to get
 	 * the three credits needed to begin the game. */
 	BroadcastOnChange<int>			m_iCoins;
@@ -219,6 +222,8 @@ public:
 
 	RString sExpandedSectionName;
 
+	RString sLastOpenSection;
+
 	static int GetNumStagesMultiplierForSong( const Song* pSong );
 	static int GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st );
 	int GetNumStagesForCurrentSongAndStepsOrCourse() const;
@@ -266,7 +271,7 @@ public:
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	// if re-adding noteskin changes in courses, add functions and such here -aj
-	void GetAllUsedNoteSkins( vector<RString> &out ) const;
+	void GetAllUsedNoteSkins( std::vector<RString> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;
 
@@ -289,7 +294,7 @@ public:
 	float m_DanceDuration;
 
 	// Random Attacks & Attack Mines
-	vector<RString>		m_RandomAttacks;
+	std::vector<RString>		m_RandomAttacks;
 
 	// used in PLAY_MODE_BATTLE
 	float	m_fOpponentHealthPercent;
@@ -353,15 +358,16 @@ public:
 		RString *pStringToFill;
 	};
 
-	void GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &vFeatsOut ) const;
+	void GetRankingFeats( PlayerNumber pn, std::vector<RankingFeat> &vFeatsOut ) const;
 	bool AnyPlayerHasRankingFeats() const;
 	void StoreRankingName( PlayerNumber pn, RString name );	// Called by name entry screens
-	vector<RString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
+	std::vector<RString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName,
+	std::set<PlayerNumber> m_sPlayersThatWereFilled;	// filled on StoreRankingName,
 
 	// Award stuff
 	// lowest priority in front, highest priority at the back.
-	deque<StageAward> m_vLastStageAwards[NUM_PLAYERS];
-	deque<PeakComboAward> m_vLastPeakComboAwards[NUM_PLAYERS];
+	std::deque<StageAward> m_vLastStageAwards[NUM_PLAYERS];
+	std::deque<PeakComboAward> m_vLastPeakComboAwards[NUM_PLAYERS];
 
 	// Attract stuff
 	int m_iNumTimesThroughAttract;	// negative means play regardless of m_iAttractSoundFrequency setting
@@ -376,7 +382,7 @@ public:
 	// Preferences
 	static Preference<bool> m_bAutoJoin;
 
-	// These options have weird interactions depending on m_bEventMode, 
+	// These options have weird interactions depending on m_bEventMode,
 	// so wrap them.
 	bool		m_bTemporaryEventMode;
 	bool		IsEventMode() const;
@@ -384,7 +390,7 @@ public:
 	Premium		GetPremium() const;
 
 	// Edit stuff
-	
+
 	/**
 	 * @brief Is the game right now using Song timing or Steps timing?
 	 *
@@ -411,12 +417,12 @@ public:
 
 	// Autogen stuff.  This should probably be moved to its own singleton or
 	// something when autogen is generalized and more customizable. -Kyz
-	float GetAutoGenFarg(size_t i)
+	float GetAutoGenFarg(std::size_t i)
 	{
 		if(i >= m_autogen_fargs.size()) { return 0.0f; }
 		return m_autogen_fargs[i];
 	}
-	vector<float> m_autogen_fargs;
+	std::vector<float> m_autogen_fargs;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -465,7 +471,7 @@ extern GameState*	GAMESTATE;	// global and accessible from anywhere in our progr
  * @author Chris Danford, Glenn Maynard, Chris Gomez (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -475,7 +481,7 @@ extern GameState*	GAMESTATE;	// global and accessible from anywhere in our progr
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

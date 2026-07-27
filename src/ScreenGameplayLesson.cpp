@@ -6,6 +6,9 @@
 #include "StatsManager.h"
 #include "Song.h"
 
+#include <vector>
+
+
 REGISTER_SCREEN_CLASS( ScreenGameplayLesson );
 ScreenGameplayLesson::ScreenGameplayLesson()
 {
@@ -30,7 +33,7 @@ void ScreenGameplayLesson::Init()
 	// Load pages
 	Song *pSong = GAMESTATE->m_pCurSong;
 	RString sDir = pSong->GetSongDir();
-	vector<RString> vs;
+	std::vector<RString> vs;
 	GetDirListing( sDir+"Page*", vs, true, true );
 	m_vPages.resize( vs.size() );
 	int i = 0;
@@ -45,7 +48,7 @@ void ScreenGameplayLesson::Init()
 		aa->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );
 		this->AddChild( aa );
 	}
-	
+
 	i = 0;
 	for (AutoActor &aa : m_vPages)
 	{
@@ -113,7 +116,7 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 				ResetAndRestartCurrentSong();
 
 				m_Try = (Try)(m_Try+1);
-				MESSAGEMAN->Broadcast( (MessageID)(Message_LessonTry1+m_Try) );
+				MESSAGEMAN->Broadcast( (MessageID)(Message_LessonTry1+Enum::to_integral(m_Try)) );
 			}
 			else
 			{
@@ -164,7 +167,7 @@ void ScreenGameplayLesson::ChangeLessonPage( int iDir )
 
 		ResetAndRestartCurrentSong();
 
-		MESSAGEMAN->Broadcast( (MessageID)(Message_LessonTry1+m_Try) );
+		MESSAGEMAN->Broadcast( (MessageID)(Message_LessonTry1+Enum::to_integral(m_Try)) );
 
 		// Change back to the current autoplay setting (in most cases, human controlled).
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -197,7 +200,7 @@ void ScreenGameplayLesson::ResetAndRestartCurrentSong()
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -207,7 +210,7 @@ void ScreenGameplayLesson::ResetAndRestartCurrentSong()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

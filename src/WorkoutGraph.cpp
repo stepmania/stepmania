@@ -11,6 +11,9 @@
 #include "Course.h"
 #include "Style.h"
 
+#include <vector>
+
+
 const int MAX_METERS_TO_SHOW = 50;
 
 REGISTER_ACTOR_CLASS( WorkoutGraph );
@@ -60,7 +63,7 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	if( pTrail == nullptr )
 		return;
 
-	vector<int> viMeters;
+	std::vector<int> viMeters;
 	for (TrailEntry const &e : pTrail->m_vEntries)
 	{
 		ASSERT( e.pSteps != nullptr );
@@ -78,7 +81,7 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	float fTotalHeight = SCALE( iBlocksHigh, 1.0f, 10.0f, 50.0f, fMaxHeight );
 	CLAMP( fTotalHeight, 50, fMaxHeight );
 
-	float fBlockSize = min( fTotalWidth / iBlocksWide, fTotalHeight / iBlocksHigh );
+	float fBlockSize = std::min( fTotalWidth / iBlocksWide, fTotalHeight / iBlocksHigh );
 
 	m_sprEmpty.SetVertAlign( align_bottom );
 	m_sprEmpty.SetCustomImageRect( RectF(0,0,(float)iBlocksWide,(float)iBlocksHigh) );
@@ -119,7 +122,7 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the WorkoutGraph. */ 
+/** @brief Allow Lua to have access to the WorkoutGraph. */
 class LunaWorkoutGraph: public Luna<WorkoutGraph>
 {
 public:
@@ -139,7 +142,7 @@ LUA_REGISTER_DERIVED_CLASS( WorkoutGraph, ActorFrame )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -149,7 +152,7 @@ LUA_REGISTER_DERIVED_CLASS( WorkoutGraph, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -4,6 +4,8 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 
+#include <cmath>
+
 /* Implement threaded read-ahead buffering.
  *
  * If a buffer is low on data, keep filling until it has a g_iMinFillFrames.
@@ -203,7 +205,7 @@ void RageSoundReader_ThreadedBuffer::BufferingThread()
 
 		int iFramesToFill = g_iReadBlockSizeFrames;
 		if( GetFilledFrames() < g_iMinFillFrames )
-			iFramesToFill = max( iFramesToFill, g_iMinFillFrames - GetFilledFrames() );
+			iFramesToFill = std::max( iFramesToFill, g_iMinFillFrames - GetFilledFrames() );
 
 		int iRet = FillFrames( iFramesToFill );
 
@@ -235,7 +237,7 @@ void RageSoundReader_ThreadedBuffer::BufferingThread()
 		else
 		{
 			m_Event.Unlock();
-			usleep( lrintf(fTimeToSleep * 1000000) );
+			usleep( static_cast<int>((fTimeToSleep * 1000000) + 0.5) );
 			m_Event.Lock();
 		}
 	}
@@ -279,7 +281,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 		unsigned iBufSize;
 		float *pBuf = m_DataBuffer.get_write_pointer( &iBufSize );
 		ASSERT( (iBufSize % iSamplesPerFrame) == 0 );
-		iGotFrames = m_pSource->RetriedRead( pBuf, min(g_iReadBlockSizeFrames, iBufSize / iSamplesPerFrame), &iNextSourceFrame, &fRate );
+		iGotFrames = m_pSource->RetriedRead( pBuf, std::min(g_iReadBlockSizeFrames, iBufSize / iSamplesPerFrame), &iNextSourceFrame, &fRate );
 	}
 
 	m_Event.Lock();
@@ -315,7 +317,7 @@ int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
 		/* Delete any empty mappings from the beginning, but don't empty the list,
 		 * so we always have the current position and rate. If we delete an item,
 		 * the rate or position has probably changed, so return. */
-		list<Mapping>::iterator it = m_StreamPosition.begin();
+		std::list<Mapping>::iterator it = m_StreamPosition.begin();
 		++it;
 		if( it != m_StreamPosition.end() && !m_StreamPosition.front().iFramesBuffered )
 		{
@@ -330,7 +332,7 @@ int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
 	if( m_StreamPosition.front().iFramesBuffered )
 	{
 		Mapping &pos = m_StreamPosition.front();
-		int iFramesToRead = min( iFrames, pos.iFramesBuffered );
+		int iFramesToRead = std::min( iFrames, pos.iFramesBuffered );
 		int iSamplesPerFrame = this->GetNumChannels();
 		m_DataBuffer.read( pBuffer, iFramesToRead * iSamplesPerFrame );
 		pos.iPositionOfFirstFrame += iFramesToRead;

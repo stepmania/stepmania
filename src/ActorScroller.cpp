@@ -8,8 +8,11 @@
 #include "ActorUtil.h"
 #include "LuaBinding.h"
 
+#include <cmath>
+#include <vector>
+
 /* Tricky: We need ActorFrames created in Lua to auto delete their children.
- * We don't want classes that derive from ActorFrame to auto delete their 
+ * We don't want classes that derive from ActorFrame to auto delete their
  * children. The name "ActorFrame" is widely used in Lua, so we'll have
  * that string instead create an ActorFrameAutoDeleteChildren object. */
 //REGISTER_ACTOR_CLASS( ActorScroller );
@@ -116,7 +119,7 @@ float ActorScroller::GetSecondsForCompleteScrollThrough() const
 
 float ActorScroller::GetSecondsToDestination() const
 {
-	float fTotalItemsToMove = fabsf(m_fCurrentItem - m_fDestinationItem);
+	float fTotalItemsToMove = std::abs(m_fCurrentItem - m_fDestinationItem);
 	return fTotalItemsToMove * m_fSecondsPerItem;
 }
 
@@ -195,7 +198,7 @@ void ActorScroller::UpdateInternal( float fDeltaTime )
 		float fApproachSpeed = fDeltaTime/m_fSecondsPerItem;
 		if( m_bFastCatchup )
 		{
-			float fDistanceToMove = fabsf(m_fCurrentItem - m_fDestinationItem);
+			float fDistanceToMove = std::abs(m_fCurrentItem - m_fDestinationItem);
 			if( fDistanceToMove > 1 )
 				fApproachSpeed *= fDistanceToMove*fDistanceToMove;
 		}
@@ -210,13 +213,13 @@ void ActorScroller::UpdateInternal( float fDeltaTime )
 	if( m_bWrap )
 	{
 		float Delta = m_fDestinationItem - m_fCurrentItem;
-		m_fCurrentItem = fmodf( m_fCurrentItem, (float) m_iNumItems );
+		m_fCurrentItem = std::fmod( m_fCurrentItem, (float) m_iNumItems );
 		m_fDestinationItem = m_fCurrentItem + Delta;
 	}
 
 	if( m_bLoop )
 	{
-		m_fCurrentItem = fmodf( m_fCurrentItem, (float) m_iNumItems );
+		m_fCurrentItem = std::fmod( m_fCurrentItem, (float) m_iNumItems );
 	}
 }
 
@@ -261,15 +264,15 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 
 	float fFirstItemToDraw = m_fCurrentItem - fNumItemsToDraw/2.f;
 	float fLastItemToDraw = m_fCurrentItem + fNumItemsToDraw/2.f;
-	int iFirstItemToDraw = (int) ceilf( fFirstItemToDraw );
-	int iLastItemToDraw = (int) ceilf( fLastItemToDraw );
+	int iFirstItemToDraw = std::ceil( fFirstItemToDraw );
+	int iLastItemToDraw = std::ceil( fLastItemToDraw );
 	if( !m_bLoop && !m_bWrap )
 	{
-		iFirstItemToDraw = clamp( iFirstItemToDraw, 0, m_iNumItems );
-		iLastItemToDraw = clamp( iLastItemToDraw, 0, m_iNumItems );
+		iFirstItemToDraw = std::clamp( iFirstItemToDraw, 0, m_iNumItems );
+		iLastItemToDraw = std::clamp( iLastItemToDraw, 0, m_iNumItems );
 	}
 
-	vector<Actor*> subs;
+	std::vector<Actor*> subs;
 
 	{
 		// Shift m_SubActors so iFirstItemToDraw is at the beginning.
@@ -320,7 +323,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ActorScroller. */ 
+/** @brief Allow Lua to have access to the ActorScroller. */
 class LunaActorScroller: public Luna<ActorScroller>
 {
 public:
@@ -354,7 +357,7 @@ public:
 	static int GetCurrentItem( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetCurrentItem() ); return 1; }
 	static int GetDestinationItem( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetDestinationItem() ); return 1; }
 	static int GetNumItems( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumItems() ); return 1; }
-	
+
 	LunaActorScroller()
 	{
 		ADD_METHOD( PositionItems );
@@ -389,7 +392,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorScroller, ActorFrame )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -399,7 +402,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorScroller, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

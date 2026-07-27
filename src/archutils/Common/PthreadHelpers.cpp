@@ -9,15 +9,17 @@
 #include "archutils/Unix/RunningUnderValgrind.h"
 #endif
 
+#include <cerrno>
+#include <cstdint>
+#include <cstdlib>
+
 #if defined(LINUX)
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
-#include <stdlib.h>
 #if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
 #endif
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/ptrace.h>
@@ -87,7 +89,7 @@ static int waittid( int ThreadID, int *status, int options )
 			return ret;
 		bSupportsWall = false;
 	}
-			
+
 	/* XXX: on 2.2, we need to use __WCLONE only if ThreadID isn't the main thread;
 	 * perhaps wait and retry without it if errno == ECHILD? */
 	int ret;
@@ -125,7 +127,7 @@ static int PtraceDetach( int ThreadID )
 
 
 /* Get this thread's ID (this may be a TID or a PID). */
-static uint64_t GetCurrentThreadIdInternal()
+static std::uint64_t GetCurrentThreadIdInternal()
 {
 	/* If we're under Valgrind, neither the PID nor the TID is associated with the
 	 * thread.  Return the pthread ID.  This can't be used to kill threads, etc.,
@@ -133,7 +135,7 @@ static uint64_t GetCurrentThreadIdInternal()
 	 * usable, unique ID, then mutexes won't work. */
 	if( RunningUnderValgrind() )
 		return (int) pthread_self();
-	
+
 	InitializePidThreadHelpers(); // for g_bUsingNPTL
 
 	/* Don't keep calling gettid() if it's not supported; it'll make valgrind spam us. */
@@ -155,14 +157,14 @@ static uint64_t GetCurrentThreadIdInternal()
 	return getpid();
 }
 
-uint64_t GetCurrentThreadId()
+std::uint64_t GetCurrentThreadId()
 {
 #if defined(HAVE_TLS)
 	/* This is called each time we lock a mutex, and gettid() is a little slow, so
 	 * cache the result if we support TLS. */
 	if( RageThread::GetSupportsTLS() )
 	{
-		static thread_local uint64_t cached_tid = 0;
+		static thread_local std::uint64_t cached_tid = 0;
 		static thread_local bool cached = false;
 		if( !cached )
 		{
@@ -176,7 +178,7 @@ uint64_t GetCurrentThreadId()
 	return GetCurrentThreadIdInternal();
 }
 
-int SuspendThread( uint64_t ThreadID )
+int SuspendThread( std::uint64_t ThreadID )
 {
 	/*
 	 * Linux: We can't simply kill(SIGSTOP) (or tkill), since that will stop all processes
@@ -187,7 +189,7 @@ int SuspendThread( uint64_t ThreadID )
 	// kill( ThreadID, SIGSTOP );
 }
 
-int ResumeThread( uint64_t ThreadID )
+int ResumeThread( std::uint64_t ThreadID )
 {
 	return PtraceDetach( int(ThreadID) );
 	// kill( ThreadID, SIGSTOP );
@@ -203,7 +205,7 @@ int ResumeThread( uint64_t ThreadID )
  * This call leaves the given thread suspended, so the returned context doesn't become invalid.
  * ResumeThread() can be used to resume a thread after this call. */
 #if defined(CRASH_HANDLER)
-bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
+bool GetThreadBacktraceContext( std::uint64_t ThreadID, BacktraceContext *ctx )
 {
 	/* Can't GetThreadBacktraceContext the current thread. */
 	ASSERT( ThreadID != GetCurrentThreadId() );
@@ -264,17 +266,17 @@ RString ThreadsVersion()
 	return "(unknown)";
 }
 
-uint64_t GetCurrentThreadId()
+std::uint64_t GetCurrentThreadId()
 {
-	return uint64_t( pthread_self() );
+	return std::uint64_t( pthread_self() );
 }
 
-int SuspendThread( uint64_t id )
+int SuspendThread( std::uint64_t id )
 {
 	return pthread_kill( pthread_t(id), SIGSTOP );
 }
 
-int ResumeThread( uint64_t id )
+int ResumeThread( std::uint64_t id )
 {
 	return pthread_kill( pthread_t(id), SIGCONT );
 }
@@ -283,7 +285,7 @@ int ResumeThread( uint64_t id )
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -293,7 +295,7 @@ int ResumeThread( uint64_t id )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
