@@ -19,6 +19,9 @@
 #include "ScreenInstallOverlay.h"
 #include "ver.h"
 
+#include "Song.h"
+#include "SongCacheIndex.h"
+
 // only used for Version()
 #if defined(_WINDOWS)
 #include <windows.h>
@@ -121,6 +124,23 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
 	if( GetCommandlineArgument("version") )
 	{
 		Version();
+		bExitAfter = true;
+	}
+	if( GetCommandlineArgument("convert") )
+	{
+		RString songDir = g_argv[2];
+		SONGINDEX = new SongCacheIndex;
+		printf("NOTE: song dir must be a subdir of dir of executable\n");
+		printf("converting: " + songDir + "\n");
+		Song* song = new Song;
+		printf("loading..\n");
+		song->LoadFromSongDir(songDir, true, ProfileSlot_Invalid);
+		RString songFilePathPrefix = song->GetSongFilePath();
+		printf("saving..\n");
+		song->Save(true);
+		song->SaveToSSCFile(songFilePathPrefix, false, false);
+		song->SaveToSMFile();
+		printf("done!\n");
 		bExitAfter = true;
 	}
 	if( bExitAfter )
