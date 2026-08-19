@@ -1,3 +1,6 @@
 [submodule "extern/IXWebSocket"]
 	path = extern/IXWebSocket
 	url = https://github.com/machinezone/IXWebSocket
+[submodule "extern/ffmpeg"]
+	path = extern/ffmpeg
+	url = https://github.com/FFmpeg/FFmpeg
