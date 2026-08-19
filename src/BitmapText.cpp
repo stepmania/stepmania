@@ -355,8 +355,8 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 	const int iNumGlyphs = m_vpFontPageTextures.size();
 	int iStartGlyph = std::lrint( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
 	int iEndGlyph = std::lrint( SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) iNumGlyphs, 0 ) );
-	iStartGlyph = clamp( iStartGlyph, 0, iNumGlyphs );
-	iEndGlyph = clamp( iEndGlyph, 0, iNumGlyphs );
+	iStartGlyph = std::clamp( iStartGlyph, 0, iNumGlyphs );
+	iEndGlyph = std::clamp( iEndGlyph, 0, iNumGlyphs );
 
 	if( m_pTempState->fade.top > 0 ||
 		m_pTempState->fade.bottom > 0 ||
@@ -403,14 +403,14 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 			{
 				// Add .5, so we fade wrt. the center of the vert, not the left side.
 				float fPercent = SCALE( start+0.5f, fLeftFadeStartGlyph, fLeftFadeStopGlyph, 0.0f, 1.0f );
-				fPercent = clamp( fPercent, 0.0f, 1.0f );
+				fPercent = std::clamp( fPercent, 0.0f, 1.0f );
 				fAlpha *= fPercent * fLeftAlpha;
 			}
 
 			if( FadeSize.right > 0.001f )
 			{
 				float fPercent = SCALE( start+0.5f, fRightFadeStartGlyph, fRightFadeStopGlyph, 1.0f, 0.0f );
-				fPercent = clamp( fPercent, 0.0f, 1.0f );
+				fPercent = std::clamp( fPercent, 0.0f, 1.0f );
 				fAlpha *= fPercent * fRightAlpha;
 			}
 
