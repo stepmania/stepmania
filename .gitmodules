@@ -7,3 +7,6 @@
 [submodule "extern/hidapi"]
 	path = extern/hidapi
 	url = https://github.com/libusb/hidapi
+[submodule "extern/ogg"]
+	path = extern/ogg
+	url = https://github.com/xiph/ogg
