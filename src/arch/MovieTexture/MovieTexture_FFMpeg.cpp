@@ -7,8 +7,7 @@
 #include "RageFile.h"
 #include "RageSurface.h"
 
-#include <cerrno>
-#include <cstddef>
+#include <chrono>
 #include <cstdint>
 #include <thread>
 
