@@ -25,3 +25,6 @@
 [submodule "extern/vorbis"]
 	path = extern/vorbis
 	url = https://github.com/xiph/vorbis
+[submodule "extern/zlib"]
+	path = extern/zlib
+	url = https://github.com/madler/zlib
