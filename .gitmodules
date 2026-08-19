@@ -13,3 +13,6 @@
 [submodule "extern/mbedtls"]
 	path = extern/mbedtls
 	url = https://github.com/Mbed-TLS/mbedtls
+[submodule "extern/libusb"]
+	path = extern/libusb
+	url = https://github.com/libusb/libusb-cmake
