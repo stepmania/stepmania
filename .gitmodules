@@ -1,33 +1,44 @@
 [submodule "extern/IXWebSocket"]
 	path = extern/IXWebSocket
 	url = https://github.com/machinezone/IXWebSocket
+	shallow = true
 [submodule "extern/ffmpeg"]
 	path = extern/ffmpeg
 	url = https://github.com/FFmpeg/FFmpeg
+	shallow = true
 [submodule "extern/hidapi"]
 	path = extern/hidapi
 	url = https://github.com/libusb/hidapi
+	shallow = true
 [submodule "extern/ogg"]
 	path = extern/ogg
 	url = https://github.com/xiph/ogg
+	shallow = true
 [submodule "extern/mbedtls"]
 	path = extern/mbedtls
 	url = https://github.com/Mbed-TLS/mbedtls
+	shallow = true
 [submodule "extern/libusb"]
 	path = extern/libusb
 	url = https://github.com/libusb/libusb-cmake
+	shallow = true
 [submodule "extern/libtomcrypt"]
 	path = extern/libtomcrypt
 	url = https://github.com/libtom/libtomcrypt
+	shallow = true
 [submodule "extern/vorbis"]
 	path = extern/vorbis
 	url = https://github.com/xiph/vorbis
+	shallow = true
 [submodule "extern/zlib"]
 	path = extern/zlib
 	url = https://github.com/madler/zlib
+	shallow = true
 [submodule "extern/libtommath"]
 	path = extern/libtommath
 	url = https://github.com/libtom/libtommath/
+	shallow = true
 [submodule "extern/libpng"]
 	path = extern/libpng
 	url = https://github.com/pnggroup/libpng
+	shallow = true
