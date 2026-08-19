@@ -31,3 +31,6 @@
 [submodule "extern/libtommath"]
 	path = extern/libtommath
 	url = https://github.com/libtom/libtommath/
+[submodule "extern/libpng"]
+	path = extern/libpng
+	url = https://github.com/pnggroup/libpng
