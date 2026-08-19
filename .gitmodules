@@ -10,3 +10,6 @@
 [submodule "extern/ogg"]
 	path = extern/ogg
 	url = https://github.com/xiph/ogg
+[submodule "extern/mbedtls"]
+	path = extern/mbedtls
+	url = https://github.com/Mbed-TLS/mbedtls
