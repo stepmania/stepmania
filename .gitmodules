@@ -22,3 +22,6 @@
 [submodule "extern/libtomcrypt"]
 	path = extern/libtomcrypt
 	url = https://github.com/libtom/libtomcrypt
+[submodule "extern/vorbis"]
+	path = extern/vorbis
+	url = https://github.com/xiph/vorbis
