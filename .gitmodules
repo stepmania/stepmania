@@ -4,3 +4,6 @@
 [submodule "extern/ffmpeg"]
 	path = extern/ffmpeg
 	url = https://github.com/FFmpeg/FFmpeg
+[submodule "extern/hidapi"]
+	path = extern/hidapi
+	url = https://github.com/libusb/hidapi
