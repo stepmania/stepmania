@@ -16,3 +16,6 @@
 [submodule "extern/libusb"]
 	path = extern/libusb
 	url = https://github.com/libusb/libusb-cmake
+[submodule "exern/libtommath"]
+	path = exern/libtommath
+	url = https://github.com/libtom/libtommath
