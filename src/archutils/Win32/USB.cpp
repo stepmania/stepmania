@@ -4,13 +4,13 @@
 #include "RageUtil.h"
 #include "archutils/Win32/ErrorStrings.h"
 
-#pragma comment(lib, "archutils/Win32/ddk/setupapi.lib")
-#pragma comment(lib, "archutils/Win32/ddk/hid.lib")
+#pragma comment(lib, "setupapi.lib")
+#pragma comment(lib, "hid.lib")
 
 extern "C" {
-#include "setupapi.h"
+#include "archutils/Win32/ddk/setupapi.h"
 /* Quiet header warning: */
-#include "hidsdi.h"
+#include "archutils/Win32/ddk/hidsdi.h"
 }
 
 #include <vector>
