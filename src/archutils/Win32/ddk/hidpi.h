@@ -1,6 +1,6 @@
- /*++
+/*++
 
-Copyright (c) 1996-1998      Microsoft Corporation
+Copyright (c) Microsoft Corporation. All rights reserved.
 
 Module Name:
 
@@ -18,6 +18,21 @@ Environment:
 
 #ifndef   __HIDPI_H__
 #define   __HIDPI_H__
+#include <winapifamily.h>
+
+#pragma region Desktop Family
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if _MSC_VER >= 1200
+#pragma warning(push)
+#endif
+#pragma warning(disable:4115) // named type definition in parentheses
+#pragma warning(disable:4201) // nameless struct/union
+#pragma warning(disable:4214) // bit field types other than int
 
 #include <pshpack4.h>
 
@@ -67,7 +82,11 @@ typedef struct _HIDP_BUTTON_CAPS
     BOOLEAN  IsDesignatorRange;
     BOOLEAN  IsAbsolute;
 
-    ULONG    Reserved[10];
+    USHORT   ReportCount;   // Available in API version >= 2 only.
+
+    USHORT   Reserved2;
+
+    ULONG    Reserved[9];
     union {
         struct {
             USAGE    UsageMin,         UsageMax;
@@ -291,10 +310,12 @@ typedef struct _HIDP_EXTENDED_ATTRIBUTES
     ULONG   Data [1]; // variableLength  DO NOT ACCESS THIS FIELD
 } HIDP_EXTENDED_ATTRIBUTES, *PHIDP_EXTENDED_ATTRIBUTES;
 
+_Must_inspect_result_
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS __stdcall
 HidP_GetCaps (
-   IN      PHIDP_PREPARSED_DATA      PreparsedData,
-   OUT     PHIDP_CAPS                Capabilities
+   _In_      PHIDP_PREPARSED_DATA      PreparsedData,
+   _Out_     PHIDP_CAPS                Capabilities
    );
 /*++
 Routine Description:
@@ -306,15 +327,17 @@ Arguments:
    Capabilities     a HIDP_CAPS structure
 
 Return Value:
-·  HIDP_STATUS_SUCCESS
-·  HIDP_STATUS_INVALID_PREPARSED_DATA
+   HIDP_STATUS_SUCCESS
+   HIDP_STATUS_INVALID_PREPARSED_DATA
 --*/
 
+_Must_inspect_result_
+_IRQL_requires_max_(DISPATCH_LEVEL)
 NTSTATUS __stdcall
 HidP_GetLinkCollectionNodes (
-   OUT      PHIDP_LINK_COLLECTION_NODE LinkCollectionNodes,
-   IN OUT   PULONG                     LinkCollectionNodesLength,
-   IN       PHIDP_PREPARSED_DATA       PreparsedData
+   _Out_writes_to_(*LinkCollectionNodesLength, *LinkCollectionNodesLength)     PHIDP_LINK_COLLECTION_NODE LinkCollectionNodes,
+   _Inout_   PULONG                     LinkCollectionNodesLength,
+   _In_      PHIDP_PREPARSED_DATA       PreparsedData
    );
 /*++
 Routine Description:
@@ -335,24 +358,17 @@ Arguments:
 
 --*/
 
-NTSTATUS __stdcall
-HidP_GetButtonCaps (
-   IN       HIDP_REPORT_TYPE     ReportType,
-   OUT      PHIDP_BUTTON_CAPS    ButtonCaps,
-   IN OUT   PUSHORT              ButtonCapsLength,
-   IN       PHIDP_PREPARSED_DATA PreparsedData
-);
-#define HidP_GetButtonCaps(_Type_, _Caps_, _Len_, _Data_) \
-        HidP_GetSpecificButtonCaps (_Type_, 0, 0, 0, _Caps_, _Len_, _Data_)
+_Must_inspect_result_
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS __stdcall
 HidP_GetSpecificButtonCaps (
-   IN       HIDP_REPORT_TYPE     ReportType,
-   IN       USAGE                UsagePage,      // Optional (0 => ignore)
-   IN       USHORT               LinkCollection, // Optional (0 => ignore)
-   IN       USAGE                Usage,          // Optional (0 => ignore)
-   OUT      PHIDP_BUTTON_CAPS    ButtonCaps,
-   IN OUT   PUSHORT              ButtonCapsLength,
-   IN       PHIDP_PREPARSED_DATA PreparsedData
+   _In_       HIDP_REPORT_TYPE     ReportType,
+   _In_opt_   USAGE                UsagePage,      // Optional (0 => ignore)
+   _In_opt_   USHORT               LinkCollection, // Optional (0 => ignore)
+   _In_opt_   USAGE                Usage,          // Optional (0 => ignore)
+   _Out_writes_to_(*ButtonCapsLength, *ButtonCapsLength) PHIDP_BUTTON_CAPS ButtonCaps,
+   _Inout_    PUSHORT              ButtonCapsLength,
+   _In_       PHIDP_PREPARSED_DATA PreparsedData
    );
 /*++
 Description:
@@ -375,17 +391,17 @@ Parameters:
                   to further limit the number of button caps structures
                   returned.
 
-   Usage      A usage value used to limit the button caps returned to those
+   Usage       A usage value used to limit the button caps returned to those
                with the specified usage value.  If set to 0, this parameter
                is ignored.  Can be used with LinkCollection and UsagePage
                parameters to further limit the number of button caps
                structures returned.
 
-   ButtonCaps A _HIDP_BUTTON_CAPS array containing information about all the
+   ButtonCaps  A _HIDP_BUTTON_CAPS array containing information about all the
                binary values in the given report.  This buffer is provided by
                the caller.
 
-   ButtonLength   As input, this parameter specifies the length of the
+   ButtonCapsLength   As input, this parameter specifies the length of the
                   ButtonCaps parameter (array) in number of array elements.
                   As output, this value is set to indicate how many of those
                   array elements were filled in by the function.  The maximum number of
@@ -399,31 +415,33 @@ Parameters:
 
 Return Value
 HidP_GetSpecificButtonCaps returns the following error codes:
-· HIDP_STATUS_SUCCESS.
-· HIDP_STATUS_INVALID_REPORT_TYPE
-· HIDP_STATUS_INVALID_PREPARSED_DATA
-· HIDP_STATUS_BUFFER_TOO_SMALL (all given entries however have been filled in)
-· HIDP_STATUS_USAGE_NOT_FOUND
+  HIDP_STATUS_SUCCESS.
+  HIDP_STATUS_INVALID_REPORT_TYPE
+  HIDP_STATUS_INVALID_PREPARSED_DATA
+  HIDP_STATUS_BUFFER_TOO_SMALL (all given entries however have been filled in)
+  HIDP_STATUS_USAGE_NOT_FOUND
 --*/
-
+_Must_inspect_result_
+_IRQL_requires_max_(PASSIVE_LEVEL)
 NTSTATUS __stdcall
-HidP_GetValueCaps (
-   IN       HIDP_REPORT_TYPE     ReportType,
-   OUT      PHIDP_VALUE_CAPS     ValueCaps,
-   IN OUT   PUSHORT              ValueCapsLength,
-   IN       PHIDP_PREPARSED_DATA PreparsedData
+HidP_GetButtonCaps (
+   _In_       HIDP_REPORT_TYPE     ReportType,
+   _Out_writes_to_(*ButtonCapsLength, *ButtonCapsLength) PHIDP_BUTTON_CAPS ButtonCaps,
+   _Inout_    PUSHORT              ButtonCapsLength,
+   _In_       PHIDP_PREPARSED_DATA PreparsedData
 );
-#define HidP_GetValueCaps(_Type_, _Caps_, _Len_, _Data_) \
-        HidP_GetSpecificValueCaps (_Type_, 0, 0, 0, _Caps_, _Len_, _Data_)
+
+_Must_inspect_result_
+_IRQL_requires_max_(DISPATCH_LEVEL)
 NTSTATUS __stdcall
 HidP_GetSpecificValueCaps (
-   IN       HIDP_REPORT_TYPE     ReportType,
-   IN       USAGE                UsagePage,      // Optional (0 => ignore)
-   IN       USHORT               LinkCollection, // Optional (0 => ignore)
-   IN       USAGE                Usage,          // Optional (0 => ignore)
-   OUT      PHIDP_VALUE_CAPS     ValueCaps,
-   IN OUT   PUSHORT              ValueCapsLength,
-   IN       PHIDP_PREPARSED_DATA PreparsedData
+   _In_       HIDP_REPORT_TYPE     ReportType,
+   _In_opt_   USAGE                UsagePage,      // Optional (0 => ignore)
+   _In_opt_   USHORT               LinkCollection, // Optional (0 => ignore)
+   _In_opt_   USAGE                Usage,          // Optional (0 => ignore)
+   _Out_writes_to_(*ValueCapsLength, *ValueCapsLength)      PHIDP_VALUE_CAPS     ValueCaps,
+   _Inout_    PUSHORT              ValueCapsLength,
+   _In_       PHIDP_PREPARSED_DATA PreparsedData
    );
 /*++
 Description:
@@ -470,21 +488,33 @@ Parameters:
 
 Return Value
 HidP_GetValueCaps returns the following error codes:
-· HIDP_STATUS_SUCCESS.
-· HIDP_STATUS_INVALID_REPORT_TYPE
-· HIDP_STATUS_INVALID_PREPARSED_DATA
-· HIDP_STATUS_BUFFER_TOO_SMALL (all given entries however have been filled in)
-· HIDP_STATUS_USAGE_NOT_FOUND
+  HIDP_STATUS_SUCCESS.
+  HIDP_STATUS_INVALID_REPORT_TYPE
+  HIDP_STATUS_INVALID_PREPARSED_DATA
+  HIDP_STATUS_BUFFER_TOO_SMALL (all given entries however have been filled in)
+  HIDP_STATUS_USAGE_NOT_FOUND
 
 --*/
 
+_Must_inspect_result_
+_IRQL_requires_max_(DISPATCH_LEVEL)
+NTSTATUS __stdcall
+HidP_GetValueCaps (
+   _In_       HIDP_REPORT_TYPE     ReportType,
+   _Out_writes_to_(*ValueCapsLength, *ValueCapsLength) PHIDP_VALUE_CAPS ValueCaps,
+   _Inout_    PUSHORT              ValueCapsLength,
+   _In_       PHIDP_PREPARSED_DATA PreparsedData
+);
+
+_Must_inspect_result_
+_IRQL_requires_max_(DISPATCH_LEVEL)
 NTSTATUS __stdcall
 HidP_GetExtendedAttributes (
-    IN      HIDP_REPORT_TYPE            ReportType,
-    IN      USHORT                      DataIndex,
-    IN      PHIDP_PREPARSED_DATA        PreparsedData,
-    OUT     PHIDP_EXTENDED_ATTRIBUTES   Attributes,
-    IN OUT  PULONG                      LengthAttributes
+    _In_      HIDP_REPORT_TYPE            ReportType,
+    _In_      USHORT                      DataIndex,
+    _In_      PHIDP_PREPARSED_DATA        PreparsedData,
+    _Out_writes_to_(*LengthAttributes, *LengthAttributes) PHIDP_EXTENDED_ATTRIBUTES Attributes,
+    _Inout_   PULONG                      LengthAttributes
     );
 /*++
 Description:
@@ -509,13 +539,15 @@ Return Value
     HIDP_STATUS_DATA_INDEX_NOT_FOUND
 --*/
 
+_Must_inspect_result_
+_IRQL_requires_max_(DISPATCH_LEVEL)
 NTSTATUS __stdcall
 HidP_InitializeReportForID (
-   IN       HIDP_REPORT_TYPE      ReportType,
-   IN       UCHAR                 ReportID,
-   IN       PHIDP_PREPARSED_DATA  PreparsedData,
-   IN OUT   PCHAR                 Report,
-   IN       ULONG                 ReportLength
+   _In_ HIDP_REPORT_TYPE ReportType,
+   _In_ UCHAR ReportID,
+   _In_ PHIDP_PREPARSED_DATA PreparsedData,
+   _Out_writes_bytes_(ReportLength) PCHAR Report,
+   _In_ ULONG ReportLength
    );
 /*++
 
@@ -537,25 +569,26 @@ Parameters:
 
 Return Value
 
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not equal
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not equal
                                         to the length specified in HIDP_CAPS
                                         structure for the given ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
 
 --*/
 
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_SetData (
-   IN       HIDP_REPORT_TYPE      ReportType,
-   IN       PHIDP_DATA            DataList,
-   IN OUT   PULONG                DataLength,
-   IN       PHIDP_PREPARSED_DATA  PreparsedData,
-   IN OUT   PCHAR                 Report,
-   IN       ULONG                 ReportLength
-   );
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _Inout_updates_to_(*DataLength,*DataLength) PHIDP_DATA DataList,
+    _Inout_ PULONG DataLength,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _In_reads_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
+    );
 /*++
 
 Routine Description:
@@ -590,44 +623,46 @@ Return Value
         have all the data set up until the HIDP_DATA structure that caused the
         error.  DataLength, in the error case, will return this problem index.
 
-· HIDP_STATUS_SUCCESS                -- upon successful insertion of all data
+  HIDP_STATUS_SUCCESS                -- upon successful insertion of all data
                                         into the report packet.
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_DATA_INDEX_NOT_FOUND   -- if a HIDP_DATA structure referenced a
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_DATA_INDEX_NOT_FOUND   -- if a HIDP_DATA structure referenced a
                                         data index that does not exist for this
                                         device's ReportType
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not equal
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not equal
                                         to the length specified in HIDP_CAPS
                                         structure for the given ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
-· HIDP_STATUS_IS_USAGE_VALUE_ARRAY   -- if one of the HIDP_DATA structures
+  HIDP_STATUS_IS_USAGE_VALUE_ARRAY   -- if one of the HIDP_DATA structures
                                         references a usage value array.
                                         DataLength will contain the index into
                                         the array that was invalid
-· HIDP_STATUS_BUTTON_NOT_PRESSED     -- if a HIDP_DATA structure attempted
+  HIDP_STATUS_BUTTON_NOT_PRESSED     -- if a HIDP_DATA structure attempted
                                         to unset a button that was not already
                                         set in the Report
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- a HIDP_DATA structure was found with
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- a HIDP_DATA structure was found with
                                         a valid index value but is contained
                                         in a different report than the one
                                         currently being processed
-· HIDP_STATUS_BUFFER_TOO_SMALL       -- if there are not enough entries in
+  HIDP_STATUS_BUFFER_TOO_SMALL       -- if there are not enough entries in
                                         a given Main Array Item to report all
                                         buttons that have been requested to be
                                         set
 --*/
 
+_Must_inspect_result_
+_IRQL_requires_max_(DISPATCH_LEVEL)
 NTSTATUS __stdcall
 HidP_GetData (
-   IN       HIDP_REPORT_TYPE      ReportType,
-   OUT      PHIDP_DATA            DataList,
-   IN OUT   PULONG                DataLength,
-   IN       PHIDP_PREPARSED_DATA  PreparsedData,
-   IN       PCHAR                 Report,
-   IN       ULONG                 ReportLength
-   );
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _Out_writes_to_(*DataLength,*DataLength) PHIDP_DATA DataList,
+    _Inout_ PULONG DataLength,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _Out_writes_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
+    );
 /*++
 
 Routine Description:
@@ -646,7 +681,7 @@ Parameters:
                 set by HidP_GetData.  The maximum size necessary for DataList
                 can be determined by calling HidP_MaxDataListLength
 
-    PreparasedData  Preparsed data structure returned by HIDCLASS
+    PreparsedData  Preparsed data structure returned by HIDCLASS
 
     Report      Buffer which to set the data into.
 
@@ -657,26 +692,27 @@ Parameters:
 Return Value
     HidP_GetData returns the following error codes.
 
-· HIDP_STATUS_SUCCESS                -- upon successful retrieval of all data
+  HIDP_STATUS_SUCCESS                -- upon successful retrieval of all data
                                         from the report packet.
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not equal
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not equal
                                         to the length specified in HIDP_CAPS
                                         structure for the given ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
-· HIDP_STATUS_BUFFER_TOO_SMALL       -- if there are not enough array entries in
+  HIDP_STATUS_BUFFER_TOO_SMALL       -- if there are not enough array entries in
                                         DataList to store all the indice values
                                         in the given report.  DataLength will
                                         contain the number of array entries
                                         required to hold all data
 --*/
 
+_IRQL_requires_max_(DISPATCH_LEVEL) 
 ULONG __stdcall
 HidP_MaxDataListLength (
-   IN HIDP_REPORT_TYPE      ReportType,
-   IN PHIDP_PREPARSED_DATA  PreparsedData
+   _In_ HIDP_REPORT_TYPE      ReportType,
+   _In_ PHIDP_PREPARSED_DATA  PreparsedData
    );
 /*++
 Routine Description:
@@ -701,16 +737,17 @@ Return Value:
 #define HidP_SetButtons(Rty, Up, Lco, ULi, ULe, Ppd, Rep, Rle) \
         HidP_SetUsages(Rty, Up, Lco, ULi, ULe, Ppd, Rep, Rle)
 
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_SetUsages (
-   IN       HIDP_REPORT_TYPE      ReportType,
-   IN       USAGE                 UsagePage,
-   IN       USHORT                LinkCollection, // Optional
-   IN       PUSAGE                UsageList,
-   IN OUT   PULONG                UsageLength,
-   IN       PHIDP_PREPARSED_DATA  PreparsedData,
-   IN OUT   PCHAR                 Report,
-   IN       ULONG                 ReportLength
+   _In_ HIDP_REPORT_TYPE    ReportType,
+   _In_ USAGE   UsagePage,
+   _In_opt_ USHORT  LinkCollection,
+   _Inout_updates_to_(*UsageLength,*UsageLength) PUSAGE  UsageList,
+   _Inout_  PULONG  UsageLength,
+   _In_ PHIDP_PREPARSED_DATA  PreparsedData,
+   _In_reads_bytes_(ReportLength) PCHAR   Report,
+   _In_ ULONG   ReportLength 
    );
 /*++
 
@@ -718,7 +755,7 @@ Routine Description:
     This function sets binary values (buttons) in a report.  Given an
     initialized packet of correct length, it modifies the report packet so that
     each element in the given list of usages has been set in the report packet.
-    For example, in an output report with 5 LED’s, each with a given usage,
+    For example, in an output report with 5 LED's, each with a given usage,
     an application could turn on any subset of these lights by placing their
     usages in any order into the usage array (UsageList).  HidP_SetUsages would,
     in turn, set the appropriate bit or add the corresponding byte into the
@@ -764,27 +801,27 @@ Return Value
     HidP_SetUsages returns the following error codes.  On error, the report packet
     will be correct up until the usage element that caused the error.
 
-· HIDP_STATUS_SUCCESS                -- upon successful insertion of all usages
+  HIDP_STATUS_SUCCESS                -- upon successful insertion of all usages
                                         into the report packet.
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- if a usage was found that exists in a
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- if a usage was found that exists in a
                                         different report.  If the report is
                                         zero-initialized on entry the first
                                         usage in the list will determine which
                                         report ID is used.  Otherwise, the
                                         parser will verify that usage matches
                                         the passed in report's ID
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage does not exist for any
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage does not exist for any
                                         report (no matter what the report ID)
                                         for the given report type.
-· HIDP_STATUS_BUFFER_TOO_SMALL       -- if there are not enough entries in a
+  HIDP_STATUS_BUFFER_TOO_SMALL       -- if there are not enough entries in a
                                         given Main Array Item to list all of
                                         the given usages.  The caller needs
                                         to split his request into more than
@@ -794,16 +831,17 @@ Return Value
 #define HidP_UnsetButtons(Rty, Up, Lco, ULi, ULe, Ppd, Rep, Rle) \
         HidP_UnsetUsages(Rty, Up, Lco, ULi, ULe, Ppd, Rep, Rle)
 
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_UnsetUsages (
-   IN       HIDP_REPORT_TYPE      ReportType,
-   IN       USAGE                 UsagePage,
-   IN       USHORT                LinkCollection, // Optional
-   IN       PUSAGE                UsageList,
-   IN OUT   PULONG                UsageLength,
-   IN       PHIDP_PREPARSED_DATA  PreparsedData,
-   IN OUT   PCHAR                 Report,
-   IN       ULONG                 ReportLength
+   _In_ HIDP_REPORT_TYPE      ReportType,
+   _In_ USAGE   UsagePage,
+   _In_opt_ USHORT  LinkCollection,
+   _Inout_updates_to_(*UsageLength,*UsageLength) PUSAGE  UsageList,
+   _Inout_  PULONG  UsageLength,
+   _In_ PHIDP_PREPARSED_DATA  PreparsedData,
+   _In_reads_bytes_(ReportLength) PCHAR   Report,
+   _In_ ULONG   ReportLength
    );
 /*++
 
@@ -859,43 +897,44 @@ Return Value
     HidP_UnsetUsages returns the following error codes.  On error, the report
     packet will be correct up until the usage element that caused the error.
 
-· HIDP_STATUS_SUCCESS                -- upon successful "unsetting" of all usages
+  HIDP_STATUS_SUCCESS                -- upon successful "unsetting" of all usages
                                         in the report packet.
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- if a usage was found that exists in a
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- if a usage was found that exists in a
                                         different report.  If the report is
                                         zero-initialized on entry the first
                                         usage in the list will determine which
                                         report ID is used.  Otherwise, the
                                         parser will verify that usage matches
                                         the passed in report's ID
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage does not exist for any
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage does not exist for any
                                         report (no matter what the report ID)
                                         for the given report type.
-· HIDP_STATUS_BUTTON_NOT_PRESSED     -- if a usage corresponds to a button that
+  HIDP_STATUS_BUTTON_NOT_PRESSED     -- if a usage corresponds to a button that
                                         is not already set in the given report
 --*/
 
 #define HidP_GetButtons(Rty, UPa, LCo, ULi, ULe, Ppd, Rep, RLe) \
         HidP_GetUsages(Rty, UPa, LCo, ULi, ULe, Ppd, Rep, RLe)
 
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_GetUsages (
-   IN       HIDP_REPORT_TYPE     ReportType,
-   IN       USAGE                UsagePage,
-   IN       USHORT               LinkCollection, // Optional
-   OUT      USAGE *              UsageList,
-   IN OUT   ULONG *              UsageLength,
-   IN       PHIDP_PREPARSED_DATA PreparsedData,
-   IN       PCHAR                Report,
-   IN       ULONG                ReportLength
+   _In_ HIDP_REPORT_TYPE    ReportType,
+   _In_ USAGE   UsagePage,
+   _In_opt_ USHORT  LinkCollection,
+   _Out_writes_to_(*UsageLength, *UsageLength)  PUSAGE UsageList,
+   _Inout_    PULONG UsageLength,
+   _In_ PHIDP_PREPARSED_DATA PreparsedData,
+   _Out_writes_bytes_(ReportLength)    PCHAR Report,
+   _In_ ULONG   ReportLength
    );
 /*++
 
@@ -942,44 +981,46 @@ Parameters:
 Return Value
     HidP_GetUsages returns the following error codes:
 
-· HIDP_STATUS_SUCCESS                -- upon successfully retrieving all the
+  HIDP_STATUS_SUCCESS                -- upon successfully retrieving all the
                                         usages from the report packet
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
-· HIDP_STATUS_BUFFER_TOO_SMALL       -- if the UsageList is not big enough to
+  HIDP_STATUS_BUFFER_TOO_SMALL       -- if the UsageList is not big enough to
                                         hold all the usages found in the report
                                         packet.  If this is returned, the buffer
                                         will contain UsageLength number of
                                         usages.  Use HidP_MaxUsageListLength to
                                         find the maximum length needed
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- if no usages were found but usages
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- if no usages were found but usages
                                         that match the UsagePage and
                                         LinkCollection specified could be found
                                         in a report with a different report ID
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if there are no usages in a reports for
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if there are no usages in a reports for
                                         the device and ReportType that match the
                                         UsagePage and LinkCollection that were
                                         specified
 --*/
 
 #define HidP_GetButtonsEx(Rty, LCo, BLi, ULe, Ppd, Rep, RLe)  \
-        HidP_GetUsagesEx(Rty, LCo, BLi, ULe, Ppd, Rep, RLe)
+         HidP_GetUsagesEx(Rty, LCo, BLi, ULe, Ppd, Rep, RLe)
 
+_Must_inspect_result_
+_IRQL_requires_max_(DISPATCH_LEVEL)
 NTSTATUS __stdcall
 HidP_GetUsagesEx (
-   IN       HIDP_REPORT_TYPE     ReportType,
-   IN       USHORT               LinkCollection, // Optional
-   OUT      PUSAGE_AND_PAGE      ButtonList,
-   IN OUT   ULONG *              UsageLength,
-   IN       PHIDP_PREPARSED_DATA PreparsedData,
-   IN       PCHAR                Report,
-   IN       ULONG                ReportLength
+    _In_    HIDP_REPORT_TYPE    ReportType,
+    _In_opt_  USHORT  LinkCollection, // Optional
+    _Inout_updates_to_(*UsageLength,*UsageLength) PUSAGE_AND_PAGE  ButtonList,
+    _Inout_   ULONG * UsageLength,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _In_reads_bytes_(ReportLength)   PCHAR   Report,
+    _In_ ULONG  ReportLength
    );
 
 /*++
@@ -1021,38 +1062,36 @@ Parameters:
 Return Value
     HidP_GetUsagesEx returns the following error codes:
 
-· HIDP_STATUS_SUCCESS                -- upon successfully retrieving all the
+  HIDP_STATUS_SUCCESS                -- upon successfully retrieving all the
                                         usages from the report packet
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
-· HIDP_STATUS_BUFFER_TOO_SMALL       -- if ButtonList is not big enough to
+  HIDP_STATUS_BUFFER_TOO_SMALL       -- if ButtonList is not big enough to
                                         hold all the usages found in the report
                                         packet.  If this is returned, the buffer
                                         will contain UsageLength number of
                                         usages.  Use HidP_MaxUsageListLength to
                                         find the maximum length needed
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- if no usages were found but usages
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- if no usages were found but usages
                                         that match the specified LinkCollection
                                         exist in report with a different report
                                         ID.
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if there are no usages in any reports that
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if there are no usages in any reports that
                                         match the LinkCollection parameter
 --*/
-
-#define HidP_GetButtonListLength(RTy, UPa, Ppd) \
-        HidP_GetUsageListLength(Rty, UPa, Ppd)
-
+        
+_IRQL_requires_max_(PASSIVE_LEVEL) 
 ULONG __stdcall
 HidP_MaxUsageListLength (
-   IN HIDP_REPORT_TYPE      ReportType,
-   IN USAGE                 UsagePage, // Optional
-   IN PHIDP_PREPARSED_DATA  PreparsedData
+   _In_ HIDP_REPORT_TYPE      ReportType,
+   _In_opt_ USAGE                 UsagePage, // Optional
+   _In_ PHIDP_PREPARSED_DATA  PreparsedData
    );
 /*++
 Routine Description:
@@ -1079,17 +1118,18 @@ Return Value:
     returns 0.
 --*/
 
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_SetUsageValue (
-   IN       HIDP_REPORT_TYPE     ReportType,
-   IN       USAGE                UsagePage,
-   IN       USHORT               LinkCollection, // Optional
-   IN       USAGE                Usage,
-   IN       ULONG                UsageValue,
-   IN       PHIDP_PREPARSED_DATA PreparsedData,
-   IN OUT   PCHAR                Report,
-   IN       ULONG                ReportLength
-   );
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _In_ USAGE UsagePage,
+    _In_opt_ USHORT LinkCollection,
+    _In_ USAGE Usage,
+    _In_ ULONG UsageValue,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _Inout_updates_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
+    );
 /*++
 Description:
     HidP_SetUsageValue inserts a value into the HID Report Packet in the field
@@ -1137,39 +1177,39 @@ Parameters:
 Return Value:
     HidP_SetUsageValue returns the following error codes:
 
-· HIDP_STATUS_SUCCESS                -- upon successfully setting the value
+  HIDP_STATUS_SUCCESS                -- upon successfully setting the value
                                         in the report packet
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
                                         link collection exist but exists in
                                         a report with a different report ID
                                         than the report being passed in.  To
                                         set this value, call HidP_SetUsageValue
                                         again with a zero-initizialed report
                                         packet
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
                                         collection combination does not exist
                                         in any reports for this ReportType
 --*/
-
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_SetScaledUsageValue (
-   IN       HIDP_REPORT_TYPE     ReportType,
-   IN       USAGE                UsagePage,
-   IN       USHORT               LinkCollection, // Optional
-   IN       USAGE                Usage,
-   IN       LONG                 UsageValue,
-   IN       PHIDP_PREPARSED_DATA PreparsedData,
-   IN OUT   PCHAR                Report,
-   IN       ULONG                ReportLength
-   );
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _In_ USAGE UsagePage,
+    _In_opt_ USHORT LinkCollection,
+    _In_ USAGE Usage,
+    _In_ LONG UsageValue,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _Inout_updates_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
+    );
 
 /*++
 Description:
@@ -1222,48 +1262,48 @@ Parameters:
 Return Value:
    HidP_SetScaledUsageValue returns the following error codes:
 
-· HIDP_STATUS_SUCCESS                -- upon successfully setting the value
+  HIDP_STATUS_SUCCESS                -- upon successfully setting the value
                                         in the report packet
-· HIDP_STATUS_NULL                   -- upon successfully setting the value
+  HIDP_STATUS_NULL                   -- upon successfully setting the value
                                         in the report packet as a NULL value
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_VALUE_OUT_OF_RANGE     -- if the value specified failed to fall
+  HIDP_STATUS_VALUE_OUT_OF_RANGE     -- if the value specified failed to fall
                                         within the physical range if it exists
                                         or within the logical range otherwise
                                         and the field specified by the usage
                                         does not allow NULL values
-· HIDP_STATUS_BAD_LOG_PHY_VALUES     -- if the field has a physical range but
+  HIDP_STATUS_BAD_LOG_PHY_VALUES     -- if the field has a physical range but
                                         either the logical range is invalid
                                         (max <= min) or the physical range is
                                         invalid
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
                                         link collection exist but exists in
                                         a report with a different report ID
                                         than the report being passed in.  To
                                         set this value, call
                                         HidP_SetScaledUsageValue again with
                                         a zero-initialized report packet
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
                                         collection combination does not exist
                                         in any reports for this ReportType
 --*/
-
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_SetUsageValueArray (
-    IN    HIDP_REPORT_TYPE     ReportType,
-    IN    USAGE                UsagePage,
-    IN    USHORT               LinkCollection, // Optional
-    IN    USAGE                Usage,
-    IN    PCHAR                UsageValue,
-    IN    USHORT               UsageValueByteLength,
-    IN    PHIDP_PREPARSED_DATA PreparsedData,
-    OUT   PCHAR                Report,
-    IN    ULONG                ReportLength
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _In_ USAGE UsagePage,
+    _In_opt_ USHORT LinkCollection,
+    _In_ USAGE Usage,
+    _In_reads_bytes_(UsageValueByteLength) PCHAR UsageValue,
+    _In_ USHORT UsageValueByteLength,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _Inout_updates_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
     );
 
 /*++
@@ -1324,54 +1364,54 @@ Parameters:
 
 
 Return Value:
-· HIDP_STATUS_SUCCESS                -- upon successfully setting the value
+  HIDP_STATUS_SUCCESS                -- upon successfully setting the value
                                         array in the report packet
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
-· HIDP_STATUS_NOT_VALUE_ARRAY        -- if the control specified is not a
+  HIDP_STATUS_NOT_VALUE_ARRAY        -- if the control specified is not a
                                         value array -- a value array will have
                                         a ReportCount field in the
                                         HIDP_VALUE_CAPS structure that is > 1
                                         Use HidP_SetUsageValue instead
-· HIDP_STATUS_BUFFER_TOO_SMALL       -- if the size of the passed in buffer with
+  HIDP_STATUS_BUFFER_TOO_SMALL       -- if the size of the passed in buffer with
                                         the values to set is too small (ie. has
                                         fewer values than the number of fields in
                                         the array
-· HIDP_STATUS_NOT_IMPLEMENTED        -- if the usage value array has field sizes
+  HIDP_STATUS_NOT_IMPLEMENTED        -- if the usage value array has field sizes
                                         that are not multiples of 8 bits, this
                                         error code is returned since the function
                                         currently does not handle setting into
                                         such arrays.
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
                                         link collection exist but exists in
                                         a report with a different report ID
                                         than the report being passed in.  To
                                         set this value, call
                                         HidP_SetUsageValueArray again with
                                         a zero-initialized report packet
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
                                         collection combination does not exist
                                         in any reports for this ReportType
 --*/
 
-
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_GetUsageValue (
-   IN    HIDP_REPORT_TYPE     ReportType,
-   IN    USAGE                UsagePage,
-   IN    USHORT               LinkCollection, // Optional
-   IN    USAGE                Usage,
-   OUT   PULONG               UsageValue,
-   IN    PHIDP_PREPARSED_DATA PreparsedData,
-   IN    PCHAR                Report,
-   IN    ULONG                ReportLength
-   );
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _In_ USAGE UsagePage,
+    _In_opt_ USHORT LinkCollection,
+    _In_ USAGE Usage,
+    _Out_ PULONG UsageValue,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _In_reads_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
+    );
 
 /*
 Description
@@ -1412,39 +1452,39 @@ Parameters:
 Return Value:
     HidP_GetUsageValue returns the following error codes:
 
-· HIDP_STATUS_SUCCESS                -- upon successfully retrieving the value
+  HIDP_STATUS_SUCCESS                -- upon successfully retrieving the value
                                         from the report packet
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+  HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
                                         for the given ReportType
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
                                         link collection exist but exists in
                                         a report with a different report ID
                                         than the report being passed in.  To
                                         set this value, call HidP_GetUsageValue
                                         again with a different report packet
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
                                         collection combination does not exist
                                         in any reports for this ReportType
 --*/
 
-
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_GetScaledUsageValue (
-   IN    HIDP_REPORT_TYPE     ReportType,
-   IN    USAGE                UsagePage,
-   IN    USHORT               LinkCollection, // Optional
-   IN    USAGE                Usage,
-   OUT   PLONG                UsageValue,
-   IN    PHIDP_PREPARSED_DATA PreparsedData,
-   IN    PCHAR                Report,
-   IN    ULONG                ReportLength
-   );
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _In_ USAGE UsagePage,
+    _In_opt_ USHORT LinkCollection,
+    _In_ USAGE Usage,
+    _Out_ PLONG UsageValue,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _In_reads_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
+    );
 
 /*++
 Description
@@ -1500,46 +1540,46 @@ Parameters:
 Return Value:
    HidP_GetScaledUsageValue returns the following error codes:
 
-· HIDP_STATUS_SUCCESS                -- upon successfully retrieving the value
+  HIDP_STATUS_SUCCESS                -- upon successfully retrieving the value
                                         from the report packet
-· HIDP_STATUS_NULL                   -- if the report packet had a NULL value
+  HIDP_STATUS_NULL                   -- if the report packet had a NULL value
                                         set
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_VALUE_OUT_OF_RANGE     -- if the value retrieved from the packet
+  HIDP_STATUS_VALUE_OUT_OF_RANGE     -- if the value retrieved from the packet
                                         falls outside the logical range and
                                         the field does not support NULL values
-· HIDP_STATUS_BAD_LOG_PHY_VALUES     -- if the field has a physical range but
+  HIDP_STATUS_BAD_LOG_PHY_VALUES     -- if the field has a physical range but
                                         either the logical range is invalid
                                         (max <= min) or the physical range is
                                         invalid
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
                                         link collection exist but exists in
                                         a report with a different report ID
                                         than the report being passed in.  To
                                         set this value, call
                                         HidP_GetScaledUsageValue with a
                                         different report packet
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
                                         collection combination does not exist
                                         in any reports for this ReportType
 --*/
-
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_GetUsageValueArray (
-    IN    HIDP_REPORT_TYPE     ReportType,
-    IN    USAGE                UsagePage,
-    IN    USHORT               LinkCollection, // Optional
-    IN    USAGE                Usage,
-    OUT   PCHAR                UsageValue,
-    IN    USHORT               UsageValueByteLength,
-    IN    PHIDP_PREPARSED_DATA PreparsedData,
-    IN    PCHAR                Report,
-    IN    ULONG                ReportLength
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _In_ USAGE UsagePage,
+    _In_opt_ USHORT LinkCollection,
+    _In_ USAGE Usage,
+    _Inout_updates_bytes_(UsageValueByteLength) PCHAR UsageValue,
+    _In_ USHORT UsageValueByteLength,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _In_reads_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
     );
 
 /*++
@@ -1598,47 +1638,49 @@ Parameters:
 
 Return Value:
 
-· HIDP_STATUS_SUCCESS                -- upon successfully retrieving the value
+  HIDP_STATUS_SUCCESS                -- upon successfully retrieving the value
                                         from the report packet
-· HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
-· HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
-· HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+  HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+  HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+  HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
                                         equal to the length specified in
                                         the HIDP_CAPS structure for the given
                                         ReportType
-· HIDP_STATUS_NOT_VALUE_ARRAY        -- if the control specified is not a
+  HIDP_STATUS_NOT_VALUE_ARRAY        -- if the control specified is not a
                                         value array -- a value array will have
                                         a ReportCount field in the
                                         HIDP_VALUE_CAPS structure that is > 1
                                         Use HidP_GetUsageValue instead
-· HIDP_STATUS_BUFFER_TOO_SMALL       -- if the size of the passed in buffer in
+  HIDP_STATUS_BUFFER_TOO_SMALL       -- if the size of the passed in buffer in
                                         which to return the array is too small
                                         (ie. has fewer values than the number of
                                         fields in the array
-· HIDP_STATUS_NOT_IMPLEMENTED        -- if the usage value array has field sizes
+  HIDP_STATUS_NOT_IMPLEMENTED        -- if the usage value array has field sizes
                                         that are not multiples of 8 bits, this
                                         error code is returned since the function
                                         currently does not handle getting values
                                         from such arrays.
-· HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
+  HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
                                         link collection exist but exists in
                                         a report with a different report ID
                                         than the report being passed in.  To
                                         set this value, call
                                         HidP_GetUsageValueArray with a
                                         different report packet
-· HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
+  HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
                                         collection combination does not exist
                                         in any reports for this ReportType
 --*/
 
+_Must_inspect_result_
+_IRQL_requires_max_(DISPATCH_LEVEL)
 NTSTATUS __stdcall
 HidP_UsageListDifference (
-    IN    PUSAGE   PreviousUsageList,
-    IN    PUSAGE   CurrentUsageList,
-    OUT   PUSAGE   BreakUsageList,
-    OUT   PUSAGE   MakeUsageList,
-    IN    ULONG    UsageListLength
+   _In_reads_(UsageListLength) PUSAGE  PreviousUsageList,
+   _In_reads_(UsageListLength) PUSAGE  CurrentUsageList,
+   _Out_writes_(UsageListLength) PUSAGE  BreakUsageList,
+   _Out_writes_(UsageListLength) PUSAGE  MakeUsageList,
+   _In_ ULONG    UsageListLength
     );
 /*++
 Routine Description:
@@ -1663,14 +1705,221 @@ Parameters:
                         will be ignored.
 --*/
 
+_Must_inspect_result_
+_IRQL_requires_max_(DISPATCH_LEVEL)
 NTSTATUS __stdcall
 HidP_UsageAndPageListDifference (
-   IN    PUSAGE_AND_PAGE PreviousUsageList,
-   IN    PUSAGE_AND_PAGE CurrentUsageList,
-   OUT   PUSAGE_AND_PAGE BreakUsageList,
-   OUT   PUSAGE_AND_PAGE MakeUsageList,
-   IN    ULONG           UsageListLength
+   _In_reads_(UsageListLength) PUSAGE_AND_PAGE PreviousUsageList,
+   _In_reads_(UsageListLength) PUSAGE_AND_PAGE CurrentUsageList,
+   _Out_writes_(UsageListLength) PUSAGE_AND_PAGE BreakUsageList,
+   _Out_writes_(UsageListLength) PUSAGE_AND_PAGE MakeUsageList,
+   _In_ ULONG           UsageListLength
    );
+
+//
+// Used to get/set data for single button in a ButtonArray.
+//
+typedef struct _HIDP_BUTTON_ARRAY_DATA
+{
+    //
+    // The position (zero-based index) of the button within the ButtonArray.
+    // Value will always be < HIDP_BUTTON_CAPS.ReportCount
+    // (Note: This is NOT an index 'of' a ButtonArray within the preparsed data.)
+    //
+    USHORT ArrayIndex;
+
+    //
+    // TRUE when the button at the ArrayIndex (within the ButtonArray) is 'On'.
+    // This is FALSE when the button is 'Off'.
+    //
+    BOOLEAN On;
+} HIDP_BUTTON_ARRAY_DATA, *PHIDP_BUTTON_ARRAY_DATA;
+
+_Must_inspect_result_
+NTSTATUS __stdcall
+HidP_GetButtonArray (
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _In_ USAGE UsagePage,
+    _In_opt_ USHORT LinkCollection,
+    _In_ USAGE Usage,
+    _Out_writes_to_(*ButtonDataLength, *ButtonDataLength) PHIDP_BUTTON_ARRAY_DATA ButtonData,
+    _Inout_ PUSHORT ButtonDataLength,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _In_reads_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
+    );
+
+/*++
+Routine Descripton:
+    A button array occurs when the last usage in the sequence of usages
+    describing a main item, must be repeated because there are less usages defined
+    than the ReportCount declared for the given main item.  In this case,
+    a single HIDP_BUTTON_CAPS is allocated for that usage and the ReportCount of the
+    HIDP_BUTTON_CAPS is set to reflect the number of fields the usage refers.
+
+    A HIDP_BUTTON_CAPS that describes a button array, will always have ReportCount > 1.
+    If ReportCount == 1, then it is not a button array and cannot be used with HidP_GetButtonArray.
+    (see instead HidP_GetUsages)
+
+    HidP_GetButtonArray returns (via _Out_ parameter) an array of HIDP_BUTTON_ARRAY_DATAs, one for each button 
+    (in the first button array found (and within the specified LinkCollection) with the supplied Usage) 
+    that is set to ON, for the supplied Report.
+
+
+Parameters:
+
+    ReportType    One of HidP_Input, HidP_Output or HidP_Feature.
+
+    UsagePage     The usage page to which the given usage refers.
+
+    LinkCollection  (Optional)  This value can be used to differentiate between two fields that may have 
+                the same UsagePage and Usage but exist in different collections.
+                If the LinkCollection value is HIDP_LINK_COLLECTION_UNSPECIFIED, the first found button array
+                matching the UsagePage and Usage will be returned (regardless of location).
+                If the LinkCollection value is HIDP_LINK_COLLECTION_ROOT, the first found button array (in the 
+                root collection) matching the UsagePage and Usage will be returned.
+
+    Usage    The usage whose buttons HidP_GetButtonArray will retrieve.
+
+    ButtonData    A HIDP_BUTTON_ARRAY_DATAs array where the data of buttons set to ON will be
+                  placed.  The number of elements required is the ReportCount field 
+                  of the HIDP_BUTTON_CAPS for this control.  This buffer is provided by
+                  the caller.
+
+    ButtonDataLength   As input, this parameter specifies the length of the
+                  ButtonData parameter (array) in number of array elements (NOT number of bytes).
+                  As output, if HIDP_STATUS_SUCCESS is returned, this value is set to indicate how many of those
+                  array elements were filled in by the function.  The maximum number of
+                  HIDP_BUTTON_ARRAY_DATA that can be returned is determined by HIDP_BUTTON_CAPS.ReportCount
+                  If HIDP_STATUS_BUFFER_TOO_SMALL is returned, this value contains the number 
+                  of array elements needed to successfully complete the request.
+
+    PreparsedData The preparsed data returned by the HIDCLASS
+
+    Report      The report packet.  (Note: The first byte MUST be the ReportId; this will be correctly set if the report is read from the system)
+
+    ReportLength   Length of the given report packet (in bytes).
+
+Return Value:
+
+    HIDP_STATUS_SUCCESS                -- upon successfully retrieving the buttons
+                                          from the report packet
+    HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+    HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+    HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+                                          equal to the length specified in
+                                          the HIDP_CAPS structure for the given
+                                          ReportType
+    HIDP_STATUS_NOT_BUTTON_ARRAY       -- if the control specified is not a
+                                          button array -- a button array will have
+                                          a ReportCount field in the
+                                          HIDP_BUTTON_CAPS structure that is > 1.
+                                          If ReportCount == 1, Use HidP_GetUsages instead.
+    HIDP_STATUS_BUFFER_TOO_SMALL       -- if the size of the passed in buffer in
+                                          which to return the array is too small
+                                          (i.e. has fewer values than the number of
+                                          fields in the array).  ButtonDataLength will be set
+                                          to the required size.
+    HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
+                                          link collection exist but exists in
+                                          a report with a different report ID
+                                          than the report being passed in.  To
+                                          set this value, call
+                                          HidP_GetButtonArray with a
+                                          different report packet
+    HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
+                                          collection combination does not exist
+                                          in any reports for this ReportType
+--*/
+
+_Must_inspect_result_
+NTSTATUS __stdcall
+HidP_SetButtonArray (
+    _In_ HIDP_REPORT_TYPE ReportType,
+    _In_ USAGE UsagePage,
+    _In_opt_ USHORT LinkCollection,
+    _In_ USAGE Usage,
+    _In_reads_(ButtonDataLength) PHIDP_BUTTON_ARRAY_DATA ButtonData,
+    _In_ USHORT ButtonDataLength,
+    _In_ PHIDP_PREPARSED_DATA PreparsedData,
+    _Inout_updates_bytes_(ReportLength) PCHAR Report,
+    _In_ ULONG ReportLength
+    );
+
+/*++
+Routine Descripton:
+    A button array occurs when the last usage in the sequence of usages
+    describing a main item, must be repeated because there are less usages defined
+    than the ReportCount declared for the given main item.  In this case,
+    a single HIDP_BUTTON_CAPS is allocated for that usage and the ReportCount of the
+    HIDP_BUTTON_CAPS is set to reflect the number of fields the usage refers.
+
+    A HIDP_BUTTON_CAPS that describes a button array, will always have ReportCount > 1.
+    If ReportCount == 1, then it is not a button array and cannot be used with HidP_SetButtonArray.
+    (see instead HidP_SetUsages)
+
+    HidP_SetButtonArray sets the state of buttons via an array of HIDP_BUTTON_ARRAY_DATAs.
+
+    HidP_SetButtonArray sets the state of buttons via an array of HIDP_BUTTON_ARRAY_DATAs
+    (for the first button array found (and within the specified LinkCollection) with the supplied Usage) 
+    for the supplied Report.
+
+Parameters:
+
+    ReportType  One of HidP_Output or HidP_Feature.
+
+    UsagePage   The usage page to which the given usage refers.
+
+    LinkCollection  (Optional)  This value can be used to differentiate between two fields that may have 
+                the same UsagePage and Usage but exist in different collections.
+                If the LinkCollection value is HIDP_LINK_COLLECTION_UNSPECIFIED, the first found button array
+                matching the UsagePage and Usage will be returned (regardless of location).
+                If the LinkCollection value is HIDP_LINK_COLLECTION_ROOT, the first found button array (in the 
+                root collection) matching the UsagePage and Usage will be returned.
+
+    Usage       The usage whose button array HidP_SetButtonArray will set.
+
+    ButtonData  The buffer with the values to set into the button array.
+
+    ButtonDataLength  Number of elements in the ButtonData buffer.
+
+    PreparsedData The preparsed data returned from HIDCLASS
+
+    Report      The report packet.  (Note: The first byte MUST be the ReportId).
+
+    ReportLength Length of the given report packet (in bytes).
+
+
+Return Value:
+    HIDP_STATUS_SUCCESS                -- upon successfully setting the value
+                                          array in the report packet
+    HIDP_STATUS_INVALID_REPORT_TYPE    -- if ReportType is not valid.
+    HIDP_STATUS_INVALID_PREPARSED_DATA -- if PreparsedData is not valid
+    HIDP_STATUS_INVALID_REPORT_LENGTH  -- the length of the report packet is not
+                                          equal to the length specified in
+                                          the HIDP_CAPS structure for the given
+                                          ReportType
+    HIDP_STATUS_REPORT_DOES_NOT_EXIST  -- if there are no reports on this device
+                                          for the given ReportType
+    HIDP_STATUS_NOT_BUTTON_ARRAY       -- if the control specified is not a
+                                          button array -- a button array will have
+                                          a ReportCount field in the
+                                          HIDP_BUTTON_CAPS structure that is > 1.
+                                          If ReportCount == 1, Use HidP_SetUsages instead.
+    HIDP_STATUS_INCOMPATIBLE_REPORT_ID -- the specified usage page, usage and
+                                          link collection exist but exists in
+                                          a report with a different report ID
+                                          than the report being passed in.  To
+                                          set this value, call
+                                          HidP_SetButtonArray again with
+                                          a zero-initialized report packet
+    HIDP_STATUS_USAGE_NOT_FOUND        -- if the usage page, usage, and link
+                                          collection combination does not exist
+                                          in any reports for this ReportType
+    HIDP_STATUS_DATA_INDEX_OUT_OF_RANGE -- if the ArrayIndex for one of the supplied HIDP_BUTTON_ARRAY_DATA
+                                          is outside the valid range for this button array (i.e. >= HIDP_BUTTON_CAPS.ReportCount)
+--*/
+
 
 //
 // Produce Make or Break Codes
@@ -1710,40 +1959,39 @@ typedef struct _HIDP_KEYBOARD_MODIFIER_STATE {
 // the below translation function.
 //
 typedef BOOLEAN (* PHIDP_INSERT_SCANCODES) (
-                  IN PVOID Context,  // Some caller supplied context.
-                  IN PCHAR NewScanCodes, // A list of i8042 scan codes.
-                  IN ULONG Length // the length of the scan codes.
+                  _In_opt_ PVOID Context,  // Some caller supplied context.
+                  _In_reads_bytes_(Length) PCHAR NewScanCodes, // A list of i8042 scan codes.
+                  _In_ ULONG Length // the length of the scan codes.
                   );
 
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_TranslateUsageAndPagesToI8042ScanCodes (
-    IN     PUSAGE_AND_PAGE               ChangedUsageList,
-    IN     ULONG                         UsageListLength,
-    IN     HIDP_KEYBOARD_DIRECTION       KeyAction,
-    IN OUT PHIDP_KEYBOARD_MODIFIER_STATE ModifierState,
-    IN     PHIDP_INSERT_SCANCODES        InsertCodesProcedure,
-    IN     PVOID                         InsertCodesContext
+    _In_reads_(UsageListLength)     PUSAGE_AND_PAGE ChangedUsageList,
+    _In_     ULONG                         UsageListLength,
+    _In_     HIDP_KEYBOARD_DIRECTION       KeyAction,
+    _Inout_  PHIDP_KEYBOARD_MODIFIER_STATE ModifierState,
+    _In_     PHIDP_INSERT_SCANCODES        InsertCodesProcedure,
+    _In_opt_ PVOID                         InsertCodesContext
     );
 /*++
 Routine Description:
 Parameters:
 --*/
-
+_Must_inspect_result_
 NTSTATUS __stdcall
 HidP_TranslateUsagesToI8042ScanCodes (
-    IN     PUSAGE                        ChangedUsageList,
-    IN     ULONG                         UsageListLength,
-    IN     HIDP_KEYBOARD_DIRECTION       KeyAction,
-    IN OUT PHIDP_KEYBOARD_MODIFIER_STATE ModifierState,
-    IN     PHIDP_INSERT_SCANCODES        InsertCodesProcedure,
-    IN     PVOID                         InsertCodesContext
+    _In_reads_(UsageListLength)     PUSAGE ChangedUsageList,
+    _In_     ULONG                         UsageListLength,
+    _In_     HIDP_KEYBOARD_DIRECTION       KeyAction,
+    _Inout_  PHIDP_KEYBOARD_MODIFIER_STATE ModifierState,
+    _In_     PHIDP_INSERT_SCANCODES        InsertCodesProcedure,
+    _In_opt_ PVOID                         InsertCodesContext
     );
 /*++
 Routine Description:
 Parameters:
 --*/
-
-
 
 //
 // Define NT Status codes with Facility Code of FACILITY_HID_ERROR_CODE
@@ -1776,13 +2024,71 @@ Parameters:
 #define HIDP_STATUS_BUTTON_NOT_PRESSED       (HIDP_ERROR_CODES(0xC,0xF))
 #define HIDP_STATUS_REPORT_DOES_NOT_EXIST    (HIDP_ERROR_CODES(0xC,0x10))
 #define HIDP_STATUS_NOT_IMPLEMENTED          (HIDP_ERROR_CODES(0xC,0x20))
+#define HIDP_STATUS_NOT_BUTTON_ARRAY         (HIDP_ERROR_CODES(0xC,0x21))
 
 //
 // We blundered this status code.
 //
 #define HIDP_STATUS_I8242_TRANS_UNKNOWN HIDP_STATUS_I8042_TRANS_UNKNOWN
 
-#include <poppack.h>
+#ifndef _KERNEL_MODE
+
+typedef NTSTATUS
+(*PFN_HidP_GetVersionInternal)(
+    _Out_ ULONG* Version);
+
+_Must_inspect_result_
+inline NTSTATUS __stdcall
+HidP_GetVersion (
+  _Out_ ULONG* Version
+  )
+/*++
+Routine Description:
+  Header-only implementation of HidP versioning, to separate API versions that support HidP_GetButtonArray && HidP_SetButtonArray
+  APIs and those that don't.
+--*/
+{
+    NTSTATUS status = HIDP_STATUS_SUCCESS;
+
+    *Version = 1;
+
+    HMODULE module = LoadLibraryW(L"hid.dll");
+    if (module == NULL)
+    {
+        // Couldn't Load the hid dll.  Something is very wrong.
+        return HIDP_STATUS_INTERNAL_ERROR;
+    }
+
+    PFN_HidP_GetVersionInternal fnVersionInternal = (PFN_HidP_GetVersionInternal) GetProcAddress(module, "HidP_GetVersionInternal");
+    if (fnVersionInternal != NULL)
+    {
+        status = fnVersionInternal(Version);
+    }
+    else
+    {
+        // This DLL build doesn't support HidP_GetVersionInternal, so the version is 1.
+    }
+
+    return status;
+}
 
 #endif
 
+#include <poppack.h>
+
+#if _MSC_VER >= 1200
+#pragma warning(pop)
+#else
+#pragma warning(default:4115)
+#pragma warning(default:4201)
+#pragma warning(default:4214)
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) */
+#pragma endregion
+
+#endif
