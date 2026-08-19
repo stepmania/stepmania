@@ -19,3 +19,6 @@
 [submodule "exern/libtommath"]
 	path = exern/libtommath
 	url = https://github.com/libtom/libtommath
+[submodule "extern/libtomcrypt"]
+	path = extern/libtomcrypt
+	url = https://github.com/libtom/libtomcrypt
