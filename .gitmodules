@@ -28,3 +28,6 @@
 [submodule "extern/zlib"]
 	path = extern/zlib
 	url = https://github.com/madler/zlib
+[submodule "extern/libtommath"]
+	path = extern/libtommath
+	url = https://github.com/libtom/libtommath/
