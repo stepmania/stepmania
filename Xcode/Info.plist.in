@@ -12,7 +12,7 @@
           <string>smzip</string>
         </array>
         <key>CFBundleTypeIconFile</key>
-        <string>logo.icns</string>
+        <string>smicon.icns</string>
         <key>CFBundleTypeMIMETypes</key>
         <array>
           <string>application/zip</string>

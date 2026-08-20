@@ -245,7 +245,7 @@ elseif(APPLE)
                      COMMAND ${CMAKE_COMMAND} -E make_directory
                              "$<TARGET_FILE_DIR:StepMania>/../Resources"
                      COMMAND ${CMAKE_COMMAND} -E copy
-                             "${SM_XCODE_DIR}/logo.icns"
+                             "${SM_XCODE_DIR}/smicon.icns"
                              "$<TARGET_FILE_DIR:StepMania>/../Resources/")
 else() # Linux
   set_target_properties("${SM_EXE_NAME}"
