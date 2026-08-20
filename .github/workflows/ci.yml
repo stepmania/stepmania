@@ -37,7 +37,7 @@ jobs:
 
   macos-build-arm64:
     name: macOS (arm64)
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - name: Checkout submodules
@@ -52,7 +52,7 @@ jobs:
 
   macos-build-x86_64:
     name: macOS (x86_64)
-    runs-on: macos-13
+    runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v4
       - name: Checkout submodules
