@@ -31,6 +31,8 @@ before_build:
 - cmd: >-
     choco upgrade cmake
 
+    git submodule update --init --recursive
+
     set path=C:\Program Files\CMake\bin;%path%
 
     cd Build
