@@ -213,7 +213,6 @@ if(NOT APPLE)
                   "arch/Lights/LightsDriver_Linux_PIUIOBTN_Leds.cpp"
                   "arch/Lights/LightsDriver_Linux_ITGIO.cpp"
                   "arch/Lights/LightsDriver_Linux_stac.cpp"
-                  "arch/Lights/LightsDriver_LinuxPacDrive.cpp"
                   "arch/Lights/LightsDriver_LinuxWeedTech.cpp")
       list(APPEND SMDATA_ARCH_LIGHTS_HPP
                   "arch/Lights/LightsDriver_Linux_Leds.h"
@@ -222,8 +221,13 @@ if(NOT APPLE)
                   "arch/Lights/LightsDriver_Linux_PIUIOBTN_Leds.h"
                   "arch/Lights/LightsDriver_Linux_ITGIO.h"
                   "arch/Lights/LightsDriver_Linux_stac.h"
-                  "arch/Lights/LightsDriver_LinuxPacDrive.h"
                   "arch/Lights/LightsDriver_LinuxWeedTech.h")
+
+      if(WITH_PACDRIVE)
+        list(APPEND SMDATA_ARCH_LIGHTS_SRC "arch/Lights/LightsDriver_LinuxPacDrive.cpp")
+        list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver_LinuxPacDrive.h")
+      endif()
+                  
       if(WITH_MINIMAID)
         list(APPEND SMDATA_ARCH_LIGHTS_SRC
                     "arch/Lights/LightsDriver_LinuxMinimaid.cpp")
