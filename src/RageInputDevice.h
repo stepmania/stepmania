@@ -4,12 +4,15 @@
 
 #include "RageTimer.h"
 #include "EnumHelper.h"
+#include "Preference.h"
 
 #include <vector>
 
 
 const int NUM_JOYSTICKS = 32;
 const int NUM_PUMPS = 2;
+
+extern Preference<float> g_analogPressThreshold;
 
 enum InputDevice
 {
@@ -334,12 +337,16 @@ public:
 	 * debouncing applied. */
 	bool bDown;
 
+	/* An analog input as an analog FSR controller will send SM axis values
+	 * this will define which pressure is considered to be a pressed button */
+	float analogThreshold = g_analogPressThreshold;
+
 	RageTimer ts;
 
 	DeviceInput(): device(InputDevice_Invalid), button(DeviceButton_Invalid), level(0), z(0), bDown(false), ts(RageZeroTimer) { }
-	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), z(0), bDown(l > 0.5f), ts(RageZeroTimer) { }
+	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), z(0), bDown(l == 1.00f || l > analogThreshold), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, DeviceButton b, float l, const RageTimer &t ):
-		device(d), button(b), level(l), z(0), bDown(level > 0.5f), ts(t) { }
+		device(d), button(b), level(l), z(0), bDown(l == 1.00f || level > analogThreshold), ts(t) { }
 	DeviceInput( InputDevice d, DeviceButton b, const RageTimer &t, int zVal=0 ):
 		device(d), button(b), level(0), z(zVal), bDown(false), ts(t) { }
 

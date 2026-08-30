@@ -6,6 +6,8 @@
 #include "RageUtil.h"
 #include "LocalizedString.h"
 
+Preference<float> g_analogPressThreshold( "AnalogPressThreshold", 0.1f );
+
 static const char *InputDeviceStateNames[] = {
 	"Connected",
 	"Unplugged",
