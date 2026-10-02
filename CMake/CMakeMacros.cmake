@@ -1,3 +1,21 @@
+# Native macOS builds often leave CMAKE_OSX_ARCHITECTURES empty; FFmpeg and
+# packaging require arm64 or x86_64 explicitly.
+macro(sm_normalize_osx_architectures)
+  if(CMAKE_OSX_ARCHITECTURES)
+    return()
+  endif()
+
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+    set(CMAKE_OSX_ARCHITECTURES "arm64"
+        CACHE STRING "Build architectures for macOS" FORCE)
+    message(STATUS "Detected native macOS architecture: arm64")
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+    set(CMAKE_OSX_ARCHITECTURES "x86_64"
+        CACHE STRING "Build architectures for macOS" FORCE)
+    message(STATUS "Detected native macOS architecture: x86_64")
+  endif()
+endmacro()
+
 function(sm_append_simple_target_property target property str)
   get_target_property(current_property ${target} ${property})
   if(current_property)
