@@ -15,7 +15,7 @@
 /* Platform-specific fixes. */
 #if defined(_WIN32)
 #include "archutils/Win32/arch_setup.h"
-#elif defined(PBBUILD)
+#elif defined(MACOSX) || defined(PBBUILD)
 #include "archutils/Darwin/arch_setup.h"
 #elif defined(UNIX)
 #include "archutils/Unix/arch_setup.h"

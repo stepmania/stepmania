@@ -209,6 +209,13 @@ if(WIN32)
     file(COPY "${SM_EXTERN_DIR}/ffmpeg-w32/${SM_WIN32_ARCH}/${dll}" DESTINATION "${SM_PROGRAM_DIR}/")
   endforeach()
 elseif(MACOSX)
+  sm_normalize_osx_architectures()
+  if(NOT CMAKE_OSX_ARCHITECTURES)
+    message(FATAL_ERROR
+      "Could not determine macOS architecture (CMAKE_SYSTEM_PROCESSOR="
+      "${CMAKE_SYSTEM_PROCESSOR}). Set CMAKE_OSX_ARCHITECTURES to arm64 or x86_64.")
+  endif()
+
   include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
 
   set(WITH_CRASH_HANDLER TRUE)
