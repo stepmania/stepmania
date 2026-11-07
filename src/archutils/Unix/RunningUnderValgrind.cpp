@@ -1,7 +1,7 @@
 #include "global.h"
 #include "RunningUnderValgrind.h"
 
-#if defined(CPU_X86) && defined(__GNUC__)
+#if defined(CPU_X86) && defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 bool RunningUnderValgrind()
 {
 	/* Valgrind crashes and burns on pthread_mutex_timedlock. */
