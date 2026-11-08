@@ -51,7 +51,7 @@ struct shim_ctx {
 	void* ctx;
 };
 
-static unsigned int crt_thread_shim(void* outer_ctx)
+static unsigned int __stdcall crt_thread_shim(void* outer_ctx)
 {
 	LOG->Trace("crt_thread_shim");
 
