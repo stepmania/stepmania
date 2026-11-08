@@ -46,6 +46,7 @@ on_success:
 
     rem C:\Repos\StepMania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%"  "%SM_COMMIT_SHORT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "%APPVEYOR_BUILD_URL%" "success"
 on_failure:
+- cmd: if exist "%APPVEYOR_BUILD_FOLDER%\Build\_CPack_Packages\Windows\NSIS\NSISOutput.log" type "%APPVEYOR_BUILD_FOLDER%\Build\_CPack_Packages\Windows\NSIS\NSISOutput.log"
 - cmd: >-
     echo "Posting to IRC now..."
 
