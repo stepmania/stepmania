@@ -50,21 +50,6 @@ jobs:
       - name: Build
         run: cmake --build build
 
-  macos-build-x86_64:
-    name: macOS (x86_64)
-    runs-on: macos-15-intel
-    steps:
-      - uses: actions/checkout@v4
-      - name: Checkout submodules
-        run: git submodule update --init --recursive
-      - name: Install dependencies
-        run: brew install
-          nasm
-      - name: Configure
-        run: cmake -B build -DCMAKE_OSX_ARCHITECTURES=x86_64
-      - name: Build
-        run: cmake --build build
-
   windows-build:
     name: Windows (x86_64)
     runs-on: windows-latest
